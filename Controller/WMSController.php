@@ -44,9 +44,14 @@ class WMSController extends Controller {
     */
     public function addAction(){
 
-        // add and then redirect
-        $newWMSId = 4;
-        $uri = $this->generateUrl("wms_details",array("wmsId"=>$newWMSId));
+        $wms = new WMS();
+        $wms->setTitle("NEW WMS");
+
+        $em = $this->get("doctrine.orm.entity_manager");
+        $em->persist($wms);
+        $em->flush();
+        
+        $uri = $this->generateUrl("wms_details",array("wmsId"=>$wms->getId()));
         return  new RedirectResponse($uri);
     }
 
