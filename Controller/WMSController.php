@@ -19,11 +19,13 @@ class WMSController extends Controller {
      * Shows the details of a WMS
     */
     public function detailsAction($wmsId){
-        $wmsTitle = "Title for $wmsId";
+        $em = $this->get("doctrine.orm.entity_manager");
+        $wms = $em->find('MBWMSBundle:WMS',$wmsId);
+
         return $this->render("MBWMSBundle:WMS:details.html.twig",
             array(
-                'wmsTitle'=>$wmsTitle,
-                'wmsId' => $wmsId
+                'wmsTitle'=>$wms->getTitle(),
+                'wmsId' => $wms->getId()
         ));
     }
     
@@ -47,6 +49,12 @@ class WMSController extends Controller {
      * deletes a WMS
     */
     public function deleteAction($wmsId){
+
+        $em = $this->get("doctrine.orm.entity_manager");
+        $wms = $em->find('MBWMSBundle:WMS',$wmsId);
+        $em->remove($wms);
+        $em->flush();
+
         return $this->render("MBWMSBundle:WMS:delete.html.twig",array("wmsId"=>$wmsId));
     }
 
@@ -55,8 +63,17 @@ class WMSController extends Controller {
     */
     public function previewAction(){
         $getcapa_url = $_POST['getcapa_url'];
+        $data = file_get_contents($getcapa_url);
+        // FIXME wrap that datagetting
+        $doc = new \DOMDocument();
+        $doc->loadXML($data);
+        $capaParser = new \MB\WMSBundle\CapabilitiesParser($doc);
+        $wms = $capaParser->getWMS();
         return $this->render("MBWMSBundle:WMS:preview.html.twig",
-            array( "getcapa_url"=>$getcapa_url)
+            array( 
+                "getcapa_url"=>$getcapa_url,
+                "wms"=>$wms
+            )
         );
     }
     

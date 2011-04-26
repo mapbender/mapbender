@@ -5,10 +5,10 @@
 {% block body %}
     <p>WMS Preview '{{ getcapa_url }}'</p>
     <div class="wms">
-        <h1 class="title">Neuer WMS</h1>
-        <h2 class="name">wms_neu</h2>
+        <h1 class="title">{{ wms.getTitle() }}</h1>
+        <h2 class="name">{{ wms.getName() }}</h2>
+        <p class="abstract">{{ wms.getAbstract() }}</p>
         <p class="address">
-        Metadatenblock 
         </p>
         <h3>Layer:</h3>
         <ul class="layers">
