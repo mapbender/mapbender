@@ -4,6 +4,7 @@ namespace MB\WMSBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use MB\WMSBundle\Entity;
 
 class WMSController extends Controller {
 
@@ -19,7 +20,11 @@ class WMSController extends Controller {
     */
     public function detailsAction($wmsId){
         $wmsTitle = "Title for $wmsId";
-        return $this->render("MBWMSBundle:WMS:details.html.twig",array('wmsTitle'=>$wmsTitle));
+        return $this->render("MBWMSBundle:WMS:details.html.twig",
+            array(
+                'wmsTitle'=>$wmsTitle,
+                'wmsId' => $wmsId
+        ));
     }
     
     /**
@@ -27,6 +32,22 @@ class WMSController extends Controller {
     */
     public function showaddAction(){
         return $this->render("MBWMSBundle:WMS:showadd.html.twig");
+    }
+    /**
+     * shows the dialog for wms Deletion confirmation
+    */
+    public function showdeleteAction($wmsId){
+        return $this->render("MBWMSBundle:WMS:showdelete.html.twig",
+            array(
+                'wmsTitle'=>"",
+                'wmsId' => $wmsId
+        ));
+    }
+    /**
+     * deletes a WMS
+    */
+    public function deleteAction($wmsId){
+        return $this->render("MBWMSBundle:WMS:delete.html.twig",array("wmsId"=>$wmsId));
     }
 
     /**
@@ -44,7 +65,7 @@ class WMSController extends Controller {
     */
     public function addAction(){
 
-        $wms = new WMS();
+        $wms = new Entity\WMS();
         $wms->setTitle("NEW WMS");
 
         $em = $this->get("doctrine.orm.entity_manager");
@@ -52,7 +73,9 @@ class WMSController extends Controller {
         $em->flush();
         
         $uri = $this->generateUrl("wms_details",array("wmsId"=>$wms->getId()));
+        #$uri = $this->generateUrl("wms_details",array("wmsId"=>4));
         return  new RedirectResponse($uri);
     }
+
 
 }

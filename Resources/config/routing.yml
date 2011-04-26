@@ -29,3 +29,16 @@ wms_preview:
     requirements:
         _method: POST
 
+wms_showdelete:
+    pattern: /{wmsId}/DELETE
+    defaults: {_controller: "MBWMSBundle:WMS:showdelete" }
+    requirements:
+        wmsId: \d+
+        _method: GET
+
+wms_delete:
+    pattern: /{wmsId}/DELETE
+    defaults: {_controller: "MBWMSBundle:WMS:showdelete" }
+    requirements:
+        wmsId: \d+
+        _method: POST

@@ -1,13 +1,24 @@
-<?xml version="1.0" ?>
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>WMS Preview</title>
-    </head>
-    <body>
-    <p>here be preview of {{ getcapa_url }}</p>
+{% extends '::base.html.twig' %} 
+
+{% block title %}WMS Preview{% endblock %}
+
+{% block body %}
+    <p>WMS Preview '{{ getcapa_url }}'</p>
+    <div class="wms">
+        <h1 class="title">Neuer WMS</h1>
+        <h2 class="name">wms_neu</h2>
+        <p class="address">
+        Metadatenblock 
+        </p>
+        <h3>Layer:</h3>
+        <ul class="layers">
+            <li class="layer">
+                <h1 class="title">Neuer Layer</h1>
+                <h2 class="name">layer_ney</h2>
+            </li>
+        </ul>
+    </div>
     <form action="{{ path('wms_add') }}" method="POST">
-        <input type="submit" value="Speichern"/> 
+        <input type="submit" name="save" value="WMS hinzufügen"/> 
     </form>
-    </body>
-</html>
+{% endblock %}

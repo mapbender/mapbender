@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %} 
+
+{% block title %}Delete {{ wmsTitle }} {% endblock %}
+
+{% block body %}
+    <h1>{{ wmsTitle }}</h1>
+    <p class="message">Wirklich Löschen ?</p>
+    <form action="{{ path("wms_delete",wmsId) }}" method="POST">
+        <input type="submit" value="Löschen" />
+    </form>
+{% endblock %}

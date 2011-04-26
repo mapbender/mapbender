@@ -1,19 +1,19 @@
-<?xml version="1.0" ?>
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Add a WMS</title>
-    </head>
-    <body>
-        <form name="url" action="{{ path('wms_preview') }}" method="POST">
-            <label for="getcapa_url">
-            <input type="url" name="getcapa_url" id="getcapa_url" />
-            getCapabilities Url</label>
-            <input type="submit" name="save" value="Laden" />
-        </form>
-        <form name="upload" action="{{ path('wms_preview')  }}" method="POST">
-            <label for="getCapabilities_file"><input type="file" />getCapabilities XMLDatei</label>
-            <input type="submit" name="save" value="Hochladen" />
-        </form>
-    </body>
-</html>
+{% extends '::base.html.twig' %} 
+
+{% block title %}Add WMS{% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('bundles/mbwms/css/style.css') }}" type="text/css"/>
+{% endblock %}
+
+{% block body %}
+    <form name="url" action="{{ path('wms_preview') }}" method="POST">
+        <input type="url" name="getcapa_url" id="getcapa_url" />
+        <label for="getcapa_url">getCapabilities Url</label>
+        <input type="submit" name="save" value="Laden" />
+    </form>
+    <form name="upload" action="{{ path('wms_preview')  }}" method="POST">
+        <input type="file" name="getcapa_file" id="getcapa_file />
+        <label for="getcapa_file"> getCapabilities XMLDatei</label>
+        <input type="submit" name="save" value="Hochladen" />
+    </form>
+{% endblock %}
