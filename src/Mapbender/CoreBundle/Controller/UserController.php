@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\SecurityContext;
 
-/*
+/**
  * User controller.
  *
  * @author Christian Wygoda <arsgeografica@gmail.com>

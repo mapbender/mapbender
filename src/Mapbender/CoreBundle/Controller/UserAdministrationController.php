@@ -6,7 +6,7 @@ use Mapbender\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/*
+/**
  * User controller.
  *
  * @author Christian Wygoda <arsgeografica@gmail.com>
