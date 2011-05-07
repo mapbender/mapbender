@@ -10,7 +10,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  * @author Christian Wygoda <arsgeografica@gmail.com>
  */
 class WelcomeController extends Controller {
+	/**
+	 * @extra:Route("/", name="mapbender_welcome")
+	 * @extra:Template()
+	 */
 	public function indexAction() {
-		return $this->render('MapbenderCoreBundle:Welcome:index.html.twig');
+		return array();
 	}
 }
