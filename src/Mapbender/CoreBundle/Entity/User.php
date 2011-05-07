@@ -7,6 +7,7 @@ namespace Mapbender\CoreBundle\Entity;
  *
  * @author Christian Wygoda <arsgeografica@gmail.com>
  * @orm:Entity
+ * @orm:Table(name="Users")
  */
 class User {
 	/** 
@@ -14,6 +15,9 @@ class User {
 	 * @orm:Id
 	 */
 	protected $id;
+
+	/** @orm:Column(length=512) */
+	protected $password;
 
 	/** @orm:Column(length=256) */
 	protected $first_name;
@@ -42,6 +46,24 @@ class User {
 	public function getId()
 	{
 		return $this->id;
+	}
+
+	/**
+	 * Set password
+	 *
+	 * @param string $password
+	 */
+	public function setPassword($password) {
+		$this->password = $password;
+	}
+
+	/**
+	 * Get password
+	 *
+	 * @return string $password
+	 */
+	public function getPassword() {
+		return $this->password;
 	}
 
 	/**
