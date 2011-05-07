@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Entity;
 
+use Symfony\Component\Security\Core\User\UserInterface;
+
 /**
  * User entity.
  *
@@ -9,7 +11,7 @@ namespace Mapbender\CoreBundle\Entity;
  * @orm:Entity
  * @orm:Table(name="Users")
  */
-class User {
+class User implements UserInterface {
 	/** 
 	 * @orm:Column(type="integer") 
 	 * @orm:Id
@@ -17,13 +19,10 @@ class User {
 	protected $id;
 
 	/** @orm:Column(length=512) */
+	protected $username;
+
+	/** @orm:Column(length=512) */
 	protected $password;
-
-	/** @orm:Column(length=256) */
-	protected $first_name;
-
-	/** @orm:Column(length=256) */
-	protected $last_name;
 
 	/** @orm:Column(length=256) */
 	protected $email;
@@ -49,6 +48,24 @@ class User {
 	}
 
 	/**
+	 * Set username
+	 *
+	 * @param string $username
+	 */
+	public function setUsername($username) {
+		$this->username = $username;
+	}
+
+	/**
+	 * Get username
+	 * 
+	 * @return string $username
+	 */
+	public function getUsername() {
+		return $this->username;
+	}
+
+	/**
 	 * Set password
 	 *
 	 * @param string $password
@@ -64,46 +81,6 @@ class User {
 	 */
 	public function getPassword() {
 		return $this->password;
-	}
-
-	/**
-	 * Set first_name
-	 *
-	 * @param string $firstName
-	 */
-	public function setFirstName($firstName)
-	{
-		$this->first_name = $firstName;
-	}
-
-	/**
-	 * Get first_name
-	 *
-	 * @return string $firstName
-	 */
-	public function getFirstName()
-	{
-		return $this->first_name;
-	}
-
-	/**
-	 * Set last_name
-	 *
-	 * @param string $lastName
-	 */
-	public function setLastName($lastName)
-	{
-		$this->last_name = $lastName;
-	}
-
-	/**
-	 * Get last_name
-	 *
-	 * @return string $lastName
-	 */
-	public function getLastName()
-	{
-		return $this->last_name;
 	}
 
 	/**
@@ -137,12 +114,44 @@ class User {
 
 	/**
 	 * Get roles
-	 *
+	 * 
 	 * @return array $roles
 	 */
 	public function getRoles() {
 		//TODO: Retrieve roles
 		return array('ROLE_USER');
+	}
+
+	/**
+	 * Get password encoding salt
+	 *
+	 * @return string $salt
+	 */
+	public function getSalt() {
+		//TODO: Make this configurable
+		return '';
+	}
+
+	/**
+	 * Remove sensitive data from the user
+	 *
+	 * @return void
+	 */
+	public function eraseCredentials() {
+		$this->password = NULL;
+	}
+
+	/**
+	 * Compare
+	 *
+	 * @return Boolean $equals
+	 */
+	public function equals(UserInterface $user) {
+		if(get_class($this) === get_class($user) && $this->getUsername() === $user->getUsername()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 
