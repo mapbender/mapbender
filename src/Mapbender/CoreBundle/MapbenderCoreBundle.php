@@ -16,6 +16,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  *
  * @author Christian Wygoda <arsgeografica@gmail.com>
  */
-class CoreBundle extends Bundle {
+class MapbenderCoreBundle extends Bundle {
 }
 
