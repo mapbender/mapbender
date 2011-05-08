@@ -67,11 +67,14 @@ interface ElementInterface {
 
 	/**
 	 * Output the HTML for rendering. The function
-	 * receives a reference to the parent element.
+	 * receives a reference to the parent element and
+	 * a name of a block to render which defaults to
+	 * 'content', 'title' can also be given.
 	 *
 	 * @param ElementInterface $parent
+	 * @param string $block
 	 * @return string $html
 	 */
-	public function render(ElementInterface parentElement = NULL);
+	public function render(ElementInterface parentElement = NULL, $block = 'content');
 }
 
