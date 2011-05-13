@@ -9,20 +9,13 @@ namespace Mapbender\CoreBundle\Component;
  */
 interface LayerInterface {
 	/**
-	 * Instantiate from WMC fragment
-	 * TODO: Type fo $fragment - string? some XML class?
-	 * 
-	 * @param WMC fragment
+	 * Constructor
+	 *
+	 * @param string $name The layer name
+	 * @param array $configuration The layer configuration
+	 * @param string $srs The Application SRS
 	 */
-	public static function loadFromWMC($fragment);
-
-	/**
-	 * Save to WMC fragment
-	 * TODO: Type of $fragment - string? some XML class?
-	 * 
-	 * @return WMC fragment
-	 */
-	public function saveToWMC();
+	public function __construct(string $name, array $configuration, string $srs);
 
 	/**
 	 * Render to output for given type. Default is rendering
@@ -32,6 +25,6 @@ interface LayerInterface {
 	 */
 	public function render($type = 'MapQuery');
 
-	//TODO: Configuration: CRUD + Form
+	//TODO: Configuration: Form, store / load at runtime
 }
 
