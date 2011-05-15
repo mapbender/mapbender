@@ -10,8 +10,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 class MapbenderCoreExtension extends Extension {
 	public function load(array $configs, ContainerBuilder $container) {
 		$loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-		// Load all element service definitions
-		$loader->load('element_services.xml');
+		$loader->load('services.xml');
 	}
 
 	public function getAlias() {

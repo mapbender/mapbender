@@ -2,10 +2,10 @@
 <container xmlns="http://symfony.com/schema/dic/services"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
-	<services>
-		<service id="mapbender_core.element.div" class="Mapbender\CoreBundle\Element\DivBundle">
-			<tag name="mapbender.element" />
+	<!--services>
+		<service id="mapbender.core.elements" class="Mapbender\CoreBundle\ElementFactory.php">
+			<tag name="mapbender.element_factory" />
 		</service>
-	</services>
+	</services-->
 </container>
 
