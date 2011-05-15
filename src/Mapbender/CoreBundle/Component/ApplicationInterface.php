@@ -32,18 +32,12 @@ interface ApplicationInterface {
 	function getTemplate();
 
 	/**
-	 * Return the array of elements. Each element has a class and id
+	 * Return the array of layersets.
 	 *
-	 * @return array Application element tree
+	 * @param string $layerset The layerset for which to return layers
+	 * @return array Application layersets
 	 */
-	function getElements();
-
-	/**
-	 * Return the array of layers. Each layer has a class and id
-	 *
-	 * @return array Application layers
-	 */
-	function getLayers();
+	function getLayersets();
 
 	/**
 	 * Render the application

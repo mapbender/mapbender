@@ -11,19 +11,19 @@ interface LayerInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param string $name The layer name
+	 * @param string $title The layer title
 	 * @param array $configuration The layer configuration
-	 * @param string $srs The Application SRS
 	 */
-	public function __construct(string $name, array $configuration, string $srs);
+	public function __construct($title, array $configuration);
 
 	/**
-	 * Render to output for given type. Default is rendering
-	 * the Javascript for use with MapQuery.
-	 * 
+	 * Return an array representation of the layer title and 
+	 * configuration ready for json_encode.
+	 *
 	 * @param string $type
+	 * @return string JSONified configuration
 	 */
-	public function render($type = 'MapQuery');
+	public function render();
 
 	//TODO: Configuration: Form, store / load at runtime
 }

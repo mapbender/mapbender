@@ -22,6 +22,7 @@ interface LayerFactoryInterface {
 	 *
 	 * @param string $name The layer name
 	 * @param array $configuration The layer configuration
+	 * @param mixed $srs The SRS for the application
 	 * @return LayerInterface The layer
 	 */
 	public function create($name, array $configuration);

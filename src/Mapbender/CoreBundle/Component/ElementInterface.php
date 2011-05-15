@@ -9,6 +9,14 @@ namespace Mapbender\CoreBundle\Component;
  */
 interface ElementInterface {
 	/**
+	 * Constructor
+	 *
+	 * @param string $id The CSS id which will be used
+	 * @param array $configuration The element configuration array
+	 */
+	public function __construct($id, array $configuration);
+
+	/**
 	 * Return element title
 	 *
 	 * @return string $title
@@ -66,6 +74,25 @@ interface ElementInterface {
 	public function isContainer();
 
 	/**
+	 * Return the id of the element
+	 *
+	 * @return string Id
+	 */
+	public function getId();
+
+	/**
+	 * Return the configuration as an array, ready
+	 * for json_encode. This array should contain
+	 * an array 'configuration' and an string 'init',
+	 * which is the name of the init function (js).
+	 * It will be called like this:
+	 * Mapbender.element.<init>(<id>, <configuration>)
+	 *
+	 * @return array Element configuration
+	 */
+	public function getConfiguration();
+
+	/**
 	 * Output the HTML for rendering. The function
 	 * receives a reference to the parent element and
 	 * a name of a block to render which defaults to
@@ -75,6 +102,12 @@ interface ElementInterface {
 	 * @param string $block
 	 * @return string $html
 	 */
-	public function render(ElementInterface parentElement = NULL, $block = 'content');
+	public function render(ElementInterface $parentElement = NULL, $block = 'content');
+
+	/**
+	 * Elements shall implement __toString as a alias for render()
+	 * This allows simpler application templates
+	 */
+	public function __toString();
 }
 
