@@ -8,18 +8,23 @@ use Symfony\Component\HttpFoundation\Response;
 class Application implements ApplicationInterface {
 	protected $container;
 	protected $configuration;
-	protected $layer_factories;
+	protected $regions;
+	protected $layersets;
+	protected $template;
 
 	public function __construct($container, $configuration) {
 		$this->container = $container;
 		$this->configuration = $configuration;
-		$this->layer_factories = array();
 		
 		// A title is required, otherwise it would be hard to select an
 		// application in a list
 		if(!$this->getTitle()) {
 			throw new \Exception('No title set for application');
 		}
+
+		$this->loadTemplate();
+		$this->loadElements();
+		$this->loadLayers();
 	}
 
 	public function getTitle() {
@@ -31,31 +36,11 @@ class Application implements ApplicationInterface {
 	}
 
 	public function getTemplate() {
-		$template_name = $this->configuration['template'];
-		return $this->container->get($template_name);
+		return $this->template;
 	}
 	
-	public function getElements() {
-		
-	}
-		
-	public function getLayers() {
-		if(!array_key_exists('layers', $this->configuration)) {
-			return array();
-		}
-
-		$layers = array();
-		foreach($this->configuration['layers'] as $name => $configuration) {
-			$factory = $this->getLayerFactory($configuration['type']);
-			if(!$factory) {
-				continue;
-			}
-
-			$layers[$name] = $factory->create($name, $configuration);
-		}
-		print_r($layers);
-		die();
-		return $layers;
+	public function getLayersets() {
+		return $this->layersets;
 	}
 	
 	public function render(Response $response = NULL) {
@@ -63,11 +48,47 @@ class Application implements ApplicationInterface {
 			$response = new Response();
 		}
 
+		$layersets = array();
+		foreach($this->layersets as $title => $layers) {
+			$layersets[$title] = array();
+			foreach($layers as $layer) {
+				$layersets[$title][] = $layer->render();
+			}
+		}
+	
+		// Get all assets we need to include
+		// First the template assets
+		$template_metadata = $this->getTemplate()->getMetadata();
+		$css = array_merge(array(), $template_metadata['css']);
+		$js  = array_merge(array(), $template_metadata['js']);
+		// Then merge in all element assets
+		// We also grab the element confs here
+		$elements_confs = array();
+		foreach($this->regions as $region => $elements) {
+			foreach($elements as $element) {
+				$assets = $element->getAssets();
+				$css = array_merge($css, $assets['css']);
+				$js  = array_merge($js,  $assets['js']);
+				$element_confs[$element->getId()] = $element->getConfiguration();
+			}
+		}	
+	
+		$configuration = array(
+			'title' => $this->getTitle(),
+			'layersets' => $layersets,
+			'elements' => $element_confs
+		);
+
+
 		$response->setContent($this->getTemplate()->render(array(
 			'title' => $this->getTitle(),
-			'layers' => $this->getLayers(),
+			'configuration' => "Mapbender = {}; Mapbender.configuration = " . json_encode($configuration),
+			'assets' => array(
+				'css' => $css,
+				'js' => $js),
+			'regions' => $this->regions
 		)));
-
+		
 		return $response;
 	}
 
@@ -81,10 +102,57 @@ class Application implements ApplicationInterface {
 		if(array_key_exists($type, $this->layer_factories)) {
 			return $this->layer_factories[$type];
 		} else {
-			$factory = $this->container->get('mapbender.layer_factory.' . $type);
+			//TODO: Search the services tagged mapbender.layer_factory for given type
+			$factory = $this->container->get('mapbender.' . $type . '.layer_factory');
 			if($factory) {
 				$this->layer_factories[$type] = $factory;
 				return $factory;
+			}
+		}
+	}
+
+	/**
+	 * Load the template
+	 */
+	private function loadTemplate() {
+		$templating = $this->container->get('templating');
+		$this->template = new $this->configuration['template']($templating);
+	}
+
+	/**
+	 * Using the configuration, load (instantiate) all elements defined for the application
+	 */
+	private function loadElements() {
+		$template_metadata = $this->getTemplate()->getMetadata();
+		$this->elements = array();
+		$counter = 0;
+		foreach($template_metadata['regions'] as $region) {
+			// Only iterate over regions defined in the app
+			if(!array_key_exists($region, $this->configuration['elements'])) {
+				continue;
+			}
+			foreach($this->configuration['elements'][$region] as $element) {
+				// Extract and unset class, so we can use the remains as configuration
+				$class = $element['class'];
+				unset($element['class']);
+				$id = "element-" . $counter++;
+				$this->regions[$region][] = new $class($id, $element);
+			}
+		}
+	}
+
+	/**
+	 * Using the configuration, load (instantiate all layers defined for the application
+	 */
+	private function loadLayers() {
+		$this->layersets = array();
+		foreach($this->configuration['layersets'] as $name => $layers) {
+			$this->layersets[$name] = array();
+			foreach($layers as $title => $layer) {
+				//Extract and unset class, so we can use the remains as configuration
+				$class = $layer['class'];
+				unset($layer['class']);
+				$this->layersets[$name][] = new $class($title, $layer);
 			}
 		}
 	}
