@@ -30,9 +30,10 @@ class OpenLayersMap implements ElementInterface {
 			'js' => array(
 				'bundles/mapbendercore/OpenLayers-2.10/OpenLayers.js',
 				'bundles/mapbendercore/OpenLayers_LayerFactory.js',
-				'bundles/mapbendercore/OpenLayers_MapElement.js',
+				'bundles/mapbendercore/Mapbender.Element.OpenLayersMap.js',
 			),
 			'css' => array(
+				'bundles/mapbendercore/OpenLayers-2.10/theme/default/style.css',
 				'bundles/mapbendercore/OpenLayers_MapElement.css',
 			)
 		);
@@ -52,8 +53,8 @@ class OpenLayersMap implements ElementInterface {
 
 	public function getConfiguration() {
 		return array(
-			'configuration' => $this->configuration,
-			'init' => 'core.openlayers_map',
+			'options' => $this->configuration,
+			'init' => 'ol_map',
 		);
 	}
 
