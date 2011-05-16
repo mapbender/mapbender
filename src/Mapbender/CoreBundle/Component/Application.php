@@ -55,12 +55,16 @@ class Application implements ApplicationInterface {
 				$layersets[$title][] = $layer->render();
 			}
 		}
-	
+
+		//TODO: This is a little weird, to use the asset helper to get the base path...?
+		$base_path = $this->container->get('templating.helper.assets')->getBasePath();
+		
 		// Get all assets we need to include
-		// First the template assets
+		// First the application and template assets
+		$js = array('bundles/mapbendercore/Mapbender.Application.js');
 		$template_metadata = $this->getTemplate()->getMetadata();
 		$css = array_merge(array(), $template_metadata['css']);
-		$js  = array_merge(array(), $template_metadata['js']);
+		$js  = array_merge($js, $template_metadata['js']);
 		// Then merge in all element assets
 		// We also grab the element confs here
 		$elements_confs = array();
@@ -76,7 +80,10 @@ class Application implements ApplicationInterface {
 		$configuration = array(
 			'title' => $this->getTitle(),
 			'layersets' => $layersets,
-			'elements' => $element_confs
+			'elements' => $element_confs,
+			'srs' => $this->configuration['srs'],
+			'basePath' => $base_path,
+			'extents' => $this->configuration['extents'],			
 		);
 
 
@@ -98,6 +105,7 @@ class Application implements ApplicationInterface {
 	 * @param string $type The layer class identifier to get the layer factory for
 	 * @return LayerFactoryInterface The layer factory
 	 */
+	/*
 	protected function getLayerFactory($type) {
 		if(array_key_exists($type, $this->layer_factories)) {
 			return $this->layer_factories[$type];
@@ -110,6 +118,7 @@ class Application implements ApplicationInterface {
 			}
 		}
 	}
+	*/
 
 	/**
 	 * Load the template
