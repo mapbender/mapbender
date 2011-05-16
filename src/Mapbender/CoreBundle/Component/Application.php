@@ -71,12 +71,16 @@ class Application implements ApplicationInterface {
 		foreach($this->regions as $region => $elements) {
 			foreach($elements as $element) {
 				$assets = $element->getAssets();
-				$css = array_merge($css, $assets['css']);
-				$js  = array_merge($js,  $assets['js']);
+				if(array_key_exists('css', $assets)) {
+					$css = array_merge($css, $assets['css']);
+				}
+				if(array_key_exists('js', $assets)) {
+					$js  = array_merge($js,  $assets['js']);
+				}
 				$element_confs[$element->getId()] = $element->getConfiguration();
 			}
 		}	
-	
+
 		$configuration = array(
 			'title' => $this->getTitle(),
 			'layersets' => $layersets,
