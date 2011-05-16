@@ -59,7 +59,9 @@ $.widget("mapbender.ol_map", {
 			// only WMS for now
 			var layer = new OpenLayers.Layer.WMS(def.title, def.configuration.url, 
 			{
-				layers: def.configuration.layers
+				layers: def.configuration.layers,
+                                format: def.configuration.format,
+                                transparent: def.configuration.transparent
 			}, { 
 				isBaseLayer: def.configuration.baselayer,
 				visibility: def.configuration.visible
