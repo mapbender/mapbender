@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 /**
  * Element interface
  *
@@ -11,10 +13,11 @@ interface ElementInterface {
 	/**
 	 * Constructor
 	 *
+	 * @param ContainerInterface $container The DI container
 	 * @param string $id The CSS id which will be used
 	 * @param array $configuration The element configuration array
 	 */
-	public function __construct($id, array $configuration);
+	public function __construct(ContainerInterface $container, $id, array $configuration);
 
 	/**
 	 * Return element title

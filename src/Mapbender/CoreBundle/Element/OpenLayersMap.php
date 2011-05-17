@@ -3,12 +3,15 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\ElementInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class OpenLayersMap implements ElementInterface {
 	protected $configuration;
 	protected $id;
+	protected $container;
 
-	public function __construct($id, array $configuration) {
+	public function __construct(ContainerInterface $container, $id, array $configuration) {
+		$this->container = $container;
 		$this->id = $id;
 		$this->configuration = $configuration;
 	}

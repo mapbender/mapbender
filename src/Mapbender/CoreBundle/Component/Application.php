@@ -149,7 +149,7 @@ class Application implements ApplicationInterface {
 				$class = $element['class'];
 				unset($element['class']);
 				$id = "element-" . $counter++;
-				$this->regions[$region][] = new $class($id, $element);
+				$this->regions[$region][] = new $class($this->container, $id, $element);
 			}
 		}
 	}
