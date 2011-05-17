@@ -11,6 +11,7 @@ class Application implements ApplicationInterface {
 	protected $regions;
 	protected $layersets;
 	protected $template;
+	protected $element_id_template;
 
 	public function __construct($container, $configuration) {
 		$this->container = $container;
@@ -22,9 +23,7 @@ class Application implements ApplicationInterface {
 			throw new \Exception('No title set for application');
 		}
 
-		$this->loadTemplate();
-		$this->loadElements();
-		$this->loadLayers();
+		$this->element_id_template = "element-%d";
 	}
 
 	public function getTitle() {
@@ -36,17 +35,43 @@ class Application implements ApplicationInterface {
 	}
 
 	public function getTemplate() {
+		if(!$this->template) {
+			$this->loadTemplate();
+		}
 		return $this->template;
 	}
 	
 	public function getLayersets() {
 		return $this->layersets;
 	}
-	
+		
+	public function getElement($id) {
+		$template_metadata = $this->getTemplate()->getMetadata();
+		$counter = 0;
+		foreach($template_metadata['regions'] as $region) {
+			// Only iterate over regions defined in the app
+			if(!array_key_exists($region, $this->configuration['elements'])) {
+				continue;
+			}
+			foreach($this->configuration['elements'][$region] as $name => $element) {
+				$element_id = sprintf($this->element_id_template, $counter++);
+				if($element_id == $id) {
+					$class = $element['class'];
+					unset($element['class']);
+					return new $class($id, $name, $element, $this->container);
+				}
+			}
+		}
+		return NULL;
+	}
+
 	public function render(Response $response = NULL) {
 		if($response == NULL) {
 			$response = new Response();
 		}
+
+		$this->loadElements();
+		$this->loadLayers();
 
 		$layersets = array();
 		foreach($this->layersets as $title => $layers) {
@@ -87,6 +112,7 @@ class Application implements ApplicationInterface {
 			'elements' => $element_confs,
 			'srs' => $this->configuration['srs'],
 			'basePath' => $base_path,
+			'slug' => 'main', //TODO: Make dynamic
 			'extents' => $this->configuration['extents'],			
 		);
 
@@ -144,12 +170,12 @@ class Application implements ApplicationInterface {
 			if(!array_key_exists($region, $this->configuration['elements'])) {
 				continue;
 			}
-			foreach($this->configuration['elements'][$region] as $element) {
+			foreach($this->configuration['elements'][$region] as $name => $element) {
 				// Extract and unset class, so we can use the remains as configuration
 				$class = $element['class'];
 				unset($element['class']);
-				$id = "element-" . $counter++;
-				$this->regions[$region][] = new $class($this->container, $id, $element);
+				$id = sprintf($this->element_id_template, $counter++);
+				$this->regions[$region][] = new $class($id, $name, $element, $this->container);
 			}
 		}
 	}

@@ -13,11 +13,12 @@ interface ElementInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param ContainerInterface $container The DI container
-	 * @param string $id The CSS id which will be used
+	 * @param string $id The id which will be used for the element
+	 * @param string $name The element name
 	 * @param array $configuration The element configuration array
+	 * @param ContainerInterface $container The DI container
 	 */
-	public function __construct(ContainerInterface $container, $id, array $configuration);
+	public function __construct($id, $name, array $configuration, ContainerInterface $container);
 
 	/**
 	 * Return element title
@@ -94,6 +95,15 @@ interface ElementInterface {
 	 * @return array Element configuration
 	 */
 	public function getConfiguration();
+
+	/**
+	 * Callback for HTTP calls, usually Ajax calls.
+	 * Gets the action name as a parameter.
+	 *
+	 * @param string $action The action to do
+	 * @return HttpResponse HTTP response
+	 */
+	public function httpAction($action);
 
 	/**
 	 * Output the HTML for rendering. The function

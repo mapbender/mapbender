@@ -40,6 +40,14 @@ interface ApplicationInterface {
 	function getLayersets();
 
 	/**
+	 * Return the element specified by id.
+	 *
+	 * @param string $id The element id
+	 * @return ElementInterface The element
+	 */
+	function getElement($id);
+
+	/**
 	 * Render the application
 	 *
 	 * @param Response $response A Response instance

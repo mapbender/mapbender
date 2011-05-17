@@ -2,20 +2,11 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class OpenLayersMap implements ElementInterface {
-	protected $configuration;
-	protected $id;
-	protected $container;
-
-	public function __construct(ContainerInterface $container, $id, array $configuration) {
-		$this->container = $container;
-		$this->id = $id;
-		$this->configuration = $configuration;
-	}
-
+class OpenLayersMap extends Element implements ElementInterface {
 	public function getTitle() {
 		return "Openlayers Map";
 	}
@@ -42,18 +33,6 @@ class OpenLayersMap implements ElementInterface {
 		);
 	}
 
-	public function getParents() {
-		return array();
-	}
-
-	public function isContainer() {
-		return false;
-	}
-
-	public function getId() {
-		return $this->id;
-	}
-
 	public function getConfiguration() {
 		return array(
 			'options' => $this->configuration,
@@ -66,10 +45,6 @@ class OpenLayersMap implements ElementInterface {
 			//TODO: use templating. Then the element template can be overriden by the application
 			return '<div id="' . $this->id . '" class="mb-element mb-element-openlayers-map"></div>';
 		}
-	}
-
-	public function __toString() {
-		return $this->render();
 	}
 }
 
