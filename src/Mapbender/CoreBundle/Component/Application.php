@@ -81,8 +81,7 @@ class Application implements ApplicationInterface {
 			}
 		}
 
-		//TODO: This is a little weird, to use the asset helper to get the base path...?
-		$base_path = $this->container->get('templating.helper.assets')->getBasePath();
+		$base_path = $this->container->get('request')->getBaseUrl();
 		
 		// Get all assets we need to include
 		// First the application and template assets
