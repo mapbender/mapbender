@@ -26,11 +26,24 @@ $.widget("mapbender.ol_map", {
 	
 		if(Mapbender.configuration.extents.max) {
 			$.extend(opts, { maxExtent: OpenLayers.Bounds.fromArray(Mapbender.configuration.extents.max) });
-		}	
+		}
+
+		if(this.options.scales) {
+			console.log(this.options.scales);
+			$.extend(opts, { scales: this.options.scales });
+		}
+
+		$.extend(opts, { controls: [
+			new OpenLayers.Control.Navigation(),
+			new OpenLayers.Control.ArgParser(),
+			new OpenLayers.Control.Attribution(),
+			new OpenLayers.Control.PanZoomBar(),
+			new OpenLayers.Control.Scale(),
+			new OpenLayers.Control.ZoomBox(),
+			new OpenLayers.Control.LayerSwitcher()
+		] });
 		
 		this.map = new OpenLayers.Map(opts);
-
-		this.map.addControl(new OpenLayers.Control.LayerSwitcher());
 
 		if(this.options.main)
 			this._loadLayers('main');
