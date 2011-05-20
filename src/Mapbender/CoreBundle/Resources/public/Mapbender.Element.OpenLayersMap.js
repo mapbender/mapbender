@@ -29,7 +29,6 @@ $.widget("mapbender.ol_map", {
 		}
 
 		if(this.options.scales) {
-			console.log(this.options.scales);
 			$.extend(opts, { scales: this.options.scales });
 		}
 
