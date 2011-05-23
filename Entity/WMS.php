@@ -1,31 +1,32 @@
 <?php
 
 namespace MB\WMSBundle\Entity;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @orm:Entity
+ * @ORM\Entity
  */
 class WMS {
 
     /**
-     *  @orm:Id
-     *  @orm:Column(type="integer")
-     *  @orm:GeneratedValue(strategy="AUTO")
+     *  @ORM\Id
+     *  @ORM\Column(type="integer")
+     *  @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
     /**
-     * @orm:Column(type="string")
+     * @ORM\Column(type="string")
      */
     protected $title;
     
     /**
-     * @orm:Column(type="string")
+     * @ORM\Column(type="string")
      */
     protected $name;
     
     /**
-     * @orm:Column(type="string")
+     * @ORM\Column(type="string")
      */
     protected $abstract;
 
