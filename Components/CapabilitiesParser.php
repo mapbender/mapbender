@@ -1,6 +1,6 @@
 <?php
 
-namespace MB\WMSBundle;
+namespace MB\WMSBundle\Components;
 use MB\WMSBundle\Entity;
 
 class CapabilitiesParser {

@@ -5,6 +5,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use MB\WMSBundle\Entity;
+use MB\WMSBundle\Components\CapabilitiesParser;
+use MB\WMSBundle\Form\WMSType;
 
 class WMSController extends Controller {
 
@@ -62,23 +64,29 @@ class WMSController extends Controller {
      * shows preview of WMS
     */
     public function previewAction(){
-        $getcapa_url = $_POST['getcapa_url'];
+        $getcapa_url = $this->get('request')->request->get('getcapa_url');
         $data = file_get_contents($getcapa_url);
         // FIXME wrap that datagetting
         $doc = new \DOMDocument();
         $doc->loadXML($data);
-        $capaParser = new \MB\WMSBundle\CapabilitiesParser($doc);
+        $capaParser = new CapabilitiesParser($doc);
         $wms = $capaParser->getWMS();
+
+        $form = $this->get('form.factory')->create(new  WMSType(),$wms);
+        //$form->bind($wms);
+
         return $this->render("MBWMSBundle:WMS:preview.html.twig",
             array( 
                 "getcapa_url"=>$getcapa_url,
-                "wms"=>$wms
+                "wms" => $wms,
+                "form" => $form,
+                "xml" => $data
             )
         );
     }
     
     /**
-     * shows preview of WMS
+     * adds a WMS
     */
     public function addAction(){
 
