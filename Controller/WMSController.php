@@ -87,7 +87,7 @@ class WMSController extends Controller {
             $em = $this->get("doctrine.orm.entity_manager");
             $em->persist($wms);
             $em->flush();
-            return $this->redirect($this->generateUrl("mb_wms_details",array("d" => $wms->getId()),true));
+            return $this->redirect($this->generateUrl("mb_wms_details",array("id" => $wms->getId()),true));
         }else{
             throw new \Exception("is broken");
         }
