@@ -1,5 +1,4 @@
 {% extends '::base.html.twig' %} 
-
 {% block title %}Details for {{ wmsTitle }} {% endblock %}
 
 {% block body %}
@@ -7,5 +6,5 @@
     <p>The WMS Details go here</p>
     <p>lala</p>
     <a href="">ll</a>
-    <a href="{{ path('wms_showdelete',wmsId) }}">Lschen</a>
+    <a href="{{ path('mb_wms_showdelete',{'id':wmsId}) }}">Löschen</a>
 {% endblock %}

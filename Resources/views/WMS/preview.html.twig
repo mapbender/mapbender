@@ -1,4 +1,4 @@
-{% extends '::base.html.twig' %} 
+{% extends 'MBWMSBundle:WMS:base.html.twig' %} 
 
 {% block title %}WMS Preview{% endblock %}
 
@@ -18,7 +18,9 @@
             </li>
         </ul>
     </div>
-    <form action="{{ path('wms_add') }}" method="POST">
+    <div class="wms-xml" style="display:none;">{{ xml }}</div>
+    <form action="{{ path('mb_wms_add') }}" method="POST">
+    {{ form_widget(form) }}
         <input type="submit" name="save" value="WMS hinzufügen"/> 
     </form>
 {% endblock %}

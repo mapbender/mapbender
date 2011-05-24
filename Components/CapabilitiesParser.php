@@ -1,18 +1,29 @@
 <?php
 
 namespace MB\WMSBundle\Components;
-use MB\WMSBundle\Entity;
+use MB\WMSBundle\Entity\WMSService;
 
+/**
+* @package Mapbender
+* @author Karim Malhas <karim@malhas.de>
+* Parses WMS GetCapabilities documents
+*/
 class CapabilitiesParser {
 
     protected $doc;
-
+    
+    /**
+    * @param DOMDocument the document to be parsed
+    */
     public function __construct(\DOMDocument $doc){
         $this->doc = $doc;
     }
 
-    public function getWMS(){
-        $wms = new Entity\WMS();
+    /**
+    *   @return WMSService
+    */
+    public function getWMSService(){
+        $wms = new WMSService();
         // FIXME: NEVER USE THIS PARSER IN PRODUCTION
 
         foreach( $this->doc->documentElement->childNodes as $node){

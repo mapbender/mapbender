@@ -1,7 +1,17 @@
-{% extends '::base.html.twig' %} 
+{% extends 'MBWMSBundle:WMS:base.html.twig' %} 
 
+{% block heading %} WMS {% endblock %}
 {% block body %}
-    <ul class="actions">
-        <li><a href="{{ path('wms_showadd')  }}">WMS hinzufügen</a></li>
-    </ul>
+
+<form class="search wms_search">
+    <div><label>title<input name="title" /></label></div> 
+    <input type="submit" value="suchen" />
+</form>
+
+<ul class="wms">
+    {% for wms in wmsArr %}
+        <li><a href=" {{ path("mb_wms_details",{'id': wms.getId()}) }}">{{ wms.getTitle() }}</a></li>
+    {% endfor %}
+</ul>
+<a href="{{ path("mb_wms_index",{"first":prevFirst}) }}">zurück</a><a href="{{  path("mb_wms_index",{"first": nextFirst}) }}">weiter</a>
 {% endblock %}

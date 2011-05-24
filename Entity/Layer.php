@@ -1,13 +1,14 @@
 <?php
-
 namespace MB\WMSBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- */
-class WMS {
-
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="discr",type="string");
+ * @ORM\DiscriminatorMap({"Layer" = "Layer","WMSService" = "WMSService"})
+*/
+abstract class Layer {
     /**
      *  @ORM\Id
      *  @ORM\Column(type="integer")
@@ -100,4 +101,5 @@ class WMS {
     {
         return $this->abstract;
     }
+
 }
