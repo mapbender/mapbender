@@ -8,6 +8,7 @@ $.widget("mapbender.ol_map", {
 	},
 
 	map: null,
+	highlightLayer: null,
 	
 	_create: function() {
 		var self = this;
@@ -100,6 +101,19 @@ $.widget("mapbender.ol_map", {
 
 	destroy: function() {
 		$.Widget.prototype.destroy.call(this);
+	},
+
+	highlight: function(geom) {
+			if(!this.highlightLayer) {
+				var hll = this.highlightLayer = new OpenLayers.Layer.Vector();
+				this.map.addLayer(hll);
+			} 
+			geojsonFormat = new OpenLayers.Format.GeoJSON();
+			
+			hll.removeAllFeatures();
+			hll.addFeatures(geojsonFormat.read(geom));
+			var extent = hll.getDataExtent();
+			this.map.zoomToExtent(extent);
 	}
 });
 
