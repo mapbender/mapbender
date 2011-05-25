@@ -1,9 +1,9 @@
 {% extends 'MBWMSBundle:WMS:base.html.twig' %} 
 
-{% block title %}WMS Preview{% endblock %}
+{% block title %}{% trans %}WMS Preview{% endtrans %}{% endblock %}
 
 {% block body %}
-    <p>WMS Preview '{{ getcapa_url }}'</p>
+    <p>{% trans %}WMS Preview{% endtrans %}: '{{ getcapa_url }}'</p>
     <div class="wms">
         <h1 class="title">{{ wms.getTitle() }}</h1>
         <h2 class="name">{{ wms.getName() }}</h2>
@@ -21,6 +21,6 @@
     <div class="wms-xml" style="display:none;">{{ xml }}</div>
     <form action="{{ path('mb_wms_add') }}" method="POST">
     {{ form_widget(form) }}
-        <input type="submit" name="save" value="WMS hinzufügen"/> 
+        <input type="submit" name="save" value="{% trans %}Add WMS{% endtrans %}"/> 
     </form>
 {% endblock %}

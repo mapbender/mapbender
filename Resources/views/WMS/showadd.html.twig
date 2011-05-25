@@ -1,6 +1,6 @@
 {% extends 'MBWMSBundle:WMS:base.html.twig' %} 
 
-{% block title %}Add WMS{% endblock %}
+{% block title %}{% trans %}Add WMS{% endtrans %}{% endblock %}
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ asset('bundles/mbwms/css/style.css') }}" type="text/css"/>
 {% endblock %}
@@ -8,12 +8,12 @@
 {% block body %}
     <form name="url" action="{{ path('mb_wms_preview') }}" method="POST">
         <input type="url" name="getcapa_url" id="getcapa_url" value="http://osm.wheregroup.com/cgi-bin/osm_basic.xml?SERVICE=WMS&amp;REQUEST=GetCapabilities" />
-        <label for="getcapa_url">getCapabilities Url</label>
-        <input type="submit" name="save" value="Laden" />
+        <label for="getcapa_url">{% trans %}Capabilities URL{% endtrans %}</label> 
+        <input type="submit" name="save" value="{% trans %}Load{% endtrans %}" /> 
     </form>
     <form name="upload" action="{{ path('mb_wms_preview')  }}" method="POST">
         <input type="file" name="getcapa_file" id="getcapa_file />
-        <label for="getcapa_file"> getCapabilities XMLDatei</label>
-        <input type="submit" name="save" value="Hochladen" />
+        <label for="getcapa_file">{% trans %}Capabilities File{% endtrans %}</label>
+        <input type="submit" name="save" value="{% trans %}Load{% endtrans %}" />
     </form>
 {% endblock %}

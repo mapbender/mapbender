@@ -3,8 +3,5 @@
 
 {% block body %}
     <h1>{{ wmsTitle }}</h1>
-    <p>The WMS Details go here</p>
-    <p>lala</p>
-    <a href="">ll</a>
-    <a href="{{ path('mb_wms_showdelete',{'id':wmsId}) }}">Löschen</a>
+    <a href="{{ path('mb_wms_showdelete',{'id':wmsId}) }}">{% trans %}Delete{% endtrans %}</a>
 {% endblock %}

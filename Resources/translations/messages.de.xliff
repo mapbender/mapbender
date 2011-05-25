@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="1">
+        <source>Add WMS</source>
+        <target>WMS hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="2">
+        <source>Capabilities URL</source>
+        <target>Capabilities URL</target>
+      </trans-unit>
+      <trans-unit id="3">
+        <source>Load</source>
+        <target>Laden</target>
+      </trans-unit>
+      <trans-unit id="4">
+        <source>Capabilities File</source>
+        <target>Capabilities Datei</target>
+      </trans-unit>
+      <trans-unit id="5">
+        <source>Find WMS</source>
+        <target>WMS finden</target>
+      </trans-unit>
+      <trans-unit id="6">
+        <source>Delete</source>
+        <target>Löschen</target>
+      </trans-unit>
+      <trans-unit id="7">
+        <source>WMS deleted</source>
+        <target>WMS gelöscht</target>
+      </trans-unit>
+      <trans-unit id="8">
+        <source>WMS Preview</source>
+        <target>WMS Vorschau</target>
+      </trans-unit>
+      <trans-unit id="9">
+        <source>Really Delete</source>
+        <target>Wirklich Löschen</target>
+      </trans-unit>
+      <trans-unit id="10">
+        <source>Cancel</source>
+        <target>Abbrechen</target>
+      </trans-unit>
+      <trans-unit id="11">
+        <source>Title</source>
+        <target>Titel</target>
+      </trans-unit>
+      <trans-unit id="12">
+        <source>Search</source>
+        <target>Suchen</target>
+      </trans-unit>
+      <trans-unit id="13">
+        <source>Previous</source>
+        <target>Zurück</target>
+      </trans-unit>
+      <trans-unit id="14">
+        <source>Next</source>
+        <target>Weiter</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

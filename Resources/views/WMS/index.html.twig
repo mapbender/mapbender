@@ -1,11 +1,11 @@
 {% extends 'MBWMSBundle:WMS:base.html.twig' %} 
 
-{% block heading %} WMS {% endblock %}
+{% block heading %}WMS{% endblock %}
 {% block body %}
 
 <form class="search wms_search">
-    <div><label>title<input name="title" /></label></div> 
-    <input type="submit" value="suchen" />
+    <div><label>{% trans %}Title{% endtrans %}<input name="title" /></label></div> 
+    <input type="submit" value="{% trans %}Search{% endtrans %}" />
 </form>
 
 <ul class="wms">
@@ -13,5 +13,5 @@
         <li><a href=" {{ path("mb_wms_details",{'id': wms.getId()}) }}">{{ wms.getTitle() }}</a></li>
     {% endfor %}
 </ul>
-<a href="{{ path("mb_wms_index",{"first":prevFirst}) }}">zurück</a><a href="{{  path("mb_wms_index",{"first": nextFirst}) }}">weiter</a>
+<a href="{{ path("mb_wms_index",{"first":prevFirst}) }}">{% trans %}Previous{% endtrans %}</a> <a href="{{  path("mb_wms_index",{"first": nextFirst}) }}">{% trans %}Next{% endtrans %}</a>
 {% endblock %}

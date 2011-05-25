@@ -1,11 +1,11 @@
 {% extends 'MBWMSBundle:WMS:base.html.twig' %} 
 
-{% block title %}Delete {{ wmsTitle }} {% endblock %}
+{% block title %}{% trans %}Delete{% endtrans %} {{ wmsTitle }} {% endblock %}
 
 {% block body %}
     <h1>{{ wmsTitle }}</h1>
-    <p class="message">Wirklich Löschen ?</p>
+    <p class="message">{% trans %}Really Delete{% endtrans %}</p>
     <form action="{{ path("mb_wms_delete",{'id': wmsId}) }}" method="POST">
-        <input type="submit" value="Löschen" /><a href="{{ path("mb_wms_details",{'id': wmsId}) }}"> Abbrechen </a>
+        <input type="submit" value="{% trans %}Delete{% endtrans%}" /><a href="{{ path("mb_wms_details",{'id': wmsId}) }}">{% trans %}Cancel{% endtrans %}</a>
     </form>
 {% endblock %}
