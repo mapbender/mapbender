@@ -70,6 +70,14 @@ $.widget("mapbender.ol_map", {
 				url
 			*/
 			// only WMS for now
+			var defaults = {
+				baselayer: true,
+				visible: true,
+				opacity: 100,
+				tiled: true
+			};
+			def.configuration = $.extend({}, defaults, def.configuration);
+
 			var layer = new OpenLayers.Layer.WMS(def.title, def.configuration.url, 
 			{
 				layers: def.configuration.layers,
@@ -77,7 +85,10 @@ $.widget("mapbender.ol_map", {
                                 transparent: def.configuration.transparent
 			}, { 
 				isBaseLayer: def.configuration.baselayer,
-				visibility: def.configuration.visible
+				visibility: def.configuration.visible,
+				opacity: def.configuration.opacity / 100.0,
+				noMagic: true,
+				singleTile: !def.configuration.tiled
 			});
 			self.map.addLayer(layer);
 		});
