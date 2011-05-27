@@ -165,6 +165,7 @@ class Application implements ApplicationInterface {
 		$this->elements = array();
 		$counter = 0;
 		foreach($template_metadata['regions'] as $region) {
+			$this->regions[$region] = array();
 			// Only iterate over regions defined in the app
 			if(!array_key_exists($region, $this->configuration['elements'])) {
 				continue;
