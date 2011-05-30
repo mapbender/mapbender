@@ -81,7 +81,7 @@ class Application implements ApplicationInterface {
 			}
 		}
 
-		$base_path = $this->container->get('request')->getBaseUrl();
+		$base_path = $this->get('request')->getBaseUrl();
 		
 		// Get all assets we need to include
 		// First the application and template assets
@@ -153,7 +153,7 @@ class Application implements ApplicationInterface {
 	 * Load the template
 	 */
 	private function loadTemplate() {
-		$templating = $this->container->get('templating');
+		$templating = $this->get('templating');
 		$this->template = new $this->configuration['template']($templating);
 	}
 
@@ -175,7 +175,7 @@ class Application implements ApplicationInterface {
 				$class = $element['class'];
 				unset($element['class']);
 				$id = sprintf($this->element_id_template, $counter++);
-				$this->regions[$region][] = new $class($id, $name, $element, $this->container);
+				$this->regions[$region][] = new $class($id, $name, $element, $this);
 			}
 		}
 	}
@@ -195,5 +195,26 @@ class Application implements ApplicationInterface {
 			}
 		}
 	}
+	
+	/**
+	 * Access services via the container
+	 */
+	 public function get($what) {
+	   return $this->container->get($what);
+	 }
+
+     /**
+      * Get final (CSS) id for element by database id
+      */
+     public function getFinalId($elementId) {
+       foreach($this->regions as $region) {
+         foreach($region as $element) {
+           if($element->getName() === $elementId) {
+             return $element->getId();
+           }
+         }
+       }
+       return NULL;
+     }
 }
 

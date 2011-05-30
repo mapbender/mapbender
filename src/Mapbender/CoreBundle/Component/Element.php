@@ -3,29 +3,32 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\ElementInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class Element implements ElementInterface {
 	protected $id;
 	protected $name;
 	protected $configuration;
-	protected $container;
+    protected $application;
 
-	public function __construct($id, $name, array $configuration, ContainerInterface $container) {
+	public function __construct($id, $name, array $configuration, $application) {
 		$this->name = $name;
-		$this->container = $container;
 		$this->id = $id;
 		$this->configuration = $configuration;
+        $this->application = $application;
 	}
 
-	public function get($what) {
-		return $this->container->get($what);
+	protected function get($what) {
+		return $this->application->get($what);
 	}
 
 	public function getTitle() {
 		return "Element";
 	}
+
+    public function getName() {
+        return $this->name;
+    }
 	
 	public function getDescription() {
 		throw new \Exception("The getDescription function of " . get_class($this) . " has to be overriden!");
@@ -59,7 +62,7 @@ abstract class Element implements ElementInterface {
 		throw new NotFoundHttpException("No such action for this element");
 	}
 
-	public function	render(ElementInterface $parentElement = NULL, $block = 'content') {
+	public function	render($widget, $block = 'content', ElementInterface $parentElement = NULL) {
 		throw new \Exception("The render function of " . get_class($this) . " has to be overriden!");
 	}
 

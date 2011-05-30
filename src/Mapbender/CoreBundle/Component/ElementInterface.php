@@ -16,9 +16,9 @@ interface ElementInterface {
 	 * @param string $id The id which will be used for the element
 	 * @param string $name The element name
 	 * @param array $configuration The element configuration array
-	 * @param ContainerInterface $container The DI container
+     * @param Application $application The surrounding application
 	 */
-	public function __construct($id, $name, array $configuration, ContainerInterface $container);
+	public function __construct($id, $name, array $configuration, $application);
 
 	/**
 	 * Return element title
@@ -111,11 +111,12 @@ interface ElementInterface {
 	 * a name of a block to render which defaults to
 	 * 'content', 'title' can also be given.
 	 *
-	 * @param ElementInterface $parent
-	 * @param string $block
+	 * @param string $widget Which widget to render
+	 * @param string $block Which block (content, title...) to render
+	 * @param ElementInterface $parentElement 
 	 * @return string $html
 	 */
-	public function render(ElementInterface $parentElement = NULL, $block = 'content');
+	public function render($widget, $block = 'content', ElementInterface $parentElement = NULL);
 
 	/**
 	 * Elements shall implement __toString as a alias for render()
