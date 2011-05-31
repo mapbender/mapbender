@@ -40,11 +40,9 @@ class OpenLayersMap extends Element implements ElementInterface {
 		);
 	}
 
-	public function	render($widget, $block = 'content', ElementInterface $parentElement = NULL) {
-		if($block == 'content') {
+	public function	render() {
 			//TODO: use templating. Then the element template can be overriden by the application
 			return '<div id="' . $this->id . '" class="mb-element mb-element-openlayers-map"></div>';
-		}
 	}
 }
 

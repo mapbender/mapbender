@@ -106,17 +106,9 @@ interface ElementInterface {
 	public function httpAction($action);
 
 	/**
-	 * Output the HTML for rendering. The function
-	 * receives a reference to the parent element and
-	 * a name of a block to render which defaults to
-	 * 'content', 'title' can also be given.
-	 *
-	 * @param string $widget Which widget to render
-	 * @param string $block Which block (content, title...) to render
-	 * @param ElementInterface $parentElement 
-	 * @return string $html
-	 */
-	public function render($widget, $block = 'content', ElementInterface $parentElement = NULL);
+	 * Output the HTML for rendering.
+     */
+	public function render();
 
 	/**
 	 * Elements shall implement __toString as a alias for render()

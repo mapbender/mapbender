@@ -62,7 +62,7 @@ abstract class Element implements ElementInterface {
 		throw new NotFoundHttpException("No such action for this element");
 	}
 
-	public function	render($widget, $block = 'content', ElementInterface $parentElement = NULL) {
+	public function	render() {
 		throw new \Exception("The render function of " . get_class($this) . " has to be overriden!");
 	}
 
