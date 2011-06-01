@@ -14,11 +14,11 @@ class GroupLayer extends Layer {
     protected $layer;
     
     public function __construct(){
-        $this->layers = new ArrayCollection();
+        $this->layer = new ArrayCollection();
     }
     
     public function getLayer(){
-        return $this->layer();
+        return $this->layer;
     }
 
 }

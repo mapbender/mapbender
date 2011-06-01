@@ -22,6 +22,8 @@ class WMSController extends Controller {
      * @Template()
     */
     public function indexAction(){
+
+
         $request = $this->get('request');
         $first = $request->get('first') ? $request->get('first') : 0;
         $max = $request->get('max') ? $request->get('max') : 10;
@@ -58,8 +60,7 @@ class WMSController extends Controller {
         }
 
         return array(
-                'wmsTitle'=>$wms->getTitle(),
-                'wmsId' => $wms->getId()
+            "wms" => $wms
         );
     }
     
@@ -131,10 +132,7 @@ class WMSController extends Controller {
     public function previewAction(){
         $getcapa_url = $this->get('request')->request->get('getcapa_url');
         $data = file_get_contents($getcapa_url);
-        // FIXME wrap that datagetting
-        $doc = new \DOMDocument();
-        $doc->loadXML($data);
-        $capaParser = new CapabilitiesParser($doc);
+        $capaParser = new CapabilitiesParser($data);
         $wms = $capaParser->getWMSService();
 
         $form = $this->get('form.factory')->create(new WMSType());
@@ -144,7 +142,7 @@ class WMSController extends Controller {
                 "getcapa_url"=>$getcapa_url,
                 "wms" => $wms,
                 "form" => $form->createView(),
-                "xml" => $doc->saveXML()
+                "xml" => $data
             );
     }
     
