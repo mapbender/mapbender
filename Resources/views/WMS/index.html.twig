@@ -1,8 +1,8 @@
 {% extends 'MBWMSBundle:WMS:base.html.twig' %} 
 
 {% block heading %}WMS{% endblock %}
-{% block body %}
-
+{% block content %}
+<p>Auf dieser Seite können OGC WMS geladen und bearbetet werden. </p>
 <form class="search wms_search">
     <div><label>{% trans %}Title{% endtrans %}<input name="title" /></label></div> 
     <input type="submit" value="{% trans %}Search{% endtrans %}" />

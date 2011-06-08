@@ -1,12 +1,13 @@
 <?php
 namespace MB\WMSBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr",type="string");
- * @ORM\DiscriminatorMap({"Layer" = "Layer","WMSService" = "WMSService"})
+ * @ORM\DiscriminatorMap({"Layer" = "Layer","WMSService" = "WMSService", "WMSLayer" = "WMSLayer"})
 */
 abstract class Layer {
     /**

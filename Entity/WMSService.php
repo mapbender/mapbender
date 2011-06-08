@@ -32,6 +32,8 @@ class WMSService extends GroupLayer {
 
     public function __construct() {
         $this->keywords = new ArrayCollection();
+        # calling super  - how to avoid ?
+        return parent::__construct();
     }
 
     public function getKeywords(){

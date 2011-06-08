@@ -2,10 +2,11 @@
 
 {% block title %}{% trans %}Delete{% endtrans %} {{ wmsTitle }} {% endblock %}
 
-{% block body %}
-    <h1>{{ wmsTitle }}</h1>
-    <p class="message">{% trans %}Really Delete{% endtrans %}</p>
-    <form action="{{ path("mb_wms_delete",{'id': wmsId}) }}" method="POST">
-        <input type="submit" value="{% trans %}Delete{% endtrans%}" /><a href="{{ path("mb_wms_details",{'id': wmsId}) }}">{% trans %}Cancel{% endtrans %}</a>
-    </form>
+{% block content %}
+    <div class="message">
+        <p>{% trans %}Really Delete{% endtrans %}</p>
+        <form action="{{ path("mb_wms_delete",{'id': wmsId}) }}" method="POST">
+            <button>{% trans %}Delete{% endtrans%}</button><a class="button" href="{{ path("mb_wms_details",{'id': wmsId}) }}">{% trans %}Cancel{% endtrans %}</a>
+        </form>
+    </div>
 {% endblock %}

@@ -1,9 +1,18 @@
 {% extends '::base.html.twig' %} 
 
-{% block navigation %}
-{{ parent() }}
-<ul class="navigation">
+{% block wms_navigation %}
+<ul class="actions">
     <li><a href="{{ path('mb_wms_showadd')  }}">{% trans %}Add WMS{% endtrans %}</a></li>
     <li><a href="{{ path('mb_wms_index')  }}">{% trans %}Find WMS{% endtrans %}</a></li>
 </ul>
+<ul class="wms">
+    {% for wms in menu_wmsArr %}
+        <li><a href=" {{ path("mb_wms_details",{'id': wms.getId()}) }}">{{ wms.getTitle() }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
+{% block body %}
+    <div class="content">
+    {% block content %} {% endblock %}
+    </div>
 {% endblock %}

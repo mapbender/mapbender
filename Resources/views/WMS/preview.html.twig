@@ -2,25 +2,16 @@
 
 {% block title %}{% trans %}WMS Preview{% endtrans %}{% endblock %}
 
-{% block body %}
+{% block content %}
     <p>{% trans %}WMS Preview{% endtrans %}: '{{ getcapa_url }}'</p>
     <div class="wms">
-        <h1 class="title">{{ wms.getTitle() }}</h1>
-        <h2 class="name">{{ wms.getName() }}</h2>
-        <p class="abstract">{{ wms.getAbstract() }}</p>
-        <p class="address">
-        </p>
-        <h3>Layer:</h3>
-        <ul class="layers">
-            <li class="layer">
-                <h1 class="title">Neuer Layer</h1>
-                <h2 class="name">layer_ney</h2>
-            </li>
-        </ul>
-    </div>
-    <div class="wms-xml" style="display:none;">{{ xml }}</div>
+    <input type="hidden" value="{{ xml }}" />
     <form action="{{ path('mb_wms_add') }}" method="POST">
-    {{ form_widget(form) }}
         <input type="submit" name="save" value="{% trans %}Add WMS{% endtrans %}"/> 
+        <div class="layers" >
+            {{ form_widget(form.layer) }}
+        </div>
+        {{ form_rest(form) }}
+         <input type="submit" name="save" value="{% trans %}Add WMS{% endtrans %}"/> 
     </form>
 {% endblock %}

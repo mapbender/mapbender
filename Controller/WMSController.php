@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use MB\WMSBundle\Entity\WMSService;
+use MB\WMSBundle\Entity\GroupLayer;
 use MB\WMSBundle\Components\CapabilitiesParser;
 use MB\WMSBundle\Form\WMSType;
 
@@ -15,6 +16,22 @@ use MB\WMSBundle\Form\WMSType;
 * @author Karim Malhas <karim@malhas.de>
 */
 class WMSController extends Controller {
+    
+    /**
+     * Use this function in all controllers return statements to  augment them with common data.
+     * @param Array The specific data from the controller
+     * @return Array The specific data from the controller augmented with the data common to all controllers,
+    */
+    public function commonData(array $extendedData){
+
+        $em = $this->get("doctrine.orm.entity_manager");
+        $q = $em->createQuery("select wms from MB\WMSBundle\Entity\WMSService wms ");
+        $wmsArr = $q->getResult();
+        $common = array(
+            "menu_wmsArr" => $wmsArr
+        );
+        return array_merge($common,$extendedData);
+    }
 
     /**
      * Shows the startpage of the WMS Bundle
@@ -38,13 +55,14 @@ class WMSController extends Controller {
 
         $nextFirst = count($wmsArr) < $max ? $first : $first + $max;
         $prevFirst = ($first - $max)  > 0 ? $first - $max : 0;
-        return array(
+        return $this->commonData(array(
             "wmsArr" => $wmsArr,
             "nextFirst" =>  $nextFirst,
             "prevFirst" => $prevFirst,
             "max" => $max
-        );
+        ));
     }
+
 
     /**
      * Shows the details of a WMS
@@ -54,14 +72,15 @@ class WMSController extends Controller {
     public function detailsAction($id){
         $em = $this->get("doctrine.orm.entity_manager");
         $wms = $em->find('MBWMSBundle:WMSService',$id);
+        
 
         if(!$wms){
             return array();
         }
 
-        return array(
+        return $this->commonData(array(
             "wms" => $wms
-        );
+        ));
     }
     
     /**
@@ -70,7 +89,7 @@ class WMSController extends Controller {
      * @Template()
     */
     public function showaddAction(){
-        return array(); 
+        return $this->commonData(array());
     }
     /**
      * adds a WMS
@@ -80,9 +99,10 @@ class WMSController extends Controller {
     public function addAction(){
 
         $wms = new WMSService();
-        $form = $this->get('form.factory') ->create(new WMSType(),$wms); 
+        $form = $this->get('form.factory')->create(new WMSType(),$wms); 
         $request = $this->get('request');
         $form->bindRequest($request);
+        
     
         if($form->isValid()){
             $em = $this->get("doctrine.orm.entity_manager");
@@ -90,21 +110,23 @@ class WMSController extends Controller {
             $em->flush();
             return $this->redirect($this->generateUrl("mb_wms_details",array("id" => $wms->getId()),true));
         }else{
-            throw new \Exception("is broken");
+            throw new \Exception("I am invalid");
+
         }
     
         
     }
+
     /**
      * shows the dialog for wms Deletion confirmation
      * @Route("/{id}/delete", name="mb_wms_showdelete", requirements = { "id" = "\d+","_method" = "GET" })
      * @Template()
     */
     public function showdeleteAction($id){
-        return array(
+        return $this->commonData(array(
                 'wmsTitle'=>"",
                 'wmsId' => $id
-        );
+        ));
     }
     /**
      * deletes a WMS
@@ -118,10 +140,10 @@ class WMSController extends Controller {
         $em->remove($wms);
         $em->flush();
 
-        return array(
+        return $this->commonData(array(
             "wmsId"=>$wms->getId(),
             "wmsTitle"=>$wms->getTitle()
-        );
+        ));
     }
 
     /**
@@ -138,12 +160,12 @@ class WMSController extends Controller {
         $form = $this->get('form.factory')->create(new WMSType());
         $form->setData($wms);
 
-        return array( 
+        return $this->commonData(array(
                 "getcapa_url"=>$getcapa_url,
                 "wms" => $wms,
                 "form" => $form->createView(),
                 "xml" => $data
-            );
+            ));
     }
     
 

@@ -2,6 +2,9 @@
 
 namespace MB\WMSBundle\Components;
 use MB\WMSBundle\Entity\WMSService;
+use MB\WMSBundle\Entity\WMSLayer;
+use MB\WMSBundle\Entity\Layer;
+use MB\WMSBundle\Entity\GroupLayer;
 
 /**
 * @package Mapbender
@@ -36,65 +39,64 @@ class CapabilitiesParser {
 
         $wms->setVersion((string)$this->doc->documentElement->getAttribute("version"));
         foreach( $this->doc->documentElement->childNodes as $node){
-            if($node->nodeType != XML_ELEMENT_NODE){ continue; };
-            switch ($node->nodeName) {
+            if($node->nodeType == XML_ELEMENT_NODE){
+                switch ($node->nodeName) {
 
-                case "Service":
-                    foreach ($node->childNodes as $node){
-                        if($node->nodeType != XML_ELEMENT_NODE){ continue; };
-                        switch ($node->nodeName) {
-                            case "Name":
-                                $wms->setName($node->nodeValue);
-                            break;
-                            case "Title":
-                                $wms->setTitle($node->nodeValue);
-                            break;
-                            case "Abstract":
-                                $wms->setAbstract($node->nodeValue);
-                            break;
-                            case "KeywordList":
-                            break;
-                            case "OnlineResource":
-                            break;
-                            case "ContactInformation":
-                            break;
-                            case "Fees":
-                            break;
-                            case "AccessConstraints":
-                            break;
+                    case "Service":
+                        foreach ($node->childNodes as $node){
+                            if($node->nodeType == XML_ELEMENT_NODE){ 
+                                switch ($node->nodeName) {
+                                    case "Name":
+                                        $wms->setName($node->nodeValue);
+                                    break;
+                                    case "Title":
+                                        $wms->setTitle($node->nodeValue);
+                                    break;
+                                    case "Abstract":
+                                        $wms->setAbstract($node->nodeValue);
+                                    break;
+                                    case "KeywordList":
+                                    break;
+                                    case "OnlineResource":
+                                    break;
+                                    case "ContactInformation":
+                                    break;
+                                    case "Fees":
+                                    break;
+                                    case "AccessConstraints":
+                                    break;
+                                }
+                            } 
                         }
-                     
-                    }
-                break;
-                case "Capability":
-                    foreach ($node->childNodes as $node){
-                        switch($node->nodeName){
-                            case "Request":
-                            break;
-                            case "Exception":
-                            break;
-                            case "VendorSpecificCapabilities":
-                            case "UserDefinedSymbolization":
-                            break;
-                            case "Layer":
-                                $wms = $this->parseLayers($node,$wms);
-                            break;
+                    break;
+                    case "Capability":
+                        foreach ($node->childNodes as $node){
+                            if($node->nodeType == XML_ELEMENT_NODE){ 
+                                switch($node->nodeName){
+                                    case "Request":
+                                    break;
+                                    case "Exception":
+                                    break;
+                                    case "VendorSpecificCapabilities":
+                                    case "UserDefinedSymbolization":
+                                    break;
+                                    case "Layer":
+                                        $sublayer = $this->WMSLayerFromLayerNode($node);
+                                        $wms->getLayer()->add($sublayer);
+                                    break;
+                                }
+                            }
                         }
-                    }
-                break;
+                    break;
+                }
             }
         }
+
+        // check for mandatory elements
+        if($wms->getName() === null){
+            throw new \Exception("Mandatory Element Name not defined on Service");
+        }
         return $wms;
-    }
-
-   /**
-    * @param DOMNode
-    * @param WMSService
-    * @return Array Array of Layers
-    */
-    protected function parseLayers(\DOMNode $node, WMSService $wms){
-
-       return $wms; 
     }
 
    /**
@@ -102,9 +104,68 @@ class CapabilitiesParser {
     * @param WMSService
     * @return WMSService
     */
-    protected function parseMetadata(DOMDocument $doc, WMSService $wms){
+    protected function parseMetadata(\DOMDocument $doc, WMSService $wms){
 
     }
 
+    /**
+     * @param DOMNode a WMS layernode to be converted to a Layer Objject
+     * @return WMSLayer 
+     */
+    protected function WMSLayerFromLayerNode(\DOMNode $layerNode){
+
+        $layer = new WMSLayer();
+
+        foreach($layerNode->childNodes as $node){
+            if($node->nodeType == XML_ELEMENT_NODE){  
+                switch ($node->nodeName) {
+                    case "Name":
+                        $layer->setName($node->nodeValue);
+                    break;
+                    
+                    case "Title":
+                        $layer->setTitle($node->nodeValue);
+                    break;
+
+                    case "Abstract":
+                        $layer->setAbstract($node->nodeValue);
+                    break;
+                    
+                    case "SRS":
+                        # $layer->addSRS();
+                    break;
+
+                    case "LatLonBoundingBox":   
+                    break;
+
+                    case "BoundingBox":
+                    break;
+
+                    case "KeywordList":
+                        # $layer->addKeyword();
+                    break;
+
+                    case "Style":
+                        # $layer->setStyle();
+                    break;
+
+                    case "ScaleHint":
+                    break;
+
+                    case "Layer":
+                        $sublayer = $this->WMSLayerFromLayerNode($node);
+                        $layer->getLayer()->add($sublayer);
+                    break;
+                    
+                }
+            }
+        }
+
+        // check for manadory elements
+        if($layer->getTitle() === null){
+            throw new \Exception("Invalid Layer definition, mandatory Field 'Title' not defined");
+        }
+        return $layer;
+    }
     
 }

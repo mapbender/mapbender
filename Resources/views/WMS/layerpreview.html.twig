@@ -1,7 +1,8 @@
 <div class="wmslayer">
+
 <h1>{{ layer.getTitle() }}<h1><h2>{{ layer.getName() }}</h2>
 <p class="abstract">{{ layer.getAbstract() }}</p>
 {% for layer in layer.getLayer() %}
-  {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
+  {% include "MBWMSBundle:WMS:layerpreview.html.twig" %}
 {% endfor %}
 </div>

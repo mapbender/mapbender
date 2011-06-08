@@ -39,6 +39,7 @@ and a single layer are present
     <Layer>
       <Title>The Title</Title>
       <Name>TheLayer</Name>
+      <Abstract>A Layerabstract</Abstract>
       <SRS>EPSG:4326</SRS>
       <LatLonBoundingBox minx="-10.4" miny="35.7" maxx="-180" maxy="180"/>
       <BoundingBox ></BoundingBox>

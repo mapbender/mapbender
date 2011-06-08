@@ -1,39 +1,47 @@
-{% extends '::base.html.twig' %} 
+{% extends 'MBWMSBundle:WMS:base.html.twig' %} 
+
 {% block title %}Details for {{ wms.getTitle() }} {% endblock %}
 
-{% block body %}
-    <h1 class="title" ><a href="{{ wms.getId() }}" target="_new">{{ wms.getTitle() }}</a></h1><h2 class="name">({{ wms.getName() }})</h2>
-    <p class="abstract">{{ wms.getAbstract() }}</p>
-    <p class="fees">{{ wms.getFees() }}</p>
-    <p class="accessConstraints">{{ wms.getAccessConstraints() }}</p>
-    <div class="contact"></div>
-    <ul class="keywords">
-    {#
-     {% for keyword in wms.getKeywords() %}
-        <li  class="keyword">{{ keyword }}></li>
-     {% endfor %}
-    #}
+{% block content %}
+    <ul class="actions">
+        <li><a href="{{ path('mb_wms_showdelete',{'id':wms.getId()}) }}">{% trans %}Delete{% endtrans %}</a></li>
+        <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
+        <li><a href="#">{% trans %}Update{% endtrans %}</a></li>
     </ul>
-    <div class="request getCapabilities">
-    <h3>GetCapabilities</h3>
-    <ul class="httpdcptypes">
-     <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
-     <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
-    </ul>
-    <ul class="formats">
-        <li>application/vnd.ogc.wms_xml
-    </ul>
-    </div>
-    <div class="request getMap">
-    <h3>GetMap</h3>
-    <ul>
-     <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
-     <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
-    </ul>
-    </div>
+    <div class="wms">
+        <h1 class="title" ><a href="{{ wms.getId() }}" target="_new">{{ wms.getTitle() }}</a></h1> <h2 class="name">({{ wms.getName() }})</h2>
+        <p class="abstract">{{ wms.getAbstract() }}</p>
+        <p class="fees">{{ wms.getFees() }}</p>
+        <p class="accessConstraints">{{ wms.getAccessConstraints() }}</p>
+        <div class="contact"></div>
+        <ul class="keywords">
+        {#
+         {% for keyword in wms.getKeywords() %}
+            <li  class="keyword">{{ keyword }}></li>
+         {% endfor %}
+        #}
+        </ul>
+        <div class="request getCapabilities">
+        <h3>GetCapabilities</h3>
+        <ul class="httpdcptypes">
+         <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+         <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+        </ul>
+        <ul class="formats">
+            <li>application/vnd.ogc.wms_xml
+        </ul>
+        </div>
+        <div class="request getMap">
+        <h3>GetMap</h3>
+        <ul>
+         <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+         <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+        </ul>
+        </div>
 
-    {% for layer in wms.getLayer() %}
-      {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
-    {% endfor %}
-    <a href="{{ path('mb_wms_showdelete',{'id':wms.getId()}) }}">{% trans %}Delete{% endtrans %}</a>
+        <h3>{% trans %}Layer{% endtrans %}</h3>
+        {% for layer in wms.getLayer() %}
+          {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
+        {% endfor %}
+    </div>
 {% endblock %}
