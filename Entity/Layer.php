@@ -20,17 +20,17 @@ abstract class Layer {
     /**
      * @ORM\Column(type="string")
      */
-    protected $title;
+    protected $title = "";
     
     /**
      * @ORM\Column(type="string")
      */
-    protected $name;
+    protected $name = "";
     
     /**
      * @ORM\Column(type="string")
      */
-    protected $abstract;
+    protected $abstract = "";
 
 
     /**

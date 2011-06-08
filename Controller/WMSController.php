@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use MB\WMSBundle\Entity\WMSService;
+use MB\WMSBundle\Entity\WMSLayer;
 use MB\WMSBundle\Entity\GroupLayer;
 use MB\WMSBundle\Components\CapabilitiesParser;
 use MB\WMSBundle\Form\WMSType;
@@ -98,7 +99,11 @@ class WMSController extends Controller {
     */
     public function addAction(){
 
+        // deinfe the structure of the data that we wish to bind from the submittet formdata
         $wms = new WMSService();
+        $layer = new WMSLayer();
+        $wms->addLayer($layer);
+
         $form = $this->get('form.factory')->create(new WMSType(),$wms); 
         $request = $this->get('request');
         $form->bindRequest($request);
