@@ -42,8 +42,19 @@ $.widget("mapbender.ol_map", {
 			new OpenLayers.Control.ZoomBox(),
 			new OpenLayers.Control.LayerSwitcher()
 		] });
+
+	    if(this.options.overview) {
+            var layerConf = Mapbender.configuration.layersets[this.options.overview][0];
+            var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
+                layers: layerConf.configuration.layers
+            });
+            opts['controls'].push(new OpenLayers.Control.OverviewMap({
+                layers: [layer]
+            }));
+        }
+        console.log(opts);
 		
-		this.map = new OpenLayers.Map(opts);
+        this.map = new OpenLayers.Map(opts);
 
 		if(this.options.main)
 			this._loadLayers('main');
@@ -114,15 +125,37 @@ $.widget("mapbender.ol_map", {
 		$.Widget.prototype.destroy.call(this);
 	},
 
-	highlight: function(geom) {
+	highlight: function(data, type) {
 			if(!this.highlightLayer) {
-				var hll = this.highlightLayer = new OpenLayers.Layer.Vector();
-				this.map.addLayer(hll);
-			} 
-			geojsonFormat = new OpenLayers.Format.GeoJSON();
+				this.highlightLayer = new OpenLayers.Layer.Vector();
+				this.map.addLayer(this.highlightLayer);
+			}
+            var hll = this.highlightLayer;
+
+            var features = [];
+            switch(type) {
+                case 'gml':
+                    var gmlFormat = new OpenLayers.Format.GML();
+                    features = gmlFormat.read(data);
+                    break;
+                case 'xy':
+                    data = data.split(" ");
+                    var x = parseFloat(data[0]);
+                    var y = parseFloat(data[1]);
+                    if(!(x && y)) {
+                        return;
+                    }
+                    var point = new OpenLayers.Geometry.Point(x, y);
+                    features = [new OpenLayers.Feature.Vector(point)];
+                    break;
+                case 'json':
+                    var geojsonFormat = new OpenLayers.Format.GeoJSON();
+                    features = geojsonFormat.read(data);
+                    break;
+            }
 			
 			hll.removeAllFeatures();
-			hll.addFeatures(geojsonFormat.read(geom));
+			hll.addFeatures(features);
 			var extent = hll.getDataExtent();
 			this.map.zoomToExtent(extent);
 	}
