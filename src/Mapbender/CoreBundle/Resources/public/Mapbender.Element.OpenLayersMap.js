@@ -52,7 +52,6 @@ $.widget("mapbender.ol_map", {
                 layers: [layer]
             }));
         }
-        console.log(opts);
 		
         this.map = new OpenLayers.Map(opts);
 
