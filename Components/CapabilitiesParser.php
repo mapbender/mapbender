@@ -7,6 +7,7 @@ use MB\WMSBundle\Entity\Layer;
 use MB\WMSBundle\Entity\GroupLayer;
 
 /**
+* Class that Parses WMS GetCapabilies Document 
 * @package Mapbender
 * @author Karim Malhas <karim@malhas.de>
 * Parses WMS GetCapabilities documents
@@ -99,17 +100,8 @@ class CapabilitiesParser {
         return $wms;
     }
 
-   /**
-    * @param DOMDocument
-    * @param WMSService
-    * @return WMSService
-    */
-    protected function parseMetadata(\DOMDocument $doc, WMSService $wms){
-
-    }
-
     /**
-     * @param DOMNode a WMS layernode to be converted to a Layer Objject
+     * @param DOMNode a WMS layernode "<Layer>" to be converted to a Layer Objject
      * @return WMSLayer 
      */
     protected function WMSLayerFromLayerNode(\DOMNode $layerNode){

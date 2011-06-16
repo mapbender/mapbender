@@ -31,18 +31,15 @@ class CapabilitiesParserTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testMinimalInvalidNoName(){
-        
+        // names are important but if they are missing they should not cause problems 
         $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimalinvalid.noname.xml"));
         $parser  = new CapabilitiesParser($data);
         try {
             $wms = $parser->getWMSService();
         }
         catch(Exception $E){
-            return true;
+            $this->assertSame("",$wms->getName());
         }
-        $this->assertSame("",$wms->getName());
-        $this->fail("Expected Exception not thrown");
-
 
     }
 
@@ -56,7 +53,7 @@ class CapabilitiesParserTest extends PHPUnit_Framework_TestCase {
         $rootLayer = $wms->getLayer()->get(0);
         $this->assertSame("The Title",$rootLayer->getTitle(),"Root layer title irsd wrong"); 
         $this->assertSame("TheLayer",$rootLayer->getName(), "Root Layer Name is wrong"); 
-        $this->assertSame(" a Layerabstract",$rootLayer->getAbstract(),"Root Layer abstract is wrong" );
+        $this->assertSame("A Layerabstract",$rootLayer->getAbstract(),"Root Layer abstract is wrong" );
         # The root layer itself has no sublayers
         $this->assertEquals(0,$rootLayer->getlayer()->count(), "Root Layer does not have 0 sub layers");
     }
