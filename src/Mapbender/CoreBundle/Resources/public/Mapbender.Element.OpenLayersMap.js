@@ -124,18 +124,35 @@ $.widget("mapbender.ol_map", {
 		$.Widget.prototype.destroy.call(this);
 	},
 
-	highlight: function(data, type) {
+	highlight: function(features) {
+            var self = this;
 			if(!this.highlightLayer) {
 				this.highlightLayer = new OpenLayers.Layer.Vector();
 				this.map.addLayer(this.highlightLayer);
+                var selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer, {
+                    hover: true,
+                    onSelect: function(feature) {
+                        self._trigger('highlighthoverin', null, {
+                            feature: feature
+                        });
+                    },
+                    onUnselect: function(feature) {
+                        self._trigger('highlighthoverout', null, {
+                            feature: feature
+                        });
+                    }
+                });
+                this.map.addControl(selectControl);
+                selectControl.activate();
 			}
             var hll = this.highlightLayer;
 
+            /*
             var features = [];
             switch(type) {
                 case 'gml':
                     var gmlFormat = new OpenLayers.Format.GML();
-                    features = gmlFormat.read(data);
+                    features = gmlFormat.read(geom);
                     break;
                 case 'xy':
                     data = data.split(" ");
@@ -152,12 +169,24 @@ $.widget("mapbender.ol_map", {
                     features = geojsonFormat.read(data);
                     break;
             }
-			
+            */
 			hll.removeAllFeatures();
 			hll.addFeatures(features);
 			var extent = hll.getDataExtent();
 			this.map.zoomToExtent(extent);
-	}
+	},
+
+    addPopup: function(popup) {
+        this.map.addPopup(popup);
+    },
+
+    removePopup: function(popup) {
+        this.map.removePopup(popup);
+    },
+
+    zoomToExtent: function(extent) {
+        this.map.zoomToExtent(extent);
+    }
 });
 
 })(jQuery);
