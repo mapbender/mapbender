@@ -99,7 +99,8 @@ class WMSController extends Controller {
     */
     public function addAction(){
 
-        // deinfe the structure of the data that we wish to bind from the submittet formdata
+        // define the structure of the data that we wish to bind from the submittet formdata
+        // This does not work for arbitrarily nested WMSLayer
         $wms = new WMSService();
         $layer = new WMSLayer();
         $wms->addLayer($layer);
