@@ -147,29 +147,6 @@ $.widget("mapbender.ol_map", {
 			}
             var hll = this.highlightLayer;
 
-            /*
-            var features = [];
-            switch(type) {
-                case 'gml':
-                    var gmlFormat = new OpenLayers.Format.GML();
-                    features = gmlFormat.read(geom);
-                    break;
-                case 'xy':
-                    data = data.split(" ");
-                    var x = parseFloat(data[0]);
-                    var y = parseFloat(data[1]);
-                    if(!(x && y)) {
-                        return;
-                    }
-                    var point = new OpenLayers.Geometry.Point(x, y);
-                    features = [new OpenLayers.Feature.Vector(point)];
-                    break;
-                case 'json':
-                    var geojsonFormat = new OpenLayers.Format.GeoJSON();
-                    features = geojsonFormat.read(data);
-                    break;
-            }
-            */
 			hll.removeAllFeatures();
 			hll.addFeatures(features);
 			var extent = hll.getDataExtent();
