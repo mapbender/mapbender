@@ -1,4 +1,3 @@
-/*Marker*/
 (function($) {
 
 $.widget("mapbender.ol_map", {
