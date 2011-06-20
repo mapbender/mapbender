@@ -3,6 +3,8 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * Welcome controller.
@@ -11,8 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  */
 class WelcomeController extends Controller {
 	/**
-	 * @extra:Route("/", name="mapbender_welcome")
-	 * @extra:Template()
+	 * @Route("/", name="mapbender_welcome")
+	 * @Template()
 	 */
 	public function indexAction() {
 		return array();

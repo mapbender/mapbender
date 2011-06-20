@@ -6,13 +6,16 @@ use Mapbender\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\SecurityContext;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * User controller.
  *
  * @author Christian Wygoda <arsgeografica@gmail.com>
- * 
- * @extra:Route("/user")
+ *
+ * @Route("/user")
  */
 class UserController extends Controller {
 	protected $em;
@@ -31,9 +34,9 @@ class UserController extends Controller {
 
 	/**
 	 * User login
-	 * 
-	 * @extra:Route("/login", name="mapbender_user_login")
-	 * @extra:Template()
+	 *
+	 * @Route("/login", name="mapbender_user_login")
+	 * @Template()
 	 */
 	public function loginAction() {
 		$request = $this->get('request');
@@ -50,23 +53,23 @@ class UserController extends Controller {
 	}
 
 	/**
-	 * @extra:Route("/login_check", name="_security_check")
+	 * @Route("/login_check", name="_security_check")
 	 */
 	public function loginCheckAction() {
 		//Don't worry, this is actually intercepted by the security layer.
 	}
 
 	/**
-	 * @extra:Route("/logout", name="mapbender_user_logout")
+	 * @Route("/logout", name="mapbender_user_logout")
 	 */
 	public function logoutAction() {
 		//Don't worry, this is actually intercepted by the security layer.
 	}
 
 	/**
-	 * @extra:Route("/", name="mapbender_user_profile")
-	 * @extra:Secure("ROLE_USER")
-	 * @extra:Template()
+	 * @Route("/", name="mapbender_user_profile")
+	 * @Secure("ROLE_USER")
+	 * @Template()
 	 */
 	public function profileAction() {
 		$user = $this->get('security.context')->getToken()->getUser();
