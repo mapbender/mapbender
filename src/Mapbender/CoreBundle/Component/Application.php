@@ -16,7 +16,7 @@ class Application implements ApplicationInterface {
 	public function __construct($container, $configuration) {
 		$this->container = $container;
 		$this->configuration = $configuration;
-		
+
 		// A title is required, otherwise it would be hard to select an
 		// application in a list
 		if(!$this->getTitle()) {
@@ -40,11 +40,11 @@ class Application implements ApplicationInterface {
 		}
 		return $this->template;
 	}
-	
+
 	public function getLayersets() {
 		return $this->layersets;
 	}
-		
+
 	public function getElement($id) {
 		$template_metadata = $this->getTemplate()->getMetadata();
 		$counter = 0;
@@ -82,7 +82,7 @@ class Application implements ApplicationInterface {
 		}
 
 		$base_path = $this->get('request')->getBaseUrl();
-		
+
 		// Get all assets we need to include
 		// First the application and template assets
 		$js = array('bundles/mapbendercore/Mapbender.Application.js');
@@ -99,11 +99,18 @@ class Application implements ApplicationInterface {
 					$css = array_merge($css, $assets['css']);
 				}
 				if(array_key_exists('js', $assets)) {
-					$js  = array_merge($js,  $assets['js']);
+					$js = array_merge($js,  $assets['js']);
 				}
 				$element_confs[$element->getId()] = $element->getConfiguration();
 			}
-		}	
+        }
+
+        try {
+            $wdt = $this->get('web_profiler.debug_toolbar');
+            $js[] = 'bundles/mapbendercore/wdt.js';
+        } catch(\Exception $e) {
+            // Silently ignore...
+        }
 
 		$configuration = array(
 			'title' => $this->getTitle(),
@@ -112,7 +119,7 @@ class Application implements ApplicationInterface {
 			'srs' => $this->configuration['srs'],
 			'basePath' => $base_path,
 			'slug' => 'main', //TODO: Make dynamic
-			'extents' => $this->configuration['extents'],			
+			'extents' => $this->configuration['extents'],
 		);
 
 
@@ -124,7 +131,7 @@ class Application implements ApplicationInterface {
 				'js' => $js),
 			'regions' => $this->regions
 		)));
-		
+
 		return $response;
 	}
 
@@ -195,7 +202,7 @@ class Application implements ApplicationInterface {
 			}
 		}
 	}
-	
+
 	/**
 	 * Access services via the container
 	 */

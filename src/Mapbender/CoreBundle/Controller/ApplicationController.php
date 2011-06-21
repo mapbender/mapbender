@@ -13,17 +13,43 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  */
 class ApplicationController extends Controller {
-	/**
+    /**
+     * Render an application at url /application/{slug}
+     *
+     * @param string $slug The application slug
+     * @return Response HTTP response
      * @Route("/application/{slug}", name="mapbender_application")
 	 * @Template()
 	 */
     public function applicationAction($slug) {
-        //TODO: Check for ORM Applications first, YAML Application only come in
-        //second place
-        $application = $this->getYamlApplication($slug);
+        $application = $this->getApplication($slug);
         return $application->render();
     }
 
+    /**
+     * Call an application element's action at /application/{slug}/element/{id}/{action}
+     * @Route("/application/{slug}/element/{id}/{action}", name="mapbender_element")
+     */
+    public function elementAction($slug, $id, $action) {
+        $application = $this->getApplication($slug);
+        $element = $application->getElement($id);
+        if(!$element) {
+            throw new HttpNotFoundException("Element can not be found.");
+        }
+        return $element->httpAction($action);
+    }
+
+    /**
+     * Given an application slug, find it and inflate it
+     * @param string $slug
+     * @return Application Application
+     */
+    private function getApplication($slug){
+        //TODO: Check for ORM Applications first, YAML Application only come in
+        //second place
+        $application = $this->getYamlApplication($slug);
+        return $application;
+    }
     /**
      * Inflate an application from Yaml
      */
