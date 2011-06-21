@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Component\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Application controller.
@@ -23,6 +24,7 @@ class ApplicationController extends Controller {
 	 */
     public function applicationAction($slug) {
         $application = $this->getApplication($slug);
+        $this->checkAllowedRoles($application->getRoles());
         return $application->render();
     }
 
@@ -32,6 +34,7 @@ class ApplicationController extends Controller {
      */
     public function elementAction($slug, $id, $action) {
         $application = $this->getApplication($slug);
+        $this->checkAllowedRoles($application->getRoles());
         $element = $application->getElement($id);
         if(!$element) {
             throw new HttpNotFoundException("Element can not be found.");
@@ -66,6 +69,23 @@ class ApplicationController extends Controller {
         }
 
         // instantiate application
-        return new Application($this->container, $apps_pars[$slug]);
+        return new Application($this->container, $slug, $apps_pars[$slug]);
+    }
+
+    /**
+     * Check if the allowed roles set by the application are matched by the current user
+     */
+    private function checkAllowedRoles(array $allowedRoles) {
+        $securityContext = $this->get('security.context');
+        $isGrantedAccess = false;
+        foreach($allowedRoles as $allowedRole) {
+            if($securityContext->isGranted($allowedRole)) {
+                $isGrantedAccess = true;
+                break;
+            };
+        }
+        if(!$isGrantedAccess) {
+            throw new AccessDeniedException("You are not allowed to access this application");
+        }
     }
 }

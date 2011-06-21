@@ -47,7 +47,7 @@ class UserController extends Controller {
 		}
 
 		return array(
-			'last_username' => $this->get('request')->getSession()->get(SecurityContext::LAST_USERNAME),
+			'last_username' => $request->getSession()->get(SecurityContext::LAST_USERNAME),
 			'error' => $error,
 		);
 	}

@@ -6,15 +6,17 @@ use Mapbender\CoreBundle\Component\ApplicationInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class Application implements ApplicationInterface {
-	protected $container;
+    protected $container;
+    protected $slug;
 	protected $configuration;
 	protected $regions;
 	protected $layersets;
 	protected $template;
 	protected $element_id_template;
 
-	public function __construct($container, $configuration) {
-		$this->container = $container;
+	public function __construct($container, $slug, $configuration) {
+        $this->container = $container;
+        $this->slug = $slug;
 		$this->configuration = $configuration;
 
 		// A title is required, otherwise it would be hard to select an
@@ -117,8 +119,9 @@ class Application implements ApplicationInterface {
 			'layersets' => $layersets,
 			'elements' => $element_confs,
 			'srs' => $this->configuration['srs'],
-			'basePath' => $base_path,
-			'slug' => 'main', //TODO: Make dynamic
+            'basePath' => $base_path,
+            'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
+			'slug' => $this->slug,
 			'extents' => $this->configuration['extents'],
 		);
 
@@ -222,6 +225,20 @@ class Application implements ApplicationInterface {
          }
        }
        return NULL;
+     }
+
+     /**
+      * Get a list of roles allowed to access this application
+      */
+     public function getRoles() {
+        if(!isset($this->configuration['roles']))
+            return array('IS_AUTHENTICATED_ANONYMOUSLY');
+        $roles = $this->configuration['roles'];
+        if(is_string($roles)) {
+            return array($roles);
+        } else {
+            return $roles;
+        }
      }
 }
 
