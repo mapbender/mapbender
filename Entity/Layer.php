@@ -1,5 +1,5 @@
 <?php
-namespace MB\CoreBundle\Entity;
+namespace MB\WMSBundle\Entity;
 use MB\CoreBundle\Components\LayerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
