@@ -4,6 +4,9 @@ use MB\CoreBundle\Components\LayerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+* @ORM\Entity
+*/
 abstract class Layer implements LayerInterface{
     /**
      *  @ORM\Id
