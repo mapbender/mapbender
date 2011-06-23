@@ -316,6 +316,46 @@ $.extend($.MapQuery.Layer, {
                 options: o
             };
         },
+        wfs: function(options) {
+            var o = $.extend(true, {}, $.fn.mapQuery.defaults.layer.all,
+                    $.fn.mapQuery.defaults.layer.vector,
+                    $.fn.mapQuery.defaults.layer.wfs,
+                    options);
+            this.isVector = true;
+            var strategies = [];
+            for (var i in o.strategies) {
+                switch(o.strategies[i].toLowerCase()) {
+                case 'bbox':
+                    strategies.push(new OpenLayers.Strategy.BBOX()); break;
+                case 'cluster':
+                    strategies.push(new OpenLayers.Strategy.Cluster()); break;
+                case 'filter':
+                    strategies.push(new OpenLayers.Strategy.Filter()); break;
+                case 'fixed':
+                    strategies.push(new OpenLayers.Strategy.Fixed()); break;
+                case 'paging':
+                    strategies.push(new OpenLayers.Strategy.Paging()); break;
+                case 'refresh':
+                    strategies.push(new OpenLayers.Strategy.Refresh()); break;
+                case 'save':
+                    strategies.push(new OpenLayers.Strategy.Save()); break;
+                }
+            }
+
+            return {
+                layer: new OpenLayers.Layer.Vector({
+                    protocol: new OpenLayers.Protocol.WFS({
+                        version: o.version,
+                        url: o.url,
+                        featureType: o.featureType,
+                        featureNS: o.featureNS
+                    }),
+                    styleMap: o.styleMap,
+                    strategies: strategies
+                }),
+                options: o
+            };
+        },
         json: function(options) {
             var o = $.extend(true, {}, $,fn,mapQuery.defaults.layer.all,
                     $.fn.mapQuery.defaults.layer.vector,
@@ -548,6 +588,9 @@ $.fn.mapQuery.defaults = {
         vector: {
             // options for vector layers
             strategies: ['fixed']
+        },
+        wfs: {
+            version: '1.1.0'
         },
         wmts: {
             format: 'image/jpeg',
