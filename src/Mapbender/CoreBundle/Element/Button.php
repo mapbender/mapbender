@@ -22,8 +22,8 @@ class Button extends Element implements ElementInterface {
 	public function getAssets() {
 		return array(
             'js' => array(
-                'bundles/mapbendercore/Mapbender.Element.Button.js'
-            ), // jquery.ui.button.js
+                'mapbender.element.button.js'
+            ),
 			'css' => array()
 		);
 	}

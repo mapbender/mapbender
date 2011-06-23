@@ -20,7 +20,8 @@ class WmsLayer implements LayerInterface {
 
 	public function render() {
 		return array(
-			'title' => $this->title,
+            'title' => $this->title,
+            'type' => 'wms',
 			'configuration' => $this->configuration,
 		);
 	}

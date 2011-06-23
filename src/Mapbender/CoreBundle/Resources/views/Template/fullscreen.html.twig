@@ -4,13 +4,13 @@
 
 {% block css %}
 	{% for css in assets.css %}
-	<link rel="stylesheet" type="text/css" href="{{ asset(css) }}" />
+	<link rel="stylesheet" type="text/css" href="{{ asset('%s/%s'|format(css.base, css.file)) }}" />
 	{% endfor %}
 {% endblock %}
 
 {% block js %}
 	{% for js in assets.js %}
-	<script type="text/javascript" src="{{ asset(js) }}"></script>
+	<script type="text/javascript" src="{{ asset('%s/%s'|format(js.base, js.file)) }}"></script>
 	{% endfor %}
 {% endblock %}
 

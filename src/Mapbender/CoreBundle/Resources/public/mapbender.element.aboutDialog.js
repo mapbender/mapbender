@@ -37,7 +37,8 @@ $.widget("mapbender.mb_about_dialog", {
                 modal: true
             });
 
-        $.ajax(this.elementUrl + 'about', {
+        $.ajax({
+            url: this.elementUrl + 'about',
             dataType: 'json',
             context: self,
             success: self._onAjaxSuccess,

@@ -86,30 +86,67 @@ class Application implements ApplicationInterface {
 		$base_path = $this->get('request')->getBaseUrl();
 
 		// Get all assets we need to include
-		// First the application and template assets
-		$js = array('bundles/mapbendercore/Mapbender.Application.js');
-		$template_metadata = $this->getTemplate()->getMetadata();
-		$css = array_merge(array(), $template_metadata['css']);
-		$js  = array_merge($js, $template_metadata['js']);
+        // First the application and template assets
+        $js = array();
+        $css = array();
+        $baseDir = $this->getBaseDir($this);
+        $js[] = array(
+            'base' => $baseDir,
+            'file' => 'mapbender.application.js'
+        );
+
+        $template = $this->getTemplate();
+        $baseDir = $this->getBaseDir($template);
+        $template_metadata = $this->getTemplate()->getMetadata();
+        foreach($template_metadata['css'] as $asset) {
+            $css[] = array(
+                'base' => $baseDir,
+                'file' => $asset
+            );
+        }
+        foreach($template_metadata['js'] as $asset) {
+            $js[] = array(
+                'base' => $baseDir,
+                'file' => $asset
+            );
+        }
+
 		// Then merge in all element assets
-		// We also grab the element confs here
+        // We also grab the element confs here
 		$elements_confs = array();
 		foreach($this->regions as $region => $elements) {
-			foreach($elements as $element) {
-				$assets = $element->getAssets();
-				if(array_key_exists('css', $assets)) {
-					$css = array_merge($css, $assets['css']);
+            foreach($elements as $element) {
+                $baseDir = $this->getBaseDir($element);
+
+                $assets = $element->getAssets();
+                if(array_key_exists('css', $assets)) {
+                    foreach($assets['css'] as $asset) {
+                        $css[] = array(
+                            'base' => $baseDir,
+                            'file' => $asset
+                        );
+                    }
 				}
-				if(array_key_exists('js', $assets)) {
-					$js = array_merge($js,  $assets['js']);
+
+                if(array_key_exists('js', $assets)) {
+                    foreach($assets['js'] as $asset) {
+                        $js[] = array(
+                            'base' => $baseDir,
+                            'file' => $asset
+                        );
+                    }
 				}
-				$element_confs[$element->getId()] = $element->getConfiguration();
+
+                $element_confs[$element->getId()] = $element->getConfiguration();
 			}
         }
 
         try {
             $wdt = $this->get('web_profiler.debug_toolbar');
-            $js[] = 'bundles/mapbendercore/wdt.js';
+            $baseDir = $this->getBaseDir($this);
+            $js[] = array(
+                'base' => $baseDir,
+                'file' => 'mapbender.application.wdt.js');
         } catch(\Exception $e) {
             // Silently ignore...
         }
@@ -125,7 +162,6 @@ class Application implements ApplicationInterface {
 			'extents' => $this->configuration['extents'],
 		);
 
-
 		$response->setContent($this->getTemplate()->render(array(
 			'title' => $this->getTitle(),
 			'configuration' => "Mapbender = {}; Mapbender.configuration = " . json_encode($configuration),
@@ -138,6 +174,13 @@ class Application implements ApplicationInterface {
 		return $response;
 	}
 
+    private function getBaseDir($object) {
+        $namespaces = explode('\\', get_class($object));
+        $bundle = sprintf('%s%s', $namespaces[0], $namespaces[1]);
+        // see Symfony\FrameWorkBundle\Command\AssetsInstallCommand, line 77
+        $baseDir = sprintf('bundles/%s', preg_replace('/bundle$/', '', strtolower($bundle)));
+        return $baseDir;
+    }
 	/**
 	 * Get the layer factory for the specified type and cache it
 	 *

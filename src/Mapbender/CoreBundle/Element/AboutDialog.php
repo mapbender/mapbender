@@ -24,9 +24,9 @@ class AboutDialog extends Element implements ElementInterface {
 	public function getAssets() {
 		return array(
             'js' => array(
-                'bundles/mapbendercore/Mapbender.Element.Button.js',
-                'bundles/mapbendercore/Mapbender.Element.AboutDialog.js'
-            ), // jquery.ui.button.js
+                'mapbender.element.button.js',
+                'mapbender.element.aboutDialog.js'
+            ),
 			'css' => array()
 		);
 	}
