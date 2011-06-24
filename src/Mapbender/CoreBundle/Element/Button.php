@@ -24,7 +24,9 @@ class Button extends Element implements ElementInterface {
             'js' => array(
                 'mapbender.element.button.js'
             ),
-			'css' => array()
+            'css' => array(
+                'mapbender.elements.css'
+            )
 		);
 	}
 
@@ -44,7 +46,7 @@ class Button extends Element implements ElementInterface {
 	public function	render() {
             return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
                 'id' => $this->id,
-                'configuration' => $this->configuration));
+                'configuration' => array_merge($this->configuration, array('text' => $this->name))));
 	}
 }
 

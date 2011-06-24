@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -66,7 +65,7 @@ class AboutDialog extends Element implements ElementInterface {
         }
     }
 
-	public function	render() {
+	public function render() {
             return $this->get('templating')->render('MapbenderCoreBundle:Element:about_dialog.html.twig', array(
                 'id' => $this->id,
                 'configuration' => $this->configuration));

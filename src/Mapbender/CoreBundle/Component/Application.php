@@ -94,6 +94,10 @@ class Application implements ApplicationInterface {
             'base' => $baseDir,
             'file' => 'mapbender.application.js'
         );
+        $css[] = array(
+            'base' => $baseDir,
+            'file' => 'mapbender.application.css'
+        );
 
         $template = $this->getTemplate();
         $baseDir = $this->getBaseDir($template);

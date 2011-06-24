@@ -1,0 +1,15 @@
+.mb-element-button .ui-button-icon-primary.zoom-in {
+    background-image: url('icons/MActionZoomIn.png');
+}
+
+.mb-element-button .ui-button-icon-primary.zoom-out {
+    background-image: url('icons/MActionZoomOut.png');
+}
+
+.mb-element-button .ui-button-icon-primary.zoom-extent {
+    background-image: url('icons/MActionZoomFullExtent.png');
+}
+
+.mb-element-featureinfo .ui-button-icon-primary.featureinfo {
+    background-image: url('icons/MActionIdentify.png');
+}

@@ -87,7 +87,7 @@ $.widget("mapbender.mbMap", {
         var mqLayerDef = null;
         switch(layerDef.type) {
             case 'wms':
-                //baselayer, layers, opacity, visible
+                //baselayer,opacity, visible
                 mqLayerDef = {
                     type: 'wms',
                     label: layerDef.title,
@@ -98,9 +98,50 @@ $.widget("mapbender.mbMap", {
                 };
                 return mqLayerDef
                 break;
+            case 'wfs':
+                console.log(layerDef);
+                return {
+                    type: 'wfs',
+                    version: layerDef.configuration.version,
+                    label: layerDef.title,
+                    url: layerDef.configuration.url,
+                    featureType: layerDef.configuration.featureType,
+                    featureNS: layerDef.configuration.featureNS,
+                };
+
             default:
                 throw "Layer type " + layerDef.type + " is not supported by mapbender.mapquery-map";
         }
+    },
+
+    zoomIn: function() {
+        // TODO: MapQuery?
+        this.map.olMap.zoomIn();
+    },
+
+    zoomOut: function() {
+        // TODO: MapQuery?
+        this.map.olMap.zoomOut();
+    },
+
+    zoomToFullExtent: function() {
+        // TODO: MapQuery?
+        this.map.olMap.zoomToMaxExtent();
+    },
+
+    zoomToExtent: function() {
+        //TODO: MapQuery?
+        this.map.olMap.zoomToExtent(extent);
+    },
+
+    addPopup: function(popup) {
+        //TODO: MapQuery
+        this.map.olMap.addPopup(popup);
+    },
+
+    removePopup: function(popup) {
+        //TODO: MapQuery
+        this.map.olMap.removePopup(popup);
     }
 });
 
