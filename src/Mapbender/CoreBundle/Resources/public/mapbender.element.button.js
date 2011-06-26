@@ -5,7 +5,8 @@ $.widget("mapbender.mb_button", {
         target: undefined,
         click: undefined,
         icon: undefined,
-        label: true
+        label: true,
+        group: undefined
     },
 
 	_create: function() {
@@ -21,10 +22,12 @@ $.widget("mapbender.mb_button", {
                 text: this.options.label
             });
         }
-        me.button(o);
-        me.click(function() { 
-            self._onClick.call(self);
-        });
+
+        // Radios are inside a div, so we need to button'ize the right element
+        this.options.group ? me.find('input').button(o) : me.button(o);
+        
+        me.bind('click', $.proxy(self._onClick, self));
+        me.bind('deactivate', $.proxy(self.deactivate, self));
 	},
 
 	_setOption: function(key, value) {
@@ -35,12 +38,33 @@ $.widget("mapbender.mb_button", {
 	},
 
     _onClick: function() {
-		if(this.options.target && this.options.action) {
-			var target = $('#' + this.options.target);
+        // If we're part of a group, deactivate all other actions in this group
+        if(this.options.group) {
+            var others = $('input[type="radio"][name="' + this.options.group + '"]').parent();
+            others.trigger('deactivate');
+        }
+        this.activate();
+    },
+
+    _onChange: function() {
+        if($(this.element).filter(':checked')) {
+            console.log('c', $(this.element).attr('id'));
+        } else {
+            console.log('n', $(this.element).attr('id'));
+        }
+    },
+
+    activate: function() {
+        if(this.options.target && this.options.action) {
+            var target = $('#' + this.options.target);
             var widget = Mapbender.configuration.elements[this.options.target].init;
             target[widget](this.options.action);
-		}
+        }
+    },
+
+    deactivate: function() {
     }
 });
 
 })(jQuery);
+

@@ -87,14 +87,20 @@ $.widget("mapbender.mbMap", {
         var mqLayerDef = null;
         switch(layerDef.type) {
             case 'wms':
-                //baselayer,opacity, visible
                 mqLayerDef = {
-                    type: 'wms',
-                    label: layerDef.title,
-                    url: layerDef.configuration.url,
-                    layers: layerDef.configuration.layers,
+                    type:        'wms',
+                    label:       layerDef.title,
+                    url:         layerDef.configuration.url,
+
+                    layers:      layerDef.configuration.layers,
+                    queryLayers: layerDef.configuration.queryLayers,
+                    
                     transparent: layerDef.configuration.transparent,
-                    format: layerDef.configuration.format
+                    format:      layerDef.configuration.format,
+
+                    baselayer:   layerDef.configuration.baselayer,
+                    opacity:     layerDef.configuration.opacity
+                    //TODO: visible:     layerDef.configuration.visible
                 };
                 return mqLayerDef
                 break;
@@ -132,6 +138,10 @@ $.widget("mapbender.mbMap", {
     zoomToExtent: function() {
         //TODO: MapQuery?
         this.map.olMap.zoomToExtent(extent);
+    },
+
+    panMode: function() {
+        //TODO: MapQuery
     },
 
     addPopup: function(popup) {
