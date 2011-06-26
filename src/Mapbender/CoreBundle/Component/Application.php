@@ -90,29 +90,17 @@ class Application implements ApplicationInterface {
         $js = array();
         $css = array();
         $baseDir = $this->getBaseDir($this);
-        $js[] = array(
-            'base' => $baseDir,
-            'file' => 'mapbender.application.js'
-        );
-        $css[] = array(
-            'base' => $baseDir,
-            'file' => 'mapbender.application.css'
-        );
+        $js[] = $baseDir . '/mapbender.application.js';
+        $css[] = $baseDir . '/mapbender.application.css';
 
         $template = $this->getTemplate();
         $baseDir = $this->getBaseDir($template);
         $template_metadata = $this->getTemplate()->getMetadata();
         foreach($template_metadata['css'] as $asset) {
-            $css[] = array(
-                'base' => $baseDir,
-                'file' => $asset
-            );
+            $css[] = $baseDir . '/' . $asset;
         }
         foreach($template_metadata['js'] as $asset) {
-            $js[] = array(
-                'base' => $baseDir,
-                'file' => $asset
-            );
+            $js[] = $baseDir . '/' . $asset;
         }
 
 		// Then merge in all element assets
@@ -125,19 +113,13 @@ class Application implements ApplicationInterface {
                 $assets = $element->getAssets();
                 if(array_key_exists('css', $assets)) {
                     foreach($assets['css'] as $asset) {
-                        $css[] = array(
-                            'base' => $baseDir,
-                            'file' => $asset
-                        );
+                        $css[] = $baseDir . '/' . $asset;
                     }
 				}
 
                 if(array_key_exists('js', $assets)) {
                     foreach($assets['js'] as $asset) {
-                        $js[] = array(
-                            'base' => $baseDir,
-                            'file' => $asset
-                        );
+                        $js[] = $baseDir . '/' . $asset;
                     }
 				}
 
@@ -145,12 +127,29 @@ class Application implements ApplicationInterface {
 			}
         }
 
+        foreach($this->layersets as $layerset) {
+            foreach($layerset as $layer) {
+                $baseDir = $this->getBaseDir($layer);
+
+                $assets = $layer->getAssets();
+                if(array_key_exists('css', $assets)) {
+                    foreach($assets['css'] as $asset) {
+                        $css[] = $baseDir . '/' . $asset;
+                    }
+				}
+
+                if(array_key_exists('js', $assets)) {
+                    foreach($assets['js'] as $asset) {
+                        $js[] = $baseDir . '/' . $asset;
+                    }
+				}
+            }
+        }
+
         try {
             $wdt = $this->get('web_profiler.debug_toolbar');
             $baseDir = $this->getBaseDir($this);
-            $js[] = array(
-                'base' => $baseDir,
-                'file' => 'mapbender.application.wdt.js');
+            $js[] = $baseDir . '/mapbender.application.wdt.js';
         } catch(\Exception $e) {
             // Silently ignore...
         }
@@ -163,15 +162,19 @@ class Application implements ApplicationInterface {
             'basePath' => $base_path,
             'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
 			'slug' => $this->slug,
-			'extents' => $this->configuration['extents'],
+            'extents' => $this->configuration['extents'],
+            'proxies' => array(
+                'open' => $this->get('router')->generate('mapbender_proxy_open'),
+                'secure' => $this->get('router')->generate('mapbender_proxy_secure')
+            )
 		);
 
 		$response->setContent($this->getTemplate()->render(array(
 			'title' => $this->getTitle(),
 			'configuration' => "Mapbender = {}; Mapbender.configuration = " . json_encode($configuration),
 			'assets' => array(
-				'css' => $css,
-				'js' => $js),
+				'css' => array_unique($css),
+				'js' => array_unique($js)),
 			'regions' => $this->regions
 		)));
 
