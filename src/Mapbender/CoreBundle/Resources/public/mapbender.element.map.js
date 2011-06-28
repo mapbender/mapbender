@@ -19,7 +19,7 @@ $.widget("mapbender.mbMap", {
             layers.push(self._convertLayerDef.call(self, layerDef));
         });
         
-        me.mapQuery({
+        var mapOptions = {
             maxExtent: Mapbender.configuration.extents.max,
             maxResolution: 'auto',
             projection: new OpenLayers.Projection(Mapbender.configuration.srs),
@@ -27,13 +27,31 @@ $.widget("mapbender.mbMap", {
             units: Mapbender.configuration.units,
 
             layers: layers
-        });
+        };
+
+        if(this.options.scales) {
+            $.extend(mapOptions, {
+                scales: this.options.scales
+            });
+        }
+
+        me.mapQuery(mapOptions);
         this.map = me.data('mapQuery');
 
         if(Mapbender.configuration.extents.start) {
             this.map.goto({
                 box: Mapbender.configuration.extents.start,
             });
+        }
+
+        if(this.options.overview) {
+            var layerConf = Mapbender.configuration.layersets[this.options.overview][0];
+            var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
+                layers: layerConf.configuration.layers
+            });
+            this.map.olMap.addControl(new OpenLayers.Control.OverviewMap({
+                layers: [layer]
+            }));
         }
 
         self._trigger('ready');
