@@ -1,0 +1,84 @@
+.map {
+  height:512px;
+  width:512px;
+  border:solid 1px black;
+  display: inline-block;
+}
+.olControlAttribution {
+    bottom:0.5em !important;
+}
+.zoom {
+  position: absolute;
+  z-index: 100000;
+  margin: 5px;
+  cursor: pointer;
+}
+.zoom .ui-icon {
+  margin: 0 4px;
+}
+.zoom .ui-corner-all{
+  margin: 2px;
+  padding: 4px 0;
+}
+#layercontrol{
+    float:right;
+    width: 320px;
+    border:solid 1px black;
+    padding: 0px;
+    background: #ececec;
+}
+.mq-widget {
+    font-size:0.6em;
+}
+#layercontrol ul{
+    padding: 0px;
+    margin: 5px;
+}
+.mq-layercontrol {    
+    margin: 2px;
+    padding:2px;
+}
+.mq-layercontrol .ui-icon {
+    margin-bottom:-2px;
+    display:inline-block;
+}
+.mq-layercontrol-label {
+    width:160px;   
+    display:inline-block;
+}
+.mq-layercontrol-visibility {
+    text-align: right;
+}
+.mq-layercontrol-delete {
+    
+}
+.mq-mouseposition {
+    display: block;
+    width: 300px;
+}
+.mq-mouseposition-coordinate {
+    display: inline-block;  
+    margin:2px;       
+}
+.mq-overviewmap-dialog .ui-dialog-content{
+    padding: 0.4em;
+}
+ #layermanager{
+     width: 300px;
+ }
+
+#featureinfo {
+    display: inline-block;
+    height: 256px;
+    position: relative;
+    vertical-align: top;
+    width: 256px;
+}
+#featureinfo p {
+    font-size: 1.5em;
+    margin-left: 1em;
+}
+
+#popup {
+  position:absolute;
+}
