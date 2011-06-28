@@ -161,8 +161,12 @@ $.widget("mapbender.ol_map", {
         this.map.removePopup(popup);
     },
 
-    zoomToExtent: function(extent) {
+    zoomToExtent: function(extent, scale) {
         this.map.zoomToExtent(extent);
+        if(scale) {
+            // Zoom to next largest scale
+            this.map.zoomToScale(scale, true);
+        }
     }
 });
 
