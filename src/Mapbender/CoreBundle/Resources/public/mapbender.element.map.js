@@ -49,12 +49,23 @@ $.widget("mapbender.mbMap", {
 
     highlight: function(features, options) {
         var self = this;
-        
         if(!this.highlightLayer) {
             this.highlightLayer = this.map.layers({
                 type: 'vector',
                 label: 'Highlight'});
+            var selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer.olLayer, {
+                hover: true,
+                onSelect: function(feature) {
+                    self._trigger('highlighthoverin', null, { feature: feature });
+                },
+                onUnselect: function(feature) {
+                    self._trigger('highlighthoverout', null, { feature: feature });
+                }
+            });
+            this.map.olMap.addControl(selectControl);
+            selectControl.activate();
         }
+
 
         var o = $.extend({}, {
             clearFirst: true,
@@ -135,7 +146,7 @@ $.widget("mapbender.mbMap", {
         this.map.olMap.zoomToMaxExtent();
     },
 
-    zoomToExtent: function() {
+    zoomToExtent: function(extent) {
         //TODO: MapQuery?
         this.map.olMap.zoomToExtent(extent);
     },

@@ -23,8 +23,7 @@ class OpenLayersMap extends Element implements ElementInterface {
 		return array(
 			'js' => array(
 				'OpenLayers-2.10/OpenLayers.js',
-				'OpenLayers_LayerFactory.js',
-				'Mapbender.Element.OpenLayersMap.js',
+				'mapbender.element.openlayersMap.js',
 			),
 			'css' => array(
 				'OpenLayers-2.10/theme/default/style.css',

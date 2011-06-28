@@ -34,7 +34,7 @@ class Mapbender2UserProvider implements UserProviderInterface {
                 return new User($username, $user_data['mb_user_password'], $user_data['mb_user_email']);
         }
 
-        public function loadUser(UserInterface $user) {
+        public function refreshUser(UserInterface $user) {
                 if(!$user instanceof User) {
                         throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
                 }
