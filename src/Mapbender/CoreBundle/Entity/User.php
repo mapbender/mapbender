@@ -2,29 +2,30 @@
 
 namespace Mapbender\CoreBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User entity.
  *
  * @author Christian Wygoda <arsgeografica@gmail.com>
- * @orm:Entity
- * @orm:Table(name="Users")
+ * @ORM\Entity
+ * @ORM\Table(name="Users")
  */
 class User implements UserInterface {
-	/** 
-	 * @orm:Column(type="integer") 
-	 * @orm:Id
+	/**
+	 * @ORM\Column(type="integer")
+	 * @ORM\Id
 	 */
 	protected $id;
 
-	/** @orm:Column(length=512) */
+	/** @ORM\Column(length=512) */
 	protected $username;
 
-	/** @orm:Column(length=512) */
+	/** @ORM\Column(length=512) */
 	protected $password;
 
-	/** @orm:Column(length=256) */
+	/** @ORM\Column(length=256) */
 	protected $email;
 
 	/**
@@ -58,7 +59,7 @@ class User implements UserInterface {
 
 	/**
 	 * Get username
-	 * 
+	 *
 	 * @return string $username
 	 */
 	public function getUsername() {
@@ -114,7 +115,7 @@ class User implements UserInterface {
 
 	/**
 	 * Get roles
-	 * 
+	 *
 	 * @return array $roles
 	 */
 	public function getRoles() {

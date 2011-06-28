@@ -20,9 +20,18 @@ class WmsLayer implements LayerInterface {
 
 	public function render() {
 		return array(
-			'title' => $this->title,
+            'title' => $this->title,
+            'type' => 'wms',
 			'configuration' => $this->configuration,
 		);
-	}
+    }
+
+    public function getAssets() {
+        return array(
+            'js' => array(
+                'mapbender.layer.wms.js'
+            )
+        );
+    }
 }
 

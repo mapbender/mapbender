@@ -22,13 +22,13 @@ class OpenLayersMap extends Element implements ElementInterface {
 	public function getAssets() {
 		return array(
 			'js' => array(
-				'bundles/mapbendercore/OpenLayers-2.10/OpenLayers.js',
-				'bundles/mapbendercore/OpenLayers_LayerFactory.js',
-				'bundles/mapbendercore/Mapbender.Element.OpenLayersMap.js',
+				'OpenLayers-2.10/OpenLayers.js',
+				'OpenLayers_LayerFactory.js',
+				'Mapbender.Element.OpenLayersMap.js',
 			),
 			'css' => array(
-				'bundles/mapbendercore/OpenLayers-2.10/theme/default/style.css',
-				'bundles/mapbendercore/OpenLayers_MapElement.css',
+				'OpenLayers-2.10/theme/default/style.css',
+				'OpenLayers_MapElement.css',
 			)
 		);
 	}

@@ -6,17 +6,19 @@ use Mapbender\CoreBundle\Component\ApplicationInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class Application implements ApplicationInterface {
-	protected $container;
+    protected $container;
+    protected $slug;
 	protected $configuration;
 	protected $regions;
 	protected $layersets;
 	protected $template;
 	protected $element_id_template;
 
-	public function __construct($container, $configuration) {
-		$this->container = $container;
+	public function __construct($container, $slug, $configuration) {
+        $this->container = $container;
+        $this->slug = $slug;
 		$this->configuration = $configuration;
-		
+
 		// A title is required, otherwise it would be hard to select an
 		// application in a list
 		if(!$this->getTitle()) {
@@ -40,11 +42,11 @@ class Application implements ApplicationInterface {
 		}
 		return $this->template;
 	}
-	
+
 	public function getLayersets() {
 		return $this->layersets;
 	}
-		
+
 	public function getElement($id) {
 		$template_metadata = $this->getTemplate()->getMetadata();
 		$counter = 0;
@@ -82,52 +84,110 @@ class Application implements ApplicationInterface {
 		}
 
 		$base_path = $this->get('request')->getBaseUrl();
-		
+
 		// Get all assets we need to include
-		// First the application and template assets
-		$js = array('bundles/mapbendercore/Mapbender.Application.js');
-		$template_metadata = $this->getTemplate()->getMetadata();
-		$css = array_merge(array(), $template_metadata['css']);
-		$js  = array_merge($js, $template_metadata['js']);
+        // First the application and template assets
+        $js = array();
+        $css = array();
+        $baseDir = $this->getBaseDir($this);
+        $js[] = $baseDir . '/mapbender.application.js';
+        $css[] = $baseDir . '/mapbender.application.css';
+
+        $template = $this->getTemplate();
+        $baseDir = $this->getBaseDir($template);
+        $template_metadata = $this->getTemplate()->getMetadata();
+        foreach($template_metadata['css'] as $asset) {
+            $css[] = $baseDir . '/' . $asset;
+        }
+        foreach($template_metadata['js'] as $asset) {
+            $js[] = $baseDir . '/' . $asset;
+        }
+
 		// Then merge in all element assets
-		// We also grab the element confs here
+        // We also grab the element confs here
 		$elements_confs = array();
 		foreach($this->regions as $region => $elements) {
-			foreach($elements as $element) {
-				$assets = $element->getAssets();
-				if(array_key_exists('css', $assets)) {
-					$css = array_merge($css, $assets['css']);
+            foreach($elements as $element) {
+                $baseDir = $this->getBaseDir($element);
+
+                $assets = $element->getAssets();
+                if(array_key_exists('css', $assets)) {
+                    foreach($assets['css'] as $asset) {
+                        $css[] = $baseDir . '/' . $asset;
+                    }
 				}
-				if(array_key_exists('js', $assets)) {
-					$js  = array_merge($js,  $assets['js']);
+
+                if(array_key_exists('js', $assets)) {
+                    foreach($assets['js'] as $asset) {
+                        $js[] = $baseDir . '/' . $asset;
+                    }
 				}
-				$element_confs[$element->getId()] = $element->getConfiguration();
+
+                $element_confs[$element->getId()] = $element->getConfiguration();
 			}
-		}	
+        }
+
+        foreach($this->layersets as $layerset) {
+            foreach($layerset as $layer) {
+                $baseDir = $this->getBaseDir($layer);
+
+                $assets = $layer->getAssets();
+                if(array_key_exists('css', $assets)) {
+                    foreach($assets['css'] as $asset) {
+                        $css[] = $baseDir . '/' . $asset;
+                    }
+				}
+
+                if(array_key_exists('js', $assets)) {
+                    foreach($assets['js'] as $asset) {
+                        $js[] = $baseDir . '/' . $asset;
+                    }
+				}
+            }
+        }
+
+        try {
+            $wdt = $this->get('web_profiler.debug_toolbar');
+            $baseDir = $this->getBaseDir($this);
+            $js[] = $baseDir . '/mapbender.application.wdt.js';
+        } catch(\Exception $e) {
+            // Silently ignore...
+        }
 
 		$configuration = array(
 			'title' => $this->getTitle(),
 			'layersets' => $layersets,
 			'elements' => $element_confs,
 			'srs' => $this->configuration['srs'],
-			'basePath' => $base_path,
-			'slug' => 'main', //TODO: Make dynamic
-			'extents' => $this->configuration['extents'],			
+            'basePath' => $base_path,
+            'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
+			'slug' => $this->slug,
+            'extents' => $this->configuration['extents'],
+            'proxies' => array(
+                'open' => $this->get('router')->generate('mapbender_proxy_open'),
+                'secure' => $this->get('router')->generate('mapbender_proxy_secure')
+            )
 		);
-
 
 		$response->setContent($this->getTemplate()->render(array(
 			'title' => $this->getTitle(),
 			'configuration' => "Mapbender = {}; Mapbender.configuration = " . json_encode($configuration),
 			'assets' => array(
-				'css' => $css,
-				'js' => $js),
+				'css' => array_unique($css),
+				'js' => array_unique($js)),
 			'regions' => $this->regions
 		)));
-		
+
 		return $response;
 	}
 
+    private function getBaseDir($object) {
+        $namespaces = explode('\\', get_class($object));
+        $bundle = sprintf('%s%s', $namespaces[0], $namespaces[1]);
+        // see Symfony\FrameWorkBundle\Command\AssetsInstallCommand, line 77
+        $baseDir = sprintf('bundles/%s', preg_replace('/bundle$/', '', strtolower($bundle)));
+        return $baseDir;
+    }
 	/**
 	 * Get the layer factory for the specified type and cache it
 	 *
@@ -195,7 +255,7 @@ class Application implements ApplicationInterface {
 			}
 		}
 	}
-	
+
 	/**
 	 * Access services via the container
 	 */
@@ -215,6 +275,20 @@ class Application implements ApplicationInterface {
          }
        }
        return NULL;
+     }
+
+     /**
+      * Get a list of roles allowed to access this application
+      */
+     public function getRoles() {
+        if(!isset($this->configuration['roles']))
+            return array('IS_AUTHENTICATED_ANONYMOUSLY');
+        $roles = $this->configuration['roles'];
+        if(is_string($roles)) {
+            return array($roles);
+        } else {
+            return $roles;
+        }
      }
 }
 

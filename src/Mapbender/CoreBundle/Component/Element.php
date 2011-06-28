@@ -29,7 +29,7 @@ abstract class Element implements ElementInterface {
     public function getName() {
         return $this->name;
     }
-	
+
 	public function getDescription() {
 		throw new \Exception("The getDescription function of " . get_class($this) . " has to be overriden!");
 	}
@@ -50,7 +50,7 @@ abstract class Element implements ElementInterface {
 		return false;
 	}
 
-	public function getId() {
+	public final function getId() {
 		return $this->id;
 	}
 

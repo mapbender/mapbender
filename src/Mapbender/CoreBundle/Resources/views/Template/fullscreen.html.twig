@@ -1,0 +1,30 @@
+{% extends "MapbenderCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block css %}
+	{% for css in assets.css %}
+	<link rel="stylesheet" type="text/css" href="{{ asset(css) }}" />
+	{% endfor %}
+{% endblock %}
+
+{% block js %}
+	{% for js in assets.js %}
+	<script type="text/javascript" src="{{ asset(js) }}"></script>
+	{% endfor %}
+{% endblock %}
+
+{% block content %}
+<div id="top" class="region">
+{% for element in regions.top %}
+	{{ element.render() | raw }}
+{% endfor %}
+</div>
+<div id="content" class="region">
+{% for element in regions.content %}
+	{{ element.render() | raw }}
+{% endfor %}
+</div>
+<script type="text/javascript">{{ configuration | raw }}</script>
+{% endblock %}
+

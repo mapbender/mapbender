@@ -5,12 +5,13 @@ namespace Mapbender\CoreBundle\Controller;
 use Mapbender\CoreBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 /**
  * User controller.
  *
  * @author Christian Wygoda <arsgeografica@gmail.com>
- * @extra:Route("/admin/user")
+ * @Route("/admin/user")
  */
 class UserAdministrationController extends Controller {
 	protected $em;
@@ -29,8 +30,8 @@ class UserAdministrationController extends Controller {
 
 	/**
 	 * User list
-	 * 
-	 * @extra:Route("/", name="mapbender_user_list")
+	 *
+	 * @Route("/", name="mapbender_user_list")
 	 */
 	public function indexAction() {
 		$users = $this->em->find('MapbenderCoreBundle:User', '');

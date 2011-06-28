@@ -17,7 +17,7 @@ interface LayerInterface {
 	public function __construct($title, array $configuration);
 
 	/**
-	 * Return an array representation of the layer title and 
+	 * Return an array representation of the layer title and
 	 * configuration ready for json_encode.
 	 *
 	 * @param string $type
@@ -25,6 +25,13 @@ interface LayerInterface {
 	 */
 	public function render();
 
-	//TODO: Configuration: Form, store / load at runtime
+    /**
+     * Return assets.
+     *
+     * @return array Assets array
+     */
+    public function getAssets();
+
+    //TODO: Configuration: Form, store / load at runtime
 }
 
