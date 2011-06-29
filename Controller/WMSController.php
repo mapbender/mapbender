@@ -73,7 +73,6 @@ class WMSController extends Controller {
     public function detailsAction($id){
         $em = $this->get("doctrine.orm.entity_manager");
         $wms = $em->find('MBWMSBundle:WMSService',$id);
-        
 
         if(!$wms){
             return array();
@@ -159,9 +158,38 @@ class WMSController extends Controller {
     */
     public function previewAction(){
         $getcapa_url = $this->get('request')->request->get('getcapa_url');
+        if(!$getcapa_url){
+            throw new \Exception('getcapa_url not set');
+        }
+        
+
         $data = file_get_contents($getcapa_url);
+
+
+
+        $ch = curl_init($getcapa_url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $proxyConf = $this->container->getParameter('proxy');
+        if($proxyConf && isset($proxyConf['host']) && $proxyConf['host'] != ""){
+            throw new \Exception($proxyConf['host']);
+            curl_setopt($ch, CURLOPT_PROXY,$proxyConf['host']);
+            curl_setopt($ch, CURLOPT_PROXYPORT,$proxyConf['port']);
+        }
+
+        $data = curl_exec($ch);
+
+        if(!$data){
+            throw new \Exception('data is not empty');
+        }
+
         $capaParser = new CapabilitiesParser($data);
+
         $wms = $capaParser->getWMSService();
+        if(!$wms){
+            throw new \Exception("could not parse data for url '$getcapa_url'");
+        }
 
         $form = $this->get('form.factory')->create(new WMSType());
         $form->setData($wms);
