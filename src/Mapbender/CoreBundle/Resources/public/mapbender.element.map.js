@@ -167,9 +167,12 @@ $.widget("mapbender.mbMap", {
         this.map.olMap.zoomToMaxExtent();
     },
 
-    zoomToExtent: function(extent) {
+    zoomToExtent: function(extent, scale) {
         //TODO: MapQuery?
         this.map.olMap.zoomToExtent(extent);
+        if(scale) {
+            this.map.olMap.zoomToScale(scale, true);
+        }
     },
 
     panMode: function() {
