@@ -30,7 +30,7 @@ $.MapQuery.Map = function(element, options) {
     this.olMap = new OpenLayers.Map(this.element[0], this.olMapOptions);
     
     //OpenLayers doesn't want to return a maxExtent when there is no baselayer set (eg on an empty map, so we create a fake baselayer
-    this.olMap.addLayer(new OpenLayers.Layer('fake', {baseLayer: true}));    
+    this.olMap.addLayer(new OpenLayers.Layer('fake', {baseLayer: true, displayInLayerSwitcher: false}));
 
     // Keep IDs of vector layer for select feature control
     this.vectorLayers = [];
