@@ -131,8 +131,9 @@ $.widget("mapbender.mbMap", {
                     format:      layerDef.configuration.format,
 
                     baselayer:   layerDef.configuration.baselayer,
-                    opacity:     layerDef.configuration.opacity
-                    //TODO: visible:     layerDef.configuration.visible
+                    opacity:     layerDef.configuration.opacity,
+                    visible:     layerDef.configuration.visible,
+                    tiled:       layerDef.configuration.tiled
                 };
                 return mqLayerDef
                 break;
