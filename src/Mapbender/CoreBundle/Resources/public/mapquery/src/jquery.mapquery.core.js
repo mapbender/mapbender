@@ -373,10 +373,11 @@ $.extend($.MapQuery.Layer, {
             };
             var olLayerOpts = {
                 visibility: o.visible === undefined ? true : o.visible,
-                singleTile: o.tiled === undefined ? false : o.tiled,
+                singleTile: o.tiled === undefined ? false : !o.tiled,
                 opacity: o.opacity === undefined ? 1.0 : o.opacity / 100.0,
                 noMagic: true
             };
+            console.log(o, olLayerOpts);
             //SMO20110611: TODO WMS requires a label, autogenerate one if not provided
             return {
                 layer: new OpenLayers.Layer.WMS(o.label, o.url, params, olLayerOpts),
