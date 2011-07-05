@@ -25,6 +25,7 @@ $.widget("mapbender.mbMap", {
             projection: new OpenLayers.Projection(Mapbender.configuration.srs),
             displayProjection: new OpenLayers.Projection(Mapbender.configuration.srs),
             units: Mapbender.configuration.units,
+            allOverlays: false,
 
             layers: layers
         };
@@ -126,11 +127,11 @@ $.widget("mapbender.mbMap", {
 
                     layers:      layerDef.configuration.layers,
                     queryLayers: layerDef.configuration.queryLayers,
-                    
+
                     transparent: layerDef.configuration.transparent,
                     format:      layerDef.configuration.format,
 
-                    baselayer:   layerDef.configuration.baselayer,
+                    isBaseLayer:   layerDef.configuration.baselayer,
                     opacity:     layerDef.configuration.opacity,
                     visible:     layerDef.configuration.visible,
                     tiled:       layerDef.configuration.tiled
@@ -138,7 +139,6 @@ $.widget("mapbender.mbMap", {
                 return mqLayerDef
                 break;
             case 'wfs':
-                console.log(layerDef);
                 return {
                     type: 'wfs',
                     version: layerDef.configuration.version,

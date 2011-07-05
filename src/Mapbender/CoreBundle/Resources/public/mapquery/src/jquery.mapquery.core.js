@@ -10,7 +10,6 @@ $.MapQuery.Map = function(element, options) {
         options.maxResolution = (options.maxExtent[2]-options.maxExtent[0])/256;
     }};
     this.options = $.extend({}, new $.fn.mapQuery.defaults.map(), options);
-
     this.element = element;
     // TODO vmx 20110609: do proper options building
     // TODO SMO 20110616: make sure that all projection strings are uppercase
@@ -368,11 +367,11 @@ $.extend($.MapQuery.Layer, {
                     options);
             var params = {
                 layers: o.layers,
-                transparent: o.transparent,
+                transparent: o.transparent === undefined ? false : o.transparent,
                 format: o.format
             };
             var olLayerOpts = {
-                isBaseLayer: o.baselayer === undefined ? true : o.baselayer,
+                isBaseLayer: o.isBaseLayer === undefined ? true : o.isBaseLayer,
                 visibility: o.visible === undefined ? true : o.visible,
                 singleTile: o.tiled === undefined ? false : !o.tiled,
                 opacity: o.opacity === undefined ? 1.0 : o.opacity / 100.0,
