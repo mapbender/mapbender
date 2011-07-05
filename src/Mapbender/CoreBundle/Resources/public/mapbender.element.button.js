@@ -1,6 +1,6 @@
 (function($) {
 
-$.widget("mapbender.mb_button", {
+$.widget("mapbender.mbButton", {
 	options: {
         target: undefined,
         click: undefined,
@@ -40,18 +40,12 @@ $.widget("mapbender.mb_button", {
     _onClick: function() {
         // If we're part of a group, deactivate all other actions in this group
         if(this.options.group) {
-            var others = $('input[type="radio"][name="' + this.options.group + '"]').parent();
+            var others = $('input[type="radio"][name="' + this.options.group + '"]')
+                .parent()
+                .not($(this.element));
             others.trigger('deactivate');
         }
         this.activate();
-    },
-
-    _onChange: function() {
-        if($(this.element).filter(':checked')) {
-            console.log('c', $(this.element).attr('id'));
-        } else {
-            console.log('n', $(this.element).attr('id'));
-        }
     },
 
     activate: function() {

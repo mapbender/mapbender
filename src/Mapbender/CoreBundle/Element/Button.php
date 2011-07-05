@@ -39,7 +39,7 @@ class Button extends Element implements ElementInterface {
         }
         return array(
             'options' => $opts,
-			'init' => 'mb_button',
+			'init' => 'mbButton',
 		);
 	}
 

@@ -40,7 +40,7 @@ class FeatureInfo extends Element implements ElementInterface {
 
         return array(
             'options' => $opts,
-			'init' => 'mb_featureInfo',
+			'init' => 'mbFeatureInfo',
 		);
     }
 
