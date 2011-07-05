@@ -1,8 +1,8 @@
 {% if configuration.group is defined %}
 <div class="mb-element mb-element-button mb-element-{{ classNameLower }}" id="{{ id }}">
     <input type="radio" name="{{ configuration.group }}" id="{{ id }}" name="{{ id }}"/>
-    <label for="{{ id }}">{{ configuration.label }}</label>
+    <label for="{{ id }}">{{ label }}</label>
 </div>
 {% else %}
-<button class="mb-element mb-element-button {{ classNameLower }}" id="{{ id }}">{{ configuration.label }}</button>
+<button class="mb-element mb-element-button {{ classNameLower }}" id="{{ id }}">{{ label }}</button>
 {% endif %}

@@ -32,6 +32,7 @@ class {{ className }} extends Element implements ElementInterface {
 
 	public function getConfiguration() {
         $opts = $this->configuration;
+        $opts['text'] = $this->name;
         // Resolve the run-time id of the target widget
         if(array_key_exists('target', $this->configuration)) {
             $elementId = $this->configuration['target'];
@@ -58,7 +59,8 @@ class {{ className }} extends Element implements ElementInterface {
 	public function	render() {
         return $this->get('templating')->render('{{ bundle }}:Element:{{ classNameLower }}.html.twig', array(
                 'id' => $this->id,
-                'configuration' => $this->configuration));
+                'configuration' => $this->configuration,
+                'label' => $this->name));
     }
 }
 
