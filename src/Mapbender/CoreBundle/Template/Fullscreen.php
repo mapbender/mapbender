@@ -20,7 +20,7 @@ class Fullscreen implements TemplateInterface {
 		return array(
 			'type' => 'application',
 			'regions' => array('top', 'content'),
-			'css' => array('fullscreen.css'),
+			'css' => array('mapbender.template.fullscreen.css'),
 			'js' => array(),
 		);
 	}

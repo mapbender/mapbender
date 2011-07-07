@@ -21,3 +21,8 @@ div.mb-element-button {
 .mb-element-button .ui-button-icon-primary.featureinfo {
     background-image: url('icons/MActionIdentify.png');
 }
+
+.mb-element-map {
+	height: 100%;
+}
+

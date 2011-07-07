@@ -5,9 +5,11 @@ $(function() {
         .css('z-index', '10000')
         .fadeTo('slow', opacity);
     wdt.hover(function(){
-        wdt.fadeTo('fast', 1.0);
+        wdt.stop()
+            .fadeTo('fast', 1.0);
     }, function(){
-        wdt.fadeTo('slow', opacity);
+        wdt.stop()
+            .fadeTo('slow', opacity);
     }
     );
 });
