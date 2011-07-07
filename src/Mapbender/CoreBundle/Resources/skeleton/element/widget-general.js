@@ -11,9 +11,7 @@ $.widget("mapbender.mb{{ widgetName }}", {
         this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
     },
 
-    destroy: function() {
-        $.Widget.prototype.destroy.call(this);
-    }
+    _destroy: $.noop
 });
 
 })(jQuery);

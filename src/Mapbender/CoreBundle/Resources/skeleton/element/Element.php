@@ -7,30 +7,30 @@ use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class {{ className }} extends Element implements ElementInterface {
-	public function getTitle() {
-		return "Please give me a title";
-	}
+    public function getTitle() {
+        return "Please give me a title";
+    }
 
-	public function getDescription() {
-		return "Please give me a description";
-	}
+    public function getDescription() {
+        return "Please give me a description";
+    }
 
-	public function getTags() {
-		return array();
-	}
+    public function getTags() {
+        return array();
+    }
 
-	public function getAssets() {
-		return array(
+    public function getAssets() {
+        return array(
             'js' => array(
                 'mapbender.element.{{ classNameLower }}.js'
             ),
             'css' => array(
                 'mapbender.elements.css'
             )
-		);
-	}
+        );
+    }
 
-	public function getConfiguration() {
+    public function getConfiguration() {
         $opts = $this->configuration;
         $opts['text'] = $this->name;
         // Resolve the run-time id of the target widget
@@ -42,8 +42,8 @@ class {{ className }} extends Element implements ElementInterface {
         return array(
             'options' => $opts,
             'init' => 'mb{{ className }}',
-		);
-	}
+        );
+    }
 
     public function httpAction($action) {
         $response = new Response();
@@ -56,7 +56,7 @@ class {{ className }} extends Element implements ElementInterface {
         return $response;
     }
 
-	public function	render() {
+    public function render() {
         return $this->get('templating')->render('{{ bundle }}:Element:{{ classNameLower }}.html.twig', array(
                 'id' => $this->id,
                 'configuration' => $this->configuration,
