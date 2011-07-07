@@ -2,7 +2,6 @@
 
 $.widget("mapbender.mbMap", {
 	options: {
-		'srs': 'EPSG:4326',
 		'layerset': null, //mapset for main map
 	},
 
@@ -50,9 +49,14 @@ $.widget("mapbender.mbMap", {
             var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
                 layers: layerConf.configuration.layers
             });
-            this.map.olMap.addControl(new OpenLayers.Control.OverviewMap({
-                layers: [layer]
-            }));
+            var overviewControl = new OpenLayers.Control.OverviewMap({
+                layers: [layer],
+                mapOptions: {
+                    maxExtent: OpenLayers.Bounds.fromArray(Mapbender.configuration.extents.max),
+                    projection: new OpenLayers.Projection(Mapbender.configuration.srs)
+                }
+            });
+            this.map.olMap.addControl(overviewControl);
         }
         this.map.olMap.addControl(new OpenLayers.Control.Scale());
         this.map.olMap.addControl(new OpenLayers.Control.LayerSwitcher());
