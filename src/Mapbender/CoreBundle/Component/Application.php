@@ -123,7 +123,9 @@ class Application implements ApplicationInterface {
                     }
 				}
 
-                $element_confs[$element->getId()] = $element->getConfiguration();
+                $element_confs[$element->getId()] = array_merge(
+                    $element->getConfiguration(),
+                    array('name' => $element->getName()));
 			}
         }
 
