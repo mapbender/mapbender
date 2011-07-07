@@ -33,10 +33,6 @@ $.widget("mapbender.mbButton", {
 	_setOption: function(key, value) {
 	},
 
-	destroy: function() {
-		$.Widget.prototype.destroy.call(this);
-	},
-
     _onClick: function() {
         // If we're part of a group, deactivate all other actions in this group
         if(this.options.group) {

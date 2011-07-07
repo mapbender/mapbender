@@ -61,10 +61,6 @@ $.widget("mapbender.mbMap", {
         self._trigger('ready');
 	},
 
-	destroy: function() {
-		$.Widget.prototype.destroy.call(this);
-	},
-
     goto: function(options) {
         this.map.goto(options);
     },

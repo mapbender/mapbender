@@ -14,10 +14,6 @@ $.widget("mapbender.mb_about_dialog", {
         me.click(function() { self._onClick.call(self); });
     },
 
-	destroy: function() {
-		$.Widget.prototype.destroy.call(this);
-	},
-
     _onClick: function() {
         if(!this.dlg) {
             this._initDialog();
