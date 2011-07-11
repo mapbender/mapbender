@@ -28,6 +28,10 @@ class User implements UserInterface {
                 return $this->password;
         }
 
+        public function getEmail() {
+            return $this->email;
+        }
+
         public function getSalt() {
                 return '';
         }
