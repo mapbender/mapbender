@@ -27,7 +27,7 @@ $.widget("mapbender.mbButton", {
         this.options.group ? me.find('input').button(o) : me.button(o);
         
         me.bind('click', $.proxy(self._onClick, self));
-        me.bind('deactivate', $.proxy(self.deactivate, self));
+        me.bind('mbButtonDeactivate', $.proxy(self.deactivate, self));
 	},
 
 	_setOption: function(key, value) {
@@ -39,7 +39,7 @@ $.widget("mapbender.mbButton", {
             var others = $('input[type="radio"][name="' + this.options.group + '"]')
                 .parent()
                 .not($(this.element));
-            others.trigger('deactivate');
+            others.trigger('mbButtonDeactivate');
         }
         this.activate();
         return false;
