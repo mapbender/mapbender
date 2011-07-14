@@ -23,6 +23,7 @@ class ProxyController extends Controller {
      */
     public function openProxyAction() {
         $request = $this->get('request');
+
         $url = parse_url($request->get('url'));
         /*
         $proxyConf = $this->container->getParameter('proxy');
@@ -40,7 +41,16 @@ class ProxyController extends Controller {
             $ch = curl_init($request->get('url'));
             if($request->getMethod() == 'POST') {
                 curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+                $contentType = explode(';', $request->headers->get('content-type'));
+                if($contentType[0] == 'application/xml') {
+                    $xml = file_get_contents('php://input');
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        'Content-type: application/xml'
+                    ));
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+                } else {
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+                }
             }
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($ch, CURLOPT_HEADER, true);
@@ -51,10 +61,10 @@ class ProxyController extends Controller {
             list($header, $content) = preg_split('/([\r\n][\r\n])\\1/', curl_exec($ch), 2);
             $status = curl_getinfo($ch);
             curl_close($ch);
-
             // Return server response
             $response = new Response();
             $response->setContent($content);
+            $response->headers->set('Content-Type', $status['content_type']);
             return $response;
         /*
         } else {

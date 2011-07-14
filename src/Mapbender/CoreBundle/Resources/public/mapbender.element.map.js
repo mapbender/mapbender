@@ -1,5 +1,7 @@
 (function($) {
 
+OpenLayers.ProxyHost = Mapbender.configuration.proxies.open + '?url=';
+
 $.widget("mapbender.mbMap", {
 	options: {
 		'layerset': null, //mapset for main map
