@@ -24,9 +24,10 @@ $.widget("mapbender.mbButton", {
         }
 
         // Radios are inside a div, so we need to button'ize the right element
-        this.options.group ? me.find('input').button(o) : me.button(o);
-        
-        me.bind('click', $.proxy(self._onClick, self));
+        var b = this.options.group ? me.find('input') : me;
+        b.button(o);
+        var c = this.options.group ? me.find('label') : me;
+        c.bind('click', $.proxy(self._onClick, self));
         me.bind('mbButtonDeactivate', $.proxy(self.deactivate, self));
 	},
 
@@ -36,9 +37,10 @@ $.widget("mapbender.mbButton", {
     _onClick: function() {
         // If we're part of a group, deactivate all other actions in this group
         if(this.options.group) {
+            var me = $(this.element);
             var others = $('input[type="radio"][name="' + this.options.group + '"]')
                 .parent()
-                .not($(this.element));
+                .not(me);
             others.trigger('mbButtonDeactivate');
         }
         this.activate();
