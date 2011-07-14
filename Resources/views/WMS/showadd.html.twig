@@ -8,8 +8,19 @@
 {% block content %}
     <div class="message">
         <form name="url" action="{{ path('mb_wms_preview') }}" method="POST">
-            <input type="url" name="getcapa_url" id="getcapa_url" value="http://osm.wheregroup.com/cgi-bin/osm_basic.xml?SERVICE=WMS&amp;REQUEST=GetCapabilities" />
-            <label for="getcapa_url">{% trans %}Capabilities URL{% endtrans %}</label> 
+            <div>
+                <label for="getcapa_url">{% trans %}Capabilities URL{% endtrans %}</label> 
+                <input type="url" name="getcapa_url" id="getcapa_url" value="" />
+            </div>
+            <div>
+                <label for="http_user">{% trans %}HTTP User{% endtrans %}</label>
+                <input type="text" name="http_user" />
+            </div>
+            <div>
+                <label for="http_password">{% trans %}HTTP Password{% endtrans %}</label>
+                <input type="password" name="http_password" />
+            </div>
+
             <input type="submit" name="save" value="{% trans %}Load{% endtrans %}" /> 
         </form>
         <form name="upload" action="{{ path('mb_wms_preview')  }}" method="POST">

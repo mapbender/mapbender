@@ -5,6 +5,9 @@ use MB\CoreBundle\Entity\Keyword;
 use MB\WMSBundle\Entity\GroupLayer;
 use Doctrine\Common\Collections\ArrayCollection;
 
+/**
+ * @ORM\Entity
+*/
 class WMSService extends GroupLayer {
 
     /**
@@ -22,20 +25,10 @@ class WMSService extends GroupLayer {
     */
     protected $accessConstraints = "";
     
-    /**
-     * @ORM\ManyToMany(targetEntity="MB\CoreBundle\Entity\Keyword")
-    */
-    protected $keywords;
-    
 
     public function __construct() {
-        $this->keywords = new ArrayCollection();
         # calling super  - how to avoid ?
         return parent::__construct();
-    }
-
-    public function getKeywords(){
-        return $this->keywords;
     }
 
     public function setVersion($version){

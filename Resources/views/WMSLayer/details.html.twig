@@ -1,0 +1,13 @@
+{% extends 'MBWMSBundle:WMS:base.html.twig' %}
+{% block title %}Details for {{ wmsLayer.getTitle() }} {% endblock %}
+
+{% block content %}
+    <div class="wmsLayer">
+        <h1 class="title" ><a href="{{ wmsLayer.getId() }}" target="_new">{{ wmsLayer.getTitle() }}</a></h1> <h2 class="name">({{ wmsLayer.getName() }})</h2>
+        <p class="abstract">{{ wmsLayer.getAbstract() }}</p>
+        <h3>{% trans %}Layer{% endtrans %}</h3>
+        {% for layer in wmsLayer.getLayer() %}
+          {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
+        {% endfor %}
+    </div>
+{% endblock %}

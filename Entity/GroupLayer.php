@@ -9,7 +9,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 class GroupLayer extends Layer {
 
     /**
-     * @ORM\ManyToMany(targetEntity="GroupLayer", cascade={"all"})
+     * @ORM\ManyToOne(targetEntity="GroupLayer",inversedBy="layer")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+    */
+     protected $parent;
+
+    /**
+     * @ORM\OneToMany(targetEntity="GroupLayer",mappedBy="parent", cascade={"all"})
     */
     protected $layer;
     

@@ -6,6 +6,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
 * @ORM\Entity
+* @ORM\InheritanceType("JOINED")
+* @ORM\DiscriminatorColumn(name="discr", type="string")
+* @ORM\DiscriminatorMap({"wmsservice" = "WMSService", "wmslayer" = "WMSLayer", "grouplayer" = "GroupLayer"})
 */
 abstract class Layer implements LayerInterface{
     /**
@@ -21,12 +24,12 @@ abstract class Layer implements LayerInterface{
     protected $title = "";
     
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable="true")
      */
     protected $name = "";
     
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text",nullable="true")
      */
     protected $abstract = "";
 

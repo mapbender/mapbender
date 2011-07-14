@@ -10,11 +10,14 @@ class WMSType  extends AbstractType {
     public function buildForm(FormBuilder $builder, array $options){
         $builder->add("title");
         $builder->add("name","text",array(
+            "required" => false
         ));
         $builder->add("abstract","text",array(
             "required" => false
         ));
-        $builder->add("layer",'collection',array( 'type' => new WMSLayerType(),));
+        $builder->add("layer",'collection',array( 
+            'type' => new WMSLayerType(),
+        ));
 
     }
     public function getDefaultOptions(array $options){

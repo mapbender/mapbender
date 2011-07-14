@@ -98,20 +98,19 @@ class WMSController extends Controller {
     */
     public function addAction(){
 
-        // define the structure of the data that we wish to bind from the submittet formdata
-        // This does not work for arbitrarily nested WMSLayer
-        $wms = new WMSService();
-        $layer = new WMSLayer();
-        $wms->addLayer($layer);
-
-        $form = $this->get('form.factory')->create(new WMSType(),$wms); 
         $request = $this->get('request');
+        /* build up nested wmslayer structure */
+        $requestWMS = $request->get('wms');
+        $wms = new WMSService();
+        $wms = $this->buildWMSFormStructure($requestWMS,$wms);
+        $form = $this->get('form.factory')->create(new WMSType(),$wms); 
+
         $form->bindRequest($request);
-        
+
     
         if($form->isValid()){
             $em = $this->get("doctrine.orm.entity_manager");
-            $em->persist($wms);
+            $this->persistRecursive($wms,$em);
             $em->flush();
             return $this->redirect($this->generateUrl("mb_wms_details",array("id" => $wms->getId()),true));
         }else{
@@ -163,9 +162,6 @@ class WMSController extends Controller {
         }
         
 
-        $data = file_get_contents($getcapa_url);
-
-
 
         $ch = curl_init($getcapa_url);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -173,7 +169,6 @@ class WMSController extends Controller {
         
         $proxyConf = $this->container->getParameter('proxy');
         if($proxyConf && isset($proxyConf['host']) && $proxyConf['host'] != ""){
-            throw new \Exception($proxyConf['host']);
             curl_setopt($ch, CURLOPT_PROXY,$proxyConf['host']);
             curl_setopt($ch, CURLOPT_PROXYPORT,$proxyConf['port']);
         }
@@ -201,6 +196,33 @@ class WMSController extends Controller {
                 "xml" => $data
             ));
     }
+
+
+    public function persistRecursive($grouplayer,$em){
+        if(count($grouplayer->getLayer()) > 1 ){
+            foreach($grouplayer->getLayer() as $layer){
+                $this->persistRecursive($layer,$em);
+            }
+        }
+        $em->persist($grouplayer);
+        $em->flush();
+    }
+    /**
+     * Aids in Form Construction
+    */
+    public function buildWMSFormStructure(array $grouplayerArr, $grouplayer){
+        if(isset($grouplayerArr['layer']) && is_array($grouplayerArr['layer'])){
+                foreach($grouplayerArr['layer'] as $layerArr){
+                        $layer = new WMSLayer();
+                        if(isset($layerArr['layer']) && is_array($layerArr['layer']) && count($layerArr['layer'])){
+                                $layer = $this->buildWMSFormStructure($layerArr,$layer);
+
+                        }   
+                        $grouplayer->addLayer($layer);
+                }   
+        }   
+        return $grouplayer;
+    } 
     
 
 
