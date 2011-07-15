@@ -31,7 +31,10 @@ class Mapbender2UserProvider implements UserProviderInterface {
                         return;
                 }
 
-                return new User($username, $user_data['mb_user_password'], $user_data['mb_user_email']);
+                return new User($username,
+                    $user_data['mb_user_password'],
+                    $user_data['mb_user_email'],
+                    $user_data['mb_user_realname']);
         }
 
         public function refreshUser(UserInterface $user) {

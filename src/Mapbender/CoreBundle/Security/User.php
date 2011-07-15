@@ -12,12 +12,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface {
 	protected $username;
 	protected $password;
-	protected $email;
+    protected $email;
+    protected $realname;
 
-	public function __construct($username, $password, $email) {
+	public function __construct($username, $password, $email, $realname) {
                 $this->username = $username;
                 $this->password = $password;
                 $this->email = $email;
+                $this->realname = $realname;
         }
 
         public function getRoles() {
@@ -30,6 +32,10 @@ class User implements UserInterface {
 
         public function getEmail() {
             return $this->email;
+        }
+
+        public function getRealname() {
+            return $this->realname;
         }
 
         public function getSalt() {
