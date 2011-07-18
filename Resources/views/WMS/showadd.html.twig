@@ -8,7 +8,10 @@
 {% block content %}
     <div class="message">
         <form name="url" action="{{ path('mb_wms_preview') }}" method="POST">
-            <div>
+            
+			 <fieldset>
+   			<legend>Capabilities-URL laden</legend>
+			<div>
                 <label for="getcapa_url">{% trans %}Capabilities URL{% endtrans %}</label> 
                 <input type="url" name="getcapa_url" id="getcapa_url" value="" />
             </div>
@@ -20,13 +23,18 @@
                 <label for="http_password">{% trans %}HTTP Password{% endtrans %}</label>
                 <input type="password" name="http_password" />
             </div>
-
-            <input type="submit" name="save" value="{% trans %}Load{% endtrans %}" /> 
+			<input type="submit" name="save" value="{% trans %}Load{% endtrans %}" /> 			
         </form>
+		</fieldset>
+
+		 <fieldset>
+   			<legend>Capabilities-URL hochladen</legend>
+			
         <form name="upload" action="{{ path('mb_wms_preview')  }}" method="POST">
             <input type="file" name="getcapa_file" id="getcapa_file />
-            <label for="getcapa_file">{% trans %}Capabilities File{% endtrans %}</label>
+            <label for="getcapa_file">{% trans %}<br/><br/>Capabilities File{% endtrans %}</label>
             <input type="submit" name="save" value="{% trans %}Load{% endtrans %}" />
         </form>
+		</fieldset>
     </div>
 {% endblock %}

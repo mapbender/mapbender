@@ -1,10 +1,14 @@
 {% extends '::base.html.twig' %} 
 
 {% block wms_navigation %}
-<ul class="actions">
-    <li><a href="{{ path('mb_wms_showadd')  }}">{% trans %}Add WMS{% endtrans %}</a></li>
-    <li><a href="{{ path('mb_wms_index')  }}">{% trans %}Find WMS{% endtrans %}</a></li>
-</ul>
+<div class="action">
+    <a href="{{ path('mb_wms_showadd')  }}">{% trans %}WMS registrieren{% endtrans %}</a>
+</div>
+<div class="action">
+    <form class="search wms_search"><label>{% trans %}Suchen&nbsp;&nbsp;{% endtrans %}<input name="title" /></label><input type="submit" value="{% trans %}Suche starten{% endtrans %}" />
+	</form>
+</div>
+
 {% endblock %}
 {% block body %}
     <div class="content">

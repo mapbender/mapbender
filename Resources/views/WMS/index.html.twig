@@ -2,12 +2,6 @@
 
 {% block heading %}WMS{% endblock %}
 {% block content %}
-<p>Auf dieser Seite können OGC WMS geladen und bearbetet werden. </p>
-<form class="search wms_search">
-    <div><label>{% trans %}Title{% endtrans %}<input name="title" /></label></div> 
-    <input type="submit" value="{% trans %}Search{% endtrans %}" />
-</form>
-
 <ul class="wms">
     {% for wms in wmsArr %}
         <li><a href=" {{ path("mb_wms_details",{'id': wms.getId()}) }}">{{ wms.getTitle() }}</a></li>
