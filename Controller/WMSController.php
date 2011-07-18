@@ -167,7 +167,13 @@ class WMSController extends Controller {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
-        $proxyConf = $this->container->getParameter('proxy');
+        try {
+            $proxyConf = $this->container->getParameter('proxy');
+        }catch(\InvalidArgumentException $E){
+            // thrown when the parameter is not set
+            // maybe some logging ?
+            $proxyConf = array();
+        }
         if($proxyConf && isset($proxyConf['host']) && $proxyConf['host'] != ""){
             curl_setopt($ch, CURLOPT_PROXY,$proxyConf['host']);
             curl_setopt($ch, CURLOPT_PROXYPORT,$proxyConf['port']);
