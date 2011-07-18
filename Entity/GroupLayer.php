@@ -9,8 +9,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 class GroupLayer extends Layer {
 
     /**
-     * @ORM\ManyToOne(targetEntity="GroupLayer",inversedBy="layer")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="GroupLayer",inversedBy="layer", cascade={"a;ll"})
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable="false")
     */
      protected $parent;
 
@@ -45,6 +45,20 @@ class GroupLayer extends Layer {
             $this->layer->add($newLayer);
         }
 
+    }
+
+    /**
+     * sets the Parent layer
+     */
+    public function setParent(Layer $parent){
+        $this->parent = $parent;
+    }
+    
+    /**
+     * gets the Parent layer
+     */
+    public function getParent(Layer $parent){
+        return $this->parent;
     }
 
 }

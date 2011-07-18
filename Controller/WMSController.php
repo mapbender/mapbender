@@ -111,6 +111,7 @@ class WMSController extends Controller {
         if($form->isValid()){
             $em = $this->get("doctrine.orm.entity_manager");
             $this->persistRecursive($wms,$em);
+            $em->persist($wms);
             $em->flush();
             return $this->redirect($this->generateUrl("mb_wms_details",array("id" => $wms->getId()),true));
         }else{
@@ -205,12 +206,13 @@ class WMSController extends Controller {
 
 
     public function persistRecursive($grouplayer,$em){
-        if(count($grouplayer->getLayer()) > 1 ){
+        $em->persist($grouplayer);
+        if(count($grouplayer->getLayer()) > 0 ){
             foreach($grouplayer->getLayer() as $layer){
+                $layer->setParent($grouplayer);
                 $this->persistRecursive($layer,$em);
             }
         }
-        $em->persist($grouplayer);
         $em->flush();
     }
     /**
