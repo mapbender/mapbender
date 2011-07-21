@@ -177,13 +177,14 @@ class WMSController extends Controller {
         }
         if($proxyConf && isset($proxyConf['host']) && $proxyConf['host'] != ""){
             curl_setopt($ch, CURLOPT_PROXY,$proxyConf['host']);
-            curl_setopt($ch, CURLOPT_PROXYPORT,$proxyConf['port']);
+            curl_setopt($ch, CURLOPT_PROXYPORT,$proxyConf['port']?:"");
         }
 
         $data = curl_exec($ch);
 
         if(!$data){
-            throw new \Exception('data is not empty');
+            $this->get("logger")->debug("$getcapa_url returned no data");
+            throw new \Exception('Service returned no Data');
         }
 
         $capaParser = new CapabilitiesParser($data);
