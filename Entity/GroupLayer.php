@@ -57,7 +57,7 @@ class GroupLayer extends Layer {
     /**
      * gets the Parent layer
      */
-    public function getParent(Layer $parent){
+    public function getParent(){
         return $this->parent;
     }
 

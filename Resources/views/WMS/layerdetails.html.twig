@@ -1,5 +1,5 @@
 <div class="wmslayer">
-<h1>{{ layer.getTitle() }}<h1><h2>{{ layer.getName() }}</h2>
+<h1><a href="{{ path('mb_wmslayer_details',{'wmsId': layer.getWMS().getId(),'id':layer.getId()})  }}">{{ layer.getTitle() }}</a><h1><h2>{{ layer.getName() }}</h2>
 <p class="abstract">{{ layer.getAbstract() }}</p>
 {% for layer in layer.getLayer() %}
   {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
