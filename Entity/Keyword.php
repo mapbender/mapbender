@@ -28,4 +28,14 @@ class Keyword {
     }
     
 
+
+    /**
+     * Get id
+     *
+     * @return integer $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 }
