@@ -10,7 +10,7 @@
 
 <tr>
 <td>
-<h2>{{ layer.getTitle() }}<h2>
+<h2><a href="{{ path('mb_wmslayer_details',{'wmsId': layer.getWMS().getId(),'id':layer.getId()})  }}">{{ layer.getTitle() }}</a><h2>
 </td>
 
 <td>
