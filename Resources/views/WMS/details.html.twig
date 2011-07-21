@@ -114,14 +114,14 @@ var previewWMS = {
     url: '{{ wms.getGetMapGet() }}',
     rootlayer: '{{ wms.getRootLayer().getName() }}',
     format: '{{ wms.getDefaultGetMapFormat() }}',
+    projection: '{{ wms.getRootLayer().getDefaultSRS() }}',
     bounds: {
                 left: '{{ minx }}',
                 bottom: '{{ miny }}',
                 right:'{{ maxx }}',
                 top: '{{ maxy }}'
             }
-    projection: '{{ wms.getRootLayer().getDefaultSRS() }}'
-}
+};
 
 </script>
 <script src="{{asset('js/ol/OpenLayers-2.10/OpenLayers.js') }}"></script>

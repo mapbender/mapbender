@@ -78,13 +78,13 @@ class WMSController extends Controller {
             return array();
         }
         $bounds = $wms->getRootLayer()->getLatLonBounds();
-        $bounds = explode(" ",$bounds);
+        $b = explode(" ",$bounds);
         return $this->commonData(array(
             "wms" => $wms,
-            "minx" => $bounds[0],
-            "miny" => $bounds[1],
-            "maxx" => $bounds[2],
-            "maxy" => $bounds[3]
+            "minx" => isset($b[0])?$b[0]:"",
+            "miny" => isset($b[1])?$b[1]:"",
+            "maxx" => isset($b[2])?$b[2]:"",
+            "maxy" => isset($b[3])?$b[3]:""
         ));
     }
     
