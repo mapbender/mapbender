@@ -46,7 +46,6 @@ class CapabilitiesParserTest extends PHPUnit_Framework_TestCase {
     public function testLayersRootLayerOnly(){
         $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
         $parser  = new CapabilitiesParser($data);
-        $parser  = new CapabilitiesParser($data);
         $wms = $parser->getWMSService();
         $this->assertEquals(1,$wms->getLayer()->count());
 
@@ -56,6 +55,20 @@ class CapabilitiesParserTest extends PHPUnit_Framework_TestCase {
         $this->assertSame("A Layerabstract",$rootLayer->getAbstract(),"Root Layer abstract is wrong" );
         # The root layer itself has no sublayers
         $this->assertEquals(0,$rootLayer->getlayer()->count(), "Root Layer does not have 0 sub layers");
+    }
+
+    public function testGetMap(){
+        $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
+        $parser  = new CapabilitiesParser($data);
+        $wms = $parser->getWMSService();
+        $this->assertEquals(1,$wms->getLayer()->count());
+
+        $this->assertSame("image/png",$wms->getDefaultGetMapFormat());
+        $this->assertSame("http://example.com/ohmyawms",$wms->getGetMapGet());
+
+        $rootLayer = $wms->getRootLayer();
+        $this->assertEquals("EPSG:4326",$rootLayer->getDefaultSrs());
+        $this->assertEquals("-10.4 35.7 -180 180",$rootLayer->getLatLonBounds());
     }
     
 }

@@ -13,7 +13,7 @@ and a single layer are present
   <Capability>
     <Request>
         <GetCapabilities>
-            <Format>application/vnd.ogc.wms_xml </Format>
+            <Format>application/vnd.ogc.wms_xml</Format>
             <DCPType>
               <HTTP>
                 <Get>
@@ -23,7 +23,7 @@ and a single layer are present
             </DCPType>
         </GetCapabilities>
         <GetMap>
-            <Format></Format>
+            <Format>image/png</Format>
             <DCPType>
               <HTTP>
                 <Get>

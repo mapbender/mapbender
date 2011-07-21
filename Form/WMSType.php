@@ -15,6 +15,21 @@ class WMSType  extends AbstractType {
         $builder->add("abstract","text",array(
             "required" => false
         ));
+        $builder->add("fees","text",array(
+            "required" => false
+        ));
+        $builder->add("accessConstraints","text",array(
+            "required" => false
+        ));
+        $builder->add("getMapGet","hidden",array(
+            "required" => false
+        ));
+        $builder->add("getMapFormats","hidden",array(
+            "required" => false
+        ));
+        $builder->add("getMapFormats","hidden",array(
+            "required" => false
+        ));
         $builder->add("layer",'collection',array( 
             'type' => new WMSLayerType(),
         ));

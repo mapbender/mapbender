@@ -75,6 +75,11 @@ class CapabilitiesParser {
                             if($node->nodeType == XML_ELEMENT_NODE){ 
                                 switch($node->nodeName){
                                     case "Request":
+                                        foreach ($node->childNodes as $node){
+                                            if($node->nodeType == XML_ELEMENT_NODE){ 
+                                                 $this->requestDescriptionFromNode($wms,$node);
+                                            }
+                                        }
                                     break;
                                     case "Exception":
                                     break;
@@ -107,6 +112,7 @@ class CapabilitiesParser {
     protected function WMSLayerFromLayerNode(\DOMNode $layerNode){
 
         $layer = new WMSLayer();
+        $srs = array();
 
         foreach($layerNode->childNodes as $node){
             if($node->nodeType == XML_ELEMENT_NODE){  
@@ -124,10 +130,16 @@ class CapabilitiesParser {
                     break;
                     
                     case "SRS":
-                        # $layer->addSRS();
+                        $srs[] = $node->nodeValue;
                     break;
 
                     case "LatLonBoundingBox":   
+                        $bounds = array(4);
+                        $bounds[0] = trim($node->getAttribute("minx"));
+                        $bounds[1] = trim($node->getAttribute("miny"));
+                        $bounds[2] = trim($node->getAttribute("maxx"));
+                        $bounds[3] = trim($node->getAttribute("maxy"));
+                        $layer->setLatLonBounds(implode(' ',$bounds));
                     break;
 
                     case "BoundingBox":
@@ -153,11 +165,72 @@ class CapabilitiesParser {
             }
         }
 
+        $srs = implode(',',$srs);
+        $layer->setSRS($srs);
         // check for manadory elements
         if($layer->getTitle() === null){
             throw new \Exception("Invalid Layer definition, mandatory Field 'Title' not defined");
         }
         return $layer;
+    }
+
+    public function RequestDescriptionFromNode($wms,\DomNode $RequestNode){
+        $formats = array();
+        $get  = "";
+        $post ="";
+        foreach ($RequestNode->childNodes as $node){
+            if($node->nodeType == XML_ELEMENT_NODE){ 
+                switch ($node->nodeName) {
+                    case "Format":
+                        $formats[] = $node->nodeValue;
+                    break;
+                    case "DCPType":
+                        try{
+                            foreach ($node->childNodes as $httpnode){
+                                if($httpnode->nodeType == XML_ELEMENT_NODE){ 
+                                    foreach ($httpnode->childNodes as $methodnode){
+                                        if($methodnode->nodeType == XML_ELEMENT_NODE){ 
+                                            switch ($methodnode->nodeName) {
+                                                case "Get":
+                                                    foreach ($methodnode->childNodes as $resnode){
+                                                        if($resnode->nodeType == XML_ELEMENT_NODE){ 
+                                                            $get = $resnode->getAttributeNS("http://www.w3.org/1999/xlink" ,"href");
+                                                        }
+                                                    }
+                                                break;
+                                                case "Post":
+                                                    foreach ($methodnode->childNodes as $resnode){
+                                                        if($resnode->nodeType == XML_ELEMENT_NODE){ 
+                                                            $post = $resnode->getAttributeNS("http://www.w3.org/1999/xlink" ,"href");
+                                                        }
+                                                    }
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }catch(\Exception $E){
+                            throw $E;
+                        }
+                    break;
+                }
+            }
+        }
+
+        switch($RequestNode->nodeName){
+            case "GetMap":
+                $wms->setGetMapGet($get);
+                // FIXME: what if a format contains a , ?
+                $wms->setGetMapFormats(implode(',',$formats));
+            break;
+            case "getCapabilities":
+            case "getFeatureInfo":
+            case "DescribeLayer":
+            case "GetLegendGraphic":
+            break;
+        }
+
     }
     
 }

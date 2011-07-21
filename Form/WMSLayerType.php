@@ -13,6 +13,12 @@ class WMSLayerType  extends AbstractType {
         $builder->add("abstract","text",array(
             "required" => false,
         ));
+        $builder->add("srs","hidden",array(
+            "required" => false,
+        ));
+        $builder->add("latLonBounds","hidden",array(
+            "required" => false,
+        ));
         $builder->add("layer",'collection',array( 
             'type' => new WMSLayerType(),
         ));

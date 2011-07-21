@@ -8,10 +8,10 @@
     <input type="hidden" value="{{ xml }}" />
     <form action="{{ path('mb_wms_add') }}" method="POST">
         <input type="submit" name="save" value="{% trans %}Add WMS{% endtrans %}"/> 
+        {{ form_rest(form) }}
         <div class="layers" >
             {{ form_widget(form.layer) }}
         </div>
-        {{ form_rest(form) }}
          <input type="submit" name="save" value="{% trans %}Add WMS{% endtrans %}"/> 
     </form>
 {% endblock %}

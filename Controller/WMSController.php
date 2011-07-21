@@ -77,9 +77,14 @@ class WMSController extends Controller {
         if(!$wms){
             return array();
         }
-
+        $bounds = $wms->getRootLayer()->getLatLonBounds();
+        $bounds = explode(" ",$bounds);
         return $this->commonData(array(
-            "wms" => $wms
+            "wms" => $wms,
+            "minx" => $bounds[0],
+            "miny" => $bounds[1],
+            "maxx" => $bounds[2],
+            "maxy" => $bounds[3]
         ));
     }
     

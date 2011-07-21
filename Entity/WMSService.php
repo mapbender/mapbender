@@ -11,17 +11,27 @@ use Doctrine\Common\Collections\ArrayCollection;
 class WMSService extends GroupLayer {
 
     /**
-    * @ORM\Column(type="string")
+    * @ORM\Column(type="string", nullable="true")
     */
     protected $version = "";
 
     /**
-    * @ORM\Column(type="string")
+    * @ORM\Column(type="string", nullable="true")
     */
     protected $fees = "";
     
     /**
-    * @ORM\Column(type="string")
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $getMapGet = "";
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $getMapFormats = "";
+    
+    /**
+    * @ORM\Column(type="string",nullable="true")
     */
     protected $accessConstraints = "";
     
@@ -54,5 +64,37 @@ class WMSService extends GroupLayer {
     public function getAccessConstraints(){
         return $this->accessConstraints;
     }
+    
+    public function setGetMapGet($getMapGet){
+        $this->getMapGet = $getMapGet;
+    }
+    
+    public function getGetMapGet(){
+        return $this->getMapGet;
+    }
+    
+    public function setGetMapFormats($formats){
+        $this->getMapFormats = $formats;
+    }
+    
+    public function getGetMapFormats(){
+        return $this->getMapFormats;
+    }
+
+    /**
+     * returns the default (first) format that a wms supports for getMap requests
+    */
+    public function getDefaultGetMapFormat(){
+        $formats = explode(',',$this->getMapFormats);
+        return $formats[0];
+    }
+
+   /**
+    *
+    */ 
+    public function getRootLayer(){
+        return $this->getLayer()->get(0);
+    }
+
     
 }
