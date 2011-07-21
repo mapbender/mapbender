@@ -11,7 +11,6 @@ class WMSLayer extends GroupLayer {
 
     /**
      * returns the WMSService a WMSLayer belongs to. This is neccessary because WMSLayer::getParent() might return a GroupLayer only
-     * @returns WMSService
      */
     public function getWMS(){
         $layer = $this;
