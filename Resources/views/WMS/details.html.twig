@@ -3,17 +3,49 @@
 {% block title %}Details for {{ wms.getTitle() }} {% endblock %}
 
 {% block content %}
+
+<fieldset>
+<legend>WMS-Detail</legen>	
+<div class="wms">
+        
+        <table>
+        <tr>
+        <th>WMS Titel</th>
+        <th>WMS Name</th>
+        <th>Abstract</th>
+        <th>Preview</th>
+        </tr>
+        
+        <tr>
+        <td><h1 class="title" ><a href="{{ wms.getId() }}" target="_new">{{ wms.getTitle() }}</a></h1></td>
+        
+        <td><h2 class="name">({{ wms.getName() }})</h2></td>
+         
+        <td><p class="abstract">{{ wms.getAbstract() }}</p></td>
+        
+        <td><div id="map" class="smallmap"></div></td>
+        </tr>
+        
+        </table>
+</fieldset>
+        
+     <p class="fees">{{ wms.getFees() }}</p>
+     <p class="accessConstraints">{{ wms.getAccessConstraints() }}</p>
+     <div class="contact"></div>
+
+
+<fieldset>
+<legend>Edit</legend>
     <ul class="actions">
         <li><a href="{{ path('mb_wms_showdelete',{'id':wms.getId()}) }}">{% trans %}Delete{% endtrans %}</a></li>
         <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
         <li><a href="#">{% trans %}Update{% endtrans %}</a></li>
     </ul>
-    <div class="wms">
-        <h1 class="title" ><a href="{{ wms.getId() }}" target="_new">{{ wms.getTitle() }}</a></h1> <h2 class="name">({{ wms.getName() }})</h2>
-        <p class="abstract">{{ wms.getAbstract() }}</p>
-        <p class="fees">{{ wms.getFees() }}</p>
-        <p class="accessConstraints">{{ wms.getAccessConstraints() }}</p>
-        <div class="contact"></div>
+</fieldset>
+
+     
+  <fieldset>
+        <legend>Keywords</legend>
         <ul class="keywords">
         {#
          {% for keyword in wms.getKeywords() %}
@@ -21,27 +53,61 @@
          {% endfor %}
         #}
         </ul>
-        <div class="request getCapabilities">
-        <h3>GetCapabilities</h3>
+       </fieldset>
+       
+       <fieldset> 
+        <legend>GetCapabilities</legend>
         <ul class="httpdcptypes">
          <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
          <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+         <li class="formats">application/vnd.ogc.wms_xml</li>
         </ul>
-        <ul class="formats">
-            <li>application/vnd.ogc.wms_xml
-        </ul>
-        </div>
+        </fieldset>
+        
+        <fieldset>
+        <legend>GetMap</legend> 
         <div class="request getMap">
-        <h3>GetMap</h3>
         <ul>
          <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
          <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
         </ul>
         </div>
-
-        <h3>{% trans %}Layer{% endtrans %}</h3>
+		</fieldset>
+		
+		
+		<fieldset>
+        <legend>Preview</legend> 
+        <div>
+        <ul>
+         <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+         <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+        </ul>
+        </div>
+		</fieldset>
+		
+		
+		<!--fieldset>
+        <legend>Preview Open Layers</legend>
+        <div id="map" class="smallmap"></div>
+		</fieldset-->
+		
+		
+		
+        <h2>{% trans %}Layerdetails{% endtrans %}</h2>
         {% for layer in wms.getLayer() %}
           {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
         {% endfor %}
     </div>
 {% endblock %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{asset('js/ol/OpenLayers-2.10/examples/style_example.css') }}" />
+	<link rel="stylesheet" href="{{asset('js/ol/OpenLayers-2.10/theme/default/styleol.css') }}" />
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{asset('js/ol/OpenLayers-2.10/OpenLayers.js') }}"></script>
+<script src="{{asset('js/ol/ol_client.js') }}"></script>		
+	
+{% endblock %}
+

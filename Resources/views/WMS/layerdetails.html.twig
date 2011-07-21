@@ -1,7 +1,35 @@
 <div class="wmslayer">
-<h1>{{ layer.getTitle() }}<h1><h2>{{ layer.getName() }}</h2>
-<p class="abstract">{{ layer.getAbstract() }}</p>
+
+<table>
+
+<tr>
+<th>Layertitel</th>
+<th>Layername</th>
+<!--th>Abstract</th-->
+</tr>
+
+<tr>
+<td>
+<h2>{{ layer.getTitle() }}<h2>
+</td>
+
+<td>
+<h2>{{ layer.getName() }}</h2>
+</td>
+
+<!--td>
+<p class="abstract">{{ layer.getAbstract() }}folgt</p>
+</td-->
+
+</tr>
+</table>
+
+
+
+
 {% for layer in layer.getLayer() %}
   {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
 {% endfor %}
+
+
 </div>
