@@ -14,3 +14,7 @@ html, body {
 .region#content {
 	height: 100%;
 }
+
+.olControlPanZoomBar {
+    top: 40px!important
+}
