@@ -193,7 +193,8 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
 
     _listWmcSuccess: function(data) {
         var me = $(this.element),
-            select = me.find('select#wmc-doc-title-load');
+            select = me.find('select#wmc-doc-title-load').
+                empty();
 
         $.each(data, function(idx, wmc) {
             $('<option></option>')
