@@ -14,6 +14,7 @@ class User implements UserInterface {
 	protected $password;
     protected $email;
     protected $realname;
+    protected $extraData;
 
 	public function __construct($username, $password, $email, $realname) {
                 $this->username = $username;
@@ -36,6 +37,14 @@ class User implements UserInterface {
 
         public function getRealname() {
             return $this->realname;
+        }
+
+        public function setExtraData($data) {
+            $this->extraData = $data;
+        }
+
+        public function getExtraData() {
+            return $this->extraData;
         }
 
         public function getSalt() {
