@@ -36,8 +36,36 @@ class Map extends Element implements ElementInterface {
 
     public function getConfiguration() {
         //TODO: Cherry pick
+
+        $extra = array();
+        $poi = $this->get('request')->get('poi');
+        if($poi) {
+            $extra['type'] = 'poi';
+            $point = split(',', $poi['point']);
+            $extra['data'] = array(
+                'x' => floatval($point[0]),
+                'y' => floatval($point[1]),
+                'label' => $poi['label']
+            );
+        }
+
+        $bbox = $this->get('request')->get('bbox');
+        if(!$poi && $bbox) {
+            $bbox = split(',', $bbox);
+            if(count($bbox) === 4) {
+                $extra['type'] = 'bbox';
+                $extra['data'] = array(
+                    'xmin' => floatval($bbox[0]),
+                    'ymin' => floatval($bbox[1]),
+                    'xmax' => floatval($bbox[2]),
+                    'ymax' => floatval($bbox[3])
+                );
+            }
+        }
+
+        $options = array_merge(array('extra' => $extra), $this->configuration);
 		return array(
-			'options' => $this->configuration,
+			'options' => $options,
 			'init' => 'mbMap',
 		);
 	}

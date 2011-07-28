@@ -45,19 +45,58 @@ $.widget("mapbender.mbMap", {
                 box: Mapbender.configuration.extents.start,
             });
         }
+        if(this.options.extra.type) {
+            switch(this.options.extra.type) {
+                case 'poi':
+                    this.map.goto({
+                        position: [ this.options.extra.data.x, 
+                            this.options.extra.data.y ]
+                    });
+                    if(this.options.extra.data.label) {
+                        var position = new OpenLayers.LonLat(
+                            this.options.extra.data.x,
+                            this.options.extra.data.y);
+                        var popup = new OpenLayers.Popup.FramedCloud('chicken',
+                            position,
+                            null,
+                            this.options.extra.data.label,
+                            null,
+                            true,
+                            function() {
+                                self.removePopup(this);
+                                this.destroy();
+                            });
+                        this.addPopup(popup);
+                    }
+                    break;
+                case 'bbox':
+                    this.map.goto({
+                        box: [
+                            this.options.extra.data.xmin, this.options.extra.data.ymin,
+                            this.options.extra.data.xmax, this.options.extra.data.ymax
+                        ]});
+            }
+        }
 
         if(this.options.overview) {
-            var layerConf = Mapbender.configuration.layersets[this.options.overview][0];
+            var layerConf = Mapbender.configuration.layersets[this.options.overview.mapset][0];
             var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
                 layers: layerConf.configuration.layers
             });
-            var overviewControl = new OpenLayers.Control.OverviewMap({
+            var overviewOptions = {
                 layers: [layer],
                 mapOptions: {
                     maxExtent: OpenLayers.Bounds.fromArray(Mapbender.configuration.extents.max),
                     projection: new OpenLayers.Projection(Mapbender.configuration.srs)
                 }
-            });
+            };
+            if(this.options.overview.fixed) {
+                $.extend(overviewOptions, {
+                    minRatio: 1,
+                    maxRatio: 1000000000
+                });
+            }
+            var overviewControl = new OpenLayers.Control.OverviewMap(overviewOptions);
             this.map.olMap.addControl(overviewControl);
         }
         this.map.olMap.addControl(new OpenLayers.Control.Scale());
