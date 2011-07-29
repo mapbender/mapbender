@@ -55,6 +55,10 @@ $.widget("mapbender.mbMap", {
                         position: [ this.options.extra.data.x, 
                             this.options.extra.data.y ]
                     });
+                    if(this.options.extra.data.scale) {
+                        this.zoomToScale(this.options.extra.data.scale);
+                    }
+
                     if(this.options.extra.data.label) {
                         var position = new OpenLayers.LonLat(
                             this.options.extra.data.x,
@@ -218,6 +222,10 @@ $.widget("mapbender.mbMap", {
         if(scale) {
             this.map.olMap.zoomToScale(scale, true);
         }
+    },
+
+    zoomToScale: function(scale) {
+        this.map.olMap.zoomToScale(scale, true);
     },
 
     panMode: function() {

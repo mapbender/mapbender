@@ -45,7 +45,8 @@ class Map extends Element implements ElementInterface {
             $extra['data'] = array(
                 'x' => floatval($point[0]),
                 'y' => floatval($point[1]),
-                'label' => $poi['label']
+                'label' => $poi['label'],
+                'scale' => $poi['scale']
             );
         }
 
