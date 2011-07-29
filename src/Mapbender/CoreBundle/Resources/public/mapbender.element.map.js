@@ -39,6 +39,9 @@ $.widget("mapbender.mbMap", {
 
         me.mapQuery(mapOptions);
         this.map = me.data('mapQuery');
+        
+        //TODO: Bind all events
+        this.map.bind('zoomend', function() { self._trigger('zoomend', arguments); });
 
         if(Mapbender.configuration.extents.start) {
             this.map.goto({
