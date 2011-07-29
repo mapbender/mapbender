@@ -46,7 +46,8 @@ class Button extends Element implements ElementInterface {
 	public function	render() {
             return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
                 'id' => $this->id,
-                'configuration' => array_merge($this->configuration, array('text' => $this->name))));
+                'configuration' => $this->configuration,
+                'label' => $this->name));
 	}
 }
 

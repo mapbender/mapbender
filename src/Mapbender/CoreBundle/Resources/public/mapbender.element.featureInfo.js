@@ -34,6 +34,7 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
     },
 
     deactivate: function() {
+        this._super('deactivate');
         if(this.map)
             this.map.element.unbind('click', this.mapClickHandler);
     },

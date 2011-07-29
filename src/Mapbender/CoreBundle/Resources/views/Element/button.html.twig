@@ -1,8 +1,1 @@
-{% if configuration.group is defined %}
-<div class="mb-element mb-element-button{% if configuration.icon is defined %} mb-element-button-icon{% endif %}" id="{{ id }}">
-    <input type="radio" name="{{ configuration.group }}" id="{{ id }}" name="{{ id }}"/>
-    <label for="{{ id }}">{{ configuration.text }}</label>
-</div>
-{% else %}
-<button class="mb-element mb-element-button" id="{{ id }}">{{ configuration.text }}</button>
-{% endif %}
+<button class="mb-element mb-element-button {% if configuration.group is defined %}mb-button-group-{{ configuration.group }}{% endif %}" id="{{ id }}">{{ label }}</button>
