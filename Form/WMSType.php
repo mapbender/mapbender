@@ -7,6 +7,8 @@ use Symfony\Component\Form\FormBuilder;
 
 class WMSType  extends AbstractType {
 
+    public function getName (){ return "WMSService";}
+
     public function buildForm(FormBuilder $builder, array $options){
         $builder->add("title");
         $builder->add("name","text",array(

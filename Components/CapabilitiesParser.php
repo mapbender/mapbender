@@ -24,8 +24,11 @@ class CapabilitiesParser {
     * @param DOMDocument the document to be parsed
     */
     public function __construct($data){
+
         $this->doc = new \DOMDocument();
-        $this->doc->loadXML($data);
+        if(!$this->doc->loadXML($data)){
+            throw new \UnexpectedValueException("Could not parse Capabilitiesdocument.");
+        }
 
         if(!@$this->doc->validate()){
             // TODO logging
