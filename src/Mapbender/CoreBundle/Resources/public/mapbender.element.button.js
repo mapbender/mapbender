@@ -38,7 +38,7 @@ $.widget("mapbender.mbButton", {
         
         // If we're part of a group, deactivate all other actions in this group
         if(this.options.group) {
-            var others = $('.mb-element-button.mb-button-group-' + this.options.group + ' input')
+            var others = $('.mb-element-button.mb-button-group-' + this.options.group)
                 .not(me);
             others.trigger('mbButtonDeactivate');
         }
