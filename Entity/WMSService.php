@@ -86,20 +86,142 @@ class WMSService extends GroupLayer {
     protected $fees = "";
     
     /**
-    * @ORM\Column(type="string", nullable="true")
-    */
-    protected $getMapGet = "";
-
-    /**
-    * @ORM\Column(type="string", nullable="true")
-    */
-    protected $getMapFormats = "";
-    
-    /**
     * @ORM\Column(type="string",nullable="true")
     */
     protected $accessConstraints = "";
     
+
+
+
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetCapabilitiesGET = "";
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetCapabilitiesPOST = "";
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetCapabilitiesFormats = "";
+
+
+
+
+    
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetMapGET = "";
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetMapPOST = "";
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetMapFormats = "";
+    
+    
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetFeatureInfoGET = "";
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetFeatureInfoPOST = "";
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetFeatureInfoFormats = "";
+
+
+
+
+
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestDescribeLayerGET = "";
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestDescribeLayerPOST = "";
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestDescribeLayerFormats = "";
+
+
+
+
+
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetLegendGraphicGET = "";
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetLegendGraphicPOST = "";
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetLegendGraphicFormats = "";
+
+
+
+
+
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetStylesGET = "";
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetStylesPOST = "";
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestGetStylesFormats = "";
+
+
+
+
+
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestPutStylesGET = "";
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestPutStylesPOST = "";
+
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $requestPutStylesFormats = "";
+
+
+
+
+
 
     public function __construct() {
         # calling super  - how to avoid ?
@@ -130,30 +252,6 @@ class WMSService extends GroupLayer {
         return $this->accessConstraints;
     }
     
-    public function setGetMapGet($getMapGet){
-        $this->getMapGet = $getMapGet;
-    }
-    
-    public function getGetMapGet(){
-        return $this->getMapGet;
-    }
-    
-    public function setGetMapFormats($formats){
-        $this->getMapFormats = $formats;
-    }
-    
-    public function getGetMapFormats(){
-        return $this->getMapFormats;
-    }
-
-    /**
-     * returns the default (first) format that a wms supports for getMap requests
-    */
-    public function getDefaultGetMapFormat(){
-        $formats = explode(',',$this->getMapFormats);
-        return $formats[0];
-    }
-
    /**
     *
     */ 
@@ -421,5 +519,244 @@ class WMSService extends GroupLayer {
     {
         return $this->ContactAddressCountry;
     }
+    
+    public function setRequestGetCapabilitiesGET($requestGetCapabilitiesGET){
+        $this->requestGetCapabilitiesGET = $requestGetCapabilitiesGET;
+    }
+    
+    public function getRequestGetCapabilitiesGET(){
+        return $this->requestGetCapabilitiesGET;
+    }
+
+    public function setRequestGetCapabilitiesPOST($requestGetCapabilitiesPOST){
+        $this->requestGetCapabilitiesPOST = $requestGetCapabilitiesPOST;
+    }
+    
+    public function getRequestGetCapabilitiesPOST(){
+        return $this->requestGetCapabilitiesPOST;
+    }
+    
+    public function setRequestGetCapabilitiesFormats($formats){
+        $this->requestGetCapabilitiesFormats = $formats;
+    }
+    
+    public function getRequestGetCapabilitiesFormats(){
+        return $this->requestGetCapabilitiesFormats;
+    }
+
+    /**
+     * returns the default (first) format that a wms supports for getCapabilities requests
+    */
+    public function getDefaultRequestGetCapabilitiesFormat(){
+        $formats = explode(',',$this->requestGetCapabilitiesFormats);
+        return $formats[0];
+    }
+
+
+
+
+    public function setRequestGetMapGET($requestGetMapGET){
+        $this->requestGetMapGET = $requestGetMapGET;
+    }
+    
+    public function getRequestGetMapGET(){
+        return $this->requestGetMapGET;
+    }
+    
+    public function setRequestGetMapPOST($requestGetMapPOST){
+        $this->requestGetMapPOST = $requestGetMapPOST;
+    }
+    
+    public function getRequestGetMapPOST(){
+        return $this->requestGetMapPOST;
+    }
+    
+    public function setRequestGetMapFormats($formats){
+        $this->requestGetMapFormats = $formats;
+    }
+    
+    public function getRequestGetMapFormats(){
+        return $this->requestGetMapFormats;
+    }
+    
+    /**
+     * returns the default (first) format that a wms supports for getMap requests
+    */
+    public function getDefaultRequestGetMapFormat(){
+        $formats = explode(',',$this->requestGetMapFormats);
+        return $formats[0];
+    }
+
+
+
+    public function setRequestGetFeatureInfoGET($requestGetFeatureInfoGET){
+        $this->requestGetFeatureInfoGET = $requestGetFeatureInfoGET;
+    }
+    
+    public function getRequestGetFeatureInfoGET(){
+        return $this->requestGetFeatureInfoGET;
+    }
+    
+    public function setRequestGetFeatureInfoPOST($requestGetFeatureInfoPOST){
+        $this->requestGetFeatureInfoPOST = $requestGetFeatureInfoPOST;
+    }
+    
+    public function getRequestGetFeatureInfoPOST(){
+        return $this->requestGetFeatureInfoPOST;
+    }
+    
+    public function setRequestGetFeatureInfoFormats($formats){
+        $this->requestGetFeatureInfoFormats = $formats;
+    }
+    
+    public function getRequestGetFeatureInfoFormats(){
+        return $this->requestGetFeatureInfoFormats;
+    }
+    
+    /**
+     * returns the default (first) format that a wms supports for getFeatureInfo requests
+    */
+    public function getDefaultRequestGetFeatureInfoFormat(){
+        $formats = explode(',',$this->requestGetFeatureInfoFormats);
+        return $formats[0];
+    }
+
+
+
+    public function setRequestDescribeLayerGET($requestDescribeLayerGET){
+        $this->requestDescribeLayerGET = $requestDescribeLayerGET;
+    }
+    
+    public function getRequestDescribeLayerGET(){
+        return $this->requestDescribeLayerGET;
+    }
+    
+    public function setRequestDescribeLayerPOST($requestDescribeLayerPOST){
+        $this->requestDescribeLayerPOST = $requestDescribeLayerPOST;
+    }
+    
+    public function getRequestDescribeLayerPOST(){
+        return $this->requestDescribeLayerPOST;
+    }
+    
+    public function setRequestDescribeLayerFormats($formats){
+        $this->requestDescribeLayerFormats = $formats;
+    }
+    
+    public function getRequestDescribeLayerFormats(){
+        return $this->requestDescribeLayerFormats;
+    }
+    
+    /**
+     * returns the default (first) format that a wms supports for getDescribeLayer requests
+    */
+    public function getDefaultRequestDescribeLayerFormat(){
+        $formats = explode(',',$this->requestDescribeLayerFormats);
+        return $formats[0];
+    }
+
+
+
+    public function setRequestGetLegendGraphicGET($requestGetLegendGraphicGET){
+        $this->requestGetLegendGraphicGET = $requestGetLegendGraphicGET;
+    }
+    
+    public function getRequestGetLegendGraphicGET(){
+        return $this->requestGetLegendGraphicGET;
+    }
+    
+    public function setRequestGetLegendGraphicPOST($requestGetLegendGraphicPOST){
+        $this->requestGetLegendGraphicPOST = $requestGetLegendGraphicPOST;
+    }
+    
+    public function getRequestGetLegendGraphicPOST(){
+        return $this->requestGetLegendGraphicPOST;
+    }
+    
+    public function setRequestGetLegendGraphicFormats($formats){
+        $this->requestGetLegendGraphicFormats = $formats;
+    }
+    
+    public function getRequestGetLegendGraphicFormats(){
+    
+        return $this->requestGetLegendGraphicFormats;
+    }
+    
+    /**
+     * returns the default (first) format that a wms supports for getLegendGraphic requests
+    */
+    public function getDefaultRequestGetLegendGraphicFormat(){
+        $formats = explode(',',$this->requestGetLegendGraphicFormats);
+        return $formats[0];
+    }
+
+
+
+    public function setRequestGetStylesGET($requestGetStylesGET){
+        $this->requestGetStylesGET = $requestGetStylesGET;
+    }
+    
+    public function getRequestGetStylesGET(){
+        return $this->requestGetStylesGET;
+    }
+    
+    public function setRequestGetStylesPOST($requestGetStylesPOST){
+        $this->requestGetStylesPOST = $requestGetStylesPOST;
+    }
+    
+    public function getRequestGetStylesPOST(){
+        return $this->requestGetStylesPOST;
+    }
+    
+    public function setRequestGetStylesFormats($formats){
+        $this->requestGetStylesFormats = $formats;
+    }
+    
+    public function getRequestGetStylesFormats(){
+        return $this->requestGetStylesFormats;
+    }
+    
+    /**
+     * returns the default (first) format that a wms supports for getStyles requests
+    */
+    public function getDefaultRequestGetStylesFormat(){
+        $formats = explode(',',$this->requestGetStylesFormats);
+        return $formats[0];
+    }
+
+
+
+    public function setRequestPutStylesGET($requestPutStylesGET){
+        $this->requestPutStylesGET = $requestPutStylesGET;
+    }
+    
+    public function getRequestPutStylesGET(){
+        return $this->requestPutStylesGET;
+    }
+    
+    public function setRequestPutStylesPOST($requestPutStylesPOST){
+        $this->requestPutStylesPOST = $requestPutStylesPOST;
+    }
+    
+    public function getRequestPutStylesPOST(){
+        return $this->requestPutStylesPOST;
+    }
+    
+    public function setRequestPutStylesFormats($formats){
+        $this->requestPutStylesFormats = $formats;
+    }
+    
+    public function getRequestPutStylesFormats(){
+        return $this->requestPutStylesFormats;
+    }
+    
+    /**
+     * returns the default (first) format that a wms supports for putStyles requests
+    */
+    public function getDefaultRequestPutStylesFormat(){
+        $formats = explode(',',$this->requestPutStylesFormats);
+        return $formats[0];
+    }
+
 
 }

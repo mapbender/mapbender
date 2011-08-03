@@ -16,6 +16,8 @@ class WMSType  extends AbstractType {
         $builder->add("version","text", array(
             "required"  => false,
         ));
+
+        // Service Section Elements
         $builder->add("name","text",array(
             "required" => false,
         ));
@@ -70,15 +72,79 @@ class WMSType  extends AbstractType {
         $builder->add("accessConstraints","text",array(
             "required" => false,
         ));
-        $builder->add("getMapGet","hidden",array(
+
+        // Capabilites > Request Section Elements
+        $builder->add("requestGetCapabilitiesGET","text",array(
             "required" => false,
         ));
-        $builder->add("getMapFormats","hidden",array(
+        $builder->add("requestGetCapabilitiesPOST","text",array(
             "required" => false,
         ));
-        $builder->add("getMapFormats","hidden",array(
+        $builder->add("requestGetCapabilitiesFormats","text",array(
             "required" => false,
         ));
+
+        $builder->add("requestGetMapGET","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestGetMapPOST","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestGetMapFormats","text",array(
+            "required" => false,
+        ));
+
+        $builder->add("requestGetFeatureInfoGET","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestGetFeatureInfoPOST","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestGetFeatureInfoFormats","text",array(
+            "required" => false,
+        ));
+        
+        $builder->add("requestDescribeLayerGET","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestDescribeLayerPOST","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestDescribeLayerFormats","text",array(
+            "required" => false,
+        ));
+        
+        $builder->add("requestGetLegendGraphicGET","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestGetLegendGraphicPOST","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestGetLegendGraphicFormats","text",array(
+            "required" => false,
+        ));
+        
+        $builder->add("requestGetStylesGET","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestGetStylesPOST","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestGetStylesFormats","text",array(
+            "required" => false,
+        ));
+        
+        $builder->add("requestPutStylesGET","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestPutStylesPOST","text",array(
+            "required" => false,
+        ));
+        $builder->add("requestPutStylesFormats","text",array(
+            "required" => false,
+        ));
+
+
         $builder->add("layer",'collection',array( 
             'type' => new WMSLayerType(),
         ));
