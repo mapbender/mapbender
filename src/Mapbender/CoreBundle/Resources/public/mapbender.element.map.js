@@ -168,13 +168,27 @@ $.widget("mapbender.mbMap", {
         var mqLayerDef = null;
         switch(layerDef.type) {
             case 'wms':
+                var layers = [];
+                var queryLayers = [];
+                $.each(layerDef.configuration.layers, function(idx, layer) {
+                    var layerDef = $.extend({},
+                        { visible: true, queryable: false }, layer );
+                    if(layerDef.visible) {
+                        layers.push(layerDef.name);
+                    }
+                    if(layerDef.queryable) {
+                        queryLayers.push(layerDef.name);
+                    }
+                });
+
                 mqLayerDef = {
                     type:        'wms',
                     label:       layerDef.title,
                     url:         layerDef.configuration.url,
 
-                    layers:      layerDef.configuration.layers,
-                    queryLayers: layerDef.configuration.queryLayers,
+                    layers:      layers,
+                    queryLayers: queryLayers,
+                    allLayers:   layerDef.configuration.layers,
 
                     transparent: layerDef.configuration.transparent,
                     format:      layerDef.configuration.format,
