@@ -27,7 +27,7 @@ class CapabilitiesParser {
 
         $this->doc = new \DOMDocument();
         if(!$this->doc->loadXML($data)){
-            throw new \UnexpectedValueException("Could not parse Capabilitiesdocument.");
+            throw new \UnexpectedValueException("Could not parse CapabilitiesDocument.");
         }
 
         if(!@$this->doc->validate()){
