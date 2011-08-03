@@ -103,7 +103,22 @@ class WmcStorage extends Element implements ElementInterface {
                 throw new \Exception('The params parameter must be an array.');
             }
             $params = array_merge($params, array('owner' => $owner));
-            $list = $repository->findBy($params);
+            $qb = $repository->createQueryBuilder('w');
+            //$qb->add('select', 'w');
+            $where = $qb->expr()->andx(
+                $qb->expr()->eq('w.crs', ':crs'),
+                $qb->expr()->orx(
+                    $qb->expr()->eq('w.owner', ':owner'),
+                    $qb->expr()->eq('w.public', 'true')
+                )
+            );
+            $qb->add('where', $where);
+
+            $qb->setParameter('crs',  $params['crs']);
+            $qb->setParameter('owner', $params['owner']);
+
+            $list = $qb->getQuery()->getResult();
+
             foreach($list as &$item) {
                 $item = array(
                     'id' => $item->getId(),
