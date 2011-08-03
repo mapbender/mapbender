@@ -1,36 +1,22 @@
 {% extends 'MBWMSBundle:WMS:base.html.twig' %} 
 
 {% block heading %}WMS all{% endblock %}
+
 {% block content %}
+    <table class="wmslist">
+        <caption>Verfügbare WMS-Dienste</caption>
+        <tr>
+            <th>Nr.</th>
+            <th>WMS-Name</th>
+        </tr>
 
-<table class="wmslist">
-<caption>Verfügbare WMS-Dienste</caption>
-<tr>
-
-<th>
-Nr.
-</th>
-
-<th>
-WMS-Name
-</th>
-</tr>
-{% for wms in wmsArr %}
-
-<tr>
-
-<td>
-{{ loop.index }}
-</td>
-
-<td>
-       <a href=" {{ path("mb_wms_details",{'id': wms.getId()}) }}">{{ wms.getTitle() }}</a></li>
-</td>
-</tr>
-
-{% endfor %}
-</ol>
-</table>
-
-<a href="{{ path("mb_wms_index",{"first":prevFirst}) }}">{% trans %}Previous{% endtrans %}</a> <a href="{{  path("mb_wms_index",{"first": nextFirst}) }}">{% trans %}Next{% endtrans %}</a>
+        {% for wms in wmsArr %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td><a href="{{ path("mb_wms_details",{'id': wms.getId()}) }}">{{ wms.getTitle() }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+    <a href="{{ path("mb_wms_index",{"first":prevFirst}) }}">{% trans %}Previous{% endtrans %}</a> 
+    <a href="{{  path("mb_wms_index",{"first": nextFirst}) }}">{% trans %}Next{% endtrans %}</a>
 {% endblock %}

@@ -1,35 +1,27 @@
 <div class="wmslayer">
 
-<table>
+    <tr>
+    <td>
+    <h2><a href="{{ path('mb_wmslayer_details',{'wmsId': layer.getWMS().getId(),'id':layer.getId()})  }}">{{ layer.getTitle() }}</a><h2>
+    </td>
 
-<tr>
-<th>Layertitel</th>
-<th>Layername</th>
-<!--th>Abstract</th-->
-</tr>
+    <td>
+    <h2>{{ layer.getName() }}</h2>
+    </td>
 
-<tr>
-<td>
-<h2><a href="{{ path('mb_wmslayer_details',{'wmsId': layer.getWMS().getId(),'id':layer.getId()})  }}">{{ layer.getTitle() }}</a><h2>
-</td>
+    <!--td>
+    <p class="abstract">{{ layer.getAbstract() }}folgt</p>
+    </td-->
 
-<td>
-<h2>{{ layer.getName() }}</h2>
-</td>
-
-<!--td>
-<p class="abstract">{{ layer.getAbstract() }}folgt</p>
-</td-->
-
-</tr>
-</table>
-
-
-
-
-{% for layer in layer.getLayer() %}
-  {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
-{% endfor %}
-
-
+    </tr>
+    <table>
+        <tr>
+            <th>Layertitel</th>
+            <th>Layername</th>
+            <!--th>Abstract</th-->
+        </tr>
+        {% for layer in layer.getLayer() %}
+          {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
+        {% endfor %}
+    </table>
 </div>

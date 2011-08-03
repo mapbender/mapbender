@@ -5,100 +5,80 @@
 
 
 {% block content %}
-
-<fieldset>
-<legend>WMS-Detail</legen>	
-<div class="wms">
-        
+    <fieldset>
+        <legend>WMS-Detail</legen>	
         <table>
-        <tr>
-        <th>WMS Titel</th>
-        <th>WMS Name</th>
-        <th>Abstract</th>
-        <th>Preview</th>
-        </tr>
-        
-        <tr>
-        <td><h1 class="title" ><a href="{{ wms.getId() }}" target="_new">{{ wms.getTitle() }}</a></h1></td>
-        
-        <td><h2 class="name">({{ wms.getName() }})</h2></td>
-         
-        <td><p class="abstract">{{ wms.getAbstract() }}</p></td>
-        
-        <td><div id="map" class="smallmap"></div></td>
-        </tr>
-        
+            <tr>
+                <th>WMS Titel</th>
+                <th>WMS Name</th>
+                <th>Abstract</th>
+                <th>Preview</th>
+            </tr>
+            <tr>
+                <td><h1 class="title" ><a href="{{ wms.getId() }}" target="_new">{{ wms.getTitle() }}</a></h1></td>
+                <td><h2 class="name">({{ wms.getName() }})</h2></td>
+                <td><p class="abstract">{{ wms.getAbstract() }}</p></td>
+                <td><div id="map" class="smallmap"></div></td>
+            </tr>
         </table>
-</fieldset>
-        
-     <p class="fees">{{ wms.getFees() }}</p>
-     <p class="accessConstraints">{{ wms.getAccessConstraints() }}</p>
-     <div class="contact"></div>
-
-
-<fieldset>
-<legend>Edit</legend>
-    <ul class="actions">
-        <li><a href="{{ path('mb_wms_showdelete',{'id':wms.getId()}) }}">{% trans %}Delete{% endtrans %}</a></li>
-        <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
-        <li><a href="#">{% trans %}Update{% endtrans %}</a></li>
-    </ul>
-</fieldset>
-
-     
-  <fieldset>
+    </fieldset>
+    <p class="fees">{{ wms.getFees() }}</p>
+    <p class="accessConstraints">{{ wms.getAccessConstraints() }}</p>
+    <div class="contact"></div>
+    <fieldset>
+        <legend>Edit</legend>
+        <ul class="actions">
+            <li><a href="{{ path('mb_wms_showdelete',{'id':wms.getId()}) }}">{% trans %}Delete{% endtrans %}</a></li>
+            <li><a href="#">{% trans %}Edit{% endtrans %}</a></li>
+            <li><a href="#">{% trans %}Update{% endtrans %}</a></li>
+        </ul>
+    </fieldset>
+    <fieldset>
         <legend>Keywords</legend>
         <ul class="keywords">
-        {#
-         {% for keyword in wms.getKeywords() %}
-            <li  class="keyword">{{ keyword }}></li>
-         {% endfor %}
-        #}
+            {#
+                {% for keyword in wms.getKeywords() %}
+                    <li  class="keyword">{{ keyword }}></li>
+                {% endfor %}
+            #}
         </ul>
-       </fieldset>
-       
-       <fieldset> 
+    </fieldset>
+
+    <fieldset> 
         <legend>GetCapabilities</legend>
         <ul class="httpdcptypes">
-         <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
-         <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
-         <li class="formats">application/vnd.ogc.wms_xml</li>
+            <li>GET <a href="{{ wms.getMapGet() }}" target="_new">{{ wms.getMapGet() }}</a></li>
+            <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+            <li class="formats">application/vnd.ogc.wms_xml</li>
         </ul>
-        </fieldset>
-        
-        <fieldset>
+    </fieldset>
+
+    <fieldset>
         <legend>GetMap</legend> 
         <div class="request getMap">
-        <ul>
-         <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
-         <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
-        </ul>
+            <ul>
+                <li>GET <a href="{{ wms.getMapGet() }}" target="_new">{{ wms.getMapGet() }}</a></li>
+                <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+            </ul>
         </div>
-		</fieldset>
-		
-		
-		<fieldset>
+    </fieldset>
+
+
+    <fieldset>
         <legend>Preview</legend> 
         <div>
-        <ul>
-         <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
-         <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
-        </ul>
+            <ul>
+                <li>GET <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+                <li>POST <a href="http://example.com" target="_new">http://exampe.com/</a></li>
+            </ul>
         </div>
-		</fieldset>
-		
-		
-		<!--fieldset>
-        <legend>Preview Open Layers</legend>
-        <div id="map" class="smallmap"></div>
-		</fieldset-->
-		
-		
-		
-        <h2>{% trans %}Layerdetails{% endtrans %}</h2>
-        {% for layer in wms.getLayer() %}
-          {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
-        {% endfor %}
+    </fieldset>
+
+
+    <h2>{% trans %}Layerdetails{% endtrans %}</h2>
+    {% for layer in wms.getLayer() %}
+        {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
+    {% endfor %}
     </div>
 {% endblock %}
 
@@ -108,24 +88,24 @@
 {% endblock %}
 
 {% block javascripts %}
-<script type="application/javascript">
-var previewWMS = {
-    title: '{{ wms.getTitle() }}',
-    url: '{{ wms.getGetMapGet() }}',
-    rootlayer: '{{ wms.getRootLayer().getName() }}',
-    format: '{{ wms.getDefaultGetMapFormat() }}',
-    projection: '{{ wms.getRootLayer().getDefaultSRS() }}',
-    bounds: {
-                left: '{{ minx }}',
-                bottom: '{{ miny }}',
-                right:'{{ maxx }}',
-                top: '{{ maxy }}'
-            }
-};
+    <script type="application/javascript">
+    var previewWMS = {
+        title: '{{ wms.getTitle() }}',
+        url: '{{ wms.getGetMapGet() }}',
+        rootlayer: '{{ wms.getRootLayer().getName() }}',
+        format: '{{ wms.getDefaultGetMapFormat() }}',
+        projection: '{{ wms.getRootLayer().getDefaultSRS() }}',
+        bounds: {
+                    left: '{{ minx }}',
+                    bottom: '{{ miny }}',
+                    right:'{{ maxx }}',
+                    top: '{{ maxy }}'
+                }
+    };
 
-</script>
-<script src="{{asset('js/ol/OpenLayers-2.10/OpenLayers.js') }}"></script>
-<script src="{{asset('js/ol/ol_client.js') }}"></script>		
-	
+    </script>
+    <script src="{{asset('js/ol/OpenLayers-2.10/OpenLayers.js') }}"></script>
+    <script src="{{asset('js/ol/ol_client.js') }}"></script>		
+        
 {% endblock %}
 
