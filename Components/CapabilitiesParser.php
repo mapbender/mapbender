@@ -90,6 +90,16 @@ class CapabilitiesParser {
                                         }
                                     break;
                                     case "Exception":
+                                        foreach ($node->childNodes as $node){
+                                            if($node->nodeType == XML_ELEMENT_NODE){ 
+                                                if($node->nodeName == "Format"){
+                                                    $formats = $wms->getExceptionFormats();
+                                                    $seperator = $formats == "" ?"":",";
+                                                    $formats .=  $seperator . $node->nodeValue;
+                                                    $wms->setExceptionFormats($formats);
+                                                }
+                                            }
+                                        }
                                     break;
                                     case "VendorSpecificCapabilities":
                                     case "UserDefinedSymbolization":

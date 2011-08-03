@@ -90,9 +90,31 @@ class WMSService extends GroupLayer {
     */
     protected $accessConstraints = "";
     
-
-
-
+    /**
+    * @ORM\Column(type="string",nullable="true")
+    * FIXME: change to array type
+    */
+    protected $exceptionFormats = "";
+    
+    /**
+    * @ORM\Column(type="boolean")
+    */
+    protected $symbolSupportSLD = false;
+    
+    /**
+    * @ORM\Column(type="boolean")
+    */
+    protected $symbolUserLayer = false;
+    
+    /**
+    * @ORM\Column(type="boolean")
+    */
+    protected $symbolUserStyle = false;
+    
+    /**
+    * @ORM\Column(type="boolean")
+    */
+    protected $symbolRemoteWFS = false;
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -107,10 +129,6 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="string", nullable="true")
     */
     protected $requestGetCapabilitiesFormats = "";
-
-
-
-
     
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -125,8 +143,6 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="string", nullable="true")
     */
     protected $requestGetMapFormats = "";
-    
-    
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -142,11 +158,6 @@ class WMSService extends GroupLayer {
     */
     protected $requestGetFeatureInfoFormats = "";
 
-
-
-
-
-
     /**
     * @ORM\Column(type="string", nullable="true")
     */
@@ -160,11 +171,6 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="string", nullable="true")
     */
     protected $requestDescribeLayerFormats = "";
-
-
-
-
-
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -180,11 +186,6 @@ class WMSService extends GroupLayer {
     */
     protected $requestGetLegendGraphicFormats = "";
 
-
-
-
-
-
     /**
     * @ORM\Column(type="string", nullable="true")
     */
@@ -199,11 +200,6 @@ class WMSService extends GroupLayer {
     */
     protected $requestGetStylesFormats = "";
 
-
-
-
-
-
     /**
     * @ORM\Column(type="string", nullable="true")
     */
@@ -217,10 +213,6 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="string", nullable="true")
     */
     protected $requestPutStylesFormats = "";
-
-
-
-
 
 
     public function __construct() {
@@ -250,6 +242,21 @@ class WMSService extends GroupLayer {
     
     public function getAccessConstraints(){
         return $this->accessConstraints;
+    }
+
+    public function setExceptionFormats($exceptionFormats){
+        $this->exceptionFormats = $exceptionFormats;
+    }
+    public function getExceptionFormats(){
+        return $this->exceptionFormats;
+    }
+    
+    /**
+     * returns the default (first) exceptionFormats that a wms supports 
+    */
+    public function getDefaultExceptionFormats(){
+        $formats = explode(',',$this->exceptionFormats);
+        return $formats[0];
     }
     
    /**

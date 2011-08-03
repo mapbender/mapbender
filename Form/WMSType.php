@@ -144,6 +144,22 @@ class WMSType  extends AbstractType {
             "required" => false,
         ));
 
+        $builder->add("exceptionFormats","text",array(
+            "required"  => false,
+        ));
+
+        $builder->add("symbolSupportSLD","boolean",array(
+            "required"  => false,
+        ));
+        $builder->add("symbolUserLayer","boolean",array(
+            "required"  => false,
+        ));
+        $builder->add("symbolUserStyle","boolean",array(
+            "required"  => false,
+        ));
+        $builder->add("symbolRemoteWFS","boolean",array(
+            "required"  => false,
+        ));
 
         $builder->add("layer",'collection',array( 
             'type' => new WMSLayerType(),
