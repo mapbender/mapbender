@@ -62,12 +62,17 @@ class CapabilitiesParser {
                                     case "KeywordList":
                                     break;
                                     case "OnlineResource":
+                                        $onlineResource = $node->getAttributeNS("http://www.w3.org/1999/xlink" ,"href");
+                                        $wms->setOnlineResource($onlineResource);
                                     break;
                                     case "ContactInformation":
+                                        $wms = $this->ContactInformationFromNode($wms,$node);
                                     break;
                                     case "Fees":
+                                        $wms->setFees($node->nodeValue);
                                     break;
                                     case "AccessConstraints":
+                                        $wms->setAccessConstraints($node->nodeValue);
                                     break;
                                 }
                             } 
@@ -104,6 +109,73 @@ class CapabilitiesParser {
         // check for mandatory elements
         if($wms->getName() === null){
             throw new \Exception("Mandatory Element Name not defined on Service");
+        }
+        return $wms;
+    }
+
+    /**
+     *  @param MB\WMSBundle\WMSService The WMS that needs the contact information
+     *  @param \DOMNode the <contactInformation> node of the WMS
+     *  @return the wms
+     */
+    protected function ContactInformationFromNode($wms,\DOMNode $contactNode){
+        foreach($contactNode->childNodes as $node){
+            if($node->nodeType == XML_ELEMENT_NODE){  
+                switch ($node->nodeName) {
+                    case "ContactPersonPrimary":
+                        foreach($node->childNodes as $subnode){
+                            if($subnode->nodeType == XML_ELEMENT_NODE){  
+                                switch ($subnode->nodeName) {
+                                    case "ContactPerson":
+                                        $wms->setContactPerson($subnode->nodeValue);
+                                    break;
+                                    case "ContactOrganization":
+                                        $wms->setContactOrganization($subnode->nodeValue);
+                                    break;
+                                }
+                            }
+                        }
+                    break;
+                    case "ContactPosition":
+                        $wms->setContactPosition($node->nodeValue);
+                    break;
+                    case "ContactAddress":
+                        foreach($node->childNodes as $subnode){
+                            if($subnode->nodeType == XML_ELEMENT_NODE){  
+                                switch ($subnode->nodeName) {
+                                    case "Address":
+                                        $wms->setContactAddress($subnode->nodeValue);
+                                    break;
+                                    case "AddressType":
+                                        $wms->setContactAddressType($subnode->nodeValue);
+                                    break;
+                                    case "City":
+                                        $wms->setContactAddressCity($subnode->nodeValue);
+                                    break;
+                                    case "StateOrProvince":
+                                        $wms->setContactAddressStateOrProvince($subnode->nodeValue);
+                                    break;
+                                    case "PostCode":
+                                        $wms->setContactAddressPostCode($subnode->nodeValue);
+                                    break;
+                                    case "Country":
+                                        $wms->setContactAddressCountry($subnode->nodeValue);
+                                    break;
+                                }
+                            }
+                        }
+                    break;
+                    case "ContactVoiceTelephone":
+                        $wms->setContactVoiceTelephone($node->nodeValue);
+                    break;
+                    case "ContactFacsimileTelephone":
+                        $wms->setContactFacsimileTelephone($node->nodeValue);
+                    break;
+                    case "ContactElectronicMailAddress":
+                        $wms->setContactElectronicMailAddress($node->nodeValue);
+                    break;
+                }
+            }
         }
         return $wms;
     }
