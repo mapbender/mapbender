@@ -6,6 +6,7 @@ use Symfony\Component\Form\FormBuilder;
 
 class WMSLayerType  extends AbstractType {
 
+    public function getName (){ return "WMSLayer";}
     public function buildForm(FormBuilder $builder, array $options){
         $builder->add("title");
         $builder->add("name","text",array(
