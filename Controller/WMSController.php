@@ -105,7 +105,7 @@ class WMSController extends Controller {
 
         $request = $this->get('request');
         /* build up nested wmslayer structure */
-        $requestWMS = $request->get('wms');
+        $requestWMS = $request->get('WMSService');
         $wms = new WMSService();
         $wms = $this->buildWMSFormStructure($requestWMS,$wms);
         $form = $this->get('form.factory')->create(new WMSType(),$wms); 
