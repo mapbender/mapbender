@@ -5,7 +5,8 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
         modal: true,
         autoOpen: false,
         width: 600,
-        height: 400
+        height: 400,
+        searchParams: []
     },
 
     elementUrl: null,
@@ -41,11 +42,11 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
         });
     },
 
-    load: function(params) {
+    load: function(params, options) {
         if(!params) {
             this._showLoadDialog();
         } else {
-            this._load(params);
+            this._load(params, options);
         }
     },
 
@@ -57,13 +58,14 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
         }
     },
 
-    _load: function(params) {
+    _load: function(params, options) {
+        var self = this;
         $.ajax({
             url: this.elementUrl + 'load?' + $.param({
                      params: params
                  }),
             context: this,
-            success: this._loadSuccess,
+            success: function(data) { this._loadSuccess(data, options) },
             error: this._loadError
         });
     },
@@ -84,6 +86,7 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
         var extraData = {
             title: docName,
             public: false,
+            crs: this.map.getProjection()
         };
 
         $.ajax({
@@ -103,13 +106,13 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
     },
 
     _onSaveError: function(jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
         $(this.element).find('div#wmc-save-error')
             .show()
             .siblings().hide();
     },
 
-    _loadSuccess: function(data) {
+    _loadSuccess: function(data, options) {
+        options = options || {};
         var me = $(this.element),
             format = new OpenLayers.Format.WMC(),
             map = $('#' + this.options.target).data('mbMap');
@@ -146,6 +149,7 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
                 label: layerContext.title,
                 url: layerContext.url,
 
+                allLayers: layerContext.allLayers,
                 layers: layerContext.name,
                 transparent: layerContext.transparent,
                 format: layerContext.formats[0].value,
@@ -159,7 +163,11 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
         $.each(layerDefs, function(idx, layerDef) {
             map.map.layers(layerDef);
         });
-        map.zoomToExtent(wmc.bounds);
+        if(!options.dontZoom) {
+            map.zoomToExtent(wmc.bounds);
+        }
+
+        this._trigger('loaddone');
 
         this.close();
     },
@@ -185,9 +193,28 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
 
         $.ajax({
             url: this.elementUrl + 'list',
+            data: {
+                params: this.options.searchParams
+            },
             context: this,
             success: this._listWmcSuccess,
             error: this._listWmcError
+        });
+    },
+
+    listWmc: function(callback) {
+        if(typeof(callback) !== 'function') {
+            throw "callback is not a function!";
+        }
+
+        $.ajax({
+            url: this.elementUrl + 'list',
+            data: {
+                params: this.options.searchParams
+            },
+            context: this,
+            success: callback,
+            error: function() { callback({}); }
         });
     },
 

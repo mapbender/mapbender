@@ -37,6 +37,11 @@ class Wmc {
     private $document;
 
     /**
+     * @ORM\Column(type="string", length=64)
+     */
+    private $crs;
+
+    /**
      * Get id
      *
      * @return integer $id
@@ -115,6 +120,13 @@ class Wmc {
      */
     public function getDocument() {
         return $this->document;
+    }
+    public function setCrs($crs) {
+        $this->crs = $crs;
+    }
+
+    public function getCrs() {
+        return $this->crs;
     }
 }
 

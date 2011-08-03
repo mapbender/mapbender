@@ -60,6 +60,7 @@ class WmcStorage extends Element implements ElementInterface {
             if(!$title) {
                 throw new \Exception('You did not send a title for the WMC document.');
             }
+            $crs = $request->get('crs');
 
             $wmcDocument = file_get_contents('php://input');
 
@@ -80,6 +81,7 @@ class WmcStorage extends Element implements ElementInterface {
                 $wmc->setOwner($owner);
                 $wmc->setPublic($public);
                 $wmc->setDocument($wmcDocument);
+                $wmc->setCrs($crs);
 
                 try {
                     $em->persist($wmc);
@@ -96,10 +98,19 @@ class WmcStorage extends Element implements ElementInterface {
             break;
 
         case 'list':
-            $query = $em->createQuery('SELECT w.id, w.title FROM MapbenderWmcBundle:Wmc w '
-                . 'WHERE w.public = true OR w.owner = :owner')
-                ->setParameter('owner', $owner);
-            $response->setContent(json_encode($query->getResult()));
+            $params = $request->get('params', array());
+            if(!is_array($params)) {
+                throw new \Exception('The params parameter must be an array.');
+            }
+            $params = array_merge($params, array('owner' => $owner));
+            $list = $repository->findBy($params);
+            foreach($list as &$item) {
+                $item = array(
+                    'id' => $item->getId(),
+                    'title' => $item->getTitle()
+                );
+            }
+            $response->setContent(json_encode($list));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
             break;
