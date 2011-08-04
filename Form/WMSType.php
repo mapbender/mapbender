@@ -12,7 +12,11 @@ class WMSType  extends AbstractType {
 
     public function getName (){ return "WMSService";}
 
+
     public function buildForm(FormBuilder $builder, array $options){
+
+
+
         $builder->add("version","text", array(
             "required"  => false,
         ));
@@ -80,8 +84,11 @@ class WMSType  extends AbstractType {
         $builder->add("requestGetCapabilitiesPOST","text",array(
             "required" => false,
         ));
-        $builder->add("requestGetCapabilitiesFormats","text",array(
+        $builder->add("requestGetCapabilitiesFormats","choice",array(
             "required" => false,
+            "choices"   => $options['requestGetCapabilitiesFormats'],
+            "multiple"  => true,
+            "expanded"  => true,
         ));
 
         $builder->add("requestGetMapGET","text",array(
@@ -90,8 +97,11 @@ class WMSType  extends AbstractType {
         $builder->add("requestGetMapPOST","text",array(
             "required" => false,
         ));
-        $builder->add("requestGetMapFormats","text",array(
+        $builder->add("requestGetMapFormats","choice",array(
             "required" => false,
+            "choices"   => $options['requestGetMapFormats'],
+            "multiple"  => true,
+            "expanded"  => true,
         ));
 
         $builder->add("requestGetFeatureInfoGET","text",array(
@@ -100,8 +110,11 @@ class WMSType  extends AbstractType {
         $builder->add("requestGetFeatureInfoPOST","text",array(
             "required" => false,
         ));
-        $builder->add("requestGetFeatureInfoFormats","text",array(
+        $builder->add("requestGetFeatureInfoFormats","choice",array(
             "required" => false,
+            "choices"   => $options['requestGetFeatureInfoFormats'],
+            "multiple"  => true,
+            "expanded"  => true,
         ));
         
         $builder->add("requestDescribeLayerGET","text",array(
@@ -110,8 +123,11 @@ class WMSType  extends AbstractType {
         $builder->add("requestDescribeLayerPOST","text",array(
             "required" => false,
         ));
-        $builder->add("requestDescribeLayerFormats","text",array(
+        $builder->add("requestDescribeLayerFormats","choice",array(
             "required" => false,
+            "choices"   => $options['requestDescribeLayerFormats'],
+            "multiple"  => true,
+            "expanded"  => true,
         ));
         
         $builder->add("requestGetLegendGraphicGET","text",array(
@@ -120,8 +136,11 @@ class WMSType  extends AbstractType {
         $builder->add("requestGetLegendGraphicPOST","text",array(
             "required" => false,
         ));
-        $builder->add("requestGetLegendGraphicFormats","text",array(
+        $builder->add("requestGetLegendGraphicFormats","choice",array(
             "required" => false,
+            "choices"   => $options['requestGetLegendGraphicFormats'],
+            "multiple"  => true,
+            "expanded"  => true,
         ));
         
         $builder->add("requestGetStylesGET","text",array(
@@ -130,8 +149,11 @@ class WMSType  extends AbstractType {
         $builder->add("requestGetStylesPOST","text",array(
             "required" => false,
         ));
-        $builder->add("requestGetStylesFormats","text",array(
+        $builder->add("requestGetStylesFormats","choice",array(
             "required" => false,
+            "choices"   => $options['requestGetStylesFormats'],
+            "multiple"  => true,
+            "expanded"  => true,
         ));
         
         $builder->add("requestPutStylesGET","text",array(
@@ -140,12 +162,18 @@ class WMSType  extends AbstractType {
         $builder->add("requestPutStylesPOST","text",array(
             "required" => false,
         ));
-        $builder->add("requestPutStylesFormats","text",array(
+        $builder->add("requestPutStylesFormats","choice",array(
             "required" => false,
+            "choices"   => $options['requestPutStylesFormats'],
+            "multiple"  => true,
+            "expanded"  => true,
         ));
 
-        $builder->add("exceptionFormats","text",array(
+        $builder->add("exceptionFormats","choice",array(
             "required"  => false,
+            "choices"   => $options['exceptionFormats'],
+            "multiple"  => true,
+            "expanded"  => true,
         ));
 
         $builder->add("symbolSupportSLD","checkbox",array(
@@ -168,7 +196,15 @@ class WMSType  extends AbstractType {
     }
     public function getDefaultOptions(array $options){
         return array(
-            'data_class' => "MB\WMSBundle\Entity\WMSService"
+            'data_class' => "MB\WMSBundle\Entity\WMSService",
+            "exceptionFormats" => array(),
+            "requestGetCapabilitiesFormats" => array(),
+            "requestGetMapFormats" => array(),
+            "requestGetFeatureInfoFormats" => array(),
+            "requestDescribeLayerFormats"  => array(),
+            "requestGetLegendGraphicFormats" => array(),
+            "requestGetStylesFormats" => array(),
+            "requestPutStylesFormats" => array(),
         );
    }
 }

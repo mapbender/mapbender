@@ -199,8 +199,16 @@ class WMSController extends Controller {
             throw new \Exception("could not parse data for url '$getcapa_url'");
         }
 
-        $form = $this->get('form.factory')->create(new WMSType());
-        $form->setData($wms);
+        $form = $this->get('form.factory')->create(new WMSType(), $wms,array(
+            "exceptionFormats" => $wms->getExceptionFormats(),
+            "requestGetCapabilitiesFormats" => $wms->getRequestGetCapabilitiesFormats(),
+            "requestGetMapFormats" => $wms->getRequestGetMapFormats(),
+            "requestGetFeatureInfoFormats" => $wms->getRequestGetFeatureInfoFormats(),
+            "requestDescribeLayerFormats"  => $wms->getRequestDescribeLayerFormats(),
+            "requestGetLegendGraphicFormats" => $wms->getRequestGetLegendGraphicFormats(),
+            "requestGetStylesFormats" => $wms->getRequestGetStylesFormats(),
+            "requestPutStylesFormats" => $wms->getRequestPutStylesFormats(),
+        ));
 
         return $this->commonData(array(
                 "getcapa_url"=>$getcapa_url,

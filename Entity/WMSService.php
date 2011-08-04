@@ -91,10 +91,9 @@ class WMSService extends GroupLayer {
     protected $accessConstraints = "";
     
     /**
-    * @ORM\Column(type="string",nullable="true")
-    * FIXME: change to array type
+    * @ORM\Column(type="array",nullable="true")
     */
-    protected $exceptionFormats = "";
+    protected $exceptionFormats = array();
     
     /**
     * @ORM\Column(type="boolean")
@@ -126,9 +125,9 @@ class WMSService extends GroupLayer {
     protected $requestGetCapabilitiesPOST = "";
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="array", nullable="true")
     */
-    protected $requestGetCapabilitiesFormats = "";
+    protected $requestGetCapabilitiesFormats = array();
     
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -140,9 +139,9 @@ class WMSService extends GroupLayer {
     protected $requestGetMapPOST = "";
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="array", nullable="true")
     */
-    protected $requestGetMapFormats = "";
+    protected $requestGetMapFormats = array();
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -154,9 +153,9 @@ class WMSService extends GroupLayer {
     protected $requestGetFeatureInfoPOST = "";
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="array", nullable="true")
     */
-    protected $requestGetFeatureInfoFormats = "";
+    protected $requestGetFeatureInfoFormats = array();
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -168,9 +167,9 @@ class WMSService extends GroupLayer {
     protected $requestDescribeLayerPOST = "";
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="array", nullable="true")
     */
-    protected $requestDescribeLayerFormats = "";
+    protected $requestDescribeLayerFormats = array();
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -182,9 +181,9 @@ class WMSService extends GroupLayer {
     protected $requestGetLegendGraphicPOST = "";
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="array", nullable="true")
     */
-    protected $requestGetLegendGraphicFormats = "";
+    protected $requestGetLegendGraphicFormats = array();
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -196,9 +195,9 @@ class WMSService extends GroupLayer {
     protected $requestGetStylesPOST = "";
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="array", nullable="true")
     */
-    protected $requestGetStylesFormats = "";
+    protected $requestGetStylesFormats = array();
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -210,9 +209,9 @@ class WMSService extends GroupLayer {
     protected $requestPutStylesPOST = "";
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="array", nullable="true")
     */
-    protected $requestPutStylesFormats = "";
+    protected $requestPutStylesFormats = array();
 
 
     public function __construct() {
@@ -244,7 +243,7 @@ class WMSService extends GroupLayer {
         return $this->accessConstraints;
     }
 
-    public function setExceptionFormats($exceptionFormats){
+    public function setExceptionFormats(array $exceptionFormats){
         $this->exceptionFormats = $exceptionFormats;
     }
     public function getExceptionFormats(){
@@ -255,8 +254,7 @@ class WMSService extends GroupLayer {
      * returns the default (first) exceptionFormats that a wms supports 
     */
     public function getDefaultExceptionFormats(){
-        $formats = explode(',',$this->exceptionFormats);
-        return $formats[0];
+        return isset($this->exceptionFormats[0])? $this->exceptionFormats[0]: '';
     }
     
    /**
@@ -543,7 +541,7 @@ class WMSService extends GroupLayer {
         return $this->requestGetCapabilitiesPOST;
     }
     
-    public function setRequestGetCapabilitiesFormats($formats){
+    public function setRequestGetCapabilitiesFormats(array $formats){
         $this->requestGetCapabilitiesFormats = $formats;
     }
     
@@ -555,8 +553,7 @@ class WMSService extends GroupLayer {
      * returns the default (first) format that a wms supports for getCapabilities requests
     */
     public function getDefaultRequestGetCapabilitiesFormat(){
-        $formats = explode(',',$this->requestGetCapabilitiesFormats);
-        return $formats[0];
+        return isset($this->requestGetCapabilitiesFormats[0])? $this->requestGetCapabilitiesFormats[0]: '';
     }
 
 
@@ -578,7 +575,7 @@ class WMSService extends GroupLayer {
         return $this->requestGetMapPOST;
     }
     
-    public function setRequestGetMapFormats($formats){
+    public function setRequestGetMapFormats(array $formats){
         $this->requestGetMapFormats = $formats;
     }
     
@@ -590,8 +587,7 @@ class WMSService extends GroupLayer {
      * returns the default (first) format that a wms supports for getMap requests
     */
     public function getDefaultRequestGetMapFormat(){
-        $formats = explode(',',$this->requestGetMapFormats);
-        return $formats[0];
+        return isset($this->requestGetMapFormats[0])? $this->requestGetMapFormats[0]: '';
     }
 
 
@@ -612,7 +608,7 @@ class WMSService extends GroupLayer {
         return $this->requestGetFeatureInfoPOST;
     }
     
-    public function setRequestGetFeatureInfoFormats($formats){
+    public function setRequestGetFeatureInfoFormats(array $formats){
         $this->requestGetFeatureInfoFormats = $formats;
     }
     
@@ -624,8 +620,7 @@ class WMSService extends GroupLayer {
      * returns the default (first) format that a wms supports for getFeatureInfo requests
     */
     public function getDefaultRequestGetFeatureInfoFormat(){
-        $formats = explode(',',$this->requestGetFeatureInfoFormats);
-        return $formats[0];
+        return isset($this->requestGetFeatureInfoFormats[0])? $this->requestGetFeatureInfoFormats[0]: '';
     }
 
 
@@ -646,7 +641,7 @@ class WMSService extends GroupLayer {
         return $this->requestDescribeLayerPOST;
     }
     
-    public function setRequestDescribeLayerFormats($formats){
+    public function setRequestDescribeLayerFormats(array $formats){
         $this->requestDescribeLayerFormats = $formats;
     }
     
@@ -658,8 +653,7 @@ class WMSService extends GroupLayer {
      * returns the default (first) format that a wms supports for getDescribeLayer requests
     */
     public function getDefaultRequestDescribeLayerFormat(){
-        $formats = explode(',',$this->requestDescribeLayerFormats);
-        return $formats[0];
+        return isset($this->requestDescribeLayerFormats[0])? $this->requestDescribeLayerFormats[0]: '';
     }
 
 
@@ -680,7 +674,7 @@ class WMSService extends GroupLayer {
         return $this->requestGetLegendGraphicPOST;
     }
     
-    public function setRequestGetLegendGraphicFormats($formats){
+    public function setRequestGetLegendGraphicFormats(array $formats){
         $this->requestGetLegendGraphicFormats = $formats;
     }
     
@@ -693,8 +687,7 @@ class WMSService extends GroupLayer {
      * returns the default (first) format that a wms supports for getLegendGraphic requests
     */
     public function getDefaultRequestGetLegendGraphicFormat(){
-        $formats = explode(',',$this->requestGetLegendGraphicFormats);
-        return $formats[0];
+        return isset($this->requestGetLegendGraphicFormats[0])? $this->requestGetLegendGraphicFormats[0]: '';
     }
 
 
@@ -715,7 +708,7 @@ class WMSService extends GroupLayer {
         return $this->requestGetStylesPOST;
     }
     
-    public function setRequestGetStylesFormats($formats){
+    public function setRequestGetStylesFormats(array $formats){
         $this->requestGetStylesFormats = $formats;
     }
     
@@ -727,8 +720,7 @@ class WMSService extends GroupLayer {
      * returns the default (first) format that a wms supports for getStyles requests
     */
     public function getDefaultRequestGetStylesFormat(){
-        $formats = explode(',',$this->requestGetStylesFormats);
-        return $formats[0];
+        return isset($this->requestGetStylesFormats[0])? $this->requestGetStylesFormats[0]: '';
     }
 
 
@@ -749,7 +741,7 @@ class WMSService extends GroupLayer {
         return $this->requestPutStylesPOST;
     }
     
-    public function setRequestPutStylesFormats($formats){
+    public function setRequestPutStylesFormats(array $formats){
         $this->requestPutStylesFormats = $formats;
     }
     
@@ -761,8 +753,7 @@ class WMSService extends GroupLayer {
      * returns the default (first) format that a wms supports for putStyles requests
     */
     public function getDefaultRequestPutStylesFormat(){
-        $formats = explode(',',$this->requestPutStylesFormats);
-        return $formats[0];
+        return isset($this->requestPutStylesFormats[0])? $this->requestPutStylesFormats[0]: '';
     }
 
     /**

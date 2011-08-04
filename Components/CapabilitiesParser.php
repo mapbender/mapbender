@@ -94,8 +94,7 @@ class CapabilitiesParser {
                                             if($node->nodeType == XML_ELEMENT_NODE){ 
                                                 if($node->nodeName == "Format"){
                                                     $formats = $wms->getExceptionFormats();
-                                                    $seperator = $formats == "" ?"":",";
-                                                    $formats .=  $seperator . $node->nodeValue;
+                                                    $formats[]  = $node->nodeValue;
                                                     $wms->setExceptionFormats($formats);
                                                 }
                                             }
@@ -346,37 +345,37 @@ class CapabilitiesParser {
             case "GetCapabilities":
                 $wms->setRequestGetCapabilitiesGET($get);
                 $wms->setRequestGetCapabilitiesPOST($post);
-                $wms->setRequestGetCapabilitiesFormats(implode(',',$formats));
+                $wms->setRequestGetCapabilitiesFormats($formats);
             break;
             case "GetMap":
                 $wms->setRequestGetMapGET($get);
                 $wms->setRequestGetMapPOST($post);
-                $wms->setRequestGetMapFormats(implode(',',$formats));
+                $wms->setRequestGetMapFormats($formats);
             break;
             case "GetFeatureInfo":
                 $wms->setRequestGetFeatureInfoGET($get);
                 $wms->setRequestGetFeatureInfoPOST($post);
-                $wms->setRequestGetFeatureInfoFormats(implode(',',$formats));
+                $wms->setRequestGetFeatureInfoFormats($formats);
             break;
             case "DescribeLayer":
                 $wms->setRequestDescribeLayerGET($get);
                 $wms->setRequestDescribeLayerPOST($post);
-                $wms->setRequestDescribeLayerFormats(implode(',',$formats));
+                $wms->setRequestDescribeLayerFormats($formats);
             break;
             case "GetLegendGraphic":
                 $wms->setRequestGetLegendGraphicGET($get);
                 $wms->setRequestGetLegendGraphicPOST($post);
-                $wms->setRequestGetLegendGraphicFormats(implode(',',$formats));
+                $wms->setRequestGetLegendGraphicFormats($formats);
             break;
             case "GetStyles":
                 $wms->setRequestGetStylesGET($get);
                 $wms->setRequestGetStylesPOST($post);
-                $wms->setRequestGetStylesFormats(implode(',',$formats));
+                $wms->setRequestGetStylesFormats($formats);
             break;
             case "PutStyles":
                 $wms->setRequestPutStylesGET($get);
                 $wms->setRequestPutStylesPOST($post);
-                $wms->setRequestPutStylesFormats(implode(',',$formats));
+                $wms->setRequestPutStylesFormats($formats);
             break;
         }
 
