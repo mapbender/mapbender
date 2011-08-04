@@ -198,7 +198,9 @@ class WMSController extends Controller {
         if(!$wms){
             throw new \Exception("could not parse data for url '$getcapa_url'");
         }
+    
 
+//        die(print_r($wms->getExceptionFormats(),true));
         $form = $this->get('form.factory')->create(new WMSType(), $wms,array(
             "exceptionFormats" => $wms->getExceptionFormats(),
             "requestGetCapabilitiesFormats" => $wms->getRequestGetCapabilitiesFormats(),

@@ -169,11 +169,17 @@ class WMSType  extends AbstractType {
             "expanded"  => true,
         ));
 
+        $exceptionFormatChoices = array_combine(
+            $options['exceptionFormats'],
+            $options['exceptionFormats']
+        );
+        
+        // Symfony2 is silly an does not work if a value contains a dot
         $builder->add("exceptionFormats","choice",array(
             "required"  => false,
-            "choices"   => $options['exceptionFormats'],
+            "choices"   => $exceptionFormatChoices,
             "multiple"  => true,
-            "expanded"  => true,
+            "expanded"  => true
         ));
 
         $builder->add("symbolSupportSLD","checkbox",array(

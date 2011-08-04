@@ -243,12 +243,16 @@ class WMSService extends GroupLayer {
         return $this->accessConstraints;
     }
 
+
+
     public function setExceptionFormats(array $exceptionFormats){
         $this->exceptionFormats = $exceptionFormats;
     }
+
     public function getExceptionFormats(){
         return $this->exceptionFormats;
     }
+
     
     /**
      * returns the default (first) exceptionFormats that a wms supports 
