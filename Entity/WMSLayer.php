@@ -56,12 +56,12 @@ class WMSLayer extends GroupLayer {
     /**
      * @ORM\Column(type="float",nullable="true")
      */
-    protected $ScaleHintMin = 0;
+    protected $scaleHintMin = 0;
     
     /**
      * @ORM\Column(type="float",nullable="true")
      */
-    protected $ScaleHintMax = 0;
+    protected $scaleHintMax = 0;
 
     /*
         FIXME Dimension and Extent are missing
@@ -291,7 +291,7 @@ class WMSLayer extends GroupLayer {
      */
     public function setScaleHintMin($scaleHintMin)
     {
-        $this->ScaleHintMin = $scaleHintMin;
+        $this->scaleHintMin = $scaleHintMin;
     }
 
     /**
@@ -301,7 +301,7 @@ class WMSLayer extends GroupLayer {
      */
     public function getScaleHintMin()
     {
-        return $this->ScaleHintMin;
+        return $this->scaleHintMin;
     }
 
     /**
@@ -311,7 +311,7 @@ class WMSLayer extends GroupLayer {
      */
     public function setScaleHintMax($scaleHintMax)
     {
-        $this->ScaleHintMax = $scaleHintMax;
+        $this->scaleHintMax = $scaleHintMax;
     }
 
     /**
@@ -321,7 +321,7 @@ class WMSLayer extends GroupLayer {
      */
     public function getScaleHintMax()
     {
-        return $this->ScaleHintMax;
+        return $this->scaleHintMax;
     }
 
     /**

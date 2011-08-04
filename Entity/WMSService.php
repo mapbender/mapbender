@@ -23,70 +23,70 @@ class WMSService extends GroupLayer {
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactPerson;
+    protected $contactPerson;
     
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactPosition;
+    protected $contactPosition;
 
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactOrganization;
+    protected $contactOrganization;
     
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactVoiceTelephone;
+    protected $contactVoiceTelephone;
     
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactFacsimileTelephone;
+    protected $contactFacsimileTelephone;
     
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactElectronicMailAddress;
+    protected $contactElectronicMailAddress;
     
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactAddress;
+    protected $contactAddress;
     
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactAddressType;
+    protected $contactAddressType;
     
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactAddressCity;
+    protected $contactAddressCity;
     
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactAddressStateOrProvince;
+    protected $contactAddressStateOrProvince;
     
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactAddressPostCode;
+    protected $contactAddressPostCode;
     
     /**
     * @ORM\Column(type="string",nullable="true")
     */
-    protected $ContactAddressCountry;
+    protected $contactAddressCountry;
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="text", nullable="true")
     */
     protected $fees = "";
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="text",nullable="true")
     */
     protected $accessConstraints = "";
     
@@ -296,7 +296,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactPerson($contactPerson)
     {
-        $this->ContactPerson = $contactPerson;
+        $this->contactPerson = $contactPerson;
     }
 
     /**
@@ -306,7 +306,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactPerson()
     {
-        return $this->ContactPerson;
+        return $this->contactPerson;
     }
 
     /**
@@ -316,7 +316,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactOrganization($contactOrganization)
     {
-        $this->ContactOrganization = $contactOrganization;
+        $this->contactOrganization = $contactOrganization;
     }
 
     /**
@@ -326,7 +326,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactOrganization()
     {
-        return $this->ContactOrganization;
+        return $this->contactOrganization;
     }
     
     /**
@@ -336,7 +336,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactPosition($contactPosition)
     {
-        $this->ContactPosition = $contactPosition;
+        $this->contactPosition = $contactPosition;
     }
 
     /**
@@ -346,7 +346,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactPosition()
     {
-        return $this->ContactPosition;
+        return $this->contactPosition;
     }
 
     /**
@@ -356,7 +356,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactVoiceTelephone($contactVoiceTelephone)
     {
-        $this->ContactVoiceTelephone = $contactVoiceTelephone;
+        $this->contactVoiceTelephone = $contactVoiceTelephone;
     }
 
     /**
@@ -366,7 +366,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactVoiceTelephone()
     {
-        return $this->ContactVoiceTelephone;
+        return $this->contactVoiceTelephone;
     }
 
     /**
@@ -376,7 +376,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactFacsimileTelephone($contactFacsimileTelephone)
     {
-        $this->ContactFacsimileTelephone = $contactFacsimileTelephone;
+        $this->contactFacsimileTelephone = $contactFacsimileTelephone;
     }
 
     /**
@@ -386,7 +386,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactFacsimileTelephone()
     {
-        return $this->ContactFacsimileTelephone;
+        return $this->contactFacsimileTelephone;
     }
 
     /**
@@ -396,7 +396,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactElectronicMailAddress($contactElectronicMailAddress)
     {
-        $this->ContactElectronicMailAddress = $contactElectronicMailAddress;
+        $this->contactElectronicMailAddress = $contactElectronicMailAddress;
     }
 
     /**
@@ -406,7 +406,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactElectronicMailAddress()
     {
-        return $this->ContactElectronicMailAddress;
+        return $this->contactElectronicMailAddress;
     }
 
     /**
@@ -416,7 +416,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactAddress($contactAddress)
     {
-        $this->ContactAddress = $contactAddress;
+        $this->contactAddress = $contactAddress;
     }
 
     /**
@@ -426,7 +426,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactAddress()
     {
-        return $this->ContactAddress;
+        return $this->contactAddress;
     }
 
     /**
@@ -436,7 +436,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactAddressType($contactAddressType)
     {
-        $this->ContactAddressType = $contactAddressType;
+        $this->contactAddressType = $contactAddressType;
     }
 
     /**
@@ -446,7 +446,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactAddressType()
     {
-        return $this->ContactAddressType;
+        return $this->contactAddressType;
     }
 
     /**
@@ -456,7 +456,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactAddressCity($contactAddressCity)
     {
-        $this->ContactAddressCity = $contactAddressCity;
+        $this->contactAddressCity = $contactAddressCity;
     }
 
     /**
@@ -466,7 +466,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactAddressCity()
     {
-        return $this->ContactAddressCity;
+        return $this->contactAddressCity;
     }
 
     /**
@@ -476,7 +476,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactAddressStateOrProvince($contactAddressStateOrProvince)
     {
-        $this->ContactAddressStateOrProvince = $contactAddressStateOrProvince;
+        $this->contactAddressStateOrProvince = $contactAddressStateOrProvince;
     }
 
     /**
@@ -486,7 +486,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactAddressStateOrProvince()
     {
-        return $this->ContactAddressStateOrProvince;
+        return $this->contactAddressStateOrProvince;
     }
 
     /**
@@ -496,7 +496,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactAddressPostCode($contactAddressPostCode)
     {
-        $this->ContactAddressPostCode = $contactAddressPostCode;
+        $this->contactAddressPostCode = $contactAddressPostCode;
     }
 
     /**
@@ -506,7 +506,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactAddressPostCode()
     {
-        return $this->ContactAddressPostCode;
+        return $this->contactAddressPostCode;
     }
 
     /**
@@ -516,7 +516,7 @@ class WMSService extends GroupLayer {
      */
     public function setContactAddressCountry($contactAddressCountry)
     {
-        $this->ContactAddressCountry = $contactAddressCountry;
+        $this->contactAddressCountry = $contactAddressCountry;
     }
 
     /**
@@ -526,7 +526,7 @@ class WMSService extends GroupLayer {
      */
     public function getContactAddressCountry()
     {
-        return $this->ContactAddressCountry;
+        return $this->contactAddressCountry;
     }
     
     public function setRequestGetCapabilitiesGET($requestGetCapabilitiesGET){

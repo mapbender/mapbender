@@ -20,6 +20,37 @@ class WMSLayerType  extends AbstractType {
         $builder->add("latLonBounds","hidden",array(
             "required" => false,
         ));
+        $builder->add("queryable","checkbox",array(
+            "required"  => false,
+        ));
+        $builder->add("cascaded","integer",array(
+            "required"  => false,
+            "read_only"  => true,
+        ));
+        $builder->add("opaque","checkbox",array(
+            "required"  => false,
+            "read_only"  => true,
+        ));
+        $builder->add("noSubset","checkbox",array(
+            "required"  => false,
+            "read_only"  => true,
+        ));
+        $builder->add("fixedWidth","integer",array(
+            "required"  => false,
+            "read_only"  => true,
+        ));
+        $builder->add("fixedHeight","integer",array(
+            "required"  => false,
+            "read_only"  => true,
+        ));
+        $builder->add("scaleHintMin","number",array(
+            "required"  => false,
+            "read_only"  => true,
+        ));
+        $builder->add("scaleHintMax","number",array(
+            "required"  => false,
+            "read_only"  => true,
+        ));
         $builder->add("layer",'collection',array( 
             'type' => new WMSLayerType(),
         ));
