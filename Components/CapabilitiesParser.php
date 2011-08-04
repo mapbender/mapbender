@@ -103,6 +103,40 @@ class CapabilitiesParser {
                                     break;
                                     case "VendorSpecificCapabilities":
                                     case "UserDefinedSymbolization":
+                                        // these can either be '0','1',nonexistant ( -> false) or another string
+                                        // we take 'any other string' to mean the same thing as '1'
+
+                                        $supportSLD = $node->getAttribute("SupportSLD");
+                                        if($supportSLD == '0' || $supportSLD === false){
+                                            $supportSLD = false;
+                                        } else { 
+                                            $supportSLD = true;
+                                        }
+                                        $wms->setSymbolSupportSLD($supportSLD);
+
+                                        $userLayer = $node->getAttribute("UserLayer"); 
+                                        if($userLayer == '0' || $userLayer === false){
+                                            $userLayer = false;
+                                        } else { 
+                                            $userLayer = true;
+                                        }
+                                        $wms->setSymbolUserLayer($userLayer);
+
+                                        $userStyle = $node->getAttribute("UserStyle");
+                                        if($userStyle == '0' || $userStyle === false){
+                                            $userStyle = false;
+                                        } else { 
+                                            $userStyle = true;
+                                        }
+                                        $wms->setSymbolUserStyle($userStyle);
+
+                                        $remoteWFS = $node->getAttribute("RemoteWFS");
+                                        if($remoteWFS == '0' || $remoteWFS === false){
+                                            $remoteWFS = false;
+                                        } else { 
+                                            $remoteWFS = true;
+                                        }
+                                        $wms->setSymbolRemoteWFS($remoteWFS);
                                     break;
                                     case "Layer":
                                         $sublayer = $this->WMSLayerFromLayerNode($node);

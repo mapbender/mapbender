@@ -148,16 +148,16 @@ class WMSType  extends AbstractType {
             "required"  => false,
         ));
 
-        $builder->add("symbolSupportSLD","boolean",array(
+        $builder->add("symbolSupportSLD","checkbox",array(
             "required"  => false,
         ));
-        $builder->add("symbolUserLayer","boolean",array(
+        $builder->add("symbolUserLayer","checkbox",array(
             "required"  => false,
         ));
-        $builder->add("symbolUserStyle","boolean",array(
+        $builder->add("symbolUserStyle","checkbox",array(
             "required"  => false,
         ));
-        $builder->add("symbolRemoteWFS","boolean",array(
+        $builder->add("symbolRemoteWFS","checkbox",array(
             "required"  => false,
         ));
 

@@ -765,5 +765,83 @@ class WMSService extends GroupLayer {
         return $formats[0];
     }
 
+    /**
+     * Set symbolSupportSLD
+     *
+     * @param boolean $symbolSupportSLD
+     */
+    public function setSymbolSupportSLD($symbolSupportSLD)
+    {
+        $this->symbolSupportSLD = $symbolSupportSLD;
+    }
 
+    /**
+     * Get symbolSupportSLD
+     *
+     * @return boolean 
+     */
+    public function getSymbolSupportSLD()
+    {
+        return $this->symbolSupportSLD;
+    }
+
+    /**
+     * Set symbolUserLayer
+     *
+     * @param boolean $symbolUserLayer
+     */
+    public function setSymbolUserLayer($symbolUserLayer)
+    {
+        $this->symbolUserLayer = $symbolUserLayer;
+    }
+
+    /**
+     * Get symbolUserLayer
+     *
+     * @return boolean 
+     */
+    public function getSymbolUserLayer()
+    {
+        return $this->symbolUserLayer;
+    }
+
+    /**
+     * Set symbolUserStyle
+     *
+     * @param boolean $symbolUserStyle
+     */
+    public function setSymbolUserStyle($symbolUserStyle)
+    {
+        $this->symbolUserStyle = $symbolUserStyle;
+    }
+
+    /**
+     * Get symbolUserStyle
+     *
+     * @return boolean 
+     */
+    public function getSymbolUserStyle()
+    {
+        return $this->symbolUserStyle;
+    }
+
+    /**
+     * Set symbolRemoteWFS
+     *
+     * @param boolean $symbolRemoteWFS
+     */
+    public function setSymbolRemoteWFS($symbolRemoteWFS)
+    {
+        $this->symbolRemoteWFS = $symbolRemoteWFS;
+    }
+
+    /**
+     * Get symbolRemoteWFS
+     *
+     * @return boolean 
+     */
+    public function getSymbolRemoteWFS()
+    {
+        return $this->symbolRemoteWFS;
+    }
 }
