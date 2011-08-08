@@ -63,8 +63,8 @@ class CapabilitiesParserTest extends PHPUnit_Framework_TestCase {
         $wms = $parser->getWMSService();
         $this->assertEquals(1,$wms->getLayer()->count());
 
-        $this->assertSame("image/png",$wms->getDefaultGetMapFormat());
-        $this->assertSame("http://example.com/ohmyawms",$wms->getGetMapGet());
+        $this->assertSame("image/png",$wms->getDefaultRequestGetMapFormat());
+        $this->assertSame("http://example.com/ohmyawms",$wms->getRequestGetMapGet());
 
         $rootLayer = $wms->getRootLayer();
         $this->assertEquals("EPSG:4326",$rootLayer->getDefaultSrs());
