@@ -3,11 +3,17 @@
 
 {% block content %}
     <div class="wmsLayer">
-        <h1 class="title" ><a href="{{ wmsLayer.getId() }}" target="_new">{{ wmsLayer.getTitle() }}</a></h1> <h2 class="name">({{ wmsLayer.getName() }})</h2>
+        <h1 class="title" >
+            <a href="{{ wmsLayer.getId() }}" target="_new">{{ wmsLayer.getTitle() }}</a>
+        </h1>
+        <span class="name">({{ wmsLayer.getName() }})</span>
         <p class="abstract">{{ wmsLayer.getAbstract() }}</p>
-        <h3>{% trans %}Layer{% endtrans %}</h3>
+        <h2>{% trans %}Layer{% endtrans %}</h2>
         {% for layer in wmsLayer.getLayer() %}
           {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
         {% endfor %}
+        {% if wmsLayer.getLayer()|length == 0 %}
+            <p class="emptydata">{% trans %}No Layers{% endtrans %}</p>
+        {% endif %}
     </div>
 {% endblock %}
