@@ -250,6 +250,7 @@ class WMSService extends GroupLayer {
     }
 
     public function getExceptionFormats(){
+        $this->exceptionFormats = $this->exceptionFormats == ""? array(): $this->exceptionFormats;
         return $this->exceptionFormats;
     }
 

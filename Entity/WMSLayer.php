@@ -89,12 +89,12 @@ class WMSLayer extends GroupLayer {
     /**
      * @ORM\Column(type="integer",nullable="true")
      */
-    protected $attributionLogoWidth = '';
+    protected $attributionLogoWidth = 0;
     
     /**
      * @ORM\Column(type="integer",nullable="true")
      */
-    protected $attributionLogoHeight = '';
+    protected $attributionLogoHeight = 0;
     
     /**
      * @ORM\Column(type="string",nullable="true")
@@ -161,7 +161,11 @@ class WMSLayer extends GroupLayer {
     
     public function __construct()
     {
-        $this->layer = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->queryable    = false;
+        $this->cascaded     = 0;
+        $this->opaque       = false;
+        $this->noSubset     = false;
+        $this->layer        = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -191,7 +195,11 @@ class WMSLayer extends GroupLayer {
      */
     public function setCascaded($cascaded)
     {
-        $this->cascaded = $cascaded;
+        if(!is_integer($cascaded)){
+            $this->cascaded = 0;
+        }else{
+            $this->cascaded = $cascaded;
+        }
     }
 
     /**
@@ -251,7 +259,11 @@ class WMSLayer extends GroupLayer {
      */
     public function setFixedWidth($fixedWidth)
     {
-        $this->fixedWidth = $fixedWidth;
+        if(!is_integer($fixedWidth)){
+            $this->fixedWidth = null;
+        }else{
+            $this->fixedWidth = $fixedWidth;
+        }
     }
 
     /**
@@ -271,7 +283,11 @@ class WMSLayer extends GroupLayer {
      */
     public function setFixedHeight($fixedHeight)
     {
-        $this->fixedHeight = $fixedHeight;
+        if(!is_integer($fixedHeight)){
+            $this->fixedHeight = null;
+        }else{
+            $this->fixedHeight = $fixedHeight;
+        } 
     }
 
     /**
@@ -411,7 +427,11 @@ class WMSLayer extends GroupLayer {
      */
     public function setAttributionLogoWidth($attributionLogoWidth)
     {
-        $this->attributionLogoWidth = $attributionLogoWidth;
+        if(!is_integer($attributionLogoWidth)){
+            $this->attributionLogoWidth = 0;
+        }else{
+            $this->attributionLogoWidth = $attributionLogoWidth;
+        }
     }
 
     /**
@@ -431,7 +451,11 @@ class WMSLayer extends GroupLayer {
      */
     public function setAttributionLogoHeight($attributionLogoHeight)
     {
-        $this->attributionLogoHeight = $attributionLogoHeight;
+        if(!is_integer($attributionLogoHeight)){
+            $this->attributionLogoHeight = 0;
+        }else{
+            $this->attributionLogoHeight = $attributionLogoHeight;
+        }
     }
 
     /**
