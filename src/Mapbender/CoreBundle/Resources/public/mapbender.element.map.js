@@ -107,7 +107,6 @@ $.widget("mapbender.mbMap", {
             this.map.olMap.addControl(overviewControl);
         }
         this.map.olMap.addControl(new OpenLayers.Control.Scale());
-        this.map.olMap.addControl(new OpenLayers.Control.LayerSwitcher());
         this.map.olMap.addControl(new OpenLayers.Control.PanZoomBar());
 
         self._trigger('ready');
