@@ -7,6 +7,8 @@ use Mapbender\CoreBundle\Component\ElementInterface;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\ORM\Query\Expr\Andx;
+use Doctrine\ORM\Query\Expr\Comparison;
 
 class WmcStorage extends Element implements ElementInterface {
     public function getTitle() {
@@ -104,7 +106,6 @@ class WmcStorage extends Element implements ElementInterface {
             }
             $params = array_merge($params, array('owner' => $owner));
             $qb = $repository->createQueryBuilder('w');
-            //$qb->add('select', 'w');
             $where = $qb->expr()->andx(
                 $qb->expr()->eq('w.crs', ':crs'),
                 $qb->expr()->orx(
@@ -136,9 +137,24 @@ class WmcStorage extends Element implements ElementInterface {
                 throw new \Exception('The params parameter must be an array.');
             }
 
-            $params = array_merge($params, array('owner' => $owner));
+            $qb = $repository->createQueryBuilder('w');
 
-            $wmc = $repository->findOneBy($params);
+            $where = $qb->expr()->andx(
+                $qb->expr()->orx(
+                    $qb->expr()->eq('w.owner', ':owner'),
+                    $qb->expr()->eq('w.public', 'true')
+                )
+            );
+            foreach($params as $key => $value) {
+                $where->add(new Comparison("w.$key", '=', ":$key"));
+                $qb->setParameter($key, $value);
+            }
+
+            $qb->add('where', $where);
+
+            $qb->setParameter('owner', $params['owner']);
+
+            $wmc = $qb->getQuery()->getSingleResult();
             if(!$wmc) {
                 throw new \Exception('No WMC found for your paramters.');
             }

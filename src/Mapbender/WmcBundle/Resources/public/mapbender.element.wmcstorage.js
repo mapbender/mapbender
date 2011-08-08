@@ -173,7 +173,7 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
     },
 
     _loadError: function(jqXHR, textStatus, errorThrown) {
-
+        this._trigger('loaderror');
     },
 
     _showSaveDialog: function() {
