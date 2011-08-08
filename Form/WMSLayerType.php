@@ -22,6 +22,7 @@ class WMSLayerType  extends AbstractType {
         ));
         $builder->add("queryable","checkbox",array(
             "required"  => false,
+            "read_only"  => true,
         ));
         $builder->add("cascaded","integer",array(
             "required"  => false,
