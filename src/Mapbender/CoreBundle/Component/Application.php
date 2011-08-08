@@ -292,5 +292,12 @@ class Application implements ApplicationInterface {
             return $roles;
         }
      }
+
+     /*
+      * Get a container parameter
+      */
+     public function getParameter($key) {
+        return $this->container->getParameter($key);
+     }
 }
 
