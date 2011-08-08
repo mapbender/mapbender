@@ -3,32 +3,35 @@
 {% block title %}Details for {{ wms.getTitle() }} {% endblock %}
 {% block heading %}WMS detail{% endblock %}
 
-
-{% block content %}
+{% block subnavigation %}
     <nav class="actions">
         <a href="{{ path('mb_wms_showdelete',{'id':wms.getId()}) }}">{% trans %}Delete{% endtrans %}</a>
         <a href="">{% trans %}Edit{% endtrans %}</a>
         <a href="#">{% trans %}Update{% endtrans %}</a>
     </nav>
+{% endblock %}
+
+{% block content %}
     
     <div class="wms">
-        <h1 class="title" ><a href="{{ wms.getId() }}" target="_new">{{ wms.getTitle() }}</a></h1>
-        <span class="name">({{ wms.getName() }})</span>
-        <p class="onlineResource">{{ wms.getOnlineResource() }}</p>
-        <p class="abstract"> {{ wms.getAbstract() }} </p>
-        <h2>{% trans %}Fees{% endtrans %}</h2>
-        <p class="fees">{{ wms.getFees() }}</p>
-        <h2>{% trans %}Accessconstraints{% endtrans %}</h2>
-        <p class="accessConstraints">{{ wms.getAccessConstraints() }}</p>
-        {% if wms is defined %}
-            <div class="preview">
-                <h2>{% trans %}OpenLayers Preview{% endtrans %}</h2>
-                <div id="map" class="smallmap"></div>
-            </div>
-        {% else %}
-            <p class="no-preview">{% trans %}WMS not published. Preview not available {% endtrans %}</p>
-        {% endif %}
-       
+        <div class="metadata"> 
+            <h1 class="title" ><a href="{{ wms.getId() }}" target="_new">{{ wms.getTitle() }}</a></h1>
+            <span class="name">({{ wms.getName() }})</span>
+            <p class="onlineResource">{{ wms.getOnlineResource() }}</p>
+            <p class="abstract"> {{ wms.getAbstract() }} </p>
+            <h2>{% trans %}Fees{% endtrans %}</h2>
+            <p class="fees">{{ wms.getFees() }}</p>
+            <h2>{% trans %}Accessconstraints{% endtrans %}</h2>
+            <p class="accessConstraints">{{ wms.getAccessConstraints() }}</p>
+            {% if wms is defined %}
+                <div class="preview">
+                    <h2>{% trans %}OpenLayers Preview{% endtrans %}</h2>
+                    <div id="map" class="smallmap"></div>
+                </div>
+            {% else %}
+                <p class="no-preview">{% trans %}WMS not published. Preview not available {% endtrans %}</p>
+            {% endif %}
+        </div> 
         <div class="contact">
             <h2>{% trans %}Contact{% endtrans %}</h2> 
             <div class="contact-person> 
