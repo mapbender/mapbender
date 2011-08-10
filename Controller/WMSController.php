@@ -109,9 +109,7 @@ class WMSController extends Controller {
         $wms = new WMSService();
         $wms = $this->buildWMSFormStructure($requestWMS,$wms);
         $form = $this->get('form.factory')->create(new WMSType(),$wms); 
-
         $form->bindRequest($request);
-
     
         if($form->isValid()){
             $em = $this->get("doctrine.orm.entity_manager");
@@ -120,8 +118,13 @@ class WMSController extends Controller {
             $em->flush();
             return $this->redirect($this->generateUrl("mb_wms_details",array("id" => $wms->getId()),true));
         }else{
-            throw new \Exception("I am invalid");
-
+            // FIXME: getcapa_url is missing, xml is missing
+            return $this->render("MBWMSBundle:WMS:preview.html.twig",array(
+                    "getcapa_url"=> "",
+                    "wms" => $wms,
+                    "form" => $form->createView(),
+                    "xml" =>""
+                ));
         }
     
         
@@ -200,7 +203,6 @@ class WMSController extends Controller {
         }
     
 
-//        die(print_r($wms->getExceptionFormats(),true));
         $form = $this->get('form.factory')->create(new WMSType(), $wms,array(
             "exceptionFormats" => $wms->getExceptionFormats(),
             "requestGetCapabilitiesFormats" => $wms->getRequestGetCapabilitiesFormats(),
