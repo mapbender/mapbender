@@ -6,8 +6,8 @@
 {% block subnavigation %}
     <nav class="actions">
         <a href="{{ path('mb_wms_showdelete',{'id':wms.getId()}) }}">{% trans %}Delete{% endtrans %}</a>
-        <a href="">{% trans %}Edit{% endtrans %}</a>
-        <a href="#">{% trans %}Update{% endtrans %}</a>
+        <a class="disabled" href="">{% trans %}Edit{% endtrans %}</a>
+        <a class="disabled" href="#">{% trans %}Update{% endtrans %}</a>
     </nav>
 {% endblock %}
 
@@ -17,40 +17,38 @@
         <div class="metadata"> 
             <h1 class="title" ><a href="{{ wms.getId() }}" target="_new">{{ wms.getTitle() }}</a></h1>
             <span class="name">({{ wms.getName() }})</span>
+            <h2>{% trans %}Onlineresource{% endtrans %}</h2>
             <p class="onlineResource">{{ wms.getOnlineResource() }}</p>
+            <h2>{% trans %}Abstract{% endtrans %}</h2>
             <p class="abstract"> {{ wms.getAbstract() }} </p>
             <h2>{% trans %}Fees{% endtrans %}</h2>
             <p class="fees">{{ wms.getFees() }}</p>
             <h2>{% trans %}Accessconstraints{% endtrans %}</h2>
             <p class="accessConstraints">{{ wms.getAccessConstraints() }}</p>
-            {% if wms is defined %}
-                <div class="preview">
-                    <h2>{% trans %}OpenLayers Preview{% endtrans %}</h2>
-                    <div id="map" class="smallmap"></div>
-                </div>
-            {% else %}
-                <p class="no-preview">{% trans %}WMS not published. Preview not available {% endtrans %}</p>
-            {% endif %}
         </div> 
+        <div class="preview">
+            <h2>{% trans %}OpenLayers Preview{% endtrans %}</h2>
+            <div id="map" class="smallmap"></div>
+        </div>
         <div class="contact">
             <h2>{% trans %}Contact{% endtrans %}</h2> 
-            <div class="contact-person> 
+            <div class="contact-person"> 
                 <span class="type">{% trans %}Person{% endtrans %}</span>
                 <span class="value">{{ wms.getContactPerson() }}</span>
             </div>
-            <div class="contact-organization> 
+            <div class="contact-organization"> 
                 <span class="type">{% trans %}Organization{% endtrans %}</span>
                 <span class="value">{{ wms.getContactOrganization() }}</span>
             </div>
-            <div class="contact-position> 
+            <div class="contact-position"> 
                 <span class="type">{% trans %}Position{% endtrans %}</span>
                 <span class="value">{{ wms.getContactPosition() }}</span>
             </div>
-            <div class="contact-voicetelephone> 
+            <div class="contact-voicetelephone">
                 <span class="type">{% trans %}Telephone{% endtrans %}</span>
                 <span class="value">{{ wms.getContactVoiceTelephone() }}</span>
             </div>
-            <div class="contact-voicefax> 
+            <div class="contact-voicefax">
                 <span class="type">{% trans %}Fax{% endtrans %}</span>
                 <span class="value">{{ wms.getContactFacsimileTelephone() }}</span>
             </div>
@@ -83,52 +81,53 @@
                 <span class="value">{{ wms.getContactAddressCountry() }}</span>
             </div>
         </div>
-
-
-    </div>
-
-    <div class="requestGetCapabilities">
-        <h2>{% trans %}Operations{% endtrans %}</h2>
-        <h3>GetCapabilities</h3>
-        <div class="get">
-            <span class="type">GET</span>
-            <span class="value">
-                <a href="{{ wms.getRequestGetCapabilitiesGET() }}" target="_new">{{ wms.getRequestGetCapabilitiesGET() }}</a>
-            </span>
+    <div class="service">
+        <div class="requestGetCapabilities">
+            <h2>{% trans %}Operations{% endtrans %}</h2>
+            <h3>GetCapabilities</h3>
+            <div class="get">
+                <span class="type">GET</span>
+                <span class="value">
+                    <a href="{{ wms.getRequestGetCapabilitiesGET() }}" target="_new">{{ wms.getRequestGetCapabilitiesGET() }}</a>
+                </span>
+            </div>
+            <div class="get">
+                <span class="type">POST</span>
+                <span class="value">
+                    <a href="{{ wms.getRequestGetCapabilitiesPOST() }}" target="_new">{{ wms.getRequestGetCapabilitiesPOST() }}</a>
+                </span>
+            </div>
         </div>
-        <div class="get">
-            <span class="type">POST</span>
-            <span class="value">
-                <a href="{{ wms.getRequestGetCapabilitiesPOST() }}" target="_new">{{ wms.getRequestGetCapabilitiesPOST() }}</a>
-            </span>
-        </div>
-    </div>
 
-    <div>
-        <h3>GetMap</h3>
-        <div class="get">
-            <span class="type">GET</span>
-            <span class="value">
-                <a href="{{ wms.getRequestGetMapGET() }}" target="_new">{{ wms.getRequestGetMapGET() }}</a>
-            </span>
-        </div>
-        <div class="get">
-            <span class="type">POST</span>
-            <span class="value">
-                <a href="{{ wms.getRequestGetMapPOST() }}" target="_new">{{ wms.getRequestGetMapPOST() }}</a>
-            </span>
+        <div>
+            <h3>GetMap</h3>
+            <div class="get">
+                <span class="type">GET</span>
+                <span class="value">
+                    <a href="{{ wms.getRequestGetMapGET() }}" target="_new">{{ wms.getRequestGetMapGET() }}</a>
+                </span>
+            </div>
+            <div class="get">
+                <span class="type">POST</span>
+                <span class="value">
+                    <a href="{{ wms.getRequestGetMapPOST() }}" target="_new">{{ wms.getRequestGetMapPOST() }}</a>
+                </span>
+            </div>
         </div>
     </div>
-
-
-    <h2>{% trans %}Layers{% endtrans %}</h2>
-    {% for layer in wms.getLayer() %}
-        {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
-    {% endfor %}
-    {% if wms.getLayer()|length == 0 %}
-        <p class="emptydata">{% trans %}No Layers{% endtrans %}</p>
-    {% endif %}
+    <div class="layers">
+        <h2>{% trans %}Layers{% endtrans %}</h2>
+        {% for layer in wms.getLayer() %}
+            {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
+        {% endfor %}
+        {% if wms.getLayer()|length == 0 %}
+            <p class="emptydata">{% trans %}No Layers{% endtrans %}</p>
+        {% endif %}
     </div>
+    </div>
+
+
+
 {% endblock %}
 
 {% block stylesheets %}
