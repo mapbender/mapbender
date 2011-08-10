@@ -152,7 +152,7 @@ class WmcStorage extends Element implements ElementInterface {
 
             $qb->add('where', $where);
 
-            $qb->setParameter('owner', $params['owner']);
+            $qb->setParameter('owner', $owner);
 
             $wmc = $qb->getQuery()->getSingleResult();
             if(!$wmc) {
