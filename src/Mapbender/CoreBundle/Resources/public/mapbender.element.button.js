@@ -10,10 +10,13 @@ $.widget("mapbender.mbButton", {
     },
 
     active: false,
+    button : null,
 
     _create: function() {
         var self = this;
         var me = $(this.element);
+        
+        this.button = this.element[0];
 
         var o = {};
         if(this.options.icon) {
@@ -25,7 +28,11 @@ $.widget("mapbender.mbButton", {
             });
         }
 
-        me.button(o)
+        if(this.options.group) {
+            this.button.checked = false;
+        }
+
+        $(this.button).button(o)
             .bind('click', $.proxy(self._onClick, self))
             .bind('mbButtonDeactivate', $.proxy(self.deactivate, self));
     },
@@ -35,17 +42,16 @@ $.widget("mapbender.mbButton", {
 
     _onClick: function() {
         var me = $(this.element);
-        
+ 
         // If we're part of a group, deactivate all other actions in this group
         if(this.options.group) {
-            var others = $('.mb-element-button.mb-button-group-' + this.options.group)
+            var others = $('input[type="checkbox"]')
+                .filter('[name="mb-button-group[' + this.options.group + ']"]')
                 .not(me);
             others.trigger('mbButtonDeactivate');
         }
 
         this.active ? this.deactivate() : this.activate();
-
-        return false;
     },
 
     activate: function() {
@@ -57,13 +63,19 @@ $.widget("mapbender.mbButton", {
         }
         if(!this.options.group) {
             this.deactivate();
+        } else {
+            this.button.checked = true;
+            $(this.button).button('refresh');
         }
     },
 
     deactivate: function() {
         if(this.active) {
             this.active = false;
-            $(this.element).removeClass('ui-state-focus');
+        }
+        if(this.options.group) {
+            this.button.checked = false;
+            $(this.button).button('refresh');
         }
     }
 });

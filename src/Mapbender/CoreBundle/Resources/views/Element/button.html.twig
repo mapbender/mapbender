@@ -1,1 +1,5 @@
-<button class="mb-element mb-element-button {% if configuration.group is defined %}mb-button-group-{{ configuration.group }}{% endif %}" id="{{ id }}">{{ label }}</button>
+{% if configuration.group is defined %}
+<label for="{{ id }}">{{ label }}</label><input class="mb-element mb-element-button" type="checkbox" name="mb-button-group[{{ configuration.group }}]" value="{{ id }}" id="{{ id }}"/>
+{% else %}
+<button class="mb-element mb-element-button" id="{{ id }}">{{ label }}</button>
+{% endif %}
