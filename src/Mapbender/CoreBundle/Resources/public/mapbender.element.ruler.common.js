@@ -43,6 +43,7 @@ $.widget("mapbender.mbCommonRuler", $.mapbender.mbButton, {
      * This activates this button and will be called on click
      */
     activate: function() {
+        this._super('activate');
         var olMap = this.map.data('mapQuery').olMap;
         olMap.addControl(this.control);
         this.control.activate();
@@ -59,7 +60,7 @@ $.widget("mapbender.mbCommonRuler", $.mapbender.mbButton, {
      * this group is activated.
      */
     deactivate: function() {
-        //this._super('deactivate');
+        this._super('deactivate');
         var olMap = this.map.data('mapQuery').olMap;
         this.control.deactivate();
         olMap.removeControl(this.control);
