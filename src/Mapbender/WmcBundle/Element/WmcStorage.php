@@ -106,17 +106,25 @@ class WmcStorage extends Element implements ElementInterface {
             }
             $params = array_merge($params, array('owner' => $owner));
             $qb = $repository->createQueryBuilder('w');
+
             $where = $qb->expr()->andx(
-                $qb->expr()->eq('w.crs', ':crs'),
-                $qb->expr()->orx(
-                    $qb->expr()->eq('w.owner', ':owner'),
-                    $qb->expr()->eq('w.public', 'true')
-                )
-            );
+                $qb->expr()->eq('w.crs', ':crs'));
+
+            if($params['private'] === 'true') {
+                $where->add($qb->expr()->eq('w.owner', ':owner'));
+            } else {
+                $where->add(
+                    $qb->expr()->orx(
+                        $qb->expr()->eq('w.owner', ':owner'),
+                        $qb->expr()->eq('w.public', 'true')
+                    )
+                );
+            }
+
             $qb->add('where', $where);
 
             $qb->setParameter('crs',  $params['crs']);
-            $qb->setParameter('owner', $params['owner']);
+            $qb->setParameter('owner', $owner);
 
             $list = $qb->getQuery()->getResult();
 
@@ -160,6 +168,18 @@ class WmcStorage extends Element implements ElementInterface {
             }
             $response->setContent($wmc->getDocument());
             $response->headers->set('Content-Type', 'application/xml');
+            return $response;
+            break;
+        case 'delete':
+            $id = intval($request->get('id'));
+            $wmc = $repository->findOneBy(array(
+                'id' => $id,
+                'owner' => $owner
+            ));
+
+            $em->remove($wmc);
+            $em->flush();
+            $response->setContent($id);
             return $response;
             break;
         }

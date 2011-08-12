@@ -30,7 +30,7 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
         me.find('button').button();
 
         // Trigger save from within save dialog
-        me.find('#wmc-save button').click(function() {
+        me.find('button#save-wmc').click(function() {
             var docName = me.find('input#wmc-doc-title-save').val();
             self.save.call(self, docName);
         });
@@ -39,6 +39,12 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
             self.load.call(self, {
                 id: docId
             });
+        });
+        me.find('button#delete-wmc').click(function() {
+            var docId = me.find('select#wmc-delete').val();
+            if(docId !== null) {
+                self.deleteWmc.call(self, docId);
+            }
         });
     },
 
@@ -140,7 +146,6 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
         /**
          * Load layers from WMC into map
          */
-        //$.each(wmc.layersContext, function(idx, layerContext) {
             //TODO: queryLayers, opacity
         var hasBaseLayer = false;
         var layerDefs = $.map(wmc.layersContext, function(layerContext) {
@@ -182,7 +187,45 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
             .show()
             .siblings().hide();
 
+        this._loadDeleteList();
         this.open();
+    },
+
+    _loadDeleteList: function() {
+        $.ajax({
+            url: this.elementUrl + 'list',
+            data: {
+                params: $.extend({}, this.options.searchParams, {
+                            private: true
+                        })
+            },
+            context: this,
+            success: this._deleteListWmcSuccess,
+            //error: this._listWmcError
+        });
+    },
+
+    deleteWmc: function(id) {
+        $.ajax({
+            url: this.elementUrl + 'delete',
+            data: {
+                id: id
+            },
+            complete: $.proxy(this._loadDeleteList, this)
+        });
+    },
+
+    _deleteListWmcSuccess: function(data) {
+        var me = $(this.element),
+            select = me.find('select#wmc-delete').
+                empty();
+
+        $.each(data, function(idx, wmc) {
+            $('<option></option>')
+                .attr('value', wmc.id)
+                .html(wmc.title)
+                .appendTo(select);
+        });
     },
 
     _showLoadDialog: function() {
