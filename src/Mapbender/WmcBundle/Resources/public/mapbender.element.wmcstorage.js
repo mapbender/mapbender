@@ -102,6 +102,7 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
     },
 
     _onSaveSuccess: function(data) {
+        this._trigger('savesuccess');
         this.close();
     },
 
