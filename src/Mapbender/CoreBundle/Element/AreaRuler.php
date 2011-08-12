@@ -22,7 +22,8 @@ class AreaRuler extends Element implements ElementInterface {
     public function getAssets() {
         return array(
             'js' => array(
-                'mapbender.element.arearuler.js'
+                'mapbender.element.ruler.common.js',
+                'mapbender.element.ruler.area.js'
             ),
             'css' => array(
                 'mapbender.elements.css'

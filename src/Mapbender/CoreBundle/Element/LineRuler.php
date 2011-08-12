@@ -23,7 +23,7 @@ class LineRuler extends Element implements ElementInterface {
         return array(
             'js' => array(
                 'mapbender.element.ruler.common.js',
-                'mapbender.element.lineruler.js'
+                'mapbender.element.ruler.line.js'
             ),
             'css' => array(
                 'mapbender.elements.css'

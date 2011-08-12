@@ -65,7 +65,7 @@ $.widget("mapbender.mbCommonRuler", $.mapbender.mbButton, {
         this.control.deactivate();
         olMap.removeControl(this.control);
 
-        if(this.dlg !== null) {
+        if(this.dlg !== null && this.dlg.dialog('isOpen')) {
             this.dlg.dialog('close');
         }
     },
@@ -89,7 +89,8 @@ $.widget("mapbender.mbCommonRuler", $.mapbender.mbButton, {
                 width: 200,
                 height: 100,
                 autoOpen: false,
-                title: this.options.title
+                title: this.options.title,
+                close: $.proxy(this.deactivate, this)
             });
     }
 });
