@@ -13,10 +13,10 @@
         {% for wms in wmsArr %}
             <tr>
                 <td>{{ loop.index }}</td>
-                <td><a href="{{ path("mb_wms_details",{'id': wms.getId()}) }}">{{ wms.getTitle() }}</a></td>
+                <td><a href="{{ path("mb_wms_wms_edit",{'id': wms.getId()}) }}">{{ wms.getTitle() }}</a></td>
             </tr>
         {% endfor %}
     </table>
-    <a href="{{ path("mb_wms_index",{"first":prevFirst}) }}">{% trans %}Previous{% endtrans %}</a> 
-    <a href="{{  path("mb_wms_index",{"first": nextFirst}) }}">{% trans %}Next{% endtrans %}</a>
+    <a href="{{ path("mb_wms_wms_index",{"first":prevFirst}) }}">{% trans %}Previous{% endtrans %}</a> 
+    <a href="{{  path("mb_wms_wms_index",{"first": nextFirst}) }}">{% trans %}Next{% endtrans %}</a>
 {% endblock %}

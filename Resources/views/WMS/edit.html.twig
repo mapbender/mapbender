@@ -1,0 +1,21 @@
+{% extends 'MBWMSBundle:WMS:base.html.twig' %} 
+
+{% block title %}Details for {{ wms.getTitle() }} {% endblock %}
+{% block heading %}WMS detail{% endblock %}
+
+{% form_theme form _self %}
+
+{% block subnavigation %}
+    <nav class="actions">
+        <a href="{{ path('mb_wms_wms_confirmdelete',{'id':wms.getId()}) }}">{% trans %}Delete{% endtrans %}</a>
+        <a class="disabled" href="">{% trans %}Edit{% endtrans %}</a>
+        <a class="disabled" href="#">{% trans %}Update{% endtrans %}</a>
+    </nav>
+{% endblock %}
+
+{% block content %}
+<form action="{{ path('mb_wms_wms_save',{'id':wms.id}) }}" method="POST">
+{{ form_widget(form) }}
+<button type="submit">{% trans %}Save{% endtrans %}</button>
+</form>
+{% endblock %}

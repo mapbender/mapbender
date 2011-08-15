@@ -5,7 +5,7 @@
 {% block content %}
     <p>{% trans %}WMS Preview{% endtrans %}: '{{ getcapa_url }}'</p>
     <input type="hidden" value="{{ xml }}" />
-     <form class="wms" action="{{ path('mb_wms_add') }}" method="POST">
+     <form class="wms" action="{{ path('mb_wms_wms_add') }}" method="POST">
         <input type="submit" name="save" value="{% trans %}Add WMS{% endtrans %}"/> 
 
         <fieldset id="service" >
