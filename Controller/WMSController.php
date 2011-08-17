@@ -234,7 +234,8 @@ class WMSController extends Controller {
     }
     
 
-    /**
+ 
+  /**
      * Recursively persists a nested Layerstructure
      * param GroupLayer
      * param EntityManager

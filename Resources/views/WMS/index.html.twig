@@ -3,19 +3,25 @@
 {% block heading %}WMS all{% endblock %}
 
 {% block content %}
-    <table class="wmslist">
-        <caption>Verfügbare WMS-Dienste</caption>
-        <tr>
-            <th>Nr.</th>
-            <th>WMS-Name</th>
-        </tr>
 
+    <table class="wms">
+        <caption>{% trans %}Verfügbare WMS-Dienste{% endtrans %}</caption>
+        <thead>
+            <tr>
+                <th>{% trans %}Title{% endtrans %}</th>
+                <th>{% trans %}Alias{% endtrans %}</th>
+                <th>{% trans %}Abstract{% endtrans %}</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for wms in wmsArr %}
             <tr>
-                <td>{{ loop.index }}</td>
-                <td><a href="{{ path("mb_wms_wms_edit",{'id': wms.getId()}) }}">{{ wms.getTitle() }}</a></td>
+                <td><a href="{{ path("mb_wms_wms_edit",{'id': wms.id }) }}">{{ wms.title }}</a></td>
+                <td>{{ wms.alias }}</td>
+                <td>{{ wms.abstract }}</td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
     <a href="{{ path("mb_wms_wms_index",{"first":prevFirst}) }}">{% trans %}Previous{% endtrans %}</a> 
     <a href="{{  path("mb_wms_wms_index",{"first": nextFirst}) }}">{% trans %}Next{% endtrans %}</a>

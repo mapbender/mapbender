@@ -31,6 +31,10 @@ class WMSType  extends AbstractType {
             "required"  => false,
             "label"     => "Title",
         ));
+        $builder->add("alias","text", array(
+            "required"  => false,
+            "label"     => "Alias",
+        ));
         $builder->add("abstract","text",array(
             "required" => false,
         ));

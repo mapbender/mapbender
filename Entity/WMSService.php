@@ -14,6 +14,11 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="string", nullable="true")
     */
     protected $version = "";
+    
+    /**
+    * @ORM\Column(type="string", nullable="true")
+    */
+    protected $alias = "";
 
     /**
     * @ORM\Column(type="string",nullable="true")
@@ -225,6 +230,14 @@ class WMSService extends GroupLayer {
     
     public function getVersion(){
         return $this->version;
+    }
+    
+    public function setAlias($alias){
+        $this->alias = $alias;
+    }
+    
+    public function getAlias(){
+        return $this->alias;
     }
     
     public function setFees($fees){

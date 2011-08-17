@@ -1,62 +1,172 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="file.ext">
     <body>
       <trans-unit id="1">
-        <source>Add WMS</source>
-        <target>WMS hinzufügen</target>
-      </trans-unit>
+        <source>Layer</source> <target state="needs-review-translation">__Layer</target> </trans-unit>
       <trans-unit id="2">
-        <source>Capabilities URL</source>
-        <target>Capabilities URL</target>
-      </trans-unit>
+        <source>No Layers</source> <target>Keine layer</target> </trans-unit>
       <trans-unit id="3">
-        <source>Load</source>
-        <target>Laden</target>
-      </trans-unit>
-      <trans-unit id="4">
-        <source>Capabilities File</source>
-        <target>Capabilities Datei</target>
-      </trans-unit>
-      <trans-unit id="5">
-        <source>Find WMS</source>
-        <target>WMS finden</target>
-      </trans-unit>
-      <trans-unit id="6">
         <source>Delete</source>
         <target>Löschen</target>
       </trans-unit>
+      <trans-unit id="4">
+        <source>Edit</source> <target>Bearbeiten</target> </trans-unit>
+      <trans-unit id="5">
+        <source>Update</source> <target>Aktualisieren</target> </trans-unit>
+      <trans-unit id="6">
+        <source>Save</source> <target>Speichern</target> </trans-unit>
       <trans-unit id="7">
-        <source>WMS deleted</source>
-        <target>WMS gelöscht</target>
-      </trans-unit>
+        <source>register WMS</source> <target>WMS registrieren</target> </trans-unit>
       <trans-unit id="8">
-        <source>WMS Preview</source>
-        <target>WMS Vorschau</target>
-      </trans-unit>
+        <source>search</source> <target>Suchen</target> </trans-unit>
       <trans-unit id="9">
+        <source>Onlineresource</source> <target>__Onlineresource</target> </trans-unit>
+      <trans-unit id="10">
+        <source>Abstract</source> <target>__Abstract</target> </trans-unit>
+      <trans-unit id="11">
+        <source>Fees</source>
+        <target>__Fees</target>
+      </trans-unit>
+      <trans-unit id="12">
+        <source>Accessconstraints</source>
+        <target>__Accessconstraints</target>
+      </trans-unit>
+      <trans-unit id="13">
+        <source>OpenLayers Preview</source>
+        <target>__OpenLayers Preview</target>
+      </trans-unit>
+      <trans-unit id="14">
+        <source>Contact</source>
+        <target>__Contact</target>
+      </trans-unit>
+      <trans-unit id="15">
+        <source>Person</source>
+        <target>__Person</target>
+      </trans-unit>
+      <trans-unit id="16">
+        <source>Organization</source>
+        <target>__Organization</target>
+      </trans-unit>
+      <trans-unit id="17">
+        <source>Position</source>
+        <target>__Position</target>
+      </trans-unit>
+      <trans-unit id="18">
+        <source>Telephone</source>
+        <target>__Telephone</target>
+      </trans-unit>
+      <trans-unit id="19">
+        <source>Fax</source>
+        <target>__Fax</target>
+      </trans-unit>
+      <trans-unit id="20">
+        <source>Email</source>
+        <target>__Email</target>
+      </trans-unit>
+      <trans-unit id="21">
+        <source>Address</source>
+        <target>__Address</target>
+      </trans-unit>
+      <trans-unit id="22">
+        <source>Addresstype</source>
+        <target>__Addresstype</target>
+      </trans-unit>
+      <trans-unit id="23">
+        <source>City</source>
+        <target>__City</target>
+      </trans-unit>
+      <trans-unit id="24">
+        <source>State or Province</source>
+        <target>__State or Province</target>
+      </trans-unit>
+      <trans-unit id="25">
+        <source>Postcode</source>
+        <target>__Postcode</target>
+      </trans-unit>
+      <trans-unit id="26">
+        <source>Country</source>
+        <target>__Country</target>
+      </trans-unit>
+      <trans-unit id="27">
+        <source>Operations</source>
+        <target>__Operations</target>
+      </trans-unit>
+      <trans-unit id="28">
+        <source>Layers</source>
+        <target>__Layers</target>
+      </trans-unit>
+      <trans-unit id="29">
         <source>Really Delete</source>
         <target>Wirklich Löschen</target>
       </trans-unit>
-      <trans-unit id="10">
+      <trans-unit id="30">
         <source>Cancel</source>
         <target>Abbrechen</target>
       </trans-unit>
-      <trans-unit id="11">
-        <source>Title</source>
-        <target>Titel</target>
+      <trans-unit id="31">
+        <source>WMS Preview</source>
+        <target>WMS Vorschau</target>
       </trans-unit>
-      <trans-unit id="12">
-        <source>Search</source>
-        <target>Suchen</target>
+      <trans-unit id="32">
+        <source>Add WMS</source>
+        <target>WMS hinzufügen</target>
       </trans-unit>
-      <trans-unit id="13">
+      <trans-unit id="33">
+        <source>Service Information</source>
+        <target>__Service Information</target>
+      </trans-unit>
+      <trans-unit id="34">
+        <source>Capability Information</source>
+        <target>__Capability Information</target>
+      </trans-unit>
+      <trans-unit id="35">
+        <source>Symbolization</source>
+        <target>__Symbolization</target>
+      </trans-unit>
+      <trans-unit id="36">
+        <source>Exception</source>
+        <target>__Exception</target>
+      </trans-unit>
+      <trans-unit id="37">
         <source>Previous</source>
         <target>Zurück</target>
       </trans-unit>
-      <trans-unit id="14">
+      <trans-unit id="38">
         <source>Next</source>
         <target>Weiter</target>
+      </trans-unit>
+      <trans-unit id="39">
+        <source>Capabilities URL</source>
+        <target>Capabilities URL</target>
+      </trans-unit>
+      <trans-unit id="40">
+        <source>HTTP User</source> <target>HTTP Benuzter</target> </trans-unit>
+      <trans-unit id="41">
+        <source>HTTP Password</source> <target>HTTP Passwort</target> </trans-unit>
+      <trans-unit id="42">
+        <source>Load</source>
+        <target>Laden</target>
+      </trans-unit>
+      <trans-unit id="43">
+        <source>Capabilities File</source>
+        <target>Capabilities Datei</target>
+      </trans-unit>
+      <trans-unit id="44">
+        <source>Find WMS</source>
+        <target>WMS finden</target>
+      </trans-unit>
+      <trans-unit id="45">
+        <source>WMS deleted</source>
+        <target>WMS gelöscht</target>
+      </trans-unit>
+      <trans-unit id="46">
+        <source>Title</source>
+        <target>Titel</target>
+      </trans-unit>
+      <trans-unit id="47">
+        <source>Search</source>
+        <target>Suchen</target>
       </trans-unit>
     </body>
   </file>

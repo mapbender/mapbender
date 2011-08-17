@@ -12,9 +12,10 @@
             <h3>{% trans %}Service Information{% endtrans %}</h3>
             {{ form_row(form.title) }}
             {{ form_row(form.name) }}
+            {{ form_row(form.alias) }}
             <div>
                 {{ form_label(form.onlineResource) }}{{ form_errors(form.onlineResource) }}{{ form_widget(form.onlineResource) }}
-                <a href="{{ wms.getOnlineResource() }}">link</a>
+                <a href="{{ wms.getOnlineResource() }}" target="_blank">link</a>
             </div>
             {{ form_row(form.version) }}
             {{ form_row(form.abstract) }}
