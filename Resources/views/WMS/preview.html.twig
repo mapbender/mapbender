@@ -1,4 +1,5 @@
 {% extends 'MBWMSBundle:WMS:base.html.twig' %} 
+{% form_theme form 'MBWMSBundle:Form:fields.html.twig' %}
 
 {% block title %}{% trans %}WMS Preview{% endtrans %}{% endblock %}
 
@@ -7,108 +8,7 @@
     <input type="hidden" value="{{ xml }}" />
      <form class="wms" action="{{ path('mb_wms_wms_add') }}" method="POST">
         <input type="submit" name="save" value="{% trans %}Add WMS{% endtrans %}"/> 
-
-        <fieldset id="service" >
-            <h3>{% trans %}Service Information{% endtrans %}</h3>
-            {{ form_row(form.title) }}
-            {{ form_row(form.name) }}
-            {{ form_row(form.alias) }}
-            <div>
-                {{ form_label(form.onlineResource) }}{{ form_errors(form.onlineResource) }}{{ form_widget(form.onlineResource) }}
-                <a href="{{ wms.getOnlineResource() }}" target="_blank">link</a>
-            </div>
-            {{ form_row(form.version) }}
-            {{ form_row(form.abstract) }}
-            {{ form_row(form.fees) }}
-            {{ form_row(form.accessConstraints) }}
-            {{ form_row(form.contactPerson) }}
-            {{ form_row(form.contactOrganization) }}
-            {{ form_row(form.contactPosition) }}
-            {{ form_row(form.contactVoiceTelephone) }}
-            {{ form_row(form.contactFacsimileTelephone) }}
-            {{ form_row(form.contactElectronicMailAddress) }}
-            {{ form_row(form.contactAddress) }}
-            {{ form_row(form.contactAddressType) }}
-            {{ form_row(form.contactAddressCity) }}
-            {{ form_row(form.contactAddressStateOrProvince) }}
-            {{ form_row(form.contactAddressPostCode) }}
-            {{ form_row(form.contactAddressCountry) }}
-        </fieldset>
-
-        <fieldset id="capability" class="capability">
-            <h3>{% trans %}Capability Information{% endtrans %}</h3> 
-
-            <fieldset id="userDefinedSymbolization" class="userdefinedSymbolization">
-                <h4>{% trans %}Symbolization{% endtrans %}<h4>
-                {{ form_row(form.symbolSupportSLD) }}
-                {{ form_row(form.symbolUserLayer) }}
-                {{ form_row(form.symbolUserStyle) }}
-                {{ form_row(form.symbolRemoteWFS) }}
-            </fieldset>
-
-            <fieldset id="exception" class="exception">
-                <h4>{% trans %}Exception{% endtrans %}</h4>
-                {{ form_row(form.exceptionFormats) }}
-            </fieldset>
-            
-            <fieldset class="getCapabilities">
-                <h4>GetCapabilities</h4>
-                {{ form_row(form.requestGetCapabilitiesGET) }}
-                {{ form_row(form.requestGetCapabilitiesPOST) }}
-                {{ form_row(form.requestGetCapabilitiesFormats) }}
-            </fieldset>
-            
-            <fieldset class="GetMap">
-                <h4>GetMap</h4>
-                {{ form_row(form.requestGetMapGET) }}
-                {{ form_row(form.requestGetMapPOST) }}
-                {{ form_row(form.requestGetMapFormats) }}
-            </fieldset>
-            
-            <fieldset class="getFeatureInfo">
-                <h4>GetFeatureInfo</h4>
-                {{ form_row(form.requestGetFeatureInfoGET) }}
-                {{ form_row(form.requestGetFeatureInfoPOST) }}
-                {{ form_row(form.requestGetFeatureInfoFormats) }}
-            </fieldset>
-            
-            <fieldset class="describeLayer">
-                <h4>DescribeLayer</h4>
-                {{ form_row(form.requestDescribeLayerGET) }}
-                {{ form_row(form.requestDescribeLayerPOST) }}
-                {{ form_row(form.requestDescribeLayerFormats) }}
-            </fieldset>
-
-            <fieldset class="getLegendGraphic">
-                <h4>GetLegendGraphic</h4>
-                {{ form_row(form.requestGetLegendGraphicGET) }}
-                {{ form_row(form.requestGetLegendGraphicPOST) }}
-                {{ form_row(form.requestGetLegendGraphicFormats) }}
-            </fieldset>
-
-            <fieldset class="getStyles">
-                <h4>GetStyles</h4>
-                {{ form_row(form.requestGetStylesGET) }}
-                {{ form_row(form.requestGetStylesPOST) }}
-                {{ form_row(form.requestGetStylesFormats) }}
-            </fieldset>
-            
-            <fieldset class="putStyles">
-                <h4>PutStyles</h4>
-                {{ form_row(form.requestPutStylesGET) }}
-                {{ form_row(form.requestPutStylesPOST) }}
-                {{ form_row(form.requestPutStylesFormats) }}
-            </fieldset>
-
-        </fieldset>   
-
-        <fieldset id="layers" class="layers">
-            <h3>{% trans %}Layers{% endtrans %}</h3>
-            {{ form_widget(form.layer) }}
-        </fieldset>
-
-    
-
+        {{ form_widget(form) }}
         {{ form_rest(form) }}
          <input type="submit" name="save" value="{% trans %}Add WMS{% endtrans %}"/> 
     </form>

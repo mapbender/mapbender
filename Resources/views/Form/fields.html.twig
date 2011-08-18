@@ -1,0 +1,106 @@
+
+{% block WMSLayer_row %}
+    <fieldset class="layer">
+        <legend>{{ value.title }}</legend>
+        {{ form_errors(form) }}
+        {{ form_widget(form) }} 
+    </fieldset>
+{% endblock %}
+
+{% block WMSLayer_widget %}
+
+    <div>
+        {{ form_row(form.title) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.abstract) }}
+        {{ form_row(form.queryable) }}
+        {{ form_row(form.cascaded) }}
+        {{ form_row(form.opaque) }}
+        {{ form_row(form.noSubset) }} 
+    </div>
+    <div>
+        {{ form_row(form.fixedWidth) }}
+        {{ form_row(form.fixedHeight) }}
+        {{ form_row(form.scaleHintMin) }}
+        {{ form_row(form.scaleHintMax) }}
+        {{ form_rest(form) }}
+    </div>
+    <div>
+    {% if form.layer|length > 0 %}
+            {{ form_row(form.layer) }} 
+    {% endif %}
+    </div>
+{% endblock %}
+
+{% block WMSService_widget %}
+    <fieldset class="metadata">
+        <legend>{% trans %}Metadata{% endtrans %}</legend>
+        {{ form_row(form.title) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.alias) }}
+        {{ form_row(form.abstract) }}
+        {{ form_row(form.onlineResource) }}
+        {{ form_row(form.fees) }}
+        {{ form_row(form.accessConstraints) }}
+    </fieldset>
+    <fieldset class="preview">
+        <legend>{% trans %}Preview{% endtrans %}</legend>
+        <div id="map" class="smallmap"></div>
+    </fieldset>
+    <fieldset class="contact">
+        <legend>{% trans %}Contact{% endtrans %}</legend>
+        {{ form_row(form.contactPerson) }}
+        {{ form_row(form.contactOrganization) }}
+        {{ form_row(form.contactPosition) }}
+        {{ form_row(form.contactVoiceTelephone) }}
+        {{ form_row(form.contactFacsimileTelephone) }}
+        {{ form_row(form.contactElectronicMailAddress) }}
+        {{ form_row(form.contactAddress) }}
+        {{ form_row(form.contactAddressType) }}
+        {{ form_row(form.contactAddressCity) }}
+        {{ form_row(form.contactAddressStateOrProvince) }}
+        {{ form_row(form.contactAddressPostCode) }}
+        {{ form_row(form.contactAddressCountry) }}
+    </fieldset>
+    <fieldset class="service">
+        <legend>{% trans %}Service{% endtrans %}</legend>
+        {{ form_row(form.version) }}
+        {{ form_row(form.requestGetCapabilitiesGET) }}
+        {{ form_row(form.requestGetCapabilitiesPOST) }}
+        {{ form_row(form.requestGetCapabilitiesFormats) }}
+        {{ form_row(form.requestGetMapGET) }}
+        {{ form_row(form.requestGetMapPOST) }}
+        {{ form_row(form.requestGetMapFormats) }}
+        {{ form_row(form.requestGetFeatureInfoGET) }}
+        {{ form_row(form.requestGetFeatureInfoPOST) }}
+        {{ form_row(form.requestGetFeatureInfoFormats) }}
+        {{ form_row(form.requestGetLegendGraphicGET) }}
+        {{ form_row(form.requestGetLegendGraphicPOST) }}
+        {{ form_row(form.requestGetLegendGraphicFormats) }}
+        {{ form_row(form.requestDescribeLayerGET) }}
+        {{ form_row(form.requestDescribeLayerPOST) }}
+        {{ form_row(form.requestDescribeLayerFormats) }}
+        {{ form_row(form.requestGetStylesGET) }}
+        {{ form_row(form.requestGetStylesPOST) }}
+        {{ form_row(form.requestGetStylesFormats) }}
+        {{ form_row(form.requestPutStylesGET) }}
+        {{ form_row(form.requestPutStylesPOST) }}
+        {{ form_row(form.requestPutStylesFormats) }}
+        {{ form_row(form.exceptionFormats) }}
+        {{ form_row(form.symbolSupportSLD) }}
+        {{ form_row(form.symbolUserLayer) }}
+        {{ form_row(form.symbolUserStyle) }}
+        {{ form_row(form.symbolRemoteWFS) }}
+    </fieldset>
+
+
+
+    <fieldset style="float:left">
+        <legend>{% trans %}Layer{% endtrans %}</legend>
+        {% if form.layer|length > 0 %}
+                {{ form_row(form.layer) }} 
+        {% endif %}
+    </fieldset>
+{% endblock %}
+
+

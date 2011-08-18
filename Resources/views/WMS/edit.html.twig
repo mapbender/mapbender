@@ -1,9 +1,9 @@
 {% extends 'MBWMSBundle:WMS:base.html.twig' %} 
+{% form_theme form 'MBWMSBundle:Form:fields.html.twig' %}
 
 {% block title %}Details for {{ wms.getTitle() }} {% endblock %}
 {% block heading %}WMS detail{% endblock %}
 
-{% form_theme form _self %}
 
 {% block subnavigation %}
     <nav class="actions">
@@ -14,8 +14,9 @@
 {% endblock %}
 
 {% block content %}
-<form action="{{ path('mb_wms_wms_save',{'id':wms.id}) }}" method="POST">
-{{ form_widget(form) }}
-<button type="submit">{% trans %}Save{% endtrans %}</button>
-</form>
+    <form class="wms" action="{{ path('mb_wms_wms_save',{'id':wms.id}) }}" method="POST">
+        {{ form_widget(form) }}
+        {{ form_rest(form) }}
+        <button type="submit">{% trans %}Save{% endtrans %}</button>
+    </form>
 {% endblock %}

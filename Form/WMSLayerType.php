@@ -8,7 +8,9 @@ class WMSLayerType  extends AbstractType {
 
     public function getName (){ return "WMSLayer";}
     public function buildForm(FormBuilder $builder, array $options){
-        $builder->add("title");
+        $builder->add("title","text",array(
+            "required" => false,
+        ));
         $builder->add("name","text",array(
             "required" => false,
         ));
