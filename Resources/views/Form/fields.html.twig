@@ -1,6 +1,6 @@
 
 {% block WMSLayer_row %}
-    <fieldset class="layer">
+    <fieldset id="wmslayer_{{value.id}}" class="layer">
         <legend>{{ value.title }}</legend>
         {{ form_errors(form) }}
         {{ form_widget(form) }} 
@@ -39,7 +39,12 @@
         {{ form_row(form.name) }}
         {{ form_row(form.alias) }}
         {{ form_row(form.abstract) }}
-        {{ form_row(form.onlineResource) }}
+        <div>
+        {{ form_label(form.onlineResource) }}{{ 
+        form_errors(form.onlineResource) }}{{ 
+        form_widget(form.onlineResource) }} <a target="_blank" href="{{value.onlineResource}}">{% trans %}Open{% endtrans %}</a>
+        </div>
+
         {{ form_row(form.fees) }}
         {{ form_row(form.accessConstraints) }}
     </fieldset>
