@@ -1,0 +1,10 @@
+services:
+  translation.loader.po:
+    class: BCC\ExtraToolsBundle\Translation\Loader\PotFileLoader
+    tags:
+      - { name: translation.loader, alias: po }
+      - { name: translation.loader, alias: pot }
+  translation.loader.mo:
+    class: BCC\ExtraToolsBundle\Translation\Loader\MoFileLoader
+    tags:
+      - { name: translation.loader, alias: mo }
