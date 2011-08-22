@@ -74,7 +74,6 @@ class WMSController extends Controller {
         }
         
 
-
         $ch = curl_init($getcapa_url);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -116,12 +115,18 @@ class WMSController extends Controller {
             "requestGetStylesFormats" => $wms->getRequestGetStylesFormats(),
             "requestPutStylesFormats" => $wms->getRequestPutStylesFormats(),
         ));
-
+        
+        $bounds = $wms->getRootLayer()->getLatLonBounds();
+        $b = explode(" ",$bounds);
         return array(
                 "getcapa_url"=>$getcapa_url,
                 "wms" => $wms,
                 "form" => $form->createView(),
-                "xml" => $data
+                "xml" => $data,
+                "minx" => isset($b[0])?$b[0]:"",
+                "miny" => isset($b[1])?$b[1]:"",
+                "maxx" => isset($b[2])?$b[2]:"",
+                "maxy" => isset($b[3])?$b[3]:""
             );
     }
 
