@@ -1,6 +1,6 @@
-Installing using Git
-====================
 
+Installing using Git
+--------------------
 Our code is maintained using git and hosted at Github. We split up our code
 into three parts:
 
@@ -12,13 +12,15 @@ into three parts:
    maintain our own clone.
 
 Cloning
--------
+~~~~~~~
 You can clone our code using the command::
+
   git clone git://github.com/mapbender/mapbender-starter
 
 The mapbender-starter repository references the mapbender repository as a
 submodule which again references the mapquery repository.
 
 Therefore you need to pull in the submodules code using::
+
   git submodule update --init --recursive
 
