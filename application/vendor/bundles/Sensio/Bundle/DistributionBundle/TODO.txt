@@ -1,0 +1,22 @@
+* Create a command that can be run when a project code has been updated on
+  the production servers:
+
+    ./build_bootstrap.php (à inclure dans cache:clear)
+    cache:clear --env=prod --without-debug
+    assets:install --env=prod web/
+    assetic:dump --env=prod web/
+
+    On ne pourrait la mettre que dans Symfony SE sauf si on la configure
+    quelque part:
+
+    ./app/console project:prepare
+    ./app/console project:update --env=prod
+
+* faire une commande upgrade pour Symfony SE (mettre à jour le build_bootstrap pour la RC1 -> performance win)
+
+* add a command that installs a list pre-defined bundles
+  this list is hosted somewhere under symfony.com, retrieved, cached
+  and propose a one-click install (via Git or download?)
+
+* Add a CLI to send feedback to the Symfony server -> the resulting anonymous
+  database is free to access for everyone?
