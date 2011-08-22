@@ -1,4 +1,15 @@
-# Internal routing configuration to handle ESI
-#_internal:
-#   resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
-#   prefix:   /_internal
+_mapbender_application:
+    resource: "@MapbenderCoreBundle/Controller/ApplicationController.php"
+    type: annotation
+
+_mapbender_proxy:
+    resource: "@MapbenderCoreBundle/Controller/ProxyController.php"
+    type: annotation
+
+_mapbender_user:
+    resource: "@MapbenderCoreBundle/Controller/UserController.php"
+    type: annotation
+
+_mapbender_welcome:
+    resource: "@MapbenderCoreBundle/Controller/WelcomeController.php"
+    type: annotation

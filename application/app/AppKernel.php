@@ -19,6 +19,9 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new BCC\ExtraToolsBundle\BCCExtraToolsBundle(),
+            new Mapbender\CoreBundle\MapbenderCoreBundle(),
+            new Mapbender\WmcBundle\MapbenderWmcBundle(),
+            new Mapbender\WmsBundle\MapbenderWmsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -1,0 +1,67 @@
+parameters:
+    applications:
+        mapbender_user:
+            title: Mapbender User Demo Map
+            template:  Mapbender\CoreBundle\Template\Fullscreen
+            srs: EPSG:4326
+            extents:
+                start: [-180,-90,180,90]
+                max: [-180,-90,180,90]
+            scales: [25000000, 10000000,5000000,1000000,500000]
+            maxResolution: 'auto'
+            layersets:
+                main:
+                    demis:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: Demis World Map
+                        url: http://www2.demis.nl/wms/wms.asp?wms=WorldMap
+                        layers: 
+                            - { name: Bathymetry,    title :Bathymetry,  visible: true }
+                            - { name: Countries,     title :Countries,   visible: true }
+                            - { name: Topography,    title :Topography,  visible: true }
+                            - { name: Hillshading,   title :Hillshading, visible: true }
+                        baselayer: false
+                        visible: true
+                        format: image/png
+                        transparent: true
+                        tiled: false
+                    mapbender_users:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: Mapbender Users
+                        url: http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
+                        layers: 
+                            - { name: Mapbender_User,    title : Nutzer,  visible: true }
+                            - { name: Mapbender_Names,   title : Namen,   visible: true }
+                        baselayer: false
+                        visible: true
+                        format: image/png
+                        transparent: true
+                        tiled: false
+                        opacity: 85
+                overview:
+                    demis:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: Demis World Map
+                        url: http://www2.demis.nl/wms/wms.asp?wms=WorldMap
+                        layers: 
+                            - { name: Bathymetry,    title :Bathymetry,  visible: true }
+                            - { name: Countries,     title :Countries,   visible: true }
+                            - { name: Topography,    title :Topography,  visible: true }
+                            - { name: Hillshading,   title :Hillshading, visible: true }
+            elements:
+                top:
+                    mapclick:
+                        title: Map Click
+                        class: DemoBundle\Element\MapClick
+                        label: true
+                        group: maptools
+                        target: map
+
+                contents: 
+                    map:
+                        title: Main Map 
+                        class: MapbenderCoreBundle\Element\Map
+                        layerset: main
+                        overview:
+                            layerset: overview 
+
