@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 
-class InitElementCommand extends ContainerAwareCommand {
+class GenerateElementCommand extends ContainerAwareCommand {
     private $generator;
 
     protected function getGenerator() {
@@ -27,14 +27,15 @@ class InitElementCommand extends ContainerAwareCommand {
                 new InputOption('type', '', InputOption::VALUE_REQUIRED, 'Type of Element to create (general, button, map-click, map-box)', 'general')
             ))
             ->setHelp(<<<EOT
-The <info>mapbender:init:element</info> command generates a new Mapbender element with a basic skeleton.
+The <info>mapbender:generate:element</info> command generates a new Mapbender element with a basic skeleton.
 
-<info>./app/console/ mapbender:init:element "Vendor\HelloBundle" MyElement src </info>
+<info>./app/console/ mapbender:generate:element "Vendor\HelloBundle" MyElement src </info>
 
 The generated Element class will be Vendor\HelloBundle\Element\MyElement.
 EOT
             )
-            ->setName('mapbender:init:element');
+            ->setName('mapbender:generate:element')
+            ->setDescription('Generates a Mapbender element');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
@@ -65,7 +66,7 @@ EOT
         if (false === strpos($bundleNamespace, '\\')) {
             $msg = array();
             $msg[] = sprintf('The namespace must contain a vendor namespace (e.g. "VendorName\%s" instead of simply "%s").', $bundleNamespace, $bundleNamespace);
-            $msg[] = 'If you\'ve specified a vendor namespace, did you forget to surround it with quotes (mapbender:init:element "Acme\BlogBundle")?';
+            $msg[] = 'If you\'ve specified a vendor namespace, did you forget to surround it with quotes (mapbender:generate:element "Acme\BlogBundle")?';
 
             throw new \InvalidArgumentException(implode("\n\n", $msg));
         }
