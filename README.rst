@@ -1,3 +1,25 @@
+Requirements
+============
+Mapbender3 is built upon the shoulders of Symfony2, the new generation of
+the well-known PHP application framework.
+This introduces some requirements which you have to meet in order to run
+Symfony2 or Mapbender3:
+
+1. PHP >= 5.3.2: This is essential to run Symfony2
+2. date.timezone setting in your php.ini
+
+For an overview of more optional requirements, see
+http://symfony.com/doc/current/reference/requirements.html. We will list
+Mapbender3-specific requirements in this document as they arise during
+development.
+
+Installation
+============
+
+Installing using the download package
+-------------------------------------
+COMING SOON: We will start building downloadable all-in-one packages soon.
+Expect to see zipfiles, tarballs, deb and rpm packages.
 
 Installing using Git
 --------------------
@@ -23,4 +45,9 @@ submodule which again references the mapquery repository.
 Therefore you need to pull in the submodules code using::
 
   git submodule update --init --recursive
+
+Configuration
+-------------
+After installing the code, you need to make sure that your web server can
+write into the application/app/cache and application/app/logs directories.
 
