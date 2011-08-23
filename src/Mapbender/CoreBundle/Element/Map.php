@@ -7,31 +7,32 @@ use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Map extends Element implements ElementInterface {
-	public function getTitle() {
-		return "MapQuery Map";
-	}
+    public function getTitle() {
+        return "MapQuery Map";
+    }
 
-	public function getDescription() {
-		return "Renders a MapQuery map";
-	}
+    public function getDescription() {
+        return "Renders a MapQuery map";
+    }
 
-	public function getTags() {
-		return array('Map', 'MapQuery');
-	}
+    public function getTags() {
+        return array('Map', 'MapQuery');
+    }
 
-	public function getAssets() {
-		return array(
+    public function getAssets() {
+        return array(
             'js' => array(
                 'mapquery/lib/openlayers/OpenLayers.js',
                 'mapquery/lib/jquery/jquery.tmpl.js',
                 'mapquery/src/jquery.mapquery.core.js',
                 'mapbender.element.map.js'
-			),
+            ),
             'css' => array(
+                'mapbender.elements.css',
                 'mapquery/lib/jquery/themes/base/jquery-ui.css',
-			)
-		);
-	}
+            )
+        );
+    }
 
     public function getConfiguration() {
         //TODO: Cherry pick
@@ -64,16 +65,16 @@ class Map extends Element implements ElementInterface {
         }
 
         $options = array_merge(array('extra' => $extra), $this->configuration);
-		return array(
-			'options' => $options,
-			'init' => 'mbMap',
-		);
-	}
+        return array(
+            'options' => $options,
+            'init' => 'mbMap',
+        );
+    }
 
-    public function	render() {
+    public function render() {
             return $this->get('templating')->render('MapbenderCoreBundle:Element:map.html.twig', array(
                 'id' => $this->id
             ));
-	}
+    }
 }
 

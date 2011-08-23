@@ -3,30 +3,32 @@
 OpenLayers.ProxyHost = Mapbender.configuration.proxies.open + '?url=';
 
 $.widget("mapbender.mbMap", {
-	options: {
-		'layerset': null, //mapset for main map
-	},
+    options: {
+        'layerset': null, //mapset for main map
+    },
 
-	map: null,
-	highlightLayer: null,
-	
-	_create: function() {
-		var self = this,
+    map: null,
+    highlightLayer: null,
+
+    _create: function() {
+        var self = this,
             me = $(this.element);
 
         // Prepare initial layers
         var layers = [];
+        var allOverlays = true;
         $.each(Mapbender.configuration.layersets[this.options.layerset], function(idx, layerDef) {
             layers.push(self._convertLayerDef.call(self, layerDef));
+            allOverlays = allOverlays && (layerDef.configuration.baselayer !== true);
         });
-        
+
         var mapOptions = {
             maxExtent: Mapbender.configuration.extents.max,
             maxResolution: 'auto',
             projection: new OpenLayers.Projection(Mapbender.configuration.srs),
             displayProjection: new OpenLayers.Projection(Mapbender.configuration.srs),
             units: Mapbender.configuration.units,
-            allOverlays: false,
+            allOverlays: allOverlays,
 
             layers: layers
         };
@@ -39,13 +41,13 @@ $.widget("mapbender.mbMap", {
 
         me.mapQuery(mapOptions);
         this.map = me.data('mapQuery');
-        
+
         //TODO: Bind all events
         this.map.bind('zoomend', function() { self._trigger('zoomend', arguments); });
 
         if(Mapbender.configuration.extents.start) {
             this.map.goto({
-                box: Mapbender.configuration.extents.start,
+                box: Mapbender.configuration.extents.start
             });
         }
         if(this.options.extra.type) {
@@ -86,7 +88,7 @@ $.widget("mapbender.mbMap", {
         }
 
         if(this.options.overview) {
-            var layerConf = Mapbender.configuration.layersets[this.options.overview.mapset][0];
+            var layerConf = Mapbender.configuration.layersets[this.options.overview.layerset][0];
             var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
                 layers: layerConf.configuration.layers
             });
@@ -110,7 +112,7 @@ $.widget("mapbender.mbMap", {
         this.map.olMap.addControl(new OpenLayers.Control.PanZoomBar());
 
         self._trigger('ready');
-	},
+    },
 
     goto: function(options) {
         this.map.goto(options);
