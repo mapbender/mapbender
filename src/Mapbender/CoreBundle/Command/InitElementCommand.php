@@ -2,7 +2,7 @@
 
 namespace Mapbender\CoreBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\Command;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\FrameworkBundle\Generator\Generator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 
-class InitElementCommand extends Command {
+class InitElementCommand extends ContainerAwareCommand {
     protected function configure() {
         $this->setDefinition(array(
                 new InputArgument('bundle', InputArgument::REQUIRED, 'The bundle namespace of the Element to create'),
@@ -90,7 +90,7 @@ EOT
             throw new \RuntimeException($msg);
         }
 
-        $filesystem->copy(__DIR__ . '/../Resources/skeleton/element/Element.php',
+        $filesystem->copy(__DIR__ . '/../Resources/skeleton/element/' . $type . '.php',
             $classFile);
         Generator::renderFile($classFile, array(
             'bundleNamespace' => $bundleNamespace,
@@ -105,17 +105,21 @@ EOT
             'widgetName' => $className
         ));
 
-        $filesystem->copy(__DIR__ . '/../Resources/skeleton/element/widget-' . $type . '.html.twig',
-            $twigFile);
-        Generator::renderFile($twigFile, array(
-            'classNameLower' => $classNameLower
-        ));
+        if($type === 'general') {
+            $filesystem->copy(__DIR__ . '/../Resources/skeleton/element/widget-' . $type . '.html.twig',
+                $twigFile);
+            Generator::renderFile($twigFile, array(
+                'classNameLower' => $classNameLower
+            ));
+        }
 
         $output->writeln('<comment>Summary of actions</comment>');
         $output->writeln(sprintf('- Your element %s\Element\%s has been created.', $bundle, $className));
         $output->writeln('- A PHP class, Twig template and jQuery widget have been created:');
         $output->writeln('  - ' . $classFile);
-        $output->writeln('  - ' . $twigFile);
+        if($type === 'general') {
+            $output->writeln('  - ' . $twigFile);
+        }
         $output->writeln('  - ' . $widgetFile);
         $output->writeln('');
         $output->writeln('<comment>Follow up actions</comment>');
