@@ -17,6 +17,7 @@ $.widget("mapbender.mb{{ widgetName }}", $.mapbender.mbButton, {
      * This activates this button and will be called on click
      */
     activate: function() {
+        this._super('activate');
         /**
          * This is a demo: Call the targets action if this is configured
          */
@@ -32,6 +33,7 @@ $.widget("mapbender.mb{{ widgetName }}", $.mapbender.mbButton, {
      * this group is activated.
      */
     deactivate: function() {
+        this._super('deactivate');
     }
 });
 

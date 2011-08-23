@@ -22,11 +22,10 @@ class {{ className }} extends Element implements ElementInterface {
     public function getAssets() {
         return array(
             'js' => array(
+                '../mapbendercore/mapbender.element.button.js',
                 'mapbender.element.{{ classNameLower }}.js'
             ),
-            'css' => array(
-                'mapbender.elements.css'
-            )
+            'css' => array()
         );
     }
 
@@ -64,7 +63,7 @@ class {{ className }} extends Element implements ElementInterface {
         return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
                 'id' => $this->id,
                 'configuration' => $this->configuration,
-                'label' => $this->name));
+                'label' => $this->configuration['title']));
     }
 }
 

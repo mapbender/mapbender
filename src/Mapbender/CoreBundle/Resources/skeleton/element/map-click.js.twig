@@ -23,6 +23,7 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
      * be used.
      */
     activate: function() {
+        this._super('activate');
         if(this.map.length !== 0) {
             this.map.bind('click', this.mapClickProxy);
         }
@@ -32,6 +33,7 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
      * On deactivation, unbind the onClick handler
      */
     deactivate: function() {
+        this._super('deactivate');
         if(this.map.length !== 0) {
             this.map.unbind('click', this.mapClickProxy);
         }
