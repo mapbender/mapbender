@@ -26,3 +26,11 @@ div.mb-element-button {
     height: 100%;
 }
 
+.mb-element-toc h3 input {
+    display: inline!important;
+}
+
+.mb-element-toc h3 a {
+    display: inline!important;
+    padding-left: 0!important;
+}
