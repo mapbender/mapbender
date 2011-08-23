@@ -55,7 +55,7 @@ class AboutDialog extends Element implements ElementInterface {
                 }
 
                 $about = array(
-                    'version' => '0.0.0',
+                    'version' => '3.0 alpha',
                     'user' => $username
                 );
 

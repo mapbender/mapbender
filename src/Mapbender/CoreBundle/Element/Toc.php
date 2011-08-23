@@ -6,7 +6,7 @@ use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class AreaRuler extends Element implements ElementInterface {
+class Toc extends Element implements ElementInterface {
     public function getTitle() {
         return "Please give me a title";
     }
@@ -22,8 +22,7 @@ class AreaRuler extends Element implements ElementInterface {
     public function getAssets() {
         return array(
             'js' => array(
-                'mapbender.element.ruler.common.js',
-                'mapbender.element.ruler.area.js'
+                'mapbender.element.toc.js'
             ),
             'css' => array(
                 'mapbender.elements.css'
@@ -42,23 +41,12 @@ class AreaRuler extends Element implements ElementInterface {
         }
         return array(
             'options' => $opts,
-            'init' => 'mbAreaRuler',
+            'init' => 'mbToc',
         );
-    }
-
-    public function httpAction($action) {
-        $response = new Response();
-
-        $data = array(
-            'message' => 'Hello World'
-        );
-        $response->setContent(json_encode($data));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
     }
 
     public function render() {
-        return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
+        return $this->get('templating')->render('MapbenderCoreBundle:Element:toc.html.twig', array(
                 'id' => $this->id,
                 'configuration' => $this->configuration,
                 'label' => $this->configuration['title']));
