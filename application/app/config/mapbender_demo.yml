@@ -15,7 +15,7 @@ parameters:
                         class: Mapbender\WmsBundle\WmsLayer
                         title: Demis World Map
                         url: http://www2.demis.nl/wms/wms.asp?wms=WorldMap
-                        layers: 
+                        layers:
                             - { name: Bathymetry,    title :Bathymetry,  visible: true }
                             - { name: Countries,     title :Countries,   visible: true }
                             - { name: Topography,    title :Topography,  visible: true }
@@ -24,12 +24,12 @@ parameters:
                         visible: true
                         format: image/png
                         transparent: true
-                        tiled: false
+                        tiled: true
                     mapbender_users:
                         class: Mapbender\WmsBundle\WmsLayer
                         title: Mapbender Users
                         url: http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
-                        layers: 
+                        layers:
                             - { name: Mapbender_User,    title : Nutzer,  visible: true }
                             - { name: Mapbender_Names,   title : Namen,   visible: true }
                         baselayer: false
@@ -43,7 +43,7 @@ parameters:
                         class: Mapbender\WmsBundle\WmsLayer
                         title: Demis World Map
                         url: http://www2.demis.nl/wms/wms.asp?wms=WorldMap
-                        layers: 
+                        layers:
                             - { name: Bathymetry,    title :Bathymetry,  visible: true }
                             - { name: Countries,     title :Countries,   visible: true }
                             - { name: Topography,    title :Topography,  visible: true }
@@ -52,16 +52,42 @@ parameters:
                 top:
                     mapclick:
                         title: Map Click
-                        class: DemoBundle\Element\MapClick
+                        class: Acme\DemoBundle\Element\MapClick
                         label: true
                         group: maptools
                         target: map
-
-                contents: 
+                    mapbox:
+                        title: Map Box
+                        class: Acme\DemoBundle\Element\MapBox
+                        group: maptools
+                        target: map
+                    lineruler:
+                        title: Distance
+                        class: Mapbender\CoreBundle\Element\LineRuler
+                        group: maptools
+                        target: map
+                    arearuler:
+                        title: Area
+                        class: Mapbender\CoreBundle\Element\AreaRuler
+                        group: maptools
+                        target: map
+                    toc-button:
+                        title: TOC
+                        class: Mapbender\CoreBundle\Element\Button
+                        target: toc
+                        action: open
+                    about:
+                        title: About
+                        class: Mapbender\CoreBundle\Element\AboutDialog
+                content:
                     map:
-                        title: Main Map 
-                        class: MapbenderCoreBundle\Element\Map
+                        title: Main Map
+                        class: Mapbender\CoreBundle\Element\Map
                         layerset: main
                         overview:
-                            layerset: overview 
+                            layerset: overview
+                    toc:
+                        title: Table of Contents
+                        class: Mapbender\CoreBundle\Element\Toc
+                        target: map
 

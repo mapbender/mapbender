@@ -20,6 +20,10 @@ class AppKernel extends Kernel
             new Mapbender\CoreBundle\MapbenderCoreBundle(),
             new Mapbender\WmcBundle\MapbenderWmcBundle(),
             new Mapbender\WmsBundle\MapbenderWmsBundle(),
+            /**
+             * Disable the demo bundle when startin a real-world project!
+             */
+            new Acme\DemoBundle\AcmeDemoBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
