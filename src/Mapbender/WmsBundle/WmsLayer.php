@@ -10,20 +10,20 @@ use Mapbender\CoreBundle\Component\LayerInterface;
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  */
 class WmsLayer implements LayerInterface {
-	protected $title;
-	protected $configuration;
+    protected $id;
+    protected $configuration;
 
-	public function __construct($title, array $configuration) {
-		$this->title = $title;
-		$this->configuration = $configuration;
-	}
+    public function __construct($id, array $configuration) {
+        $this->id = $id;
+        $this->configuration = $configuration;
+    }
 
-	public function render() {
-		return array(
-            'title' => $this->title,
+    public function render() {
+        return array(
+            'id' => $this->id,
             'type' => 'wms',
-			'configuration' => $this->configuration,
-		);
+            'configuration' => $this->configuration,
+        );
     }
 
     public function getAssets() {

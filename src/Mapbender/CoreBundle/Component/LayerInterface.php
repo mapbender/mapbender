@@ -11,10 +11,10 @@ interface LayerInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param string $title The layer title
+	 * @param string $title The layer id
 	 * @param array $configuration The layer configuration
 	 */
-	public function __construct($title, array $configuration);
+	public function __construct($id, array $configuration);
 
 	/**
 	 * Return an array representation of the layer title and
