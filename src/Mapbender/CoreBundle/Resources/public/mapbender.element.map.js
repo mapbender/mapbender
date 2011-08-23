@@ -166,41 +166,14 @@ $.widget("mapbender.mbMap", {
     },
 
     _convertLayerDef: function(layerDef) {
+        if(typeof Mapbender.layer[layerDef.type] !== 'object' 
+            && typeof Mapbender.layer[layerDef.type].create !== 'function') {
+            throw "Layer type " + layerDef.type + " is not supported by mapbender.mapquery-map";
+        }
+        return Mapbender.layer[layerDef.type].create(layerDef);
+        /*
         var mqLayerDef = null;
         switch(layerDef.type) {
-            case 'wms':
-                var layers = [];
-                var queryLayers = [];
-                $.each(layerDef.configuration.layers, function(idx, layer) {
-                    var layerDef = $.extend({},
-                        { visible: true, queryable: false }, layer );
-                    if(layerDef.visible) {
-                        layers.push(layerDef.name);
-                    }
-                    if(layerDef.queryable) {
-                        queryLayers.push(layerDef.name);
-                    }
-                });
-
-                mqLayerDef = {
-                    type:        'wms',
-                    label:       layerDef.title,
-                    url:         layerDef.configuration.url,
-
-                    layers:      layers,
-                    queryLayers: queryLayers,
-                    allLayers:   layerDef.configuration.layers,
-
-                    transparent: layerDef.configuration.transparent,
-                    format:      layerDef.configuration.format,
-
-                    isBaseLayer:   layerDef.configuration.baselayer,
-                    opacity:     layerDef.configuration.opacity,
-                    visible:     layerDef.configuration.visible,
-                    tiled:       layerDef.configuration.tiled
-                };
-                return mqLayerDef
-                break;
             case 'wfs':
                 return {
                     type: 'wfs',
@@ -212,8 +185,8 @@ $.widget("mapbender.mbMap", {
                 };
 
             default:
-                throw "Layer type " + layerDef.type + " is not supported by mapbender.mapquery-map";
-        }
+                        }
+        */
     },
 
     zoomIn: function() {
