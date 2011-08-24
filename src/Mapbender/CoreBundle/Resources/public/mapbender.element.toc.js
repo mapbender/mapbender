@@ -112,23 +112,25 @@ $.widget("mapbender.mbToc", $.ui.dialog, {
             .append(label)
             .appendTo(li);
 
-        var layers = $('<ol><ol>');
-        $.each(layer.options.allLayers, function(idx, sublayer) {
-            var li = $('<li></li>')
-                .addClass('layer')
-                .data('layer', sublayer.name);
-            var cb = $('<input></input>')
-                .attr('type', 'checkbox')
-                .addClass('layer')
-                .appendTo(li);
-            if($.inArray(sublayer.name, layer.options.layers) !== -1) {
-                cb.attr('checked', 'checked');
-            }
-            var span = $('<span></span>')
-                .html(sublayer.title)
-                .appendTo(li);
-            layers.prepend(li);
-        });
+        if(layer.options.allLayers) {
+            var layers = $('<ol><ol>');
+            $.each(layer.options.allLayers, function(idx, sublayer) {
+                var li = $('<li></li>')
+                    .addClass('layer')
+                    .data('layer', sublayer.name);
+                var cb = $('<input></input>')
+                    .attr('type', 'checkbox')
+                    .addClass('layer')
+                    .appendTo(li);
+                if($.inArray(sublayer.name, layer.options.layers) !== -1) {
+                    cb.attr('checked', 'checked');
+                }
+                var span = $('<span></span>')
+                    .html(sublayer.title)
+                    .appendTo(li);
+                layers.prepend(li);
+            });
+        }
 
         services.append(li);
         services.append($('<div></div>').append(layers));
