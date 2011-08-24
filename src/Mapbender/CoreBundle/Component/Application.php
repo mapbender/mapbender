@@ -161,6 +161,7 @@ class Application implements ApplicationInterface {
             'layersets' => $layersets,
             'elements' => $element_confs,
             'srs' => $this->configuration['srs'],
+            'units' => $this->configuration['units'],
             'basePath' => $base_path,
             'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
             'slug' => $this->slug,
