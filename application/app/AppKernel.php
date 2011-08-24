@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new Mapbender\CoreBundle\MapbenderCoreBundle(),
             new Mapbender\WmcBundle\MapbenderWmcBundle(),
             new Mapbender\WmsBundle\MapbenderWmsBundle(),
+            new Mapbender\WmtsBundle\MapbenderWmtsBundle(),
             /**
              * Disable the demo bundle when startin a real-world project!
              */

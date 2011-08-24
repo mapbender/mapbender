@@ -1,5 +1,5 @@
 imports:
-    - { resource: mapbender_demo.yml }
+    - { resource: mapbender_demos.yml }
     - { resource: parameters.ini }
     - { resource: security.yml }
 
