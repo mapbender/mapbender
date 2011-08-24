@@ -71,3 +71,12 @@ write into the application/app/cache and application/app/logs directories.
 
    before and after installing the assets.
 
+Running
+-------
+Symfony2 uses front-end controllers, which are located in the application/web
+directory. You should expose this directory via your webserver and run the
+app_dev.php to use the development mode front-end controller. You can only
+run this controller if the webserver is running on your localhost.
+
+The production front-end controller is named app.php.
+
