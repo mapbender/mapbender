@@ -7,6 +7,7 @@ Symfony2 or Mapbender3:
 
 1. PHP >= 5.3.2: This is essential to run Symfony2
 2. date.timezone setting in your php.ini
+3. PHP CLI for running console commands for Symfony2
 
 For an overview of more optional requirements, see
 http://symfony.com/doc/current/reference/requirements.html. We will list
@@ -50,4 +51,23 @@ Configuration
 -------------
 After installing the code, you need to make sure that your web server can
 write into the application/app/cache and application/app/logs directories.
+
+1. Make sure your webserver can write into the application/app/cache and
+   application/app/logs directories. This often breaks, as running
+   Symfony console commands writes into these with user rights.
+2. Install the bundle assets into the web folder by running the Symfony
+   console command from the application directory:::
+
+    app/console assets:install web
+
+   If you are on a Unix-like system, you can use this form to use symlinks
+   instead of copying which is great during development:::
+
+    app/console assets:install --symlink web
+
+   Hint: You probably need to run a::
+
+    sudo rm -Rf app/cache/*
+
+   before and after installing the assets.
 
