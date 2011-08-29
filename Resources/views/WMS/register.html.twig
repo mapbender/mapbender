@@ -26,8 +26,9 @@
                 <input type="password" name="http_password" />
             </div>
 			<input type="submit" name="save" value="{% trans %}Load{% endtrans %}" /> 			
+        	</fieldset>
         </form>
-		</fieldset>
+		
 {#
 		 <fieldset>
    			<legend>Capabilities-URL hochladen</legend>
@@ -39,5 +40,12 @@
         </form>
 		</fieldset>
 #}
+	<div id="tmpExample" title="Basic dialog" style="display: none">
+	<p>WMS konfigurieren: Vorschau wird geladen...</p>
+	</div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{asset('bundles/mbwms/js/preview.js') }}"></script>	
 {% endblock %}

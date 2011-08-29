@@ -1,4 +1,3 @@
-{% extends 'MBWMSBundle:WMS:base.html.twig' %} 
 {% form_theme form 'MBWMSBundle:Form:fields.html.twig' %}
 
 {% block title %}{% trans %}WMS Preview{% endtrans %}{% endblock %}
@@ -7,10 +6,9 @@
     <p>{% trans %}WMS Preview{% endtrans %}: '{{ getcapa_url }}'</p>
     <input type="hidden" value="{{ xml }}" />
      <form class="wms" action="{{ path('mb_wms_wms_add') }}" method="POST">
-        <input type="submit" name="save" value="{% trans %}Add WMS{% endtrans %}"/> 
         {{ form_widget(form) }}
         {{ form_rest(form) }}
-         <input type="submit" name="save" value="{% trans %}Add WMS{% endtrans %}"/> 
+         <input type="submit" name="save" value="{% trans %}Save{% endtrans %}"/> 
     </form>
 
 {% endblock %}
@@ -34,9 +32,8 @@
                     top: '{{ maxy }}'
                 }
     };
-
     </script>
+    
     <script src="{{asset('js/ol/OpenLayers-2.10/OpenLayers.js') }}"></script>
-    <script src="{{asset('js/ol/ol_client.js') }}"></script>		
-        
+    <script src="{{asset('js/ol/ol_client.js') }}"></script>
 {% endblock %}

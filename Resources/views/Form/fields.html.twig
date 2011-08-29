@@ -1,5 +1,5 @@
-
 {% block WMSLayer_row %}
+
     <fieldset id="wmslayer_{{value.id}}" class="layer">
         <legend>{{ value.title }}</legend>
         {{ form_errors(form) }}
@@ -32,8 +32,25 @@
     </div>
 {% endblock %}
 
+
+
+
 {% block WMSService_widget %}
-    <fieldset class="metadata">
+
+
+
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-1">Metadata</a></li>
+		<li><a href="#tabs-2">Contact</a></li>
+		<li><a href="#tabs-3">Service</a></li>
+		<li><a href="#tabs-4">Layers</a></li>
+		<li><a href="#tabs-5">Preview</a></li>
+		
+	</ul>
+	
+	<div id="tabs-1">
+	 <fieldset class="metadata">
         <legend>{% trans %}Metadata{% endtrans %}</legend>
         {{ form_row(form.title) }}
         {{ form_row(form.name) }}
@@ -48,10 +65,9 @@
         {{ form_row(form.fees) }}
         {{ form_row(form.accessConstraints) }}
     </fieldset>
-    <fieldset class="preview">
-        <legend>{% trans %}Preview{% endtrans %}</legend>
-        <div id="map" class="smallmap"></div>
-    </fieldset>
+    </div>
+  
+    <div id="tabs-2">
     <fieldset class="contact">
         <legend>{% trans %}Contact{% endtrans %}</legend>
         {{ form_row(form.contactPerson) }}
@@ -67,45 +83,68 @@
         {{ form_row(form.contactAddressPostCode) }}
         {{ form_row(form.contactAddressCountry) }}
     </fieldset>
+    </div>
+    
+    <div id='tabs-3'>
     <fieldset class="service">
         <legend>{% trans %}Service{% endtrans %}</legend>
         {{ form_row(form.version) }}
+        <hr style="color:#AAAAAA;background: #AAAAAA; height:1px">
         {{ form_row(form.requestGetCapabilitiesGET) }}
         {{ form_row(form.requestGetCapabilitiesPOST) }}
         {{ form_row(form.requestGetCapabilitiesFormats) }}
+        <hr>
         {{ form_row(form.requestGetMapGET) }}
         {{ form_row(form.requestGetMapPOST) }}
         {{ form_row(form.requestGetMapFormats) }}
+        <hr>
         {{ form_row(form.requestGetFeatureInfoGET) }}
         {{ form_row(form.requestGetFeatureInfoPOST) }}
         {{ form_row(form.requestGetFeatureInfoFormats) }}
+        <hr>
         {{ form_row(form.requestGetLegendGraphicGET) }}
         {{ form_row(form.requestGetLegendGraphicPOST) }}
         {{ form_row(form.requestGetLegendGraphicFormats) }}
+        <hr>
         {{ form_row(form.requestDescribeLayerGET) }}
         {{ form_row(form.requestDescribeLayerPOST) }}
         {{ form_row(form.requestDescribeLayerFormats) }}
+        <hr>
         {{ form_row(form.requestGetStylesGET) }}
         {{ form_row(form.requestGetStylesPOST) }}
         {{ form_row(form.requestGetStylesFormats) }}
+        <hr>
         {{ form_row(form.requestPutStylesGET) }}
         {{ form_row(form.requestPutStylesPOST) }}
         {{ form_row(form.requestPutStylesFormats) }}
+        <hr>
         {{ form_row(form.exceptionFormats) }}
+        <hr>
         {{ form_row(form.symbolSupportSLD) }}
         {{ form_row(form.symbolUserLayer) }}
         {{ form_row(form.symbolUserStyle) }}
         {{ form_row(form.symbolRemoteWFS) }}
     </fieldset>
-
-
-
-    <fieldset style="float:left">
-        <legend>{% trans %}Layer{% endtrans %}</legend>
-        {% if form.layer|length > 0 %}
-                {{ form_row(form.layer) }} 
-        {% endif %}
+	</div>
+  
+	<div id="tabs-4">
+	     {% trans %}Layer{% endtrans %}
+	        {% if form.layer|length > 0 %}
+	                {{ form_row(form.layer) }} 
+	        {% endif %}
+	</div>
+   
+   <div id="tabs-5">
+   <fieldset class="preview">
+        <legend>{% trans %}Preview{% endtrans %}</legend>
+        <div id="map" class="smallmap"></div>
     </fieldset>
+   </div>
+   
+    </div>
+    
+  
+    
 {% endblock %}
 
 
