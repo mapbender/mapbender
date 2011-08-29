@@ -138,7 +138,7 @@ class WMSController extends Controller {
     public function addAction(){
 
         $request = $this->get('request');
-        /* build up nested wmslayer structure */
+
         $requestWMS = $request->get('WMSService');
         $wms = new WMSService();
         $wms = $this->buildWMSFormStructure($wms,$requestWMS);
@@ -150,7 +150,9 @@ class WMSController extends Controller {
             $this->persistRecursive($wms,$em);
             $em->persist($wms);
             $em->flush();
-            return $this->redirect($this->generateUrl("mb_wms_wms_edit",array("id" => $wms->getId()),true));
+            return $this->redirect($this->generateUrl("mb_wms_wms_index",
+                array("info_message" =>"WMS '".$wms. "' saved"),
+            true));
         }else{
             // FIXME: getcapa_url is missing, xml is missing
             return $this->render("MBWMSBundle:WMS:preview.html.twig",array(

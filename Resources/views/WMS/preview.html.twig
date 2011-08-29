@@ -20,11 +20,12 @@
 	<link rel="stylesheet" href="{{asset('js/ol/OpenLayers-2.10/theme/default/styleol.css') }}" />
 {% endblock %}
 {% block javascripts %}
+
     <script type="application/javascript">
     var previewWMS = {
         title: '{{ wms.getTitle() }}',
         url: '{{ wms.getRequestGetMapGET() }}',
-        rootlayer: '{{ wms.getRootLayer().getName() }}',
+        rootlayer: '{{ wms.getAllLayerNames(wms.layer) }}',
         format: '{{ wms.getDefaultRequestGetMapFormat() }}',
         projection: '{{ wms.getRootLayer().getDefaultSRS() }}',
         bounds: {
