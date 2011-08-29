@@ -14,6 +14,8 @@
 {% endblock %}
 
 {% block content %}
+    <script src="{{asset('bundles/mbwms/js/preview.js') }}"></script>	
+
     <form class="wms" action="{{ path('mb_wms_wms_save',{'id':wms.id}) }}" method="POST">
         {{ form_widget(form) }}
         {{ form_rest(form) }}
