@@ -4,6 +4,7 @@ parameters:
             title: Mapbender User Demo Map
             template:  Mapbender\CoreBundle\Template\Fullscreen
             srs: EPSG:4326
+            units: 'degrees'
             extents:
                 start: [-180,-90,180,90]
                 max: [-180,-90,180,90]
@@ -79,6 +80,11 @@ parameters:
                     about:
                         title: About
                         class: Mapbender\CoreBundle\Element\AboutDialog
+                    fi:
+                        title: FeatureInfo
+                        class: Mapbender\CoreBundle\Element\FeatureInfo
+                        label: true
+                        target: map
                 content:
                     map:
                         title: Main Map
