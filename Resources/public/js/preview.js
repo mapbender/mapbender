@@ -1,13 +1,13 @@
 $(function() {
-	$('form').submit(function(){
+	$('form.wmsregister').submit(function(){
 		var target = $(this).attr('action');
 		
-		$('div#tmpExample').dialog({
+		$('div#wmspreview').dialog({
 			modal:true,
 			autoOpen:true,
 			width: 600,
 			height: 650,
-			title: 'WMS konfigurieren',
+			title: 'WMS Preview',
 			position: [300,50],
 			show: 'slide',
 			buttons:{
@@ -31,7 +31,7 @@ $(function() {
 			data: values,
 			type: 'POST',
 			success: function(data) {
-				$('div#tmpExample').empty().html(data);
+				$('div#wmspreview').empty().html(data);
 				$( "#tabs" ).tabs();				
 			}
 		});
@@ -39,4 +39,3 @@ $(function() {
 		return false;
 	});
 });
-

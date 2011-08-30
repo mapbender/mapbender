@@ -9,7 +9,7 @@
 
 {% block content %}
     <div class="message">
-        <form name="url" action="{{ path('mb_wms_wms_preview') }}" method="POST">
+        <form class="wmsregister" name="url" action="{{ path('mb_wms_wms_preview') }}" method="POST">
             
 			 <fieldset>
    			<legend>Capabilities-URL laden</legend>
@@ -40,9 +40,9 @@
         </form>
 		</fieldset>
 #}
-	<div id="tmpExample" title="Basic dialog" style="display: none">
-	<p>WMS konfigurieren: Vorschau wird geladen...</p>
-	</div>
+        <div id="wmspreview" title="WMS Preview" style="display: none">
+            <p>{% trans %}Loading WMS{% endtrans %} <img src="{{ asset('bundles/mbwms/img/spinner.gif') }}" alt="loading..." title="locadin..."/></p>
+        </div>
     </div>
 {% endblock %}
 

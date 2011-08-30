@@ -1,14 +1,12 @@
 {% form_theme form 'MBWMSBundle:Form:fields.html.twig' %}
 
-{% block title %}{% trans %}WMS Preview{% endtrans %}{% endblock %}
-
 {% block content %}
-    <p>{% trans %}WMS Preview{% endtrans %}: '{{ getcapa_url }}'</p>
+    <p>'{{ getcapa_url }}'</p>
     <input type="hidden" value="{{ xml }}" />
      <form class="wms" action="{{ path('mb_wms_wms_add') }}" method="POST">
         {{ form_widget(form) }}
         {{ form_rest(form) }}
-         <input type="submit" name="save" value="{% trans %}Save{% endtrans %}"/> 
+        {# <input type="submit" name="save" value="{% trans %}Save{% endtrans %}"/> #}
     </form>
 
 {% endblock %}
