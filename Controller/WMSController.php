@@ -151,7 +151,7 @@ class WMSController extends Controller {
             $em->persist($wms);
             $em->flush();
             return $this->redirect($this->generateUrl("mb_wms_wms_index",
-                array("info_message" =>"WMS '".$wms. "' saved"),
+                array("info_message" =>"WMS '".$wms->getTitle(). "' saved"),
             true));
         }else{
             // FIXME: getcapa_url is missing, xml is missing
