@@ -23,7 +23,7 @@
     var previewWMS = {
         title: '{{ wms.getTitle() }}',
         url: '{{ wms.getRequestGetMapGET() }}',
-        rootlayer: '{{ wms.getAllLayerNames(wms.layer) }}',
+        rootlayer: '',
         format: '{{ wms.getDefaultRequestGetMapFormat() }}',
         projection: '{{ wms.getRootLayer().getDefaultSRS() }}',
         bounds: {
