@@ -284,6 +284,18 @@ class WMSService extends GroupLayer {
 
 
     /**
+     * returns all Layers of the WMS as comma-seperated string so that they can be used in a WMS Request's LAYER parameter
+     */
+    static function getAllLayerNames($grouplayers){
+        $names = array();
+        foreach ($grouplayers as $layers){
+            $names[] = $layer->getName();
+            $names[] = self::getAllLayerNames($layer->getLayer());
+        }
+        return $names;
+    }
+
+    /**
      * Set onlineResource
      *
      * @param string $onlineResource

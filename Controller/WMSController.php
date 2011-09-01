@@ -168,7 +168,7 @@ class WMSController extends Controller {
 
     /**
      * Shows the WMS in an Editor
-     * @Route("/{id}"))
+     * @Route("/{wmsId}"))
      * @Method({"GET"})
      * @Template()
     */
@@ -182,7 +182,7 @@ class WMSController extends Controller {
     
     /**
      * Shows the WMS in an Editor
-     * @Route("/{id}"))
+     * @Route("/{wmsId}"))
      * @Method({"POST"})
      * @Template()
     */
@@ -194,12 +194,12 @@ class WMSController extends Controller {
         $form->bindRequest($request);
         $em = $this->get("doctrine.orm.entity_manager");
         $this->persistRecursive($wms,$em);
-        return $this->redirect($this->generateUrl("mb_wms_wms_edit", array("id"=>$wms->getId())));
+        return $this->redirect($this->generateUrl("mb_wms_wms_edit", array("wmsId"=>$wms->getId())));
     }
 
     /**
      * shows the dialog for wms Deletion confirmation
-     * @Route("/{id}/delete")
+     * @Route("/{wmsId}/delete")
      * @Method({"GET"})
      * @Template()
     */
@@ -211,7 +211,7 @@ class WMSController extends Controller {
 
     /**
      * deletes a WMS
-     * @Route("/{id}/delete")
+     * @Route("/{wmsId}/delete")
      * @Method({"POST"})
     */
     public function deleteAction(WMSService $wms){
@@ -224,7 +224,7 @@ class WMSController extends Controller {
     /**
      * FIXME: this can be removed
      * Shows the details of a WMS
-     * @Route("/{id}/details")
+     * @Route("/{wmsId}/details")
      * @Method({"GET"})
      * @Template()
     */

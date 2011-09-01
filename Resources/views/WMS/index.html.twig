@@ -16,7 +16,7 @@
         <tbody>
         {% for wms in wmsArr %}
             <tr>
-                <td><a href="{{ path("mb_wms_wms_edit",{'id': wms.id }) }}">{{ wms.title }}</a></td>
+                <td><a href="{{ path("mb_wms_wms_edit",{'wmsId': wms.id }) }}">{{ wms.title }}</a></td>
                 <td>{{ wms.alias }}</td>
                 <td>{{ wms.abstract }}</td>
             </tr>

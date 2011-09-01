@@ -21,56 +21,14 @@ class WMSLayerController extends Controller {
 
     /**
      * Shows the WMSlayer in an Editor
-     * @Route("/{wmsId}/layer/{id}")
+     * @Route("/{wmsId}/layer/{wmsLayerId}")
      * @Method({"GET"})
      * @Template()
     */
-    public function editAction($wmsId = null, $id){
-
-        $wmsLayer = $this->getDoctrine()
-            ->getRepository('MBWMSBundle:WMSLayer')
-            ->find($id);
-
-        if(!$wmsLayer){
-            throw new NotFoundHttpException('WMSLayer does not exist');
-        }
-        
-        $wms = $wmsLayer->getWMS(); $this->getWMS($wmsId);
-        if($wmsId != $wms->getId()){
-            throw new NotFoundHttpException('WMSLayer does not exist');
-        } 
-
+    public function editAction(WMSService $wms, WMSLayer $wmsLayer){
         $form = $this->get('form.factory')->create(new WMSLayerType(),$wmsLayer); 
         return array(
             'form' => $form->createView(),
-        );
-    }
-
-    /**
-     * FIXME: can be removed
-     * Shows the details of a WMS
-     * @Route("/{wmsId}/layer/{id}")
-     * @Method({"GET"})
-     * @Template()
-    */
-    public function detailsAction($wmsId = null, $id){
-
-        $wmsLayer = $this->getDoctrine()
-            ->getRepository('MBWMSBundle:WMSLayer')
-            ->find($id);
-
-        if(!$wmsLayer){
-            throw new NotFoundHttpException('WMSLayer does not exist');
-        }
-        
-        $wms = $wmsLayer->getWMS(); $this->getWMS($wmsId);
-        if($wmsId != $wms->getId()){
-            throw new NotFoundHttpException('WMSLayer does not exist');
-        } 
-
-        return array(
-            "wms" => $wms,
-            "wmsLayer" => $wmsLayer
         );
     }
 

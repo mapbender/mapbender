@@ -5,8 +5,8 @@
 {% block content %}
     <div class="message">
         <p>{% trans %}Really Delete{% endtrans %} "{{wms.title }}" ?</p>
-        <form action="{{ path("mb_wms_wms_delete",{'id': wms.id}) }}" method="POST">
-            <button>{% trans %}Delete{% endtrans%}</button><a class="button" href="{{ path("mb_wms_wms_edit",{'id': wms.id}) }}">{% trans %}Cancel{% endtrans %}</a>
+        <form action="{{ path("mb_wms_wms_delete",{'wmsId': wms.id}) }}" method="POST">
+            <button>{% trans %}Delete{% endtrans%}</button><a class="button" href="{{ path("mb_wms_wms_edit",{'wmsId': wms.id}) }}">{% trans %}Cancel{% endtrans %}</a>
         </form>
     </div>
 {% endblock %}

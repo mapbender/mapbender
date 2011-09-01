@@ -7,7 +7,7 @@
 
 {% block subnavigation %}
     <nav class="actions">
-        <a href="{{ path('mb_wms_wms_confirmdelete',{'id':wms.getId()}) }}">{% trans %}Delete{% endtrans %}</a>
+        <a href="{{ path('mb_wms_wms_confirmdelete',{'wmsId':wms.id}) }}">{% trans %}Delete{% endtrans %}</a>
         <a class="disabled" href="">{% trans %}Edit{% endtrans %}</a>
         <a class="disabled" href="#">{% trans %}Update{% endtrans %}</a>
     </nav>
@@ -16,7 +16,7 @@
 {% block content %}
     <script src="{{asset('bundles/mbwms/js/preview.js') }}"></script>	
 
-    <form class="wms" action="{{ path('mb_wms_wms_save',{'id':wms.id}) }}" method="POST">
+    <form class="wms" action="{{ path('mb_wms_wms_save',{'wmsId':wms.id}) }}" method="POST">
         {{ form_widget(form) }}
         {{ form_rest(form) }}
         <button type="submit">{% trans %}Save{% endtrans %}</button>
