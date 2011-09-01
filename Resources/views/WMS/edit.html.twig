@@ -16,7 +16,7 @@
 {% block content %}
     <script src="{{asset('bundles/mbwms/js/preview.js') }}"></script>	
 
-    <form class="wms" action="{{ path('mb_wms_wms_save',{'wmsId':wms.id}) }}" method="POST">
+    <form class="wms tabbable" action="{{ path('mb_wms_wms_save',{'wmsId':wms.id}) }}" method="POST">
         {{ form_widget(form) }}
         {{ form_rest(form) }}
         <button type="submit">{% trans %}Save{% endtrans %}</button>

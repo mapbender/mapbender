@@ -32,7 +32,7 @@ $(function() {
 			type: 'POST',
 			success: function(data) {
 				$('div#wmspreview').empty().html(data);
-				$( "#tabs" ).tabs();				
+				$( ".tabbable" ).tabs();				
 			}
 		});
 		

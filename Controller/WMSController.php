@@ -150,11 +150,11 @@ class WMSController extends Controller {
             $this->persistRecursive($wms,$em);
             $em->persist($wms);
             $em->flush();
-            return $this->redirect($this->generateUrl("mb_wms_wms_index",
-                array("info_message" =>"WMS '".$wms->getTitle(). "' saved"),
-            true));
+            $this->get('session')->setFlash('info',"WMS Added");
+            return $this->redirect($this->generateUrl("mb_wms_wms_index",array(), true));
         }else{
             // FIXME: getcapa_url is missing, xml is missing
+            $this->get('session')->setFlash('error',"Could not Add WMS");
             return $this->render("MBWMSBundle:WMS:preview.html.twig",array(
                     "getcapa_url"=> "",
                     "wms" => $wms,
@@ -194,6 +194,8 @@ class WMSController extends Controller {
         $form->bindRequest($request);
         $em = $this->get("doctrine.orm.entity_manager");
         $this->persistRecursive($wms,$em);
+        // FIXME: error handling
+        $this->get('session')->setFlash('info',"WMS Saved");
         return $this->redirect($this->generateUrl("mb_wms_wms_edit", array("wmsId"=>$wms->getId())));
     }
 
@@ -220,28 +222,10 @@ class WMSController extends Controller {
         $this->removeRecursive($wms,$em);
         $em->remove($wms);
         $em->flush();
+        //FIXME: error handling
+        $this->get('session')->setFlash('info',"WMS deleted");
         return $this->redirect($this->generateUrl("mb_wms_wms_index"));
     }
-
-    /**
-     * FIXME: this can be removed
-     * Shows the details of a WMS
-     * @Route("/{wmsId}/details")
-     * @Method({"GET"})
-     * @Template()
-    */
-    public function detailsAction(WMSService $wms){
-        $bounds = $wms->getRootLayer()->getLatLonBounds();
-        $b = explode(" ",$bounds);
-        return array(
-            "wms" => $wms,
-            "minx" => isset($b[0])?$b[0]:"",
-            "miny" => isset($b[1])?$b[1]:"",
-            "maxx" => isset($b[2])?$b[2]:"",
-            "maxy" => isset($b[3])?$b[3]:""
-        );
-    }
-    
 
  
     /**
