@@ -215,7 +215,9 @@ class WMSController extends Controller {
      * @Method({"POST"})
     */
     public function deleteAction(WMSService $wms){
+        // TODO: check wether a layer is used by a VWMS still
         $em = $this->getDoctrine()->getEntityManager();
+        $this->removeRecursive($wms,$em);
         $em->remove($wms);
         $em->flush();
         return $this->redirect($this->generateUrl("mb_wms_wms_index"));
@@ -242,7 +244,7 @@ class WMSController extends Controller {
     
 
  
-  /**
+    /**
      * Recursively persists a nested Layerstructure
      * param GroupLayer
      * param EntityManager
@@ -257,6 +259,19 @@ class WMSController extends Controller {
         }
         $em->flush();
     }
+    /**
+     * Recursively remove a nested Layerstructure
+     * param GroupLayer
+     * param EntityManager
+    */
+    public function removeRecursive($grouplayer,$em){
+        foreach($grouplayer->getLayer() as $layer){
+            $this->removeRecursive($layer,$em);
+        }
+        $em->flush();
+        $em->remove($grouplayer);
+    }
+
     /**
      *  
      * Takes an Arraystructure from a POSTrequest and recurses into the nested layers to build a matching WMSLayer structure
