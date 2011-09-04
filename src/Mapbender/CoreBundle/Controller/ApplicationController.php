@@ -15,13 +15,24 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ApplicationController extends Controller {
     /**
+     * Rneder an application list at /applications
+     *
+     * @Route("/applications")
+     * @Template()
+     */
+    public function listAction() {
+        return array(
+            'apps' => $this->getYamlApplications());
+    }
+
+    /**
      * Render an application at url /application/{slug}
      *
      * @param string $slug The application slug
      * @return Response HTTP response
      * @Route("/application/{slug}", name="mapbender_application")
-	 * @Template()
-	 */
+     * @Template()
+     */
     public function applicationAction($slug) {
         $application = $this->getApplication($slug);
         $this->checkAllowedRoles($application->getRoles());
@@ -53,6 +64,25 @@ class ApplicationController extends Controller {
         $application = $this->getYamlApplication($slug);
         return $application;
     }
+
+    /**
+     * Get all Yaml-defined applications
+     */
+    private function getYamlApplications() {
+        if(!$this->container->hasParameter('applications')) {
+            return array();
+        }
+
+        $apps_parameters = $this->container->getParameter('applications');
+
+        $apps = array();
+        foreach($apps_parameters as $key => $conf) {
+            $apps[$key] = $this->getYamlApplication($key);
+        }
+
+        return $apps;
+    }
+
     /**
      * Inflate an application from Yaml
      */

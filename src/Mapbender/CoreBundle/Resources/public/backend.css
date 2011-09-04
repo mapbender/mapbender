@@ -1,0 +1,121 @@
+.clearfix:before,
+.clearfix:after {
+    content: '';
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    zoom: 1;
+}
+
+body {
+    background: #e0e0e0;
+    font-family: sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+header {
+    background: #2A2934;
+    color: #e0e0e0;
+
+    padding: 0.3em;
+
+    border-bottom: 1px solid #ccc;
+}
+
+nav ul {
+    background: #2A2934;
+    color: #e0e0e0;
+}
+
+nav ul:after {
+    content: '';
+    clear: both;
+}
+
+nav li a {
+    float: left
+}
+
+nav li a:link, nav li a:visited {
+    display: block;
+    padding: 0.2em 1em;
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+}
+
+nav li a:hover {
+    background: #524F64;
+}
+
+a#mapbendercore-user-account,
+a#mapbendercore-user-login,
+a#mapbendercore-user-logout {
+    float: right;
+}
+
+aside.description {
+    margin: 1em 3em;
+    padding: 0.5em;
+    border: 1px solid #888;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    background: #eee;
+}
+
+section#apps-overview {
+    margin: 0 1em;
+}
+
+section#apps-overview li {
+    display: inline-block;
+    vertical-align: top;
+
+    border: 1px solid #888;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    background: #eee;
+    box-shadow: 2px 2px 2px #aaa;
+}
+
+section#apps-overview li > div {
+    border: 1px solid #333;
+    height: 200px;
+    width: 300px;
+    margin: 0.5em;
+    background: #f0f0f0;
+}
+
+section#apps-overview li h2 a:link,
+section#apps-overview li h2 a:visited {
+    font-weight: 700;
+    text-decoration: none;
+    color: #555;
+    padding: 0.2em 0.5em;
+}
+
+section#apps-overview li .description {
+    padding: 0.2em 0.5em;
+    color: #555;
+}
+
+section#apps-overview li:hover {
+    box-shadow: 2px 2px 2px #333;
+    cursor: pointer;
+}
+
+section#apps-overview li:hover h2 a {
+    color: #222;
+}
+
+section#apps-overview li:hover .description {
+    color: #222;
+}
