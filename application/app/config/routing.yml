@@ -1,3 +1,8 @@
+# Per default, the application list is the start page. You may change that.
+_mapbender_start:
+    pattern: "/"
+    defaults: { _controller: MapbenderCoreBundle:Application:list}
+
 _mapbender_application:
     resource: "@MapbenderCoreBundle/Controller/ApplicationController.php"
     type: annotation
@@ -10,6 +15,3 @@ _mapbender_user:
     resource: "@MapbenderCoreBundle/Controller/UserController.php"
     type: annotation
 
-_mapbender_welcome:
-    resource: "@MapbenderCoreBundle/Controller/WelcomeController.php"
-    type: annotation

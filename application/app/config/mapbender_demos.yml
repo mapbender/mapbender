@@ -2,8 +2,10 @@ parameters:
     applications:
         mapbender_user:
             title: Mapbender User Demo Map
+            description: "Simple map showing WMS use."
             template:  Mapbender\CoreBundle\Template\Fullscreen
             srs: EPSG:4326
+            units: degrees
             extents:
                 start: [-180,-90,180,90]
                 max: [-180,-90,180,90]
@@ -93,9 +95,10 @@ parameters:
 
         osm_denver:
             title: OSM Denver Map
+            description: "Simple map showing OSM with WMTS tiles."
             template:  Mapbender\CoreBundle\Template\Fullscreen
             srs: EPSG:4326
-            units: 'degrees'
+            units: degrees
             extents:
                 start: [-102.75,38.5,-102.5,39.5]
                 max: [-180,-90,180,90]
