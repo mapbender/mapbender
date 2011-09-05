@@ -1,6 +1,6 @@
 <?php
 
-namespace MB\WMSBundle\Controller;
+namespace Mapbender\WmsBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -8,11 +8,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use MB\WMSBundle\Entity\WMSService;
-use MB\WMSBundle\Entity\WMSLayer;
-use MB\WMSBundle\Entity\GroupLayer;
-use MB\WMSBundle\Components\CapabilitiesParser;
-use MB\WMSBundle\Form\WMSType;
+use Mapbender\WmsBundle\Entity\WMSService;
+use Mapbender\WmsBundle\Entity\WMSLayer;
+use Mapbender\WmsBundle\Entity\GroupLayer;
+use Mapbender\WmsBundle\Components\CapabilitiesParser;
+use Mapbender\WmsBundle\Form\WMSType;
 
 /*
 * @package bkg
@@ -35,7 +35,7 @@ class WMSController extends Controller {
         $max = $max < 1000 ? $max : 1000;
 
         $em = $this->get("doctrine.orm.entity_manager");
-        $q = $em->createQuery("select wms from MB\WMSBundle\Entity\WMSService wms ");
+        $q = $em->createQuery("select wms from Mapbender\WmsBundle\Entity\WMSService wms ");
         $q->setFirstResult($first);
         $q->setMaxResults($max);
         $wmsArr = $q->getResult();
@@ -155,7 +155,7 @@ class WMSController extends Controller {
         }else{
             // FIXME: getcapa_url is missing, xml is missing
             $this->get('session')->setFlash('error',"Could not Add WMS");
-            return $this->render("MBWMSBundle:WMS:preview.html.twig",array(
+            return $this->render("MapbenderWmsBundle:WMS:preview.html.twig",array(
                     "getcapa_url"=> "",
                     "wms" => $wms,
                     "form" => $form->createView(),

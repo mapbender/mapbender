@@ -1,8 +1,7 @@
 <?php
-namespace MB\WMSBundle\Entity;
+namespace Mapbender\WmsBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
-use MB\CoreBundle\Entity\Keyword;
-use MB\WMSBundle\Entity\GroupLayer;
+use Mapbender\WmsBundle\Entity\GroupLayer;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**

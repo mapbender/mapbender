@@ -4,7 +4,7 @@
 * @author Karim Malhas <karim@malhas.de>
 */
 
-use MB\WMSBundle\Components\CapabilitiesParser;
+use Mapbender\WmsBundle\Components\CapabilitiesParser;
 /**
  *   Tests the CapabilitiesParser. Note that te tests are coupled to the testdata somewhaty tightly. This is on purpose
  *   to keep the tests simple
@@ -14,7 +14,7 @@ class CapabilitiesParserTest extends PHPUnit_Framework_TestCase {
 
     public function testMinimal(){
 
-        $keyword = new MB\CoreBundle\Entity\Keyword();
+        $keyword = new Mapbender\CoreBundle\Entity\Keyword();
         $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimal.singlelayer.xml"));
         $parser  = new CapabilitiesParser($data);
         $wms = $parser->getWMSService();

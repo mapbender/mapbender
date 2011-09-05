@@ -1,6 +1,6 @@
 <?php
 
-namespace MB\WMSBundle\Form;
+namespace Mapbender\WmsBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
 
@@ -255,7 +255,7 @@ class WMSType  extends AbstractType {
     }
     public function getDefaultOptions(array $options){
         return array(
-            'data_class' => "MB\WMSBundle\Entity\WMSService",
+            'data_class' => "Mapbender\WmsBundle\Entity\WMSService",
             "exceptionFormats" => array(),
             "requestGetCapabilitiesFormats" => array(),
             "requestGetMapFormats" => array(),

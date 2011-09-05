@@ -1,4 +1,4 @@
-{% extends 'MBWMSBundle:WMS:base.html.twig' %} 
+{% extends 'MapbenderWmsBundle:WMS:base.html.twig' %} 
 
 {% block title %}Details for {{ wms.getTitle() }} {% endblock %}
 {% block heading %}WMS detail{% endblock %}
@@ -118,7 +118,7 @@
     <div class="layers">
         <h2>{% trans %}Layers{% endtrans %}</h2>
         {% for layer in wms.getLayer() %}
-            {% include "MBWMSBundle:WMS:layerdetails.html.twig" %}
+            {% include "MapbenderWmsBundle:WMS:layerdetails.html.twig" %}
         {% endfor %}
         {% if wms.getLayer()|length == 0 %}
             <p class="emptydata">{% trans %}No Layers{% endtrans %}</p>
