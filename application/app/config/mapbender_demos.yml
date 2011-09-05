@@ -81,6 +81,11 @@ parameters:
                     about:
                         title: About
                         class: Mapbender\CoreBundle\Element\AboutDialog
+                    fi:
+                        title: FeatureInfo
+                        class: Mapbender\CoreBundle\Element\FeatureInfo
+                        label: true
+                        target: map
                 content:
                     map:
                         title: Main Map
