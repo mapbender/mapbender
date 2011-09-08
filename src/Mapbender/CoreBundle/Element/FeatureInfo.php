@@ -47,8 +47,8 @@ class FeatureInfo extends Element implements ElementInterface {
 	public function render() {
             return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
                 'id' => $this->id,
-                'configuration' => array_merge($this->configuration,
-                    array('text' => 'Feature Info'))));
+                'configuration' => array_merge($this->configuration),
+                'label' => $this->configuration['title']));
 	}
 }
 
