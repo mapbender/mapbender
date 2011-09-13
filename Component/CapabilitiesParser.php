@@ -1,6 +1,6 @@
 <?php
 
-namespace MB\WMSBundle\Components;
+namespace MB\WMSBundle\Component;
 use MB\WMSBundle\Entity\WMSService;
 use MB\WMSBundle\Entity\WMSLayer;
 use MB\WMSBundle\Entity\Layer;
