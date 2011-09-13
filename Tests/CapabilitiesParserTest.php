@@ -4,7 +4,7 @@
 * @author Karim Malhas <karim@malhas.de>
 */
 
-use Mapbender\WmsBundle\Components\CapabilitiesParser;
+use Mapbender\WmsBundle\Component\CapabilitiesParser;
 /**
  *   Tests the CapabilitiesParser. Note that te tests are coupled to the testdata somewhaty tightly. This is on purpose
  *   to keep the tests simple

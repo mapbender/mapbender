@@ -1,6 +1,6 @@
 <?php
 
-namespace Mapbender\WmsBundle\Components;
+namespace Mapbender\WmsBundle\Component;
 use Mapbender\WmsBundle\Entity\WMSService;
 use Mapbender\WmsBundle\Entity\WMSLayer;
 use Mapbender\WmsBundle\Entity\Layer;

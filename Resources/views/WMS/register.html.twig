@@ -9,7 +9,7 @@
 
 {% block content %}
     <div class="message">
-        <form class="wmsregister" name="url" action="{{ path('mb_wms_wms_preview') }}" method="POST">
+        <form class="wmsregister" name="url" action="{{ path('mapbender_wms_wms_preview') }}" method="POST">
             
 			 <fieldset>
    			<legend>Capabilities-URL laden</legend>
@@ -33,7 +33,7 @@
 		 <fieldset>
    			<legend>Capabilities-URL hochladen</legend>
 			
-        <form name="upload" action="{{ path('mb_wms_wms_preview')  }}" method="POST">
+        <form name="upload" action="{{ path('mapbender_wms_wms_preview')  }}" method="POST">
             <input type="file" name="getcapa_file" id="getcapa_file />
             <label for="getcapa_file">{% trans %}<br/><br/>Capabilities File{% endtrans %}</label>
             <input type="submit" name="save" value="{% trans %}Load{% endtrans %}" />

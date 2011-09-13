@@ -10,7 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Mapbender\WmsBundle\Entity\WMSService;
 use Mapbender\WmsBundle\Entity\WMSLayer;
 use Mapbender\WmsBundle\Entity\GroupLayer;
-use Mapbender\WmsBundle\Components\CapabilitiesParser;
+use Mapbender\WmsBundle\Component\CapabilitiesParser;
 use Mapbender\WmsBundle\Form\WMSType;
 
 /*

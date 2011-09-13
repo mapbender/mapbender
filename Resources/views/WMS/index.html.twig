@@ -16,13 +16,13 @@
         <tbody>
         {% for wms in wmsArr %}
             <tr>
-                <td><a href="{{ path("mb_wms_wms_edit",{'wmsId': wms.id }) }}">{{ wms.title }}</a></td>
+                <td><a href="{{ path("mapbender_wms_wms_edit",{'wmsId': wms.id }) }}">{{ wms.title }}</a></td>
                 <td>{{ wms.alias }}</td>
                 <td>{{ wms.abstract }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-    <a href="{{ path("mb_wms_wms_index",{"first":prevFirst}) }}">{% trans %}Previous{% endtrans %}</a> 
-    <a href="{{  path("mb_wms_wms_index",{"first": nextFirst}) }}">{% trans %}Next{% endtrans %}</a>
+    <a href="{{ path("mapbender_wms_wms_index",{"first":prevFirst}) }}">{% trans %}Previous{% endtrans %}</a> 
+    <a href="{{  path("mapbender_wms_wms_index",{"first": nextFirst}) }}">{% trans %}Next{% endtrans %}</a>
 {% endblock %}

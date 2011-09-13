@@ -3,7 +3,7 @@
 {% block content %}
     <p>'{{ getcapa_url }}'</p>
     <input type="hidden" value="{{ xml }}" />
-     <form class="wms tabbable" action="{{ path('mb_wms_wms_add') }}" method="POST">
+     <form class="wms tabbable" action="{{ path('mapbender_wms_wms_add') }}" method="POST">
         {{ form_widget(form) }}
         {{ form_rest(form) }}
         {# <input type="submit" name="save" value="{% trans %}Save{% endtrans %}"/> #}
