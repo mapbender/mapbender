@@ -1,6 +1,6 @@
 <?php
 
-namespace MB\CoreBundle\Components;
+namespace MB\CoreBundle\Component;
 
 interface LayerInterface {
 
