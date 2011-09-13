@@ -4,7 +4,7 @@
 * @author Karim Malhas <karim@malhas.de>
 */
 
-use MB\WMSBundle\Components\CapabilitiesParser;
+use MB\WMSBundle\Component\CapabilitiesParser;
 /**
  *   Tests the CapabilitiesParser. Note that te tests are coupled to the testdata somewhaty tightly. This is on purpose
  *   to keep the tests simple

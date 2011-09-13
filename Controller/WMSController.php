@@ -11,7 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use MB\WMSBundle\Entity\WMSService;
 use MB\WMSBundle\Entity\WMSLayer;
 use MB\WMSBundle\Entity\GroupLayer;
-use MB\WMSBundle\Components\CapabilitiesParser;
+use MB\WMSBundle\Component\CapabilitiesParser;
 use MB\WMSBundle\Form\WMSType;
 
 /*
