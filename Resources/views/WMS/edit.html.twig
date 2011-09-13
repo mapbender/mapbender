@@ -22,3 +22,29 @@
         <button type="submit">{% trans %}Save{% endtrans %}</button>
     </form>
 {% endblock %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{asset('js/ol/OpenLayers-2.10/examples/style_example.css') }}" />
+	<link rel="stylesheet" href="{{asset('js/ol/OpenLayers-2.10/theme/default/styleol.css') }}" />
+{% endblock %}
+{% block javascripts %}
+    <script type="application/javascript">
+        var bounds = "{{wms.rootlayer.latLonBounds}}".split(' ');
+        var previewWMS = {
+            title: '{{ wms.getTitle() }}',
+            url: '{{ wms.getRequestGetMapGET() }}',
+            rootlayer: '{{ wms.getRootLayer().getName() }}',
+    {#        format: '{{ wms.getDefaultRequestGetMapFormat() }}', #}
+            format: 'image/png',
+            projection: '{{ wms.getRootLayer().getDefaultSRS() }}',
+            bounds: {
+                        left: bounds[0],
+                        bottom: bounds[1],
+                        right: bounds[2],
+                        top: bounds[3]
+                    }
+        };
+    </script>
+    <script src="{{asset('js/ol/OpenLayers-2.10/OpenLayers.js') }}"></script>
+    <script src="{{asset('js/ol/ol_client.js') }}"></script>
+{% endblock %}
