@@ -1,4 +1,5 @@
 parameters:
+    sensio_framework_extra.converter.doctrine.class: "Mapbender\Component\CustomDoctrineParamConverter"
     applications:
         mapbender_user:
             title: Mapbender User Demo Map

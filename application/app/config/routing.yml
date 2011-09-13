@@ -15,3 +15,13 @@ _mapbender_user:
     resource: "@MapbenderCoreBundle/Controller/UserController.php"
     type: annotation
 
+_mapbender_wms:
+    resource: "@MapbenderWmsBundle/Controller/WMSController.php"
+    type: annotation
+    prefix: /wms
+
+_mapbender_wmslayer:
+    resource: "@MapbenderWmsBundle/Controller/WMSLayerController.php"
+    type: annotation
+    prefix: /wms
+
