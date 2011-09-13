@@ -116,17 +116,11 @@ class WMSController extends Controller {
             "requestPutStylesFormats" => $wms->getRequestPutStylesFormats(),
         ));
         
-        $bounds = $wms->getRootLayer()->getLatLonBounds();
-        $b = explode(" ",$bounds);
         return array(
                 "getcapa_url"=>$getcapa_url,
                 "wms" => $wms,
                 "form" => $form->createView(),
-                "xml" => $data,
-                "minx" => isset($b[0])?$b[0]:"",
-                "miny" => isset($b[1])?$b[1]:"",
-                "maxx" => isset($b[2])?$b[2]:"",
-                "maxy" => isset($b[3])?$b[3]:""
+                "xml" => $data
             );
     }
 
