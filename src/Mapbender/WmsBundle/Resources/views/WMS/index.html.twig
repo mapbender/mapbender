@@ -1,6 +1,6 @@
 {% extends 'MapbenderWmsBundle:WMS:base.html.twig' %} 
 
-{% block heading %}WMS all{% endblock %}
+{% block heading %}{{ "WMS index"|trans }}{% endblock %}
 
 {% block content %}
 
@@ -14,7 +14,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for wms in wmsArr %}
+        {% for wms in wmsList %}
             <tr>
                 <td><a href="{{ path("mapbender_wms_wms_edit",{'wmsId': wms.id }) }}">{{ wms.title }}</a></td>
                 <td>{{ wms.alias }}</td>
@@ -23,6 +23,6 @@
         {% endfor %}
         </tbody>
     </table>
-    <a href="{{ path("mapbender_wms_wms_index",{"first":prevFirst}) }}">{% trans %}Previous{% endtrans %}</a> 
-    <a href="{{  path("mapbender_wms_wms_index",{"first": nextFirst}) }}">{% trans %}Next{% endtrans %}</a>
+    <a href="{{ path("mb_wms_wms_index",{"offset":prevOffset}) }}">{% trans %}Previous{% endtrans %}</a> 
+    <a href="{{  path("mb_wms_wms_index",{"offset": nextOffset}) }}">{% trans %}Next{% endtrans %}</a>
 {% endblock %}

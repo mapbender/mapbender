@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\WmsBundle\Entity\WMSService;
 use Mapbender\WmsBundle\Entity\WMSLayer;
 use Mapbender\WmsBundle\Entity\GroupLayer;
@@ -25,28 +26,20 @@ class WMSController extends Controller {
      * @Route("/")
      * @Method({"GET"})
      * @Template()
+     * @ParamConverter("wmsList",class="MB\WMSBundle\Entity\WMSService")
     */
-    public function indexAction(){
+    public function indexAction(array $wmsList){
 
         $request = $this->get('request');
-        $first = $request->get('first') ? $request->get('first') : 0;
-        $max = $request->get('max') ? $request->get('max') : 10;
-        // allow 1000 results per page
-        $max = $max < 1000 ? $max : 1000;
-
-        $em = $this->get("doctrine.orm.entity_manager");
-        $q = $em->createQuery("select wms from Mapbender\WmsBundle\Entity\WMSService wms ");
-        $q->setFirstResult($first);
-        $q->setMaxResults($max);
-        $wmsArr = $q->getResult();
-
-        $nextFirst = count($wmsArr) < $max ? $first : $first + $max;
-        $prevFirst = ($first - $max)  > 0 ? $first - $max : 0;
+        $offset = $request->get('usedOffset');
+        $limit = $request->get('usedLimit');
+        $nextOffset = count($wmsList) < $limit ? $offset : $offset + $limit;
+        $prevOffset = ($offset - $limit)  > 0 ? $offset - $limit : 0;
         return array(
-            "wmsArr" => $wmsArr,
-            "nextFirst" =>  $nextFirst,
-            "prevFirst" => $prevFirst,
-            "max" => $max
+            "wmsList" => $wmsList,
+            "nextOffset" =>  $nextOffset,
+            "prevOffset" => $prevOffset,
+            "limit" => $limit
         );
     }
 
