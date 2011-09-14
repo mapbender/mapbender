@@ -1,0 +1,47 @@
+Layer: __Layer
+'No Layers': '__No Layers'
+Delete: Löschen
+Edit: __Edit
+Update: __Update
+Save: __Save
+'register WMS': '__register WMS'
+search: __search
+Onlineresource: __Onlineresource
+Abstract: __Abstract
+Fees: __Fees
+Accessconstraints: __Accessconstraints
+'OpenLayers Preview': '__OpenLayers Preview'
+Contact: __Contact
+Person: __Person
+Organization: __Organization
+Position: __Position
+Telephone: __Telephone
+Fax: __Fax
+Email: __Email
+Address: __Address
+Addresstype: __Addresstype
+City: __City
+'State or Province': '__State or Province'
+Postcode: __Postcode
+Country: __Country
+Operations: __Operations
+Layers: __Layers
+'Really Delete': 'Wirklich Löschen'
+Cancel: Abbrechen
+'WMS Preview': 'WMS Vorschau'
+'Add WMS': 'WMS hinzufügen'
+'Service Information': '__Service Information'
+'Capability Information': '__Capability Information'
+Symbolization: __Symbolization
+Exception: __Exception
+Previous: Zurück
+Next: Weiter
+'Capabilities URL': 'Capabilities URL'
+'HTTP User': '__HTTP User'
+'HTTP Password': '__HTTP Password'
+Load: Laden
+'Capabilities File': 'Capabilities Datei'
+'Find WMS': 'WMS finden'
+'WMS deleted': 'WMS gelöscht'
+Title: Titel
+Search: Suchen

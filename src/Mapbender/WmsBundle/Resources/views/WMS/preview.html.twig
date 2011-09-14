@@ -1,0 +1,22 @@
+{% form_theme form 'MapbenderWmsBundle:Form:fields.html.twig' %}
+
+{% block content %}
+    <p>'{{ getcapa_url }}'</p>
+    <input type="hidden" value="{{ xml }}" />
+     <form class="wms tabbable" action="{{ path('mapbender_wms_wms_add') }}" method="POST">
+        {{ form_widget(form) }}
+        {{ form_rest(form) }}
+        {# <input type="submit" name="save" value="{% trans %}Save{% endtrans %}"/> #}
+    </form>
+
+{% endblock %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{asset('js/ol/OpenLayers-2.10/examples/style_example.css') }}" />
+	<link rel="stylesheet" href="{{asset('js/ol/OpenLayers-2.10/theme/default/styleol.css') }}" />
+{% endblock %}
+{% block javascripts %}
+
+    <script type="application/javascript">
+    </script>
+{% endblock %}
