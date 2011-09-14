@@ -1,10 +1,10 @@
 <?php
 
-namespace MB\WMSBundle\Component;
-use MB\WMSBundle\Entity\WMSService;
-use MB\WMSBundle\Entity\WMSLayer;
-use MB\WMSBundle\Entity\Layer;
-use MB\WMSBundle\Entity\GroupLayer;
+namespace Mapbender\WmsBundle\Component;
+use Mapbender\WmsBundle\Entity\WMSService;
+use Mapbender\WmsBundle\Entity\WMSLayer;
+use Mapbender\WmsBundle\Entity\Layer;
+use Mapbender\WmsBundle\Entity\GroupLayer;
 
 /**
 * Class that Parses WMS GetCapabilies Document 
@@ -157,7 +157,7 @@ class CapabilitiesParser {
     }
 
     /**
-     *  @param MB\WMSBundle\WMSService The WMS that needs the contact information
+     *  @param Mapbender\WmsBundle\WMSService The WMS that needs the contact information
      *  @param \DOMNode the <contactInformation> node of the WMS
      *  @return the wms
      */
@@ -293,7 +293,7 @@ class CapabilitiesParser {
     }
 
     /**
-     *  @param MB\WMSBundle\WMSService The WMS that needs the request information
+     *  @param Mapbender\WmsBundle\WMSService The WMS that needs the request information
      *  @param \DOMNode a childElement of the <Request> element
      *  @return the wms
      */

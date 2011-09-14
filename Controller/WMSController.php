@@ -1,6 +1,6 @@
 <?php
 
-namespace MB\WMSBundle\Controller;
+namespace Mapbender\WmsBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -8,12 +8,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use MB\WMSBundle\Entity\WMSService;
-use MB\WMSBundle\Entity\WMSLayer;
-use MB\WMSBundle\Entity\GroupLayer;
-use MB\WMSBundle\Component\CapabilitiesParser;
-use MB\WMSBundle\Form\WMSType;
 use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\WmsBundle\Entity\WMSService;
+use Mapbender\WmsBundle\Entity\WMSLayer;
+use Mapbender\WmsBundle\Entity\GroupLayer;
+use Mapbender\WmsBundle\Component\CapabilitiesParser;
+use Mapbender\WmsBundle\Form\WMSType;
 
 /*
 * @package bkg
@@ -138,11 +138,11 @@ class WMSController extends Controller {
             $em->persist($wms);
             $em->flush();
             $this->get('session')->setFlash('info',"WMS Added");
-            return $this->redirect($this->generateUrl("mb_wms_wms_index",array(), true));
+            return $this->redirect($this->generateUrl("mapbender_wms_wms_index",array(), true));
         }else{
             // FIXME: getcapa_url is missing, xml is missing
             $this->get('session')->setFlash('error',"Could not Add WMS");
-            return $this->render("MBWMSBundle:WMS:preview.html.twig",array(
+            return $this->render("MapbenderWmsBundle:WMS:preview.html.twig",array(
                     "getcapa_url"=> "",
                     "wms" => $wms,
                     "form" => $form->createView(),
@@ -183,7 +183,7 @@ class WMSController extends Controller {
         $this->persistRecursive($wms,$em);
         // FIXME: error handling
         $this->get('session')->setFlash('info',"WMS Saved");
-        return $this->redirect($this->generateUrl("mb_wms_wms_edit", array("wmsId"=>$wms->getId())));
+        return $this->redirect($this->generateUrl("mapbender_wms_wms_edit", array("wmsId"=>$wms->getId())));
     }
 
     /**
@@ -211,7 +211,7 @@ class WMSController extends Controller {
         $em->flush();
         //FIXME: error handling
         $this->get('session')->setFlash('info',"WMS deleted");
-        return $this->redirect($this->generateUrl("mb_wms_wms_index"));
+        return $this->redirect($this->generateUrl("mapbender_wms_wms_index"));
     }
 
  

@@ -1,17 +1,17 @@
 <?php
 
-namespace MB\WMSBundle\Controller;
+namespace Mapbender\WmsBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use MB\WMSBundle\Entity\WMSService;
-use MB\WMSBundle\Entity\WMSLayer;
-use MB\WMSBundle\Entity\GroupLayer;
-use MB\WMSBundle\Component\CapabilitiesParser;
-use MB\WMSBundle\Form\WMSType;
+use Mapbender\WmsBundle\Entity\WMSService;
+use Mapbender\WmsBundle\Entity\WMSLayer;
+use Mapbender\WmsBundle\Entity\GroupLayer;
+use Mapbender\WmsBundle\Component\CapabilitiesParser;
+use Mapbender\WmsBundle\Form\WMSType;
 
 /*
 * @package bkg

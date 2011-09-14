@@ -3,6 +3,6 @@
 <h1>{{ layer.title }}<h1><h2>{{ layer.name }}</h2>
 <p class="abstract">{{ layer.abstract }}</p>
 {% for layer in layer.layer %}
-  {% include "MBWMSBundle:WMS:layerpreview.html.twig" %}
+  {% include "MapbenderWmsBundle:WMS:layerpreview.html.twig" %}
 {% endfor %}
 </div>

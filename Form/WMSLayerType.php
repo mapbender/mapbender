@@ -1,6 +1,6 @@
 <?php
 
-namespace MB\WMSBundle\Form;
+namespace Mapbender\WmsBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
 
@@ -62,7 +62,7 @@ class WMSLayerType  extends AbstractType {
     }
     public function getDefaultOptions(array $options){
         return array(
-            'data_class' => "MB\WMSBundle\Entity\WMSLayer"
+            'data_class' => "Mapbender\WmsBundle\Entity\WMSLayer"
         );
    }
 }

@@ -1,6 +1,6 @@
 <?php
-namespace MB\WMSBundle\Entity;
-use MB\CoreBundle\Component\LayerInterface;
+namespace Mapbender\WmsBundle\Entity;
+use Mapbender\WmsBundle\Component\LayerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
