@@ -13,6 +13,7 @@ use MB\WMSBundle\Entity\WMSLayer;
 use MB\WMSBundle\Entity\GroupLayer;
 use MB\WMSBundle\Component\CapabilitiesParser;
 use MB\WMSBundle\Form\WMSType;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /*
 * @package bkg
@@ -25,28 +26,20 @@ class WMSController extends Controller {
      * @Route("/")
      * @Method({"GET"})
      * @Template()
+     * @ParamConverter("wmsList",class="MB\WMSBundle\Entity\WMSService")
     */
-    public function indexAction(){
+    public function indexAction(array $wmsList){
 
         $request = $this->get('request');
-        $first = $request->get('first') ? $request->get('first') : 0;
-        $max = $request->get('max') ? $request->get('max') : 10;
-        // allow 1000 results per page
-        $max = $max < 1000 ? $max : 1000;
-
-        $em = $this->get("doctrine.orm.entity_manager");
-        $q = $em->createQuery("select wms from MB\WMSBundle\Entity\WMSService wms ");
-        $q->setFirstResult($first);
-        $q->setMaxResults($max);
-        $wmsArr = $q->getResult();
-
-        $nextFirst = count($wmsArr) < $max ? $first : $first + $max;
-        $prevFirst = ($first - $max)  > 0 ? $first - $max : 0;
+        $offset = $request->get('usedOffset');
+        $limit = $request->get('usedLimit');
+        $nextOffset = count($wmsList) < $limit ? $offset : $offset + $limit;
+        $prevOffset = ($offset - $limit)  > 0 ? $offset - $limit : 0;
         return array(
-            "wmsArr" => $wmsArr,
-            "nextFirst" =>  $nextFirst,
-            "prevFirst" => $prevFirst,
-            "max" => $max
+            "wmsList" => $wmsList,
+            "nextOffset" =>  $nextOffset,
+            "prevOffset" => $prevOffset,
+            "limit" => $limit
         );
     }
 
