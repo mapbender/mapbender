@@ -10,9 +10,9 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
     mapClickHandler: null,
     dlg: null,
 
-	_create: function() {
+    _create: function() {
         this._super('_create');
-	},
+    },
 
     _setOption: function(key, value) {
         switch(key) {
@@ -47,7 +47,6 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
         var self = this,
             x = e.pageX - $(this.map.element).offset().left;
             y = e.pageY - $(this.map.element).offset().top;
-
 
         if(!this.dlg) {
             this.dlg = $('<div></div>')

@@ -32,7 +32,7 @@
             <li><a href="" id="mapbendercore-user-logout">Logout</a></li>
         </ul>
     </nav>
-
+    {% block subnavigation %}{% endblock %}
     {% block content %}{% endblock %}
 
     <script type="text/javascript" src="{{ asset('bundles/mapbendercore/mapquery/lib/jquery/jquery-1.4.4.js') }}"></script>
