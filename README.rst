@@ -55,7 +55,14 @@ write into the application/app/cache and application/app/logs directories.
 1. Make sure your webserver can write into the application/app/cache and
    application/app/logs directories. This often breaks, as running
    Symfony console commands writes into these with user rights.
-2. Install the bundle assets into the web folder by running the Symfony
+
+2. Initialize the demo database in app/db/demo.sq3 by running:::
+
+    app/console doctrine:database:create
+    app/console doctrine:schema:create
+
+
+3. Install the bundle assets into the web folder by running the Symfony
    console command from the application directory:::
 
     app/console assets:install web
