@@ -80,3 +80,11 @@ run this controller if the webserver is running on your localhost.
 
 The production front-end controller is named app.php.
 
+Demo users
+~~~~~~~~~~
+Some of the demos may require you to login. In the delivered security.yml,
+two users are hardcoded (name/password):
+
+ user/user
+ root/root
+
