@@ -9,8 +9,8 @@ security:
     providers:
         in_memory:
             users:
-                user:  { password: userpass, roles: [ 'ROLE_USER' ] }
-                admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+                user:  { password: user, roles: [ 'ROLE_USER' ] }
+                root: { password: root, roles: [ 'ROLE_ADMIN' ] }
 
     firewalls:
         dev:
@@ -25,7 +25,7 @@ security:
             pattern:    ^/
             anonymous: ~
             form_login:
-                check_path: /user/login_check
+                check_path: /user/login/check
                 login_path: /user/login
             logout:
                 path:   /user/logout

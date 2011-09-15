@@ -4,6 +4,7 @@ parameters:
         mapbender_user:
             title: Mapbender User Demo Map
             description: "Simple map showing WMS use."
+            roles: [ROLE_USER]
             template:  Mapbender\CoreBundle\Template\Fullscreen
             srs: EPSG:4326
             units: degrees
