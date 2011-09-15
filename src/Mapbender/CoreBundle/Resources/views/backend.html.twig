@@ -18,16 +18,16 @@
 
 {% block baseContent %}
     <header>
-    <h1><img alt="{{ server_name }}" src="{{ asset('bundles/mapbendercore/logo.png') }}"></h1>
+    <h1><img alt="{{ server_name }}" src="{{ asset('bundles/mapbendercore/image/mapbender.png') }}"></h1>
     </header>
 
     <nav>
         <!-- TODO: Make menu more dynamic -->
         <ul class="clearfix">
-            <li><a href="" id="mapbendercore-applications-admin">Apps</a></li>
-            <li><a href="" id="mapbendercore-services-admin">Services</a></li>
+            <li><a href="{{ path('mapbender_core_application_list') }}" id="mapbendercore-applications-admin">Apps</a></li>
+            <li><a href="{{ path('mapbender_wms_wms_index')}}" id="mapbendercore-services-admin">Services</a></li>
             <li><a href="" id="mapbendercore-user-admin">Users</a></li>
-            <li><a href="" id="mapbendercore-help-book">Handbook</a></li>
+            <li><a href="http://mapbender3.org/Handbook" id="mapbendercore-help-book">Handbook</a></li>
             <li><a href="" id="mapbendercore-user-account">My Account</a></li>
             <li><a href="" id="mapbendercore-user-logout">Logout</a></li>
         </ul>
