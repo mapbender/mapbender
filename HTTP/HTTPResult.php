@@ -81,4 +81,3 @@ class HTTPResult {
         return isset($statusCodeMapping[$this->statusCode])? $statusCodeMapping[$this->statusCode]: "Unknown status";
     }
 }
-

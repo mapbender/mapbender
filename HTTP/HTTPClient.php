@@ -14,12 +14,28 @@ class HTTPClient {
     protected $proxyPort = "";
     protected $username = "";
     protected $password = "";
-
+    protected $container = "";
     protected $ch = null;
     
 
-    public function __construct(){
+    public function __construct($container = null){
         $this->ch = curl_init();
+
+        $proxyConf = null;
+        if($this->container){
+            try {
+                $proxyConf = $this->container->getParameter('proxy');
+            }catch(\InvalidArgumentException $E){
+                // thrown when the parameter is not set
+                // maybe some logging ?
+                $proxyConf = array();
+            }
+            if($proxyConf && isset($proxyConf['host']) && $proxyConf['host'] != ""){
+                $this->setProxyHost($proxyConf['host']);
+                $this->setProxyPort($proxyConf['port']?:null);
+            }
+        }
+
     }
     public function __destruct(){
         $this->ch = curl_close($this->ch);
