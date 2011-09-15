@@ -20,9 +20,9 @@ parameters:
                         title: Demis World Map
                         url: http://www2.demis.nl/wms/wms.asp?wms=WorldMap
                         layers:
-                            - { name: Bathymetry,    title :Bathymetry,  visible: true }
-                            - { name: Countries,     title :Countries,   visible: true }
-                            - { name: Topography,    title :Topography,  visible: true }
+                            - { name: Bathymetry,    title :Bathymetry,  visible: true, queryable: true }
+                            - { name: Countries,     title :Countries,   visible: true, queryable: true }
+                            - { name: Topography,    title :Topography,  visible: true, queryable: true }
                             - { name: Hillshading,   title :Hillshading, visible: true }
                         baselayer: false
                         visible: true
@@ -35,7 +35,8 @@ parameters:
                         url: http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
                         layers:
                             - { name: Mapbender_User,    title : Nutzer,  visible: true }
-                            - { name: Mapbender_Names,   title : Namen,   visible: true }
+                            - { name: Mapbender_Names,   title : Namen,   visible: true, queryable: true }
+                        queryLayers: [ Mapbender_User, Mapbender_Names]
                         baselayer: false
                         visible: true
                         format: image/png
@@ -129,7 +130,7 @@ parameters:
                         url: http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
                         layers:
                             - { name: Mapbender_User,    title : Nutzer,  visible: true }
-                            - { name: Mapbender_Names,   title : Namen,   visible: true }
+                            - { name: Mapbender_Names,   title : Namen,   visible: true, queryable: true }
                         baselayer: false
                         visible: true
                         format: image/png
