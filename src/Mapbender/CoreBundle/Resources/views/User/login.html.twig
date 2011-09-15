@@ -1,20 +1,42 @@
-{% extends "MapbenderCoreBundle::layout.html.twig" %}
+{% extends "MapbenderCoreBundle::frontend.html.twig" %}
 
 {% block title %}Login{% endblock %}
 
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendercore/mapbender.login.css') }}" />
+{% endblock %}
+
 {% block content %}
-{% if error %}
-<div class="error">{{ error.message }}</div>
-{% endif %}
-<form action="{{ path("_security_check") }}" method="post" id="login">
-	<div class="form-field form-text">
-		<label for="username">Username</label>
-		<input id="username" name="_username" value="{{ last_username }}" />
-	</div>
-	<div class="form-field form-password">
-		<label for="password">Password</label>
-		<input type="password" id="password" name="_password" />
-	</div>
-	<input type="submit" class="form-button" value="Login" />
-</form>
+<div id="frame">
+    <img alt="Mapbender3" src="{{ asset('bundles/mapbendercore/image/mapbender_logo.png') }}" />
+
+    {% if error %}
+    <div class="error">{{ error.message }}</div>
+    {% endif %}
+
+    <form action="{{ path("mapbender_core_user_logincheck") }}" method="post" id="login">
+        <div class="form-field form-text">
+            <label for="username">Username</label>
+            <input id="username" name="_username" value="{{ last_username }}" />
+        </div>
+        <div class="form-field form-password">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="_password" />
+        </div>
+        <input type="submit" class="form-button" value="Login" />
+    </form>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    $('.form-field input')
+        .bind('keypress change', function() {
+            if($(this).val() === '') {
+                $(this).removeClass('has-value');
+            } else {
+                $(this).addClass('has-value');
+            }
+        });
+</script>
 {% endblock %}
