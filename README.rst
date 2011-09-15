@@ -34,6 +34,10 @@ into three parts:
 3. mapquery: Mapbender uses MapQuery as it's jQuery/OpenLayers wrapper. We
    maintain our own clone.
 
+You can either go ahead by hand, or use the provided bootstrap script:::
+
+  curl https://raw.github.com/mapbender/mapbender-starter/master/bin/bootstrap.sh -o - | sh
+
 Cloning
 ~~~~~~~
 You can clone our code using the command::

@@ -10,7 +10,7 @@ git submodule update --init --recursive
 
 # Get extra deps needed by MapQuery
 cd application/mapbender/src/Mapbender/CoreBundle/Resources/public/mapquery/lib
-./getdepsh.sh
+./getdeps.sh
 
 cd "$start/mapbender-starter/application"
 
