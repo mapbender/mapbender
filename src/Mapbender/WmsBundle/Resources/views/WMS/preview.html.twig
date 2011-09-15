@@ -5,9 +5,10 @@
     <p>'{{ getcapa_url }}'</p>
     <input type="hidden" value="{{ xml }}" />
      <form class="wms tabbable" action="{{ path('mapbender_wms_wms_add') }}" method="POST">
+        <input type="submit" name="save" value="{% trans %}Save{% endtrans %}"/>
         {{ form_widget(form) }}
         {{ form_rest(form) }}
-        {# <input type="submit" name="save" value="{% trans %}Save{% endtrans %}"/> #}
+        <input type="submit" name="save" value="{% trans %}Save{% endtrans %}"/>
     </form>
 
 {% endblock %}

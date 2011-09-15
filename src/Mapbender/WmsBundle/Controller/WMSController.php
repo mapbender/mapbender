@@ -26,7 +26,7 @@ class WMSController extends Controller {
      * @Route("/")
      * @Method({"GET"})
      * @Template()
-     * @ParamConverter("wmsList",class="MB\WMSBundle\Entity\WMSService")
+     * @ParamConverter("wmsList",class="Mapbender\WmsBundle\Entity\WMSService")
     */
     public function indexAction(array $wmsList){
 
