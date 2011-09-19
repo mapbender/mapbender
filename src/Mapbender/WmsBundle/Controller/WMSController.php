@@ -96,6 +96,15 @@ class WMSController extends Controller {
         if(!$wms){
             throw new \Exception("could not parse data for url '$getcapa_url'");
         }
+
+        $wmsWithSameTitle  =$this->getDoctrine()
+            ->getEntityManager()
+            ->getRepository("MapbenderWmsBundle:WMSService")
+            ->findByTitle($wms->getTitle());
+
+        if ( count($wmsWithSameTitle) > 0) {
+            $wms->setAlias(count($wmsWithSameTitle));
+        } 
     
 
         $form = $this->get('form.factory')->create(new WMSType(), $wms,array(
