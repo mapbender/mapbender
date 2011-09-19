@@ -1,6 +1,6 @@
 <?php
 
-namespace MB\CoreBundle\HTTP;
+namespace Mapbender\Component\HTTP;
 
 class HTTPClient {
 
@@ -13,6 +13,7 @@ class HTTPClient {
     protected $proxyHost = "";
     protected $proxyPort = "";
     protected $username = "";
+
     protected $password = "";
     protected $container = "";
     protected $ch = null;
@@ -49,6 +50,21 @@ class HTTPClient {
         $this->proxyPort = $port;
     }
 
+    public function getUsername (){
+        return $this->username ;
+    }
+    
+    public function setUsername ($username ){
+        $this->username  = $username ;
+    }
+
+    public function getPassword (){
+        return $this->password ;
+    }
+    
+    public function setPassword ($password ){
+        $this->password  = $password ;
+    }
 
     /**
      * Shortcut Method 
@@ -58,6 +74,12 @@ class HTTPClient {
         curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->ch, CURLINFO_HEADER_OUT, true);
+        
+        if($this->getUsername()){
+            curl_setopt($this->ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+            curl_setopt($this->ch, CURLOPT_USERPWD, $this->getUsername().":".$this->getPassword());
+        }
+
 
         $data = curl_exec($this->ch);
         $statusCode = curl_getInfo($this->ch,CURLINFO_HTTP_CODE);
