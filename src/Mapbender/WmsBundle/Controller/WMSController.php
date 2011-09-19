@@ -169,7 +169,16 @@ class WMSController extends Controller {
      * @Template()
     */
     public function editAction(WMSService $wms){
-        $form = $this->get('form.factory')->create(new WMSType(),$wms); 
+        $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
+            "exceptionFormats" => $wms->getExceptionFormats(),
+            "requestGetCapabilitiesFormats" => $wms->getRequestGetCapabilitiesFormats(),
+            "requestGetMapFormats" => $wms->getRequestGetMapFormats(),
+            "requestGetFeatureInfoFormats" => $wms->getRequestGetFeatureInfoFormats(),
+            "requestDescribeLayerFormats"  => $wms->getRequestDescribeLayerFormats(),
+            "requestGetLegendGraphicFormats" => $wms->getRequestGetLegendGraphicFormats(),
+            "requestGetStylesFormats" => $wms->getRequestGetStylesFormats(),
+            "requestPutStylesFormats" => $wms->getRequestPutStylesFormats(),
+        )); 
         return array(
             "wms" => $wms,
             "form"  => $form->createView(),

@@ -305,7 +305,9 @@ class CapabilitiesParser {
             if($node->nodeType == XML_ELEMENT_NODE){ 
                 switch ($node->nodeName) {
                     case "Format":
-                        $formats[] = $node->nodeValue;
+                        // WORKAROUND: Symfony uses '.' as a PropertyPath seperator which creates problems If we want to use the nodeValue 
+                        // as a list of checkboxes to show what the wms supports
+                        $formats[] = str_replace(".","__",$node->nodeValue);
                     break;
                     case "DCPType":
                         try{

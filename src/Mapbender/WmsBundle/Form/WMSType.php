@@ -13,6 +13,20 @@ class WMSType  extends AbstractType {
     public function getName (){ return "WMSService";}
 
 
+    /**
+     * comvberts an array ["a"] into ["a" =>"a"]
+    */
+    protected function makeFormatChoices($array){
+        $keys = $array;
+        $values = array(); 
+
+        // See also: CapabilitiesParser where Formats is parsed
+        foreach ($array as $entry){
+            $values[] = str_replace("__",".",$entry);
+        }
+        return count($array) ? array_combine($keys,$values): array();
+    }
+
     public function buildForm(FormBuilder $builder, array $options){
 
 
@@ -110,7 +124,7 @@ class WMSType  extends AbstractType {
         ));
         $builder->add("requestGetCapabilitiesFormats","choice",array(
             "required" => false,
-            "choices"   => $options['requestGetCapabilitiesFormats'],
+            "choices"   => $this->makeFormatChoices($options['requestGetCapabilitiesFormats']),
             "multiple"  => true,
             "expanded"  => true,
             "label"     => "GetCapabilties Formats",
@@ -126,7 +140,7 @@ class WMSType  extends AbstractType {
         ));
         $builder->add("requestGetMapFormats","choice",array(
             "required" => false,
-            "choices"   => $options['requestGetMapFormats'],
+            "choices"   => $this->makeFormatChoices($options['requestGetMapFormats']),
             "multiple"  => true,
             "expanded"  => true,
             "label"     => "getMap Formats",
@@ -142,7 +156,7 @@ class WMSType  extends AbstractType {
         ));
         $builder->add("requestGetFeatureInfoFormats","choice",array(
             "required" => false,
-            "choices"   => $options['requestGetFeatureInfoFormats'],
+            "choices"   => $this->makeFormatChoices($options['requestGetFeatureInfoFormats']),
             "multiple"  => true,
             "expanded"  => true,
             "label"     => "GetFeatureInfo Formats",
@@ -156,9 +170,10 @@ class WMSType  extends AbstractType {
             "required" => false,
             "label"     => "GetFeatureInfo POST URL",
         ));
+
         $builder->add("requestDescribeLayerFormats","choice",array(
             "required" => false,
-            "choices"   => $options['requestDescribeLayerFormats'],
+            "choices"   => $this->makeFormatChoices($options['requestDescribeLayerFormats']),
             "multiple"  => true,
             "expanded"  => true,
             "label"     => "GetFeatureInfo Formats",
@@ -172,9 +187,10 @@ class WMSType  extends AbstractType {
             "required" => false,
             "label"     => "GetLegendGraphic POST URL",
         ));
+        
         $builder->add("requestGetLegendGraphicFormats","choice",array(
             "required" => false,
-            "choices"   => $options['requestGetLegendGraphicFormats'],
+            "choices"   => $this->makeFormatChoices( $options['requestGetLegendGraphicFormats']),
             "multiple"  => true,
             "expanded"  => true,
             "label"     => "GetLegendGraphic Formats",
@@ -188,9 +204,10 @@ class WMSType  extends AbstractType {
             "required" => false,
             "label"     => "GetStyles POST URL",
         ));
+
         $builder->add("requestGetStylesFormats","choice",array(
             "required" => false,
-            "choices"   => $options['requestGetStylesFormats'],
+            "choices"   => $this->makeFormatChoices($options['requestGetStylesFormats']),
             "multiple"  => true,
             "expanded"  => true,
             "label"     => "GetStyles Formats",
@@ -206,26 +223,16 @@ class WMSType  extends AbstractType {
         ));
         $builder->add("requestPutStylesFormats","choice",array(
             "required" => false,
-            "choices"   => $options['requestPutStylesFormats'],
+            "choices"   => $this->makeFormatChoices($options['requestPutStylesFormats']),
             "multiple"  => true,
             "expanded"  => true,
             "label"     => "PutStyles Formats",
         ));
 
-        // if there aren't any exceptionFormats array_combine breaks on the empty arrays, yay php
-        if(count($options['exceptionFormats'])){
-            $exceptionFormatChoices = array_combine(
-                $options['exceptionFormats'],
-                $options['exceptionFormats']
-            );
-        }else{
-            $exceptionFormatChoices = array();
-        }
         
-        // Symfony2 is silly an does not work if a value contains a dot
         $builder->add("exceptionFormats","choice",array(
             "required"  => false,
-            "choices"   => $exceptionFormatChoices,
+            "choices"   => $this->makeFormatChoices($options["exceptionFormats"]),
             "multiple"  => true,
             "expanded"  => true,
             "label"     => "Exception Formats"
