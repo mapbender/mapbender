@@ -1,6 +1,6 @@
 <?php
 
-namespace MB\CoreBundle\HTTP;
+namespace Mapbender\Component\HTTP;
 
 class HTTPResult {
 
