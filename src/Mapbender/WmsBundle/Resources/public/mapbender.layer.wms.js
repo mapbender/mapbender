@@ -1,4 +1,4 @@
-mapbender.layer = $.extend(Mapbender.layer, {
+Mapbender.layer = $.extend(Mapbender.layer, {
     'wms': {
         create: function(layerDef) {
             var layers = [];
