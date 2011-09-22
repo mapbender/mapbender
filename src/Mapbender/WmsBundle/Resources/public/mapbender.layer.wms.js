@@ -49,8 +49,8 @@ Mapbender.layer = $.extend(Mapbender.layer, {
                 HEIGHT: $(layer.map.element).height(),
                 X: x,
                 Y: y,
-                LAYERS: queryLayers,
-                QUERY_LAYERS: queryLayers
+                LAYERS: queryLayers.join(','),
+                QUERY_LAYERS: queryLayers.join(',')
             });
 
             // this clever shit was taken from $.ajax
