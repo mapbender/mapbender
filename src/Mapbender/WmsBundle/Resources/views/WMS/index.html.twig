@@ -11,6 +11,7 @@
                 <th>{% trans %}Title{% endtrans %}</th>
                 <th>{% trans %}Alias{% endtrans %}</th>
                 <th>{% trans %}Abstract{% endtrans %}</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -19,6 +20,8 @@
                 <td><a href="{{ path("mapbender_wms_wms_edit",{'wmsId': wms.id }) }}">{{ wms.title }}</a></td>
                 <td>{{ wms.alias }}</td>
                 <td>{{ wms.abstract }}</td>
+                <td><a class="confirmdelete" href="{{ path("mapbender_wms_wms_confirmdelete",{ "wmsId": wms.id }) }}" >{{ "Delete"|trans }}</a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
