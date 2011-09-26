@@ -111,9 +111,16 @@
         {{ form_row(form.exceptionFormats) }}
         <hr>
         {{ form_row(form.symbolSupportSLD) }}
+        <p>{{ "Supports SLD"|trans }} {% if value.symbolSupportSLD  %}:{{ "Yes"|trans }}{% else %}{{ "No"|trans }}{% endif %}</p>
+
         {{ form_row(form.symbolUserLayer) }}
+        <p>{{ "Supports Userlayer"|trans }} {% if value.symbolUserLayer %}:{{ "Yes"|trans }}{% else %}{{ "No"|trans }}{% endif %}</p>
+
         {{ form_row(form.symbolUserStyle) }}
+        <p>{{ "Supports User Style"|trans }} {% if value.symbolUserStyle %}:{{ "Yes"|trans }}{% else %}{{ "No"|trans }}{% endif %}</p>
+
         {{ form_row(form.symbolRemoteWFS) }}
+        <p>{{ "Supports remote WFS"|trans }} {% if value.symbolRemoteWFS %}:{{ "Yes"|trans }}{% else %}{{ "No"|trans }}{% endif %}</cwplabel>
     </fieldset>
   
    <fieldset id="{{value.name}}-layer" class="layer">

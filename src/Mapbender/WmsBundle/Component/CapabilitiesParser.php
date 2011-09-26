@@ -94,7 +94,7 @@ class CapabilitiesParser {
                                             if($node->nodeType == XML_ELEMENT_NODE){ 
                                                 if($node->nodeName == "Format"){
                                                     $formats = $wms->getExceptionFormats();
-                                                    $formats[]  = $node->nodeValue;
+                                                    $formats[] = str_replace(".","__",$node->nodeValue);
                                                     $wms->setExceptionFormats($formats);
                                                 }
                                             }

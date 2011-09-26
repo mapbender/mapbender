@@ -107,8 +107,9 @@ class WMSController extends Controller {
         } 
     
 
+        // Save these Formats somewhere somehow
         $form = $this->get('form.factory')->create(new WMSType(), $wms,array(
-            "exceptionFormats" => $wms->getExceptionFormats(),
+            "exceptionFormats" => $wms->getAllExceptionFormats(),
             "requestGetCapabilitiesFormats" => $wms->getRequestGetCapabilitiesFormats(),
             "requestGetMapFormats" => $wms->getRequestGetMapFormats(),
             "requestGetFeatureInfoFormats" => $wms->getRequestGetFeatureInfoFormats(),
@@ -138,8 +139,21 @@ class WMSController extends Controller {
         $requestWMS = $request->get('WMSService');
         $wms = new WMSService();
         $wms = $this->buildWMSFormStructure($wms,$requestWMS);
-        $form = $this->get('form.factory')->create(new WMSType(),$wms); 
+
+        // wms has basic structure... but at this point we don't know what it supports
+        // for multiselect to work we need to know what it supports..
+        $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
+            "exceptionFormats" => $wms->getAllExceptionFormats(),
+            "requestGetCapabilitiesFormats" => $wms->getAllRequestGetCapabilitiesFormats(),
+            "requestGetMapFormats" => $wms->getAllRequestGetMapFormats(),
+            "requestGetFeatureInfoFormats" => $wms->getAllRequestGetFeatureInfoFormats(),
+            "requestDescribeLayerFormats"  => $wms->getAllRequestDescribeLayerFormats(),
+            "requestGetLegendGraphicFormats" => $wms->getAllRequestGetLegendGraphicFormats(),
+            "requestGetStylesFormats" => $wms->getAllRequestGetStylesFormats(),
+            "requestPutStylesFormats" => $wms->getAllRequestPutStylesFormats(),
+        )); 
         $form->bindRequest($request);
+
     
         if($form->isValid()){
             $em = $this->get("doctrine.orm.entity_manager");
@@ -195,13 +209,31 @@ class WMSController extends Controller {
         $request = $this->get('request');
         /* build up nested wmslayer structure */
         $requestWMS = $request->get('WMSService');
-        $form = $this->get('form.factory')->create(new WMSType(),$wms); 
+        $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
+            "exceptionFormats" => $wms->getAllExceptionFormats(),
+            "requestGetCapabilitiesFormats" => $wms->getAllRequestGetCapabilitiesFormats(),
+            "requestGetMapFormats" => $wms->getAllRequestGetMapFormats(),
+            "requestGetFeatureInfoFormats" => $wms->getAllRequestGetFeatureInfoFormats(),
+            "requestDescribeLayerFormats"  => $wms->getAllRequestDescribeLayerFormats(),
+            "requestGetLegendGraphicFormats" => $wms->getAllRequestGetLegendGraphicFormats(),
+            "requestGetStylesFormats" => $wms->getAllRequestGetStylesFormats(),
+            "requestPutStylesFormats" => $wms->getAllRequestPutStylesFormats(),
+        )); 
         $form->bindRequest($request);
-        $em = $this->get("doctrine.orm.entity_manager");
-        $this->persistRecursive($wms,$em);
-        // FIXME: error handling
-        $this->get('session')->setFlash('info',"WMS Saved");
-        return $this->redirect($this->generateUrl("mapbender_wms_wms_edit", array("wmsId"=>$wms->getId())));
+        if($form->isValid()){
+            $em = $this->get("doctrine.orm.entity_manager");
+            $this->persistRecursive($wms,$em);
+            $this->get('session')->setFlash('info',"WMS Saved");
+            return $this->redirect($this->generateUrl("mapbender_wms_wms_edit", array("wmsId"=>$wms->getId())));
+        }else{
+            $this->get('session')->setFlash('error',"Could not Save WMS");
+            return $this->render("MapbenderWmsBundle:WMS:edit.html.twig",array(
+                    "wms" => $wms,
+                    "form" => $form->createView(),
+                ));
+        }
+
+
     }
 
     /**
@@ -248,6 +280,7 @@ class WMSController extends Controller {
         }
         $em->flush();
     }
+
     /**
      * Recursively remove a nested Layerstructure
      * param GroupLayer
@@ -258,6 +291,7 @@ class WMSController extends Controller {
             $this->removeRecursive($layer,$em);
         }
         $em->flush();
+//        throw new \Exception($grouplayer->getId());
         $em->remove($grouplayer);
     }
 

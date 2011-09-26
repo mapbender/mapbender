@@ -238,21 +238,13 @@ class WMSType  extends AbstractType {
             "label"     => "Exception Formats"
         ));
 
-        $builder->add("symbolSupportSLD","checkbox",array(
-            "required"  => false,
-            "label"     => "Supports SLD",
+        $builder->add("symbolSupportSLD","hidden",array(
         ));
-        $builder->add("symbolUserLayer","checkbox",array(
-            "required"  => false,
-            "label"     => "Supports Userlayer",
+        $builder->add("symbolUserLayer","hidden",array(
         ));
-        $builder->add("symbolUserStyle","checkbox",array(
-            "required"  => false,
-            "label"     => "Supports UserStyle",
+        $builder->add("symbolUserStyle","hidden",array(
         ));
-        $builder->add("symbolRemoteWFS","checkbox",array(
-            "required"  => false,
-            "label"     => "Supports RemoteWFS",
+        $builder->add("symbolRemoteWFS","hidden",array(
         ));
 
         $builder->add("layer",'collection',array( 

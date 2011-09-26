@@ -100,22 +100,22 @@ class WMSService extends GroupLayer {
     protected $exceptionFormats = array();
     
     /**
-    * @ORM\Column(type="boolean")
+    * @ORM\Column(type="boolean", nullable="true")
     */
     protected $symbolSupportSLD = false;
     
     /**
-    * @ORM\Column(type="boolean")
+    * @ORM\Column(type="boolean", nullable="true")
     */
     protected $symbolUserLayer = false;
     
     /**
-    * @ORM\Column(type="boolean")
+    * @ORM\Column(type="boolean", nullable="true")
     */
     protected $symbolUserStyle = false;
     
     /**
-    * @ORM\Column(type="boolean")
+    * @ORM\Column(type="boolean", nullable="true")
     */
     protected $symbolRemoteWFS = false;
 
@@ -272,6 +272,17 @@ class WMSService extends GroupLayer {
     */
     public function getDefaultExceptionFormats(){
         return isset($this->exceptionFormats[0])? $this->exceptionFormats[0]: '';
+    }
+    
+    /**
+    * returns an array of all locally known ExceptionFormats
+    */
+    public static function getAllExceptionFormats(){
+        return array(
+            "application/vnd__ogc__se_xml",
+            "application/vnd__ogc__se_inimage",
+            "application/vnd__ogc__se_blank"
+        );
     }
     
    /**
@@ -577,6 +588,15 @@ class WMSService extends GroupLayer {
     public function getRequestGetCapabilitiesFormats(){
         return $this->requestGetCapabilitiesFormats;
     }
+    
+    /**
+    * returns an array of all locally known RequestCapabilitiesFormats
+    */
+    public static function getAllRequestGetCapabilitiesFormats(){
+        return array(
+            "application/vnd__ogc__wms_xml",
+        );
+    }
 
     /**
      * returns the default (first) format that a wms supports for getCapabilities requests
@@ -613,6 +633,20 @@ class WMSService extends GroupLayer {
     }
     
     /**
+    * returns an array of all locally known RequestMapFormats
+    */
+    public static function getAllRequestGetMapFormats(){
+        return array(
+            "image/png",
+            "image/gif",
+            "image/png; mode=24bit",
+            "image/jpeg",
+            "image/wbmp",
+            "image/tiff"
+        );
+    }
+    
+    /**
      * returns the default (first) format that a wms supports for getMap requests
     */
     public function getDefaultRequestGetMapFormat(){
@@ -646,6 +680,17 @@ class WMSService extends GroupLayer {
     }
     
     /**
+    * returns an array of all locally known RequestGetFeatureInfoFormats
+    */
+    public static function getAllRequestGetFeatureinfoFormats(){
+        return array(
+            "text/html",
+            "text/plain",
+            "application/vnd__ogc__gml"
+        );
+    }
+    
+    /**
      * returns the default (first) format that a wms supports for getFeatureInfo requests
     */
     public function getDefaultRequestGetFeatureInfoFormat(){
@@ -676,6 +721,17 @@ class WMSService extends GroupLayer {
     
     public function getRequestDescribeLayerFormats(){
         return $this->requestDescribeLayerFormats;
+    }
+    
+    /**
+    * returns an array of all locally known RequestGetFeatureInfoFormats
+    */
+    public static function getAllRequestDescribeLayerFormats(){
+        return array(
+            "text/plain",
+            "text/xml",
+            "application/vnd__ogc__gml",
+        );
     }
     
     /**
@@ -713,6 +769,20 @@ class WMSService extends GroupLayer {
     }
     
     /**
+    * returns an array of all locally known RequestGetLegendGraphicsFormats
+    */
+    public static function getAllRequestGetLegendGraphicFormats(){
+        return array(
+            "image/png",
+            "image/gif",
+            "image/png; mode=24bit",
+            "image/jpeg",
+            "image/wbmp",
+            "image/tiff"
+        );
+    }
+    
+    /**
      * returns the default (first) format that a wms supports for getLegendGraphic requests
     */
     public function getDefaultRequestGetLegendGraphicFormat(){
@@ -746,6 +816,14 @@ class WMSService extends GroupLayer {
     }
     
     /**
+    * returns an array of all locally known RequestGetStylesFormats
+    */
+    public static function getAllRequestGetStylesFormats(){
+        return array(
+        );
+    }
+    
+    /**
      * returns the default (first) format that a wms supports for getStyles requests
     */
     public function getDefaultRequestGetStylesFormat(){
@@ -776,6 +854,14 @@ class WMSService extends GroupLayer {
     
     public function getRequestPutStylesFormats(){
         return $this->requestPutStylesFormats;
+    }
+    
+    /**
+    * returns an array of all locally known RequestPutStylesFormats
+    */
+    public static function getAllRequestPutStylesFormats(){
+        return array(
+        );
     }
     
     /**
