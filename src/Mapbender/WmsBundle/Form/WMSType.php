@@ -164,11 +164,11 @@ class WMSType  extends AbstractType {
         
         $builder->add("requestDescribeLayerGET","text",array(
             "required" => false,
-            "label"     => "GetFeatureInfo GET URL",
+            "label"     => "DescribeLayer GET URL",
         ));
         $builder->add("requestDescribeLayerPOST","text",array(
             "required" => false,
-            "label"     => "GetFeatureInfo POST URL",
+            "label"     => "DescribeLayer POST URL",
         ));
 
         $builder->add("requestDescribeLayerFormats","choice",array(
@@ -176,7 +176,7 @@ class WMSType  extends AbstractType {
             "choices"   => $this->makeFormatChoices($options['requestDescribeLayerFormats']),
             "multiple"  => true,
             "expanded"  => true,
-            "label"     => "GetFeatureInfo Formats",
+            "label"     => "DescribeLayer Formats",
         ));
         
         $builder->add("requestGetLegendGraphicGET","text",array(
