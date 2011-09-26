@@ -4,6 +4,8 @@
 
 {% block content %}
 
+
+    {% if wmsList|length > 0 %}
     <table class="wms">
         <caption>{% trans %}Verfügbare WMS-Dienste{% endtrans %}</caption>
         <thead>
@@ -28,4 +30,8 @@
     </table>
     <a href="{{ path("mapbender_wms_wms_index",{"offset":prevOffset}) }}">{% trans %}Previous{% endtrans %}</a> 
     <a href="{{  path("mapbender_wms_wms_index",{"offset": nextOffset}) }}">{% trans %}Next{% endtrans %}</a>
+
+    {% else %}
+     <p>{% trans %}No WMS Available{% endtrans %}</p>
+    {% endif %}
 {% endblock %}
