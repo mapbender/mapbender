@@ -14,6 +14,7 @@ use Mapbender\WmsBundle\Entity\WMSLayer;
 use Mapbender\WmsBundle\Entity\GroupLayer;
 use Mapbender\WmsBundle\Component\CapabilitiesParser;
 use Mapbender\WmsBundle\Form\WMSType;
+use Mapbender\Component\HTTP\HTTPClient;
 
 /*
 * @package bkg
@@ -63,40 +64,32 @@ class WMSController extends Controller {
     public function previewAction(){
         $getcapa_url = $this->get('request')->request->get('getcapa_url');
         if(!$getcapa_url){
-            throw new \Exception('getcapa_url not set');
+            $this->get('session')->setFlash('error', "url not set");
+            return $this->render("MapbenderWmsBundle:WMS:register.html.twig",array("getcapa_url",$getcapa_url));
         }
-        
-
-        $ch = curl_init($getcapa_url);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
         try {
-            $proxyConf = $this->container->getParameter('proxy');
-        }catch(\InvalidArgumentException $E){
-            // thrown when the parameter is not set
-            // maybe some logging ?
-            $proxyConf = array();
+            $client = new HTTPClient($container=$this->container);
+            $result = $client->open(trim($getcapa_url));
+
+            if($result->getStatusCode() == 200){
+                if(!$result->getData()){
+                    $this->get("logger")->debug("$getcapa_url returned no data");
+                    throw new \Exception("Preview: Service '$getcapa_url' returned no Data");
+                }
+                $capaParser = new CapabilitiesParser($result->getData());
+                $wms = $capaParser->getWMSService();
+                if(!$wms){
+                    $this->get("logger")->debug("Could not parse data for url '$getcapa_url'");
+                    throw new \Exception("Preview: Could not parse data for url '$getcapa_url'");
+                }
+            }else{
+                throw new \Exception("Preview: Server said '".$result->getStatusCode() . " ". $result->getStatusMessage(). "'");
+            }
+        }catch(\Exception $E){
+            $this->get('session')->setFlash('error', $E->getMessage());
+            return $this->render("MapbenderWmsBundle:WMS:register.html.twig",array("getcapa_url",$getcapa_url));
         }
-        if($proxyConf && isset($proxyConf['host']) && $proxyConf['host'] != ""){
-            curl_setopt($ch, CURLOPT_PROXY,$proxyConf['host']);
-            curl_setopt($ch, CURLOPT_PROXYPORT,$proxyConf['port']?:"");
-        }
-
-        $data = curl_exec($ch);
-
-        if(!$data){
-            $this->get("logger")->debug("$getcapa_url returned no data");
-            throw new \Exception('Service returned no Data');
-        }
-
-        $capaParser = new CapabilitiesParser($data);
-
-        $wms = $capaParser->getWMSService();
-        if(!$wms){
-            throw new \Exception("could not parse data for url '$getcapa_url'");
-        }
-
+        
         $wmsWithSameTitle  =$this->getDoctrine()
             ->getEntityManager()
             ->getRepository("MapbenderWmsBundle:WMSService")
@@ -123,7 +116,6 @@ class WMSController extends Controller {
                 "getcapa_url"=>$getcapa_url,
                 "wms" => $wms,
                 "form" => $form->createView(),
-                "xml" => $data
             );
     }
 
@@ -178,7 +170,7 @@ class WMSController extends Controller {
 
     /**
      * Shows the WMS in an Editor
-     * @Route("/{wmsId}"))
+     * @Route("/{wmsId}")
      * @Method({"GET"})
      * @Template()
     */
@@ -201,7 +193,7 @@ class WMSController extends Controller {
     
     /**
      * Shows the WMS in an Editor
-     * @Route("/{wmsId}"))
+     * @Route("/{wmsId}")
      * @Method({"POST"})
      * @Template()
     */
@@ -234,6 +226,72 @@ class WMSController extends Controller {
         }
 
 
+    }
+
+    /**
+     *  Show two WMS in an editor, the current, and the new
+     *  @Route("/{wmsId}/update")
+     *  @Method({"GET"})
+     *  @Template()
+    */
+
+    public function updateAction(WMSService $wms){
+        // FIXME: this url buidling thing is brittle!
+        $serviceUrl = $wms->getRequestGetCapabilitiesGET();
+        $version = $wms->getVersion();
+        $url = $serviceUrl ."&VERSION=".urlencode($version)."&REQUEST=GetCapabilities&SERVICE=wms";
+        // FIXME: move this kludge into WMSService
+        $newWms = null;
+        try {
+            $client = new HTTPClient($container=$this->container);
+            $result = $client->open(trim($url));
+
+            if($result->getStatusCode() == 200){
+                if(!$result->getData()){
+                    $this->get("logger")->debug("$url returned no data");
+                    throw new \Exception("Update: Service '$url' returned no Data");
+                }
+                $capaParser = new CapabilitiesParser($result->getData());
+                $newWms = $capaParser->getWMSService();
+                if(!$newWms){
+                    $this->get("logger")->debug("Could not parse data for url '$url'");
+                    throw new \Exception("Update: Could not parse data for url '$url'");
+                }
+            }else{
+                throw new \Exception("Update: Server said '".$result->getStatusCode() . " ". $result->getStatusMessage(). "'");
+            }
+        }catch(\Exception $E){
+            $this->get('session')->setFlash('error', $E->getMessage());
+            return $this->render("MapbenderWmsBundle:WMS:index.html.twig");
+        }
+
+        $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
+            "exceptionFormats" => $wms->getExceptionFormats(),
+            "requestGetCapabilitiesFormats" => $wms->getRequestGetCapabilitiesFormats(),
+            "requestGetMapFormats" => $wms->getRequestGetMapFormats(),
+            "requestGetFeatureInfoFormats" => $wms->getRequestGetFeatureInfoFormats(),
+            "requestDescribeLayerFormats"  => $wms->getRequestDescribeLayerFormats(),
+            "requestGetLegendGraphicFormats" => $wms->getRequestGetLegendGraphicFormats(),
+            "requestGetStylesFormats" => $wms->getRequestGetStylesFormats(),
+            "requestPutStylesFormats" => $wms->getRequestPutStylesFormats(),
+        )); 
+        $newForm = $this->get('form.factory')->create(new WMSType(),$newWms,array(
+            "exceptionFormats" => $newWms->getExceptionFormats(),
+            "requestGetCapabilitiesFormats" => $newWms->getRequestGetCapabilitiesFormats(),
+            "requestGetMapFormats" => $newWms->getRequestGetMapFormats(),
+            "requestGetFeatureInfoFormats" => $newWms->getRequestGetFeatureInfoFormats(),
+            "requestDescribeLayerFormats"  => $newWms->getRequestDescribeLayerFormats(),
+            "requestGetLegendGraphicFormats" => $newWms->getRequestGetLegendGraphicFormats(),
+            "requestGetStylesFormats" => $newWms->getRequestGetStylesFormats(),
+            "requestPutStylesFormats" => $newWms->getRequestPutStylesFormats(),
+        )); 
+        return array(
+            "wms" => $wms,
+            "form"  => $form->createView(),
+            "newWms" => $newWms,
+            "newForm"  => $newForm->createView(),
+        );
+        
     }
 
     /**

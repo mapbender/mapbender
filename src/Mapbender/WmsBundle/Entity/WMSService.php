@@ -296,13 +296,14 @@ class WMSService extends GroupLayer {
     /**
      * returns all Layers of the WMS as comma-seperated string so that they can be used in a WMS Request's LAYER parameter
      */
-    static function getAllLayerNames($grouplayers){
-        $names = array();
-        foreach ($grouplayers as $layers){
-            $names[] = $layer->getName();
-            $names[] = self::getAllLayerNames($layer->getLayer());
+    public function getAllLayerNames($grouplayers = null){
+        $grouplayers  = $grouplayers == null? $this->getLayer(): $grouplayers;
+        $names = "";
+        foreach ($grouplayers as $layer){
+            $names .= ",".$layer->getName();
+            $names .= ",".$this->getAllLayerNames($layer->getLayer());
         }
-        return $names;
+        return trim($names,",");
     }
 
     /**

@@ -82,6 +82,10 @@ class HTTPClient {
 
 
         $data = curl_exec($this->ch);
+
+        if(($error = curl_error($this->ch)) != ""){
+            throw new \Exception("Curl says: '$error'");
+        }
         $statusCode = curl_getInfo($this->ch,CURLINFO_HTTP_CODE);
 
         $result = new HTTPResult();
