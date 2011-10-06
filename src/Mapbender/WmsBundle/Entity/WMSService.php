@@ -217,6 +217,16 @@ class WMSService extends GroupLayer {
     */
     protected $requestPutStylesFormats = array();
 
+    /**
+    * @ORM\Column(type="text", nullable="true");
+    */
+    protected $username = null;
+
+    /**
+    * @ORM\Column(type="text", nullable="true");
+    */
+    protected $password = null; 
+
 
     public function __construct() {
         # calling super  - how to avoid ?
@@ -300,7 +310,10 @@ class WMSService extends GroupLayer {
         $grouplayers  = $grouplayers == null? $this->getLayer(): $grouplayers;
         $names = "";
         foreach ($grouplayers as $layer){
-            $names .= ",".$layer->getName();
+            $name = $layer->getName();
+            if ( $name != ""){
+                $names .= $name;
+            }
             $names .= ",".$this->getAllLayerNames($layer->getLayer());
         }
         return trim($names,",");
@@ -615,6 +628,20 @@ class WMSService extends GroupLayer {
     
     public function getRequestGetMapGET(){
         return $this->requestGetMapGET;
+    }
+    
+
+    /*
+    *
+    * returns a the getMapUrl with added username and password like "http://user:password@host/
+    */
+    public function getAuthRequestGetMapGET(){
+        if(!$this->username){
+            return $this->requestGetMapGET;
+        }
+
+        $authString = $this->username .":".$this->password . "@";
+        $authRequestUrl =  preg_replace("/^https*:\/\/", $authString, $this->requestGetMapGET );
     }
     
     public function setRequestGetMapPOST($requestGetMapPOST){
@@ -951,4 +978,21 @@ class WMSService extends GroupLayer {
     {
         return $this->symbolRemoteWFS;
     }
+    
+    public function getUsername (){
+        return $this->username ;
+    }
+    
+    public function setUsername ($username ){
+        $this->username  = $username ;
+    }
+
+    public function getPassword (){
+        return $this->password ;
+    }
+    
+    public function setPassword ($password ){
+        $this->password  = $password ;
+    }
+
 }

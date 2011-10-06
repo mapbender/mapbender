@@ -63,6 +63,8 @@ class WMSController extends Controller {
     */
     public function previewAction(){
         $getcapa_url = $this->get('request')->request->get('getcapa_url');
+        $user = $this->get('request')->request->get('http_user');
+        $password = $this->get('request')->request->get('http_password');
         if(!$getcapa_url){
             $this->get('session')->setFlash('error', "url not set");
             return $this->render("MapbenderWmsBundle:WMS:register.html.twig",array("getcapa_url",$getcapa_url));
@@ -100,6 +102,8 @@ class WMSController extends Controller {
         } 
     
 
+        $wms->setUsername($user);
+        $wms->setPassword($password);
         // Save these Formats somewhere somehow
         $form = $this->get('form.factory')->create(new WMSType(), $wms,array(
             "exceptionFormats" => $wms->getAllExceptionFormats(),

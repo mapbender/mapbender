@@ -52,6 +52,13 @@ class WMSType  extends AbstractType {
         $builder->add("abstract","text",array(
             "required" => false,
         ));
+        $builder->add("username","text", array(
+            "required"  => false,
+            "label"     => "Username",
+        ));
+        $builder->add("password","text", array(
+            "required"  => false,
+        ));
         $builder->add("onlineResource","text", array(
             "required" => false,
             "label"     => "OnlineResource",
