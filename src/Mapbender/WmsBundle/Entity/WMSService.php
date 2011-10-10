@@ -641,7 +641,7 @@ class WMSService extends GroupLayer {
         }
 
         $authString = $this->username .":".$this->password . "@";
-        $authRequestUrl =  preg_replace("/^https*:\/\/", $authString, $this->requestGetMapGET );
+        $authRequestUrl =  preg_replace("/^https*:\/\//", $authString, $this->requestGetMapGET );
     }
     
     public function setRequestGetMapPOST($requestGetMapPOST){
