@@ -52,7 +52,7 @@ class WMSController extends Controller {
      * @Template()
     */
     public function registerAction(){
-        return array();
+        return array( 'getcapa_url'=>'');
     }
     
     /**
@@ -89,7 +89,7 @@ class WMSController extends Controller {
             }
         }catch(\Exception $E){
             $this->get('session')->setFlash('error', $E->getMessage());
-            return $this->render("MapbenderWmsBundle:WMS:register.html.twig",array("getcapa_url",$getcapa_url));
+            return $this->render("MapbenderWmsBundle:WMS:register.html.twig",array("getcapa_url" => $getcapa_url));
         }
         
         $wmsWithSameTitle  =$this->getDoctrine()
