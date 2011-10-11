@@ -5,6 +5,7 @@ use Mapbender\WmsBundle\Entity\WMSService;
 use Mapbender\WmsBundle\Entity\WMSLayer;
 use Mapbender\WmsBundle\Entity\Layer;
 use Mapbender\WmsBundle\Entity\GroupLayer;
+use Mapbender\WmsBundle\Component\Exception\ParsingException;
 
 /**
 * Class that Parses WMS GetCapabilies Document 
@@ -28,6 +29,11 @@ class CapabilitiesParser {
         $this->doc = new \DOMDocument();
         if(!$this->doc->loadXML($data)){
             throw new \UnexpectedValueException("Could not parse CapabilitiesDocument.");
+        }
+        if($this->doc->documentElement->tagName == "ServiceExceptionReport"){
+            $message=$this->doc->documentElement->nodeValue;
+            throw new  ParsingException($message);
+        
         }
 
         if(!@$this->doc->validate()){
