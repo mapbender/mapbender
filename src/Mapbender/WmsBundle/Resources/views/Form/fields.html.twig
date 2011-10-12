@@ -21,16 +21,26 @@
         {{ form_row(form.dataurl) }} 
     </div>
     <div>
-        {{ form_row(form.fixedWidth) }}
+        {% if value.fixedWidth is not empty %}{{ form_row(form.fixedWidth) }}{% endif %}
         {{ form_row(form.fixedHeight) }}
-        {{ form_row(form.scaleHintMin) }}
-        {{ form_row(form.scaleHintMax) }}
-        {{ form_rest(form) }}
+        <div>
+          {{ form_label(form.scaleHintMin) }}
+          {{ form_widget(form.scaleHintMin) }}
+          <span>{{ value.scaleHintMin }}</span>
+        </div>
+        <div>
+          {{ form_label(form.scaleHintMax) }}
+          {{ form_widget(form.scaleHintMax) }}
+          <span>{{ value.scaleHintMax }}</span>
+        </div>
     </div>
     <div>
     {% if form.layer|length > 0 %}
             {{ form_row(form.layer) }} 
+    {% else %}
+            {{ form_widget(form.layer) }} 
     {% endif %}
+        {{ form_rest(form) }}
     </div>
 {% endblock %}
 
