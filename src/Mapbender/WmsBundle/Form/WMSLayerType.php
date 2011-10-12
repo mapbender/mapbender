@@ -54,10 +54,12 @@ class WMSLayerType  extends AbstractType {
             "read_only"  => true,
         ));
         $builder->add("scaleHintMin","number",array(
+            "precision" => "20",
             "required"  => false,
             "read_only"  => true,
         ));
         $builder->add("scaleHintMax","number",array(
+            "precision" => "20",
             "required"  => false,
             "read_only"  => true,
         ));
