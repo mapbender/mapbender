@@ -28,12 +28,26 @@ class CapabilitiesParser {
 
         $this->doc = new \DOMDocument();
         if(!$this->doc->loadXML($data)){
-            throw new \UnexpectedValueException("Could not parse CapabilitiesDocument.");
+            if(!$this->doc->loadHTML($data)){
+                  throw new \UnexpectedValueException("Could not parse CapabilitiesDocument.");
+            }
         }
         if($this->doc->documentElement->tagName == "ServiceExceptionReport"){
             $message=$this->doc->documentElement->nodeValue;
             throw new  ParsingException($message);
         
+        }
+
+        $version = $this->doc->documentElement->getAttribute("version");
+        switch($version){
+
+            case "1.0.0":
+            case "1.1.0":
+            case "1.1.1":
+            case "1.3.0":
+            default:
+            break;
+
         }
 
         if(!@$this->doc->validate()){
@@ -278,6 +292,36 @@ class CapabilitiesParser {
                     break;
 
                     case "ScaleHint":
+                        $layer->setScaleHintMin(trim($node->getAttribute("min")));
+                        $layer->setScaleHintMax(trim($node->getAttribute("max")));
+                    break;
+                    
+                    case "MetadataURL":
+                        foreach($node->childNodes as $metadataChild){
+                            if($metadataChild->nodeType == XML_ELEMENT_NODE){  
+                                switch ($metadataChild->nodeName) {
+                                    case "Format":
+                                    break;
+                                    case "OnlineResource":
+                                        $layer->setMetadataURL($metadataChild->getAttributeNS("http://www.w3.org/1999/xlink" ,"href"));
+                                    break;
+                                }
+                            }
+                        }
+                    break;
+                    
+                    case "DataURL":
+                        foreach($node->childNodes as $dataChild){
+                            if($dataChild->nodeType == XML_ELEMENT_NODE){  
+                                switch ($dataChild->nodeName) {
+                                    case "Format":
+                                    break;
+                                    case "OnlineResource":
+                                        $layer->setDataURL($dataChild->getAttributeNS("http://www.w3.org/1999/xlink" ,"href"));
+                                    break;
+                                }
+                            }
+                        }
                     break;
 
                     case "Layer":

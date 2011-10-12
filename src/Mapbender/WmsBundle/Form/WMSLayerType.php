@@ -17,6 +17,12 @@ class WMSLayerType  extends AbstractType {
         $builder->add("abstract","text",array(
             "required" => false,
         ));
+        $builder->add("metadataurl","text",array(
+            "required" => false,
+        ));
+        $builder->add("dataurl","text",array(
+            "required" => false,
+        ));
         $builder->add("srs","hidden",array(
             "required" => false,
         ));

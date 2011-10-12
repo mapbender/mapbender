@@ -74,6 +74,11 @@ class WMSLayer extends GroupLayer {
     /**
      * @ORM\Column(type="string",nullable="true")
      */
+    protected $dataURL = '';
+
+    /**
+     * @ORM\Column(type="string",nullable="true")
+     */
     protected $attributionTitle = '';
     
     /**
@@ -358,6 +363,26 @@ class WMSLayer extends GroupLayer {
     public function getMetadataURL()
     {
         return $this->metadataURL;
+    }
+    
+    /**
+     * Set dataURL
+     *
+     * @param string $dataURL
+     */
+    public function setDataURL($dataURL)
+    {
+        $this->dataURL = $dataURL;
+    }
+
+    /**
+     * Get dataURL
+     *
+     * @return string 
+     */
+    public function getDataURL()
+    {
+        return $this->dataURL;
     }
 
     /**
