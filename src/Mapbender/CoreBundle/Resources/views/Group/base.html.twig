@@ -1,0 +1,21 @@
+{% extends 'MapbenderCoreBundle::backend.html.twig' %}
+
+{#{% stylesheets '@MapbenderCoreBundle/Resources/public/style/*' %}
+    <link  rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets  %}  
+#}
+{% block subnavigation %}
+<nav class="action">
+    <h1>Group Navigation</h1>
+    <ul>
+      <li><a href="{{ path('mapbender_core_group_create') }}">{% trans %}Add Group{% endtrans %}</a></li>
+    </ul>
+</nav>
+
+{% endblock %}
+{% block body %}
+    <div class="content">
+    {% block content %} {% endblock %}
+    </div>
+{% endblock %}
+

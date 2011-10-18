@@ -1,0 +1,31 @@
+{% extends "MapbenderCoreBundle:User:base.html.twig" %}
+
+{% block heading %}{{ "User Index"|trans }}{% endblock %}
+
+{% block content %}
+
+{% if userList|length >0 %}
+  <table class="listable" >
+    <caption>{% trans %}Available Users{% endtrans %}</caption>
+    <thead>
+      <tr>
+        <th>{{ "Name"|trans}}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in userList %}
+      <tr>
+        <td>{{ user.displayName }}</td>
+        <td>
+          <a title="{{"Edit"|trans}} '{{user.displayName}}'"   class="edit" href="{{path("mapbender_core_user_edit",{"userId":user.id})}}">{{ "Edit"|trans }}</a>
+          <a title="{{"Delete"|trans}} '{{user.displayName}}'" class="confirmdelete" href="{{path("mapbender_core_user_confirmdelete",{"userId":user.id})}}">{{ "Delete"|trans }}</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+ <p>{% trans %}No Users{% endtrans %}</p>
+{% endif %}
+{% endblock %}

@@ -1,32 +1,59 @@
 <?php
 
 namespace Mapbender\CoreBundle\Entity;
-
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User entity.
  *
  * @author Christian Wygoda <arsgeografica@gmail.com>
+ * @author apour
  * @ORM\Entity
- * @ORM\Table(name="users")
+ * @ORM\Table(name="`User`")
  */
 class User implements UserInterface {
 	/**
-	 * @ORM\Column(type="integer")
 	 * @ORM\Id
+	 * @ORM\Column(type="integer")
+	 * @ORM\GeneratedValue(strategy="AUTO")
 	 */
 	protected $id;
 
-	/** @ORM\Column(length=512) */
+	/**
+	 * @Assert\NotNull
+	 * @ORM\Column(type="string", nullable="false",length=512)
+	 */
 	protected $username;
-
+	
 	/** @ORM\Column(length=512) */
 	protected $password;
 
-	/** @ORM\Column(length=256) */
+	/**
+	 * @Assert\NotNull
+	 * @ORM\Column(type="string", nullable="true")
+	 */
 	protected $email;
+	
+ /**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $firstName;
+	
+	/**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $lastName;
+
+	/**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $displayName;
 
 	/**
 	 * Set id
@@ -103,6 +130,65 @@ class User implements UserInterface {
 	{
 		return $this->email;
 	}
+    /**
+     * Set firstName
+     *
+     * @param string $firstName
+     */
+    public function setFirstName($firstName)
+    {
+        $this->firstName = $firstName;
+    }
+
+    /**
+     * Get firstName
+     *
+     * @return string 
+     */
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+
+    /**
+     * Set lastName
+     *
+     * @param string $lastName
+     */
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
+    }
+
+    /**
+     * Get lastName
+     *
+     * @return string 
+     */
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
+
+    /**
+     * Set displayName
+     *
+     * @param string $displayName
+     */
+    public function setDisplayName($displayName)
+    {
+        $this->displayName = $displayName;
+    }
+
+    /**
+     * Get displayName
+     *
+     * @return string 
+     */
+    public function getDisplayName()
+    {
+        return $this->displayName;
+    }
 
 	/**
 	 * Set roles

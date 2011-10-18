@@ -1,0 +1,31 @@
+{% extends "MapbenderCoreBundle:Group:base.html.twig" %}
+
+{% block heading %}{{ "Group Index"|trans }}{% endblock %}
+
+{% block content %}
+
+{% if groupList|length >0 %}
+  <table class="listable" >
+    <caption>{% trans %}Available Groups{% endtrans %}</caption>
+    <thead>
+      <tr>
+        <th>{{ "Name"|trans}}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for group in groupList %}
+      <tr>
+        <td>{{ group.name }}</td>
+        <td>
+          <a title="{{"Edit"|trans}} '{{group.name}}'"   class="edit" href="{{path("mapbender_core_group_edit",{"groupId":group.id})}}">{{ "Edit"|trans }}</a>
+          <a title="{{"Delete"|trans}} '{{group.name}}'" class="confirmdelete" href="{{path("mapbender_core_group_confirmdelete",{"groupId":group.id})}}">{{ "Delete"|trans }}</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+ <p>{% trans %}No Groups{% endtrans %}</p>
+{% endif %}
+{% endblock %}
