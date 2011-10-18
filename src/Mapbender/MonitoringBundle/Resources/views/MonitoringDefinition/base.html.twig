@@ -1,0 +1,20 @@
+{%extends 'MapbenderCoreBundle::backend.html.twig' %}
+
+{#{% stylesheets '@MapbenderWmsBundle/Resources/public/style/*' %}
+    <link  rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets  %}
+#}
+{% block subnavigation %}
+<nav class="action">
+    <h1>Monitoring Navigation</h1>
+    <ul>
+      <li><a href="{{ path('mapbender_monitoring_monitoringdefinition_create')  }}">{% trans %}Add Monitoring Definition{% endtrans %}</a></li>
+    </ul>
+</nav>
+
+{% endblock %}
+{% block body %}
+    <div class="content">
+    {% block content %} {% endblock %}
+    </div>
+{% endblock %}

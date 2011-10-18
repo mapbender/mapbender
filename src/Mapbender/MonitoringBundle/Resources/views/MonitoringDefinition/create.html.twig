@@ -1,0 +1,12 @@
+{% extends "MapbenderMonitoringBundle:MonitoringDefinition:base.html.twig" %}
+{% form_theme form 'MapbenderMonitoringBundle:Form:fields.html.twig' %}
+
+{% block content %}
+	<form action="{{path("mapbender_monitoring_monitoringdefinition_add")}}" method="post">
+		{{form_widget(form)}}
+		<input type="submit" name="create" value="{{"Save"|trans}}" />
+	</form>
+	<form action="{{path("mapbender_monitoring_monitoringdefinition_index")}}" method="get">
+		<input type="submit" name="create" value="{{"Cancel"|trans}}" />
+	</form>
+{% endblock %}

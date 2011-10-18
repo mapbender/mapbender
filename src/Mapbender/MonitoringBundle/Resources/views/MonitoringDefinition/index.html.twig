@@ -1,0 +1,33 @@
+{% extends "MapbenderMonitoringBundle:MonitoringDefinition:base.html.twig" %}
+
+{% block heading %}{{ "Monitoring Definition Index"|trans }}{% endblock %}
+
+{% block content %}
+
+{% if mdList|length >0 %}
+	<table class="listable" >
+    <caption>{% trans %}Available Monitoring Definitions{% endtrans %}</caption>
+		<thead>
+			<tr>
+				<th>{{ "Title"|trans}}</th>
+        <th>{{ "Last Status"|trans }}</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for md in mdList %}
+			<tr>
+				<td>{{ md.title }}</td>
+        <td></td>
+				<td>
+          <a title="{{"Edit"|trans}} '{{md.title}}'"   class="edit" href="{{path("mapbender_monitoring_monitoringdefinition_edit",{"mdId":md.id})}}">{{ "Edit"|trans }}</a>
+				  <a title="{{"Delete"|trans}} '{{md.title}}'" class="confirmdelete" href="{{path("mapbender_monitoring_monitoringdefinition_confirmdelete",{"mdId":md.id})}}">{{ "Delete"|trans }}</a>
+        </td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+ <p>{% trans %}No Monitoring Definitions available{% endtrans %}</p>
+{% endif %}
+{% endblock %}
