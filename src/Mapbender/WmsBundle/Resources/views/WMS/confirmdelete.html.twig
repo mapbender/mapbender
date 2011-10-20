@@ -3,10 +3,11 @@
 {% block title %}{% trans %}Delete{% endtrans %} "{{ wms.title }}"{% endblock %}
 
 {% block content %}
-    <div class="message">
-        <p>{% trans %}Really Delete{% endtrans %} "{{wms.title }}" ?</p>
-        <form action="{{ path("mapbender_wms_wms_delete",{'wmsId': wms.id}) }}" method="POST">
-            <button>{% trans %}Delete{% endtrans%}</button><a class="button" href="{{ path("mapbender_wms_wms_edit",{'wmsId': wms.id}) }}">{% trans %}Cancel{% endtrans %}</a>
-        </form>
-    </div>
+  <div class="message">
+    <p>{% trans %}Really Delete{% endtrans %} "{{wms.title }}" ?</p>
+    <form action="{{ path("mapbender_wms_wms_delete",{'wmsId': wms.id}) }}" method="POST">
+      <button>{% trans %}Delete{% endtrans%}</button>
+      <a class="button" href="{{ path("mapbender_wms_wms_edit",{'wmsId': wms.id}) }}">{% trans %}Cancel{% endtrans %}</a>
+    </form>
+  </div>
 {% endblock %}

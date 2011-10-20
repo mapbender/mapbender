@@ -5,9 +5,11 @@
 
 {% block subnavigation %}
     <nav class="actions">
-        <a href="{{ path('mapbender_wms_wms_confirmdelete',{'wmsId':wms.id}) }}">{% trans %}Delete{% endtrans %}</a>
-        <a class="disabled" href="">{% trans %}Edit{% endtrans %}</a>
-        <a class="disabled" href="#">{% trans %}Update{% endtrans %}</a>
+      <ul>
+        <li><a href="{{ path('mapbender_wms_wms_confirmdelete',{'wmsId':wms.id}) }}">{% trans %}Delete{% endtrans %}</a></li>
+        <li><a class="disabled" href=#"">{% trans %}Edit{% endtrans %}</a></li>
+        <li><a class="disabled" href="#">{% trans %}Update{% endtrans %}</a></li>
+      </ul>
     </nav>
 {% endblock %}
 

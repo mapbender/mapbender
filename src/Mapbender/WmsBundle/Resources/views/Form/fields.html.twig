@@ -19,9 +19,10 @@
         {{ form_row(form.noSubset) }} 
         {{ form_row(form.metadataurl) }}
         {{ form_row(form.dataurl) }} 
+        {{ form_row(form.styles) }} 
     </div>
     <div>
-        {% if value.fixedWidth is not empty %}{{ form_row(form.fixedWidth) }}{% endif %}
+        {{ form_row(form.fixedWidth) }}
         {{ form_row(form.fixedHeight) }}
         <div>
           {{ form_label(form.scaleHintMin) }}
