@@ -29,14 +29,20 @@ class WMSLayer extends GroupLayer {
     protected $noSubset = false;
     
     /**
-     * @ORM\Column(type="integer", nullable="false")
+     * @ORM\Column(type="integer", nullable="true")
      */
-    protected $fixedWidth = 0;
+    protected $fixedWidth;
     
     /**
-     * @ORM\Column(type="integer", nullable="false")
+     * @ORM\Column(type="integer", nullable="true")
      */
-    protected $fixedHeight = 0;
+    protected $fixedHeight;
+
+    /**
+      * @ORM\Column(type="array", nullable="true")
+     */
+    protected $styles = array();
+
     
 
     /**
@@ -56,12 +62,12 @@ class WMSLayer extends GroupLayer {
     /**
      * @ORM\Column(type="float",nullable="true")
      */
-    protected $scaleHintMin = 0;
+    protected $scaleHintMin;
     
     /**
      * @ORM\Column(type="float",nullable="true")
      */
-    protected $scaleHintMax = 0;
+    protected $scaleHintMax;
 
     /*
         FIXME Dimension and Extent are missing
@@ -611,6 +617,17 @@ class WMSLayer extends GroupLayer {
     public function getRequestFeatureListFormats()
     {
         return $this->requestFeatureListFormats;
+    }
+    
+    public function getStyles(){
+        return $this->styles ;
+    }
+    
+    public function setStyles($styles ){
+        $this->styles  = $styles ;
+    }
+    public function addStyle($style){
+        $this->styles[]  = $style ;
     }
 
 }

@@ -45,6 +45,9 @@ class WMSLayerType  extends AbstractType {
             "required"  => false,
             "read_only"  => true,
         ));
+        $builder->add("styles","hidden",array(
+            "required"  => false,
+        ));
         $builder->add("fixedWidth","integer",array(
             "required"  => false,
             "read_only"  => true,
@@ -62,6 +65,12 @@ class WMSLayerType  extends AbstractType {
             "precision" => "20",
             "required"  => false,
             "read_only"  => true,
+        ));
+        $builder->add("scaleHintMin","hidden",array(
+            "required"  => false,
+        ));
+        $builder->add("scaleHintMax","hidden",array(
+            "required"  => false,
         ));
         $builder->add("layer",'collection',array( 
             'type' => new WMSLayerType(),

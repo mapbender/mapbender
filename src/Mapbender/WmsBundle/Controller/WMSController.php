@@ -88,7 +88,7 @@ class WMSController extends Controller {
                 throw new \Exception("Preview: Server said '".$result->getStatusCode() . " ". $result->getStatusMessage(). "'");
             }
         }catch(\Exception $E){
-            $this->get('session')->setFlash('error', $E->getMessage());
+            $this->get('session')->setFlash('error',$E->getFile());
             return $this->render("MapbenderWmsBundle:WMS:register.html.twig",array("getcapa_url" => $getcapa_url));
         }
         
@@ -353,7 +353,6 @@ class WMSController extends Controller {
             $this->removeRecursive($layer,$em);
         }
         $em->flush();
-//        throw new \Exception($grouplayer->getId());
         $em->remove($grouplayer);
     }
 
