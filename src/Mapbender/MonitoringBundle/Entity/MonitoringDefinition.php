@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\MonitoringBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author apour
  * @ORM\Entity
  */
-class MonitoringDefinition {
+class MonitoringDefinition extends MonitoringJob {
 	/**
 	 *
 	 * @ORM\Id
@@ -92,11 +91,16 @@ class MonitoringDefinition {
 	 */
 	protected $lastNotificationTime;
 
-	/**
-	 *
-	 * @ORM\Column(type="string", nullable="true")
-	 */
-//	protected $monitoringJobs;
+    /**
+     * @ORM\ManyToOne(targetEntity="MonitoringDefinition",inversedBy="monitoringJobs", cascade={"update"})
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable="false")
+    */
+     protected $parent;
+
+    /**
+     * @ORM\OneToMany(targetEntity="MonitoringDefinition",mappedBy="parent", cascade={"persist","remove"})
+    */
+	protected $monitoringJobs;
 
 	/**
 	 *
