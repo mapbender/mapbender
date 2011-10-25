@@ -455,4 +455,125 @@ class MonitoringDefinition extends MonitoringJob {
     {
         return $this->enabled;
     }
+    /**
+     * @var string $timestamp
+     */
+    private $timestamp;
+
+    /**
+     * @var string $latency
+     */
+    private $latency;
+
+    /**
+     * @var string $changed
+     */
+    private $changed;
+
+    public function __construct()
+    {
+        $this->monitoringJobs = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Set timestamp
+     *
+     * @param string $timestamp
+     */
+    public function setTimestamp($timestamp)
+    {
+        $this->timestamp = $timestamp;
+    }
+
+    /**
+     * Get timestamp
+     *
+     * @return string 
+     */
+    public function getTimestamp()
+    {
+        return $this->timestamp;
+    }
+
+    /**
+     * Set latency
+     *
+     * @param string $latency
+     */
+    public function setLatency($latency)
+    {
+        $this->latency = $latency;
+    }
+
+    /**
+     * Get latency
+     *
+     * @return string 
+     */
+    public function getLatency()
+    {
+        return $this->latency;
+    }
+
+    /**
+     * Set changed
+     *
+     * @param string $changed
+     */
+    public function setChanged($changed)
+    {
+        $this->changed = $changed;
+    }
+
+    /**
+     * Get changed
+     *
+     * @return string 
+     */
+    public function getChanged()
+    {
+        return $this->changed;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param Mapbender\MonitoringBundle\Entity\MonitoringDefinition $parent
+     */
+    public function setParent(\Mapbender\MonitoringBundle\Entity\MonitoringDefinition $parent)
+    {
+        $this->parent = $parent;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return Mapbender\MonitoringBundle\Entity\MonitoringDefinition 
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Add monitoringJobs
+     *
+     * @param Mapbender\MonitoringBundle\Entity\MonitoringDefinition $monitoringJobs
+     */
+    public function addMonitoringJobs(\Mapbender\MonitoringBundle\Entity\MonitoringDefinition $monitoringJobs)
+    {
+        $this->monitoringJobs[] = $monitoringJobs;
+    }
+
+    /**
+     * Get monitoringJobs
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getMonitoringJobs()
+    {
+        return $this->monitoringJobs;
+    }
+
+
 }
