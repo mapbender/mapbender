@@ -458,17 +458,17 @@ class MonitoringDefinition extends MonitoringJob {
     /**
      * @var string $timestamp
      */
-    private $timestamp;
+    protected $timestamp;
 
     /**
      * @var string $latency
      */
-    private $latency;
+    protected $latency;
 
     /**
      * @var string $changed
      */
-    private $changed;
+    protected $changed;
 
     public function __construct()
     {
