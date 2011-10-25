@@ -1,4 +1,4 @@
-{% extends "MapbenderCoreBundle::frontend.html.twig" %}
+{% extends "MapbenderCoreBundle:User:base.html.twig" %}
 
 {% block title %}Login{% endblock %}
 
@@ -8,7 +8,7 @@
 
 {% block content %}
 <div id="frame">
-    <img alt="Mapbender3" src="{{ asset('bundles/mapbendercore/image/mapbender_logo.png') }}" />
+    {# <img alt="Mapbender3" src="{{ asset('bundles/mapbendercore/image/mapbender_logo.png') }}" /> #}
 
     {% if error %}
     <div class="error">{{ error.message }}</div>
