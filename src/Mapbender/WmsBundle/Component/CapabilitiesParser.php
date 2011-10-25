@@ -288,7 +288,26 @@ class CapabilitiesParser {
                     break;
 
                     case "Style":
-                        # $layer->setStyle();
+                        $style = array(
+                            "name"=>"",
+                            "title"=>"",
+                            "legendUrl"=> array (
+                                "link" =>""
+                            ),
+                        );
+                        foreach($node->childNodes as $styleChild){
+                            if($styleChild->nodeType == XML_ELEMENT_NODE){  
+                                switch ($styleChild->nodeName) {
+                                    case "Name":
+                                        $style["name"]= $styleChild->nodeValue;
+                                    break;
+                                    case "Title":
+                                        $style["title"]= $styleChild->nodeValue;
+                                    break;
+                                }
+                            }
+                        }
+                        $layer->addStyle($style);
                     break;
 
                     case "ScaleHint":
@@ -296,7 +315,6 @@ class CapabilitiesParser {
                         $layer->setScaleHintMax(trim($node->getAttribute("max")));
                     break;
                     
-                    case "MetadataURL":
                         foreach($node->childNodes as $metadataChild){
                             if($metadataChild->nodeType == XML_ELEMENT_NODE){  
                                 switch ($metadataChild->nodeName) {

@@ -3,16 +3,19 @@
 {% stylesheets '@MapbenderWmsBundle/Resources/public/style/*' %}
     <link  rel="stylesheet" href="{{ asset_url }}" />
 {% endstylesheets  %}
+
 {% block subnavigation %}
 <nav class="action">
     <h1>WMS Navigation</h1>
-    <a href="{{ path('mapbender_wms_wms_register')  }}">{% trans %}register WMS{% endtrans %}</a>
-{#
-     <form class="disabled" class="search wms_search">
-        <input name="q" id="q" />
-        <input type="submit" value="{% trans %}search{% endtrans %}" />
-     </form>
-#}
+    <ul>
+      <li><a href="{{ path('mapbender_wms_wms_register')  }}">{% trans %}register WMS{% endtrans %}</a></li>
+  {#
+       <form class="disabled" class="search wms_search">
+          <input name="q" id="q" />
+          <input type="submit" value="{% trans %}search{% endtrans %}" />
+       </form>
+  #}
+    </ul>
 </nav>
 
 {% endblock %}

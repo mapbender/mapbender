@@ -4,10 +4,9 @@
 
 {% block content %}
 
-
     {% if wmsList|length > 0 %}
-    <table class="wms">
-        <caption>{% trans %}Verfügbare WMS-Dienste{% endtrans %}</caption>
+    <table class="wms listable">
+        <caption>{% trans %}Available WMS{% endtrans %}</caption>
         <thead>
             <tr>
                 <th>{% trans %}Title{% endtrans %}</th>
@@ -22,7 +21,9 @@
                 <td><a href="{{ path("mapbender_wms_wms_edit",{'wmsId': wms.id }) }}">{{ wms.title }}</a></td>
                 <td>{{ wms.alias }}</td>
                 <td>{{ wms.abstract }}</td>
-                <td><a class="confirmdelete" href="{{ path("mapbender_wms_wms_confirmdelete",{ "wmsId": wms.id }) }}" >{{ "Delete"|trans }}</a>
+                <td>
+                  <a title="{{"Edit"|trans}} '{{wms.title}}'"   class="edit" href="{{path("mapbender_wms_wms_edit",{"wmsId":wms.id})}}">{{ "Edit"|trans }}</a>
+                  <a title="{{"Delete"|trans}} '{{wms.title}}'" class="confirmdelete" href="{{ path("mapbender_wms_wms_confirmdelete",{ "wmsId": wms.id }) }}" >{{ "Delete"|trans }}</a>
                 </td>
             </tr>
         {% endfor %}
