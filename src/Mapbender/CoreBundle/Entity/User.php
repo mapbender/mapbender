@@ -51,6 +51,13 @@ class User implements UserInterface {
 
 	/**
 	 *
+	 * @ORM\Column(type="array", nullable="true")
+	 */
+	protected $roles;
+
+
+	/**
+	 *
 	 * @ORM\Column(type="string", nullable="true")
 	 */
 	protected $displayName;
@@ -195,8 +202,13 @@ class User implements UserInterface {
 	 *
 	 * @param array $roles
 	 */
-	public function setRoles($roles) {
-		//TODO: Store roles
+	public function setRoles(array $roles) {
+    // make sure that at least "ROLE_USER"
+    // TODO: make sure that this is generally a good idea
+
+    $roles[] ="ROLE_USER";
+    $roles =array_unique($roles);
+    $this->roles = $roles;
 	}
 
 	/**
@@ -205,8 +217,9 @@ class User implements UserInterface {
 	 * @return array $roles
 	 */
 	public function getRoles() {
-		//TODO: Retrieve roles
-		return array('ROLE_USER');
+    $roles = $this->roles ;
+    $roles[] ="ROLE_USER";
+    return array_unique($roles);
 	}
 
 	/**

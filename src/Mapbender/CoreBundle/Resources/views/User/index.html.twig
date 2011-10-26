@@ -2,6 +2,14 @@
 
 {% block heading %}{{ "User Index"|trans }}{% endblock %}
 
+{% block subnavigation %}
+<nav class="action">
+    <h1>User Navigation</h1>
+    <ul>
+      <li><a href="{{ path('mapbender_core_user_create') }}">{% trans %}Add User{% endtrans %}</a></li>
+    </ul>
+</nav>
+{% endblock %}
 {% block content %}
 
 {% if userList|length >0 %}

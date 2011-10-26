@@ -1,4 +1,4 @@
-{% extends 'MapbenderCoreBundle::backend.html.twig' %}
+{% extends '::base.html.twig' %}
 
 {#{% stylesheets '@MapbenderCoreBundle/Resources/public/style/*' %}
     <link  rel="stylesheet" href="{{ asset_url }}" />
@@ -11,7 +11,6 @@
       <li><a href="{{ path('mapbender_core_user_create') }}">{% trans %}Add User{% endtrans %}</a></li>
     </ul>
 </nav>
-
 {% endblock %}
 {% block body %}
     <div class="content">

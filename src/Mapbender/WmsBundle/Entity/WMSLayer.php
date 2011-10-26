@@ -312,7 +312,7 @@ class WMSLayer extends GroupLayer {
     }
 
     /**
-     * Set ScaleHintMin
+     * Set ScaleHintMin Expects an integer such as 20000 which is then converted to internal encoding  or just for the form...?
      *
      * @param float $scaleHintMin
      */
