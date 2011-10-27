@@ -203,11 +203,6 @@ class User implements UserInterface {
 	 * @param array $roles
 	 */
 	public function setRoles(array $roles) {
-    // make sure that at least "ROLE_USER"
-    // TODO: make sure that this is generally a good idea
-
-    $roles[] ="ROLE_USER";
-    $roles =array_unique($roles);
     $this->roles = $roles;
 	}
 
@@ -217,9 +212,7 @@ class User implements UserInterface {
 	 * @return array $roles
 	 */
 	public function getRoles() {
-    $roles = $this->roles ;
-    $roles[] ="ROLE_USER";
-    return array_unique($roles);
+    return $this->roles?:array();
 	}
 
 	/**
@@ -228,7 +221,6 @@ class User implements UserInterface {
 	 * @return string $salt
 	 */
 	public function getSalt() {
-		//TODO: Make this configurable
 		return '';
 	}
 
