@@ -14,7 +14,7 @@ class WMSType  extends AbstractType {
 
 
     /**
-     * comvberts an array ["a"] into ["a" =>"a"]
+     * converts an array ["a"] into ["a" =>"a"]
     */
     protected function makeFormatChoices($array){
         $keys = $array;
