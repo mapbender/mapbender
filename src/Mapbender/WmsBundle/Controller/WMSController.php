@@ -136,17 +136,19 @@ class WMSController extends Controller {
         $wms = new WMSService();
         $wms = $this->buildWMSFormStructure($wms,$requestWMS);
 
+        $exceptionFormats = $requestWMS['exceptionFormats'];
+
         // wms has basic structure... but at this point we don't know what it supports
         // for multiselect to work we need to know what it supports..
         $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
-            "exceptionFormats" => $wms->getAllExceptionFormats(),
-            "requestGetCapabilitiesFormats" => $wms->getAllRequestGetCapabilitiesFormats(),
-            "requestGetMapFormats" => $wms->getAllRequestGetMapFormats(),
-            "requestGetFeatureInfoFormats" => $wms->getAllRequestGetFeatureInfoFormats(),
-            "requestDescribeLayerFormats"  => $wms->getAllRequestDescribeLayerFormats(),
-            "requestGetLegendGraphicFormats" => $wms->getAllRequestGetLegendGraphicFormats(),
-            "requestGetStylesFormats" => $wms->getAllRequestGetStylesFormats(),
-            "requestPutStylesFormats" => $wms->getAllRequestPutStylesFormats(),
+            "exceptionFormats" => isset($requestWMS['exceptionFormats'])?$requestWMS['exceptionFormats']:array(),
+            "requestGetCapabilitiesFormats" => isset($requestWMS['requestGetCapabilitiesFormats'])?$requestWMS['requestGetCapabilitiesFormats']:array(),
+            "requestGetMapFormats" => isset($requestWMS['requestGetMapFormats'])?$requestWMS['requestGetMapFormats']:array(),
+            "requestGetFeatureInfoFormats" => isset($requestWMS['requestGetFeatureInfoFormats'])?$requestWMS['requestGetFeatureInfoFormats']:array(),
+            "requestDescribeLayerFormats"  => isset($requestWMS['requestDescribeLayerFormats'])?$requestWMS['requestDescribeLayerFormats']:array(),
+            "requestGetLegendGraphicFormats" => isset($requestWMS['requestGetLegendGraphicFormats'])?$requestWMS['requestGetLegendGraphicFormats']:array(),
+            "requestGetStylesFormats" => isset($requestWMS['requestGetStylesFormats'])?$requestWMS['requestGetStylesFormats']:array(),
+            "requestPutStylesFormats" => isset($requestWMS['requestPutStylesFormats'])?$requestWMS['requestPutStylesFormats']:array(),
         )); 
         $form->bindRequest($request);
 
