@@ -68,7 +68,7 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
             $request->attributes->set("usedLimit",$limit);
             // This could support selecting by criteria for searching
             return $this->registry->getRepository($class, $options['entity_manager'])
-                ->findBy(array(),null,$limit,$offset);
+                ->findBy(array(),array('id' => 'ASC'),$limit,$offset);
                 
 
     }
