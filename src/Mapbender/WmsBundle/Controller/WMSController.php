@@ -71,6 +71,10 @@ class WMSController extends Controller {
         }
         try {
             $client = new HTTPClient($container=$this->container);
+            if($user){
+              $client->setUsername($user);
+              $client->setPassword($password);
+            } 
             $result = $client->open(trim($getcapa_url));
 
             if($result->getStatusCode() == 200){
@@ -88,7 +92,7 @@ class WMSController extends Controller {
                 throw new \Exception("Preview: Server said '".$result->getStatusCode() . " ". $result->getStatusMessage(). "'");
             }
         }catch(\Exception $E){
-            $this->get('session')->setFlash('error',$E->getFile());
+            $this->get('session')->setFlash('error',$E->getMessage());
             return $this->render("MapbenderWmsBundle:WMS:register.html.twig",array("getcapa_url" => $getcapa_url));
         }
         
