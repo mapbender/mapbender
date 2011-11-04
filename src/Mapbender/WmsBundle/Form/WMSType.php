@@ -31,13 +31,13 @@ class WMSType  extends AbstractType {
 
 
 
-        $builder->add("version","text", array(
+        $builder->add("version","hidden", array(
             "required"  => false,
             "label"     => "Version",
         ));
 
         // Service Section Elements
-        $builder->add("name","text",array(
+        $builder->add("name","hidden",array(
             "required" => false,
             "label"     => "Name",
         ));

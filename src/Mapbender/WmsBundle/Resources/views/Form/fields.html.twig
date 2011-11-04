@@ -7,33 +7,75 @@
     </fieldset>
 {% endblock %}
 
+
 {% block WMSLayer_widget %}
 
     <div>
         {{ form_row(form.title) }}
-        {{ form_row(form.name) }}
+        <div>
+          {{ form_label(form.name) }}
+          {{ form_widget(form.name) }}
+          <span>{{ value.name }}</span>
+        </div>
         {{ form_row(form.abstract) }}
-        {{ form_row(form.queryable) }}
+        <div>
+          {{ form_label(form.queryable) }}
+          {{ form_widget(form.queryable) }}
+          <span>{{ value.queryable ? "Yes"|trans : "No"|trans}}</span>
+        </div>
         {{ form_row(form.cascaded) }}
-        {{ form_row(form.opaque) }}
-        {{ form_row(form.noSubset) }} 
+        <div>
+          {{ form_label(form.cascaded) }}
+          {{ form_widget(form.cascaded) }}
+          <span>{{ value.cascaded }}</span>
+        </div>
+        <div>
+          {{ form_label(form.opaque) }}
+          {{ form_widget(form.opaque) }}
+          <span>{{ value.opaque  ? "Yes"|trans : "No"|trans}}</span>
+        </div>
+        <div>
+          {{ form_label(form.noSubset) }}
+          {{ form_widget(form.noSubset) }}
+          <span>{{ value.noSubset  ? "Yes"|trans : "No"|trans}}</span>
+        </div>
+        {% if value.metadataurl is not empty %}
         {{ form_row(form.metadataurl) }}
+        {% endif %}
+        {% if value.dataurl is not empty %}
         {{ form_row(form.dataurl) }} 
+        {% endif %}
         {{ form_row(form.styles) }} 
     </div>
     <div>
-        {{ form_row(form.fixedWidth) }}
-        {{ form_row(form.fixedHeight) }}
+        {% if value.fixedWidth is not empty %}
+        <div>
+          {{ form_label(form.fixedWidth) }}
+          {{ form_widget(form.fixedWidth) }}
+          <span>{{ value.fixedWidth }}</span>
+        </div>
+        {% endif %}
+        {% if value.fixedHeight is not empty %}
+        <div>
+          {{ form_label(form.fixedHeight) }}
+          {{ form_widget(form.fixedHeight) }}
+          <span>{{ value.fixedHeight }}</span>
+        </div>
+        {% endif %}
+        {% if value.scaleHintMin is not empty %}
         <div>
           {{ form_label(form.scaleHintMin) }}
           {{ form_widget(form.scaleHintMin) }}
           <span>{{ value.scaleHintMin }}</span>
         </div>
+        {% endif %}
+        {% if value.scaleHintMax is not empty %}
         <div>
           {{ form_label(form.scaleHintMax) }}
           {{ form_widget(form.scaleHintMax) }}
           <span>{{ value.scaleHintMax }}</span>
         </div>
+        {% endif %}
     </div>
     <div>
     {% if form.layer|length > 0 %}
@@ -41,7 +83,6 @@
     {% else %}
             {{ form_widget(form.layer) }} 
     {% endif %}
-        {{ form_rest(form) }}
     </div>
 {% endblock %}
 
@@ -61,6 +102,11 @@
         <legend>{% trans %}Metadata{% endtrans %}</legend>
         {{ form_row(form.title) }}
         {{ form_row(form.name) }}
+        <div>
+          {{ form_label(form.name) }}
+          {{ form_widget(form.name) }}
+          <span>{{ value.name }}</span>
+        </div>
         {{ form_row(form.alias) }}
         {{ form_row(form.abstract) }}
         <div>
@@ -93,38 +139,42 @@
     
     <fieldset id="{{value.name}}-service"  class="service">
         <legend>{% trans %}Service{% endtrans %}</legend>
-        {{ form_row(form.version) }}
-        <hr style="color:#AAAAAA;background: #AAAAAA; height:1px">
+        <div>
+          {{ form_label(form.version) }}
+          {{ form_widget(form.version) }}
+          <span>{{ value.version }}</span>
+        </div>
+        <hr />
         {{ form_row(form.requestGetCapabilitiesGET) }}
         {{ form_row(form.requestGetCapabilitiesPOST) }}
         {{ form_row(form.requestGetCapabilitiesFormats) }}
-        <hr>
+        <hr />
         {{ form_row(form.requestGetMapGET) }}
         {{ form_row(form.requestGetMapPOST) }}
         {{ form_row(form.requestGetMapFormats) }}
-        <hr>
+        <hr />
         {{ form_row(form.requestGetFeatureInfoGET) }}
         {{ form_row(form.requestGetFeatureInfoPOST) }}
         {{ form_row(form.requestGetFeatureInfoFormats) }}
-        <hr>
+        <hr />
         {{ form_row(form.requestGetLegendGraphicGET) }}
         {{ form_row(form.requestGetLegendGraphicPOST) }}
         {{ form_row(form.requestGetLegendGraphicFormats) }}
-        <hr>
+        <hr />
         {{ form_row(form.requestDescribeLayerGET) }}
         {{ form_row(form.requestDescribeLayerPOST) }}
         {{ form_row(form.requestDescribeLayerFormats) }}
-        <hr>
+        <hr />
         {{ form_row(form.requestGetStylesGET) }}
         {{ form_row(form.requestGetStylesPOST) }}
         {{ form_row(form.requestGetStylesFormats) }}
-        <hr>
+        <hr />
         {{ form_row(form.requestPutStylesGET) }}
         {{ form_row(form.requestPutStylesPOST) }}
         {{ form_row(form.requestPutStylesFormats) }}
-        <hr>
+        <hr />
         {{ form_row(form.exceptionFormats) }}
-        <hr>
+        <hr />
         {{ form_row(form.symbolSupportSLD) }}
         <p>{{ "Supports SLD"|trans }} {% if value.symbolSupportSLD  %}:{{ "Yes"|trans }}{% else %}{{ "No"|trans }}{% endif %}</p>
 
@@ -150,4 +200,36 @@
    
 {% endblock %}
 
-
+{# 
+  this is a copy of the one found in symfony/src/Symfony/Bridge/Twig/Resources/views/Form/form_div_layout.html.twig
+  but modified to place choicelist in a ul 
+#}
+{% block choice_widget %}
+{% spaceless %}
+    {% if expanded %}
+        <ul {{ block('widget_container_attributes') }}>
+        {% for child in form %}
+            <li>
+            {{ form_widget(child) }}
+            {{ form_label(child) }}
+          </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+    <select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
+        {% if empty_value is not none %}
+            <option value="">{{ empty_value|trans }}</option>
+        {% endif %}
+        {% if preferred_choices|length > 0 %}
+            {% set options = preferred_choices %}
+            {{ block('widget_choice_options') }}
+            {% if choices|length > 0 %}
+                <option disabled="disabled">{{ separator }}</option>
+            {% endif %}
+        {% endif %}
+        {% set options = choices %}
+        {{ block('widget_choice_options') }}
+    </select>
+    {% endif %}
+{% endspaceless %}
+{% endblock choice_widget %}

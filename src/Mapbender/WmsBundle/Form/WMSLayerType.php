@@ -11,7 +11,7 @@ class WMSLayerType  extends AbstractType {
         $builder->add("title","text",array(
             "required" => false,
         ));
-        $builder->add("name","text",array(
+        $builder->add("name","hidden",array(
             "required" => false,
         ));
         $builder->add("abstract","text",array(
@@ -29,42 +29,26 @@ class WMSLayerType  extends AbstractType {
         $builder->add("latLonBounds","hidden",array(
             "required" => false,
         ));
-        $builder->add("queryable","checkbox",array(
+        $builder->add("queryable","hidden",array(
             "required"  => false,
-            "read_only"  => true,
         ));
-        $builder->add("cascaded","integer",array(
+        $builder->add("cascaded","hidden",array(
             "required"  => false,
-            "read_only"  => true,
         ));
-        $builder->add("opaque","checkbox",array(
+        $builder->add("opaque","hidden",array(
             "required"  => false,
-            "read_only"  => true,
         ));
-        $builder->add("noSubset","checkbox",array(
+        $builder->add("noSubset","hidden",array(
             "required"  => false,
-            "read_only"  => true,
         ));
         $builder->add("styles","hidden",array(
             "required"  => false,
         ));
-        $builder->add("fixedWidth","integer",array(
+        $builder->add("fixedWidth","hidden",array(
             "required"  => false,
-            "read_only"  => true,
         ));
-        $builder->add("fixedHeight","integer",array(
+        $builder->add("fixedHeight","hidden",array(
             "required"  => false,
-            "read_only"  => true,
-        ));
-        $builder->add("scaleHintMin","number",array(
-            "precision" => "20",
-            "required"  => false,
-            "read_only"  => true,
-        ));
-        $builder->add("scaleHintMax","number",array(
-            "precision" => "20",
-            "required"  => false,
-            "read_only"  => true,
         ));
         $builder->add("scaleHintMin","hidden",array(
             "required"  => false,
