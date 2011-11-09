@@ -5,6 +5,7 @@ OpenLayers.ProxyHost = Mapbender.configuration.proxies.open + '?url=';
 $.widget("mapbender.mbMap", {
     options: {
         'layerset': null, //mapset for main map
+        dpi: OpenLayers.DOTS_PER_INCH
     },
 
     map: null,
@@ -13,6 +14,10 @@ $.widget("mapbender.mbMap", {
     _create: function() {
         var self = this,
             me = $(this.element);
+
+        if(typeof(this.options.dpi) !== 'undefined') {
+            OpenLayers.DOTS_PER_INCH = this.options.dpi;
+        }
 
         // Prepare initial layers
         var layers = [];
