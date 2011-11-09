@@ -42,7 +42,7 @@ class ElementGenerator extends Generator {
 
         if($type === 'general') {
             $this->renderFile(__DIR__ . '/../Resources/skeleton/element',
-                $type . 'html.twig', $twigFile, array(
+                $type . '.html.twig', $twigFile, array(
                     'classNameLower' => $classNameLower));
             $files['Twig template'] = $twigFile;
         }
