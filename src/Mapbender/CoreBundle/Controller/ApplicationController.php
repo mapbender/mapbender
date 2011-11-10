@@ -31,13 +31,13 @@ class ApplicationController extends Controller {
      *
      * @param string $slug The application slug
      * @return Response HTTP response
-     * @Route("/application/{slug}", name="mapbender_application")
+     * @Route("/application/{slug}.{_format}", name="mapbender_application", defaults={ "_format" = "html"})
      * @Template()
      */
     public function applicationAction($slug) {
         $application = $this->getApplication($slug);
         $this->checkAllowedRoles($application->getRoles());
-        return $application->render();
+        return $application->render($this->get('request')->get('_format'));
     }
 
     /**

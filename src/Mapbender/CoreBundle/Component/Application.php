@@ -67,7 +67,7 @@ class Application implements ApplicationInterface {
         return NULL;
     }
 
-    public function render(Response $response = NULL) {
+    public function render($_format = 'html', Response $response = NULL) {
         if($response == NULL) {
             $response = new Response();
         }
@@ -163,6 +163,7 @@ class Application implements ApplicationInterface {
             'srs' => $this->configuration['srs'],
             'units' => $this->configuration['units'],
             'basePath' => $base_path,
+            'assetPath' => rtrim($this->get('templating.helper.assets')->getUrl('.'), '.'),
             'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
             'slug' => $this->slug,
             'extents' => $this->configuration['extents'],
@@ -173,13 +174,13 @@ class Application implements ApplicationInterface {
         );
 
         $response->setContent($this->getTemplate()->render(array(
-            'title' => $this->getTitle(),
-            'configuration' => "Mapbender = {}; Mapbender.configuration = " . json_encode($configuration),
+            '_format' => $_format,
+            'configuration' => $configuration,
             'assets' => array(
-                'css' => array_unique($css),
-                'js' => array_unique($js)),
+                'css' => array_values(array_unique($css)),
+                'js' => array_values(array_unique($js))),
             'regions' => $this->regions
-        )));
+        ), $_format));
 
         return $response;
     }

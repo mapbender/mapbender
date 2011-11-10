@@ -20,10 +20,11 @@ interface TemplateInterface {
 	/**
 	 * Return template specifier like
 	 * "MapbenderCoreBundle:Application:demo1"
-	 *
+     *
+     * @param string $_format The requested template format
 	 * @return string $templateId
 	 */
-	public function getTemplate();
+	public function getTemplate($_format);
 
 	/**
 	 * Return template metadata
@@ -42,9 +43,10 @@ interface TemplateInterface {
 	/**
 	 * Render the template with the given data
 	 *
-	 * @param array $data
+     * @param array $data
+     * @param string $_format The requested template format, defaults to html
 	 * @return string The evaluated template as a string
 	 */
-	public function render($data);
+	public function render($data, $_format = 'html');
 }
 
