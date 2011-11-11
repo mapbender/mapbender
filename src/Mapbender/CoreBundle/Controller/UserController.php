@@ -20,6 +20,40 @@ use Mapbender\CoreBundle\Form\UserType;
  */
 class UserController extends Controller {
     protected $em;
+    
+    /**
+     * User login
+     *
+     * @Route("/user/login")
+     * @Template()
+     */
+    public function loginAction() {
+        $request = $this->get('request');
+        if($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
+            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
+        } else {
+            $error = $request->getSession()->get(SecurityContext::AUTHENTICATION_ERROR);
+        }
+
+        return array(
+            'last_username' => $request->getSession()->get(SecurityContext::LAST_USERNAME),
+            'error' => $error,
+        );
+    }
+
+    /**
+     * @Route("/user/login/check")
+     */
+    public function loginCheckAction() {
+        //Don't worry, this is actually intercepted by the security layer.
+    }
+
+    /**
+     * @Route("/user/logout")
+     */
+    public function logoutAction() {
+        //Don't worry, this is actually intercepted by the security layer.
+    }
 
 	/**
 	 * @Route("/user/")
@@ -182,39 +216,6 @@ class UserController extends Controller {
         $this->em = $this->get('doctrine.orm.default_entity_manager');
     }
 
-    /**
-     * User login
-     *
-     * @Route("/login")
-     * @Template()
-     */
-    public function loginAction() {
-        $request = $this->get('request');
-        if($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
-            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
-        } else {
-            $error = $request->getSession()->get(SecurityContext::AUTHENTICATION_ERROR);
-        }
-
-        return array(
-            'last_username' => $request->getSession()->get(SecurityContext::LAST_USERNAME),
-            'error' => $error,
-        );
-    }
-
-    /**
-     * @Route("/login/check")
-     */
-    public function loginCheckAction() {
-        //Don't worry, this is actually intercepted by the security layer.
-    }
-
-    /**
-     * @Route("/logout")
-     */
-    public function logoutAction() {
-        //Don't worry, this is actually intercepted by the security layer.
-    }
 
     /**
      * @Route("/")
