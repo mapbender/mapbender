@@ -55,6 +55,28 @@ class WMSController extends Controller {
         return array( 'getcapa_url'=>'');
     }
     
+    /*
+     * Make sure the url is correct,. add missing parameters and filter sessionids
+    */ 
+    protected function CapabilitiesURLFixup($url){
+        $sessionids = array(
+          "PHPSESSID",
+          "jsessionid"
+        );
+        $parsedUrl = HTTPClient::parseUrl($url);
+        $parsedQuery = HTTPClient::parseQueryString($parsedUrl['query']);
+
+        $resultQuery = array();
+        foreach($parsedQuery as $key => $value){
+          if(!in_array($key,$sessionids)){
+            $resultQuery[$key] = $value;
+          }
+        } 
+    
+        $parsedUrl['query'] = HTTPClient::buildQueryString($resultQuery);
+        return HTTPClient::buildUrl($parsedUrl);
+    }
+  
     /**
      * shows preview of WMS
      * @Route("/preview")
@@ -63,6 +85,9 @@ class WMSController extends Controller {
     */
     public function previewAction(){
         $getcapa_url = $this->get('request')->request->get('getcapa_url');
+
+        $getcapa_url = $this->CapabilitiesURLFixup($getcapa_url);
+
         $user = $this->get('request')->request->get('http_user');
         $password = $this->get('request')->request->get('http_password');
         if(!$getcapa_url){
