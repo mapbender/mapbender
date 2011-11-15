@@ -4,8 +4,15 @@ OpenLayers.ProxyHost = Mapbender.configuration.proxies.open + '?url=';
 
 $.widget("mapbender.mbMap", {
     options: {
-        'layerset': null, //mapset for main map
-        dpi: OpenLayers.DOTS_PER_INCH
+        layerset: null, //mapset for main map
+        dpi: OpenLayers.DOTS_PER_INCH,
+        srs: 'EPSG:4326',
+        units: 'degrees',
+        extents: {
+            max: [-180, -90, 180, 90],
+            start: [-180, -90, 180, 90]
+        },
+        maxResolution: 'auto'
     },
 
     map: null,
@@ -28,11 +35,11 @@ $.widget("mapbender.mbMap", {
         });
 
         var mapOptions = {
-            maxExtent: Mapbender.configuration.extents.max,
-            maxResolution: 'auto',
-            projection: new OpenLayers.Projection(Mapbender.configuration.srs),
-            displayProjection: new OpenLayers.Projection(Mapbender.configuration.srs),
-            units: Mapbender.configuration.units,
+            maxExtent: this.options.extents.max,
+            maxResolution: this.options.maxResolution,
+            projection: new OpenLayers.Projection(this.options.srs),
+            displayProjection: new OpenLayers.Projection(this.options.srs),
+            units: this.options.units,
             allOverlays: allOverlays,
 
             layers: layers
@@ -50,9 +57,9 @@ $.widget("mapbender.mbMap", {
         //TODO: Bind all events
         this.map.bind('zoomend', function() { self._trigger('zoomend', arguments); });
 
-        if(Mapbender.configuration.extents.start) {
+        if(this.options.extents.start) {
             this.map.goto({
-                box: Mapbender.configuration.extents.start
+                box: this.options.extents.start
             });
         }
         if(this.options.extra.type) {

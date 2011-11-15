@@ -160,13 +160,10 @@ class Application implements ApplicationInterface {
             'title' => $this->getTitle(),
             'layersets' => $layersets,
             'elements' => $element_confs,
-            'srs' => $this->configuration['srs'],
-            'units' => $this->configuration['units'],
             'basePath' => $base_path,
             'assetPath' => rtrim($this->get('templating.helper.assets')->getUrl('.'), '.'),
             'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
             'slug' => $this->slug,
-            'extents' => $this->configuration['extents'],
             'proxies' => array(
                 'open' => $this->get('router')->generate('mapbender_proxy_open'),
                 'secure' => $this->get('router')->generate('mapbender_proxy_secure')
