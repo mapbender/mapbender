@@ -200,6 +200,7 @@ $.widget("mapbender.mbMap", {
             default:
                         }
         */
+        return $.extend(Mapbender.layer[layerDef.type].create(layerDef), { mapbenderId: layerDef.id });
     },
 
     zoomIn: function() {
@@ -241,6 +242,21 @@ $.widget("mapbender.mbMap", {
     removePopup: function(popup) {
         //TODO: MapQuery
         this.map.olMap.removePopup(popup);
+    },
+
+    /**
+     * Searches for a MapQuery layer by it's Mapbender id.
+     * Returns the layer or null if not found.
+     */
+    layerById: function(id) {
+        var layer = null;
+        $.each(this.map.layers(), function(idx, mqLayer) {
+            if(mqLayer.options.mapbenderId === id) {
+                layer = mqLayer;
+                return false;
+            }
+        });
+        return layer;
     }
 });
 
