@@ -37,6 +37,7 @@ $.widget("mapbender.mbMap", {
         var mapOptions = {
             maxExtent: this.options.extents.max,
             maxResolution: this.options.maxResolution,
+            numZoomLevels: this.options.numZoomLevels,
             projection: new OpenLayers.Projection(this.options.srs),
             displayProjection: new OpenLayers.Projection(this.options.srs),
             units: this.options.units,
