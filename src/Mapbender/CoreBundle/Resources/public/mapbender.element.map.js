@@ -183,23 +183,6 @@ $.widget("mapbender.mbMap", {
             && typeof Mapbender.layer[layerDef.type].create !== 'function') {
             throw "Layer type " + layerDef.type + " is not supported by mapbender.mapquery-map";
         }
-        return Mapbender.layer[layerDef.type].create(layerDef);
-        /*
-        var mqLayerDef = null;
-        switch(layerDef.type) {
-            case 'wfs':
-                return {
-                    type: 'wfs',
-                    version: layerDef.configuration.version,
-                    label: layerDef.title,
-                    url: layerDef.configuration.url,
-                    featureType: layerDef.configuration.featureType,
-                    featureNS: layerDef.configuration.featureNS,
-                };
-
-            default:
-                        }
-        */
         return $.extend(Mapbender.layer[layerDef.type].create(layerDef), { mapbenderId: layerDef.id });
     },
 
