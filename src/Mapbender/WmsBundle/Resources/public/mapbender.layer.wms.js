@@ -26,10 +26,10 @@ Mapbender.layer = $.extend(Mapbender.layer, {
                 transparent: layerDef.configuration.transparent,
                 format:      layerDef.configuration.format,
 
-                isBaseLayer:   layerDef.configuration.baselayer,
+                isBaseLayer: layerDef.configuration.baselayer,
                 opacity:     layerDef.configuration.opacity,
                 visible:     layerDef.configuration.visible,
-                tiled:       layerDef.configuration.tiled
+                singleTile:  !layerDef.configuration.tiled
             };
             return mqLayerDef
         },

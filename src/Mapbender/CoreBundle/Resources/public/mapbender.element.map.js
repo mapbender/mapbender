@@ -59,14 +59,14 @@ $.widget("mapbender.mbMap", {
         this.map.bind('zoomend', function() { self._trigger('zoomend', arguments); });
 
         if(this.options.extents.start) {
-            this.map.goto({
+            this.map.center({
                 box: this.options.extents.start
             });
         }
         if(this.options.extra.type) {
             switch(this.options.extra.type) {
                 case 'poi':
-                    this.map.goto({
+                    this.map.center({
                         position: [ this.options.extra.data.x, 
                             this.options.extra.data.y ]
                     });
@@ -92,7 +92,7 @@ $.widget("mapbender.mbMap", {
                     }
                     break;
                 case 'bbox':
-                    this.map.goto({
+                    this.map.center({
                         box: [
                             this.options.extra.data.xmin, this.options.extra.data.ymin,
                             this.options.extra.data.xmax, this.options.extra.data.ymax
@@ -127,8 +127,15 @@ $.widget("mapbender.mbMap", {
         self._trigger('ready');
     },
 
+    /**
+     * DEPRECATED
+     */
     goto: function(options) {
-        this.map.goto(options);
+        this.map.center(options);
+    },
+
+    center: function(options) {
+        this.map.center(options);
     },
 
     highlight: function(features, options) {
@@ -167,7 +174,7 @@ $.widget("mapbender.mbMap", {
         // Goto features if requested
         if(o.goto) {
             var bounds = this.highlightLayer.olLayer.getDataExtent();
-            this.map.goto({box: bounds.toArray()});
+            this.map.center({box: bounds.toArray()});
         }
 
         this.highlightLayer.bind('featureselected',   function() { self._trigger('highlightselected', arguments); });
