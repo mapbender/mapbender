@@ -7,6 +7,7 @@ Mapbender.setup = function() {
             $('#' + id)[data.init](data.options);
         }
     });
+    $(document).trigger('mapbender.setupfinished');
 };
 
 $(Mapbender.setup);

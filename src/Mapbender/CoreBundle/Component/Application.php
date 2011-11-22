@@ -3,7 +3,6 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\ApplicationInterface;
-use Symfony\Component\HttpFoundation\Response;
 
 class Application implements ApplicationInterface {
     protected $container;
@@ -67,11 +66,7 @@ class Application implements ApplicationInterface {
         return NULL;
     }
 
-    public function render($_format = 'html', Response $response = NULL) {
-        if($response == NULL) {
-            $response = new Response();
-        }
-
+    public function render($_parts = array('css', 'html', 'js', 'configuration'), $_format = 'html') {
         $this->loadElements();
         $this->loadLayers();
 
@@ -105,7 +100,7 @@ class Application implements ApplicationInterface {
 
         // Then merge in all element assets
         // We also grab the element confs here
-        $elements_confs = array();
+        $element_confs = array();
         foreach($this->regions as $region => $elements) {
             foreach($elements as $element) {
                 $baseDir = $this->getBaseDir($element);
@@ -170,16 +165,13 @@ class Application implements ApplicationInterface {
             )
         );
 
-        $response->setContent($this->getTemplate()->render(array(
-            '_format' => $_format,
+        return $this->getTemplate()->render(array(
             'configuration' => $configuration,
             'assets' => array(
                 'css' => array_values(array_unique($css)),
                 'js' => array_values(array_unique($js))),
             'regions' => $this->regions
-        ), $_format));
-
-        return $response;
+        ), $_parts, $_format);
     }
 
     private function getBaseDir($object) {

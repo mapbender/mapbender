@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Application controller.
@@ -35,9 +36,20 @@ class ApplicationController extends Controller {
      * @Template()
      */
     public function applicationAction($slug) {
+        return $this->embedAction($slug,
+            array('css', 'html', 'js', 'configuration'),
+            $this->get('request')->get('_format'));
+    }
+
+    /**
+     * Embed controller action.
+     */
+    public function embedAction($slug, $parts = array('css', 'html', 'js', 'configuration'), $format = 'embed') {
         $application = $this->getApplication($slug);
         $this->checkAllowedRoles($application->getRoles());
-        return $application->render($this->get('request')->get('_format'));
+
+        $answer = $application->render($parts, $format);
+        return new Response($format === 'json' ? json_encode($answer) : $answer);
     }
 
     /**

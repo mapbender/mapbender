@@ -51,10 +51,10 @@ interface ApplicationInterface {
 	/**
 	 * Render the application
      *
+     * @param Array $parts The requested parts. Can be a combination if 'css', 'html', 'js' and 'configuration'
      * @param String $format The required response format, defaults to html
-	 * @param Response $response A Response instance
 	 * @return Response A Response instance
 	 */
-	function render($_format = 'html', Response $response = NULL);
+	function render($parts = array('css', 'html', 'js', 'javascript'), $_format = 'html');
 }
 
