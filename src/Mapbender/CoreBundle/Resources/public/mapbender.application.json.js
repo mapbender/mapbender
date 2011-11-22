@@ -24,10 +24,15 @@
 
             var self = this,
                 head = $('head'),
-                body = $('body');
+                body = $('body'),
+                prefix = '';
             if(json.assets && $.isArray(json.assets.css)) {
+                if(json.configuration && json.configuration.assetPath) {
+                    prefix = json.configuration.assetPath;
+                }
+
                 $.each(json.assets.css, function(index, path) {
-                    $('<link rel="stylesheet" type="text/css" href="' + json.configuration.assetPath + path + '"/>')
+                    $('<link rel="stylesheet" type="text/css" href="' + prefix + path + '"/>')
                         .appendTo(head);
                 });
             }
@@ -39,11 +44,10 @@
             }
 
             if(json.assets && $.isArray(json.assets.js)) {
+                if(json.configuration && json.configuration.assetPath) {
+                    prefix = json.configuration.assetPath;
+                }
                 $.each(json.assets.js, function(index, path) {
-                    var prefix = '';
-                    if(json.configuration && json.configuration.assetPath) {
-                        prefix = json.configuration.assetPath;
-                    }
                     $('<script type="text/javascript" src="' + prefix + path + '"></script>')
                         .appendTo(head);
                 });
