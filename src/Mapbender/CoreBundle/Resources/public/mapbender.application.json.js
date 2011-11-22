@@ -54,9 +54,11 @@
             }
             $.isReady = true;
 
-            OpenLayers._getScriptLocation = function() {
-                return json.configuration.assetPath + 'bundles/mapbendercore/mapquery/lib/openlayers/';
-            };
+            if(typeof(OpenLayers) !== 'undefined') {
+                OpenLayers._getScriptLocation = function() {
+                    return json.configuration.assetPath + 'bundles/mapbendercore/mapquery/lib/openlayers/';
+                };
+            }
 
             if(typeof(Mapbender) !== 'undefined' && typeof(Mapbender.setup) === 'function') {
                 Mapbender.setup();
