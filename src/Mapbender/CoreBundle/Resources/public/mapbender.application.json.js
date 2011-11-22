@@ -18,10 +18,9 @@
         },
 
         onSuccess: function(json) {
-            if(typeof(json.html) !== 'string') {
-                throw "No HTML in JSON.";
+            if(typeof(json.html) !== 'undefined') {
+                this.element.html(json.html);
             }
-            this.element.html(json.html);
 
             var self = this,
                 head = $('head'),
