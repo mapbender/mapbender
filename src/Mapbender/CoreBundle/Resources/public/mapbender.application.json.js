@@ -11,6 +11,7 @@
 
             $.ajax({
                 url: options.jsonUrl,
+                dataType: 'json',
                 context: this,
                 success: this.onSuccess,
                 error: this.onError
