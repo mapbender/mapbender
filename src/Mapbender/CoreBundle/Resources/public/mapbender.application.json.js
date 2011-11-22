@@ -58,7 +58,7 @@
                 return json.configuration.assetPath + 'bundles/mapbendercore/mapquery/lib/openlayers/';
             };
 
-            if(Mapbender && Mapbender.setup) {
+            if(typeof(Mapbender) !== 'undefined' && typeof(Mapbender.setup) === 'function') {
                 Mapbender.setup();
             }
         },
