@@ -40,7 +40,11 @@
 
             if(json.assets && $.isArray(json.assets.js)) {
                 $.each(json.assets.js, function(index, path) {
-                    $('<script type="text/javascript" src="' + json.configuration.assetPath + path + '"></script>')
+                    var prefix = '';
+                    if(json.configuration && json.configuration.assetPath) {
+                        prefix = json.configuration.assetPath;
+                    }
+                    $('<script type="text/javascript" src="' + prefix + path + '"></script>')
                         .appendTo(head);
                 });
             }
