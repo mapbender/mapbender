@@ -1,10 +1,9 @@
 (function($) {
 
-    var plugin = {
-        options: {},
-        element: undefined,
-
-        construct: function(options) {
+    var Plugin = function() {};
+    Plugin.prototype.options = {};
+    Plugin.prototype.element =  undefined;
+    Plugin.prototype.construct = function(options) {
             if(typeof(this.options.jsonUrl) === 'undefined') {
                 this.onError(undefined, 'error', 'You must set the jsonUrl option.');
             }
@@ -16,9 +15,9 @@
                 success: this.onSuccess,
                 error: this.onError
             });
-        },
+        };
 
-        onSuccess: function(json) {
+      Plugin.prototype.onSuccess = function(json) {
             if(typeof(json.html) !== 'undefined') {
                 this.element.html(json.html);
             }
@@ -64,21 +63,21 @@
             if(typeof(Mapbender) !== 'undefined' && typeof(Mapbender.setup) === 'function') {
                 Mapbender.setup();
             }
-        },
+        };
 
-        onError: function(jqXHR, textStatus, errorThrown) {
+        Plugin.prototype.onError = function(jqXHR, textStatus, errorThrown) {
             throw textStatus + ': ' + errorThrown;
-        }
-    };
+        };
 
     $.fn.mapbenderload = function(method) {
-        // Method dispatcher
+        var plugin = $(this).data("mapbenderload") || new Plugin();
         if(typeof(plugin[method]) === 'function') {
             if(method !== 'construct') {
                 var args = Array.prototype.slice.call(arguments, 1);
                 return plugin[method].apply(this, args);
             }
         } else if(typeof(method) === 'object' || typeof(method) === 'undefined') {
+            $(this).data("mapbenderload",plugin);
             plugin.options = arguments[0] || {};
             plugin.element = this;
             return plugin.construct.apply(plugin, arguments);
