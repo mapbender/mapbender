@@ -6,13 +6,6 @@ parameters:
             description: "Simple map showing WMS use."
             roles: [ROLE_USER]
             template:  Mapbender\CoreBundle\Template\Fullscreen
-            srs: EPSG:4326
-            units: degrees
-            extents:
-                start: [-180,-90,180,90]
-                max: [-180,-90,180,90]
-            scales: [25000000, 10000000,5000000,1000000,500000]
-            maxResolution: 'auto'
             layersets:
                 main:
                     demis:
@@ -94,6 +87,13 @@ parameters:
                         title: Main Map
                         class: Mapbender\CoreBundle\Element\Map
                         layerset: main
+                        srs: EPSG:4326
+                        units: degrees
+                        extents:
+                            start: [-180,-90,180,90]
+                            max: [-180,-90,180,90]
+                        scales: [25000000, 10000000,5000000,1000000,500000]
+                        maxResolution: 'auto'
                         overview:
                             layerset: overview
                     toc:
@@ -105,12 +105,6 @@ parameters:
             title: OSM Denver Map
             description: "Simple map showing OSM with WMTS tiles."
             template:  Mapbender\CoreBundle\Template\Fullscreen
-            srs: EPSG:4326
-            units: degrees
-            extents:
-                start: [-102.75,38.5,-102.5,39.5]
-                max: [-180,-90,180,90]
-            maxResolution: 'auto'
             layersets:
                 main:
                     osm-denver:
@@ -173,6 +167,12 @@ parameters:
                         title: Main Map
                         class: Mapbender\CoreBundle\Element\Map
                         layerset: main
+                        srs: EPSG:4326
+                        units: degrees
+                        extents:
+                            start: [-102.75,38.5,-102.5,39.5]
+                            max: [-180,-90,180,90]
+                        maxResolution: 'auto'
                     toc:
                         title: Table of Contents
                         class: Mapbender\CoreBundle\Element\Toc
