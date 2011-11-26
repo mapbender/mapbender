@@ -103,13 +103,15 @@ $.widget("mapbender.mbMap", {
         if(this.options.overview) {
             var layerConf = Mapbender.configuration.layersets[this.options.overview.layerset][0];
             var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
-                layers: layerConf.configuration.layers
+                layers: $.map(layerConf.configuration.layers, function(layer) {
+                    return layer.name;
+                })
             });
             var overviewOptions = {
                 layers: [layer],
                 mapOptions: {
-                    maxExtent: OpenLayers.Bounds.fromArray(Mapbender.configuration.extents.max),
-                    projection: new OpenLayers.Projection(Mapbender.configuration.srs)
+                    maxExtent: OpenLayers.Bounds.fromArray(this.options.extents.max),
+                    projection: new OpenLayers.Projection(this.options.srs)
                 }
             };
             if(this.options.overview.fixed) {
