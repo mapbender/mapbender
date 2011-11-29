@@ -77,8 +77,6 @@
 
     $.fn.mapbenderload = function(method) {
         var plugin = $(this).data("mapbenderload") || new Plugin();
-        // Method dispatcher
-        console.log(plugin); 
         if(typeof(plugin[method]) === 'function') {
             if(method !== 'construct') {
                 var args = Array.prototype.slice.call(arguments, 1);
