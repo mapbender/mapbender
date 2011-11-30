@@ -67,7 +67,7 @@ $.widget("mapbender.mbMap", {
             switch(this.options.extra.type) {
                 case 'poi':
                     this.map.center({
-                        position: [ this.options.extra.data.x, 
+                        position: [ this.options.extra.data.x,
                             this.options.extra.data.y ]
                     });
                     if(this.options.extra.data.scale) {
@@ -188,11 +188,12 @@ $.widget("mapbender.mbMap", {
     },
 
     _convertLayerDef: function(layerDef) {
-        if(typeof Mapbender.layer[layerDef.type] !== 'object' 
+        if(typeof Mapbender.layer[layerDef.type] !== 'object'
             && typeof Mapbender.layer[layerDef.type].create !== 'function') {
             throw "Layer type " + layerDef.type + " is not supported by mapbender.mapquery-map";
         }
-        return $.extend(Mapbender.layer[layerDef.type].create(layerDef), { mapbenderId: layerDef.id });
+        // TODO object should be cleaned up
+        return $.extend(Mapbender.layer[layerDef.type].create(layerDef), { mapbenderId: layerDef.id, configuration: layerDef });
     },
 
     zoomIn: function() {

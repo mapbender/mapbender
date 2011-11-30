@@ -31,7 +31,7 @@ Mapbender.layer = $.extend(Mapbender.layer, {
                 visible:     layerDef.configuration.visible,
                 singleTile:  !layerDef.configuration.tiled
             };
-            return mqLayerDef
+            return mqLayerDef;
         },
 
         featureInfo: function(layer, x, y, callback) {
@@ -75,6 +75,57 @@ Mapbender.layer = $.extend(Mapbender.layer, {
                     });
                 }
             });
+        },
+
+        loadFromUrl: function(url) {
+            var dlg = $('<div></div>').attr('id', 'loadfromurl-wms'),
+                spinner = $('<img />')
+                    .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/images/spinner.gif')
+                    .appendTo(dlg);
+            dlg.appendTo($('body'));
+
+            $('<script></type')
+                .attr('type', 'text/javascript')
+                .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/mapbender.layer.wms.loadfromurl.js')
+                .appendTo($('body'));
+        },
+
+        layersFromCapabilities: function(xml) {
+            var parser = new OpenLayers.Format.WMSCapabilities(),
+                capabilities = parser.read(xml);
+
+            if(typeof(capabilities.capability) !== 'undefined') {
+                var def = {
+                        type: 'wms',
+                        configuration: {
+                            title: capabilities.service.title,
+                            url: capabilities.capability.request.getmap.get.href,
+
+                            transparent: true,
+                            format: capabilities.capability.request.getmap.formats[0],
+
+                            baselayer: false,
+                            opacity: 100,
+                            tiled: false,
+
+                            layers: []
+                        }
+                    };
+
+                var layers = $.map(capabilities.capability.layers, function(layer, idx) {
+                    def.configuration.layers.push({
+                        name: layer.name,
+                        title: layer.title,
+                        maxScale: layer.maxScale,
+                        minScale: layer.minScale,
+                        visible: true
+                    });
+                });
+
+                return def;
+            } else {
+                return null;
+            }
         }
     }
 });
