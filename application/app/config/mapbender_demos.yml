@@ -59,16 +59,24 @@ parameters:
                         class: Acme\DemoBundle\Element\MapBox
                         group: maptools
                         target: map
-                    lineruler:
-                        title: Distance
-                        class: Mapbender\CoreBundle\Element\LineRuler
+                    linerulerButton:
+                        title: Line ruler
+                        class: Mapbender\CoreBundle\Element\Button
                         group: maptools
-                        target: map
-                    arearuler:
-                        title: Area
-                        class: Mapbender\CoreBundle\Element\AreaRuler
+                        icon: lineruler
+                        label: false
+                        target: lineruler
+                        action: activate
+                        deactivate: deactivate
+                    arearulerButton:
+                        title: Area ruler
+                        class: Mapbender\CoreBundle\Element\Button
                         group: maptools
-                        target: map
+                        icon: arearuler
+                        label: false
+                        target: arearuler
+                        action: activate
+                        deactivate: deactivate
                     toc-button:
                         title: TOC
                         class: Mapbender\CoreBundle\Element\Button
@@ -80,7 +88,8 @@ parameters:
                     fi:
                         title: FeatureInfo
                         class: Mapbender\CoreBundle\Element\FeatureInfo
-                        label: true
+                        icon: featureinfo
+                        label: false
                         target: map
                 content:
                     map:
@@ -99,6 +108,16 @@ parameters:
                     toc:
                         title: Table of Contents
                         class: Mapbender\CoreBundle\Element\Toc
+                        target: map
+                    lineruler:
+                        title: Distance
+                        class: Mapbender\CoreBundle\Element\LineRuler
+                        group: maptools
+                        target: map
+                    arearuler:
+                        title: Area
+                        class: Mapbender\CoreBundle\Element\AreaRuler
+                        group: maptools
                         target: map
 
         osm_denver:
