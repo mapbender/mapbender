@@ -41,7 +41,7 @@
                     json.assets.css = [json.assets.css];
                 }
                 $.each(json.assets.css, function(k, v) {
-                    if(v[0] !== '/' && json.configuration.assetPath) {
+                    if(v[0] !== '/' && json.configuration && json.configuration.assetPath) {
                         v = json.configuration.assetPath + '/' + v;
                     }
                     $('<link rel="stylesheet" type="text/css" href="' + v + '"/>')
@@ -58,7 +58,7 @@
                     json.assets.js = [json.assets.js];
                  }
                  $.each(json.assets.js, function(k, v) {
-                    if(v[0] !== '/' && json.configuration.assetPath) {
+                    if(v[0] !== '/' && json.configuration && json.configuration.assetPath) {
                         v = json.configuration.assetPath + '/' + v;
                     }
                     $('<script></script')
