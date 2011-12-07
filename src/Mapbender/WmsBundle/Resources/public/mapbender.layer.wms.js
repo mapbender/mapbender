@@ -45,7 +45,7 @@ $.extend(true, Mapbender, { layer: {
                 VERSION: layer.olLayer.params.VERSION,
                 EXCEPTIONS: "application/vnd.ogc.se_xml",
                 SRS: layer.olLayer.params.SRS,
-                BBOX: layer.map.goto().box.join(','),
+                BBOX: layer.map.center().box.join(','),
                 WIDTH: $(layer.map.element).width(),
                 HEIGHT: $(layer.map.element).height(),
                 X: x,
