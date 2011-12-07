@@ -1,4 +1,5 @@
-Mapbender.layer = $.extend(Mapbender.layer, {
+var Mapbender = Mapbender || {};
+$.extend(true, Mapbender, { layer: {
     'wms': {
         create: function(layerDef) {
             var layers = [];
@@ -128,5 +129,5 @@ Mapbender.layer = $.extend(Mapbender.layer, {
             }
         }
     }
-});
+}});
 

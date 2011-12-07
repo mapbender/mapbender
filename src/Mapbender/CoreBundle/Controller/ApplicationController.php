@@ -9,6 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
+use Assetic\Asset\FileAsset;
+use Assetic\Asset\AssetCollection;
 
 /**
  * Application controller.
@@ -51,6 +53,43 @@ class ApplicationController extends Controller {
         $answer = $application->render($parts, $format);
         return new Response($format === 'json' ? json_encode($answer) : $answer);
     }
+
+    /**
+     * Assetic controller.
+     * @Route("/application/{slug}/assets/{type}")
+     */
+    public function assetsAction($slug, $type) {
+        $application = $this->getApplication($slug);
+        $config = $application->getAssets();
+        $assets = new AssetCollection();
+        $locator = $this->get('file_locator');
+
+        if($type === 'css') {
+            $rewrite = $this->get('assetic.filter.cssrewrite');
+        }
+        foreach(array_values(array_unique($config[$type])) as $file) {
+            $filters = array();
+            if($type === 'css') {
+                $filters[] = $rewrite;
+            }
+
+            $target = dirname($_SERVER['SCRIPT_NAME']) . '/bundles/' . strtolower(substr($file, 1, strpos($file, '/') - 7));
+            $file = $locator->locate($file);
+            $target .= '/' . basename($file);
+            $assets->add(new FileAsset($file,
+                $filters, null, $target));
+        }
+
+        $response = new Response();
+        $response->setContent($assets->dump());
+        $mimetypes = array(
+            'css' => 'text/css',
+            'js' => 'application/javascript'
+        );
+        $response->headers->set('Content-Type', $mimetypes[$type]);
+        return $response;
+    }
+
 
     /**
      * Call an application element's action at /application/{slug}/element/{id}/{action}

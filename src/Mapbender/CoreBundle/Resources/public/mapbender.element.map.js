@@ -26,6 +26,8 @@ $.widget("mapbender.mbMap", {
             OpenLayers.DOTS_PER_INCH = this.options.dpi;
         }
 
+        OpenLayers.ImgPath = Mapbender.configuration.assetPath + '/bundles/mapbendercore/mapquery/lib/openlayers/img/';
+
         // Prepare initial layers
         var layers = [];
         var allOverlays = true;
