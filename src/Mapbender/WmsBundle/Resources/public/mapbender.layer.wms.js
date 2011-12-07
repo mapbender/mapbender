@@ -94,7 +94,6 @@ $.extend(true, Mapbender, { layer: {
         layersFromCapabilities: function(xml) {
             var parser = new OpenLayers.Format.WMSCapabilities(),
                 capabilities = parser.read(xml);
-
             if(typeof(capabilities.capability) !== 'undefined') {
                 var def = {
                         type: 'wms',
@@ -119,7 +118,9 @@ $.extend(true, Mapbender, { layer: {
                         title: layer.title,
                         maxScale: layer.maxScale,
                         minScale: layer.minScale,
-                        visible: true
+                        visible: true,
+                        bbox: layer.bbox,
+                        srs: layer.srs
                     });
                 });
 
