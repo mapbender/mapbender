@@ -44,7 +44,7 @@ $.widget("mapbender.mbMap", {
             displayProjection: new OpenLayers.Projection(this.options.srs),
             units: this.options.units,
             allOverlays: allOverlays,
-
+            theme: null,
             layers: layers
         };
 
