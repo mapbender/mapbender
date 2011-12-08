@@ -14,11 +14,20 @@
 
             $.ajax({
                 url: options.jsonUrl,
+                data: this.getUrlParameters(),
                 dataType: 'json',
                 context: this,
                 success: this.onSuccess,
                 error: this.onError
             });
+        },
+
+        getUrlParameters: function() {
+            var map = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                map[key] = unescape(value);
+            });
+            return map;
         },
 
         onSuccess: function(json) {
