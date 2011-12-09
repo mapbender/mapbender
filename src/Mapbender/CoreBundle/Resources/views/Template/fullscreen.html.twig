@@ -1,6 +1,6 @@
 {% extends "MapbenderCoreBundle::frontend.html.twig" %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ configuration.title }}{% endblock %}
 
 {% block css %}
 	{% for css in assets.css %}
@@ -25,6 +25,6 @@
 	{{ element.render() | raw }}
 {% endfor %}
 </div>
-<script type="text/javascript">{{ configuration | raw }}</script>
+<script type="text/javascript">var Mapbender = Mapbender || {}; Mapbender.configuration = {{ configuration | json_encode | raw }}</script>
 {% endblock %}
 

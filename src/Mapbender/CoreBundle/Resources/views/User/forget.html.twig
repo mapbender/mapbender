@@ -1,0 +1,19 @@
+{% extends "MapbenderCoreBundle::backend.html.twig" %}
+
+{% block title %}Login{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendercore/mapbender.login.css') }}" />
+{% endblock %}
+
+{% block content %}
+{{ form_errors(form) }}
+<form action="{{ path('mapbender_core_user_register') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+
+    <input type="submit" />
+</form>
+{% endblock %}
+
+{% block js %}
+{% endblock %}

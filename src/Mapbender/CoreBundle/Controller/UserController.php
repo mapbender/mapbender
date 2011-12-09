@@ -11,6 +11,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\SecurityContext;
 use Mapbender\CoreBundle\Entity\User;
 use Mapbender\CoreBundle\Form\UserType;
+use Symfony\Component\HttpFoundation\Request;
+use Acme\HelloBundle\Mailer;
 
 /**
  * User controller.
@@ -20,6 +22,84 @@ use Mapbender\CoreBundle\Form\UserType;
  */
 class UserController extends Controller {
     protected $em;
+    
+    /**
+     * User login
+     *
+     * @Route("/user/login")
+     * @Template()
+     */
+    public function loginAction() {
+        $request = $this->get('request');
+        if($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
+            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
+        } else {
+            $error = $request->getSession()->get(SecurityContext::AUTHENTICATION_ERROR);
+        }
+
+        return array(
+            'last_username' => $request->getSession()->get(SecurityContext::LAST_USERNAME),
+            'error' => $error,
+        );
+    }
+
+    /**
+     * @Route("/user/login/check")
+     */
+    public function loginCheckAction() {
+        //Don't worry, this is actually intercepted by the security layer.
+    }
+
+    /**
+     * @Route("/user/logout")
+     */
+    public function logoutAction() {
+        //Don't worry, this is actually intercepted by the security layer.
+    }
+    
+    /**
+     * @Route("/user/register")
+     * @Template
+     */
+    public function registerAction() {
+        $request = $this->get('request');
+        $user = new User();
+        $form = $this->createFormBuilder($user)
+                ->add('username', 'text')
+                ->add('password', 'password')
+                ->add('email', 'text')
+                ->add('firstName', 'text')
+                ->add('lastName', 'text')
+                ->add('captcha', 'captcha', array( 'width' => 200, 'height' => 50, 'length' => 6, ))
+                ->getForm();
+        
+        if($request->getMethod() === 'POST') {
+            $form->bindRequest($request);
+            if($form->isValid()) {
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->persist($user);
+                $em->flush();
+                //email senden
+                $mailTo = $user->getEmail();
+                $mailFrom = "info@wheregroup.com";
+                $mailer = $this->get('mailer');
+//                $sender = $this->get('email_sender');
+                $message = \Swift_Message::newInstance()
+			->setSubject('Ein WMS2Go-Job wurde erfolgreich erstellt')
+//			->setFrom(array($sender['email'] => $sender['name']))
+                        ->setFrom(array("paul.schmidt@wheregroup.com" => "Paul Sch"))
+			->setTo($user->getEmail())
+//			->setBody($this->renderEmail('BawWms2GoBundle:Job:email_success.email.twig',
+//				array('job' => $event->getJob())));
+                         ->setBody("bla bla");
+		$mailer->send($message);
+                return $this->redirect($this->generateUrl('mapbender_core_user_login'));
+            }
+        }
+        
+        return $this->render('MapbenderCoreBundle:User:register.html.twig',
+                array('form' => $form->createView()));
+    }
 
 	/**
 	 * @Route("/user/")
@@ -182,39 +262,6 @@ class UserController extends Controller {
         $this->em = $this->get('doctrine.orm.default_entity_manager');
     }
 
-    /**
-     * User login
-     *
-     * @Route("/login")
-     * @Template()
-     */
-    public function loginAction() {
-        $request = $this->get('request');
-        if($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
-            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
-        } else {
-            $error = $request->getSession()->get(SecurityContext::AUTHENTICATION_ERROR);
-        }
-
-        return array(
-            'last_username' => $request->getSession()->get(SecurityContext::LAST_USERNAME),
-            'error' => $error,
-        );
-    }
-
-    /**
-     * @Route("/login/check")
-     */
-    public function loginCheckAction() {
-        //Don't worry, this is actually intercepted by the security layer.
-    }
-
-    /**
-     * @Route("/logout")
-     */
-    public function logoutAction() {
-        //Don't worry, this is actually intercepted by the security layer.
-    }
 
     /**
      * @Route("/")

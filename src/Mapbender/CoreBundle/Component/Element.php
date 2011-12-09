@@ -20,7 +20,11 @@ abstract class Element implements ElementInterface {
 
 	protected function get($what) {
 		return $this->application->get($what);
-	}
+    }
+
+    protected function getParameter($key) {
+        return $this->application->getParameter($key);
+    }
 
 	public function getTitle() {
 		return "Element";

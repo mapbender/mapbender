@@ -3,7 +3,6 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\ApplicationInterface;
-use Symfony\Component\HttpFoundation\Response;
 
 class Application implements ApplicationInterface {
     protected $container;
@@ -67,11 +66,7 @@ class Application implements ApplicationInterface {
         return NULL;
     }
 
-    public function render(Response $response = NULL) {
-        if($response == NULL) {
-            $response = new Response();
-        }
-
+    public function render($_parts = array('css', 'html', 'js', 'configuration'), $_format = 'html') {
         $this->loadElements();
         $this->loadLayers();
 
@@ -85,41 +80,71 @@ class Application implements ApplicationInterface {
 
         $base_path = $this->get('request')->getBaseUrl();
 
+        $config = $this->getAssets();
+
+        $configuration = array(
+            'title' => $this->getTitle(),
+            'layersets' => $layersets,
+            'elements' => $config['element_confs'],
+            'basePath' => $base_path,
+            'assetPath' => rtrim($this->get('templating.helper.assets')->getUrl('.'), '.'),
+            'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
+            'slug' => $this->slug,
+            'proxies' => array(
+                'open' => $this->get('router')->generate('mapbender_proxy_open'),
+                'secure' => $this->get('router')->generate('mapbender_proxy_secure')
+            )
+        );
+
+        $cssUrl = $this->get('router')->generate('mapbender_core_application_assets', array(
+            'slug' => $this->slug,
+            'type' => 'css'));
+        $jsUrl = $this->get('router')->generate('mapbender_core_application_assets', array(
+            'slug' => $this->slug,
+            'type' => 'js'));
+
+        return $this->getTemplate()->render(array(
+            'configuration' => $configuration,
+            'assets' => array(
+                'js' => $jsUrl,
+                'css' => $cssUrl),
+            'regions' => $this->regions
+        ), $_parts, $_format);
+    }
+
+    public function getAssets() {
+        $this->loadElements();
+        $this->loadLayers();
+
         // Get all assets we need to include
         // First the application and template assets
         $js = array();
         $css = array();
-        $baseDir = $this->getBaseDir($this);
-        $js[] = $baseDir . '/mapbender.application.js';
-        $css[] = $baseDir . '/mapbender.application.css';
 
         $template = $this->getTemplate();
-        $baseDir = $this->getBaseDir($template);
         $template_metadata = $this->getTemplate()->getMetadata();
         foreach($template_metadata['css'] as $asset) {
-            $css[] = $baseDir . '/' . $asset;
+            $css[] = $this->getReference($template, $asset);
         }
         foreach($template_metadata['js'] as $asset) {
-            $js[] = $baseDir . '/' . $asset;
+            $js[] = $this->getReference($template, $asset);
         }
 
         // Then merge in all element assets
         // We also grab the element confs here
-        $elements_confs = array();
+        $element_confs = array();
         foreach($this->regions as $region => $elements) {
             foreach($elements as $element) {
-                $baseDir = $this->getBaseDir($element);
-
                 $assets = $element->getAssets();
                 if(array_key_exists('css', $assets)) {
                     foreach($assets['css'] as $asset) {
-                        $css[] = $baseDir . '/' . $asset;
+                        $css[] = $this->getReference($element, $asset);
                     }
                 }
 
                 if(array_key_exists('js', $assets)) {
                     foreach($assets['js'] as $asset) {
-                        $js[] = $baseDir . '/' . $asset;
+                        $js[] = $this->getReference($element, $asset);
                     }
                 }
 
@@ -131,66 +156,57 @@ class Application implements ApplicationInterface {
 
         foreach($this->layersets as $layerset) {
             foreach($layerset as $layer) {
-                $baseDir = $this->getBaseDir($layer);
-
                 $assets = $layer->getAssets();
                 if(array_key_exists('css', $assets)) {
                     foreach($assets['css'] as $asset) {
-                        $css[] = $baseDir . '/' . $asset;
+                        $css[] = $this->getReference($layer, $asset);
                     }
                 }
 
                 if(array_key_exists('js', $assets)) {
                     foreach($assets['js'] as $asset) {
-                        $js[] = $baseDir . '/' . $asset;
+                        $js[] = $this->getReference($layer, $asset);
                     }
                 }
             }
         }
 
+        $js[] = $this->getReference($this, 'mapbender.application.js');
+        $css[] = $this->getReference($this, 'mapbender.application.css');
+
         try {
             $wdt = $this->get('web_profiler.debug_toolbar');
-            $baseDir = $this->getBaseDir($this);
-            $js[] = $baseDir . '/mapbender.application.wdt.js';
+            $js[] = $this->getReference($this, 'mapbender.application.wdt.js');
         } catch(\Exception $e) {
             // Silently ignore...
         }
 
-        $configuration = array(
-            'title' => $this->getTitle(),
-            'layersets' => $layersets,
-            'elements' => $element_confs,
-            'srs' => $this->configuration['srs'],
-            'units' => $this->configuration['units'],
-            'basePath' => $base_path,
-            'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
-            'slug' => $this->slug,
-            'extents' => $this->configuration['extents'],
-            'proxies' => array(
-                'open' => $this->get('router')->generate('mapbender_proxy_open'),
-                'secure' => $this->get('router')->generate('mapbender_proxy_secure')
-            )
+        return array(
+            'element_confs' => $element_confs,
+            'css' => array_values(array_unique($css)),
+            'js' => array_values(array_unique($js))
         );
-
-        $response->setContent($this->getTemplate()->render(array(
-            'title' => $this->getTitle(),
-            'configuration' => "Mapbender = {}; Mapbender.configuration = " . json_encode($configuration),
-            'assets' => array(
-                'css' => array_unique($css),
-                'js' => array_unique($js)),
-            'regions' => $this->regions
-        )));
-
-        return $response;
     }
 
     private function getBaseDir($object) {
         $namespaces = explode('\\', get_class($object));
         $bundle = sprintf('%s%s', $namespaces[0], $namespaces[1]);
         // see Symfony\FrameWorkBundle\Command\AssetsInstallCommand, line 77
-        $baseDir = sprintf('bundles/%s', preg_replace('/bundle$/', '', strtolower($bundle)));
+        $baseDir = sprintf('@%s/Resources/public', $bundle);
+        //$baseDir = sprintf('bundles/%s', preg_replace('/bundle$/', '', strtolower($bundle)));
         return $baseDir;
     }
+
+    private function getReference($object, $file) {
+        if($file[0] !== '@') {
+            $namespaces = explode('\\', get_class($object));
+            $bundle = sprintf('%s%s', $namespaces[0], $namespaces[1]);
+            return sprintf('@%s/Resources/public/%s', $bundle, $file);
+        } else {
+            return $file;
+        }
+    }
+
     /**
      * Get the layer factory for the specified type and cache it
      *

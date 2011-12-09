@@ -26,7 +26,8 @@ interface ApplicationInterface {
 
 	/**
 	 * Return the class name of the Component\TemplateInterface to use
-	 *
+     *
+     * @param String $_format The requested template format
 	 * @return Application template
 	 */
 	function getTemplate();
@@ -49,10 +50,11 @@ interface ApplicationInterface {
 
 	/**
 	 * Render the application
-	 *
-	 * @param Response $response A Response instance
+     *
+     * @param Array $parts The requested parts. Can be a combination if 'css', 'html', 'js' and 'configuration'
+     * @param String $format The required response format, defaults to html
 	 * @return Response A Response instance
 	 */
-	function render(Response $response = NULL);
+	function render($parts = array('css', 'html', 'js', 'javascript'), $_format = 'html');
 }
 

@@ -4,7 +4,15 @@ OpenLayers.ProxyHost = Mapbender.configuration.proxies.open + '?url=';
 
 $.widget("mapbender.mbMap", {
     options: {
-        'layerset': null, //mapset for main map
+        layerset: null, //mapset for main map
+        dpi: OpenLayers.DOTS_PER_INCH,
+        srs: 'EPSG:4326',
+        units: 'degrees',
+        extents: {
+            max: [-180, -90, 180, 90],
+            start: [-180, -90, 180, 90]
+        },
+        maxResolution: 'auto'
     },
 
     map: null,
@@ -13,6 +21,12 @@ $.widget("mapbender.mbMap", {
     _create: function() {
         var self = this,
             me = $(this.element);
+
+        if(typeof(this.options.dpi) !== 'undefined') {
+            OpenLayers.DOTS_PER_INCH = this.options.dpi;
+        }
+
+        OpenLayers.ImgPath = Mapbender.configuration.assetPath + '/bundles/mapbendercore/mapquery/lib/openlayers/img/';
 
         // Prepare initial layers
         var layers = [];
@@ -23,13 +37,14 @@ $.widget("mapbender.mbMap", {
         });
 
         var mapOptions = {
-            maxExtent: Mapbender.configuration.extents.max,
-            maxResolution: 'auto',
-            projection: new OpenLayers.Projection(Mapbender.configuration.srs),
-            displayProjection: new OpenLayers.Projection(Mapbender.configuration.srs),
-            units: Mapbender.configuration.units,
+            maxExtent: this.options.extents.max,
+            maxResolution: this.options.maxResolution,
+            numZoomLevels: this.options.numZoomLevels,
+            projection: new OpenLayers.Projection(this.options.srs),
+            displayProjection: new OpenLayers.Projection(this.options.srs),
+            units: this.options.units,
             allOverlays: allOverlays,
-
+            theme: null,
             layers: layers
         };
 
@@ -45,16 +60,16 @@ $.widget("mapbender.mbMap", {
         //TODO: Bind all events
         this.map.bind('zoomend', function() { self._trigger('zoomend', arguments); });
 
-        if(Mapbender.configuration.extents.start) {
-            this.map.goto({
-                box: Mapbender.configuration.extents.start
+        if(this.options.extents.start) {
+            this.map.center({
+                box: this.options.extents.start
             });
         }
         if(this.options.extra.type) {
             switch(this.options.extra.type) {
                 case 'poi':
-                    this.map.goto({
-                        position: [ this.options.extra.data.x, 
+                    this.map.center({
+                        position: [ this.options.extra.data.x,
                             this.options.extra.data.y ]
                     });
                     if(this.options.extra.data.scale) {
@@ -79,7 +94,7 @@ $.widget("mapbender.mbMap", {
                     }
                     break;
                 case 'bbox':
-                    this.map.goto({
+                    this.map.center({
                         box: [
                             this.options.extra.data.xmin, this.options.extra.data.ymin,
                             this.options.extra.data.xmax, this.options.extra.data.ymax
@@ -90,13 +105,15 @@ $.widget("mapbender.mbMap", {
         if(this.options.overview) {
             var layerConf = Mapbender.configuration.layersets[this.options.overview.layerset][0];
             var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
-                layers: layerConf.configuration.layers
+                layers: $.map(layerConf.configuration.layers, function(layer) {
+                    return layer.name;
+                })
             });
             var overviewOptions = {
                 layers: [layer],
                 mapOptions: {
-                    maxExtent: OpenLayers.Bounds.fromArray(Mapbender.configuration.extents.max),
-                    projection: new OpenLayers.Projection(Mapbender.configuration.srs)
+                    maxExtent: OpenLayers.Bounds.fromArray(this.options.extents.max),
+                    projection: new OpenLayers.Projection(this.options.srs)
                 }
             };
             if(this.options.overview.fixed) {
@@ -114,8 +131,15 @@ $.widget("mapbender.mbMap", {
         self._trigger('ready');
     },
 
+    /**
+     * DEPRECATED
+     */
     goto: function(options) {
-        this.map.goto(options);
+        this.map.center(options);
+    },
+
+    center: function(options) {
+        this.map.center(options);
     },
 
     highlight: function(features, options) {
@@ -154,7 +178,7 @@ $.widget("mapbender.mbMap", {
         // Goto features if requested
         if(o.goto) {
             var bounds = this.highlightLayer.olLayer.getDataExtent();
-            this.map.goto({box: bounds.toArray()});
+            this.map.center({box: bounds.toArray()});
         }
 
         this.highlightLayer.bind('featureselected',   function() { self._trigger('highlightselected', arguments); });
@@ -166,27 +190,12 @@ $.widget("mapbender.mbMap", {
     },
 
     _convertLayerDef: function(layerDef) {
-        if(typeof Mapbender.layer[layerDef.type] !== 'object' 
+        if(typeof Mapbender.layer[layerDef.type] !== 'object'
             && typeof Mapbender.layer[layerDef.type].create !== 'function') {
             throw "Layer type " + layerDef.type + " is not supported by mapbender.mapquery-map";
         }
-        return Mapbender.layer[layerDef.type].create(layerDef);
-        /*
-        var mqLayerDef = null;
-        switch(layerDef.type) {
-            case 'wfs':
-                return {
-                    type: 'wfs',
-                    version: layerDef.configuration.version,
-                    label: layerDef.title,
-                    url: layerDef.configuration.url,
-                    featureType: layerDef.configuration.featureType,
-                    featureNS: layerDef.configuration.featureNS,
-                };
-
-            default:
-                        }
-        */
+        // TODO object should be cleaned up
+        return $.extend(Mapbender.layer[layerDef.type].create(layerDef), { mapbenderId: layerDef.id, configuration: layerDef });
     },
 
     zoomIn: function() {
@@ -228,6 +237,21 @@ $.widget("mapbender.mbMap", {
     removePopup: function(popup) {
         //TODO: MapQuery
         this.map.olMap.removePopup(popup);
+    },
+
+    /**
+     * Searches for a MapQuery layer by it's Mapbender id.
+     * Returns the layer or null if not found.
+     */
+    layerById: function(id) {
+        var layer = null;
+        $.each(this.map.layers(), function(idx, mqLayer) {
+            if(mqLayer.options.mapbenderId === id) {
+                layer = mqLayer;
+                return false;
+            }
+        });
+        return layer;
     }
 });
 
