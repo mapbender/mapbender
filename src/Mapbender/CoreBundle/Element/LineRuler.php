@@ -58,10 +58,11 @@ class LineRuler extends Element implements ElementInterface {
     }
 
     public function render() {
-        return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
-                'id' => $this->id,
-                'configuration' => $this->configuration,
-                'label' => $this->configuration['title']));
+        return $this->get('templating')->render('MapbenderCoreBundle:Element:measure_dialog.html.twig', array(
+            'id' => $this->id,
+            'type' => 'line',
+            'configuration' => $this->configuration,
+            'label' => $this->configuration['title']));
     }
 }
 

@@ -58,9 +58,10 @@ class AreaRuler extends Element implements ElementInterface {
     }
 
     public function render() {
-        return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
+        return $this->get('templating')->render('MapbenderCoreBundle:Element:measure_dialog.html.twig', array(
                 'id' => $this->id,
                 'configuration' => $this->configuration,
+                'type' => 'area',
                 'label' => $this->configuration['title']));
     }
 }

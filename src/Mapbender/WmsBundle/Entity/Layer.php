@@ -43,6 +43,14 @@ abstract class Layer implements LayerInterface{
     {
         return $this->id;
     }
+    
+    /**
+     * Set id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     /**
      * Set title
@@ -104,4 +112,11 @@ abstract class Layer implements LayerInterface{
         return $this->abstract;
     }
 
+  /**
+   * This returns $this->id so that is can be used to keep entity relations across Form submissions in a hidden field
+   * If you ask yourself : "Should I change this to something more readable? " The answer is likely "No" - Karim
+  */
+  public function __toString(){
+    return (string) $this->getId();
+  }
 }

@@ -70,6 +70,11 @@ $.widget("mapbender.mbButton", {
     },
 
     deactivate: function() {
+        if(this.options.target && this.options.deactivate) {
+            var target = $('#' + this.options.target);
+            var widget = Mapbender.configuration.elements[this.options.target].init;
+            target[widget](this.options.deactivate);
+        }
         if(this.active) {
             this.active = false;
         }

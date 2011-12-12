@@ -25,7 +25,7 @@ class Fullscreen implements TemplateInterface {
 		);
 	}
 
-	public function render($data, $_format = 'html') {
+	public function render($data, $parts, $_format = 'html') {
 		return $this->templating->render($this->getTemplate($_format), $data);
 	}
 }

@@ -1,6 +1,6 @@
 (function($) {
 
-$.widget("mapbender.mbCommonRuler", $.mapbender.mbButton, {
+$.widget("mapbender.mbCommonRuler", {
     options: {
         target: undefined,
         click: undefined,
@@ -27,7 +27,7 @@ $.widget("mapbender.mbCommonRuler", $.mapbender.mbButton, {
         this.control.handler.persist = this.control.persist;
 
         this.control.setImmediate(this.options.immediate);
-        
+
         this.control.events.on({
             'scope': this,
             'measure': this._handleMeasurements,
@@ -36,21 +36,22 @@ $.widget("mapbender.mbCommonRuler", $.mapbender.mbButton, {
 
         this.map = $('#' + this.options.target);
 
-        this._super('_create');
+        this.dlg = $(this.element).dialog({
+            autoOpen: false,
+            title: this.options.title
+        });
+
+        this.dlg.bind('dialogclose', $.proxy(this.deactivate, this));
     },
 
     /**
      * This activates this button and will be called on click
      */
     activate: function() {
-        this._super('activate');
         var olMap = this.map.data('mapQuery').olMap;
         olMap.addControl(this.control);
         this.control.activate();
 
-        if(this.dlg === null) {
-            this._createDialog();
-        }
         this.dlg.empty();
         this.dlg.dialog('open');
     },
@@ -60,7 +61,6 @@ $.widget("mapbender.mbCommonRuler", $.mapbender.mbButton, {
      * this group is activated.
      */
     deactivate: function() {
-        this._super('deactivate');
         var olMap = this.map.data('mapQuery').olMap;
         this.control.deactivate();
         olMap.removeControl(this.control);
