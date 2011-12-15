@@ -32,7 +32,7 @@ $.widget("mapbender.mbMap", {
         var layers = [];
         var allOverlays = true;
         $.each(Mapbender.configuration.layersets[this.options.layerset], function(idx, layerDef) {
-            layers.push(self._convertLayerDef.call(self, layerDef));
+			layers.push(self._convertLayerDef.call(self, layerDef));
             allOverlays = allOverlays && (layerDef.configuration.baselayer !== true);
         });
 
@@ -103,14 +103,21 @@ $.widget("mapbender.mbMap", {
         }
 
         if(this.options.overview) {
-            var layerConf = Mapbender.configuration.layersets[this.options.overview.layerset][0];
-            var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
-                layers: $.map(layerConf.configuration.layers, function(layer) {
-                    return layer.name;
-                })
-            });
-            var overviewOptions = {
-                layers: [layer],
+//			var layerConf = Mapbender.configuration.layersets[this.options.overview.layerset][0];
+//			var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
+//				layers: $.map(layerConf.configuration.layers, function(layer) {
+//					return layer.name;
+//				})
+//			});
+
+			var layers_ = [];
+			$.each(Mapbender.configuration.layersets[this.options.overview.layerset], function(idx, layerDef) {
+				layers_.push(self._convertLayerDef.call(self, layerDef));
+			});
+			console.log(layers_);
+			var res = $.MapQuery.Layer.types[layers_[0].type].call(this, layers_[0]);
+			var overviewOptions = {
+                layers: res.layer,
                 mapOptions: {
                     maxExtent: OpenLayers.Bounds.fromArray(this.options.extents.max),
                     projection: new OpenLayers.Projection(this.options.srs)
