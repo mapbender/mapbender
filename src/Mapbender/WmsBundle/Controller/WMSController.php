@@ -31,16 +31,27 @@ class WMSController extends Controller {
     */
     public function indexAction(array $wmsList){
 
+        $total = $this->getDoctrine()
+            ->getEntityManager()
+            ->createQuery("SELECT count(w.id) as total From MapbenderWmsBundle:WmsService w")
+            ->getScalarResult();
+        // Grrr   why can't php allow ()[] ?
+        $total = $total[0]['total'];
         $request = $this->get('request');
         $offset = $request->get('usedOffset');
         $limit = $request->get('usedLimit');
         $nextOffset = count($wmsList) < $limit ? $offset : $offset + $limit;
         $prevOffset = ($offset - $limit)  > 0 ? $offset - $limit : 0;
+        $lastOffset = ($total - $limit)  > 0 ? $total - $limit : 0;
+
         return array(
             "wmsList" => $wmsList,
+            "offset" => $offset,
             "nextOffset" =>  $nextOffset,
             "prevOffset" => $prevOffset,
-            "limit" => $limit
+            "lastOffset" => $lastOffset,
+            "limit" => $limit,
+            "total" => $total,
         );
     }
 

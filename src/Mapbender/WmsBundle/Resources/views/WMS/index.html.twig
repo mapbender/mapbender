@@ -5,8 +5,11 @@
 {% block content %}
 
     {% if wmsList|length > 0 %}
+    <a href="{{ path("mapbender_wms_wms_index",{"offset":0}) }}">{% trans %}Start{% endtrans %}</a> 
     <a href="{{ path("mapbender_wms_wms_index",{"offset":prevOffset}) }}">{% trans %}Previous{% endtrans %}</a> 
+    <span>{% trans with{'%start%': offset +1, '%end%': offset + wmsList|length, '%total%' : total} %} Showing %start% to %end% of %total%{% endtrans %}</span>
     <a href="{{  path("mapbender_wms_wms_index",{"offset": nextOffset}) }}">{% trans %}Next{% endtrans %}</a>
+    <a href="{{ path("mapbender_wms_wms_index",{"offset": lastOffset}) }}">{% trans %}End{% endtrans %}</a> 
     <table class="wms listable">
         <caption>{% trans %}Available WMS{% endtrans %}</caption>
         <thead>
