@@ -21,7 +21,9 @@ $.extend(true, Mapbender, { layer: {
 
                 isBaseLayer: layerDef.configuration.baselayer,
                 opacity:     layerDef.configuration.opacity,
-                visible:     layerDef.configuration.visible
+                visible:     layerDef.configuration.visible,
+
+                attribution: layerDef.configuration.attribution
             };
             return mqLayerDef;
         }

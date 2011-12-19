@@ -52,6 +52,8 @@ $.widget("mapbender.mbButton", {
         }
 
         this.active ? this.deactivate() : this.activate();
+
+        return false;
     },
 
     activate: function() {
