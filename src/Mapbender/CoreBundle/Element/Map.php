@@ -53,7 +53,7 @@ class Map extends Element implements ElementInterface {
 
         $bbox = $this->get('request')->get('bbox');
         if(!$poi && $bbox) {
-            $bbox = split(',', $bbox);
+            $bbox = explode(',', $bbox);
             if(count($bbox) === 4) {
                 $extra['type'] = 'bbox';
                 $extra['data'] = array(
