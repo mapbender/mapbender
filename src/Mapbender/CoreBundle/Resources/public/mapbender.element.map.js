@@ -141,7 +141,7 @@ $.widget("mapbender.mbMap", {
     /**
      * DEPRECATED
      */
-    goto: function(options) {
+    "goto": function(options) {
         this.map.center(options);
     },
 
@@ -171,7 +171,7 @@ $.widget("mapbender.mbMap", {
 
         var o = $.extend({}, {
             clearFirst: true,
-            goto: true
+            "goto": true
         }, options);
 
         // Remove existing features if requested
@@ -259,7 +259,17 @@ $.widget("mapbender.mbMap", {
             }
         });
         return layer;
+    },
+
+    scales: function() {
+        var scales = [];
+        for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
+            var res = this.map.olMap.getResolutionForZoom(i);
+            scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
     }
+        return scales;
+    }
+
 });
 
 })(jQuery);
