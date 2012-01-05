@@ -114,7 +114,7 @@ $.widget("mapbender.mbMap", {
 			$.each(Mapbender.configuration.layersets[this.options.overview.layerset], function(idx, layerDef) {
 				layers_.push(self._convertLayerDef.call(self, layerDef));
 			});
-			console.log(layers_);
+			window.console && console.log(layers_);
 			var res = $.MapQuery.Layer.types[layers_[0].type].call(this, layers_[0]);
 			var overviewOptions = {
                 layers: res.layer,
