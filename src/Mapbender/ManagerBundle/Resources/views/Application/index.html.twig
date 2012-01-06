@@ -1,0 +1,41 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ "Applications" | trans }}{% endblock %}
+
+{% block manager_js %}
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/list.js') }}"></script>
+{% endblock %}
+
+{% block manager_content %}
+
+<table class="datasheet">
+    <thead>
+        <tr>
+            <th>{{ "Title (Slug)" | trans }}</th>
+            <th>{{ "Description" | trans }}</th>
+            <th>{{ "Actions" | trans }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for app in apps %}
+        <tr id="app-{{ app.id }}">
+            <td>{{ app.title }} ({{ app.slug }})</td>
+            <td>{{ app.description }}</td>
+            <td>
+                <div class="entity-actions">
+                    <a class="action-view" href="#">{{ 'View' | trans }}</a>
+                    <a class="action-edit" href="{{ path('mapbender_manager_application_edit',  {'id': app.id }) }}" title="{{ 'Edit application' | trans }}">{{ 'Edit' | trans }}</a>
+                    <a class="action-clone" href="#">{{ 'Clone' | trans }}</a>
+                    <a class="action-delete" href="{{ path('mapbender_manager_application_confirmdelete', { 'id': app.id }) }}">{{ 'Delete' | trans }}</a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "MapbenderManagerBundle:Application:actions.html.twig" %}
+
+{% pager %}
+
+{% endblock %}

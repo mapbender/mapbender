@@ -1,0 +1,11 @@
+{% set actions = {
+    'create': {
+        'url': url('mapbender_manager_application_new'),
+        'title': 'Create new application',
+        'attr': {
+            'class': 'primary'
+        }
+    }
+}
+%}
+{% include "MapbenderManagerBundle::actions.html.twig" %}

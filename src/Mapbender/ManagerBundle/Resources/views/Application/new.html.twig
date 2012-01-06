@@ -1,0 +1,23 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ "New application" | trans}}{% endblock %}
+
+{% block manager_css %}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/css/jquery-ui-1.8.16.css') }}" />
+{% endblock %}
+
+{% block manager_js %}
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/form.js') }}"></script>
+{% endblock %}
+
+{% block manager_content %}
+
+<form action="{{ path('mapbender_manager_application_create') }}" method="post" {{ form_enctype(form)}}>
+    {%include "MapbenderManagerBundle:Application:form.html.twig" %}
+    <footer>
+        <input type="submit" value="{{ 'Create' | trans }}" />
+        <a href="{{ url('mapbender_manager_application_index') }}">{{ 'Cancel' | trans}}</a>
+    </footer>
+</form>
+
+{% endblock %}

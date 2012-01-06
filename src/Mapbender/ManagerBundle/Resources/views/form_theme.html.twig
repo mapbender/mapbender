@@ -1,0 +1,12 @@
+{% block field_row %}
+{% spaceless %}
+    <div id="form-{{ id }}">
+    {{ form_label(form, label|default(null)) }}
+    {{ form_widget(form) }}
+    {% if attr.title is defined %}
+    <p class="help">{{ attr.title }}</p>
+    {% endif %}
+    {{ form_errors(form) }}
+    </div>
+{% endspaceless %}
+{% endblock field_row %}
