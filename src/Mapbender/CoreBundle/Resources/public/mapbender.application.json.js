@@ -49,7 +49,7 @@
                 }
                 $.each(json.assets.js, function(index, path) {
                     $('<script type="text/javascript" src="' + prefix + path + '"></script>')
-                        .appendTo(head);
+                        .appendTo(body);
                 });
             }
             $.isReady = true;
@@ -60,8 +60,14 @@
                 };
             }
 
-            if(typeof(Mapbender) !== 'undefined' && typeof(Mapbender.setup) === 'function') {
-                Mapbender.setup();
+            if(json.configuration && json.configuration.initialize ){
+              if (typeof window[json.configuration.initialize] === 'function'){
+                window[json.configuration.initialize]();
+              }
+            }else{
+              if(typeof(Mapbender) !== 'undefined' && typeof(Mapbender.setup) === 'function') {
+                  Mapbender.setup();
+              }
             }
         };
 
