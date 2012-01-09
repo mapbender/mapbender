@@ -31,16 +31,27 @@ class WMSController extends Controller {
     */
     public function indexAction(array $wmsList){
 
+        $total = $this->getDoctrine()
+            ->getEntityManager()
+            ->createQuery("SELECT count(w.id) as total From MapbenderWmsBundle:WmsService w")
+            ->getScalarResult();
+        // Grrr   why can't php allow ()[] ?
+        $total = $total[0]['total'];
         $request = $this->get('request');
         $offset = $request->get('usedOffset');
         $limit = $request->get('usedLimit');
         $nextOffset = count($wmsList) < $limit ? $offset : $offset + $limit;
         $prevOffset = ($offset - $limit)  > 0 ? $offset - $limit : 0;
+        $lastOffset = ($total - $limit)  > 0 ? $total - $limit : 0;
+
         return array(
             "wmsList" => $wmsList,
+            "offset" => $offset,
             "nextOffset" =>  $nextOffset,
             "prevOffset" => $prevOffset,
-            "limit" => $limit
+            "lastOffset" => $lastOffset,
+            "limit" => $limit,
+            "total" => $total,
         );
     }
 
@@ -55,6 +66,28 @@ class WMSController extends Controller {
         return array( 'getcapa_url'=>'');
     }
     
+    /*
+     * Make sure the url is correct,. add missing parameters and filter sessionids
+    */ 
+    protected function CapabilitiesURLFixup($url){
+        $sessionids = array(
+          "PHPSESSID",
+          "jsessionid"
+        );
+        $parsedUrl = HTTPClient::parseUrl($url);
+        $parsedQuery = HTTPClient::parseQueryString($parsedUrl['query']);
+
+        $resultQuery = array();
+        foreach($parsedQuery as $key => $value){
+          if(!in_array($key,$sessionids)){
+            $resultQuery[$key] = $value;
+          }
+        } 
+    
+        $parsedUrl['query'] = HTTPClient::buildQueryString($resultQuery);
+        return HTTPClient::buildUrl($parsedUrl);
+    }
+  
     /**
      * shows preview of WMS
      * @Route("/preview")
@@ -63,6 +96,9 @@ class WMSController extends Controller {
     */
     public function previewAction(){
         $getcapa_url = $this->get('request')->request->get('getcapa_url');
+
+        $getcapa_url = $this->CapabilitiesURLFixup($getcapa_url);
+
         $user = $this->get('request')->request->get('http_user');
         $password = $this->get('request')->request->get('http_password');
         if(!$getcapa_url){

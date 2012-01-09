@@ -1,79 +1,95 @@
 (function($) {
 
     var Plugin = function() {};
-    Plugin.prototype.options = {};
-    Plugin.prototype.element =  undefined;
-    Plugin.prototype.construct = function(options) {
+
+    $.extend(Plugin.prototype, {
+        options: {},
+        element: undefined,
+        loadCounter: -1,
+
+        construct: function(options) {
             if(typeof(this.options.jsonUrl) === 'undefined') {
                 this.onError(undefined, 'error', 'You must set the jsonUrl option.');
             }
 
             $.ajax({
                 url: options.jsonUrl,
+                data: this.getUrlParameters(),
                 dataType: 'json',
                 context: this,
                 success: this.onSuccess,
                 error: this.onError
             });
-        };
+        },
 
-      Plugin.prototype.onSuccess = function(json) {
+        getUrlParameters: function() {
+            var map = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                map[key] = unescape(value);
+            });
+            return map;
+        },
+
+        onSuccess: function(json) {
+            this.loadHtml(json);
+            this.loadCss(json);
+            this.loadConfiguration(json);
+            this.loadJs(json);
+        },
+
+        loadHtml: function(json) {
             if(typeof(json.html) !== 'undefined') {
                 this.element.html(json.html);
             }
+        },
 
-            var self = this,
-                head = $('head'),
-                body = $('body'),
-                prefix = '';
-            if(json.assets && $.isArray(json.assets.css)) {
-                if(json.configuration && json.configuration.assetPath) {
-                    prefix = json.configuration.assetPath;
+        loadCss: function(json) {
+            if(json.assets && json.assets.css) {
+                var head = $('head');
+                if(!$.isArray(json.assets.css)) {
+                    json.assets.css = [json.assets.css];
                 }
-
-                $.each(json.assets.css, function(index, path) {
-                    $('<link rel="stylesheet" type="text/css" href="' + prefix + path + '"/>')
+                $.each(json.assets.css, function(k, v) {
+                    if(v[0] !== '/' && json.configuration && json.configuration.assetPath) {
+                        v = json.configuration.assetPath + '/' + v;
+                    }
+                    $('<link rel="stylesheet" type="text/css" href="' + v + '"/>')
                         .appendTo(head);
                 });
-            }
 
-            $.isReady = false;
+            }
+        },
+
+        loadJs: function(json) {
+            var self = this;
+             if(json.assets && json.assets.js) {
+                 if(!$.isArray(json.assets.js)) {
+                    json.assets.js = [json.assets.js];
+                 }
+                 $.each(json.assets.js, function(k, v) {
+                    if(v[0] !== '/' && json.configuration && json.configuration.assetPath) {
+                        v = json.configuration.assetPath + '/' + v;
+                    }
+                    $('<script></script')
+                        .attr('src', v)
+                        .appendTo($('body'));
+                 });
+
+             }
+        },
+
+        loadConfiguration: function(json) {
             if(json.configuration) {
                 Mapbender = {};
                 Mapbender.configuration = json.configuration;
             }
+        },
 
-            if(json.assets && $.isArray(json.assets.js)) {
-                if(json.configuration && json.configuration.assetPath) {
-                    prefix = json.configuration.assetPath;
-                }
-                $.each(json.assets.js, function(index, path) {
-                    $('<script type="text/javascript" src="' + prefix + path + '"></script>')
-                        .appendTo(body);
-                });
-            }
-            $.isReady = true;
-
-            if(typeof(OpenLayers) !== 'undefined') {
-                OpenLayers._getScriptLocation = function() {
-                    return json.configuration.assetPath + 'bundles/mapbendercore/mapquery/lib/openlayers/';
-                };
-            }
-
-            if(json.configuration && json.configuration.initialize ){
-              if (typeof window[json.configuration.initialize] === 'function'){
-                window[json.configuration.initialize]();
-              }
-            }else{
-              if(typeof(Mapbender) !== 'undefined' && typeof(Mapbender.setup) === 'function') {
-                  Mapbender.setup();
-              }
-            }
-        };
-
-        Plugin.prototype.onError = function(jqXHR, textStatus, errorThrown) {
+        onError: function(jqXHR, textStatus, errorThrown) {
             throw textStatus + ': ' + errorThrown;
-        };
+        }
+
+    });
 
     $.fn.mapbenderload = function(method) {
         var plugin = $(this).data("mapbenderload") || new Plugin();

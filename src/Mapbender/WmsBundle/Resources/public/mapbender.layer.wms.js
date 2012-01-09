@@ -1,4 +1,5 @@
-Mapbender.layer = $.extend(Mapbender.layer, {
+var Mapbender = Mapbender || {};
+$.extend(true, Mapbender, { layer: {
     'wms': {
         create: function(layerDef) {
             var layers = [];
@@ -29,7 +30,8 @@ Mapbender.layer = $.extend(Mapbender.layer, {
                 isBaseLayer: layerDef.configuration.baselayer,
                 opacity:     layerDef.configuration.opacity,
                 visible:     layerDef.configuration.visible,
-                singleTile:  !layerDef.configuration.tiled
+                singleTile:  !layerDef.configuration.tiled,
+                attribution: layerDef.configuration.attribution
             };
             return mqLayerDef;
         },
@@ -113,12 +115,17 @@ Mapbender.layer = $.extend(Mapbender.layer, {
                     };
 
                 var layers = $.map(capabilities.capability.layers, function(layer, idx) {
+                    var legend = null;
+                    if(layer.styles && layer.styles.length > 0) legend = layer.styles[0].legend.href;
                     def.configuration.layers.push({
                         name: layer.name,
                         title: layer.title,
                         maxScale: layer.maxScale,
                         minScale: layer.minScale,
-                        visible: true
+                        visible: true,
+                        bbox: layer.bbox,
+                        srs: layer.srs,
+                        legend: legend
                     });
                 });
 
@@ -128,5 +135,5 @@ Mapbender.layer = $.extend(Mapbender.layer, {
             }
         }
     }
-});
+}});
 

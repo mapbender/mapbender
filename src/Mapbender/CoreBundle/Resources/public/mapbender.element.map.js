@@ -26,6 +26,8 @@ $.widget("mapbender.mbMap", {
             OpenLayers.DOTS_PER_INCH = this.options.dpi;
         }
 
+        OpenLayers.ImgPath = Mapbender.configuration.assetPath + '/bundles/mapbendercore/mapquery/lib/openlayers/img/';
+
         // Prepare initial layers
         var layers = [];
         this.rootLayers = [];
@@ -152,7 +154,7 @@ $.widget("mapbender.mbMap", {
             units: this.options.units,
             allOverlays: allOverlays,
             controls: controls,
-
+            theme: null,
             layers: layers
         };
 
@@ -215,14 +217,21 @@ $.widget("mapbender.mbMap", {
         }
 
         if(this.options.overview) {
-            var layerConf = Mapbender.configuration.layersets[this.options.overview.layerset][0];
-            var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
-                layers: $.map(layerConf.configuration.layers, function(layer) {
-                    return layer.name;
-                })
-            });
-            var overviewOptions = {
-                layers: [layer],
+//			var layerConf = Mapbender.configuration.layersets[this.options.overview.layerset][0];
+//			var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
+//				layers: $.map(layerConf.configuration.layers, function(layer) {
+//					return layer.name;
+//				})
+//			});
+
+			var layers_ = [];
+			$.each(Mapbender.configuration.layersets[this.options.overview.layerset], function(idx, layerDef) {
+				layers_.push(self._convertLayerDef.call(self, layerDef));
+			});
+			window.console && console.log(layers_);
+			var res = $.MapQuery.Layer.types[layers_[0].type].call(this, layers_[0]);
+			var overviewOptions = {
+                layers: res.layer,
                 mapOptions: {
                     maxExtent: OpenLayers.Bounds.fromArray(this.options.extents.max),
                     projection: new OpenLayers.Projection(this.options.srs)
@@ -507,7 +516,17 @@ $.widget("mapbender.mbMap", {
             }
         });
         return layer;
+    },
+
+    scales: function() {
+        var scales = [];
+        for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
+            var res = this.map.olMap.getResolutionForZoom(i);
+            scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
     }
+        return scales;
+    }
+
 });
 
 })(jQuery);
