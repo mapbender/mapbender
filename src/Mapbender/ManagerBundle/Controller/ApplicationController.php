@@ -200,11 +200,12 @@ class ApplicationController extends Controller {
      * Create the application form, set extra options needed
      */
     private function createApplicationForm($application) {
-        $available_templates = array(
-            'Arsgeografica\MapbenderBundle\Template\Arsgeografica'
-                => 'Arsgeografica',
-            'Mapbender\CoreBundle\Template\Fullscreen' => 'Fullscreen'
-        );
+        $available_templates = array();
+        foreach($this->get('mapbender')->getTemplates() as $templateClassName) {
+            $available_templates[$templateClassName] =
+                $templateClassName::getTitle();
+        }
+        asort($available_templates);
 
         return $this->createForm(new ApplicationType(), $application, array(
             'available_templates' => $available_templates));

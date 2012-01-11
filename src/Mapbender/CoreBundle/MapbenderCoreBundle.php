@@ -9,13 +9,16 @@
 
 namespace Mapbender\CoreBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Mapbender\CoreBundle\Component\MapbenderBundle;
 
 /**
  * CoreBundle.
  *
  * @author Christian Wygoda <arsgeografica@gmail.com>
  */
-class MapbenderCoreBundle extends Bundle {
+class MapbenderCoreBundle extends MapbenderBundle {
+    public function getTemplates() {
+        return array('Mapbender\CoreBundle\Template\Fullscreen');
+    }
 }
 

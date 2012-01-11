@@ -12,6 +12,9 @@ class Fullscreen implements TemplateInterface {
 		$this->templating = $templating;
 	}
 
+    public static function getTitle() {
+        return 'Mapbender\'s simple template';
+    }
 	public function getTemplate($_format) {
 		return 'MapbenderCoreBundle:Template:fullscreen.html.twig';
 	}
