@@ -30,13 +30,13 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
     }
 
     public function apply(Request $request, ConfigurationInterface $configuration) {
-        // TODO: needs a security context 
+        // TODO: needs a security context
 
         $this->configuration = $configuration;
         $class = $configuration->getClass();
         $options = $this->getOptions($configuration);
 
-        
+
         // find by identifier?
         if ($request->attributes->has('id') || $request->attributes->has($configuration->getName()."Id" )) {
             $object = $this->find($class, $request, $options);
@@ -57,7 +57,7 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
 
     protected function findList($class,Request $request, $options){
             // if limit or offset are set we assume we the caller is trying for pagination
-            // FIXME: is this clever? what if someone just wants to mess with us? 
+            // FIXME: is this clever? what if someone just wants to mess with us?
 
             $offset = $request->get('offset') ? $request->get('offset') : 0;
             $limit = $request->get('limit') ? $request->get('limit') : 10;
@@ -66,14 +66,18 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
 
             $request->attributes->set("usedOffset",$offset);
             $request->attributes->set("usedLimit",$limit);
-            // This could support selecting by criteria for searching
-            return $this->registry->getRepository($class, $options['entity_manager'])
-                ->findBy(array(),array('id' => 'ASC'),$limit,$offset);
-                
 
+            // this generally allows the user to search in any field
+            // something else might be wanted in any case
+            $criteria = array();
+            if ($request->attributes->get('criteria'))
+              parse_str($request->attributes->get('criteria'), $criteria);
+
+            return $this->registry->getRepository($class, $options['entity_manager'])
+                ->findBy($criteria,array('id' => 'ASC'),$limit,$offset);
     }
 
-    protected function find($class, Request $request, $options) {   
+    protected function find($class, Request $request, $options) {
 
         // try to load by Id
         // Supports only single parameter - this is how the "normal" DoctrineParameterConverter works
@@ -81,13 +85,13 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
         if ($request->attributes->has('id')) {
             return $this->registry->getRepository($class, $options['entity_manager'])->find($request->attributes->get('id'));
         }
-        
-        // try to load by classname + id 
+
+        // try to load by classname + id
         $name = $this->configuration->getName();
         if ($request->attributes->has($name."Id")) {
             return $this->registry->getRepository($class, $options['entity_manager'])->find($request->attributes->get($name."Id"));
-        }   
-        
+        }
+
     }
 
     public function supports(ConfigurationInterface $configuration) {
