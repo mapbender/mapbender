@@ -155,10 +155,11 @@ $.widget("mapbender.mbMap", {
             displayProjection: new OpenLayers.Projection(this.options.srs),
             units: this.options.units,
             allOverlays: allOverlays,
-            controls: controls,
             theme: null,
             layers: layers
         };
+
+        if(controls.length !== 0) mapOptions.controls = controls;
 
         if(this.options.scales) {
             $.extend(mapOptions, {
