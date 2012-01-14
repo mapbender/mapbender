@@ -1,3 +1,13 @@
+{% block collection_widget %}
+{% spaceless %}
+    {% set attr = attr|merge({'data-item-count': value.count })%}
+    {% if prototype is defined %}
+        {% set attr = attr|merge({'data-prototype': form_row(prototype) }) %}
+    {% endif %}
+    {{ block('form_widget') }}
+{% endspaceless %}
+{% endblock collection_widget %}
+
 {% block field_row %}
 {% spaceless %}
     <div id="form-{{ id }}">

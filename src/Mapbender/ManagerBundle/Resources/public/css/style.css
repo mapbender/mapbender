@@ -132,10 +132,15 @@ form label.required {
 }
 
 form input[type="text"],
-form textarea {
+form textarea,
+form .CodeMirror {
     border: 1px solid #333;
     padding: 0.25em;
     width: 100%;
+}
+
+.CodeMirror .activeline {
+    background: #f0fcff !important;
 }
 
 form textarea {

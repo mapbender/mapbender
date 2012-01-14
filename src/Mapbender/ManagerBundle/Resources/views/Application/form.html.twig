@@ -20,7 +20,8 @@ Required fields are marked with dark labels, while optional fields have lighter 
     </section>
 
     <section id="application-elements">
-        Elements
+        <button class="collection-add" data-type="application_elements">{{ 'Add element' | trans }}</button>
+        {{ form_row(form.elements) }}
     </section>
 
     <section id="application-layersets">

@@ -4,10 +4,13 @@
 
 {% block manager_css %}
 <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/css/jquery-ui-1.8.16.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.css') }}" />
 {% endblock %}
 
 {% block manager_js %}
 <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/form.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}

@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\Response;
 
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
@@ -99,8 +100,8 @@ class ApplicationController extends Controller {
     /**
      * View application
      *
-     * @Route("/application/{id}")
-     * QMethod("GET")
+     * @Route("/application/{id}", requirements = { "id" = "\d+" })
+     * @Method("GET")
      * @Template
      */
     public function viewAction($id) {
@@ -110,7 +111,7 @@ class ApplicationController extends Controller {
     /**
      * Edit application
      *
-     * @Route("/application/{id}/edit")
+     * @Route("/application/{id}/edit", requirements = { "id" = "\d+" })
      * @Method("GET")
      * @Template
      */
@@ -126,7 +127,7 @@ class ApplicationController extends Controller {
     /**
      * Updates application by POSTed data
      *
-     * @Route("/application/{id}/update")
+     * @Route("/application/{id}/update", requirements = { "id" = "\d+" })
      * @Method("POST")
      */
     public function updateAction($id) {
@@ -157,7 +158,7 @@ class ApplicationController extends Controller {
 
     /**
      * Delete confirmation page
-     * @Route("/application/{id}/delete")
+     * @Route("/application/{id}/delete", requirements = { "id" = "\d+" })
      * @Method("GET")
      * @Template
      */
@@ -171,7 +172,7 @@ class ApplicationController extends Controller {
     /**
      * Delete application
      *
-     * @Route("/application/{id}/delete")
+     * @Route("/application/{id}/delete", requirements = { "id" = "\d+" })
      * @Method("POST")
      */
     public function deleteAction($id) {
@@ -209,6 +210,24 @@ class ApplicationController extends Controller {
 
         return $this->createForm(new ApplicationType(), $application, array(
             'available_templates' => $available_templates));
+    }
+
+    /**
+     * Return list of element classes
+     *
+     * @Route("/application/elements", defaults={ "_format"="json" })
+     */
+    public function elementListAction() {
+        $available_elements = array();
+        foreach($this->get('mapbender')->getElements() as $elementClassName) {
+            $available_elements[$elementClassName] = array(
+                'title' => $elementClassName::getTitle(),
+                'description' => $elementClassName::getDescription(),
+                'tags' => $elementClassName::getTags());
+        }
+        asort($available_elements);
+
+        return new Response(json_encode($available_elements));
     }
 
     /**

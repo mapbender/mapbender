@@ -5,6 +5,8 @@ namespace Mapbender\ManagerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
 
+use Mapbender\ManagerBundle\Form\Type\BaseElementType;
+
 class ApplicationType extends AbstractType {
     public function getName() {
         return 'application';
@@ -16,7 +18,11 @@ class ApplicationType extends AbstractType {
     }
 
     public function buildForm(FormBuilder $builder, array $options) {
-        $builder->add('title', 'text', array(
+        $builder
+            /**
+             * Base data
+             */
+            ->add('title', 'text', array(
                 'attr' => array(
                     'title' => 'The application title, as shown in the browser '
                         . 'title bar and in lists.')))
@@ -32,7 +38,14 @@ class ApplicationType extends AbstractType {
                 'choices' => $options['available_templates'],
                 'attr' => array(
                     'title' => 'The HTML template used for this '
-                    .'application.')));
+                    .'application.')))
+            /**
+             * Elements
+             */
+            ->add('elements', 'collection', array(
+                'type' => new BaseElementType(),
+                'allow_add' => true,
+                'allow_delete' => true));
     }
 }
 
