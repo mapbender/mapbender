@@ -11,17 +11,17 @@ use Doctrine\ORM\Query\Expr\Andx;
 use Doctrine\ORM\Query\Expr\Comparison;
 
 class WmcStorage extends Element implements ElementInterface {
-    public function getTitle() {
+    static public function getTitle() {
         return "WMC Storage Interface";
     }
 
-    public function getDescription() {
+    static public function getDescription() {
         return "Stores and loads WMC documents. Can provide a dialog for "
             + "selecting and saving.";
     }
 
-    public function getTags() {
-        return array('wmc');
+    static public function getTags() {
+        return array('WMC');
     }
 
     public function getAssets() {

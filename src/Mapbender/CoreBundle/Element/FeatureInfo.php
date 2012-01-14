@@ -8,16 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class FeatureInfo extends Element implements ElementInterface {
-	public function getTitle() {
+	static public function getTitle() {
 		return "FeatureInfo";
 	}
 
-	public function getDescription() {
+	static public function getDescription() {
 		return "Renders a button to trigger a feature info request and popup";
 	}
 
-	public function getTags() {
-		return array('button', 'featureinfo');
+	static public function getTags() {
+		return array('Button', 'FeatureInfo');
 	}
 
 	public function getAssets() {

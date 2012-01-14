@@ -11,7 +11,11 @@
 
 namespace Mapbender\WmcBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Mapbender\CoreBundle\Component\MapbenderBundle;
 
-class MapbenderWmcBundle extends Bundle {
+class MapbenderWmcBundle extends MapbenderBundle {
+    public function getElements() {
+        return array('Mapbender\WmcBundle\Element\WmcStorage');
+    }
 }
+

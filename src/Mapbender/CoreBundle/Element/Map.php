@@ -7,15 +7,15 @@ use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Map extends Element implements ElementInterface {
-    public function getTitle() {
+    static public function getTitle() {
         return "MapQuery Map";
     }
 
-    public function getDescription() {
+    static public function getDescription() {
         return "Renders a MapQuery map";
     }
 
-    public function getTags() {
+    static public function getTags() {
         return array('Map', 'MapQuery');
     }
 

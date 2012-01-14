@@ -7,16 +7,16 @@ use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AreaRuler extends Element implements ElementInterface {
-    public function getTitle() {
+    static public function getTitle() {
         return "Please give me a title";
     }
 
-    public function getDescription() {
+    static public function getDescription() {
         return "Please give me a description";
     }
 
-    public function getTags() {
-        return array();
+    static public function getTags() {
+        return array('Ruler', 'Measure');
     }
 
     public function getAssets() {

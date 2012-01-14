@@ -7,16 +7,16 @@ use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Button extends Element implements ElementInterface {
-	public function getTitle() {
+	static public function getTitle() {
 		return "Button";
 	}
 
-	public function getDescription() {
+	static public function getDescription() {
 		return "Renders a Button";
 	}
 
-	public function getTags() {
-		return array('button');
+	static public function getTags() {
+		return array('Button');
 	}
 
 	public function getAssets() {

@@ -8,16 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class AboutDialog extends Element implements ElementInterface {
-	public function getTitle() {
+	static public function getTitle() {
 		return "About dialog";
 	}
 
-	public function getDescription() {
+	static public function getDescription() {
 		return "Renders a button to show a about dialog";
 	}
 
-	public function getTags() {
-		return array('button', 'about');
+	static public function getTags() {
+		return array('Help', 'Info', 'About');
 	}
 
 	public function getAssets() {

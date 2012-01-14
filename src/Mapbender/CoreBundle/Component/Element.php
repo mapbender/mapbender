@@ -2,10 +2,9 @@
 
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-abstract class Element implements ElementInterface {
+abstract class Element {
 	protected $id;
 	protected $name;
 	protected $configuration;
@@ -26,19 +25,21 @@ abstract class Element implements ElementInterface {
         return $this->application->getParameter($key);
     }
 
-	public function getTitle() {
-		return "Element";
-	}
+    static public function getTitle() {
+        throw new \Exception('Your Element must implement the getTitle '
+            .'function!');
+    }
 
     public function getName() {
         return $this->name;
     }
 
-	public function getDescription() {
-		throw new \Exception("The getDescription function of " . get_class($this) . " has to be overriden!");
-	}
+    static public function getDescription() {
+        throw new \Exception('Your Element must implement the getDescription '
+            .'function!');
+    }
 
-	public function getTags() {
+	public static function getTags() {
 		return array();
 	}
 

@@ -25,21 +25,21 @@ interface ElementInterface {
 	 *
 	 * @return string $title
 	 */
-	public function getTitle();
+	static public function getTitle();
 
 	/**
 	 * Return element description.
 	 *
 	 * @return string $title
 	 */
-	public function getDescription();
+	static public function getDescription();
 
 	/**
 	 * Return tags for searching
 	 *
 	 * @return array $tags
 	 */
-	public function getTags();
+	static public function getTags();
 
 	/**
 	 * Return array of assets (CSS, JS).
@@ -60,9 +60,9 @@ interface ElementInterface {
 
 	/**
 	 * Return the list of possible parent elements.
-	 * If the list is empty, it is assumed that the 
+	 * If the list is empty, it is assumed that the
 	 * element can be inserted in any container element.
-	 * The list should contain the full class names of 
+	 * The list should contain the full class names of
 	 * the possible parent elements.
 	 *
 	 * @return array $parents
