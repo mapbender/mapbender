@@ -30,7 +30,8 @@ $.extend(true, Mapbender, { layer: {
                 isBaseLayer: layerDef.configuration.baselayer,
                 opacity:     layerDef.configuration.opacity,
                 visible:     layerDef.configuration.visible,
-                singleTile:  !layerDef.configuration.tiled
+                singleTile:  !layerDef.configuration.tiled,
+                attribution: layerDef.configuration.attribution
             };
             return mqLayerDef;
         },
@@ -94,6 +95,7 @@ $.extend(true, Mapbender, { layer: {
         layersFromCapabilities: function(xml) {
             var parser = new OpenLayers.Format.WMSCapabilities(),
                 capabilities = parser.read(xml);
+
             if(typeof(capabilities.capability) !== 'undefined') {
                 var def = {
                         type: 'wms',
@@ -113,6 +115,8 @@ $.extend(true, Mapbender, { layer: {
                     };
 
                 var layers = $.map(capabilities.capability.layers, function(layer, idx) {
+                    var legend = null;
+                    if(layer.styles && layer.styles.length > 0) legend = layer.styles[0].legend.href;
                     def.configuration.layers.push({
                         name: layer.name,
                         title: layer.title,
@@ -120,7 +124,8 @@ $.extend(true, Mapbender, { layer: {
                         minScale: layer.minScale,
                         visible: true,
                         bbox: layer.bbox,
-                        srs: layer.srs
+                        srs: layer.srs,
+                        legend: legend
                     });
                 });
 

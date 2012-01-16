@@ -93,4 +93,74 @@ class HTTPClient {
         $result->setStatusCode($statusCode);
         return $result;
     }
+
+  static function parseQueryString($str) {
+    $op = array();
+    $pairs = explode("&", $str);
+    foreach ($pairs as $pair) {
+        $arr = explode("=",$pair);
+        $k = isset($arr[0])? $arr[0]:null;
+        $v = isset($arr[1])? $arr[1]:null;
+        if($k !== null){
+          $op[$k] = $v;
+        }
+    }
+    return $op;
+  } 
+  
+  static function buildQueryString($parsedQuery) {
+    $result = array();
+    foreach($parsedQuery as $key => $value){
+      if($key || $value ) {
+        $result[] = "$key=$value";
+      }
+    }
+    return implode("&",$result);
+  } 
+
+  static function parseUrl($url){
+      $defaults = array(
+        "scheme"   => "http",
+        "host"     => null, 
+        "port"     => null,
+        "user"     => null,
+        "pass"     => null, 
+        "path"     => "/",  
+        "query"    => null,
+        "fragment" => null
+      );  
+
+      $parsedUrl = parse_url($url);
+
+      $mergedUrl = array_merge($defaults,$parsedUrl);
+    return $mergedUrl;
+  }
+  static function buildUrl(array $parsedUrl){
+      $defaults = array(
+        "scheme"   => "http",
+        "host"     => null, 
+        "port"     => null,
+        "user"     => null,
+        "pass"     => null, 
+        "path"     => "/",  
+        "query"    => null,
+        "fragment" => null
+      );  
+
+      $mergedUrl = array_merge($defaults,$parsedUrl);
+
+      $result = $mergedUrl['scheme'] ."://";
+      
+      $authString = $mergedUrl['user'] ;
+      $authString .= $mergedUrl['pass'] ? ":" .$mergedUrl['pass'] : ""; 
+      $authString .= $authString ? "@":"";
+      $result .= $authString;
+
+      $result .= $mergedUrl['host'];
+      $result .= $mergedUrl['port'] ? ':'.$mergedUrl['port']:"";
+      $result .= $mergedUrl['path'];
+      $result .= $mergedUrl['query'] ? '?'.$mergedUrl['query']:"";
+      return $result;
+   
+  }
 }
