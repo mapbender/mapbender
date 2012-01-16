@@ -100,6 +100,12 @@ class WMSService extends GroupLayer {
     protected $exceptionFormats = array();
     
     /**
+    * @ORM\Column(type="array",nullable="true")
+    */
+    protected $supportedExceptionFormats = array();
+    
+    
+    /**
     * @ORM\Column(type="boolean", nullable="true")
     */
     protected $symbolSupportSLD = false;
@@ -134,6 +140,11 @@ class WMSService extends GroupLayer {
     protected $requestGetCapabilitiesFormats = array();
     
     /**
+    * @ORM\Column(type="array", nullable="true")
+    */
+    protected $requestSupportedGetCapabilitiesFormats = array();
+    
+    /**
     * @ORM\Column(type="string", nullable="true")
     */
     protected $requestGetMapGET = "";
@@ -146,6 +157,11 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="array", nullable="true")
     */
     protected $requestGetMapFormats = array();
+    
+    /**
+    * @ORM\Column(type="array", nullable="true")
+    */
+    protected $requestSupportedGetMapFormats = array();
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -160,6 +176,11 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="array", nullable="true")
     */
     protected $requestGetFeatureInfoFormats = array();
+    
+    /**
+    * @ORM\Column(type="array", nullable="true")
+    */
+    protected $requestSupportedGetFeatureInfoFormats = array();
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -174,6 +195,11 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="array", nullable="true")
     */
     protected $requestDescribeLayerFormats = array();
+    
+    /**
+    * @ORM\Column(type="array", nullable="true")
+    */
+    protected $requestSupportedDescribeLayerFormats = array();
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -188,6 +214,11 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="array", nullable="true")
     */
     protected $requestGetLegendGraphicFormats = array();
+    
+    /**
+    * @ORM\Column(type="array", nullable="true")
+    */
+    protected $requestSupportedGetLegendGraphicFormats = array();
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -202,6 +233,11 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="array", nullable="true")
     */
     protected $requestGetStylesFormats = array();
+    
+    /**
+    * @ORM\Column(type="array", nullable="true")
+    */
+    protected $requestSupportedGetStylesFormats = array();
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -216,6 +252,11 @@ class WMSService extends GroupLayer {
     * @ORM\Column(type="array", nullable="true")
     */
     protected $requestPutStylesFormats = array();
+    
+    /**
+    * @ORM\Column(type="array", nullable="true")
+    */
+    protected $requestSupportedPutStylesFormats = array();
 
     /**
     * @ORM\Column(type="text", nullable="true");
@@ -995,6 +1036,166 @@ class WMSService extends GroupLayer {
     
     public function setPassword ($password ){
         $this->password  = $password ;
+    }
+
+    /**
+     * Set supportedExceptionFormats
+     *
+     * @param array $supportedExceptionFormats
+     */
+    public function setSupportedExceptionFormats($supportedExceptionFormats)
+    {
+        $this->supportedExceptionFormats = $supportedExceptionFormats;
+    }
+
+    /**
+     * Get supportedExceptionFormats
+     *
+     * @return array 
+     */
+    public function getSupportedExceptionFormats()
+    {
+        return $this->supportedExceptionFormats;
+    }
+
+    /**
+     * Set requestSupportedGetCapabilitiesFormats
+     *
+     * @param array $requestSupportedGetCapabilitiesFormats
+     */
+    public function setRequestSupportedGetCapabilitiesFormats($requestSupportedGetCapabilitiesFormats)
+    {
+        $this->requestSupportedGetCapabilitiesFormats = $requestSupportedGetCapabilitiesFormats;
+    }
+
+    /**
+     * Get requestSupportedGetCapabilitiesFormats
+     *
+     * @return array 
+     */
+    public function getRequestSupportedGetCapabilitiesFormats()
+    {
+        return $this->requestSupportedGetCapabilitiesFormats;
+    }
+
+    /**
+     * Set requestSupportedGetMapFormats
+     *
+     * @param array $requestSupportedGetMapFormats
+     */
+    public function setRequestSupportedGetMapFormats($requestSupportedGetMapFormats)
+    {
+        $this->requestSupportedGetMapFormats = $requestSupportedGetMapFormats;
+    }
+
+    /**
+     * Get requestSupportedGetMapFormats
+     *
+     * @return array 
+     */
+    public function getRequestSupportedGetMapFormats()
+    {
+        return $this->requestSupportedGetMapFormats;
+    }
+
+    /**
+     * Set requestSupportedGetFeatureInfoFormats
+     *
+     * @param array $requestSupportedGetFeatureInfoFormats
+     */
+    public function setRequestSupportedGetFeatureInfoFormats($requestSupportedGetFeatureInfoFormats)
+    {
+        $this->requestSupportedGetFeatureInfoFormats = $requestSupportedGetFeatureInfoFormats;
+    }
+
+    /**
+     * Get requestSupportedGetFeatureInfoFormats
+     *
+     * @return array 
+     */
+    public function getRequestSupportedGetFeatureInfoFormats()
+    {
+        return $this->requestSupportedGetFeatureInfoFormats;
+    }
+
+    /**
+     * Set requestSupportedDescribeLayerFormats
+     *
+     * @param array $requestSupportedDescribeLayerFormats
+     */
+    public function setRequestSupportedDescribeLayerFormats($requestSupportedDescribeLayerFormats)
+    {
+        $this->requestSupportedDescribeLayerFormats = $requestSupportedDescribeLayerFormats;
+    }
+
+    /**
+     * Get requestSupportedDescribeLayerFormats
+     *
+     * @return array 
+     */
+    public function getRequestSupportedDescribeLayerFormats()
+    {
+        return $this->requestSupportedDescribeLayerFormats;
+    }
+
+    /**
+     * Set requestSupportedGetLegendGraphicFormats
+     *
+     * @param array $requestSupportedGetLegendGraphicFormats
+     */
+    public function setRequestSupportedGetLegendGraphicFormats($requestSupportedGetLegendGraphicFormats)
+    {
+        $this->requestSupportedGetLegendGraphicFormats = $requestSupportedGetLegendGraphicFormats;
+    }
+
+    /**
+     * Get requestSupportedGetLegendGraphicFormats
+     *
+     * @return array 
+     */
+    public function getRequestSupportedGetLegendGraphicFormats()
+    {
+        return $this->requestSupportedGetLegendGraphicFormats;
+    }
+
+    /**
+     * Set requestSupportedGetStylesFormats
+     *
+     * @param array $requestSupportedGetStylesFormats
+     */
+    public function setRequestSupportedGetStylesFormats($requestSupportedGetStylesFormats)
+    {
+        $this->requestSupportedGetStylesFormats = $requestSupportedGetStylesFormats;
+    }
+
+    /**
+     * Get requestSupportedGetStylesFormats
+     *
+     * @return array 
+     */
+    public function getRequestSupportedGetStylesFormats()
+    {
+        return $this->requestSupportedGetStylesFormats;
+    }
+
+    /**
+     * Set requestSupportedPutStylesFormats
+     *
+     * @param array $requestSupportedPutStylesFormats
+     */
+    public function setRequestSupportedPutStylesFormats($requestSupportedPutStylesFormats)
+    {
+        $this->requestSupportedPutStylesFormats = $requestSupportedPutStylesFormats;
+    }
+
+    /**
+     * Get requestSupportedPutStylesFormats
+     *
+     * @return array 
+     */
+    public function getRequestSupportedPutStylesFormats()
+    {
+        return $this->requestSupportedPutStylesFormats;
     }
 
 }
