@@ -30,10 +30,15 @@ class HTTPClient {
                 // thrown when the parameter is not set
                 // maybe some logging ?
                 $proxyConf = array();
+                $this->container->get('logging')->debug('Not using Proxy Configuuration');
             }
             if($proxyConf && isset($proxyConf['host']) && $proxyConf['host'] != ""){
                 $this->setProxyHost($proxyConf['host']);
                 $this->setProxyPort($proxyConf['port']?:null);
+                $this->container->get('logging')
+                ->debug(sprintf('Making Request via Proxy: %s:%s',
+                $this->getProxyHost(),
+                $this->getProxyPort()));
             }
         }
 
@@ -78,6 +83,12 @@ class HTTPClient {
         if($this->getUsername()){
             curl_setopt($this->ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
             curl_setopt($this->ch, CURLOPT_USERPWD, $this->getUsername().":".$this->getPassword());
+        }
+        if($this->getProxyHost()){
+            curl_setopt($this->ch, CURLOPT_PROXY, $this->getProxyHost());
+        }
+        if($this->getProxyPort()){
+            curl_setopt($this->ch, CURLOPT_PROXYPORT, $this->getProxyport());
         }
 
 
