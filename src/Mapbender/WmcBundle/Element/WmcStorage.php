@@ -51,11 +51,18 @@ class WmcStorage extends Element implements ElementInterface {
         $request = $this->get('request');
         $em = $this->get('doctrine')->getEntityManager();
         $repository = $this->get('doctrine')->getRepository('MapbenderWmcBundle:Wmc');
-        //TODO: owner shall be a reference to a UserInterface
-        $owner = $this->get('security.context')->getToken()->getUser()->getUsername();
 
         switch($action) {
+        case 'download':
+            $response->setContent($request->get('wmcContent'));
+            $response->headers->set('Content-Type', 'application/xml');
+            $response->headers->set('Content-Disposition', 'attachment; filename=wmc.xml');
+            return $response;
+            break;
+
         case 'save':
+            //TODO: owner shall be a reference to a UserInterface
+            $owner = $this->get('security.context')->getToken()->getUser()->getUsername();
             $title = $request->get('title');
             $public = strtolower($request->get('public'));
             $public = $public === 'true' ? true : false;
@@ -100,6 +107,8 @@ class WmcStorage extends Element implements ElementInterface {
             break;
 
         case 'list':
+            //TODO: owner shall be a reference to a UserInterface
+            $owner = $this->get('security.context')->getToken()->getUser()->getUsername();
             $params = $request->get('params', array());
             if(!is_array($params)) {
                 throw new \Exception('The params parameter must be an array.');
@@ -140,6 +149,8 @@ class WmcStorage extends Element implements ElementInterface {
             break;
 
         case 'load':
+            //TODO: owner shall be a reference to a UserInterface
+            $owner = $this->get('security.context')->getToken()->getUser()->getUsername();
             $params = $request->get('params');
             if(!is_array($params)) {
                 throw new \Exception('The params parameter must be an array.');
@@ -171,6 +182,8 @@ class WmcStorage extends Element implements ElementInterface {
             return $response;
             break;
         case 'delete':
+            //TODO: owner shall be a reference to a UserInterface
+            $owner = $this->get('security.context')->getToken()->getUser()->getUsername();
             $id = intval($request->get('id'));
             $wmc = $repository->findOneBy(array(
                 'id' => $id,
