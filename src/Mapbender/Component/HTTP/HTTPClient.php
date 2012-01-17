@@ -51,8 +51,17 @@ class HTTPClient {
     public function setProxyHost($host){
         $this->proxyHost = $host;
     }
+    
+    public function getProxyHost(){
+        return $this->proxyHost;
+    }
+
     public function setProxyPort($port){
         $this->proxyPort = $port;
+    }
+    
+    public function getProxyPort(){
+        return $this->proxyPort;
     }
 
     public function getUsername (){
