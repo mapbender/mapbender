@@ -316,5 +316,9 @@ class Application implements ApplicationInterface {
      public function getParameter($key) {
         return $this->container->getParameter($key);
      }
+
+     public function getSlug() {
+        return $this->slug;
+     }
 }
 
