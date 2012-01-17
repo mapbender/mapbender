@@ -4,56 +4,79 @@ $.widget("mapbender.mbKmlExport", {
     options: {},
 
     elementUrl: null,
+    form: null,
 
     _create: function() {
         var self = this;
-        var me = $(this.element);
-        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
+        this.form = $(this.element);
+        this.elementUrl = Mapbender.configuration.elementPath +
+            this.form.attr('id') + '/';
     },
 
     _destroy: $.noop,
 
-    exportMap: function(targetId) {
-        var map = $('#' + targetId).data('mbMap').map,
-            mbLayers = map.layers(),
-            form = $(this.element);
+    _layer2form: function(layer) {
+        if(layer.options.type !== 'wms') {
+            return;
+        }
 
-        form.empty();
+        $('<input></input>')
+            .attr('type', 'hidden')
+            .attr('name', 'layers[' + layer.label + ']')
+            .val($.param({
+                params: layer.olLayer.params,
+                options: {
+                    layers: layer.olLayer.options.layers,
+                    format: layer.olLayer.options.format,
+                    url: layer.olLayer.options.url,
+                    visibility: layer.olLayer.visible
+                }
+            }))
+            .appendTo(this.form);
+    },
 
-        $.each(mbLayers, function(k, v) {
-            if(v.options.type !== 'wms') {
-                return;
-            }
-
-            $('<input></input>')
-                .attr('type', 'hidden')
-                .attr('name', 'layers[' + v.label + ']')
-                .val($.param({
-                    params: v.olLayer.params,
-                    options: {
-                        layers: v.olLayer.options.layers,
-                        format: v.olLayer.options.format,
-                        url: v.olLayer.options.url,
-                        visibility: v.olLayer.visible
-                    }
-                }))
-                .appendTo(form);
-        });
+    _map2form: function(targetId) {
+        var map = $('#' + targetId).data('mbMap').map;
 
         var extent = map.olMap.getExtent();
         $('<input></input>')
             .attr('type', 'hidden')
             .attr('name', 'extent')
             .val(extent.toBBOX())
-            .appendTo(form);
+            .appendTo(this.form);
 
         $('<input></input>')
             .attr('type', 'hidden')
             .attr('name', 'srs')
             .val(map.olMap.getProjection())
-            .appendTo(form);
+            .appendTo(this.form);
+    },
 
-        form.submit();
+    exportMap: function(targetId) {
+        var map = $('#' + targetId).data('mbMap').map,
+            mbLayers = map.layers(),
+            self = this;
+
+        this.form.empty();
+
+        $.each(mbLayers, function(k, v) {
+            self._layer2form(v);
+        });
+
+        this._map2form(targetId);
+
+        this.form.submit();
+    },
+
+    exportLayer: function(layer) {
+        var mapId = layer.map.element.attr('id');
+        this.form.empty();
+
+        this._layer2form(layer);
+
+        this._map2form(mapId);
+
+        this.form.submit();
     }
 });
 
