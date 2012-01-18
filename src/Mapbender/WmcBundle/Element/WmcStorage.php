@@ -53,6 +53,11 @@ class WmcStorage extends Element implements ElementInterface {
         $repository = $this->get('doctrine')->getRepository('MapbenderWmcBundle:Wmc');
 
         switch($action) {
+        case 'downloadDirect':
+            $response->setContent(file_get_contents($request->files->get('wmcContent')));
+            $response->headers->set('Content-Type', 'application/xml');
+            return $response;
+            break;
         case 'download':
             $response->setContent($request->get('wmcContent'));
             $response->headers->set('Content-Type', 'application/xml');
