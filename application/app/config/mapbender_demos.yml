@@ -11,7 +11,7 @@ parameters:
                     demis:
                         class: Mapbender\WmsBundle\WmsLayer
                         title: Demis World Map
-                        url: http://www2.demis.nl/wms/wms.asp?wms=WorldMap
+                        url: http://www2.demis.nl/wms/wms.ashx?wms=WorldMap
                         layers:
                             - { name: Bathymetry,    title :Bathymetry,  visible: true, queryable: true }
                             - { name: Countries,     title :Countries,   visible: true, queryable: true }
@@ -25,11 +25,12 @@ parameters:
                     mapbender_users:
                         class: Mapbender\WmsBundle\WmsLayer
                         title: Mapbender Users
-                        url: http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
+                        url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
                         layers:
-                            - { name: Mapbender_User,    title : Nutzer,  visible: true }
-                            - { name: Mapbender_Names,   title : Namen,   visible: true, queryable: true }
-                        queryLayers: [ Mapbender_User, Mapbender_Names]
+                            - { name: Mapbender_User,    title : User,  visible: true }
+                            - { name: Mapbender_Names,   title : Name,   visible: true, queryable: true }
+                        queryLayers: [Mapbender_Names]
+                        queryFormat: text/html
                         baselayer: false
                         visible: true
                         format: image/png
@@ -40,7 +41,7 @@ parameters:
                     demis:
                         class: Mapbender\WmsBundle\WmsLayer
                         title: Demis World Map
-                        url: http://www2.demis.nl/wms/wms.asp?wms=WorldMap
+                        url: http://www2.demis.nl/wms/wms.ashx?wms=WorldMap
                         layers:
                             - { name: Bathymetry,    title :Bathymetry,  visible: true }
                             - { name: Countries,     title :Countries,   visible: true }
@@ -140,10 +141,12 @@ parameters:
                     mapbender_users:
                         class: Mapbender\WmsBundle\WmsLayer
                         title: Mapbender Users
-                        url: http://wms1.ccgis.de/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
+                        url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
                         layers:
-                            - { name: Mapbender_User,    title : Nutzer,  visible: true }
-                            - { name: Mapbender_Names,   title : Namen,   visible: true, queryable: true }
+                            - { name: Mapbender_User,    title : User,  visible: true }
+                            - { name: Mapbender_Names,   title : Name,   visible: true, queryable: true }
+                        queryLayers: [Mapbender_Names]
+                        queryFormat: text/html
                         baselayer: false
                         visible: true
                         format: image/png
