@@ -8,6 +8,8 @@ Symfony2 or Mapbender3:
 1. PHP >= 5.3.2: This is essential to run Symfony2
 2. date.timezone setting in your php.ini
 3. PHP CLI for running console commands for Symfony2
+4. PHP modules: php5-sqlite, php5-psql, php5-intl
+
 
 For an overview of more optional requirements, see
 http://symfony.com/doc/current/reference/requirements.html. We will list
