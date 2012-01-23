@@ -22,7 +22,7 @@ class MapClick extends Element implements ElementInterface {
     public function getAssets() {
         return array(
             'js' => array(
-                '../mapbendercore/mapbender.element.button.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.button.js',
                 'mapbender.element.mapclick.js'
             ),
             'css' => array()
