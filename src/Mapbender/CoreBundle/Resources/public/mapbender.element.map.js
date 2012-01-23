@@ -51,10 +51,11 @@ $.widget("mapbender.mbMap", {
         });
 
         // TODO find out how to do a proper menu with jquery ui
-        if(this.options.controlstype === 'menu')
+        if(this.options.controlstype === 'menu') {
             $('#mb-element-maptools').buttonset();
-        else
+        } else {
             $('#mb-element-maptools').buttonset();
+        }
 
         var controls = [];
         var hasNavigation = false;
@@ -221,26 +222,25 @@ $.widget("mapbender.mbMap", {
         }
 
         if(this.options.overview) {
-//      var layerConf = Mapbender.configuration.layersets[this.options.overview.layerset][0];
-//      var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
-//        layers: $.map(layerConf.configuration.layers, function(layer) {
-//          return layer.name;
-//        })
-//      });
 
-      var layers_ = [];
-      $.each(Mapbender.configuration.layersets[this.options.overview.layerset], function(idx, layerDef) {
-        layers_.push(self._convertLayerDef.call(self, layerDef));
-      });
-      window.console && console.log(layers_);
-      var res = $.MapQuery.Layer.types[layers_[0].type].call(this, layers_[0]);
-      var overviewOptions = {
+            var layers_ = [];
+            $.each(Mapbender.configuration
+                    .layersets[this.options.overview.layerset],
+                    function(idx, layerDef) {
+                layers_.push(self._convertLayerDef.call(self, layerDef));
+            });
+
+            var res = $.MapQuery.Layer.types[layers_[0].type]
+                .call(this, layers_[0]);
+            var overviewOptions = {
                 layers: res.layer,
                 mapOptions: {
                     maxExtent: OpenLayers.Bounds.fromArray(this.options.extents.max),
-                    projection: new OpenLayers.Projection(this.options.srs)
+                    projection: new OpenLayers.Projection(this.options.srs),
+                    theme: null
                 }
             };
+
             if(this.options.overview.fixed) {
                 $.extend(overviewOptions, {
                     minRatio: 1,
@@ -250,6 +250,7 @@ $.widget("mapbender.mbMap", {
             var overviewControl = new OpenLayers.Control.OverviewMap(overviewOptions);
             this.map.olMap.addControl(overviewControl);
         }
+
         if(controls.length === 0) {
             this.map.olMap.addControl(new OpenLayers.Control.Scale());
             this.map.olMap.addControl(new OpenLayers.Control.PanZoomBar());

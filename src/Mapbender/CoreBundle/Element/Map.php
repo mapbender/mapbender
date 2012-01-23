@@ -29,7 +29,6 @@ class Map extends Element implements ElementInterface {
             ),
             'css' => array(
                 'mapbender.elements.css',
-                'mapquery/lib/jquery/themes/base/jquery-ui.css',
                 'mapquery/lib/openlayers/theme/default/style.css'
             )
         );
