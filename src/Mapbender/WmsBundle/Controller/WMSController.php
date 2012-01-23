@@ -106,7 +106,7 @@ class WMSController extends Controller {
             return $this->render("MapbenderWmsBundle:WMS:register.html.twig",array("getcapa_url",$getcapa_url));
         }
         try {
-            $client = new HTTPClient($container=$this->container);
+            $client = new HTTPClient($this->container);
             if($user){
               $client->setUsername($user);
               $client->setPassword($password);
