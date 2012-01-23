@@ -12,7 +12,8 @@ $.widget("mapbender.mbMap", {
             max: [-180, -90, 180, 90],
             start: [-180, -90, 180, 90]
         },
-        maxResolution: 'auto'
+        maxResolution: 'auto',
+        imgPath: 'bundles/mapbendercore/mapquery/lib/openlayers/img'
     },
 
     map: null,
@@ -26,7 +27,7 @@ $.widget("mapbender.mbMap", {
             OpenLayers.DOTS_PER_INCH = this.options.dpi;
         }
 
-        OpenLayers.ImgPath = Mapbender.configuration.assetPath + '/bundles/mapbendercore/mapquery/lib/openlayers/img/';
+        OpenLayers.ImgPath = Mapbender.configuration.assetPath + this.options.imgPath + '/';
 
         // Prepare initial layers
         var layers = [];
