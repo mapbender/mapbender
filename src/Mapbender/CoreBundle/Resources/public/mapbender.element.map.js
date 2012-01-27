@@ -233,7 +233,7 @@ $.widget("mapbender.mbMap", {
             var res = $.MapQuery.Layer.types[layers_[0].type]
                 .call(this, layers_[0]);
             var overviewOptions = {
-                layers: res.layer,
+                layers: [res.layer],
                 mapOptions: {
                     maxExtent: OpenLayers.Bounds.fromArray(this.options.extents.max),
                     projection: new OpenLayers.Projection(this.options.srs),
