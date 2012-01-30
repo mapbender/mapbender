@@ -22,6 +22,7 @@ class ProxyController extends Controller {
      * @Route("/open", name="mapbender_proxy_open")
      */
     public function openProxyAction() {
+        session_write_close();
         $request = $this->get('request');
 
         $url = parse_url($request->get('url'));
@@ -53,13 +54,15 @@ class ProxyController extends Controller {
                 }
             }
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_HEADER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
 
             // Get response from server
-            list($header, $content) = preg_split('/([\r\n][\r\n])\\1/', curl_exec($ch), 2);
+            //list($header, $content) = preg_split('/([\r\n][\r\n])\\1/', curl_exec($ch), 2);
+            $content = curl_exec($ch);
             $status = curl_getinfo($ch);
+
             curl_close($ch);
             // Return server response
             $response = new Response();
