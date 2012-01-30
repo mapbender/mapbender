@@ -12,7 +12,8 @@ $.widget("mapbender.mbMap", {
             max: [-180, -90, 180, 90],
             start: [-180, -90, 180, 90]
         },
-        maxResolution: 'auto'
+        maxResolution: 'auto',
+        imgPath: 'bundles/mapbendercore/mapquery/lib/openlayers/img'
     },
 
     map: null,
@@ -26,15 +27,127 @@ $.widget("mapbender.mbMap", {
             OpenLayers.DOTS_PER_INCH = this.options.dpi;
         }
 
-        OpenLayers.ImgPath = Mapbender.configuration.assetPath + '/bundles/mapbendercore/mapquery/lib/openlayers/img/';
+        OpenLayers.ImgPath = Mapbender.configuration.assetPath + this.options.imgPath + '/';
 
         // Prepare initial layers
         var layers = [];
+        this.rootLayers = [];
         var allOverlays = true;
+
+        function addSubs(layer){
+            if(layer.sublayers) {
+                $.each(layer.sublayers, function(idx, val) {
+                           layers.push(val);
+                           addSubs(val);
+                       });
+            }
+        }
+
         $.each(Mapbender.configuration.layersets[this.options.layerset], function(idx, layerDef) {
-			layers.push(self._convertLayerDef.call(self, layerDef));
-            allOverlays = allOverlays && (layerDef.configuration.baselayer !== true);
+                   layers.push(self._convertLayerDef.call(self, layerDef));
+                   self.rootLayers.push(layers[layers.length-1]);
+                   addSubs(layers[layers.length-1]);
+                   allOverlays = allOverlays && (layerDef.configuration.baselayer !== true);
         });
+
+        // TODO find out how to do a proper menu with jquery ui
+        if(this.options.controlstype === 'menu') {
+            $('#mb-element-maptools').buttonset();
+        } else {
+            $('#mb-element-maptools').buttonset();
+        }
+
+        var controls = [];
+        var hasNavigation = false;
+        if(this.options.controls) {
+            $.each(this.options.controls, function(idx, control) {
+                       switch(idx) {
+                       case 'pan':
+                           $('#' + control.target).css('display', 'block')
+                               .click(function() { self.map.mode('pan'); });
+                           control = 'DragPan';
+                           break;
+                       case 'zoomin':
+                           $('#' + control.target).css('display', 'block')
+                               .click(function() { self.map.mode('zoomin'); });
+                           control = 'ZoomIn';
+                           break;
+                       case 'zoomout':
+                           $('#' + control.target).css('display', 'block')
+                               .click(function() { self.map.mode('zoomout'); });
+                           control = 'ZoomOut';
+                           break;
+                       case 'zoombox':
+                           $('#' + control.target).css('display', 'block')
+                               .click(function() { self.map.mode('zoombox'); });
+                           control = 'ZoomBox';
+                           break;
+                       case 'zoomhome':
+                       case 'zoomnext':
+                       case 'zoomlast':
+                       case 'zoomcoordinate':
+                       case 'zoomscale':
+                           $('#' + control.target).css('display', 'block');
+                           break;
+                       }
+                       if(idx === 'zoomhome') {
+                           $('#' + control.target).click($.proxy(self.zoomToFullExtent, self));
+                       } else if(idx === 'zoomlast') {
+                           if(!hasNavigation) {
+                               controls.push(hasNavigation = new OpenLayers.Control.NavigationHistory());
+                           }
+                           $('#' + control.target).click($.proxy(hasNavigation.previousTrigger, hasNavigation));
+                       } else if(idx === 'zoomnext') {
+                           if(!hasNavigation) {
+                               controls.push(hasNavigation = new OpenLayers.Control.NavigationHistory());
+                           }
+                           $('#' + control.target).click($.proxy(hasNavigation.nextTrigger, hasNavigation));
+                       } else if(idx === 'zoomcoordinate') {
+                           $('#mb-zoom-coordinate-dialog').dialog(
+                               {
+                                   autoOpen: false,
+                                   buttons: {
+                                       Zoom: function() {
+                                           var x = $('#mb-zoom-coordinate-x')[0].value;
+                                           var y = $('#mb-zoom-coordinate-y')[0].value;
+                                           self.center({position: [x, y]});
+                                           $( this ).dialog( "close" );
+                                       },
+                                       Cancel: function() {
+                                           $( this ).dialog( "close" );
+                                       }
+                                   }});
+                           $('#' + control.target).click(function(){ $('#mb-zoom-coordinate-dialog').dialog('open'); });
+                       } else if(idx === 'zoomscale') {
+
+                           $('#mb-zoom-scale-dialog').dialog(
+                               {
+                                   autoOpen: false,
+                                   buttons: {
+                                       Zoom: function() {
+                                           var scale = $('#mb-zoom-scale-select')[0].value;
+                                           self.map.olMap.zoomToScale(scale);
+                                           $( this ).dialog( "close" );
+                                       },
+                                       Cancel: function() {
+                                           $( this ).dialog( "close" );
+                                       }
+                                   }});
+                           $('#' + control.target).click(function(){
+                                                             var scales = self.map.olMap.scales;
+                                                             var html = '';
+                                                             $.each(scales, function(idx, val) {
+                                                                        html += '<option>' + val + '</option>';
+                                                                    });
+                                                             $('#mb-zoom-scale-select').html(html);
+                                                             $('#mb-zoom-scale-dialog').dialog('open');
+                                                         });
+                       } else {
+                           var ctrl = new OpenLayers.Control[control]();
+                           controls.push(ctrl);
+                       }
+                   });
+        }
 
         var mapOptions = {
             maxExtent: this.options.extents.max,
@@ -48,6 +161,8 @@ $.widget("mapbender.mbMap", {
             layers: layers
         };
 
+        if(controls.length !== 0) mapOptions.controls = controls;
+
         if(this.options.scales) {
             $.extend(mapOptions, {
                 scales: this.options.scales
@@ -56,6 +171,10 @@ $.widget("mapbender.mbMap", {
 
         me.mapQuery(mapOptions);
         this.map = me.data('mapQuery');
+        // if(hasNavigation){
+        //     hasNavigation.setMap(this.map.olMap);
+        //     hasNavigation.activate();
+        // }
 
         //TODO: Bind all events
         this.map.bind('zoomend', function() { self._trigger('zoomend', arguments); });
@@ -103,26 +222,25 @@ $.widget("mapbender.mbMap", {
         }
 
         if(this.options.overview) {
-//			var layerConf = Mapbender.configuration.layersets[this.options.overview.layerset][0];
-//			var layer = new OpenLayers.Layer.WMS(layerConf.title, layerConf.configuration.url, {
-//				layers: $.map(layerConf.configuration.layers, function(layer) {
-//					return layer.name;
-//				})
-//			});
 
-			var layers_ = [];
-			$.each(Mapbender.configuration.layersets[this.options.overview.layerset], function(idx, layerDef) {
-				layers_.push(self._convertLayerDef.call(self, layerDef));
-			});
-			console.log(layers_);
-			var res = $.MapQuery.Layer.types[layers_[0].type].call(this, layers_[0]);
-			var overviewOptions = {
-                layers: res.layer,
+            var layers_ = [];
+            $.each(Mapbender.configuration
+                    .layersets[this.options.overview.layerset],
+                    function(idx, layerDef) {
+                layers_.push(self._convertLayerDef.call(self, layerDef));
+            });
+
+            var res = $.MapQuery.Layer.types[layers_[0].type]
+                .call(this, layers_[0]);
+            var overviewOptions = {
+                layers: [res.layer],
                 mapOptions: {
                     maxExtent: OpenLayers.Bounds.fromArray(this.options.extents.max),
-                    projection: new OpenLayers.Projection(this.options.srs)
+                    projection: new OpenLayers.Projection(this.options.srs),
+                    theme: null
                 }
             };
+
             if(this.options.overview.fixed) {
                 $.extend(overviewOptions, {
                     minRatio: 1,
@@ -132,8 +250,11 @@ $.widget("mapbender.mbMap", {
             var overviewControl = new OpenLayers.Control.OverviewMap(overviewOptions);
             this.map.olMap.addControl(overviewControl);
         }
-        this.map.olMap.addControl(new OpenLayers.Control.Scale());
-        this.map.olMap.addControl(new OpenLayers.Control.PanZoomBar());
+
+        if(controls.length === 0) {
+            this.map.olMap.addControl(new OpenLayers.Control.Scale());
+            this.map.olMap.addControl(new OpenLayers.Control.PanZoomBar());
+        }
 
         self._trigger('ready');
     },
@@ -141,7 +262,7 @@ $.widget("mapbender.mbMap", {
     /**
      * DEPRECATED
      */
-    goto: function(options) {
+    "goto": function(options) {
         this.map.center(options);
     },
 
@@ -171,7 +292,7 @@ $.widget("mapbender.mbMap", {
 
         var o = $.extend({}, {
             clearFirst: true,
-            goto: true
+            "goto": true
         }, options);
 
         // Remove existing features if requested
@@ -183,7 +304,7 @@ $.widget("mapbender.mbMap", {
         this.highlightLayer.olLayer.addFeatures(features);
 
         // Goto features if requested
-        if(o.goto) {
+        if(o['goto']) {
             var bounds = this.highlightLayer.olLayer.getDataExtent();
             this.map.center({box: bounds.toArray()});
         }
@@ -193,16 +314,141 @@ $.widget("mapbender.mbMap", {
     },
 
     layer: function(layerDef) {
-        this.map.layers(this._convertLayerDef(layerDef));
+        var l = this._convertLayerDef(layerDef)
+        this.rootLayers.push(l);
+        this.map.layers(l);
+    },
+
+    // untested!
+    appendLayer: function(layerDef, parentId) {
+        if(!parentId) {
+            this.layer(layerDef);
+            return;
+        }
+        var self = this;
+        var newLayer = this._convertLayerDef(layerDef);
+        this.map.layers(newLayer);
+
+        function _append(_, layer) {
+            if(layer.mapbenderId === parentId) {
+                if(!layer.sublayers) layer.sublayers = [];
+                layer.sublayers.push(newLayer);
+            } else {
+                if(layer.sublayers) {
+                    $.each(layer.sublayers, _append);
+                }
+            }
+        }
+
+        $.each(this.rootLayers, _append);
+
+        this.rebuildStacking();
+    },
+
+    /**
+     * Insert a layer before or after a sibling. Untested!
+     */
+    insert: function(layerDef, siblingId, before) {
+        var self = this;
+        var newLayer = this._convertLayerDef(layerDef);
+        this.map.layers(newLayer);
+
+        function _insert(list) {
+            for(var i = 0; i < list.length; ++i) {
+                if(list[i].mapbenderId === siblingId) {
+                    if(before) {
+                        list.splice(i, 0, newLayer);
+                        break;
+                    } else {
+                        list.splice(i+1, 0, newLayer);
+                        break;
+                    }
+                } else {
+                    if(list[i].sublayers) {
+                        _insert(list[i].sublayers);
+                    }
+                }
+            }
+        }
+
+        _insert(this.rootLayers);
+
+        this.rebuildStacking();
+    },
+
+    rebuildStacking: function() {
+        var self = this;
+        var pos = 0;
+        function _rebuild(layer){
+            if(layer.sublayers) {
+                $.each(layer.sublayers, function(idx, val) {
+                           self.layerById(val.mapbenderId).position(pos++);
+                           _rebuild(val);
+                       });
+            }
+        }
+
+        for(var i = 0; i < this.rootLayers.length; ++i) {
+            self.layerById(this.rootLayers[i].mapbenderId).position(pos++);
+            _rebuild(this.rootLayers[i]);
+        }
+    },
+
+    /**
+     * Moves a layer up (direction == true) or down (direction == false) on the same level in the layer hierarchy.
+     */
+    move: function(id, direction) {
+        var self = this;
+        function _move(list) {
+            var idx = null;
+            for(var i = 0; i < list.length; ++i) {
+                if(list[i].mapbenderId === id) {
+                    idx = i;
+                    break;
+                }
+            }
+            if(idx !== null) {
+                if(direction && idx > 0) {
+                    var lay = list[idx];
+                    list[idx] = list[idx-1];
+                    list[idx-1] = lay;
+                    lay = self.layerById(id);
+                    self.rebuildStacking();
+                } else if(!direction && idx < list.length - 1) {
+                    var lay = list[idx];
+                    list[idx] = list[idx+1];
+                    list[idx+1] = lay;
+                    lay = self.layerById(id);
+                    self.rebuildStacking();
+                }
+            } else {
+                for(i = 0; i < list.length; ++i) {
+                    if(list[i].sublayers) {
+                        _move(list[i].sublayers);
+                    }
+                }
+            }
+        }
+        _move(this.rootLayers);
     },
 
     _convertLayerDef: function(layerDef) {
+        var self = this;
         if(typeof Mapbender.layer[layerDef.type] !== 'object'
             && typeof Mapbender.layer[layerDef.type].create !== 'function') {
             throw "Layer type " + layerDef.type + " is not supported by mapbender.mapquery-map";
         }
         // TODO object should be cleaned up
-        return $.extend(Mapbender.layer[layerDef.type].create(layerDef), { mapbenderId: layerDef.id, configuration: layerDef });
+        var l = $.extend(Mapbender.layer[layerDef.type].create(layerDef), { mapbenderId: layerDef.id, configuration: layerDef });
+
+        if(layerDef.configuration.sublayers) {
+            l.sublayers = [];
+            $.each(layerDef.configuration.sublayers, function(idx, val) {
+                       l.sublayers.push(self._convertLayerDef({id: idx, type: 'wms', configuration: val}));
+                   });
+        }
+
+        return l;
     },
 
     zoomIn: function() {
@@ -233,7 +479,7 @@ $.widget("mapbender.mbMap", {
     },
 
     panMode: function() {
-        //TODO: MapQuery
+        this.map.mode('pan');
     },
 
     addPopup: function(popup) {
@@ -244,6 +490,22 @@ $.widget("mapbender.mbMap", {
     removePopup: function(popup) {
         //TODO: MapQuery
         this.map.olMap.removePopup(popup);
+    },
+
+    removeById: function(id) {
+        var self = this;
+        function _remove(_, layer) {
+            self.layerById(layer.mapbenderId).remove();
+            if(layer.sublayers) {
+                $.each(layer.sublayers, _remove);
+            }
+        }
+
+        $.each(this.rootLayers, function(idx, layer) {
+                   if(layer.mapbenderId === id) {
+                       _remove(null, layer);
+                   }
+        });
     },
 
     /**
@@ -259,7 +521,17 @@ $.widget("mapbender.mbMap", {
             }
         });
         return layer;
+    },
+
+    scales: function() {
+        var scales = [];
+        for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
+            var res = this.map.olMap.getResolutionForZoom(i);
+            scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
     }
+        return scales;
+    }
+
 });
 
 })(jQuery);

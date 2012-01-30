@@ -1,8 +1,10 @@
 {%extends 'MapbenderCoreBundle::backend.html.twig' %}
 
-{% stylesheets '@MapbenderWmsBundle/Resources/public/style/*' %}
-    <link  rel="stylesheet" href="{{ asset_url }}" />
-{% endstylesheets  %}
+{% block stylesheets %}
+    {% stylesheets '@MapbenderWmsBundle/Resources/public/style/*' %}
+        <link  rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets  %}
+{% endblock %}
 
 {% block subnavigation %}
 <nav class="action">
