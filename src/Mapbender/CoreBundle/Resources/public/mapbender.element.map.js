@@ -232,8 +232,12 @@ $.widget("mapbender.mbMap", {
 
             var res = $.MapQuery.Layer.types[layers_[0].type]
                 .call(this, layers_[0]);
+
+            var div = $("#"+this.options.overview.div);
+            div = div.size() > 0 ? div.get(0): undefined;
             var overviewOptions = {
                 layers: [res.layer],
+                div: div,
                 mapOptions: {
                     maxExtent: OpenLayers.Bounds.fromArray(this.options.extents.max),
                     projection: new OpenLayers.Projection(this.options.srs),
