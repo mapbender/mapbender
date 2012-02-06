@@ -79,7 +79,9 @@ class ApplicationController extends Controller {
 
     /**
      * Call an application element's action at /application/{slug}/element/{id}/{action}
-     * @Route("/application/{slug}/element/{id}/{action}", name="mapbender_element")
+     * @Route("/application/{slug}/element/{id}/{action}",
+     *     name="mapbender_element",
+     *     requirements={ "action" = ".+" })
      */
     public function elementAction($slug, $id, $action) {
         $application = $this->getApplication($slug);
