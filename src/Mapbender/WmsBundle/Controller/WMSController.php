@@ -106,7 +106,7 @@ class WMSController extends Controller {
             return $this->render("MapbenderWmsBundle:WMS:register.html.twig",array("getcapa_url",$getcapa_url));
         }
         try {
-            $client = new HTTPClient($container=$this->container);
+            $client = new HTTPClient($this->container);
             if($user){
               $client->setUsername($user);
               $client->setPassword($password);
@@ -192,6 +192,47 @@ class WMSController extends Controller {
         )); 
         $form->bindRequest($request);
 
+        $wms->setSupportedExceptionFormats(
+            isset($requestWMS['exceptionFormats'])
+            ? $requestWMS['exceptionFormats']
+            :array());
+
+        $wms->setRequestSupportedGetCapabilitiesFormats(
+            isset($requestWMS['requestGetCapabilitiesFormats'])
+            ? $requestWMS['requestGetCapabilitiesFormats']
+            :array());
+        
+        $wms->setRequestSupportedGetMapFormats(
+            isset($requestWMS['requestGetMapFormats'])
+            ? $requestWMS['requestGetMapFormats']
+            : array());
+
+        $wms->setRequestSupportedGetFeatureInfoFormats(
+            isset($requestWMS['requestGetFeatureInfoFormats'])
+            ? $requestWMS['requestGetFeatureInfoFormats']
+            : array());
+
+        $wms->setRequestSupportedDescribeLayerFormats(
+            isset($requestWMS['requestDescribeLayerFormats'])
+            ? $requestWMS['requestDescribeLayerFormats']
+            : array());
+
+        $wms->setRequestSupportedGetLegendGraphicFormats(
+            isset($requestWMS['requestGetLegendGraphicFormats'])
+            ? $requestWMS['requestGetLegendGraphicFormats']
+            : array());
+
+         $wms->setRequestSupportedGetStylesFormats(
+            isset($requestWMS['requestGetStylesFormats'])
+            ? $requestWMS['requestGetStylesFormats']
+            : array());
+         
+         $wms->setRequestSupportedPutStylesFormats(
+            isset($requestWMS['requestPutStylesFormats'])
+            ? $requestWMS['requestPutStylesFormats']
+            : array());
+
+
     
         if($form->isValid()){
             $em = $this->get("doctrine.orm.entity_manager");
@@ -223,13 +264,13 @@ class WMSController extends Controller {
     public function editAction(WMSService $wms){
         $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
             "exceptionFormats" => $wms->getExceptionFormats(),
-            "requestGetCapabilitiesFormats" => $wms->getRequestGetCapabilitiesFormats(),
-            "requestGetMapFormats" => $wms->getRequestGetMapFormats(),
-            "requestGetFeatureInfoFormats" => $wms->getRequestGetFeatureInfoFormats(),
-            "requestDescribeLayerFormats"  => $wms->getRequestDescribeLayerFormats(),
-            "requestGetLegendGraphicFormats" => $wms->getRequestGetLegendGraphicFormats(),
-            "requestGetStylesFormats" => $wms->getRequestGetStylesFormats(),
-            "requestPutStylesFormats" => $wms->getRequestPutStylesFormats(),
+            "requestGetCapabilitiesFormats" => $wms->getRequestSupportedGetCapabilitiesFormats(),
+            "requestGetMapFormats" => $wms->getRequestSupportedGetMapFormats(),
+            "requestGetFeatureInfoFormats" => $wms->getRequestSupportedGetFeatureInfoFormats(),
+            "requestDescribeLayerFormats"  => $wms->getRequestSupportedDescribeLayerFormats(),
+            "requestGetLegendGraphicFormats" => $wms->getRequestSupportedGetLegendGraphicFormats(),
+            "requestGetStylesFormats" => $wms->getRequestSupportedGetStylesFormats(),
+            "requestPutStylesFormats" => $wms->getRequestSupportedPutStylesFormats(),
         )); 
         return array(
             "wms" => $wms,
@@ -248,14 +289,14 @@ class WMSController extends Controller {
         /* build up nested wmslayer structure */
         $requestWMS = $request->get('WMSService');
         $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
-            "exceptionFormats" => $wms->getAllExceptionFormats(),
-            "requestGetCapabilitiesFormats" => $wms->getAllRequestGetCapabilitiesFormats(),
-            "requestGetMapFormats" => $wms->getAllRequestGetMapFormats(),
-            "requestGetFeatureInfoFormats" => $wms->getAllRequestGetFeatureInfoFormats(),
-            "requestDescribeLayerFormats"  => $wms->getAllRequestDescribeLayerFormats(),
-            "requestGetLegendGraphicFormats" => $wms->getAllRequestGetLegendGraphicFormats(),
-            "requestGetStylesFormats" => $wms->getAllRequestGetStylesFormats(),
-            "requestPutStylesFormats" => $wms->getAllRequestPutStylesFormats(),
+            "exceptionFormats" => $wms->getSupportedExceptionFormats(),
+            "requestGetCapabilitiesFormats" => $wms->getRequestSupportedGetCapabilitiesFormats(),
+            "requestGetMapFormats" => $wms->getRequestSupportedGetMapFormats(),
+            "requestGetFeatureInfoFormats" => $wms->getRequestSupportedGetFeatureInfoFormats(),
+            "requestDescribeLayerFormats"  => $wms->getRequestSupportedDescribeLayerFormats(),
+            "requestGetLegendGraphicFormats" => $wms->getRequestSupportedGetLegendGraphicFormats(),
+            "requestGetStylesFormats" => $wms->getRequestSupportedGetStylesFormats(),
+            "requestPutStylesFormats" => $wms->getRequestSupportedPutStylesFormats(),
         )); 
         $form->bindRequest($request);
         if($form->isValid()){

@@ -3,15 +3,11 @@
 {% block title %}{{ configuration.title }}{% endblock %}
 
 {% block css %}
-	{% for css in assets.css %}
-	<link rel="stylesheet" type="text/css" href="{{ asset(css) }}" />
-	{% endfor %}
+	<link rel="stylesheet" type="text/css" href="{{ assets.css }}" />
 {% endblock %}
 
 {% block js %}
-	{% for js in assets.js %}
-	<script type="text/javascript" src="{{ asset(js) }}"></script>
-	{% endfor %}
+	<script type="text/javascript" src="{{ assets.js }}"></script>
 {% endblock %}
 
 {% block content %}

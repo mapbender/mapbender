@@ -1,1 +1,27 @@
+<div id="mb-element-maptools">
+  <button class="mb-element-button ui-button-icon-primary zoom-last" id="zoomlastbutton"></button>
+  <button class="mb-element-button ui-button-icon-primary zoom-next" id="zoomnextbutton"></button>
+  <button class="mb-element-button ui-button-icon-primary pan" id="panbutton"></button>
+  <button class="mb-element-button ui-button-icon-primary zoom-in" id="zoominbutton"></button>
+  <button class="mb-element-button ui-button-icon-primary zoom-out" id="zoomoutbutton"></button>
+  <button class="mb-element-button ui-button-icon-primary zoom-extent" id="zoomextentbutton"></button>
+  <button class="mb-element-button ui-button-icon-primary zoom-full-extent" id="zoommaxbutton"></button>
+  <button class="mb-element-button ui-button-icon-primary zoom-coordinate" id="zoomcoordinatebutton"></button>
+  <button class="mb-element-button ui-button-icon-primary zoom-scale" id="zoomscalebutton"></button>
+</div>
+<div id="mb-zoom-coordinate-dialog" title="Zoom to coordinate">
+    <fieldset>
+      <label for="mb-zoom-coordinate-x">X coordinate:</label>
+      <input type="text" name="x" id="mb-zoom-coordinate-x" class="text ui-widget-content ui-corner-all" />
+      <br></br>
+      <label for="mb-zoom-coordinate-y">Y coordinate:</label>
+      <input type="text" name="y" id="mb-zoom-coordinate-y" value="" class="text ui-widget-content ui-corner-all" />
+    </fieldset>
+</div>
+<div id="mb-zoom-scale-dialog" title="Zoom to scale">
+    <fieldset>
+      <select id="mb-zoom-scale-select">
+      </select>
+    </fieldset>
+</div>
 <div class="mb-element mb-element-map" id="{{ id }}"></div>

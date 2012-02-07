@@ -76,6 +76,12 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
         });
     },
 
+    download: function(wmc) {
+        $('#wmc-download-textarea').val(wmc);
+        $('#wmc-download-form').attr('action', this.elementUrl + 'download');
+        $('#wmc-download-form').submit();
+    },
+
     _save: function(docName) {
         if(!docName) {
             throw "No WMC document title given.";
@@ -91,7 +97,7 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
 
         var extraData = {
             title: docName,
-            public: false,
+            'public': false,
             crs: this.map.getProjection()
         };
 
@@ -142,7 +148,7 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
          */
         map.map.olMap.projection = wmc.projection;
         map.map.olMap.maxExtent = wmc.maxExtent;
-        
+
         /**
          * Load layers from WMC into map
          */
@@ -196,7 +202,7 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
             url: this.elementUrl + 'list',
             data: {
                 params: $.extend({}, this.options.searchParams, {
-                            private: true
+                            'private': true
                         })
             },
             context: this,
@@ -221,10 +227,10 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
                 empty();
 
         $.each(data, function(idx, wmc) {
-            $('<option></option>')
-                .attr('value', wmc.id)
-                .html(wmc.title)
-                .appendTo(select);
+            var obj = $('<option></option>');
+            obj.attr('value', wmc.id);
+            obj.html(wmc.title);
+            obj.appendTo(select);
         });
     },
 

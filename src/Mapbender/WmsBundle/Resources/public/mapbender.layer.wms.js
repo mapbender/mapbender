@@ -29,7 +29,7 @@ $.extend(true, Mapbender, { layer: {
 
                 isBaseLayer: layerDef.configuration.baselayer,
                 opacity:     layerDef.configuration.opacity,
-                visible:     layerDef.configuration.visible,
+                visibility:  layerDef.configuration.visible,
                 singleTile:  !layerDef.configuration.tiled,
                 attribution: layerDef.configuration.attribution
             };
@@ -95,6 +95,7 @@ $.extend(true, Mapbender, { layer: {
         layersFromCapabilities: function(xml) {
             var parser = new OpenLayers.Format.WMSCapabilities(),
                 capabilities = parser.read(xml);
+
             if(typeof(capabilities.capability) !== 'undefined') {
                 var def = {
                         type: 'wms',
