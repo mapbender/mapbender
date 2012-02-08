@@ -106,6 +106,25 @@ class ApplicationController extends Controller {
     }
 
     /**
+<<<<<<< Updated upstream
+=======
+     * Render an application at url /application/{slug}
+     *
+     * @param string $slug The application slug
+     * @return Response HTTP response
+     * @Route("/application/{slug}.{_format}",
+     *     name="mapbender_application",
+     *     defaults={ "_format" = "html" })
+     * @Template()
+     */
+    public function applicationAction($slug) {
+        return $this->embedAction($slug,
+            array('css', 'html', 'js', 'configuration'),
+            $this->get('request')->get('_format'));
+    }
+
+    /**
+>>>>>>> Stashed changes
      * Given an application slug, find it and inflate it
      * @param string $slug
      * @return Application Application
