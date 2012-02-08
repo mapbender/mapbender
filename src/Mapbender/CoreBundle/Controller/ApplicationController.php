@@ -98,9 +98,9 @@ class ApplicationController extends Controller {
      *
      * @param string $slug The application slug
      * @return Response HTTP response
-     * @Route("/application/{slug}/{_appExtra}.{_format}",
+     * @Route("/application/{slug}.{_format}",
      *     name="mapbender_application",
-     *     defaults={ "_format" = "html", "_appExtra" = ""})
+     *     defaults={ "_format" = "html" })
      * @Template()
      */
     public function applicationAction($slug) {
@@ -110,6 +110,10 @@ class ApplicationController extends Controller {
     }
 
     /**
+<<<<<<< HEAD
+>>>>>>> Stashed changes
+=======
+>>>>>>> 7713d635b37839dc3e1fac9a51ea1b01a087b218
      * Given an application slug, find it and inflate it
      * @param string $slug
      * @return Application Application
