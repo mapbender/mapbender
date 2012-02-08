@@ -100,8 +100,7 @@ class ApplicationController extends Controller {
      * @return Response HTTP response
      * @Route("/application/{slug}/{_appExtra}.{_format}",
      *     name="mapbender_application",
-     *     defaults={ "_format" = "html", "_appExtra" = ""},
-     *     requirements={ "_appExtra" = ".+"})
+     *     defaults={ "_format" = "html", "_appExtra" = ""})
      * @Template()
      */
     public function applicationAction($slug) {
