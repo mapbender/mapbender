@@ -5,6 +5,7 @@ namespace {{ bundleNamespace }}\Element;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class {{ className }} extends Element implements ElementInterface {
     public function getTitle() {
