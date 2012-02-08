@@ -34,6 +34,35 @@ $.widget("mapbender.mbMap", {
         this.rootLayers = [];
         var allOverlays = true;
 
+        // TODO think about integrating proj4js properly into Mapbender and/or Mapquery
+        // could also integrate transformation on server side
+        if(this.options.targetsrs && window.Proj4js) {
+            var bbox = this.options.extents.max;
+            var source = new Proj4js.Proj(this.options.srs);
+            var dest = new Proj4js.Proj(this.options.targetsrs);
+            var min = Proj4js.transform(source, dest, {x: bbox[0], y: bbox[1]});
+            var max = Proj4js.transform(source, dest, {x: bbox[2], y: bbox[3]});
+            var newExtent = [min.x, min.y, max.x, max.y];
+            this.options.extents.max = newExtent;
+            this.options.srs = this.options.targetsrs;
+
+            bbox = this.options.extents.start;
+            min = Proj4js.transform(source, dest, {x: bbox[0], y: bbox[1]});
+            max = Proj4js.transform(source, dest, {x: bbox[2], y: bbox[3]});
+            this.options.extents.start = [min.x, min.y, max.x, max.y];
+            if(this.options.extra && this.options.extra.type === 'bbox') {
+                min = Proj4js.transform(source, dest, {x: this.options.extra.data.xmin, y: this.options.extra.data.ymin});
+                max = Proj4js.transform(source, dest, {x: this.options.extra.data.xmax, y: this.options.extra.data.ymax});
+                this.options.extra.data.xmin = min.x;
+                this.options.extra.data.ymin = min.y;
+                this.options.extra.data.xmax = max.x;
+                this.options.extra.data.ymax = max.y;
+            }
+            if(this.options.targetsrs === 'EPSG:4326') {
+                this.options.units = 'degrees';
+            }
+        }
+
         function addSubs(layer){
             if(layer.sublayers) {
                 $.each(layer.sublayers, function(idx, val) {
@@ -254,7 +283,6 @@ $.widget("mapbender.mbMap", {
             var overviewControl = new OpenLayers.Control.OverviewMap(overviewOptions);
             this.map.olMap.addControl(overviewControl);
         }
-
         if(controls.length === 0) {
             this.map.olMap.addControl(new OpenLayers.Control.Scale());
             this.map.olMap.addControl(new OpenLayers.Control.PanZoomBar());
@@ -451,7 +479,6 @@ $.widget("mapbender.mbMap", {
                        l.sublayers.push(self._convertLayerDef({id: idx, type: 'wms', configuration: val}));
                    });
         }
-
         return l;
     },
 

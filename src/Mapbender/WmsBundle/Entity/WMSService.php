@@ -359,6 +359,18 @@ class WMSService extends GroupLayer {
         }
         return trim($names,",");
     }
+    
+    /**
+     * returns all Layers of the WMS as comma-seperated string so that they can be used in a WMS Request's LAYER parameter
+     */
+    public function getAllLayer($grouplayers=null, &$layers = array()){
+        $grouplayers  = $grouplayers == null? $this->getLayer(): $grouplayers;
+        foreach ($grouplayers as $layer){
+            $layers[] = $layer;
+            $this->getAllLayer($layer->getLayer(), $layers);
+        }
+        return $layers;
+    }
 
     /**
      * Set onlineResource

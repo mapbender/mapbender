@@ -30,20 +30,6 @@ class ApplicationController extends Controller {
     }
 
     /**
-     * Render an application at url /application/{slug}
-     *
-     * @param string $slug The application slug
-     * @return Response HTTP response
-     * @Route("/application/{slug}.{_format}", name="mapbender_application", defaults={ "_format" = "html"})
-     * @Template()
-     */
-    public function applicationAction($slug) {
-        return $this->embedAction($slug,
-            array('css', 'html', 'js', 'configuration'),
-            $this->get('request')->get('_format'));
-    }
-
-    /**
      * Embed controller action.
      */
     public function embedAction($slug, $parts = array('css', 'html', 'js', 'configuration'), $format = 'embed') {
@@ -93,7 +79,9 @@ class ApplicationController extends Controller {
 
     /**
      * Call an application element's action at /application/{slug}/element/{id}/{action}
-     * @Route("/application/{slug}/element/{id}/{action}", name="mapbender_element")
+     * @Route("/application/{slug}/element/{id}/{action}",
+     *     name="mapbender_element",
+     *     requirements={ "action" = ".+" })
      */
     public function elementAction($slug, $id, $action) {
         $application = $this->getApplication($slug);
@@ -106,8 +94,6 @@ class ApplicationController extends Controller {
     }
 
     /**
-<<<<<<< Updated upstream
-=======
      * Render an application at url /application/{slug}
      *
      * @param string $slug The application slug
@@ -124,7 +110,10 @@ class ApplicationController extends Controller {
     }
 
     /**
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> 7713d635b37839dc3e1fac9a51ea1b01a087b218
      * Given an application slug, find it and inflate it
      * @param string $slug
      * @return Application Application
