@@ -64,8 +64,8 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
             // allow 1000 results per page at most
             $limit = $limit < 1000 ? $limit : 1000;
 
-            $request->attributes->set("usedOffset",$offset);
-            $request->attributes->set("usedLimit",$limit);
+            $request->attributes->set("usedOffset", $offset);
+            $request->attributes->set("usedLimit", $limit);
 
             // this generally allows the user to search in any field
             // something else might be wanted in any case
@@ -73,8 +73,15 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
             if ($request->attributes->get('criteria'))
               parse_str($request->attributes->get('criteria'), $criteria);
 
-            return $this->registry->getRepository($class, $options['entity_manager'])
-                ->findBy($criteria,array('id' => 'ASC'),$limit,$offset);
+            $result = $this->registry->getRepository($class, $options['entity_manager'])
+              ->findBy($criteria,array('id' => 'ASC'),$limit + 1,$offset);
+            if(count($result) === ($limit + 1)) {
+              $result = array_splice($result, 0, $limit);
+              $request->attributes->set('lastPage', false);
+            } else {
+              $request->attributes->set('lastPage', true);
+            }
+            return $result;
     }
 
     protected function find($class, Request $request, $options) {
