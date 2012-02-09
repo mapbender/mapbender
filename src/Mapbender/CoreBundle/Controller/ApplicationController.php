@@ -35,7 +35,9 @@ class ApplicationController extends Controller {
     public function embedAction($slug, $parts = array('css', 'html', 'js', 'configuration'), $format = 'embed') {
         $application = $this->getApplication($slug);
         $this->checkAllowedRoles($application->getRoles());
-
+        
+        $this->get("session")->set("proxyAllowed",true);
+        
         $answer = $application->render($parts, $format);
         return new Response($format === 'json' ? json_encode($answer) : $answer);
     }

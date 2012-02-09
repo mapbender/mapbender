@@ -22,10 +22,17 @@ $.extend(true, Mapbender, { layer: {
                     layerDef.configuration.tileFullExtent);
             }
 
+            var finalUrl = layerDef.configuration.url;
+            
+            if(layerDef.configuration.proxy === true) {
+                finalUrl = OpenLayers.ProxyHost + finalUrl;
+            }
+            
+            
             mqLayerDef = {
                 type:        'wmts',
                 label:       layerDef.configuration.title,
-                url:         layerDef.configuration.url,
+                url:         finalUrl,
 
                 layer:       layerDef.configuration.layer,
                 style:       layerDef.configuration.style,

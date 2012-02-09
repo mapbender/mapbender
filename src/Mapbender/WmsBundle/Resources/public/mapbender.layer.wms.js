@@ -4,6 +4,7 @@ $.extend(true, Mapbender, { layer: {
         create: function(layerDef) {
             var layers = [];
             var queryLayers = [];
+            
             $.each(layerDef.configuration.layers, function(idx, layer) {
                 var layerDef = $.extend({},
                     { visible: true, queryable: false }, layer );
@@ -14,12 +15,18 @@ $.extend(true, Mapbender, { layer: {
                     queryLayers.push(layerDef.name);
                 }
             });
-
+            
+            var finalUrl = layerDef.configuration.url;
+            
+            if(layerDef.configuration.proxy === true) {
+                finalUrl = OpenLayers.ProxyHost + finalUrl;
+            }
+            
             mqLayerDef = {
                 type:        'wms',
                 label:       layerDef.configuration.title,
-                url:         layerDef.configuration.url,
-
+                url:         finalUrl,
+                
                 layers:      layers,
                 queryLayers: queryLayers,
                 allLayers:   layerDef.configuration.layers,
