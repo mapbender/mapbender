@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Proxy controller.
@@ -22,10 +23,25 @@ class ProxyController extends Controller {
      * @Route("/open", name="mapbender_proxy_open")
      */
     public function openProxyAction() {
+        $session = $this->get("session");
+        
+        if($session->get("proxyAllowed",false) !== true) {
+            throw new AccessDeniedHttpException('You are not allowd to use this proxy without a session.');
+        }
+        
         session_write_close();
+        
         $request = $this->get('request');
 
         $url = parse_url($request->get('url'));
+        
+        $baseUrl = $request->get('url');
+        
+        foreach($request->query->all() as $key => $value) {
+            if($key === "url") continue;
+            $baseUrl .= "&$key=".urlencode($value);
+        }
+        
         /*
         $proxyConf = $this->container->getParameter('proxy');
 
@@ -39,7 +55,7 @@ class ProxyController extends Controller {
                 throw new HttpException(500, 'This proxy only allow HTTP and HTTPS urls.');
             }
 
-            $ch = curl_init($request->get('url'));
+            $ch = curl_init($baseUrl);
             if($request->getMethod() == 'POST') {
                 curl_setopt($ch, CURLOPT_POST, true);
                 $contentType = explode(';', $request->headers->get('content-type'));

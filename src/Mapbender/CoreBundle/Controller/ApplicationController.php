@@ -35,7 +35,9 @@ class ApplicationController extends Controller {
     public function embedAction($slug, $parts = array('css', 'html', 'js', 'configuration'), $format = 'embed') {
         $application = $this->getApplication($slug);
         $this->checkAllowedRoles($application->getRoles());
-
+        
+        $this->get("session")->set("proxyAllowed",true);
+        
         $answer = $application->render($parts, $format);
         return new Response($format === 'json' ? json_encode($answer) : $answer);
     }
@@ -110,10 +112,6 @@ class ApplicationController extends Controller {
     }
 
     /**
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 7713d635b37839dc3e1fac9a51ea1b01a087b218
      * Given an application slug, find it and inflate it
      * @param string $slug
      * @return Application Application
