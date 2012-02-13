@@ -4,9 +4,19 @@
 {% block content %}
 	<form action="{{path("mapbender_monitoring_monitoringdefinition_save",{"mdId":md.id})}}" method="post">
 		{{form_widget(form)}}
-		<input type="submit" name="create" value="{{"save"|trans}}" />
+		<input type="submit" name="save" value="{{"save"|trans}}" />
 	</form>
 	<form action="{{path("mapbender_monitoring_monitoringdefinition_index")}}" method="get">
-		<input type="submit" name="create" value="{{"Cancel"|trans}}" />
+		<input type="submit" name="cancel" value="{{"Cancel"|trans}}" />
 	</form>
+    <h2>{{ "Jobs"|trans }}</h2>
+    {% if md.monitoringJobs|length > 0 %}
+    <ul>
+        {% for job in md.monitoringJobs %}
+            <li>{{ job.id }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>{{ "No jobs have been run"|trans }}</p>
+    {% endif %}
 {% endblock %}
