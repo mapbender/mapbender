@@ -70,9 +70,13 @@
                     if(v[0] !== '/' && json.configuration && json.configuration.assetPath) {
                         v = json.configuration.assetPath + '/' + v;
                     }
-                    $('<script></script')
-                        .attr('src', v)
-                        .appendTo($('body'));
+                    var script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.src = v;
+                    document.body.appendChild(script);
+                    // $('<script type="text/javascript"></script')
+                    //     .attr('src', v)
+                    //     .appendTo($('body'));
                  });
 
              }
