@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author apour
  * @ORM\Entity
  */
-class MonitoringDefinition extends MonitoringJob {
+class MonitoringDefinition  {
 	/**
 	 *
 	 * @ORM\Id
