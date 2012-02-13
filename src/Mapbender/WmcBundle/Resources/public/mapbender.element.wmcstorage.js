@@ -109,7 +109,7 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
             data: wmc,
             context: this,
             success: this._onSaveSuccess,
-            error: this._onSaveError,
+            error: this._onSaveError
         });
     },
 
@@ -206,7 +206,7 @@ $.widget('mapbender.mbWmcStorage', $.ui.dialog,  {
                         })
             },
             context: this,
-            success: this._deleteListWmcSuccess,
+            success: this._deleteListWmcSuccess
             //error: this._listWmcError
         });
     },
