@@ -1,6 +1,18 @@
 {% extends "MapbenderMonitoringBundle:MonitoringDefinition:base.html.twig" %}
 {% form_theme form 'MapbenderMonitoringBundle:Form:fields.html.twig' %}
 
+{% block subnavigation %}
+<nav class="action">
+    <h1>Monitoring Navigation</h1>
+    <ul>
+      <li>
+        <form action="{{ path('mapbender_monitoring_monitoringdefinition_run',{'mdId':md.id}) }}" method="post">
+        <button>{% trans %}Run{% endtrans %}</button>
+        </form>
+      </li>
+    </ul>
+</nav>
+{% endblock %}
 {% block content %}
 	<form action="{{path("mapbender_monitoring_monitoringdefinition_save",{"mdId":md.id})}}" method="post">
 		{{form_widget(form)}}

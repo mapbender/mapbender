@@ -7,6 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Mapbender\MonitoringBundle\Entity\MonitoringDefinition;
 use Mapbender\MonitoringBundle\Form\MonitoringDefinitionType;
+use Mapbender\MonitoringBundle\Component\MonitoringRunner;
+use Mapbender\Component\HTTP\HTTPClient;
 
 /**
  * Description of MonitoringDefinitionController
@@ -157,6 +159,26 @@ class MonitoringDefinitionController extends Controller {
 			);
 		}
 	}
+	
+    /**
+	 * @Route("/{mdId}/run")
+	 * @Method("POST")
+	 */
+	public function runAction(MonitoringDefinition $md) {	
+        $client = new HTTPClient($this->container);
+        $mr = new MonitoringRunner($md,$client);
+        $job = $mr->run();
+        $md->addMonitoringJob($job);
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->persist($md);
+        $em->flush();
+    	return $this->redirect(
+            $this->generateUrl(
+                "mapbender_monitoring_monitoringdefinition_edit",
+                array("mdId" =>  $md->getId())
+            )
+        );
+    }
 }
 
 ?>

@@ -36,12 +36,13 @@ class MonitoringJob {
 	 * @ORM\Column(type="string", nullable="true")
 	 */
 	protected $changed;
-
+    
 	/**
 	 *
      * @ORM\ManyToOne(targetEntity="MonitoringDefinition", inversedBy="monitoringJobs")
 	 */
 	protected $monitoringDefinition;
+
 
     /**
      * Get id

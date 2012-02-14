@@ -1,0 +1,123 @@
+<?php
+namespace Mapbender\MonitoringBundle\Entity;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * Description of MonitoringDefinition
+ * 
+ * @author apour
+ * @ORM\Entity
+ */
+class MonitoringDefinition  {
+	/**
+	 *
+	 * @ORM\Id
+	 * @ORM\Column(type="integer")
+	 * @ORM\GeneratedValue(strategy="AUTO")
+	 */
+	protected $id;
+	
+	/**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $type;
+	
+	/**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $typeId;
+
+	/**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $name;
+
+	/**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $title;
+
+	/**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $alias;
+
+	/**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $url;
+
+	/**
+	 * @Assert\NotNull
+	 * @ORM\Column(type="string")
+	 */
+	protected $requestUrl;
+
+	/**
+	 *
+	 * @ORM\Column(type="text", nullable="true")
+	 */
+	protected $response;
+
+	/**
+	 *
+	 * @ORM\Column(type="text", nullable="true")
+	 */
+	protected $lastResponse;
+
+	/**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $contactEmail;
+
+	/**
+	 *
+	 * @ORM\Column(type="string", nullable="true")
+	 */
+	protected $contact;
+
+	/**
+	 *
+	 * @ORM\Column(type="datetime", nullable="true")
+	 */
+	protected $lastNotificationTime;
+
+    /**
+     * @ORM\OneToMany(targetEntity="MonitoringJob",mappedBy="MonitoringDefinition", cascade={"persist","remove"})
+    */
+	protected $monitoringJobs;
+
+	/**
+	 *
+	 * @ORM\Column(type="datetime", nullable="true")
+	 */
+	protected $ruleStart;
+
+	/**
+	 *
+	 * @ORM\Column(type="datetime", nullable="true")
+	 */
+	protected $ruleEnd;
+
+	/**
+	 *
+	 * @ORM\Column(type="boolean")
+	 */
+	protected $ruleMonitor = true;
+
+	/**
+	 *
+	 * @ORM\Column(type="string")
+	 */
+	protected $enabled = true;
+
+}
