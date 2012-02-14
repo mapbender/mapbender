@@ -93,6 +93,7 @@ class MonitoringDefinition  {
 
     /**
      * @ORM\OneToMany(targetEntity="MonitoringJob",mappedBy="monitoringDefinition", cascade={"persist","remove"})
+     * @ORM\OrderBy({"timestamp" = "DESC"});
     */
 	protected $monitoringJobs;
 
@@ -473,5 +474,12 @@ class MonitoringDefinition  {
     public function getMonitoringJobs()
     {
         return $this->monitoringJobs;
+    }
+
+    /**
+     * Get the latest MonitoringJob
+    */
+    public function getLastMonitoringJob(){
+        return $this->monitoringJobs[0];         
     }
 }

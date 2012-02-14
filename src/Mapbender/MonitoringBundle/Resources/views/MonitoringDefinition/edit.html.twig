@@ -25,10 +25,15 @@
     {% if md.monitoringJobs|length > 0 %}
     <ul>
         {% for job in md.monitoringJobs %}
-            <li>{{ job.id }}</li>
+            <li>{{ job.id }} {{ job.latency }} ms</li>
         {% endfor %}
     </ul>
+    <h2>{{ "Last Result"|trans }}</h2>
+    <pre>
+        {{md.monitoringJobs[0].result}}
+    </pre>
     {% else %}
         <p>{{ "No jobs have been run"|trans }}</p>
     {% endif %}
+    
 {% endblock %}

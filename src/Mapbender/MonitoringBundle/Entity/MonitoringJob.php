@@ -21,21 +21,27 @@ class MonitoringJob {
 	
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="datetime", nullable="true")
 	 */
 	protected $timestamp;
 	
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="float", nullable="true")
 	 */
 	protected $latency;
 	
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="boolean", nullable="true")
 	 */
 	protected $changed;
+	
+    /**
+	 *
+	 * @ORM\Column(type="text", nullable="true")
+	 */
+	protected $result;
     
 	/**
 	 *
@@ -43,6 +49,11 @@ class MonitoringJob {
 	 */
 	protected $monitoringDefinition;
 
+
+
+    public function __construct(){
+        $this->timestamp = new \DateTime();
+    }
 
     /**
      * Get id
@@ -112,6 +123,26 @@ class MonitoringJob {
     public function getChanged()
     {
         return $this->changed;
+    }
+
+    /**
+     * Set result
+     *
+     * @param string $result
+     */
+    public function setResult($result)
+    {
+        $this->result = $result;
+    }
+
+    /**
+     * Get result
+     *
+     * @return string 
+     */
+    public function getResult()
+    {
+        return $this->result;
     }
 
     /**

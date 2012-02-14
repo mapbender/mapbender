@@ -9,6 +9,7 @@ use Mapbender\MonitoringBundle\Entity\MonitoringDefinition;
 use Mapbender\MonitoringBundle\Form\MonitoringDefinitionType;
 use Mapbender\MonitoringBundle\Component\MonitoringRunner;
 use Mapbender\Component\HTTP\HTTPClient;
+use Mapbender\WmsBundle\Entity\WMSService;
 
 /**
  * Description of MonitoringDefinitionController
@@ -45,6 +46,28 @@ class MonitoringDefinitionController extends Controller {
 		return array(
 			"form" => $form->createView()
 		);
+	}
+	
+    /**
+	 * @Route("/wms/{wmsId}")
+	 * @Method("POST")
+	 * @Template()
+	 */
+	public function importAction(WMSService $wms) {
+        $md = new MonitoringDefinition(); 
+        $md->setType(get_class($wms));
+        $md->setTypeId($wms->getId());
+        $md->setName($wms->getName());
+        $md->setTitle($wms->getTitle());
+        $md->setRequestUrl($wms->getOnlineResource());
+
+        $em = $this->getDoctrine()
+            ->getEntityManager();
+        $em->persist($md);
+        $em->flush();
+        return $this->redirect($this->generateUrl(
+            "mapbender_wms_wms_index"
+        ));
 	}
 	
 	/**
