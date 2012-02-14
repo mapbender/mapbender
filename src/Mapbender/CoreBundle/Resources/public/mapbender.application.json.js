@@ -53,8 +53,14 @@
                     if(v[0] !== '/' && json.configuration && json.configuration.assetPath) {
                         v = json.configuration.assetPath + '/' + v;
                     }
-                    $('<link rel="stylesheet" type="text/css" href="' + v + '"/>')
-                        .appendTo(head);
+                    var css = document.createElement('link');
+                    css.rel = 'stylesheet';
+                    css.type = 'text/css';
+                    css.href = v;
+                    document.getElementsByTagName('head')[0].appendChild(css);
+                    // do not use jquery to load it, will not work in IE!
+                    // $('<link rel="stylesheet" type="text/css" href="' + v + '"/>')
+                    //     .appendTo(head);
                 });
 
             }
@@ -70,9 +76,20 @@
                     if(v[0] !== '/' && json.configuration && json.configuration.assetPath) {
                         v = json.configuration.assetPath + '/' + v;
                     }
-                    $('<script></script')
-                        .attr('src', v)
-                        .appendTo($('body'));
+
+                            // do not use jquery to load scripts, will fail on IE!
+                            // $.getScript(v, $.proxy(function(data){
+                            //                            $.globalEval(data);
+                            //                            alert(Mapbender.configuration);
+                            //                          }, self));
+                    var script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.src = v;
+                            // $.getScript(v);
+                    document.body.appendChild(script);
+                    // $('<script type="text/javascript"></script')
+                    //     .attr('src', v)
+                    //     .appendTo($('body'));
                  });
 
              }
