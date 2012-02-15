@@ -285,12 +285,15 @@ $.widget("mapbender.mbMap", {
         }
         if(controls.length === 0) {
             this.map.olMap.addControl(new OpenLayers.Control.Scale());
+            // nasty hack/bugfix: on scrolled pages the original version does not work well
             OpenLayers.Control.PanZoomBar.prototype.zoomBarDrag = function(evt) {
                 if (this.mouseDragStart != null) {
                     var deltaY = this.mouseDragStart.y - evt.xy.y;
                     var offsets = OpenLayers.Util.pagePosition(this.zoombarDiv);
-                    if (((evt.y ? evt.y : evt.pageY) - offsets[1]) > 0 &&
-                        ((evt.y ? evt.y : evt.pageY) - offsets[1]) < parseInt(this.zoombarDiv.style.height) - 2) {
+                    var y = evt.y ? evt.y : evt.pageY; // chrome only
+                    if(window.opera) y = evt.pageY;
+                    if ((y - offsets[1]) > 0 &&
+                        (y - offsets[1]) < parseInt(this.zoombarDiv.style.height) - 2) {
                         var newTop = parseInt(this.slider.style.top) - deltaY;
                         this.slider.style.top = newTop+"px";
                         this.mouseDragStart = evt.xy.clone();
