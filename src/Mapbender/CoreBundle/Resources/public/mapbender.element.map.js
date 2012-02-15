@@ -285,7 +285,23 @@ $.widget("mapbender.mbMap", {
         }
         if(controls.length === 0) {
             this.map.olMap.addControl(new OpenLayers.Control.Scale());
-            this.map.olMap.addControl(new OpenLayers.Control.PanZoomBar());
+            OpenLayers.Control.PanZoomBar.prototype.zoomBarDrag = function(evt) {
+                if (this.mouseDragStart != null) {
+                    var deltaY = this.mouseDragStart.y - evt.xy.y;
+                    var offsets = OpenLayers.Util.pagePosition(this.zoombarDiv);
+                    if (((evt.y ? evt.y : evt.pageY) - offsets[1]) > 0 &&
+                        ((evt.y ? evt.y : evt.pageY) - offsets[1]) < parseInt(this.zoombarDiv.style.height) - 2) {
+                        var newTop = parseInt(this.slider.style.top) - deltaY;
+                        this.slider.style.top = newTop+"px";
+                        this.mouseDragStart = evt.xy.clone();
+                    }
+                    // set cumulative displacement
+                    this.deltaY = this.zoomStart.y - evt.xy.y;
+                    OpenLayers.Event.stop(evt);
+                }
+            }
+            var c = new OpenLayers.Control.PanZoomBar();
+            this.map.olMap.addControl(c);
         }
 
         self._trigger('ready');
