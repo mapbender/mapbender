@@ -18,7 +18,11 @@
 			{% for md in mdList %}
 			<tr>
 				<td>{{ md.title }}</td>
-        <td></td>
+        {% if md.getLastMonitoringJob().status is defined %}
+            <td>{{ md.getLastMonitoringJob().status }}</td>
+        {% else %}
+            <td>{{ "No runs yet"|trans}}</td>
+        {% endif %}
 				<td>
           <a title="{{"Edit"|trans}} '{{md.title}}'"   class="edit" href="{{path("mapbender_monitoring_monitoringdefinition_edit",{"mdId":md.id})}}">{{ "Edit"|trans }}</a>
 				  <a title="{{"Delete"|trans}} '{{md.title}}'" class="confirmdelete" href="{{path("mapbender_monitoring_monitoringdefinition_confirmdelete",{"mdId":md.id})}}">{{ "Delete"|trans }}</a>
