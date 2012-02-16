@@ -76,6 +76,7 @@
           <span>{{ value.scaleHintMax }}</span>
         </div>
         {% endif %}
+        {{ form_widget(form.latLonBounds) }}
     </div>
     <div>
     {% if form.layer|length > 0 %}

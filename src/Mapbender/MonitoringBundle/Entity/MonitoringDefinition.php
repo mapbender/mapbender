@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author apour
  * @ORM\Entity
  */
-class MonitoringDefinition extends MonitoringJob {
+class MonitoringDefinition  {
 	/**
 	 *
 	 * @ORM\Id
@@ -92,13 +92,8 @@ class MonitoringDefinition extends MonitoringJob {
 	protected $lastNotificationTime;
 
     /**
-     * @ORM\ManyToOne(targetEntity="MonitoringDefinition",inversedBy="monitoringJobs", cascade={"update"})
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable="false")
-    */
-     protected $parent;
-
-    /**
-     * @ORM\OneToMany(targetEntity="MonitoringDefinition",mappedBy="parent", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="MonitoringJob",mappedBy="monitoringDefinition", cascade={"persist","remove"})
+     * @ORM\OrderBy({"timestamp" = "DESC"});
     */
 	protected $monitoringJobs;
 
@@ -126,6 +121,11 @@ class MonitoringDefinition extends MonitoringJob {
 	 */
 	protected $enabled = true;
 
+    public function __construct()
+    {
+        $this->monitoringJobs = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
     /**
      * Get id
      *
@@ -455,114 +455,15 @@ class MonitoringDefinition extends MonitoringJob {
     {
         return $this->enabled;
     }
-    /**
-     * @var string $timestamp
-     */
-    protected $timestamp;
-
-    /**
-     * @var string $latency
-     */
-    protected $latency;
-
-    /**
-     * @var string $changed
-     */
-    protected $changed;
-
-    public function __construct()
-    {
-        $this->monitoringJobs = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
-    /**
-     * Set timestamp
-     *
-     * @param string $timestamp
-     */
-    public function setTimestamp($timestamp)
-    {
-        $this->timestamp = $timestamp;
-    }
-
-    /**
-     * Get timestamp
-     *
-     * @return string 
-     */
-    public function getTimestamp()
-    {
-        return $this->timestamp;
-    }
-
-    /**
-     * Set latency
-     *
-     * @param string $latency
-     */
-    public function setLatency($latency)
-    {
-        $this->latency = $latency;
-    }
-
-    /**
-     * Get latency
-     *
-     * @return string 
-     */
-    public function getLatency()
-    {
-        return $this->latency;
-    }
-
-    /**
-     * Set changed
-     *
-     * @param string $changed
-     */
-    public function setChanged($changed)
-    {
-        $this->changed = $changed;
-    }
-
-    /**
-     * Get changed
-     *
-     * @return string 
-     */
-    public function getChanged()
-    {
-        return $this->changed;
-    }
-
-    /**
-     * Set parent
-     *
-     * @param Mapbender\MonitoringBundle\Entity\MonitoringDefinition $parent
-     */
-    public function setParent(\Mapbender\MonitoringBundle\Entity\MonitoringDefinition $parent)
-    {
-        $this->parent = $parent;
-    }
-
-    /**
-     * Get parent
-     *
-     * @return Mapbender\MonitoringBundle\Entity\MonitoringDefinition 
-     */
-    public function getParent()
-    {
-        return $this->parent;
-    }
 
     /**
      * Add monitoringJobs
      *
-     * @param Mapbender\MonitoringBundle\Entity\MonitoringDefinition $monitoringJobs
+     * @param Mapbender\MonitoringBundle\Entity\MonitoringJob $monitoringJobs
      */
-    public function addMonitoringJobs(\Mapbender\MonitoringBundle\Entity\MonitoringDefinition $monitoringJobs)
+    public function addMonitoringJob(\Mapbender\MonitoringBundle\Entity\MonitoringJob $monitoringJob)
     {
-        $this->monitoringJobs[] = $monitoringJobs;
+        $this->monitoringJobs[] = $monitoringJob;
     }
 
     /**
@@ -575,5 +476,10 @@ class MonitoringDefinition extends MonitoringJob {
         return $this->monitoringJobs;
     }
 
-
+    /**
+     * Get the latest MonitoringJob
+    */
+    public function getLastMonitoringJob(){
+        return $this->monitoringJobs[0];         
+    }
 }
