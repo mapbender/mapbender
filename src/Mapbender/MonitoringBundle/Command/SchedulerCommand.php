@@ -9,6 +9,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
+use Mapbender\MonitoringBundle\Component\MonitoringRunner;
+use Mapbender\Component\HTTP\HTTPClient;
 
 class SchedulerCommand extends ContainerAwareCommand {
     protected function configure() {
@@ -28,14 +30,63 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output) {
 		$command = $input->getArgument('cmd');
+        if(!$command = strtolower($command)){
+        
+            return "";
+        }
 
-		$output->writeln("You want : ".$command);
+        switch($command ){
+            case "run":
+                while(true){
+                    $this->runCommand($input, $output);
+                    sleep(10);
+                }
+            break;
+            case "list":
+                $result = $this->listCommand($input, $output);
+            break;
+        }
+
+    }
+
+    protected function listCommand(InputInterface $input, OutputInterface $output){
+
+        $defs = $this->getContainer()
+            ->get("doctrine")
+            ->getRepository('Mapbender\MonitoringBundle\Entity\MonitoringDefinition')
+            ->findAll();
+    
+        foreach($defs as $md){
+            $output->writeln($md->getTitle());
+        }
+
+    }
+
+    protected function runCommand(InputInterface $input, OutputInterface $output){
+
+        $defs = $this->getContainer()
+            ->get("doctrine")
+            ->getRepository('Mapbender\MonitoringBundle\Entity\MonitoringDefinition')
+            ->findAll();
+    
+
+        $em = $this->getContainer()->get("doctrine")->getEntityManager();
+
+        foreach($defs as $md){
+            $output->write($md->getTitle());
+            $client = new HTTPClient($this->getContainer());
+            $mr = new MonitoringRunner($md,$client);                                   
+            if($md->getEnabled()){
+                $job = $mr->run();                                                         
+                $md->addMonitoringJob($job);                                               
+                $em->persist($md);                                                         
+                $em->flush();   
+                $output->writeln("\t\t".$md->getLastMonitoringJob()->getStatus());
+            }else{
+                $output->writeln("\t\tDISABLED");
+            }
+        }
 		
-		if(strtolower($command) === "start") {
-			
-		} else if(strtolower($command) === "stop") {
-			
-		}
     }
 }
 

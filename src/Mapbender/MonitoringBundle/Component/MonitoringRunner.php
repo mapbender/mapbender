@@ -16,10 +16,16 @@ class MonitoringRunner {
     public function run(){
         $job = new MonitoringJob();
         $time_pre = microtime(true);
-        $result = $this->client->open($this->md->getRequestUrl());
+        $result = null;
+        try {
+            $result = $this->client->open($this->md->getRequestUrl());
+            $job->setResult($result->getData());
+            $job->setSTATUS("SUCCESS");
+        }catch(\Exception $E){
+            $job->setSTATUS("FAIL");
+        }
         $time_post = microtime(true);
         $job->setMonitoringDefinition($this->md);
-        $job->setResult($result->getData());
         $job->setLatency(round($time_post-$time_pre,3));
         return $job;
     }
