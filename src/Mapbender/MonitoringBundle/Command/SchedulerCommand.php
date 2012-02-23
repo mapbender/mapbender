@@ -76,11 +76,15 @@ EOT
             $output->write($md->getTitle());
             $client = new HTTPClient($this->getContainer());
             $mr = new MonitoringRunner($md,$client);                                   
-            $job = $mr->run();                                                         
-            $md->addMonitoringJob($job);                                               
-            $em->persist($md);                                                         
-            $em->flush();   
-            $output->writeln("\t\t".$md->getLastMonitoringJob()->getStatus());
+            if($md->getEnabled()){
+                $job = $mr->run();                                                         
+                $md->addMonitoringJob($job);                                               
+                $em->persist($md);                                                         
+                $em->flush();   
+                $output->writeln("\t\t".$md->getLastMonitoringJob()->getStatus());
+            }else{
+                $output->writeln("\t\tDISABLED");
+            }
         }
 		
     }
