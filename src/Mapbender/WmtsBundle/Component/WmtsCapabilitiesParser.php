@@ -142,6 +142,12 @@ class WmtsCapabilitiesParser {
             $getTile = $this->xpath->query("./ows:Operation[@name='GetTile']", $operationsMetadata)->item(0);
             if($getTile != null){
                 $getrest = $this->getValue("./ows:DCP/ows:HTTP/ows:Get[./ows:Constraint/ows:AllowedValues/ows:Value/text()='RESTful']/@xlink:href", $getTile);
+                /* remove a version from the getrest url */
+                $versionAtUrl = "/".$wmts->getVersion();
+                $pos = strripos($getrest, $versionAtUrl);
+                if ($pos!==false && $pos >= (strlen($getrest) - strlen($versionAtUrl) - 1)){
+                    $getrest = substr($getrest, 0, $pos);
+                }
                 $wmts->setRequestGetTileGETREST($getrest);
                 $getkvp = $this->getValue("./ows:DCP/ows:HTTP/ows:Get[./ows:Constraint/ows:AllowedValues/ows:Value/text()='KVP']/@xlink:href", $getTile);
                 $wmts->setRequestGetTileGETKVP($getkvp);
@@ -152,6 +158,12 @@ class WmtsCapabilitiesParser {
             $getFeatureInfo = $this->xpath->query("./ows:Operation[@name='GetFeatureInfo']", $operationsMetadata)->item(0);
             if($getFeatureInfo != null){
                 $getrest = $this->getValue("./ows:DCP/ows:HTTP/ows:Get[/ows:Constraint/ows:AllowedValues/ows:Value/text()='RESTful']/@xlink:href", $getFeatureInfo);
+                /* remove a version from the getrest url */
+                $versionAtUrl = "/".$wmts->getVersion();
+                $pos = strripos($getrest, $versionAtUrl);
+                if ($pos!==false && $pos >= (strlen($getrest) - strlen($versionAtUrl) - 1)){
+                    $getrest = substr($getrest, 0, $pos);
+                }
                 $wmts->setRequestGetFeatureInfoGETREST($getrest);
                 $getkvp = $this->getValue("./ows:DCP/ows:HTTP/ows:Get[/ows:Constraint/ows:AllowedValues/ows:Value/text()='KVP']/@xlink:href", $getFeatureInfo);
                 $wmts->setRequestGetFeatureInfoGETKVP($getkvp);
