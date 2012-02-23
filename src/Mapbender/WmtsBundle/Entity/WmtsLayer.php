@@ -9,12 +9,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
 * @ORM\Entity
-* @ORM\Table(name="layer")
+* @ORM\Table(name="wmtslayer")
 * @ORM\InheritanceType("JOINED")
 * @ORM\DiscriminatorColumn(name="discr", type="string")
-* @ORM\DiscriminatorMap({"wmtsservice" = "WMTSService", "wmtslayer" = "WMTSLayer", "grouplayer" = "GroupLayer"})
+* @ORM\DiscriminatorMap({"wmtsservice" = "WmtsService", "wmtslayerdetail" = "WmtsLayerDetail", "wmtsgrouplayer" = "WmtsGroupLayer", "wmtsinstance"="WmtsInstance"})
 */
-abstract class Layer implements LayerInterface{
+abstract class WmtsLayer implements LayerInterface{
     /**
      *  @ORM\Id
      *  @ORM\Column(type="integer")

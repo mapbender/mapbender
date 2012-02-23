@@ -1,13 +1,18 @@
 <?php
 namespace Mapbender\WmtsBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\WmtsBundle\Entity\GroupLayer;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
+ * WMTSLayer class
+ * 
+ * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ *
+ * 
  * @ORM\Entity
 */
-class WMTSLayer extends GroupLayer {
+class WmtsLayerDetail extends WmtsGroupLayer {
 
     /**
      * @ORM\Column(type="boolean", nullable="false")
@@ -22,7 +27,15 @@ class WMTSLayer extends GroupLayer {
      */
     protected $crs = array();
     /**
+     * @ORM\Column(type="array", nullable="true")
+     */
+    protected $crsBounds = array();
+    /**
      * @ORM\Column(type="string", nullable="true")
+     */
+    protected $crsLatLon = "EPSG:4326";
+    /**
+     * @ORM\Column(type="array", nullable="true")
      */
     protected $latLonBounds = "-180 -90 180 90";
     /**
@@ -70,17 +83,27 @@ class WMTSLayer extends GroupLayer {
     }
     /**
      * Set crs
-     * @param $crs 
+     * @param array $crs 
      */
     public function setCrs($crs){
         $this->crs = $crs;
     }
+    
     /**
-     * Get crs
-     * @return array crs
+     * Set crs
+     * @param $crs 
      */
-    public function getCrs(){
-        return $this->crs;
+    public function setDefaultCrs($crs){
+        if($this->crs == null) {
+            $this->crs = array();
+        }
+        $idx = array_search($crs, $this->crs);
+        if($idx===false){
+            $this->crs = array_merge(array($crs), $this->crs);
+        } else {
+            unset($this->crs[$idx]);
+            $this->crs = array_merge(array($crs), $this->crs);
+        }
     }
     /**
      * Get default crs
@@ -89,6 +112,28 @@ class WMTSLayer extends GroupLayer {
     public function getDefaultCrs(){
         $crs = explode(',',$this->crs);
         return $crs[0] ?:"";
+    }
+    /**
+     * Get crs
+     * @return array crs
+     */
+    public function getCrs(){
+        return $this->crs;
+    }
+    
+    /**
+     * Set crsLatLon
+     * @param string $crsLatLon
+     */
+    public function setCrsLatLon($crsLatLon){
+        $this->crsLatLon = $crsLatLon;
+    }
+    /**
+     * Get crsLatLon
+     * @return array crsLatLon
+     */
+    public function getCrsLatLon(){
+        return $this->crsLatLon;
     }
     /**
      * Set latLonBounds
@@ -103,6 +148,20 @@ class WMTSLayer extends GroupLayer {
      */
     public function getLatLonBounds(){
         return $this->latLonBounds;
+    }
+    /**
+     * Set crsBounds
+     * @param array $bounds 
+     */
+    public function setCrsBounds($bounds){
+        $this->crsBounds = $bounds; 
+    }
+    /**
+     * Get crsBounds
+     * @return array
+     */
+    public function getCrsBounds(){
+        return $this->crsBounds;
     }
 
     

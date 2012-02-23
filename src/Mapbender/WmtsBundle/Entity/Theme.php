@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\WmtsBundle\Entity;
 
-
 use Doctrine\Common\Collections\ArrayCollection;
 
 
@@ -17,6 +16,8 @@ class Theme {
     protected $title = "";
     
     protected $abstract = "";
+    
+    protected $layerref = "";
     
     protected $theme;
     
@@ -79,6 +80,20 @@ class Theme {
         $this->abstract = $abstract;
     }
     /**
+     * Get layerref
+     * @return string layerref
+     */
+    public function getLayerRef() {
+        return $this->layerref;
+    }
+    /**
+     * Set layerref
+     * @param string $layerref 
+     */
+    public function setLayerRef($layerref) {
+        $this->layerref = $layerref;
+    }
+    /**
      * Get theme
      * @return arrray theme
      */
@@ -98,16 +113,22 @@ class Theme {
      * @param Theme $theme 
      */
     public function addTheme($theme) {
-        $this->theme[] = $theme;
+        $this->theme->add($theme);
     }
     
-    public function getAsArray(Theme $theme=null, &$themes=array()) {
-        $theme = $theme=null? $this: $theme;
+//    public function getAsArray(Theme $theme=null, &$themes=array()) {
+    public function getAsArray() {
+//        $theme = $theme==null? $this: $theme;
+        $theme = $this;
+        $themes = array();
         $themes["identifier"] = $theme->getIdentifier();
         $themes["title"] = $theme->getTitle();
         $themes["abstract"] = $theme->getAbstract();
+        $themes["layerref"] = $theme->getLayerRef();
+        $arr = $theme->getTheme();
         foreach ($theme->getTheme() as $subtheme){
-            $themes["theme"][] = getAsArray($subtheme, $subtheme->getTheme());
+//            $themes["theme"][] = $subtheme->getAsArray($subtheme, $subtheme->getTheme());
+            $themes["theme"][] = $subtheme->getAsArray();
         }
         return $themes;
     }
