@@ -266,11 +266,11 @@ class Application implements ApplicationInterface {
         $this->layersets = array();
         foreach($this->configuration['layersets'] as $layersetId => $layers) {
             $this->layersets[$layersetId] = array();
-            foreach($layers as $id => $layer) {
+            foreach($layers as $layerId => $layer) {
                 //Extract and unset class, so we can use the remains as configuration
                 $class = $layer['class'];
                 unset($layer['class']);
-                $this->layersets[$layersetId][] = new $class($id, $layer);
+                $this->layersets[$layersetId][] = new $class($layersetId, $layerId, $layer, $this->get("doctrine"));
             }
         }
     }

@@ -14,7 +14,7 @@ interface LayerInterface {
 	 * @param string $title The layer id
 	 * @param array $configuration The layer configuration
 	 */
-	public function __construct($id, array $configuration);
+	public function __construct($layerSetId, $layerId, array $configuration, $doctrine = null);
 
 	/**
 	 * Return an array representation of the layer title and
