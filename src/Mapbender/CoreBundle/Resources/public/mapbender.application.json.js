@@ -1,5 +1,4 @@
 (function($) {
-
     var Plugin = function() {};
 
     $.extend(Plugin.prototype, {
@@ -49,8 +48,10 @@
                 if(!$.isArray(json.assets.css)) {
                     json.assets.css = [json.assets.css];
                 }
+                
                 $.each(json.assets.css, function(k, v) {
-                    if(v[0] !== '/' && json.configuration && json.configuration.assetPath) {
+                    // !!! IE7 important: typeof(v[0]) !== 'undefined'
+                    if(typeof(v[0]) !== 'undefined' && v[0] !== '/' && json.configuration && json.configuration.assetPath) {
                         v = json.configuration.assetPath + '/' + v;
                     }
                     var css = document.createElement('link');
@@ -73,10 +74,10 @@
                     json.assets.js = [json.assets.js];
                  }
                  $.each(json.assets.js, function(k, v) {
-                    if(v[0] !== '/' && json.configuration && json.configuration.assetPath) {
+                    // !!! IE7 important: typeof(v[0]) !== 'undefined'
+                    if(typeof(v[0]) !== 'undefined' && v[0] !== '/' && json.configuration && json.configuration.assetPath) {
                         v = json.configuration.assetPath + '/' + v;
                     }
-
                             // do not use jquery to load scripts, will fail on IE!
                             // $.getScript(v, $.proxy(function(data){
                             //                            $.globalEval(data);
