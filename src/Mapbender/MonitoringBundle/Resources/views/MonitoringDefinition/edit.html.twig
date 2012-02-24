@@ -23,19 +23,20 @@
 	</form>
     <h2>{{ "Jobs"|trans }}</h2>
     {% if md.monitoringJobs|length > 0 %}
-    <ul>
+    <table id="table-job">
+        <tr><th>{{"Nr"|trans}}</th><th>{{"date"|trans}}</th><th>{{"latency"|trans}}</th><th>{{"status"|trans}}</th><th>{{"changed"|trans}}</th></tr>
         {% set num = 0 %}
         {% for job in md.monitoringJobs %}
             {% if num == 0 %}
-                <li class="job job-last"><span class="job-id">{{ job.id }}</span> {{ job.latency }} ms {{ job.status }} {% if job.changed %}CHANGED{% endif %}</li>
+                <tr class="job job-last"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("m.d.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>{% if job.changed %}CHANGED{% endif %}</td></tr>
             {% elseif num < 10 %}
                 {% if job.changed %}
-                <li class="job job-previous"><span class="job-id">{{ job.id }}</span> {{ job.latency }} ms {{ job.status }} CHANGED</li>
+                <tr class="job job-previous"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("m.d.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>CHANGED</td></tr>
                 {% endif %}
             {% endif %}
             {% set num = num+1 %}
         {% endfor %}
-    </ul>
+    </table>
     <h2>{{ "Last Result"|trans }}</h2>
     <pre>
 {{md.monitoringJobs[0].result}}
@@ -44,10 +45,10 @@
         <p>{{ "No jobs have been run"|trans }}</p>
     {% endif %}
     <script type="text/javascript">
-    $('li.job').bind("click", function(e) {
+    $('tr.job').bind("click", function(e) {
         var that = this;
         $.ajax({
-            url: '{{path("mapbender_monitoring_monitoringdefinition_show",{"jId":''})}}/'+$(that).find('span.job-id').text(),
+            url: '{{path("mapbender_monitoring_monitoringdefinition_show",{"jId":''})}}/'+$(that).find('td.job-id').text(),
             type: "get",
             dataType: "json",
             success: function(data) {

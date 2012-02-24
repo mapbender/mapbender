@@ -119,23 +119,6 @@ class MonitoringDefinitionController extends Controller {
 		);
 	}
     
-    /**
-	 * @Route("/show/{jId}")
-	 * @Method("GET")
-	 * @Template()
-	 */
-	public function showAction($jId) {
-        $tr = $this->get('translator');
-        $job = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:MonitoringJob")
-                ->findOneById($jId);
-        $result = array("html" => "<pre>".htmlentities($job->getResult())."</pre>",
-            "error" => "", "title" => $tr->trans('Job_result'));
-        $response = new Response();
-        $response->setContent(json_encode($result));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
-	}
-	
 	/**
 	 * @Route("/{mdId}/delete")
 	 * @Method("POST")
@@ -226,6 +209,23 @@ class MonitoringDefinitionController extends Controller {
             )
         );
     }
+    
+     /**
+	 * @Route("/show/{jId}")
+	 * @Method("GET")
+	 * @Template()
+	 */
+	public function showAction($jId) {
+        $tr = $this->get('translator');
+        $job = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:MonitoringJob")
+                ->findOneById($jId);
+        $result = array("html" => "<pre>".htmlentities($job->getResult())."</pre>",
+            "error" => "", "title" => $tr->trans('Job_result'));
+        $response = new Response();
+        $response->setContent(json_encode($result));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+	}
 }
 
 ?>
