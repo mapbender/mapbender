@@ -24,16 +24,41 @@
     <h2>{{ "Jobs"|trans }}</h2>
     {% if md.monitoringJobs|length > 0 %}
     <ul>
+        {% set num = 0 %}
         {% for job in md.monitoringJobs %}
-            <li>{{ job.id }} {{ job.latency }} ms {{ job.status }}</li>
+            {% if num == 0 %}
+                <li class="job job-last"><span class="job-id">{{ job.id }}</span> {{ job.latency }} ms {{ job.status }} {% if job.changed %}CHANGED{% endif %}</li>
+            {% elseif num < 10 %}
+                {% if job.changed %}
+                <li class="job job-previous"><span class="job-id">{{ job.id }}</span> {{ job.latency }} ms {{ job.status }} CHANGED</li>
+                {% endif %}
+            {% endif %}
+            {% set num = num+1 %}
         {% endfor %}
     </ul>
     <h2>{{ "Last Result"|trans }}</h2>
     <pre>
-        {{md.monitoringJobs[0].result}}
+{{md.monitoringJobs[0].result}}
     </pre>
     {% else %}
         <p>{{ "No jobs have been run"|trans }}</p>
     {% endif %}
-    
+    <script type="text/javascript">
+    $('li.job').bind("click", function(e) {
+        var that = this;
+        $.ajax({
+            url: '{{path("mapbender_monitoring_monitoringdefinition_show",{"jId":''})}}/'+$(that).find('span.job-id').text(),
+            type: "get",
+            dataType: "json",
+            success: function(data) {
+                $(data.html).dialog({
+                    autoOpen: true,
+                    width: 800,
+                    height: 600,
+                    title: data.title
+                });
+            }
+        });
+    });
+    </script>
 {% endblock %}
