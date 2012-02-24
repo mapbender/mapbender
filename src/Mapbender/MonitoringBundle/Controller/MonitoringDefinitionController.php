@@ -11,6 +11,8 @@ use Mapbender\MonitoringBundle\Component\MonitoringRunner;
 use Mapbender\Component\HTTP\HTTPClient;
 use Mapbender\WmsBundle\Entity\WMSService;
 
+use Symfony\Component\HttpFoundation\Response;
+
 /**
  * Description of MonitoringDefinitionController
  *
@@ -116,6 +118,23 @@ class MonitoringDefinitionController extends Controller {
 			"md" => $md
 		);
 	}
+    
+    /**
+	 * @Route("/show/{jId}")
+	 * @Method("GET")
+	 * @Template()
+	 */
+	public function showAction($jId) {
+        $tr = $this->get('translator');
+        $job = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:MonitoringJob")
+                ->findOneById($jId);
+        $result = array("html" => "<pre>".htmlentities($job->getResult())."</pre>",
+            "error" => "", "title" => $tr->trans('Job_result'));
+        $response = new Response();
+        $response->setContent(json_encode($result));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+	}
 	
 	/**
 	 * @Route("/{mdId}/delete")
@@ -187,10 +206,15 @@ class MonitoringDefinitionController extends Controller {
 	 * @Route("/{mdId}/run")
 	 * @Method("POST")
 	 */
-	public function runAction(MonitoringDefinition $md) {	
+	public function runAction(MonitoringDefinition $md) {
         $client = new HTTPClient($this->container);
         $mr = new MonitoringRunner($md,$client);
         $job = $mr->run();
+        if(strcmp($job->getResult(), $md->getLastMonitoringJob()->getResult()) != 0){
+            $job->setChanged(true);
+        } else {
+            $job->setChanged(false);
+        }
         $md->addMonitoringJob($job);
         $em = $this->getDoctrine()->getEntityManager();
         $em->persist($md);

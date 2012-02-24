@@ -20,9 +20,17 @@ class MonitoringRunner {
         try {
             $result = $this->client->open($this->md->getRequestUrl());
             $job->setResult($result->getData());
-            $job->setSTATUS("SUCCESS");
+            if($result->getStatusCode()=="200") {
+                $teststr = substr($result->getData(), 0, 100);
+                if(strripos(strtolower($teststr), "exception") !== false){
+                    $job->setSTATUS(MonitoringJob::$STATUS_EXCEPTION);
+                } else {
+                    $job->setSTATUS(MonitoringJob::$STATUS_SUCCESS);
+                }
+            } else 
+                $job->setSTATUS(MonitoringJob::$STATUS_ERROR.":".$result->getStatusCode());
         }catch(\Exception $E){
-            $job->setSTATUS("FAIL");
+            $job->setSTATUS(MonitoringJob::$STATUS_FAIL);
         }
         $time_post = microtime(true);
         $job->setMonitoringDefinition($this->md);
