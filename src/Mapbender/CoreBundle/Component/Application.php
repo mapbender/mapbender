@@ -121,12 +121,15 @@ class Application implements ApplicationInterface {
         // First the application and template assets
         $js = array();
         $css = array();
-
+        
         $template = $this->getTemplate();
         $template_metadata = $this->getTemplate()->getMetadata();
         foreach($template_metadata['css'] as $asset) {
             $css[] = $this->getReference($template, $asset);
         }
+        // load mapbender.translate 
+        
+        $js[] = $this->getReference($this, 'mapbender.trans.js');
         foreach($template_metadata['js'] as $asset) {
             $js[] = $this->getReference($template, $asset);
         }
@@ -173,7 +176,6 @@ class Application implements ApplicationInterface {
         }
 
         $js[] = $this->getReference($this, 'mapbender.application.js');
-        $js[] = $this->getReference($this, 'mapbender.trans.js');
         $css[] = $this->getReference($this, 'mapbender.application.css');
 
         try {
