@@ -89,6 +89,7 @@ class Application implements ApplicationInterface {
             'basePath' => $base_path,
             'assetPath' => rtrim($this->get('templating.helper.assets')->getUrl('.'), '.'),
             'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
+            'transPath' => $this->get('router')->generate('mapbender_core_translation_transtext'),
             'slug' => $this->slug,
             'proxies' => array(
                 'open' => $this->get('router')->generate('mapbender_proxy_open'),
@@ -172,6 +173,7 @@ class Application implements ApplicationInterface {
         }
 
         $js[] = $this->getReference($this, 'mapbender.application.js');
+        $js[] = $this->getReference($this, 'mapbender.trans.js');
         $css[] = $this->getReference($this, 'mapbender.application.css');
 
         try {
