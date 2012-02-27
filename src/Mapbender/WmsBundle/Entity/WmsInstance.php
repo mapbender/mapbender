@@ -1,18 +1,18 @@
 <?php
-namespace Mapbender\WmtsBundle\Entity;
+namespace Mapbender\WmtBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * WmtsInstance class
+ * WmsInstance class
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  *
  * 
  * @ORM\Entity
 */
-class WmtsInstance {
+class WmsInstance {
     /**
     *  @ORM\Id
     *  @ORM\Column(type="integer")
@@ -20,15 +20,17 @@ class WmtsInstance {
     */
     protected $id;
     /**
-     * @ORM\ManyToOne(targetEntity="WmtsService",inversedBy="layer", cascade={"update"})
-     * @ORM\JoinColumn(name="wmts_service", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="WMSService",inversedBy="layer", cascade={"update"})
+     * @ORM\JoinColumn(name="wms_service", referencedColumnName="id")
      */
-    protected $wmts_service;
+    protected $wms_service;
     /**
+     * Layersetid form .yml
      * @ORM\Column(type="string", nullable="true")
      */
     protected $layersetid = true;
     /**
+     * Layerid form .yml
      * @ORM\Column(type="string", nullable="true")
      */
     protected $layerid = true;
@@ -98,12 +100,12 @@ class WmtsInstance {
     
     
     
-    public function getWmts_service(){
-        return $this->wmts_service;
+    public function getWms_service(){
+        return $this->wms_service;
     }
     
-    public function setWmts_service($wmts_service){
-        $this->wmts_service = $wmts_service;
+    public function setWms_service($wms_service){
+        $this->wms_service = $wms_service;
     }
     
     
@@ -325,8 +327,8 @@ class WmtsInstance {
     }
     
     public function save($em){
-        if($this->wmts_service !== null){
-            foreach($this->wmts_service->getTileMatrixSetAsObjects() as $matrixset){
+        if($this->wms_service !== null){
+            foreach($this->wms_service->getTileMatrixSetAsObjects() as $matrixset){
                 if($matrixset->getIdentifier()==$this->matrixSet){
                     $tilesize = array();
                     $topleftcorner = array();
@@ -353,7 +355,7 @@ class WmtsInstance {
                 }
             }
             $crsbound = array();
-            foreach($this->wmts_service->getAllLayer() as $layer){
+            foreach($this->wms_service->getAllLayer() as $layer){
                 if($layer->getId()==$this->getLayeridentifier()){
                     $crsbounds = $layer->getCrsBounds();
                     $crsbound = explode(" ", $crsbounds[$this->getCrs()]);
@@ -368,10 +370,10 @@ class WmtsInstance {
     }
     
     public function completeForm($translator, $form) {
-        if( $this->wmts_service !== null){
+        if( $this->wms_service !== null){
             $layer_choice = array();
             $layers = array();
-            foreach($this->wmts_service->getAllLayer() as $layer){
+            foreach($this->wms_service->getAllLayer() as $layer){
                 $layer_choice[$layer->getId()] = $layer->getTitle();
                 $layers[$layer->getId()] = $layer;
             }

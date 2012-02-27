@@ -26,7 +26,26 @@ class WmsLayer implements LayerInterface {
     }
     
     public function loadLayer(){
-        $a=0;
+        return; // TODO
+        $em = $this->doctrine->getEntityManager();
+        $query = $em->createQuery(
+            'SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.layersetid = :layersetid AND i.layerid= :layerid'
+            )->setParameter('layersetid', $this->layerSetId)->setParameter('layerid', $this->layerId);
+        $wmsinstanceList = $query->getResult();
+        foreach($wmsinstanceList as $wmsinstance){
+            $wms = $wmsinstance->getWms_service();
+            $layer = $this->doctrine->getRepository('MapbenderWmsBundle:WMSLayer')->find($wmsinstance->getLayeridentifier());
+            $this->configuration["proxy"] = $wmsinstance->getProxy();
+            $this->configuration["baselayer"] = true; // TODO ??
+            $this->configuration["visible"] = $wmsinstance->getVisible();
+            $this->configuration["title"] = "Hintergrundkarte"; // ??? title: WMS or from YAML
+
+            $this->configuration["url"] = $wms->getRequestGetMapGET();//($wms->getRequestGetMapGET()!==null)? $wms->getRequestGetTileGETREST() : $wms->getRequestGetTileGETKVP();
+            $this->configuration["layers"] = $wmsinstance->getLayers();
+            $this->configuration["format"] = $wmsinstance->getFormat();
+            $this->configuration["transparent"] = $wmsinstance->getTransparent();
+            $this->configuration["tiled"] = $wmsinstance->getTiled();
+        }
     }
 
     public function render() {
