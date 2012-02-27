@@ -3,7 +3,7 @@
 namespace Mapbender\WmtsBundle;
 
 use Mapbender\CoreBundle\Component\LayerFactoryInterface;
-use Mapbender\WmtsBundle\WmtsLayer;
+use Mapbender\WmtsBundle\WmtsLayerLoader;
 
 class WmtsLayerFactory implements LayerFactoryInterface {
 	public function getLayerClass() {
@@ -11,7 +11,7 @@ class WmtsLayerFactory implements LayerFactoryInterface {
 	}
 
 	public function create($name, array $configuration) {
-		return new WmtsLayerDetail($name, $configuration);
+		return new WmtsLayeLoader($name, $configuration);
 	}
 }
 
