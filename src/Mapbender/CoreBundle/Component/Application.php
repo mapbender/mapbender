@@ -93,7 +93,7 @@ class Application implements ApplicationInterface {
             'slug' => $this->slug,
             'proxies' => array(
                 'open' => $this->get('router')->generate('mapbender_proxy_open'),
-                'secure' => $this->get('router')->generate('mapbender_proxy_secure')
+                //'secure' => $this->get('router')->generate('mapbender_proxy_secure')
             )
         );
 
@@ -121,7 +121,7 @@ class Application implements ApplicationInterface {
         // First the application and template assets
         $js = array();
         $css = array();
-        // load mapbender.translate 
+        // load mapbender.translate
         $js[] = $this->getReference($this, 'mapbender.trans.js');
         $template = $this->getTemplate();
         $template_metadata = $this->getTemplate()->getMetadata();
