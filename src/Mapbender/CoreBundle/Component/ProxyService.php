@@ -85,6 +85,12 @@ class ProxyService {
         // Get response from server
         $content = curl_exec($ch);
         $status = curl_getinfo($ch);
+
+        if($content === false) {
+            throw new \RuntimeException('Proxying failed: ' . curl_error($ch)
+                . ' [' . curl_errno($ch) . ']', curl_errno($ch));
+        }
+
         curl_close($ch);
 
         // Return server response
