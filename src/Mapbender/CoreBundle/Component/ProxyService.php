@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProxyService {
     protected $proxy_conf;
+    protected $noproxy;
 
     public function __construct($proxy_conf) {
         if($proxy_conf['host'] !== null) {
@@ -22,8 +23,11 @@ class ProxyService {
                 $user .= ':' . $proxy_conf['password'];
             }
             $this->proxy_conf[CURLOPT_PROXYUSERPWD] = $user;
+
+            $this->noproxy = $proxy_conf['noproxy'];
         } else {
             $this->proxy_conf = array();
+            $this->noproxy = array();
         }
     }
 
@@ -79,8 +83,12 @@ class ProxyService {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_USERAGENT      => $_SERVER['HTTP_USER_AGENT']);
 
-        // Set params + proxy params
-        curl_setopt_array($ch, $curl_config + $this->proxy_conf);
+        // Set params + proxy params if not noproxy
+        if(!in_array($url['host'], $this->noproxy)) {
+            $curl_config += $this->proxy_conf;
+        }
+
+        curl_setopt_array($ch, $curl_config);
 
         // Get response from server
         $content = curl_exec($ch);
