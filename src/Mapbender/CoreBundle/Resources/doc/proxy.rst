@@ -30,3 +30,21 @@ mapbender_core:
 Anything but the ``proxy.host`` setting is optional. To not use a proxy for the
 ``mapbender.proxy`` service, just omit the proxy configuration in the
 ``mapbender_core`` section of your ``config.yml``.
+
+The noproxy Option
+------------------
+
+Additionally to the options described above, a ``noproxy`` option can be given
+in the form of an array of hostnames and/or IP addresses which then will never
+be routed trough the configured proxy. An example::
+
+mapbender_core:
+    proxy:
+        host: proxyhost
+        port: 8080
+        user: proxyuser
+        password: proxypasswd
+        noproxy:
+            - myinternalhost
+            - 10.10.1.4
+
