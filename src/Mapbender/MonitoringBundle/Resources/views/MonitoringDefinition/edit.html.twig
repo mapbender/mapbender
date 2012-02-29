@@ -6,9 +6,6 @@
     <h1>Monitoring Navigation</h1>
     <ul>
       <li>
-        <form action="{{ path('mapbender_monitoring_monitoringdefinition_run',{'mdId':md.id}) }}" method="post">
-        <button>{% trans %}Run{% endtrans %}</button>
-        </form>
       </li>
     </ul>
 </nav>
@@ -21,6 +18,12 @@
 	<form action="{{path("mapbender_monitoring_monitoringdefinition_index")}}" method="get">
 		<input type="submit" name="cancel" value="{{"Cancel"|trans}}" />
 	</form>
+	<form action="{{path("mapbender_monitoring_monitoringdefinition_statreset",{"mdId":md.id})}}" method="post">
+		<input type="submit" name="reset" value="{{"Reset"|trans}}" />
+	</form>
+    <form action="{{ path('mapbender_monitoring_monitoringdefinition_run',{'mdId':md.id}) }}" method="post">
+        <input type="submit" name="run" value="{% trans %}Run{% endtrans %}" />
+    </form>
     <h2>{{ "Jobs"|trans }}</h2>
     {% if md.monitoringJobs|length > 0 %}
     <table id="table-job">

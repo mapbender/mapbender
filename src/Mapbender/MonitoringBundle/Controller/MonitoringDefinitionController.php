@@ -215,6 +215,24 @@ class MonitoringDefinitionController extends Controller {
         );
     }
     
+    /**
+	 * @Route("/{mdId}/statreset")
+	 * @Method("POST")
+	 */
+	public function statresetAction(MonitoringDefinition $md) {
+        $em = $this->getDoctrine()->getEntityManager();
+        foreach($md->getMonitoringJobs() as $job){
+            $em->remove($job);
+        } 
+        $em->flush();
+    	return $this->redirect(
+            $this->generateUrl(
+                "mapbender_monitoring_monitoringdefinition_edit",
+                array("mdId" =>  $md->getId())
+            )
+        );
+    }
+    
      /**
 	 * @Route("/show/{jId}")
 	 * @Method("GET")
