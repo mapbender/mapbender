@@ -68,7 +68,8 @@ class MonitoringDefinitionController extends Controller {
         $em->persist($md);
         $em->flush();
         return $this->redirect($this->generateUrl(
-            "mapbender_wms_wms_index"
+            "mapbender_monitoring_monitoringdefinition_edit",
+            array("mdId" => $md->getId())
         ));
 	}
 	
