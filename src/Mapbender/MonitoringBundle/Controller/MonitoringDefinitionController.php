@@ -194,10 +194,14 @@ class MonitoringDefinitionController extends Controller {
         $client = new HTTPClient($this->container);
         $mr = new MonitoringRunner($md,$client);
         $job = $mr->run();
-        if(strcmp($job->getResult(), $md->getLastMonitoringJob()->getResult()) != 0){
+        if($md->getLastMonitoringJob()){
+            if(strcmp($job->getResult(), $md->getLastMonitoringJob()->getResult()) != 0){
+                $job->setChanged(true);
+            } else {
+                $job->setChanged(false);
+            }
+        }else {
             $job->setChanged(true);
-        } else {
-            $job->setChanged(false);
         }
         $md->addMonitoringJob($job);
         $em = $this->getDoctrine()->getEntityManager();
