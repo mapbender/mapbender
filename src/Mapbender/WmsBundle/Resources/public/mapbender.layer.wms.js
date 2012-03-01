@@ -129,7 +129,7 @@ $.extend(true, Mapbender, { layer: {
                     }
 
                     if(layer.queryable === true) {
-                        queryLayers.push(layer.title);
+                        queryLayers.push(layer.name);
                     }
 
                     def.configuration.layers.push({
