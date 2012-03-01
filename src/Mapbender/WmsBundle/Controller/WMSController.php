@@ -15,6 +15,8 @@ use Mapbender\WmsBundle\Entity\GroupLayer;
 use Mapbender\WmsBundle\Component\CapabilitiesParser;
 use Mapbender\WmsBundle\Form\WMSType;
 use Mapbender\Component\HTTP\HTTPClient;
+use Mapbender\WmsBundle\Event\WmsListLoaded;
+use Mapbender\WmsBundle\WmsEvents;
 
 /*
 * @package bkg
@@ -44,6 +46,12 @@ class WMSController extends Controller {
         $prevOffset = ($offset - $limit)  > 0 ? $offset - $limit : 0;
         $lastOffset = ($total - $limit)  > 0 ? $total - $limit : 0;
 
+        $dispatcher = $this->get("event_dispatcher");
+    
+        $wmsListLoadedEvent = new WmsListLoaded();
+        $wmsListLoadedEvent->setWmsList($wmsList);
+        $dispatcher->dispatch(WmsEvents::onWmsListLoaded, $wmsListLoadedEvent);
+
         return array(
             "wmsList" => $wmsList,
             "offset" => $offset,
@@ -52,6 +60,7 @@ class WMSController extends Controller {
             "lastOffset" => $lastOffset,
             "limit" => $limit,
             "total" => $total,
+            "extraColumns" => $wmsListLoadedEvent->getColumns(),
         );
     }
 
