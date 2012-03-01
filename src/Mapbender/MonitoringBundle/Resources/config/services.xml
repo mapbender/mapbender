@@ -11,7 +11,7 @@
     <services>
         <service id="mapbender.wmslistlistener" class="%mapbender.wmslistlistener.class%">
         <argument type="service" id="doctrine" />
-        <tag name="kernel.event_listener" event="mapbender.wmsbundle.wmslistloaded" method="onWmsListLoaded" />
+        <tag name="kernel.event_listener" event="mapbender.wmsbundle.wms.index" method="onWmsListLoaded" />
         </service>
     </services>
 </container>
