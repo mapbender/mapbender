@@ -27,9 +27,16 @@ class WmsListListener {
         ));
         foreach($mds as $md){
             if($lastJob = $md->getLastMonitoringJob()){
-                $data[$md->getTypeId()] = $lastJob->getStatus();
+                if ($lastJob->getStatus() == "SUCCESS"){
+                    $data[$md->getTypeId()] = 
+                        '<span class="monitoring success">Everything is fine</span>';
+                }else{
+                    $data[$md->getTypeId()] = 
+                        '<span class="monitoring failure">Something is broken</span>';
+
+                }
             }else{
-                $data[$md->getTypeId()] = "No runs yet";
+                $data[$md->getTypeId()] = '<span class="monitoring success">No runs yet</span>';
             }
         } 
         $event->addColumn("status",$data);
