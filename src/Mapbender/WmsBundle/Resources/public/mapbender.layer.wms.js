@@ -104,6 +104,7 @@ $.extend(true, Mapbender, { layer: {
                 capabilities = parser.read(xml);
 
             if(typeof(capabilities.capability) !== 'undefined') {
+                var queryLayers = [];
                 var def = {
                         type: 'wms',
                         configuration: {
@@ -123,7 +124,13 @@ $.extend(true, Mapbender, { layer: {
 
                 var layers = $.map(capabilities.capability.layers, function(layer, idx) {
                     var legend = null;
-                    if(layer.styles && layer.styles.length > 0) legend = layer.styles[0].legend.href;
+                    if(layer.styles && layer.styles.length > 0 && layer.styles[0].legend) {
+                        legend = layer.styles[0].legend.href;
+                    }
+
+                    if(layer.queryable === true) {
+                        queryLayers.push(layer.name);
+                    }
 
                     def.configuration.layers.push({
                         name: layer.name,
@@ -138,6 +145,7 @@ $.extend(true, Mapbender, { layer: {
                     });
                 });
 
+                def.configuration.queryLayers = queryLayers;
                 return def;
             } else {
                 return null;
