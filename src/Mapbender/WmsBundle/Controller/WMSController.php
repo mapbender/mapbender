@@ -15,7 +15,7 @@ use Mapbender\WmsBundle\Entity\GroupLayer;
 use Mapbender\WmsBundle\Component\CapabilitiesParser;
 use Mapbender\WmsBundle\Form\WMSType;
 use Mapbender\Component\HTTP\HTTPClient;
-use Mapbender\WmsBundle\Event\WmsListLoaded;
+use Mapbender\WmsBundle\Event\WmsIndexEvent;
 use Mapbender\WmsBundle\WmsEvents;
 
 /*
@@ -48,9 +48,9 @@ class WMSController extends Controller {
 
         $dispatcher = $this->get("event_dispatcher");
     
-        $wmsListLoadedEvent = new WmsListLoaded();
+        $wmsListLoadedEvent = new WmsIndexEvent();
         $wmsListLoadedEvent->setWmsList($wmsList);
-        $dispatcher->dispatch(WmsEvents::onWmsListLoaded, $wmsListLoadedEvent);
+        $dispatcher->dispatch(WmsEvents::onWmsIndex, $wmsListLoadedEvent);
 
         return array(
             "wmsList" => $wmsList,

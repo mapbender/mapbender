@@ -2,7 +2,7 @@
 namespace Mapbender\WmsBundle\Event;
 use Symfony\Component\EventDispatcher\Event;
 
-class WmsListLoaded extends Event {
+class WmsIndexEvent extends Event {
 
     
 
