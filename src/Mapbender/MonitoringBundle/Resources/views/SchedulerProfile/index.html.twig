@@ -1,0 +1,43 @@
+{% extends "MapbenderMonitoringBundle:SchedulerProfile:base.html.twig" %}
+
+{% block heading %}{{ "Scheduler Profile Index"|trans }}{% endblock %}
+
+{% block content %}
+{% if schedulers!=null %}
+    <table id="table-scheduler" >
+        <thead>
+            <tr>
+                <th>{{'name'|trans }}</th>
+                <th>{{'edit'|trans }}</th>
+                <th>{{'edit'|trans }}</th>
+                <th>{{'edit'|trans }}</th>
+                <th>{{'laststarttime'|trans }}</th>
+                <th>{{'lastendtime'|trans }}</th>
+                <th>{{'status'|trans }}</th>
+                <th>{{'edit'|trans }}</th>
+                <th>{{'delete'|trans }}</th>
+                <th>{{'current'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for scheduler in schedulers %}
+        <tr {% if scheduler.current %} class="scheduler-current" {% endif %}>
+            <td>{{ scheduler.title }}</td>
+            <td>{{ scheduler.title }}</td>
+            <td>{{ scheduler.title }}</td>
+            <td>{{ scheduler.title }}</td>
+            <td>{% if scheduler.laststarttime!=null %}{{scheduler.laststarttime|date("m.d.Y H:i:s")}}{% endif %} </td>
+            <td>{% if scheduler.lastendtime!=null %}{{ scheduler.lastendtime|date("m.d.Y H:i:s")}}{% endif %} </td>
+            <td>{{ scheduler.status }}</td>
+            <td><a href="{{ path('mapbender_monitoring_schedulerprofile_edit',{"spId":scheduler.id}) }}">{{'edit'|trans }}</a></td>
+            <td><a href="{{ path('mapbender_monitoring_schedulerprofile_delete',{"spId":scheduler.id}) }}">{{'delete'|trans }}</a></td>
+            <td><a href="{{ path('mapbender_monitoring_schedulerprofile_current',{"spId":scheduler.id}) }}">{{'set_current'|trans }}</a></td>
+        </tr>
+    {% endfor %}
+        </tbody>
+    </table>        
+
+{% endif %}
+    <a href="{{ path('mapbender_monitoring_schedulerprofile_shownew') }}">{{'define Scheduler'|trans }}</a>
+
+{% endblock %}

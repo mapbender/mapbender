@@ -37,9 +37,15 @@ EOT
 
         switch($command ){
             case "run":
-                while(true){
-                    $this->runCommand($input, $output);
-                    sleep(10);
+                $sp = $this->getContainer()
+                    ->get("doctrine")
+                    ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
+                    ->findOneByCurrent(true);
+                if($sp != null){
+                    while(true){
+                        $this->runCommand($input, $output);
+                        sleep(10);
+                    }
                 }
             break;
             case "list":
