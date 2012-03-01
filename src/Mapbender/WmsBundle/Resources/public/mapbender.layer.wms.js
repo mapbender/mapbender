@@ -145,7 +145,7 @@ $.extend(true, Mapbender, { layer: {
                     });
                 });
 
-                def.queryLayers = queryLayers;
+                def.configuration.queryLayers = queryLayers;
                 return def;
             } else {
                 return null;
