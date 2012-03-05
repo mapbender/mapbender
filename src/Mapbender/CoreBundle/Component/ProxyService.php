@@ -77,11 +77,14 @@ class ProxyService {
             }
         }
 
+        $user_agent = array_key_exists('HTTP_USER_AGENT', $_SERVER) ?
+            $_SERVER['HTTP_USER_AGENT'] : 'Mapbender3';
+
         $curl_config = array(
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HEADER         => false,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_USERAGENT      => $_SERVER['HTTP_USER_AGENT']);
+            CURLOPT_USERAGENT      => $user_agent);
 
         // Set params + proxy params if not noproxy
         if(!in_array($url['host'], $this->noproxy)) {
