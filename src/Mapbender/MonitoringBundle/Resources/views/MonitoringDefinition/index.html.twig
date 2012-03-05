@@ -10,7 +10,7 @@
 		<thead>
 			<tr>
 				<th>{{ "Title"|trans}}</th>
-        <th>{{ "Last Status"|trans }}</th>
+                <th>{{ "Last Status"|trans }}</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -19,14 +19,14 @@
 			<tr>
 				<td>{{ md.title }}</td>
         {% if md.getLastMonitoringJob().status is defined %}
-            <td>{{ md.getLastMonitoringJob().status }}</td>
+                <td>{{ md.getLastMonitoringJob().status }}</td>
         {% else %}
-            <td>{{ "No runs yet"|trans}}</td>
+                <td>{{ "No runs yet"|trans}}</td>
         {% endif %}
-				<td>
-          <a title="{{"Edit"|trans}} '{{md.title}}'"   class="edit" href="{{path("mapbender_monitoring_monitoringdefinition_edit",{"mdId":md.id})}}">{{ "Edit"|trans }}</a>
-				  <a title="{{"Delete"|trans}} '{{md.title}}'" class="confirmdelete" href="{{path("mapbender_monitoring_monitoringdefinition_confirmdelete",{"mdId":md.id})}}">{{ "Delete"|trans }}</a>
-        </td>
+                <td>
+                    <a title="{{"Edit"|trans}} '{{md.title}}'"   class="edit" href="{{path("mapbender_monitoring_monitoringdefinition_edit",{"mdId":md.id})}}">{{ "Edit"|trans }}</a>
+                    <a title="{{"Delete"|trans}} '{{md.title}}'" class="confirmdelete" href="{{path("mapbender_monitoring_monitoringdefinition_confirmdelete",{"mdId":md.id})}}">{{ "Delete"|trans }}</a>
+                </td>
 			</tr>
 			{% endfor %}
 		</tbody>
@@ -34,4 +34,5 @@
 {% else %}
  <p>{% trans %}No Monitoring Definitions available{% endtrans %}</p>
 {% endif %}
+ <a href="{{path('mapbender_monitoring_schedulerprofile_index')}}">{{"config_scheduler"|trans}}</a>
 {% endblock %}

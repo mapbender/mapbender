@@ -9,12 +9,28 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  */
 class SchedulerProfile {
-    private static $HOUR_MS = 3600000;
-    private static $STATUS_STARTED = "started";
+    public static $HOUR_MS = 3600;
+//    public static $STATUS_STARTED = "started";
     private static $STATUS_ENDED = "ended";
     private static $STATUS_RUNNING = "running";
     private static $STATUS_ERROR = "error";
-    private static $STATUS_UNDEFINED = "undefined";
+//    public static $STATUS_UNDEFINED = "undefined";
+    private static $STATUS_NO_JOB = "no_job";
+    private static $STATUS_WAITSTART = "wait_start";
+    private static $STATUS_WAITJOBSTART = "wait_job_start";
+    private static $STATUS_CANNOTSTART = "can_not_start";
+    
+    public static $TIMEINTERVAL_14HOURLY = "every quarter of an hour";
+    public static $TIMEINTERVAL_12HOURLY = "half-hourly";
+    public static $TIMEINTERVAL_HOURLY = "hourly";
+    public static $TIMEINTERVAL_DAILY = "daily";
+    public static $TIMEINTERVAL_WEEKLY = "weekly";
+    public static $TIMEINTERVAL_1MIN = "1 min";
+    public static $TIMEINTERVAL_2MIN = "2 min";
+    public static $TIMEINTERVAL_3MIN = "3 min";
+    public static $TIMEINTERVAL_4MIN = "4 min";
+    public static $TIMEINTERVAL_5MIN = "5 min";
+    public static $TIMEINTERVAL_10MIN = "10 min";
     /**
 	 *
 	 * @ORM\Id
@@ -32,6 +48,8 @@ class SchedulerProfile {
 	 * @ORM\Column(type="datetime", nullable="true")
 	 */
     protected $starttime;
+    
+    protected $starttimeStr;
     /**
 	 *
 	 * @ORM\Column(type="integer", nullable="true")
@@ -41,7 +59,7 @@ class SchedulerProfile {
 	 *
 	 * @ORM\Column(type="integer", nullable="true")
 	 */
-    protected $monitoringinterval;
+    protected $jobcontinuity;
     /**
 	 *
 	 * @ORM\Column(type="integer", nullable="true")
@@ -69,7 +87,7 @@ class SchedulerProfile {
     protected $status;
     
     public function __construct() {
-        $this->status = SchedulerProfile::$STATUS_UNDEFINED;
+//        $this->status = SchedulerProfile::$STATUS_UNDEFINED;
     }
     
     public function getId() {
@@ -93,7 +111,32 @@ class SchedulerProfile {
     }
     
     public function setStarttime($starttime) {
+        if($starttime == null){
+            $this->starttimeStr = $starttime;
+        } else if(gettype ($starttime) == "string"){
+            $this->starttimeStr = $starttime;
+            $timestamp = strtotime($starttime);
+            $starttime = date("H:i",$timestamp);
+            $starttime = new \DateTime($starttime);
+        } else {
+            $this->starttimeStr = date("H:i",date_timestamp_get($starttime));
+        }
         $this->starttime = $starttime;
+    }
+    
+    public function getStarttimeStr() {
+        $starttime = $this->getStarttime();
+        if($starttime !=null){
+            $this->starttimeStr = date("H:i",date_timestamp_get($this->getStarttime()));
+        } else {
+            $this->starttimeStr = null;
+        }
+        return $this->starttimeStr;
+    }
+    
+    public function setStarttimeStr($starttime) {
+        $this->starttimeStr = $starttime;
+        $this->setStarttime($this->starttimeStr);
     }
     
     public function getStarttimeinterval() {
@@ -106,24 +149,30 @@ class SchedulerProfile {
     
     public function getStarttimeintervalOpts() {
         return array(
-            SchedulerProfile::$HOUR_MS => "stündlich",
-            (SchedulerProfile::$HOUR_MS * 24) => "täglich",
-            (SchedulerProfile::$HOUR_MS * 24 * 7) => "wochentlich");
+            (SchedulerProfile::$HOUR_MS / 12) => SchedulerProfile::$TIMEINTERVAL_5MIN,
+            (SchedulerProfile::$HOUR_MS / 6) => SchedulerProfile::$TIMEINTERVAL_10MIN,
+            (SchedulerProfile::$HOUR_MS / 4) => SchedulerProfile::$TIMEINTERVAL_14HOURLY,
+            (SchedulerProfile::$HOUR_MS / 2) => SchedulerProfile::$TIMEINTERVAL_12HOURLY,
+            SchedulerProfile::$HOUR_MS => SchedulerProfile::$TIMEINTERVAL_HOURLY,
+            (SchedulerProfile::$HOUR_MS * 24) => SchedulerProfile::$TIMEINTERVAL_DAILY,
+            (SchedulerProfile::$HOUR_MS * 24 * 7) => SchedulerProfile::$TIMEINTERVAL_WEEKLY);
     }
     
-    public function getMonitoringinterval() {
-        return $this->monitoringinterval;
+    public function getJobcontinuity() {
+        return $this->jobcontinuity;
     }
     
-    public function getMonitoringintervalOpts() {
+    public function getJobcontinuityOpts() {
         return array(
-            (SchedulerProfile::$HOUR_MS / 6) => "10 min",
-            (SchedulerProfile::$HOUR_MS / 3) => "20 min",
-            (SchedulerProfile::$HOUR_MS / 2) => "30 min");
+            (SchedulerProfile::$HOUR_MS / 60) => SchedulerProfile::$TIMEINTERVAL_1MIN,
+            (SchedulerProfile::$HOUR_MS / 30) => SchedulerProfile::$TIMEINTERVAL_2MIN,
+            (SchedulerProfile::$HOUR_MS / 20) => SchedulerProfile::$TIMEINTERVAL_3MIN,
+            (SchedulerProfile::$HOUR_MS / 15) => SchedulerProfile::$TIMEINTERVAL_4MIN,
+            (SchedulerProfile::$HOUR_MS / 12) => SchedulerProfile::$TIMEINTERVAL_5MIN);
     }
     
-    public function setMonitoringinterval($monitoringinterval) {
-        $this->monitoringinterval = $monitoringinterval;
+    public function setJobcontinuity($jobcontinuity) {
+        $this->jobcontinuity = $jobcontinuity;
     }
     
     public function getJobinterval() {
@@ -132,10 +181,10 @@ class SchedulerProfile {
     
     public function getJobintervalOpts() {
         return array(
-            (SchedulerProfile::$HOUR_MS / 60) => "1 min",
-            (SchedulerProfile::$HOUR_MS / 30) => "2 min",
-            (SchedulerProfile::$HOUR_MS / 12) => "5 min",
-            (SchedulerProfile::$HOUR_MS / 6) => "10 min");
+            (SchedulerProfile::$HOUR_MS / 60) => SchedulerProfile::$TIMEINTERVAL_1MIN,
+            (SchedulerProfile::$HOUR_MS / 30) => SchedulerProfile::$TIMEINTERVAL_2MIN,
+            (SchedulerProfile::$HOUR_MS / 12) => SchedulerProfile::$TIMEINTERVAL_5MIN,
+            (SchedulerProfile::$HOUR_MS / 6) => SchedulerProfile::$TIMEINTERVAL_10MIN);
     }
     
     public function setJobinterval($jobinterval) {
@@ -174,8 +223,32 @@ class SchedulerProfile {
         $this->status = $status;
     }
     
-    public function isStatusStarted() {
-        return $this->status == SchedulerProfile::$STATUS_STARTED;
+    public function getTimeinterval($timeinterval) {
+        switch ($timeinterval) {
+        case SchedulerProfile::$HOUR_MS: return SchedulerProfile::$TIMEINTERVAL_HOURLY; break;
+        case SchedulerProfile::$HOUR_MS * 24: return SchedulerProfile::$TIMEINTERVAL_DAILY; break;
+        case SchedulerProfile::$HOUR_MS * 24 * 7: return SchedulerProfile::$TIMEINTERVAL_WEEKLY; break;
+        case SchedulerProfile::$HOUR_MS / 60: return SchedulerProfile::$TIMEINTERVAL_1MIN; break;
+        case SchedulerProfile::$HOUR_MS / 30: return SchedulerProfile::$TIMEINTERVAL_2MIN; break;
+        case SchedulerProfile::$HOUR_MS / 20: return SchedulerProfile::$TIMEINTERVAL_3MIN; break;
+        case SchedulerProfile::$HOUR_MS / 15: return SchedulerProfile::$TIMEINTERVAL_4MIN; break;
+        case SchedulerProfile::$HOUR_MS / 12: return SchedulerProfile::$TIMEINTERVAL_5MIN; break;
+        case SchedulerProfile::$HOUR_MS / 6: return SchedulerProfile::$TIMEINTERVAL_10MIN; break;
+
+        default:
+        return null;
+        }
+    }
+    
+    public function canStart() {
+        return $this->status == SchedulerProfile::$STATUS_ENDED
+                || $this->status == null
+                || $this->status == SchedulerProfile::$STATUS_ERROR;
+    }
+    
+    
+    public function isStatusCannotstart() {
+        return $this->status == SchedulerProfile::$STATUS_CANNOTSTART;
     }
     public function isStatusEnded() {
         return $this->status == SchedulerProfile::$STATUS_ENDED;
@@ -183,27 +256,39 @@ class SchedulerProfile {
     public function isStatusError() {
         return $this->status == SchedulerProfile::$STATUS_ERROR;
     }
+    public function isStatusNojob() {
+        return $this->status == SchedulerProfile::$STATUS_NO_JOB;
+    }
     public function isStatusRunning() {
         return $this->status == SchedulerProfile::$STATUS_RUNNING;
     }
-    public function isStatusUndefined() {
-        return $this->status == SchedulerProfile::$STATUS_UNDEFINED;
+    public function isStatusWaitjobstart() {
+        return $this->status == SchedulerProfile::$STATUS_WAITJOBSTART;
+    }
+    public function isStatusWaitstart() {
+        return $this->status == SchedulerProfile::$STATUS_WAITSTART;
     }
     
-    public function setStatusStatusStarted() {
-        $this->status = SchedulerProfile::$STATUS_STARTED;
+    public function setStatusCannotstart() {
+        $this->status == SchedulerProfile::$STATUS_CANNOTSTART;
     }
-    public function setStatusStatusEnded() {
+    public function setStatusEnded() {
         $this->status = SchedulerProfile::$STATUS_ENDED;
     }
-    public function setStatusStatusError() {
+    public function setStatusError() {
         $this->status = SchedulerProfile::$STATUS_ERROR;
     }
-    public function setStatusStatusRunning() {
+    public function setStatusNojob() {
+        $this->status = SchedulerProfile::$STATUS_NO_JOB;
+    }
+    public function setStatusRunning() {
         $this->status = SchedulerProfile::$STATUS_RUNNING;
     }
-    public function setStatusStatusUndefined() {
-        $this->status = SchedulerProfile::$STATUS_UNDEFINED;
+    public function setStatusWaitjobstart() {
+        $this->status = SchedulerProfile::$STATUS_WAITJOBSTART;
+    }
+    public function setStatusWaitstart() {
+        $this->status = SchedulerProfile::$STATUS_WAITSTART;
     }
 }
 ?>

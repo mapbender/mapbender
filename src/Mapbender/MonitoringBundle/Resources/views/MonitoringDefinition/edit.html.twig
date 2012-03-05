@@ -24,10 +24,13 @@
     <form action="{{ path('mapbender_monitoring_monitoringdefinition_run',{'mdId':md.id}) }}" method="post">
         <input type="submit" name="run" value="{% trans %}Run{% endtrans %}" />
     </form>
-    <h2>{{ "Jobs"|trans }}</h2>
     {% if md.monitoringJobs|length > 0 %}
-    <table id="table-job">
+    <table class="listable" id="_table-job">
+        <caption>{{ "Jobs"|trans }}</caption>
+        <thead>
         <tr><th>{{"Nr"|trans}}</th><th>{{"date"|trans}}</th><th>{{"latency"|trans}}</th><th>{{"status"|trans}}</th><th>{{"changed"|trans}}</th></tr>
+        </thead>
+        <tbody>
         {% set num = 0 %}
         {% for job in md.monitoringJobs %}
             {% if num == 0 %}
@@ -39,6 +42,7 @@
             {% endif %}
             {% set num = num+1 %}
         {% endfor %}
+        </tbody>
     </table>
     <h2>{{ "Last Result"|trans }}</h2>
     <pre>
