@@ -18,14 +18,72 @@ use Mapbender\MonitoringBundle\Entity\SchedulerProfile;
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
 class SchedulerProfileController extends Controller {
+    
+    private static $CMD = "console monitoring:scheduler run schedulerprofilecontroller";
+    
+    /**
+	 * @Route("/scheduler/start/")
+	 * @Method("GET")
+	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:index.html.twig")
+	 */
+	public function startAction() {
+        $dir = $this->container->getParameter("kernel.root_dir");
+        $cmd = $dir."/".SchedulerProfileController::$CMD;
+        $result = $this->getProcess($cmd);
+        
+        if(count($result) == 0){
+            $cmd_full = $cmd." > /tmp/stdout &";
+            $res = exec($cmd_full);
+            sleep(3);
+        }
+        $schedulers = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:SchedulerProfile")->findAll();
+		return array("schedulers" => $schedulers,
+            "process" => $this->getProcessStatus($cmd)
+
+		);
+	}
+    
+    /**
+	 * @Route("/scheduler/stop/")
+	 * @Method("GET")
+	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:index.html.twig")
+	 */
+	public function stopAction() {
+        
+        $dir = $this->container->getParameter("kernel.root_dir");
+        $cmd = $dir."/".SchedulerProfileController::$CMD;
+        $result = $this->getProcess($cmd);
+
+        foreach ($result as $process) {
+            $cmd_kill = "kill -9 ".$process["PID"];
+            $res = exec($cmd_kill);
+            $sp = $this->getDoctrine()
+                    ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
+                    ->findOneByCurrent(true);
+            $sp->setStatus(SchedulerProfile::$STATUS_ABORTED);
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->persist($sp);
+            $em->flush();
+        }
+        
+        $schedulers = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:SchedulerProfile")->findAll();
+		return array("schedulers" => $schedulers,
+            "process" => $this->getProcessStatus($cmd)
+
+		);
+	}
+    
 	/**
 	 * @Route("/scheduler/")
 	 * @Method("GET")
 	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:index.html.twig")
 	 */
 	public function indexAction() {
+        $dir = $this->container->getParameter("kernel.root_dir");
+        $cmd = $dir."/".SchedulerProfileController::$CMD;
         $schedulers = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:SchedulerProfile")->findAll();
-		return array("schedulers" => $schedulers
+		return array("schedulers" => $schedulers,
+            "process" => $this->getProcessStatus($cmd)
 
 		);
 	}
@@ -40,12 +98,15 @@ class SchedulerProfileController extends Controller {
         $form = $this->getNewForm($sp);
 		return array('form' => $form->createView(), "scheduler" => $sp);
 	}
+    
      /**
 	 * @Route("/scheduler/new/")
 	 * @Method("POST")
 	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:edit.html.twig")
 	 */
 	public function newAction() {
+        $dir = $this->container->getParameter("kernel.root_dir");
+        $cmd = $dir."/".SchedulerProfileController::$CMD;
         $scheduler_req = new SchedulerProfile();
         $form = $this->getNewForm($scheduler_req);
         $form->bindRequest($this->get('request'));
@@ -59,7 +120,8 @@ class SchedulerProfileController extends Controller {
             $schedulers = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:SchedulerProfile")->findAll();
             return $this->render(
                     'MapbenderMonitoringBundle:SchedulerProfile:index.html.twig',
-                    array("schedulers" => $schedulers));
+                    array("schedulers" => $schedulers,
+                        "process" => $this->getProcessStatus($cmd)));
         }
         return array('form' => $form->createView(), "scheduler" => $scheduler_req);
 	}
@@ -70,11 +132,14 @@ class SchedulerProfileController extends Controller {
 	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:index.html.twig")
 	 */
 	public function deleteAction(SchedulerProfile $sp) {
+        $dir = $this->container->getParameter("kernel.root_dir");
+        $cmd = $dir."/".SchedulerProfileController::$CMD;
         $em = $this->getDoctrine()->getEntityManager();
         $em->remove($sp);
         $em->flush();
 		$schedulers = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:SchedulerProfile")->findAll();
-		return array("schedulers" => $schedulers);
+		return array("schedulers" => $schedulers,
+            "process" => $this->getProcessStatus($cmd));
 	}
     
     /**
@@ -83,13 +148,16 @@ class SchedulerProfileController extends Controller {
 	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:index.html.twig")
 	 */
 	public function currentAction(SchedulerProfile $sp) {
+        $dir = $this->container->getParameter("kernel.root_dir");
+        $cmd = $dir."/".SchedulerProfileController::$CMD;
         $this->deactivateAllScheduler();
         $em = $this->getDoctrine()->getEntityManager();
         $sp->setCurrent(true);
         $em->persist($sp);
         $em->flush();
         $schedulers = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:SchedulerProfile")->findAll();
-		return array("schedulers" => $schedulers);
+		return array("schedulers" => $schedulers,
+            "process" => $this->getProcessStatus($cmd));
 	}
     
     /**
@@ -107,6 +175,8 @@ class SchedulerProfileController extends Controller {
 	* @Template("MapbenderMonitoringBundle:SchedulerProfile:edit.html.twig")
 	*/
 	public function editAction(SchedulerProfile $sp) {
+        $dir = $this->container->getParameter("kernel.root_dir");
+        $cmd = $dir."/".SchedulerProfileController::$CMD;
 //        $scheduler_req = new SchedulerProfile();
         $form = $this->getNewForm($sp);
         $form->bindRequest($this->get('request'));
@@ -128,7 +198,8 @@ class SchedulerProfileController extends Controller {
             $schedulers = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:SchedulerProfile")->findAll();
             return $this->render(
                     'MapbenderMonitoringBundle:SchedulerProfile:index.html.twig',
-                    array("schedulers" => $schedulers));
+                    array("schedulers" => $schedulers,
+                        "process" => $this->getProcessStatus($cmd)));
         }
         return array('form' => $form->createView(), "scheduler" => $sp);
 	}
@@ -184,127 +255,168 @@ class SchedulerProfileController extends Controller {
         }
     }
     
+    protected function getProcessStatus($cmd) {
+        $result = $this->getProcess($cmd);
+        
+        if(count($result) > 0){
+            return "running";
+        } else
+            return "not running";
+    }
+    
+    protected function getProcess($cmd) {
+        $res_int = -1;
+        $res_arr = array();
+        $res = exec("ps -aux ", $res_arr, $res_int);
+        $teststr = $cmd;
+        $result = array();
+        $num = 0;
+        $header = array();
+        foreach ($res_arr as $value) {
+            if($num == 0){
+                $header = preg_split ("/[\s]+/", $value);
+            } else {
+                $pos = strpos ($value , $teststr);
+                if($pos!== false){
+                    $help = preg_split ("/[\s]+/", $value);
+                    $temp = array();
+                    for($i = 0; $i < count($header); $i++) {
+                        $temp[$header[$i]] = $help[$i];
+                    }
+                    $result[] = $temp;
+                }
+            }
+            $num++;
+        }
+        return $result;
+    }
+    
     protected function getCurrentScheduler() {
         return $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:SchedulerProfile")->findBy(array('current' => true));
     }
-    
-    /**
-	 * @Route("/scheduler/test/")
-	 * @Method("GET")
-	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:index.html.twig")
-	 */
-	public function testAction() {
-                $run = true;
-                while($run){
-                    $sp = $this->getDoctrine()
-                        ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
-                        ->findOneByCurrent(true);
-//                    $sp = $this->getContainer()
-//                            ->get("doctrine")
-//                            ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
-//                            ->findOneByCurrent(true);
-                    if($sp != null){
-                        $em = $this->getDoctrine()->getEntityManager();
+//    
+//    /**
+//	 * @Route("/scheduler/test/")
+//	 * @Method("GET")
+//	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:index.html.twig")
+//	 */
+//	public function testAction() {
+//                $run = true;
+//                $num = 0;
+//                while($run){
+//                    $num ++;
+//                    $sp = $this->getDoctrine()
+//                        ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
+//                        ->findOneByCurrent(true);
+////                    $sp = $this->getContainer()
+////                            ->get("doctrine")
+////                            ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
+////                            ->findOneByCurrent(true);
+//                    if($sp != null){
 //                        $em = $this->getDoctrine()->getEntityManager();
-                        $timestamp_act = time();
-                        if($sp->canStart()) { // check
-                            $hour_sec = 3600;
-//                            $day_sec = 86400;
-                            $sleepbeforstart = 0;
-                            $starttimeinterval = $sp->getStarttimeinterval();
-                            $timeinterval = $sp->getTimeinterval($starttimeinterval);
-                            if($timeinterval != null) {
-                                if($timeinterval <= SchedulerProfile::$TIMEINTERVAL_HOURLY) {
-//                                    $sleepbeforstart = 0;
-                                    $lastendtime = $sp->getLastendtime();
-                                    $laststarttime = $sp->getLaststarttime();
-                                    if($laststarttime == null) {
-                                        $sleepbeforstart = 0;
-                                        $timestamp_start = $timestamp_act;
-                                    } else {
-                                        $timestamp_laststart = date_timestamp_get($laststarttime);
-                                        $sleepbeforstart = $timestamp_act - $timestamp_laststart;
-                                        if($sleepbeforstart > $hour_sec) {
-                                            $sleepbeforstart = 0;
-                                            $timestamp_start = $timestamp_act;
-                                        } else {
-                                            $timestamp_start = $timestamp_laststart + $hour_sec;
-                                            $sleepbeforstart = $timestamp_start - $timestamp_act;
-                                        }
-                                    }
-                                    
-                                } else {
-                                    $starttime = $sp->getStarttime();
-                                    $time = date("H:i",date_timestamp_get($starttime));
-                                    $timestamp_start = date_timestamp_get(new \DateTime($time));
-                                    if($timestamp_start < $timestamp_act){ // start next day
-                                        $timestamp_start += $hour_sec * 24;
-                                    }
-                                    $sleepbeforstart = $timestamp_start - $timestamp_act;
-                                    $sp->setStatusWaitstart();
-                                    $em->persist($sp);
-                                    $em->flush();
-        //                            $timestamp = strtotime($starttime);
-        //                            $starttime = date("H:i",$timestamp);
-        //                            $starttime = new \DateTime(date("H:i",$timestamp));
-                                }
-                                // sleep
-                                sleep($sleepbeforstart);
-                                $sp->setLaststarttime(new \DateTime(date("Y-m-d H:i",$timestamp_start)));
-                                $jobs = array("test");
-                                if(count($jobs)==0){
-                                    $sp->setLastendtime(new \DateTime(date("Y-m-d H:i",$timestamp_start)));
-                                    $sp->setStatusError();
-                                    $em->persist($sp);
-                                    $em->flush();
-                                    $run = false;
-                                } else {
-                                    foreach($jobs as $job) {
-                                        $sp->setStatusRunning();
-                                        $em->persist($sp);
-                                        $em->flush();
-//                                        $job->mkjob();
-                                        sleep(10);
-                                        $sp->setStatusWaitjobstart();
-                                        $em->persist($sp);
-                                        $em->flush();
-                                        sleep($sp->getJobinterval());
-                                    }
-                                    $sp->setLastendtime(new \DateTime(date("Y-m-d H:i", time())));
-                                    $sp->setStatusEnded();
-                                    $em->persist($sp);
-                                    $em->flush();
-                                }
-//                                    $sp->setLaststarttime(new \DateTime(date("Y-m-d H:i",$timestamp)));
-        //                        while(true){
-        //                            $this->runCommand($input, $output);
-        //                            sleep(10);
-        //                        }
-                            } else {
-                                // timeinterval is null
-                            }
-                        } else {
-                            // status is not ended or undefined
-                            $sp->setLaststarttime(new \DateTime(date("Y-m-d H:i",$timestamp_act)));
-                            $sp->setLastendtime(new \DateTime(date("Y-m-d H:i",$timestamp_act)));
-                            $sp->setStatusCannotstart();
-                            $em->persist($sp);
-                            $em->flush();
-                            $run = false;
-                        }
-                    } else {
-                        // $sp null
-                         $run = false;
-                    }
-                }
-//                    if(gettype ($starttime) == "string"){
-//                        $timestamp = strtotime($starttime);
-//                        $starttime = date("H:i",$timestamp);
-//                        $starttime = new \DateTime($starttime);
+////                        $em = $this->getDoctrine()->getEntityManager();
+//                        $timestamp_act = time();
+//                        if($sp->canStart()) { // check
+//                            $hour_sec = 3600;
+////                            $day_sec = 86400;
+//                            $sleepbeforstart = 0;
+//                            $starttimeinterval = $sp->getStarttimeinterval();
+//                            $timeinterval = $sp->getTimeinterval($starttimeinterval);
+//                            if($timeinterval != null) {
+//                                if($timeinterval <= SchedulerProfile::$TIMEINTERVAL_HOURLY) {
+////                                    $sleepbeforstart = 0;
+//                                    $lastendtime = $sp->getLastendtime();
+//                                    $laststarttime = $sp->getLaststarttime();
+//                                    if($laststarttime == null) {
+//                                        $sleepbeforstart = 0;
+//                                        $timestamp_start = $timestamp_act;
+//                                    } else {
+//                                        $timestamp_laststart = date_timestamp_get($laststarttime);
+//                                        $sleepbeforstart = $timestamp_act - $timestamp_laststart;
+//                                        if($sleepbeforstart > $hour_sec) {
+//                                            $sleepbeforstart = 0;
+//                                            $timestamp_start = $timestamp_act;
+//                                        } else {
+//                                            $timestamp_start = $timestamp_laststart + $hour_sec;
+//                                            $sleepbeforstart = $timestamp_start - $timestamp_act;
+//                                        }
+//                                    }
+//                                    
+//                                } else {
+//                                    $starttime = $sp->getStarttime();
+//                                    $time = date("H:i",date_timestamp_get($starttime));
+//                                    $timestamp_start = date_timestamp_get(new \DateTime($time));
+//                                    if($timestamp_start < $timestamp_act){ // start next day
+//                                        $timestamp_start += $hour_sec * 24;
+//                                    }
+//                                    $sleepbeforstart = $timestamp_start - $timestamp_act;
+//                                    $sp->setStatusWaitstart();
+//                                    $em->persist($sp);
+//                                    $em->flush();
+//        //                            $timestamp = strtotime($starttime);
+//        //                            $starttime = date("H:i",$timestamp);
+//        //                            $starttime = new \DateTime(date("H:i",$timestamp));
+//                                }
+//                                // sleep
+//                                sleep($sleepbeforstart);
+//                                $sp->setLaststarttime(new \DateTime(date("Y-m-d H:i",$timestamp_start)));
+//                                $jobs = array("test");
+//                                if(count($jobs)==0){
+//                                    $sp->setLastendtime(new \DateTime(date("Y-m-d H:i",$timestamp_start)));
+//                                    $sp->setStatusError();
+//                                    $em->persist($sp);
+//                                    $em->flush();
+//                                    $run = false;
+//                                } else {
+//                                    foreach($jobs as $job) {
+//                                        $sp->setStatusRunning();
+//                                        $em->persist($sp);
+//                                        $em->flush();
+////                                        $job->mkjob();
+//                                        sleep(10);
+//                                        $sp->setStatusWaitjobstart();
+//                                        $em->persist($sp);
+//                                        $em->flush();
+//                                        sleep($sp->getJobinterval());
+//                                    }
+//                                    $sp->setLastendtime(new \DateTime(date("Y-m-d H:i", time())));
+//                                    $sp->setStatusEnded();
+//                                    $em->persist($sp);
+//                                    $em->flush();
+//                                }
+////                                    $sp->setLaststarttime(new \DateTime(date("Y-m-d H:i",$timestamp)));
+//        //                        while(true){
+//        //                            $this->runCommand($input, $output);
+//        //                            sleep(10);
+//        //                        }
+//                            } else {
+//                                // timeinterval is null
+//                            }
+//                        } else {
+//                            // status is not ended or undefined
+//                            $sp->setLaststarttime(new \DateTime(date("Y-m-d H:i",$timestamp_act)));
+//                            $sp->setLastendtime(new \DateTime(date("Y-m-d H:i",$timestamp_act)));
+//                            $sp->setStatusCannotstart();
+//                            $em->persist($sp);
+//                            $em->flush();
+//                            $run = false;
+//                        }
+//                    } else {
+//                        // $sp null
+//                         $run = false;
 //                    }
-
-                
-		$schedulers = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:SchedulerProfile")->findAll();
-		return array("schedulers" => $schedulers);
-	}
+//                    if($num == 3)
+//                        $run = false;
+//                }
+////                    if(gettype ($starttime) == "string"){
+////                        $timestamp = strtotime($starttime);
+////                        $starttime = date("H:i",$timestamp);
+////                        $starttime = new \DateTime($starttime);
+////                    }
+//
+//                
+//		$schedulers = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:SchedulerProfile")->findAll();
+//		return array("schedulers" => $schedulers,
+//            "process" => $this->getProcessStatus());
+//	}
 }

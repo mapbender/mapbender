@@ -19,6 +19,7 @@ class SchedulerProfile {
     private static $STATUS_WAITSTART = "wait_start";
     private static $STATUS_WAITJOBSTART = "wait_job_start";
     private static $STATUS_CANNOTSTART = "can_not_start";
+    public static $STATUS_ABORTED = "aborted";
     
     public static $TIMEINTERVAL_14HOURLY = "every quarter of an hour";
     public static $TIMEINTERVAL_12HOURLY = "half-hourly";
@@ -70,6 +71,12 @@ class SchedulerProfile {
 	 * @ORM\Column(type="datetime", nullable="true")
 	 */
     protected $laststarttime;
+    
+    /**
+	 *
+	 * @ORM\Column(type="datetime", nullable="true")
+	 */
+    protected $nextstarttime;
     /**
 	 *
 	 * @ORM\Column(type="datetime", nullable="true")
@@ -149,10 +156,16 @@ class SchedulerProfile {
     
     public function getStarttimeintervalOpts() {
         return array(
-            (SchedulerProfile::$HOUR_MS / 12) => SchedulerProfile::$TIMEINTERVAL_5MIN,
-            (SchedulerProfile::$HOUR_MS / 6) => SchedulerProfile::$TIMEINTERVAL_10MIN,
-            (SchedulerProfile::$HOUR_MS / 4) => SchedulerProfile::$TIMEINTERVAL_14HOURLY,
-            (SchedulerProfile::$HOUR_MS / 2) => SchedulerProfile::$TIMEINTERVAL_12HOURLY,
+//            // TEST START to delete
+//            (SchedulerProfile::$HOUR_MS / 60) => SchedulerProfile::$TIMEINTERVAL_1MIN,
+//            (SchedulerProfile::$HOUR_MS / 30) => SchedulerProfile::$TIMEINTERVAL_2MIN,
+//            (SchedulerProfile::$HOUR_MS / 20) => SchedulerProfile::$TIMEINTERVAL_3MIN,
+//            (SchedulerProfile::$HOUR_MS / 15) => SchedulerProfile::$TIMEINTERVAL_4MIN,
+//            (SchedulerProfile::$HOUR_MS / 12) => SchedulerProfile::$TIMEINTERVAL_5MIN,
+//            (SchedulerProfile::$HOUR_MS / 6) => SchedulerProfile::$TIMEINTERVAL_10MIN,
+//            (SchedulerProfile::$HOUR_MS / 4) => SchedulerProfile::$TIMEINTERVAL_14HOURLY,
+//            (SchedulerProfile::$HOUR_MS / 2) => SchedulerProfile::$TIMEINTERVAL_12HOURLY,
+//            // TEST END 
             SchedulerProfile::$HOUR_MS => SchedulerProfile::$TIMEINTERVAL_HOURLY,
             (SchedulerProfile::$HOUR_MS * 24) => SchedulerProfile::$TIMEINTERVAL_DAILY,
             (SchedulerProfile::$HOUR_MS * 24 * 7) => SchedulerProfile::$TIMEINTERVAL_WEEKLY);
@@ -197,6 +210,14 @@ class SchedulerProfile {
     
     public function setLaststarttime($laststarttime) {
         $this->laststarttime = $laststarttime;
+    }
+    
+    public function getNextstarttime() {
+        return $this->nextstarttime;
+    }
+    
+    public function setNextstarttime($nextstarttime) {
+        $this->nextstarttime = $nextstarttime;
     }
     
     public function getLastendtime() {
