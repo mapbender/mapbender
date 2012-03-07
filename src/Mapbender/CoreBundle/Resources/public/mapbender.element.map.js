@@ -607,8 +607,7 @@ $.widget("mapbender.mbMap", {
     /**
      * Listen to removed layer in the MapQuery object
      */
-    _onRemoveLayer: function(event, layer) {
-    }
+    _onRemoveLayer: function(event, layer) {}
 });
 
 })(jQuery);

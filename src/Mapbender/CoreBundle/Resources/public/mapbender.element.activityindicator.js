@@ -10,12 +10,43 @@ $.widget("mapbender.mbActivityIndicator", {
     elementUrl: null,
     ajaxActivity: false,
     tileActivity: false,
+    loadingLayers: {},
 
     _create: function() {
+        var self = this;
+
         this.element.bind('ajaxStart', $.proxy(this._onAjaxStart, this));
         this.element.bind('ajaxStop', $.proxy(this._onAjaxStop, this));
 
-        //TODO: Listen to layer tile events
+        $('.mb-element-map').each(function() {
+            var mqMap = $(this).data('mbMap').map;
+            $.each(mqMap.layers(), function(idx, mqLayer) {
+                self._bindToLayer(mqLayer);
+                // Is it already loading tiles?
+                if(typeof mqLayer.olLayer.numLoadingTiles === 'number' &&
+                    mqLayer.olLayer.numLoadingTiles > 0) {
+                    self.loadingLayers[mqLayer.olLayer.id] = true;
+                    self._onLayerLoadChange();
+                }
+            });
+            mqMap.events.bind('mqAddLayer', function(event, mqLayer) {
+                self._bindToLayer(mqLayer);
+            });
+        });
+    },
+
+    _bindToLayer: function(mqLayer) {
+        mqLayer.olLayer.events.on({
+            scope: this,
+            loadstart: function(event) {
+                this.loadingLayers[event.object.id] = true;
+                this._onLayerLoadChange();
+            },
+            loadend: function(event) {
+                delete this.loadingLayers[event.object.id];
+                this._onLayerLoadChange();
+            }
+        });
     },
 
     _destroy: function() {
@@ -40,6 +71,24 @@ $.widget("mapbender.mbActivityIndicator", {
     _onAjaxStop: function() {
         this.ajaxActivity = false;
         this._updateBodyClass();
+    },
+
+    _onLayerLoadChange: function() {
+        var keys = Object.keys || function(obj) {
+            var keys = [];
+            for(var key in obj) {
+                if(obj.hasOwnProperty(key)) {
+                    keys[keys.length] = key;
+                }
+            }
+            return keys;
+        };
+
+        var stillLoading = keys(this.loadingLayers).length > 0;
+        if(stillLoading !== this.tileActivity) {
+            this.tileActivity = stillLoading;
+            this._updateBodyClass();
+        }
     },
 
     /**
