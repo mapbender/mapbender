@@ -180,15 +180,17 @@ $.widget("mapbender.mbMap", {
 
         var mapOptions = {
             maxExtent: this.options.extents.max,
+            zoomToMaxExtent: false,
             maxResolution: this.options.maxResolution,
             numZoomLevels: this.options.numZoomLevels,
             projection: new OpenLayers.Projection(this.options.srs),
             displayProjection: new OpenLayers.Projection(this.options.srs),
             units: this.options.units,
             allOverlays: allOverlays,
-            theme: null,
-            layers: layers
+            theme: null
+            //layers: layers
         };
+
 
         if(controls.length !== 0) mapOptions.controls = controls;
 
@@ -207,6 +209,15 @@ $.widget("mapbender.mbMap", {
 
         //TODO: Bind all events
         this.map.bind('zoomend', function() { self._trigger('zoomend', arguments); });
+
+        // We have to add our listeners to the map before adding layers...
+        // This might change in the future, when the MapQuery map accepts
+        // listeners as options
+        this.map.bind('mqAddLayer', $.proxy(this._onAddLayer, this));
+        this.map.bind('mqRemoveLayer', $.proxy(this._onRemoveLayer, this));
+
+        this.map.layers(layers);
+        this.map.center({ box: this.options.extents.max });
 
         if(this.options.extents.start) {
             this.map.center({
@@ -578,10 +589,26 @@ $.widget("mapbender.mbMap", {
         for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
             var res = this.map.olMap.getResolutionForZoom(i);
             scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
-    }
+        }
         return scales;
-    }
+    },
 
+    /**
+     * Listen to newly added layers in the MapQuery object
+     */
+    _onAddLayer: function(event, layer) {
+        var listener = Mapbender.layer[layer.olLayer.type].onLoadStart;
+        if(typeof listener === 'function') {
+            listener.call(layer);
+        }
+    },
+
+
+    /**
+     * Listen to removed layer in the MapQuery object
+     */
+    _onRemoveLayer: function(event, layer) {
+    }
 });
 
 })(jQuery);

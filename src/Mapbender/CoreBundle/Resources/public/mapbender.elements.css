@@ -112,3 +112,34 @@ div.mb-element-button {
 #mb-zoom-scale-dialog {
     display: none;
 }
+
+.mb-element-activityindicator {
+    position: absolute;
+    z-index: 10000;
+    top: 0;
+    width: 100%;
+    height: 32px;
+    background: green;
+}
+
+/**
+ * Ajax-Only activity
+ */
+body.mb-activity-ajax .mb-element-activityindicator {
+    background: red;
+}
+
+/**
+ * Tile-Only activity
+ */
+body.mb-activity-tile .mb-element-activityindicator {
+    background: yellow;
+}
+
+/**
+ * Ajax+Tile activity
+ */
+body.mb-activity-ajax.mb-activity-tile .mb-element-activityindicator {
+    background: orange;
+}
+
