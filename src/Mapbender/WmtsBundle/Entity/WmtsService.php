@@ -2,13 +2,17 @@
 namespace Mapbender\WmtsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\WmtsBundle\Entity\GroupLayer;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
+ * WMTSService class
+ *
+ * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ *
+ * 
  * @ORM\Entity
 */
-class WMTSService extends GroupLayer {
+class WmtsService extends WmtsGroupLayer {
 
     /**
     * @ORM\Column(type="string", nullable="true")
@@ -118,8 +122,6 @@ class WMTSService extends GroupLayer {
     * @ORM\Column(type="string", nullable="true")
     */
     protected $requestGetTileGETKVP = "";
-
-
     /**
     * @ORM\Column(type="string", nullable="true")
     */
@@ -132,7 +134,7 @@ class WMTSService extends GroupLayer {
     /**
     * @ORM\Column(type="array", nullable="true");
     */
-    protected $themes = null; 
+    protected $theme = null; 
     
     /**
     * @ORM\Column(type="array", nullable="true");
@@ -148,64 +150,104 @@ class WMTSService extends GroupLayer {
     * @ORM\Column(type="text", nullable="true");
     */
     protected $password = null; 
-    
 
-
+    /**
+     * Create an instance of WMTSService
+     */
     public function __construct() {
         # calling super  - how to avoid ?
         return parent::__construct();
         $this->tilematrixset = array();
-        $this->themes = array();
+        $this->theme = array();
     }
-
+    /**
+     * Set version
+     * 
+     * @param type $version 
+     */
     public function setVersion($version){
         $this->version = $version;
     }
-    
+    /**
+     * Get version
+     *
+     * @return string
+     */
     public function getVersion(){
         return $this->version;
     }
-    
+    /**
+     * Set alias
+     * 
+     * @param string $alias 
+     */
     public function setAlias($alias){
         $this->alias = $alias;
     }
-    
+    /**
+     * Get alias
+     * 
+     * @return string
+     */
     public function getAlias(){
         return $this->alias;
     }
-    
+    /**
+     * Set fees
+     * 
+     * @param string $fees 
+     */
     public function setFees($fees){
         $this->fees = $fees;
     }
-    
+    /**
+     * Get fees
+     * 
+     * @return string
+     */
     public function getFees(){
         return $this->fees;
     }
-    
+    /**
+     * Get accessConstraints
+     * 
+     * @param string $accessConstraints 
+     */
     public function setAccessConstraints($accessConstraints){
         $this->accessConstraints = $accessConstraints;
     }
-    
+    /**
+     * Get accessConstraints
+     * 
+     * @return string
+     */
     public function getAccessConstraints(){
         return $this->accessConstraints;
     }
-    
+    /**
+     * Set serviceType
+     * 
+     * @param string $serviceType 
+     */
     public function setServiceType($serviceType){
         $this->serviceType = $serviceType;
     }
-    
+    /**
+     * Get serviceType
+     * 
+     * @return string
+     */
     public function getServiceType(){
         return $this->serviceType;
     }
-
-    
-   /**
-    *
-    */ 
+    /**
+     * Get root layer
+     * 
+     * @return WMTSLayer
+     */
     public function getRootLayer(){
         return $this->getLayer()->get(0);
     }
-
 
     /**
      * returns all Layers of the WMTS as comma-seperated string so that they can be used in a WMTS Request's LAYER parameter
@@ -468,82 +510,178 @@ class WMTSService extends GroupLayer {
     /**
      * Get ContactAddressCountry
      *
-     * @return string 
+     * @return string
      */
     public function getContactAddressCountry()
     {
         return $this->contactAddressCountry;
     }
-    
-    
+    /**
+     * Set requestGetCapabilitiesGETREST
+     *
+     * @param type $requestGetCapabilitiesGETREST 
+     */
     public function setRequestGetCapabilitiesGETREST($requestGetCapabilitiesGETREST){
         $this->requestGetCapabilitiesGETREST = $requestGetCapabilitiesGETREST;
     }
-    
+    /**
+     * Get requestGetCapabilitiesGETREST
+     *
+     * @return string 
+     */
     public function getRequestGetCapabilitiesGETREST(){
         return $this->requestGetCapabilitiesGETREST;
     }
-    
+    /**
+     * Set requestGetCapabilitiesGETKVP
+     * 
+     * @param string $requestGetCapabilitiesGETKVP 
+     */
     public function setRequestGetCapabilitiesGETKVP($requestGetCapabilitiesGETKVP){
         $this->requestGetCapabilitiesGETKVP = $requestGetCapabilitiesGETKVP;
     }
-    
+    /**
+     * Get requestGetCapabilitiesGETKVP
+     * 
+     * @return string
+     */
     public function getRequestGetCapabilitiesGETKVP(){
         return $this->requestGetCapabilitiesGETKVP;
     }
 
-    
+    /**
+     * Set requestGetTileGETREST
+     * 
+     * @param string $requestGetTileGETREST 
+     */
     public function setRequestGetTileGETREST($requestGetTileGETREST){
         $this->requestGetTileGETREST = $requestGetTileGETREST;
     }
-    
+    /**
+     * Get requestGetTileGETREST
+     * 
+     * @return string 
+     */
     public function getRequestGetTileGETREST(){
         return $this->requestGetTileGETREST;
     }
-    
+    /**
+     * Set requestGetTileGETKVP
+     * 
+     * @param string $requestGetTileGETKVP 
+     */
     public function setRequestGetTileGETKVP($requestGetTileGETKVP){
         $this->requestGetTileGETKVP = $requestGetTileGETKVP;
     }
-    
+    /**
+     * Get requestGetTileGETKVP
+     * 
+     * @return string
+     */
     public function getRequestGetTileGETKVP(){
         return $this->requestGetTileGETKVP;
     }
     /**
-     *
-     * @return array theme 
+     * Get theme
+     * 
+     * @return array 
      */
     public function getTheme (){
         return $this->theme ;
     }
+    
     /**
-     *
-     * @param array $themes 
+     * Get theme as ArrayCollection of Theme
+     * 
+     * @return ArrayCollection 
+     */
+    public function getThemeAsObjects (){
+        $array = new ArrayCollection();
+        foreach ($this->theme as $theme){
+            $array->add(new Theme($theme));
+        }
+        return $array;
+    }
+    
+    /**
+     * Set theme
+     * 
+     * @param array of Theme or Theme->getAsArray $themes 
      */
     public function setTheme ($themes){
-        $this->theme  = $themes ;
+        if($themes === null){
+            $this->theme = $themes;
+        } else if(count($themes)> 0){
+            if(is_array($themes[0])){
+                $this->theme = $themes;
+            } else if($themes[0] instanceof Theme) {
+                foreach ($themes as $theme){
+                    $this->theme[] = $theme->getAsArray();
+                }
+            }
+        } else {
+            $this->theme = $themes;
+        }
     }
-    
+    /**
+     * Add $theme to theme
+     * 
+     * @param Theme or array $theme 
+     */
     public function addTheme ($theme){
-        $this->theme[]  = $theme ;
+        if(is_array($theme)){
+            $this->theme[] = $theme ;
+        } else if($theme instanceof Theme){
+            $this->theme[] = $theme->getAsArray();
+        }
     }
     
     /**
-     *
-     * @return array tilematrixset 
+     * Get tilematrixset
+     * 
+     * @return array 
      */
     public function getTileMatrixSet (){
         return $this->tilematrixset;
     }
+    
     /**
-     *
+     * Get tilematrixset
+     * 
+     * @return array 
+     */
+    public function getTileMatrixSetAsObjects (){
+        $array = new ArrayCollection();
+        foreach ($this->tilematrixset as $tilematrixset){
+            $array->add(new TileMatrixSet($tilematrixset));
+        }
+        return $array;
+    }
+    /**
+     * Set tilematrixset
+     * 
      * @param array $tilematrixset 
      */
     public function setTtilematrixset ($tilematrixset){
         $this->tilematrixset  = $tilematrixset ;
+        if($tilematrixset === null){
+            $this->tilematrixset = $tilematrixset;
+        } else if(count($tilematrixset)> 0){
+            if(is_array($tilematrixset[0])){
+                $this->tilematrixset = $tilematrixset;
+            } else if($tilematrixset[0] instanceof TileMatrixSet) {
+                foreach ($tilematrixset as $tilematrixset_){
+                    $this->tilematrixset = array();
+                    $this->tilematrixset[] = $tilematrixset_->getAsArray();
+                }
+            }
+        } else {
+            $this->tilematrixset = $tilematrixset;
+        }
     }
     /**
-     *
-     * @param TilematrixSet $tilematrixset 
+     * Add tilematrixset
+     * @param TilematrixSet or array $tilematrixset 
      */
     public function addTtilematrixset ($tilematrixset){
         if(is_array($tilematrixset)) {
@@ -552,19 +690,35 @@ class WMTSService extends GroupLayer {
             $this->tilematrixset[]  = $tilematrixset->getAsArray() ;
         }
     }
-    
+    /**
+     * Get username
+     * 
+     * @return string
+     */
     public function getUsername (){
         return $this->username ;
     }
-    
+    /**
+     * Set username
+     * 
+     * @param string $username 
+     */
     public function setUsername ($username ){
         $this->username  = $username ;
     }
-
+    /**
+     * Get password
+     * 
+     * @return string
+     */
     public function getPassword (){
         return $this->password ;
     }
-    
+    /**
+     * Set password
+     * 
+     * @param string $password 
+     */
     public function setPassword ($password ){
         $this->password  = $password ;
     }

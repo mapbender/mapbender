@@ -1,10 +1,10 @@
 <?php
 
 namespace Mapbender\WmtsBundle\Component;
-use Mapbender\WmtsBundle\Entity\WMTSService;
-use Mapbender\WmtsBundle\Entity\WMTSLayer;
-use Mapbender\WmtsBundle\Entity\Layer;
-use Mapbender\WmtsBundle\Entity\GroupLayer;
+use Mapbender\WmtsBundle\Entity\WmtsService;
+use Mapbender\WmtsBundle\Entity\WmtsLayerDetail;
+use Mapbender\WmtsBundle\Entity\WmtsLayer;
+use Mapbender\WmtsBundle\Entity\WmtsGroupLayer;
 use Mapbender\WmtsBundle\Entity\Theme;
 use Mapbender\WmtsBundle\Entity\TileMatrix;
 use Mapbender\WmtsBundle\Entity\TileMatrixSet;
@@ -13,10 +13,11 @@ use Mapbender\WmtsBundle\Component\Exception\ParsingException;
 /**
 * Class that Parses WMTS GetCapabilies Document 
 * @package Mapbender
-* @author Karim Malhas <karim@malhas.de>
+* @author paul Schmidt <paul.schmidt@wheregroup.com>
+ * 
 * Parses WMTS GetCapabilities documents
 */
-class CapabilitiesParser {
+class WmtsCapabilitiesParser {
 
     /**
      * The XML representation of the Capabilites Document
@@ -89,10 +90,10 @@ class CapabilitiesParser {
     }
 
     /**
-    *   @return WMTSService
+    *   @return WmtsService
     */
     public function getWMTSService(){
-        $wmts = new WMTSService();
+        $wmts = new WmtsService();
         
         $root = $this->doc->documentElement;
         $wmts->setVersion($this->getValue("./@version", $root));
@@ -141,6 +142,12 @@ class CapabilitiesParser {
             $getTile = $this->xpath->query("./ows:Operation[@name='GetTile']", $operationsMetadata)->item(0);
             if($getTile != null){
                 $getrest = $this->getValue("./ows:DCP/ows:HTTP/ows:Get[./ows:Constraint/ows:AllowedValues/ows:Value/text()='RESTful']/@xlink:href", $getTile);
+                /* remove a version from the getrest url */
+                $versionAtUrl = "/".$wmts->getVersion();
+                $pos = strripos($getrest, $versionAtUrl);
+                if ($pos!==false && $pos >= (strlen($getrest) - strlen($versionAtUrl) - 1)){
+                    $getrest = substr($getrest, 0, $pos);
+                }
                 $wmts->setRequestGetTileGETREST($getrest);
                 $getkvp = $this->getValue("./ows:DCP/ows:HTTP/ows:Get[./ows:Constraint/ows:AllowedValues/ows:Value/text()='KVP']/@xlink:href", $getTile);
                 $wmts->setRequestGetTileGETKVP($getkvp);
@@ -151,6 +158,12 @@ class CapabilitiesParser {
             $getFeatureInfo = $this->xpath->query("./ows:Operation[@name='GetFeatureInfo']", $operationsMetadata)->item(0);
             if($getFeatureInfo != null){
                 $getrest = $this->getValue("./ows:DCP/ows:HTTP/ows:Get[/ows:Constraint/ows:AllowedValues/ows:Value/text()='RESTful']/@xlink:href", $getFeatureInfo);
+                /* remove a version from the getrest url */
+                $versionAtUrl = "/".$wmts->getVersion();
+                $pos = strripos($getrest, $versionAtUrl);
+                if ($pos!==false && $pos >= (strlen($getrest) - strlen($versionAtUrl) - 1)){
+                    $getrest = substr($getrest, 0, $pos);
+                }
                 $wmts->setRequestGetFeatureInfoGETREST($getrest);
                 $getkvp = $this->getValue("./ows:DCP/ows:HTTP/ows:Get[/ows:Constraint/ows:AllowedValues/ows:Value/text()='KVP']/@xlink:href", $getFeatureInfo);
                 $wmts->setRequestGetFeatureInfoGETKVP($getkvp);
@@ -166,21 +179,36 @@ class CapabilitiesParser {
         if($contents != null){
             $layerlist = $this->xpath->query("./wmts:Layer", $contents);
             foreach($layerlist as $layerEl) {
-                $layer = new WMTSLayer();
+                $layer = new WmtsLayerDetail();
 //                $layer->setName($node->nodeValue); ???
                 $layer->setTitle($this->getValue("./ows:Title/text()", $layerEl));
                 $layer->setAbstract($this->getValue("./ows:Abstract/text()", $layerEl));
                 $crs = array();
+                $bounds = array();
+//                <ows:BoundingBox crs="urn:ogc:def:crs:EPSG::25832">
+//                    <ows:LowerCorner>280388.0 5235855.0</ows:LowerCorner>
+//                    <ows:UpperCorner>921290.0 6101349.0</ows:UpperCorner>
+//                </ows:BoundingBox>
                 $bboxesEl = $this->xpath->query("./ows:BoundingBox", $layerEl);
                 foreach($bboxesEl as $bboxEl) {
-                    $crs[] = $this->getValue("./@crs", $bboxEl);
+                    $crsStr = $this->getValue("./@crs", $bboxEl);
+                    $crs[] = $crsStr;
+                    $bounds[$crsStr] = $this->getValue("./ows:BoundingBox/ows:LowerCorner/text()", $layerEl)
+                        ." ". $this->getValue("./ows:BoundingBox/ows:UpperCorner/text()", $layerEl);
                 }
-                $layer->setCRS(implode(",", $crs));
+                $layer->setCrs($crs);
+                $layer->setCrsBounds($bounds);
                 
-                $crs84 = $this->getValue("./ows:WGS84BoundingBox/ows:LowerCorner/text()", $layerEl)
+                $latlonbounds = $this->getValue("./ows:WGS84BoundingBox/ows:LowerCorner/text()", $layerEl)
                         ." ". $this->getValue("./ows:WGS84BoundingBox/ows:UpperCorner/text()", $layerEl);
-                $layer->setLatLonBounds($crs84);
-                
+                $layer->setLatLonBounds($latlonbounds);
+                $crs84 = $this->getValue("./ows:WGS84BoundingBox/@crs", $layerEl);
+                $layer->setCrsLatLon($crs84);
+                if(count($crs) == 0) {
+                    $layer->setDefaultCrs($this->getValue("./ows:WGS84BoundingBox/@crs", $layerEl));
+                }
+                unset($crs);
+                unset($crs84);
                 $layer->setIdentifier($this->getValue("./ows:Identifier/text()", $layerEl));
                 
                 $metadataUrlsEl = $this->xpath->query("./ows:Metadata", $layerEl);
@@ -189,32 +217,35 @@ class CapabilitiesParser {
                     $metadata[] = $this->getValue("./xlink:href", $metadataUrlEl);
                 }
                 $layer->setMetadataURL($metadata);
+                unset($metadata);
+                unset($metadataUrlsEl);
 
                 $stylesEl = $this->xpath->query("./wmts:Style", $layerEl);
                 foreach($stylesEl as $styleEl) {
                     $layer->addStyle(
                             array(
-                                "name"=>$this->getValue("./ows:Identifier/text()", $styleEl),
+                                "identifier"=>$this->getValue("./ows:Identifier/text()", $styleEl),
                                 "title"=>$this->getValue("./ows:Title/text()", $styleEl),
                                 "legendUrl"=> array (
                                 "link" =>"")));
                 }
-                
+                unset($stylesEl);
                 
                 $format = array();
-                $fromatsEl = $this->xpath->query("./wmts:Format", $layerEl);
-                foreach($fromatsEl as $fromatEl) {
-                    $format[] = $this->getValue("./text()", $fromatEl);
+                $formatsEl = $this->xpath->query("./wmts:Format", $layerEl);
+                foreach($formatsEl as $formatEl) {
+                    $format[] = $this->getValue("./text()", $formatEl);
                 }
                 $layer->setRequestDataFormats($format);
-                unset($format);
                 //TODO InfoFormat
                 $format = array();
-                $fromatsEl = $this->xpath->query("./wmts:InfoFormat", $layerEl);
-                foreach($fromatsEl as $fromatEl) {
-                   $format[] = $this->getValue("./text()", $fromatEl);
+                $formatsEl = $this->xpath->query("./wmts:InfoFormat", $layerEl);
+                foreach($formatsEl as $formatEl) {
+                   $format[] = $this->getValue("./text()", $formatEl);
                 }
                 $layer->setRequestInfoFormats($format);
+                unset($fromatsElmats);
+                unset($format);
                 
                 $tileMatrixSetLinks = array();
                 $tileMatrixSetLinksEl = $this->xpath->query("./wmts:TileMatrixSetLink", $layerEl);
@@ -266,13 +297,12 @@ class CapabilitiesParser {
             }
         }
         unset($contents);
-        // read Themes 
-//        $theme = array();
         $themes = $this->xpath->query("./wmts:Themes/wmts:Theme", $root);
         if($themes != null){
             foreach($themes as $themeEl) {
                 $theme =  $this->findTheme(null, $themeEl);
-                $wfst->addTheme($theme);
+                $arr = $theme->getAsArray();
+                $wmts->addTheme($theme->getAsArray());
             }
         }
 /*        
@@ -298,22 +328,19 @@ class CapabilitiesParser {
     }
     
     private function findTheme($theme = null, $themeParentEl){
-        $theme = $theme==null? newTheme():$theme;
-//        $themesEl = $this->xpath->query("./wmts:Theme", $themeParentEl);
-//        if($themesEl != null) {
-//            foreach($themesEl as $themeEl) {
-//                $theme = newTheme();
-                $theme->setIdentifier($this->getValue("./ows:Identifier/text()", $themeParentEl));
-                $theme->setTitle($this->getValue("./ows:Title/text()", $themeParentEl));
-                $theme->setAbstract($this->getValue("./ows:Abstract/text()", $themeParentEl));
-                $subthemesEl = $this->xpath->query("./wmts:Theme", $themeParentEl);
-                if($subthemesEl != null) {
-                    foreach($subthemesEl as $subthemeEl) {
-                        $theme->addTheme(new Theme(), $subthemeEl);
-                    }
-                }
-//            }
-//        }
+//        $elmname = $themeParentEl->localName;
+        $theme = $theme==null? new Theme():$theme;
+        $theme->setIdentifier($this->getValue("./ows:Identifier/text()", $themeParentEl));
+        $theme->setTitle($this->getValue("./ows:Title/text()", $themeParentEl));
+        $theme->setAbstract($this->getValue("./ows:Abstract/text()", $themeParentEl));
+        $theme->setLayerRef($this->getValue("./wmts:LayerRef/text()", $themeParentEl));
+        $subthemesEl = $this->xpath->query("./wmts:Theme", $themeParentEl);
+        if($subthemesEl != null) {
+            foreach($subthemesEl as $subthemeEl) {
+                $subelmname = $subthemeEl->localName;
+                $theme->addTheme($this->findTheme(new Theme(), $subthemeEl));
+            }
+        }
         return $theme;
     }
 }

@@ -16,10 +16,24 @@ class MonitoringRunner {
     public function run(){
         $job = new MonitoringJob();
         $time_pre = microtime(true);
-        $result = $this->client->open($this->md->getRequestUrl());
+        $result = null;
+        try {
+            $result = $this->client->open($this->md->getRequestUrl());
+            $job->setResult($result->getData());
+            if($result->getStatusCode()=="200") {
+                $teststr = substr($result->getData(), 0, 100);
+                if(strripos(strtolower($teststr), "exception") !== false){
+                    $job->setSTATUS(MonitoringJob::$STATUS_EXCEPTION);
+                } else {
+                    $job->setSTATUS(MonitoringJob::$STATUS_SUCCESS);
+                }
+            } else 
+                $job->setSTATUS(MonitoringJob::$STATUS_ERROR.":".$result->getStatusCode());
+        }catch(\Exception $E){
+            $job->setSTATUS(MonitoringJob::$STATUS_FAIL);
+        }
         $time_post = microtime(true);
         $job->setMonitoringDefinition($this->md);
-        $job->setResult($result->getData());
         $job->setLatency(round($time_post-$time_pre,3));
         return $job;
     }

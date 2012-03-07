@@ -11,11 +11,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  */
 class MonitoringJob {
-    public static $STATUS_SUCCESS = "SUCCESS";
-    public static $STATUS_FAIL = "FAIL";
-    public static $STATUS_EXCEPTION = "EXCEPTION";
-    public static $STATUS_ERROR = "ERROR";
-    
 	/**
 	 *
 	 * @ORM\Id
@@ -40,7 +35,7 @@ class MonitoringJob {
 	 *
 	 * @ORM\Column(type="boolean", nullable="true")
 	 */
-	protected $changed = false;
+	protected $changed;
 	
     /**
 	 *
@@ -65,7 +60,6 @@ class MonitoringJob {
 
     public function __construct(){
         $this->timestamp = new \DateTime();
-        $this->status = MonitoringJob::$STATUS_FAIL;
     }
 
     /**
@@ -176,25 +170,5 @@ class MonitoringJob {
     public function getMonitoringDefinition()
     {
         return $this->monitoringDefinition;
-    }
-
-    /**
-     * Set status
-     *
-     * @param string $status
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-    }
-
-    /**
-     * Get status
-     *
-     * @return string 
-     */
-    public function getStatus()
-    {
-        return $this->status;
     }
 }

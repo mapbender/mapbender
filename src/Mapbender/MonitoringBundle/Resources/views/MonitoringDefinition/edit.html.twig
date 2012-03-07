@@ -6,9 +6,6 @@
     <h1>Monitoring Navigation</h1>
     <ul>
       <li>
-        <form action="{{ path('mapbender_monitoring_monitoringdefinition_run',{'mdId':md.id}) }}" method="post">
-        <button>{% trans %}Run{% endtrans %}</button>
-        </form>
       </li>
     </ul>
 </nav>
@@ -21,19 +18,55 @@
 	<form action="{{path("mapbender_monitoring_monitoringdefinition_index")}}" method="get">
 		<input type="submit" name="cancel" value="{{"Cancel"|trans}}" />
 	</form>
-    <h2>{{ "Jobs"|trans }}</h2>
+	<form action="{{path("mapbender_monitoring_monitoringdefinition_statreset",{"mdId":md.id})}}" method="post">
+		<input type="submit" name="reset" value="{{"Reset"|trans}}" />
+	</form>
+    <form action="{{ path('mapbender_monitoring_monitoringdefinition_run',{'mdId':md.id}) }}" method="post">
+        <input type="submit" name="run" value="{% trans %}Run{% endtrans %}" />
+    </form>
     {% if md.monitoringJobs|length > 0 %}
-    <ul>
+    <table class="listable" id="_table-job">
+        <caption>{{ "Jobs"|trans }}</caption>
+        <thead>
+        <tr><th>{{"Nr"|trans}}</th><th>{{"date"|trans}}</th><th>{{"latency"|trans}}</th><th>{{"status"|trans}}</th><th>{{"changed"|trans}}</th></tr>
+        </thead>
+        <tbody>
+        {% set num = 0 %}
         {% for job in md.monitoringJobs %}
-            <li>{{ job.id }} {{ job.latency }} ms</li>
+            {% if num == 0 %}
+                <tr class="job job-last"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>{% if job.changed %}CHANGED{% endif %}</td></tr>
+            {% elseif num < 10 %}
+                {% if job.changed %}
+                <tr class="job job-previous"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>CHANGED</td></tr>
+                {% endif %}
+            {% endif %}
+            {% set num = num+1 %}
         {% endfor %}
-    </ul>
+        </tbody>
+    </table>
     <h2>{{ "Last Result"|trans }}</h2>
     <pre>
-        {{md.monitoringJobs[0].result}}
+{{md.monitoringJobs[0].result}}
     </pre>
     {% else %}
         <p>{{ "No jobs have been run"|trans }}</p>
     {% endif %}
-    
+    <script type="text/javascript">
+    $('tr.job').bind("click", function(e) {
+        var that = this;
+        $.ajax({
+            url: '{{path("mapbender_monitoring_monitoringdefinition_show",{"jId":''})}}/'+$(that).find('td.job-id').text(),
+            type: "get",
+            dataType: "json",
+            success: function(data) {
+                $(data.html).dialog({
+                    autoOpen: true,
+                    width: 800,
+                    height: 600,
+                    title: data.title
+                });
+            }
+        });
+    });
+    </script>
 {% endblock %}

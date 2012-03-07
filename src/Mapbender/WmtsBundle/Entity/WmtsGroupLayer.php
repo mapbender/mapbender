@@ -1,22 +1,23 @@
 <?php
 namespace Mapbender\WmtsBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="grouplayer")
+ * @ORM\Table(name="wmtsgrouplayer")
  */
-class GroupLayer extends Layer {
+class WmtsGroupLayer extends WmtsLayer {
 
     /**
-     * @ORM\ManyToOne(targetEntity="GroupLayer",inversedBy="layer", cascade={"update"})
+     * @ORM\ManyToOne(targetEntity="WMTSGroupLayer",inversedBy="wmtslayer", cascade={"update"})
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable="false")
     */
      protected $parent;
 
     /**
-     * @ORM\OneToMany(targetEntity="GroupLayer",mappedBy="parent", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="WMTSGroupLayer",mappedBy="parent", cascade={"persist","remove"})
     */
     protected $layer;
     
@@ -24,7 +25,7 @@ class GroupLayer extends Layer {
         $this->layer = new ArrayCollection();
     }
     
-    public function addLayer(WMTSLayer $layer){
+    public function addLayer(WmtsLayerDetail $layer){
         $this->layer->add($layer);
     }
     
@@ -39,7 +40,7 @@ class GroupLayer extends Layer {
         $this->layer = new ArrayCollection();
         $newLayer = null;
         foreach ($layer as $l ){
-            $newLayer = new WMTSLayer(); 
+            $newLayer = new WmtsLayerDetail(); 
             $newLayer->setName($l['name']);
             $newLayer->setTitle($l['title']);
             $newLayer->setAbstract($l['abstract']);
@@ -51,7 +52,7 @@ class GroupLayer extends Layer {
     /**
      * sets the Parent layer
      */
-    public function setParent(Layer $parent){
+    public function setParent(WmtsLayer $parent){
         $this->parent = $parent;
     }
     

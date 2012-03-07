@@ -89,10 +89,11 @@ class Application implements ApplicationInterface {
             'basePath' => $base_path,
             'assetPath' => rtrim($this->get('templating.helper.assets')->getUrl('.'), '.'),
             'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
+            'transPath' => $this->get('router')->generate('mapbender_core_translation_transtext'),
             'slug' => $this->slug,
             'proxies' => array(
                 'open' => $this->get('router')->generate('mapbender_proxy_open'),
-                'secure' => $this->get('router')->generate('mapbender_proxy_secure')
+                //'secure' => $this->get('router')->generate('mapbender_proxy_secure')
             )
         );
 
@@ -120,7 +121,8 @@ class Application implements ApplicationInterface {
         // First the application and template assets
         $js = array();
         $css = array();
-
+        // load mapbender.translate
+        $js[] = $this->getReference($this, 'mapbender.trans.js');
         $template = $this->getTemplate();
         $template_metadata = $this->getTemplate()->getMetadata();
         foreach($template_metadata['css'] as $asset) {
@@ -266,11 +268,11 @@ class Application implements ApplicationInterface {
         $this->layersets = array();
         foreach($this->configuration['layersets'] as $layersetId => $layers) {
             $this->layersets[$layersetId] = array();
-            foreach($layers as $id => $layer) {
+            foreach($layers as $layerId => $layer) {
                 //Extract and unset class, so we can use the remains as configuration
                 $class = $layer['class'];
                 unset($layer['class']);
-                $this->layersets[$layersetId][] = new $class($id, $layer);
+                $this->layersets[$layersetId][] = new $class($layersetId, $layerId, $layer, $this->get("doctrine"));
             }
         }
     }
