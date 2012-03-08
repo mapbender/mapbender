@@ -66,14 +66,21 @@ class ProxyService {
             $contentType = explode(';', $request->headers->get('Content-Type'));
 
             if($contentType[0] == 'application/xml') {
-
+//                curl_setopt($ch, CURLOPT_HTTPHEADER, $request->headers
+//                    ->get('Content-Type'));
+                $content = $request->getContent();
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: ' . $contentType[0]));
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getContent());
+                /*
                 $xml = file_get_contents('php://input');
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                     'Content-type: application/xml'));
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+                */
 
             } else {
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getParameters());
+                //curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
             }
         }
 
