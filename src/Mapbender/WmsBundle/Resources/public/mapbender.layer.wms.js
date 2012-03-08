@@ -150,6 +150,23 @@ $.extend(true, Mapbender, { layer: {
             } else {
                 return null;
             }
+        },
+
+        /**
+         * The Mapbender map object calls this function when a new layer is
+         * added to the map in the context of the layer, e.g. "this" is a
+         * MapQuery layer object.
+         */
+        onLoadStart: function() {
+            this.olLayer.events.on({
+                scope: this,
+                loadstart: function() {
+                    // Prevent loading without layers
+                    if(this.olLayer.layers.length === 0) {
+                        this.olLayer.setVisibility(false);
+                    }
+                }
+            });
         }
     }
 }});

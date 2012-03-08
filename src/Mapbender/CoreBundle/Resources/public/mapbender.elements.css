@@ -112,3 +112,17 @@ div.mb-element-button {
 #mb-zoom-scale-dialog {
     display: none;
 }
+
+.mb-element-activityindicator {
+    position: absolute;
+    z-index: 10000;
+    bottom: 0;
+    right: 0;
+    width: 32px;
+    height: 32px;
+}
+
+body.mb-activity .mb-element-activityindicator {
+    background: url('image/activity.gif');
+}
+
