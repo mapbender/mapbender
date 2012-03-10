@@ -3,25 +3,11 @@ _mapbender_start:
     pattern: "/"
     defaults: { _controller: MapbenderCoreBundle:Application:list}
 
-_mapbender_application:
-    resource: "@MapbenderCoreBundle/Controller/ApplicationController.php"
+_mapbender_corebundle:
+    resource: "@MapbenderCoreBundle/Controller/"
     type: annotation
 
-_mapbender_proxy:
-    resource: "@MapbenderCoreBundle/Controller/ProxyController.php"
+_mapbender_wmsbundle:
+    resource: "@MapbenderWmsBundle/Controller/"
     type: annotation
-
-_mapbender_user:
-    resource: "@MapbenderCoreBundle/Controller/UserController.php"
-    type: annotation
-
-_mapbender_wms:
-    resource: "@MapbenderWmsBundle/Controller/WMSController.php"
-    type: annotation
-    prefix: /wms
-
-_mapbender_wmslayer:
-    resource: "@MapbenderWmsBundle/Controller/WMSLayerController.php"
-    type: annotation
-    prefix: /wms
 

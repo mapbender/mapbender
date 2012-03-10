@@ -128,7 +128,7 @@ parameters:
             layersets:
                 main:
                     osm-denver:
-                        class: Mapbender\WmtsBundle\WmtsLayer
+                        class: Mapbender\WmtsBundle\WmtsLayerLoader
                         title: Denver OSM
                         url: http://demo.mapserver.org:8081/geocache/wmts
                         layer: osm-denver
