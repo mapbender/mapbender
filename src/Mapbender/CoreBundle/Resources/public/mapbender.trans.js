@@ -42,6 +42,5 @@ Mapbender.getTrans = function(translatedterms, term) {
         result = translatedterms[this.strToHex(term)];
     }catch(e){  }
     return result;
-}
+};
 
-//$(Mapbender.setup);
