@@ -10,6 +10,7 @@ $.widget("mapbender.mbZoomBar", {
     map: null,
     zoomslider: null,
     navigationHistoryControl: null,
+    zoomBoxControl: null,
 
     _create: function() {
         var self = this;
@@ -63,9 +64,24 @@ $.widget("mapbender.mbZoomBar", {
     },
 
     _setupZoomButtons: function() {
+        var self = this;
+
         this.navigationHistoryControl =
             new OpenLayers.Control.NavigationHistory();
         this.map.addControl(this.navigationHistoryControl);
+
+        this.zoomBoxControl = new OpenLayers.Control.ZoomBox({
+            keyMask: OpenLayers.Handler.MOD_NONE,
+            autoActivate: false});
+        this.map.addControl(this.zoomBoxControl);
+        this.element.find('div.zoom-box').bind('click', function() {
+            $(this).toggleClass('active');
+            if($(this).hasClass('active')) {
+                self.zoomBoxControl.activate();
+            } else {
+                self.zoomBoxControl.deactivate();
+            }
+        });
 
         this.element.find('div.zoom-prev').bind('click',
             $.proxy(this.navigationHistoryControl.previousTrigger,

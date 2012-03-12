@@ -26,7 +26,7 @@ class ZoomBar extends Element implements ElementInterface {
                 'mapbender.element.zoombar.js'
             ),
             'css' => array(
-                'mapbender.elements.css'
+                'mapbender.element.zoombar.css'
             )
         );
     }
