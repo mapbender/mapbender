@@ -23,7 +23,10 @@ class WmtsLayerLoader implements LayerInterface {
         $this->configuration = $configuration;
         if($doctrine!==null){
             $this->doctrine = $doctrine;
-            $this->loadLayer();
+            try {
+                $this->loadLayer();
+            } catch(\Exception $e) {
+            }
         }
     }
     
