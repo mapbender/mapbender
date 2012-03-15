@@ -19,8 +19,8 @@ $.widget("mapbender.mbZoomBar", {
         this._setupSlider();
         this._setupZoomButtons();
         this._setupPanButtons();
-        this.map.events.register('zoomend', this, this._onZoomEnd);
-        this._onZoomEnd();
+        this.map.events.register('zoomend', this, this._zoom2Slider);
+        this._zoom2Slider();
 
         if(this.options.draggable === true) {
             this.element.draggable({
@@ -44,6 +44,22 @@ $.widget("mapbender.mbZoomBar", {
         for(var i = 0; i < this.map.getNumZoomLevels(); i++) {
             this.zoomslider.append($('<li></li>'));
         }
+        this.zoomslider.find('li').last()
+            .addClass('active')
+            .append($('<div></div>'));
+
+        var step = [
+            this.zoomslider.find('li').last().width(),
+            this.zoomslider.find('li').last().height()];
+
+        this.zoomslider.sortable({
+                axis: 'y', // TODO: Orientation
+                containment: this.zoomslider,
+                grid: step,
+                handle: 'div',
+                tolerance: 'pointer',
+                stop: $.proxy(this._slider2Zoom, this)
+            });
         this.zoomslider.show();
 
         var self = this;
@@ -131,10 +147,28 @@ $.widget("mapbender.mbZoomBar", {
         });
     },
 
-    _onZoomEnd: function() {
+    /**
+     * Set map zoom level from slider
+     */
+    _slider2Zoom: function() {
+        var position = this.zoomslider.find('li.active').index(),
+            index = this.map.getNumZoomLevels() - 1 - position;
+
+        this.map.zoomTo(index);
+    },
+
+    /**
+     * Set slider to reflect map zoom level
+     */
+    _zoom2Slider: function() {
         var position = this.map.getNumZoomLevels() - 1 - this.map.getZoom();
-        this.zoomslider.find('li.active').removeClass('active');
-        this.zoomslider.find('li').eq(position).addClass('active');
+
+        this.zoomslider.find('li.active')
+            .removeClass('active')
+            .empty();
+        this.zoomslider.find('li').eq(position)
+            .addClass('active')
+            .append($('<div></div>'));
     }
 });
 

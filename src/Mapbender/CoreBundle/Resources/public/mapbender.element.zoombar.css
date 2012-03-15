@@ -52,12 +52,17 @@
     height: 10px;
     width: 20px;
     background: url('image/zoombar-zoom-slider.png') -26px 50%;
-    margin: 0 auto;
+    margin: 0 7px;
 }
 
 .mb-element-zoombar ol.zoom-slider li.active {
     background: url('image/zoombar-zoom-slider.png');
     width: 24px;
+    margin: 0 5px;
+}
+
+.mb-element-zoombar ol.zoom-slider li.active div {
+    height: 100%;
 }
 
 .mb-element-zoombar div.zoom-prev,
