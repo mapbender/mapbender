@@ -4,7 +4,7 @@
 </div>
 {% endif %}
 
-<button id="application-add-element" class="btn btn-small">{{ 'Add element' | trans}}...</button>
+<a data-toggle="modal" href="#modal-application-elements" class="add-subentity btn btn-small">{{ 'Add element' | trans}}...</a>
 
 {% if application.elements | length > 0 %}
 <table class="table-sortable table table-striped">

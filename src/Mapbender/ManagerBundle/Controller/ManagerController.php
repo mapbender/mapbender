@@ -34,7 +34,7 @@ class ManagerController extends Controller {
                 '_controllers' => array(
                     'Application')),
             'layers' => array(
-                'title' => 'Layers',
+                'title' => 'Services',
                 '_controllers' => array(
                     'Layer',
                     'Repository')),

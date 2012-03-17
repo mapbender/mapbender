@@ -23,5 +23,30 @@
             slug.val(slugified);
         });
     }
+
+    //
+    // Sub-Entity class selection modal
+    //
+    var modal =$('div#modal-application-elements');
+
+    modal.find('div.element').on('click', function() {
+        var element = $(this);
+        element.addClass('selected')
+            .siblings().removeClass('selected');
+        element.closest('.modal').find('div.modal-footer a.btn-primary')
+            .removeClass('disabled');
+
+    });
+
+    modal.find('div.modal-footer a.btn-primary').on('click', function() {});
+
+    modal.on('show', function() {
+        var modal = $(this),
+            select = modal.find('div.modal-footer a.btn-primary');
+
+        modal.find('div.element').removeClass('selected');
+
+        select.addClass('disabled');
+    });
 })();
 

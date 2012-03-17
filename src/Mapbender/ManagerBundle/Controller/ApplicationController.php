@@ -118,6 +118,7 @@ class ApplicationController extends Controller {
 
         return array(
             'application' => $application,
+            'available_elements' => $this->getElementList(),
             'form' => $form->createView());
     }
 
@@ -210,11 +211,9 @@ class ApplicationController extends Controller {
     }
 
     /**
-     * Return list of element classes
-     *
-     * @Route("/application/elements", defaults={ "_format"="json" })
+     * Collect available elements
      */
-    public function elementListAction() {
+    private function getElementList() {
         $available_elements = array();
         foreach($this->get('mapbender')->getElements() as $elementClassName) {
             $available_elements[$elementClassName] = array(
@@ -224,7 +223,7 @@ class ApplicationController extends Controller {
         }
         asort($available_elements);
 
-        return new Response(json_encode($available_elements));
+        return $available_elements;
     }
 
     /**
