@@ -53,7 +53,7 @@ class WMSLayer extends GroupLayer {
     /**
      * @ORM\Column(type="array",nullable="true")
      */
-    protected $latLonBounds = "180 90 -180 -90";
+    protected $latLonBounds = "-180 -90 180 90";
     
     /*  
         FIXME BoundingBox is missing

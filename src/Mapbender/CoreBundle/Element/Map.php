@@ -29,7 +29,7 @@ class Map extends Element implements ElementInterface {
             ),
             'css' => array(
                 'mapbender.elements.css',
-                'mapquery/lib/jquery/themes/base/jquery-ui.css',
+                'mapquery/lib/openlayers/theme/default/style.css'
             )
         );
     }
@@ -38,6 +38,7 @@ class Map extends Element implements ElementInterface {
         //TODO: Cherry pick
 
         $extra = array();
+        $srs = $this->get('request')->get('srs');
         $poi = $this->get('request')->get('poi');
         if($poi) {
             $extra['type'] = 'poi';
@@ -52,7 +53,7 @@ class Map extends Element implements ElementInterface {
 
         $bbox = $this->get('request')->get('bbox');
         if(!$poi && $bbox) {
-            $bbox = split(',', $bbox);
+            $bbox = explode(',', $bbox);
             if(count($bbox) === 4) {
                 $extra['type'] = 'bbox';
                 $extra['data'] = array(
@@ -65,6 +66,8 @@ class Map extends Element implements ElementInterface {
         }
 
         $options = array_merge(array('extra' => $extra), $this->configuration);
+        if($srs)
+          $options = array_merge($options, array('targetsrs' => $srs));
         return array(
             'options' => $options,
             'init' => 'mbMap',

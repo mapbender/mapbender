@@ -8,13 +8,19 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class MapbenderCoreExtension extends Extension {
-	public function load(array $configs, ContainerBuilder $container) {
-		$loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-		$loader->load('services.xml');
-	}
+    public function load(array $configs, ContainerBuilder $container) {
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
 
-	public function getAlias() {
-		return 'mapbender_core';
-	}
+        $container->setParameter('mapbender.proxy', $config['proxy']);
+
+        $loader = new XmlFileLoader($container,
+            new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.xml');
+    }
+
+    public function getAlias() {
+        return 'mapbender_core';
+    }
 }
 

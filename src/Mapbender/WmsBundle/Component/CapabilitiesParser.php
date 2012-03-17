@@ -410,8 +410,12 @@ class CapabilitiesParser {
                 }
             }
         }
-
-        switch($RequestNode->nodeName){
+        if($RequestNode->hasAttribute("name")){
+            $operation_name = $RequestNode->getAttribute("name");
+        } else {
+            $operation_name = $RequestNode->nodeName;
+        }
+        switch($operation_name){
             case "GetCapabilities":
                 $wms->setRequestGetCapabilitiesGET($get);
                 $wms->setRequestGetCapabilitiesPOST($post);

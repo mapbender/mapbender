@@ -32,8 +32,10 @@ class AreaRuler extends Element implements ElementInterface {
     }
 
     public function getConfiguration() {
+        $tr = $this->get('translator');
         $opts = $this->configuration;
         $opts['text'] = $this->name;
+        $opts['title'] = $tr->trans($opts['title']);
         // Resolve the run-time id of the target widget
         if(array_key_exists('target', $this->configuration)) {
             $elementId = $this->configuration['target'];

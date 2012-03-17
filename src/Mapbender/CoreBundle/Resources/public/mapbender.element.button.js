@@ -15,14 +15,14 @@ $.widget("mapbender.mbButton", {
     _create: function() {
         var self = this;
         var me = $(this.element);
-        
+
         this.button = this.element[0];
 
         var o = {};
         if(this.options.icon) {
             $.extend(o, {
                 icons: {
-                    primary: this.options.icon,
+                    primary: this.options.icon
                 },
                 text: this.options.label
             });
@@ -52,6 +52,8 @@ $.widget("mapbender.mbButton", {
         }
 
         this.active ? this.deactivate() : this.activate();
+
+        return false;
     },
 
     activate: function() {
@@ -70,6 +72,11 @@ $.widget("mapbender.mbButton", {
     },
 
     deactivate: function() {
+        if(this.options.target && this.options.deactivate) {
+            var target = $('#' + this.options.target);
+            var widget = Mapbender.configuration.elements[this.options.target].init;
+            target[widget](this.options.deactivate);
+        }
         if(this.active) {
             this.active = false;
         }

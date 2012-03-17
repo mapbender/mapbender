@@ -52,7 +52,6 @@ $.widget("mapbender.mb_about_dialog", {
     },
 
     _onAjaxError: function(XHR, d, f) {
-        console.log(arguments);
     }
 });
 

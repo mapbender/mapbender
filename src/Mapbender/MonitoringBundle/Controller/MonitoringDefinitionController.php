@@ -7,6 +7,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Mapbender\MonitoringBundle\Entity\MonitoringDefinition;
 use Mapbender\MonitoringBundle\Form\MonitoringDefinitionType;
+use Mapbender\MonitoringBundle\Component\MonitoringRunner;
+use Mapbender\Component\HTTP\HTTPClient;
+use Mapbender\WmsBundle\Entity\WMSService;
+
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of MonitoringDefinitionController
@@ -43,6 +48,29 @@ class MonitoringDefinitionController extends Controller {
 		return array(
 			"form" => $form->createView()
 		);
+	}
+	
+    /**
+	 * @Route("/wms/{wmsId}")
+	 * @Method("POST")
+	 * @Template()
+	 */
+	public function importAction(WMSService $wms) {
+        $md = new MonitoringDefinition(); 
+        $md->setType(get_class($wms));
+        $md->setTypeId($wms->getId());
+        $md->setName($wms->getName());
+        $md->setTitle($wms->getTitle());
+        $md->setRequestUrl($wms->getOnlineResource());
+
+        $em = $this->getDoctrine()
+            ->getEntityManager();
+        $em->persist($md);
+        $em->flush();
+        return $this->redirect($this->generateUrl(
+            "mapbender_monitoring_monitoringdefinition_edit",
+            array("mdId" => $md->getId())
+        ));
 	}
 	
 	/**
@@ -91,7 +119,7 @@ class MonitoringDefinitionController extends Controller {
 			"md" => $md
 		);
 	}
-	
+    
 	/**
 	 * @Route("/{mdId}/delete")
 	 * @Method("POST")
@@ -156,6 +184,70 @@ class MonitoringDefinitionController extends Controller {
 					"md" => $md)
 			);
 		}
+	}
+	
+    /**
+	 * @Route("/{mdId}/run")
+	 * @Method("POST")
+	 */
+	public function runAction(MonitoringDefinition $md) {
+        $client = new HTTPClient($this->container);
+        $mr = new MonitoringRunner($md,$client);
+        $job = $mr->run();
+        if($md->getLastMonitoringJob()){
+            if(strcmp($job->getResult(), $md->getLastMonitoringJob()->getResult()) != 0){
+                $job->setChanged(true);
+            } else {
+                $job->setChanged(false);
+            }
+        }else {
+            $job->setChanged(true);
+        }
+        $md->addMonitoringJob($job);
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->persist($md);
+        $em->flush();
+    	return $this->redirect(
+            $this->generateUrl(
+                "mapbender_monitoring_monitoringdefinition_edit",
+                array("mdId" =>  $md->getId())
+            )
+        );
+    }
+    
+    /**
+	 * @Route("/{mdId}/statreset")
+	 * @Method("POST")
+	 */
+	public function statresetAction(MonitoringDefinition $md) {
+        $em = $this->getDoctrine()->getEntityManager();
+        foreach($md->getMonitoringJobs() as $job){
+            $em->remove($job);
+        } 
+        $em->flush();
+    	return $this->redirect(
+            $this->generateUrl(
+                "mapbender_monitoring_monitoringdefinition_edit",
+                array("mdId" =>  $md->getId())
+            )
+        );
+    }
+    
+     /**
+	 * @Route("/show/{jId}")
+	 * @Method("GET")
+	 * @Template()
+	 */
+	public function showAction($jId) {
+        $tr = $this->get('translator');
+        $job = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:MonitoringJob")
+                ->findOneById($jId);
+        $result = array("html" => "<pre>".htmlentities($job->getResult())."</pre>",
+            "error" => "", "title" => $tr->trans('Job_result'));
+        $response = new Response();
+        $response->setContent(json_encode($result));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
 	}
 }
 

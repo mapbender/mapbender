@@ -11,6 +11,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  */
 class MonitoringJob {
+    public static $STATUS_SUCCESS = "SUCCESS";
+    public static $STATUS_FAIL = "FAIL";
+    public static $STATUS_EXCEPTION = "EXCEPTION";
+    public static $STATUS_ERROR = "ERROR";
+    
 	/**
 	 *
 	 * @ORM\Id
@@ -21,27 +26,47 @@ class MonitoringJob {
 	
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="datetime", nullable="true")
 	 */
 	protected $timestamp;
 	
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="float", nullable="true")
 	 */
 	protected $latency;
 	
 	/**
 	 *
+	 * @ORM\Column(type="boolean", nullable="true")
+	 */
+	protected $changed = false;
+	
+    /**
+	 *
+	 * @ORM\Column(type="text", nullable="true")
+	 */
+	protected $result;
+    
+	/**
+	 *
 	 * @ORM\Column(type="string", nullable="true")
 	 */
-	protected $changed;
+    protected $status;
 
 	/**
 	 *
      * @ORM\ManyToOne(targetEntity="MonitoringDefinition", inversedBy="monitoringJobs")
 	 */
 	protected $monitoringDefinition;
+
+
+
+
+    public function __construct(){
+        $this->timestamp = new \DateTime();
+        $this->status = MonitoringJob::$STATUS_FAIL;
+    }
 
     /**
      * Get id
@@ -114,6 +139,26 @@ class MonitoringJob {
     }
 
     /**
+     * Set result
+     *
+     * @param string $result
+     */
+    public function setResult($result)
+    {
+        $this->result = $result;
+    }
+
+    /**
+     * Get result
+     *
+     * @return string 
+     */
+    public function getResult()
+    {
+        return $this->result;
+    }
+
+    /**
      * Set monitoringDefinition
      *
      * @param Mapbender\MonitoringBundle\Entity\MonitoringDefinition $monitoringDefinition
@@ -131,5 +176,25 @@ class MonitoringJob {
     public function getMonitoringDefinition()
     {
         return $this->monitoringDefinition;
+    }
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string 
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }

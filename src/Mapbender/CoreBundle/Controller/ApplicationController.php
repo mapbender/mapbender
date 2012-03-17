@@ -9,6 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
+use Assetic\Asset\FileAsset;
+use Assetic\Asset\AssetCollection;
 
 /**
  * Application controller.
@@ -28,33 +30,60 @@ class ApplicationController extends Controller {
     }
 
     /**
-     * Render an application at url /application/{slug}
-     *
-     * @param string $slug The application slug
-     * @return Response HTTP response
-     * @Route("/application/{slug}.{_format}", name="mapbender_application", defaults={ "_format" = "html"})
-     * @Template()
-     */
-    public function applicationAction($slug) {
-        return $this->embedAction($slug,
-            array('css', 'html', 'js', 'configuration'),
-            $this->get('request')->get('_format'));
-    }
-
-    /**
      * Embed controller action.
      */
     public function embedAction($slug, $parts = array('css', 'html', 'js', 'configuration'), $format = 'embed') {
         $application = $this->getApplication($slug);
         $this->checkAllowedRoles($application->getRoles());
-
+        
+        $this->get("session")->set("proxyAllowed",true);
+        
         $answer = $application->render($parts, $format);
         return new Response($format === 'json' ? json_encode($answer) : $answer);
     }
 
     /**
+     * Assetic controller.
+     * @Route("/application/{slug}/assets/{type}")
+     */
+    public function assetsAction($slug, $type) {
+        $application = $this->getApplication($slug);
+        $config = $application->getAssets();
+        $assets = new AssetCollection();
+        $locator = $this->get('file_locator');
+
+        if($type === 'css') {
+            $rewrite = $this->get('assetic.filter.cssrewrite');
+        }
+        foreach(array_values(array_unique($config[$type])) as $file) {
+            $filters = array();
+            if($type === 'css') {
+                $filters[] = $rewrite;
+            }
+
+            $target = dirname($_SERVER['SCRIPT_NAME']) . '/bundles/' . strtolower(substr($file, 1, strpos($file, '/') - 7));
+            $file = $locator->locate($file);
+            $target .= '/' . basename($file);
+            $assets->add(new FileAsset($file,
+                $filters, null, $target));
+        }
+
+        $response = new Response();
+        $response->setContent($assets->dump());
+        $mimetypes = array(
+            'css' => 'text/css',
+            'js' => 'application/javascript'
+        );
+        $response->headers->set('Content-Type', $mimetypes[$type]);
+        return $response;
+    }
+
+
+    /**
      * Call an application element's action at /application/{slug}/element/{id}/{action}
-     * @Route("/application/{slug}/element/{id}/{action}", name="mapbender_element")
+     * @Route("/application/{slug}/element/{id}/{action}",
+     *     name="mapbender_element",
+     *     requirements={ "action" = ".+" })
      */
     public function elementAction($slug, $id, $action) {
         $application = $this->getApplication($slug);
@@ -64,6 +93,22 @@ class ApplicationController extends Controller {
             throw new HttpNotFoundException("Element can not be found.");
         }
         return $element->httpAction($action);
+    }
+
+    /**
+     * Render an application at url /application/{slug}
+     *
+     * @param string $slug The application slug
+     * @return Response HTTP response
+     * @Route("/application/{slug}.{_format}",
+     *     name="mapbender_application",
+     *     defaults={ "_format" = "html" })
+     * @Template()
+     */
+    public function applicationAction($slug) {
+        return $this->embedAction($slug,
+            array('css', 'html', 'js', 'configuration'),
+            $this->get('request')->get('_format'));
     }
 
     /**

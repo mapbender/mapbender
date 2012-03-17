@@ -1,18 +1,18 @@
 /* This is the fullscreen template css */
 html, body {
-	height: 100%;
-	margin: 0;
+    height: 100%;
+    margin: 0;
 }
 
 .region#top {
-	position: absolute;
-	z-index: 2000;
-	background: url('top_bg.png') 0 100% repeat-x;
-	width: 100%;
+    position: absolute;
+    z-index: 2000;
+    background: url('top_bg.png');
+    width: 100%;
 }
 
 .region#content {
-	height: 100%;
+    height: 100%;
 }
 
 .olControlPanZoomBar {
