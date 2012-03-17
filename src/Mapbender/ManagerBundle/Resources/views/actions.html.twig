@@ -1,8 +1,8 @@
-<ul class="repository-actions actions">
+<div class="repository-actions actions btn-group">
     {% for k,v in actions %}
     {% set attr %}
     {% if v.attr is defined %}{% for k,v in v.attr %} {{k}}="{{v}}"{% endfor %}{% endif %}
     {% endset %}
-    <li id="action-{{ k }}" class="ui-corner-all"><a href="{{ v.url }}"{{ attr }}>{{ v.title | trans }}</a></li>
+    <a id="action-{{ k }}" href="{{ v.url }}"{{ attr }}>{{ v.title | trans }}</a>
     {% endfor %}
-</ul>
+</div>

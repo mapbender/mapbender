@@ -89,9 +89,6 @@ class ApplicationController extends Controller {
                 $this->generateUrl('mapbender_manager_application_index'));
         }
 
-        $this->get('session')->setFlash('error',
-            'Your form has errors, please review them below.');
-
         return array(
             'application' => $application,
             'form' => $form->createView());

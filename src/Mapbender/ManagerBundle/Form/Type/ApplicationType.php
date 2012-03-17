@@ -38,14 +38,7 @@ class ApplicationType extends AbstractType {
                 'choices' => $options['available_templates'],
                 'attr' => array(
                     'title' => 'The HTML template used for this '
-                    .'application.')))
-            /**
-             * Elements
-             */
-            ->add('elements', 'collection', array(
-                'type' => new BaseElementType(),
-                'allow_add' => true,
-                'allow_delete' => true));
+                    .'application.')));
     }
 }
 

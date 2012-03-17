@@ -17,12 +17,12 @@
 
 <form id="entity-delete" action="{{ path('mapbender_manager_application_delete', { 'id': application.id }) }}" method="post" {{ form_enctype(form)}}>
     <header>
-    {% trans %}Do you really want to delete the application with the title %application_title% and the id %application_id%?{% endtrans %}
+    {% trans %}Do you really want to delete the application with the title <em>%application_title%</em> and the id <em>%application_id%</em>?{% endtrans %}
     </header>
     {{ form_widget(form) }}
     <footer class="actions">
-        <input type="submit" class="danger" value="{{ 'Delete' | trans }}" />
-        <a href="{{ url('mapbender_manager_application_index') }}">{{ 'Cancel' | trans}}</a>
+        <input type="submit" value="{{ 'Delete' | trans }}" class="btn btn-danger"/>
+        <a href="{{ url('mapbender_manager_application_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
     </footer>
 </form>
 

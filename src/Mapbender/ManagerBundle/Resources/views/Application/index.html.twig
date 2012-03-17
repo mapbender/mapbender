@@ -8,7 +8,8 @@
 
 {% block manager_content %}
 
-<table class="datasheet">
+{% if apps|length > 0 %}
+<table class="table table-striped">
     <thead>
         <tr>
             <th>{{ "Title (Slug)" | trans }}</th>
@@ -19,20 +20,30 @@
     <tbody>
         {% for app in apps %}
         <tr id="app-{{ app.id }}">
-            <td>{{ app.title }} ({{ app.slug }})</td>
+            <td>
+                <a href="{{ path('mapbender_manager_application_edit', {'id': app.id}) }}" title="{{ 'Edit' | trans }}">{{ app.title }}</a>
+                <a href="#" title="{{ 'View' | trans }}">({{ app.slug }})</a>
+            </td>
             <td>{{ app.description }}</td>
             <td>
-                <div class="entity-actions">
-                    <a class="action-view" href="#">{{ 'View' | trans }}</a>
-                    <a class="action-edit" href="{{ path('mapbender_manager_application_edit',  {'id': app.id }) }}" title="{{ 'Edit application' | trans }}">{{ 'Edit' | trans }}</a>
-                    <a class="action-clone" href="#">{{ 'Clone' | trans }}</a>
-                    <a class="action-delete" href="{{ path('mapbender_manager_application_confirmdelete', { 'id': app.id }) }}">{{ 'Delete' | trans }}</a>
+                <div class="entity-actions btn-group">
+                    <a class="action-view btn" href="#">{{ 'View' | trans }}</a>
+                    <a class="action-edit btn" href="{{ path('mapbender_manager_application_edit',  {'id': app.id }) }}" title="{{ 'Edit application' | trans }}">{{ 'Edit' | trans }}</a>
+                    <a class="action-clone btn" href="#">{{ 'Clone' | trans }}</a>
+                    <a class="action-delete btn" href="{{ path('mapbender_manager_application_confirmdelete', { 'id': app.id }) }}">{{ 'Delete' | trans }}</a>
                 </div>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+<div class="alert alert-info">
+{% trans %}
+You don't have any apps defined. Start by creating one now.
+{% endtrans %}
+</div>
+{% endif %}
 
 {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
 

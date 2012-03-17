@@ -12,24 +12,21 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/css/h5bp.css') }}">
   <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/css/style.css') }}">
-  <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/css/jquery-ui-1.8.16.css') }}">
-  <!--link rel="stylesheet" href="{{ asset('bundles/arsgeograficaentitypager/pager.css') }}"-->
+  <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/bootstrap/css/bootstrap.css') }}">
   <script src="{{ asset('bundles/mapbendermanager/js/modernizr-2.0.6.min.js') }}"></script>
   {% block manager_css %}{% endblock %}
 </head>
 
-<body>
+<body class="{% if app.debug %}debug{% endif %}">
     <div id="wrapper">
         <header role="navigation">
         <h1><a href="{{ path('mapbender_manager_manager_index') }}"><img alt="Mapbender Manager" src="{{ asset('bundles/mapbendermanager/logo.png')}}" /></a></h1>
 
-            <div>
-                <p>{% trans %}Hello{% endtrans %} <em><a href="#">user</a></em>.</p>
-                <a href="#" id="user-logout">{% trans %}Logout{% endtrans %}</a>
-            </div>
-
-            <form id="manager-search" action="." method="post">
-                <input type="text" value="{{ "search"|trans }}"/>
+            <form id="manager-search" action="." method="post" class="form-search">
+                <input type="hidden" name="path" value="{{ app.request.attributes.get('_route') }}" class="search-query"/>
+                <div class="input-append">
+                    <input type="text" name="term"/><button class="btn" title="{{ "Search"|trans }}"><i class="icon-search"></i></button>
+                </div>
             </form>
 
             <nav>
@@ -41,14 +38,20 @@
             <h1>{{ title|trans }}</h1>
 
             {% if app.session.hasFlash('error') %}
-            <div id="flash-error" class="flash ui-state-error ui-corner-all">
+            <div class="alert alert-error">
                 {{ app.session.flash('error') | trans }}
             </div>
             {% endif %}
 
-            {% if app.session.hasFlash('notice') %}
-            <div id="flash-notice" class="flash ui-state-highlight ui-corner-all">
-                {{ app.session.flash('notice') | trans }}
+            {% if app.session.hasFlash('info') %}
+            <div class="alert alert-info">
+                {{ app.session.flash('info') | trans }}
+            </div>
+            {% endif %}
+
+            {% if app.session.hasFlash('success') %}
+            <div class="alert alert-success">
+                {{ app.session.flash('success') | trans }}
             </div>
             {% endif %}
 
@@ -57,8 +60,7 @@
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="{{ asset('bundles/mapbendermanager/js/jquery-1.7.1.js') }}"><\/script>')</script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-    <script>window.jQuery.ui || document.write('<script src="{{ asset('bundles/mapbendermanager/js/jquery-ui-1.8.16.min.js') }}"><\/script>')</script>
+    <script src="{{ asset('bundles/mapbendermanager/bootstrap/js/bootstrap.js')}}"></script>
     {% block manager_js %}{% endblock %}
 </body>
 </html>

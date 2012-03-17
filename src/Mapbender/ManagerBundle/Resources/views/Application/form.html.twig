@@ -4,36 +4,31 @@
 Required fields are marked with dark labels, while optional fields have lighter labels.
 {% endtrans %}
 </header>
-<div class="tabbed">
-    <ul class="form-tabs">
-        <li><a href="#application-basics">{{ 'Base data' | trans}}</a></li>
-        <li><a href="#application-elements">{{ 'Elements' | trans}}</a></li>
-        <li><a href="#application-layersets">{{ 'Layersets' | trans}}</a></li>
-        <li><a href="#application-permissions">{{ 'Permissions' | trans}}</a></li>
-    </ul>
 
-    <section id="application-basics">
-        {{ form_row(form.title) }}
-        {{ form_row(form.slug) }}
-        {{ form_row(form.description) }}
-        {{ form_row(form.template) }}
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#application-basics" data-toggle="tab">{{ 'Base data' | trans}}</a></li>
+    <li><a href="#application-elements" data-toggle="tab">{{ 'Elements' | trans}}</a></li>
+    <li><a href="#application-layersets" data-toggle="tab">{{ 'Layersets' | trans}}</a></li>
+    <li><a href="#application-permissions" data-toggle="tab">{{ 'Permissions' | trans}}</a></li>
+</ul>
+
+<div class="tab-content">
+    <section id="application-basics" class="tab-pane active">
+        {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
     </section>
 
-    <section id="application-elements">
-        <button class="collection-add" data-type="application_elements">{{ 'Add element' | trans }}</button>
-        {{ form_row(form.elements) }}
+    <section id="application-elements" class="tab-pane">
+        {% include 'MapbenderManagerBundle:Application:form-elements.html.twig' %}
     </section>
 
-    <section id="application-layersets">
-        Layersets
+    <section id="application-layersets" class="tab-pane">
+        {% include 'MapbenderManagerBundle:Application:form-layersets.html.twig' %}
     </section>
 
-    <section id="application-permissions">
-        Permissions
+    <section id="application-permissions" class="tab-pane">
+        {% include 'MapbenderManagerBundle:Application:form-permissions.html.twig' %}
     </section>
 </div>
-
-{{ form_row(form._token) }}
 
 {###############################################################################
     Render any remaining fields inside the rulers to make you aware you forgot
