@@ -12,7 +12,7 @@ class Button extends Element implements ElementInterface {
 	}
 
 	static public function getDescription() {
-		return "Renders a Button";
+		return "Renders a button";
 	}
 
 	static public function getTags() {

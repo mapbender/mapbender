@@ -14,7 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 
-use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Component\Application2;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -45,10 +45,6 @@ class ApplicationController extends Controller {
     }
 
     /**
-     * GET applications/search{term}/{page}
-     */
-
-    /**
      * Shows form for creating new applications
      *
      * @Route("/application/new")
@@ -56,8 +52,8 @@ class ApplicationController extends Controller {
      * @Template
      */
     public function newAction() {
-        $application = new Application();
-        $form = $this->createApplicationForm($application);
+        $application = new Application2(null, $this->container);
+        $form = $this->createApplicationForm($application->getEntity());
 
         return array(
             'application' => $application,
@@ -72,14 +68,14 @@ class ApplicationController extends Controller {
      * @Template("MapbenderManagerBundle:Application:new.html.twig")
      */
     public function createAction() {
-        $application = new Application();
-        $form = $this->createApplicationForm($application);
+        $application = new Application2(null, $this->container);
+        $form = $this->createApplicationForm($application->getEntity());
         $request = $this->getRequest();
 
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-            $em->persist($application);
+            $em->persist($application->getEntity());
             $em->flush();
 
             $this->get('session')->setFlash('notice',
@@ -113,8 +109,8 @@ class ApplicationController extends Controller {
      * @Template
      */
     public function editAction($id) {
-        $application = $this->findApplication($id);
-        $form = $this->createApplicationForm($application);
+        $application = new Application2($id, $this->container);
+        $form = $this->createApplicationForm($application->getEntity());
 
         return array(
             'application' => $application,
@@ -129,7 +125,7 @@ class ApplicationController extends Controller {
      * @Method("POST")
      */
     public function updateAction($id) {
-        $application  = $this->findApplication($id);
+        $application = new Application2($id, $this->container);
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
 
@@ -161,7 +157,7 @@ class ApplicationController extends Controller {
      * @Template
      */
     public function confirmDeleteAction($id) {
-        $application = $this->findApplication($id);
+        $application = new Application2($id, $this->container);
         return array(
             'application' => $application,
             'form' => $this->createDeleteForm($id)->createView());
@@ -174,14 +170,14 @@ class ApplicationController extends Controller {
      * @Method("POST")
      */
     public function deleteAction($id) {
-        $application = $this->findApplication($id);
+        $application = new Application2($id, $this->container);
         $form = $this->createDeleteForm($id);
         $request = $this->getRequest();
 
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-            $em->remove($application);
+            $em->remove($application->getEntity());
             $em->flush();
 
             $this->get('session')->setFlash('notice',
@@ -235,18 +231,5 @@ class ApplicationController extends Controller {
             ->getForm();
     }
 
-    /**
-     * Find the application with the given id or throw an 404
-     */
-    private function findApplication($id) {
-        $application = $this->get('doctrine')
-            ->getRepository('MapbenderCoreBundle:Application')
-            ->find($id);
-        if($application === null) {
-            throw $this->createNotFoundException('Application with id ' . $id
-               .' not found');
-        }
-        return $application;
-    }
 }
 

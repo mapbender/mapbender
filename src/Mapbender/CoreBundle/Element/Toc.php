@@ -8,11 +8,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Toc extends Element implements ElementInterface {
     static public function getTitle() {
-        return "Please give me a title";
+        return "Table of contents";
     }
 
     static public function getDescription() {
-        return "Please give me a description";
+        return "Table of contents listing map layers";
     }
 
     static public function getTags() {

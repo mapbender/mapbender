@@ -100,6 +100,19 @@ class Element {
     }
 
     /**
+     * Get class title
+     *
+     * @return string
+     */
+    public function getClassTitle() {
+        $class = $this->getClass();
+        if(class_exists($class)) {
+            return $class::getTitle();
+        }
+        return '';
+    }
+
+    /**
      * Set configuration
      *
      * @param array $configuration

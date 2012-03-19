@@ -8,11 +8,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AreaRuler extends Element implements ElementInterface {
     static public function getTitle() {
-        return "Please give me a title";
+        return "Area ruler";
     }
 
     static public function getDescription() {
-        return "Please give me a description";
+        return "Ruler to measure area";
     }
 
     static public function getTags() {

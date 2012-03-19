@@ -27,7 +27,15 @@
     //
     // Sub-Entity class selection modal
     //
-    var modal =$('div#modal-application-elements');
+    var trigger = form.find('a[href="#modal-application-elements"]');
+    var modal = $('div#modal-application-elements');
+
+    trigger.on('click', function() {
+        var href = $(this).attr('data-href');
+        modal.data('href', href);
+        modal.modal('show');
+        return false;
+    });
 
     modal.find('div.element').on('click', function() {
         var element = $(this);
@@ -38,7 +46,13 @@
 
     });
 
-    modal.find('div.modal-footer a.btn-primary').on('click', function() {});
+    modal.find('div.modal-footer a.btn-primary').on('click', function() {
+        var href = modal.data('href');
+        var element_class = modal.find('.selected').attr('data-class');
+
+        var url = href + '&class=' + element_class;
+        window.location = url;
+    });
 
     modal.on('show', function() {
         var modal = $(this),
@@ -47,6 +61,39 @@
         modal.find('div.element').removeClass('selected');
 
         select.addClass('disabled');
+    });
+
+    //
+    // YAML textareas
+    //
+    var yaml = form.find('textarea.code-yaml');
+    yaml.each(function() {
+        var editor = CodeMirror.fromTextArea(this, {
+            mode: 'yaml',
+            linenumbers: true,
+            onCursorActivity: function() {
+                editor.setLineClass(hlLine, null);
+                hlLine = editor.setLineClass(editor.getCursor().line,
+                    "activeline");
+            }
+        });
+        var hlLine = editor.setLineClass(0, "activeline");
+    });
+
+    //
+    // Elements sortable
+    //
+    var sortables = $('table.table-sortable');
+    sortables.each(function() {
+        var me = $(this);
+        me.sortable({
+            axis: 'y',
+            connectWith: sortables.not(me),
+            containment: me.closest('form'),
+            handle: 'td.sort-grip',
+            items: 'tbody > tr',
+            tolerance: 'pointer'
+        });
     });
 })();
 

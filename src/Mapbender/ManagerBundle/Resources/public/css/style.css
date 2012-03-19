@@ -130,10 +130,45 @@ form textarea {
     height: 4em;
 }
 
+.CodeMirror {
+    background: #fff;
+    border: 1px solid #ccc;
+    width: 630px;
+}
+
 form footer {
     margin-top: 1em;
     border-top: 1px solid #ddd;
     padding-top: 1em;
+}
+
+.table-elements {
+    width: 100%;
+}
+
+.table-elements span.up,
+.table-elements span.down {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url('../bootstrap/img/glyphicons-halflings.png');
+    cursor: pointer;
+}
+
+.table-elements span.up {
+    background-position: -287px -96px;
+}
+
+.table-elements span.down {
+    background-position: -314px -96px;
+}
+
+.table-elements th.title {
+    width: 33%;
+}
+
+.table-elements th.type {
+    width: 33%;
 }
 
 /**

@@ -8,11 +8,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LineRuler extends Element implements ElementInterface {
     static public function getTitle() {
-        return "Please give me a title";
+        return "Line ruler";
     }
 
     static public function getDescription() {
-        return "Please give me a description";
+        return "Ruler tool to measure distance";
     }
 
     static public function getTags() {

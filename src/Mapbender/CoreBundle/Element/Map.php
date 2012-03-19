@@ -8,11 +8,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Map extends Element implements ElementInterface {
     static public function getTitle() {
-        return "MapQuery Map";
+        return "Map";
     }
 
     static public function getDescription() {
-        return "Renders a MapQuery map";
+        return "OpenLayers based map";
     }
 
     static public function getTags() {

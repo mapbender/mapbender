@@ -1,28 +1,23 @@
-{% if application.elements | length == 0 %}
-<div class="alert alert-info">
-    {% trans %}There are no elements yet.{% endtrans %}
-</div>
-{% endif %}
-
-<a data-toggle="modal" href="#modal-application-elements" class="add-subentity btn btn-small">{{ 'Add element' | trans}}...</a>
-
-{% if application.elements | length > 0 %}
-<table class="table-sortable table table-striped">
+{% for region, elements in application.elements %}
+<h3>{{ region | capitalize }} <a data-href="{{ url('mapbender_manager_element_new', { 'app_id': application.entity.id, 'region': region }) }}" href="#modal-application-elements" class="add-subentity btn btn-small">{{ 'Add element' | trans}}...</a></h3>
+<table class="table-elements table-sortable table table-striped">
     <thead>
         <tr>
-            <th>{{ 'Title' | trans }}</th>
-            <th>{{ 'Class' | trans }}</th>
-            <th>{{ 'Actions' | trans }}</th>
+            <th class="weight"></th>
+            <th class="title">{{ 'Title' | trans }}</th>
+            <th class="type">{{ 'Type' | trans }}</th>
+            <th class="actions">{{ 'Actions' | trans }}</th>
         </tr>
     </thead>
     <tbody>
-        {% for element in application.elements %}
+        {% for element in elements %}
         <tr>
+            <td class="sort-grip"><span class="up"></span><span class="down"></span></td>
             <td>{{ element.title }}</td>
-            <td>{{ element.class }}</td>
+            <td>{{ element.classtitle }}</td>
             <td>
                 <div class="btn-group">
-                    <a href="#" class="btn">{{ 'Edit' | trans }}</a>
+                    <a href="{{ path('mapbender_manager_element_edit', {'app_id': application.entity.id, 'id': element.id})}}" class="btn">{{ 'Edit' | trans }}</a>
                     <a href="#" class="btn btn-warning">{{ 'Delete' | trans }}</a>
                 </div>
             </td>
@@ -30,5 +25,4 @@
         {% endfor %}
     </tbody>
 </table>
-{% endif %}
-
+{% endfor %}

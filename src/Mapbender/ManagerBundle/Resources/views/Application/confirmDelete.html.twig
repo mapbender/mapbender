@@ -1,7 +1,7 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
 
-{% set application_title = application.title %}
-{% set application_id = application.id %}
+{% set application_title = application.entity.title %}
+{% set application_id = application.entity.id %}
 
 {% block title %}{% trans %}Delete application %application_title%{% endtrans %}{% endblock %}
 
@@ -15,7 +15,7 @@
 
 {% block manager_content %}
 
-<form id="entity-delete" action="{{ path('mapbender_manager_application_delete', { 'id': application.id }) }}" method="post" {{ form_enctype(form)}}>
+<form id="entity-delete" action="{{ path('mapbender_manager_application_delete', { 'id': application.entity.id }) }}" method="post" {{ form_enctype(form)}}>
     <header>
     {% trans %}Do you really want to delete the application with the title <em>%application_title%</em> and the id <em>%application_id%</em>?{% endtrans %}
     </header>

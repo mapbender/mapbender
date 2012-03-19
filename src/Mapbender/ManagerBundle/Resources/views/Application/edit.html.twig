@@ -1,6 +1,6 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ application.title }}{% endblock %}
+{% block title %}{{ application.entity.title }}{% endblock %}
 
 {% block manager_css %}
 <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/css/jquery-ui-1.8.16.css') }}" />
@@ -12,7 +12,7 @@
 
 {% block manager_content %}
 
-<form action="{{ path('mapbender_manager_application_update', { 'id': application.id }) }}" method="post" {{ form_enctype(form)}} class="well">
+<form action="{{ path('mapbender_manager_application_update', { 'id': application.entity.id }) }}" method="post" {{ form_enctype(form)}} class="well">
 
     {{ form_row(form._token) }}
 
@@ -20,7 +20,7 @@
 
     <footer>
         <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
-        <a href="{{ url('mapbender_manager_application_delete', { 'id': application.id } )}}" class="btn btn-warning">{{ 'Delete' | trans}}</a>
+        <a href="{{ url('mapbender_manager_application_delete', { 'id': application.entity.id } )}}" class="btn btn-warning">{{ 'Delete' | trans}}</a>
         <a href="{{ url('mapbender_manager_application_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
     </footer>
 </form>

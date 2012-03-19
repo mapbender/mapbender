@@ -1,0 +1,21 @@
+<header class="form-help">
+{% trans %}
+Required fields are marked with dark labels, while optional fields have lighter labels.
+{% endtrans %}
+</header>
+
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#element-basics" data-toggle="tab">{{ 'Base data' | trans}}</a></li>
+    <li><a href="#element-configuration" data-toggle="tab">{{ 'Configuration' | trans}}</a></li>
+</ul>
+
+<div class="tab-content">
+    <section id="element-basics" class="tab-pane active">
+        {{ form_row(form.title) }}
+    </section>
+
+    <section id="element-configuration" class="tab-pane">
+        {{ form_rest(form) }}
+    </section>
+</div>
+
