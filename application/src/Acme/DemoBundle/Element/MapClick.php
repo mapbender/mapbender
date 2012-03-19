@@ -7,15 +7,15 @@ use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class MapClick extends Element implements ElementInterface {
-    public function getTitle() {
+    public static function getTitle() {
         return "Please give me a title";
     }
 
-    public function getDescription() {
+    public static function getDescription() {
         return "Please give me a description";
     }
 
-    public function getTags() {
+    public static function getTags() {
         return array();
     }
 
