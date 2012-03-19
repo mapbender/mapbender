@@ -35,3 +35,4 @@ security:
         - { path: ^/user/login,    roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/user,          roles: ROLE_USER }
         - { path: ^/admin,         roles: ROLE_ADMIN }
+        - { path: ^/manager,       roles: ROLE_ADMIN }

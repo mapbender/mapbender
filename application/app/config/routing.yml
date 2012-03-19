@@ -11,3 +11,7 @@ _mapbender_wmsbundle:
     resource: "@MapbenderWmsBundle/Controller/"
     type: annotation
 
+_mapbender_managerbundle:
+    resource: "@MapbenderManagerBundle/Controller"
+    prefix: "/manager"
+    type: annotation
