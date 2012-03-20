@@ -5,6 +5,7 @@ Configuration of WMS Layers
 * title: The title to display, in the table of contents for example
 * url: The URL for the GetMap request
 * layers: An array of WMS layer definitions:
+
   - name: Name of the WMS layer
   - title: The title to display, in the table of contents for example
   - visible: Should this layer be loaded on start, defaults to true

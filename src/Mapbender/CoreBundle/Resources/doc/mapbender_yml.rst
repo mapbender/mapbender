@@ -10,6 +10,7 @@ Basically we hook into the parameters configuration of Symfony 2 to declare
 Mapbender3 applications. Therefore you will notice the following structure:
 
 ::
+
     parameters:
         applications:
             app1:
@@ -38,6 +39,7 @@ There are two options as of now which are of a general nature:
   This is primarily used in the application overview page.
 
 ::
+
     parameters:
         applications:
             app1:
@@ -106,6 +108,7 @@ Each layerset lists layer ids which define a configuration for one layer. Each
 layer class is explained in it's own documentation file.
 
 ::
+
      parameters:
         applications:
             app1:
