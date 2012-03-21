@@ -47,11 +47,11 @@ $.extend(true, Mapbender, { layer: {
             var queryLayers = layer.options.queryLayers ?
                 layer.options.queryLayers :
                 layer.options.layers;
-
-            var params = $.param({
+            var param_tmp = {
                 REQUEST: 'GetFeatureInfo',
                 VERSION: layer.olLayer.params.VERSION,
                 EXCEPTIONS: "application/vnd.ogc.se_xml",
+                FORMAT: layer.options.configuration.configuration.format,
                 SRS: layer.olLayer.params.SRS,
                 BBOX: layer.map.center().box.join(','),
                 WIDTH: $(layer.map.element).width(),
@@ -60,7 +60,20 @@ $.extend(true, Mapbender, { layer: {
                 Y: y,
                 LAYERS: queryLayers.join(','),
                 QUERY_LAYERS: queryLayers.join(',')
-            });
+            };
+            if(typeof(layer.options.configuration.configuration.info_format)
+                !== 'undefined'){
+                param_tmp["INFO_FORMAT"] =
+                    layer.options.configuration.configuration.info_format;
+            }
+            
+            if(typeof(layer.options.configuration.configuration.feature_count)
+                !== 'undefined'){
+                param_tmp["FEATURE_COUNT"] =
+                    layer.options.configuration.configuration.feature_count;
+            }
+            var params = $.param(param_tmp);
+            
 
             // this clever shit was taken from $.ajax
             requestUrl = layer.options.url;
