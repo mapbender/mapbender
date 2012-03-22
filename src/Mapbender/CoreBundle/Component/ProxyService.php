@@ -102,15 +102,31 @@ class ProxyService {
 
         // Get response from server
         $content = curl_exec($ch);
+        
         $status = curl_getinfo($ch);
 
         if($content === false) {
             throw new \RuntimeException('Proxying failed: ' . curl_error($ch)
                 . ' [' . curl_errno($ch) . ']', curl_errno($ch));
         }
-
         curl_close($ch);
-
+        // convert into content-type charset
+        try{
+            $contentType = $request->headers->get("content-type");
+            if($contentType !== null && strlen($contentType) > 0){
+                $tmp = explode(";", $contentType);
+                foreach ($tmp as $value) {
+                    if(stripos ($value, "charset") !== false
+                            && stripos ($value, "charset") == 0) {
+                        $charset = explode("=", $value);
+                    }
+                }
+                if(isset($charset) && isset($charset[1])
+                        && !mb_check_encoding($content, $charset[1])){
+                    $content = mb_convert_encoding($content, $charset[1]);
+                }
+            }
+        } catch (\Exception $e){}
         // Return server response
         return new Response($content, $status['http_code'], array(
             'Content-Type' => $status['content_type']));

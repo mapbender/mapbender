@@ -61,16 +61,24 @@ $.extend(true, Mapbender, { layer: {
                 LAYERS: queryLayers.join(','),
                 QUERY_LAYERS: queryLayers.join(',')
             };
+            var contentType_ = "";
             if(typeof(layer.options.configuration.configuration.info_format)
                 !== 'undefined'){
                 param_tmp["INFO_FORMAT"] =
                     layer.options.configuration.configuration.info_format;
+                contentType_ +=
+                    layer.options.configuration.configuration.info_format;
             }
-            
             if(typeof(layer.options.configuration.configuration.feature_count)
                 !== 'undefined'){
                 param_tmp["FEATURE_COUNT"] =
                     layer.options.configuration.configuration.feature_count;
+            }
+            if(typeof(layer.options.configuration.configuration.info_charset)
+                !== 'undefined'){
+                contentType_ += contentType_.length > 0 ? ";" +
+                    layer.options.configuration.configuration.info_charset :
+                    layer.options.configuration.configuration.info_charset;
             }
             var params = $.param(param_tmp);
             
@@ -81,6 +89,7 @@ $.extend(true, Mapbender, { layer: {
 
             $.ajax({
                 url: Mapbender.configuration.proxies.open,
+                contentType: contentType_,
                 data: {
                     url: requestUrl
                 },
