@@ -36,7 +36,8 @@ $.extend(true, Mapbender, { layer: {
 
                 isBaseLayer: layerDef.configuration.baselayer,
                 opacity:     layerDef.configuration.opacity,
-                visibility:  layerDef.configuration.visible,
+                visibility:  layerDef.configuration.visible &&
+                                (layers.length > 0),
                 singleTile:  !layerDef.configuration.tiled,
                 attribution: layerDef.configuration.attribution
             };
