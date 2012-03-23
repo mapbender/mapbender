@@ -66,8 +66,8 @@ $.extend(true, Mapbender, { layer: {
                 !== 'undefined'){
                 param_tmp["INFO_FORMAT"] =
                     layer.options.configuration.configuration.info_format;
-                contentType_ +=
-                    layer.options.configuration.configuration.info_format;
+//                contentType_ +=
+//                    layer.options.configuration.configuration.info_format;
             }
             if(typeof(layer.options.configuration.configuration.feature_count)
                 !== 'undefined'){
@@ -76,8 +76,7 @@ $.extend(true, Mapbender, { layer: {
             }
             if(typeof(layer.options.configuration.configuration.info_charset)
                 !== 'undefined'){
-                contentType_ += contentType_.length > 0 ? ";" +
-                    layer.options.configuration.configuration.info_charset :
+                contentType_ += contentType_.length > 0 ? ";" : "" +
                     layer.options.configuration.configuration.info_charset;
             }
             var params = $.param(param_tmp);
