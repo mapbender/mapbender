@@ -209,7 +209,6 @@ $.widget("mapbender.mbMap", {
 
         //TODO: Bind all events
         this.map.bind('zoomend', function() { self._trigger('zoomend', arguments); });
-        this.map.bind('movestart', $.proxy(this._beforeZoom, this));
 
         // We have to add our listeners to the map before adding layers...
         // This might change in the future, when the MapQuery map accepts
@@ -588,19 +587,7 @@ $.widget("mapbender.mbMap", {
     /**
      * Listen to removed layer in the MapQuery object
      */
-    _onRemoveLayer: function(event, layer) {},
-
-    /**
-     * Before map zoom, check layers
-     */
-    _beforeZoom: function() {
-        $.each(this.map.layers(), function(idx, layer) {
-            var type = layer.options.type;
-            if(typeof Mapbender.layer[type].onBeforeZoom === 'function') {
-                Mapbender.layer[type].onBeforeZoom.call(layer);
-            }
-        });
-    }
+    _onRemoveLayer: function(event, layer) {}
 });
 
 })(jQuery);
