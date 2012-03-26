@@ -1,17 +1,24 @@
 var Mapbender = Mapbender || {};
+Mapbender.alltranslations = {};
 Mapbender.transCallBack = function(objToCallBack, termsToTranslate, saveAtAll) {
     if(typeof(saveAtAll) === 'undefined'){
         saveAtAll = false;
     }
     if(typeof(Mapbender.alltranslations) !== 'undefined'){
-        try {
-            var result = {};
-            for(var key in termsToTranslate){
+        var result = {};
+        var ok = true;
+        for(var key in termsToTranslate){
+            if(typeof(Mapbender.alltranslations[key]) === 'undefined') {
+                ok = false;
+                break;
+            } else {
                 result[key] = Mapbender.alltranslations[key];
             }
+        }
+        if(ok) {
             objToCallBack.transCallBack(result);
             return;
-        }catch(e){}
+        }
     }
     var mb = this;
     $.ajax({
@@ -23,9 +30,6 @@ Mapbender.transCallBack = function(objToCallBack, termsToTranslate, saveAtAll) {
             if(textStatus == "success") {
                 termsToTranslate = $.parseJSON(jqXHR.responseText);
                 if(saveAtAll) {
-                    if(typeof(Mapbender.alltranslations) === 'undefined'){
-                        Mapbender.alltranslations = {};
-                    }
                     for(var key in termsToTranslate){
                         Mapbender.alltranslations[key] = termsToTranslate[key];
                     }
@@ -69,6 +73,8 @@ Mapbender.getTransFromAll = function(term) {
     var result = term;
     try {
         result = Mapbender.alltranslations[this.strToHex(term)];
-    }catch(e){  }
+    }catch(e){
+        var e = e;
+    }
     return result;
 };
