@@ -189,6 +189,16 @@ $.extend(true, Mapbender, { layer: {
                     }
                 }
             });
+        },
+
+        /**
+         * On map zoom, check if we need to disable ourself.
+         * Context is the MapQuery layer object.
+         */
+        onBeforeZoom: function() {
+            if(this.visible()) {
+                this.olLayer.setVisibility(this.olLayer.layers.length !== 0);
+            }
         }
     }
 }});
