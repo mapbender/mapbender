@@ -183,22 +183,23 @@ $.extend(true, Mapbender, { layer: {
             this.olLayer.events.on({
                 scope: this,
                 loadstart: function() {
+                    var scale = this.olLayer.map.getScale();
+                    var layers = [];
+                    $.each(this.options.allLayers, function(idx, layer) {
+                        var show = true;
+                        if(!((typeof layer.minScale !== 'undefined' && layer.minScale < scale) ||
+                           (typeof layer.minScale !== 'undefined' && layer.maxScale > scale))) {
+                            layers.push(layer.name);
+                        }
+                    });
+                    this.olLayer.layers = layers;
+
                     // Prevent loading without layers
                     if(this.olLayer.layers.length === 0) {
                         this.olLayer.setVisibility(false);
                     }
                 }
             });
-        },
-
-        /**
-         * On map zoom, check if we need to disable ourself.
-         * Context is the MapQuery layer object.
-         */
-        onBeforeZoom: function() {
-            if(this.visible()) {
-                this.olLayer.setVisibility(this.olLayer.layers.length !== 0);
-            }
         }
     }
 }});
