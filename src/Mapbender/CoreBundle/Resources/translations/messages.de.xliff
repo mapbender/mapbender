@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="1">
+        <source>FeatureInfo</source>
+        <target>__FeatureInfo</target>
+      </trans-unit>
+      <trans-unit id="2">
+        <source>Services</source>
+        <target>__Services</target>
+      </trans-unit>
+      <trans-unit id="3">
+        <source>X coordinate</source>
+        <target>__X coordinate</target>
+      </trans-unit>
+      <trans-unit id="4">
+        <source>Y coordinate</source>
+        <target>__Y coordinate</target>
+      </trans-unit>
+      <trans-unit id="5">
+        <source>Pan up</source>
+        <target>__Pan up</target>
+      </trans-unit>
+      <trans-unit id="6">
+        <source>Pan right</source>
+        <target>__Pan right</target>
+      </trans-unit>
+      <trans-unit id="7">
+        <source>Pan down</source>
+        <target>__Pan down</target>
+      </trans-unit>
+      <trans-unit id="8">
+        <source>Pan left</source>
+        <target>__Pan left</target>
+      </trans-unit>
+      <trans-unit id="9">
+        <source>Go back</source>
+        <target>__Go back</target>
+      </trans-unit>
+      <trans-unit id="10">
+        <source>Go forward</source>
+        <target>__Go forward</target>
+      </trans-unit>
+      <trans-unit id="11">
+        <source>Zoom by box</source>
+        <target>__Zoom by box</target>
+      </trans-unit>
+      <trans-unit id="12">
+        <source>Zoom in</source>
+        <target>__Zoom in</target>
+      </trans-unit>
+      <trans-unit id="13">
+        <source>Click to zoom</source>
+        <target>__Click to zoom</target>
+      </trans-unit>
+      <trans-unit id="14">
+        <source>Zoom out</source>
+        <target>__Zoom out</target>
+      </trans-unit>
+      <trans-unit id="15">
+        <source>About</source>
+        <target>__About</target>
+      </trans-unit>
+      <trans-unit id="16">
+        <source>Save</source>
+        <target>__Save</target>
+      </trans-unit>
+      <trans-unit id="17">
+        <source>Cancel</source>
+        <target>__Cancel</target>
+      </trans-unit>
+      <trans-unit id="18">
+        <source>Add Group</source>
+        <target>__Add Group</target>
+      </trans-unit>
+      <trans-unit id="19">
+        <source>Delete</source>
+        <target>__Delete</target>
+      </trans-unit>
+      <trans-unit id="20">
+        <source>Really Delete</source>
+        <target>__Really Delete</target>
+      </trans-unit>
+      <trans-unit id="21">
+        <source>Group Index</source>
+        <target>__Group Index</target>
+      </trans-unit>
+      <trans-unit id="22">
+        <source>Available Groups</source>
+        <target>__Available Groups</target>
+      </trans-unit>
+      <trans-unit id="23">
+        <source>Name</source>
+        <target>__Name</target>
+      </trans-unit>
+      <trans-unit id="24">
+        <source>Edit</source>
+        <target>__Edit</target>
+      </trans-unit>
+      <trans-unit id="25">
+        <source>No Groups</source>
+        <target>__No Groups</target>
+      </trans-unit>
+      <trans-unit id="26">
+        <source>Add User</source>
+        <target>__Add User</target>
+      </trans-unit>
+      <trans-unit id="27">
+        <source>Realy delete?</source>
+        <target>__Realy delete?</target>
+      </trans-unit>
+      <trans-unit id="28">
+        <source>Yes</source>
+        <target>__Yes</target>
+      </trans-unit>
+      <trans-unit id="29">
+        <source>No</source>
+        <target>__No</target>
+      </trans-unit>
+      <trans-unit id="30">
+        <source>save</source>
+        <target>__save</target>
+      </trans-unit>
+      <trans-unit id="31">
+        <source>User Index</source>
+        <target>__User Index</target>
+      </trans-unit>
+      <trans-unit id="32">
+        <source>Available Users</source>
+        <target>__Available Users</target>
+      </trans-unit>
+      <trans-unit id="33">
+        <source>No Users</source>
+        <target>__No Users</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
