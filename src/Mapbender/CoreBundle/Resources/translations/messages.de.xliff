@@ -4,135 +4,135 @@
     <body>
       <trans-unit id="1">
         <source>FeatureInfo</source>
-        <target>__FeatureInfo</target>
+        <target>Sachinformation</target>
       </trans-unit>
       <trans-unit id="2">
         <source>Services</source>
-        <target>__Services</target>
+        <target>Dienste</target>
       </trans-unit>
       <trans-unit id="3">
         <source>X coordinate</source>
-        <target>__X coordinate</target>
+        <target>X-Koordinate</target>
       </trans-unit>
       <trans-unit id="4">
         <source>Y coordinate</source>
-        <target>__Y coordinate</target>
+        <target>Y-Koordinate</target>
       </trans-unit>
       <trans-unit id="5">
         <source>Pan up</source>
-        <target>__Pan up</target>
+        <target>Nach oben verschieben</target>
       </trans-unit>
       <trans-unit id="6">
         <source>Pan right</source>
-        <target>__Pan right</target>
+        <target>Nach rechts verschieben</target>
       </trans-unit>
       <trans-unit id="7">
         <source>Pan down</source>
-        <target>__Pan down</target>
+        <target>Nach unten verschieben</target>
       </trans-unit>
       <trans-unit id="8">
         <source>Pan left</source>
-        <target>__Pan left</target>
+        <target>Nach links verschieben</target>
       </trans-unit>
       <trans-unit id="9">
         <source>Go back</source>
-        <target>__Go back</target>
+        <target>Zurück</target>
       </trans-unit>
       <trans-unit id="10">
         <source>Go forward</source>
-        <target>__Go forward</target>
+        <target>Vor</target>
       </trans-unit>
       <trans-unit id="11">
         <source>Zoom by box</source>
-        <target>__Zoom by box</target>
+        <target>Ausschnitt aufziehen</target>
       </trans-unit>
       <trans-unit id="12">
         <source>Zoom in</source>
-        <target>__Zoom in</target>
+        <target>Hineinzoomen</target>
       </trans-unit>
       <trans-unit id="13">
         <source>Click to zoom</source>
-        <target>__Click to zoom</target>
+        <target>Zoom per Klick</target>
       </trans-unit>
       <trans-unit id="14">
         <source>Zoom out</source>
-        <target>__Zoom out</target>
+        <target>Herauszoomen</target>
       </trans-unit>
       <trans-unit id="15">
         <source>About</source>
-        <target>__About</target>
+        <target>Über</target>
       </trans-unit>
       <trans-unit id="16">
         <source>Save</source>
-        <target>__Save</target>
+        <target>Speichern</target>
       </trans-unit>
       <trans-unit id="17">
         <source>Cancel</source>
-        <target>__Cancel</target>
+        <target>Abbrechen</target>
       </trans-unit>
       <trans-unit id="18">
         <source>Add Group</source>
-        <target>__Add Group</target>
+        <target>Gruppe hinzufügen</target>
       </trans-unit>
       <trans-unit id="19">
         <source>Delete</source>
-        <target>__Delete</target>
+        <target>Löschen</target>
       </trans-unit>
       <trans-unit id="20">
         <source>Really Delete</source>
-        <target>__Really Delete</target>
+        <target>Wirklich löschen</target>
       </trans-unit>
       <trans-unit id="21">
         <source>Group Index</source>
-        <target>__Group Index</target>
+        <target>Gruppen Index</target>
       </trans-unit>
       <trans-unit id="22">
         <source>Available Groups</source>
-        <target>__Available Groups</target>
+        <target>Verfügbare Gruppen</target>
       </trans-unit>
       <trans-unit id="23">
         <source>Name</source>
-        <target>__Name</target>
+        <target>Name</target>
       </trans-unit>
       <trans-unit id="24">
         <source>Edit</source>
-        <target>__Edit</target>
+        <target>Bearbeiten</target>
       </trans-unit>
       <trans-unit id="25">
         <source>No Groups</source>
-        <target>__No Groups</target>
+        <target>Keine Gruppen</target>
       </trans-unit>
       <trans-unit id="26">
         <source>Add User</source>
-        <target>__Add User</target>
+        <target>Benutzer hinzufügen</target>
       </trans-unit>
       <trans-unit id="27">
         <source>Realy delete?</source>
-        <target>__Realy delete?</target>
+        <target>Wirklich löschen?</target>
       </trans-unit>
       <trans-unit id="28">
         <source>Yes</source>
-        <target>__Yes</target>
+        <target>Ja</target>
       </trans-unit>
       <trans-unit id="29">
         <source>No</source>
-        <target>__No</target>
+        <target>Nein</target>
       </trans-unit>
       <trans-unit id="30">
         <source>save</source>
-        <target>__save</target>
+        <target>Speichern</target>
       </trans-unit>
       <trans-unit id="31">
         <source>User Index</source>
-        <target>__User Index</target>
+        <target>Benutzer Index</target>
       </trans-unit>
       <trans-unit id="32">
         <source>Available Users</source>
-        <target>__Available Users</target>
+        <target>Verfügbare Benutzer</target>
       </trans-unit>
       <trans-unit id="33">
         <source>No Users</source>
-        <target>__No Users</target>
+        <target>Keine Benutzer</target>
       </trans-unit>
     </body>
   </file>
