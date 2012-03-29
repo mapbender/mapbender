@@ -39,7 +39,10 @@ $.extend(true, Mapbender, { layer: {
                 visibility:  layerDef.configuration.visible &&
                                 (layers.length > 0),
                 singleTile:  !layerDef.configuration.tiled,
-                attribution: layerDef.configuration.attribution
+                attribution: layerDef.configuration.attribution,
+
+                minScale:    layerDef.configuration.minScale,
+                maxScale:    layerDef.configuration.maxScale
             };
             return mqLayerDef;
         },
