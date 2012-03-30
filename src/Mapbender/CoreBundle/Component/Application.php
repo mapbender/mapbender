@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\ApplicationInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class Application implements ApplicationInterface {
     protected $container;
@@ -269,9 +270,10 @@ class Application implements ApplicationInterface {
             }
             foreach($this->configuration['elements'][$region] as $name => $element) {
                 // check if the roles set
+                $user_roles = $user instanceof UserInterface ? $user->getRoles() : array();
                 if(isset($element['roles'])){
                     $allow = false;
-                    foreach ($user->getRoles() as $role) {
+                    foreach ($user_roles as $role) {
                         // check if the user authorized
                         if(in_array($role, $element['roles'])){
                             $allow = true;
