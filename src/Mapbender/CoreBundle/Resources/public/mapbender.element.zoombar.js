@@ -86,9 +86,18 @@ $.widget("mapbender.mbZoomBar", {
             new OpenLayers.Control.NavigationHistory();
         this.map.addControl(this.navigationHistoryControl);
 
-        this.zoomBoxControl = new OpenLayers.Control.ZoomBox({
-            keyMask: OpenLayers.Handler.MOD_NONE,
-            autoActivate: false});
+        this.zoomBoxControl = new OpenLayers.Control();
+        OpenLayers.Util.extend(this.zoomBoxControl, {
+            handler: null,
+            autoActivate: false,
+
+            draw: function() {
+                this.handler = new OpenLayers.Handler.Box(this, {
+                    done: $.proxy(self._zoomToBox, self) }, {
+                    keyMask: OpenLayers.Handler.MOD_NONE});
+            }
+        });
+
         this.map.addControl(this.zoomBoxControl);
         this.element.find('div.zoom-box').bind('click', function() {
             $(this).toggleClass('active');
@@ -110,6 +119,22 @@ $.widget("mapbender.mbZoomBar", {
             $.proxy(this.map.zoomIn, this.map));
         this.element.find('div.zoom-out a').bind('click',
             $.proxy(this.map.zoomOut, this.map));
+    },
+
+    _zoomToBox: function(position) {
+        var zoom, center;
+        if(position instanceof OpenLayers.Bounds) {
+            zoom = this.map.getZoomForExtent(position);
+            center = position.getCenterLonLat();
+        } else {
+            zoom = this.map.getZoom() + 1;
+            center = this.map.getLonLatFromPixel(position);
+        }
+
+        this.map.setCenter(center, zoom);
+
+        this.zoomBoxControl.deactivate();
+        this.element.find('div.zoom-box').removeClass('active');
     },
 
     _setupPanButtons: function() {
