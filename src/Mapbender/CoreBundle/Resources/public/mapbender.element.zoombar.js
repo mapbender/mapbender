@@ -124,8 +124,14 @@ $.widget("mapbender.mbZoomBar", {
     _zoomToBox: function(position) {
         var zoom, center;
         if(position instanceof OpenLayers.Bounds) {
-            zoom = this.map.getZoomForExtent(position);
-            center = position.getCenterLonLat();
+            var minXY = this.map.getLonLatFromPixel(
+                new OpenLayers.Pixel(position.left, position.bottom));
+            var maxXY = this.map.getLonLatFromPixel(
+                new OpenLayers.Pixel(position.right, position.top));
+            var bounds = new OpenLayers.Bounds(minXY.lon, minXY.lat,
+                maxXY.lon, maxXY.lat);
+            zoom = this.map.getZoomForExtent(bounds);
+            center = bounds.getCenterLonLat();
         } else {
             zoom = this.map.getZoom() + 1;
             center = this.map.getLonLatFromPixel(position);
