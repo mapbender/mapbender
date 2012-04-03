@@ -8,6 +8,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProxyService {
     protected $proxy_conf;
@@ -52,6 +53,10 @@ class ProxyService {
         }
 
         // Only allow proxing HTTP and HTTPS
+        if(!isset($url['scheme'])){
+            throw new HttpException(500, 'This proxy only allow HTTP and '
+                . 'HTTPS urls.');
+        }
         if(!$url['scheme'] == 'http' && !$url['scheme'] == 'https') {
             throw new HttpException(500, 'This proxy only allow HTTP and '
                 . 'HTTPS urls.');
