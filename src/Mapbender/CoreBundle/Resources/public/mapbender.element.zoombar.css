@@ -131,3 +131,7 @@
     height: 2px;
 }
 
+.olMapViewport.MapbenderControlZoomBoxActive {
+    cursor: crosshair;
+}
+

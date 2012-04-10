@@ -95,7 +95,10 @@ $.widget("mapbender.mbZoomBar", {
                 this.handler = new OpenLayers.Handler.Box(this, {
                     done: $.proxy(self._zoomToBox, self) }, {
                     keyMask: OpenLayers.Handler.MOD_NONE});
-            }
+            },
+
+            CLASS_NAME: 'Mapbender.Control.ZoomBox',
+            displayClass: 'MapbenderControlZoomBox'
         });
 
         this.map.addControl(this.zoomBoxControl);
