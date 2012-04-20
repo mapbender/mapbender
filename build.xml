@@ -23,8 +23,7 @@
     <property name="project.license" value="GPLv3" />
     <property name="project.changelog" value=""></property>
 
-
-    <target name="tarball" depends="prepare">
+    <target name="tarball" depends="prepare" description="Build a tarball for distribution">
         <copy todir="/tmp/${package}-${version.full}" overwrite="true">
             <fileset dir="application/">
                 <include name="**" />
@@ -50,13 +49,22 @@
         </tar>
         <delete dir="/tmp/${package}-${version.full}/"></delete>
     </target>
-    
-    <target name="prepare" depends="lint">
+
+    <target name="prepare" depends="lint" description="Install runtime dependencies (MapQuery deps)">
         <exec command="./getdebs.sh" dir="application/mapbender/src/Mapbender/CoreBundle/Resources/public/mapquery/lib" />
     </target>
 
+    <target name="doc" description="Generate PHP API documentation">
+        <apigen
+            source="application/mapbender"
+            destination="documentation/php-api"
+            wipeout="true"
+            title="Mapbender3 PHP API documentation"
+            deprecated="true"
+            todo="true"/>
+    </target>
 
-    <target name="clean">
+    <target name="clean" description="Clean up build packages">
         <delete>
             <fileset  dir=".">
                 <include name="*.tar.gz" />
@@ -64,9 +72,8 @@
             </fileset>
         </delete>
     </target>
-    
 
-    <target name="lint">
+    <target name="lint" description="Check PHP syntax">
         <phplint>
             <fileset dir=".">
                 <include name="application/src/**/*.php" />

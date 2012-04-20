@@ -10,11 +10,22 @@ Symfony2 or Mapbender3:
 3. PHP CLI for running console commands for Symfony2
 4. PHP modules: php5-sqlite, php5-psql, php5-intl
 
-
 For an overview of more optional requirements, see
 http://symfony.com/doc/current/reference/requirements.html. We will list
 Mapbender3-specific requirements in this document as they arise during
 development.
+
+To generate documentation and build tarballs you will need to install the
+following dependencies, too:
+
+1. Phing: See http://www.phing.info/docs/guide/stable/ for installation
+2. ApiGen: See http://apigen.org/##installation for installation
+
+a call to::
+
+    phing -l
+
+will then list all available phing targets.
 
 Installation
 ============
