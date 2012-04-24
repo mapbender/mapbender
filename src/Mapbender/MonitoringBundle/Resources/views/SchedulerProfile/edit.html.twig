@@ -1,0 +1,21 @@
+{% extends "MapbenderMonitoringBundle:SchedulerProfile:index.html.twig" %}
+
+{% block content %}
+<a class="a-scheduler" href="{{path("mapbender_monitoring_schedulerprofile_index")}}">{{"to_scheduler_list"|trans}}</a><br/>
+
+{% if scheduler.id!=null %}
+    <p class="p-scheduler">{{"new scheduler"|trans}}</p>
+    <form action="{{path("mapbender_monitoring_schedulerprofile_edit",{"spId":scheduler.id})}}" method="post">
+		{{form_widget(form)}}
+		<input type="submit" name="save" value="{{"save"|trans}}" />
+	</form>
+{% else %}
+    <p class="p-scheduler">{{"edit scheduler"|trans}}</p>
+    <form action="{{path("mapbender_monitoring_schedulerprofile_new")}}" method="post">
+		{{form_widget(form)}}
+		<input type="submit" name="save" value="{{"save"|trans}}" />
+	</form>
+
+{% endif %}
+    
+{% endblock %}

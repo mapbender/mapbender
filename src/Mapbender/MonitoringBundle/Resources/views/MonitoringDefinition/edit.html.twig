@@ -6,9 +6,6 @@
     <h1>Monitoring Navigation</h1>
     <ul>
       <li>
-        <form action="{{ path('mapbender_monitoring_monitoringdefinition_run',{'mdId':md.id}) }}" method="post">
-        <button>{% trans %}Run{% endtrans %}</button>
-        </form>
       </li>
     </ul>
 </nav>
@@ -21,21 +18,31 @@
 	<form action="{{path("mapbender_monitoring_monitoringdefinition_index")}}" method="get">
 		<input type="submit" name="cancel" value="{{"Cancel"|trans}}" />
 	</form>
-    <h2>{{ "Jobs"|trans }}</h2>
+	<form action="{{path("mapbender_monitoring_monitoringdefinition_statreset",{"mdId":md.id})}}" method="post">
+		<input type="submit" name="reset" value="{{"Reset"|trans}}" />
+	</form>
+    <form action="{{ path('mapbender_monitoring_monitoringdefinition_run',{'mdId':md.id}) }}" method="post">
+        <input type="submit" name="run" value="{% trans %}Run{% endtrans %}" />
+    </form>
     {% if md.monitoringJobs|length > 0 %}
-    <table id="table-job">
+    <table class="listable" id="_table-job">
+        <caption>{{ "Jobs"|trans }}</caption>
+        <thead>
         <tr><th>{{"Nr"|trans}}</th><th>{{"date"|trans}}</th><th>{{"latency"|trans}}</th><th>{{"status"|trans}}</th><th>{{"changed"|trans}}</th></tr>
+        </thead>
+        <tbody>
         {% set num = 0 %}
         {% for job in md.monitoringJobs %}
             {% if num == 0 %}
-                <tr class="job job-last"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("m.d.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>{% if job.changed %}CHANGED{% endif %}</td></tr>
+                <tr class="job job-last"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>{% if job.changed %}CHANGED{% endif %}</td></tr>
             {% elseif num < 10 %}
                 {% if job.changed %}
-                <tr class="job job-previous"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("m.d.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>CHANGED</td></tr>
+                <tr class="job job-previous"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>CHANGED</td></tr>
                 {% endif %}
             {% endif %}
             {% set num = num+1 %}
         {% endfor %}
+        </tbody>
     </table>
     <h2>{{ "Last Result"|trans }}</h2>
     <pre>

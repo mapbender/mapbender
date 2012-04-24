@@ -36,9 +36,13 @@ $.extend(true, Mapbender, { layer: {
 
                 isBaseLayer: layerDef.configuration.baselayer,
                 opacity:     layerDef.configuration.opacity,
-                visibility:  layerDef.configuration.visible,
+                visibility:  layerDef.configuration.visible &&
+                                (layers.length > 0),
                 singleTile:  !layerDef.configuration.tiled,
-                attribution: layerDef.configuration.attribution
+                attribution: layerDef.configuration.attribution,
+
+                minScale:    layerDef.configuration.minScale,
+                maxScale:    layerDef.configuration.maxScale
             };
             return mqLayerDef;
         },
@@ -47,11 +51,11 @@ $.extend(true, Mapbender, { layer: {
             var queryLayers = layer.options.queryLayers ?
                 layer.options.queryLayers :
                 layer.options.layers;
-
-            var params = $.param({
+            var param_tmp = {
                 REQUEST: 'GetFeatureInfo',
                 VERSION: layer.olLayer.params.VERSION,
                 EXCEPTIONS: "application/vnd.ogc.se_xml",
+                FORMAT: layer.options.configuration.configuration.format,
                 SRS: layer.olLayer.params.SRS,
                 BBOX: layer.map.center().box.join(','),
                 WIDTH: $(layer.map.element).width(),
@@ -60,7 +64,27 @@ $.extend(true, Mapbender, { layer: {
                 Y: y,
                 LAYERS: queryLayers.join(','),
                 QUERY_LAYERS: queryLayers.join(',')
-            });
+            };
+            var contentType_ = "";
+            if(typeof(layer.options.configuration.configuration.info_format)
+                !== 'undefined'){
+                param_tmp["INFO_FORMAT"] =
+                    layer.options.configuration.configuration.info_format;
+//                contentType_ +=
+//                    layer.options.configuration.configuration.info_format;
+            }
+            if(typeof(layer.options.configuration.configuration.feature_count)
+                !== 'undefined'){
+                param_tmp["FEATURE_COUNT"] =
+                    layer.options.configuration.configuration.feature_count;
+            }
+            if(typeof(layer.options.configuration.configuration.info_charset)
+                !== 'undefined'){
+                contentType_ += contentType_.length > 0 ? ";" : "" +
+                    layer.options.configuration.configuration.info_charset;
+            }
+            var params = $.param(param_tmp);
+            
 
             // this clever shit was taken from $.ajax
             requestUrl = layer.options.url;
@@ -68,6 +92,7 @@ $.extend(true, Mapbender, { layer: {
 
             $.ajax({
                 url: Mapbender.configuration.proxies.open,
+                contentType: contentType_,
                 data: {
                     url: requestUrl
                 },
@@ -104,6 +129,7 @@ $.extend(true, Mapbender, { layer: {
                 capabilities = parser.read(xml);
 
             if(typeof(capabilities.capability) !== 'undefined') {
+                var queryLayers = [];
                 var def = {
                         type: 'wms',
                         configuration: {
@@ -123,7 +149,13 @@ $.extend(true, Mapbender, { layer: {
 
                 var layers = $.map(capabilities.capability.layers, function(layer, idx) {
                     var legend = null;
-                    if(layer.styles && layer.styles.length > 0) legend = layer.styles[0].legend.href;
+                    if(layer.styles && layer.styles.length > 0 && layer.styles[0].legend) {
+                        legend = layer.styles[0].legend.href;
+                    }
+
+                    if(layer.queryable === true) {
+                        queryLayers.push(layer.name);
+                    }
 
                     def.configuration.layers.push({
                         name: layer.name,
@@ -138,10 +170,39 @@ $.extend(true, Mapbender, { layer: {
                     });
                 });
 
+                def.configuration.queryLayers = queryLayers;
                 return def;
             } else {
                 return null;
             }
+        },
+
+        /**
+         * The Mapbender map object calls this function when a new layer is
+         * added to the map in the context of the layer, e.g. "this" is a
+         * MapQuery layer object.
+         */
+        onLoadStart: function() {
+            this.olLayer.events.on({
+                scope: this,
+                loadstart: function() {
+                    var scale = this.olLayer.map.getScale();
+                    var layers = [];
+                    $.each(this.options.allLayers, function(idx, layer) {
+                        var show = true;
+                        if(!((typeof layer.minScale !== 'undefined' && layer.minScale < scale) ||
+                           (typeof layer.minScale !== 'undefined' && layer.maxScale > scale))) {
+                            layers.push(layer.name);
+                        }
+                    });
+                    this.olLayer.layers = layers;
+
+                    // Prevent loading without layers
+                    if(this.olLayer.layers.length === 0) {
+                        this.olLayer.setVisibility(false);
+                    }
+                }
+            });
         }
     }
 }});

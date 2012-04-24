@@ -19,12 +19,12 @@ $.widget("mapbender.mbToc", $.ui.dialog, {
 
         this.map = $('#' + this.options.target).data('mapQuery');
         var wmcStorage = $('.mb-element-wmc-storage');
-        wmcStorage.bind('mbwmcstorageloaddone', $.proxy(this._reload, this));
+        wmcStorage.bind('mbwmcstorageloaddone', $.proxy(this.reload, this));
 
-        this._reload();
+        this.reload();
     },
 
-    _reload: function() {
+    reload: function() {
         var me = $(this.element);
         var self = this;
         var services = me.find('div#services').hide();

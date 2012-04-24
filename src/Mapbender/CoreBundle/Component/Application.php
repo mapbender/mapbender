@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Component\ApplicationInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class Application implements ApplicationInterface {
     protected $container;
@@ -49,12 +50,27 @@ class Application implements ApplicationInterface {
     public function getElement($id) {
         $template_metadata = $this->getTemplate()->getMetadata();
         $counter = 0;
+        $user = $this->container->get('security.context')->getToken()->getUser();
         foreach($template_metadata['regions'] as $region) {
             // Only iterate over regions defined in the app
             if(!array_key_exists($region, $this->configuration['elements'])) {
                 continue;
             }
             foreach($this->configuration['elements'][$region] as $name => $element) {
+                // check if the roles set
+                if(isset($element['roles'])){
+                    $allow = false;
+                    foreach ($user->getRoles() as $role) {
+                        // check if the user authorized
+                        if(in_array($role, $element['roles'])){
+                            $allow = true;
+                            break;
+                        }
+                    }
+                    if(!$allow){
+                        continue;
+                    }
+                }
                 $element_id = sprintf($this->element_id_template, $counter++);
                 if($element_id == $id) {
                     $class = $element['class'];
@@ -242,6 +258,7 @@ class Application implements ApplicationInterface {
      * Using the configuration, load (instantiate) all elements defined for the application
      */
     private function loadElements() {
+        $user = $this->container->get('security.context')->getToken()->getUser();
         $template_metadata = $this->getTemplate()->getMetadata();
         $this->elements = array();
         $counter = 0;
@@ -252,6 +269,21 @@ class Application implements ApplicationInterface {
                 continue;
             }
             foreach($this->configuration['elements'][$region] as $name => $element) {
+                // check if the roles set
+                $user_roles = $user instanceof UserInterface ? $user->getRoles() : array();
+                if(isset($element['roles'])){
+                    $allow = false;
+                    foreach ($user_roles as $role) {
+                        // check if the user authorized
+                        if(in_array($role, $element['roles'])){
+                            $allow = true;
+                            break;
+                        }
+                    }
+                    if(!$allow){
+                        continue;
+                    }
+                }
                 // Extract and unset class, so we can use the remains as configuration
                 $class = $element['class'];
                 unset($element['class']);

@@ -8,6 +8,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProxyService {
     protected $proxy_conf;
@@ -52,6 +53,10 @@ class ProxyService {
         }
 
         // Only allow proxing HTTP and HTTPS
+        if(!isset($url['scheme'])){
+            throw new HttpException(500, 'This proxy only allow HTTP and '
+                . 'HTTPS urls.');
+        }
         if(!$url['scheme'] == 'http' && !$url['scheme'] == 'https') {
             throw new HttpException(500, 'This proxy only allow HTTP and '
                 . 'HTTPS urls.');
@@ -66,22 +71,32 @@ class ProxyService {
             $contentType = explode(';', $request->headers->get('Content-Type'));
 
             if($contentType[0] == 'application/xml') {
-
+//                curl_setopt($ch, CURLOPT_HTTPHEADER, $request->headers
+//                    ->get('Content-Type'));
+                $content = $request->getContent();
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: ' . $contentType[0]));
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getContent());
+                /*
                 $xml = file_get_contents('php://input');
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                     'Content-type: application/xml'));
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+                */
 
             } else {
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getParameters());
+                //curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
             }
         }
+
+        $user_agent = array_key_exists('HTTP_USER_AGENT', $_SERVER) ?
+            $_SERVER['HTTP_USER_AGENT'] : 'Mapbender3';
 
         $curl_config = array(
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HEADER         => false,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_USERAGENT      => $_SERVER['HTTP_USER_AGENT']);
+            CURLOPT_USERAGENT      => $user_agent);
 
         // Set params + proxy params if not noproxy
         if(!in_array($url['host'], $this->noproxy)) {
@@ -92,15 +107,31 @@ class ProxyService {
 
         // Get response from server
         $content = curl_exec($ch);
+        
         $status = curl_getinfo($ch);
 
         if($content === false) {
             throw new \RuntimeException('Proxying failed: ' . curl_error($ch)
                 . ' [' . curl_errno($ch) . ']', curl_errno($ch));
         }
-
         curl_close($ch);
-
+        // convert into content-type charset
+        try{
+            $contentType = $request->headers->get("content-type");
+            if($contentType !== null && strlen($contentType) > 0){
+                $tmp = explode(";", $contentType);
+                foreach ($tmp as $value) {
+                    if(stripos ($value, "charset") !== false
+                            && stripos ($value, "charset") == 0) {
+                        $charset = explode("=", $value);
+                    }
+                }
+                if(isset($charset) && isset($charset[1])
+                        && !mb_check_encoding($content, $charset[1])){
+                    $content = mb_convert_encoding($content, $charset[1]);
+                }
+            }
+        } catch (\Exception $e){}
         // Return server response
         return new Response($content, $status['http_code'], array(
             'Content-Type' => $status['content_type']));

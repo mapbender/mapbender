@@ -6,7 +6,7 @@ use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class AreaRuler extends Element implements ElementInterface {
+class Ruler extends Element implements ElementInterface {
     public function getTitle() {
         return "Please give me a title";
     }
@@ -22,8 +22,7 @@ class AreaRuler extends Element implements ElementInterface {
     public function getAssets() {
         return array(
             'js' => array(
-                'mapbender.element.ruler.common.js',
-                'mapbender.element.ruler.area.js'
+                'mapbender.element.ruler.js',
             ),
             'css' => array(
                 'mapbender.elements.css'
@@ -44,7 +43,7 @@ class AreaRuler extends Element implements ElementInterface {
         }
         return array(
             'options' => $opts,
-            'init' => 'mbAreaRuler',
+            'init' => 'mbRuler',
         );
     }
 
@@ -61,10 +60,11 @@ class AreaRuler extends Element implements ElementInterface {
 
     public function render() {
         return $this->get('templating')->render('MapbenderCoreBundle:Element:measure_dialog.html.twig', array(
-                'id' => $this->id,
-                'configuration' => $this->configuration,
-                'type' => 'area',
-                'label' => $this->configuration['title']));
+            'id' => $this->id,
+            'type' => array_key_exists('type', $this->configuration) ?
+                $this->configuration['type'] : 'line',
+            'configuration' => $this->configuration,
+            'label' => $this->configuration['title']));
     }
 }
 

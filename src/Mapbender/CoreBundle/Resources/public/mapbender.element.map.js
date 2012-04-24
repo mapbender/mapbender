@@ -180,15 +180,17 @@ $.widget("mapbender.mbMap", {
 
         var mapOptions = {
             maxExtent: this.options.extents.max,
+            zoomToMaxExtent: false,
             maxResolution: this.options.maxResolution,
             numZoomLevels: this.options.numZoomLevels,
             projection: new OpenLayers.Projection(this.options.srs),
             displayProjection: new OpenLayers.Projection(this.options.srs),
             units: this.options.units,
             allOverlays: allOverlays,
-            theme: null,
-            layers: layers
+            theme: null
+            //layers: layers
         };
+
 
         if(controls.length !== 0) mapOptions.controls = controls;
 
@@ -207,6 +209,15 @@ $.widget("mapbender.mbMap", {
 
         //TODO: Bind all events
         this.map.bind('zoomend', function() { self._trigger('zoomend', arguments); });
+
+        // We have to add our listeners to the map before adding layers...
+        // This might change in the future, when the MapQuery map accepts
+        // listeners as options
+        this.map.bind('mqAddLayer', $.proxy(this._onAddLayer, this));
+        this.map.bind('mqRemoveLayer', $.proxy(this._onRemoveLayer, this));
+
+        this.map.layers(layers);
+        this.map.center({ box: this.options.extents.max });
 
         if(this.options.extents.start) {
             this.map.center({
@@ -285,26 +296,6 @@ $.widget("mapbender.mbMap", {
         }
         if(controls.length === 0) {
             this.map.olMap.addControl(new OpenLayers.Control.Scale());
-            // nasty hack/bugfix: on scrolled pages the original version does not work well
-            OpenLayers.Control.PanZoomBar.prototype.zoomBarDrag = function(evt) {
-                if (this.mouseDragStart != null) {
-                    var deltaY = this.mouseDragStart.y - evt.xy.y;
-                    var offsets = OpenLayers.Util.pagePosition(this.zoombarDiv);
-                    var y = evt.y ? evt.y : evt.pageY; // chrome only
-                    if(window.opera) y = evt.pageY;
-                    if ((y - offsets[1]) > 0 &&
-                        (y - offsets[1]) < parseInt(this.zoombarDiv.style.height) - 2) {
-                        var newTop = parseInt(this.slider.style.top) - deltaY;
-                        this.slider.style.top = newTop+"px";
-                        this.mouseDragStart = evt.xy.clone();
-                    }
-                    // set cumulative displacement
-                    this.deltaY = this.zoomStart.y - evt.xy.y;
-                    OpenLayers.Event.stop(evt);
-                }
-            }
-            var c = new OpenLayers.Control.PanZoomBar();
-            this.map.olMap.addControl(c);
         }
 
         self._trigger('ready');
@@ -578,10 +569,25 @@ $.widget("mapbender.mbMap", {
         for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
             var res = this.map.olMap.getResolutionForZoom(i);
             scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
-    }
+        }
         return scales;
-    }
+    },
 
+    /**
+     * Listen to newly added layers in the MapQuery object
+     */
+    _onAddLayer: function(event, layer) {
+        var listener = Mapbender.layer[layer.olLayer.type].onLoadStart;
+        if(typeof listener === 'function') {
+            listener.call(layer);
+        }
+    },
+
+
+    /**
+     * Listen to removed layer in the MapQuery object
+     */
+    _onRemoveLayer: function(event, layer) {}
 });
 
 })(jQuery);

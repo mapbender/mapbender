@@ -5,8 +5,9 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
-class LineRuler extends Element implements ElementInterface {
+class ZoomBar extends Element implements ElementInterface {
     public function getTitle() {
         return "Please give me a title";
     }
@@ -22,20 +23,17 @@ class LineRuler extends Element implements ElementInterface {
     public function getAssets() {
         return array(
             'js' => array(
-                'mapbender.element.ruler.common.js',
-                'mapbender.element.ruler.line.js'
+                'mapbender.element.zoombar.js'
             ),
             'css' => array(
-                'mapbender.elements.css'
+                'mapbender.element.zoombar.css'
             )
         );
     }
 
     public function getConfiguration() {
-        $tr = $this->get('translator');
         $opts = $this->configuration;
         $opts['text'] = $this->name;
-        $opts['title'] = $tr->trans($opts['title']);
         // Resolve the run-time id of the target widget
         if(array_key_exists('target', $this->configuration)) {
             $elementId = $this->configuration['target'];
@@ -44,7 +42,7 @@ class LineRuler extends Element implements ElementInterface {
         }
         return array(
             'options' => $opts,
-            'init' => 'mbLineRuler',
+            'init' => 'mbZoomBar',
         );
     }
 
@@ -60,11 +58,10 @@ class LineRuler extends Element implements ElementInterface {
     }
 
     public function render() {
-        return $this->get('templating')->render('MapbenderCoreBundle:Element:measure_dialog.html.twig', array(
-            'id' => $this->id,
-            'type' => 'line',
-            'configuration' => $this->configuration,
-            'label' => $this->configuration['title']));
+        return $this->get('templating')->render('MapbenderCoreBundle:Element:zoombar.html.twig', array(
+                'id' => $this->id,
+                'configuration' => $this->configuration,
+                'label' => $this->name));
     }
 }
 

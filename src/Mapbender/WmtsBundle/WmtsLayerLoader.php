@@ -21,6 +21,7 @@ class WmtsLayerLoader implements LayerInterface {
         $this->layerSetId = $layerSetId;
         $this->layerId = $layerId;
         $this->configuration = $configuration;
+<<<<<<< HEAD
         $this->application = $application;
     }
     
@@ -30,6 +31,15 @@ class WmtsLayerLoader implements LayerInterface {
     
 	public function getLayerId(){
         return $this->layerId;
+=======
+        if($doctrine!==null){
+            $this->doctrine = $doctrine;
+            try {
+                $this->loadLayer();
+            } catch(\Exception $e) {
+            }
+        }
+>>>>>>> 46430b21eb25d726f452b43975d5d2a9610190cc
     }
     
     public function loadLayer(){

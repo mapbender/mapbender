@@ -68,7 +68,8 @@ class MonitoringDefinitionController extends Controller {
         $em->persist($md);
         $em->flush();
         return $this->redirect($this->generateUrl(
-            "mapbender_wms_wms_index"
+            "mapbender_monitoring_monitoringdefinition_edit",
+            array("mdId" => $md->getId())
         ));
 	}
 	
@@ -193,14 +194,36 @@ class MonitoringDefinitionController extends Controller {
         $client = new HTTPClient($this->container);
         $mr = new MonitoringRunner($md,$client);
         $job = $mr->run();
-        if(strcmp($job->getResult(), $md->getLastMonitoringJob()->getResult()) != 0){
+        if($md->getLastMonitoringJob()){
+            if(strcmp($job->getResult(), $md->getLastMonitoringJob()->getResult()) != 0){
+                $job->setChanged(true);
+            } else {
+                $job->setChanged(false);
+            }
+        }else {
             $job->setChanged(true);
-        } else {
-            $job->setChanged(false);
         }
         $md->addMonitoringJob($job);
         $em = $this->getDoctrine()->getEntityManager();
         $em->persist($md);
+        $em->flush();
+    	return $this->redirect(
+            $this->generateUrl(
+                "mapbender_monitoring_monitoringdefinition_edit",
+                array("mdId" =>  $md->getId())
+            )
+        );
+    }
+    
+    /**
+	 * @Route("/{mdId}/statreset")
+	 * @Method("POST")
+	 */
+	public function statresetAction(MonitoringDefinition $md) {
+        $em = $this->getDoctrine()->getEntityManager();
+        foreach($md->getMonitoringJobs() as $job){
+            $em->remove($job);
+        } 
         $em->flush();
     	return $this->redirect(
             $this->generateUrl(
