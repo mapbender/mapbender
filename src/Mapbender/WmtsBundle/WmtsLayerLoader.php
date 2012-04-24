@@ -15,31 +15,38 @@ class WmtsLayerLoader implements LayerInterface {
     protected $layerSetId;
     protected $layerId;
     protected $configuration;
-    protected $doctrine;
+    protected $application;
 
-    public function __construct($layerSetId, $layerId, array $configuration, $doctrine = null) {
+    public function __construct($layerSetId, $layerId, array $configuration, $application) {
         $this->layerSetId = $layerSetId;
         $this->layerId = $layerId;
         $this->configuration = $configuration;
-        if($doctrine!==null){
-            $this->doctrine = $doctrine;
-            $this->loadLayer();
-        }
+        $this->application = $application;
+    }
+    
+    public function getLayerSetId(){
+        return $this->layerSetId;
+    }
+    
+	public function getLayerId(){
+        return $this->layerId;
     }
     
     public function loadLayer(){
-        $em = $this->doctrine->getEntityManager();
+        $em = $this->application->get("doctrine")->getEntityManager();
         $query = $em->createQuery(
-            'SELECT i FROM MapbenderWmtsBundle:WmtsInstance i WHERE i.layersetid = :layersetid AND i.layerid= :layerid'
+            'SELECT i FROM MapbenderWmtsBundle:WmtsInstance i WHERE i.layersetid = :layersetid AND i.layerid= :layerid AND i.published = true'
             )->setParameter('layersetid', $this->layerSetId)->setParameter('layerid', $this->layerId);
         $wmtsinstanceList = $query->getResult();
         foreach($wmtsinstanceList as $wmtsinstance){ 
-            $wmts = $wmtsinstance->getWmts_service();
-            $layer = $this->doctrine->getRepository('MapbenderWmtsBundle:WmtsLayerDetail')->find($wmtsinstance->getLayeridentifier());
+            $wmts = $wmtsinstance->getService();
+            $layer = $this->application->get("doctrine")
+                    ->getRepository('MapbenderWmtsBundle:WmtsLayerDetail')
+                    ->find($wmtsinstance->getLayeridentifier());
             $this->configuration["proxy"] = $wmtsinstance->getProxy();
-            $this->configuration["baselayer"] = true; // TODO ??
+            $this->configuration["baselayer"] = $wmtsinstance->getBaselayer();
             $this->configuration["visible"] = $wmtsinstance->getVisible();
-            $this->configuration["title"] = "Hintergrundkarte"; // ??? title: WMTS or from YAML
+            $this->configuration["title"] = $wmtsinstance->getLayerid();
 //                    
             $this->configuration["url"] = ($wmts->getRequestGetTileGETREST()!==null)? $wmts->getRequestGetTileGETREST() : $wmts->getRequestGetTileGETKVP();
             $this->configuration["layer"] = $layer->getTitle();

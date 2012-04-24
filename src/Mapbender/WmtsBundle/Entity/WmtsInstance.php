@@ -21,9 +21,9 @@ class WmtsInstance {
     protected $id;
     /**
      * @ORM\ManyToOne(targetEntity="WmtsService",inversedBy="layer", cascade={"update"})
-     * @ORM\JoinColumn(name="wmts_service", referencedColumnName="id")
+     * @ORM\JoinColumn(name="service", referencedColumnName="id")
      */
-    protected $wmts_service;
+    protected $service;
     /**
      * @ORM\Column(type="string", nullable="true")
      */
@@ -32,6 +32,14 @@ class WmtsInstance {
      * @ORM\Column(type="string", nullable="true")
      */
     protected $layerid = true;
+    /**
+     * @ORM\Column(type="boolean", nullable="true")
+     */
+    protected $published = false;
+    /**
+     * @ORM\Column(type="boolean", nullable="true")
+     */
+    protected $baselayer = false;
     /**
      * @ORM\Column(type="boolean")
      */
@@ -98,12 +106,12 @@ class WmtsInstance {
     
     
     
-    public function getWmts_service(){
-        return $this->wmts_service;
+    public function getService(){
+        return $this->service;
     }
     
-    public function setWmts_service($wmts_service){
-        $this->wmts_service = $wmts_service;
+    public function setService($service){
+        $this->service = $service;
     }
     
     
@@ -141,7 +149,22 @@ class WmtsInstance {
         $this->layersetid = $layersetid;
     }
     
-    
+    /**
+     * Get a baselayer
+     * 
+     * @return boolean
+     */
+    public function getBaselayer() {
+        return $this->baselayer;
+    }
+    /**
+     * Set a baselayer
+     *
+     * @param boolean $baselayer
+     */
+    public function setBaselayer($baselayer) {
+        $this->baselayer = $baselayer;
+    }
     /**
      * Gets visible
      *
@@ -323,10 +346,26 @@ class WmtsInstance {
     public function setTilesize($tilesize) {
         $this->tilesize = $tilesize;
     }
+    /**
+     * Get a published
+     * 
+     * @return boolean
+     */
+    public function getPublished() {
+        return $this->published;
+    }
+    /**
+     * Sets a published
+     *
+     * @param boolean $published
+     */
+    public function setPublished($published) {
+        $this->published = $published;
+    }
     
     public function save($em){
-        if($this->wmts_service !== null){
-            foreach($this->wmts_service->getTileMatrixSetAsObjects() as $matrixset){
+        if($this->service !== null){
+            foreach($this->service->getTileMatrixSetAsObjects() as $matrixset){
                 if($matrixset->getIdentifier()==$this->matrixSet){
                     $tilesize = array();
                     $topleftcorner = array();
@@ -342,9 +381,6 @@ class WmtsInstance {
                         $matrixids[] = array(
                             "identifier" => $tilematrix->getIdentifier(),
                             "scaleDenominator" => $tilematrix->getScaledenominator());
-//                        matrixids:
-//                            - { identifier: "0", scaleDenominator: 10000000.0 }
-//                        $a=0;
                     }
                     $this->setTilesize($tilesize);
                     $this->setTopleftcorner($topleftcorner);
@@ -353,7 +389,7 @@ class WmtsInstance {
                 }
             }
             $crsbound = array();
-            foreach($this->wmts_service->getAllLayer() as $layer){
+            foreach($this->service->getAllLayer() as $layer){
                 if($layer->getId()==$this->getLayeridentifier()){
                     $crsbounds = $layer->getCrsBounds();
                     $crsbound = explode(" ", $crsbounds[$this->getCrs()]);
@@ -368,16 +404,20 @@ class WmtsInstance {
     }
     
     public function completeForm($translator, $form) {
-        if( $this->wmts_service !== null){
+        if( $this->service !== null){
             $layer_choice = array();
             $layers = array();
-            foreach($this->wmts_service->getAllLayer() as $layer){
+            foreach($this->service->getAllLayer() as $layer){
                 $layer_choice[$layer->getId()] = $layer->getTitle();
                 $layers[$layer->getId()] = $layer;
             }
             if(count($layer_choice) > 0) {
+                $form->add('published', 'checkbox', array(
+                        'label' => $translator->trans('published').":",
+                        'required'  => false));
                 $form->add('layersetid', 'text', array(
-                    'label' => $translator->trans('layersetid').":"));
+                    'label' => $translator->trans('layersetid').":",
+                    'read_only' => true));
                 $form->add('layerid', 'text', array(
                     'label' => $translator->trans('layer_id').":"));
                 $form->add('layeridentifier', 'choice', array(
@@ -390,6 +430,10 @@ class WmtsInstance {
                         $keys = array_keys($layer_choice);
                         $layer = $layers[$keys[0]];
                     }
+                    
+                    $form->add('baselayer', 'checkbox', array(
+                        'label' => $translator->trans('baselayer').":",
+                        'required'  => false));
                     
                     $form->add('visible', 'checkbox', array(
                         'label' => $translator->trans('visible').":",

@@ -67,8 +67,8 @@ class Application implements ApplicationInterface {
     }
 
     public function render($_parts = array('css', 'html', 'js', 'configuration'), $_format = 'html') {
-        $this->loadElements();
         $this->loadLayers();
+        $this->loadElements();
 
         $layersets = array();
         foreach($this->layersets as $title => $layers) {
@@ -114,8 +114,8 @@ class Application implements ApplicationInterface {
     }
 
     public function getAssets() {
-        $this->loadElements();
         $this->loadLayers();
+        $this->loadElements();
 
         // Get all assets we need to include
         // First the application and template assets
@@ -272,8 +272,43 @@ class Application implements ApplicationInterface {
                 //Extract and unset class, so we can use the remains as configuration
                 $class = $layer['class'];
                 unset($layer['class']);
-                $this->layersets[$layersetId][] = new $class($layersetId, $layerId, $layer, $this->get("doctrine"));
+                $this->layersets[$layersetId][] = new $class($layersetId, $layerId, $layer, $this);
             }
+        }
+    }
+    
+    public function resetLayersets() {
+        $this->layersets = array();
+    }
+    
+    public function reloadLayers($layersParams) {
+        foreach ($layersParams as $layerParams) {
+            $class = $layerParams["class"];
+            $layerloader = new $class(
+                    $layerParams["layersetId"],
+                    $layerParams["layerId"],
+                    $layerParams["configuration"],
+                    $this);
+            $layerloader->loadLayer();
+            $this->layersets[$layerParams["layersetId"]][] = $layerloader;
+        }
+    }
+    
+    public function reloadLayer($class, $layersetId, $layerId, $configuration) {
+        // find layerset
+        $find = false;
+        foreach ($this->layersets[$layersetId] as &$layerset) {
+            if($layerset->getLayerSetId() == $layersetId
+                    && $layerset->getLayerId() == $layerId) {
+                $find = true;
+                $layerset->loadLayer();
+                break;
+            }
+        }
+        if(!$find){
+            $layerloader = new $class($layersetId, $layerId, $configuration, $this);
+            $layerloader->loadLayer();
+            $this->layersets[$layersetId][] = $layerloader;
         }
     }
 

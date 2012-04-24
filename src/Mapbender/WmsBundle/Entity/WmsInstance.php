@@ -1,5 +1,5 @@
 <?php
-namespace Mapbender\WmtBundle\Entity;
+namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,64 +21,63 @@ class WmsInstance {
     protected $id;
     /**
      * @ORM\ManyToOne(targetEntity="WMSService",inversedBy="layer", cascade={"update"})
-     * @ORM\JoinColumn(name="wms_service", referencedColumnName="id")
+     * @ORM\JoinColumn(name="service", referencedColumnName="id")
      */
-    protected $wms_service;
+    protected $service;
     /**
-     * Layersetid form .yml
+     * Layersetid from .yml
      * @ORM\Column(type="string", nullable="true")
      */
     protected $layersetid = true;
     /**
+     * @ORM\Column(type="boolean", nullable="true")
+     */
+    protected $published = false;
+    /**
      * Layerid form .yml
      * @ORM\Column(type="string", nullable="true")
      */
-    protected $layerid = true;
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    protected $visible = true;
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    protected $proxy = false;
-    /**
-    * @ORM\Column(type="integer", nullable="true")
-    */
-    protected $layeridentifier = null;
-    /**
-     *  @ORM\Column(type="string", nullable="true")
-     */
-    protected $crs = null;
-    /**
-     *  @ORM\Column(type="array", nullable="true")
-     */
-    protected $crsbound = array();
+    protected $layerid = null;
     /**
     * @ORM\Column(type="string", nullable="true")
     */
-    protected $style = null;
+    protected $url = null;
     /**
     * @ORM\Column(type="string", nullable="true")
     */
     protected $format = null;
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="array", nullable="true")
     */
-    protected $matrixSet = null;
+    protected $layers = array(); //{ name: 1,   title: Webatlas,   visible: true }
     /**
     * @ORM\Column(type="array", nullable="true")
     */
-    protected $matrixids = null;
+    protected $fulllayers = array(); //{ name: 1,   title: Webatlas,   visible: true }
     /**
-    * @ORM\Column(type="array", nullable="true")
-    */
-    protected $topleftcorner = null;
+     * @ORM\Column(type="boolean", nullable="true")
+     */
+    protected $visible = true;
     /**
-    * @ORM\Column(type="array", nullable="true")
-    */
-    protected $tilesize = null;
-    
+     * @ORM\Column(type="boolean", nullable="true")
+     */
+    protected $proxy = false;
+//    /**
+//    * @ORM\Column(type="integer", nullable="true")
+//    */
+//    protected $layeridentifier = null;
+    /**
+     * @ORM\Column(type="boolean", nullable="true")
+     */
+    protected $baselayer = true;
+    /**
+     * @ORM\Column(type="boolean", nullable="true")
+     */
+    protected $transparent = true;
+    /**
+     * @ORM\Column(type="boolean", nullable="true")
+     */
+    protected $tiled = false;
     
     /**
      * Gets id
@@ -98,17 +97,13 @@ class WmsInstance {
         $this->id = $id;
     }
     
-    
-    
-    public function getWms_service(){
-        return $this->wms_service;
+    public function getService(){
+        return $this->service;
     }
     
-    public function setWms_service($wms_service){
-        $this->wms_service = $wms_service;
+    public function setService($service){
+        $this->service = $service;
     }
-    
-    
     
     /**
      * Get the layerid
@@ -178,73 +173,7 @@ class WmsInstance {
     public function setProxy($proxy) {
         $this->proxy = $proxy;
     }
-    
-    /**
-     * Get the crs
-     *
-     * @return string
-     */
-    public function getCrs() {
-        return $this->crs;
-    }
-    /**
-     * Set a crs
-     *
-     * @param string $crs
-     */
-    public function setCrs($crs) {
-        $this->crs = $crs;
-    }
-    /**
-     * Get the crsbound
-     *
-     * @return array
-     */
-    public function getCrsbound() {
-        return $this->crsbound;
-    }
-    /**
-     * Set a crsbound
-     *
-     * @param array $crsbound
-     */
-    public function setCrsbound($crsbound) {
-        $this->crsbound = $crsbound;
-    }
-    
-    /**
-     * Get the layeridentifier
-     *
-     * @return string
-     */
-    public function getLayeridentifier() {
-        return $this->layeridentifier;
-    }
-    /**
-     * Set a layeridentifier
-     *
-     * @param string $layeridentifier
-     */
-    public function setLayeridentifier($layeridentifier) {
-        $this->layeridentifier = $layeridentifier;
-    }
-    
-    /**
-     * Get the style
-     *
-     * @return string
-     */
-    public function getStyle() {
-        return $this->style;
-    }
-    /**
-     * Set a style
-     *
-     * @param string $style
-     */
-    public function setStyle($style) {
-        $this->style = $style;
-    }
+
     /**
      * Get the format
      *
@@ -261,182 +190,261 @@ class WmsInstance {
     public function setFormat($format) {
         $this->format = $format;
     }
+  
     /**
-     * Get the matrixSet
+     * Get an url
+     *
+     * @return string
+     */
+    public function getUrl() {
+        return $this->url;
+    }
+    /**
+     * Set an url
+     *
+     * @param string $url
+     */
+    public function setUrl($url) {
+        $this->url = $url;
+    }
+    /**
+     * Get the layers
      *
      * @return array
      */
-    public function getMatrixSet() {
-        return $this->matrixSet;
+    public function getLayers() {
+        return $this->layers;
     }
     /**
-     * Set a matrixSet
+     * Set the layers
      *
-     * @param array $matrixSet
+     * @param array $layers
      */
-    public function setMatrixSet($matrixSet) {
-        $this->matrixSet = $matrixSet;
+    public function setLayers($layers) {
+        if($layers === null) {
+            $this->layers = array();
+        } else if(is_string($layers)) {
+            $this->layers = explode(",", $layers);
+        } else if(is_array($layers)) {
+            $this->layers = $layers;
+        } else {
+            $this->layers = array();
+        }
+        
     }
+    
     /**
-     * Get the matrixids
-     *
-     * @return array
-     */
-    public function getMatrixids() {
-        return $this->matrixids;
-    }
-    /**
-     * Set a matrixids
-     *
-     * @param array $matrixids
-     */
-    public function setMatrixids($matrixids) {
-        $this->matrixids = $matrixids;
-    }
-    /**
-     * Get the topleftcorner
+     * Get the layers
      *
      * @return array
      */
-    public function getTopleftcorner() {
-        return $this->topleftcorner;
+    public function getFulllayers() {
+        return $this->fulllayers;
     }
     /**
-     * Set a topleftcorner
+     * Set the layers
      *
-     * @param array $topleftcorner
+     * @param array $layers
      */
-    public function setTopleftcorner($topleftcorner) {
-        $this->topleftcorner = $topleftcorner;
+    public function setFulllayers($layers) {
+        if($layers === null) {
+            $this->fulllayers = array();
+        } else if(is_string($layers)) {
+            $this->fulllayers = explode(",", $layers);
+        } else if(is_array($layers)) {
+            $this->fulllayers = $layers;
+        } else {
+            $this->fulllayers = array();
+        }
+        
     }
     /**
-     * Get the tilesize
+     * Set the layers
      *
-     * @return array
+     * @param array $layers
      */
-    public function getTilesize() {
-        return $this->tilesize;
+    public function addLayer($layer) {
+        if(is_array($layer)) {
+            $this->layers[] = $layer;
+        }
+    }
+
+    /**
+     * Get a baselayer
+     * 
+     * @return boolean
+     */
+    public function getBaselayer() {
+        return $this->baselayer;
     }
     /**
-     * Set a tilesize
+     * Set a baselayer
      *
-     * @param array $tilesize
+     * @param boolean $baselayer
      */
-    public function setTilesize($tilesize) {
-        $this->tilesize = $tilesize;
+    public function setBaselayer($baselayer) {
+        $this->baselayer = $baselayer;
+    }
+
+    /**
+     * Get a transparent
+     * 
+     * @return boolean
+     */
+    public function getTransparent() {
+        return $this->transparent;
+    }
+    /**
+     * Sets a transparent
+     *
+     * @param boolean $transparent
+     */
+    public function setTransparent($transparent) {
+        $this->transparent = $transparent;
+    }
+
+    /**
+     * Get a tiled
+     * 
+     * @return boolean
+     */
+    public function getTiled() {
+        return $this->tiled;
+    }
+    /**
+     * Sets a tiled
+     *
+     * @param boolean $tiled
+     */
+    public function setTiled($tiled) {
+        $this->tiled = $tiled;
+    }
+    
+    /**
+     * Get a published
+     * 
+     * @return boolean
+     */
+    public function getPublished() {
+        return $this->published;
+    }
+    /**
+     * Sets a published
+     *
+     * @param boolean $published
+     */
+    public function setPublished($published) {
+        $this->published = $published;
+    }
+  
+    public function getLayerArray($name) {
+        foreach ($this->layers as $layer) {
+            if($layer["name"] == $name) {
+                return $layer;
+            }
+        }
+        return null;
+    }
+    
+    public function getFullLayerArray($name) {
+        foreach ($this->fulllayers as $layer) {
+            if($layer["name"] == $name) {
+                return $layer;
+            }
+        }
+        return null;
+    }
+    
+    public function getCompletedFullLayerArray($name){
+        foreach ($this->fulllayers as $fulllayer) {
+            if($fulllayer["name"] == $name) {
+                $layer = $this->getLayerArray($name);
+                if($layer !== null){
+                    $fulllayer["published"] = $layer["published"];
+                    $fulllayer["visible"] = $layer["visible"];
+                    $fulllayer["queryable"] = isset($layer["queryable"]) ? $layer["queryable"] : null;
+                }
+                return $fulllayer;
+            }
+        }
+        return null;
+    }
+    
+    public static function removeFromLayerArray($array, $name){
+        $newarray = array();
+        foreach ($array as $field) {
+            if($field["name"] != $name){
+                $newarray[] = $field;
+            }
+        }
+        return $newarray;
     }
     
     public function save($em){
-        if($this->wms_service !== null){
-            foreach($this->wms_service->getTileMatrixSetAsObjects() as $matrixset){
-                if($matrixset->getIdentifier()==$this->matrixSet){
-                    $tilesize = array();
-                    $topleftcorner = array();
-                    $matrixids = array();
-                    foreach($matrixset->getTilematrix() as $tilematrix){
-                        if(count($tilesize) == 0) {
-                            $tilesize[] = $tilematrix->getTilewidth();
-                            $tilesize[] = $tilematrix->getTileheight();
-                        }
-                        if(count($topleftcorner) == 0) {
-                            $topleftcorner = explode(" ", $tilematrix->getTopleftcorner());
-                        }
-                        $matrixids[] = array(
-                            "identifier" => $tilematrix->getIdentifier(),
-                            "scaleDenominator" => $tilematrix->getScaledenominator());
-//                        matrixids:
-//                            - { identifier: "0", scaleDenominator: 10000000.0 }
-//                        $a=0;
-                    }
-                    $this->setTilesize($tilesize);
-                    $this->setTopleftcorner($topleftcorner);
-                    $this->setMatrixids($matrixids);
-                    break;
+        if($this->service !== null && count($this->getFulllayers()) == 0){
+            $fulllayers = array();
+            foreach ($this->service->getAllLayer() as $layer) {
+                if($layer->getName() !== null && $layer->getName() != ""){
+                    $instanceLayer = WmsInstanceLayer::create(
+                            $this->getId(),
+                            $layer->getId(),
+                            $layer->getName(),
+                            $layer->getTitle(),
+                            false, 
+                            false, 
+                            $layer->getQueryable()? false : null);
+                    $fulllayers[] = $instanceLayer->getAsFullArray();
                 }
             }
-            $crsbound = array();
-            foreach($this->wms_service->getAllLayer() as $layer){
-                if($layer->getId()==$this->getLayeridentifier()){
-                    $crsbounds = $layer->getCrsBounds();
-                    $crsbound = explode(" ", $crsbounds[$this->getCrs()]);
-                    break;
-                }
-            }
-            
-            $this->setCrsbound($crsbound);
+            $this->setFulllayers($fulllayers);
         }
         $em->persist($this);
         $em->flush();
     }
     
     public function completeForm($translator, $form) {
-        if( $this->wms_service !== null){
-            $layer_choice = array();
-            $layers = array();
-            foreach($this->wms_service->getAllLayer() as $layer){
-                $layer_choice[$layer->getId()] = $layer->getTitle();
-                $layers[$layer->getId()] = $layer;
+        if( $this->service !== null){
+            $form->add('published', 'checkbox', array(
+                'label' => $translator->trans('published').":",
+                'required'  => false));
+            $form->add('layersetid', 'text', array(
+                'label' => $translator->trans('layersetid').":",
+                'required'  => false));
+            $form->add('layerid', 'text', array(
+                'label' => $translator->trans('layer_id').":",
+                'required'  => false));
+            $form->add('url', 'text', array(
+                'label' => $translator->trans('url').":",
+                'required'  => false));
+            $arr = $this->service->getRequestGetMapFormats()!== null?
+                    $this->service->getRequestGetMapFormats(): array();
+            $formats = array();
+            foreach ($arr as $value) {
+                $formats[$value] = $value;
             }
-            if(count($layer_choice) > 0) {
-                $form->add('layersetid', 'text', array(
-                    'label' => $translator->trans('layersetid').":"));
-                $form->add('layerid', 'text', array(
-                    'label' => $translator->trans('layer_id').":"));
-                $form->add('layeridentifier', 'choice', array(
-                    'label' => $translator->trans('layer').":",
-                    'choices' => $layer_choice));
-                if($this->layeridentifier !== null || count($layer_choice) == 1) {
-                    if($this->layeridentifier !== null) {
-                        $layer = $layers[$this->layeridentifier];
-                    }else{
-                        $keys = array_keys($layer_choice);
-                        $layer = $layers[$keys[0]];
-                    }
-                    
-                    $form->add('visible', 'checkbox', array(
-                        'label' => $translator->trans('visible').":",
-                        'required'  => false));
-                    
-                    $form->add('proxy', 'checkbox', array(
-                        'label' => $translator->trans('proxy').":",
-                        'required'  => false));
-                    $help_arr = array();
-                    foreach($layer->getCrs() as $crs){
-                        $help_arr[$crs] = $crs;
-                    }
-                    $form->add('crs', 'choice', array(
-                        'label' => $translator->trans('crs').":",
-                        'choices' => $help_arr));
-                    unset($help_arr);
-                    $help_arr = array();
-                    foreach( $layer->getStyles() as $style){
-                        $help_arr[$style["identifier"]] = $style["title"];
-                    }
-                    $form->add('style', 'choice', array(
-                        'label' => $translator->trans('style').":",
-                        'choices' => $help_arr));
-                    unset($help_arr);
-                    $help_arr = array();
-                    foreach( $layer->getRequestDataFormats() as $format){
-                        $help_arr[$format] = $format;
-                    }
-                    $form->add('format', 'choice', array(
-                        'label' => $translator->trans('format').":",
-                        'choices' => $help_arr));
-                    unset($help_arr);
-                    $help_arr = array();
-                    foreach( $layer->getTileMatrixSetLink() as $link){
-                        $help_arr[$link] = $link;
-                    }
-                    $form->add('matrixSet', 'choice', array(
-                        'label' => $translator->trans('matrixSet').":",
-                        'choices' => $help_arr));
-                    unset($help_arr);
-                }
-            }
+            $form->add('format', 'choice', array(
+                'label' => $translator->trans('format').":",
+                'choices' => $formats,
+                'required'  => true));
+            $form->add('visible', 'checkbox', array(
+                'label' => $translator->trans('visible').":",
+                'required'  => false));
+
+            $form->add('proxy', 'checkbox', array(
+                'label' => $translator->trans('proxy').":",
+                'required'  => false));
+
+            $form->add('baselayer', 'checkbox', array(
+                'label' => $translator->trans('baselayer').":",
+                'required'  => false));
+            $form->add('transparent', 'checkbox', array(
+                'label' => $translator->trans('transparent').":",
+                'required'  => false));
+            $form->add('tiled', 'checkbox', array(
+                'label' => $translator->trans('tiled').":",
+                'required'  => false));
         }
         return $form;
     }
-
 }
 ?>

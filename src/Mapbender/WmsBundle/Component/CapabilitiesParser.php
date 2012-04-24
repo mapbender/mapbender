@@ -251,7 +251,11 @@ class CapabilitiesParser {
 
         $layer = new WMSLayer();
         $srs = array();
-
+//        queryable
+        $queryable = $layerNode->getAttribute("queryable");
+        if($queryable !== null && ($queryable == "0" || $queryable == "1")){
+            $layer->setQueryable($queryable);
+        }
         foreach($layerNode->childNodes as $node){
             if($node->nodeType == XML_ELEMENT_NODE){  
                 switch ($node->nodeName) {

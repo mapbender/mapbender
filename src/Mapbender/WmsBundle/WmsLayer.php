@@ -13,34 +13,37 @@ class WmsLayer implements LayerInterface {
     protected $layerSetId;
     protected $layerId;
     protected $configuration;
-    protected $doctrine;
+    protected $application;
 
-    public function __construct($layerSetId, $layerId, array $configuration, $doctrine = null) {
+    public function __construct($layerSetId, $layerId, array $configuration, $application) {
         $this->layerSetId = $layerSetId;
         $this->layerId = $layerId;
         $this->configuration = $configuration;
-        if($doctrine!==null){
-            $this->doctrine = $doctrine;
-            $this->loadLayer();
-        }
+        $this->application = $application;
+    }
+    
+    public function getLayerSetId(){
+        return $this->layerSetId;
+    }
+    
+	public function getLayerId(){
+        return $this->layerId;
     }
     
     public function loadLayer(){
-        return; // TODO
-        $em = $this->doctrine->getEntityManager();
+        $em = $this->application->get("doctrine")->getEntityManager();
         $query = $em->createQuery(
             'SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.layersetid = :layersetid AND i.layerid= :layerid'
             )->setParameter('layersetid', $this->layerSetId)->setParameter('layerid', $this->layerId);
         $wmsinstanceList = $query->getResult();
         foreach($wmsinstanceList as $wmsinstance){
-            $wms = $wmsinstance->getWms_service();
-            $layer = $this->doctrine->getRepository('MapbenderWmsBundle:WMSLayer')->find($wmsinstance->getLayeridentifier());
+            $wms = $wmsinstance->getService();
             $this->configuration["proxy"] = $wmsinstance->getProxy();
-            $this->configuration["baselayer"] = true; // TODO ??
+            $this->configuration["baselayer"] = $wmsinstance->getBaselayer();
             $this->configuration["visible"] = $wmsinstance->getVisible();
-            $this->configuration["title"] = "Hintergrundkarte"; // ??? title: WMS or from YAML
+            $this->configuration["title"] = $wmsinstance->getLayerid();
 
-            $this->configuration["url"] = $wms->getRequestGetMapGET();//($wms->getRequestGetMapGET()!==null)? $wms->getRequestGetTileGETREST() : $wms->getRequestGetTileGETKVP();
+            $this->configuration["url"] = $wms->getRequestGetMapGET();
             $this->configuration["layers"] = $wmsinstance->getLayers();
             $this->configuration["format"] = $wmsinstance->getFormat();
             $this->configuration["transparent"] = $wmsinstance->getTransparent();
