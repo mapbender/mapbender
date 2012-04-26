@@ -17,6 +17,12 @@ interface LayerInterface {
 	public function __construct($layerSetId, $layerId, array $configuration, $application);
     
     /**
+	 * Return a configuration.
+	 * @return array
+	 */
+    
+    public function getConfiguration();
+    /**
 	 * Return a layerSetId.
 	 * @return string
 	 */

@@ -24,6 +24,10 @@ class WmtsLayerLoader implements LayerInterface {
         $this->application = $application;
     }
     
+    public function getConfiguration(){
+        return $this->configuration;
+    }
+    
     public function getLayerSetId(){
         return $this->layerSetId;
     }

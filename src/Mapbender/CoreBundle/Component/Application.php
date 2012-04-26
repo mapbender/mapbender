@@ -309,38 +309,39 @@ class Application implements ApplicationInterface {
         }
     }
     
-    public function resetLayersets() {
-        $this->layersets = array();
-    }
-    
     public function reloadLayers($layersParams) {
-        foreach ($layersParams as $layerParams) {
-            $class = $layerParams["class"];
-            $layerloader = new $class(
-                    $layerParams["layersetId"],
-                    $layerParams["layerId"],
-                    $layerParams["configuration"],
-                    $this);
+        $layerLoaders = array();
+        foreach ($layersParams as  $layer_Params) {//foreach ($layers as  $layerId => $params) {
+            $cl = $layer_Params["loaderClass"];
+            $lsId = $layer_Params["layersetId"];
+            $lId = $layer_Params["layerId"];
+            $lIdToRem = $layer_Params["layerIdToRemove"];
+            $layerloader = new $cl(
+                $lsId,
+                $lId,
+                array("class" => $cl),
+                $this);
             $layerloader->loadLayer();
-            $this->layersets[$layerParams["layersetId"]][] = $layerloader;
-        }
-    }
-    
-    public function reloadLayer($class, $layersetId, $layerId, $configuration) {
-        // find layerset
-        $find = false;
-        foreach ($this->layersets[$layersetId] as &$layerset) {
-            if($layerset->getLayerSetId() == $layersetId
-                    && $layerset->getLayerId() == $layerId) {
-                $find = true;
-                $layerset->loadLayer();
-                break;
+            $layerLoaders[$lsId][] = array(
+                "layerLoader" => $layerloader,
+                "layerToRemove" => $lIdToRem);
+            if(isset($this->configuration['layersets'][$lsId][$lIdToRem])){
+                unset($this->configuration['layersets'][$lsId][$lIdToRem]);
             }
+            $this->configuration['layersets'][$lsId][$lId] = $layerloader->getConfiguration();
         }
-        if(!$find){
-            $layerloader = new $class($layersetId, $layerId, $configuration, $this);
-            $layerloader->loadLayer();
-            $this->layersets[$layersetId][] = $layerloader;
+        foreach ($layerLoaders as $lsId => $layersToChange) {
+            $newLayersAtLs = array();
+            foreach ($this->layersets[$lsId] as $layersAtLs) {
+                foreach ($layersToChange as $layer_ToChange) {
+                    if($layersAtLs->getLayerId() == $layer_ToChange["layerToRemove"]) {
+                        $newLayersAtLs[] = $layer_ToChange["layerLoader"];
+                    } else {
+                        $newLayersAtLs[] = $layersAtLs;
+                    }
+                }
+            }
+            $this->layersets[$lsId] = $newLayersAtLs;
         }
     }
 
