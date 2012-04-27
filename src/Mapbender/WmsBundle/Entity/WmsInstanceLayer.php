@@ -29,11 +29,6 @@ class WmsInstanceLayer {
      * @ORM\Column(type="string", nullable="true")
      */
     protected $title;
-//    /**
-//     * 
-//     * @ORM\Column(type="boolean", nullable="false")
-//     */
-//    protected $published = false;
     /**
      * @ORM\Column(type="boolean", nullable="false")
      */
@@ -46,8 +41,6 @@ class WmsInstanceLayer {
     public function __construct() {
     }
     
-//    public static function create($instanceid, $layerid,
-//            $name, $title, $published, $visible, $queryable) {
     public static function create($instanceid, $layerid,
             $name, $title, $visible, $queryable) {
         $wmsInstanceLayer = new WmsInstanceLayer();
@@ -55,7 +48,6 @@ class WmsInstanceLayer {
         $wmsInstanceLayer->layerid = $layerid;
         $wmsInstanceLayer->name = $name;
         $wmsInstanceLayer->title = $title;
-//        $wmsInstanceLayer->published = $published;
         $wmsInstanceLayer->visible = $visible;
         $wmsInstanceLayer->queryable = $queryable;
         return $wmsInstanceLayer;
@@ -68,7 +60,6 @@ class WmsInstanceLayer {
                     isset($array['layerid'])? $array['layerid'] : "",
                     isset($array['name'])? $array['name'] : "",
                     isset($array['title'])? $array['title'] : "",
-//                    isset($array['published'])? $array['published'] : false,
                     isset($array['visible'])? $array['visible'] : false,
                     isset($array['queryable'])? $array['queryable'] : null);
         } else {
@@ -79,7 +70,6 @@ class WmsInstanceLayer {
         $array =  array(
             'name' => $this->name,
             'title' => $this->title,
-//            'published' => $this->published,
             'visible' => $this->visible);
         if($this->queryable !== null){
             $array['queryable'] = $this->queryable;
@@ -93,7 +83,6 @@ class WmsInstanceLayer {
             'layerid' => $this->layerid,
             'name' => $this->name,
             'title' => $this->title,
-//            'published' => $this->published,
             'visible' => $this->visible,
             'queryable' => $this->queryable);
     }
@@ -129,20 +118,6 @@ class WmsInstanceLayer {
     public function getTitle(){
         return $this->title;
     }
-//    
-//    public function setPublished($val){
-//        if($val === null) {
-//            $this->published = false;
-//        } else if(is_bool($val)) {
-//            $this->published = $val;
-//        } else {
-//            $this->published = false;
-//        }
-//    }
-//    
-//    public function getPublished(){
-//        return $this->published;
-//    }
     
     public function setVisible($val){
         if($val === null) {
@@ -179,10 +154,6 @@ class WmsInstanceLayer {
         $form->add('layerid', 'hidden', array(
             'data' => $this->layerid,
             'required'  => true));
-//        $form->add('published', 'checkbox', array(
-//            'label' => $translator->trans('published'),
-//            'required'  => false,
-//            "read_only" => $read_only ? true : false));
         $form->add('name', 'text', array(
             'attr' => array('readonly' => 'readonly'),
             'required'  => true,

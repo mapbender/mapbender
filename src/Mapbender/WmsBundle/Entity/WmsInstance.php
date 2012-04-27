@@ -409,7 +409,8 @@ class WmsInstance {
                 'required'  => false));
             $form->add('layersetid', 'text', array(
                 'label' => $translator->trans('layersetid').":",
-                'required'  => false));
+                'required'  => false,
+                'read_only' => true));
             $form->add('layerid', 'text', array(
                 'label' => $translator->trans('layer_id').":",
                 'required'  => false));
