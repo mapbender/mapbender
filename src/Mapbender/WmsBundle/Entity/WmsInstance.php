@@ -360,7 +360,7 @@ class WmsInstance {
             if($fulllayer["name"] == $name) {
                 $layer = $this->getLayerArray($name);
                 if($layer !== null){
-                    $fulllayer["published"] = $layer["published"];
+//                    $fulllayer["published"] = $layer["published"];
                     $fulllayer["visible"] = $layer["visible"];
                     $fulllayer["queryable"] = isset($layer["queryable"]) ? $layer["queryable"] : null;
                 }
