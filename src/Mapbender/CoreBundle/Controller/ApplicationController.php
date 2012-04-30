@@ -160,8 +160,9 @@ class ApplicationController extends Controller {
      */
     public function checkApplicationAccess(Application $application) {
         $user = $this->get('security.context')->getToken()->getUser();
+        $owner = $application->getEntity()->getOwner();
 
-        if($application->getEntity()->getOwner()->equals($user)) {
+        if(is_object($user) && $owner->equals($user)) {
             return;
         }
 
