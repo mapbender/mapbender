@@ -1,5 +1,5 @@
 {% for region, elements in application.elements %}
-<h3>{{ region | capitalize }} <a data-href="{{ url('mapbender_manager_element_new', { 'app_id': application.entity.id, 'region': region }) }}" href="#modal-application-elements" class="add-subentity btn btn-small">{{ 'Add element' | trans}}...</a></h3>
+<h3>{{ region | capitalize }} <a data-href="{{ url('mapbender_manager_element_new', { 'app_id': application.id, 'region': region }) }}" href="#modal-application-elements" class="add-subentity btn btn-small">{{ 'Add element' | trans}}...</a></h3>
 <table class="table-elements table-sortable table table-striped">
     <thead>
         <tr>

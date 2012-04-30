@@ -14,7 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 
-use Mapbender\CoreBundle\Component\Application2;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -35,13 +35,14 @@ class ApplicationController extends Controller {
      * Render a list of applications the current logged in user has access
      * to.
      *
-     * @Route("/applications/{page}", requirements={"page" = "\d+"}, defaults={ "page" = 1 })
+     * @Route("/applications")
      * @Method("GET")
-     * @ParamConverter("apps", class="MapbenderCoreBundle:Application")
      * @Template
      */
-    public function indexAction($apps) {
-        return array('apps' => $apps);
+    public function indexAction() {
+        $applications = $this->get('mapbender')->getApplicationEntities();
+
+        return array('applications' => $applications);
     }
 
     /**
@@ -52,8 +53,8 @@ class ApplicationController extends Controller {
      * @Template
      */
     public function newAction() {
-        $application = new Application2(null, $this->container);
-        $form = $this->createApplicationForm($application->getEntity());
+        $application = new Application();
+        $form = $this->createApplicationForm($application);
 
         return array(
             'application' => $application,
@@ -68,14 +69,14 @@ class ApplicationController extends Controller {
      * @Template("MapbenderManagerBundle:Application:new.html.twig")
      */
     public function createAction() {
-        $application = new Application2(null, $this->container);
-        $form = $this->createApplicationForm($application->getEntity());
+        $application = new Application();
+        $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
 
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-            $em->persist($application->getEntity());
+            $em->persist($application);
             $em->flush();
 
             $this->get('session')->setFlash('notice',
@@ -91,26 +92,15 @@ class ApplicationController extends Controller {
     }
 
     /**
-     * View application
-     *
-     * @Route("/application/{id}", requirements = { "id" = "\d+" })
-     * @Method("GET")
-     * @Template
-     */
-    public function viewAction($id) {
-        return array();
-    }
-
-    /**
      * Edit application
      *
-     * @Route("/application/{id}/edit", requirements = { "id" = "\d+" })
+     * @Route("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")
      * @Template
      */
-    public function editAction($id) {
-        $application = new Application2($id, $this->container);
-        $form = $this->createApplicationForm($application->getEntity());
+    public function editAction($slug) {
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $form = $this->createApplicationForm($application);
 
         return array(
             'application' => $application,
@@ -121,11 +111,11 @@ class ApplicationController extends Controller {
     /**
      * Updates application by POSTed data
      *
-     * @Route("/application/{id}/update", requirements = { "id" = "\d+" })
+     * @Route("/application/{slug}/update", requirements = { "slug" = "[\w-]+" })
      * @Method("POST")
      */
-    public function updateAction($id) {
-        $application = new Application2($id, $this->container);
+    public function updateAction($slug) {
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
 
@@ -152,11 +142,11 @@ class ApplicationController extends Controller {
 
     /**
      * Delete confirmation page
-     * @Route("/application/{id}/delete", requirements = { "id" = "\d+" })
+     * @Route("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")
      * @Template
      */
-    public function confirmDeleteAction($id) {
+    public function confirmDeleteAction($slug) {
         $application = new Application2($id, $this->container);
         return array(
             'application' => $application,
@@ -166,10 +156,10 @@ class ApplicationController extends Controller {
     /**
      * Delete application
      *
-     * @Route("/application/{id}/delete", requirements = { "id" = "\d+" })
+     * @Route("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
      * @Method("POST")
      */
-    public function deleteAction($id) {
+    public function deleteAction($slug) {
         $application = new Application2($id, $this->container);
         $form = $this->createDeleteForm($id);
         $request = $this->getRequest();
@@ -213,9 +203,9 @@ class ApplicationController extends Controller {
         $available_elements = array();
         foreach($this->get('mapbender')->getElements() as $elementClassName) {
             $available_elements[$elementClassName] = array(
-                'title' => $elementClassName::getTitle(),
-                'description' => $elementClassName::getDescription(),
-                'tags' => $elementClassName::getTags());
+                'title' => $elementClassName::getClassTitle(),
+                'description' => $elementClassName::getClassDescription(),
+                'tags' => $elementClassName::getClassTags());
         }
         asort($available_elements);
 
@@ -230,6 +220,5 @@ class ApplicationController extends Controller {
             ->add('id', 'hidden')
             ->getForm();
     }
-
 }
 

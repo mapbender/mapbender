@@ -3,52 +3,55 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\User\UserInterface;
 
-class FeatureInfo extends Element implements ElementInterface {
-	static public function getTitle() {
-		return "FeatureInfo";
-	}
-
-	static public function getDescription() {
-		return "Renders a button to trigger a feature info request and popup";
-	}
-
-	static public function getTags() {
-		return array('Button', 'FeatureInfo');
-	}
-
-	public function getAssets() {
-		return array(
-            'js' => array(
-                'mapbender.element.button.js', //Our base widget
-                'mapbender.element.featureInfo.js'
-            ),
-            'css' => array(
-                'mapbender.elements.css'
-            )
-		);
-	}
-
-	public function getConfiguration() {
-        $opts = $this->configuration;
-        $elementId = $this->configuration['target'];
-        $finalId = $this->application->getFinalId($elementId);
-        $opts = array_merge($opts, array('target' => $finalId));
-
-        return array(
-            'options' => $opts,
-			'init' => 'mbFeatureInfo',
-		);
+/**
+ * FeatureInfo element
+ *
+ * @author Christian Wygoda
+ */
+class FeatureInfo extends Element {
+    static public function getClassTitle() {
+        return "FeatureInfo";
     }
 
-	public function render() {
-            return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
-                'id' => $this->id,
-                'configuration' => array_merge($this->configuration),
-                'label' => $this->configuration['title']));
-	}
+    static public function getClassDescription() {
+        return "Renders a button to trigger a feature info request and popup";
+    }
+
+    static public function getClassTags() {
+        return array('Button', 'FeatureInfo');
+    }
+
+    public function getDefaultConfiguration() {
+        return array(
+            'layers' => null,
+            'target' => null);
+    }
+
+    public function getWidgetName() {
+        return 'mapbender.mbFeatureInfo';
+    }
+
+    public function getAssets($type) {
+        parent::getAssets($type);
+        switch($type) {
+        case 'js':
+            return array(
+                'mapbender.element.button.js',
+                'mapbender.element.featureInfo.js');
+        case 'css':
+            return array(
+                //TODO: Split up
+                'mapbender.elements.css');
+        }
+    }
+
+    public function render() {
+        return $this->container->get('templating')
+            ->render('MapbenderCoreBundle:Element:button.html.twig', array(
+                'id' => $this->getId(),
+                'label' => $this->getTitle(),
+                'configuration' => $this->entity->getConfiguration()));
+    }
 }
 

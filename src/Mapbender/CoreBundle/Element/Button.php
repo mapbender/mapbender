@@ -3,51 +3,55 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class Button extends Element implements ElementInterface {
-	static public function getTitle() {
-		return "Button";
-	}
+/**
+ * Button element
+ *
+ * @author Christian Wygoda
+ */
+class Button extends Element {
+    static public function getClassTitle() {
+        return "Button";
+    }
 
-	static public function getDescription() {
-		return "Renders a button";
-	}
+    static public function getClassDescription() {
+        return "Renders a button";
+    }
 
-	static public function getTags() {
-		return array('Button');
-	}
+    static public function getClassTags() {
+        return array('Button');
+    }
 
-	public function getAssets() {
-		return array(
-            'js' => array(
-                'mapbender.element.button.js'
-            ),
-            'css' => array(
-                'mapbender.elements.css'
-            )
-		);
-	}
-
-	public function getConfiguration() {
-        $opts = $this->configuration;
-        if(array_key_exists('target', $this->configuration)) {
-            $elementId = $this->configuration['target'];
-            $finalId = $this->application->getFinalId($elementId);
-            $opts = array_merge($opts, array('target' => $finalId));
-        }
+    public function getDefaultConfiguration() {
         return array(
-            'options' => $opts,
-			'init' => 'mbButton',
-		);
-	}
+            'target' => null,
+            'click' => null,
+            'icon' => null,
+            'label' => true,
+            'group' => null);
+    }
 
-	public function	render() {
-            return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
-                'id' => $this->id,
-                'configuration' => $this->configuration,
-                'label' => $this->configuration['title']));
-	}
+    public function getWidgetName() {
+        return 'mapbender.mbButton';
+    }
+
+    public function getAssets($type) {
+        parent::getAssets($type);
+        switch($type) {
+        case 'js':
+            return array('mapbender.element.button.js');
+        case 'css':
+            //TODO: Split up
+            return array('mapbender.elements.css');
+        }
+    }
+
+    public function render() {
+        return $this->container->get('templating')
+            ->render('MapbenderCoreBundle:Element:button.html.twig', array(
+                'id' => $this->getId(),
+                'label' => $this->getTitle(),
+                'configuration' => $this->entity->getConfiguration()));
+    }
 }
 

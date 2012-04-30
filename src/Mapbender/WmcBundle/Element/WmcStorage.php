@@ -3,47 +3,45 @@
 namespace Mapbender\WmcBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Query\Expr\Andx;
 use Doctrine\ORM\Query\Expr\Comparison;
 
-class WmcStorage extends Element implements ElementInterface {
-    static public function getTitle() {
+class WmcStorage extends Element {
+    static public function getClassTitle() {
         return "WMC Storage";
     }
 
-    static public function getDescription() {
+    static public function getClassDescription() {
         return "Stores and loads WMC documents. Can provide a dialog for "
             . "selecting and saving.";
     }
 
-    static public function getTags() {
+    static public function getClassTags() {
         return array('WMC');
     }
 
-    public function getAssets() {
-        return array(
-            'js' => array(
-                'mapbender.element.wmcstorage.js',
-            ),
-            'css' => array()
-        );
+    public function getAssets($type) {
+        parent::getAssets($type);
+
+        switch($type) {
+        case 'js':
+            return array('mapbender.element.wmcstorage.js');
+        case 'css':
+            return array();
+        }
     }
 
-    public function getConfiguration() {
-        $opts = $this->configuration;
-        if(array_key_exists('target', $this->configuration)) {
-            $elementId = $this->configuration['target'];
-            $finalId = $this->application->getFinalId($elementId);
-            $opts = array_merge($opts, array('target' => $finalId));
-        }
+
+    public function getDefaultConfiguration() {
         return array(
-            'options' => $opts,
-            'init' => 'mbWmcStorage'
-        );
+            'target' => null);
+    }
+
+    public function getWidgetName() {
+        return 'mapbender.mbWmcStorage';
     }
 
     public function httpAction($action) {
@@ -205,9 +203,10 @@ class WmcStorage extends Element implements ElementInterface {
     }
 
     public function render() {
-            return $this->get('templating')->render('MapbenderWmcBundle:Element:wmcstorage.html.twig', array(
-                'id' => $this->id,
-                'configuration' => $this->configuration));
+        return $this->container->get('templating')
+            ->render('MapbenderWmcBundle:Element:wmcstorage.html.twig', array(
+                'id' => $this->getId(),
+                'configuration' => $this->getConfiguration()));
     }
 }
 

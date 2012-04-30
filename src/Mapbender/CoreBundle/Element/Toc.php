@@ -3,53 +3,52 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class Toc extends Element implements ElementInterface {
-    static public function getTitle() {
+/**
+ * Table of Content element
+ *
+ * @author Christian Wygoda
+ */
+class Toc extends Element {
+    static public function getClassTitle() {
         return "Table of contents";
     }
 
-    static public function getDescription() {
+    static public function getClassDescription() {
         return "Table of contents listing map layers";
     }
 
-    static public function getTags() {
+    static public function getClassTags() {
         return array('TOC', 'Table of Contents');
     }
 
-    public function getAssets() {
+    public function getDefaultConfiguration() {
         return array(
-            'js' => array(
-                'mapbender.element.toc.js'
-            ),
-            'css' => array(
-                'mapbender.elements.css'
-            )
-        );
+            'target' => null,
+            'autoOpen' => true);
     }
 
-    public function getConfiguration() {
-        $opts = $this->configuration;
-        $opts['text'] = $this->name;
-        // Resolve the run-time id of the target widget
-        if(array_key_exists('target', $this->configuration)) {
-            $elementId = $this->configuration['target'];
-            $finalId = $this->application->getFinalId($elementId);
-            $opts = array_merge($opts, array('target' => $finalId));
+    public function getWidgetName() {
+        return 'mapbender.mbToc';
+    }
+
+    public function getAssets($type) {
+        parent::getAssets($type);
+        switch($type) {
+        case 'js':
+            return array('mapbender.element.toc.js');
+        case 'css':
+            //TODO: Split up
+            return array('mapbender.elements.css');
+
         }
-        return array(
-            'options' => $opts,
-            'init' => 'mbToc',
-        );
     }
 
     public function render() {
-        return $this->get('templating')->render('MapbenderCoreBundle:Element:toc.html.twig', array(
-                'id' => $this->id,
-                'configuration' => $this->configuration,
-                'label' => $this->configuration['title']));
+        return $this->container->get('templating')
+            ->render('MapbenderCoreBundle:Element:toc.html.twig', array(
+                'id' => $this->getId(),
+                'configuration' => $this->getConfiguration()));
     }
 }
 

@@ -8,7 +8,7 @@
 
 {% block manager_content %}
 
-{% if apps|length > 0 %}
+{% if applications | length > 0 %}
 <table class="table table-striped">
     <thead>
         <tr>
@@ -18,19 +18,22 @@
         </tr>
     </thead>
     <tbody>
-        {% for app in apps %}
-        <tr id="app-{{ app.id }}">
+        {% for application in applications %}
+        <tr id="app-{{ application.id }}">
             <td>
-                <a href="{{ path('mapbender_manager_application_edit', {'id': app.id}) }}" title="{{ 'Edit' | trans }}">{{ app.title }}</a>
-                <a href="#" title="{{ 'View' | trans }}">({{ app.slug }})</a>
+                <i class="icon-eye-{% if application.published %}open{% else %}close{% endif %}"></i>
+                <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) }}" title="{{ 'Edit' | trans }}">{{ application.title }}</a>
+                <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View' | trans }}">({{ application.slug }})</a>
             </td>
-            <td>{{ app.description }}</td>
+            <td>{{ application.description }}</td>
             <td>
                 <div class="entity-actions btn-group">
                     <a class="action-view btn" href="#">{{ 'View' | trans }}</a>
-                    <a class="action-edit btn" href="{{ path('mapbender_manager_application_edit',  {'id': app.id }) }}" title="{{ 'Edit application' | trans }}">{{ 'Edit' | trans }}</a>
+                    <a class="action-edit btn" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug }) }}" title="{{ 'Edit application' | trans }}">{{ 'Edit' | trans }}</a>
                     <a class="action-clone btn" href="#">{{ 'Clone' | trans }}</a>
-                    <a class="action-delete btn" href="{{ path('mapbender_manager_application_confirmdelete', { 'id': app.id }) }}">{{ 'Delete' | trans }}</a>
+{% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') %}
+                    <a class="action-delete btn" href="{{ path('mapbender_manager_application_confirmdelete', { 'slug': application.slug }) }}">{{ 'Delete' | trans }}</a>
+{% endif %}
                 </div>
             </td>
         </tr>
@@ -47,6 +50,6 @@ You don't have any apps defined. Start by creating one now.
 
 {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
 
-{% pager %}
+{#% pager %#}
 
 {% endblock %}

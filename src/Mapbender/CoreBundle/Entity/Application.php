@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Applicaton entity
@@ -10,12 +11,22 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  *
  * @ORM\Entity
+ * @ORM\Table(name="mb_application")
  */
 class Application {
+
+    const SOURCE_YAML = 1;
+    const SOURCE_DB = 2;
+
+    /**
+     * @var integer $source
+     */
+    protected $source;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue
      */
     protected $id;
 
@@ -40,12 +51,62 @@ class Application {
     protected $template;
 
     /**
-     * @ORM\OneToMany(targetEntity="Element", mappedBy="application")
+     * @ORM\OneToMany(targetEntity="Element", mappedBy="application",
+     *     cascade={"persist", "remove"})
      */
     protected $elements;
 
-    protected $owner;
+    /**
+     * @ORM\OneToMany(targetEntity="Element", mappedBy="application",
+     *      cascade={"persist"})
+     */
     protected $layersets;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User")
+     */
+    protected $owner;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Role")
+     * @ORM\JoinTable(name="mb_application_roles")
+     */
+    protected $roles;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $published;
+
+    /**
+     * @ORM\Column(type="string", length=256, nullable=true)
+     */
+    protected $screenshot;
+
+    public function __construct() {
+        $this->elements = new ArrayCollection();
+        $this->layersets = new ArrayCollection();
+        $this->roles = new ArrayCollection();
+    }
+
+    /**
+     * Get entity source type
+     *
+     * @param int $source
+     */
+    public function setSource($source) {
+        $this->source = $source;
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return type
+     */
+    public function getSource() {
+        return $this->source;
+    }
 
     /**
      * Get id
@@ -63,6 +124,7 @@ class Application {
      */
     public function setTitle($title) {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -81,6 +143,7 @@ class Application {
      */
     public function setSlug($slug) {
         $this->slug = $slug;
+        return $this;
     }
 
     /**
@@ -97,8 +160,10 @@ class Application {
      *
      * @param text $description
      */
+
     public function setDescription($description) {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -109,11 +174,7 @@ class Application {
     public function getDescription() {
         return $this->description;
     }
-    public function __construct()
-    {
-        $this->elements = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
+
     /**
      * Set template
      *
@@ -122,12 +183,13 @@ class Application {
     public function setTemplate($template)
     {
         $this->template = $template;
+        return $this;
     }
 
     /**
      * Get template
      *
-     * @return string 
+     * @return string
      */
     public function getTemplate()
     {
@@ -139,18 +201,108 @@ class Application {
      *
      * @param Mapbender\CoreBundle\Entity\Element $elements
      */
-    public function addElements(\Mapbender\CoreBundle\Entity\Element $elements)
-    {
+    public function addElements(\Mapbender\CoreBundle\Entity\Element $elements) {
         $this->elements[] = $elements;
     }
 
     /**
      * Get elements
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return Doctrine\Common\Collections\Collection
      */
-    public function getElements()
-    {
+    public function getElements() {
         return $this->elements;
     }
+
+    /**
+     * Add layersets
+     *
+     * @param Layerset $layerset
+     */
+    public function addLayersets(Layerset $layersets) {
+        $this->layersets[] = $layersets;
+    }
+
+    /**
+     * Get layersets
+     *
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function getLayersets() {
+        return $this->layersets;
+    }
+
+    /**
+     * Set screenshot
+     *
+     * @param string $screenshot
+     */
+    public function setScreenshot($screenshot) {
+        $this->screenshot = $screenshot;
+    }
+
+    /**
+     * Get screenshot
+     *
+     * @return string
+     */
+    public function getScreenshot() {
+        return $this->screenshot;
+    }
+
+    /**
+     * Set owner
+     *
+     * @param User $owner
+     */
+    public function setOwner($owner) {
+        $this->owner = $owner;
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return User
+     */
+    public function getOwner() {
+        return $this->owner;
+    }
+
+    /**
+     * Add roles
+     *
+     * @param Role $role
+     */
+    public function addRole(Role $role) {
+        $this->role[] = $role;
+    }
+
+    /**
+     * Get allowed roles
+     *
+     * @return array
+     */
+    public function getRoles() {
+        return $this->roles;
+    }
+
+    /**
+     * Set published
+     *
+     * @param boolean $published
+     */
+    public function setPublished($published) {
+        $this->published = $published;
+    }
+
+    /**
+     * Is published?
+     *
+     * @return boolean
+     */
+    public function isPublished() {
+        return $this->published;
+    }
 }
+

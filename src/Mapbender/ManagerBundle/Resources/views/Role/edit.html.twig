@@ -1,0 +1,26 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ "Edit Role" | trans}}{% endblock %}
+
+{% block manager_content %}
+
+<form action="{{ path('mapbender_manager_role_update', { 'id': role.id }) }}" method="post" {{ form_enctype(form)}} class="well">
+    {% if form_errors(form) %}
+    <div class="alert alert-error">
+        {{ form_errors(form) }}
+    </div>
+    {% endif %}
+
+    {% set user_count = '<span class="badge badge-info">' ~ role.users | length ~ '</span>' %}
+    <p>{%trans with {'%user_count%': user_count } %}There are %user_count% users registered in this role.{% endtrans %}</p>
+
+    {{ form_row(form._token) }}
+    {% include 'MapbenderManagerBundle:Role:form.html.twig' %}
+
+    <footer>
+        <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
+        <a href="{{ url('mapbender_manager_role_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+    </footer>
+</form>
+
+{% endblock %}

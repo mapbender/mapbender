@@ -38,7 +38,22 @@ class ApplicationType extends AbstractType {
                 'choices' => $options['available_templates'],
                 'attr' => array(
                     'title' => 'The HTML template used for this '
-                    .'application.')));
+                    .'application.')))
+
+            // Security
+            ->add('published', 'checkbox', array(
+                'required' => false,
+                'label' => 'Published'))
+            ->add('owner', 'entity', array(
+                'class' => 'MapbenderCoreBundle:User',
+                'property' => 'username',
+                'label' => 'Owner'))
+            ->add('roles', 'entity', array(
+                'class' => 'MapbenderCoreBundle:Role',
+                'expanded' => true,
+                'multiple' => true,
+                'property' => 'title',
+                'label' => 'Roles'));
     }
 }
 

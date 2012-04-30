@@ -15,6 +15,8 @@
 {% set form_errors = form_errors(form) %}
 
 {% block manager_content %}
+<p>{% trans %}Create a new application by providing basic information and then
+use the edit mode to add elements, layers and security.{% endtrans %}</p>
 
 <form action="{{ path('mapbender_manager_application_create') }}" method="post" {{ form_enctype(form)}} class="well">
     {% if form_errors(form) %}
@@ -25,7 +27,8 @@
 
     {{ form_row(form._token) }}
 
-    {%include "MapbenderManagerBundle:Application:form-basic.html.twig" %}
+    {% include "MapbenderManagerBundle:Application:form-create.html.twig" %}
+
     <footer>
         <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
         <a href="{{ url('mapbender_manager_application_index') }}" class="btn">{{ 'Cancel' | trans}}</a>

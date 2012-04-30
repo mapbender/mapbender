@@ -22,10 +22,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class TranslationController extends Controller {
      /**
-     * @Route("/transtext")
+     * @Route("/trans")
      * @Method({"POST"})
      */
-    public function transtextAction() {
+    public function transAction() {
         $tr = $this->get('translator');
         $request = $this->get('request');
         $paramspost = $request->request->all();

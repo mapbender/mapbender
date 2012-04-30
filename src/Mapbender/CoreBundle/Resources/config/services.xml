@@ -13,6 +13,10 @@
         <service id="mapbender.proxy" class="Mapbender\CoreBundle\Component\ProxyService">
             <argument>%mapbender.proxy%</argument>
         </service>
+        <service id="security.access.rootaccount.voter" class="Mapbender\CoreBundle\Security\Authorization\Voter\RootAccountVoter">
+            <argument type="service" id="service_container" strict="false" />
+            <tag name="security.voter" />
+        </service>
     </services>
 </container>
 

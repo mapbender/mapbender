@@ -1,26 +1,27 @@
 {% extends '::base.html.twig' %}
 
 {% block baseHead %}
+
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <!--[if IE]>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <![endif]-->
     <title>{% block title %}{% endblock %} - {{ server_name }}</title>
-
-    {% block head %}{% endblock %}
+{% block head %}{% endblock %}
 
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendercore/reset.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendercore/mapquery/lib/jquery/themes/base/jquery-ui.css') }}" />
+{% block css %}{% endblock %}
 
-    {% block css %}{% endblock %}
 {% endblock %}
 
 {% block baseContent %}
-    {% block content %}{% endblock %}
+
+{% block content %}{% endblock %}
 
     <script type="text/javascript" src="{{ asset('bundles/mapbendercore/mapquery/lib/jquery/jquery-1.4.4.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/mapbendercore/mapquery/lib/jquery/ui/jquery-ui.js') }}"></script>
+{% block js %}{% endblock %}
 
-    {% block js %}{% endblock %}
 {% endblock %}
 

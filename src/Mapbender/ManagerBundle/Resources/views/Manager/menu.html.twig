@@ -9,7 +9,7 @@
 <div id="manager-user-menu">
     <p>{{ "You're logged in as"|trans}} <em>{{ app.user.username }}</em>:</p>
     <ul>
-        <li id="manager-account"><a href="#">{{ "Your Account"|trans }}</a></li>
+        <li id="manager-account"><a href="{{ url('mapbender_manager_user_edit', {'id': app.user.id}) }}">{{ "Your Account"|trans }}</a></li>
         <li id="manager-logout"><a href="{{ url('mapbender_core_user_logout') }}">{{ "Logout"|trans }}</a></li>
     </ul>
 </div>

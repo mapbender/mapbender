@@ -14,7 +14,7 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
 /**
  * CoreBundle.
  *
- * @author Christian Wygoda <arsgeografica@gmail.com>
+ * @author Christian Wygoda
  */
 class MapbenderCoreBundle extends MapbenderBundle {
     public function getTemplates() {
@@ -24,10 +24,9 @@ class MapbenderCoreBundle extends MapbenderBundle {
     public function getElements() {
         return array(
             'Mapbender\CoreBundle\Element\AboutDialog',
-            'Mapbender\CoreBundle\Element\AreaRuler',
             'Mapbender\CoreBundle\Element\Button',
             'Mapbender\CoreBundle\Element\FeatureInfo',
-            'Mapbender\CoreBundle\Element\LineRuler',
+            'Mapbender\CoreBundle\Element\Ruler',
             'Mapbender\CoreBundle\Element\Map',
             'Mapbender\CoreBundle\Element\Toc');
     }

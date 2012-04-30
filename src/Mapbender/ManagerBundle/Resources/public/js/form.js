@@ -9,6 +9,10 @@
     //
     form.find('div.tabbed').tab();
 
+    // After tabbing, give focus to first visible :input, but mind the search
+    // field
+    $('form:not(#manager-search) :input:visible').eq(0).focus();
+
     //
     // If we have a title field AND a slug field, make them dependent
     //
@@ -94,6 +98,22 @@
             items: 'tbody > tr',
             tolerance: 'pointer'
         });
+    });
+
+    //
+    // Roles checkboxes
+    //
+    var roles = $('#application_roles');
+    roles.find('input').each(function() {
+        var checkbox = $(this).hide();
+        var label = roles.find('label[for="' + checkbox.attr('id') + '"]');
+        label.addClass('btn');
+        if(checkbox.prop('checked')) {
+            label.addClass('btn-success');
+        }
+        checkbox.on('change', function() {
+            label.toggleClass('btn-success');
+        })
     });
 })();
 

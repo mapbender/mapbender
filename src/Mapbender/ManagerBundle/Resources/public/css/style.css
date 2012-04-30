@@ -218,3 +218,10 @@ div.entity-actions:hover {
 .modal .element.selected {
     background: #5bb75b
 }
+
+#application_roles input {
+    float: left;
+    clear: both;
+    margin-right: 0.2em;
+}
+

@@ -1,7 +1,46 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ 'Users' | trans }}{% endblock %}
 
 {% block manager_content %}
-Hello World!
+
+{% include "MapbenderManagerBundle:User:navigation.html.twig" %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>{{ "Name" | trans }}</th>
+            <th>{{ "E-Mail" | trans }}</th>
+            <th>{{ "Roles" | trans }}</th>
+            <th>{{ "Actions" | trans }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr id="app-{{ user.id }}">
+            <td>
+                <a href="{{ path('mapbender_manager_user_edit', {'id': user.id}) }}" title="{{ 'Edit' | trans }}">{{ user.username }}</a>
+            </td>
+            <td><a href="mailto:{{ user.email }}" title="{{ 'Contact user via e-mail' | trans }}">{{ user.email }}</a></td>
+            <td>
+                <ul>
+                    {% for role in user.roleObjects %}
+                    <li><a href="{{ path('mapbender_manager_role_edit', { 'id': role.id }) }}" title="{{ 'Edit role' | trans }}">{{ role.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>
+                <div class="entity-actions btn-group">
+                    <a class="action-edit btn" href="{{ path('mapbender_manager_user_edit',  {'id': user.id }) }}" title="{{ 'Edit' | trans }}">{{ 'Edit' | trans }}</a>
+                    {% if user.id != 1 %}
+                    <a class="action-delete btn" href="{{ path('mapbender_manager_user_confirmdelete', { 'id': user.id }) }}">{{ 'Delete' | trans }}</a>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "MapbenderManagerBundle:User:actions.html.twig" %}
+
 {% endblock %}

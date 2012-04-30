@@ -3,7 +3,8 @@
 $.widget("mapbender.mbToc", $.ui.dialog, {
     options: {
         title: 'Table of Contents',
-        autoOpen: true
+        autoOpen: true,
+        target: null
     },
 
     map: null,

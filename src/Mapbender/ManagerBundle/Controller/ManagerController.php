@@ -32,7 +32,8 @@ class ManagerController extends Controller {
             'apps' => array(
                 'title' => 'Applications',
                 '_controllers' => array(
-                    'Application')),
+                    'Application',
+                    'Element')),
             'layers' => array(
                 'title' => 'Services',
                 '_controllers' => array(
@@ -42,11 +43,7 @@ class ManagerController extends Controller {
                 'title' => 'Users',
                 '_controllers' => array(
                     'User',
-                    'Group')),
-            'settings' => array(
-                'title' => 'Settings',
-                '_controllers' => array(
-                    'Settings')));
+                    'Role')));
 
         foreach($menu as &$item) {
             $item['active'] = false;

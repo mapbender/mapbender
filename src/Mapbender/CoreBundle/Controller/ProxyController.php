@@ -13,16 +13,14 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 /**
  * Proxy controller.
  *
- * @author Christian Wygoda <arsgeografica@gmail.com>
- *
- * @Route("/proxy")
+ * @author Christian Wygoda
  */
 class ProxyController extends Controller {
     /**
      * Open Proxy. Only checks if a valid session has been started earlier.
-     * @Route("/open", name="mapbender_proxy_open")
+     * @Route("/proxy")
      */
-    public function openProxyAction() {
+    public function proxyAction() {
         $session = $this->get("session");
         if($session->get("proxyAllowed",false) !== true) {
             throw new AccessDeniedHttpException('You are not allowd to use this'
