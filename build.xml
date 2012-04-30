@@ -61,7 +61,8 @@
             wipeout="true"
             title="Mapbender3 PHP API documentation"
             deprecated="true"
-            todo="true"/>
+            todo="true"
+            quiet="false"/>
     </target>
 
     <target name="clean" description="Clean up build packages">

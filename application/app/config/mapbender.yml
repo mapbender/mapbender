@@ -47,35 +47,17 @@ parameters:
                             - { name: 'ne2:ne2', title: 'Natural Earth 2'}
             elements:
                 top:
-                    mapclick:
-                        title: Map Click
-                        class: Acme\DemoBundle\Element\MapClick
-                        label: true
-                        group: maptools
-                        target: map
-                    mapbox:
-                        title: Map Box
-                        class: Acme\DemoBundle\Element\MapBox
-                        group: maptools
-                        target: map
-                    linerulerButton:
-                        title: Line ruler
-                        class: Mapbender\CoreBundle\Element\Button
-                        group: maptools
-                        icon: lineruler
-                        label: false
-                        target: lineruler
-                        action: activate
-                        deactivate: deactivate
-                    arearulerButton:
-                        title: Area ruler
-                        class: Mapbender\CoreBundle\Element\Button
-                        group: maptools
-                        icon: arearuler
-                        label: false
-                        target: arearuler
-                        action: activate
-                        deactivate: deactivate
+                    #mapclick:
+                    #    title: Map Click
+                    #    class: Acme\DemoBundle\Element\MapClick
+                    #    label: true
+                    #    group: maptools
+                    #    target: map
+                    #mapbox:
+                    #    title: Map Box
+                    #    class: Acme\DemoBundle\Element\MapBox
+                    #    group: maptools
+                    #    target: map
                     toc-button:
                         title: TOC
                         class: Mapbender\CoreBundle\Element\Button
@@ -113,93 +95,4 @@ parameters:
                         class: Mapbender\CoreBundle\Element\Toc
                         target: map
                         autoOpen: false
-                    lineruler:
-                        title: Distance
-                        class: Mapbender\CoreBundle\Element\LineRuler
-                        group: maptools
-                        target: map
-                    arearuler:
-                        title: Area
-                        class: Mapbender\CoreBundle\Element\AreaRuler
-                        group: maptools
-                        target: map
-
-        osm_denver:
-            title: OSM Denver Map
-            description: "Simple map showing OSM with WMTS tiles."
-            template:  Mapbender\CoreBundle\Template\Fullscreen
-            layersets:
-                main:
-                    osm-denver:
-                        class: Mapbender\WmtsBundle\WmtsLayerLoader
-                        title: Denver OSM
-                        url: http://demo.mapserver.org:8081/geocache/wmts
-                        layer: osm-denver
-                        style: default
-                        matrixSet: osmgrid
-                        baselayer: true
-                        visible: true,
-                        format: image/png
-                        origin: [-109.060090, 41.013656]
-                    mapbender_users:
-                        class: Mapbender\WmsBundle\WmsLayer
-                        title: Mapbender Users
-                        url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
-                        layers:
-                            - { name: Mapbender_User,    title : User,  visible: true }
-                            - { name: Mapbender_Names,   title : Name,   visible: true, queryable: true }
-                        queryLayers: [Mapbender_Names]
-                        queryFormat: text/html
-                        baselayer: false
-                        visible: true
-                        format: image/png
-                        transparent: true
-                        tiled: false
-                        opacity: 85
-            elements:
-                top:
-                    mapclick:
-                        title: Map Click
-                        class: Acme\DemoBundle\Element\MapClick
-                        label: true
-                        group: maptools
-                        target: map
-                    mapbox:
-                        title: Map Box
-                        class: Acme\DemoBundle\Element\MapBox
-                        group: maptools
-                        target: map
-                    lineruler:
-                        title: Distance
-                        class: Mapbender\CoreBundle\Element\LineRuler
-                        group: maptools
-                        target: map
-                    arearuler:
-                        title: Area
-                        class: Mapbender\CoreBundle\Element\AreaRuler
-                        group: maptools
-                        target: map
-                    toc-button:
-                        title: TOC
-                        class: Mapbender\CoreBundle\Element\Button
-                        target: toc
-                        action: open
-                    about:
-                        title: About
-                        class: Mapbender\CoreBundle\Element\AboutDialog
-                content:
-                    map:
-                        title: Main Map
-                        class: Mapbender\CoreBundle\Element\Map
-                        layerset: main
-                        srs: EPSG:4326
-                        units: degrees
-                        extents:
-                            start: [-102.75,38.5,-102.5,39.5]
-                            max: [-180,-90,180,90]
-                        maxResolution: 'auto'
-                    toc:
-                        title: Table of Contents
-                        class: Mapbender\CoreBundle\Element\Toc
-                        target: map
 
