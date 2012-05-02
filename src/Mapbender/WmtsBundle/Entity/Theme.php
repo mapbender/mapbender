@@ -109,14 +109,6 @@ class Theme {
     }
     
     /**
-     * Add theme
-     * @param Theme $theme 
-     */
-    public function addTheme($theme) {
-        $this->theme->add($theme);
-    }
-    
-    /**
      * Add theme into theme
      * @param Theme $theme 
      */
