@@ -318,19 +318,4 @@ class WmtsLayerDetail extends WmtsGroupLayer {
     public function getLayer(){
         return $this->layer;
     }
-//
-//        #WORKAROUND: form some reason $layer is an array of arrays instead of an array of WMTSLayerobjects
-//
-//        $this->tileMatrixSet = new ArrayCollection();
-////        $newLayer = null;
-//        foreach ($tileMatrixSets as $tms ){
-////            $newLayer = new WMTSLayer(); 
-////            $newLayer->setName($l['name']);
-////            $newLayer->setTitle($l['title']);
-////            $newLayer->setAbstract($l['abstract']);
-////            $this->layer->add($newLayer);
-//        }
-//
-//    }
-
 }

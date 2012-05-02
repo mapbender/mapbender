@@ -185,4 +185,3 @@ class TileMatrixSet {
         return $tilematrixset;
     }
 }
-?>

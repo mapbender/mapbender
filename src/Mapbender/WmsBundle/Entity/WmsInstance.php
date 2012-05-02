@@ -448,4 +448,3 @@ class WmsInstance {
         return $form;
     }
 }
-?>

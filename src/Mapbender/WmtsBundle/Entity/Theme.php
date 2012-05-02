@@ -116,9 +116,14 @@ class Theme {
         $this->theme->add($theme);
     }
     
-//    public function getAsArray(Theme $theme=null, &$themes=array()) {
+    /**
+     * Add theme into theme
+     * @param Theme $theme 
+     */
+    public function addTheme($theme) {
+        $this->theme->add($theme);
+    }
     public function getAsArray() {
-//        $theme = $theme==null? $this: $theme;
         $theme = $this;
         $themes = array();
         $themes["identifier"] = $theme->getIdentifier();
@@ -133,4 +138,3 @@ class Theme {
         return $themes;
     }
 }
-?>

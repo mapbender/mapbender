@@ -167,4 +167,3 @@ class TileMatrix {
         return $tilematrix;
     }
 }
-?>
