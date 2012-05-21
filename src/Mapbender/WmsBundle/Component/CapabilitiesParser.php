@@ -158,6 +158,18 @@ class CapabilitiesParser {
                                         $wms->setSymbolRemoteWFS($remoteWFS);
                                     break;
                                     case "Layer":
+                                        foreach ($node->childNodes as $subnode){
+                                            switch ($subnode->nodeName) {
+                                                case "CRS":
+                                                    $wms->addSrs($subnode->nodeValue);
+                                                    break;
+                                                case "SRS":
+                                                    $wms->addSrs($subnode->nodeValue);
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                        }
                                         $sublayer = $this->WMSLayerFromLayerNode($node);
                                         $wms->getLayer()->add($sublayer);
                                     break;
@@ -272,6 +284,9 @@ class CapabilitiesParser {
                     break;
                     
                     case "SRS":
+                        $srs[] = $node->nodeValue;
+                        
+                    case "CRS":
                         $srs[] = $node->nodeValue;
                     break;
 

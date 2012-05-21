@@ -51,7 +51,7 @@ class WmtsLayerLoader implements LayerInterface {
             $this->configuration["baselayer"] = $wmtsinstance->getBaselayer();
             $this->configuration["visible"] = $wmtsinstance->getVisible();
             $this->configuration["title"] = $wmtsinstance->getLayerid();
-//                    
+            $this->configuration["srs"] = $wmtsinstance->getSrs();
             $this->configuration["url"] = ($wmts->getRequestGetTileGETREST()!==null)? $wmts->getRequestGetTileGETREST() : $wmts->getRequestGetTileGETKVP();
             $this->configuration["layer"] = $layer->getTitle();
             $this->configuration["style"] = $wmtsinstance->getStyle();

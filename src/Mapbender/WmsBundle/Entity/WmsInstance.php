@@ -78,7 +78,10 @@ class WmsInstance {
      * @ORM\Column(type="boolean", nullable="true")
      */
     protected $tiled = false;
-    
+    /**
+    * @ORM\Column(type="array", nullable="true")
+    */
+    protected $srs = array();
     /**
      * Gets id
      *
@@ -335,6 +338,51 @@ class WmsInstance {
      */
     public function setPublished($published) {
         $this->published = $published;
+    }
+    /**
+     * Get the srs
+     *
+     * @return array
+     */
+    public function getSrs() {
+        return $this->srs;
+    }
+    /**
+     * Set the srs
+     *
+     * @param array $srs
+     */
+    public function setSrs($srs) {
+        $this->srs = $srs;
+    }
+    /**
+     * Set the srs
+     *
+     * @param string $srs
+     */
+    public function addSrs($srs){
+        if($this->srs !== null){
+            if(srs !== null && !in_array($srs, $this->srs)){
+                $this->srs[] = $srs;
+            }
+        } else {
+            if(srs !== null){
+                $this->srs = array();
+                $this->srs[] = $srs;
+            }
+        }
+    }
+    /**
+     * Has the srs
+     *
+     * @param string $srs
+     */
+    public function hasSrs($srs){
+        if($this->srs === null){
+            return false;
+        } else {
+            return in_array($srs, $this->srs);
+        }
     }
   
     public function getLayerArray($name) {
