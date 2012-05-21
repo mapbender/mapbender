@@ -72,7 +72,7 @@ div.mb-element-button {
     display: none;
 }
 
-.mb-element-button.ui-button-icon-primary-featureinfo {
+.mb-element-button .ui-button-icon-primary.featureinfo {
     background-image: url('icons/MActionIdentify.png');
 }
 
