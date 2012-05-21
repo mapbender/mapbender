@@ -23,12 +23,14 @@ class ProxyController extends Controller {
      * @Route("/open", name="mapbender_proxy_open")
      */
     public function openProxyAction() {
-#        $session = $this->get("session");
-#        if($session->get("proxyAllowed",false) !== true) {
-#            throw new AccessDeniedHttpException('You are not allowd to use this'
-#               . ' proxy without a session.');
-#       }
-#        session_write_close();
+        /*
+        $session = $this->get("session");
+        if($session->get("proxyAllowed",false) !== true) {
+            throw new AccessDeniedHttpException('You are not allowd to use this'
+               . ' proxy without a session.');
+        }
+        */
+        session_write_close();
 
         return $this->get('mapbender.proxy')->proxy($this->getRequest());
     }
