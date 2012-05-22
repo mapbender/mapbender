@@ -274,7 +274,11 @@ class WmtsCapabilitiesParser {
                     $tilematrixset->setTitle($this->getValue("./ows:Title/text()", $tilematrixsetEl));
                     $tilematrixset->setAbstract($this->getValue("./ows:Abstract/text()", $tilematrixsetEl));
 //                    $tilematrixset->setKeyword($this->getValue("./ows:Keyword/text()", $tilematrixsetEl));// ????
-                    $tilematrixset->setSupportedSRS($this->getValue("./ows:SupportedCRS/text()", $tilematrixsetEl));
+                    $srslist = $this->xpath->query("./ows:SupportedCRS", $tilematrixsetEl);
+                    foreach($srslist as $srsEl) {
+                        $tilematrixset->addSupportedSRS($this->getValue("./text()", $srsEl));
+                    }
+                    
                     $tilematrixset->setWellknowscaleset($this->getValue("./wmts:WellKnownScaleSet/text()", $tilematrixsetEl));
 //                    $tilematrixset->setBoundingBox($this->getValue("./ows:BoundingBox/text()", $tilematrixsetEl));// ????
                     

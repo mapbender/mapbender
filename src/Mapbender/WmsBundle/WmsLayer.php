@@ -46,7 +46,7 @@ class WmsLayer implements LayerInterface {
             $this->configuration["baselayer"] = $wmsinstance->getBaselayer();
             $this->configuration["visible"] = $wmsinstance->getVisible();
             $this->configuration["title"] = $wmsinstance->getLayerid();
-
+            $this->configuration["srs"] = $wmsinstance->getSrs();
             $this->configuration["url"] = $wms->getRequestGetMapGET();
             $this->configuration["layers"] = $wmsinstance->getLayers();
             $this->configuration["format"] = $wmsinstance->getFormat();

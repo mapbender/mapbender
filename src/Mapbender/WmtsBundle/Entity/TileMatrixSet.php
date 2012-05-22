@@ -17,8 +17,8 @@ class TileMatrixSet {
     protected $identifier;
     /**  @var string keyword ??? */
     protected $keyword;
-    /**  @var string supportedsrs */
-    protected $supportedsrs;
+    /**  @var array supportedsrs */
+    protected $supportedsrs = array();
     /**  @var string wellknowscaleset */
     protected $wellknowscaleset;
     /**  @var array $tilematrixes */
@@ -119,6 +119,36 @@ class TileMatrixSet {
      */
     public function setSupportedSRS($value) {
         $this->supportedsrs = $value;
+    }
+    /**
+     * Add supportedsrs
+     * 
+     * @param string $value 
+     */
+    public function addSupportedSRS($value) {
+        if($this->supportedsrs === null) {
+            $this->supportedsrs = array();
+        }
+        if(!in_array($value, $this->supportedsrs)){
+            $this->supportedsrs[] = $value;
+        }
+    }
+    /**
+     * Get simple supportedsrs
+     * 
+     * return array 
+     */
+    public function getSRS() {
+        if($this->supportedsrs === null) {
+            return array();
+        } else {
+            $array = array();
+            foreach($this->supportedsrs as $srs) {
+                $newsrs = strripos($srs, "EPSG") !== FALSE ? substr($srs, strripos($srs, "EPSG")) : $srs;
+                $array[] = str_replace("::" , ":" , $newsrs);
+            }
+            return $array;
+        }
     }
     /**
      * Get wellknowscaleset
