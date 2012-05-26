@@ -4,12 +4,13 @@
 
 {% block manager_js %}
 <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/list.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-list.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
 
 {% if applications | length > 0 %}
-<table class="table table-striped">
+<table class="table table-striped" id="application-list">
     <thead>
         <tr>
             <th>{{ "Title (Slug)" | trans }}</th>
@@ -19,9 +20,9 @@
     </thead>
     <tbody>
         {% for application in applications %}
-        <tr id="app-{{ application.id }}">
+        <tr data-application-slug="{{ application.slug }}" data-application-id="{{ application.id }}">
             <td>
-                <i class="icon-eye-{% if application.published %}open{% else %}close{% endif %}"></i>
+                <i class="application-state icon-eye-{% if application.published %}open{% else %}close{% endif %}" title={{ 'Toggle application state quickly' | trans }}></i>
                 <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) }}" title="{{ 'Edit' | trans }}">{{ application.title }}</a>
                 <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View' | trans }}">({{ application.slug }})</a>
             </td>

@@ -141,6 +141,43 @@ class ApplicationController extends Controller {
     }
 
     /**
+     * Toggle application state.
+     *
+     * @Route("/application/{slug}/state", options={"expose"=true})
+     * @Method("POST")
+     */
+    public function toggleStateAction($slug) {
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $requestedState = $this->get('request')->get('state');
+        $currentState = $application->isPublished();
+        $newState = $currentState;
+
+        switch($requestedState) {
+        case 'enabled':
+        case 'disabled':
+            $newState = $requestedState === 'enabled' ? true : false;
+            $application->setPublished($newState);
+            $em->flush();
+            $message = 'State switched';
+            break;
+        case null:
+            $message = 'No state given';
+            break;
+        default:
+            $message = 'Unknown state requested';
+            break;
+        }
+
+        return new Response(json_encode(array(
+            'oldState' => $currentState ? 'enabled' : 'disabled',
+            'newState' => $newState ? 'enabled' : 'disabled',
+            'message' => $message)), 200, array(
+                'Content-Type' => 'application/json'));
+    }
+
+    /**
      * Delete confirmation page
      * @Route("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")

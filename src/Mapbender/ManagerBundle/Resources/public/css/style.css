@@ -225,3 +225,6 @@ div.entity-actions:hover {
     margin-right: 0.2em;
 }
 
+i.application-state {
+    cursor: pointer;
+}
