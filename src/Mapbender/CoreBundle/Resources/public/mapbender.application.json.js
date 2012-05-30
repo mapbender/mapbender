@@ -2,9 +2,12 @@
     var Plugin = function() {};
 
     $.extend(Plugin.prototype, {
-        options: {},
+        options: {num: -1},
         element: undefined,
         loadCounter: -1,
+        checkCounter: -1,
+        cssToLoad: {},
+        json: {},
 
         construct: function(options) {
             if(typeof(this.options.jsonUrl) === 'undefined') {
@@ -33,7 +36,9 @@
             this.loadHtml(json);
             this.loadCss(json);
             this.loadConfiguration(json);
-            this.loadJs(json);
+            this.checkCounter = 100;
+            this.json = json;
+            this.loadJs();
         },
 
         loadHtml: function(json) {
@@ -43,7 +48,9 @@
         },
 
         loadCss: function(json) {
+            var that = this;
             if(json.assets && json.assets.css) {
+                that.cssToLoad = {};
                 var head = $('head');
                 if(!$.isArray(json.assets.css)) {
                     json.assets.css = [json.assets.css];
@@ -58,42 +65,74 @@
                     css.rel = 'stylesheet';
                     css.type = 'text/css';
                     css.href = v;
+                    var path = v.split("/");
+                    that.cssToLoad[path[path.length - 1]] = css;
                     document.getElementsByTagName('head')[0].appendChild(css);
                     // do not use jquery to load it, will not work in IE!
                     // $('<link rel="stylesheet" type="text/css" href="' + v + '"/>')
                     //     .appendTo(head);
                 });
-
             }
         },
 
-        loadJs: function(json) {
+        loadJs: function() {
             var self = this;
-             if(json.assets && json.assets.js) {
-                 if(!$.isArray(json.assets.js)) {
-                    json.assets.js = [json.assets.js];
-                 }
-                 $.each(json.assets.js, function(k, v) {
-                    // !!! IE7 important: typeof(v[0]) !== 'undefined'
-                    if(typeof(v[0]) !== 'undefined' && v[0] !== '/' && json.configuration && json.configuration.assetPath) {
-                        v = json.configuration.assetPath + '/' + v;
+//            window.console && console.log("loadJs"+self.checkCounter);
+            try {
+                if(self.checkCounter > -1){
+                    var sheets = document.styleSheets;
+                    for(var j = 0; j < sheets.length; j++) {
+                        if(sheets[j].href && sheets[j].href != null){
+                            var path = sheets[j].href.split("/");
+                            if(self.cssToLoad[path[path.length - 1]]){
+                                sheets[j].cssRules;
+                            }
+                        }
                     }
-                            // do not use jquery to load scripts, will fail on IE!
-                            // $.getScript(v, $.proxy(function(data){
-                            //                            $.globalEval(data);
-                            //                            alert(Mapbender.configuration);
-                            //                          }, self));
-                    var script = document.createElement('script');
-                    script.type = 'text/javascript';
-                    script.src = v;
-                            // $.getScript(v);
-                    document.body.appendChild(script);
-                    // $('<script type="text/javascript"></script')
-                    //     .attr('src', v)
-                    //     .appendTo($('body'));
-                 });
+                }
+//                window.console && console.log("css loaded");
+//                window.console && console.log(self.cssToLoad);
+                var json = self.json;
+                if(json.assets && json.assets.js) {
+                    if(!$.isArray(json.assets.js)) {
+                        json.assets.js = [json.assets.js];
+                    }
+                    $.each(json.assets.js, function(k, v) {
+                        // !!! IE7 important: typeof(v[0]) !== 'undefined'
+                        if(typeof(v[0]) !== 'undefined' && v[0] !== '/' && json.configuration && json.configuration.assetPath) {
+                            v = json.configuration.assetPath + '/' + v;
+                        }
+                        // do not use jquery to load scripts, will fail on IE!
+                        // $.getScript(v, $.proxy(function(data){
+                        //                            $.globalEval(data);
+                        //                            alert(Mapbender.configuration);
+                        //                          }, self));
+                        var script = document.createElement('script');
+                        script.type = 'text/javascript';
+                        script.src = v;
+                        // $.getScript(v);
+                        document.body.appendChild(script);
+                        // $('<script type="text/javascript"></script')
+                        //     .attr('src', v)
+                        //     .appendTo($('body'));
+                    });
 
-             }
+                }
+            } catch(e) {
+                self.checkCounter--;
+//                window.console && console.log("wait for css");
+//                var sheets = document.styleSheets;
+//                for(var j = 0; j < sheets.length; j++) {
+//                    if(sheets[j].href && sheets[j].href != null){
+//                        var path = sheets[j].href.split("/");
+//                        if(self.cssToLoad[path[path.length - 1]]){
+////                                sheets[j].cssRules;
+//                            window.console && console.log(sheets[j]);
+//                        }
+//                    }
+//                }
+                window.setTimeout($.proxy(self.loadJs, self), 50);
+            }
         },
 
         loadConfiguration: function(json) {
