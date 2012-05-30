@@ -77,7 +77,7 @@
 
         loadJs: function() {
             var self = this;
-//            window.console && console.log("loadJs"+self.checkCounter);
+            window.console && console.log("loadJs:"+self.checkCounter);
             try {
                 if(self.checkCounter > -1){
                     var sheets = document.styleSheets;
@@ -91,6 +91,8 @@
                     }
                     window.console && console.log("css loaded");
                     window.console && console.log(self.cssToLoad);
+                    self.checkCounter = -1;
+                    window.setTimeout($.proxy(self.loadJs, self), 200);
                 } else {
                     window.console && console.log("css load timeout");
                     window.console && console.log(self.cssToLoad);
