@@ -89,9 +89,12 @@
                             }
                         }
                     }
+                    window.console && console.log("css loaded");
+                    window.console && console.log(self.cssToLoad);
+                } else {
+                    window.console && console.log("css load timeout");
+                    window.console && console.log(self.cssToLoad);
                 }
-//                window.console && console.log("css loaded");
-//                window.console && console.log(self.cssToLoad);
                 var json = self.json;
                 if(json.assets && json.assets.js) {
                     if(!$.isArray(json.assets.js)) {
@@ -111,6 +114,7 @@
                         script.type = 'text/javascript';
                         script.src = v;
                         // $.getScript(v);
+                        window.console && console.log("js load "+v);
                         document.body.appendChild(script);
                         // $('<script type="text/javascript"></script')
                         //     .attr('src', v)
@@ -120,7 +124,7 @@
                 }
             } catch(e) {
                 self.checkCounter--;
-//                window.console && console.log("wait for css");
+                window.console && console.log("wait for css");
 //                var sheets = document.styleSheets;
 //                for(var j = 0; j < sheets.length; j++) {
 //                    if(sheets[j].href && sheets[j].href != null){
