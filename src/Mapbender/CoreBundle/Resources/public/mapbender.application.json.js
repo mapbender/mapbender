@@ -5,9 +5,8 @@
         options: {num: -1},
         element: undefined,
         loadCounter: -1,
-        checkCounter: -1,
-        cssRulesLength: -1,
         cssToLoad: {},
+        jsonLoaded: false,
         json: {},
 
         construct: function(options) {
@@ -37,9 +36,8 @@
             this.loadHtml(json);
             this.loadCss(json);
             this.loadConfiguration(json);
-            this.checkCounter = 100;
             this.json = json;
-            this.loadJs();
+            this.checkCss(); 
         },
 
         loadHtml: function(json) {
@@ -67,7 +65,12 @@
                     css.type = 'text/css';
                     css.href = v;
                     var path = v.split("/");
-                    that.cssToLoad[path[path.length - 1]] = css;
+                    that.cssToLoad[path[path.length - 1]] = {
+                        css: css,
+                        checkCounter: 100,
+                        cssRulesLength: -1,
+                        loaded: false
+                    };
                     document.getElementsByTagName('head')[0].appendChild(css);
                     // do not use jquery to load it, will not work in IE!
                     // $('<link rel="stylesheet" type="text/css" href="' + v + '"/>')
@@ -76,78 +79,83 @@
             }
         },
 
-        loadJs: function() {
+        checkCss: function() {
             var self = this;
-            window.console && console.log("loadJs:"+self.checkCounter);
-            try {
-                if(self.checkCounter > -1){
-                    var cssRulesLength = 0;
-                    var sheets = document.styleSheets;
-                    for(var j = 0; j < sheets.length; j++) {
-                        if(sheets[j].href && sheets[j].href != null){
-                            var path = sheets[j].href.split("/");
-                            if(self.cssToLoad[path[path.length - 1]]){
-                                sheets[j].cssRules;
-                                cssRulesLength = sheets[j].cssRules.length;
+            for(cssTL in self.cssToLoad){
+                try {
+                    if(self.cssToLoad[cssTL].checkCounter > -1){
+                        var cssRulesLength = 0;
+                        var sheets = document.styleSheets;
+                        var name = "";
+                        for(var j = 0; j < sheets.length; j++) {
+                            if(sheets[j].href && sheets[j].href != null){
+                                var path = sheets[j].href.split("/");
+                                name = path[path.length - 1];
+                                if(self.cssToLoad[name]){
+                                    sheets[j].cssRules;
+                                    cssRulesLength = sheets[j].cssRules.length;
+                                    window.console && console.log(sheets[j].cssRules);
+                                    break;
+                                }
                             }
                         }
-                    }
-                    window.console && console.log("css loaded");
-                    window.console && console.log(self.cssToLoad);
-                    if(self.cssRulesLength != cssRulesLength){
-//                        self.checkCounter++;
-                        window.console && console.log("css load -> cssRulesLength:"+self.cssRulesLength+"-"+cssRulesLength);
-                        self.cssRulesLength = cssRulesLength;
-                        window.setTimeout($.proxy(self.loadJs, self), 50);
-                    }
-                } else {
-                    window.console && console.log("css load timeout");
-                    window.console && console.log(self.cssToLoad);
-                }
-                var json = self.json;
-                if(json.assets && json.assets.js) {
-                    if(!$.isArray(json.assets.js)) {
-                        json.assets.js = [json.assets.js];
-                    }
-                    $.each(json.assets.js, function(k, v) {
-                        // !!! IE7 important: typeof(v[0]) !== 'undefined'
-                        if(typeof(v[0]) !== 'undefined' && v[0] !== '/' && json.configuration && json.configuration.assetPath) {
-                            v = json.configuration.assetPath + '/' + v;
+                        if(self.cssToLoad[cssTL].cssRulesLength != cssRulesLength){
+                            window.console && console.log("run once more:"+self.cssToLoad[cssTL].cssRulesLength+"|"+cssRulesLength);
+                            self.cssToLoad[cssTL].cssRulesLength = cssRulesLength;
+                            window.setTimeout($.proxy(self.checkCss, self), 50);
+                        } else if(!self.cssToLoad[cssTL].loaded){
+                            self.cssToLoad[cssTL].loaded = true;
+                            window.console && console.log("run final:"+self.cssToLoad[cssTL].cssRulesLength+"|"+cssRulesLength);
+                            window.setTimeout($.proxy(self.checkCss, self), 50);
                         }
-                        // do not use jquery to load scripts, will fail on IE!
-                        // $.getScript(v, $.proxy(function(data){
-                        //                            $.globalEval(data);
-                        //                            alert(Mapbender.configuration);
-                        //                          }, self));
-                        var script = document.createElement('script');
-                        script.type = 'text/javascript';
-                        script.src = v;
-                        // $.getScript(v);
-                        window.console && console.log("js load "+v);
-                        document.body.appendChild(script);
-                        // $('<script type="text/javascript"></script')
-                        //     .attr('src', v)
-                        //     .appendTo($('body'));
-                    });
-
+                    } 
+                } catch(e) {
+                    self.cssToLoad[cssTL].checkCounter--;
+                    window.console && console.log("wait for css:"+cssTL);
+                    window.setTimeout($.proxy(self.checkCss, self), 50);
                 }
-            } catch(e) {
-                self.checkCounter--;
-                window.console && console.log("wait for css");
-//                var sheets = document.styleSheets;
-//                for(var j = 0; j < sheets.length; j++) {
-//                    if(sheets[j].href && sheets[j].href != null){
-//                        var path = sheets[j].href.split("/");
-//                        if(self.cssToLoad[path[path.length - 1]]){
-////                                sheets[j].cssRules;
-//                            window.console && console.log(sheets[j]);
-//                        }
-//                    }
-//                }
+            }
+            var canLoadJs = true;
+            for(cssTL in self.cssToLoad){
+                if(self.cssToLoad[cssTL].checkCounter > -1 && !self.cssToLoad[cssTL].loaded){
+                    canLoadJs = false;
+                }
+            }
+            if(canLoadJs && !self.jsonLoaded){
+                self.jsonLoaded = true;
                 window.setTimeout($.proxy(self.loadJs, self), 50);
             }
         },
-
+        
+        loadJs: function() {
+            var json = this.json;
+            if(json.assets && json.assets.js) {
+                if(!$.isArray(json.assets.js)) {
+                    json.assets.js = [json.assets.js];
+                }
+                $.each(json.assets.js, function(k, v) {
+                    // !!! IE7 important: typeof(v[0]) !== 'undefined'
+                    if(typeof(v[0]) !== 'undefined' && v[0] !== '/' && json.configuration && json.configuration.assetPath) {
+                        v = json.configuration.assetPath + '/' + v;
+                    }
+                    // do not use jquery to load scripts, will fail on IE!
+                    // $.getScript(v, $.proxy(function(data){
+                    //                            $.globalEval(data);
+                    //                            alert(Mapbender.configuration);
+                    //                          }, self));
+                    var script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.src = v;
+                    // $.getScript(v);
+                    window.console && console.log("js load "+v);
+                    document.body.appendChild(script);
+                    // $('<script type="text/javascript"></script')
+                    //     .attr('src', v)
+                    //     .appendTo($('body'));
+                });
+            }
+        },
+        
         loadConfiguration: function(json) {
             if(json.configuration) {
                 Mapbender = {};
