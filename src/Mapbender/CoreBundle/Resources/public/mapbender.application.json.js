@@ -100,14 +100,14 @@
                                 }
                             }
                         }
-                        if(self.cssToLoad[cssTL].cssRulesLength != cssRulesLength){
+                        if(cssRulesLength == 0 || self.cssToLoad[cssTL].cssRulesLength != cssRulesLength){
                             window.console && console.log(cssTL+" -> run once more:"+self.cssToLoad[cssTL].cssRulesLength+"|"+cssRulesLength);
                             self.cssToLoad[cssTL].cssRulesLength = cssRulesLength;
                             window.setTimeout($.proxy(self.checkCss, self), 50);
                         } else if(!self.cssToLoad[cssTL].loaded){
                             self.cssToLoad[cssTL].loaded = true;
-                            window.console && console.log(cssTL+" -> run final:"+self.cssToLoad[cssTL].cssRulesLength+"|"+cssRulesLength);
-                            window.setTimeout($.proxy(self.checkCss, self), 50);
+//                            window.console && console.log(cssTL+" -> run final:"+self.cssToLoad[cssTL].cssRulesLength+"|"+cssRulesLength);
+//                            window.setTimeout($.proxy(self.checkCss, self), 50);
                         }
                     } 
                 } catch(e) {
