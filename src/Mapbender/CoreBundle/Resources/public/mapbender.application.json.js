@@ -94,24 +94,25 @@
                                 if(self.cssToLoad[name]){
                                     sheets[j].cssRules;
                                     cssRulesLength = sheets[j].cssRules.length;
+                                    window.console && console.log(cssTL+" -> cssRules:");
                                     window.console && console.log(sheets[j].cssRules);
                                     break;
                                 }
                             }
                         }
                         if(self.cssToLoad[cssTL].cssRulesLength != cssRulesLength){
-                            window.console && console.log("run once more:"+self.cssToLoad[cssTL].cssRulesLength+"|"+cssRulesLength);
+                            window.console && console.log(cssTL+" -> run once more:"+self.cssToLoad[cssTL].cssRulesLength+"|"+cssRulesLength);
                             self.cssToLoad[cssTL].cssRulesLength = cssRulesLength;
                             window.setTimeout($.proxy(self.checkCss, self), 50);
                         } else if(!self.cssToLoad[cssTL].loaded){
                             self.cssToLoad[cssTL].loaded = true;
-                            window.console && console.log("run final:"+self.cssToLoad[cssTL].cssRulesLength+"|"+cssRulesLength);
+                            window.console && console.log(cssTL+" -> run final:"+self.cssToLoad[cssTL].cssRulesLength+"|"+cssRulesLength);
                             window.setTimeout($.proxy(self.checkCss, self), 50);
                         }
                     } 
                 } catch(e) {
                     self.cssToLoad[cssTL].checkCounter--;
-                    window.console && console.log("wait for css:"+cssTL);
+                    window.console && console.log(cssTL+" -> wait for css");
                     window.setTimeout($.proxy(self.checkCss, self), 50);
                 }
             }
@@ -121,7 +122,10 @@
                     canLoadJs = false;
                 }
             }
-            if(canLoadJs && !self.jsonLoaded){
+            if(!canLoadJs){
+                window.setTimeout($.proxy(self.checkCss, self), 50);
+            }
+            if(!self.jsonLoaded){
                 self.jsonLoaded = true;
                 window.setTimeout($.proxy(self.loadJs, self), 50);
             }
