@@ -6,6 +6,7 @@
         element: undefined,
         loadCounter: -1,
         checkCounter: -1,
+        cssRulesLength: -1,
         cssToLoad: {},
         json: {},
 
@@ -80,19 +81,25 @@
             window.console && console.log("loadJs:"+self.checkCounter);
             try {
                 if(self.checkCounter > -1){
+                    var cssRulesLength = 0;
                     var sheets = document.styleSheets;
                     for(var j = 0; j < sheets.length; j++) {
                         if(sheets[j].href && sheets[j].href != null){
                             var path = sheets[j].href.split("/");
                             if(self.cssToLoad[path[path.length - 1]]){
                                 sheets[j].cssRules;
+                                cssRulesLength = sheets[j].cssRules.length;
                             }
                         }
                     }
                     window.console && console.log("css loaded");
                     window.console && console.log(self.cssToLoad);
-                    self.checkCounter = -1;
-                    window.setTimeout($.proxy(self.loadJs, self), 200);
+                    if(self.cssRulesLength != cssRulesLength){
+//                        self.checkCounter++;
+                        window.console && console.log("css load -> cssRulesLength:"+self.cssRulesLength+"-"+cssRulesLength);
+                        self.cssRulesLength = cssRulesLength;
+                        window.setTimeout($.proxy(self.loadJs, self), 50);
+                    }
                 } else {
                     window.console && console.log("css load timeout");
                     window.console && console.log(self.cssToLoad);
