@@ -189,7 +189,8 @@ class ApplicationController extends Controller {
      * @Template
      */
     public function confirmDeleteAction($slug) {
-        $application = new Application2($id, $this->container);
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $id = $application->getId();
         return array(
             'application' => $application,
             'form' => $this->createDeleteForm($id)->createView());
@@ -202,14 +203,14 @@ class ApplicationController extends Controller {
      * @Method("POST")
      */
     public function deleteAction($slug) {
-        $application = new Application2($id, $this->container);
-        $form = $this->createDeleteForm($id);
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $form = $this->createDeleteForm($application->getId());
         $request = $this->getRequest();
 
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-            $em->remove($application->getEntity());
+            $em->remove($application);
             $em->flush();
 
             $this->get('session')->setFlash('notice',
