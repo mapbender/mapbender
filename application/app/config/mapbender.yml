@@ -1,3 +1,13 @@
+services:
+  mapbender2_geometryprovider:
+    class: OwsProxy3\CoreBundle\GeometryProvider\Mapbender2GeometryProvider
+    arguments: [ @service_container ]
+#  owsproxy.spatialsecurity.listener: 
+#    class: OwsProxy3\CoreBundle\EventListener\SpatialSecurityListener
+#    arguments: [ @service_container ]
+#    tags: 
+#      - { name: kernel.event_listener, event: owsproxy_before_proxy, method: beforeProxyEvent }
+      
 parameters:
     sensio_framework_extra.converter.doctrine.class: "Mapbender\Component\CustomDoctrineParamConverter"
     applications:

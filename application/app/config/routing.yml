@@ -1,13 +1,6 @@
 # Per default, the application list is the start page. You may change that.
-_mapbender_start:
-    pattern: "/"
-    defaults: { _controller: MapbenderCoreBundle:Application:list}
-
-_mapbender_corebundle:
-    resource: "@MapbenderCoreBundle/Controller/"
-    type: annotation
-
 _mapbender_wmsbundle:
-    resource: "@MapbenderWmsBundle/Controller/"
+    resource: "@OwsProxy3CoreBundle/Controller/"
+    prefix: "/owsproxy"
     type: annotation
 
