@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="owsproxy.spatialsecurity.class">OwsProxy3\CoreBundle\Worker\Mapbender2SpatialSecurityWorker</parameter>
+    </parameters>
+
+    <services>        
+        <service id="owsproxy.spatialsecurity" class="%owsproxy.spatialsecurity.class%">
+            <tag name="kernel.event_listener" event="owsproxy.before_proxy" method="onBeforeProxyEvent" />
+            <tag name="kernel.event_listener" event="owsproxy.after_proxy" method="onAfterProxyEvent" />
+            <argument type="service" id="service_container" />
+        </service>
+    </services>
+</container>
+

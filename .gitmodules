@@ -1,3 +1,6 @@
 [submodule "application/mapbender"]
 	path = application/mapbender
 	url = git://github.com/mapbender/mapbender.git
+[submodule "application/vendor/buzz"]
+	path = application/vendor/buzz
+	url = https://github.com/kriswallsmith/Buzz.git
