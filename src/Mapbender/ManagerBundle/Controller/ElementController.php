@@ -96,7 +96,7 @@ class ElementController extends Controller {
 
             return $this->redirect(
                 $this->generateUrl('mapbender_manager_application_edit', array(
-                    'slug' => $slug)));
+                    'slug' => $slug)) . '#elements');
         } else {
             return array(
                 'form' => $form['type']->getForm()->createView(),
@@ -162,7 +162,7 @@ class ElementController extends Controller {
 
             return $this->redirect(
                 $this->generateUrl('mapbender_manager_application_edit', array(
-                    'slug' => $slug)));
+                    'slug' => $slug)) . '#elements');
         } else {
             return array(
                 'form' => $form['type']->getForm()->createView(),
@@ -230,7 +230,7 @@ class ElementController extends Controller {
 
             return $this->redirect(
                 $this->generateUrl('mapbender_manager_application_edit', array(
-                    'slug' => $slug)));
+                    'slug' => $slug)) . '#elements');
         } else {
             return array(
                 'element' => $element,
