@@ -12,7 +12,7 @@
 
 {% block manager_content %}
 
-<form action="{{ path('mapbender_manager_application_update', { 'slug': application.slug }) }}" method="post" {{ form_enctype(form)}} class="well">
+<form action="{{ path('mapbender_manager_application_update', { 'slug': application.slug }) }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well">
 
     {{ form_row(form._token) }}
 

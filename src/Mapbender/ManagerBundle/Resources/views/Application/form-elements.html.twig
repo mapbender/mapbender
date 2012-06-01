@@ -1,6 +1,6 @@
-{% for region, elements in application.elements %}
-<h3>{{ region | capitalize }} <a data-href="{{ url('mapbender_manager_element_new', { 'app_id': application.id, 'region': region }) }}" href="#modal-application-elements" class="add-subentity btn btn-small">{{ 'Add element' | trans}}...</a></h3>
-<table class="table-elements table-sortable table table-striped">
+{% for region in regions %}
+<h3>{{ region | capitalize }} <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="btn btn-small" title="{{ 'Add element' | trans}}"><i class="icon-plus-sign"></i></a></h3>
+<table class="table table-striped">
     <thead>
         <tr>
             <th class="weight"></th>
@@ -10,19 +10,20 @@
         </tr>
     </thead>
     <tbody>
-        {% for element in elements %}
+    {% for element in application.getElementsByRegion(region) %}
         <tr>
             <td class="sort-grip"><span class="up"></span><span class="down"></span></td>
             <td>{{ element.title }}</td>
-            <td>{{ element.classtitle }}</td>
+            <td>{{ element_class_title(element) }}</td>
             <td>
                 <div class="btn-group">
-                    <a href="{{ path('mapbender_manager_element_edit', {'app_id': application.entity.id, 'id': element.id})}}" class="btn">{{ 'Edit' | trans }}</a>
-                    <a href="#" class="btn btn-warning">{{ 'Delete' | trans }}</a>
+                    <a href="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}" class="btn">{{ 'Edit' | trans }}</a>
+                    <a href="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}" class="btn btn-warning">{{ 'Delete' | trans }}</a>
                 </div>
             </td>
         </tr>
-        {% endfor %}
-    </tbody>
+    {% endfor %}
+   </tbody>
 </table>
 {% endfor %}
+

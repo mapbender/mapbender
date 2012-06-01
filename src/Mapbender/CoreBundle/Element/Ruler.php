@@ -29,7 +29,7 @@ class Ruler extends Element {
         }
     }
 
-    public function getDefaultConfiguration() {
+    public static function getDefaultConfiguration() {
         return array(
             'type' => 'line');
     }

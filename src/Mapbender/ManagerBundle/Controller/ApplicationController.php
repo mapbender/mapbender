@@ -17,8 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
 class ApplicationController extends Controller {
    /**
      * Convenience route, simply redirects to the index action.
@@ -58,7 +56,8 @@ class ApplicationController extends Controller {
 
         return array(
             'application' => $application,
-            'form' => $form->createView());
+            'form' => $form->createView(),
+            'form_name' => $form->getName());
     }
 
     /**
@@ -69,6 +68,8 @@ class ApplicationController extends Controller {
      * @Template("MapbenderManagerBundle:Application:new.html.twig")
      */
     public function createAction() {
+        $mb = $this->container->getParameter('mapbender.screenshot_path');
+        print_r($mb);die;
         $application = new Application();
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
@@ -102,10 +103,14 @@ class ApplicationController extends Controller {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         $form = $this->createApplicationForm($application);
 
+        $templateClass = $application->getTemplate();
+
         return array(
             'application' => $application,
+            'regions' => $templateClass::getRegions(),
             'available_elements' => $this->getElementList(),
-            'form' => $form->createView());
+            'form' => $form->createView(),
+            'form_name' => $form->getName());
     }
 
     /**
@@ -122,14 +127,14 @@ class ApplicationController extends Controller {
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-            $em->persist($application);
             $em->flush();
 
             $this->get('session')->setFlash('notice',
                 'Your application has been updated.');
 
             return $this->redirect(
-                $this->generateUrl('mapbender_manager_application_index'));
+                $this->generateUrl('mapbender_manager_application_edit', array(
+                    'slug' => $slug)));
         }
 
         $this->get('session')->setFlash('error',

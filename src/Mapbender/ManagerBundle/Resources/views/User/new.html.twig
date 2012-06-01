@@ -8,7 +8,7 @@
 
 {% block manager_content %}
 
-<form action="{{ path('mapbender_manager_user_create') }}" method="post" {{ form_enctype(form)}} class="well">
+<form action="{{ path('mapbender_manager_user_create') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well">
     {% if form_errors(form) %}
     <div class="alert alert-error">
         {{ form_errors(form) }}

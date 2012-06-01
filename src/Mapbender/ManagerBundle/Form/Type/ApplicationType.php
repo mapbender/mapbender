@@ -19,9 +19,7 @@ class ApplicationType extends AbstractType {
 
     public function buildForm(FormBuilder $builder, array $options) {
         $builder
-            /**
-             * Base data
-             */
+            // Base data
             ->add('title', 'text', array(
                 'attr' => array(
                     'title' => 'The application title, as shown in the browser '

@@ -24,5 +24,10 @@ class RoleType extends AbstractType {
                 'label' => 'Users'));
 
     }
+
+    public function getDefaultOptions(array $options) {
+        return array(
+            'exclude_fau_role' => false);
+    }
 }
 

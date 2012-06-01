@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Applicaton entity
@@ -12,11 +13,15 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_application")
+ * @ORM\HasLifecycleCallbacks
  */
 class Application {
 
     const SOURCE_YAML = 1;
     const SOURCE_DB = 2;
+
+    private $preparedElements;
+    private $screenshotPath;
 
     /**
      * @var integer $source
@@ -82,6 +87,11 @@ class Application {
      * @ORM\Column(type="string", length=256, nullable=true)
      */
     protected $screenshot;
+
+    /**
+     * @Assert\File(maxSize="102400")
+     */
+    public $screenshotFile;
 
     public function __construct() {
         $this->elements = new ArrayCollection();
@@ -303,6 +313,36 @@ class Application {
      */
     public function isPublished() {
         return $this->published;
+    }
+
+    public function getElementsByRegion($region = null) {
+        if($this->preparedElements === null) {
+            $this->preparedElements = array();
+
+            foreach($this->getElements() as $element) {
+                $region = $element->getRegion();
+                if(!array_key_exists($region, $this->preparedElements)) {
+                    $this->preparedElements[$region] = array();
+                }
+                $this->preparedElements[$region][] = $element;
+            }
+
+            foreach($this->preparedElements as $region => $elements) {
+                usort($elements, function($a, $b) {
+                    return $a->getWeight() - $b->getWeight();
+                });
+            }
+        }
+
+        if($this->preparedElements !== null) {
+            if(array_key_exists($region, $this->preparedElements)) {
+                return $this->preparedElements[$region];
+            } else {
+                return null;
+            }
+        } else {
+            return $this->preparedElements;
+        }
     }
 }
 

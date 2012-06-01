@@ -1,1 +1,5 @@
+{% if not role.mpttLeft == 1 %}
 {{ form_row(form.users) }}
+{% else %}
+<p>{{ 'This role is applied to every user.' | trans }}
+{% endif %}

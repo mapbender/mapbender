@@ -22,17 +22,13 @@ class RoleController extends Controller {
     /**
      * Renders role list.
      *
-     * TODO: Paging via universal ParamConverter
-     *
      * @Route("/role")
      * @Method({ "GET" })
      * @Template
      */
     public function indexAction() {
-        $query = $this->getDoctrine()->getEntityManager()->createQuery(
-            'SELECT r FROM MapbenderCoreBundle:Role r');
-
-        $roles = $query->getResult();
+        $roles = $this->getDoctrine()->getRepository('MapbenderCoreBundle:Role')
+            ->findAll();
 
         return array(
             'roles' => $roles);
@@ -49,7 +45,8 @@ class RoleController extends Controller {
 
         return array(
             'role' => $role,
-            'form' => $form->createView());
+            'form' => $form->createView(),
+            'form_name' => $form->getName());
     }
 
     /**
@@ -96,7 +93,8 @@ class RoleController extends Controller {
 
         return array(
             'role' => $role,
-            'form' => $form->createView());
+            'form' => $form->createView(),
+            'form_name' => $form->getName());
     }
 
     /**

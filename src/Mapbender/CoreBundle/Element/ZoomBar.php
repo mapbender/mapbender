@@ -40,7 +40,7 @@ EOT;
         }
     }
 
-    public function getDefaultConfiguration() {
+    public static function getDefaultConfiguration() {
         return array(
             'stepSize' => 50,
             'stepByPixel' => false,

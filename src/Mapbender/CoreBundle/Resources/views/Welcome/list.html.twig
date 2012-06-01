@@ -4,9 +4,7 @@
 <ul>
 {% for application in applications %}
     <li>
-        <div class="thumbnail">
-            <h2><a href="{{ url('mapbender_core_application_application', { 'slug': application.slug }) }}">{{ application.title }}</a></h2>
-        </div>
+        <a href="{{ url('mapbender_core_application_application', { 'slug': application.slug }) }}">{{ application.title }}</a>
     </li>
 {% endfor %}
 </ul>

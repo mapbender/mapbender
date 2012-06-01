@@ -22,7 +22,7 @@ class Button extends Element {
         return array('Button');
     }
 
-    public function getDefaultConfiguration() {
+    public static function getDefaultConfiguration() {
         return array(
             'target' => null,
             'click' => null,

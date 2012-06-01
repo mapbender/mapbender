@@ -22,7 +22,7 @@ class Toc extends Element {
         return array('TOC', 'Table of Contents');
     }
 
-    public function getDefaultConfiguration() {
+    public static function getDefaultConfiguration() {
         return array(
             'target' => null,
             'autoOpen' => true);

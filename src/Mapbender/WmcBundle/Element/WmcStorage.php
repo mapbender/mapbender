@@ -34,8 +34,7 @@ class WmcStorage extends Element {
         }
     }
 
-
-    public function getDefaultConfiguration() {
+    public static function getDefaultConfiguration() {
         return array(
             'target' => null);
     }

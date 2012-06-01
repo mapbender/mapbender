@@ -1,14 +1,17 @@
 {% extends "MapbenderManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ "Edit Element" | trans}}{% endblock %}
+{% block title %}{{ "New Element" | trans}}{% endblock %}
 
 {% block manager_css %}
-<link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.css') }}" />
+{% for asset in assets.css %}
+<link rel="stylesheet" type="text/css" href="{{ asset(asset) }}" />
+{% endfor %}
 {% endblock %}
 
 {% block manager_js %}
-<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js') }}"></script>
+{% for asset in assets.js %}
+<script type="text/javascript" src="{{ asset(asset) }}"></script>
+{% endfor %}
 <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/form.js') }}"></script>
 {% endblock %}
 
@@ -16,7 +19,11 @@
 
 {% block manager_content %}
 
-<form action="{{ path('mapbender_manager_element_update', { 'app_id': application.entity.id, 'id': element.id }) }}" method="post" {{ form_enctype(form)}} class="well">
+{% if app.request.get('id') %}
+<form action="{{ path('mapbender_manager_element_update', { 'slug': app.request.get('slug'), 'id': app.request.get('id') }) }}" method="post" {{ form_enctype(form)}} class="well">
+{% else %}
+<form action="{{ path('mapbender_manager_element_create', { 'slug': app.request.get('slug') }) }}" method="post" {{ form_enctype(form)}} class="well">
+{% endif %}
     {% if form_errors(form) %}
     <div class="alert alert-error">
         {{ form_errors(form) }}
@@ -27,10 +34,19 @@
     {{ form_row(form.class) }}
     {{ form_row(form.region) }}
 
-    {%include "MapbenderManagerBundle:Element:form.html.twig" %}
+    {{ form_row(form.title) }}
+
+    <hr/>
+
+    {% include(theme) %}
+
     <footer>
+        {% if app.request.get('id') %}
         <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
-        <a href="{{ url('mapbender_manager_application_edit', {'id': application.entity.id}) }}" class="btn">{{ 'Cancel' | trans}}</a>
+        {% else %}
+        <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
+        {% endif %}
+        <a href="{{ url('mapbender_manager_application_edit', {'slug': app.request.get('slug')}) }}#elements" class="btn">{{ 'Cancel' | trans}}</a>
     </footer>
 </form>
 

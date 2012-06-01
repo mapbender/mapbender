@@ -18,10 +18,6 @@ class AboutDialog extends Element {
         return array('Help', 'Info', 'About');
     }
 
-    public function getDefaultConfiguration() {
-        return array();
-    }
-
     public function getWidgetName() {
         return 'mapbender.mbAboutDialog';
     }

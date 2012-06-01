@@ -22,7 +22,7 @@ class FeatureInfo extends Element {
         return array('Button', 'FeatureInfo');
     }
 
-    public function getDefaultConfiguration() {
+    public static function getDefaultConfiguration() {
         return array(
             'layers' => null,
             'target' => null);

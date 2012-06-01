@@ -44,7 +44,8 @@ class UserController extends Controller {
 
         return array(
             'user' => $user,
-            'form' => $form->createView());
+            'form' => $form->createView(),
+            'form_name' => $form->getName());
     }
 
     /**
@@ -97,7 +98,8 @@ class UserController extends Controller {
 
         return array(
             'user' => $user,
-            'form' => $form->createView());
+            'form' => $form->createView(),
+            'form_name' => $form->getName());
     }
 
     /**

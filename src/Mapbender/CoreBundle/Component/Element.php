@@ -104,7 +104,9 @@ abstract class Element {
      *
      * @return array
      */
-    abstract public function getDefaultConfiguration();
+    static public function getDefaultConfiguration() {
+        return array();
+    }
 
     /*************************************************************************
      *                                                                       *
@@ -265,8 +267,28 @@ abstract class Element {
      *
      * @return Symfony\Component\FormTypeInterface
      */
-    public function getType() {
-        throw new \RuntimeException('NIY getType');
+    public static function getType() {
+        return null;
+    }
+
+    /**
+     * Get the form template to use.
+     *
+     * @return string
+     */
+    public static function getFormTemplate() {
+        return null;
+    }
+
+    /**
+     * Get the form assets.
+     *
+     * @return array
+     */
+    public static function getFormAssets() {
+        return array(
+            'js' => array(),
+            'css' => array());
     }
 }
 

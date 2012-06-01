@@ -4,6 +4,7 @@ namespace Mapbender\ManagerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
+use Doctrine\ORM\EntityRepository;
 
 class UserType extends AbstractType {
     public function getName() {
@@ -24,6 +25,13 @@ class UserType extends AbstractType {
                     'label' => 'Password')))
             ->add('roleObjects', 'entity', array(
                 'class' =>  'MapbenderCoreBundle:Role',
+                'query_builder' => function(EntityRepository $er) {
+                    $qb = $er->createQueryBuilder('r')
+                        ->add('where', 'r.mpttLeft != 1')
+                        ->orderBy('r.title', 'ASC');
+
+                    return $qb;
+                },
                 'expanded' => true,
                 'multiple' => true,
                 'property' => 'title',

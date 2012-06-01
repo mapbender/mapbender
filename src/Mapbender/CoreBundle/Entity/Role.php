@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Role\RoleInterface;
  * Role entity.
  *
  * @author Christian Wygoda
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Mapbender\CoreBundle\Entity\Repository\RoleRepository")
  * @ORM\Table(name="mb_role")
  */
 class Role implements RoleInterface {
@@ -22,9 +22,24 @@ class Role implements RoleInterface {
     protected $id;
 
     /**
+     * @ORM\Column(type="integer")
+     */
+    protected $mpttLeft;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $mpttRight;
+
+    /**
      * @ORM\Column(type="string", unique="true")
      */
     protected $title;
+
+    /**
+     * @ORM\Column(nullable=true)
+     */
+    protected $override;
 
     /**
      * @ORM\Column(type="text")
@@ -50,6 +65,44 @@ class Role implements RoleInterface {
     }
 
     /**
+     * Set MPTT left
+     *
+     * @param integer $left
+     */
+    public function setMpttLeft($mpttLeft) {
+        $this->mpttLeft = $mpttLeft;
+        return $this;
+    }
+
+    /**
+     * Get MPTT left
+     *
+     * @return integer
+     */
+    public function getMpttLeft() {
+        return $this->mpttLeft;
+    }
+
+    /**
+     * Set MPTT right
+     *
+     * @param integer $right
+     */
+    public function setMpttRight($mpttRight) {
+        $this->mpttRight = $mpttRight;
+        return $this;
+    }
+
+    /**
+     * Get MPTT right
+     *
+     * @return integer
+     */
+    public function getMpttRight() {
+        return $this->mpttRight;
+    }
+
+    /**
      * Set title
      *
      * @param string $title
@@ -66,6 +119,23 @@ class Role implements RoleInterface {
      */
     public function getTitle() {
         return $this->title;
+    }
+
+    /**
+     * Set the internal role override
+     *
+     * @param string $override
+     */
+    public function setOverride($override) {
+        $this->override = $override;
+        return $this;
+    }
+
+    /**
+     * Get the internal role override
+     */
+    public function getOverride($override) {
+        return $this->override;
     }
 
     /**
@@ -113,7 +183,11 @@ class Role implements RoleInterface {
      * @return string
      */
     public function getRole() {
-        return 'ROLE_MB3_' . $this->id;
+        if($this->roleOverride !== null) {
+            return $this->roleOverride;
+        } else {
+            return 'ROLE_MB3_' . $this->id;
+        }
     }
 }
 

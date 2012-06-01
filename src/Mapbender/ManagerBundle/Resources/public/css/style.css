@@ -203,20 +203,8 @@ div.entity-actions:hover {
     opacity: 1.0;
 }
 
-/**
- * Subentity selection modal
- */
-.modal .element {
-    cursor: pointer;
-    padding: 0.5em;
-}
-
-.modal .element:hover {
-    background: #f5f5f5;
-}
-
-.modal .element.selected {
-    background: #5bb75b
+#application-elements h3 a {
+    float: right;
 }
 
 #application_roles input {

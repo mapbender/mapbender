@@ -22,7 +22,7 @@ class Map extends Element {
         return array('Map', 'MapQuery', 'OpenLayers');
     }
 
-    public function getDefaultConfiguration() {
+    public static function getDefaultConfiguration() {
         return array(
             'layerset' => null,
             'dpi' => 72,

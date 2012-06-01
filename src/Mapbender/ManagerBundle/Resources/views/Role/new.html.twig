@@ -2,9 +2,13 @@
 
 {% block title %}{{ "New Role" | trans}}{% endblock %}
 
+{% block manager_js %}
+    <script type="application/javascript" src="{{ asset('bundles/mapbendermanager/js/form.js') }}"></script>
+{% endblock %}
+
 {% block manager_content %}
 
-<form action="{{ path('mapbender_manager_role_create') }}" method="post" {{ form_enctype(form)}} class="well">
+<form action="{{ path('mapbender_manager_role_create') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well">
     {% if form_errors(form) %}
     <div class="alert alert-error">
         {{ form_errors(form) }}
