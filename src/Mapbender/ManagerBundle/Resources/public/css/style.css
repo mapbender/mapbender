@@ -42,7 +42,6 @@ header[role="navigation"] a {
 }
 
 div[role="main"] {
-    width: 680px;
     padding: 20px;
     display: table-cell;
 }

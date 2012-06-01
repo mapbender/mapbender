@@ -27,7 +27,7 @@
             <td>
                 <div class="entity-actions btn-group">
                     <a class="action-edit btn" href="{{ path('mapbender_manager_role_edit',  {'id': role.id }) }}" title="{{ 'Edit' | trans }}">{{ 'Edit' | trans }}</a>
-                    <a class="action-delete btn" href="{{ path('mapbender_manager_role_confirmdelete', { 'id': role.id }) }}">{{ 'Delete' | trans }}</a>
+                    <a class="action-delete btn btn-warning" href="{{ path('mapbender_manager_role_confirmdelete', { 'id': role.id }) }}">{{ 'Delete' | trans }}</a>
                 </div>
             </td>
         </tr>

@@ -30,8 +30,10 @@ use the edit mode to add elements, layers and security.{% endtrans %}</p>
     {% include "MapbenderManagerBundle:Application:form-create.html.twig" %}
 
     <footer>
-        <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
-        <a href="{{ url('mapbender_manager_application_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
+            <a href="{{ url('mapbender_manager_application_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
     </footer>
 </form>
 

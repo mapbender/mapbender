@@ -78,7 +78,8 @@ class UserController extends Controller {
 
         return array(
             'user' => $user,
-            'form' => $form->createView());
+            'form' => $form->createView(),
+            'form_name' => $form->getName());
     }
 
     /**
@@ -151,13 +152,14 @@ class UserController extends Controller {
 
         return array(
             'user' => $user,
-            'form' => $form->createView());
+            'form' => $form->createView(),
+            'form_name' => $form->getName());
     }
 
     /**
      * @Route("/user/{id}/delete")
      * @Method({ "GET" })
-     * @Template
+     * @Template("MapbenderManagerBundle:User:delete.html.twig")
      */
     public function confirmDeleteAction($id) {
         $user = $this->getDoctrine()->getRepository('MapbenderCoreBundle:User')

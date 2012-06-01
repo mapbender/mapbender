@@ -186,7 +186,7 @@ class ApplicationController extends Controller {
      * Delete confirmation page
      * @Route("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")
-     * @Template
+     * @Template("MapbenderManagerBundle:Application:delete.html.twig")
      */
     public function confirmDeleteAction($slug) {
         $application = $this->get('mapbender')->getApplicationEntity($slug);

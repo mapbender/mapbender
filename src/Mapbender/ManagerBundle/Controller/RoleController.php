@@ -132,7 +132,7 @@ class RoleController extends Controller {
     /**
      * @Route("/role/{id}/delete")
      * @Method({ "GET" })
-     * @Template
+     * @Template("MapbenderManagerBundle:Role:delete.html.twig")
      */
     public function confirmDeleteAction($id) {
         $role = $this->getDoctrine()->getRepository('MapbenderCoreBundle:Role')

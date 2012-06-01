@@ -17,8 +17,10 @@
     {{ form_widget(form) }}
 
     <footer>
-        <input type="submit" value="{{ 'Delete' | trans }}" class="btn btn-primary"/>
-        <a href="{{ url('mapbender_manager_application_edit', {'slug': app.request.get('slug')}) }}#elements" class="btn">{{ 'Cancel' | trans}}</a>
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Delete' | trans }}" class="btn btn-danger"/>
+            <a href="{{ url('mapbender_manager_application_edit', {'slug': app.request.get('slug')}) }}#elements" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
     </footer>
 </form>
 

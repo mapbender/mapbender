@@ -41,12 +41,14 @@
     {% include(theme) %}
 
     <footer>
-        {% if app.request.get('id') %}
-        <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
-        {% else %}
-        <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
-        {% endif %}
-        <a href="{{ url('mapbender_manager_application_edit', {'slug': app.request.get('slug')}) }}#elements" class="btn">{{ 'Cancel' | trans}}</a>
+        <div class="btn-group">
+            {% if app.request.get('id') %}
+            <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
+            {% else %}
+            <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
+            {% endif %}
+            <a href="{{ url('mapbender_manager_application_edit', {'slug': app.request.get('slug')}) }}#elements" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
     </footer>
 </form>
 

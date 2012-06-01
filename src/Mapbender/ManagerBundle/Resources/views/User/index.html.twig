@@ -32,7 +32,7 @@
                 <div class="entity-actions btn-group">
                     <a class="action-edit btn" href="{{ path('mapbender_manager_user_edit',  {'id': user.id }) }}" title="{{ 'Edit' | trans }}">{{ 'Edit' | trans }}</a>
                     {% if user.id != 1 %}
-                    <a class="action-delete btn" href="{{ path('mapbender_manager_user_confirmdelete', { 'id': user.id }) }}">{{ 'Delete' | trans }}</a>
+                    <a class="action-delete btn btn-warning" href="{{ path('mapbender_manager_user_confirmdelete', { 'id': user.id }) }}">{{ 'Delete' | trans }}</a>
                     {% endif %}
                 </div>
             </td>

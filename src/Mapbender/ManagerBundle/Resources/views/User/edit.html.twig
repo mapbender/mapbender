@@ -20,8 +20,10 @@
     {% include 'MapbenderManagerBundle:User:form.html.twig' %}
 
     <footer>
-        <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
-        <a href="{{ url('mapbender_manager_user_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
+            <a href="{{ url('mapbender_manager_user_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
     </footer>
 </form>
 

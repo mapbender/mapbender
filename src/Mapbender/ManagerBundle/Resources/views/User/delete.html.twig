@@ -12,8 +12,10 @@
     </header>
     {{ form_widget(form) }}
     <footer class="actions">
-        <input type="submit" value="{{ 'Delete' | trans }}" class="btn btn-danger"/>
-        <a href="{{ url('mapbender_manager_user_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Delete' | trans }}" class="btn btn-danger"/>
+            <a href="{{ url('mapbender_manager_user_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
     </footer>
 </form>
 

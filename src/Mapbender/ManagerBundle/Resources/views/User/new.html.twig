@@ -8,7 +8,7 @@
 
 {% block manager_content %}
 
-<form action="{{ path('mapbender_manager_user_create') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well">
+<form action="{{ path('mapbender_manager_user_create') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well" autocomplete="off">
     {% if form_errors(form) %}
     <div class="alert alert-error">
         {{ form_errors(form) }}
@@ -20,8 +20,10 @@
     {% include 'MapbenderManagerBundle:User:form.html.twig' %}
 
     <footer>
-        <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
-        <a href="{{ url('mapbender_manager_user_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
+            <a href="{{ url('mapbender_manager_user_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
     </footer>
 </form>
 
