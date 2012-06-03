@@ -30,14 +30,10 @@ EOT;
         return array('zoom', 'pan', 'control', 'panel');
     }
 
-    public function getAssets($type) {
-        parent::getAssets($type);
-        switch($type) {
-        case 'js':
-            return array('mapbender.element.zoombar.js');
-        case 'css':
-            return array('mapbender.element.zoombar.css');
-        }
+    public function getAssets() {
+        return array(
+            'js' => array('mapbender.element.zoombar.js'),
+            'css' => array('mapbender.element.zoombar.css'));
     }
 
     public static function getDefaultConfiguration() {

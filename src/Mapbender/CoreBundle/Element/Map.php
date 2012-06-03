@@ -39,21 +39,17 @@ class Map extends Element {
         return 'mapbender.mbMap';
     }
 
-    public function getAssets($type) {
-        parent::getAssets($type);
-        switch($type) {
-        case 'js':
-            return array(
+    public function getAssets() {
+        return array(
+            'js' => array(
                 'mapquery/lib/openlayers/OpenLayers.js',
                 'mapquery/lib/jquery/jquery.tmpl.js',
                 'mapquery/src/jquery.mapquery.core.js',
-                'mapbender.element.map.js');
-        case 'css':
-            return array(
+                'mapbender.element.map.js'),
+            'css' => array(
                 //TODO: Split up
                 'mapbender.elements.css',
-                'mapquery/lib/openlayers/theme/default/style.css');
-        }
+                'mapquery/lib/openlayers/theme/default/style.css'));
     }
 
     public function getConfiguration() {

@@ -25,9 +25,7 @@ class KmlExport extends Element implements ElementInterface {
             'js' => array(
                 'mapbender.element.kmlexport.js'
             ),
-            'css' => array(
-                //'mapbender.elements.css'
-            )
+            'css' => array()
         );
     }
 

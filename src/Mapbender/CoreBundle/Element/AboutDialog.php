@@ -22,16 +22,12 @@ class AboutDialog extends Element {
         return 'mapbender.mbAboutDialog';
     }
 
-    public function getAssets($type) {
-        parent::getAssets($type);
-        switch($type) {
-        case 'js':
-            return array(
+    public function getAssets() {
+        return array(
+            'js' => array(
                 'mapbender.element.button.js',
-                'mapbender.element.aboutDialog.js');
-        case 'css':
-            return array();
-        }
+                'mapbender.element.aboutDialog.js'),
+            'css' => array());
     }
 
     public function httpAction($action) {

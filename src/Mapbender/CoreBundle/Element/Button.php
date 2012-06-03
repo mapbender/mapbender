@@ -35,15 +35,11 @@ class Button extends Element {
         return 'mapbender.mbButton';
     }
 
-    public function getAssets($type) {
-        parent::getAssets($type);
-        switch($type) {
-        case 'js':
-            return array('mapbender.element.button.js');
-        case 'css':
+    public function getAssets() {
+        return array(
+            'js' => array('mapbender.element.button.js'),
             //TODO: Split up
-            return array('mapbender.elements.css');
-        }
+            'css' => array('mapbender.elements.css'));
     }
 
     public function render() {

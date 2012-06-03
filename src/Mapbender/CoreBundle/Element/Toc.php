@@ -32,16 +32,11 @@ class Toc extends Element {
         return 'mapbender.mbToc';
     }
 
-    public function getAssets($type) {
-        parent::getAssets($type);
-        switch($type) {
-        case 'js':
-            return array('mapbender.element.toc.js');
-        case 'css':
+    public function getAssets() {
+        return array(
+            'js' => array('mapbender.element.toc.js'),
             //TODO: Split up
-            return array('mapbender.elements.css');
-
-        }
+            'css' => array('mapbender.elements.css'));
     }
 
     public function render() {

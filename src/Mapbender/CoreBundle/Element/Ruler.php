@@ -18,15 +18,11 @@ class Ruler extends Element {
         return array();
     }
 
-    public function getAssets($type) {
-        parent::getAssets($type);
-
-        switch($type) {
-        case 'js':
-            return array('@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js');
-        case 'css':
-            return array('@MapbenderCoreBundle/Resources/public/mapbender.elements.css');
-        }
+    public function getAssets() {
+        return array(
+            'js' => array('@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js'),
+            //TODO: Split up
+            'css' => array('@MapbenderCoreBundle/Resources/public/mapbender.elements.css'));
     }
 
     public static function getDefaultConfiguration() {

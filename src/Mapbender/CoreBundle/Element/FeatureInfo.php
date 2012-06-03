@@ -32,18 +32,14 @@ class FeatureInfo extends Element {
         return 'mapbender.mbFeatureInfo';
     }
 
-    public function getAssets($type) {
-        parent::getAssets($type);
-        switch($type) {
-        case 'js':
-            return array(
+    public function getAssets() {
+        return array(
+            'js' => array(
                 'mapbender.element.button.js',
-                'mapbender.element.featureInfo.js');
-        case 'css':
-            return array(
+                'mapbender.element.featureInfo.js'),
+            'css' => array(
                 //TODO: Split up
-                'mapbender.elements.css');
-        }
+                'mapbender.elements.css'));
     }
 
     public function render() {

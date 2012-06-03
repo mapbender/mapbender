@@ -33,15 +33,11 @@ class ActivityIndicator extends Element {
         return 'mapbender.mbActivityIndicator';
     }
 
-    public function getAssets($type) {
-        parent::getAssets($type);
-        switch($type) {
-        case 'js':
-            return array('mapbender.element.activityindicator.js');
-        case 'css':
+    public function getAssets() {
+        return array(
+            'js' => array('mapbender.element.activityindicator.js'),
             //TODO: Split up
-            return array('mapbender.elements.css');
-        }
+            'css' => array('mapbender.elements.css'));
     }
 
      public function render() {

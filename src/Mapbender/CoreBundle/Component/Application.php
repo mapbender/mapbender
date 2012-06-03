@@ -184,8 +184,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         // Load all elements assets
         foreach($this->getElements() as $region => $elements) {
             foreach($elements as $element) {
-                foreach($element->getAssets($type) as $asset) {
-                   $this->addAsset($assets, $type,
+                $element_assets = $element->getAssets();
+                foreach($element_assets[$type] as $asset) {
+                    $this->addAsset($assets, $type,
                         $this->getReference($element, $asset));
                 }
             }

@@ -23,15 +23,10 @@ class WmcStorage extends Element {
         return array('WMC');
     }
 
-    public function getAssets($type) {
-        parent::getAssets($type);
-
-        switch($type) {
-        case 'js':
-            return array('mapbender.element.wmcstorage.js');
-        case 'css':
-            return array();
-        }
+    public function getAssets() {
+        return array(
+            'js' => array('mapbender.element.wmcstorage.js'),
+            'css' => array());
     }
 
     public static function getDefaultConfiguration() {

@@ -200,6 +200,7 @@ abstract class Element {
      * Get the element assets.
      *
      * Returns an array of references to asset files of the given type.
+     * Assets are grouped by css and javascript.
      * References can either be filenames/path which are searched for in the
      * Resources/public directory of the element's bundle or assetic references
      * indicating the bundle to search in:
@@ -208,15 +209,9 @@ abstract class Element {
      *   'foo.css'),
      *   '@MapbenderCoreBundle/Resources/public/foo.css'));
      *
-     * @param string $type Asset type to list, can be 'css' or 'js'
      * @return array
      */
-    public function getAssets($type) {
-        if($type !== 'css' && $type !== 'js') {
-            throw new \RuntimeException('The asset type \'' . $type .
-                '\' is not supported.');
-        }
-
+    public function getAssets() {
         return array();
     }
 
