@@ -101,8 +101,11 @@ class ApplicationYAMLMapper {
             }
         }
 
+        $owner = $this->container->get('doctrine')
+            ->getRepository('MapbenderCoreBundle:User')
+            ->find(1);
+        $application->setOwner($owner);
         // TODO: Add roles, entity needs work first
-        // TODO: owner, entity needs work first
 
         // Create layersets and layers
         foreach($definition['layersets'] as $id => $layerDefinitions) {
