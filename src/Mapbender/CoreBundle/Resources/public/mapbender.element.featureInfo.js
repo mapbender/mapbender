@@ -45,7 +45,7 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
      */
     _triggerFeatureInfo: function(e) {
         var self = this,
-            x = e.pageX - $(this.map.element).offset().left;
+            x = e.pageX - $(this.map.element).offset().left,
             y = e.pageY - $(this.map.element).offset().top;
 
         if(!this.dlg) {
