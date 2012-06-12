@@ -22,7 +22,7 @@ class AppKernel extends Kernel
             new Mapbender\WmsBundle\MapbenderWmsBundle(),
             new Mapbender\WmtsBundle\MapbenderWmtsBundle(),
             new Mapbender\ManagerBundle\MapbenderManagerBundle(),
-            new Arsgeografica\EntityPagerBundle\ArsgeograficaEntityPagerBundle(),
+            new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             /**
              * Disable the demo bundle when startin a real-world project!
              */

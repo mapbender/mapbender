@@ -1,5 +1,29 @@
+services:
+    # Use the four following services to enable cookie-less logins
+    #session.storage.native:
+    #    # Enabled session id transport via GET parameter
+    #    class: Mapbender\Component\UrlSessionStorage
+    #    arguments: [%session.storage.options%, @service_container]
+    #security.authentication.form_entry_point:
+    #    # Makes sure the session id is passed to the login form
+    #    class: Mapbender\Component\UrlSessionFormEntryPoint
+    #    public: false
+    #    abstract: true
+    #    arguments: [@http_kernel]
+    #security.authentication.success_handler:
+    #    # Updates session id GET parameter after login
+    #    class: Mapbender\Component\UrlSessionLoginHandler
+    #    public: false
+    #    arguments: []
+    #urlsession.redirect.listener:
+    #    # Intercept redirects and update Location header with session id
+    #    class: Mapbender\Component\UrlSessionRedirectListener
+    #    arguments: [ @service_container ]
+    #    tags:
+    #        - { name: kernel.event_listener, event: kernel.response }
+
 parameters:
-    sensio_framework_extra.converter.doctrine.class: "Mapbender\Component\CustomDoctrineParamConverter"
+    #sensio_framework_extra.converter.doctrine.class: "Mapbender\Component\CustomDoctrineParamConverter"
     applications:
         mapbender_user:
             title: Mapbender User Demo Map

@@ -1,9 +1,9 @@
 # Per default, the application list is the start page. You may change that.
-_mapbender_start:
+mapbender_start:
     pattern: "/"
     defaults: { _controller: MapbenderCoreBundle:Welcome:list}
 
-_mapbender_corebundle:
+mapbender_corebundle:
     resource: "@MapbenderCoreBundle/Controller/"
     type: annotation
 
@@ -11,7 +11,11 @@ _mapbender_corebundle:
 #    resource: "@MapbenderWmsBundle/Controller/"
 #    type: annotation
 
-_mapbender_managerbundle:
+mapbender_managerbundle:
     resource: "@MapbenderManagerBundle/Controller"
     prefix: "/manager"
     type: annotation
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+

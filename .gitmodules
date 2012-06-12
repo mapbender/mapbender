@@ -1,9 +1,6 @@
 [submodule "application/mapbender"]
-	path = application/mapbender
-	url = git://github.com/mapbender/mapbender.git
-[submodule "application/vendor/bundles/Arsgeografica/EntityPager"]
-	path = application/vendor/bundles/Arsgeografica/EntityPager
-	url = git://github.com/arsgeografica/EntityPagerBundle.git
-[submodule "application/vendor/bundles/Arsgeografica/EntityPagerBundle"]
-	path = application/vendor/bundles/Arsgeografica/EntityPagerBundle
-	url = git://github.com/arsgeografica/EntityPagerBundle.git
+    path = application/mapbender
+    url = git://github.com/mapbender/mapbender.git
+[submodule "application/vendor/bundles/FOS/JsRoutingBundle"]
+	path = application/vendor/bundles/FOS/JsRoutingBundle
+	url = https://github.com/FriendsOfSymfony/FOSJsRoutingBundle.git
