@@ -1,8 +1,7 @@
 <ul>
 {% for k, v in menu %}
     <li id="manager-{{ k }}"{% if v.active %} class="active"{% endif %}>
-        <a href="{{ path('mapbender_manager_' 
-            ~ v._controllers[0]|lower ~ '_index') }}">{{ v.title|trans }}</a>
+        <a href="{{ path(v.route) }}">{{ v.title|trans }}</a>
     </li>
 {% endfor %}
 </ul>

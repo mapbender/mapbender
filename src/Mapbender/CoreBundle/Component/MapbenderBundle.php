@@ -47,5 +47,28 @@ class MapbenderBundle extends Bundle {
     public function getTemplates() {
         return array();
     }
+
+    /**
+     * Return list of administration controllers to include in the manager
+     * backend.
+     * The list should be an array of arrays, each having giving the integer
+     * weight, the name and the route.
+     *
+     * @return array Array of admin controllers
+     */
+    public function getAdminControllers()
+    {
+        return array(
+            //array(
+            //    'weight' => 5,
+            //    'name' => 'Users'
+            //    'route' => 'mapbender_manager_user_index',
+            //    'controllers' => array(
+            //        'mapbender_manager_user',
+            //        'mapbender_manager_group'
+            //    )
+            //)
+        );
+    }
 }
 

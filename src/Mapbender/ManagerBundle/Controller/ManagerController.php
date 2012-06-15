@@ -24,35 +24,26 @@ class ManagerController extends Controller {
      * @Template
      */
     public function menuAction($request) {
-        //TODO: Make the menu tree - and with it the ability to call menu
-        //items - configurable in the bundle configuration
-        $current_route = explode('_', $request->attributes->get('_route'));
+        $current_route = $request->attributes->get('_route');
 
-        $menu = array(
-            'apps' => array(
-                'title' => 'Applications',
-                '_controllers' => array(
-                    'Application',
-                    'Element')),
-            'layers' => array(
-                'title' => 'Services',
-                '_controllers' => array(
-                    'Layer',
-                    'Repository')),
-            'users' => array(
-                'title' => 'Users',
-                '_controllers' => array(
-                    'User',
-                    'Role')));
-
+        $menu = $this->get('mapbender')->getAdminControllers();
         foreach($menu as &$item) {
             $item['active'] = false;
-            foreach($item['_controllers'] as $controller) {
-                if(strtolower($controller) === $current_route[2]) {
+            foreach($item['controllers'] as $controller) {
+                if(substr($current_route, 0, strlen($controller))
+                    === $controller){
                     $item['active'] = true;
                 }
             }
         }
+
+        usort($menu, function($a, $b) {
+            if ($a['weight'] == $b['weight']) {
+                return 0;
+            }
+            return ($a['weight'] < $b['weight']) ? -1 : 1;
+        });
+
         return array(
             'menu' => $menu);
     }
