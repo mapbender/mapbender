@@ -129,7 +129,6 @@ $.extend(true, Mapbender, { layer: {
                 capabilities = parser.read(xml);
 
             if(typeof(capabilities.capability) !== 'undefined') {
-                var queryLayers = [];
                 var def = {
                         type: 'wms',
                         configuration: {
@@ -153,10 +152,6 @@ $.extend(true, Mapbender, { layer: {
                         legend = layer.styles[0].legend.href;
                     }
 
-                    if(layer.queryable === true) {
-                        queryLayers.push(layer.name);
-                    }
-
                     def.configuration.layers.push({
                         name: layer.name,
                         title: layer.title,
@@ -166,11 +161,11 @@ $.extend(true, Mapbender, { layer: {
                         bbox: layer.bbox,
                         srs: layer.srs,
                         legend: legend,
-                        metadataUrls: layer.metadataURLs
+                        metadataUrls: layer.metadataURLs,
+                        queryable: layer.queryable
                     });
                 });
 
-                def.configuration.queryLayers = queryLayers;
                 return def;
             } else {
                 return null;
