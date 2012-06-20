@@ -73,13 +73,17 @@ write into the application/app/cache and application/app/logs directories.
    application/app/logs directories. This often breaks, as running
    Symfony console commands writes into these with user rights.
 
-2. Initialize the demo database in app/db/demo.sq3 by running:::
+2. Copy the parameters.ini.dist, found in the application/app/config folder,
+   as your parameters.ini and modify to fit your database connection. By
+   default a SQLite database is preconfigured in the file.
+
+3. Initialize the demo database in app/db/demo.sq3 by running:::
 
     app/console doctrine:database:create
     app/console doctrine:schema:create
 
 
-3. Install the bundle assets into the web folder by running the Symfony
+4. Install the bundle assets into the web folder by running the Symfony
    console command from the application directory:::
 
     app/console assets:install web

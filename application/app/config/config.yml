@@ -45,24 +45,9 @@ doctrine:
           host:     %database_host%
           port:     %database_port%
           dbname:   %database_name%
+          path:     %database_name%
           user:     %database_user%
           password: %database_password%
-          charset:  UTF8
-        mb2:
-          driver:   %mb2_driver%
-          host:     %mb2_host%
-          port:     %mb2_port%
-          dbname:   %mb2_name%
-          user:     %mb2_user%
-          password: %mb2_password%
-          charset:  UTF8
-        mb2gis:
-          driver:   %mb2gis_driver%
-          host:     %mb2gis_host%
-          port:     %mb2gis_port%
-          dbname:   %mb2gis_name%
-          user:     %mb2gis_user%
-          password: %mb2gis_password%
           charset:  UTF8
     orm:
         auto_generate_proxy_classes: %kernel.debug%
