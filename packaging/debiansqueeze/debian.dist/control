@@ -1,0 +1,12 @@
+Source: @@deb.name@@
+Maintainer: @@deb.maintainer@@
+Section: misc
+Priority: optional
+Standards-Version: 3.9.1
+Build-Depends: debhelper (>= 7.3.8)
+
+Package: @@deb.name@@
+Architecture: all
+Depends: python, python-support (>= 0.90.0), php5 (>= 5.3), php5-intl, php5-pgsql, php5-sqlite
+Description: @@deb.shortdescription@@
+  @@deb.description@@

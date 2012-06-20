@@ -1,0 +1,12 @@
+*/app/cache
+*/app/logs
+*/doc/api
+*/doc/*.html
+*/web/bundles
+*/web/doc
+extra/
+*/app/config/parameters.ini
+*.tar.gz
+*.rpm
+*.deb
+local.properties

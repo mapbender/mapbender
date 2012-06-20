@@ -1,0 +1,14 @@
+--- a/app/AppKernel.php
++++ b/app/AppKernel.php
+@@ -39,4 +39,11 @@
+     {
+         $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');
+     }
++
++    public function getCacheDir(){
++        return "@@patch.cachedir@@"; 
++    }
++    public function getLogDir(){
++        return "@@patch.logdir@@";
++    }
+ }

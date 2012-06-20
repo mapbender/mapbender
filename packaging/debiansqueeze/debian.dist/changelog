@@ -1,0 +1,5 @@
+@@deb.name@@ (@@deb.version@@) UNRELEASED; urgency=low
+
+  * Initial release. 
+
+ -- Karim Malhas <karim.malhas@wheregroup.com>  Fri, 06 Jan 2012 08:57:33 +0100
