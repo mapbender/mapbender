@@ -10,9 +10,11 @@ class RPMTask extends Task {
 
     private $specfile;
     private $topdir ;
+    private $sign;
 
     public function __construct(){
-        $topdir = '${PWD}/packaging/opensuse-rpm/';
+        $this->topdir = '${PWD}/packaging/opensuse-rpm/';
+        $this->sign = false;
         
     }
 
@@ -23,6 +25,12 @@ class RPMTask extends Task {
     public function setTopdir($topdir){
         $this->topdir = $topdir;
     }
+    
+    public function setSign($sign){
+        if (strtolower($sign) == "yes" || $sign == "1" || strtolower($sign) == "true"){
+            $this->sign = true;
+        }
+    }
 
     public function init(){
 
@@ -31,8 +39,12 @@ class RPMTask extends Task {
     public function main(){
 
         $rpmbuld_bin = "rpmbuild";
+        $singopt == "";
+        if($this->sign){
+            $signopt = "--sign";
+        }
         # the --define option seems to be undocumented. works though
-        $rpmbuild_opts = sprintf('-bb --sign --define "_topdir %s"',$this->topdir);
+        $rpmbuild_opts = sprintf('-bb %s --define "_topdir %s"',$signopt, $this->topdir);
         $command = sprintf("%s %s %s",$rpmbuld_bin, $rpmbuild_opts, $this->specfile);
         
         $return = 0;

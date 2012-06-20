@@ -28,6 +28,12 @@
     <property name="buildroot" value="/tmp/jenkins/${package}/"></property>
 
     <!--
+        Task specific properties
+    -->
+
+    <property name="opensuserpm.sign" >no</property>
+
+    <!--
         Custom Task definitions
     -->
 
@@ -110,7 +116,7 @@
             todir="${buildroot}/packaging/opensuse-rpm/SOURCES/"
             overwrite="true"
         />
-        <rpm specfile="${buildroot}/packaging/opensuse-rpm/SPECS/${package}.spec" topdir="${buildroot}/packaging/opensuse-rpm/" />
+        <rpm sign="${opensuserpm.sign}" specfile="${buildroot}/packaging/opensuse-rpm/SPECS/${package}.spec" topdir="${buildroot}/packaging/opensuse-rpm/" />
         <copy 
             file="${buildroot}/packaging/opensuse-rpm/RPMS/noarch/${package}-${version.full}-${packaging.release}.noarch.rpm"
             todir="artefacts/"
