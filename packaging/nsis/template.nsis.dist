@@ -1,0 +1,18 @@
+outFile "@@nsis.installer@@"
+
+installDir  $PROGRAMFILES\@@nsis.name@@
+
+section
+    setOutPath $INSTDIR
+    file /r @@nsis.name@@-@@nsis.version@@/*
+    writeUninstaller $INSTDIR\uninstaller.exe
+    createShortCut "$SMPROGRAMS\project.lnk" "http://localhost/@@nsis.name@@"
+    execWait 'php "$INSTDIR\app\console" cache:clear'
+sectionEnd
+
+
+section "Uninstall"
+    delete $INSTDIR\uninstaller.exe
+    rmdir /r  $INSTDIR
+    delete "$SMPROGRAMS\project.lnk"
+sectionEnd

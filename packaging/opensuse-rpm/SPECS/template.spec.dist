@@ -1,0 +1,90 @@
+%define buildroot  %{_topdir}/bkg 
+%define _cachedir   /var/cache
+%define _logdir     /var/log
+%define _wwwdir     /var/www
+
+Name: @@rpm.name@@
+Version: @@rpm.version@@
+Release: @@rpm.release@@
+Group: @@rpm.group@@
+License: @@rpm.license@@
+URL: @@rpm.url@@
+Source: @@rpm.source@@
+Patch: http://projects.wheregroup.com/%{name}/files/pathadjustments.patch
+Summary: @@rpm.summary@@
+BuildArch: noarch
+BuildRoot: %{buildroot}
+Prefix: /opt
+
+#BuildRequires:
+Requires: php5 >= 5.3, php5-intl
+
+%description
+@@rpm.description@@
+
+%prep
+# patch it so logs and cache go somewhere else
+%setup -q -n %{name}-%{version}
+%patch 
+rm web/app_dev.php
+rm web/config.php
+rm -rf app/cache/*
+rm -rf app/logs/*
+
+%build
+# we do this at the tarballing stage
+
+%check
+# we do this at the tarballing stage
+
+%install
+rm -rf %{buildroot}
+
+install -d %{buildroot}%{_sysconfdir}/%{name}
+install app/config/parameters.ini.dist %{buildroot}%{_sysconfdir}/%{name}/%{name}.ini.dist
+rm -f app/config/parameters.ini
+ln -s %{_sysconfdir}/%{name}/%{name}.ini app/config/parameters.ini
+rm app/config/parameters.ini.dist
+
+install -d %{buildroot}%{_datadir}/%{name}
+cp -rp  app src mapbender vendor  web  %{buildroot}%{_datadir}/%{name}/
+
+install -d %{buildroot}%{_cachedir}/%{name}
+install -d %{buildroot}%{_logdir}/%{name}
+
+
+%files
+# give files proper permissions and claim them
+%defattr(-,root,root,-)
+%{_datadir}/%{name}/app
+%{_datadir}/%{name}/src
+%{_datadir}/%{name}/mapbender
+%{_datadir}/%{name}/vendor
+%attr(-,wwwrun,root) %{_datadir}/%{name}/web
+%config %{_sysconfdir}/*
+%attr(0755,wwwrun,root) %{_cachedir}/%{name}
+%attr(0755,wwwrun,root) %{_logdir}/%{name}
+%doc doc
+
+%changelog
+#@@rpm.changelog@@
+
+%clean
+rm -rf %{buildroot}
+
+%post 
+if [ "$1" == "2" ]; then
+  #upgrade
+  echo "upgrading database"
+  sudo -u wwwrun %{_datadir}/%{name}/app/console doctrine:migrations:migrate  --no-interaction
+  echo "rebuilding cache"
+  sudo -u wwwrun %{_datadir}/%{name}/app/console cache:clear --env=prod
+  echo "done upgrading"
+fi
+
+# There is no post-install script that creates the database because we ship with an example mapconfigurator.ini
+# and there is likely no database available at installtime
+
+# There is a post-upgrade script, however that tries to update the databse schema - if mapconfigurator is configured,
+# it has to be updated, if it is not the script fails and everything is well
+# if doing cache:clear - > make sure it's done with  --env=prod --no-debug

@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+
+PKGNAME=@@deb.name@@
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	mkdir -p $$(pwd)/debian/$(PKGNAME)/usr/share/$(PKGNAME)/
+	cp -r app mapbender doc src vendor web $$(pwd)/debian/$(PKGNAME)/usr/share/$(PKGNAME)/
+
