@@ -1,0 +1,26 @@
+--- web/app.php
++++ web/app.php
+@@ -1,6 +1,6 @@
+ <?php
+
+-require_once __DIR__.'/../app/bootstrap.php.cache';
+-require_once __DIR__.'/../app/AppKernel.php';
++require_once '@@patch.datadir@@/app/bootstrap.php.cache';
++require_once '@@patch.datadir@@/app/AppKernel.php';
+ //require_once __DIR__.'/../app/AppCache.php';
+ 
+
+--- app/AppKernel.php
++++ app/AppKernel.php
+@@ -55,4 +55,11 @@ class AppKernel extends Kernel
+     {
+         $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');
+     }
++
++    public function getCacheDir(){
++        return "@@patch.cachedir@@"; 
++    }
++    public function getLogDir(){
++        return "@@patch.logdir@@";
++    }
+ }

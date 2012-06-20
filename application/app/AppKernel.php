@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new Mapbender\WmtsBundle\MapbenderWmtsBundle(),
             new Mapbender\ManagerBundle\MapbenderManagerBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
+            new OwsProxy3\CoreBundle\OwsProxy3CoreBundle(),
             /**
              * Disable the demo bundle when startin a real-world project!
              */

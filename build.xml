@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project name="mapbender-starter" default="lint">
+<project default="prepare">
 
     <property file="./build.properties" override="true" />
     <property file="./local.properties" override="true" />
     <property name="package"    value="${phing.project.name}" />
+
     <!--
         The version.* properties are used for packaging
     -->
@@ -17,70 +18,255 @@
     <!--
         These next propertes are short strings that are usefull in a lot of places
     -->
-    <property name="project.shortdescription" value="${package} is a web mapping framework" /> 
-    <property name="project.description">Mapbender3 is the next version in the Mapbender series. It is rewritten from the ground up, using modern web technologies. The foundation is laid by Symfony 2, the brand-new version of the successfull Symfony PHP web application framework. </property>
+    <property name="project.shortdescription" value="" /> 
+    <property name="project.description" value="" />
     <property name="project.url" value="http://projects.wheregroup.com/${package}" />
     <property name="project.license" value="GPLv3" />
-    <property name="project.changelog" value=""></property>
+    <property name="project.changelog" value="" />
+    <property name="project.maintainer" value=""/>
 
-    <target name="tarball" depends="prepare" description="Build a tarball for distribution">
-        <copy todir="/tmp/${package}-${version.full}" overwrite="true">
+    <property name="buildroot" value="/tmp/jenkins/${package}/"></property>
+
+    <!--
+        Task specific properties
+    -->
+
+    <property name="opensuserpm.sign" >no</property>
+
+    <!--
+        Custom Task definitions
+    -->
+
+    <taskdef name="rpm" classname="phing.tasks.RPMTask" />
+
+    <taskdef name="deb" classname="phing.tasks.DEBTask" />
+    
+    <taskdef name="nsis" classname="phing.tasks.NSISTask" />
+
+
+    <!--
+        Targets
+    -->
+
+    <target name="tarball" depends="prepare">
+        <mkdir dir="${buildroot}" />
+        <copy todir="${buildroot}/${package}-${version.full}" overwrite="true">
             <fileset dir="application/">
                 <include name="**" />
-                <exclude name="**/.git*/**" />
-                <exclude name="app/cache/**" />
-                <exclude name="app/logs/**" />
-                <exclude name="app/db/**" />
-                <exclude name="web/bundles/**" />
-                <exclude name="bin/**" />
+                <exclude name="**/.git/**" />
+                <exclude name="app/cache" />
+                <exclude name="app/logs" />
+                <exclude name="bin" />
             </fileset>
         </copy>
-        <mkdir dir="/tmp/${package}-${version.full}/app/cache" />
-        <mkdir dir="/tmp/${package}-${version.full}/app/log" />
-        <mkdir dir="/tmp/${package}-${version.full}/app/db" />
-        <mkdir dir="/tmp/${package}-${version.full}/web/bundles" />
-        <exec command="app/console doctrine:database:create" dir="/tmp/${package}-${version.full}" />
-        <exec command="app/console doctrine:schema:create" dir="/tmp/${package}-${version.full}" />
-        <exec command="app/console assets:install web/" dir="/tmp/${package}-${version.full}" />
-        <tar destfile="${package}-${version.full}.tar.gz" compression="gzip">
-            <fileset dir="/tmp">
+        <mkdir dir="artefacts" />
+        <tar destfile="artefacts/${package}-${version.full}.tar.gz" compression="gzip">
+            <fileset dir="${buildroot}">
                 <include name="${package}-${version.full}/**" />
             </fileset>
         </tar>
-        <delete dir="/tmp/${package}-${version.full}/"></delete>
+        <delete dir="${buildroot}" />
     </target>
 
-    <target name="prepare" depends="lint" description="Install runtime dependencies (MapQuery deps)">
-        <exec command="./getdebs.sh" dir="application/mapbender/src/Mapbender/CoreBundle/Resources/public/mapquery/lib" />
+    <target name="packages" depends="opensuse-rpm,debiansqueeze-deb,nsis" />
+
+    <target name="opensuse-rpm" depends="tarball">
+        <mkdir dir="${buildroot}/" />
+        <copy todir="${buildroot}/" >
+            <fileset dir=".">
+                <include name="packaging/opensuse-rpm/**"/>
+            </fileset>
+        </copy>
+        <copy 
+            file="${buildroot}/packaging/opensuse-rpm/SPECS/template.spec.dist" 
+            tofile="${buildroot}/packaging/opensuse-rpm/SPECS/${package}.spec" 
+            overwrite="true">
+        <filterchain>
+            <replacetokens begintoken="@@" endtoken="@@">
+                <token key="rpm.topdir" value="${project.basedir}" />
+                <token key="rpm.name" value="${package}" />
+                <token key="rpm.group" value="misc" />
+                <token key="rpm.version" value="${version.full}" />
+                <token key="rpm.release" value="${packaging.release}" />
+                <token key="rpm.license" value="${project.license}" />
+                <token key="rpm.url"    value="${project.url}" />
+                <token key="rpm.source" value="${project.url}/files/${package}-${version.full}.tar.gz" />
+                <token key="rpm.summary" value="${project.shortdescription}" />
+                <token key="rpm.description" value="${project.description}" />
+                <token key="rpm.changelog" value="${project.changelog}" />
+            </replacetokens>
+        </filterchain>
+        </copy>
+        <copy 
+              file="${buildroot}/packaging/opensuse-rpm/SOURCES/pathadjustments.patch.dist"
+              tofile="${buildroot}/packaging/opensuse-rpm/SOURCES/pathadjustments.patch"
+              overwrite="true"
+              >
+            <filterchain>
+                <replacetokens begintoken="@@" endtoken="@@">
+                    <token key="patch.cachedir" value="/var/cache/${package}/prod" />
+                    <token key="patch.logdir" value="/var/log/${package}" />
+                    <token key="patch.datadir" value="/usr/share/${package}" />
+                    <token key="patch.conffilepath" value="/etc/${package}/${package}.ini" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+        <copy 
+            file="artefacts/${package}-${version.full}.tar.gz" 
+            todir="${buildroot}/packaging/opensuse-rpm/SOURCES/"
+            overwrite="true"
+        />
+        <rpm sign="${opensuserpm.sign}" specfile="${buildroot}/packaging/opensuse-rpm/SPECS/${package}.spec" topdir="${buildroot}/packaging/opensuse-rpm/" />
+        <copy 
+            file="${buildroot}/packaging/opensuse-rpm/RPMS/noarch/${package}-${version.full}-${packaging.release}.noarch.rpm"
+            todir="artefacts/"
+            overwrite="true"
+        />
+        <delete dir="${buildroot}" />
     </target>
 
-    <target name="doc" description="Generate PHP API documentation">
-        <apigen
-            source="application/mapbender"
-            destination="documentation/php-api"
-            wipeout="true"
-            title="Mapbender3 PHP API documentation"
-            deprecated="true"
-            todo="true"
-            quiet="false"/>
+    <target name="debiansqueeze-deb" depends="tarball" >
+        <mkdir dir="${buildroot}/" />
+        <copy todir="${buildroot}/" >
+            <fileset dir=".">
+                <include name="packaging/debiansqueeze/**"/>
+            </fileset>
+        </copy>
+        <copy 
+            file="artefacts/${package}-${version.full}.tar.gz" 
+            tofile="${buildroot}/packaging/debiansqueeze/${package}_${version.full}.orig.tar.gz" />
+        <untar 
+            file="${buildroot}/packaging/debiansqueeze/${package}_${version.full}.orig.tar.gz"
+            todir="${buildroot}/packaging/debiansqueeze/"
+        />
+        <mkdir dir="${buildroot}/packaging/debiansqueeze/${package}-${version.full}/debian" />
+        <copy 
+            todir="${buildroot}/packaging/debiansqueeze/${package}-${version.full}/debian"
+            overwrite="true">
+            <fileset dir="${buildroot}/packaging/debiansqueeze/debian.dist/">
+                <include name="**" />
+            </fileset>
+            <filterchain>
+                <replacetokens begintoken="@@" endtoken="@@">
+                    <token key="deb.name" value="${package}" />
+                    <token key="deb.version" value="${version.full}" />
+                    <token key="deb.maintainer" value="${project.maiontainer}" />
+                    <token key="deb.shortdescription" value="${project.shortdescription}" />
+                    <token key="deb.description" value="${project.description}" />
+                    <token key="patch.cachedir" value="/var/cache/${package}/prod" />
+                    <token key="patch.logdir" value="/var/log/${package}" />
+                    <token key="patch.datadir" value="/usr/share/${package}" />
+                    <token key="patch.conffilepath" value="/etc/${package}/${package}.ini" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+        <deb buildroot="${buildroot}/packaging/debiansqueeze/${package}-${version.full}/" /> 
+        <copy file="${buildroot}/packaging/debiansqueeze/${package}_${version.full}_all.deb" todir="artefacts/" overwrite="true" />
+        <delete dir="${buildroot}" />
     </target>
 
-    <target name="clean" description="Clean up build packages">
+    <target name="nsis" depends="tarball">
+        <mkdir dir="${buildroot}/" />
+        <copy todir="${buildroot}/" >
+            <fileset dir=".">
+                <include name="packaging/nsis/**"/>
+            </fileset>
+        </copy>
+        <copy 
+            file="${buildroot}/packaging/nsis/template.nsis.dist" 
+            tofile="${buildroot}/packaging/nsis/${package}.nsis" 
+            overwrite="true">
+            <filterchain>
+                <replacetokens begintoken="@@" endtoken="@@">
+                    <token key="nsis.name" value="${package}" />
+                    <token key="nsis.version" value="${version.full}" />
+                    <token key="nsis.installer" value="${package}-${version.full}-installer.exe" />
+
+                    <token key="nsis.release" value="${packaging.release}" />
+                    <token key="nsis.license" value="${project.license}" />
+                    <token key="nsis.url"    value="${project.url}" />
+                    <token key="nsis.source" value="${project.url}/files/${package}-${version.full}.tar.gz" />
+                    <token key="nsis.summary" value="${project.shortdescription}" />
+                    <token key="nsis.description" value="${project.description}" />
+                    <token key="nsis.changelog" value="${project.changelog}" />
+                </replacetokens>
+            </filterchain>
+        </copy>
+        <untar file="artefacts/${package}-${version.full}.tar.gz" todir="${buildroot}/packaging/nsis/" />
+        <nsis dir="${buildroot}packaging/nsis/" file="${package}.nsis" />
+        <copy file="${buildroot}/packaging/nsis/${package}-${version.full}-installer.exe" todir="artefacts/" overwrite="true" />
+        <delete dir="${buildroot}" />
+    </target>
+
+    <target name="doc">
+        <phpdoc title="API Documentation"
+            destdir="application/doc/api"
+            output="HTML:Smarty:PHP" >
+            <fileset dir="application/src">
+                <include name="**/*.php" />
+            </fileset>
+        </phpdoc>
+    </target>
+
+    <target name="prepare" depends="doc,unittest">
+        <exec command="application/app/console assets:install application/web/" />
+        <exec command="application/app/console assetic:dump --env=prod --no-debug" />
+        <copy todir="application/web/doc">
+            <fileset dir="application/doc/">
+                <exclude name="*.rst" />
+            </fileset> 
+        </copy>
+
+    </target>
+
+    <target name="clean">
+        <delete dir="${buildroot}" />
         <delete>
             <fileset  dir=".">
-                <include name="*.tar.gz" />
-                <include name="*.rpm" />
+                <include name="application/doc/api" />
+                <include name="application/doc/*.html" />
+                <include name="application/web/doc/" />
+                <include name="features/behat.yml" />
+                <include name="artefacts/**" />
             </fileset>
         </delete>
+        <delete dir="artefacts" />
+        <!-- clean the assets from web! -->
+    </target>
+    
+    <target name="unittest" depends="lint">
+        <phpunit bootstrap="application/app/bootstrap.php.cache" haltonfailure="true" >
+            <formatter type="plain" usefile="false" />
+            <batchtest>
+                <fileset dir="application/">
+                    <include name="src/**/**/*Bundle/Tests/**Test.php" />
+                    <include name="src/**/Bundle/*Bundle/Tests/**Test.php" />
+                </fileset>
+            </batchtest>
+        </phpunit>
+    </target>
+    
+    <target name="test" depends="unittest">
     </target>
 
-    <target name="lint" description="Check PHP syntax">
+    <target name="lint">
         <phplint>
             <fileset dir=".">
                 <include name="application/src/**/*.php" />
-                <include name="application/mapbender/**/*.php" />
+                <include name="application/vendor/bundles/BKG/**/*.php" />
+                <include name="application/vendor/bundles/MB/**/*.php" />
             </fileset>
         </phplint>
     </target>
-</project>
 
+    <target name="transupdate">
+        <exec command="application/app/console bcc:trans:update --force --output-format xliff de BkgVwmsBundle" />
+        <exec command="application/app/console bcc:trans:update --force --output-format xliff de BkgCoreBundle" />
+        <exec command="application/app/console bcc:trans:update --force --output-format xliff de MapbenderWmsBundle" />
+    </target>
+
+
+    <target name="submoduleupdate">
+        <exec command="git submodule foreach 'git pull || :'" />
+    </target>
+</project>

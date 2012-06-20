@@ -16,8 +16,10 @@ $loader->registerNamespaces(array(
     'Monolog'          => __DIR__.'/../vendor/monolog/src',
     'Assetic'          => __DIR__.'/../vendor/assetic/src',
     'Metadata'         => __DIR__.'/../vendor/metadata/src',
+    'Buzz'             => __DIR__.'/../vendor/buzz/lib',
     'Mapbender'        => __DIR__.'/../mapbender/src',
     'FOS'              => __DIR__.'/../vendor/bundles',
+    'OwsProxy3'        => __DIR__.'/../owsproxy/src',
 ));
 $loader->registerPrefixes(array(
     'Twig_Extensions_' => __DIR__.'/../vendor/twig-extensions/lib',

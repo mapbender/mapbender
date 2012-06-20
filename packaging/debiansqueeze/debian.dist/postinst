@@ -1,0 +1,10 @@
+#!/bin/sh -e
+# this is broken, fix it
+# Source debconf library.
+. /usr/share/debconf/confmodule
+
+db_input medium mwkel-klaerschlamm/dbhost || true
+db_go
+
+db_get mwkel-klaerschlamm/dbhost
+dbhost=$RET
