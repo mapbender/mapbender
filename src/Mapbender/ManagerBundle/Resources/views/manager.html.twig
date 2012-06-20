@@ -30,7 +30,9 @@
             </form>
 
             <nav>
+                {% if app.user != "" %}
                 {% render "MapbenderManagerBundle:Manager:menu" with { "request": app.request } %}
+                {% endif %}
             </nav>
         </header>
 
