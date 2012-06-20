@@ -199,7 +199,6 @@
     </target>
 
     <target name="doc">
-        <exec command="dot extra/sitemap.dot -o extra/sitemap.png -Tpng" ></exec>
         <phpdoc title="API Documentation"
             destdir="application/doc/api"
             output="HTML:Smarty:PHP" >
@@ -207,7 +206,6 @@
                 <include name="**/*.php" />
             </fileset>
         </phpdoc>
-        <exec command="rst2html application/doc/manual.rst > application/doc/manual.html" ></exec>
     </target>
 
     <target name="prepare" depends="doc,unittest">
