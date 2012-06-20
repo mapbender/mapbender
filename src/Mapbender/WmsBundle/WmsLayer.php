@@ -2,38 +2,28 @@
 
 namespace Mapbender\WmsBundle;
 
-use Mapbender\CoreBundle\Component\LayerInterface;
+use Mapbender\CoreBundle\Component\Layer;
 
 /**
  * Base WMS class
  *
- * @author Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author Christian Wygoda
  */
-class WmsLayer implements LayerInterface {
-    protected $layerSetId;
-    protected $layerId;
-    protected $configuration;
-    protected $application;
+class WmsLayer extends Layer {
+    public function getType() {
+        return 'wms';
+    }
 
-    public function __construct($layerSetId, $layerId, array $configuration, $application) {
-        $this->layerSetId = $layerSetId;
-        $this->layerId = $layerId;
-        $this->configuration = $configuration;
-        $this->application = $application;
+    public function getAssets($type) {
+        parent::getAssets($type);
+        switch($type) {
+        case 'js':
+            return array('@MapbenderWmsBundle/Resources/public/mapbender.layer.wms.js');
+        case 'css':
+            return array();
+        }
     }
-    
-    public function getConfiguration(){
-        return $this->configuration;
-    }
-    
-    public function getLayerSetId(){
-        return $this->layerSetId;
-    }
-    
-	public function getLayerId(){
-        return $this->layerId;
-    }
-    
+
     public function loadLayer(){
         $em = $this->application->get("doctrine")->getEntityManager();
         $query = $em->createQuery(
@@ -53,22 +43,6 @@ class WmsLayer implements LayerInterface {
             $this->configuration["transparent"] = $wmsinstance->getTransparent();
             $this->configuration["tiled"] = $wmsinstance->getTiled();
         }
-    }
-
-    public function render() {
-        return array(
-            'id' => $this->layerId,
-            'type' => 'wms',
-            'configuration' => $this->configuration,
-        );
-    }
-
-    public function getAssets() {
-        return array(
-            'js' => array(
-                'mapbender.layer.wms.js'
-            )
-        );
     }
 }
 

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * TODO: License
+ */
+
 namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\Application;
@@ -9,171 +13,188 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
-use Assetic\Asset\FileAsset;
-use Assetic\Asset\AssetCollection;
 
 /**
  * Application controller.
  *
- * @author Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author Christian Wygoda
  */
 class ApplicationController extends Controller {
     /**
-     * Rneder an application list at /applications
+     * Get runtime URLs
      *
-     * @Route("/applications")
-     * @Template()
+     * @param string $slug
+     * @return array
      */
-    public function listAction() {
+    private function getUrls($slug) {
         return array(
-            'apps' => $this->getYamlApplications());
+            'base' => $this->get('request')->getBaseUrl(),
+            // TODO: Can this be done less hack-ish?
+            'asset' => rtrim($this->get('templating.helper.assets')
+                ->getUrl('.'), '.'),
+            'element' => $this->get('router')
+                ->generate('mapbender_core_application_element', array(
+                    'slug' => $slug)),
+            'trans' => $this->get('router')
+                ->generate('mapbender_core_translation_trans'),
+            'proxy' => $this->get('router')
+            ->generate('mapbender_core_proxy_proxy'));
     }
 
-    /**
-     * Embed controller action.
-     */
-    public function embedAction($slug, $parts = array('css', 'html', 'js', 'configuration'), $format = 'embed') {
-        $application = $this->getApplication($slug);
-        $this->checkAllowedRoles($application->getRoles());
-        
-        $this->get("session")->set("proxyAllowed",true);
-        
-        $answer = $application->render($parts, $format);
-        return new Response($format === 'json' ? json_encode($answer) : $answer);
-    }
 
     /**
-     * Assetic controller.
+     * Asset controller.
+     *
+     * Dumps the assets for the given application and type. These are up to
+     * date and this controller will be used during development mode.
+     *
      * @Route("/application/{slug}/assets/{type}")
      */
     public function assetsAction($slug, $type) {
-        $application = $this->getApplication($slug);
-        $config = $application->getAssets();
-        $assets = new AssetCollection();
-        $locator = $this->get('file_locator');
+        $assets = $this->getApplication($slug)->getAssets($type);
+        $asset_modification_time = new \DateTime();
+        $asset_modification_time->setTimestamp($assets->getLastModified());
 
-        if($type === 'css') {
-            $rewrite = $this->get('assetic.filter.cssrewrite');
+        //TODO: Make filters part of the bundle configuration
+        //TODO: I'd like to have source maps support in here for easier
+        //    debugging of minified code, see
+        //    http://www.thecssninja.com/javascript/source-mapping
+        $filters = array(
+            'js' => array(),
+            'css' => array($this->container->get('assetic.filter.cssrewrite')));
+
+        // Set target path for CSS rewrite to work
+        $target = $this->get('request')->server->get('ORIG_SCRIPT_FILENAME');
+        $assets->setTargetPath($target);
+
+        foreach($filters[$type] as $filter) {
+            $assets->ensureFilter($filter);
         }
-        foreach(array_values(array_unique($config[$type])) as $file) {
-            $filters = array();
-            if($type === 'css') {
-                $filters[] = $rewrite;
-            }
 
-            $target = dirname($_SERVER['SCRIPT_NAME']) . '/bundles/' . strtolower(substr($file, 1, strpos($file, '/') - 7));
-            $file = $locator->locate($file);
-            $target .= '/' . basename($file);
-            $assets->add(new FileAsset($file,
-                $filters, null, $target));
-        }
-
-        $response = new Response();
-        $response->setContent($assets->dump());
         $mimetypes = array(
             'css' => 'text/css',
-            'js' => 'application/javascript'
-        );
+            'js' => 'application/javascript');
+
+        $response = new Response();
         $response->headers->set('Content-Type', $mimetypes[$type]);
+
+        if(!$this->container->getParameter('kernel.debug')) {
+            //TODO: use max(asset_modification_time, application_update_time)
+            $response->setLastModified($asset_modification_time);
+            if($response->isNotModified($this->get('request'))) {
+                return $response;
+            }
+        }
+
+        $response->setContent($assets->dump());
         return $response;
     }
 
-
     /**
-     * Call an application element's action at /application/{slug}/element/{id}/{action}
+     * Element action controller.
+     *
+     * Passes the request to the element's httpAction.
      * @Route("/application/{slug}/element/{id}/{action}",
-     *     name="mapbender_element",
-     *     requirements={ "action" = ".+" })
+     *     defaults={ "id" = null, "action" = null })
      */
     public function elementAction($slug, $id, $action) {
-        $application = $this->getApplication($slug);
-        $this->checkAllowedRoles($application->getRoles());
-        $element = $application->getElement($id);
-        if(!$element) {
-            throw new HttpNotFoundException("Element can not be found.");
-        }
+        $element = $this->getApplication($slug)->getElement($id);
+
+        $this->checkAllowedRoles($element->getRoles());
+
         return $element->httpAction($action);
     }
 
     /**
-     * Render an application at url /application/{slug}
+     * Main application controller.
      *
-     * @param string $slug The application slug
-     * @return Response HTTP response
-     * @Route("/application/{slug}.{_format}",
-     *     name="mapbender_application",
-     *     defaults={ "_format" = "html" })
+     * @Route("/application/{slug}.{_format}", defaults={ "_format" = "html" })
      * @Template()
      */
     public function applicationAction($slug) {
-        return $this->embedAction($slug,
-            array('css', 'html', 'js', 'configuration'),
-            $this->get('request')->get('_format'));
+        $application = $this->getApplication($slug);
+
+        // At this point, we are allowed to acces the application. In order
+        // to use the proxy in following request, we have to mark the session
+        $this->get("session")->set("proxyAllowed",true);
+
+        return new Response($application->render());
     }
 
     /**
-     * Given an application slug, find it and inflate it
-     * @param string $slug
-     * @return Application Application
+     * Get the application by slug.
+     *
+     * Tries to get the application with the given slug and throws an 404
+     * exception if it can not be found. This also checks access control and
+     * therefore may throw an AuthorizationException.
+     *
+     * @return Mapbender\CoreBundle\Component\Application
      */
-    private function getApplication($slug){
-        //TODO: Check for ORM Applications first, YAML Application only come in
-        //second place
-        $application = $this->getYamlApplication($slug);
+    private function getApplication($slug) {
+        $application = $this->get('mapbender')
+            ->getApplication($slug, $this->getUrls($slug));
+
+        if($application === null) {
+            throw new NotFoundHttpException(
+                'The application can not be found.');
+        }
+
+        $this->checkApplicationAccess($application);
+
         return $application;
     }
 
     /**
-     * Get all Yaml-defined applications
+     * Check access permissions for given application.
+     *
+     * This will first check if the current user is the owner, in which case
+     * access will be granted without regarding published state or required
+     * roles for the application. The same is true for the root account user.
+     * Then access will be denied if the application is not currently
+     * published, and the lastly checkAccess will be called to check if the
+     * current user has at least one of the roles required by the application.
+     * Denied access or insufficient authorization will throw the corresponding
+     * exception which are then picked up by Symfony's security layer.
+     *
+     * @param Application $application
      */
-    private function getYamlApplications() {
-        if(!$this->container->hasParameter('applications')) {
-            return array();
+    public function checkApplicationAccess(Application $application) {
+        $user = $this->get('security.context')->getToken()->getUser();
+        $owner = $application->getEntity()->getOwner();
+
+        if(is_object($user) && $owner->equals($user)) {
+            return;
         }
 
-        $apps_parameters = $this->container->getParameter('applications');
-
-        $apps = array();
-        foreach($apps_parameters as $key => $conf) {
-            $apps[$key] = $this->getYamlApplication($key);
+        if($user instanceof User and $user->getId() == 1) {
+            return;
         }
 
-        return $apps;
+        if(!$application->getEntity()->isPublished()) {
+            throw new AccessDeniedException('This application is not published at the moment.');
+        }
+
+        $this->checkAccess($application->getRoles());
     }
 
     /**
-     * Inflate an application from Yaml
+     * Check access permissions for given roles.
+     *
+     * Check if the allowed roles set by the application or element are matched
+     * by the current user. If no roles are required by the application
+     * configuration, this will still require IS_AUTHENTICATED_ANONYMOUSLY to
+     * guarantee a session.
+     * May throw an AccessDeniedException.
      */
-    private function getYamlApplication($slug) {
-        // Try to load application configurations from parameters
-        if(!$this->container->hasParameter('applications')) {
-            throw new NotFoundHttpException('No applications are defined.');
-        }
-        $apps_pars = $this->container->getParameter('applications');
-
-        // Find desired application configuration
-        if(!array_key_exists($slug, $apps_pars)) {
-            throw new NotFoundHttpException('Application ' . $slug . ' not found.');
+    private function checkAccess(array $allowedRoles) {
+        if(count($allowedRoles) == 0) {
+            $allowedRoles = 'IS_AUTHENTICATED_ANONYMOUSLY';
         }
 
-        // instantiate application
-        return new Application($this->container, $slug, $apps_pars[$slug]);
-    }
-
-    /**
-     * Check if the allowed roles set by the application are matched by the current user
-     */
-    private function checkAllowedRoles(array $allowedRoles) {
-        $securityContext = $this->get('security.context');
-        $isGrantedAccess = false;
-        foreach($allowedRoles as $allowedRole) {
-            if($securityContext->isGranted($allowedRole)) {
-                $isGrantedAccess = true;
-                break;
-            };
-        }
-        if(!$isGrantedAccess) {
-            throw new AccessDeniedException("You are not allowed to access this application");
+        if(!$this->get('security.context')->isGranted($allowedRoles)) {
+            throw new AccessDeniedException(
+                "You are not allowed to access this application");
         }
     }
 }
+

@@ -1,0 +1,9 @@
+{% macro link(title, path, params, li) %}
+{% set l = '<a href="' ~ path(path, params) ~ '">' ~ title ~ '</a>' %}
+{% if li %}<li{% if app.request.attributes.get('_route') == path %} class="active"{% endif %}>{{ l | raw }}</li>
+{% else %}{{ l | raw }}{% endif %}
+{% endmacro %}
+<ul class="nav nav-pills">
+    {{ _self.link('Users' | trans, 'mapbender_manager_user_index', {}, true) }}
+    {{ _self.link('Roles' | trans, 'mapbender_manager_role_index', {}, true) }}
+</ul>

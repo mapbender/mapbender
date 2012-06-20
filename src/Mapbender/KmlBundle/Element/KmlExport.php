@@ -8,15 +8,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class KmlExport extends Element implements ElementInterface {
-    public function getTitle() {
+    public static function getTitle() {
         return "Please give me a title";
     }
 
-    public function getDescription() {
+    public static function getDescription() {
         return "Please give me a description";
     }
 
-    public function getTags() {
+    public static function getTags() {
         return array();
     }
 
@@ -25,9 +25,7 @@ class KmlExport extends Element implements ElementInterface {
             'js' => array(
                 'mapbender.element.kmlexport.js'
             ),
-            'css' => array(
-                //'mapbender.elements.css'
-            )
+            'css' => array()
         );
     }
 

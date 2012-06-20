@@ -3,46 +3,49 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Response;
 
-class ActivityIndicator extends Element implements ElementInterface {
-    public function getTitle() {
-        return "Please give me a title";
+/**
+ * Activity indicator
+ *
+ * @author Christian Wygoda
+ */
+class ActivityIndicator extends Element {
+    public function getClassTitle() {
+        return "Activity Indicator";
     }
 
-    public function getDescription() {
-        return "Please give me a description";
+    public function getClassDescription() {
+        return "Shows HTTP activity";
     }
 
-    public function getTags() {
+    public function getClassTags() {
         return array();
+    }
+
+    public function getDefaultConfiguration() {
+        return array(
+            'activityClass' => 'mb-activity',
+            'ajaxActivityClass' => 'mb-activity-ajax',
+            'tileActivityClass' => 'mb-activity-tile');
+    }
+
+    public function getWidgetName() {
+        return 'mapbender.mbActivityIndicator';
     }
 
     public function getAssets() {
         return array(
-            'js' => array(
-                'mapbender.element.activityindicator.js'
-            ),
-            'css' => array(
-                'mapbender.elements.css'
-            )
-        );
+            'js' => array('mapbender.element.activityindicator.js'),
+            //TODO: Split up
+            'css' => array('mapbender.elements.css'));
     }
 
-    public function getConfiguration() {
-        $opts = $this->configuration;
-        return array(
-            'options' => $opts,
-            'init' => 'mbActivityIndicator',
-        );
-    }
-
-    public function render() {
-        return $this->get('templating')->render('MapbenderCoreBundle:Element:activityindicator.html.twig', array(
-                'id' => $this->id,
-                'configuration' => $this->configuration));
+     public function render() {
+         return $this->get('templating')
+             ->render('MapbenderCoreBundle:Element:activityindicator.html.twig',
+                 array(
+                    'id' => $this->id,
+                    'configuration' => $this->configuration));
     }
 }
 

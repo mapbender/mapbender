@@ -1,0 +1,217 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    background: #fff;
+    font-size: 16px/24px;
+    display: table;
+}
+
+div#wrapper {
+    display: table-row;
+}
+
+header[role="navigation"],
+div[role="main"] {
+    display: table-cell;
+    vertical-align: top;
+}
+
+header[role="navigation"] {
+    height: 100%;
+    display: inline-block;
+    width: 196px;
+    border-right: 4px solid #ccc;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: table-cell;
+
+    background: #f5f5f5;
+    text-align: center;
+}
+
+header[role="navigation"] div {
+    font-size: 0.875em;
+}
+
+header[role="navigation"] a {
+    color: #333;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+div[role="main"] {
+    padding: 20px;
+    display: table-cell;
+}
+
+div[role="main"] > h1 {
+    margin-bottom: 1em;
+    text-shadow: 1px 1px 0px #aaa;
+}
+
+/**
+ * Global sidebar search
+ */
+
+form#manager-search {
+    text-align: right;
+    margin: 1em 0;
+}
+
+form#manager-search input {
+    width: 150px;
+}
+
+/**
+ * Manager menu in the sidebar
+ */
+
+header[role="navigation"] nav ul {
+    margin-right: -20px;
+    margin-left: -10px;
+}
+
+header[role="navigation"] nav li a {
+    display: block;
+    padding: 0.75em 20px 0.75em 10px;
+    margin-left: 10px;
+    smargin-bottom: 10px;
+    text-align: right;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    -webkit-border-top-left-radius: 4px;
+    -webkit-border-bottom-left-radius: 4px;
+    -moz-border-top-left-radius: 4px;
+    -moz-border-bottom-left-radius: 4px;
+
+    /*
+    -webkit-transition: all 300ms ease-in-out;
+    -moz-transition: all 300ms ease-in-out;
+    -o-transition: all 300ms ease-in-out;
+    -ms-transition: all 300ms ease-in-out;
+    */
+}
+
+header[role="navigation"] nav li a:hover {
+    border-right: 4px solid #dc4a38;
+    margin-right: -4px;
+}
+
+header[role="navigation"] nav li.active a {
+    border-right: 4px solid #c24232;
+    color: #c24232;
+    margin-right: -4px;
+}
+
+#manager-user-menu {
+    margin-top: 1em;
+}
+
+#manager-user-menu p {
+    margin: 0;
+    text-align: right;
+}
+
+/**
+ * General form styles
+ */
+.CodeMirror .activeline {
+    background: #f0fcff !important;
+}
+
+form textarea {
+    height: 4em;
+}
+
+.CodeMirror {
+    background: #fff;
+    border: 1px solid #ccc;
+    width: 630px;
+}
+
+form footer {
+    margin-top: 1em;
+    border-top: 1px solid #ddd;
+    padding-top: 1em;
+}
+
+.table-elements {
+    width: 100%;
+}
+
+.table-elements span.up,
+.table-elements span.down {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url('../bootstrap/img/glyphicons-halflings.png');
+    cursor: pointer;
+}
+
+.table-elements span.up {
+    background-position: -287px -96px;
+}
+
+.table-elements span.down {
+    background-position: -314px -96px;
+}
+
+.table-elements th.title {
+    width: 33%;
+}
+
+.table-elements th.type {
+    width: 33%;
+}
+
+/**
+ * Fixes for h5bp + bootstrap
+ */
+.btn:visited {
+    color: #000;
+}
+
+.btn-primary:visited, .btn-warning:visited, .btn-danger:visited,
+.btn-success:visited, .btn-info:visited, .btn-inverse:visited {
+    color: #fff;
+}
+
+form.well ul.nav-tabs li.active a {
+    background: #f5f5f5;
+}
+
+/**
+ * Entity actions
+ */
+div.entity-actions {
+    opacity: 0.2;
+
+    -webkit-transition: all 300ms ease-in-out;
+    -moz-transition: all 300ms ease-in-out;
+    -o-transition: all 300ms ease-in-out;
+    -ms-transition: all 300ms ease-in-out;
+}
+
+div.entity-actions:hover {
+    opacity: 1.0;
+}
+
+#application-elements h3 a {
+    float: right;
+}
+
+#application_roles input {
+    float: left;
+    clear: both;
+    margin-right: 0.2em;
+}
+
+i.application-state {
+    cursor: pointer;
+}

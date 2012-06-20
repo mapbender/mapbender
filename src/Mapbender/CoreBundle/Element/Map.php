@@ -3,20 +3,40 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class Map extends Element implements ElementInterface {
-    public function getTitle() {
-        return "MapQuery Map";
+/**
+ * Map element.
+ *
+ * @author Christian Wygoda
+ */
+class Map extends Element {
+    static public function getClassTitle() {
+        return "Map";
     }
 
-    public function getDescription() {
-        return "Renders a MapQuery map";
+    static public function getClassDescription() {
+        return "MapQuery/OpenLayers based map";
     }
 
-    public function getTags() {
-        return array('Map', 'MapQuery');
+    static public function getClassTags() {
+        return array('Map', 'MapQuery', 'OpenLayers');
+    }
+
+    public static function getDefaultConfiguration() {
+        return array(
+            'layerset' => null,
+            'dpi' => 72,
+            'srs' => 'EPSG:4326',
+            'units' => 'degrees',
+            'extents' => array(
+                'max' => array(-180, -90, 180, 90),
+                'start' => array(-180, -90, 180, 90)),
+            'maxResolution' => 'auto',
+            'imgPath' => 'bundles/mapbendercore/mapquery/lib/openlayers/img');
+    }
+
+    public function getWidgetName() {
+        return 'mapbender.mbMap';
     }
 
     public function getAssets() {
@@ -25,21 +45,19 @@ class Map extends Element implements ElementInterface {
                 'mapquery/lib/openlayers/OpenLayers.js',
                 'mapquery/lib/jquery/jquery.tmpl.js',
                 'mapquery/src/jquery.mapquery.core.js',
-                'mapbender.element.map.js'
-            ),
+                'mapbender.element.map.js'),
             'css' => array(
+                //TODO: Split up
                 'mapbender.elements.css',
-                'mapquery/lib/openlayers/theme/default/style.css'
-            )
-        );
+                'mapquery/lib/openlayers/theme/default/style.css'));
     }
 
     public function getConfiguration() {
-        //TODO: Cherry pick
+        $configuration = parent::getConfiguration();
 
         $extra = array();
-        $srs = $this->get('request')->get('srs');
-        $poi = $this->get('request')->get('poi');
+        $srs = $this->container->get('request')->get('srs');
+        $poi = $this->container->get('request')->get('poi');
         if($poi) {
             $extra['type'] = 'poi';
             $point = split(',', $poi['point']);
@@ -51,7 +69,7 @@ class Map extends Element implements ElementInterface {
             );
         }
 
-        $bbox = $this->get('request')->get('bbox');
+        $bbox = $this->container->get('request')->get('bbox');
         if(!$poi && $bbox) {
             $bbox = explode(',', $bbox);
             if(count($bbox) === 4) {
@@ -65,19 +83,19 @@ class Map extends Element implements ElementInterface {
             }
         }
 
-        $options = array_merge(array('extra' => $extra), $this->configuration);
+        $configuration = array_merge(array('extra' => $extra), $configuration);
+
         if($srs)
-          $options = array_merge($options, array('targetsrs' => $srs));
-        return array(
-            'options' => $options,
-            'init' => 'mbMap',
-        );
+            $configuration = array_merge($configuration,
+                array('targetsrs' => $srs));
+
+        return $configuration;
     }
 
     public function render() {
-            return $this->get('templating')->render('MapbenderCoreBundle:Element:map.html.twig', array(
-                'id' => $this->id
-            ));
+        return $this->container->get('templating')
+            ->render('MapbenderCoreBundle:Element:map.html.twig', array(
+                'id' => $this->getId()));
     }
 }
 

@@ -1,0 +1,32 @@
+<header class="form-help">
+{% trans %}
+Required fields are marked with dark labels, while optional fields have lighter labels.
+{% endtrans %}
+</header>
+
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#user-basics" data-toggle="tab">{{ 'Base data' | trans}}</a></li>
+    <li><a href="#user-roles" data-toggle="tab">{{ 'Roles' | trans}}</a></li>
+</ul>
+
+<div class="tab-content">
+    <section id="user-basics" class="tab-pane active">
+        {% include 'MapbenderManagerBundle:User:form-basic.html.twig' %}
+    </section>
+
+    <section id="user-roles" class="tab-pane">
+        {% include 'MapbenderManagerBundle:User:form-roles.html.twig' %}
+    </section>
+</div>
+
+{###############################################################################
+    Render any remaining fields inside the rulers to make you aware you forgot
+    them
+###############################################################################}
+{% set form_rest = form_rest(form) %}
+{% if form_rest %}
+<hr />
+{{ form_rest | raw }}
+<hr />
+{% endif %}
+

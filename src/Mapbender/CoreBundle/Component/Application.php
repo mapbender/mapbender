@@ -1,221 +1,316 @@
 <?php
 
+/**
+ * TODO: License
+ */
+
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Component\ApplicationInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Assetic\Asset\AssetCollection;
+use Assetic\Asset\FileAsset;
+use Assetic\Asset\StringAsset;
+use Mapbender\CoreBundle\Entity\Application as Entity;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class Application implements ApplicationInterface {
+/**
+ * Application is the main Mapbender3 class.
+ *
+ * This class is the controller for each application instance.
+ * The application class will not perform any access checks, this is due to
+ * the controller instantiating an application. The controller should check
+ * with the configuration entity to get a list of allowed roles and only then
+ * decide to instantiate a new application instance based on the configuration
+ * entity.
+ *
+ * @author Christian Wygoda
+ */
+ class Application {
+    /**
+     * @var ContainerInterface $container The container
+     */
     protected $container;
-    protected $slug;
-    protected $configuration;
-    protected $regions;
-    protected $layersets;
+
+    /**
+     * @var Template $template The application template class
+     */
     protected $template;
-    protected $element_id_template;
 
-    public function __construct($container, $slug, $configuration) {
+    /**
+     * @var array $elements The elements, ordered by weight
+     */
+    protected $elements;
+
+    /**
+     * @var array $layers The layers
+     */
+    protected $layers;
+
+    /**
+     * @var array $urls Runtime URLs
+     */
+    protected $urls;
+
+    /**
+     * @param ContainerInterface $container The container
+     * @param Entity $entity The configuration entity
+     * @param array $urls Array of runtime URLs
+     */
+    public function __construct(ContainerInterface $container,
+        Entity $entity, array $urls) {
         $this->container = $container;
-        $this->slug = $slug;
-        $this->configuration = $configuration;
+        $this->entity = $entity;
+        $this->urls = $urls;
+   }
 
-        // A title is required, otherwise it would be hard to select an
-        // application in a list
-        if(!$this->getTitle()) {
-            throw new \Exception('No title set for application');
-        }
+    /*************************************************************************
+     *                                                                       *
+     *                    Configuration entity handling                      *
+     *                                                                       *
+     *************************************************************************/
 
-        $this->element_id_template = "element-%d";
+    /**
+     * Get the configuration entity.
+     *
+     * @return object $entity
+     */
+    public function getEntity() {
+        return $this->entity;
     }
 
+    /**
+     * Get allowed roles.
+     *
+     * @return array
+     */
+    public function getRoles() {
+        return $this->entity->getRoles()->toArray();
+    }
+
+    /*************************************************************************
+     *                                                                       *
+     *             Shortcut functions for leaner Twig templates              *
+     *                                                                       *
+     *************************************************************************/
+
+    /**
+     * Get the application ID
+     *
+     * @return integer
+     */
+    public function getId() {
+        return $this->entity->getId();
+    }
+
+    /**
+     * Get the application slug
+     *
+     * @return string
+     */
+    public function getSlug() {
+        return $this->entity->getSlug();
+    }
+
+    /**
+     * Get the application title
+     *
+     * @return string
+     */
     public function getTitle() {
-        return $this->configuration['title'];
+        return $this->entity->getTitle();
     }
 
+    /**
+     * Get the application description
+     *
+     * @return string
+     */
     public function getDescription() {
-        return array_key_exists('description', $this->configuration) ? $this->configuration['description'] : NULL;
+        return $this->entity->getDescription();
     }
 
-    public function getTemplate() {
-        if(!$this->template) {
-            $this->loadTemplate();
+    /*************************************************************************
+     *                                                                       *
+     *                              Frontend stuff                           *
+     *                                                                       *
+     *************************************************************************/
+
+    /**
+     * Render the application
+     *
+     * @param string format Output format, defaults to HTML
+     * @param boolean $html Whether to render the HTML itself
+     * @param boolean $css  Whether to include the CSS links
+     * @param boolean $js   Whether to include the JavaScript
+     * @return string $html The rendered HTML
+     */
+    public function render($format = 'html', $html = true, $css = true,
+        $js = true) {
+        return $this->getTemplate()->render($format, $html, $css, $js);
+    }
+
+    /**
+     * Get the assets as an AsseticCollection.
+     * Filters can be applied later on with the ensureFilter method.
+     *
+     * @param string $type Can be 'css' or 'js' to indicate which assets to dump
+     * @return AsseticCollection
+     */
+    public function getAssets($type) {
+        if($type !== 'css' && $type !== 'js') {
+            throw new \RuntimeException('Asset type \'' . $type .
+                '\' is unknown.');
         }
-        return $this->template;
-    }
 
-    public function getLayersets() {
-        return $this->layersets;
-    }
+        $assets = new AssetCollection();
 
-    public function getElement($id) {
-        $template_metadata = $this->getTemplate()->getMetadata();
-        $counter = 0;
-        $user = $this->container->get('security.context')->getToken()->getUser();
-        foreach($template_metadata['regions'] as $region) {
-            // Only iterate over regions defined in the app
-            if(!array_key_exists($region, $this->configuration['elements'])) {
-                continue;
-            }
-            foreach($this->configuration['elements'][$region] as $name => $element) {
-                // check if the roles set
-                if(isset($element['roles'])){
-                    $allow = false;
-                    foreach ($user->getRoles() as $role) {
-                        // check if the user authorized
-                        if(in_array($role, $element['roles'])){
-                            $allow = true;
-                            break;
-                        }
-                    }
-                    if(!$allow){
-                        continue;
-                    }
-                }
-                $element_id = sprintf($this->element_id_template, $counter++);
-                if($element_id == $id) {
-                    $class = $element['class'];
-                    unset($element['class']);
-                    return new $class($id, $name, $element, $this->container);
-                }
-            }
-        }
-        return NULL;
-    }
-
-    public function render($_parts = array('css', 'html', 'js', 'configuration'), $_format = 'html') {
-        $this->loadLayers();
-        $this->loadElements();
-
-        $layersets = array();
-        foreach($this->layersets as $title => $layers) {
-            $layersets[$title] = array();
-            foreach($layers as $layer) {
-                $layersets[$title][] = $layer->render();
+        if($type === 'js') {
+            // Mapbender API
+            $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.js';
+            $this->addAsset($assets, $type, $file);
+            // Translation API
+            $file = '@MapbenderCoreBundle/Resources/public/mapbender.trans.js';
+            $this->addAsset($assets, $type, $file);
+            // WDT fixup
+            if($this->container->has('web_profiler.debug_toolbar')) {
+                $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js';
+                $this->addAsset($assets, $type, $file);
             }
         }
-
-        $base_path = $this->get('request')->getBaseUrl();
-
-        $config = $this->getAssets();
-
-        $configuration = array(
-            'title' => $this->getTitle(),
-            'layersets' => $layersets,
-            'elements' => $config['element_confs'],
-            'basePath' => $base_path,
-            'assetPath' => rtrim($this->get('templating.helper.assets')->getUrl('.'), '.'),
-            'elementPath' => sprintf('%s/application/%s/element/', $base_path, $this->slug),
-            'transPath' => $this->get('router')->generate('mapbender_core_translation_transtext'),
-            'slug' => $this->slug,
-            'proxies' => array(
-                'open' => $this->get('router')->generate('mapbender_proxy_open'),
-                //'secure' => $this->get('router')->generate('mapbender_proxy_secure')
-            )
-        );
-
-        $cssUrl = $this->get('router')->generate('mapbender_core_application_assets', array(
-            'slug' => $this->slug,
-            'type' => 'css'));
-        $jsUrl = $this->get('router')->generate('mapbender_core_application_assets', array(
-            'slug' => $this->slug,
-            'type' => 'js'));
-
-        return $this->getTemplate()->render(array(
-            'configuration' => $configuration,
-            'assets' => array(
-                'js' => $jsUrl,
-                'css' => $cssUrl),
-            'regions' => $this->regions
-        ), $_parts, $_format);
-    }
-
-    public function getAssets() {
-        $this->loadLayers();
-        $this->loadElements();
-
-        // Get all assets we need to include
-        // First the application and template assets
-        $js = array();
-        $css = array();
-        // load mapbender.translate
-        $js[] = $this->getReference($this, 'mapbender.trans.js');
-        $template = $this->getTemplate();
-        $template_metadata = $this->getTemplate()->getMetadata();
-        foreach($template_metadata['css'] as $asset) {
-            $css[] = $this->getReference($template, $asset);
-        }
-        foreach($template_metadata['js'] as $asset) {
-            $js[] = $this->getReference($template, $asset);
+        if($type === 'css') {
+            $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.css';
+            $this->addAsset($assets, $type, $file);
         }
 
-        // Then merge in all element assets
-        // We also grab the element confs here
-        $element_confs = array();
-        foreach($this->regions as $region => $elements) {
+        // Load all elements assets
+        foreach($this->getElements() as $region => $elements) {
             foreach($elements as $element) {
-                $assets = $element->getAssets();
-                if(array_key_exists('css', $assets)) {
-                    foreach($assets['css'] as $asset) {
-                        $css[] = $this->getReference($element, $asset);
-                    }
-                }
-
-                if(array_key_exists('js', $assets)) {
-                    foreach($assets['js'] as $asset) {
-                        $js[] = $this->getReference($element, $asset);
-                    }
-                }
-
-                $element_confs[$element->getId()] = array_merge(
-                    $element->getConfiguration(),
-                    array('name' => $element->getName()));
-            }
-        }
-
-        foreach($this->layersets as $layerset) {
-            foreach($layerset as $layer) {
-                $assets = $layer->getAssets();
-                if(array_key_exists('css', $assets)) {
-                    foreach($assets['css'] as $asset) {
-                        $css[] = $this->getReference($layer, $asset);
-                    }
-                }
-
-                if(array_key_exists('js', $assets)) {
-                    foreach($assets['js'] as $asset) {
-                        $js[] = $this->getReference($layer, $asset);
-                    }
+                $element_assets = $element->getAssets();
+                foreach($element_assets[$type] as $asset) {
+                    $this->addAsset($assets, $type,
+                        $this->getReference($element, $asset));
                 }
             }
         }
 
-        $js[] = $this->getReference($this, 'mapbender.application.js');
-        $css[] = $this->getReference($this, 'mapbender.application.css');
-
-        try {
-            $wdt = $this->get('web_profiler.debug_toolbar');
-            $js[] = $this->getReference($this, 'mapbender.application.wdt.js');
-        } catch(\Exception $e) {
-            // Silently ignore...
+        // Load all layer assets
+        foreach($this->getLayersets() as $layerset) {
+            foreach($layerset->layerObjects as $layer) {
+                foreach($layer->getAssets($type) as $asset) {
+                    $this->addAsset($assets, $type, $this->getReference($layer,
+                        $asset));
+                }
+            }
         }
 
-        return array(
-            'element_confs' => $element_confs,
-            'css' => array_values(array_unique($css)),
-            'js' => array_values(array_unique($js))
-        );
+        // Load the template assets last, so it can easily overwrite element
+        // and layer assets for application specific styling for example
+        foreach($this->getTemplate()->getAssets($type) as $asset) {
+            $file = $this->getReference($this->template, $asset);
+            $this->addAsset($assets, $type, $file);
+        }
+
+        return $assets;
     }
 
-    private function getBaseDir($object) {
-        $namespaces = explode('\\', get_class($object));
-        $bundle = sprintf('%s%s', $namespaces[0], $namespaces[1]);
-        // see Symfony\FrameWorkBundle\Command\AssetsInstallCommand, line 77
-        $baseDir = sprintf('@%s/Resources/public', $bundle);
-        //$baseDir = sprintf('bundles/%s', preg_replace('/bundle$/', '', strtolower($bundle)));
-        return $baseDir;
+    private function addAsset($collection, $type, $reference) {
+        $locator = $this->container->get('file_locator');
+        $file = $locator->locate($reference);
+
+        // This stuff is needed for CSS rewrite. This will use the file contents
+        // from the bundle directory, but the path inside the public folder
+        // for URL rewrite
+        $sourceBase = null;
+        $sourcePath = null;
+        if($reference[0] == '@') {
+            // Bundle name
+            $bundle = substr($reference, 1, strpos($reference, '/') - 1);
+            // Installation root directory
+            $root = dirname($this->container->getParameter('kernel.root_dir'));
+            // Path inside the Resources/public folder
+            $assetPath = substr($reference,
+                strlen('@' . $bundle . '/Resources/public'));
+
+            // Path for the public version
+            $public = $root . '/web/bundles/' .
+                preg_replace('/bundle$/', '', strtolower($bundle)) .
+                $assetPath;
+
+            $sourceBase = '';
+            $sourcePath = $public;
+        }
+
+        $asset = new FileAsset($file,
+            array(),
+            $sourceBase,
+            $sourcePath);
+
+        $collection->add($asset);
     }
 
+    /**
+     * Get the configuration (application, elements, layers) as an StringAsset.
+     * Filters can be applied later on with the ensureFilter method.
+     *
+     * @return StringAsset The configuration asset object
+     */
+    public function getConfiguration() {
+        $configuration = array();
+
+        $configuration['application'] = array(
+            'title' => $this->entity->getTitle(),
+            'urls' => $this->urls,
+            'slug' => $this->getSlug());
+
+        // Get all element configurations
+        $configuration['elements'] = array();
+        foreach($this->getElements() as $region => $elements) {
+            foreach($elements as $element) {
+                $configuration['elements'][$element->getId()] = array(
+                    'init' => $element->getWidgetName(),
+                    'configuration' => $element->getConfiguration());
+            }
+        }
+
+        // Get all layer configurations
+        $configuration['layersets'] = array();
+        foreach($this->getLayersets() as $layerset) {
+            $cnfiguration['layersets'][$layerset->getId()] = array();
+            foreach($layerset->layerObjects as $layer) {
+                $configuration['layersets'][$layerset->getId()][$layer->getId()] = array(
+                    'type' => $layer->getType(),
+                    'configuration' => $layer->getConfiguration());
+            }
+        }
+
+        // Convert to asset
+        $asset = new StringAsset(json_encode((object) $configuration));
+
+        // TODO: Determine modification timestamp for caching
+        // $asset->setLastModified(new DateTime());
+
+        return $asset;
+    }
+
+    /**
+     * Return the element with the given id
+     *
+     * @param string $id The element id
+     * @return Element
+     */
+    public function getElement($id) {
+        throw new \RuntimeException('NIY getElement');
+    }
+
+    /**
+     * Build an Assetic reference path from a given objects bundle name(space)
+     * and the filename/path within that bundles Resources/public folder
+     *
+     * @param object $object
+     * @param string $file
+     * @return string
+     */
     private function getReference($object, $file) {
+        // If it starts with an @ we assume it's already an assetic reference
         if($file[0] !== '@') {
             $namespaces = explode('\\', get_class($object));
             $bundle = sprintf('%s%s', $namespaces[0], $namespaces[1]);
@@ -226,86 +321,58 @@ class Application implements ApplicationInterface {
     }
 
     /**
-     * Get the layer factory for the specified type and cache it
+     * Get template object
      *
-     * @param string $type The layer class identifier to get the layer factory for
-     * @return LayerFactoryInterface The layer factory
+     * @return Template
      */
-    /*
-    protected function getLayerFactory($type) {
-        if(array_key_exists($type, $this->layer_factories)) {
-            return $this->layer_factories[$type];
-        } else {
-            //TODO: Search the services tagged mapbender.layer_factory for given type
-            $factory = $this->container->get('mapbender.' . $type . '.layer_factory');
-            if($factory) {
-                $this->layer_factories[$type] = $factory;
-                return $factory;
-            }
+    public function getTemplate() {
+        if($this->template === null) {
+            $template = $this->entity->getTemplate();
+            $this->template = new $template($this->container, $this);
         }
-    }
-    */
-
-    /**
-     * Load the template
-     */
-    private function loadTemplate() {
-        $templating = $this->get('templating');
-        $this->template = new $this->configuration['template']($templating);
+        return $this->template;
     }
 
     /**
-     * Using the configuration, load (instantiate) all elements defined for the application
+     * Get elements, optionally by region
+     *
+     * @param string $region Region to get elements for. If null, all elements
+     * are returned.
+     * @return array
      */
-    private function loadElements() {
-        $user = $this->container->get('security.context')->getToken()->getUser();
-        $template_metadata = $this->getTemplate()->getMetadata();
-        $this->elements = array();
-        $counter = 0;
-        foreach($template_metadata['regions'] as $region) {
-            $this->regions[$region] = array();
-            // Only iterate over regions defined in the app
-            if(!array_key_exists($region, $this->configuration['elements'])) {
-                continue;
-            }
-            foreach($this->configuration['elements'][$region] as $name => $element) {
-                // check if the roles set
-                $user_roles = $user instanceof UserInterface ? $user->getRoles() : array();
-                if(isset($element['roles'])){
-                    $allow = false;
-                    foreach ($user_roles as $role) {
-                        // check if the user authorized
-                        if(in_array($role, $element['roles'])){
-                            $allow = true;
-                            break;
-                        }
-                    }
-                    if(!$allow){
-                        continue;
-                    }
+    public function getElements($region = null) {
+        if($this->elements === null) {
+            // Set up all elements (by region)
+            $this->elements = array();
+            foreach($this->entity->getElements() as $entity) {
+                $class = $entity->getClass();
+                $element = new $class($this, $this->container, $entity);
+                $r = $entity->getRegion();
+
+                if(!array_key_exists($r, $this->elements)) {
+                    $this->elements[$r] = array();
                 }
-                // Extract and unset class, so we can use the remains as configuration
-                $class = $element['class'];
-                unset($element['class']);
-                $id = sprintf($this->element_id_template, $counter++);
-                $this->regions[$region][] = new $class($id, $name, $element, $this);
+                $this->elements[$r][] = $element;
+            }
+
+            // Sort each region element's by weight
+            foreach($this->elements as $r => $elements) {
+                usort($elements, function($a, $b) {
+                    $wa = $a->getEntity()->getWeight();
+                    $wb = $b->getEntity()->getWeight();
+                    if($wa == $wb) {
+                        return 0;
+                    }
+                    return ($wa < $wb) ? -1 : 1;
+                });
             }
         }
-    }
 
-    /**
-     * Using the configuration, load (instantiate all layers defined for the application
-     */
-    private function loadLayers() {
-        $this->layersets = array();
-        foreach($this->configuration['layersets'] as $layersetId => $layers) {
-            $this->layersets[$layersetId] = array();
-            foreach($layers as $layerId => $layer) {
-                //Extract and unset class, so we can use the remains as configuration
-                $class = $layer['class'];
-                unset($layer['class']);
-                $this->layersets[$layersetId][] = new $class($layersetId, $layerId, $layer, $this);
-            }
+        if($region) {
+            return array_key_exists($region, $this->elements) ?
+                $this->elements[$region] : array();
+        } else {
+            return $this->elements;
         }
     }
     
@@ -339,50 +406,22 @@ class Application implements ApplicationInterface {
         $this->layersets[$layersetId] = $newLayers;
     }
 
-    /**
-     * Access services via the container
-     */
-     public function get($what) {
-       return $this->container->get($what);
-     }
+    public function getLayersets() {
+        if($this->layers === null) {
+            // Set up all elements (by region)
+            $this->layers = array();
+            foreach($this->entity->getLayersets() as $layerset) {
+                $layerset->layerObjects = array();
+                foreach($layerset->getLayers() as $entity) {
+                    $class = $entity->getClass();
+                    $layer = new $class($this->container, $entity);
 
-     /**
-      * Get final (CSS) id for element by database id
-      */
-     public function getFinalId($elementId) {
-       foreach($this->regions as $region) {
-         foreach($region as $element) {
-           if($element->getName() === $elementId) {
-             return $element->getId();
-           }
-         }
-       }
-       return NULL;
-     }
-
-     /**
-      * Get a list of roles allowed to access this application
-      */
-     public function getRoles() {
-        if(!isset($this->configuration['roles']))
-            return array('IS_AUTHENTICATED_ANONYMOUSLY');
-        $roles = $this->configuration['roles'];
-        if(is_string($roles)) {
-            return array($roles);
-        } else {
-            return $roles;
+                    $layerset->layerObjects[] = $layer;
+                }
+                $this->layers[$layerset->getId()] = $layerset;
+            }
         }
-     }
-
-     /*
-      * Get a container parameter
-      */
-     public function getParameter($key) {
-        return $this->container->getParameter($key);
-     }
-
-     public function getSlug() {
-        return $this->slug;
-     }
-}
+        return $this->layers;
+    }
+ }
 

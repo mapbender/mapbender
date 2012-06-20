@@ -1,0 +1,55 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ "New Element" | trans}}{% endblock %}
+
+{% block manager_css %}
+{% for asset in assets.css %}
+<link rel="stylesheet" type="text/css" href="{{ asset(asset) }}" />
+{% endfor %}
+{% endblock %}
+
+{% block manager_js %}
+{% for asset in assets.js %}
+<script type="text/javascript" src="{{ asset(asset) }}"></script>
+{% endfor %}
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/form.js') }}"></script>
+{% endblock %}
+
+{% set form_errors = form_errors(form) %}
+
+{% block manager_content %}
+
+{% if app.request.get('id') %}
+<form action="{{ path('mapbender_manager_element_update', { 'slug': app.request.get('slug'), 'id': app.request.get('id') }) }}" method="post" {{ form_enctype(form)}} class="well">
+{% else %}
+<form action="{{ path('mapbender_manager_element_create', { 'slug': app.request.get('slug') }) }}" method="post" {{ form_enctype(form)}} class="well">
+{% endif %}
+    {% if form_errors(form) %}
+    <div class="alert alert-error">
+        {{ form_errors(form) }}
+    </div>
+    {% endif %}
+
+    {{ form_row(form._token) }}
+    {{ form_row(form.class) }}
+    {{ form_row(form.region) }}
+
+    {{ form_row(form.title) }}
+
+    <hr/>
+
+    {% include(theme) %}
+
+    <footer>
+        <div class="btn-group">
+            {% if app.request.get('id') %}
+            <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
+            {% else %}
+            <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
+            {% endif %}
+            <a href="{{ url('mapbender_manager_application_edit', {'slug': app.request.get('slug')}) }}#elements" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
+    </footer>
+</form>
+
+{% endblock %}

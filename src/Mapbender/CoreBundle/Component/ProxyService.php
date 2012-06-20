@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author Christian Wygoda <christian.wygoda@wheregroup.com>
+ * TODO: License
  */
 
 namespace Mapbender\CoreBundle\Component;
@@ -10,6 +10,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * The central proxy service which can be used internally or by the proxie
+ * controllers.
+ *
+ * @deprecated Will be replaced by OWSProxy3
+ * @author Christian Wygoda
+ */
 class ProxyService {
     protected $proxy_conf;
     protected $noproxy;

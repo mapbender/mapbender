@@ -12,7 +12,10 @@ class MapbenderCoreExtension extends Extension {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $screenshot_path = $container->getParameter('kernel.root_dir')
+            . '/../web/' . $config['screenshot_path'];
         $container->setParameter('mapbender.proxy', $config['proxy']);
+        $container->setParameter('mapbender.screenshot_path', $screenshot_path);
 
         $loader = new XmlFileLoader($container,
             new FileLocator(__DIR__ . '/../Resources/config'));

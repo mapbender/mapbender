@@ -1,6 +1,6 @@
 (function($) {
 
-OpenLayers.ProxyHost = Mapbender.configuration.proxies.open + '?url=';
+OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
 
 $.widget("mapbender.mbMap", {
     options: {

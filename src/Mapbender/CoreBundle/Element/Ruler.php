@@ -3,68 +3,43 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+//use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class Ruler extends Element implements ElementInterface {
-    public function getTitle() {
-        return "Please give me a title";
+class Ruler extends Element {
+    static public function getClassTitle() {
+        return 'Line/Area ruler';
     }
 
-    public function getDescription() {
+    static public function getClassDescription() {
         return "Please give me a description";
     }
 
-    public function getTags() {
+    static public function getClassTags() {
         return array();
     }
 
     public function getAssets() {
         return array(
-            'js' => array(
-                'mapbender.element.ruler.js',
-            ),
-            'css' => array(
-                'mapbender.elements.css'
-            )
-        );
+            'js' => array('@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js'),
+            //TODO: Split up
+            'css' => array('@MapbenderCoreBundle/Resources/public/mapbender.elements.css'));
     }
 
-    public function getConfiguration() {
-        $tr = $this->get('translator');
-        $opts = $this->configuration;
-        $opts['text'] = $this->name;
-        $opts['title'] = $tr->trans($opts['title']);
-        // Resolve the run-time id of the target widget
-        if(array_key_exists('target', $this->configuration)) {
-            $elementId = $this->configuration['target'];
-            $finalId = $this->application->getFinalId($elementId);
-            $opts = array_merge($opts, array('target' => $finalId));
-        }
+    public static function getDefaultConfiguration() {
         return array(
-            'options' => $opts,
-            'init' => 'mbRuler',
-        );
+            'type' => 'line');
     }
 
-    public function httpAction($action) {
-        $response = new Response();
-
-        $data = array(
-            'message' => 'Hello World'
-        );
-        $response->setContent(json_encode($data));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
+    public function getWidgetName() {
+        return 'mapbender.mbRuler';
     }
 
     public function render() {
-        return $this->get('templating')->render('MapbenderCoreBundle:Element:measure_dialog.html.twig', array(
-            'id' => $this->id,
-            'type' => array_key_exists('type', $this->configuration) ?
-                $this->configuration['type'] : 'line',
-            'configuration' => $this->configuration,
-            'label' => $this->configuration['title']));
+        return $this->container->get('templating')
+            ->render('MapbenderCoreBundle:Element:measure_dialog.html.twig',
+                array(
+                    'id' => $this->getId(),
+                    'configuration' => $this->getConfiguration()));
     }
 }
 

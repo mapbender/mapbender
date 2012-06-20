@@ -1,0 +1,40 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ "New application" | trans}}{% endblock %}
+
+{% block manager_css %}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.css') }}" />
+{% endblock %}
+
+{% block manager_js %}
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/form.js') }}"></script>
+{% endblock %}
+
+{% set form_errors = form_errors(form) %}
+
+{% block manager_content %}
+<p>{% trans %}Create a new application by providing basic information and then
+use the edit mode to add elements, layers and security.{% endtrans %}</p>
+
+<form action="{{ path('mapbender_manager_application_create') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well">
+    {% if form_errors(form) %}
+    <div class="alert alert-error">
+        {{ form_errors(form) }}
+    </div>
+    {% endif %}
+
+    {{ form_row(form._token) }}
+
+    {% include "MapbenderManagerBundle:Application:form-create.html.twig" %}
+
+    <footer>
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
+            <a href="{{ url('mapbender_manager_application_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
+    </footer>
+</form>
+
+{% endblock %}

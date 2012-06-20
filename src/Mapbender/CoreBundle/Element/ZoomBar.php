@@ -3,65 +3,56 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Response;
 
-class ZoomBar extends Element implements ElementInterface {
-    public function getTitle() {
-        return "Please give me a title";
+/**
+ * Mapbender Zoombar
+ *
+ * The Zoombar element provides a control to pan and zoom, similar to the
+ * OpenLayers PanZoomBar control. This element though is easier to use when
+ * custom styling is needed.
+ *
+ * @author Christian Wygoda
+ */
+class ZoomBar extends Element {
+    public static function getClassTitle() {
+        return "Pan/Zoom Bar";
     }
 
-    public function getDescription() {
-        return "Please give me a description";
+    public static function getClassDescription() {
+        return <<<EOT
+The Zoombar element provides a control to pan and zoom, similar to the
+OpenLayers PanZoomBar control. This element though is easier to use when
+custom styling is needed.
+EOT;
     }
 
-    public function getTags() {
-        return array();
+    public static function getClassTags() {
+        return array('zoom', 'pan', 'control', 'panel');
     }
 
     public function getAssets() {
         return array(
-            'js' => array(
-                'mapbender.element.zoombar.js'
-            ),
-            'css' => array(
-                'mapbender.element.zoombar.css'
-            )
-        );
+            'js' => array('mapbender.element.zoombar.js'),
+            'css' => array('mapbender.element.zoombar.css'));
     }
 
-    public function getConfiguration() {
-        $opts = $this->configuration;
-        $opts['text'] = $this->name;
-        // Resolve the run-time id of the target widget
-        if(array_key_exists('target', $this->configuration)) {
-            $elementId = $this->configuration['target'];
-            $finalId = $this->application->getFinalId($elementId);
-            $opts = array_merge($opts, array('target' => $finalId));
-        }
+    public static function getDefaultConfiguration() {
         return array(
-            'options' => $opts,
-            'init' => 'mbZoomBar',
-        );
+            'stepSize' => 50,
+            'stepByPixel' => false,
+            'position' => array(0, 0),
+            'draggable' => true);
     }
 
-    public function httpAction($action) {
-        $response = new Response();
-
-        $data = array(
-            'message' => 'Hello World'
-        );
-        $response->setContent(json_encode($data));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
+    public function getWidgetName() {
+        return 'mapbender.mbZoomBar';
     }
 
     public function render() {
-        return $this->get('templating')->render('MapbenderCoreBundle:Element:zoombar.html.twig', array(
-                'id' => $this->id,
-                'configuration' => $this->configuration,
-                'label' => $this->name));
+        return $this->container->get('templating')
+            ->render('MapbenderCoreBundle:Element:zoombar.html.twig', array(
+                'id' => $this->getId(),
+                'configuration' => $this->getConfiguration()));
     }
 }
 

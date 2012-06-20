@@ -1,0 +1,30 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ application.title }}{% endblock %}
+
+{% block manager_css %}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/css/jquery-ui-1.8.16.css') }}" />
+{% endblock %}
+
+{% block manager_js %}
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/form.js') }}"></script>
+{% endblock %}
+
+{% block manager_content %}
+
+<form action="{{ path('mapbender_manager_application_update', { 'slug': application.slug }) }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well">
+
+    {{ form_row(form._token) }}
+
+    {%include "MapbenderManagerBundle:Application:form-edit.html.twig" %}
+
+    <footer>
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
+            <a href="{{ url('mapbender_manager_application_confirmdelete', { 'slug': application.slug } )}}" class="btn btn-warning">{{ 'Delete' | trans}}</a>
+            <a href="{{ url('mapbender_manager_application_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
+    </footer>
+</form>
+
+{% endblock %}

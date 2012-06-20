@@ -1,26 +1,33 @@
 {% extends "MapbenderCoreBundle::frontend.html.twig" %}
 
-{% block title %}{{ configuration.title }}{% endblock %}
+{% block title %}{{ application.title }}{% endblock %}
 
+{# TODO: Use controller for app.debug, else use dumped assets #}
 {% block css %}
-	<link rel="stylesheet" type="text/css" href="{{ assets.css }}" />
+    <link rel="stylesheet" type="text/css" href="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'css'}) }}" />
 {% endblock %}
 
 {% block js %}
-	<script type="text/javascript" src="{{ assets.js }}"></script>
+    <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
 {% endblock %}
 
 {% block content %}
 <div id="top" class="region">
-{% for element in regions.top %}
-	{{ element.render() | raw }}
+{% if application.elements.top is defined %}
+{% for element in application.elements.top %}
+    {{ element.render() | raw }}
 {% endfor %}
+{% endif %}
 </div>
 <div id="content" class="region">
-{% for element in regions.content %}
-	{{ element.render() | raw }}
+{% if application.elements.content is defined %}
+{% for element in application.elements.content %}
+    {{ element.render() | raw }}
 {% endfor %}
+{% endif %}
 </div>
-<script type="text/javascript">var Mapbender = Mapbender || {}; Mapbender.configuration = {{ configuration | json_encode | raw }}</script>
+<script type="text/javascript">
+    var Mapbender = Mapbender || {};
+    Mapbender.configuration = {{ application.configuration.dump | raw }}</script>
 {% endblock %}
 

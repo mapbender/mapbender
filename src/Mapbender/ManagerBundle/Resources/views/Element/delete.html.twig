@@ -1,0 +1,27 @@
+{% extends "MapbenderManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ "Delete Element" | trans}}{% endblock %}
+
+{% set form_errors = form_errors(form) %}
+
+{% block manager_content %}
+
+<form action="{{ path('mapbender_manager_element_delete', { 'slug': app.request.get('slug'), 'id': app.request.get('id') }) }}" method="post" {{ form_enctype(form)}} class="well">
+    {% if form_errors(form) %}
+    <div class="alert alert-error">
+        {{ form_errors(form) }}
+    </div>
+    {% endif %}
+
+    <p>{{ 'Do you really want to delete the element?' | trans }}</p>
+    {{ form_widget(form) }}
+
+    <footer>
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Delete' | trans }}" class="btn btn-danger"/>
+            <a href="{{ url('mapbender_manager_application_edit', {'slug': app.request.get('slug')}) }}#elements" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
+    </footer>
+</form>
+
+{% endblock %}

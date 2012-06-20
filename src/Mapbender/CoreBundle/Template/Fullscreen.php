@@ -2,31 +2,38 @@
 
 namespace Mapbender\CoreBundle\Template;
 
-use Mapbender\CoreBundle\Component\TemplateInterface;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Mapbender\CoreBundle\Component\Template;
 
-class Fullscreen implements TemplateInterface {
-	private $templating;
+class Fullscreen extends Template {
+    public static function getTitle() {
+        return 'Mapbender\'s simple template';
+    }
 
-	public function __construct(EngineInterface $templating) {
-		$this->templating = $templating;
-	}
+    public function getAssets($type) {
+        parent::getAssets($type);
+        $assets = array(
+            'css' => array('@MapbenderCoreBundle/Resources/public/mapbender.template.fullscreen.css'),
+            'js' => array(),
+        );
 
-	public function getTemplate($_format) {
-		return 'MapbenderCoreBundle:Template:fullscreen.html.twig';
-	}
+        return $assets[$type];
+    }
 
-	public function getMetadata() {
-		return array(
-			'type' => 'application',
-			'regions' => array('top', 'content'),
-			'css' => array('mapbender.template.fullscreen.css'),
-			'js' => array(),
-		);
-	}
+    public static function getRegions() {
+        return array('top', 'content');
+    }
 
-	public function render($data, $parts, $_format = 'html') {
-		return $this->templating->render($this->getTemplate($_format), $data);
-	}
+    public function render($format = 'html', $html = true, $css = true,
+        $js = true) {
+        $templating = $this->container->get('templating');
+        return $templating
+            ->render('MapbenderCoreBundle:Template:fullscreen.html.twig',
+                array(
+                    'html' => $html,
+                    'css' => $css,
+                    'js' => $js,
+                    'application' => $this->application));
+    }
+
 }
 

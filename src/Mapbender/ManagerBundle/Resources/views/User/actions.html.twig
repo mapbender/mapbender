@@ -1,0 +1,12 @@
+{% set actions = {
+    'create': {
+        'url': url('mapbender_manager_user_new'),
+        'title': 'Create new user',
+        'attr': {
+            'class': 'btn btn-primary'
+        }
+    }
+}
+%}
+{% include "MapbenderManagerBundle::actions.html.twig" %}
+

@@ -1,0 +1,11 @@
+{% extends 'MapbenderCoreBundle::backend.html.twig' %}
+
+{% block content %}
+<ul>
+{% for application in applications %}
+    <li>
+        <a href="{{ url('mapbender_core_application_application', { 'slug': application.slug }) }}">{{ application.title }}</a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

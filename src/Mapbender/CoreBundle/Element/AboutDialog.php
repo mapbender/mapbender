@@ -3,44 +3,31 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\User\UserInterface;
 
-class AboutDialog extends Element implements ElementInterface {
-	public function getTitle() {
-		return "About dialog";
-	}
+class AboutDialog extends Element {
+    static public function getClassTitle() {
+        return "About dialog";
+    }
 
-	public function getDescription() {
-		return "Renders a button to show a about dialog";
-	}
+    static public function getClassDescription() {
+        return "Renders a button to show a about dialog";
+    }
 
-	public function getTags() {
-		return array('button', 'about');
-	}
+    static public function getClassTags() {
+        return array('Help', 'Info', 'About');
+    }
 
-	public function getAssets() {
-		return array(
+    public function getWidgetName() {
+        return 'mapbender.mbAboutDialog';
+    }
+
+    public function getAssets() {
+        return array(
             'js' => array(
                 'mapbender.element.button.js',
-                'mapbender.element.aboutDialog.js'
-            ),
-			'css' => array()
-		);
-	}
-
-	public function getConfiguration() {
-        $opts = $this->configuration;
-        if(array_key_exists('target', $this->configuration)) {
-            $elementId = $this->configuration['target'];
-            $finalId = $this->application->getFinalId($elementId);
-            $opts = array_merge($opts, array('target' => $finalId));
-        }
-        return array(
-            'options' => $opts,
-			'init' => 'mb_about_dialog',
-		);
+                'mapbender.element.aboutDialog.js'),
+            'css' => array());
     }
 
     public function httpAction($action) {
@@ -65,10 +52,12 @@ class AboutDialog extends Element implements ElementInterface {
         }
     }
 
-	public function render() {
-            return $this->get('templating')->render('MapbenderCoreBundle:Element:about_dialog.html.twig', array(
-                'id' => $this->id,
-                'configuration' => $this->configuration));
-	}
+    public function render() {
+        return $this->container->get('templating')
+            ->render('MapbenderCoreBundle:Element:about_dialog.html.twig',
+                array(
+                    'id' => $this->getId(),
+                    'configuration' => $this->getConfiguration()));
+    }
 }
 

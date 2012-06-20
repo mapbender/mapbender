@@ -1,16 +1,16 @@
 (function($) {
 
-$.widget("mapbender.mb_about_dialog", {
-	options: {},
+$.widget("mapbender.mbAboutDialog", {
+    options: {},
 
     dlg: null,
     elementUrl: null,
 
-	_create: function() {
-		var self = this;
-		var me = $(this.element);
+    _create: function() {
+        var self = this;
+        var me = $(this.element);
         this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
-		me.button();
+        me.button();
         me.click(function() { self._onClick.call(self); });
     },
 
