@@ -64,7 +64,8 @@ class ApplicationController extends Controller {
             'css' => array($this->container->get('assetic.filter.cssrewrite')));
 
         // Set target path for CSS rewrite to work
-        $target = $this->get('request')->server->get('ORIG_SCRIPT_FILENAME');
+        $target = $this->get('request')->server->get('DOCUMENT_ROOT')
+		. $this->get('request')->server->get('REQUEST_URI');
         $assets->setTargetPath($target);
 
         foreach($filters[$type] as $filter) {
