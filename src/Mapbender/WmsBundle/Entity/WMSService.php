@@ -10,266 +10,266 @@ use Doctrine\Common\Collections\ArrayCollection;
 class WMSService extends GroupLayer {
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $version = "";
     
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $alias = "";
 
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $onlineResource;
 
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactPerson;
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactPosition;
 
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactOrganization;
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactVoiceTelephone;
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactFacsimileTelephone;
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactElectronicMailAddress;
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactAddress;
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactAddressType;
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactAddressCity;
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactAddressStateOrProvince;
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactAddressPostCode;
     
     /**
-    * @ORM\Column(type="string",nullable="true")
+    * @ORM\Column(type="string",nullable=true)
     */
     protected $contactAddressCountry;
 
     /**
-    * @ORM\Column(type="text", nullable="true")
+    * @ORM\Column(type="text", nullable=true)
     */
     protected $fees = "";
     
     /**
-    * @ORM\Column(type="text",nullable="true")
+    * @ORM\Column(type="text",nullable=true)
     */
     protected $accessConstraints = "";
     
     /**
-    * @ORM\Column(type="array",nullable="true")
+    * @ORM\Column(type="array",nullable=true)
     */
     protected $exceptionFormats = array();
     
     /**
-    * @ORM\Column(type="array",nullable="true")
+    * @ORM\Column(type="array",nullable=true)
     */
     protected $supportedExceptionFormats = array();
     
     
     /**
-    * @ORM\Column(type="boolean", nullable="true")
+    * @ORM\Column(type="boolean", nullable=true)
     */
     protected $symbolSupportSLD = false;
     
     /**
-    * @ORM\Column(type="boolean", nullable="true")
+    * @ORM\Column(type="boolean", nullable=true)
     */
     protected $symbolUserLayer = false;
     
     /**
-    * @ORM\Column(type="boolean", nullable="true")
+    * @ORM\Column(type="boolean", nullable=true)
     */
     protected $symbolUserStyle = false;
     
     /**
-    * @ORM\Column(type="boolean", nullable="true")
+    * @ORM\Column(type="boolean", nullable=true)
     */
     protected $symbolRemoteWFS = false;
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestGetCapabilitiesGET = "";
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestGetCapabilitiesPOST = "";
 
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestGetCapabilitiesFormats = array();
     
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestSupportedGetCapabilitiesFormats = array();
     
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestGetMapGET = "";
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestGetMapPOST = "";
 
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestGetMapFormats = array();
     
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestSupportedGetMapFormats = array();
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestGetFeatureInfoGET = "";
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestGetFeatureInfoPOST = "";
 
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestGetFeatureInfoFormats = array();
     
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestSupportedGetFeatureInfoFormats = array();
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestDescribeLayerGET = "";
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestDescribeLayerPOST = "";
 
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestDescribeLayerFormats = array();
     
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestSupportedDescribeLayerFormats = array();
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestGetLegendGraphicGET = "";
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestGetLegendGraphicPOST = "";
 
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestGetLegendGraphicFormats = array();
     
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestSupportedGetLegendGraphicFormats = array();
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestGetStylesGET = "";
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestGetStylesPOST = "";
 
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestGetStylesFormats = array();
     
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestSupportedGetStylesFormats = array();
 
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestPutStylesGET = "";
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $requestPutStylesPOST = "";
 
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestPutStylesFormats = array();
     
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $requestSupportedPutStylesFormats = array();
 
     /**
-    * @ORM\Column(type="text", nullable="true");
+    * @ORM\Column(type="text", nullable=true);
     */
     protected $username = null;
 
     /**
-    * @ORM\Column(type="text", nullable="true");
+    * @ORM\Column(type="text", nullable=true);
     */
     protected $password = null; 
     
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $srs = array();
 

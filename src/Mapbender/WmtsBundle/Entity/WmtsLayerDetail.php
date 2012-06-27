@@ -15,48 +15,48 @@ use Doctrine\Common\Collections\ArrayCollection;
 class WmtsLayerDetail extends WmtsGroupLayer {
 
     /**
-     * @ORM\Column(type="boolean", nullable="false")
+     * @ORM\Column(type="boolean", nullable=false)
      */
     protected $queryable = false;
     /**
-      * @ORM\Column(type="array", nullable="true")
+      * @ORM\Column(type="array", nullable=true)
      */
     protected $styles = array();
     /**
-     * @ORM\Column(type="array", nullable="true")
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $crs = array();
     /**
-     * @ORM\Column(type="array", nullable="true")
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $crsBounds = array();
     /**
-     * @ORM\Column(type="string", nullable="true")
+     * @ORM\Column(type="string", nullable=true)
      */
     protected $crsLatLon = "EPSG:4326";
     /**
-     * @ORM\Column(type="array", nullable="true")
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $latLonBounds = "-180 -90 180 90";
     /**
-     * @ORM\Column(type="array", nullable="true")
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $tileMatrixSetLink = array();
     /**
-     * @ORM\Column(type="array", nullable="true")
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $metadataURL = array();
     /**
-     * @ORM\Column(type="array", nullable="true")
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $resourceUrl = array();
 
     /**
-     * @ORM\Column(type="array", nullable="true")
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $requestDataFormats = array();
     /**
-     * @ORM\Column(type="array", nullable="true")
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $requestInfoFormats = array();
     /**

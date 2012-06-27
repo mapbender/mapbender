@@ -19,17 +19,17 @@ abstract class Layer implements LayerInterface{
     protected $id;
 
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      */
     protected $title = "";
     
     /**
-     * @ORM\Column(type="string", nullable="true")
+     * @ORM\Column(type="string", nullable=true)
      */
     protected $name = "";
     
     /**
-     * @ORM\Column(type="text",nullable="true")
+     * @ORM\Column(type="text",nullable=true)
      */
     protected $abstract = "";
 

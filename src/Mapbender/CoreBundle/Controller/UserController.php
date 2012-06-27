@@ -51,7 +51,6 @@ class UserController extends Controller {
 
     /**
      * @Route("/user/login/check")
-     * @Method("GET")
      */
     public function loginCheckAction() {
         //Don't worry, this is actually intercepted by the security layer.

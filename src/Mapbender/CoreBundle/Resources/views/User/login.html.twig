@@ -1,8 +1,11 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "MapbenderCoreBundle::backend.html.twig" %}
 
 {% block title %}Login{% endblock %}
 
-{% block manager_content %}
+{% block wrapperclass %}hero-unit{% endblock %}
+
+{% block content %}
+    <h1>Hello, please log in.</h1>
     <form action="{{ path("mapbender_core_user_logincheck") }}" method="post" id="login">
         {% if error %}
         <div class="error">{{ error.message }}</div>

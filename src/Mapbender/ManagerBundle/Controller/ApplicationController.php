@@ -68,8 +68,6 @@ class ApplicationController extends Controller {
      * @Template("MapbenderManagerBundle:Application:new.html.twig")
      */
     public function createAction() {
-        $mb = $this->container->getParameter('mapbender.screenshot_path');
-        print_r($mb);die;
         $application = new Application();
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
@@ -77,6 +75,8 @@ class ApplicationController extends Controller {
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
+            // Credentials may be erased, triggering an failing update
+            $em->refresh($application->getOwner());
             $em->persist($application);
             $em->flush();
 

@@ -9,49 +9,49 @@ use Mapbender\WmsBundle\Entity\GroupLayer;
 class WMSLayer extends GroupLayer {
 
     /**
-     * @ORM\Column(type="boolean", nullable="false")
+     * @ORM\Column(type="boolean", nullable=false)
      */
     protected $queryable = false;
     
     /**
-     * @ORM\Column(type="integer", nullable="false")
+     * @ORM\Column(type="integer", nullable=false)
      */
     protected $cascaded = 0;
     
     /**
-     * @ORM\Column(type="boolean", nullable="false")
+     * @ORM\Column(type="boolean", nullable=false)
      */
     protected $opaque = false;
     
     /**
-     * @ORM\Column(type="boolean", nullable="false")
+     * @ORM\Column(type="boolean", nullable=false)
      */
     protected $noSubset = false;
     
     /**
-     * @ORM\Column(type="integer", nullable="true")
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $fixedWidth;
     
     /**
-     * @ORM\Column(type="integer", nullable="true")
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $fixedHeight;
 
     /**
-      * @ORM\Column(type="array", nullable="true")
+      * @ORM\Column(type="array", nullable=true)
      */
     protected $styles = array();
 
     
 
     /**
-     * @ORM\Column(type="array",nullable="true")
+     * @ORM\Column(type="array",nullable=true)
      */
     protected $srs = array();
     
     /**
-     * @ORM\Column(type="array",nullable="true")
+     * @ORM\Column(type="array",nullable=true)
      */
     protected $latLonBounds = "-180 -90 180 90";
     
@@ -60,12 +60,12 @@ class WMSLayer extends GroupLayer {
     */ 
 
     /**
-     * @ORM\Column(type="float",nullable="true")
+     * @ORM\Column(type="float",nullable=true)
      */
     protected $scaleHintMin;
     
     /**
-     * @ORM\Column(type="float",nullable="true")
+     * @ORM\Column(type="float",nullable=true)
      */
     protected $scaleHintMax;
 
@@ -73,69 +73,69 @@ class WMSLayer extends GroupLayer {
         FIXME Dimension and Extent are missing
     */
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      */
     protected $metadataURL = '';
     
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      */
     protected $dataURL = '';
 
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      */
     protected $attributionTitle = '';
     
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      */
     protected $attributionOnlineResource = '';
     
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      */
     protected $attributionLogoURL = '';
     
     /**
-     * @ORM\Column(type="integer",nullable="true")
+     * @ORM\Column(type="integer",nullable=true)
      */
     protected $attributionLogoWidth = 0;
     
     /**
-     * @ORM\Column(type="integer",nullable="true")
+     * @ORM\Column(type="integer",nullable=true)
      */
     protected $attributionLogoHeight = 0;
     
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      */
     protected $identifier = '';
     
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      */
     protected $identifierAuthorityURL = '';
     
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      * Refers to the DataURL element
      */
     protected $requestDataGET = '';
     
     /**
-     * @ORM\Column(type="array",nullable="true")
+     * @ORM\Column(type="array",nullable=true)
      */
     protected $requestDataFormats = '';
     
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      * Refers to the DataURL element
      */
     protected $requestFeatureListGET = '';
     
     /**
-     * @ORM\Column(type="array",nullable="true")
+     * @ORM\Column(type="array",nullable=true)
      */
     protected $requestFeatureListFormats = '';
 

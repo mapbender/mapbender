@@ -21,37 +21,37 @@ class MonitoringDefinition  {
 	
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	protected $type;
 	
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	protected $typeId;
 
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	protected $name;
 
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	protected $title;
 
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	protected $alias;
 
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	protected $url;
 
@@ -63,31 +63,31 @@ class MonitoringDefinition  {
 
 	/**
 	 *
-	 * @ORM\Column(type="text", nullable="true")
+	 * @ORM\Column(type="text", nullable=true)
 	 */
 	protected $response;
 
 	/**
 	 *
-	 * @ORM\Column(type="text", nullable="true")
+	 * @ORM\Column(type="text", nullable=true)
 	 */
 	protected $lastResponse;
 
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	protected $contactEmail;
 
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
 	protected $contact;
 
 	/**
 	 *
-	 * @ORM\Column(type="datetime", nullable="true")
+	 * @ORM\Column(type="datetime", nullable=true)
 	 */
 	protected $lastNotificationTime;
 
@@ -99,13 +99,13 @@ class MonitoringDefinition  {
 
 	/**
 	 *
-	 * @ORM\Column(type="datetime", nullable="true")
+	 * @ORM\Column(type="datetime", nullable=true)
 	 */
 	protected $ruleStart;
 
 	/**
 	 *
-	 * @ORM\Column(type="datetime", nullable="true")
+	 * @ORM\Column(type="datetime", nullable=true)
 	 */
 	protected $ruleEnd;
 

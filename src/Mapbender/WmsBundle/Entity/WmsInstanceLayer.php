@@ -14,27 +14,27 @@ use Doctrine\ORM\Mapping as ORM;
 class WmsInstanceLayer {
     /**
     * @ORM\Id
-    * @ORM\Column(type="string", nullable="false")
+    * @ORM\Column(type="string", nullable=false)
     */
     protected $name;
     /**
-     * @ORM\Column(type="integer", nullable="false")
+     * @ORM\Column(type="integer", nullable=false)
      */
     protected $instanceid = -1;
     /**
-     * @ORM\Column(type="integer", nullable="false")
+     * @ORM\Column(type="integer", nullable=false)
      */
     protected $layerid = -1;
     /**
-     * @ORM\Column(type="string", nullable="true")
+     * @ORM\Column(type="string", nullable=true)
      */
     protected $title;
     /**
-     * @ORM\Column(type="boolean", nullable="false")
+     * @ORM\Column(type="boolean", nullable=false)
      */
     protected $visible = false;
     /**
-    * @ORM\Column(type="boolean", nullable="false")
+    * @ORM\Column(type="boolean", nullable=false)
     */
     protected $queryable = false;
     

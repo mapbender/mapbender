@@ -32,7 +32,7 @@ class Role implements RoleInterface {
     protected $mpttRight;
 
     /**
-     * @ORM\Column(type="string", unique="true")
+     * @ORM\Column(type="string", unique=true)
      */
     protected $title;
 

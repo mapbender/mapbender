@@ -41,55 +41,55 @@ class SchedulerProfile {
     protected $id;
     /**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
     protected $title;
     /**
 	 *
-	 * @ORM\Column(type="datetime", nullable="true")
+	 * @ORM\Column(type="datetime", nullable=true)
 	 */
     protected $starttime;
     
     protected $starttimeStr;
     /**
 	 *
-	 * @ORM\Column(type="integer", nullable="true")
+	 * @ORM\Column(type="integer", nullable=true)
 	 */
     protected $starttimeinterval;
     /**
 	 *
-	 * @ORM\Column(type="integer", nullable="true")
+	 * @ORM\Column(type="integer", nullable=true)
 	 */
     protected $jobcontinuity;
     /**
 	 *
-	 * @ORM\Column(type="integer", nullable="true")
+	 * @ORM\Column(type="integer", nullable=true)
 	 */
     protected $jobinterval;
     /**
 	 *
-	 * @ORM\Column(type="datetime", nullable="true")
+	 * @ORM\Column(type="datetime", nullable=true)
 	 */
     protected $laststarttime;
     
     /**
 	 *
-	 * @ORM\Column(type="datetime", nullable="true")
+	 * @ORM\Column(type="datetime", nullable=true)
 	 */
     protected $nextstarttime;
     /**
 	 *
-	 * @ORM\Column(type="datetime", nullable="true")
+	 * @ORM\Column(type="datetime", nullable=true)
 	 */
     protected $lastendtime;
     /**
 	 *
-	 * @ORM\Column(type="boolean", nullable="true")
+	 * @ORM\Column(type="boolean", nullable=true)
 	 */
     protected $current = false;
     /**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
     protected $status;
     

@@ -23,17 +23,17 @@ abstract class WmtsLayer implements LayerInterface{
     protected $id;
 
     /**
-     * @ORM\Column(type="string",nullable="true")
+     * @ORM\Column(type="string",nullable=true)
      */
     protected $title = "";
     
     /**
-     * @ORM\Column(name="name", type="string", nullable="true")
+     * @ORM\Column(name="name", type="string", nullable=true)
      */
     protected $identifier = "";
     
     /**
-     * @ORM\Column(type="text",nullable="true")
+     * @ORM\Column(type="text",nullable=true)
      */
     protected $abstract = "";
 

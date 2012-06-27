@@ -26,31 +26,31 @@ class MonitoringJob {
 	
 	/**
 	 *
-	 * @ORM\Column(type="datetime", nullable="true")
+	 * @ORM\Column(type="datetime", nullable=true)
 	 */
 	protected $timestamp;
 	
 	/**
 	 *
-	 * @ORM\Column(type="float", nullable="true")
+	 * @ORM\Column(type="float", nullable=true)
 	 */
 	protected $latency;
 	
 	/**
 	 *
-	 * @ORM\Column(type="boolean", nullable="true")
+	 * @ORM\Column(type="boolean", nullable=true)
 	 */
 	protected $changed = false;
 	
     /**
 	 *
-	 * @ORM\Column(type="text", nullable="true")
+	 * @ORM\Column(type="text", nullable=true)
 	 */
 	protected $result;
     
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable="true")
+	 * @ORM\Column(type="string", nullable=true)
 	 */
     protected $status;
 

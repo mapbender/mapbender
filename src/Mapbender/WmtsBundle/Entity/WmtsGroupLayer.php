@@ -12,7 +12,7 @@ class WmtsGroupLayer extends WmtsLayer {
 
     /**
      * @ORM\ManyToOne(targetEntity="WMTSGroupLayer",inversedBy="wmtslayer", cascade={"update","delete"})
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable="false")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=false)
     */
      protected $parent;
 

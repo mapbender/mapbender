@@ -26,60 +26,60 @@ class WmsInstance {
     protected $service;
     /**
      * Layersetid from .yml
-     * @ORM\Column(type="string", nullable="true")
+     * @ORM\Column(type="string", nullable=true)
      */
     protected $layersetid = true;
     /**
-     * @ORM\Column(type="boolean", nullable="true")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $published = false;
     /**
      * Layerid form .yml
-     * @ORM\Column(type="string", nullable="true")
+     * @ORM\Column(type="string", nullable=true)
      */
     protected $layerid = null;
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $url = null;
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $format = null;
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $layers = array(); //{ name: 1,   title: Webatlas,   visible: true }
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $fulllayers = array(); //{ name: 1,   title: Webatlas,   visible: true }
     /**
-     * @ORM\Column(type="boolean", nullable="true")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $visible = true;
     /**
-     * @ORM\Column(type="boolean", nullable="true")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $proxy = false;
 //    /**
-//    * @ORM\Column(type="integer", nullable="true")
+//    * @ORM\Column(type="integer", nullable=true)
 //    */
 //    protected $layeridentifier = null;
     /**
-     * @ORM\Column(type="boolean", nullable="true")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $baselayer = true;
     /**
-     * @ORM\Column(type="boolean", nullable="true")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $transparent = true;
     /**
-     * @ORM\Column(type="boolean", nullable="true")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $tiled = false;
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $srs = array();
     /**

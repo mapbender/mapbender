@@ -25,19 +25,19 @@ class WmtsInstance {
      */
     protected $service;
     /**
-     * @ORM\Column(type="string", nullable="true")
+     * @ORM\Column(type="string", nullable=true)
      */
     protected $layersetid = true;
     /**
-     * @ORM\Column(type="string", nullable="true")
+     * @ORM\Column(type="string", nullable=true)
      */
     protected $layerid = true;
     /**
-     * @ORM\Column(type="boolean", nullable="true")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $published = false;
     /**
-     * @ORM\Column(type="boolean", nullable="true")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $baselayer = false;
     /**
@@ -49,43 +49,43 @@ class WmtsInstance {
      */
     protected $proxy = false;
     /**
-    * @ORM\Column(type="integer", nullable="true")
+    * @ORM\Column(type="integer", nullable=true)
     */
     protected $layeridentifier = null;
     /**
-     *  @ORM\Column(type="string", nullable="true")
+     *  @ORM\Column(type="string", nullable=true)
      */
     protected $crs = null;
     /**
-     *  @ORM\Column(type="array", nullable="true")
+     *  @ORM\Column(type="array", nullable=true)
      */
     protected $crsbound = array();
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $style = null;
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $format = null;
     /**
-    * @ORM\Column(type="string", nullable="true")
+    * @ORM\Column(type="string", nullable=true)
     */
     protected $matrixSet = null;
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $matrixids = null;
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $topleftcorner = null;
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $tilesize = null;
     /**
-    * @ORM\Column(type="array", nullable="true")
+    * @ORM\Column(type="array", nullable=true)
     */
     protected $srs = array();
     

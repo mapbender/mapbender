@@ -3,19 +3,9 @@ html, body, #sidebar, #content {
 }
 
 body {
-    display: table;
 }
 
 #wrapper {
-    display: table-row;
-}
-
-#sidebar {
-    display: table-cell;
-    width: 200px;
-    border-right: 3px solid #888;
-}
-
-#content {
-    display: table-cell;
+    width: 45em;
+    margin: 3em auto;
 }

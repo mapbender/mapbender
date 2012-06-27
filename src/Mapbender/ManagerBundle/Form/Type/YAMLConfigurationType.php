@@ -3,17 +3,19 @@
 namespace Mapbender\ManagerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
 use Mapbender\ManagerBundle\Form\DataTransformer\YAMLDataTransformer;
 
 class YAMLConfigurationType extends AbstractType
 {
-    public function buildForm(FormBuilder $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->appendClientTransformer(new YAMLDataTransformer());
+        $builder
+            ->resetViewTransformers()
+            ->addViewTransformer(new YAMLDataTransformer());
     }
 
-    public function getParent(array $options)
+    public function getParent()
     {
         return 'textarea';
     }

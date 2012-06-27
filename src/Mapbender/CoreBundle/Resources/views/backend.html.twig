@@ -3,10 +3,10 @@
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="{{ app.session.locale }}"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="{#{ app.session.locale }#}"> <!--<![endif]-->
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>{% block title %}{% endblock %} - {{ server_name }}</title>
+    <title>{% block title %}{% endblock %} - {{ mapbender.server_name }}</title>
     <meta name="viewport" content="width=device-width">
 
     <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/bootstrap/css/bootstrap.css') }}">
@@ -16,15 +16,8 @@
     <script src="{{ asset('bundles/mapbendermanager/js/modernizr-2.0.6.min.js') }}"></script>
 </head>
 <body>
-    <div id="wrapper">
-        <div id="sidebar">
-            <img alt="{{ server_name }}" src="{{ asset('bundles/mapbendercore/image/mapbender.png') }}">
-        </div>
-        <div id="content">
-
+    <div id="wrapper" class="{% block wrapperclass %}{% endblock %}">
         {% block content %}{% endblock %}
-
-        </div>
     </div>
 
     <script type="text/javascript" src="{{ asset('bundles/mapbendercore/mapquery/lib/jquery/jquery-1.4.4.js') }}"></script>

@@ -3,14 +3,14 @@
 namespace Mapbender\ManagerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class RoleType extends AbstractType {
     public function getName() {
         return 'role';
     }
 
-    public function buildForm(FormBuilder $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('title', 'text', array(
                 'label' => 'Role title'))
@@ -23,11 +23,6 @@ class RoleType extends AbstractType {
                 'property' => 'username',
                 'label' => 'Users'));
 
-    }
-
-    public function getDefaultOptions(array $options) {
-        return array(
-            'exclude_fau_role' => false);
     }
 }
 
