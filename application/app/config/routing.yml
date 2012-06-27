@@ -8,7 +8,7 @@ mapbender_corebundle:
     resource: "@MapbenderCoreBundle/Controller/"
     type: annotation
 
-#_mapbender_wmsbundle:
+#mapbender_wmsbundle:
 #    resource: "@MapbenderWmsBundle/Controller/"
 #    type: annotation
 
@@ -16,7 +16,7 @@ mapbender_managerbundle:
     resource: "@MapbenderManagerBundle/Controller"
     prefix: "/manager"
 
-_mapbender_wmsbundle:
+ows_corebundle:
     resource: "@OwsProxy3CoreBundle/Controller/"
     prefix: "/owsproxy"
     type: annotation

@@ -42,27 +42,24 @@ Run the following commands:
 Once you've downloaded the standard edition, installation is easy, and basically
 involves making sure your system is ready for Symfony.
 
-### a) Check your System Configuration
+### a) Install the Vendor Libraries
 
-Before you begin, make sure that your local system is properly configured
+If you downloaded the archive "without vendors" or installed via git, then
+you need to download all of the necessary vendor libraries. If you're not
+sure if you need to do this, check to see if you have a ``vendor/`` directory.
+If you don't, or if that directory is empty, download composer following the
+instructions on http://getcomposer.org/ and then run the following:
+
+    php composer.phar install
+
+### b) Check your System Configuration
+
+Now make sure that your local system is properly configured
 for Symfony. To do this, execute the following:
 
     php app/check.php
 
 If you get any warnings or recommendations, fix these now before moving on.
-
-### b) Install the Vendor Libraries
-
-If you downloaded the archive "without vendors" or installed via git, then
-you need to download all of the necessary vendor libraries. If you're not
-sure if you need to do this, check to see if you have a ``vendor/`` directory.
-If you don't, or if that directory is empty, run the following:
-
-    php bin/vendors install
-
-Note that you **must** have git installed and be able to execute the `git`
-command to execute this script. If you don't have git available, either install
-it or download Symfony with the vendor libraries already included.
 
 ### c) Access the Application via the Browser
 
@@ -114,12 +111,16 @@ playing with it, you can remove it by following these steps:
 * delete the ``src/Acme`` directory;
 * remove the routing entries referencing AcmeBundle in ``app/config/routing_dev.yml``;
 * remove the AcmeBundle from the registered bundles in ``app/AppKernel.php``;
-
+* remove the ``web/bundles/acmedemo`` directory;
+* remove the inclusion of the security configuration in
+  ``app/config/config.yml`` (remove the ``- { resource: security.yml }`` line)
+  or tweak the default configuration to fit your needs.
 
 What's inside?
 ---------------
+
 The Symfony Standard Edition comes pre-configured with the following bundles:
-	
+
 * **FrameworkBundle** - The core Symfony framework bundle
 * **SensioFrameworkExtraBundle** - Adds several enhancements, including template
   and routing annotation capability ([documentation](http://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html))
@@ -136,7 +137,9 @@ The Symfony Standard Edition comes pre-configured with the following bundles:
 * **AsseticBundle** - Adds support for Assetic, an asset processing library
   ([documentation](http://symfony.com/doc/2.0/cookbook/assetic/asset_management.html))
 * **JMSSecurityExtraBundle** - Allows security to be added via annotations
-  ([documentation](http://symfony.com/doc/current/bundles/JMSSecurityExtraBundle/index.html))
+  ([documentation](http://jmsyst.com/bundles/JMSSecurityExtraBundle/1.1))
+* **JMSDiExtraBundle** - Adds more powerful dependency injection features 
+  ([documentation](http://jmsyst.com/bundles/JMSDiExtraBundle/1.0))
 * **WebProfilerBundle** (in dev/test env) - Adds profiling functionality and
   the web debug toolbar
 * **SensioDistributionBundle** (in dev/test env) - Adds functionality for configuring

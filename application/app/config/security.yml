@@ -1,3 +1,7 @@
+jms_security_extra:
+    secure_all_services: false
+    expressions: true
+
 security:
     encoders:
         Mapbender\CoreBundle\Entity\User: sha512
@@ -32,3 +36,4 @@ security:
         - { path: ^/user,          roles: ROLE_USER }
         - { path: ^/admin,         roles: ROLE_ADMIN }
         - { path: ^/manager,       roles: ROLE_ADMIN }
+

@@ -5,7 +5,10 @@
 */web/bundles
 */web/doc
 extra/
-*/app/config/parameters.ini
+*/app/config/parameters.yml
+*/app/bootstrap.php.cache
+*/composer.phar
+*/vendor
 *.tar.gz
 *.rpm
 *.deb

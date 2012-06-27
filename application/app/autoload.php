@@ -1,51 +1,43 @@
 <?php
 
-use Symfony\Component\ClassLoader\UniversalClassLoader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
+if (!$loader = @include __DIR__.'/../vendor/autoload.php') {
 
-$loader = new UniversalClassLoader();
-$loader->registerNamespaces(array(
-    'Symfony'          => array(__DIR__.'/../vendor/symfony/src', __DIR__.'/../vendor/bundles'),
-    'Sensio'           => __DIR__.'/../vendor/bundles',
-    'JMS'              => __DIR__.'/../vendor/bundles',
-    'BCC'              => __DIR__.'/../vendor/bundles',
-    'Doctrine\\Common' => __DIR__.'/../vendor/doctrine-common/lib',
-    'Doctrine\\DBAL'   => __DIR__.'/../vendor/doctrine-dbal/lib',
-    'Doctrine\\DBAL\\Migrations'    => __DIR__.'/../vendor/doctrine-migrations/lib',
-    'Doctrine'         => __DIR__.'/../vendor/doctrine/lib',
-    'Monolog'          => __DIR__.'/../vendor/monolog/src',
-    'Assetic'          => __DIR__.'/../vendor/assetic/src',
-    'Metadata'         => __DIR__.'/../vendor/metadata/src',
-    'Buzz'             => __DIR__.'/../vendor/buzz/lib',
-    'Mapbender'        => __DIR__.'/../mapbender/src',
-    'FOS'              => __DIR__.'/../vendor/bundles',
-    'OwsProxy3'        => __DIR__.'/../owsproxy/src',
-));
-$loader->registerPrefixes(array(
-    'Twig_Extensions_' => __DIR__.'/../vendor/twig-extensions/lib',
-    'Twig_'            => __DIR__.'/../vendor/twig/lib',
-));
+    $message = <<< EOF
+<p>You must set up the project dependencies by running the following commands:</p>
+<pre>
+    curl -s http://getcomposer.org/installer | php
+    php composer.phar install
+</pre>
+
+EOF;
+
+    if (PHP_SAPI === 'cli') {
+        $message = strip_tags($message);
+    }
+
+    die($message);
+}
+
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use Symfony\Component\ClassLoader\ApcClassLoader;
+
+$loader->add('Mapbender', __DIR__.'/../mapbender/src');
+$loader->add('OwsProxy3', __DIR__.'/../owsproxy/src');
 
 // intl
 if (!function_exists('intl_get_error_code')) {
-    require_once __DIR__.'/../vendor/symfony/src/Symfony/Component/Locale/Resources/stubs/functions.php';
+    require_once __DIR__.'/../vendor/symfony/symfony/src/Symfony/Component/Locale/Resources/stubs/functions.php';
 
-    $loader->registerPrefixFallbacks(array(__DIR__.'/../vendor/symfony/src/Symfony/Component/Locale/Resources/stubs'));
+    $loader->add('', __DIR__.'/../vendor/symfony/symfony/src/Symfony/Component/Locale/Resources/stubs');
 }
 
-$loader->registerNamespaceFallbacks(array(
-    __DIR__.'/../src',
-));
-$loader->register();
+AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
-AnnotationRegistry::registerLoader(function($class) use ($loader) {
-    $loader->loadClass($class);
-    return class_exists($class, false);
-});
-AnnotationRegistry::registerFile(__DIR__.'/../vendor/doctrine/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php');
-
-// Swiftmailer needs a special autoloader to allow
-// the lazy loading of the init file (which is expensive)
-require_once __DIR__.'/../vendor/swiftmailer/lib/classes/Swift.php';
-Swift::registerAutoload(__DIR__.'/../vendor/swiftmailer/lib/swift_init.php');
-
+// Use APC as autoloading to improve performance
+/*
+if (ini_get('apc.enabled')) {
+    // Change 'sf2' by the prefix you want in order to prevent key conflict with another application
+    $loader = new ApcClassLoader('sf2', $loader);
+    $loader->register(true);
+}
+*/
