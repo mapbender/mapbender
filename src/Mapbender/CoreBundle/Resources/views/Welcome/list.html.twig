@@ -1,10 +1,17 @@
 {% extends 'MapbenderCoreBundle::backend.html.twig' %}
 
 {% block content %}
-<ul>
+<ul class="thumbnails">
 {% for application in applications %}
-    <li>
-        <a href="{{ url('mapbender_core_application_application', { 'slug': application.slug }) }}">{{ application.title }}</a>
+    <li class="span3">
+        <div class="thumbnail">
+            <img src="http://placehold.it/260x180" title="screenshot">
+            <div class="caption">
+                <h5><a href="{{ url('mapbender_core_application_application', { 'slug': application.slug }) }}">{{ application.title }}</a></h5>
+                <p>{{ application.description }}</p>
+                <p>
+                    <a class="btn btn-primary" href="{{ url('mapbender_core_application_application', { 'slug': application.slug }) }}">{{ 'Start' | trans }}</a>
+                </p>
     </li>
 {% endfor %}
 </ul>
