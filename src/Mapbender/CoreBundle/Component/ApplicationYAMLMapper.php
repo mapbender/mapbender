@@ -72,7 +72,8 @@ class ApplicationYAMLMapper {
             ->setSlug($slug)
             ->setTitle($definition['title'])
             ->setDescription($definition['description'])
-            ->setTemplate($definition['template']);
+            ->setTemplate($definition['template'])
+            ->setPublished($definition['published']);
 
         // Then create elements
         foreach($definition['elements'] as $region => $elementsDefinition) {

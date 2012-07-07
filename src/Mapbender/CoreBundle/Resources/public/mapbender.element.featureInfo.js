@@ -1,7 +1,7 @@
 (function($) {
 
 $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
-	options: {
+    options: {
         layers: undefined,
         target: undefined
     },
@@ -63,6 +63,9 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
 
         // Go over all layers
         $.each(this.map.layers(), function(idx, layer){
+            if(layer.options.queryLayers.length == 0) {
+                return;
+            }
             // Prepare result tab list
             header.append($('<li></li>')
                 .append($('<a></a>')

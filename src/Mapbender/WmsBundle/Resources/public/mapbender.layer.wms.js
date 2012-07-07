@@ -48,9 +48,9 @@ $.extend(true, Mapbender, { layer: {
         },
 
         featureInfo: function(layer, x, y, callback) {
-            var queryLayers = layer.options.queryLayers ?
-                layer.options.queryLayers :
-                layer.options.layers;
+            if(layer.options.queryLayers.length === 0) {
+                return;
+            }
             var param_tmp = {
                 REQUEST: 'GetFeatureInfo',
                 VERSION: layer.olLayer.params.VERSION,
@@ -62,8 +62,8 @@ $.extend(true, Mapbender, { layer: {
                 HEIGHT: $(layer.map.element).height(),
                 X: x,
                 Y: y,
-                LAYERS: queryLayers.join(','),
-                QUERY_LAYERS: queryLayers.join(',')
+                LAYERS: layer.options.queryLayers.join(','),
+                QUERY_LAYERS: layer.options.queryLayers.join(',')
             };
             var contentType_ = "";
             if(typeof(layer.options.configuration.configuration.info_format)
@@ -84,14 +84,14 @@ $.extend(true, Mapbender, { layer: {
                     layer.options.configuration.configuration.info_charset;
             }
             var params = $.param(param_tmp);
-            
+
 
             // this clever shit was taken from $.ajax
             requestUrl = layer.options.url;
             requestUrl += (/\?/.test(layer.options.url) ? '&' : '?') + params;
 
             $.ajax({
-                url: Mapbender.configuration.proxies.open,
+                url: Mapbender.configuration.application.urls.proxy,
                 contentType: contentType_,
                 data: {
                     url: requestUrl

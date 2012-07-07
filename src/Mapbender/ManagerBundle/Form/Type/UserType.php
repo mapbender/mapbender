@@ -27,7 +27,7 @@ class UserType extends AbstractType {
                 'class' =>  'MapbenderCoreBundle:Role',
                 'query_builder' => function(EntityRepository $er) {
                     $qb = $er->createQueryBuilder('r')
-                        ->add('where', 'r.mpttLeft != 1')
+                        //->add('where', 'r.mpttLeft != 1')
                         ->orderBy('r.title', 'ASC');
 
                     return $qb;
