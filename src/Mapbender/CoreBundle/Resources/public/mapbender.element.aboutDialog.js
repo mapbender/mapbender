@@ -25,7 +25,7 @@ $.widget("mapbender.mbAboutDialog", {
         var self = this;
         this.dlg = $('<div></div>')
             .attr('id', 'mb-about-dialog')
-            .html('Loading...')
+            .html('Mapbender3 pre')
             .appendTo($('body'))
             .dialog({
                 title: 'About Mapbender',
@@ -33,6 +33,7 @@ $.widget("mapbender.mbAboutDialog", {
                 modal: true
             });
 
+        /*
         $.ajax({
             url: this.elementUrl + 'about',
             dataType: 'json',
@@ -40,6 +41,7 @@ $.widget("mapbender.mbAboutDialog", {
             success: self._onAjaxSuccess,
             error: self._onAjaxError
         });
+        */
     },
 
     _onAjaxSuccess: function(data) {

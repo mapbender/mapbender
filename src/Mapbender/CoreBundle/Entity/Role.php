@@ -22,12 +22,12 @@ class Role implements RoleInterface {
     protected $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * ORM\Column(type="integer")
      */
     protected $mpttLeft;
 
     /**
-     * @ORM\Column(type="integer")
+     * ORM\Column(type="integer")
      */
     protected $mpttRight;
 
@@ -47,7 +47,8 @@ class Role implements RoleInterface {
     protected $description;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="roles")
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="roles",
+     *     cascade={"persist", "remove"})
      */
     protected $users;
 

@@ -57,7 +57,7 @@ class Application {
 
     /**
      * @ORM\OneToMany(targetEntity="Element", mappedBy="application",
-     *     cascade={"persist", "remove"})
+     *     cascade={"persist" })
      */
     protected $elements;
 
@@ -68,12 +68,14 @@ class Application {
     protected $layersets;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="User",
+     *     cascade={"persist"})
      */
     protected $owner;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Role")
+     * @ORM\ManyToMany(targetEntity="Role",
+     *     cascade={"persist"})
      * @ORM\JoinTable(name="mb_application_roles")
      */
     protected $roles;
