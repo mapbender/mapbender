@@ -6,6 +6,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInte
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Doctrine\ORM\Mapping\MappingException;
+
 
 
 /**
@@ -20,7 +22,7 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
 
     protected $configuration = null;
 
-    public function __construct(\Symfony\Bundle\DoctrineBundle\Registry $registry = null)
+    public function __construct(\Doctrine\Bundle\DoctrineBundle\Registry $registry = null)
     {
         if (is_null($registry)) {
             return;
