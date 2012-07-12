@@ -2,7 +2,7 @@
 
 namespace Mapbender\WmsBundle\Form;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * @package Mapbender
@@ -27,7 +27,7 @@ class WMSType  extends AbstractType {
         return count($array) ? array_combine($keys,$values): array();
     }
 
-    public function buildForm(FormBuilder $builder, array $options){
+    public function buildForm(FormBuilderInterface $builder, array $options){
 
 
 
@@ -259,7 +259,7 @@ class WMSType  extends AbstractType {
         ));
 
     }
-    public function getDefaultOptions(array $options){
+    public function getDefaultOptions(){
         return array(
             'data_class' => "Mapbender\WmsBundle\Entity\WMSService",
             "exceptionFormats" => array(),

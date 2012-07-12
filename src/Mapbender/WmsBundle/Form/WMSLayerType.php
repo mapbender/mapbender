@@ -2,12 +2,12 @@
 
 namespace Mapbender\WmsBundle\Form;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class WMSLayerType  extends AbstractType {
 
     public function getName (){ return "WMSLayer";}
-    public function buildForm(FormBuilder $builder, array $options){
+    public function buildForm(FormBuilderInterface $builder, array $options){
         $builder->add("title","text",array(
             "required" => false,
         ));
@@ -61,7 +61,7 @@ class WMSLayerType  extends AbstractType {
         ));
 
     }
-    public function getDefaultOptions(array $options){
+    public function getDefaultOptions(){
         return array(
             'data_class' => "Mapbender\WmsBundle\Entity\WMSLayer"
         );
