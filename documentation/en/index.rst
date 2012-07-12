@@ -9,10 +9,10 @@ Welcome to Mapbender3's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   en/index
-   mapbender/TODOs
+   thebook
+   bundles
 
 Indices and tables
 ==================
