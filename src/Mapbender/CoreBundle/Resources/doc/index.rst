@@ -1,11 +1,22 @@
-MapbenderCoreBundle
-===================
+CoreBundle
+##########
 
-The ``MapbenderCoreBundle`` is the base for any Mapbender3 application.
+The CoreBundle contains all basic functionality, including base classes and
+interfaces for the Mapbender3 API usable by Mapbender and third-party bundles.
 
-Services
---------
+Element Classes
+===============
 
-* mapbender.proxy: The proxy service allows you to proxy a Request object. For
-  details on the proxy configuration, see the proxy.rst file.
+.. toctree::
+   :maxdepth: 1
 
+   elements/button
+
+Service Classes
+===============
+
+Symfony2 Entities
+=================
+
+Symfony2 Services
+=================
