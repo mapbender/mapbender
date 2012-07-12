@@ -29,7 +29,6 @@ class MonitoringDefinitionController extends Controller {
 	public function indexAction(array $monitoringDefinitionList) {
 		return array(
 			"mdList" => $monitoringDefinitionList,
-			"debug" => print_r($monitoringDefinitionList,true)
 		);
 	}
 	
