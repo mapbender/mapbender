@@ -21,6 +21,9 @@ class WmsListListener {
             $wmsIds[] = $wms->getId();
             $data[$wms->getId()] = "unmonitored";
         }
+        if( count($wmsIds) < 1){
+            return;
+        }
         $mds = $repository->findBy(array(
             "typeId" =>$wmsIds,
             "type" => get_class(new \Mapbender\WmsBundle\Entity\WMSService())
