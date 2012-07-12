@@ -1,7 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Form;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * Description of GroupType
@@ -13,7 +13,7 @@ class GroupType extends AbstractType {
 		return "Group";
 	}
 	
-	public function buildForm(FormBuilder $builder,array $options) {
+	public function buildForm(FormBuilderInterface $builder,array $options) {
 
 		$builder->add("name","text",array(
 		));

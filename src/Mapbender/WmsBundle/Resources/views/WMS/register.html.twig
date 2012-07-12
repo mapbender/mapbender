@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="message">
+    <div>
         <form class="wmsregister" name="url" action="{{ path('mapbender_wms_wms_preview') }}" method="POST">
             
 			 <fieldset>
@@ -25,7 +25,7 @@
                 <label for="http_password">{% trans %}HTTP Password{% endtrans %}</label>
                 <input type="password" name="http_password" />
             </div>
-		<input type="submit" name="save" value="{% trans %}Load{% endtrans %}" /> 			
+    		<input type="submit" name="save" value="{% trans %}Load{% endtrans %}" /> 			
         	</fieldset>
         </form>
 {#
@@ -40,7 +40,7 @@
 		</fieldset>
 #}
         <div id="wmspreview" title="WMS Preview" style="display: none">
-            <p>{% trans %}Loading WMS{% endtrans %} <img src="{{ asset('bundles/mbwms/img/spinner.gif') }}" alt="loading..." title="locadin..."/></p>
+            <p>{% trans %}Loading WMS{% endtrans %} <img src="{{ asset('bundles/mbwms/img/spinner.gif') }}" alt="{{ "loading"|trans }}..." title="{{ "loading"|trans}}... "/></p>
         </div>
     </div>
 {% endblock %}

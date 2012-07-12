@@ -9,22 +9,22 @@ use Mapbender\WmsBundle\Entity\GroupLayer;
 class WMSLayer extends GroupLayer {
 
     /**
-     * @ORM\Column(type="boolean", nullable=false)
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $queryable = false;
     
     /**
-     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $cascaded = 0;
     
     /**
-     * @ORM\Column(type="boolean", nullable=false)
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $opaque = false;
     
     /**
-     * @ORM\Column(type="boolean", nullable=false)
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $noSubset = false;
     

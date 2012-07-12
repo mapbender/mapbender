@@ -1,7 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Form;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * Description of UserType
@@ -13,7 +13,7 @@ class UserType extends AbstractType {
 		return "User";
 	}
 	
-	public function buildForm(FormBuilder $builder,array $options) {
+	public function buildForm(FormBuilderInterface $builder,array $options) {
 		$builder->add("username","text",array(
 			"required" => true
 		));

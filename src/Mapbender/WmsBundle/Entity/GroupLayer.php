@@ -10,7 +10,7 @@ class GroupLayer extends Layer {
 
     /**
      * @ORM\ManyToOne(targetEntity="GroupLayer",inversedBy="layer", cascade={"update"})
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
     */
      protected $parent;
 
@@ -25,6 +25,10 @@ class GroupLayer extends Layer {
 
     public function addLayer(WMSLayer $layer){
         $this->layer->add($layer);
+    }
+    
+    public function removeLayer(WMSLayer $layer){
+        // FIXME:no using this atm, by syfony2 is complaining
     }
 
     public function getLayer(){
@@ -60,5 +64,15 @@ class GroupLayer extends Layer {
     public function getParent(){
         return $this->parent;
     }
-
+    /**
+     * Add layer
+     *
+     * @param Mapbender\WmsBundle\Entity\GroupLayer $layer
+     * @return GroupLayer
+     */
+    public function addGroupLayer(\Mapbender\WmsBundle\Entity\GroupLayer $layer)
+    {
+        $this->layer[] = $layer;
+        return $this;
+    }
 }
