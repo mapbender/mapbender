@@ -199,13 +199,7 @@
     </target>
 
     <target name="doc">
-        <phpdoc title="API Documentation"
-            destdir="application/doc/api"
-            output="HTML:Smarty:PHP" >
-            <fileset dir="application/src">
-                <include name="**/*.php" />
-            </fileset>
-        </phpdoc>
+        <exec command="sphinx-build documentation/ application/documentation/" />
     </target>
 
     <target name="prepare" depends="doc,unittest">
