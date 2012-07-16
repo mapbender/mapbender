@@ -25,20 +25,6 @@ directory of your cloned repository:
 
     :command:`git submodule update --init --recursive`
 
-Dependency management using Composer
-************************************
-
-All the remaining bundles - Symfony, Doctrine and so on - are also not included.
-To fetch them, we use `Composer http://getcomposer.org` as the dependency
-manager. Getting composer is easy with curl:
-
-    :command:`cd application`
-    :command:`curl -s http://getcomposer.org/installer | php`
-
-Then the remaining dependencies can easily be fetched:
-
-    :command:`php composer.phar install`
-
 Build management using Phing
 ****************************
 
@@ -62,9 +48,15 @@ Our build scripts need some more dependencies to run unit test, generate
 documentation and build installation packages.
 
 Once you have installed the following dependencies, you can get an overview
-of availbale build tasks by issuing
+of available build tasks by issuing
 
     :command:`phing -l`
+
+The first task you want to - actually need to - execute is the deps task, which
+uses `Composer http://getcomposer.org` to install the runtime dependencies like
+Symfony and Doctrine:
+
+    :command:`phing deps`
 
 Package Build Tools
 ===================
