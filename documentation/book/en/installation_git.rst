@@ -47,7 +47,7 @@ Then let's get Phing:
 Our build scripts need some more dependencies to run unit test, generate
 documentation and build installation packages.
 
-Once you have installed the following dependencies, you can get an overview
+Once you have installed the dependencies listed below, you can get an overview
 of available build tasks by issuing
 
     :command:`phing -l`
@@ -58,10 +58,19 @@ Symfony and Doctrine:
 
     :command:`phing deps`
 
+
+cURL
+====
+
+Our build system uses cURL to fetch some remote components, therefore you need
+to install the cURL command line tool:
+
+    :command:`sudo apt-get install curl`
+
 Package Build Tools
 ===================
 
-TODO: Skipped for now,.KMalhas has the knowledge.
+TODO: Skipped for now, KMQ has the knowledge.
 
 PHPUnit
 =======
