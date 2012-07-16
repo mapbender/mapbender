@@ -203,7 +203,15 @@
         <exec command="sphinx-build documentation/ application/documentation/" />
     </target>
 
-    <target name="prepare" depends="doc,unittest">
+    <target name="deps">
+        <copy overwrite="false" haltonerror="false"
+            file="application/app/config/parameters.yml.dist"
+            tofile="application/app/config/parameters.yml" />
+        <exec command="curl -s http://getcomposer.org/installer | php" dir="application" />
+        <exec command="php composer.phar install" dir="application" passthru="true"/>
+    </target>
+
+    <target name="prepare" depends="deps,doc,unittest">
         <exec command="application/app/console assets:install application/web/" />
         <exec command="application/app/console assetic:dump --env=prod --no-debug" />
         <copy todir="application/web/doc">
@@ -223,6 +231,7 @@
                 <include name="application/web/doc/" />
                 <include name="features/behat.yml" />
                 <include name="artefacts/**" />
+                <include name="application/vendor/**" />
             </fileset>
         </delete>
         <delete dir="artefacts" />

@@ -15,5 +15,6 @@ parameters:
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-    server_name:       Mapbender3
+    mapbender:
+        server_name:       Mapbender3
 
