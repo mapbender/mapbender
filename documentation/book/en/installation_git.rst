@@ -1,0 +1,70 @@
+Git-based installation
+######################
+
+If you want to participate in the Mapbender3 development, or for some other
+reasons want to use the Git repositories for Mapbender3, follow this guide
+instead of the normal download.
+
+Cloning the Repository
+**********************
+
+Cloning is easy, just issue the following command in your shell:
+
+    :command:`git clone git://github.com/mapbender/mapbender-starter`
+
+Developers granted secure access to the code must use the SSH-URL of the
+repository: git@github.com:mapbender/mapbender-starter
+
+Fetching the Submodules
+***********************
+
+The starter application does not include the Mapbender3 bundles, these are
+kept in a repository of their own and are included as a submodule of the
+starter repository. To fetch them, issue the following command at the root
+directory of your cloned repository:
+
+    :command:`git submodule update --init --recursive`
+
+Dependency management using Composer
+************************************
+
+All the remaining bundles - Symfony, Doctrine and so on - are also not included.
+To fetch them, we use `Composer http://getcomposer.org` as the dependency
+manager. Getting composer is easy with curl:
+
+    :command:`curl -s http://getcomposer.org/installer | php`
+
+Then the remaining dependencies can easily be fetched:
+
+    :command:`php composer.phar install`
+
+Build management using Phing
+****************************
+
+Build management is done using `Phing` which is installed using Pear.
+
+    ...
+
+Our build scripts need some more dependencies to run unit test, generate
+documentation and build installation packages.
+
+Once you have installed the following dependencies, you can get an overview
+of availbale build tasks by issuing
+
+    :command:`phing -l`
+
+Package Build Tools
+===================
+
+PHPUnit
+=======
+
+Sphinx
+======
+
+Sphinx is used to build the documentation you are reading right now. On Debian-
+based systems, you can use apt to install Sphinx:
+
+    :command:`apt-get install sphinx-common`
+
+

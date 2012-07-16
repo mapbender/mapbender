@@ -33,6 +33,9 @@ sure your Webserver points to the web directory inside the mapbender3 directory
 you just uncompressed. You will also need to make sure that the default
 directory index is *app.php*.
 
+A :doc:`Git-based <installation_git>` installation - mainly for developers -
+is also possible.
+
 Configuration
 =============
 
@@ -76,24 +79,24 @@ Creating the database
 ^^^^^^^^^^^^^^^^^^^^^
 
 Symfony2 can attempt to create your database, this works of course only if the
-configured database user is allowed to. Call the console utility like so::
+configured database user is allowed to. Call the console utility like so:
 
-    app/console doctrine:database:create
+    :command:`app/console doctrine:database:create`
 
 Creating the database schema
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Symfony2 will create the database schema for you, if you ask nicely::
+Symfony2 will create the database schema for you, if you ask nicely:
 
-    app/console doctrine:schema:create
+    :command:`app/console doctrine:schema:create`
 
 Copying the bundles' assets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Each bundle has it's own assets - CSS files, JavaScript files, images and more -
-but these need to be copied into the public web folder::
+but these need to be copied into the public web folder:
 
-    app/console assets:install web
+    :command:`app/console assets:install web`
 
 
 As a developer, you might want to use the symlink switch on that command to
@@ -103,16 +106,16 @@ directories way easier.
 Initializing Mapbender's role system
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The standard roles need to be initialized in the database::
+The standard roles need to be initialized in the database:
 
-    app/console mapbender:initroles
+    :command:`app/console mapbender:initroles`
 
 Creating the administrative user
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The first user - which has all privileges - must be created using the command::
+The first user - which has all privileges - must be created using the command:
 
-    app/console mapbender:resetroot
+    :command:`app/console mapbender:resetroot`
 
 This will interactively ask all information needed and create the user in the
 database.
