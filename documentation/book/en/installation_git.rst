@@ -32,6 +32,7 @@ All the remaining bundles - Symfony, Doctrine and so on - are also not included.
 To fetch them, we use `Composer http://getcomposer.org` as the dependency
 manager. Getting composer is easy with curl:
 
+    :command:`cd application`
     :command:`curl -s http://getcomposer.org/installer | php`
 
 Then the remaining dependencies can easily be fetched:
@@ -41,9 +42,20 @@ Then the remaining dependencies can easily be fetched:
 Build management using Phing
 ****************************
 
-Build management is done using `Phing` which is installed using Pear.
+Build management is done using `Phing` which is installed using Pear. So, first
+we need to get Pear, we are assuming a Debian-based system here:
 
-    ...
+    :command:`sudo apt-get install php-pear`
+
+We then tell Pear where to autodiscover it's repositories and for good measure,
+update Pear:
+
+    :command:`sudo pear config-set auto_discover 1`
+    :command:`sudo pear upgrade-all`
+
+Then let's get Phing:
+
+    :command:`sudo pear install phing/phing`
 
 Our build scripts need some more dependencies to run unit test, generate
 documentation and build installation packages.
@@ -56,8 +68,15 @@ of availbale build tasks by issuing
 Package Build Tools
 ===================
 
+TODO: Skipped for now,.KMalhas has the knowledge.
+
 PHPUnit
 =======
+
+Symfony2 needs a more recent PHPUnit than for example comes with Ubuntu 12.04.
+So we will use Pear to install PHPUnit:
+
+    :command:`sudo pear install phpunit/PHPUnit`
 
 Sphinx
 ======
