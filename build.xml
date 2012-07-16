@@ -199,6 +199,7 @@
     </target>
 
     <target name="doc">
+        <symlink target="../application/mapbender" link="documentation/mapbender" />
         <exec command="sphinx-build documentation/ application/documentation/" />
     </target>
 
