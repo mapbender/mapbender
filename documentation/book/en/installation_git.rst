@@ -51,6 +51,7 @@ We then tell Pear where to autodiscover it's repositories and for good measure,
 update Pear:
 
     :command:`sudo pear config-set auto_discover 1`
+
     :command:`sudo pear upgrade-all`
 
 Then let's get Phing:
