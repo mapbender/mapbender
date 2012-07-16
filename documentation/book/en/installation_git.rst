@@ -10,7 +10,7 @@ Cloning the Repository
 
 Cloning is easy, just issue the following command in your shell:
 
-    :command:`git clone git://github.com/mapbender/mapbender-starter`
+    :command:`git clone -b 3.0 git://github.com/mapbender/mapbender-starter`
 
 Developers granted secure access to the code must use the SSH-URL of the
 repository: git@github.com:mapbender/mapbender-starter
