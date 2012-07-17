@@ -198,9 +198,16 @@
         <delete dir="${buildroot}" />
     </target>
 
-    <target name="doc">
+    <target name="doc:sphinx">
         <symlink target="../application/mapbender" link="documentation/mapbender" />
         <exec command="sphinx-build documentation/ application/documentation/" />
+    </target>
+
+    <target name="doc:api">
+        <apigen config="apigen.conf" destination="application/apidoc" />
+    </target>
+
+    <target name="doc" depends="doc:sphinx,doc:api">
     </target>
 
     <target name="deps">
