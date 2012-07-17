@@ -86,6 +86,23 @@ Sphinx
 Sphinx is used to build the documentation you are reading right now. On Debian-
 based systems, you can use apt to install Sphinx:
 
-    :command:`apt-get install sphinx-common`
+    :command:`sudo apt-get install sphinx-common`
 
+
+ApiGen
+======
+
+`ApiGen <http://apigen.org>`_ is our API documentation generator of choice. It too
+can be installed using Pear, so use the following command:
+
+    :command:`sudo pear install pear.apigen.org/apigen`
+
+Troubleshooting
+***************
+
+* The ApiGen task only works with recent versions of Phing. 2.4.12 is sufficent,
+  while 2.4.9 is not. Check with :command:`phing -v`. You can update all your
+  Pear packages with
+
+    :command:`sudo pear upgrade-all`
 
