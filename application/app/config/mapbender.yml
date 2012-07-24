@@ -23,12 +23,17 @@ services:
     #        - { name: kernel.event_listener, event: kernel.response }
   mapbender2_geometryprovider:
     class: OwsProxy3\CoreBundle\GeometryProvider\Mapbender2GeometryProvider
-    arguments: [ @service_container ]
+    arguments: [ "@service_container" ]
 #  owsproxy.spatialsecurity.listener:
 #    class: OwsProxy3\CoreBundle\EventListener\SpatialSecurityListener
 #    arguments: [ @service_container ]
 #    tags:
 #      - { name: kernel.event_listener, event: owsproxy_before_proxy, method: beforeProxyEvent }
+  login_listener:
+    class: Mapbender\ManagerBundle\Listener\LoginListener
+    arguments: [ "@security.context", "@doctrine", "@session" ]
+    tags:
+      - { name: kernel.event_listener, event: security.interactive_login, method: onLogin }
 
 parameters:
     #sensio_framework_extra.converter.doctrine.class: "Mapbender\Component\CustomDoctrineParamConverter"
@@ -36,6 +41,7 @@ parameters:
         mapbender_user:
             title: Mapbender User Demo Map
             description: "Simple map showing WMS use. Use root/root to login."
+            published: true
             roles: [ROLE_USER]
             template:  Mapbender\CoreBundle\Template\Fullscreen
             layersets:

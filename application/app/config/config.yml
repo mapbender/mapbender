@@ -62,4 +62,9 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
-
+    
+# Mapbender Configuration 
+mapbender_core:
+    selfregister: true
+    max_registration_time: 1
+    max_reset_time: 1
