@@ -1,0 +1,12 @@
+{% extends "MapbenderCoreBundle::backend.html.twig" %}
+
+{% block title %} {{ 'Register' | trans}} {% endblock %}
+
+{% block wrapperclass %}hero-unit{% endblock %}
+
+{% block content %}
+<h1>{{ 'Your registration' | trans}}</h1>
+<div id="frame">
+    <p>{{ 'The new password was sent to your e-mail.'|trans|raw }}</p>
+</div>
+{% endblock %}

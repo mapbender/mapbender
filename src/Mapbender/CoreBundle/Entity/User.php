@@ -9,7 +9,7 @@
 namespace Mapbender\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  * @ORM\Table(name="mb_user")
  */
-class User implements UserInterface {
+class User implements AdvancedUserInterface {
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -57,6 +57,30 @@ class User implements UserInterface {
      * @ORM\Column
      */
     protected $salt;
+    
+    /**
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $registrationTime;
+    
+    /**
+     *
+     * @ORM\Column(type="string", nullable=true, length=50)
+     */
+    protected $registrationToken;
+    
+    /**
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $resetTime;
+    
+    /**
+     *
+     * @ORM\Column(type="string", nullable=true, length=50)
+     */
+    protected $resetToken;
 
     /**
      * @ORM\ManyToMany(targetEntity="Role", inversedBy="users")
@@ -162,6 +186,86 @@ class User implements UserInterface {
     }
 
     /**
+     * Set registrationTime
+     *
+     * @param text $registrationTime
+     */
+    public function setRegistrationTime($registrationTime)
+    {
+        $this->registrationTime = $registrationTime;
+    }
+
+    /**
+     * Get registrationTime
+     *
+     * @return text
+     */
+    public function getRegistrationTime()
+    {
+        return $this->registrationTime;
+    }
+    
+    /**
+     * Set registrationToken
+     *
+     * @param text $registrationToken
+     */
+    public function setRegistrationToken($registrationToken)
+    {
+        $this->registrationToken = $registrationToken;
+    }
+
+    /**
+     * Get registrationToken
+     *
+     * @return string
+     */
+    public function getRegistrationToken()
+    {
+        return $this->registrationToken;
+    }
+
+    /**
+     * Set resetTime
+     *
+     * @param text $resetTime
+     */
+    public function setResetTime($resetTime)
+    {
+        $this->resetTime = $resetTime;
+    }
+
+    /**
+     * Get resetTime
+     *
+     * @return text
+     */
+    public function getResetTime()
+    {
+        return $this->resetTime;
+    }
+
+    /**
+     * Set resetToken
+     *
+     * @param text $resetToken
+     */
+    public function setResetToken($resetToken)
+    {
+        $this->resetToken = $resetToken;
+    }
+
+    /**
+     * Get resetToken
+     *
+     * @return string
+     */
+    public function getResetToken()
+    {
+        return $this->resetToken;
+    }
+
+    /**
      * Add roles
      *
      * @param Mapbender\CoreBundle\Entity\Role $roles
@@ -197,8 +301,6 @@ class User implements UserInterface {
      * Removes password and salt from the user object
      */
     public function eraseCredentials() {
-        $this->password = null;
-        $this->salt = null;
     }
 
     /**
@@ -212,6 +314,28 @@ class User implements UserInterface {
     public function equals(UserInterface $user) {
         return (get_class() === get_class($user)
             && $this->getUsername() === $user->getUsername());
+    }
+    
+    
+    
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    public function isEnabled()
+    {
+        return $this->registrationToken === null;
     }
 }
 
