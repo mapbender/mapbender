@@ -1,23 +1,28 @@
 {% extends "MapbenderCoreBundle::backend.html.twig" %}
 
-{% block title %}Login{% endblock %}
+{% block title %}{{ 'Login' | trans}}{% endblock %}
 
 {% block wrapperclass %}hero-unit{% endblock %}
 
 {% block content %}
-    <h1>Hello, please log in.</h1>
+    <h1>{{ 'Hello, please log in' | trans}}.</h1>
     <form action="{{ path("mapbender_core_user_logincheck") }}" method="post" id="login">
         {% if error %}
-        <div class="error">{{ error.message }}</div>
+        <div class="alert alert-error">{{ error.message }}</div>
         {% endif %}
 
-        <label for="username">Username</label>
+        <label for="username">{{ 'Username' | trans}}</label>
+        
         <input id="username" type="text" name="_username" value="{{ last_username }}" />
-        <label for="password">Password</label>
+        <label for="password">{{ 'Password' | trans}}</label>
         <div class="input-append">
-            <input type="password" id="password" name="_password" /><input type="submit" class="btn" value="Login" />
+            <input type="password" id="password" name="_password" /><input type="submit" class="btn" value="{{ 'Login' | trans}}" />
         </div>
     </form>
+    {% if selfregister == true %}
+    <a href="{{ path('mapbender_manager_user_register') }}">{{ 'Register' | trans}}</a>
+    {% endif %}
+    <a href="{{ path('mapbender_manager_user_forgotpass') }}">{{ 'Forgot password' | trans}}?</a>
 </div>
 {% endblock %}
 

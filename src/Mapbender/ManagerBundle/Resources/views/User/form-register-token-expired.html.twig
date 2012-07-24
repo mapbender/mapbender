@@ -1,0 +1,21 @@
+{% extends "MapbenderCoreBundle::backend.html.twig" %}
+
+{% block title %} {{ 'Register' | trans}} {% endblock %}
+
+{% block wrapperclass %}hero-unit{% endblock %}
+
+{% block content %}
+<h1>{{ 'Your registration' | trans}}</h1>
+<form action="{{ url('mapbender_manager_user_registerreset', {"token": user.registrationToken}) }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well" autocomplete="off">
+    {% if form_errors(form) %}
+    <div class="alert alert-error">
+        {{ form_errors(form) }}
+    </div>
+    {% endif %}
+    <footer>
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Reset register' | trans}}" class="btn btn-primary"/>
+        </div>
+    </footer>
+</form>
+{% endblock %}
