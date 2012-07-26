@@ -5,3 +5,6 @@
 [submodule "documentation/_exts"]
 	path = documentation/_exts
 	url = https://github.com/fabpot/sphinx-php.git
+[submodule "application/fom"]
+	path = application/fom
+	url = https://github.com/mapbender/fom.git
