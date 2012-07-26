@@ -15,6 +15,7 @@ mapbender_corebundle:
 mapbender_managerbundle:
     resource: "@MapbenderManagerBundle/Controller"
     prefix: "/manager"
+    type: annotation
 
 ows_corebundle:
     resource: "@OwsProxy3CoreBundle/Controller/"
