@@ -13,6 +13,7 @@ Contents:
 
    thebook
    bundles
+   development
 
 Indices and tables
 ==================
