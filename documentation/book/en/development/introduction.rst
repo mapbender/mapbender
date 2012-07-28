@@ -20,3 +20,22 @@ to Mapbender3:
 * JavaScript: We use jQuery a lot and especially the jQuery UI widget factory.
   These are essential to understand to write maintainable JavaScript code.
 
+Getting Help
+************
+
+
+Topics
+******
+
+.. toctree::
+   :maxdepth: 1
+
+   git
+   github
+   apidocumentation
+   requestresponse
+   code_convention
+   translations
+   elements
+   administrations
+

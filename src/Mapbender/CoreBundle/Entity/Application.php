@@ -56,25 +56,25 @@ class Application {
     protected $template;
 
     /**
-     * @ORM\OneToMany(targetEntity="Element", mappedBy="application",
+     * @ORM\OneToMany(targetEntity="Element", mappedBy="application")
      *     cascade={"persist" })
      */
     protected $elements;
 
     /**
-     * @ORM\OneToMany(targetEntity="Element", mappedBy="application",
+     * @ORM\OneToMany(targetEntity="Element", mappedBy="application")
      *      cascade={"persist"})
      */
     protected $layersets;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User",
+     * @ORM\ManyToOne(targetEntity="FOM\UserBundle\Entity\User")
      *     cascade={"persist"})
      */
     protected $owner;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Role",
+     * @ORM\ManyToMany(targetEntity="FOM\UserBundle\Entity\Role")
      *     cascade={"persist"})
      * @ORM\JoinTable(name="mb_application_roles")
      */
