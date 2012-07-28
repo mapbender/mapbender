@@ -1,0 +1,3 @@
+{{'&lt;p&gt;Hello %user_username%,&lt;/p&gt;&lt;p&gt;You have requested a new password.
+&lt;br /&gt;Click please &lt;a href="%url%"&gt;here&lt;/a&gt;.'|trans(
+{'%user_username%': user.username,'%url%': url('mapbender_manager_user_resetpassform', { 'token': user.resettoken }) }, "messages")|raw}}

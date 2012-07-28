@@ -1,0 +1,31 @@
+{% extends "MapbenderCoreBundle::backend.html.twig" %}
+
+{% block title %} {{ 'Register' | trans}} {% endblock %}
+
+{% block wrapperclass %}hero-unit{% endblock %}
+
+{% block content %}
+<h1>{{ 'Register' | trans}}</h1>
+<form action="{{ path('mapbender_manager_user_register') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well" autocomplete="off">
+    {% if form_errors(form) %}
+    <div class="alert alert-error">
+        {{ form_errors(form) }}
+    </div>
+    {% endif %}
+
+    {{ form_row(form._token) }}
+    
+    <header class="form-help">
+    {% trans %}
+    Required fields are marked with dark labels, while optional fields have lighter labels.
+    {% endtrans %}
+    </header>
+        
+    {% include 'MapbenderManagerBundle:User:form-basic.html.twig' %}
+    <footer>
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Register' | trans}}" class="btn btn-primary"/>
+        </div>
+    </footer>
+</form>
+{% endblock %}
