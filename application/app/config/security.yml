@@ -4,12 +4,12 @@ jms_security_extra:
 
 security:
     encoders:
-        Mapbender\CoreBundle\Entity\User: sha512
+        FOM\UserBundle\Entity\User: sha512
 
     providers:
         main:
             entity:
-                class: Mapbender\CoreBundle\Entity\User
+                class: FOM\UserBundle\Entity\User
                 property: username
 
     firewalls:
@@ -38,7 +38,6 @@ security:
         - { path: ^/manager/user/registerreset,    roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/manager/user/register,    roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/manager/user/resetpass,    roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/user,          roles: ROLE_USER }
         - { path: ^/admin,         roles: ROLE_ADMIN }
         - { path: ^/manager,       roles: ROLE_ADMIN }
 

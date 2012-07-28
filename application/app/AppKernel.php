@@ -24,12 +24,16 @@ class AppKernel extends Kernel
             // Extra bundles required by Mapbender3/OWSProxy3
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
 
+            // FoM bundles
+            new FOM\ManagerBundle\FOMManagerBundle(),
+            new FOM\UserBundle\FOMUserBundle(),
+
             // Mapbender3 bundles
             new Mapbender\CoreBundle\MapbenderCoreBundle(),
             new Mapbender\WmcBundle\MapbenderWmcBundle(),
             new Mapbender\WmsBundle\MapbenderWmsBundle(),
             new Mapbender\WmtsBundle\MapbenderWmtsBundle(),
-            new Mapbender\ManagerBundle\MapbenderManagerBundle(),
+            //new Mapbender\ManagerBundle\MapbenderManagerBundle(),
 
             // OWSProxy3 bundles
             new OwsProxy3\CoreBundle\OwsProxy3CoreBundle(),

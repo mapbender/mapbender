@@ -24,7 +24,7 @@ twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
     globals:
-        mapbender:    %mapbender%
+        fom:    %fom%
 
 # Assetic Configuration
 assetic:
@@ -62,9 +62,15 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
-    
-# Mapbender Configuration 
-mapbender_core:
+
+# FOM User Configuration
+fom_user:
     selfregister: true
     max_registration_time: 1
     max_reset_time: 1
+    mail_from_address: wizard@oz.net
+    mail_from_name: Wizard of Oz
+
+# Mapbender Configuration
+mapbender_core: ~
+

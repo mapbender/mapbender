@@ -12,9 +12,20 @@ mapbender_corebundle:
 #    resource: "@MapbenderWmsBundle/Controller/"
 #    type: annotation
 
-mapbender_managerbundle:
-    resource: "@MapbenderManagerBundle/Controller"
-    prefix: "/manager"
+#fom_managerbundle:
+#    resource: "@FOMManagerBundle/Controller"
+#    type: annotation
+
+fom_userbundle_login:
+    resource: "@FOMUserBundle/Controller/LoginController.php"
+    type: annotation
+
+fom_userbundle_registration:
+    resource: "@FOMUserBundle/Controller/RegistrationController.php"
+    type: annotation
+
+fom_userbundle_password:
+    resource: "@FOMUserBundle/Controller/PasswordController.php"
     type: annotation
 
 ows_corebundle:

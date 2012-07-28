@@ -22,6 +22,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Symfony\Component\ClassLoader\ApcClassLoader;
 
 $loader->add('Mapbender', __DIR__.'/../mapbender/src');
+$loader->add('FOM', __DIR__.'/../fom/src');
 $loader->add('OwsProxy3', __DIR__.'/../owsproxy/src');
 
 // intl
