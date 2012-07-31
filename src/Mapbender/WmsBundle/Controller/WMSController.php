@@ -185,7 +185,6 @@ class WMSController extends Controller {
         $wms = new WMSService();
         $wms = $this->buildWMSFormStructure($wms,$requestWMS);
 
-        $exceptionFormats = $requestWMS['exceptionFormats'];
 
         // wms has basic structure... but at this point we don't know what it supports
         // for multiselect to work we need to know what it supports..
