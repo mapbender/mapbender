@@ -21,6 +21,15 @@ class Configuration implements ConfigurationInterface {
 
         $rootNode
             ->children()
+                ->scalarNode('selfregister')
+                    ->defaultFalse()
+                ->end()
+                ->scalarNode('max_registration_time')
+                    ->defaultValue(24)
+                ->end()
+                ->scalarNode('max_reset_time')
+                    ->defaultValue(24)
+                ->end()
                 ->scalarNode('screenshot_path')
                     ->defaultValue($defaultScreenshotPath)
                 ->end()
