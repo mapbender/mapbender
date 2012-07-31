@@ -334,7 +334,14 @@ class WMSController extends Controller {
         // FIXME: this url buidling thing is brittle!
         $serviceUrl = $wms->getRequestGetCapabilitiesGET();
         $version = $wms->getVersion();
-        $url = $serviceUrl ."&VERSION=".urlencode($version)."&REQUEST=GetCapabilities&SERVICE=wms";
+
+        if (strstr($serviceUrl,"?")){
+            $concat = "&";
+        }else{
+            $concat = "?";
+        }
+
+        $url = $serviceUrl .$concat."VERSION=".urlencode($version)."&REQUEST=GetCapabilities&SERVICE=wms";
         // FIXME: move this kludge into WMSService
         $newWms = null;
         try {
@@ -357,7 +364,8 @@ class WMSController extends Controller {
             }
         }catch(\Exception $E){
             $this->get('session')->setFlash('error', $E->getMessage());
-            return $this->render("MapbenderWmsBundle:WMS:index.html.twig");
+            $this->get('session')->setFlash('error',"tried to load WMS from '$url'");
+            return $this->redirect($this->generateUrl("mapbender_wms_wms_edit",array("wmsId"=>$wms->getId())));
         }
 
         $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
