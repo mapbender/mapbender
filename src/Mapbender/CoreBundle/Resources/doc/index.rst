@@ -1,22 +1,33 @@
-CoreBundle
-##########
+MapbenderCoreBundle
+###################
 
 The CoreBundle contains all basic functionality, including base classes and
 interfaces for the Mapbender3 API usable by Mapbender and third-party bundles.
 
-Element Classes
-===============
+Elements
+========
 
 .. toctree::
    :maxdepth: 1
+   :glob:
 
-   elements/button
+   elements/*
 
-Service Classes
-===============
+Entities
+========
 
-Symfony2 Entities
-=================
+.. toctree::
+    :maxdepth: 1
+    :glob:
 
-Symfony2 Services
-=================
+    entities/*
+
+Services
+========
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+
+    services/*
+
