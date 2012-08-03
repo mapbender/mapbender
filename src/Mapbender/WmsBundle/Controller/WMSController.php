@@ -185,7 +185,6 @@ class WMSController extends Controller {
         $wms = new WMSService();
         $wms = $this->buildWMSFormStructure($wms,$requestWMS);
 
-        $exceptionFormats = $requestWMS['exceptionFormats'];
 
         // wms has basic structure... but at this point we don't know what it supports
         // for multiselect to work we need to know what it supports..
@@ -296,7 +295,31 @@ class WMSController extends Controller {
     public function saveAction(WMSService $wms){
         $request = $this->get('request');
         /* build up nested wmslayer structure */
-        $requestWMS = $request->get('WMSService');
+        $requestWMS = $request->get('WMSService'); 
+
+
+
+        /*
+
+            Attention!:
+        
+            The Point of the @$arr[idex]?:array()-Mumbo is to resize the array in
+            the form so that when this method is called from updateAction, there
+            are no mismatches between slosts noi the form an what is submitted
+            in the *Formats arrays.
+            I am placing a FIXME here, because that seems kind of klunky
+
+        */
+    
+        $wms->setSupportedExceptionFormats(@$requestWMS['exceptionFormats']?:array());
+        $wms->setRequestSupportedGetCapabilitiesFormats(@$requestWMS['requestGetCapabilitiesFormats']?:array());
+        $wms->setRequestSupportedGetMapFormats(@$requestWMS['requestGetMapFormats']?:array());
+        $wms->setRequestSupportedGetFeatureInfoFormats(@$requestWMS['requestGetFeatureInfoFormats']?:array());
+        $wms->setRequestSupportedDescribeLayerFormats(@$requestWMS['requestDescribeLayerFormats ']?:array());
+        $wms->setRequestSupportedGetLegendGraphicFormats(@$requestWMS['requestGetLegendGraphicFormats']?:array());
+        $wms->setRequestSupportedGetStylesFormats(@$requestWMS['requestGetStylesFormats']?:array());
+        $wms->setRequestSupportedPutStylesFormats(@$requestWMS['requestPutStylesFormats']?:array());
+
         $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
             "exceptionFormats" => $wms->getSupportedExceptionFormats(),
             "requestGetCapabilitiesFormats" => $wms->getRequestSupportedGetCapabilitiesFormats(),
@@ -335,7 +358,14 @@ class WMSController extends Controller {
         // FIXME: this url buidling thing is brittle!
         $serviceUrl = $wms->getRequestGetCapabilitiesGET();
         $version = $wms->getVersion();
-        $url = $serviceUrl ."&VERSION=".urlencode($version)."&REQUEST=GetCapabilities&SERVICE=wms";
+
+        if (strstr($serviceUrl,"?")){
+            $concat = "&";
+        }else{
+            $concat = "?";
+        }
+
+        $url = $serviceUrl .$concat."VERSION=".urlencode($version)."&REQUEST=GetCapabilities&SERVICE=wms";
         // FIXME: move this kludge into WMSService
         $newWms = null;
         try {
@@ -358,7 +388,8 @@ class WMSController extends Controller {
             }
         }catch(\Exception $E){
             $this->get('session')->setFlash('error', $E->getMessage());
-            return $this->render("MapbenderWmsBundle:WMS:index.html.twig");
+            $this->get('session')->setFlash('error',"tried to load WMS from '$url'");
+            return $this->redirect($this->generateUrl("mapbender_wms_wms_edit",array("wmsId"=>$wms->getId())));
         }
 
         $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
@@ -382,6 +413,7 @@ class WMSController extends Controller {
             "requestPutStylesFormats" => $newWms->getRequestPutStylesFormats(),
         )); 
         return array(
+            "url" => trim($url),
             "wms" => $wms,
             "form"  => $form->createView(),
             "newWms" => $newWms,

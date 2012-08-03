@@ -78,6 +78,7 @@
         {% endif %}
         {{ form_widget(form.latLonBounds) }}
     </div>
+    {{ form_widget(form.srs) }}
     <div>
     {% if form.layer|length > 0 %}
             {{ form_row(form.layer) }} 

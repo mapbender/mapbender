@@ -18,6 +18,7 @@
 
 {% block content %}
     <script src="{{asset('bundles/mbwms/js/preview.js') }}"></script>	
+    <p>{{ "Loaded"|trans}}:  {{ url }}</p>
     <h2>Current</h2>
     <form class="wms tabbable" action="{{ path('mapbender_wms_wms_save',{'wmsId':wms.id}) }}" method="POST">
         {{ form_widget(form) }}
