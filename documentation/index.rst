@@ -1,17 +1,12 @@
-.. Mapbender3 documentation master file, created by
-   sphinx-quickstart on Sun Jul  8 00:08:58 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Mapbender3's documentation!
-======================================
+######################################
 
-Contents:
+Please choose a language of your choice:
 
 .. toctree::
    :maxdepth: 1
 
-   en/index
+   English <en/index>
    mapbender/TODOs
 
 Indices and tables

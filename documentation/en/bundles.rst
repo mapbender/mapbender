@@ -2,7 +2,7 @@ Bundle Documentation
 ====================
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    ../mapbender/src/Mapbender/CoreBundle/Resources/doc/index
    ../mapbender/src/Mapbender/WmsBundle/Resources/doc/index
