@@ -9,7 +9,7 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +22,7 @@ class ElementController extends Controller {
     /**
      * Show element class selection
      *
-     * @Route("/application/{slug}/element/select")
+     * @ManagerRoute("/application/{slug}/element/select")
      * @Method("GET")
      * @Template
      */
@@ -42,7 +42,7 @@ class ElementController extends Controller {
     /**
      * Shows form for creating new element
      *
-     * @Route("/application/{slug}/element/new")
+     * @ManagerRoute("/application/{slug}/element/new")
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Element:edit.html.twig")
      */
@@ -73,7 +73,7 @@ class ElementController extends Controller {
     /**
      * Create a new element from POSTed data
      *
-     * @Route("/application/{slug}/element/new")
+     * @ManagerRoute("/application/{slug}/element/new")
      * @Method("POST")
      * @Template("MapbenderManagerBundle:Element:new.html.twig")
      */
@@ -106,7 +106,7 @@ class ElementController extends Controller {
     }
 
     /**
-     * @Route("/application/{slug}/element/{id}", requirements={"id" = "\d+"})
+     * @ManagerRoute("/application/{slug}/element/{id}", requirements={"id" = "\d+"})
      * @Method("GET")
      * @Template
      */
@@ -133,7 +133,7 @@ class ElementController extends Controller {
     /**
      * Updates element by POSTed data
      *
-     * @Route("/application/{slug}/element/{id}", requirements = {"id" = "\d+" })
+     * @ManagerRoute("/application/{slug}/element/{id}", requirements = {"id" = "\d+" })
      * @Method("POST")
      * @Template("MapbenderManagerBundle:Element:edit.html.twig")
      */
@@ -174,7 +174,7 @@ class ElementController extends Controller {
     /**
      * Shows delete confirmation page
      *
-     * @Route("application/{slug}/element/{id}/delete", requirements = {
+     * @ManagerRoute("application/{slug}/element/{id}/delete", requirements = {
      *     "id" = "\d+" })
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Element:delete.html.twig")
@@ -200,7 +200,7 @@ class ElementController extends Controller {
     /**
      * Delete element
      *
-     * @Route("application/{slug}/element/{id}/delete")
+     * @ManagerRoute("application/{slug}/element/{id}/delete")
      * @Method("POST")
      * @Template
      */

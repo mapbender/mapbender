@@ -108,14 +108,16 @@ Initializing Mapbender's role system
 
 The standard roles need to be initialized in the database:
 
-    :command:`app/console mapbender:initroles`
+    :command:`app/console fom:user:initroles`
 
 Creating the administrative user
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The first user - which has all privileges - must be created using the command:
 
-    :command:`app/console mapbender:resetroot`
+    :command:`app/console fom:user:resetroot`
 
 This will interactively ask all information needed and create the user in the
 database.
+
+Now head over to your installation in your browser and enjoy.

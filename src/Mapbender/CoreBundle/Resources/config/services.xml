@@ -15,11 +15,6 @@
             <argument>%mapbender.proxy%</argument>
         </service>
 
-        <service id="security.access.rootaccount.voter" class="Mapbender\CoreBundle\Security\Authorization\Voter\RootAccountVoter">
-            <argument type="service" id="service_container" strict="false" />
-            <tag name="security.voter" />
-        </service>
-
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
         </service>

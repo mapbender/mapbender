@@ -103,7 +103,7 @@ class ApplicationYAMLMapper {
         }
 
         $owner = $this->container->get('doctrine')
-            ->getRepository('MapbenderCoreBundle:User')
+            ->getRepository('FOMUserBundle:User')
             ->find(1);
         $application->setOwner($owner);
         // TODO: Add roles, entity needs work first

@@ -9,18 +9,18 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
- * @Route("/repository")
+ * @ManagerRoute("/repository")
  */
 class RepositoryController extends Controller {
     /**
      * Renders the layer service repository.
      *
-     * @Route("/{page}", defaults={ "page"=1 }, requirements={ "page"="\d+" })
+     * @ManagerRoute("/{page}", defaults={ "page"=1 }, requirements={ "page"="\d+" })
      * @Method({ "GET" })
      * @Template
      */

@@ -44,11 +44,11 @@ class ApplicationType extends AbstractType {
                 'required' => false,
                 'label' => 'Published'))
             ->add('owner', 'entity', array(
-                'class' => 'MapbenderCoreBundle:User',
+                'class' => 'FOMUserBundle:User',
                 'property' => 'username',
                 'label' => 'Owner'))
             ->add('roles', 'entity', array(
-                'class' => 'MapbenderCoreBundle:Role',
+                'class' => 'FOMUserBundle:Role',
                 'expanded' => true,
                 'multiple' => true,
                 'property' => 'title',

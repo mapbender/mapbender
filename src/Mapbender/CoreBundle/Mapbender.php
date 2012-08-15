@@ -22,7 +22,6 @@ class Mapbender {
     private $elements = array();
     private $layers = array();
     private $templates = array();
-    private $adminControllers = array();
 
     /**
      * Mapbender constructor.
@@ -45,8 +44,6 @@ class Mapbender {
                     $bundle->getLayers());
                 $this->templates = array_merge($this->templates,
                     $bundle->getTemplates());
-
-                $this->adminControllers += $bundle->getAdminControllers();
             }
         }
     }
@@ -85,16 +82,6 @@ class Mapbender {
      */
     public function getTemplates() {
         return $this->templates;
-    }
-
-    /**
-     * Get list of all declared admin controllers.
-     *
-     * @return array
-     */
-    public function getAdminControllers()
-    {
-        return $this->adminControllers;
     }
 
     /**

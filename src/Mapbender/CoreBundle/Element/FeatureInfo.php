@@ -38,7 +38,7 @@ class FeatureInfo extends Element {
                 'mapbender.element.button.js',
                 'mapbender.element.featureInfo.js'),
             'css' => array(
-                //TODO: Split up
+                //@TODO: Split up
                 'mapbender.elements.css'));
     }
 
