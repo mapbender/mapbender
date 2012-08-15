@@ -1,5 +1,4 @@
-# Per default, the application list is the start page. You may change that.
-
+# Per default, the application list is the start page. You may change that to fit your project's needs.
 mapbender_start:
     pattern: "/"
     defaults: { _controller: MapbenderCoreBundle:Welcome:list}
@@ -8,24 +7,20 @@ mapbender_corebundle:
     resource: "@MapbenderCoreBundle/Controller/"
     type: annotation
 
+mapbender_managerbundle:
+    resource: "@MapbenderManagerBundle/Controller/"
+    type: annotation
+
 #mapbender_wmsbundle:
 #    resource: "@MapbenderWmsBundle/Controller/"
 #    type: annotation
 
-#fom_managerbundle:
-#    resource: "@FOMManagerBundle/Controller"
-#    type: annotation
-
-fom_userbundle_login:
-    resource: "@FOMUserBundle/Controller/LoginController.php"
+fom_managerbundle:
+    resource: "@FOMManagerBundle/Controller"
     type: annotation
 
-fom_userbundle_registration:
-    resource: "@FOMUserBundle/Controller/RegistrationController.php"
-    type: annotation
-
-fom_userbundle_password:
-    resource: "@FOMUserBundle/Controller/PasswordController.php"
+fom_userbundle:
+    resource: "@FOMUserBundle/Controller"
     type: annotation
 
 ows_corebundle:

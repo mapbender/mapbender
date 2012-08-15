@@ -63,6 +63,10 @@ swiftmailer:
     password:  %mailer_password%
     spool:     { type: memory }
 
+# FOM Manager Configuration
+fom_manager:
+    route_prefix: /manager
+
 # FOM User Configuration
 fom_user:
     selfregister: true

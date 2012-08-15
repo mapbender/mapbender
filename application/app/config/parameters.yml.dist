@@ -16,5 +16,6 @@ parameters:
     secret:            ThisTokenIsNotSoSecretChangeIt
 
     fom:
-        server_name:       Mapbender3
+        server_name:   Mapbender3
+        server_logo:   bundles/web/mapbendermanager/logo.png
 
