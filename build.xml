@@ -200,7 +200,8 @@
 
     <target name="doc:sphinx">
         <symlink target="../application/mapbender" link="documentation/mapbender" />
-        <exec command="sphinx-build documentation/ application/documentation/" />
+        <symlink target="../application/fom" link="documentation/fom" />
+        <exec command="sphinx-build documentation/ application/documentation/" passthru="true" />
     </target>
 
     <target name="doc:api">
