@@ -14,11 +14,15 @@ Configuration
 =============
 
 <Put YAML configuration here, include defaults and explain>
-.. code-block:: yaml
 
+.. code-block:: yaml
+   foo: bar # Example, delete me!
 
 HTTP Callbacks
 ==============
+
+<Check the PHP class' httpAction method to find out the actions and what they
+ do. If no httpAction method is defined put "None." into this section.>
 
 <action>
 --------------------------------
@@ -29,6 +33,8 @@ HTTP Callbacks
 
 JavaScript API
 ==============
+
+<Check the widgets methods which don't start with an underscore.>
 
 <function>
 ----------

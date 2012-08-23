@@ -34,8 +34,31 @@ develop your own controller.
 
 .. image:: figures/http_workflow_application.png
 
-Element Workflow
-****************
+Element Rendering Workflow
+**************************
+Upon application rendering, every element is asked to render itself. The workflow
+is a little tangled but, basically the application asks it's template to render
+itself which includes the template iterating over each element and calling the
+elements render function.
+
+The render function usually uses twig to render a HTML fragment to stand for the
+element and this fragment _must_ include an id attribute set to the id dynamically
+given to the element by the Mapbender application! As these ids are generated
+dynamically you must not use them for styling in your element's CSS.
+
+Also, the application iterates over each element and calls the getConfiguration
+method to collect all elements' configuration arrays which are made available
+client-side in the Mapbender.configuration.elements variable - as well as given to
+each element's widget construct method.
+
+To sum up, the elements configurations are available:
+
+* In the element's render function which can pass the configuration to the twig file.
+* In the element's widget methods as "this->options".
+* In the Mapbender.configuration.elements JavaScript variable (for all elements)
+
+Element Callback Workflow
+*************************
 The standard element callback /application/{slug}/element/{id}/{action} is
 routed to the
 Mapbender\CoreBundle\Controller\ApplicationController::elementAction($slug, $id, $action)
