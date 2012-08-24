@@ -6,5 +6,6 @@ The Developer's Book
 
    ../mapbender/documentation/book/en/development/introduction
    ../mapbender/documentation/book/en/development/apidocumentation
+   ../mapbender/documentation/book/en/development/elements
    ../mapbender/documentation/book/en/development/git
    ../fom/documentation/en/index
