@@ -136,7 +136,7 @@ class ApplicationYAMLMapper {
             $application->addLayersets($layerset);
         }
 
-        $application->setSource(Application::SOURCE_YAML);
+        $application->setSource(ApplicationEntity::SOURCE_YAML);
 
         return $application;
     }
