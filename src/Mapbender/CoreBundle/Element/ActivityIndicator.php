@@ -10,19 +10,19 @@ use Mapbender\CoreBundle\Component\Element;
  * @author Christian Wygoda
  */
 class ActivityIndicator extends Element {
-    public function getClassTitle() {
+    static function getClassTitle() {
         return "Activity Indicator";
     }
 
-    public function getClassDescription() {
+    static function getClassDescription() {
         return "Shows HTTP activity";
     }
 
-    public function getClassTags() {
+    static function getClassTags() {
         return array();
     }
 
-    public function getDefaultConfiguration() {
+    static function getDefaultConfiguration() {
         return array(
             'activityClass' => 'mb-activity',
             'ajaxActivityClass' => 'mb-activity-ajax',

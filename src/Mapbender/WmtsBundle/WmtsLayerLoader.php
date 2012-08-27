@@ -2,7 +2,7 @@
 
 namespace Mapbender\WmtsBundle;
 
-use Mapbender\CoreBundle\Component\LayerInterface;
+use Mapbender\CoreBundle\Component\Layer;
 use Mapbender\WmtsBundle\Entity\WmtsInstance;
 
 
@@ -11,7 +11,7 @@ use Mapbender\WmtsBundle\Entity\WmtsInstance;
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
-class WmtsLayerLoader implements LayerInterface {
+class WmtsLayerLoader extends Layer {
     protected $layerSetId;
     protected $layerId;
     protected $configuration;
@@ -78,5 +78,8 @@ class WmtsLayerLoader implements LayerInterface {
                 'mapbender.layer.wmts.js'
             )
         );
+    }
+    public function getType(){
+        return "wmts";
     }
 }
