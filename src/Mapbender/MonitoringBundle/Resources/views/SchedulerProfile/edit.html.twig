@@ -11,7 +11,7 @@
     </div>
 {% else %}
     <h3 class="p-scheduler">{{"New Scheduler"|trans}}</h3>
-    <div class="form">
+    <div class="form-monitoring">
         <form action="{{path("mapbender_monitoring_schedulerprofile_new")}}" method="post">
             {{form_widget(form)}}
             <input type="submit" name="save" value="{{"save"|trans}}" />

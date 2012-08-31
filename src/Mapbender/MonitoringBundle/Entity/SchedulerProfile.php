@@ -28,15 +28,15 @@ class SchedulerProfile {
     public static $TIMEINTERVAL_WEEKLY = "weekly";
     
     public static $TIMEINTERVAL_0MIN = "no";
-    public static $TIMEINTERVAL_1_4MIN = "1/4";
-    public static $TIMEINTERVAL_1_2MIN = "1/2";
-    public static $TIMEINTERVAL_3_4MIN = "3/4";
-    public static $TIMEINTERVAL_1MIN = "1";
-    public static $TIMEINTERVAL_2MIN = "2";
-    public static $TIMEINTERVAL_3MIN = "3";
-    public static $TIMEINTERVAL_4MIN = "4";
-    public static $TIMEINTERVAL_5MIN = "5";
-    public static $TIMEINTERVAL_10MIN = "10";
+    public static $TIMEINTERVAL_1_4MIN = "1/4 min";
+    public static $TIMEINTERVAL_1_2MIN = "1/2 min";
+    public static $TIMEINTERVAL_3_4MIN = "3/4 min";
+    public static $TIMEINTERVAL_1MIN = "1 min";
+    public static $TIMEINTERVAL_2MIN = "2 min";
+    public static $TIMEINTERVAL_3MIN = "3 min";
+    public static $TIMEINTERVAL_4MIN = "4 min";
+    public static $TIMEINTERVAL_5MIN = "5 min";
+    public static $TIMEINTERVAL_10MIN = "10 min";
     /**
 	 *
 	 * @ORM\Id

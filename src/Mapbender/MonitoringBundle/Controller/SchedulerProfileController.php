@@ -45,7 +45,9 @@ class SchedulerProfileController extends Controller {
                 'SELECT sp FROM MapbenderMonitoringBundle:SchedulerProfile sp'
                 .' ORDER BY sp.title ASC');
         $schedulers = $query->getResult();
-        return array("schedulers" => $schedulers,
+        return array(
+            "nowtime" => new \DateTime(),
+            "schedulers" => $schedulers,
             "process" => $this->getProcessStatus($this->generateCmd())
 
 		);
@@ -62,7 +64,9 @@ class SchedulerProfileController extends Controller {
                 'SELECT sp FROM MapbenderMonitoringBundle:SchedulerProfile sp'
                 .' ORDER BY sp.title ASC');
         $schedulers = $query->getResult();
-        return array("schedulers" => $schedulers,
+        return array(
+            "nowtime" => new \DateTime(),
+            "schedulers" => $schedulers,
             "process" => $this->getProcessStatus($this->generateCmd())
 		);
 	}
@@ -93,7 +97,9 @@ class SchedulerProfileController extends Controller {
                 'SELECT sp FROM MapbenderMonitoringBundle:SchedulerProfile sp'
                 .' ORDER BY sp.title ASC');
         $schedulers = $query->getResult();
-		return array("schedulers" => $schedulers,
+		return array(
+            "nowtime" => new \DateTime(),
+            "schedulers" => $schedulers,
             "process" => $this->getProcessStatus($this->generateCmd())
 		);
 	}
@@ -137,7 +143,9 @@ class SchedulerProfileController extends Controller {
             $schedulers = $query->getResult();
             return $this->render(
                     'MapbenderMonitoringBundle:SchedulerProfile:index.html.twig',
-                    array("schedulers" => $schedulers,
+                    array(
+                        "nowtime" => new \DateTime(),
+                        "schedulers" => $schedulers,
                         "process" => $this->getProcessStatus($this->generateCmd())));
         }
         return array('form' => $form->createView(), "scheduler" => $scheduler_req);
@@ -166,7 +174,9 @@ class SchedulerProfileController extends Controller {
                 'SELECT sp FROM MapbenderMonitoringBundle:SchedulerProfile sp'
                 .' ORDER BY sp.title ASC');
         $schedulers = $query->getResult();
-        return array("schedulers" => $schedulers,
+        return array(
+            "nowtime" => new \DateTime(),
+            "schedulers" => $schedulers,
             "process" => $this->getProcessStatus($this->generateCmd()));
 	}
     
@@ -186,7 +196,9 @@ class SchedulerProfileController extends Controller {
                 'SELECT sp FROM MapbenderMonitoringBundle:SchedulerProfile sp'
                 .' ORDER BY sp.title ASC');
         $schedulers = $query->getResult();
-        return array("schedulers" => $schedulers,
+        return array(
+            "nowtime" => new \DateTime(),
+            "schedulers" => $schedulers,
             "process" => $this->getProcessStatus($this->generateCmd()));
 	}
     
@@ -227,7 +239,9 @@ class SchedulerProfileController extends Controller {
             $schedulers = $query->getResult();
             return $this->render(
                     'MapbenderMonitoringBundle:SchedulerProfile:index.html.twig',
-                    array("schedulers" => $schedulers,
+                    array(
+                        "nowtime" => new \DateTime(),
+                        "schedulers" => $schedulers,
                         "process" => $this->getProcessStatus($this->generateCmd())));
         }
         return array('form' => $form->createView(), "scheduler" => $sp);
@@ -287,94 +301,96 @@ class SchedulerProfileController extends Controller {
                 "MapbenderMonitoringBundle:SchedulerProfile")->findBy(array('current' => true));
     }
     
-    /**
-	 * @Route("/scheduler/test/")
-	 * @Method("GET")
-	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:index.html.twig")
-	 */
-	public function testAction() {
-                $run = true;
-                $num = 0;
-                $sp_start = $this->get("doctrine")
-                            ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
-                            ->findOneByCurrent(true);
-                if($sp_start != null){
-                    $sp_start->setLaststarttime(null);
-                    $sp_start->setLastendtime(null);
-                    $sp_start->setNextstarttime(null);
-                    $this->get("doctrine")
-                            ->getEntityManager()->persist($sp_start);
-                    $this->get("doctrine")
-                            ->getEntityManager()->flush();
-                }
-                
-                while($run){
-                    $num ++;
-                    $sp = $this->get("doctrine")
-                            ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
-                            ->findOneByCurrent(true);
-                    if($sp != null && $sp_start->getId() == $sp->getId()){
-//                        $timestamp_act = time();
-                        $now =  new \DateTime(date("Y-m-d H:i:s", time()));
-                            $hour_sec = 3600;
-                            $sleepbeforestart = 0;
-                            if($sp->getNextstarttime() === null) { // first time
-                                if($sp->getStarttime() > $now){
-                                    $sleepbeforestart = date_timestamp_get($sp->getStarttime()) - date_timestamp_get($now);
-                                    $sp->setNextstarttime(new \DateTime(date("Y-m-d H:i:s",date_timestamp_get($sp->getStarttime()))));
-                                } else {
-                                    $sleepbeforestart = $hour_sec * 24 - (date_timestamp_get($now) - date_timestamp_get($sp->getStarttime()));
-                                    $sp->setNextstarttime(new \DateTime(date("Y-m-d H:i:s",date_timestamp_get($now) + $sleepbeforestart)));
-                                }
-                            } else {
-                                if($sp->getNextstarttime() <= $now){
-                                    $nextstarttime_stamp =  date_timestamp_get($sp->getNextstarttime());
-                                    $now_stamp =  date_timestamp_get($now);
-                                    while($nextstarttime_stamp < $now_stamp){
-                                        $nextstarttime_stamp += $sp->getStarttimeinterval();
-                                    }
-//                                    $sleepbeforestart = date_timestamp_get($nextstarttime) - date_timestamp_get($now);
-                                    $sp->setNextstarttime(null);
-                                    $sp->setNextstarttime(new \DateTime(date("Y-m-d H:i:s", $nextstarttime_stamp)));
-                                }
-                                $sleepbeforestart = date_timestamp_get($sp->getNextstarttime()) - date_timestamp_get($now);
-                            }
-                            $sp->setStatusWaitstart();
-                            $this->get("doctrine")
-                                    ->getEntityManager()->persist($sp);
-                            $this->get("doctrine")
-                                    ->getEntityManager()->flush();
-                            // sleep
-//                            sleep($sleepbeforestart);
-                            $now =  new \DateTime(date("Y-m-d H:i:s", time()));
-                            $sp->setLaststarttime($sp->getNextstarttime());
-                            $sp->setNextstarttime(null);
-                            $sp->setNextstarttime(new \DateTime(date("Y-m-d H:i:s", date_timestamp_get($sp->getLaststarttime()) + $sp->getStarttimeinterval())));
-                            $this->get("doctrine")
-                                    ->getEntityManager()->persist($sp);
-                            $this->get("doctrine")
-                                    ->getEntityManager()->flush();
-//                            $this->runCommandII($input, $output, $sp);
+//    /**
+//	 * @Route("/scheduler/test/")
+//	 * @Method("GET")
+//	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:index.html.twig")
+//	 */
+//	public function testAction() {
+//                $run = true;
+//                $num = 0;
+//                $sp_start = $this->get("doctrine")
+//                            ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
+//                            ->findOneByCurrent(true);
+//                if($sp_start != null){
+//                    $sp_start->setLaststarttime(null);
+//                    $sp_start->setLastendtime(null);
+//                    $sp_start->setNextstarttime(null);
+//                    $this->get("doctrine")
+//                            ->getEntityManager()->persist($sp_start);
+//                    $this->get("doctrine")
+//                            ->getEntityManager()->flush();
+//                }
+//                
+//                while($run){
+//                    $num ++;
+//                    $sp = $this->get("doctrine")
+//                            ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
+//                            ->findOneByCurrent(true);
+//                    if($sp != null && $sp_start->getId() == $sp->getId()){
+////                        $timestamp_act = time();
+//                        $now =  new \DateTime(date("Y-m-d H:i:s", time()));
+//                            $hour_sec = 3600;
+//                            $sleepbeforestart = 0;
+//                            if($sp->getNextstarttime() === null) { // first time
+//                                if($sp->getStarttime() > $now){
+//                                    $sleepbeforestart = date_timestamp_get($sp->getStarttime()) - date_timestamp_get($now);
+//                                    $sp->setNextstarttime(new \DateTime(date("Y-m-d H:i:s",date_timestamp_get($sp->getStarttime()))));
+//                                } else {
+//                                    $sleepbeforestart = $hour_sec * 24 - (date_timestamp_get($now) - date_timestamp_get($sp->getStarttime()));
+//                                    $sp->setNextstarttime(new \DateTime(date("Y-m-d H:i:s",date_timestamp_get($now) + $sleepbeforestart)));
+//                                }
+//                            } else {
+//                                if($sp->getNextstarttime() <= $now){
+//                                    $nextstarttime_stamp =  date_timestamp_get($sp->getNextstarttime());
+//                                    $now_stamp =  date_timestamp_get($now);
+//                                    while($nextstarttime_stamp < $now_stamp){
+//                                        $nextstarttime_stamp += $sp->getStarttimeinterval();
+//                                    }
+////                                    $sleepbeforestart = date_timestamp_get($nextstarttime) - date_timestamp_get($now);
+//                                    $sp->setNextstarttime(null);
+//                                    $sp->setNextstarttime(new \DateTime(date("Y-m-d H:i:s", $nextstarttime_stamp)));
+//                                }
+//                                $sleepbeforestart = date_timestamp_get($sp->getNextstarttime()) - date_timestamp_get($now);
+//                            }
+//                            $sp->setStatusWaitstart();
+//                            $this->get("doctrine")
+//                                    ->getEntityManager()->persist($sp);
+//                            $this->get("doctrine")
+//                                    ->getEntityManager()->flush();
+//                            // sleep
+////                            sleep($sleepbeforestart);
 //                            $now =  new \DateTime(date("Y-m-d H:i:s", time()));
-                            $sp->setLastendtime(new \DateTime(date("Y-m-d H:i:s", time())));
-                            $this->get("doctrine")
-                                    ->getEntityManager()->persist($sp);
-                            $this->get("doctrine")
-                                    ->getEntityManager()->flush();
-
-                    } else {
-                        // $sp null
-                         $run = false;
-                    }
-                    if($num == 3)
-                        $run = false;
-                }
-                
-		$query = $this->getDoctrine()->getEntityManager()->createQuery(
-                'SELECT sp FROM MapbenderMonitoringBundle:SchedulerProfile sp'
-                .' ORDER BY sp.title ASC');
-        $schedulers = $query->getResult();
-		return array("schedulers" => $schedulers,
-            "process" => $this->getProcessStatus($this->generateCmd()));
-	}
+//                            $sp->setLaststarttime($sp->getNextstarttime());
+//                            $sp->setNextstarttime(null);
+//                            $sp->setNextstarttime(new \DateTime(date("Y-m-d H:i:s", date_timestamp_get($sp->getLaststarttime()) + $sp->getStarttimeinterval())));
+//                            $this->get("doctrine")
+//                                    ->getEntityManager()->persist($sp);
+//                            $this->get("doctrine")
+//                                    ->getEntityManager()->flush();
+////                            $this->runCommandII($input, $output, $sp);
+////                            $now =  new \DateTime(date("Y-m-d H:i:s", time()));
+//                            $sp->setLastendtime(new \DateTime(date("Y-m-d H:i:s", time())));
+//                            $this->get("doctrine")
+//                                    ->getEntityManager()->persist($sp);
+//                            $this->get("doctrine")
+//                                    ->getEntityManager()->flush();
+//
+//                    } else {
+//                        // $sp null
+//                         $run = false;
+//                    }
+//                    if($num == 3)
+//                        $run = false;
+//                }
+//                
+//		$query = $this->getDoctrine()->getEntityManager()->createQuery(
+//                'SELECT sp FROM MapbenderMonitoringBundle:SchedulerProfile sp'
+//                .' ORDER BY sp.title ASC');
+//        $schedulers = $query->getResult();
+//		return array(
+//            "nowtime" => new \DateTime(),
+//            "schedulers" => $schedulers,
+//            "process" => $this->getProcessStatus($this->generateCmd()));
+//	}
 }

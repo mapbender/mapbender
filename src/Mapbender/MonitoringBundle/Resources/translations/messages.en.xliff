@@ -143,42 +143,40 @@
                 <source>New Scheduler</source>
                 <target>New Scheduler</target>
             </trans-unit>
-            
-            
             <trans-unit id="36">
-                <source>1/4</source>
+                <source>1/4 min</source>
                 <target>1/4 min</target>
             </trans-unit>
             <trans-unit id="37">
-                <source>1/2</source>
+                <source>1/2 min</source>
                 <target>1/2 min</target>
             </trans-unit>
             <trans-unit id="38">
-                <source>3/4</source>
+                <source>3/4 min</source>
                 <target>3/4 min</target>
             </trans-unit>
             <trans-unit id="39">
-                <source>1</source>
+                <source>1 min</source>
                 <target>1 min</target>
             </trans-unit>
             <trans-unit id="40">
-                <source>2</source>
+                <source>2 min</source>
                 <target>2 min</target>
             </trans-unit>
             <trans-unit id="41">
-                <source>3</source>
+                <source>3 min</source>
                 <target>3 min</target>
             </trans-unit>
             <trans-unit id="42">
-                <source>4</source>
+                <source>4 min</source>
                 <target>4 min</target>
             </trans-unit>
             <trans-unit id="43">
-                <source>5</source>
+                <source>5 min</source>
                 <target>5 min</target>
             </trans-unit>
             <trans-unit id="44">
-                <source>10</source>
+                <source>10 min</source>
                 <target>10 min</target>
             </trans-unit>
             <trans-unit id="45">

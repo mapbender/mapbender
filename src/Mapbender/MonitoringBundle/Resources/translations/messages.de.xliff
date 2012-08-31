@@ -77,7 +77,7 @@
             </trans-unit>
             <trans-unit id="19">
                 <source>Next Start Time</source>
-                <target>Nächster Endzeitpunkt</target>
+                <target>Nächster Startzeitpunkt</target>
             </trans-unit>
             <trans-unit id="20">
                 <source>Current Status</source> 
@@ -144,60 +144,60 @@
                 <target>Planer erstellen</target>
             </trans-unit>
             <trans-unit id="36">
-                <source>1/4</source>
-                <target>1/4 min</target>
+                <source>1/4 min</source>
+                <target>1/4 Min</target>
             </trans-unit>
             <trans-unit id="37">
-                <source>1/2</source>
-                <target>1/2 min</target>
+                <source>1/2 min</source>
+                <target>1/2 Min</target>
             </trans-unit>
             <trans-unit id="38">
-                <source>3/4</source>
-                <target>3/4 min</target>
+                <source>3/4 min</source>
+                <target>3/4 Min</target>
             </trans-unit>
             <trans-unit id="39">
-                <source>1</source>
-                <target>1 min</target>
+                <source>1 min</source>
+                <target>1 Min</target>
             </trans-unit>
             <trans-unit id="40">
-                <source>2</source>
-                <target>2 min</target>
+                <source>2 min</source>
+                <target>2 Min</target>
             </trans-unit>
             <trans-unit id="41">
-                <source>3</source>
-                <target>3 min</target>
+                <source>3 min</source>
+                <target>3 Min</target>
             </trans-unit>
             <trans-unit id="42">
-                <source>4</source>
-                <target>4 min</target>
+                <source>4 min</source>
+                <target>4 Min</target>
             </trans-unit>
             <trans-unit id="43">
-                <source>5</source>
-                <target>5 min</target>
+                <source>5 min</source>
+                <target>5 Min</target>
             </trans-unit>
             <trans-unit id="44">
-                <source>10</source>
-                <target>10 min</target>
+                <source>10 min</source>
+                <target>10 Min</target>
             </trans-unit>
             <trans-unit id="45">
                 <source>quarter of a hour</source>
-                <target>Quarter Of A Hour</target>
+                <target>Viertelstündlich</target>
             </trans-unit>
             <trans-unit id="46">
                 <source>half-hourly</source>
-                <target>Half-Hourly</target>
+                <target>Halbstündlich</target>
             </trans-unit>
             <trans-unit id="47">
                 <source>hourly</source>
-                <target>Hourly</target>
+                <target>Stündlich</target>
             </trans-unit>
             <trans-unit id="48">
                 <source>daily</source>
-                <target>Daily</target>
+                <target>Täglich</target>
             </trans-unit>
             <trans-unit id="49">
                 <source>weekly</source>
-                <target>Weekly</target>
+                <target>Wöchentlich</target>
             </trans-unit>
         </body>
     </file>
