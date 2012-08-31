@@ -40,7 +40,7 @@
             </trans-unit>
             <trans-unit id="10">
                 <source>no</source> 
-                <target>no</target> 
+                <target>No</target> 
             </trans-unit>
             <trans-unit id="11">
                 <source>hourly</source> 
@@ -142,6 +142,64 @@
             <trans-unit id="35">
                 <source>New Scheduler</source>
                 <target>New Scheduler</target>
+            </trans-unit>
+            
+            
+            <trans-unit id="36">
+                <source>1/4</source>
+                <target>1/4 min</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>1/2</source>
+                <target>1/2 min</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>3/4</source>
+                <target>3/4 min</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>1</source>
+                <target>1 min</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>2</source>
+                <target>2 min</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>3</source>
+                <target>3 min</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>4</source>
+                <target>4 min</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>5</source>
+                <target>5 min</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>10</source>
+                <target>10 min</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>quarter of a hour</source>
+                <target>Quarter Of A Hour</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>half-hourly</source>
+                <target>Half-Hourly</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>hourly</source>
+                <target>Hourly</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>daily</source>
+                <target>Daily</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>weekly</source>
+                <target>Weekly</target>
             </trans-unit>
         </body>
     </file>

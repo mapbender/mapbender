@@ -209,19 +209,7 @@ class MonitoringDefinitionController extends Controller {
 	public function runAction(MonitoringDefinition $md) {
         $client = new HTTPClient($this->container);
         $mr = new MonitoringRunner($md,$client);
-//        $job = $mr->run();
-//        if($md->getLastMonitoringJob()){
-//            if(strcmp($job->getResult(), $md->getLastMonitoringJob()->getResult()) != 0){
-//                $job->setChanged(true);
-//            } else {
-//                $job->setChanged(false);
-//            }
-//        }else {
-//            $job->setChanged(true);
-//        }
-//        $md->addMonitoringJob($job);
-        
-        
+
         $mr = new MonitoringRunner($md, $client);
         if($md->getEnabled()){
             if($md->getRuleMonitor()){
@@ -253,8 +241,7 @@ class MonitoringDefinitionController extends Controller {
         }
         
         $md->addMonitoringJob($job);
-        
-        
+
         $em = $this->getDoctrine()->getEntityManager();
         $em->persist($md);
         $em->flush();

@@ -41,10 +41,15 @@ EOT
             case "run":
                 $run = true;
                 $num = 0;
-                $sp_start = $this->getContainer()->get("doctrine")
-                            ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
-                            ->findOneByCurrent(true);
-                if($sp_start != null){
+                $this->getContainer()->get("doctrine")->resetEntityManager();
+                $query = $this->getContainer()->get("doctrine")->getEntityManager()
+                        ->createQuery('SELECT sp FROM MapbenderMonitoringBundle:SchedulerProfile sp WHERE sp.current=true')
+                        ->useQueryCache(null)
+                        ->useResultCache(null);
+                $sp_start_Arr = $query->getResult();
+                $sp_start_id = -1;
+                if($sp_start_Arr != null && count($sp_start_Arr) == 1){
+                    $sp_start = $sp_start_Arr[0];
                     $sp_start->setLaststarttime(null);
                     $sp_start->setLastendtime(null);
                     $sp_start->setNextstarttime(null);
@@ -52,85 +57,92 @@ EOT
                             ->getEntityManager()->persist($sp_start);
                     $this->getContainer()->get("doctrine")
                             ->getEntityManager()->flush();
+                    $sp_start_id = $sp_start->getId();
                 }
-                
+                unset($sp_start_Arr);
                 while($run){
                     $num ++;
-                    $sp = $this->getContainer()->get("doctrine")
-                            ->getRepository('Mapbender\MonitoringBundle\Entity\SchedulerProfile')
-                            ->findOneByCurrent(true);
-                    if($sp != null && $sp_start->getId() == $sp->getId()){
+                    $query = $this->getContainer()->get("doctrine")->getEntityManager()
+                            ->createQuery('SELECT sp FROM MapbenderMonitoringBundle:SchedulerProfile sp WHERE sp.current = true')
+                            ->useQueryCache(null)
+                            ->useResultCache(null);
+                    $sp_Arr = $query->getResult();
+                    if($sp_start_id  != -1 && count($sp_Arr) == 1 && $sp_start == $sp_Arr[0]){
+                        $sp = $sp_Arr[0];
                         $now =  new \DateTime(date("Y-m-d H:i:s", time()));
-                            $hour_sec = 3600;
-                            $sleepbeforestart = 0;
-                            if($sp->getNextstarttime() === null) { // first time
-                                if($sp->getStarttime() > $now){
-                                    $sleepbeforestart = date_timestamp_get(
-                                            $sp->getStarttime())
-                                            - date_timestamp_get($now);
-                                    $sp->setNextstarttime(
-                                            new \DateTime(date("Y-m-d H:i:s",
-                                                    date_timestamp_get(
-                                                            $sp->getStarttime()))));
-                                } else {
-                                    $sleepbeforestart = $hour_sec * 24 - (
-                                            date_timestamp_get($now)
-                                            - date_timestamp_get(
-                                                    $sp->getStarttime()));
-                                    $sp->setNextstarttime(
-                                            new \DateTime(date("Y-m-d H:i:s",
-                                                    date_timestamp_get($now)
-                                                    + $sleepbeforestart)));
-                                }
-                            } else {
-                                if($sp->getNextstarttime() <= $now){
-                                    $nextstarttime_stamp =  date_timestamp_get(
-                                            $sp->getNextstarttime());
-                                    $now_stamp =  date_timestamp_get($now);
-                                    while($nextstarttime_stamp < $now_stamp){
-                                        $nextstarttime_stamp += $sp->getStarttimeinterval();
-                                    }
-                                    $sp->setNextstarttime(null);
-                                    $sp->setNextstarttime(
-                                            new \DateTime(date("Y-m-d H:i:s",
-                                                    $nextstarttime_stamp)));
-                                }
+                        $hour_sec = 3600;
+                        $sleepbeforestart = 0;
+                        if($sp->getNextstarttime() === null) { // first time
+                            if($sp->getStarttime() > $now){
                                 $sleepbeforestart = date_timestamp_get(
-                                        $sp->getNextstarttime()) - date_timestamp_get($now);
+                                        $sp->getStarttime())
+                                        - date_timestamp_get($now);
+                                $sp->setNextstarttime(
+                                        new \DateTime(date("Y-m-d H:i:s",
+                                                date_timestamp_get(
+                                                        $sp->getStarttime()))));
+                            } else {
+                                $sleepbeforestart = $hour_sec * 24 - (
+                                        date_timestamp_get($now)
+                                        - date_timestamp_get(
+                                                $sp->getStarttime()));
+                                $sp->setNextstarttime(
+                                        new \DateTime(date("Y-m-d H:i:s",
+                                                date_timestamp_get($now)
+                                                + $sleepbeforestart)));
                             }
-                            $sp->setStatusWaitstart();
-                            $this->getContainer()->get("doctrine")
-                                    ->getEntityManager()->persist($sp);
-                            $this->getContainer()->get("doctrine")
-                                    ->getEntityManager()->flush();
-                            // sleep
-                            sleep($sleepbeforestart);
-                            $sp->setLaststarttime($sp->getNextstarttime());
-                            $sp->setNextstarttime(null);
-                            $sp->setNextstarttime(
-                                    new \DateTime(date("Y-m-d H:i:s",
-                                    date_timestamp_get($sp->getLaststarttime())
-                                            + $sp->getStarttimeinterval())));
-                            $this->getContainer()->get("doctrine")
-                                    ->getEntityManager()->persist($sp);
-                            $this->getContainer()->get("doctrine")
-                                    ->getEntityManager()->flush();
-                            
-                            $this->runCommandII($input, $output, $sp);
-                            
-                            $sp->setLastendtime(
-                                    new \DateTime(date("Y-m-d H:i:s", time())));
-                            $sp->setStatusEnded();
-                            $this->getContainer()->get("doctrine")
-                                    ->getEntityManager()->persist($sp);
-                            $this->getContainer()->get("doctrine")
-                                    ->getEntityManager()->flush();
+                        } else {
+                            if($sp->getNextstarttime() <= $now){
+                                $nextstarttime_stamp =  date_timestamp_get(
+                                        $sp->getNextstarttime());
+                                $now_stamp =  date_timestamp_get($now);
+                                while($nextstarttime_stamp < $now_stamp){
+                                    $nextstarttime_stamp += $sp->getStarttimeinterval();
+                                }
+                                $sp->setNextstarttime(null);
+                                $sp->setNextstarttime(
+                                        new \DateTime(date("Y-m-d H:i:s",
+                                                $nextstarttime_stamp)));
+                            }
+                            $sleepbeforestart = date_timestamp_get(
+                                    $sp->getNextstarttime()) - date_timestamp_get($now);
+                        }
+                        $sp->setStatusWaitstart();
+                        $this->getContainer()->get("doctrine")
+                                ->getEntityManager()->persist($sp);
+                        $this->getContainer()->get("doctrine")
+                                ->getEntityManager()->flush();
+                        // sleep
+                        sleep($sleepbeforestart);
+                        $sp->setLaststarttime($sp->getNextstarttime());
+                        $sp->setNextstarttime(null);
+                        $sp->setNextstarttime(
+                                new \DateTime(date("Y-m-d H:i:s",
+                                date_timestamp_get($sp->getLaststarttime())
+                                        + $sp->getStarttimeinterval())));
+                        $this->getContainer()->get("doctrine")
+                                ->getEntityManager()->persist($sp);
+                        $this->getContainer()->get("doctrine")
+                                ->getEntityManager()->flush();
+
+                        $this->runCommandII($input, $output, $sp);
+
+                        $sp->setLastendtime(
+                                new \DateTime(date("Y-m-d H:i:s", time())));
+                        $sp->setStatusEnded();
+                        $this->getContainer()->get("doctrine")
+                                ->getEntityManager()->persist($sp);
+                        $this->getContainer()->get("doctrine")
+                                ->getEntityManager()->flush();
+                        
+                        if($sp->getStarttimeinterval() == 0){
+                            $run = false;
+                        }
+                        unset($sp);
                     } else {
                         $run = false;
                     }
-                    if($sp->getStarttimeinterval() == 0){
-                        $run = false;
-                    }
+                    
                 }
             break;
             case "list":
@@ -189,15 +201,13 @@ EOT
     }
     
     protected function runCommandII(InputInterface $input, OutputInterface $output, SchedulerProfile $sp){
-
-        $defs = $this->getContainer()
-            ->get("doctrine")
-            ->getRepository('Mapbender\MonitoringBundle\Entity\MonitoringDefinition')
-            ->findAll();
-    
+//        $this->getContainer()->get("doctrine")->resetEntityManager();
         $em = $this->getContainer()->get("doctrine")->getEntityManager();
-        
-
+        $query = $em->createQuery(
+                'SELECT d FROM MapbenderMonitoringBundle:MonitoringDefinition d')
+                ->useQueryCache(null)
+                ->useResultCache(null);
+        $defs = $query->getResult();
         if(count($defs)==0){
             $output->writeln("\t\t NO JOB FOUND");
             return false;
@@ -239,6 +249,5 @@ EOT
             }
         }
     }
-
 }
 
