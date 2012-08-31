@@ -11,6 +11,8 @@
 </nav>
 {% endblock %}
 {% block content %}
+    <h3 class="p-scheduler">{{"Edit Monitoring Definition"|trans}}</h3>
+    <div class="form-monitoring">
 	<form action="{{path("mapbender_monitoring_monitoringdefinition_save",{"mdId":md.id})}}" method="post">
 		{{form_widget(form)}}
 		<input type="submit" name="save" value="{{"save"|trans}}" />
@@ -24,6 +26,7 @@
     <form action="{{ path('mapbender_monitoring_monitoringdefinition_run',{'mdId':md.id}) }}" method="post">
         <input type="submit" name="run" value="{% trans %}Run{% endtrans %}" />
     </form>
+    </div>
     {% if md.monitoringJobs|length > 0 %}
     <table class="listable" id="_table-job">
         <caption>{{ "Jobs"|trans }}</caption>

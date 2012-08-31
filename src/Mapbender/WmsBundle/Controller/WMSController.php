@@ -51,7 +51,15 @@ class WMSController extends Controller {
         $wmsListLoadedEvent = new WmsIndexEvent();
         $wmsListLoadedEvent->setWmsList($wmsList);
         $dispatcher->dispatch(WmsEvents::onWmsIndex, $wmsListLoadedEvent);
-
+        $mdefs = $this->getDoctrine()->getEntityManager()
+                ->getRepository("MapbenderMonitoringBundle:MonitoringDefinition")
+                ->findAll();
+        $defined_mds = array();
+        if ($mdefs !== null){
+            foreach ($mdefs as $md) {
+                $defined_mds[$md->getTypeId()] = true;
+            }
+        }
         return array(
             "wmsList" => $wmsList,
             "offset" => $offset,
@@ -60,6 +68,7 @@ class WMSController extends Controller {
             "lastOffset" => $lastOffset,
             "limit" => $limit,
             "total" => $total,
+            "defined_mds" => $defined_mds,
             "extraColumns" => $wmsListLoadedEvent->getColumns(),
         );
     }

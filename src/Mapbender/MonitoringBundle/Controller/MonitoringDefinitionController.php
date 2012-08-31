@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Mapbender\MonitoringBundle\Entity\MonitoringDefinition;
 use Mapbender\MonitoringBundle\Form\MonitoringDefinitionType;
 use Mapbender\MonitoringBundle\Component\MonitoringRunner;
+use Mapbender\MonitoringBundle\Entity\MonitoringJob;
 use Mapbender\Component\HTTP\HTTPClient;
 use Mapbender\WmsBundle\Entity\WMSService;
 
@@ -27,7 +28,23 @@ class MonitoringDefinitionController extends Controller {
 	 * @ParamConverter("monitoringDefinitionList",class="Mapbender\MonitoringBundle\Entity\MonitoringDefinition")
 	 */
 	public function indexAction(array $monitoringDefinitionList) {
+        $total = $this->getDoctrine()->getEntityManager()
+            ->createQuery("SELECT count(md.id) as total From MapbenderMonitoringBundle:MonitoringDefinition md")
+            ->getScalarResult();
+        $total = $total[0]['total'];
+        $request = $this->get('request');
+        $offset = $request->get('usedOffset');
+        $limit = $request->get('usedLimit');
+        $nextOffset = count($monitoringDefinitionList) < $limit ? $offset : $offset + $limit;
+        $prevOffset = ($offset - $limit)  > 0 ? $offset - $limit : 0;
+        $lastOffset = ($total - $limit)  > 0 ? $total - $limit : 0;
 		return array(
+            "offset" => $offset,
+            "nextOffset" =>  $nextOffset,
+            "prevOffset" => $prevOffset,
+            "lastOffset" => $lastOffset,
+            "limit" => $limit,
+            "total" => $total,
 			"mdList" => $monitoringDefinitionList,
 		);
 	}
@@ -155,7 +172,7 @@ class MonitoringDefinitionController extends Controller {
 	 * @Route("/{mdId}")
 	 * @Method("POST")
 	 */
-	public function saveAction(MonitoringDefinition $md) {	
+	public function saveAction(MonitoringDefinition $md) {
 		$form = $this->get("form.factory")->create(
 				new MonitoringDefinitionType(),
 				$md
@@ -171,7 +188,7 @@ class MonitoringDefinitionController extends Controller {
 				$em->persist($md);
 				$em->flush();
 			} catch(\Exception $E) {
-				$this->get("logger")->error("Could not save monitoring definition. ".$E->getMessage());
+				$this->get("logger")->err("Could not save monitoring definition. ".$E->getMessage());
 				$this->get("session")->setFlash("error","Could not save monitoring definition");
 				return $this->redirect($this->generateUrl("mapbender_monitoring_monitoringdefinition_edit",array("mdId" => $md->getId())));
 			}
@@ -192,7 +209,39 @@ class MonitoringDefinitionController extends Controller {
 	public function runAction(MonitoringDefinition $md) {
         $client = new HTTPClient($this->container);
         $mr = new MonitoringRunner($md,$client);
-        $job = $mr->run();
+//        $job = $mr->run();
+//        if($md->getLastMonitoringJob()){
+//            if(strcmp($job->getResult(), $md->getLastMonitoringJob()->getResult()) != 0){
+//                $job->setChanged(true);
+//            } else {
+//                $job->setChanged(false);
+//            }
+//        }else {
+//            $job->setChanged(true);
+//        }
+//        $md->addMonitoringJob($job);
+        
+        
+        $mr = new MonitoringRunner($md, $client);
+        if($md->getEnabled()){
+            if($md->getRuleMonitor()){
+                $now = new \DateTime();
+                if($now > $md->getRuleStart() && $now < $md->getRuleEnd()){
+                    $job = $mr->run();
+                } else {
+                    $job = new MonitoringJob();
+                    $job->setMonitoringDefinition($md);
+                    $job->setSTATUS(MonitoringJob::$STATUS_EXCEPT_TIME);
+                }
+            } else {
+                $job = $mr->run();                                                  
+            }
+        } else {
+            $job = new MonitoringJob();
+            $job->setMonitoringDefinition($md);
+            $job->setSTATUS(MonitoringJob::$STATUS_DISABLED);
+        }
+        
         if($md->getLastMonitoringJob()){
             if(strcmp($job->getResult(), $md->getLastMonitoringJob()->getResult()) != 0){
                 $job->setChanged(true);
@@ -202,7 +251,10 @@ class MonitoringDefinitionController extends Controller {
         }else {
             $job->setChanged(true);
         }
+        
         $md->addMonitoringJob($job);
+        
+        
         $em = $this->getDoctrine()->getEntityManager();
         $em->persist($md);
         $em->flush();

@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="de" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1">
+                <source>waitstart</source> 
+                <target>Warte auf Start</target> 
+            </trans-unit>
+            <trans-unit id="2">
+                <source>waitjobstart</source> 
+                <target>Warte auf Query Start</target> 
+            </trans-unit>
+            <trans-unit id="3">
+                <source>running</source> 
+                <target>Wird Ausgeführt</target> 
+            </trans-unit>
+            <trans-unit id="4">
+                <source>aborted</source> 
+                <target>Abbruch</target> 
+            </trans-unit>
+            <trans-unit id="5">
+                <source>ended</source> 
+                <target>Beendet</target> 
+            </trans-unit>
+            <trans-unit id="6">
+                <source>error</source> 
+                <target>Fehler</target> 
+            </trans-unit>
+            <trans-unit id="7">
+                <source>undefined</source> 
+                <target>Undefiniert</target> 
+            </trans-unit>
+            <trans-unit id="8">
+                <source>nojob</source>
+                <target>Keine Aufgabe</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>cannotstart</source> 
+                <target>Kann nicht starten</target> 
+            </trans-unit>
+            <trans-unit id="10">
+                <source>no</source> 
+                <target>keine</target> 
+            </trans-unit>
+            <trans-unit id="11">
+                <source>hourly</source> 
+                <target>Stündlich</target> 
+            </trans-unit>
+            <trans-unit id="12">
+                <source>daily</source> 
+                <target>Täglich</target> 
+            </trans-unit>
+            <trans-unit id="13">
+                <source>weekly</source> 
+                <target>Wöchentlich</target> 
+            </trans-unit>
+            <trans-unit id="14">
+                <source>Title</source>
+                <target>Titel</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>Start Time</source> 
+                <target>Startzeitpunkt</target> 
+            </trans-unit>
+            <trans-unit id="16">
+                <source>Repetition</source>
+                <target>Wiederholung</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>Last Start Time</source>
+                <target>Letzter Startzeitpunkt</target>
+            </trans-unit>
+            
+            <trans-unit id="18">
+                <source>Last End Time</source>
+                <target>Letzter Endzeitpunkt</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>Next Start Time</source>
+                <target>Nächster Endzeitpunkt</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>Current Status</source> 
+                <target>Akteuller Status</target> 
+            </trans-unit>
+            <trans-unit id="21">
+                <source>Edit</source> 
+                <target>Editieren</target> 
+            </trans-unit>
+            <trans-unit id="22">
+                <source>Delete</source>
+                <target>Löschen</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>Activate</source>
+                <target>Aktivieren</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>refresh table</source>
+                <target>Tabelle aktualisieren</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>Available Scheduler Definitions</source>
+                <target>Verfügbare Planer</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>Add Scheduler</source>
+                <target>Planer hinzufügen</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>Planer</source>
+                <target>Planer</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>Delay</source>
+                <target>Verzögerung</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>Delay Between The Queries</source>
+                <target>Verzögerung zw. Queries</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>Activated</source>
+                <target>Aktiviert</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>New</source>
+                <target>Neu</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>save</source>
+                <target>Speichern</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>Really Delete</source>
+                <target>Wirklich löschen</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>Edit Scheduler</source>
+                <target>Planer editieren</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>New Scheduler</source>
+                <target>Planer erstellen</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

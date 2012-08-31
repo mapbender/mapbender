@@ -51,13 +51,13 @@ class MonitoringDefinition  {
 
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable=true)
+	 * @ORM\Column(type="text", nullable=true)
 	 */
 	protected $url;
 
 	/**
 	 * @Assert\NotNull
-	 * @ORM\Column(type="string")
+	 * @ORM\Column(type="text")
 	 */
 	protected $requestUrl;
 
@@ -99,13 +99,13 @@ class MonitoringDefinition  {
 
 	/**
 	 *
-	 * @ORM\Column(type="datetime", nullable=true)
+	 * @ORM\Column(type="time", nullable=true)
 	 */
 	protected $ruleStart;
 
 	/**
 	 *
-	 * @ORM\Column(type="datetime", nullable=true)
+	 * @ORM\Column(type="time", nullable=true)
 	 */
 	protected $ruleEnd;
 

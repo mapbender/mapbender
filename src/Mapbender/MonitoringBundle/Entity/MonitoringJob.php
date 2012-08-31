@@ -15,6 +15,8 @@ class MonitoringJob {
     public static $STATUS_FAIL = "FAIL";
     public static $STATUS_EXCEPTION = "EXCEPTION";
     public static $STATUS_ERROR = "ERROR";
+    public static $STATUS_EXCEPT_TIME = "EXCEPT TIME";
+    public static $STATUS_DISABLED = "DISABLED";
     
 	/**
 	 *

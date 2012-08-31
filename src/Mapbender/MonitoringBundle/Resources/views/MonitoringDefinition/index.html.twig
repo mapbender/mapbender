@@ -5,12 +5,20 @@
 {% block content %}
 
 {% if mdList|length >0 %}
-	<table class="listable" >
+    <div class="tablenav">
+        <a href="{{ path("mapbender_monitoring_monitoringdefinition_index",{"offset":0}) }}">{% trans %}Start{% endtrans %}</a> 
+        <a href="{{ path("mapbender_monitoring_monitoringdefinition_index",{"offset":prevOffset}) }}">{% trans %}Previous{% endtrans %}</a> 
+        <span>{% trans with{'%start%': offset +1, '%end%': offset + mdList|length, '%total%' : total} %} Showing %start% to %end% of %total%{% endtrans %}</span>
+        <a href="{{  path("mapbender_monitoring_monitoringdefinition_index",{"offset": nextOffset}) }}">{% trans %}Next{% endtrans %}</a>
+        <a href="{{ path("mapbender_monitoring_monitoringdefinition_index",{"offset": lastOffset}) }}">{% trans %}End{% endtrans %}</a> 
+    </div>
+    <table class="listable" >
     <caption>{% trans %}Available Monitoring Definitions{% endtrans %}</caption>
 		<thead>
 			<tr>
 				<th>{{ "Title"|trans}}</th>
                 <th>{{ "Last Status"|trans }}</th>
+                <th>{{ "Last Start Time"|trans }}</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -20,8 +28,10 @@
 				<td>{{ md.title }}</td>
         {% if md.getLastMonitoringJob().status is defined %}
                 <td>{{ md.getLastMonitoringJob().status }}</td>
+                <td>{{ md.getLastMonitoringJob().timestamp|date("d.m.Y H:i:s") }}</td>
         {% else %}
                 <td>{{ "No runs yet"|trans}}</td>
+                <td></td>
         {% endif %}
                 <td>
                     <a title="{{"Edit"|trans}} '{{md.title}}'"   class="edit" href="{{path("mapbender_monitoring_monitoringdefinition_edit",{"mdId":md.id})}}">{{ "Edit"|trans }}</a>
@@ -34,5 +44,5 @@
 {% else %}
  <p>{% trans %}No Monitoring Definitions available{% endtrans %}</p>
 {% endif %}
- <a href="{{path('mapbender_monitoring_schedulerprofile_index')}}">{{"config_scheduler"|trans}}</a>
+ <!--a href="{#{path('mapbender_monitoring_schedulerprofile_index')}#}">{#{"config_scheduler"|trans}#}</a-->
 {% endblock %}

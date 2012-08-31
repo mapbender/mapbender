@@ -2,6 +2,8 @@
 {% form_theme form 'MapbenderMonitoringBundle:Form:fields.html.twig' %}
 
 {% block content %}
+    <h3 class="p-scheduler">{{"New Monitoring Definition"|trans}}</h3>
+    <div class="form-monitoring">
 	<form action="{{path("mapbender_monitoring_monitoringdefinition_add")}}" method="post">
 		{{form_widget(form)}}
 		<input type="submit" name="create" value="{{"Save"|trans}}" />
@@ -9,4 +11,5 @@
 	<form action="{{path("mapbender_monitoring_monitoringdefinition_index")}}" method="get">
 		<input type="submit" name="create" value="{{"Cancel"|trans}}" />
 	</form>
+    </div>
 {% endblock %}
