@@ -38,14 +38,14 @@ class MonitoringJobController extends Controller {
         $jobs = array();
 		if($mdid !== null){
             $query = $this->getDoctrine()->getEntityManager()->createQuery(
-                    "SELECT j From MapbenderMonitoringBundle:MonitoringJob j"
+                    "SELECT j From Mapbender\MonitoringBundle\Entity\MonitoringJob j"
                     ." WHERE j.monitoringDefinition= :md"
                     ." ORDER BY j.timestamp DESC")
                     ->setParameter("md", $mdid);
             $jobs = $query->getResult();
         } else {
             $query = $this->getDoctrine()->getEntityManager()->createQuery(
-                    "SELECT j From MapbenderMonitoringBundle:MonitoringJob j"
+                    "SELECT j From Mapbender\MonitoringBundle\Entity\MonitoringJob j"
                     ." ORDER BY j.timestamp DESC");
             $jobs = $query->getResult();
         }
@@ -93,11 +93,14 @@ class MonitoringJobController extends Controller {
 	public function deleteAction() {
         $mdid = $this->get('request')->get('mdid');
         if($mdid !== null){
-            $query = $this->getDoctrine()->getEntityManager()->createQuery(
-                    "SELECT j From MapbenderMonitoringBundle:MonitoringJob j"
-                    ." WHERE j.monitoringDefinition= :md")
-                    ->setParameter("md", $mdid);
-            $jobs = $query->getResult();
+            $jobs = $this->getDoctrine()
+                        ->getRepository('Mapbender\MonitoringBundle\Entity\MonitoringJob')
+                        ->findById($mdid);
+//            $query = $this->getDoctrine()->getEntityManager()->createQuery(
+//                    "SELECT j From MapbenderMonitoringBundle:MonitoringJob j"
+//                    ." WHERE j.monitoringDefinition= :md")
+//                    ->setParameter("md", $mdid);
+//            $jobs = $query->getResult();
         } else {
             $query = $this->getDoctrine()->getEntityManager()->createQuery(
                     "SELECT j From MapbenderMonitoringBundle:MonitoringJob j");
