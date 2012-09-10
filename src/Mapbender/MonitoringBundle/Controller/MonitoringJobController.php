@@ -93,17 +93,14 @@ class MonitoringJobController extends Controller {
 	public function deleteAction() {
         $mdid = $this->get('request')->get('mdid');
         if($mdid !== null){
-            $jobs = $this->getDoctrine()
-                        ->getRepository('Mapbender\MonitoringBundle\Entity\MonitoringJob')
-                        ->findById($mdid);
-//            $query = $this->getDoctrine()->getEntityManager()->createQuery(
-//                    "SELECT j From MapbenderMonitoringBundle:MonitoringJob j"
-//                    ." WHERE j.monitoringDefinition= :md")
-//                    ->setParameter("md", $mdid);
-//            $jobs = $query->getResult();
+            $query = $this->getDoctrine()->getEntityManager()->createQuery(
+                    "SELECT j From Mapbender\MonitoringBundle\Entity\MonitoringJob j"
+                    ." WHERE j.monitoringDefinition= :md")
+                    ->setParameter("md", $mdid);
+            $jobs = $query->getResult();
         } else {
             $query = $this->getDoctrine()->getEntityManager()->createQuery(
-                    "SELECT j From MapbenderMonitoringBundle:MonitoringJob j");
+                    "SELECT j From Mapbender\MonitoringBundle\Entity\MonitoringJob j");
             $jobs = $query->getResult();
         }
         if($jobs !== null && count($jobs) > 0){
