@@ -62,8 +62,8 @@ class MonitoringJobController extends Controller {
                 $content .= $this->checkValue($job->getId())
                         .$SEPARATOR_VALUE.$this->checkValue($job->getMonitoringDefinition()->getId())
                         .$SEPARATOR_VALUE.$this->checkValue($job->getResult())
-                        .$SEPARATOR_VALUE.$this->checkValue($job->getLatency()
-                        .$SEPARATOR_VALUE.$job->getChanged())
+                        .$SEPARATOR_VALUE.$this->checkValue($job->getLatency())
+                        .$SEPARATOR_VALUE.($job->getChanged() ? $this->checkValue("true") : $this->checkValue(null))
                         .$SEPARATOR_VALUE.$this->checkValue($job->getStatus())
                         .$SEPARATOR_ROW;
             }

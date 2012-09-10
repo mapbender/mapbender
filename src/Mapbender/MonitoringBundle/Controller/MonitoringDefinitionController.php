@@ -27,7 +27,25 @@ class MonitoringDefinitionController extends Controller {
 	 * @ParamConverter("monitoringDefinitionList",class="Mapbender\MonitoringBundle\Entity\MonitoringDefinition")
 	 */
 	public function indexAction(array $monitoringDefinitionList) {
+        $total = $this->getDoctrine()
+            ->getEntityManager()
+            ->createQuery("SELECT count(mb.id) as total From MapbenderMonitoringBundle:MonitoringDefinition mb")
+            ->getScalarResult();
+        // Grrr   why can't php allow ()[] ?
+        $total = $total[0]['total'];
+        $request = $this->get('request');
+        $offset = $request->get('usedOffset');
+        $limit = $request->get('usedLimit');
+        $nextOffset = count($monitoringDefinitionList) < $limit ? $offset : $offset + $limit;
+        $prevOffset = ($offset - $limit)  > 0 ? $offset - $limit : 0;
+        $lastOffset = ($total - $limit)  > 0 ? $total - $limit : 0;
 		return array(
+            "offset" => $offset,
+            "nextOffset" =>  $nextOffset,
+            "prevOffset" => $prevOffset,
+            "lastOffset" => $lastOffset,
+            "limit" => $limit,
+            "total" => $total,
 			"mdList" => $monitoringDefinitionList,
 //			"debug" => print_r($monitoringDefinitionList,true)
 		);

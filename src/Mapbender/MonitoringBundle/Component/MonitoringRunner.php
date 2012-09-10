@@ -35,7 +35,7 @@ class MonitoringRunner {
                     }
                     if($isXml){
                         if(strripos(strtolower($xml->documentElement->tagName), "exception") !== false){
-                            $job->setSTATUS(MonitoringJob::$STATUS_EXCEPTION);
+                            $job->setSTATUS(MonitoringJob::$STATUS_ERROR.":".MonitoringJob::$STATUS_EXCEPTION);
                         } else {
                             $job->setSTATUS(MonitoringJob::$STATUS_SUCCESS);
                         }
@@ -48,7 +48,7 @@ class MonitoringRunner {
                 $job->setSTATUS(MonitoringJob::$STATUS_ERROR.":".$result->getStatusCode());
             }
         }catch(\Exception $E){
-            $job->setSTATUS(MonitoringJob::$STATUS_FAIL);
+            $job->setSTATUS(MonitoringJob::$STATUS_TIMEOUT);
         }
         $time_post = microtime(true);
         $job->setMonitoringDefinition($this->md);
