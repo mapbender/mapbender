@@ -120,7 +120,6 @@ class MonitoringDefinitionController extends Controller {
 		}
 	}
 	
-	
 	/**
 	 * @Route("/{mdId}")
 	 * @Method("GET")
