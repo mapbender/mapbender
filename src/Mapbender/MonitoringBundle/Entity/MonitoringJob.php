@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class MonitoringJob {
     public static $STATUS_SUCCESS = "SUCCESS";
+    public static $STATUS_TIMEOUT = "TIMEOUT";
     public static $STATUS_FAIL = "FAIL";
     public static $STATUS_EXCEPTION = "EXCEPTION";
     public static $STATUS_ERROR = "ERROR";

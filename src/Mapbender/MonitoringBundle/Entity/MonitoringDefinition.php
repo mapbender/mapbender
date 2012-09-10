@@ -123,6 +123,8 @@ class MonitoringDefinition  {
 
     public function __construct()
     {
+        $this->ruleMonitor = true;
+        $this->enabled = true;
         $this->monitoringJobs = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
