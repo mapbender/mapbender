@@ -298,8 +298,36 @@ class CapabilitiesParser {
                         $bounds[3] = trim($node->getAttribute("maxy"));
                         $layer->setLatLonBounds(implode(' ',$bounds));
                     break;
+                
+                    case "EX_GeographicBoundingBox":
+                        $xmin = null; $xmax = null; $ymin = null; $ymax = null;
+                        foreach($node->childNodes as $bbnode){
+                            if($bbnode->nodeType == XML_ELEMENT_NODE){  
+                                switch ($bbnode->nodeName) {
+                                    case "westBoundLongitude":
+                                        $xmin = $bbnode->nodeValue;
+                                    break;
+                                    case "southBoundLatitude":
+                                        $miny = $bbnode->nodeValue;
+                                    break;
+                                    case "eastBoundLongitude":
+                                        $maxx = $bbnode->nodeValue;
+                                    break;
+                                    case "northBoundLatitude":
+                                        $maxy = $bbnode->nodeValue;
+                                    break;
+                                }
+                            }
+                        }
+                        $bounds = array(4);
+                        $bounds[0] = $xmin;
+                        $bounds[1] = $miny;
+                        $bounds[2] = $maxx;
+                        $bounds[3] = $maxy;
+                        $layer->setLatLonBounds(implode(' ',$bounds));
+                    break;
 
-                    case "BoundingBox":
+                    case "BoundingBox": //v 1.3.0
                     break;
 
                     case "KeywordList":
@@ -322,6 +350,20 @@ class CapabilitiesParser {
                                     break;
                                     case "Title":
                                         $style["title"]= $styleChild->nodeValue;
+                                    break;
+                                    case "LegendURL":
+                                        foreach($styleChild->childNodes as $legendChild){
+//                                            $t = $legendChild->nodeName;
+                                            if($legendChild->nodeType == XML_ELEMENT_NODE){  
+                                                switch ($legendChild->nodeName) {
+                                                    case "Format":
+                                                    break;
+                                                    case "OnlineResource":
+                                                        $style["legendUrl"]["link"] = $legendChild->getAttributeNS("http://www.w3.org/1999/xlink" ,"href");
+                                                    break;
+                                                }
+                                            }
+                                        }
                                     break;
                                 }
                             }
@@ -363,6 +405,9 @@ class CapabilitiesParser {
 
                     case "Layer":
                         $sublayer = $this->WMSLayerFromLayerNode($node);
+                        if($sublayer->getLatLonBounds() === null && $layer->getLatLonBounds() !== null){
+                            $sublayer->setLatLonBounds($layer->getLatLonBounds());
+                        }
                         $layer->getLayer()->add($sublayer);
                     break;
                     

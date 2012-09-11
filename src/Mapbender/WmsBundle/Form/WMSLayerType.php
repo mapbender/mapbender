@@ -41,7 +41,10 @@ class WMSLayerType  extends AbstractType {
         $builder->add("noSubset","hidden",array(
             "required"  => false,
         ));
-        $builder->add("styles","hidden",array(
+//        $builder->add("styles","hidden",array(
+//            "required"  => false,
+//        ));
+        $builder->add("stylesserialized","hidden",array(
             "required"  => false,
         ));
         $builder->add("fixedWidth","hidden",array(
