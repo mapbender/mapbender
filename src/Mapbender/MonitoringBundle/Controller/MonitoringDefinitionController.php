@@ -13,6 +13,8 @@ use Mapbender\WmsBundle\Entity\WMSService;
 
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Description of MonitoringDefinitionController
  *
@@ -144,6 +146,25 @@ class MonitoringDefinitionController extends Controller {
             "lastjobs" => $lastjobs
 		);
 	}
+    
+    /**
+     * deletes a WMS
+     * @Route("/{wmsId}/fromwmsdelete")
+     * @Method({"POST"})
+    */
+    public function fromwmsdeleteAction(MonitoringDefinition $md){
+        // TODO: check wether a layer is used by a VWMS still
+        try{
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->remove($md);
+            $em->flush();
+//            $this->get('session')->setFlash('info',"MonitoringDefinition deleted");
+        }catch(\Exception $e){
+            
+        }
+        return $this->redirect($this->generateUrl(
+                "mapbender_monitoring_monitoringdefinition_index"));
+    }
 
     
 	/**
@@ -154,7 +175,6 @@ class MonitoringDefinitionController extends Controller {
 		$em = $this->getDoctrine()->getEntityManager();
 		try {
 			$em->remove($md);
-//			$em->remove(null);
 			$em->flush();
 		} catch(\Exception $E) {
 			$this->get("logger")->info("Could not delete monitoring definition. ".$E->getMessage());
@@ -198,7 +218,7 @@ class MonitoringDefinitionController extends Controller {
 				$em->persist($md);
 				$em->flush();
 			} catch(\Exception $E) {
-				$this->get("logger")->error("Could not save monitoring definition. ".$E->getMessage());
+				$this->get("logger")->err("Could not save monitoring definition. ".$E->getMessage());
 				$this->get("session")->setFlash("error","Could not save monitoring definition");
 				return $this->redirect($this->generateUrl("mapbender_monitoring_monitoringdefinition_edit",array("mdId" => $md->getId())));
 			}

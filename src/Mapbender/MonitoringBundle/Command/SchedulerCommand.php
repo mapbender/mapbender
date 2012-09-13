@@ -221,24 +221,24 @@ EOT
                 $client = new HTTPClient($this->getContainer());
                 $mr = new MonitoringRunner($md, $client);
                 if($md->getEnabled()){
-                    if($md->getRuleMonitor()){
-                        $now = new \DateTime();
-                        if($now > $md->getRuleStart() && $now < $md->getRuleEnd()){
-                            $job = $mr->run();                                                         
-                            $md->addMonitoringJob($job);                                               
-                            $em->persist($md);                                                         
-                            $em->flush();   
-                            $output->writeln("\t\t".$md->getLastMonitoringJob()->getStatus());
-                        } else {
-                            $output->writeln("\t\tEXCEPT TIME");
-                        }
-                    } else {
+//                    if($md->getRuleMonitor()){
+//                        $now = new \DateTime();
+//                        if($now > $md->getRuleStart() && $now < $md->getRuleEnd()){
+//                            $job = $mr->run();                                                         
+//                            $md->addMonitoringJob($job);                                               
+//                            $em->persist($md);                                                         
+//                            $em->flush();   
+//                            $output->writeln("\t\t".$md->getLastMonitoringJob()->getStatus());
+//                        } else {
+//                            $output->writeln("\t\tEXCEPT TIME");
+//                        }
+//                    } else {
                         $job = $mr->run();                                                         
                         $md->addMonitoringJob($job);                                               
                         $em->persist($md);                                                         
                         $em->flush();   
                         $output->writeln("\t\t".$md->getLastMonitoringJob()->getStatus());
-                    }
+//                    }
                 }else{
                     $output->writeln("\t\tDISABLED");
                 }

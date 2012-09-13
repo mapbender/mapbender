@@ -75,9 +75,9 @@ class MonitoringDefinitionType extends AbstractType {
 //		));
 		
 		$builder->add("enabled","choice",array(
-			'choices'   => array('0' => 'false', '1' => 'true'),
-			'preferred_choices' => array('true'),
-			"required" => false
+			'choices'   => array('true' => 'true', 'false' => 'false'),
+//			'preferred_choices' => array('true'),
+			"required" => true
 		));
 	}
 }

@@ -111,19 +111,19 @@ class MonitoringDefinition  {
 
 	/**
 	 *
-	 * @ORM\Column(type="boolean")
+	 * @ORM\Column(type="boolean", nullable=false)
 	 */
-	protected $ruleMonitor = true;
+	protected $ruleMonitor;
 
 	/**
 	 *
-	 * @ORM\Column(type="string")
+	 * @ORM\Column(type="string", nullable=false)
 	 */
-	protected $enabled = true;
+	protected $enabled;
 
     public function __construct()
     {
-        $this->ruleMonitor = true;
+        $this->ruleMonitor = false;
         $this->enabled = true;
         $this->monitoringJobs = new \Doctrine\Common\Collections\ArrayCollection();
     }
