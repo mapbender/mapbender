@@ -152,7 +152,7 @@ class SchedulerProfileController extends Controller {
 	}
     
     /**
-	 * @Route("/scheduler/confirmdelete/{spId}")
+	 * @Route("/scheduler/delete/{spId}")
 	 * @Method("GET")
 	 * @Template("MapbenderMonitoringBundle:SchedulerProfile:confirmdelete.html.twig")
 	 */

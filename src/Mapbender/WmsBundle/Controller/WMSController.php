@@ -443,33 +443,33 @@ class WMSController extends Controller {
         );
     }
     
-    /**
-     * deletes a WMS
-     * @Route("/{wmsId}/deletecomponents")
-     * @Method({"POST"})
-    */
-    public function deletecomponentsAction(WMSService $wms){
-        // TODO: check wether a layer is used by a VWMS still
-        try{
-            $request = $this->get("request");
-            $request->setMethod('POST');
-            $request->setAttribute("wmsId", $wms->getId());
-            $response = $this->forward(
-                    "MapbenderMonitoringBundle:MonitoringDefinitionController:fromwmsdeleteAction",
-                    array("wmsId" => $wms->getId()));
-            
-            return $response;
-        }catch(\Exception $e){
-            $em = $this->getDoctrine()->getEntityManager();
-            $this->removeRecursive($wms,$em);
-            $em->remove($wms);
-            $em->flush();
-            //FIXME: error handling
-            $this->get('session')->setFlash('info',"WMS deleted");
-            return $this->redirect($this->generateUrl("mapbender_wms_wms_index"));
-        }
-        
-    }
+//    /**
+//     * deletes a WMS
+//     * @Route("/{wmsId}/deletecomponents")
+//     * @Method({"POST"})
+//    */
+//    public function deletecomponentsAction(WMSService $wms){
+//        // TODO: check wether a layer is used by a VWMS still
+//        try{
+//            $request = $this->get("request");
+//            $request->setMethod('POST');
+//            $request->setAttribute("wmsId", $wms->getId());
+//            $response = $this->forward(
+//                    "MapbenderMonitoringBundle:MonitoringDefinitionController:fromwmsdeleteAction",
+//                    array("wmsId" => $wms->getId()));
+//            
+//            return $response;
+//        }catch(\Exception $e){
+//            $em = $this->getDoctrine()->getEntityManager();
+//            $this->removeRecursive($wms,$em);
+//            $em->remove($wms);
+//            $em->flush();
+//            //FIXME: error handling
+//            $this->get('session')->setFlash('info',"WMS deleted");
+//            return $this->redirect($this->generateUrl("mapbender_wms_wms_index"));
+//        }
+//        
+//    }
 
     /**
      * deletes a WMS

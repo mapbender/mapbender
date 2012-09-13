@@ -1,13 +1,13 @@
 {% extends "MapbenderMonitoringBundle:MonitoringDefinition:base.html.twig" %}
 {% form_theme form 'MapbenderMonitoringBundle:Form:fields.html.twig' %}
-
+{% block title %}{{ "Monitoring Definition Edit"|trans }}{% endblock %}
 {% block subnavigation %}
 <nav class="action">
     <h1>Monitoring Navigation</h1>
     <ul>
       <li><a href="{{ path('mapbender_monitoring_monitoringdefinition_index')  }}">{% trans %}Back To List{% endtrans %}</a></li>
       <li><a href="{{ path('mapbender_monitoring_monitoringjob_exportcsv',{"mdid":md.id})  }}" >{% trans %}CSV Export{% endtrans %}</a></li>
-      <!--li><a href="{#{ path('mapbender_monitoring_monitoringjob_confirmdelete',{"mdid":md.id})  }}" >{% trans %}Delete Monitoring Jobs{% endtrans %#}</a></li-->
+      <li><a class="confirmdelete" href="{{ path('mapbender_monitoring_monitoringjob_confirmdelete',{"mdid":md.id})  }}" >{% trans %}Delete Monitoring Jobs{% endtrans %}</a></li>
     
     </ul>
 </nav>
@@ -78,6 +78,41 @@
                 });
             }
         });
+    });
+    // delete from table
+    $("li a.confirmdelete").bind("click",function(e){
+      var $anchor = $(this);
+      var title = $anchor.attr("title")? $anchor.attr("title"):"Delete";
+      $("<div>Really Delete ?</div>").dialog({
+        title: title,
+        buttons: {
+          "Yes": function(){ 
+            //FIXME: just add class to application
+            $("body").css("cursor","wait");
+            $.ajax({
+              url: $anchor.attr("href"),
+              type: 'POST',
+              data: {},
+              success: function(){
+                window.location.href = window.location.href;
+              },
+              error: function(data){
+                $("body").css("cursor","");
+                $("<div>Could not delete.</div>").dialog({
+                  title: "Delete " + title,
+                  autoOpen: true,
+                  buttons:{
+                    "OK": function(){ $(this).dialog("destroy"); }
+                  }
+                }); 
+              }
+            });
+            $(this).dialog("destroy"); 
+          },
+          "No": function(){ $(this).dialog("destroy"); }
+        }
+      });
+      return false;
     });
     </script>
 {% endblock %}

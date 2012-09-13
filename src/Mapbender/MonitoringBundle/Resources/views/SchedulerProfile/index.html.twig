@@ -1,6 +1,6 @@
 {% extends "MapbenderMonitoringBundle:SchedulerProfile:base.html.twig" %}
-
-{% block heading %}{{ "Scheduler Profile Index"|trans }}{% endblock %}
+{% block title %}{{ "Scheduler Index"|trans }}{% endblock %}
+{% block heading %}{{ "Scheduler Index"|trans }}{% endblock %}
 {% block subnavigation %}
 <nav class="action">
     <h1>Monitoring Navigation</h1>
@@ -50,7 +50,7 @@
             <td>{% if scheduler.lastendtime!=null %}{{ scheduler.lastendtime|date("d.m.Y H:i:s")}}{% endif %} </td>
             <td>{{ scheduler.status|trans }}</td>
             <td><a href="{{ path('mapbender_monitoring_schedulerprofile_edit',{"spId":scheduler.id}) }}">{{'Edit'|trans }}</a>
-                <a href="{{ path('mapbender_monitoring_schedulerprofile_confirmdelete',{"spId":scheduler.id}) }}">{{'Delete'|trans }}</a>
+                <a class="confirmdelete" href="{{ path('mapbender_monitoring_schedulerprofile_confirmdelete',{"spId":scheduler.id}) }}">{{'Delete'|trans }}</a>
               {% if scheduler.current!=1 %}
                 <a href="{{ path('mapbender_monitoring_schedulerprofile_current',{"spId":scheduler.id}) }}">{{'Activate'|trans }}</a>
               {% endif %}

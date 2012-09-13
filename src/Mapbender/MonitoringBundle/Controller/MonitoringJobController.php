@@ -94,28 +94,14 @@ class MonitoringJobController extends Controller {
         $mdid = $this->get('request')->get('mdid');
         if($mdid !== null){
             $query = $this->getDoctrine()->getEntityManager()->createQuery(
-                    "SELECT j From Mapbender\MonitoringBundle\Entity\MonitoringJob j"
+                    "DELETE From Mapbender\MonitoringBundle\Entity\MonitoringJob j"
                     ." WHERE j.monitoringDefinition= :md")
                     ->setParameter("md", $mdid);
             $jobs = $query->getResult();
         } else {
             $query = $this->getDoctrine()->getEntityManager()->createQuery(
-                    "SELECT j From Mapbender\MonitoringBundle\Entity\MonitoringJob j");
+                    "DELETE From Mapbender\MonitoringBundle\Entity\MonitoringJob j");
             $jobs = $query->getResult();
-        }
-        if($jobs !== null && count($jobs) > 0){
-            $em = $this->getDoctrine()->getEntityManager();
-            foreach($jobs as $job){
-                try {
-                    $em->remove($job);
-                    $em->flush();
-                } catch(\Exception $E) {
-                    $this->get("logger")->info("Could not delete monitoring job. ".$E->getMessage());
-                    $this->get("session")->setFlash("error","Could not delete monitoring job.");
-                }
-            }
-
-            $this->get("session")->setFlash("info","Succsessfully deleted.");
         }
         if($mdid !== null){
             return $this->redirect($this->generateUrl("mapbender_monitoring_monitoringdefinition_edit",array('mdId' => $mdid)));
@@ -124,24 +110,16 @@ class MonitoringJobController extends Controller {
         }
     }
     /**
-	 * @Route("/{mdid}/confirmdelete/")
+	 * @Route("/delete/")
 	 * @Method("GET")
 	 * @Template()
 	 */
-	public function confirmdeleteAction($mdid) {
+	public function confirmdeleteAction() {
+        $mdid = $this->get('request')->get('mdid');
 		$md = $this->getDoctrine()->getRepository("MapbenderMonitoringBundle:MonitoringDefinition")
                 ->findOneById($mdid);
 		return array(
 			"md" => $md
-		);
-	}	
-    /**
-	 * @Route("/confirmdeleteall/")
-	 * @Method("GET")
-	 * @Template()
-	 */
-	public function confirmdeleteallAction() {
-		return array(
 		);
 	}	
 }
