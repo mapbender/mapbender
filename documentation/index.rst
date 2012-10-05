@@ -7,6 +7,7 @@ Please choose a language of your choice:
    :maxdepth: 1
 
    English <en/index>
+   Deutsch <de/index>
    mapbender/TODOs
 
 Indices and tables
