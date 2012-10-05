@@ -1,12 +1,12 @@
 Git-basierte Installation
-######################
+##########################
 
 
 Wenn Sie sich an der Mapbender3-Entwicklung beteiligen möchten oder aus anderen Gründen die Git Repositories für Mapbender3 verwenden, folgen Sie dieser Anleitung statt des normalen Downloads. Diese Anleitung basiert auf Ubuntu 12.04.  Für andere Distributionen benötigen Sie vielleicht spezielle Pakete wie z.B. sphinx-common.
 
 
 Klonen des Repositories
-**********************
+*************************
 
 Klonen ist einfach, geben Sie das folgende Kommando auf Ihrer Shell ein:
 
@@ -78,7 +78,7 @@ PHPUnit
 
 Symfony2 benötigt ein neueres PHPUnit als z.B. Ubuntu 12.04 enthält. Pear wird verwendet, um  PHPUnit zu installieren:
 
-    :command:`sudo pear install phpunit/PHPUnit`#
+    :command:`sudo pear install phpunit/PHPUnit`
 
 
 
@@ -95,14 +95,14 @@ ApiGen
 
 `ApiGen <http://apigen.org>` - ist der API-Dokumentations-Generator erster Wahl. Es wird auch mit Pear installiert: 
 
-    :command:`sudo pear install pear.apigen.org/apigen`#
+    :command:`sudo pear install pear.apigen.org/apigen`
 
 
 
 Troubleshooting
 ***************
 
-Die ApiGen-Bestandteile laufen nur in der neusten Version von Phing. 2.4.12  ist ausreichend,  2.4.9 reicht nicht aus! Testen Sie mit: :command:`phing -v`. Mit dem folgenden Befehl können Sie ein Update all Ihrer Pear-Pakete vornehmen: 
+* Die ApiGen-Bestandteile laufen nur in der neusten Version von Phing. 2.4.12  ist ausreichend,  2.4.9 reicht nicht aus! Testen Sie mit: :command:`phing -v`. Mit dem folgenden Befehl können Sie ein Update all Ihrer Pear-Pakete vornehmen: 
 
     :command:`sudo pear upgrade-all`
 

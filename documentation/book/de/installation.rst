@@ -72,7 +72,7 @@ Die Parameter der Datenbankverbindung sind zusammen mit einigen anderen Konfigur
 
 
 Erzeugen der Datenbank
-^^^^^^^^^^^^^^^^^^^^^ 
+^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 Mit Symfony2 kann die Datenbank erzeugt werden. Beachten Sie, dass dazu die benötigten Datenbank-Benutzerrechte vorliegen. Rufen Sie folgenden Befehl mit dem console-Hilfsprogramm auf:
 
@@ -80,7 +80,7 @@ Mit Symfony2 kann die Datenbank erzeugt werden. Beachten Sie, dass dazu die ben�
 
 
 Erzeugen des Datenbankschemas
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^ 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 Erzeugen des Datenbankschemas über Symfony2:
 
@@ -90,7 +90,7 @@ Erzeugen des Datenbankschemas über Symfony2:
 
 
 Kopieren des bundles' assets
-^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 Jedes Bundle hat seine eigenen Abhängigkeiten - CSS-Dateien, JavaScript-Dateien, Bilder und mehr – diese müssen in das öffentliche web-Verzeichnis kopiert werden:
 
@@ -102,7 +102,7 @@ Sie können auch einen symbolischen Link verwenden, statt die Dateien zu kopiere
 
 
 Initialisierung des Mapbender Rollen-Systems
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 Die Standardrollen müssen in der Datenbank initialisiert werden:
 
@@ -111,7 +111,7 @@ Die Standardrollen müssen in der Datenbank initialisiert werden:
 
 
 Erzeugen des administrativen Benutzers
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ^^^^^ 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 Der erste Benutzer, der alle Privilegien hat, wird mit folgendem Kommando erzeugt:
 
