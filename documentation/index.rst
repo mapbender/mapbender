@@ -1,5 +1,7 @@
-Welcome to Mapbender3's documentation!
-######################################
+Welcome to the Mapbender3 documentation
+#######################################
+
+Mapbender3 Project Page http://mapbender3.org
 
 Please choose a language of your choice:
 
@@ -9,6 +11,8 @@ Please choose a language of your choice:
    English <en/index>
    Deutsch <de/index>
    mapbender/TODOs
+
+
 
 Indices and tables
 ==================
