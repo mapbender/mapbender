@@ -60,7 +60,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         $this->container = $container;
         $this->entity = $entity;
         $this->urls = $urls;
-   }
+    }
 
     /*************************************************************************
      *                                                                       *
@@ -376,7 +376,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
             return $this->elements;
         }
     }
-    
+
+    /**
+     * @TODO: Needs documentation
+     */
     public function reloadLayers($layersetId, $layeridToRemove, $layersToLoad) {
         // remove old layer configuration
         if(isset($this->configuration['layersets'][$layersetId][$layeridToRemove])){

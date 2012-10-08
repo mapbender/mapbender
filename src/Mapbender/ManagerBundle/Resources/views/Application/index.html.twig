@@ -37,7 +37,7 @@
                 {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') %}
                     <a class="action-edit btn" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug }) }}" title="{{ 'Edit application' | trans }}">{{ 'Edit' | trans }}</a>
                 {% endif %}
-                    <a class="action-clone btn" href="#">{{ 'Clone' | trans }}</a>
+                {#    <a class="action-clone btn" href="#">{{ 'Clone' | trans }}</a> #}
                 {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') %}
                     <a class="action-delete btn btn-warning" href="{{ path('mapbender_manager_application_confirmdelete', { 'slug': application.slug }) }}">{{ 'Delete' | trans }}</a>
                 {% endif %}

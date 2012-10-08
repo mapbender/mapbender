@@ -29,9 +29,14 @@ class WelcomeController extends Controller {
      * @Template()
      */
     public function listAction() {
-        //TODO: Effecient way to get only applications available to current
-        //      user/token
         $applications = $this->get('mapbender')->getApplicationEntities();
+
+        // Unset unpublished applications
+        foreach($applications as $key => $application) {
+            if(!$application->isPublished()) {
+                unset($applications[$key]);
+            }
+        }
 
         return array('applications' => $applications);
     }
