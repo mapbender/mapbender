@@ -1,0 +1,6 @@
+#featureinfo-dialog .ui-tabs-nav a.loading {
+    padding-right: 40px;
+    margin-right: 4px;
+    background: url('image/activity.gif') 100% 50% no-repeat;
+}
+

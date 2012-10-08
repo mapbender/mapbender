@@ -3,7 +3,8 @@
 $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
     options: {
         layers: undefined,
-        target: undefined
+        target: undefined,
+        deactivateOnClose: true
     },
 
     map: null,
@@ -26,6 +27,7 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
 
     activate: function() {
         var self = this;
+        this._super('activate');
         this.map = $('#' + this.options.target).data('mapQuery');
         this.mapClickHandler = function(e) {
             self._triggerFeatureInfo.call(self, e);
@@ -62,10 +64,21 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
             .appendTo(tabs);
 
         // Go over all layers
-        $.each(this.map.layers(), function(idx, layer){
-            if(layer.options.queryLayers.length == 0) {
+        $.each(this.map.layers(), function(idx, layer) {
+            if(!layer.visible()) {
                 return;
             }
+
+            var queryLayers = [];
+            $.each(layer.options.allLayers, function(idx, l) {
+                if(l.queryable === true && $.inArray(l.name, layer.olLayer.params.LAYERS) !== -1) {
+                    queryLayers.push(l.name);
+                }
+            });
+            if(queryLayers.length === 0) {
+                return;
+            }
+
             // Prepare result tab list
             header.append($('<li></li>')
                 .append($('<a></a>')
@@ -76,6 +89,7 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
 
             switch(layer.options.type) {
                 case 'wms':
+                    self.dlg.find('a[href=#' + layer.id + ']').addClass('loading');
                     Mapbender.layer.wms.featureInfo(layer, x, y, $.proxy(self._featureInfoCallback, self));
                     break;
             }
@@ -86,10 +100,13 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
             this.dlg.dialog('open');
         } else {
             this.dlg.dialog({
-                title: 'Feature info',
+                title: 'Detail-Information',
                 width: 600,
                 height: 400
             });
+            if(this.options.deactivateOnClose) {
+                this.dlg.bind('dialogclose', $.proxy(this.deactivate, this));
+            }
         }
     },
 
@@ -99,7 +116,9 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
      */
     _featureInfoCallback: function(data) {
         //TODO: Needs some escaping love
-        this.dlg.find('#' + data.layerId).html(data.response);
+        this.dlg.find('a[href=#' + data.layerId + ']').removeClass('loading');
+        this.dlg.find('#' + data.layerId)
+            .html(data.response);
     }
 });
 
