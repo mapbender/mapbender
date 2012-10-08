@@ -222,12 +222,6 @@
     <target name="prepare" depends="deps,doc,unittest">
         <exec command="application/app/console assets:install application/web/" />
         <exec command="application/app/console assetic:dump --env=prod --no-debug" />
-        <copy todir="application/web/doc">
-            <fileset dir="application/doc/">
-                <exclude name="*.rst" />
-            </fileset> 
-        </copy>
-
     </target>
 
     <target name="clean">
