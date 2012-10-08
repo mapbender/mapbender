@@ -278,6 +278,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
             foreach($layerset->layerObjects as $layer) {
                 $configuration['layersets'][$layerset->getId()][$layer->getId()] = array(
                     'type' => $layer->getType(),
+                    'title' => $layer->getTitle(),
                     'configuration' => $layer->getConfiguration());
             }
         }

@@ -24,7 +24,7 @@ $.extend(true, Mapbender, { layer: {
 
             mqLayerDef = {
                 type:        'wms',
-                label:       layerDef.configuration.title,
+                label:       layerDef.title,
                 url:         finalUrl,
 
                 layers:      layers,
