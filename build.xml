@@ -54,9 +54,8 @@
             <fileset dir="application/">
                 <include name="**" />
                 <exclude name="**/.git/**" />
-                <exclude name="app/cache" />
-                <exclude name="app/logs" />
-                <exclude name="bin" />
+                <exclude name="app/cache/*/**" />
+                <exclude name="app/logs/*/**" />
             </fileset>
         </copy>
         <mkdir dir="artefacts" />
