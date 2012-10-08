@@ -16,6 +16,21 @@ class HTTPResult {
         return  ($this->statusCode < 400);
     }
     
+    public function setHeaders($headers){
+        $this->headers = $headers;
+    }
+
+    public function getHeaders(){
+        return $this->headers;
+    }
+    
+    public function getHeader($header){
+        if(isset($this->headers) && isset($this->headers[$header])){
+            return $this->headers[$header];
+        } else {
+            return null;
+        }
+    }
 
     public function setData($data){
         $this->data = $data;

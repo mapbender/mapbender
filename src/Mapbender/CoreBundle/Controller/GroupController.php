@@ -142,7 +142,7 @@ class GroupController extends Controller {
                 $em->persist($group);
                 $em->flush();
             } catch(\Exception $E) {
-                $this->get("logger")->error("Could not save group. ".$E->getMessage());
+                $this->get("logger")->err("Could not save group. ".$E->getMessage());
                 $this->get("session")->setFlash("error","Could not save group");
                 return $this->redirect($this->generateUrl("mapbender_core_group_edit",array("groupId" => $group->getId())));
             }

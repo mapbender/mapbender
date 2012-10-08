@@ -1,11 +1,12 @@
 {% extends "MapbenderMonitoringBundle:MonitoringDefinition:base.html.twig" %}
 
-{% block title %}{% trans %}Delete{% endtrans %} "{{ md.title }}"{% endblock %}
+{% block title %}{% trans %}Monitoring Definition Delete{% endtrans %} "{{ md.title }}"{% endblock %}
 
 {% block content %}
   <div class="message">
     <p>{% trans %}Really Delete{% endtrans %} "{{md.title }}" ?</p>
-    <form action="{{path("mapbender_monitoring_monitoringdefinition_delete",{"mdId":md.id})}}" method="post">
+    <form action="{{path("mapbender_monitoring_monitoringdefinition_delete")}}" method="post">
+      <input type="hidden" value="{{md.id}}" />
       <button>{% trans %}Delete{% endtrans%}</button>
       <a class="button" href="{{ path("mapbender_monitoring_monitoringdefinition_edit",{'mdId': md.id}) }}">{% trans %}Cancel{% endtrans %}</a>
     </form>

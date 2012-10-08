@@ -59,25 +59,25 @@ class MonitoringDefinitionType extends AbstractType {
 //		$builder->add("lastNotificationTime","",array(
 //			"required" => false
 //		));
-		
-		$builder->add("ruleStart","text",array(
-			"required" => false
-		));
-		
-		$builder->add("ruleEnd","text",array(
-			"required" => false
-		));
-		
-		$builder->add("ruleMonitor","choice",array(
-			'choices'   => array('0' => 'allow', '1' => 'disallow'),
-			'preferred_choices' => array('allow'),
-			"required" => false
-		));
+//		
+//		$builder->add("ruleStart","time",array(
+//			"required" => false
+//		));
+//		
+//		$builder->add("ruleEnd","time",array(
+//			"required" => false
+//		));
+//		
+//		$builder->add("ruleMonitor","choice",array(
+//			'choices'   => array('0' => 'disallow', '1' => 'allow'),
+//			'preferred_choices' => array('allow'),
+//			"required" => false
+//		));
 		
 		$builder->add("enabled","choice",array(
-			'choices'   => array('0' => 'true', '1' => 'false'),
-			'preferred_choices' => array('true'),
-			"required" => false
+			'choices'   => array('true' => 'true', 'false' => 'false'),
+//			'preferred_choices' => array('true'),
+			"required" => true
 		));
 	}
 }

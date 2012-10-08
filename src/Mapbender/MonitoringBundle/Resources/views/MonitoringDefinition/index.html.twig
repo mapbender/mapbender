@@ -1,10 +1,26 @@
 {% extends "MapbenderMonitoringBundle:MonitoringDefinition:base.html.twig" %}
-
+{% block title %}{{ "Monitoring Definition Index"|trans }}{% endblock %}
 {% block heading %}{{ "Monitoring Definition Index"|trans }}{% endblock %}
-
+{% block subnavigation %}
+<nav class="action">
+    <h1>Monitoring Navigation</h1>
+    <ul>
+      <li><a href="{{ path('mapbender_monitoring_monitoringdefinition_create')  }}">{% trans %}Add Monitoring Definition{% endtrans %}</a></li>
+      <li><a href="{{ path('mapbender_monitoring_monitoringjob_exportcsv')  }}" >{% trans %}CSV Export{% endtrans %}</a></li>
+      <li><a class="confirmdelete" href="{{ path('mapbender_monitoring_monitoringjob_delete')  }}" title="{% trans %}Delete All Monitoring Jobs{% endtrans %}" >{% trans %}Delete All Monitoring Jobs{% endtrans %}</a></li>
+    </ul>
+</nav>
+{% endblock %}
 {% block content %}
 
 {% if mdList|length >0 %}
+    <div class="tablenav">
+        <a href="{{ path("mapbender_monitoring_monitoringdefinition_index",{"offset":0}) }}">{% trans %}Start{% endtrans %}</a> 
+        <a href="{{ path("mapbender_monitoring_monitoringdefinition_index",{"offset":prevOffset}) }}">{% trans %}Previous{% endtrans %}</a> 
+        <span>{% trans with{'%start%': offset +1, '%end%': offset + mdList|length, '%total%' : total} %} Showing %start% to %end% of %total%{% endtrans %}</span>
+        <a href="{{  path("mapbender_monitoring_monitoringdefinition_index",{"offset": nextOffset}) }}">{% trans %}Next{% endtrans %}</a>
+        <a href="{{ path("mapbender_monitoring_monitoringdefinition_index",{"offset": lastOffset}) }}">{% trans %}End{% endtrans %}</a> 
+    </div>
 	<table class="listable" >
     <caption>{% trans %}Available Monitoring Definitions{% endtrans %}</caption>
 		<thead>
@@ -31,8 +47,45 @@
 			{% endfor %}
 		</tbody>
 	</table>
+<script type="text/javascript">
+    // delete from table
+    $("li a.confirmdelete").bind("click",function(e){
+      var $anchor = $(this);
+      var title = $anchor.attr("title")? $anchor.attr("title"):"Delete";
+      $("<div>Really Delete ?</div>").dialog({
+        title: title,
+        buttons: {
+          "Yes": function(){ 
+            //FIXME: just add class to application
+            $("body").css("cursor","wait");
+            $.ajax({
+              url: $anchor.attr("href"),
+              type: 'POST',
+              data: {},
+              success: function(){
+                window.location.href = window.location.href;
+              },
+              error: function(data){
+                $("body").css("cursor","");
+                $("<div>Could not delete.</div>").dialog({
+                  title: "Delete " + title,
+                  autoOpen: true,
+                  buttons:{
+                    "OK": function(){ $(this).dialog("destroy"); }
+                  }
+                }); 
+              }
+            });
+            $(this).dialog("destroy"); 
+          },
+          "No": function(){ $(this).dialog("destroy"); }
+        }
+      });
+      return false;
+    });
+</script>
 {% else %}
  <p>{% trans %}No Monitoring Definitions available{% endtrans %}</p>
 {% endif %}
- <a href="{{path('mapbender_monitoring_schedulerprofile_index')}}">{{"config_scheduler"|trans}}</a>
+ <!--a href="{#{path('mapbender_monitoring_schedulerprofile_index')}}">{{"config_scheduler"|trans}#}</a-->
 {% endblock %}

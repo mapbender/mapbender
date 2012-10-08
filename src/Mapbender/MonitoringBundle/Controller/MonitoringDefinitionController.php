@@ -13,6 +13,8 @@ use Mapbender\WmsBundle\Entity\WMSService;
 
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Description of MonitoringDefinitionController
  *
@@ -27,8 +29,27 @@ class MonitoringDefinitionController extends Controller {
 	 * @ParamConverter("monitoringDefinitionList",class="Mapbender\MonitoringBundle\Entity\MonitoringDefinition")
 	 */
 	public function indexAction(array $monitoringDefinitionList) {
+        $total = $this->getDoctrine()
+            ->getEntityManager()
+            ->createQuery("SELECT count(mb.id) as total From MapbenderMonitoringBundle:MonitoringDefinition mb")
+            ->getScalarResult();
+        // Grrr   why can't php allow ()[] ?
+        $total = $total[0]['total'];
+        $request = $this->get('request');
+        $offset = $request->get('usedOffset');
+        $limit = $request->get('usedLimit');
+        $nextOffset = count($monitoringDefinitionList) < $limit ? $offset : $offset + $limit;
+        $prevOffset = ($offset - $limit)  > 0 ? $offset - $limit : 0;
+        $lastOffset = ($total - $limit)  > 0 ? $total - $limit : 0;
 		return array(
+            "offset" => $offset,
+            "nextOffset" =>  $nextOffset,
+            "prevOffset" => $prevOffset,
+            "lastOffset" => $lastOffset,
+            "limit" => $limit,
+            "total" => $total,
 			"mdList" => $monitoringDefinitionList,
+//			"debug" => print_r($monitoringDefinitionList,true)
 		);
 	}
 	
@@ -101,7 +122,6 @@ class MonitoringDefinitionController extends Controller {
 		}
 	}
 	
-	
 	/**
 	 * @Route("/{mdId}")
 	 * @Method("GET")
@@ -112,12 +132,40 @@ class MonitoringDefinitionController extends Controller {
 				new MonitoringDefinitionType(),
 				$md
 		);
-		
+		$query = $this->getDoctrine()->getEntityManager()->createQuery(
+                "SELECT j From MapbenderMonitoringBundle:MonitoringJob j"
+                ." WHERE j.monitoringDefinition= :md"
+                ." ORDER BY j.timestamp DESC")
+                ->setMaxResults(5)
+                ->setParameter("md", $md->getId());
+        $lastjobs = $query->getResult();
+//                ->getScalarResult();
 		return array(
 			"form" => $form->createView(),
-			"md" => $md
+			"md" => $md,
+            "lastjobs" => $lastjobs
 		);
 	}
+    
+    /**
+     * deletes a WMS
+     * @Route("/{wmsId}/fromwmsdelete")
+     * @Method({"POST"})
+    */
+    public function fromwmsdeleteAction(MonitoringDefinition $md){
+        // TODO: check wether a layer is used by a VWMS still
+        try{
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->remove($md);
+            $em->flush();
+//            $this->get('session')->setFlash('info',"MonitoringDefinition deleted");
+        }catch(\Exception $e){
+            
+        }
+        return $this->redirect($this->generateUrl(
+                "mapbender_monitoring_monitoringdefinition_index"));
+    }
+
     
 	/**
 	 * @Route("/{mdId}/delete")
@@ -127,7 +175,6 @@ class MonitoringDefinitionController extends Controller {
 		$em = $this->getDoctrine()->getEntityManager();
 		try {
 			$em->remove($md);
-//			$em->remove(null);
 			$em->flush();
 		} catch(\Exception $E) {
 			$this->get("logger")->info("Could not delete monitoring definition. ".$E->getMessage());
@@ -171,7 +218,7 @@ class MonitoringDefinitionController extends Controller {
 				$em->persist($md);
 				$em->flush();
 			} catch(\Exception $E) {
-				$this->get("logger")->error("Could not save monitoring definition. ".$E->getMessage());
+				$this->get("logger")->err("Could not save monitoring definition. ".$E->getMessage());
 				$this->get("session")->setFlash("error","Could not save monitoring definition");
 				return $this->redirect($this->generateUrl("mapbender_monitoring_monitoringdefinition_edit",array("mdId" => $md->getId())));
 			}

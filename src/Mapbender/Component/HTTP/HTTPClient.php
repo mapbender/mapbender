@@ -89,6 +89,7 @@ class HTTPClient {
         curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->ch, CURLINFO_HEADER_OUT, true);
+        curl_setopt($this->ch, CURLOPT_HEADER, true);
         
         if($this->getUsername()){
             curl_setopt($this->ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
@@ -107,11 +108,18 @@ class HTTPClient {
         if(($error = curl_error($this->ch)) != ""){
             throw new \Exception("Curl says: '$error'");
         }
-        $statusCode = curl_getInfo($this->ch,CURLINFO_HTTP_CODE);
-
         $result = new HTTPResult();
-        $result->setData($data);
-        $result->setStatusCode($statusCode);
+        $result->setStatusCode(curl_getInfo($this->ch, CURLINFO_HTTP_CODE));
+        $result->setData(substr($data, curl_getInfo($this->ch, CURLINFO_HEADER_SIZE)));
+        $header_help = explode("\r\n", trim(substr($data, 0, curl_getInfo($this->ch, CURLINFO_HEADER_SIZE))));
+        $headers = array();
+        foreach ($header_help as $header_) {
+            $pos = strpos($header_, ":");
+            if(intval($pos)){
+                $headers[substr($header_, 0, $pos)] = substr($header_, $pos);
+            }
+        }
+        $result->setHeaders($headers);
         return $result;
     }
 

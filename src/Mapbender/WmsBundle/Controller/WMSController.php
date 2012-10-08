@@ -51,7 +51,15 @@ class WMSController extends Controller {
         $wmsListLoadedEvent = new WmsIndexEvent();
         $wmsListLoadedEvent->setWmsList($wmsList);
         $dispatcher->dispatch(WmsEvents::onWmsIndex, $wmsListLoadedEvent);
-
+        $mdefs = $this->getDoctrine()->getEntityManager()
+                ->getRepository("MapbenderMonitoringBundle:MonitoringDefinition")
+                ->findAll();
+        $defined_mds = array();
+        if ($mdefs !== null){
+            foreach ($mdefs as $md) {
+                $defined_mds[$md->getTypeId()] = true;
+            }
+        }
         return array(
             "wmsList" => $wmsList,
             "offset" => $offset,
@@ -60,6 +68,7 @@ class WMSController extends Controller {
             "lastOffset" => $lastOffset,
             "limit" => $limit,
             "total" => $total,
+            "defined_mds" => $defined_mds,
             "extraColumns" => $wmsListLoadedEvent->getColumns(),
         );
     }
@@ -433,6 +442,34 @@ class WMSController extends Controller {
                'wms' => $wms 
         );
     }
+    
+//    /**
+//     * deletes a WMS
+//     * @Route("/{wmsId}/deletecomponents")
+//     * @Method({"POST"})
+//    */
+//    public function deletecomponentsAction(WMSService $wms){
+//        // TODO: check wether a layer is used by a VWMS still
+//        try{
+//            $request = $this->get("request");
+//            $request->setMethod('POST');
+//            $request->setAttribute("wmsId", $wms->getId());
+//            $response = $this->forward(
+//                    "MapbenderMonitoringBundle:MonitoringDefinitionController:fromwmsdeleteAction",
+//                    array("wmsId" => $wms->getId()));
+//            
+//            return $response;
+//        }catch(\Exception $e){
+//            $em = $this->getDoctrine()->getEntityManager();
+//            $this->removeRecursive($wms,$em);
+//            $em->remove($wms);
+//            $em->flush();
+//            //FIXME: error handling
+//            $this->get('session')->setFlash('info',"WMS deleted");
+//            return $this->redirect($this->generateUrl("mapbender_wms_wms_index"));
+//        }
+//        
+//    }
 
     /**
      * deletes a WMS
@@ -445,8 +482,21 @@ class WMSController extends Controller {
         $this->removeRecursive($wms,$em);
         $em->remove($wms);
         $em->flush();
-        //FIXME: error handling
         $this->get('session')->setFlash('info',"WMS deleted");
+        if($wms->getId() === null){
+            try{ // remove monitoringdefinition if exists
+                $md = $this->getDoctrine()->getRepository(
+                        "MapbenderMonitoringBundle:MonitoringDefinition")
+                        ->findOneBy(array(
+                            "type"=>get_class($wms), "typeId" => $wms->getId()));
+                $response = $this->forward(
+                        "MapbenderMonitoringBundle:MonitoringDefinition:fromwmsdelete",
+                        array("mdId" => $md->getId()));
+            }catch(\Exception $e){
+                
+            }
+        }
+        //FIXME: error handling
         return $this->redirect($this->generateUrl("mapbender_wms_wms_index"));
     }
 

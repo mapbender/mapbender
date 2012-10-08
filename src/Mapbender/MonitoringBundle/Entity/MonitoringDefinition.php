@@ -51,13 +51,13 @@ class MonitoringDefinition  {
 
 	/**
 	 *
-	 * @ORM\Column(type="string", nullable=true)
+	 * @ORM\Column(type="text", nullable=true)
 	 */
 	protected $url;
 
 	/**
 	 * @Assert\NotNull
-	 * @ORM\Column(type="string")
+	 * @ORM\Column(type="text")
 	 */
 	protected $requestUrl;
 
@@ -99,30 +99,32 @@ class MonitoringDefinition  {
 
 	/**
 	 *
-	 * @ORM\Column(type="datetime", nullable=true)
+	 * @ORM\Column(type="time", nullable=true)
 	 */
 	protected $ruleStart;
 
 	/**
 	 *
-	 * @ORM\Column(type="datetime", nullable=true)
+	 * @ORM\Column(type="time", nullable=true)
 	 */
 	protected $ruleEnd;
 
 	/**
 	 *
-	 * @ORM\Column(type="boolean")
+	 * @ORM\Column(type="boolean", nullable=false)
 	 */
-	protected $ruleMonitor = true;
+	protected $ruleMonitor;
 
 	/**
 	 *
-	 * @ORM\Column(type="string")
+	 * @ORM\Column(type="string", nullable=false)
 	 */
-	protected $enabled = true;
+	protected $enabled;
 
     public function __construct()
     {
+        $this->ruleMonitor = false;
+        $this->enabled = true;
         $this->monitoringJobs = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
