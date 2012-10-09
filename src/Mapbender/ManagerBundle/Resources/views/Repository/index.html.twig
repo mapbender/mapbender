@@ -1,7 +1,35 @@
-{% extends "MapbenderManagerBundle::manager.html.twig" %}
+{% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ 'Service Repository' | trans }}{% endblock %}
 
 {% block manager_content %}
-Hello World!
+<table class="table table-striped" id="repository-list">
+    <thead>
+        <tr>
+            <th>{{ 'Type' | trans }}</th>
+            <th>{{ 'Title' | trans }}</th>
+            <th>{{ 'Alias' | trans }}</th>
+            <th>{{ 'Actions' | trans }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for source in sources %}
+        <tr data-source-id="{{ source.id }}">
+            <td>{{ source.type }}</td>
+            <td>{{ source.title }}</td>
+            <td>{{ source.alias }}</td>
+            <td>
+                <div class="entity-actions btn-group">
+                    <a class="action-edit" href="#" title="{{ 'Edit source' | trans }}">{{ 'Edit' | trans }}</a>
+                    <a class="action-delete" href="#" title="{{ 'Delete source' | trans }}">{{ 'Delete' | trans }}</a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="repository-actions btn-group">
+    <a class="action-add btn btn-primary" href="#" title="{{ 'Add new source' | trans }}">{{ 'Add' | trans }}</a>
+</div>
 {% endblock %}

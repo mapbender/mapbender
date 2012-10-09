@@ -1,5 +1,13 @@
 {% extends "MapbenderMonitoringBundle:SchedulerProfile:index.html.twig" %}
-
+{% block title %}{{ "Scheduler New/Edit"|trans }}{% endblock %}
+{% block subnavigation %}
+<nav class="action">
+    <h1>Monitoring Navigation</h1>
+    <ul>
+      <li><a href="{{ path('mapbender_monitoring_schedulerprofile_index')  }}">{% trans %}Back To List{% endtrans %}</a></li>
+    </ul>
+</nav>
+{% endblock %}
 {% block content %}
 <a class="a-scheduler" href="{{path("mapbender_monitoring_schedulerprofile_index")}}">{{"to_scheduler_list"|trans}}</a><br/>
 

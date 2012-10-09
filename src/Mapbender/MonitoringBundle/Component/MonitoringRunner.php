@@ -17,20 +17,38 @@ class MonitoringRunner {
         $job = new MonitoringJob();
         $time_pre = microtime(true);
         $result = null;
+
         try {
             $result = $this->client->open($this->md->getRequestUrl());
-            $job->setResult($result->getData());
             if($result->getStatusCode()=="200") {
-                $teststr = substr($result->getData(), 0, 100);
-                if(strripos(strtolower($teststr), "exception") !== false){
-                    $job->setSTATUS(MonitoringJob::$STATUS_EXCEPTION);
-                } else {
+                if(is_int(strpos($result->getHeader('Content-Type'), "image/"))){ # check if contentType image
+                    $job->setResult(base64_encode($result->getData()));
                     $job->setSTATUS(MonitoringJob::$STATUS_SUCCESS);
+                } else {
+                    $job->setResult($result->getData());
+                    $isXml = true;
+                    $xml = new \DOMDocument();
+                    if(!$xml->loadXML($result->getData())){
+                        if(!$xml->loadHTML($xmlDocStr)){
+                              $isXml = false;
+                        }
+                    }
+                    if($isXml){
+                        if(strripos(strtolower($xml->documentElement->tagName), "exception") !== false){
+                            $job->setSTATUS(MonitoringJob::$STATUS_ERROR.":".MonitoringJob::$STATUS_EXCEPTION);
+                        } else {
+                            $job->setSTATUS(MonitoringJob::$STATUS_SUCCESS);
+                        }
+                    } else {
+                        $job->setSTATUS(MonitoringJob::$STATUS_SUCCESS);
+                    }
                 }
-            } else 
+            } else {
+                $job->setResult($result->getData());
                 $job->setSTATUS(MonitoringJob::$STATUS_ERROR.":".$result->getStatusCode());
+            }
         }catch(\Exception $E){
-            $job->setSTATUS(MonitoringJob::$STATUS_FAIL);
+            $job->setSTATUS(MonitoringJob::$STATUS_TIMEOUT);
         }
         $time_post = microtime(true);
         $job->setMonitoringDefinition($this->md);

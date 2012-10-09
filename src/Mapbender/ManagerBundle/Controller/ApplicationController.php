@@ -9,7 +9,7 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +21,7 @@ class ApplicationController extends Controller {
    /**
      * Convenience route, simply redirects to the index action.
      *
-     * @Route("/application")
+     * @ManagerRoute("/application")
      * @Method("GET")
      */
     public function index2Action() {
@@ -33,7 +33,7 @@ class ApplicationController extends Controller {
      * Render a list of applications the current logged in user has access
      * to.
      *
-     * @Route("/applications")
+     * @ManagerRoute("/applications")
      * @Method("GET")
      * @Template
      */
@@ -46,7 +46,7 @@ class ApplicationController extends Controller {
     /**
      * Shows form for creating new applications
      *
-     * @Route("/application/new")
+     * @ManagerRoute("/application/new")
      * @Method("GET")
      * @Template
      */
@@ -63,7 +63,7 @@ class ApplicationController extends Controller {
     /**
      * Create a new application from POSTed data
      *
-     * @Route("/application")
+     * @ManagerRoute("/application")
      * @Method("POST")
      * @Template("MapbenderManagerBundle:Application:new.html.twig")
      */
@@ -95,7 +95,7 @@ class ApplicationController extends Controller {
     /**
      * Edit application
      *
-     * @Route("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" })
+     * @ManagerRoute("/application/{slug}/edit", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")
      * @Template
      */
@@ -116,7 +116,7 @@ class ApplicationController extends Controller {
     /**
      * Updates application by POSTed data
      *
-     * @Route("/application/{slug}/update", requirements = { "slug" = "[\w-]+" })
+     * @ManagerRoute("/application/{slug}/update", requirements = { "slug" = "[\w-]+" })
      * @Method("POST")
      */
     public function updateAction($slug) {
@@ -148,7 +148,7 @@ class ApplicationController extends Controller {
     /**
      * Toggle application state.
      *
-     * @Route("/application/{slug}/state", options={"expose"=true})
+     * @ManagerRoute("/application/{slug}/state", options={"expose"=true})
      * @Method("POST")
      */
     public function toggleStateAction($slug) {
@@ -184,7 +184,7 @@ class ApplicationController extends Controller {
 
     /**
      * Delete confirmation page
-     * @Route("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
+     * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:delete.html.twig")
      */
@@ -199,7 +199,7 @@ class ApplicationController extends Controller {
     /**
      * Delete application
      *
-     * @Route("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
+     * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
      * @Method("POST")
      */
     public function deleteAction($slug) {

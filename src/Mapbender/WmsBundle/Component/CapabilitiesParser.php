@@ -64,12 +64,12 @@ class CapabilitiesParser {
         $wms->setVersion((string)$this->doc->documentElement->getAttribute("version"));
         foreach( $this->doc->documentElement->childNodes as $node){
             if($node->nodeType == XML_ELEMENT_NODE){
-                switch ($node->nodeName) {
+                switch ($node->localName) {
 
                     case "Service":
                         foreach ($node->childNodes as $node){
                             if($node->nodeType == XML_ELEMENT_NODE){ 
-                                switch ($node->nodeName) {
+                                switch ($node->localName) {
                                     case "Name":
                                         $wms->setName($node->nodeValue);
                                     break;
@@ -101,7 +101,7 @@ class CapabilitiesParser {
                     case "Capability":
                         foreach ($node->childNodes as $node){
                             if($node->nodeType == XML_ELEMENT_NODE){ 
-                                switch($node->nodeName){
+                                switch($node->localName){
                                     case "Request":
                                         foreach ($node->childNodes as $node){
                                             if($node->nodeType == XML_ELEMENT_NODE){ 
@@ -112,7 +112,7 @@ class CapabilitiesParser {
                                     case "Exception":
                                         foreach ($node->childNodes as $node){
                                             if($node->nodeType == XML_ELEMENT_NODE){ 
-                                                if($node->nodeName == "Format"){
+                                                if($node->localName == "Format"){
                                                     $formats = $wms->getExceptionFormats();
                                                     $formats[] = str_replace(".","__",$node->nodeValue);
                                                     $wms->setExceptionFormats($formats);
@@ -159,7 +159,7 @@ class CapabilitiesParser {
                                     break;
                                     case "Layer":
                                         foreach ($node->childNodes as $subnode){
-                                            switch ($subnode->nodeName) {
+                                            switch ($subnode->localName) {
                                                 case "CRS":
                                                     $wms->addSrs($subnode->nodeValue);
                                                     break;
@@ -196,11 +196,11 @@ class CapabilitiesParser {
     protected function ContactInformationFromNode($wms,\DOMElement $contactNode){
         foreach($contactNode->childNodes as $node){
             if($node->nodeType == XML_ELEMENT_NODE){  
-                switch ($node->nodeName) {
+                switch ($node->localName) {
                     case "ContactPersonPrimary":
                         foreach($node->childNodes as $subnode){
                             if($subnode->nodeType == XML_ELEMENT_NODE){  
-                                switch ($subnode->nodeName) {
+                                switch ($subnode->localName) {
                                     case "ContactPerson":
                                         $wms->setContactPerson($subnode->nodeValue);
                                     break;
@@ -217,7 +217,7 @@ class CapabilitiesParser {
                     case "ContactAddress":
                         foreach($node->childNodes as $subnode){
                             if($subnode->nodeType == XML_ELEMENT_NODE){  
-                                switch ($subnode->nodeName) {
+                                switch ($subnode->localName) {
                                     case "Address":
                                         $wms->setContactAddress($subnode->nodeValue);
                                     break;
@@ -270,7 +270,7 @@ class CapabilitiesParser {
         }
         foreach($layerNode->childNodes as $node){
             if($node->nodeType == XML_ELEMENT_NODE){  
-                switch ($node->nodeName) {
+                switch ($node->localName) {
                     case "Name":
                         $layer->setName($node->nodeValue);
                     break;
@@ -298,8 +298,36 @@ class CapabilitiesParser {
                         $bounds[3] = trim($node->getAttribute("maxy"));
                         $layer->setLatLonBounds(implode(' ',$bounds));
                     break;
+                
+                    case "EX_GeographicBoundingBox":
+                        $xmin = null; $xmax = null; $ymin = null; $ymax = null;
+                        foreach($node->childNodes as $bbnode){
+                            if($bbnode->nodeType == XML_ELEMENT_NODE){  
+                                switch ($bbnode->localName) {
+                                    case "westBoundLongitude":
+                                        $xmin = $bbnode->nodeValue;
+                                    break;
+                                    case "southBoundLatitude":
+                                        $miny = $bbnode->nodeValue;
+                                    break;
+                                    case "eastBoundLongitude":
+                                        $maxx = $bbnode->nodeValue;
+                                    break;
+                                    case "northBoundLatitude":
+                                        $maxy = $bbnode->nodeValue;
+                                    break;
+                                }
+                            }
+                        }
+                        $bounds = array(4);
+                        $bounds[0] = $xmin;
+                        $bounds[1] = $miny;
+                        $bounds[2] = $maxx;
+                        $bounds[3] = $maxy;
+                        $layer->setLatLonBounds(implode(' ',$bounds));
+                    break;
 
-                    case "BoundingBox":
+                    case "BoundingBox": //v 1.3.0
                     break;
 
                     case "KeywordList":
@@ -316,12 +344,26 @@ class CapabilitiesParser {
                         );
                         foreach($node->childNodes as $styleChild){
                             if($styleChild->nodeType == XML_ELEMENT_NODE){  
-                                switch ($styleChild->nodeName) {
+                                switch ($styleChild->localName) {
                                     case "Name":
                                         $style["name"]= $styleChild->nodeValue;
                                     break;
                                     case "Title":
                                         $style["title"]= $styleChild->nodeValue;
+                                    break;
+                                    case "LegendURL":
+                                        foreach($styleChild->childNodes as $legendChild){
+//                                            $t = $legendChild->localName;
+                                            if($legendChild->nodeType == XML_ELEMENT_NODE){  
+                                                switch ($legendChild->localName) {
+                                                    case "Format":
+                                                    break;
+                                                    case "OnlineResource":
+                                                        $style["legendUrl"]["link"] = $legendChild->getAttributeNS("http://www.w3.org/1999/xlink" ,"href");
+                                                    break;
+                                                }
+                                            }
+                                        }
                                     break;
                                 }
                             }
@@ -336,7 +378,7 @@ class CapabilitiesParser {
                     
                         foreach($node->childNodes as $metadataChild){
                             if($metadataChild->nodeType == XML_ELEMENT_NODE){  
-                                switch ($metadataChild->nodeName) {
+                                switch ($metadataChild->localName) {
                                     case "Format":
                                     break;
                                     case "OnlineResource":
@@ -350,7 +392,7 @@ class CapabilitiesParser {
                     case "DataURL":
                         foreach($node->childNodes as $dataChild){
                             if($dataChild->nodeType == XML_ELEMENT_NODE){  
-                                switch ($dataChild->nodeName) {
+                                switch ($dataChild->localName) {
                                     case "Format":
                                     break;
                                     case "OnlineResource":
@@ -363,6 +405,9 @@ class CapabilitiesParser {
 
                     case "Layer":
                         $sublayer = $this->WMSLayerFromLayerNode($node);
+                        if($sublayer->getLatLonBounds() === null && $layer->getLatLonBounds() !== null){
+                            $sublayer->setLatLonBounds($layer->getLatLonBounds());
+                        }
                         $layer->getLayer()->add($sublayer);
                     break;
                     
@@ -390,7 +435,7 @@ class CapabilitiesParser {
         $post ="";
         foreach ($RequestNode->childNodes as $node){
             if($node->nodeType == XML_ELEMENT_NODE){ 
-                switch ($node->nodeName) {
+                switch ($node->localName) {
                     case "Format":
                         // WORKAROUND: Symfony uses '.' as a PropertyPath seperator which creates problems If we want to use the nodeValue 
                         // as a list of checkboxes to show what the wms supports
@@ -402,7 +447,7 @@ class CapabilitiesParser {
                                 if($httpnode->nodeType == XML_ELEMENT_NODE){ 
                                     foreach ($httpnode->childNodes as $methodnode){
                                         if($methodnode->nodeType == XML_ELEMENT_NODE){ 
-                                            switch ($methodnode->nodeName) {
+                                            switch ($methodnode->localName) {
                                                 case "Get":
                                                     foreach ($methodnode->childNodes as $resnode){
                                                         if($resnode->nodeType == XML_ELEMENT_NODE){ 
@@ -432,7 +477,7 @@ class CapabilitiesParser {
         if($RequestNode->hasAttribute("name")){
             $operation_name = $RequestNode->getAttribute("name");
         } else {
-            $operation_name = $RequestNode->nodeName;
+            $operation_name = $RequestNode->localName;
         }
         switch($operation_name){
             case "GetCapabilities":

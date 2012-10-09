@@ -7,35 +7,25 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
 
 class MapbenderManagerBundle extends MapbenderBundle
 {
-    public function getAdminControllers()
+    public function getManagerControllers()
     {
         return array(
             array(
-                'weight' => 0,
+                'weight' => 10,
                 'title' => 'Applications',
                 'route' => 'mapbender_manager_application_index',
-                'controllers' => array(
+                'routes' => array(
                     'mapbender_manager_application',
                 )
             ),
             array(
-                'weight' => 10,
+                'weight' => 20,
                 'title' => 'Services',
-                'route' => 'mapbender_manager_layer_index',
-                'controllers' => array(
-                    'mapbender_manager_layer',
+                'route' => 'mapbender_manager_repository_index',
+                'routes' => array(
                     'mapbender_manager_repository',
                 )
             ),
-            array(
-                'weight' => 20,
-                'title' => 'Users',
-                'route' => 'mapbender_manager_user_index',
-                'controllers' => array(
-                    'mapbender_manager_user',
-                    'mapbender_manager_role'
-                )
-            )
         );
     }
 }

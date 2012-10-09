@@ -1,23 +1,26 @@
 <?php
-
 namespace Mapbender\KmlBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class KmlExport extends Element implements ElementInterface {
-    public static function getTitle() {
+class KmlExport extends Element {
+    public function getTitle() {
         return "Please give me a title";
     }
 
-    public static function getDescription() {
+    public function getDescription() {
         return "Please give me a description";
     }
 
-    public static function getTags() {
+    public function getTags() {
         return array();
+    }
+
+
+    public function getWidgetName() {
+        return 'mapbender.mbKmlExport';
     }
 
     public function getAssets() {
@@ -107,4 +110,3 @@ class KmlExport extends Element implements ElementInterface {
             'label' => $this->name));
     }
 }
-

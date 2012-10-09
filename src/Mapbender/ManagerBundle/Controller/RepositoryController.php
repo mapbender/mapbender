@@ -9,24 +9,41 @@
 namespace Mapbender\ManagerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @Route("/repository")
+ * @ManagerRoute("/repository")
  */
 class RepositoryController extends Controller {
     /**
      * Renders the layer service repository.
      *
-     * @Route("/{page}", defaults={ "page"=1 }, requirements={ "page"="\d+" })
+     * @ManagerRoute("/{page}", defaults={ "page"=1 }, requirements={ "page"="\d+" })
      * @Method({ "GET" })
      * @Template
      */
     public function indexAction($page) {
         return array(
             'title' => 'Repository',
+            'sources' => array(),
+        );
+    }
+
+    /**
+     * Renders a list of importers
+     *
+     * @ManagerRoute("/new")
+     * @Method({ "GET" })
+     * @Template
+     */
+    public function newAction()
+    {
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        return array(
+            'managers' => $managers
         );
     }
 }

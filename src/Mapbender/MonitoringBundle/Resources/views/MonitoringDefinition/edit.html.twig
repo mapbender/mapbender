@@ -1,12 +1,14 @@
 {% extends "MapbenderMonitoringBundle:MonitoringDefinition:base.html.twig" %}
 {% form_theme form 'MapbenderMonitoringBundle:Form:fields.html.twig' %}
-
+{% block title %}{{ "Monitoring Definition Edit"|trans }}{% endblock %}
 {% block subnavigation %}
 <nav class="action">
     <h1>Monitoring Navigation</h1>
     <ul>
-      <li>
-      </li>
+      <li><a href="{{ path('mapbender_monitoring_monitoringdefinition_index')  }}">{% trans %}Back To List{% endtrans %}</a></li>
+      <li><a href="{{ path('mapbender_monitoring_monitoringjob_exportcsv',{"mdid":md.id})  }}" >{% trans %}CSV Export{% endtrans %}</a></li>
+      <li><a class="confirmdelete" href="{{ path('mapbender_monitoring_monitoringjob_confirmdelete',{"mdid":md.id})  }}" >{% trans %}Delete Monitoring Jobs{% endtrans %}</a></li>
+    
     </ul>
 </nav>
 {% endblock %}
@@ -31,7 +33,7 @@
         <tr><th>{{"Nr"|trans}}</th><th>{{"date"|trans}}</th><th>{{"latency"|trans}}</th><th>{{"status"|trans}}</th><th>{{"changed"|trans}}</th></tr>
         </thead>
         <tbody>
-        {% set num = 0 %}
+        {#% set num = 0 %}
         {% for job in md.monitoringJobs %}
             {% if num == 0 %}
                 <tr class="job job-last"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>{% if job.changed %}CHANGED{% endif %}</td></tr>
@@ -41,6 +43,15 @@
                 {% endif %}
             {% endif %}
             {% set num = num+1 %}
+        {% endfor %#}
+        {% for job in lastjobs %}
+            <tr class="job job-last"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>{% if job.changed %}CHANGED{% endif %}</td></tr>
+            {#% elseif num < 10 %}
+                {% if job.changed %}
+                <tr class="job job-previous"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>CHANGED</td></tr>
+                {% endif %}
+            {% endif %}
+            {% set num = num+1 %#}
         {% endfor %}
         </tbody>
     </table>
@@ -67,6 +78,41 @@
                 });
             }
         });
+    });
+    // delete from table
+    $("li a.confirmdelete").bind("click",function(e){
+      var $anchor = $(this);
+      var title = $anchor.attr("title")? $anchor.attr("title"):"Delete";
+      $("<div>Really Delete ?</div>").dialog({
+        title: title,
+        buttons: {
+          "Yes": function(){ 
+            //FIXME: just add class to application
+            $("body").css("cursor","wait");
+            $.ajax({
+              url: $anchor.attr("href"),
+              type: 'POST',
+              data: {},
+              success: function(){
+                window.location.href = window.location.href;
+              },
+              error: function(data){
+                $("body").css("cursor","");
+                $("<div>Could not delete.</div>").dialog({
+                  title: "Delete " + title,
+                  autoOpen: true,
+                  buttons:{
+                    "OK": function(){ $(this).dialog("destroy"); }
+                  }
+                }); 
+              }
+            });
+            $(this).dialog("destroy"); 
+          },
+          "No": function(){ $(this).dialog("destroy"); }
+        }
+      });
+      return false;
     });
     </script>
 {% endblock %}

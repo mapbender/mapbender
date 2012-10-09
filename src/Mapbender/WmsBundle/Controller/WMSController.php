@@ -51,7 +51,15 @@ class WMSController extends Controller {
         $wmsListLoadedEvent = new WmsIndexEvent();
         $wmsListLoadedEvent->setWmsList($wmsList);
         $dispatcher->dispatch(WmsEvents::onWmsIndex, $wmsListLoadedEvent);
-
+        $mdefs = $this->getDoctrine()->getEntityManager()
+                ->getRepository("MapbenderMonitoringBundle:MonitoringDefinition")
+                ->findAll();
+        $defined_mds = array();
+        if ($mdefs !== null){
+            foreach ($mdefs as $md) {
+                $defined_mds[$md->getTypeId()] = true;
+            }
+        }
         return array(
             "wmsList" => $wmsList,
             "offset" => $offset,
@@ -60,6 +68,7 @@ class WMSController extends Controller {
             "lastOffset" => $lastOffset,
             "limit" => $limit,
             "total" => $total,
+            "defined_mds" => $defined_mds,
             "extraColumns" => $wmsListLoadedEvent->getColumns(),
         );
     }
@@ -185,7 +194,6 @@ class WMSController extends Controller {
         $wms = new WMSService();
         $wms = $this->buildWMSFormStructure($wms,$requestWMS);
 
-        $exceptionFormats = $requestWMS['exceptionFormats'];
 
         // wms has basic structure... but at this point we don't know what it supports
         // for multiselect to work we need to know what it supports..
@@ -296,7 +304,31 @@ class WMSController extends Controller {
     public function saveAction(WMSService $wms){
         $request = $this->get('request');
         /* build up nested wmslayer structure */
-        $requestWMS = $request->get('WMSService');
+        $requestWMS = $request->get('WMSService'); 
+
+
+
+        /*
+
+            Attention!:
+        
+            The Point of the @$arr[idex]?:array()-Mumbo is to resize the array in
+            the form so that when this method is called from updateAction, there
+            are no mismatches between slosts noi the form an what is submitted
+            in the *Formats arrays.
+            I am placing a FIXME here, because that seems kind of klunky
+
+        */
+    
+        $wms->setSupportedExceptionFormats(@$requestWMS['exceptionFormats']?:array());
+        $wms->setRequestSupportedGetCapabilitiesFormats(@$requestWMS['requestGetCapabilitiesFormats']?:array());
+        $wms->setRequestSupportedGetMapFormats(@$requestWMS['requestGetMapFormats']?:array());
+        $wms->setRequestSupportedGetFeatureInfoFormats(@$requestWMS['requestGetFeatureInfoFormats']?:array());
+        $wms->setRequestSupportedDescribeLayerFormats(@$requestWMS['requestDescribeLayerFormats ']?:array());
+        $wms->setRequestSupportedGetLegendGraphicFormats(@$requestWMS['requestGetLegendGraphicFormats']?:array());
+        $wms->setRequestSupportedGetStylesFormats(@$requestWMS['requestGetStylesFormats']?:array());
+        $wms->setRequestSupportedPutStylesFormats(@$requestWMS['requestPutStylesFormats']?:array());
+
         $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
             "exceptionFormats" => $wms->getSupportedExceptionFormats(),
             "requestGetCapabilitiesFormats" => $wms->getRequestSupportedGetCapabilitiesFormats(),
@@ -335,7 +367,14 @@ class WMSController extends Controller {
         // FIXME: this url buidling thing is brittle!
         $serviceUrl = $wms->getRequestGetCapabilitiesGET();
         $version = $wms->getVersion();
-        $url = $serviceUrl ."&VERSION=".urlencode($version)."&REQUEST=GetCapabilities&SERVICE=wms";
+
+        if (strstr($serviceUrl,"?")){
+            $concat = "&";
+        }else{
+            $concat = "?";
+        }
+
+        $url = $serviceUrl .$concat."VERSION=".urlencode($version)."&REQUEST=GetCapabilities&SERVICE=wms";
         // FIXME: move this kludge into WMSService
         $newWms = null;
         try {
@@ -358,7 +397,8 @@ class WMSController extends Controller {
             }
         }catch(\Exception $E){
             $this->get('session')->setFlash('error', $E->getMessage());
-            return $this->render("MapbenderWmsBundle:WMS:index.html.twig");
+            $this->get('session')->setFlash('error',"tried to load WMS from '$url'");
+            return $this->redirect($this->generateUrl("mapbender_wms_wms_edit",array("wmsId"=>$wms->getId())));
         }
 
         $form = $this->get('form.factory')->create(new WMSType(),$wms,array(
@@ -382,6 +422,7 @@ class WMSController extends Controller {
             "requestPutStylesFormats" => $newWms->getRequestPutStylesFormats(),
         )); 
         return array(
+            "url" => trim($url),
             "wms" => $wms,
             "form"  => $form->createView(),
             "newWms" => $newWms,
@@ -401,6 +442,34 @@ class WMSController extends Controller {
                'wms' => $wms 
         );
     }
+    
+//    /**
+//     * deletes a WMS
+//     * @Route("/{wmsId}/deletecomponents")
+//     * @Method({"POST"})
+//    */
+//    public function deletecomponentsAction(WMSService $wms){
+//        // TODO: check wether a layer is used by a VWMS still
+//        try{
+//            $request = $this->get("request");
+//            $request->setMethod('POST');
+//            $request->setAttribute("wmsId", $wms->getId());
+//            $response = $this->forward(
+//                    "MapbenderMonitoringBundle:MonitoringDefinitionController:fromwmsdeleteAction",
+//                    array("wmsId" => $wms->getId()));
+//            
+//            return $response;
+//        }catch(\Exception $e){
+//            $em = $this->getDoctrine()->getEntityManager();
+//            $this->removeRecursive($wms,$em);
+//            $em->remove($wms);
+//            $em->flush();
+//            //FIXME: error handling
+//            $this->get('session')->setFlash('info',"WMS deleted");
+//            return $this->redirect($this->generateUrl("mapbender_wms_wms_index"));
+//        }
+//        
+//    }
 
     /**
      * deletes a WMS
@@ -413,8 +482,21 @@ class WMSController extends Controller {
         $this->removeRecursive($wms,$em);
         $em->remove($wms);
         $em->flush();
-        //FIXME: error handling
         $this->get('session')->setFlash('info',"WMS deleted");
+        if($wms->getId() === null){
+            try{ // remove monitoringdefinition if exists
+                $md = $this->getDoctrine()->getRepository(
+                        "MapbenderMonitoringBundle:MonitoringDefinition")
+                        ->findOneBy(array(
+                            "type"=>get_class($wms), "typeId" => $wms->getId()));
+                $response = $this->forward(
+                        "MapbenderMonitoringBundle:MonitoringDefinition:fromwmsdelete",
+                        array("mdId" => $md->getId()));
+            }catch(\Exception $e){
+                
+            }
+        }
+        //FIXME: error handling
         return $this->redirect($this->generateUrl("mapbender_wms_wms_index"));
     }
 

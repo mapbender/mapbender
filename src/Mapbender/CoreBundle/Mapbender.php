@@ -22,7 +22,7 @@ class Mapbender {
     private $elements = array();
     private $layers = array();
     private $templates = array();
-    private $adminControllers = array();
+    private $repositoryManagers = array();
 
     /**
      * Mapbender constructor.
@@ -45,8 +45,8 @@ class Mapbender {
                     $bundle->getLayers());
                 $this->templates = array_merge($this->templates,
                     $bundle->getTemplates());
-
-                $this->adminControllers += $bundle->getAdminControllers();
+                $this->repositoryManagers = array_merge($this->repositoryManagers,
+                    $bundle->getRepositoryManagers());
             }
         }
     }
@@ -61,6 +61,16 @@ class Mapbender {
      */
     public function getElements() {
         return $this->elements;
+    }
+
+    /**
+     * Get list of all declared source factories.
+     *
+     * @return array
+     */
+    public function getRepositoryManagers()
+    {
+        return $this->repositoryManagers;
     }
 
     /**
@@ -85,16 +95,6 @@ class Mapbender {
      */
     public function getTemplates() {
         return $this->templates;
-    }
-
-    /**
-     * Get list of all declared admin controllers.
-     *
-     * @return array
-     */
-    public function getAdminControllers()
-    {
-        return $this->adminControllers;
     }
 
     /**

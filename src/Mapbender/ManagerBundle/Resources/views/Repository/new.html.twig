@@ -1,0 +1,13 @@
+{% extends "FOMManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ 'Service Repository' | trans }}{% endblock %}
+
+{% block manager_content %}
+
+<div class="btn-group btn-group-vertical">
+    {% for manager in managers %}
+    <a class="btn" href="{{ url(manager.manager ~ '_new') }}">{{ manager.label | trans }}</a>
+    {% endfor %}
+</div>
+
+{% endblock %}

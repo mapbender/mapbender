@@ -1,5 +1,7 @@
 <?php
 namespace Mapbender\WmsBundle\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\WmsBundle\Entity\GroupLayer;
 
@@ -43,7 +45,7 @@ class WMSLayer extends GroupLayer {
      */
     protected $styles = array();
 
-    
+    protected $stylesserialized;
 
     /**
      * @ORM\Column(type="array",nullable=true)
@@ -53,7 +55,7 @@ class WMSLayer extends GroupLayer {
     /**
      * @ORM\Column(type="array",nullable=true)
      */
-    protected $latLonBounds = "-180 -90 180 90";
+    protected $latLonBounds;// = "-180 -90 180 90";
     
     /*  
         FIXME BoundingBox is missing
@@ -138,8 +140,7 @@ class WMSLayer extends GroupLayer {
      * @ORM\Column(type="array",nullable=true)
      */
     protected $requestFeatureListFormats = '';
-
-
+    
     /**
      * returns the WMSService a WMSLayer belongs to. This is neccessary because WMSLayer::getParent() might return a GroupLayer only
      */
@@ -176,7 +177,8 @@ class WMSLayer extends GroupLayer {
         $this->cascaded     = 0;
         $this->opaque       = false;
         $this->noSubset     = false;
-        $this->layer        = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->styles       = array();
+        $this->layer        = new ArrayCollection();
     }
     
     /**
@@ -628,6 +630,18 @@ class WMSLayer extends GroupLayer {
     }
     public function addStyle($style){
         $this->styles[]  = $style ;
+    }
+    
+    public function setStylesserialized($styles){
+        $this->stylesserialized = $styles;
+        $this->styles  = unserialize($this->stylesserialized) ;
+    }
+    public function getStylesserialized(){
+        $this->stylesserialized = serialize($this->styles);
+        return $this->stylesserialized;
+    }
+    public function __toString(){
+        return (string) $this->getId();
     }
 
 }

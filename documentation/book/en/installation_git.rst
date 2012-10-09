@@ -3,7 +3,9 @@ Git-based installation
 
 If you want to participate in the Mapbender3 development, or for some other
 reasons want to use the Git repositories for Mapbender3, follow this guide
-instead of the normal download.
+instead of the normal download. This guide is based on Ubuntu 12.04. For
+other distributions, you may need to adapt, especially package names like
+sphinx-common.
 
 Cloning the Repository
 **********************

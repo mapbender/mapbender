@@ -1,53 +1,60 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * FeatureInfo element
+ * Featureinfo element
+ *
+ * This element will provide feature info for most layer types
  *
  * @author Christian Wygoda
  */
-class FeatureInfo extends Element {
-    static public function getClassTitle() {
-        return "FeatureInfo";
+class FeatureInfo extends Element
+{
+    static public function getClassTitle()
+    {
+        return "Feature info";
     }
 
-    static public function getClassDescription() {
-        return "Renders a button to trigger a feature info request and popup";
+    static public function getClassDescription()
+    {
+        return "Feature info tool for most layer types";
     }
 
-    static public function getClassTags() {
-        return array('Button', 'FeatureInfo');
+    static public function getClassTags()
+    {
+        return array('button', 'featureinfo');
     }
 
-    public static function getDefaultConfiguration() {
-        return array(
-            'layers' => null,
-            'target' => null);
-    }
-
-    public function getWidgetName() {
+    public function getWidgetName()
+    {
         return 'mapbender.mbFeatureInfo';
     }
 
-    public function getAssets() {
+    public function getAssets()
+    {
         return array(
             'js' => array(
                 'mapbender.element.button.js',
-                'mapbender.element.featureInfo.js'),
+                'mapbender.element.featureInfo.js'
+            ),
             'css' => array(
-                //TODO: Split up
-                'mapbender.elements.css'));
+                'mapbender.element.featureInfo.css'
+            )
+        );
     }
 
-    public function render() {
+    public function render()
+    {
+        $configuration = parent::getConfiguration();
         return $this->container->get('templating')
             ->render('MapbenderCoreBundle:Element:button.html.twig', array(
                 'id' => $this->getId(),
-                'label' => $this->getTitle(),
-                'configuration' => $this->entity->getConfiguration()));
+                'configuration' => $configuration,
+                'label' => 'Feature info'));
     }
 }
 

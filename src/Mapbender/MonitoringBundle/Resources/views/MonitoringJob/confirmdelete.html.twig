@@ -1,0 +1,21 @@
+{% extends "MapbenderMonitoringBundle:MonitoringDefinition:base.html.twig" %}
+
+{% block title %}{% if md != null %}{% trans %}Delete Monitoring Jobs From{% endtrans %} "{{ md.title }}" {% else %} {% trans %}Delete All Monitoring Jobs{% endtrans %} {%endif %}{% endblock %}
+
+{% block content %}
+<div class="message">
+    {% if md != null %}
+    <p>{% trans %}Really Delete Monitoring Jobs From{% endtrans %} "{{md.title }}"?</p>
+    <form action="{{path("mapbender_monitoring_monitoringjob_delete",{"mdid":md.id})}}" method="post">
+        <button>{% trans %}Delete{% endtrans%}</button>
+        <a class="button" href="{{ path("mapbender_monitoring_monitoringdefinition_edit",{'mdId': md.id}) }}">{% trans %}Cancel{% endtrans %}</a>
+    </form>
+    {% else %}
+    <p>{% trans %}Really Delete All Monitoring Jobs{% endtrans %}?</p>
+    <form action="{{path("mapbender_monitoring_monitoringjob_delete")}}" method="post">
+        <button>{% trans %}Delete{% endtrans%}</button>
+        <a class="button" href="{{ path("mapbender_monitoring_monitoringdefinition_index") }}">{% trans %}Cancel{% endtrans %}</a>
+    </form>
+    {% endif %}
+    </div>
+{% endblock %}

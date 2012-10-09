@@ -6,7 +6,7 @@
 
 namespace Mapbender\CoreBundle\Component;
 
-use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Layer;
@@ -67,7 +67,7 @@ class ApplicationYAMLMapper {
         $definition = $definitions[$slug];
 
         // First, create an application entity
-        $application = new Application();
+        $application = new ApplicationEntity();
         $application
             ->setSlug($slug)
             ->setTitle($definition['title'])
@@ -103,7 +103,7 @@ class ApplicationYAMLMapper {
         }
 
         $owner = $this->container->get('doctrine')
-            ->getRepository('MapbenderCoreBundle:User')
+            ->getRepository('FOMUserBundle:User')
             ->find(1);
         $application->setOwner($owner);
         // TODO: Add roles, entity needs work first
@@ -136,7 +136,7 @@ class ApplicationYAMLMapper {
             $application->addLayersets($layerset);
         }
 
-        $application->setSource(Application::SOURCE_YAML);
+        $application->setSource(ApplicationEntity::SOURCE_YAML);
 
         return $application;
     }

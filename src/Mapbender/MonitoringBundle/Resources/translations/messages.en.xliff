@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1">
+                <source>waitstart</source> 
+                <target>Wait For Start</target> 
+            </trans-unit>
+            <trans-unit id="2">
+                <source>waitjobstart</source> 
+                <target>Wait For Query Start</target> 
+            </trans-unit>
+            <trans-unit id="3">
+                <source>running</source> 
+                <target>Running</target> 
+            </trans-unit>
+            <trans-unit id="4">
+                <source>aborted</source> 
+                <target>Aborted</target> 
+            </trans-unit>
+            <trans-unit id="5">
+                <source>ended</source> 
+                <target>Ended</target> 
+            </trans-unit>
+            <trans-unit id="6">
+                <source>error</source> 
+                <target>Error</target> 
+            </trans-unit>
+            <trans-unit id="7">
+                <source>undefined</source> 
+                <target>Undefined</target> 
+            </trans-unit>
+            <trans-unit id="8">
+                <source>nojob</source>
+                <target>No Job</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>cannotstart</source> 
+                <target>Cannot Start</target> 
+            </trans-unit>
+            <trans-unit id="10">
+                <source>no</source> 
+                <target>No</target> 
+            </trans-unit>
+            <trans-unit id="11">
+                <source>hourly</source> 
+                <target>hourly</target> 
+            </trans-unit>
+            <trans-unit id="12">
+                <source>daily</source> 
+                <target>daily</target> 
+            </trans-unit>
+            <trans-unit id="13">
+                <source>weekly</source> 
+                <target>weekly</target> 
+            </trans-unit>
+            <trans-unit id="14">
+                <source>Title</source>
+                <target>Title</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>Start Time</source> 
+                <target>Start Time</target> 
+            </trans-unit>
+            <trans-unit id="16">
+                <source>Repetition</source>
+                <target>Repetition</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>Last Start Time</source>
+                <target>Last Start Time</target>
+            </trans-unit>
+            
+            <trans-unit id="18">
+                <source>Last End Time</source>
+                <target>Last End Time</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>Next Start Time</source>
+                <target>Next Start Time</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>Current Status</source> 
+                <target>Current Status</target> 
+            </trans-unit>
+            <trans-unit id="21">
+                <source>Edit</source> 
+                <target>Edit</target> 
+            </trans-unit>
+            <trans-unit id="22">
+                <source>Delete</source>
+                <target>Delete</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>Activate</source>
+                <target>Activate</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>refresh table</source>
+                <target>Refresh Table</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>Available Scheduler Definitions</source>
+                <target>Available Scheduler Definitions</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>Add Scheduler</source>
+                <target>Add Scheduler</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>Scheduler</source>
+                <target>Scheduler</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>Delay</source>
+                <target>Delay</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>Delay Between The Queries</source>
+                <target>Delay Between The Queries</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>Activated</source>
+                <target>Activated</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>New</source>
+                <target>New</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>Really Delete</source>
+                <target>Really Delete</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>Edit Scheduler</source>
+                <target>Edit Scheduler</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>New Scheduler</source>
+                <target>New Scheduler</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>1/4 min</source>
+                <target>1/4 min</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>1/2 min</source>
+                <target>1/2 min</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>3/4 min</source>
+                <target>3/4 min</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>1 min</source>
+                <target>1 min</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>2 min</source>
+                <target>2 min</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>3 min</source>
+                <target>3 min</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>4 min</source>
+                <target>4 min</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>5 min</source>
+                <target>5 min</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>10 min</source>
+                <target>10 min</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>quarter of a hour</source>
+                <target>Quarter Of A Hour</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>half-hourly</source>
+                <target>Half-Hourly</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>hourly</source>
+                <target>Hourly</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>daily</source>
+                <target>Daily</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>weekly</source>
+                <target>Weekly</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

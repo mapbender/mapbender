@@ -6,7 +6,7 @@
 
 namespace Mapbender\CoreBundle\Component;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use FOM\ManagerBundle\Component\ManagerBundle;
 
 /**
  * The base bundle class for all Mapbender3 bundles.
@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  *
  * @author Christian Wygoda
  */
-class MapbenderBundle extends Bundle {
+class MapbenderBundle extends ManagerBundle {
     /**
      * Return list of element classes provided by this bundle.
      * Each entry in the array is a fully qualified class name.
@@ -49,26 +49,18 @@ class MapbenderBundle extends Bundle {
     }
 
     /**
-     * Return list of administration controllers to include in the manager
-     * backend.
-     * The list should be an array of arrays, each having giving the integer
-     * weight, the name and the route.
-     *
-     * @return array Array of admin controllers
+     * @inheritdoc
      */
-    public function getAdminControllers()
+    public function getManagerControllers()
     {
-        return array(
-            //array(
-            //    'weight' => 5,
-            //    'name' => 'Users'
-            //    'route' => 'mapbender_manager_user_index',
-            //    'controllers' => array(
-            //        'mapbender_manager_user',
-            //        'mapbender_manager_group'
-            //    )
-            //)
-        );
+    }
+
+    /**
+     * Source factories provide information about source importers/parsers/transformers
+     */
+    public function getRepositoryManagers()
+    {
+        return array();
     }
 }
 

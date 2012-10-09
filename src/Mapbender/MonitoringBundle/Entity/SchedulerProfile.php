@@ -15,17 +15,22 @@ class SchedulerProfile {
     private static $STATUS_RUNNING = "running";
     private static $STATUS_ERROR = "error";
 //    public static $STATUS_UNDEFINED = "undefined";
-    private static $STATUS_NO_JOB = "no_job";
-    private static $STATUS_WAITSTART = "wait_start";
-    private static $STATUS_WAITJOBSTART = "wait_job_start";
-    private static $STATUS_CANNOTSTART = "can_not_start";
+    private static $STATUS_NO_JOB = "nojob";
+    private static $STATUS_WAITSTART = "waitstart";
+    private static $STATUS_WAITJOBSTART = "waitjobstart";
+    private static $STATUS_CANNOTSTART = "cannotstart";
     public static $STATUS_ABORTED = "aborted";
     
-    public static $TIMEINTERVAL_14HOURLY = "every quarter of an hour";
-    public static $TIMEINTERVAL_12HOURLY = "half-hourly";
+    public static $TIMEINTERVAL_1_4HOURLY = "quarter of a hour";
+    public static $TIMEINTERVAL_1_2HOURLY = "half-hourly";
     public static $TIMEINTERVAL_HOURLY = "hourly";
     public static $TIMEINTERVAL_DAILY = "daily";
     public static $TIMEINTERVAL_WEEKLY = "weekly";
+    
+    public static $TIMEINTERVAL_0MIN = "no";
+    public static $TIMEINTERVAL_1_4MIN = "1/4 min";
+    public static $TIMEINTERVAL_1_2MIN = "1/2 min";
+    public static $TIMEINTERVAL_3_4MIN = "3/4 min";
     public static $TIMEINTERVAL_1MIN = "1 min";
     public static $TIMEINTERVAL_2MIN = "2 min";
     public static $TIMEINTERVAL_3MIN = "3 min";
@@ -41,31 +46,31 @@ class SchedulerProfile {
     protected $id;
     /**
 	 *
-	 * @ORM\Column(type="string", nullable=true)
+	 * @ORM\Column(type="string", nullable=false)
 	 */
     protected $title;
     /**
 	 *
-	 * @ORM\Column(type="datetime", nullable=true)
+	 * @ORM\Column(type="time", nullable=false)
 	 */
     protected $starttime;
     
     protected $starttimeStr;
     /**
 	 *
-	 * @ORM\Column(type="integer", nullable=true)
+	 * @ORM\Column(type="integer", nullable=false)
 	 */
     protected $starttimeinterval;
     /**
 	 *
-	 * @ORM\Column(type="integer", nullable=true)
+	 * @ORM\Column(type="integer", nullable=false)
 	 */
     protected $jobcontinuity;
     /**
 	 *
-	 * @ORM\Column(type="integer", nullable=true)
+	 * @ORM\Column(type="integer", nullable=false)
 	 */
-    protected $jobinterval;
+    protected $jobinterval = 0;
     /**
 	 *
 	 * @ORM\Column(type="datetime", nullable=true)
@@ -84,7 +89,7 @@ class SchedulerProfile {
     protected $lastendtime;
     /**
 	 *
-	 * @ORM\Column(type="boolean", nullable=true)
+	 * @ORM\Column(type="boolean", nullable=false)
 	 */
     protected $current = false;
     /**
@@ -118,16 +123,16 @@ class SchedulerProfile {
     }
     
     public function setStarttime($starttime) {
-        if($starttime == null){
-            $this->starttimeStr = $starttime;
-        } else if(gettype ($starttime) == "string"){
-            $this->starttimeStr = $starttime;
-            $timestamp = strtotime($starttime);
-            $starttime = date("H:i",$timestamp);
-            $starttime = new \DateTime($starttime);
-        } else {
-            $this->starttimeStr = date("H:i",date_timestamp_get($starttime));
-        }
+//        if($starttime == null){
+//            $this->starttimeStr = $starttime;
+//        } else if(gettype ($starttime) == "string"){
+//            $this->starttimeStr = $starttime;
+//            $timestamp = strtotime($starttime);
+//            $starttime = date("H:i",$timestamp);
+//            $starttime = new \DateTime($starttime);
+//        } else {
+//            $this->starttimeStr = date("H:i",date_timestamp_get($starttime));
+//        }
         $this->starttime = $starttime;
     }
     
@@ -141,10 +146,10 @@ class SchedulerProfile {
         return $this->starttimeStr;
     }
     
-    public function setStarttimeStr($starttime) {
-        $this->starttimeStr = $starttime;
-        $this->setStarttime($this->starttimeStr);
-    }
+//    public function setStarttimeStr($starttime) {
+//        $this->starttimeStr = $starttime;
+//        $this->setStarttime($this->starttimeStr);
+//    }
     
     public function getStarttimeinterval() {
         return $this->starttimeinterval;
@@ -156,15 +161,16 @@ class SchedulerProfile {
     
     public function getStarttimeintervalOpts() {
         return array(
+            0                                    => SchedulerProfile::$TIMEINTERVAL_0MIN,
 //            // TEST START to delete
-//            (SchedulerProfile::$HOUR_MS / 60) => SchedulerProfile::$TIMEINTERVAL_1MIN,
-//            (SchedulerProfile::$HOUR_MS / 30) => SchedulerProfile::$TIMEINTERVAL_2MIN,
-//            (SchedulerProfile::$HOUR_MS / 20) => SchedulerProfile::$TIMEINTERVAL_3MIN,
-//            (SchedulerProfile::$HOUR_MS / 15) => SchedulerProfile::$TIMEINTERVAL_4MIN,
-//            (SchedulerProfile::$HOUR_MS / 12) => SchedulerProfile::$TIMEINTERVAL_5MIN,
-//            (SchedulerProfile::$HOUR_MS / 6) => SchedulerProfile::$TIMEINTERVAL_10MIN,
-//            (SchedulerProfile::$HOUR_MS / 4) => SchedulerProfile::$TIMEINTERVAL_14HOURLY,
-//            (SchedulerProfile::$HOUR_MS / 2) => SchedulerProfile::$TIMEINTERVAL_12HOURLY,
+            (SchedulerProfile::$HOUR_MS / 60) => SchedulerProfile::$TIMEINTERVAL_1MIN,
+            (SchedulerProfile::$HOUR_MS / 30) => SchedulerProfile::$TIMEINTERVAL_2MIN,
+            (SchedulerProfile::$HOUR_MS / 20) => SchedulerProfile::$TIMEINTERVAL_3MIN,
+            (SchedulerProfile::$HOUR_MS / 15) => SchedulerProfile::$TIMEINTERVAL_4MIN,
+            (SchedulerProfile::$HOUR_MS / 12) => SchedulerProfile::$TIMEINTERVAL_5MIN,
+            (SchedulerProfile::$HOUR_MS / 6) => SchedulerProfile::$TIMEINTERVAL_10MIN,
+            (SchedulerProfile::$HOUR_MS / 4) => SchedulerProfile::$TIMEINTERVAL_1_4HOURLY,
+            (SchedulerProfile::$HOUR_MS / 2) => SchedulerProfile::$TIMEINTERVAL_1_2HOURLY,
 //            // TEST END 
             SchedulerProfile::$HOUR_MS => SchedulerProfile::$TIMEINTERVAL_HOURLY,
             (SchedulerProfile::$HOUR_MS * 24) => SchedulerProfile::$TIMEINTERVAL_DAILY,
@@ -175,14 +181,14 @@ class SchedulerProfile {
         return $this->jobcontinuity;
     }
     
-    public function getJobcontinuityOpts() {
-        return array(
-            (SchedulerProfile::$HOUR_MS / 60) => SchedulerProfile::$TIMEINTERVAL_1MIN,
-            (SchedulerProfile::$HOUR_MS / 30) => SchedulerProfile::$TIMEINTERVAL_2MIN,
-            (SchedulerProfile::$HOUR_MS / 20) => SchedulerProfile::$TIMEINTERVAL_3MIN,
-            (SchedulerProfile::$HOUR_MS / 15) => SchedulerProfile::$TIMEINTERVAL_4MIN,
-            (SchedulerProfile::$HOUR_MS / 12) => SchedulerProfile::$TIMEINTERVAL_5MIN);
-    }
+//    public function getJobcontinuityOpts() {
+//        return array(
+//            (SchedulerProfile::$HOUR_MS / 60) => SchedulerProfile::$TIMEINTERVAL_1MIN,
+//            (SchedulerProfile::$HOUR_MS / 30) => SchedulerProfile::$TIMEINTERVAL_2MIN,
+//            (SchedulerProfile::$HOUR_MS / 20) => SchedulerProfile::$TIMEINTERVAL_3MIN,
+//            (SchedulerProfile::$HOUR_MS / 15) => SchedulerProfile::$TIMEINTERVAL_4MIN,
+//            (SchedulerProfile::$HOUR_MS / 12) => SchedulerProfile::$TIMEINTERVAL_5MIN);
+//    }
     
     public function setJobcontinuity($jobcontinuity) {
         $this->jobcontinuity = $jobcontinuity;
@@ -194,10 +200,14 @@ class SchedulerProfile {
     
     public function getJobintervalOpts() {
         return array(
-            (SchedulerProfile::$HOUR_MS / 60) => SchedulerProfile::$TIMEINTERVAL_1MIN,
-            (SchedulerProfile::$HOUR_MS / 30) => SchedulerProfile::$TIMEINTERVAL_2MIN,
-            (SchedulerProfile::$HOUR_MS / 12) => SchedulerProfile::$TIMEINTERVAL_5MIN,
-            (SchedulerProfile::$HOUR_MS / 6) => SchedulerProfile::$TIMEINTERVAL_10MIN);
+            0                                    => SchedulerProfile::$TIMEINTERVAL_0MIN,
+            (SchedulerProfile::$HOUR_MS / 240)  => SchedulerProfile::$TIMEINTERVAL_1_4MIN,
+            (SchedulerProfile::$HOUR_MS / 120)  => SchedulerProfile::$TIMEINTERVAL_1_2MIN,
+            (SchedulerProfile::$HOUR_MS / 80)   => SchedulerProfile::$TIMEINTERVAL_3_4MIN,
+            (SchedulerProfile::$HOUR_MS / 60)   => SchedulerProfile::$TIMEINTERVAL_1MIN,
+            (SchedulerProfile::$HOUR_MS / 30)   => SchedulerProfile::$TIMEINTERVAL_2MIN,
+            (SchedulerProfile::$HOUR_MS / 12)   => SchedulerProfile::$TIMEINTERVAL_5MIN,
+            (SchedulerProfile::$HOUR_MS / 6)    => SchedulerProfile::$TIMEINTERVAL_10MIN);
     }
     
     public function setJobinterval($jobinterval) {
@@ -249,6 +259,10 @@ class SchedulerProfile {
         case SchedulerProfile::$HOUR_MS: return SchedulerProfile::$TIMEINTERVAL_HOURLY; break;
         case SchedulerProfile::$HOUR_MS * 24: return SchedulerProfile::$TIMEINTERVAL_DAILY; break;
         case SchedulerProfile::$HOUR_MS * 24 * 7: return SchedulerProfile::$TIMEINTERVAL_WEEKLY; break;
+        case 0: return SchedulerProfile::$TIMEINTERVAL_0MIN; break;
+        case SchedulerProfile::$HOUR_MS / 240: return SchedulerProfile::$TIMEINTERVAL_1_4MIN; break;
+        case SchedulerProfile::$HOUR_MS / 120: return SchedulerProfile::$TIMEINTERVAL_1_2MIN; break;
+        case SchedulerProfile::$HOUR_MS / 80: return SchedulerProfile::$TIMEINTERVAL_3_4MIN; break;
         case SchedulerProfile::$HOUR_MS / 60: return SchedulerProfile::$TIMEINTERVAL_1MIN; break;
         case SchedulerProfile::$HOUR_MS / 30: return SchedulerProfile::$TIMEINTERVAL_2MIN; break;
         case SchedulerProfile::$HOUR_MS / 20: return SchedulerProfile::$TIMEINTERVAL_3MIN; break;
