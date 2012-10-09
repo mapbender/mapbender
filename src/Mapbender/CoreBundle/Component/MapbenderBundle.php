@@ -54,5 +54,13 @@ class MapbenderBundle extends ManagerBundle {
     public function getManagerControllers()
     {
     }
+
+    /**
+     * Source factories provide information about source importers/parsers/transformers
+     */
+    public function getRepositoryManagers()
+    {
+        return array();
+    }
 }
 

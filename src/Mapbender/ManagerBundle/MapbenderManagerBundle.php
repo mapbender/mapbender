@@ -21,9 +21,8 @@ class MapbenderManagerBundle extends MapbenderBundle
             array(
                 'weight' => 20,
                 'title' => 'Services',
-                'route' => 'mapbender_manager_layer_index',
+                'route' => 'mapbender_manager_repository_index',
                 'routes' => array(
-                    'mapbender_manager_layer',
                     'mapbender_manager_repository',
                 )
             ),

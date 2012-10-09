@@ -1,7 +1,17 @@
 <?php
 
 namespace Mapbender\WmsBundle;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MapbenderWmsBundle extends Bundle {
+use Mapbender\CoreBundle\Component\MapbenderBundle;
+
+class MapbenderWmsBundle extends MapbenderBundle {
+    public function getRepositoryManagers()
+    {
+        return array(
+            'wms' => array(
+                'label' => 'OGC Web Map Service (WMS)',
+                'manager' => 'mapbender_wms_repository'
+            )
+        );
+    }
 }

@@ -22,6 +22,7 @@ class Mapbender {
     private $elements = array();
     private $layers = array();
     private $templates = array();
+    private $repositoryManagers = array();
 
     /**
      * Mapbender constructor.
@@ -44,6 +45,8 @@ class Mapbender {
                     $bundle->getLayers());
                 $this->templates = array_merge($this->templates,
                     $bundle->getTemplates());
+                $this->repositoryManagers = array_merge($this->repositoryManagers,
+                    $bundle->getRepositoryManagers());
             }
         }
     }
@@ -58,6 +61,16 @@ class Mapbender {
      */
     public function getElements() {
         return $this->elements;
+    }
+
+    /**
+     * Get list of all declared source factories.
+     *
+     * @return array
+     */
+    public function getRepositoryManagers()
+    {
+        return $this->repositoryManagers;
     }
 
     /**
