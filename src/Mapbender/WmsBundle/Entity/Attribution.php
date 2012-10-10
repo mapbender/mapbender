@@ -64,7 +64,7 @@ class Attribution {
     }
 
     /**
-     * Gets title
+     * Get title
      * 
      * @return string
      */
@@ -73,7 +73,7 @@ class Attribution {
     }
     
     /**
-     * Sets title
+     * Set title
      * @param string $value 
      */
     public function setTitle($value) {
@@ -81,7 +81,7 @@ class Attribution {
     }
 
     /**
-     * Gets onlineResource
+     * Get onlineResource
      * 
      * @return string
      */
@@ -90,7 +90,7 @@ class Attribution {
     }
     
     /**
-     * Sets onlineResource
+     * Set onlineResource
      * @param string $value 
      */
     public function setOnlineResource($value) {
@@ -98,7 +98,7 @@ class Attribution {
     }
 
     /**
-     * Gets logoUrl
+     * Get logoUrl
      * 
      * @return string
      */
@@ -106,7 +106,7 @@ class Attribution {
         return $this->logoUrl;
     }
     /**
-     * Sets logoUrl
+     * Set logoUrl
      * @param string $value 
      */
     public function setLogoUrl($value) {
@@ -114,7 +114,7 @@ class Attribution {
     }
 
     /**
-     * Gets logoFormat
+     * Get logoFormat
      * 
      * @return string
      */
@@ -122,7 +122,7 @@ class Attribution {
         return $this->logoFormat;
     }
     /**
-     * Sets logoFormat
+     * Set logoFormat
      * @param string $value 
      */
     public function setLogoFormat($value) {
@@ -130,7 +130,7 @@ class Attribution {
     }
 
     /**
-     * Gets logoWidth
+     * Get logoWidth
      * 
      * @return integer
      */
@@ -138,7 +138,7 @@ class Attribution {
         return $this->logoWidth;
     }
     /**
-     * Sets logoWidth
+     * Set logoWidth
      * @param integer $value 
      */
     public function setLogoWidth($value) {
@@ -146,7 +146,7 @@ class Attribution {
     }
 
     /**
-     * Gets logoHeight
+     * Get logoHeight
      * 
      * @return integer
      */
@@ -154,7 +154,7 @@ class Attribution {
         return $this->logoHeight;
     }
     /**
-     * Sets logoHeight
+     * Set logoHeight
      * @param integer $value 
      */
     public function setLogoHeight($value) {
@@ -162,7 +162,7 @@ class Attribution {
     }
     
     /**
-     * Gets object as array
+     * Get object as array
      * 
      * @return array
      */

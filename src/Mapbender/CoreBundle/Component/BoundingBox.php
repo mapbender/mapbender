@@ -1,5 +1,5 @@
 <?php
-namespace Mapbender\WmsBundle\Entity;
+namespace Mapbender\CoreBundle\Component;
 
 
 /**
@@ -48,7 +48,7 @@ class BoundingBox {
     }
     
     /**
-     * Gets srs
+     * Get srs
      * 
      * @return string
      */
@@ -56,7 +56,7 @@ class BoundingBox {
         return $this->srs;
     }
     /**
-     * Sets srs
+     * Set srs
      * @param string $value 
      */
     public function setSrs($value) {
@@ -64,7 +64,7 @@ class BoundingBox {
     }
     
     /**
-     * Gets minx
+     * Get minx
      * 
      * @return float
      */
@@ -72,7 +72,7 @@ class BoundingBox {
         return $this->minx;
     }
     /**
-     * Sets minx
+     * Set minx
      * @param float $value 
      */
     public function setMinx($value) {
@@ -80,7 +80,7 @@ class BoundingBox {
     }
     
     /**
-     * Gets miny
+     * Get miny
      * 
      * @return float
      */
@@ -88,7 +88,7 @@ class BoundingBox {
         return $this->miny;
     }
     /**
-     * Sets miny
+     * Set miny
      * @param float $value 
      */
     public function setMiny($value) {
@@ -96,7 +96,7 @@ class BoundingBox {
     }
     
     /**
-     * Gets maxx
+     * Get maxx
      * 
      * @return float
      */
@@ -104,7 +104,7 @@ class BoundingBox {
         return $this->maxx;
     }
     /**
-     * Sets maxx
+     * Set maxx
      * @param float $value 
      */
     public function setMaxx($value) {
@@ -112,7 +112,7 @@ class BoundingBox {
     }
     
     /**
-     * Gets maxy
+     * Get maxy
      * 
      * @return float
      */
@@ -120,7 +120,7 @@ class BoundingBox {
         return $this->maxy;
     }
     /**
-     * Sets maxy
+     * Set maxy
      * @param float $value 
      */
     public function setMaxy($value) {
@@ -128,7 +128,7 @@ class BoundingBox {
     }
     
     /**
-     * Gets object as array
+     * Get object as array
      * 
      * @return array
      */

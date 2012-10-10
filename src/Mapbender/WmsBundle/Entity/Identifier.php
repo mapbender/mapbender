@@ -32,7 +32,7 @@ class Identifier {
     }
     
     /**
-     * Gets authority
+     * Get authority
      * 
      * @return Authority
      */
@@ -41,7 +41,7 @@ class Identifier {
     }
     
     /**
-     * Sets authority
+     * Set authority
      * @param Authority $value 
      */
     public function setAuthority($value) {
@@ -49,7 +49,7 @@ class Identifier {
     }
     
     /**
-     * Gets value
+     * Get value
      * 
      * @return string
      */
@@ -58,7 +58,7 @@ class Identifier {
     }
     
     /**
-     * Sets value
+     * Set value
      * @param string $value 
      */
     public function setValue($value) {
@@ -66,7 +66,7 @@ class Identifier {
     }
     
     /**
-     * Gets object as array
+     * Get object as array
      * 
      * @return array
      */

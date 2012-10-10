@@ -32,7 +32,7 @@ class Authority {
     }
     
     /**
-     * Gets url
+     * Get url
      * 
      * @return string
      */
@@ -41,7 +41,7 @@ class Authority {
     }
     
     /**
-     * Sets url
+     * Set url
      * @param string $value 
      */
     public function setUrl($value) {
@@ -49,7 +49,7 @@ class Authority {
     }
     
     /**
-     * Gets name
+     * Get name
      * 
      * @return string
      */
@@ -58,7 +58,7 @@ class Authority {
     }
     
     /**
-     * Sets name
+     * Set name
      * @param string $value 
      */
     public function setName($value) {
@@ -66,7 +66,7 @@ class Authority {
     }
     
     /**
-     * Gets object as array
+     * Get object as array
      * 
      * @return array
      */

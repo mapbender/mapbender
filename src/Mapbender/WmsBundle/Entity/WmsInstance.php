@@ -20,7 +20,7 @@ class WmsInstance {
     */
     protected $id;
     /**
-     * @ORM\ManyToOne(targetEntity="WMSService",inversedBy="layer", cascade={"update"})
+     * @ORM\ManyToOne(targetEntity="WMSService",inversedBy="layer", cascade={"refresh", "persist"})
      * @ORM\JoinColumn(name="service", referencedColumnName="id")
      */
     protected $service;

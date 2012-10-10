@@ -32,7 +32,7 @@ class MetadataUrl {
     }
     
     /**
-     * Gets name
+     * Get name
      * 
      * @return string
      */
@@ -41,7 +41,7 @@ class MetadataUrl {
     }
     
     /**
-     * Sets name
+     * Set name
      * @param string $value 
      */
     public function setName($value) {
@@ -49,7 +49,7 @@ class MetadataUrl {
     }
     
     /**
-     * Gets url
+     * Get url
      * 
      * @return string
      */
@@ -58,7 +58,7 @@ class MetadataUrl {
     }
     
     /**
-     * Sets url
+     * Set url
      * @param string $value 
      */
     public function setUrl($value) {
@@ -66,7 +66,7 @@ class MetadataUrl {
     }
     
     /**
-     * Gets object as array
+     * Get object as array
      * 
      * @return array
      */

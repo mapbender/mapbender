@@ -49,7 +49,7 @@ class RequestInformation {
     }
     
     /**
-     * Gets httpGet
+     * Get httpGet
      * 
      * @return string
      */
@@ -57,7 +57,7 @@ class RequestInformation {
         return $this->httpGet;
     }
     /**
-     * Sets httpGet
+     * Set httpGet
      * @param string $value 
      */
     public function setHttpGet($value) {
@@ -65,7 +65,7 @@ class RequestInformation {
     }
     
     /**
-     * Gets httpPost
+     * Get httpPost
      * 
      * @return string
      */
@@ -73,7 +73,7 @@ class RequestInformation {
         return $this->httpPost;
     }
     /**
-     * Sets httpPost
+     * Set httpPost
      * @param string $value 
      */
     public function setHttpPost($value) {
@@ -81,7 +81,7 @@ class RequestInformation {
     }
     
     /**
-     * Gets formats
+     * Get formats
      * 
      * @return string
      */
@@ -90,7 +90,7 @@ class RequestInformation {
     }
     
     /**
-     * Sets formats
+     * Set formats
      * @param string $value 
      */
     public function setFormats($value) {
@@ -98,7 +98,7 @@ class RequestInformation {
     }
     
     /**
-     * Gets object as array
+     * Get object as array
      * 
      * @return array
      */
