@@ -79,12 +79,7 @@ class Attribution {
     public function setTitle($value) {
         $this->title = $value;
     }
-    
-    /**
-     * ORM\Column(type="string", nullable=false)
-     */
-    protected $onlineResource;
-    
+
     /**
      * Gets onlineResource
      * 

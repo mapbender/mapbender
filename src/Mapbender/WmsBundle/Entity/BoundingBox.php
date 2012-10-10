@@ -107,7 +107,7 @@ class BoundingBox {
      * Sets maxx
      * @param float $value 
      */
-    public function setMiny($value) {
+    public function setMaxx($value) {
         $this->maxx = $value;
     }
     
@@ -123,7 +123,7 @@ class BoundingBox {
      * Sets maxy
      * @param float $value 
      */
-    public function setMiny($value) {
+    public function setMaxy($value) {
         $this->maxy = $value;
     }
     
