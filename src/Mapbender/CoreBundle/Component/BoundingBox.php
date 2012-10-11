@@ -58,9 +58,11 @@ class BoundingBox {
     /**
      * Set srs
      * @param string $value 
+     * @return BoundingBox
      */
     public function setSrs($value) {
         $this->srs = $value;
+        return $this;
     }
     
     /**
@@ -74,9 +76,11 @@ class BoundingBox {
     /**
      * Set minx
      * @param float $value 
+     * @return BoundingBox
      */
     public function setMinx($value) {
         $this->minx = $value;
+        return $this;
     }
     
     /**
@@ -89,10 +93,12 @@ class BoundingBox {
     }
     /**
      * Set miny
-     * @param float $value 
+     * @param float $value
+     * @return BoundingBox
      */
     public function setMiny($value) {
         $this->miny = $value;
+        return $this;
     }
     
     /**
@@ -106,9 +112,11 @@ class BoundingBox {
     /**
      * Set maxx
      * @param float $value 
+     * @return BoundingBox
      */
     public function setMaxx($value) {
         $this->maxx = $value;
+        return $this;
     }
     
     /**
@@ -122,9 +130,11 @@ class BoundingBox {
     /**
      * Set maxy
      * @param float $value 
+     * @return BoundingBox
      */
     public function setMaxy($value) {
         $this->maxy = $value;
+        return $this;
     }
     
     /**

@@ -62,6 +62,7 @@ class RequestInformation {
      */
     public function setHttpGet($value) {
         $this->httpGet = $value;
+        return $this;
     }
     
     /**
@@ -78,6 +79,7 @@ class RequestInformation {
      */
     public function setHttpPost($value) {
         $this->httpPost = $value;
+        return $this;
     }
     
     /**
@@ -95,6 +97,7 @@ class RequestInformation {
      */
     public function setFormats($value) {
         $this->formats = $value;
+        return $this;
     }
     
     /**

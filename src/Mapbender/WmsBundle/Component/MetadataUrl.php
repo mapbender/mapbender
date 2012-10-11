@@ -1,5 +1,5 @@
 <?php
-namespace Mapbender\WmsBundle\Entity;
+namespace Mapbender\WmsBundle\Component;
 
 /**
  * MetadataUrl class.
@@ -14,7 +14,7 @@ class MetadataUrl {
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $name;
+    protected $type;
     
     /**
      * Creates a MetadataUrl object from parameters
@@ -22,8 +22,8 @@ class MetadataUrl {
      */
     public static function create($parameters){
         $obj = new MetadataUrl();
-        if(isset($parameters["name"])){
-            $this->name = $parameters["name"];
+        if(isset($parameters["type"])){
+            $this->type = $parameters["type"];
         }
         if(isset($parameters["url"])){
             $this->url = $parameters["url"];
@@ -32,20 +32,22 @@ class MetadataUrl {
     }
     
     /**
-     * Get name
+     * Get type
      * 
      * @return string
      */
-    public function getName() {
-        return $this->name;
+    public function getType() {
+        return $this->type;
     }
     
     /**
-     * Set name
+     * Set type
      * @param string $value 
+     * @return MetadataUrl
      */
-    public function setName($value) {
-        $this->name = $value;
+    public function setType($value) {
+        $this->type = $value;
+        return $this;
     }
     
     /**
@@ -60,9 +62,11 @@ class MetadataUrl {
     /**
      * Set url
      * @param string $value 
+     * @return MetadataUrl
      */
     public function setUrl($value) {
         $this->url = $value;
+        return $this;
     }
     
     /**
@@ -73,7 +77,7 @@ class MetadataUrl {
     public function toArray() {
         return array (
             "url" => $this->url,
-            "name" => $this->name
+            "type" => $this->type
         );
     }
 }

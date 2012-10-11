@@ -4,192 +4,206 @@ namespace Mapbender\Component\HTTP;
 
 class HTTPClient {
 
-
+    protected $container = "";
+    protected $ch = null;
     protected $method = "GET";
     protected $headers = array();
     protected $host = "";
     protected $port = "";
     protected $path = "";
-    protected $proxyHost = "";
-    protected $proxyPort = "";
-    protected $username = "";
+    protected $username = null;
+    protected $password = null;
+    protected $proxyHost = null;
+    protected $proxyPort = null;
+    protected $noProxyHosts = array();
+    protected $usrpwd = null;
 
-    protected $password = "";
-    protected $container = "";
-    protected $ch = null;
-    
-
-    public function __construct($container = null){
+    public function __construct($container = null) {
         $this->ch = curl_init();
         $this->container = $container;
-
-        $proxyConf = null;
-        if($this->container){
+        if ($this->container) {
             try {
-                $proxyConf = $this->container->getParameter('proxy');
-            }catch(\InvalidArgumentException $E){
-                // thrown when the parameter is not set
-                // maybe some logging ?
+                $proxyConf = $this->container->getParameter('mapbender.proxy');
+            } catch (\InvalidArgumentException $E) {
+// thrown when the parameter is not set
+// maybe some logging ?
                 $proxyConf = array();
                 $this->container->get('logger')->debug('Not using Proxy Configuuration');
             }
-            if($proxyConf && isset($proxyConf['host']) && $proxyConf['host'] != ""){
+            if (isset($proxyConf['host']) && $proxyConf['host'] != "") {
                 $this->setProxyHost($proxyConf['host']);
-                $this->setProxyPort($proxyConf['port']?:null);
+                if (isset($proxyConf['port']) && $proxyConf['port'] != "") {
+                    $this->setProxyPort($proxyConf['port']);
+                }
+                if (isset($proxyConf['user']) && $proxyConf['user'] != "") {
+                    $this->setUsrPwd($proxyConf['user'] . ":" . (isset($proxyConf['password']) ? $proxyConf['password'] : null));
+                }
+                if (isset($proxyConf['noproxy']) && is_array($proxyConf['noproxy'])) {
+                    $this->setNoProxyHosts($proxyConf['noproxy']);
+                } else {
+                    $this->setNoProxyHosts(array());
+                }
                 $this->container->get('logger')
-                ->debug(sprintf('Making Request via Proxy: %s:%s',
-                $this->getProxyHost(),
-                $this->getProxyPort()));
+                        ->debug(sprintf('Making Request via Proxy: %s:%s', $this->getProxyHost(), $this->getProxyPort(), implode(",", $this->getNoProxyHosts())));
             }
         }
-
     }
-    public function __destruct(){
+
+    public function __destruct() {
         $this->ch = curl_close($this->ch);
     }
 
-
-    public function setProxyHost($host){
+    public function setProxyHost($host) {
         $this->proxyHost = $host;
     }
-    
-    public function getProxyHost(){
+
+    public function getProxyHost() {
         return $this->proxyHost;
     }
 
-    public function setProxyPort($port){
+    public function setProxyPort($port) {
         $this->proxyPort = $port;
     }
-    
-    public function getProxyPort(){
+
+    public function getProxyPort() {
         return $this->proxyPort;
     }
 
-    public function getUsername (){
-        return $this->username ;
-    }
-    
-    public function setUsername ($username ){
-        $this->username  = $username ;
+    public function setNoProxyHosts($noProxyHosts) {
+        $this->noProxyHosts = $noProxyHosts;
     }
 
-    public function getPassword (){
-        return $this->password ;
+    public function getNoProxyHosts() {
+        return $this->noProxyHosts;
     }
-    
-    public function setPassword ($password ){
-        $this->password  = $password ;
+
+    public function getUsername() {
+        return $this->username;
+    }
+
+    public function setUsername($username) {
+        $this->username = $username;
+    }
+
+    public function getPassword() {
+        return $this->password;
+    }
+
+    public function setPassword($password) {
+        $this->password = $password;
+    }
+
+    public function setUsrPwd($usrpwd) {
+        $this->usrpwd = $usrpwd;
+    }
+
+    public function getUsrPwd() {
+        return $this->usrpwd;
     }
 
     /**
      * Shortcut Method 
-    */
-    public function open($url,$query = array(),$method='GET', $data=''){
-        curl_setopt($this->ch,CURLOPT_URL,$url);
+     */
+    public function open($url, $query = array(), $method='GET', $data='') {
+        curl_setopt($this->ch, CURLOPT_URL, $url);
         curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->ch, CURLINFO_HEADER_OUT, true);
-        curl_setopt($this->ch, CURLOPT_HEADER, true);
-        
-        if($this->getUsername()){
+
+        $url_ = parse_url($url);
+
+        if ($this->getUsrPwd() !== null && !in_array($url_['host'], $this->getNoProxyHosts())) {
             curl_setopt($this->ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-            curl_setopt($this->ch, CURLOPT_USERPWD, $this->getUsername().":".$this->getPassword());
+            curl_setopt($this->ch, CURLOPT_USERPWD, $this->getUsrPwd());
         }
-        if($this->getProxyHost()){
+        if ($this->getProxyHost() !== null && !in_array($url_['host'], $this->getNoProxyHosts())) {
             curl_setopt($this->ch, CURLOPT_PROXY, $this->getProxyHost());
         }
-        if($this->getProxyPort()){
+        if ($this->getProxyPort() !== null && !in_array($url_['host'], $this->getNoProxyHosts())) {
             curl_setopt($this->ch, CURLOPT_PROXYPORT, $this->getProxyport());
         }
 
-
         $data = curl_exec($this->ch);
 
-        if(($error = curl_error($this->ch)) != ""){
+        if (($error = curl_error($this->ch)) != "") {
             throw new \Exception("Curl says: '$error'");
         }
+        $statusCode = curl_getInfo($this->ch, CURLINFO_HTTP_CODE);
+
         $result = new HTTPResult();
-        $result->setStatusCode(curl_getInfo($this->ch, CURLINFO_HTTP_CODE));
-        $result->setData(substr($data, curl_getInfo($this->ch, CURLINFO_HEADER_SIZE)));
-        $header_help = explode("\r\n", trim(substr($data, 0, curl_getInfo($this->ch, CURLINFO_HEADER_SIZE))));
-        $headers = array();
-        foreach ($header_help as $header_) {
-            $pos = strpos($header_, ":");
-            if(intval($pos)){
-                $headers[substr($header_, 0, $pos)] = substr($header_, $pos);
-            }
-        }
-        $result->setHeaders($headers);
+        $result->setData($data);
+        $result->setStatusCode($statusCode);
         return $result;
     }
 
-  static function parseQueryString($str) {
-    $op = array();
-    $pairs = explode("&", $str);
-    foreach ($pairs as $pair) {
-        $arr = explode("=",$pair);
-        $k = isset($arr[0])? $arr[0]:null;
-        $v = isset($arr[1])? $arr[1]:null;
-        if($k !== null){
-          $op[$k] = $v;
+    public static function parseQueryString($str) {
+        $op = array();
+        $pairs = explode("&", $str);
+        foreach ($pairs as $pair) {
+            $arr = explode("=", $pair);
+            $k = isset($arr[0]) ? $arr[0] : null;
+            $v = isset($arr[1]) ? $arr[1] : null;
+            if ($k !== null) {
+                $op[$k] = $v;
+            }
         }
+        return $op;
     }
-    return $op;
-  } 
-  
-  static function buildQueryString($parsedQuery) {
-    $result = array();
-    foreach($parsedQuery as $key => $value){
-      if($key || $value ) {
-        $result[] = "$key=$value";
-      }
+
+    public static function buildQueryString($parsedQuery) {
+        $result = array();
+        foreach ($parsedQuery as $key => $value) {
+            if ($key || $value) {
+                $result[] = "$key=$value";
+            }
+        }
+        return implode("&", $result);
     }
-    return implode("&",$result);
-  } 
 
-  static function parseUrl($url){
-      $defaults = array(
-        "scheme"   => "http",
-        "host"     => null, 
-        "port"     => null,
-        "user"     => null,
-        "pass"     => null, 
-        "path"     => "/",  
-        "query"    => null,
-        "fragment" => null
-      );  
+    public static function parseUrl($url) {
+        $defaults = array(
+            "scheme" => "http",
+            "host" => null,
+            "port" => null,
+            "user" => null,
+            "pass" => null,
+            "path" => "/",
+            "query" => null,
+            "fragment" => null
+        );
 
-      $parsedUrl = parse_url($url);
+        $parsedUrl = parse_url($url);
 
-      $mergedUrl = array_merge($defaults,$parsedUrl);
-    return $mergedUrl;
-  }
-  static function buildUrl(array $parsedUrl){
-      $defaults = array(
-        "scheme"   => "http",
-        "host"     => null, 
-        "port"     => null,
-        "user"     => null,
-        "pass"     => null, 
-        "path"     => "/",  
-        "query"    => null,
-        "fragment" => null
-      );  
+        $mergedUrl = array_merge($defaults, $parsedUrl);
+        return $mergedUrl;
+    }
 
-      $mergedUrl = array_merge($defaults,$parsedUrl);
+    public static function buildUrl(array $parsedUrl) {
+        $defaults = array(
+            "scheme" => "http",
+            "host" => null,
+            "port" => null,
+            "user" => null,
+            "pass" => null,
+            "path" => "/",
+            "query" => null,
+            "fragment" => null
+        );
 
-      $result = $mergedUrl['scheme'] ."://";
-      
-      $authString = $mergedUrl['user'] ;
-      $authString .= $mergedUrl['pass'] ? ":" .$mergedUrl['pass'] : ""; 
-      $authString .= $authString ? "@":"";
-      $result .= $authString;
+        $mergedUrl = array_merge($defaults, $parsedUrl);
 
-      $result .= $mergedUrl['host'];
-      $result .= $mergedUrl['port'] ? ':'.$mergedUrl['port']:"";
-      $result .= $mergedUrl['path'];
-      $result .= $mergedUrl['query'] ? '?'.$mergedUrl['query']:"";
-      return $result;
-   
-  }
+        $result = $mergedUrl['scheme'] . "://";
+
+        $authString = $mergedUrl['user'];
+        $authString .= $mergedUrl['pass'] ? ":" . $mergedUrl['pass'] : "";
+        $authString .= $authString ? "@" : "";
+        $result .= $authString;
+
+        $result .= $mergedUrl['host'];
+        $result .= $mergedUrl['port'] ? ':' . $mergedUrl['port'] : "";
+        $result .= $mergedUrl['path'];
+        $result .= $mergedUrl['query'] ? '?' . $mergedUrl['query'] : "";
+        return $result;
+    }
+
 }

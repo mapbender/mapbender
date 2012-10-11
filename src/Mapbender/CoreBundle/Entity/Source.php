@@ -25,15 +25,21 @@ abstract class Source {
 
     /**
      * @var string $title The source title
-     * @ORM\Column(type="string", length=128)
+     * @ORM\Column(type="string", length=128, nullable=true)
      */
     protected $title;
     
     /**
      * @var string $alias The source alias
-     * @ORM\Column(type="string", length=128)
+     * @ORM\Column(type="string", length=128, nullable=true)
      */
     protected $alias;
+    
+    /**
+     * @var string $description The source description
+     * @ORM\Column(type="string", length=128, nullable=true)
+     */
+    protected $description;
     
     
     public function __construct() {
@@ -70,6 +76,28 @@ abstract class Source {
     public function getTitle()
     {
         return $this->title;
+    }
+    
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Source
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string 
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**

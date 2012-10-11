@@ -1,5 +1,5 @@
 <?php
-namespace Mapbender\WmsBundle\Entity;
+namespace Mapbender\WmsBundle\Component;
 
 /**
  * Identifier class.
@@ -42,10 +42,12 @@ class Identifier {
     
     /**
      * Set authority
-     * @param Authority $value 
+     * @param Authority $value
+     * @return Identifier
      */
-    public function setAuthority($value) {
+    public function setAuthority(Authority $value) {
         $this->authority = $value;
+        return $this;
     }
     
     /**
@@ -60,9 +62,11 @@ class Identifier {
     /**
      * Set value
      * @param string $value 
+     * @return Identifier
      */
     public function setValue($value) {
         $this->value = $value;
+        return $this;
     }
     
     /**

@@ -1,125 +1,152 @@
 <?php
+
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\WmsBundle\Entity\RequestInformation;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
-*/
+ */
 class WmsSource extends Source {
     
     /**
-    * @ORM\Column(type="string", nullable=true)
-    */
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $originUrl = "";
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
     protected $name = "";
 
     /**
-    * @ORM\Column(type="string", nullable=true)
-    */
+     * @ORM\Column(type="string", nullable=true)
+     */
     protected $version = "";
 
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $onlineResource;
 
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist","remove"})
+     */
     protected $contact;
 
     /**
-    * @ORM\Column(type="text", nullable=true)
-    */
+     * @ORM\Column(type="text", nullable=true)
+     */
     protected $fees = "";
-    
+
     /**
-    * @ORM\Column(type="text",nullable=true)
-    */
+     * @ORM\Column(type="text",nullable=true)
+     */
     protected $accessConstraints = "";
-    
+
     /**
-    * @ORM\Column(type="array",nullable=true)
-    */
+     * @ORM\Column(type="array",nullable=true)
+     */
     protected $exceptionFormats = array();
-    
+
     /**
-    * @ORM\Column(type="boolean", nullable=true)
-    */
+     * @ORM\Column(type="boolean", nullable=true)
+     */
     protected $supportsSld = false;
-    
+
     /**
-    * @ORM\Column(type="boolean", nullable=true)
-    */
+     * @ORM\Column(type="boolean", nullable=true)
+     */
     protected $userLayer = false;
-    
+
     /**
-    * @ORM\Column(type="boolean", nullable=true)
-    */
+     * @ORM\Column(type="boolean", nullable=true)
+     */
     protected $userStyle = false;
-    
+
     /**
-    * @ORM\Column(type="boolean", nullable=true)
-    */
+     * @ORM\Column(type="boolean", nullable=true)
+     */
     protected $remoteWfs = false;
 
     /**
-    * @ORM\Column(type="object", nullable=true)
-    */
+     * @ORM\Column(type="object", nullable=true)
+     */
     protected $getCapabilities = null;
-    
+
     /**
-    * @ORM\Column(type="object", nullable=true)
-    */
+     * @ORM\Column(type="object", nullable=true)
+     */
     protected $getMap = null;
 
     /**
-    * @ORM\Column(type="object", nullable=true)
-    */
+     * @ORM\Column(type="object", nullable=true)
+     */
     protected $getFeatureInfo = null;
 
     /**
-    * @ORM\Column(type="object", nullable=true)
-    */
+     * @ORM\Column(type="object", nullable=true)
+     */
     protected $describeLayer = null;
 
     /**
-    * @ORM\Column(type="object", nullable=true)
-    */
+     * @ORM\Column(type="object", nullable=true)
+     */
     protected $getLegendGraphic = null;
 
     /**
-    * @ORM\Column(type="object", nullable=true)
-    */
+     * @ORM\Column(type="object", nullable=true)
+     */
     protected $getStyles = null;
 
     /**
-    * @ORM\Column(type="object", nullable=true)
-    */
+     * @ORM\Column(type="object", nullable=true)
+     */
     protected $putStyles = null;
 
     /**
-    * @ORM\Column(type="text", nullable=true);
-    */
+     * @ORM\Column(type="text", nullable=true);
+     */
     protected $username = null;
 
     /**
-    * @ORM\Column(type="text", nullable=true);
-    */
-    protected $password = null; 
-    
-    /**
-    * @ORM\Column(type="array", nullable=true)
-    */
-    protected $layers;
+     * @ORM\Column(type="text", nullable=true);
+     */
+    protected $password = null;
 
+    /**
+     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="layers", cascade={"persist","remove"})
+     */
+    protected $layers;
 
     public function __construct() {
         $this->layers = new ArrayCollection();
+    }
+    
+    /**
+     * Set originUrl
+     *
+     * @param string $originUrl
+     * @return WmsSource
+     */
+    public function setOriginUrl($originUrl) {
+        $this->originUrl = $originUrl;
+        return $this;
+    }
+
+    /**
+     * Get originUrl
+     *
+     * @return string 
+     */
+    public function getOriginUrl() {
+        return $this->originUrl;
     }
 
     /**
@@ -128,8 +155,7 @@ class WmsSource extends Source {
      * @param string $name
      * @return WmsSource
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
         return $this;
     }
@@ -139,8 +165,7 @@ class WmsSource extends Source {
      *
      * @return string 
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -150,8 +175,7 @@ class WmsSource extends Source {
      * @param string $version
      * @return WmsSource
      */
-    public function setVersion($version)
-    {
+    public function setVersion($version) {
         $this->version = $version;
         return $this;
     }
@@ -161,8 +185,7 @@ class WmsSource extends Source {
      *
      * @return string 
      */
-    public function getVersion()
-    {
+    public function getVersion() {
         return $this->version;
     }
 
@@ -172,8 +195,7 @@ class WmsSource extends Source {
      * @param string $onlineResource
      * @return WmsSource
      */
-    public function setOnlineResource($onlineResource)
-    {
+    public function setOnlineResource($onlineResource) {
         $this->onlineResource = $onlineResource;
         return $this;
     }
@@ -183,8 +205,7 @@ class WmsSource extends Source {
      *
      * @return string 
      */
-    public function getOnlineResource()
-    {
+    public function getOnlineResource() {
         return $this->onlineResource;
     }
 
@@ -194,8 +215,7 @@ class WmsSource extends Source {
      * @param string $contact
      * @return WmsSource
      */
-    public function setContact($contact)
-    {
+    public function setContact($contact) {
         $this->contact = $contact;
         return $this;
     }
@@ -205,8 +225,7 @@ class WmsSource extends Source {
      *
      * @return string 
      */
-    public function getContact()
-    {
+    public function getContact() {
         return $this->contact;
     }
 
@@ -216,8 +235,7 @@ class WmsSource extends Source {
      * @param text $fees
      * @return WmsSource
      */
-    public function setFees($fees)
-    {
+    public function setFees($fees) {
         $this->fees = $fees;
         return $this;
     }
@@ -227,8 +245,7 @@ class WmsSource extends Source {
      *
      * @return text 
      */
-    public function getFees()
-    {
+    public function getFees() {
         return $this->fees;
     }
 
@@ -238,8 +255,7 @@ class WmsSource extends Source {
      * @param text $accessConstraints
      * @return WmsSource
      */
-    public function setAccessConstraints($accessConstraints)
-    {
+    public function setAccessConstraints($accessConstraints) {
         $this->accessConstraints = $accessConstraints;
         return $this;
     }
@@ -249,8 +265,7 @@ class WmsSource extends Source {
      *
      * @return text 
      */
-    public function getAccessConstraints()
-    {
+    public function getAccessConstraints() {
         return $this->accessConstraints;
     }
 
@@ -260,8 +275,7 @@ class WmsSource extends Source {
      * @param array $exceptionFormats
      * @return WmsSource
      */
-    public function setExceptionFormats($exceptionFormats)
-    {
+    public function setExceptionFormats($exceptionFormats) {
         $this->exceptionFormats = $exceptionFormats;
         return $this;
     }
@@ -271,8 +285,7 @@ class WmsSource extends Source {
      *
      * @return array 
      */
-    public function getExceptionFormats()
-    {
+    public function getExceptionFormats() {
         return $this->exceptionFormats;
     }
 
@@ -282,8 +295,7 @@ class WmsSource extends Source {
      * @param boolean $supportsSld
      * @return WmsSource
      */
-    public function setSupportsSld($supportsSld)
-    {
+    public function setSupportsSld($supportsSld) {
         $this->supportsSld = $supportsSld;
         return $this;
     }
@@ -293,8 +305,7 @@ class WmsSource extends Source {
      *
      * @return boolean 
      */
-    public function getSupportsSld()
-    {
+    public function getSupportsSld() {
         return $this->supportsSld;
     }
 
@@ -304,8 +315,7 @@ class WmsSource extends Source {
      * @param boolean $userLayer
      * @return WmsSource
      */
-    public function setUserLayer($userLayer)
-    {
+    public function setUserLayer($userLayer) {
         $this->userLayer = $userLayer;
         return $this;
     }
@@ -315,8 +325,7 @@ class WmsSource extends Source {
      *
      * @return boolean 
      */
-    public function getUserLayer()
-    {
+    public function getUserLayer() {
         return $this->userLayer;
     }
 
@@ -326,8 +335,7 @@ class WmsSource extends Source {
      * @param boolean $userStyle
      * @return WmsSource
      */
-    public function setUserStyle($userStyle)
-    {
+    public function setUserStyle($userStyle) {
         $this->userStyle = $userStyle;
         return $this;
     }
@@ -337,8 +345,7 @@ class WmsSource extends Source {
      *
      * @return boolean 
      */
-    public function getUserStyle()
-    {
+    public function getUserStyle() {
         return $this->userStyle;
     }
 
@@ -348,8 +355,7 @@ class WmsSource extends Source {
      * @param boolean $remoteWfs
      * @return WmsSource
      */
-    public function setRemoteWfs($remoteWfs)
-    {
+    public function setRemoteWfs($remoteWfs) {
         $this->remoteWfs = $remoteWfs;
         return $this;
     }
@@ -359,8 +365,7 @@ class WmsSource extends Source {
      *
      * @return boolean 
      */
-    public function getRemoteWfs()
-    {
+    public function getRemoteWfs() {
         return $this->remoteWfs;
     }
 
@@ -370,8 +375,7 @@ class WmsSource extends Source {
      * @param Object $getCapabilities
      * @return WmsSource
      */
-    public function setGetCapabilities(\Object $getCapabilities)
-    {
+    public function setGetCapabilities(RequestInformation $getCapabilities) {
         $this->getCapabilities = $getCapabilities;
         return $this;
     }
@@ -381,8 +385,7 @@ class WmsSource extends Source {
      *
      * @return Object 
      */
-    public function getGetCapabilities()
-    {
+    public function getGetCapabilities() {
         return $this->getCapabilities;
     }
 
@@ -392,8 +395,7 @@ class WmsSource extends Source {
      * @param Object $getMap
      * @return WmsSource
      */
-    public function setGetMap(\Object $getMap)
-    {
+    public function setGetMap(\Object $getMap) {
         $this->getMap = $getMap;
         return $this;
     }
@@ -403,8 +405,7 @@ class WmsSource extends Source {
      *
      * @return Object 
      */
-    public function getGetMap()
-    {
+    public function getGetMap() {
         return $this->getMap;
     }
 
@@ -414,8 +415,7 @@ class WmsSource extends Source {
      * @param Object $getFeatureInfo
      * @return WmsSource
      */
-    public function setGetFeatureInfo(\Object $getFeatureInfo)
-    {
+    public function setGetFeatureInfo(\Object $getFeatureInfo) {
         $this->getFeatureInfo = $getFeatureInfo;
         return $this;
     }
@@ -425,8 +425,7 @@ class WmsSource extends Source {
      *
      * @return Object 
      */
-    public function getGetFeatureInfo()
-    {
+    public function getGetFeatureInfo() {
         return $this->getFeatureInfo;
     }
 
@@ -436,8 +435,7 @@ class WmsSource extends Source {
      * @param Object $describeLayer
      * @return WmsSource
      */
-    public function setDescribeLayer(\Object $describeLayer)
-    {
+    public function setDescribeLayer(\Object $describeLayer) {
         $this->describeLayer = $describeLayer;
         return $this;
     }
@@ -447,8 +445,7 @@ class WmsSource extends Source {
      *
      * @return Object 
      */
-    public function getDescribeLayer()
-    {
+    public function getDescribeLayer() {
         return $this->describeLayer;
     }
 
@@ -458,8 +455,7 @@ class WmsSource extends Source {
      * @param Object $getLegendGraphic
      * @return WmsSource
      */
-    public function setGetLegendGraphic(\Object $getLegendGraphic)
-    {
+    public function setGetLegendGraphic(\Object $getLegendGraphic) {
         $this->getLegendGraphic = $getLegendGraphic;
         return $this;
     }
@@ -469,8 +465,7 @@ class WmsSource extends Source {
      *
      * @return Object 
      */
-    public function getGetLegendGraphic()
-    {
+    public function getGetLegendGraphic() {
         return $this->getLegendGraphic;
     }
 
@@ -480,8 +475,7 @@ class WmsSource extends Source {
      * @param Object $getStyles
      * @return WmsSource
      */
-    public function setGetStyles(\Object $getStyles)
-    {
+    public function setGetStyles(\Object $getStyles) {
         $this->getStyles = $getStyles;
         return $this;
     }
@@ -491,8 +485,7 @@ class WmsSource extends Source {
      *
      * @return Object 
      */
-    public function getGetStyles()
-    {
+    public function getGetStyles() {
         return $this->getStyles;
     }
 
@@ -502,8 +495,7 @@ class WmsSource extends Source {
      * @param Object $putStyles
      * @return WmsSource
      */
-    public function setPutStyles(\Object $putStyles)
-    {
+    public function setPutStyles(\Object $putStyles) {
         $this->putStyles = $putStyles;
         return $this;
     }
@@ -513,8 +505,7 @@ class WmsSource extends Source {
      *
      * @return Object 
      */
-    public function getPutStyles()
-    {
+    public function getPutStyles() {
         return $this->putStyles;
     }
 
@@ -524,8 +515,7 @@ class WmsSource extends Source {
      * @param text $username
      * @return WmsSource
      */
-    public function setUsername($username)
-    {
+    public function setUsername($username) {
         $this->username = $username;
         return $this;
     }
@@ -535,8 +525,7 @@ class WmsSource extends Source {
      *
      * @return text 
      */
-    public function getUsername()
-    {
+    public function getUsername() {
         return $this->username;
     }
 
@@ -546,8 +535,7 @@ class WmsSource extends Source {
      * @param text $password
      * @return WmsSource
      */
-    public function setPassword($password)
-    {
+    public function setPassword($password) {
         $this->password = $password;
         return $this;
     }
@@ -557,8 +545,7 @@ class WmsSource extends Source {
      *
      * @return text 
      */
-    public function getPassword()
-    {
+    public function getPassword() {
         return $this->password;
     }
 
@@ -568,8 +555,7 @@ class WmsSource extends Source {
      * @param array $layers
      * @return WmsSource
      */
-    public function setLayers($layers)
-    {
+    public function setLayers($layers) {
         $this->layers = $layers;
         return $this;
     }
@@ -579,8 +565,19 @@ class WmsSource extends Source {
      *
      * @return array 
      */
-    public function getLayers()
-    {
+    public function getLayers() {
         return $this->layers;
     }
+
+    /**
+     * Add layer
+     *
+     * @param WmsLayerSource $layer
+     * @return WmsSource
+     */
+    public function addLayer(WmsLayerSource $layer) {
+        $this->layers->add($layer);
+        return $this;
+    }
+
 }

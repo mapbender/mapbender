@@ -17,7 +17,7 @@ use Mapbender\WmsBundle\Form\WMSType;
 * @package bkg
 * @author Karim Malhas <karim@malhas.de>
 */
-class WMSLayerController extends Controller {
+class WMSLayerController  {
 
     /**
      * Shows the WMSlayer in an Editor
