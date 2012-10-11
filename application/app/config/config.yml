@@ -75,4 +75,16 @@ fom_user:
 
 # Mapbender Configuration
 mapbender_core: ~
+#mapbender_core:
+#    proxy:
+#        host: proxy
+#        port: 8000
+#        user: paul
+#        password: paul
+#        noproxy:
+#            - arcgis.lpz.web
+#            - arcgis.ffm.web
+#            - geoportal.ffm.web
+#            - geoportal.lpz.web
+#            - ims.geoportal.de
 
