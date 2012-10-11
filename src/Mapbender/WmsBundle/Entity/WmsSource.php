@@ -392,10 +392,10 @@ class WmsSource extends Source {
     /**
      * Set getMap
      *
-     * @param Object $getMap
+     * @param RequestInformation $getMap
      * @return WmsSource
      */
-    public function setGetMap(\Object $getMap) {
+    public function setGetMap(RequestInformation $getMap) {
         $this->getMap = $getMap;
         return $this;
     }
@@ -412,10 +412,10 @@ class WmsSource extends Source {
     /**
      * Set getFeatureInfo
      *
-     * @param Object $getFeatureInfo
+     * @param RequestInformation $getFeatureInfo
      * @return WmsSource
      */
-    public function setGetFeatureInfo(\Object $getFeatureInfo) {
+    public function setGetFeatureInfo(RequestInformation $getFeatureInfo) {
         $this->getFeatureInfo = $getFeatureInfo;
         return $this;
     }
@@ -432,10 +432,10 @@ class WmsSource extends Source {
     /**
      * Set describeLayer
      *
-     * @param Object $describeLayer
+     * @param RequestInformation $describeLayer
      * @return WmsSource
      */
-    public function setDescribeLayer(\Object $describeLayer) {
+    public function setDescribeLayer(RequestInformation $describeLayer) {
         $this->describeLayer = $describeLayer;
         return $this;
     }
@@ -452,10 +452,10 @@ class WmsSource extends Source {
     /**
      * Set getLegendGraphic
      *
-     * @param Object $getLegendGraphic
+     * @param RequestInformation $getLegendGraphic
      * @return WmsSource
      */
-    public function setGetLegendGraphic(\Object $getLegendGraphic) {
+    public function setGetLegendGraphic(RequestInformation $getLegendGraphic) {
         $this->getLegendGraphic = $getLegendGraphic;
         return $this;
     }
@@ -472,10 +472,10 @@ class WmsSource extends Source {
     /**
      * Set getStyles
      *
-     * @param Object $getStyles
+     * @param RequestInformation $getStyles
      * @return WmsSource
      */
-    public function setGetStyles(\Object $getStyles) {
+    public function setGetStyles(RequestInformation $getStyles) {
         $this->getStyles = $getStyles;
         return $this;
     }
@@ -492,10 +492,10 @@ class WmsSource extends Source {
     /**
      * Set putStyles
      *
-     * @param Object $putStyles
+     * @param RequestInformation $putStyles
      * @return WmsSource
      */
-    public function setPutStyles(\Object $putStyles) {
+    public function setPutStyles(RequestInformation $putStyles) {
         $this->putStyles = $putStyles;
         return $this;
     }

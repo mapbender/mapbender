@@ -8,9 +8,9 @@ namespace Mapbender\WmsBundle\Component;
  */
 class MetadataUrl {
     /**
-     * ORM\Column(type="string", nullable=true)
+     * ORM\Column(type="object", nullable=true)
      */
-    protected $url;
+    protected $onlineResource;
     /**
      * ORM\Column(type="string", nullable=true)
      */
@@ -51,21 +51,21 @@ class MetadataUrl {
     }
     
     /**
-     * Get url
+     * Get onlineResource
      * 
-     * @return string
+     * @return OnlineResource
      */
-    public function getUrl() {
-        return $this->url;
+    public function getOnlineResource() {
+        return $this->onlineResource;
     }
     
     /**
-     * Set url
-     * @param string $value 
+     * Set onlineResource
+     * @param OnlineResource $onlineResource
      * @return MetadataUrl
      */
-    public function setUrl($value) {
-        $this->url = $value;
+    public function setOnlineResource(OnlineResource $onlineResource) {
+        $this->onlineResource = $onlineResource;
         return $this;
     }
     

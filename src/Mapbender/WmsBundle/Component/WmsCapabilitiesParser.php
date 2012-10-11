@@ -129,6 +129,7 @@ class WmsCapabilitiesParser {
                                         }
                                     break;
                                     case "VendorSpecificCapabilities":
+                                        //@TODO
                                     case "UserDefinedSymbolization":
                                         // these can either be '0','1',nonexistant ( -> false) or another string
                                         // we take 'any other string' to mean the same thing as '1'
@@ -166,19 +167,22 @@ class WmsCapabilitiesParser {
                                         $wmssource->setRemoteWfs($remoteWFS);
                                     break;
                                     case "Layer":
+                                        $srs = array();
                                         foreach ($node->childNodes as $subnode){
                                             switch ($subnode->localName) {
+                                                //@TODO other elements
                                                 case "CRS":
-                                                    $wmssource->addSrs($subnode->nodeValue);
+                                                    $srs[] = $subnode->nodeValue;
                                                     break;
                                                 case "SRS":
-                                                    $wmssource->addSrs($subnode->nodeValue);
+                                                    $srs[] = $subnode->nodeValue;
                                                     break;
                                                 default:
                                                     break;
                                             }
                                         }
-                                        $sublayer = $this->getWmsLayerFromLayerNode($node);
+                                        $sublayer = $this->getWmsLayerFromLayerNode($wmssource, $node);
+//                                        $sublayer->set
                                         $wmssource->getLayer()->add($sublayer);
                                     break;
                                 }
@@ -267,7 +271,7 @@ class WmsCapabilitiesParser {
      * @param DOMNode a WMS layernode "<Layer>" to be converted to a WmsLayerSource Object
      * @return WmsLayerSource 
      */
-    protected function getWmsLayerFromLayerNode(\DOMNode $layerNode){
+    protected function getWmsLayerFromLayerNode(WmsSource $wmssource, \DOMNode $layerNode){
 
         $layer = new WmsLayerSource();
         $srs = array();
@@ -389,6 +393,7 @@ class WmsCapabilitiesParser {
                                                 }
                                             }
                                         }
+                                        $legendUrl->setOnlineResource($onlineResource);
                                         $style->setLegendUrl($legendUrl);
                                     break;
                                 }
@@ -417,28 +422,32 @@ class WmsCapabilitiesParser {
                                 }
                             }
                         }
+                        $metadataUrl->setOnlineResource($onlineResource);
+                        $layer->addMetadataUrl($metadataUrl);
                     break;
                     
                     case "DataURL":
-                        foreach($node->childNodes as $dataChild){
-                            if($dataChild->nodeType == XML_ELEMENT_NODE){  
-                                switch ($dataChild->localName) {
-                                    case "Format":
-                                    break;
-                                    case "OnlineResource":
-                                        $layer->setDataURL($dataChild->getAttributeNS("http://www.w3.org/1999/xlink" ,"href"));
-                                    break;
-                                }
-                            }
-                        }
+                        //@TODO
+//                        foreach($node->childNodes as $dataChild){
+//                            if($dataChild->nodeType == XML_ELEMENT_NODE){  
+//                                switch ($dataChild->localName) {
+//                                    case "Format":
+//                                    break;
+//                                    case "OnlineResource":
+//                                        $layer->setDataURL($dataChild->getAttributeNS("http://www.w3.org/1999/xlink" ,"href"));
+//                                    break;
+//                                }
+//                            }
+//                        }
                     break;
 
                     case "Layer":
-                        $sublayer = $this->getWmsLayerFromLayerNode($node);
+                        $sublayer = $this->getWmsLayerFromLayerNode($wmssource, $node);
 //                        if($sublayer->getLatLonBounds() === null && $layer->getLatLonBounds() !== null){
 //                            $sublayer->setLatLonBounds($layer->getLatLonBounds());
 //                        }
-                        $sublayer->setParent($layer);
+//                        $sublayer->setParent($layer);
+                        $wmssource->addLayer($sublayer);
                     break;
                     
                 }
