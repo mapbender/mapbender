@@ -13,7 +13,6 @@ class ApplicationType extends AbstractType {
         return 'application';
     }
 
-    // TODO: Switch to setDefaultOptions (before Symfony 2.3)
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
