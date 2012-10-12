@@ -66,7 +66,7 @@ class WmsSource extends Source {
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $supportsSld = false;
+    protected $supportSld = false;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -82,6 +82,16 @@ class WmsSource extends Source {
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $remoteWfs = false;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $inlineFeature = false;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $remoteWcs = false;
 
     /**
      * @ORM\Column(type="object", nullable=true)
@@ -135,6 +145,7 @@ class WmsSource extends Source {
 
     public function __construct() {
         $this->layers = new ArrayCollection();
+        $this->exceptionFormats = array();
     }
     
     /**
@@ -327,6 +338,17 @@ class WmsSource extends Source {
         $this->exceptionFormats = $exceptionFormats;
         return $this;
     }
+    
+    /**
+     * Add exceptionFormat
+     *
+     * @param array $exceptionFormat
+     * @return WmsSource
+     */
+    public function addExceptionFormat($exceptionFormat) {
+        $this->exceptionFormats[] = $exceptionFormat;
+        return $this;
+    }
 
     /**
      * Get exceptionFormats
@@ -338,23 +360,23 @@ class WmsSource extends Source {
     }
 
     /**
-     * Set supportsSld
+     * Set supportSld
      *
-     * @param boolean $supportsSld
+     * @param boolean $supportSld
      * @return WmsSource
      */
-    public function setSupportsSld($supportsSld) {
-        $this->supportsSld = $supportsSld;
+    public function setSupportSld($supportSld) {
+        $this->supportSld = $supportSld;
         return $this;
     }
 
     /**
-     * Get supportsSld
+     * Get supportSld
      *
      * @return boolean 
      */
-    public function getSupportsSld() {
-        return $this->supportsSld;
+    public function getSupportSld() {
+        return $this->supportSld;
     }
 
     /**
@@ -417,6 +439,46 @@ class WmsSource extends Source {
         return $this->remoteWfs;
     }
 
+    /**
+     * Set inlineFeature
+     *
+     * @param boolean $inlineFeature
+     * @return WmsSource
+     */
+    public function setInlineFeature($inlineFeature) {
+        $this->inlineFeature = $inlineFeature;
+        return $this;
+    }
+
+    /**
+     * Get inlineFeature
+     *
+     * @return boolean 
+     */
+    public function getInlineFeature() {
+        return $this->inlineFeature;
+    }
+
+    /**
+     * Set remoteWcs
+     *
+     * @param boolean $remoteWcs
+     * @return WmsSource
+     */
+    public function setRemoteWcs($remoteWcs) {
+        $this->remoteWcs = $remoteWcs;
+        return $this;
+    }
+
+    /**
+     * Get remoteWcs
+     *
+     * @return boolean 
+     */
+    public function getRemoteWcs() {
+        return $this->remoteWcs;
+    }
+    
     /**
      * Set getCapabilities
      *

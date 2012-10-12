@@ -7,11 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\WmsBundle\Component\Attribution;
-use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\Identifier;
+use Mapbender\WmsBundle\Component\MetadataUrl;
+use Mapbender\WmsBundle\Component\Style;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="mb_wms_wmslayersource")
  */
 class WmsLayerSource {
 
@@ -98,6 +100,11 @@ class WmsLayerSource {
     /**
      * @ORM\Column(type="array", nullable=true)
      */
+    protected $srs;
+    
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
     protected $styles;
 
     /**
@@ -129,6 +136,7 @@ class WmsLayerSource {
         $this->boundingBoxes = new ArrayCollection();
         $this->metadataUrl = new ArrayCollection();
         $this->styles = new ArrayCollection();
+        $this->srs = array();
     }
 
     /**
@@ -389,6 +397,37 @@ class WmsLayerSource {
      */
     public function getBoundingBoxes() {
         return $this->boundingBoxes;
+    }
+    
+    /**
+     * Set srs
+     *
+     * @param array $srs
+     * @return WmsLayerSource
+     */
+    public function setSrs($srs) {
+        $this->srs = $srs;
+        return $this;
+    }
+    
+    /**
+     * Add srs
+     *
+     * @param string $srs
+     * @return WmsLayerSource
+     */
+    public function addSrs($srs) {
+        $this->srs[] = $srs;
+        return $this;
+    }
+
+    /**
+     * Get srs
+     *
+     * @return array 
+     */
+    public function getSrs() {
+        return $this->srs;
     }
     
     /**

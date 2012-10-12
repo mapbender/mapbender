@@ -95,6 +95,8 @@ class RepositoryController extends Controller {
                     $this->get("logger")->debug("Could not parse data for url '$getcapa_url_usrPwd'");
                     throw new \Exception("Preview: Could not parse data for url '$getcapa_url_usrPwd'");
                 }
+                $this->getDoctrine()->getEntityManager()->persist($wmssource);
+                $this->getDoctrine()->getEntityManager()->flush();
             }else{
                 throw new \Exception("Preview: Server said '".$result->getStatusCode() . " ". $result->getStatusMessage(). "'");
             }
