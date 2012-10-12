@@ -16,12 +16,12 @@ class Wms110CapabilitiesParser extends WmsCapabilitiesParser {
     public function parse(){
         $wms  = new WmsSource();
 
-        $wms->setName($this->getNodeValue("/WMT_MS_Capabilities/Service/Name"));
-        $wms->setTitle($this->getNodeValue("/WMT_MS_Capabilities/Service/Title"));
-        $wms->setDescription($this->getNodeValue("/WMT_MS_Capabilities/Service/Abstract"));
-        $wms->setOnlineResource($this->getNodeValue("/WMT_MS_Capabilities/Service/OnlineResource"));
-        $wms->setFees($this->getNodeValue("/WMT_MS_Capabilities/Service/Fees"));
-        $wms->setAccessConstraints($this->getNodeValue("/WMT_MS_Capabilities/Service/AccessConstraints"));
+        $wms->setName($this->getValue("/WMT_MS_Capabilities/Service/Name/text()"));
+        $wms->setTitle($this->getValue("/WMT_MS_Capabilities/Service/Title/text()"));
+        $wms->setDescription($this->getValue("/WMT_MS_Capabilities/Service/Abstract/text()"));
+        $wms->setOnlineResource($this->getValue("/WMT_MS_Capabilities/Service/OnlineResource/text()"));
+        $wms->setFees($this->getValue("/WMT_MS_Capabilities/Service/Fees/text()"));
+        $wms->setAccessConstraints($this->getValue("/WMT_MS_Capabilities/Service/AccessConstraints/text()"));
         
         $onlineResource = $this->xpath
             ->evaluate("/WMT_MS_Capabilities/Service/OnlineResource")
@@ -34,18 +34,18 @@ class Wms110CapabilitiesParser extends WmsCapabilitiesParser {
         $contact = new Contact();
         $wms->setContact($contact);
 
-        $contact->setPerson($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactPersonPrimary/ContactPerson"));
-        $contact->setOrganization($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactPersonPrimary/ContactOrganization"));
-        $contact->setPosition($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactPosition"));
-        $contact->setAddressType($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/AddressType"));
-        $contact->setAddress($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/Address"));
-        $contact->setAddressCity($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/City"));
-        $contact->setAddressStateOrProvince($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/StateOrProvince"));
-        $contact->setAddressPostCode($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/PostCode"));
-        $contact->setAddressCountry($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/Country"));
-        $contact->setVoiceTelephone($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactVoiceTelephone"));
-        $contact->setFacsimileTelephone($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactFacsimileTelephone"));
-        $contact->setElectronicMailAddress($this->getNodeValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactElectronicMailAddress"));
+        $contact->setPerson($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactPersonPrimary/ContactPerson/text()"));
+        $contact->setOrganization($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactPersonPrimary/ContactOrganization/text()"));
+        $contact->setPosition($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactPosition/text()"));
+        $contact->setAddressType($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/AddressType/text()"));
+        $contact->setAddress($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/Address/text()"));
+        $contact->setAddressCity($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/City/text()"));
+        $contact->setAddressStateOrProvince($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/StateOrProvince/text()"));
+        $contact->setAddressPostCode($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/PostCode/text()"));
+        $contact->setAddressCountry($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactAddress/Country/text()"));
+        $contact->setVoiceTelephone($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactVoiceTelephone/text()"));
+        $contact->setFacsimileTelephone($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactFacsimileTelephone/text()"));
+        $contact->setElectronicMailAddress($this->getValue("/WMT_MS_Capabilities/Service/ContactInformation/ContactElectronicMailAddress/text()"));
 
         return $wms;
     }

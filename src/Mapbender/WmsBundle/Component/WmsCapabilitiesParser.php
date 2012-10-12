@@ -32,16 +32,11 @@ abstract class WmsCapabilitiesParser {
         $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
     } 
     
-//
-//    public function getNodeValue($query){
-//        $node = $this->xpath->evaluate($query)->item(0);
-//        if($node){ return $node->nodeValue; }
-//        return null;
-//    }
     
-    
-    
-    protected function getValue($xpath, $contextElm){
+    protected function getValue($xpath, $contextElm=null){
+        if (!$contextElm){
+            $contextElm = $this->doc;
+        }
         try {
             $elm = $this->xpath->query($xpath, $contextElm)->item(0);
             if($elm->nodeType == XML_ATTRIBUTE_NODE) {

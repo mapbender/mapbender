@@ -16,12 +16,12 @@ class Wms100CapabilitiesParser extends WmsCapabilitiesParser {
     public function parse(){
         $wms  = new WmsSource();
 
-        $wms->setName($this->getNodeValue("/WMT_MS_Capabilities/Service/Name"));
-        $wms->setTitle($this->getNodeValue("/WMT_MS_Capabilities/Service/Title"));
-        $wms->setDescription($this->getNodeValue("/WMT_MS_Capabilities/Service/Abstract"));
-        $wms->setOnlineResource($this->getNodeValue("/WMT_MS_Capabilities/Service/OnlineResource"));
-        $wms->setFees($this->getNodeValue("/WMT_MS_Capabilities/Service/Fees"));
-        $wms->setAccessConstraints($this->getNodeValue("/WMT_MS_Capabilities/Service/AccessConstraints"));
+        $wms->setName($this->getValue("/WMT_MS_Capabilities/Service/Name/text()"));
+        $wms->setTitle($this->getValue("/WMT_MS_Capabilities/Service/Title/text()"));
+        $wms->setDescription($this->getValue("/WMT_MS_Capabilities/Service/Abstract/text()"));
+        $wms->setOnlineResource($this->getValue("/WMT_MS_Capabilities/Service/OnlineResource/text()"));
+        $wms->setFees($this->getValue("/WMT_MS_Capabilities/Service/Fees/text()"));
+        $wms->setAccessConstraints($this->getValue("/WMT_MS_Capabilities/Service/AccessConstraints/text()"));
             
         return $wms;
     }
