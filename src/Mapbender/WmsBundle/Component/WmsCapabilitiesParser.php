@@ -43,9 +43,7 @@ abstract class WmsCapabilitiesParser {
     static  function create($data){
         $doc = new \DOMDocument();
         if(!@$doc->loadXML($data)){
-            if(!@$doc->loadHTML($data)){
-                  throw new \UnexpectedValueException("Could not parse CapabilitiesDocument.");
-            }
+            throw new ParsingException("Could not parse CapabilitiesDocument.");
         }
         // WMS 1.0.0
         if($doc->documentElement->tagName == "WMTException"){
