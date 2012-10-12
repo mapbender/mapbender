@@ -17,7 +17,7 @@ use Mapbender\WmtsBundle\Component\Exception\ParsingException;
  * 
 * Parses WMTS GetCapabilities documents
 */
-class WmtsCapabilitiesParser {
+abstract class WmtsCapabilitiesParser {
 
     /**
      * The XML representation of the Capabilites Document
@@ -75,12 +75,12 @@ class WmtsCapabilitiesParser {
     private function getValue($xpath, $contextElm){
         try {
             $elm = $this->xpath->query($xpath, $contextElm)->item(0);
-            if($elm->nodeType == XML_ELEMENT_NODE) {
-                return $elm->wholeText;
-            } else if($elm->nodeType == XML_ATTRIBUTE_NODE) {
+            if($elm->nodeType == XML_ATTRIBUTE_NODE) {
                 return $elm->value;
             } else if($elm->nodeType == XML_TEXT_NODE){
                 return $elm->wholeText;
+            } else if($elm->nodeType == XML_ELEMENT_NODE) {
+                return $elm;
             } else {
                 return null;
             }

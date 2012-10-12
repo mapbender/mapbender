@@ -259,17 +259,17 @@ class WMSType  extends AbstractType {
         ));
 
     }
-    public function getDefaultOptions(){
-        return array(
-            'data_class' => "Mapbender\WmsBundle\Entity\WMSService",
-            "exceptionFormats" => array(),
-            "requestGetCapabilitiesFormats" => array(),
-            "requestGetMapFormats" => array(),
-            "requestGetFeatureInfoFormats" => array(),
-            "requestDescribeLayerFormats"  => array(),
-            "requestGetLegendGraphicFormats" => array(),
-            "requestGetStylesFormats" => array(),
-            "requestPutStylesFormats" => array(),
-        );
-   }
+//    public function getDefaultOptions(){
+//        return array(
+//            'data_class' => "Mapbender\WmsBundle\Entity\WMSService",
+//            "exceptionFormats" => array(),
+//            "requestGetCapabilitiesFormats" => array(),
+//            "requestGetMapFormats" => array(),
+//            "requestGetFeatureInfoFormats" => array(),
+//            "requestDescribeLayerFormats"  => array(),
+//            "requestGetLegendGraphicFormats" => array(),
+//            "requestGetStylesFormats" => array(),
+//            "requestPutStylesFormats" => array(),
+//        );
+//   }
 }

@@ -49,6 +49,14 @@ class WmsSource extends Source {
      * @ORM\Column(type="text",nullable=true)
      */
     protected $accessConstraints = "";
+     /**
+     * @ORM\Column(type="integer",nullable=true)
+     */
+    protected $maxWidth;
+     /**
+     * @ORM\Column(type="integer",nullable=true)
+     */
+    protected $maxHeight;
 
     /**
      * @ORM\Column(type="array",nullable=true)
@@ -267,6 +275,46 @@ class WmsSource extends Source {
      */
     public function getAccessConstraints() {
         return $this->accessConstraints;
+    }
+    
+    /**
+     * Set maxWidth
+     *
+     * @param integer $maxWidth
+     * @return WmsSource
+     */
+    public function setMaxWidth($maxWidth) {
+        $this->maxWidth = $maxWidth;
+        return $this;
+    }
+
+    /**
+     * Get maxWidth
+     *
+     * @return integer 
+     */
+    public function getMaxWidth() {
+        return $this->maxWidth;
+    }
+    
+    /**
+     * Set maxHeight
+     *
+     * @param integer $maxHeight
+     * @return WmsSource
+     */
+    public function setMaxHeight($maxHeight) {
+        $this->maxHeight = $maxHeight;
+        return $this;
+    }
+
+    /**
+     * Get maxHeight
+     *
+     * @return integer 
+     */
+    public function getMaxHeight() {
+        return $this->maxHeight;
     }
 
     /**

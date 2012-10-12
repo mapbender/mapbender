@@ -21,26 +21,52 @@ abstract class WmsCapabilitiesParser {
     * An Xpath-instance
     */
     protected $xpath;
-
+    
+    /**
+     *
+     * @param \DOMDocument $doc 
+     */
     public function __construct(\DOMDocument $doc){
         $this->doc = $doc;
         $this->xpath = new \DOMXPath($doc);
-        $this->xpath->registerNamespace("http://www.w3.org/1999/xlink","xlink");
+        $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
     } 
     
-
-    public function getNodeValue($query){
-        $node = $this->xpath->evaluate($query)->item(0);
-        if($node){ return $node->nodeValue; }
-        return null;
+//
+//    public function getNodeValue($query){
+//        $node = $this->xpath->evaluate($query)->item(0);
+//        if($node){ return $node->nodeValue; }
+//        return null;
+//    }
+    
+    
+    
+    protected function getValue($xpath, $contextElm){
+        try {
+            $elm = $this->xpath->query($xpath, $contextElm)->item(0);
+            if($elm->nodeType == XML_ATTRIBUTE_NODE) {
+                return $elm->value;
+            } else if($elm->nodeType == XML_TEXT_NODE){
+                return $elm->wholeText;
+            } else if($elm->nodeType == XML_ELEMENT_NODE) {
+                return $elm;
+            } else {
+                return null;
+            }
+        }catch(\Exception $E){
+            return null;
+        }
     }
 
+    /**
+     * 
+     */
     abstract public function parse();
 
     /**
     * @param String The document to be parsed
     */
-    static  function create($data){
+    static  function create($data, $validate = false){
         $doc = new \DOMDocument();
         if(!@$doc->loadXML($data)){
             throw new ParsingException("Could not parse CapabilitiesDocument.");
@@ -73,7 +99,7 @@ abstract class WmsCapabilitiesParser {
 
         }
 
-        if(!@$this->doc->validate()){
+        if($validate && !@$this->doc->validate()){
             // TODO logging
         };
     }
