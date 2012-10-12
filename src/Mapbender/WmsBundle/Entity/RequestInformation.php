@@ -45,7 +45,7 @@ class RequestInformation {
     }
     
     public function __construct(){
-//        $this->formats = array(); ???
+        $this->formats = array();
     }
     
     /**
@@ -85,7 +85,7 @@ class RequestInformation {
     /**
      * Get formats
      * 
-     * @return string
+     * @return array
      */
     public function getFormats() {
         return $this->formats;
@@ -93,10 +93,19 @@ class RequestInformation {
     
     /**
      * Set formats
-     * @param string $value 
+     * @param array $value 
      */
     public function setFormats($value) {
         $this->formats = $value;
+        return $this;
+    }
+    
+    /**
+     * Add format
+     * @param string $value 
+     */
+    public function addFormat($value) {
+        $this->formats[] = $value;
         return $this;
     }
     

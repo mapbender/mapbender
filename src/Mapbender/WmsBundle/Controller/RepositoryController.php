@@ -89,8 +89,8 @@ class RepositoryController extends Controller {
                     $this->get("logger")->debug("$getcapa_url_usrPwd returned no data");
                     throw new \Exception("Preview: Service '$getcapa_url_usrPwd' returned no Data");
                 }
-                $wmsParser = new WmsCapabilitiesParser($result->getData());
-                $wmssource = $wmsParser->getWmsSource();
+                $wmsParser = WmsCapabilitiesParser::create($result->getData());
+                $wmssource = $wmsParser->parse();
                 if(!$wmssource){
                     $this->get("logger")->debug("Could not parse data for url '$getcapa_url_usrPwd'");
                     throw new \Exception("Preview: Could not parse data for url '$getcapa_url_usrPwd'");

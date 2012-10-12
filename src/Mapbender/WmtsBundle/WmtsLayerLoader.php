@@ -72,7 +72,7 @@ class WmtsLayerLoader extends Layer {
         );
     }
 
-    public function getAssets() {
+    public function getAssets($type = null) {
         return array(
             'js' => array(
                 'mapbender.layer.wmts.js'

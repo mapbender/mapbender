@@ -64,9 +64,9 @@ class WMSLayerType  extends AbstractType {
         ));
 
     }
-    public function getDefaultOptions(){
-        return array(
-            'data_class' => "Mapbender\WmsBundle\Entity\WMSLayer"
-        );
-   }
+//    public function getDefaultOptions(){
+//        return array(
+//            'data_class' => "Mapbender\WmsBundle\Entity\WMSLayer"
+//        );
+//   }
 }

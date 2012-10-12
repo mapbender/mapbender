@@ -14,6 +14,7 @@ use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Identifier;
+use Mapbender\WmsBundle\Component\OnlineResource;
 
 
 /*
@@ -248,12 +249,16 @@ class WmsSourceTest extends \PHPUnit_Framework_TestCase {
         $layer->setName("1");
         
         $mdurl = new MetadataUrl();
-        $mdurl->setUrl("http://www.google.de")
-                ->setType("type");
+        $onlineResource = new OnlineResource();
+        $onlineResource->setFormat("text/xml")->setHref("http://www.google.de");   
+        $mdurl->setType("type");
+        $mdurl->setOnlineResource($onlineResource);
         
         $mdurl2 = new MetadataUrl();
-        $mdurl2->setUrl("http://www.google.de/test")
-                ->setType("type2");
+        $onlineResource2 = new OnlineResource();
+        $onlineResource2->setFormat("text/xml")->setHref("http://www.google.de");   
+        $mdurl2->setType("type");
+        $mdurl2->setOnlineResource($onlineResource2);
         
         $layer->addMetadataUrl($mdurl);
         $layer->addMetadataUrl($mdurl2);
@@ -265,12 +270,12 @@ class WmsSourceTest extends \PHPUnit_Framework_TestCase {
         $repo = $this->container->get("doctrine")->getRepository("MapbenderWmsBundle:WmsSource");
         $wms_new = $repo->findOneByName("NAME");
         
-        $this->assertEquals($wms_new->getLayers()->get(0)->getMetadataUrl(),
-                $wms->getLayers()->get(0)->getMetadataUrl());
-        $this->assertEquals($wms_new->getLayers()->get(0)->getMetadataUrl()->get(0)->getUrl(),
-                $wms->getLayers()->get(0)->getMetadataUrl()->get(0)->getUrl());
-        $this->assertEquals($wms_new->getLayers()->get(0)->getMetadataUrl()->get(1)->getUrl(),
-                $wms->getLayers()->get(0)->getMetadataUrl()->get(1)->getUrl());
+        $this->assertEquals($wms_new->getLayers()->get(0)->getMetadataUrl()->get(0)->getType(),
+                $wms->getLayers()->get(0)->getMetadataUrl()->get(0)->getType());
+        $this->assertEquals($wms_new->getLayers()->get(0)->getMetadataUrl()->get(0)->getOnlineResource()->getHref(),
+                $wms->getLayers()->get(0)->getMetadataUrl()->get(0)->getOnlineResource()->getHref());
+        $this->assertEquals($wms_new->getLayers()->get(0)->getMetadataUrl()->get(1)->getOnlineResource()->getHref(),
+                $wms->getLayers()->get(0)->getMetadataUrl()->get(1)->getOnlineResource()->getHref());
     }
     
     public function testWmsLayerSourceIdentfier() {
