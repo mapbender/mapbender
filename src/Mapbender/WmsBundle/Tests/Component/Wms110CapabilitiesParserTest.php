@@ -34,7 +34,6 @@ class Wms110CapabilitiesParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("theonlineResource",$wms->getOnlineResource());
         $this->assertEquals("thefees",$wms->getfees());
         $this->assertEquals("theaccessconstraints",$wms->getAccessConstraints());
-        $this->assertNull($wms->getContact());
     
     }
 
@@ -44,19 +43,19 @@ class Wms110CapabilitiesParserTest extends PHPUnit_Framework_TestCase {
         $xml .= '<Service><ContactInformation>';
 
         $xml .= '<ContactPersonPrimary>';
-        $xml .= '<ContactPerson>thecontactperson</ContactPerson>';
-        $xml .= '<ContactOrganization>thecontactorganization</ContactOrganization>';
+        $xml .= '   <ContactPerson>thecontactperson</ContactPerson>';
+        $xml .= '   <ContactOrganization>thecontactorganization</ContactOrganization>';
         $xml .= '</ContactPersonPrimary>';
         
         $xml .= '<ContactPosition>thecontactposition</ContactPosition>';
         
         $xml .= '<ContactAddress>';
-        $xml .= '<AddressType>theaddresstype</AddressType>';
-        $xml .= '<Address>theaddress</Address>';
-        $xml .= '<City>thecity</City>';
-        $xml .= '<StateOrProvince>thestate</StateOrProvence>';
-        $xml .= '<PostCode>thepostcode</PostCode>';
-        $xml .= '<Country>thecountry</Country>';
+        $xml .= '   <AddressType>theaddresstype</AddressType>';
+        $xml .= '   <Address>theaddress</Address>';
+        $xml .= '   <City>thecity</City>';
+        $xml .= '   <StateOrProvince>thestate</StateOrProvince>';
+        $xml .= '   <PostCode>thepostcode</PostCode>';
+        $xml .= '   <Country>thecountry</Country>';
         $xml .= '</ContactAddress>';
 
         $xml .= '<ContactVoiceTelephone>thevoice</ContactVoiceTelephone>';
@@ -77,7 +76,7 @@ class Wms110CapabilitiesParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("thecity",$contact->getAddressCity());
         $this->assertEquals("thestate",$contact->getAddressStateOrProvince());
         $this->assertEquals("thepostcode",$contact->getAddressPostCode());
-        $this->assertEquals("thecountry",$contact->getAddressPostCode());
+        $this->assertEquals("thecountry",$contact->getAddressCountry());
         $this->assertEquals("thevoice",$contact->getVoiceTelephone());
         $this->assertEquals("thefax",$contact->getFacsimileTelephone());
         $this->assertEquals("theemail",$contact->getElectronicMailAddress());
