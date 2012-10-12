@@ -16,6 +16,7 @@
 {% endblock %}
 
 {% set form_errors = form_errors(form) %}
+{% form_theme form 'MapbenderManagerBundle::fields.html.twig' %}
 
 {% block manager_content %}
 
@@ -38,7 +39,11 @@
 
     <hr/>
 
-    {% include(theme) %}
+    {% if theme is defined and theme != '' %}
+        {% include(theme) %}
+    {% else %}
+        {{ form_rest(form) }}
+    {% endif %}
 
     <footer>
         <div class="btn-group">

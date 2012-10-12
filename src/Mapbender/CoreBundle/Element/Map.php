@@ -97,5 +97,11 @@ class Map extends Element {
             ->render('MapbenderCoreBundle:Element:map.html.twig', array(
                 'id' => $this->getId()));
     }
+
+
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\MapAdminType';
+    }
 }
 
