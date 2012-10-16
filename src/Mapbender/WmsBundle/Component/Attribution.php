@@ -12,12 +12,14 @@ class Attribution {
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    protected $title;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $title;
 
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    protected $onlineResource;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $onlineResource;
 
     /**
      * ORM\Column(type="string", nullable=false)
@@ -27,17 +29,20 @@ class Attribution {
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    protected $logoFormat;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $logoFormat;
 
     /**
      * ORM\Column(type="integer", nullable=false)
      */
-    protected $logoWidth;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $logoWidth;
 
     /**
      * ORM\Column(type="integer", nullable=false)
      */
-    protected $logoHeight;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $logoHeight;
 
     /**
      * Creates an Attribution object from parameters

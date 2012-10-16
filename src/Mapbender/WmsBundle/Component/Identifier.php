@@ -10,11 +10,13 @@ class Identifier {
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $authority;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $authority;
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $value;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $value;
     
     /**
      * Creates a Identifier object from parameters

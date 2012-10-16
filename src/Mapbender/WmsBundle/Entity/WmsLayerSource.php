@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Identifier;
 use Mapbender\WmsBundle\Component\MetadataUrl;
+use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
 
 /**
@@ -132,9 +133,21 @@ class WmsLayerSource {
      */
     protected $metadataUrl;
     
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    protected $dataUrl;
+    
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    protected $featureListUrl;
+    
     public function __construct() {
         $this->boundingBoxes = new ArrayCollection();
         $this->metadataUrl = new ArrayCollection();
+        $this->dataUrl = new ArrayCollection();
+        $this->featureListUrl = new ArrayCollection();
         $this->styles = new ArrayCollection();
         $this->srs = array();
     }
@@ -422,12 +435,20 @@ class WmsLayerSource {
     }
 
     /**
-     * Get srs
+     * Get srs incl. from parent WmsLayerSource (OGC WMS 
+     * Implemantation Specification)
      *
      * @return array 
      */
     public function getSrs() {
-        return $this->srs;
+//        return $this->srs;
+        if($this->getParent() !== null){ // add crses from parent
+            return array_merge(
+                    $this->getParent()->getSrs(),
+                    $this->getStyles());
+        } else {
+            $this->getStyles();
+        }
     }
     
     /**
@@ -453,12 +474,19 @@ class WmsLayerSource {
     }
 
     /**
-     * Get styles
+     * Get styles incl. from parent WmsLayerSource (OGC WMS 
+     * Implemantation Specification)
      *
      * @return array 
      */
     public function getStyles() {
-        return $this->styles;
+        if($this->getParent() !== null){ // add styles from parent
+            return new ArrayCollection(array_merge(
+                    $this->getParent()->getStyles()->toArray(),
+                    $this->getStyles()->toArray()));
+        } else {
+            $this->getStyles();
+        }
     }
 
     /**
@@ -571,5 +599,70 @@ class WmsLayerSource {
     public function getMetadataUrl() {
         return $this->metadataUrl;
     }
+    
+    /**
+     * Add dataUrl
+     *
+     * @param array $dataUrl
+     * @return WmsLayerSource
+     */
+    public function addDataUrl(OnlineResource $dataUrl) {
+        $this->dataUrl->add($dataUrl);
+        return $this;
+    }
 
+    /**
+     * Set dataUrl
+     *
+     * @param array $dataUrl
+     * @return WmsLayerSource
+     */
+    public function setDataUrl($dataUrl) {
+        $this->dataUrl = $dataUrl;
+        return $this;
+    }
+
+    /**
+     * Get dataUrl
+     *
+     * @return array 
+     */
+    public function getDataUrl() {
+        return $this->dataUrl;
+    }
+
+    /**
+     * Add featureListUrl
+     *
+     * @param array $featureListUrl
+     * @return WmsLayerSource
+     */
+    public function addFeatureListUrl(OnlineResource $featureListUrl) {
+        $this->featureListUrl->add($featureListUrl);
+        return $this;
+    }
+
+    /**
+     * Set featureListUrl
+     *
+     * @param array $featureListUrl
+     * @return WmsLayerSource
+     */
+    public function setFeatureListUrl($featureListUrl) {
+        $this->featureListUrl = $featureListUrl;
+        return $this;
+    }
+
+    /**
+     * Get featureListUrl
+     *
+     * @return array 
+     */
+    public function getFeatureListUrl() {
+        return $this->featureListUrl;
+    }
+    
+    public function __toString(){
+        return (string) $this->getId();
+    }
 }

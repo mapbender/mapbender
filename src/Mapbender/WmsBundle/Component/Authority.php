@@ -12,12 +12,14 @@ class Authority {
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $url;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $url;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $name;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $name;
 
     /**
      * Creates a Authority object from parameters

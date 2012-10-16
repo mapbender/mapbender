@@ -9,6 +9,7 @@
             <th>{{ 'Type' | trans }}</th>
             <th>{{ 'Title' | trans }}</th>
             <th>{{ 'Alias' | trans }}</th>
+            <th>{{ 'Description' | trans }}</th>
             <th>{{ 'Actions' | trans }}</th>
         </tr>
     </thead>
@@ -18,10 +19,11 @@
             <td>{{ source.type }}</td>
             <td>{{ source.title }}</td>
             <td>{{ source.alias }}</td>
+            <td>{{ source.description }}</td>
             <td>
                 <div class="entity-actions btn-group">
-                    <a class="action-edit" href="#" title="{{ 'Edit source' | trans }}">{{ 'Edit' | trans }}</a>
-                    <a class="action-delete" href="#" title="{{ 'Delete source' | trans }}">{{ 'Delete' | trans }}</a>
+                    <a class="action-edit btn" href="#" title="{{ 'Edit source' | trans }}">{{ 'Edit' | trans }}</a>
+                    <a class="action-delete btn" href="#" title="{{ 'Delete source' | trans }}">{{ 'Delete' | trans }}</a>
                 </div>
             </td>
         </tr>

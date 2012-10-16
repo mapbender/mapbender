@@ -25,7 +25,7 @@ abstract class Source {
 
     /**
      * @var string $title The source title
-     * @ORM\Column(type="string", length=128, nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      */
     protected $title;
     
@@ -37,7 +37,7 @@ abstract class Source {
     
     /**
      * @var string $description The source description
-     * @ORM\Column(type="string", length=128, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $description;
     
@@ -121,4 +121,11 @@ abstract class Source {
     {
         return $this->alias;
     }
+    
+    /**
+     * Get source type
+     *
+     * @return string 
+     */
+    public abstract function getType();
 }

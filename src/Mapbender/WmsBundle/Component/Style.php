@@ -18,22 +18,26 @@ class Style {
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $name = "";
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $name = "";
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $title = "";
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $title = "";
     
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $abstract = "";
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $abstract = "";
     
     /**
      * ORM\Column(type="object", nullable=true)
      */
-    protected $legendUrl;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $legendUrl;
     
 
     /**

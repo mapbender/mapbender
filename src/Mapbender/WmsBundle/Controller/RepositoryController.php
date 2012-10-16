@@ -97,6 +97,9 @@ class RepositoryController extends Controller {
                 }
                 $this->getDoctrine()->getEntityManager()->persist($wmssource);
                 $this->getDoctrine()->getEntityManager()->flush();
+                
+                $this->getDoctrine()->getEntityManager()->remove($wmssource);
+                $this->getDoctrine()->getEntityManager()->flush();
             }else{
                 throw new \Exception("Preview: Server said '".$result->getStatusCode() . " ". $result->getStatusMessage(). "'");
             }

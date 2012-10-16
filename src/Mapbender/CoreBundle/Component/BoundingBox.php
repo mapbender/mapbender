@@ -11,23 +11,28 @@ class BoundingBox {
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    protected $srs;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $srs;
     /**
      * ORM\Column(type="float", nullable=false)
      */
-    protected $minx;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $minx;
     /**
      * ORM\Column(type="float", nullable=false)
      */
-    protected $miny;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $miny;
     /**
      * ORM\Column(type="float", nullable=false)
      */
-    protected $maxx;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $maxx;
     /**
      * ORM\Column(type="float", nullable=false)
      */
-    protected $maxy;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $maxy;
     
     /**
      * Creates a BoundingBox object from parameters

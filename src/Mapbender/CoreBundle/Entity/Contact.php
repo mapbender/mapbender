@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @author Paul Schmidt
  *
  * @ORM\Entity
- * @ORM\Table(name="mb_contact")
+ * @ORM\Table(name="mb_core_contact")
  */
 class Contact {
     /**

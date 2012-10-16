@@ -13,6 +13,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
+use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
  * @ManagerRoute("/repository")
@@ -26,9 +27,15 @@ class RepositoryController extends Controller {
      * @Template
      */
     public function indexAction($page) {
+//        $sources = $this->getDoctrine()->getEntityManager()
+//                ->findAll("Mapbender\CoreBundle\Entity\Source");
+        $em = $this->getDoctrine()->getEntityManager();
+        $query = $em->createQuery(
+                "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
+        $sources = $query->getResult();
         return array(
             'title' => 'Repository',
-            'sources' => array(),
+            'sources' => $sources,
         );
     }
 

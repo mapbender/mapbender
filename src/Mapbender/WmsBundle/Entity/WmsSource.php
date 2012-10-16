@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\WmsBundle\Entity\RequestInformation;
+use Mapbender\WmsBundle\Component\RequestInformation;
 
 /**
  * @ORM\Entity
@@ -49,11 +49,18 @@ class WmsSource extends Source {
      * @ORM\Column(type="text",nullable=true)
      */
     protected $accessConstraints = "";
-     /**
+    
+    /**
+     * @ORM\Column(type="integer",nullable=true)
+     */
+    protected $layerLimit;
+    
+    /**
      * @ORM\Column(type="integer",nullable=true)
      */
     protected $maxWidth;
-     /**
+
+    /**
      * @ORM\Column(type="integer",nullable=true)
      */
     protected $maxHeight;
@@ -287,6 +294,28 @@ class WmsSource extends Source {
     public function getAccessConstraints() {
         return $this->accessConstraints;
     }
+    
+    /**
+     * Set layerLimit
+     *
+     * @param integer $layerLimit
+     * @return WmsSource
+     */
+    public function setLayerLimit($layerLimit) {
+        $this->layerLimit = $layerLimit;
+        return $this;
+    }
+
+    /**
+     * Get layerLimit
+     *
+     * @return integer 
+     */
+    public function getLayerLimit() {
+        return $this->layerLimit;
+    }
+    
+    
     
     /**
      * Set maxWidth
@@ -688,6 +717,14 @@ class WmsSource extends Source {
     public function addLayer(WmsLayerSource $layer) {
         $this->layers->add($layer);
         return $this;
+    }
+    
+    public function getType(){
+        return "WMS";
+    }
+    
+    public function __toString(){
+        return (string) $this->getId();
     }
 
 }

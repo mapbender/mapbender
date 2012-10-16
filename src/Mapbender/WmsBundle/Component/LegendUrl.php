@@ -17,17 +17,20 @@ class LegendUrl {
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $onlineResource;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $onlineResource;
 
     /**
      * ORM\Column(type="integer", nullable=true)
      */
-    protected $width;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $width;
     
     /**
      * ORM\Column(type="integer", nullable=true)
      */
-    protected $height;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $height;
 
     /**
      * Set onlineResource
