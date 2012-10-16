@@ -41,7 +41,7 @@ class WmsLayerSource {
     /**
      * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent", cascade={"persist","remove"})
      */
-    protected $layer;
+    protected $sublayer;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -91,12 +91,14 @@ class WmsLayerSource {
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $latlonBounds;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $latlonBounds;
 
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    protected $boundingBoxes;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $boundingBoxes;
     
     /**
      * @ORM\Column(type="array", nullable=true)
@@ -121,12 +123,14 @@ class WmsLayerSource {
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $attribution;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $attribution;
 
     /**
      * @ORM\Column(type="object",nullable=true)
      */
-    protected $identifier = '';
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $identifier;
 
     /**
      * @ORM\Column(type="array", nullable=true)
@@ -144,11 +148,12 @@ class WmsLayerSource {
     protected $featureListUrl;
     
     public function __construct() {
-        $this->boundingBoxes = new ArrayCollection();
-        $this->metadataUrl = new ArrayCollection();
-        $this->dataUrl = new ArrayCollection();
-        $this->featureListUrl = new ArrayCollection();
-        $this->styles = new ArrayCollection();
+        $this->sublayer = new ArrayCollection();
+        $this->boundingBoxes = array();
+        $this->metadataUrl = array();
+        $this->dataUrl = array();
+        $this->featureListUrl = array();
+        $this->styles = array();
         $this->srs = array();
     }
 
@@ -159,6 +164,25 @@ class WmsLayerSource {
      */
     public function getId() {
         return $this->id;
+    }
+    
+    /**
+     * Set wmssource
+     * @param $wmssource
+     * @return WmsSource 
+     */
+    public function setWmssource(WmsSource $wmssource) {
+        $this->wmssource = $wmssource;
+        return $this;
+    }
+    
+    /**
+     * Get wmssource
+     *
+     * @return WmsSource 
+     */
+    public function getWmssource() {
+        return $this->wmssource;
     }
 
     /**
@@ -179,6 +203,11 @@ class WmsLayerSource {
      */
     public function getParent() {
         return $this->parent;
+    }
+    
+    
+    public function getSublayer(){
+        return $this->sublayer;
     }
 
     /**
@@ -388,7 +417,7 @@ class WmsLayerSource {
      * @return WmsLayerSource
      */
     public function addBoundingBox(BoundingBox $boundingBoxes) {
-        $this->boundingBoxes->add($boundingBoxes);
+        $this->boundingBoxes[] = $boundingBoxes;
         return $this;
     }
 
@@ -458,7 +487,7 @@ class WmsLayerSource {
      * @return WmsLayerSource
      */
     public function addStyle(Style $style) {
-        $this->styles->add($style);
+        $this->styles[] = $style;
         return $this;
     }
 
@@ -481,9 +510,9 @@ class WmsLayerSource {
      */
     public function getStyles() {
         if($this->getParent() !== null){ // add styles from parent
-            return new ArrayCollection(array_merge(
-                    $this->getParent()->getStyles()->toArray(),
-                    $this->getStyles()->toArray()));
+            return array_merge(
+                    $this->getParent()->getStyles(),
+                    $this->getStyles());
         } else {
             $this->getStyles();
         }
@@ -576,7 +605,7 @@ class WmsLayerSource {
      * @return WmsLayerSource
      */
     public function addMetadataUrl(MetadataUrl $metadataUrl) {
-        $this->metadataUrl->add($metadataUrl);
+        $this->metadataUrl[] = $metadataUrl;
         return $this;
     }
 
@@ -607,7 +636,7 @@ class WmsLayerSource {
      * @return WmsLayerSource
      */
     public function addDataUrl(OnlineResource $dataUrl) {
-        $this->dataUrl->add($dataUrl);
+        $this->dataUrl[] = $dataUrl;
         return $this;
     }
 
@@ -638,7 +667,7 @@ class WmsLayerSource {
      * @return WmsLayerSource
      */
     public function addFeatureListUrl(OnlineResource $featureListUrl) {
-        $this->featureListUrl->add($featureListUrl);
+        $this->featureListUrl[] = $featureListUrl;
         return $this;
     }
 

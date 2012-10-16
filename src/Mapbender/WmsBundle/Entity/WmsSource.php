@@ -103,37 +103,44 @@ class WmsSource extends Source {
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $getCapabilities = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $getCapabilities = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $getMap = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $getMap = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $getFeatureInfo = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $getFeatureInfo = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $describeLayer = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $describeLayer = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $getLegendGraphic = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $getLegendGraphic = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $getStyles = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $getStyles = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $putStyles = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $putStyles = null;
 
     /**
      * @ORM\Column(type="text", nullable=true);
@@ -717,6 +724,19 @@ class WmsSource extends Source {
     public function addLayer(WmsLayerSource $layer) {
         $this->layers->add($layer);
         return $this;
+    }
+    
+    /**
+     * Get root layer
+     *
+     * @return WmsLayerSource 
+     */
+    public function getRootlayer() {
+        if($this->layers !== null && $this->layers->count() > 0){
+            return $this->layers->get(0);
+        } else {
+            return null;
+        }
     }
     
     public function getType(){
