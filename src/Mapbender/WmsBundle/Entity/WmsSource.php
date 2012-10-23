@@ -4,8 +4,10 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\CoreBundle\Component\KeywordIn;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\WmsBundle\Component\RequestInformation;
 
 /**
@@ -13,7 +15,7 @@ use Mapbender\WmsBundle\Component\RequestInformation;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source {
+class WmsSource extends Source implements KeywordIn {
     
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -157,7 +159,15 @@ class WmsSource extends Source {
      */
     protected $layers;
 
+    
+    /**
+     * @var array $keywords the source keyword list
+     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
+     */
+    protected $keywords;
+
     public function __construct() {
+        $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->exceptionFormats = array();
     }
@@ -739,12 +749,54 @@ class WmsSource extends Source {
         }
     }
     
+    
+    
+    /**
+     * Set keywords
+     *
+     * @param array $keywords
+     * @return Source
+     */
+    public function setKeywords($keywords)
+    {
+        $this->keywords = $keywords;
+        return $this;
+    }
+
+    /**
+     * Get keywords
+     *
+     * @return string 
+     */
+    public function getKeywords()
+    {
+        return $this->keywords;
+    }
+    
+    /**
+     * Add keyword
+     *
+     * @param Keyword $keyword
+     * @return Source
+     */
+    public function addKeyword(Keyword $keyword)
+    {
+        $this->keywords->add($keyword);
+        return $this;
+    }
+    
     public function getType(){
         return "WMS";
     }
     
-    public function __toString(){
-        return (string) $this->getId();
+    public function getClassname(){
+        return "Mapbender\WmsBundle\Entity\WmsSource";
     }
+    
+//    public function __toString(){
+//        return (string) $this->getId();
+//    }
+    
+
 
 }

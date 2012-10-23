@@ -6,7 +6,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
+use Mapbender\WmsBundle\Component\IdentifierAuthority;
+use Mapbender\CoreBundle\Component\KeywordIn;
+use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\WmsBundle\Component\Attribution;
+use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Identifier;
 use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\OnlineResource;
@@ -16,7 +20,7 @@ use Mapbender\WmsBundle\Component\Style;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
  */
-class WmsLayerSource {
+class WmsLayerSource implements KeywordIn {
 
     /**
      * @var integer $id
@@ -127,10 +131,17 @@ class WmsLayerSource {
     public $attribution;
 
     /**
-     * @ORM\Column(type="object",nullable=true)
+     * @ORM\Column(type="array",nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $identifier;
+    
+    
+    /**
+     * @ORM\Column(type="array",nullable=true)
+     */
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $authority;
 
     /**
      * @ORM\Column(type="array", nullable=true)
@@ -147,14 +158,23 @@ class WmsLayerSource {
      */
     protected $featureListUrl;
     
+    /**
+     * @var array $keywords the source keyword list
+     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
+     */
+    protected $keywords;
+    
     public function __construct() {
         $this->sublayer = new ArrayCollection();
+        $this->keywords = new ArrayCollection();
         $this->boundingBoxes = array();
         $this->metadataUrl = array();
         $this->dataUrl = array();
         $this->featureListUrl = array();
         $this->styles = array();
         $this->srs = array();
+        $this->identifier = array();
+        $this->authority = array();
     }
 
     /**
@@ -407,6 +427,12 @@ class WmsLayerSource {
      * @return Object 
      */
     public function getLatlonBounds() {
+//        //@TODO check layer inheritance if layer->latlonBounds === null
+//        if($this->latlonBounds === null && $this->getParent() !== null){
+//            return $this->getParent()->getLatlonBounds();
+//        } else {
+//            return $this->latlonBounds;
+//        }
         return $this->latlonBounds;
     }
     
@@ -438,6 +464,12 @@ class WmsLayerSource {
      * @return array 
      */
     public function getBoundingBoxes() {
+//        //@TODO check layer inheritance if count(layer->boundingBoxes) === 0
+//        if(count($this->boundingBoxes) === 0 && $this->getParent() !== null){
+//            return $this->getParent()->getBoundingBoxes();
+//        } else {
+//            return $this->boundingBoxes;
+//        }
         return $this->boundingBoxes;
     }
     
@@ -474,9 +506,9 @@ class WmsLayerSource {
         if($this->getParent() !== null){ // add crses from parent
             return array_merge(
                     $this->getParent()->getSrs(),
-                    $this->getStyles());
+                    $this->srs);
         } else {
-            $this->getStyles();
+            $this->srs;
         }
     }
     
@@ -577,14 +609,25 @@ class WmsLayerSource {
     public function getAttribution() {
         return $this->attribution;
     }
-
+    
     /**
-     * Set identifier
+     * Add identifier
      *
      * @param Identifier $identifier
      * @return WmsLayerSource
      */
-    public function setIdentifier(Identifier $identifier) {
+    public function addIdentifier(Identifier $identifier) {
+        $this->identifier[] = $identifier;
+        return $this;
+    }
+
+    /**
+     * Set identifier
+     *
+     * @param array $identifier
+     * @return WmsLayerSource
+     */
+    public function setIdentifier($identifier) {
         $this->identifier = $identifier;
         return $this;
     }
@@ -597,6 +640,68 @@ class WmsLayerSource {
     public function getIdentifier() {
         return $this->identifier;
     }
+    
+    /**
+     * Get identifier
+     *
+     * @return array 
+     */
+    public function getIdentifierAuthority() {
+        $result = array();
+        $authorities = $this->getAuthority();
+        if(count($this->identifier) != 0 && count($authorities) != 0){
+            foreach($this->identifier as $identifier) {
+                foreach($authorities as $authority) {
+                    if($authority->getName() == $identifier->getAuthority()){
+                        $ident_auth = new IdentifierAuthority();
+                        $ident_auth->setAuthority($authority);
+                        $ident_auth->setIdentifier($identifier);
+                        $result[] = $ident_auth;
+                    }
+                }
+            }
+            
+        }
+        return $result;
+    }
+    
+    /**
+     * Add authority
+     *
+     * @param Authority $authority
+     * @return WmsLayerSource
+     */
+    public function addAuthority(Authority $authority) {
+        $this->authority[] = $authority;
+        return $this;
+    }
+
+    /**
+     * Set authority
+     *
+     * @param array $authority
+     * @return WmsLayerSource
+     */
+    public function setAuthority($authority) {
+        $this->authority = $authority;
+        return $this;
+    }
+
+    /**
+     * Get authority
+     *
+     * @return Authority
+     */
+    public function getAuthority() {
+        if($this->getParent() !== null){ // add crses from parent
+            return array_merge(
+                    $this->getParent()->getAuthority(),
+                    $this->authority);
+        } else {
+            $this->authority;
+        }
+    }
+    
     
     /**
      * Add metadataUrl
@@ -691,7 +796,45 @@ class WmsLayerSource {
         return $this->featureListUrl;
     }
     
+    /**
+     * Set keywords
+     *
+     * @param array $keywords
+     * @return Source
+     */
+    public function setKeywords($keywords)
+    {
+        $this->keywords = $keywords;
+        return $this;
+    }
+
+    /**
+     * Get keywords
+     *
+     * @return string 
+     */
+    public function getKeywords()
+    {
+        return $this->keywords;
+    }
+    
+    /**
+     * Add keyword
+     *
+     * @param Keyword $keyword
+     * @return Source
+     */
+    public function addKeyword(Keyword $keyword)
+    {
+        $this->keywords->add($keyword);
+        return $this;
+    }
+    
+    public function getClassname(){
+        return "Mapbender\WmsBundle\Entity\WmsLayerSource";
+    }
+    
     public function __toString(){
-        return (string) $this->getId();
+        return (string) $this->id;
     }
 }

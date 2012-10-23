@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Source entity
@@ -41,10 +42,6 @@ abstract class Source {
      */
     protected $description;
     
-    
-    public function __construct() {
-        
-    }
 
     /**
      * Get id
@@ -128,4 +125,15 @@ abstract class Source {
      * @return string 
      */
     public abstract function getType();
+    
+    /**
+     * Get class name
+     *
+     * @return string 
+     */
+    public abstract function getClassname();
+    
+    public function __toString(){
+        return (string) $this->id;
+    }
 }

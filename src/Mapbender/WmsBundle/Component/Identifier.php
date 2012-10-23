@@ -18,25 +18,25 @@ class Identifier {
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $value;
     
-    /**
-     * Creates a Identifier object from parameters
-     * @param array $parameters
-     */
-    public static function create($parameters){
-        $obj = new Identifier();
-        if(isset($parameters["authority"])){
-            $obj->authority = Authority::create($parameters["authority"]);
-        }
-        if(isset($parameters["value"])){
-            $obj->value = $parameters["value"];
-        }
-        return $obj;
-    }
+//    /**
+//     * Creates a Identifier object from parameters
+//     * @param array $parameters
+//     */
+//    public static function create($parameters){
+//        $obj = new Identifier();
+//        if(isset($parameters["authority"])){
+//            $obj->authority = Authority::create($parameters["authority"]);
+//        }
+//        if(isset($parameters["value"])){
+//            $obj->value = $parameters["value"];
+//        }
+//        return $obj;
+//    }
     
     /**
      * Get authority
      * 
-     * @return Authority
+     * @return string
      */
     public function getAuthority() {
         return $this->authority;
@@ -44,10 +44,10 @@ class Identifier {
     
     /**
      * Set authority
-     * @param Authority $value
+     * @param string $value
      * @return Identifier
      */
-    public function setAuthority(Authority $value) {
+    public function setAuthority($value) {
         $this->authority = $value;
         return $this;
     }
@@ -71,15 +71,15 @@ class Identifier {
         return $this;
     }
     
-    /**
-     * Get object as array
-     * 
-     * @return array
-     */
-    public function toArray() {
-        return array (
-            "authority" => $this->authority->toArray(),
-            "value" => $this->getValue()
-        );
-    }
+//    /**
+//     * Get object as array
+//     * 
+//     * @return array
+//     */
+//    public function toArray() {
+//        return array (
+//            "authority" => $this->authority->toArray(),
+//            "value" => $this->getValue()
+//        );
+//    }
 }

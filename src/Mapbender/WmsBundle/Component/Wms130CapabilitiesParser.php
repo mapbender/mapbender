@@ -6,6 +6,7 @@ use Mapbender\WmsBundle\Component\Exception\ParsingException;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Component\RequestInformation;
@@ -66,6 +67,16 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
         $wms->setName($this->getValue("./wms:Name/text()", $contextElm));
         $wms->setTitle($this->getValue("./wms:Title/text()", $contextElm));
         $wms->setDescription($this->getValue("./wms:Abstract/text()", $contextElm));
+        
+        $keywordElList = $this->xpath->query("./wms:KeywordList/wms:Keyword", $contextElm);
+        foreach($keywordElList as $keywordEl){
+            $keyword = new Keyword();
+            $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
+            $keyword->setSourceclass($wms->getClassname());
+            $keyword->setSourceid($wms);
+            $wms->addKeyword($keyword);
+        }
+        
         $wms->setOnlineResource($this->getValue("./wms:OnlineResource/@xlink:href", $contextElm));
         
         $wms->setFees($this->getValue("./wms:Fees/text()", $contextElm));
@@ -183,6 +194,15 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
         $wmslayer->setTitle($this->getValue("./wms:Title/text()", $contextElm));
         $wmslayer->setAbstract($this->getValue("./wms:Abstract/text()", $contextElm));
         //@TODO wms:KeywordList/wms:Keyword - list
+        $keywordElList = $this->xpath->query("./wms:KeywordList/wms:Keyword", $contextElm);
+        foreach($keywordElList as $keywordEl){
+            $keyword = new Keyword();
+            $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
+            $keyword->setSourceclass($wmslayer->getClassname());
+            $keyword->setSourceid($wmslayer);
+            $wmslayer->addKeyword($keyword);
+        }
+        
         $tempList = $this->xpath->query("./wms:CRS", $contextElm);
         if($tempList !== null){
             foreach ($tempList as $item) {
@@ -238,22 +258,38 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
         
         $authorityList = $this->xpath->query("./wms:AuthorityURL", $contextElm);
         $identifierList = $this->xpath->query("./wms:Identifier", $contextElm);
-        if($authorityList !== null && $identifierList !== null){
-            $authorityArr = array();
+//        if($authorityList !== null && $identifierList !== null){
+//            $authorityArr = array();
+//            foreach ($authorityList as $authorityEl) {
+//                $authority = new Authority();
+//                $authority->setName($this->getValue("./@name", $authorityEl));
+//                $authority->setUrl($this->getValue("./wms:OnlineResource/text()", $authorityEl));
+//                $authorityArr[$authority->getName()] = $authority;
+//            }
+//            foreach ($identifierList as $identifierEl) {
+//                $identifier = new Identifier();
+//                $identifier->setValue($this->getValue("./@authority", $identifierEl));
+//                if(isset($authorityArr[$identifier->getValue()])){
+//                    $identifier->setAuthority($authorityArr[$identifier->getValue()]);
+//                    $identifierArr[$authority->getName()] = $authority;
+//                    $wmslayer->setIdentifier($identifier);
+//                }
+//            }
+//        }
+        if($authorityList !== null){
             foreach ($authorityList as $authorityEl) {
                 $authority = new Authority();
                 $authority->setName($this->getValue("./@name", $authorityEl));
                 $authority->setUrl($this->getValue("./wms:OnlineResource/text()", $authorityEl));
-                $authorityArr[$authority->getName()] = $authority;
+                $wmslayer->addAuthority($authority);
             }
+        }
+        if($identifierList !== null){
             foreach ($identifierList as $identifierEl) {
                 $identifier = new Identifier();
-                $identifier->setValue($this->getValue("./@authority", $identifierEl));
-                if(isset($authorityArr[$identifier->getValue()])){
-                    $identifier->setAuthority($authorityArr[$identifier->getValue()]);
-                    $identifierArr[$authority->getName()] = $authority;
-                    $wmslayer->setIdentifier($identifier);
-                }
+                $identifier->setAuthority($this->getValue("./@authority", $identifierEl));
+                $identifier->setValue($this->getValue("./text()", $identifierEl));
+                $wmslayer->setIdentifier($identifier);
             }
         }
         
