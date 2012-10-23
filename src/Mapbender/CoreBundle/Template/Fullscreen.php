@@ -20,7 +20,7 @@ class Fullscreen extends Template {
     }
 
     public static function getRegions() {
-        return array('top', 'content');
+        return array('top', 'content', 'footer');
     }
 
     public function render($format = 'html', $html = true, $css = true,
