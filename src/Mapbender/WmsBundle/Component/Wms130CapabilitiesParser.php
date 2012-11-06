@@ -4,9 +4,12 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\WmsBundle\Component\Exception\ParsingException;
 
-use Mapbender\WmsBundle\Entity\WmsSource;
+use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\WmsBundle\Entity\RequestInformation;
+use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\WmsBundle\Entity\WmsSource;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\WmsBundle\Component\RequestInformation;
 
 /**
 * Class that Parses WMS 1.3.0 GetCapabilies Document 
@@ -14,8 +17,6 @@ use Mapbender\WmsBundle\Entity\RequestInformation;
 * @author Karim Malhas <karim@malhas.de>
 */
 class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
-    
-    private $servNsPrefix = "ms";
     
     public function __construct(\DOMDocument $doc){
         parent::__construct($doc);
@@ -26,9 +27,6 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
             if($nsPrefix == "" && $nsUri == "http://www.opengis.net/wms"){
                 $nsPrefix = "wms";
             }
-            if($nsPrefix != "wms" && $nsPrefix != "xsi" &&  $nsPrefix != "xlink" &&  $nsPrefix != "sld" &&  $nsPrefix != "xml"){
-                $this->servNsPrefix = $nsPrefix;
-            }
             $this->xpath->registerNamespace($nsPrefix , $nsUri);
         }
     }
@@ -38,88 +36,122 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
         $root = $this->doc->documentElement;
 
         $this->parseService($wms, $this->getValue("./wms:Service", $root));
-        $this->parseCapabilityRequest($wms, $this->getValue("./wms:Capability/wms:Request", $root));
+        $capabilities =  $this->xpath->query("./wms:Capability/*", $root);
+        foreach($capabilities as $capabilityEl){
+            if($capabilityEl->localName === "Request") {
+                $this->parseCapabilityRequest($wms, $capabilityEl);
+            } else if($capabilityEl->localName === "Exception") {
+                $this->parseCapabilityException($wms, $capabilityEl);
+            } else if($capabilityEl->localName === "Layer") {
+                $rootlayer = new WmsLayerSource();
+                $wms->addLayer($rootlayer);
+                $layer = $this->parseLayer($wms, $rootlayer, $capabilityEl);
+            }
+            /* parse wms:_ExtendedOperation  */
+            else if($capabilityEl->localName === "UserDefinedSymbolization") {
+                $this->parseUserDefinedSymbolization($wms, $capabilityEl);
+            }
+            /* @TODO add other wms:_ExtendedOperation ?? */
+            
+        }
+//        $this->parseCapabilityRequest($wms, $this->getValue("./wms:Capability/wms:Request", $root));
+//        $this->parseCapabilityException($wms, $this->getValue("./wms:Capability/wms:Exception", $root));
+//        $this->parseUserDefinedSymbolization($wms, $this->getValue("./wms:Capability/sld:UserDefinedSymbolization", $root));
+//        $rootlayer = new WmsLayerSource();
+//        $layer = $this->parseLayer($wms, $rootlayer, $this->getValue("./wms:Capability/wms:Layer", $root));
+//        $wms->addLayer($layer);
         return $wms;
     }
     
-    private function parseService(WmsSource $wms, \DOMElement $serviceElm){
-
-        $wms->setName($this->getValue("./wms:Name/text()", $serviceElm));
-        $wms->setTitle($this->getValue("./wms:Title/text()", $serviceElm));
-        $wms->setDescription($this->getValue("./wms:Abstract/text()", $serviceElm));
-        $wms->setOnlineResource($this->getValue("./wms:OnlineResource/@xlink:href", $serviceElm));
+    private function parseService(WmsSource $wms, \DOMElement $contextElm){
+        $wms->setName($this->getValue("./wms:Name/text()", $contextElm));
+        $wms->setTitle($this->getValue("./wms:Title/text()", $contextElm));
+        $wms->setDescription($this->getValue("./wms:Abstract/text()", $contextElm));
         
-        $wms->setFees($this->getValue("./wms:Fees/text()", $serviceElm));
-        $wms->setAccessConstraints($this->getValue("./wms:AccessConstraints/text()", $serviceElm));
-        $wms->setMaxWidth(intval($this->getValue("./wms:MaxWidth/text()", $serviceElm)));
-        $wms->setMaxHeight(intval($this->getValue("./wms:MaxHeight/text()", $serviceElm)));
+        $keywordElList = $this->xpath->query("./wms:KeywordList/wms:Keyword", $contextElm);
+        foreach($keywordElList as $keywordEl){
+            $keyword = new Keyword();
+            $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
+            $keyword->setSourceclass($wms->getClassname());
+            $keyword->setSourceid($wms);
+            $wms->addKeyword($keyword);
+        }
+        
+        $wms->setOnlineResource($this->getValue("./wms:OnlineResource/@xlink:href", $contextElm));
+        
+        $wms->setFees($this->getValue("./wms:Fees/text()", $contextElm));
+        $wms->setAccessConstraints($this->getValue("./wms:AccessConstraints/text()", $contextElm));
+        
+        $layerLimit = intval($this->getValue("./wms:LayerLimit/text()", $contextElm));
+        if($layerLimit > 0){
+            $wms->setLayerLimit(intval($layerLimit));
+        }
+        
+        $maxWidth = intval($this->getValue("./wms:MaxWidth/text()", $contextElm));
+        if($maxWidth > 0){
+            $wms->setMaxWidth(intval($maxWidth));
+        }
+        $maxHeight = intval($this->getValue("./wms:MaxHeight/text()", $contextElm));
+        if($maxHeight > 0){
+            $wms->setMaxHeight(intval($maxHeight));
+        }
+        
         $contact = new Contact();
+        $contact->setPerson($this->getValue("./wms:ContactInformation/wms:ContactPersonPrimary/wms:ContactPerson/text()", $contextElm));
+        $contact->setOrganization($this->getValue("./wms:ContactInformation/wms:ContactPersonPrimary/wms:ContactOrganization/text()", $contextElm));
+        $contact->setPosition($this->getValue("./wms:ContactInformation/wms:ContactPosition/text()", $contextElm));
         
-        $contact->setPerson($this->getValue("./wms:ContactInformation/wms:ContactPersonPrimary/wms:ContactPerson/text()", $serviceElm));
-        $contact->setOrganization($this->getValue("./wms:ContactInformation/wms:ContactPersonPrimary/wms:ContactOrganization/text()", $serviceElm));
-        $contact->setPosition($this->getValue("./wms:ContactInformation/wms:ContactPosition/text()", $serviceElm));
-        $contact->setAddressType($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:AddressType/text()", $serviceElm));
-        $contact->setAddress($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:Address/text()", $serviceElm));
-        $contact->setAddressCity($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:City/text()", $serviceElm));
-        $contact->setAddressStateOrProvince($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:StateOrProvince/text()", $serviceElm));
-        $contact->setAddressPostCode($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:PostCode/text()", $serviceElm));
-        $contact->setAddressCountry($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:Country/text()", $serviceElm));
-        $contact->setVoiceTelephone($this->getValue("./wms:ContactInformation/wms:ContactVoiceTelephone/text()", $serviceElm));
-        $contact->setFacsimileTelephone($this->getValue("./wms:ContactInformation/wms:ContactFacsimileTelephone/text()", $serviceElm));
-        $contact->setElectronicMailAddress($this->getValue("./wms:ContactInformation/wms:ContactElectronicMailAddress/text()", $serviceElm));
+        $contact->setAddressType($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:AddressType/text()", $contextElm));
+        $contact->setAddress($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:Address/text()", $contextElm));
+        $contact->setAddressCity($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:City/text()", $contextElm));
+        $contact->setAddressStateOrProvince($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:StateOrProvince/text()", $contextElm));
+        $contact->setAddressPostCode($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:PostCode/text()", $contextElm));
+        $contact->setAddressCountry($this->getValue("./wms:ContactInformation/wms:ContactAddress/wms:Country/text()", $contextElm));
+        
+        $contact->setVoiceTelephone($this->getValue("./wms:ContactInformation/wms:ContactVoiceTelephone/text()", $contextElm));
+        $contact->setFacsimileTelephone($this->getValue("./wms:ContactInformation/wms:ContactFacsimileTelephone/text()", $contextElm));
+        $contact->setElectronicMailAddress($this->getValue("./wms:ContactInformation/wms:ContactElectronicMailAddress/text()", $contextElm));
 
         $wms->setContact($contact);
     }
     
-    private function parseCapabilityRequest(WmsSource $wms, \DOMElement $requestElm){
-        $tempEl = $this->getValue("./wms:GetCapabilities", $requestElm);
-        if($tempEl !== null) {
-            $getCapabilities = $this->parseOperationRequestInformation($tempEl);
-            $wms->setGetCapabilities($getCapabilities);
-        }
-    
-        $getMap =  $this->parseOperationRequestInformation($tempEl);
-        if($tempEl !== null) {
-            $tempEl = $this->getValue("./wms:GetMap", $requestElm);
-            $wms->setGetMap($getMap);
-        }
-    
-        $tempEl = $this->getValue("./wms:GetFeatureInfo", $requestElm);
-        if($tempEl !== null) {
-            $getFeatureInfo =  $this->parseOperationRequestInformation($tempEl);
-            $wms->setGetFeatureInfo($getFeatureInfo);
-        }
-        
-        $tempEl = $this->getValue("./sld:GetLegendGraphic", $requestElm);
-        if($tempEl !== null) {
-            $getLegendGraphic = $this->parseOperationRequestInformation($tempEl);
-            $wms->setGetLegendGraphic($getLegendGraphic);
-        }
-        
-        $tempEl = $this->getValue("./sld:DescribeLayer", $requestElm);
-        if($tempEl !== null) {
-            $describeLayer =  $this->parseOperationRequestInformation($tempEl);
-            $wms->setDescribeLayer($describeLayer);
-        }
-        
-        $tempEl = $this->getValue("./".$this->servNsPrefix.":GetStyles", $requestElm);
-        if($tempEl !== null) {
-            $getStyles = $this->parseOperationRequestInformation($tempEl);
-            $wms->setGetStyles($getStyles);
-        }
-        
-        $tempEl = $this->getValue("./".$this->servNsPrefix.":PutStyles", $requestElm);
-        if($tempEl !== null) {
-            $putStyles =  $this->parseOperationRequestInformation($tempEl);
-            $wms->setPutStyles($putStyles);
+    private function parseCapabilityRequest(WmsSource $wms, \DOMElement $contextElm){
+        $operations = $this->xpath->query("./*", $contextElm);
+        foreach($operations as $operation){
+            if($operation->localName === "GetCapabilities") {
+                $getCapabilities = $this->parseOperationRequestInformation($operation);
+                $wms->setGetCapabilities($getCapabilities);
+            } else if($operation->localName === "GetMap") {
+                $getMap = $this->parseOperationRequestInformation($operation);
+                $wms->setGetMap($getMap);
+            } else if($operation->localName === "GetFeatureInfo") {
+                $getFeatureInfo = $this->parseOperationRequestInformation($operation);
+                $wms->setGetFeatureInfo($getFeatureInfo);
+            }
+            /* parse wms:_ExtendedOperation */
+             else if($operation->localName === "GetLegendGraphic") {
+                $getLegendGraphic = $this->parseOperationRequestInformation($operation);
+                $wms->setGetLegendGraphic($getLegendGraphic);
+            } else if($operation->localName === "DescribeLayer") {
+                $describeLayer = $this->parseOperationRequestInformation($operation);
+                $wms->setDescribeLayer($describeLayer);
+            } else if($operation->localName === "GetStyles") {
+                $getStyles = $this->parseOperationRequestInformation($operation);
+                $wms->setGetStyles($getStyles);
+            } else if($operation->localName === "PutStyles") {
+                $putStyles = $this->parseOperationRequestInformation($operation);
+                $wms->setPutStyles($putStyles);
+            }
         }
     }
     
     private function parseOperationRequestInformation(\DOMElement $contextElm){
         $requestImformation = new RequestInformation();
         $tempList = $this->xpath->query("./wms:Format", $contextElm);
-        foreach ($tempList as $item) {
-            $requestImformation->addFormat($this->getValue("./text()", $item));
+        if($tempList !== null){
+            foreach ($tempList as $item) {
+                $requestImformation->addFormat($this->getValue("./text()", $item));
+            }
         }
         $requestImformation->setHttpGet($this->getValue(
                 "./wms:DCPType/wms:HTTP/wms:Get/wms:OnlineResource/@xlink:href",
@@ -129,6 +161,213 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
                 $contextElm));
         
         return $requestImformation;
+    }
+    
+    private function parseCapabilityException(WmsSource $wms, \DOMElement $contextElm){
+        $tempList = $this->xpath->query("./wms:Format", $contextElm);
+        if($tempList !== null){
+            foreach ($tempList as $item) {
+                $wms->addExceptionFormat($this->getValue("./text()", $item));
+            }
+        }
+    }
+    
+    private function parseUserDefinedSymbolization(WmsSource $wms, \DOMElement $contextElm){
+        if($contextElm !== null){
+            $wms->setSupportSld($this->getValue("./@SupportSLD", $contextElm));
+            $wms->setUserLayer($this->getValue("./@UserLayer", $contextElm));
+            $wms->setUserStyle($this->getValue("./@UserStyle", $contextElm));
+            $wms->setRemoteWfs($this->getValue("./@RemoteWFS", $contextElm));
+            $wms->setInlineFeature($this->getValue("./@InlineFeature", $contextElm));
+            $wms->setRemoteWcs($this->getValue("./@RemoteWCS", $contextElm));
+        }
+    }
+    private function parseLayer(WmsSource $wms, WmsLayerSource $wmslayer, \DOMElement $contextElm){
+        $wmslayer->setQueryable($this->getValue("./@queryable", $contextElm));
+        $wmslayer->setCascaded($this->getValue("./@cascaded", $contextElm));
+        $wmslayer->setOpaque($this->getValue("./@opaque", $contextElm));
+        $wmslayer->setNoSubset($this->getValue("./@noSubsets", $contextElm));
+        $wmslayer->setFixedWidth($this->getValue("./@fixedWidth", $contextElm));
+        $wmslayer->setFixedHeight($this->getValue("./@fixedHeight", $contextElm));
+        
+        $wmslayer->setName($this->getValue("./wms:Name/text()", $contextElm));
+        $wmslayer->setTitle($this->getValue("./wms:Title/text()", $contextElm));
+        $wmslayer->setAbstract($this->getValue("./wms:Abstract/text()", $contextElm));
+        //@TODO wms:KeywordList/wms:Keyword - list
+        $keywordElList = $this->xpath->query("./wms:KeywordList/wms:Keyword", $contextElm);
+        foreach($keywordElList as $keywordEl){
+            $keyword = new Keyword();
+            $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
+            $keyword->setSourceclass($wmslayer->getClassname());
+            $keyword->setSourceid($wmslayer);
+            $wmslayer->addKeyword($keyword);
+        }
+        
+        $tempList = $this->xpath->query("./wms:CRS", $contextElm);
+        if($tempList !== null){
+            foreach ($tempList as $item) {
+                $wmslayer->addSrs($this->getValue("./text()", $item));
+            }
+        }
+        
+        $latlonBounds = new BoundingBox();
+        $latlonBounds->setSrs("EPSG:4326");
+        $latlonBounds->setMinx($this->getValue("./wms:EX_GeographicBoundingBox/wms:westBoundLongitude/text()", $contextElm));
+        $latlonBounds->setMiny($this->getValue("./wms:EX_GeographicBoundingBox/wms:southBoundLatitude/text()", $contextElm));
+        $latlonBounds->setMaxx($this->getValue("./wms:EX_GeographicBoundingBox/wms:eastBoundLongitude/text()", $contextElm));
+        $latlonBounds->setMaxy($this->getValue("./wms:EX_GeographicBoundingBox/wms:northBoundLatitude/text()", $contextElm));
+        $wmslayer->setLatlonBounds($latlonBounds);
+        
+        $tempList = $this->xpath->query("./wms:BoundingBox", $contextElm);
+        if($tempList !== null){
+            foreach ($tempList as $item) {
+                $bbox = new BoundingBox();
+                $bbox->setSrs($this->getValue("./@CRS", $item));
+                $bbox->setMinx($this->getValue("./@minx", $item));
+                $bbox->setMiny($this->getValue("./@miny", $item));
+                $bbox->setMaxx($this->getValue("./@maxx", $item));
+                $bbox->setMaxy($this->getValue("./@maxy", $item));
+                $wmslayer->addBoundingBox($bbox);
+            }
+        }
+        /*@TODO wms:Dimension <element ref="wms:Dimension" minOccurs="0" maxOccurs="unbounded"/>
+         * <element name="Dimension">
+         * <annotation><documentation>The Dimension element declares the existence of a dimension and indicates what values along a dimension are valid.</documentation></annotation>
+         * <complexType><simpleContent><extension base="string">
+         * <attribute name="name" type="string" use="required"/>
+         * <attribute name="units" type="string" use="required"/>
+         * <attribute name="unitSymbol" type="string"/>
+         * <attribute name="default" type="string"/>
+         * <attribute name="multipleValues" type="boolean"/>
+         * <attribute name="nearestValue" type="boolean"/>
+         * <attribute name="current" type="boolean"/>
+         * </extension></simpleContent></complexType>
+         * </element>
+         */
+        $attributionEl = $this->getValue("./wms:Attribution", $contextElm);
+        if($attributionEl !== null){
+            $attribution = new Attribution();
+            $attribution->setTitle($this->getValue("./wms:Title/text()", $attributionEl));
+            $attribution->setOnlineResource($this->getValue("./wms:OnlineResource/text()", $attributionEl));
+            $attribution->setLogoUrl($this->getValue("./wms:LogoURL/wms:OnlineResource/text()", $attributionEl));
+            $attribution->setLogoFormat($this->getValue("./wms:LogoURL/wms:Format/text()", $attributionEl));
+            $attribution->setLogoWidth($this->getValue("./wms:LogoURL/@width", $attributionEl));
+            $attribution->setLogoHeight($this->getValue("./wms:LogoURL/@height", $attributionEl));
+            $wmslayer->setAttribution($attribution);
+        }
+        
+        $authorityList = $this->xpath->query("./wms:AuthorityURL", $contextElm);
+        $identifierList = $this->xpath->query("./wms:Identifier", $contextElm);
+//        if($authorityList !== null && $identifierList !== null){
+//            $authorityArr = array();
+//            foreach ($authorityList as $authorityEl) {
+//                $authority = new Authority();
+//                $authority->setName($this->getValue("./@name", $authorityEl));
+//                $authority->setUrl($this->getValue("./wms:OnlineResource/text()", $authorityEl));
+//                $authorityArr[$authority->getName()] = $authority;
+//            }
+//            foreach ($identifierList as $identifierEl) {
+//                $identifier = new Identifier();
+//                $identifier->setValue($this->getValue("./@authority", $identifierEl));
+//                if(isset($authorityArr[$identifier->getValue()])){
+//                    $identifier->setAuthority($authorityArr[$identifier->getValue()]);
+//                    $identifierArr[$authority->getName()] = $authority;
+//                    $wmslayer->setIdentifier($identifier);
+//                }
+//            }
+//        }
+        if($authorityList !== null){
+            foreach ($authorityList as $authorityEl) {
+                $authority = new Authority();
+                $authority->setName($this->getValue("./@name", $authorityEl));
+                $authority->setUrl($this->getValue("./wms:OnlineResource/text()", $authorityEl));
+                $wmslayer->addAuthority($authority);
+            }
+        }
+        if($identifierList !== null){
+            foreach ($identifierList as $identifierEl) {
+                $identifier = new Identifier();
+                $identifier->setAuthority($this->getValue("./@authority", $identifierEl));
+                $identifier->setValue($this->getValue("./text()", $identifierEl));
+                $wmslayer->setIdentifier($identifier);
+            }
+        }
+        
+        $metadataUrlList = $this->xpath->query("./wms:MetadataURL", $contextElm);
+        if($metadataUrlList !== null){
+            foreach($metadataUrlList as $metadataUrlEl){
+                $metadataUrl = new MetadataUrl();
+                $onlineResource = new OnlineResource();
+                $onlineResource->setFormat($this->getValue("./wms:Format/text()", $metadataUrlEl));
+                $onlineResource->setHref($this->getValue("./wms:OnlineResource/text()", $metadataUrlEl));
+                $metadataUrl->setOnlineResource($onlineResource);
+                $metadataUrl->setType($this->getValue("./@type", $metadataUrlEl));
+                $wmslayer->addMetadataUrl($metadataUrl);
+            }
+        }
+        
+        $dataUrlList = $this->xpath->query("./wms:DataURL", $contextElm);
+        if($dataUrlList !== null){
+            foreach($dataUrlList as $dataUrlEl){
+                $onlineResource = new OnlineResource();
+                $onlineResource->setFormat($this->getValue("./wms:Format/text()", $dataUrlEl));
+                $onlineResource->setHref($this->getValue("./wms:OnlineResource/text()", $dataUrlEl));
+
+                $wmslayer->addDataUrl($onlineResource);
+            }
+        }
+        
+        $featureListUrlList = $this->xpath->query("./wms:FeatureListURL", $contextElm);
+        if($featureListUrlList !== null){
+            foreach($featureListUrlList as $featureListUrlEl){
+                $onlineResource = new OnlineResource();
+                $onlineResource->setFormat($this->getValue("./wms:Format/text()", $featureListUrlEl));
+                $onlineResource->setHref($this->getValue("./wms:OnlineResource/text()", $featureListUrlEl));
+
+                $wmslayer->addFeatureListUrl($onlineResource);
+            }
+        }
+        
+        $tempList = $this->xpath->query("./wms:Style", $contextElm);
+        if($tempList !== null){
+            foreach ($tempList as $item) {
+                $style = new Style();
+                $style->setName($this->getValue("./wms:Name/text()", $item));
+                $style->setTitle($this->getValue("./wms:Title/text()", $item));
+                $style->setAbstract($this->getValue("./wms:Abstract/text()", $item));
+                $legendUrl = new LegendUrl();
+                $legendUrl->setWidth($this->getValue("./wms:LegendURL/@width", $item));
+                $legendUrl->setHeight($this->getValue("./wms:LegendURL/@height", $item));
+                $onlineResource = new OnlineResource();
+                $onlineResource->setFormat($this->getValue("./wms:LegendURL/wms:Format/text()", $item));
+                $onlineResource->setHref($this->getValue("./wms:LegendURL/wms:OnlineResource/xlink:href", $item));
+                $legendUrl->setOnlineResource($onlineResource);
+                $style->setLegendUrl($legendUrl);
+                $wmslayer->addStyle($style);
+            }
+        }
+        
+        $minScale = $this->getValue("./wms:MinScaleDenominator/text()", $contextElm);
+        if($minScale !== null){
+            $wmslayer->setMinScale(floatval($minScale));
+        }
+        $maxScale = $this->getValue("./wms:MaxScaleDenominator/text()", $contextElm);
+        if($maxScale !== null){
+            $wmslayer->setMaxScale(floatval($maxScale));
+        }
+        
+        $tempList = $this->xpath->query("./wms:Layer", $contextElm);
+        if($tempList !== null){
+            foreach ($tempList as $item) {
+                $subwmslayer = $this->parseLayer($wms, new WmsLayerSource(), $item);
+                $subwmslayer->setParent($wmslayer);
+                $subwmslayer->setWmsSource($wms);
+                $wmslayer->getSublayer()->add($subwmslayer);
+                $wms->addLayer($subwmslayer);
+            }
+        }
+        $wmslayer->setWmsSource($wms);
+        return $wmslayer;
     }
 }
 

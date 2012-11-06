@@ -12,27 +12,29 @@ class Authority {
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $url;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $url;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $name;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $name;
 
-    /**
-     * Creates a Authority object from parameters
-     * @param array $parameters
-     */
-    public static function create($parameters) {
-        $obj = new Authority();
-        if (isset($parameters["url"])) {
-            $obj->url = $parameters["url"];
-        }
-        if (isset($parameters["name"])) {
-            $obj->name = $parameters["name"];
-        }
-        return $obj;
-    }
+//    /**
+//     * Creates a Authority object from parameters
+//     * @param array $parameters
+//     */
+//    public static function create($parameters) {
+//        $obj = new Authority();
+//        if (isset($parameters["url"])) {
+//            $obj->url = $parameters["url"];
+//        }
+//        if (isset($parameters["name"])) {
+//            $obj->name = $parameters["name"];
+//        }
+//        return $obj;
+//    }
 
     /**
      * Get url
@@ -72,16 +74,16 @@ class Authority {
         return $this;
     }
 
-    /**
-     * Get object as array
-     * 
-     * @return array
-     */
-    public function toArray() {
-        return array(
-            "name" => $this->name,
-            "url" => $this->url
-        );
-    }
+//    /**
+//     * Get object as array
+//     * 
+//     * @return array
+//     */
+//    public function toArray() {
+//        return array(
+//            "name" => $this->name,
+//            "url" => $this->url
+//        );
+//    }
 
 }

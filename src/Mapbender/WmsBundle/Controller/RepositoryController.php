@@ -11,6 +11,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
@@ -95,6 +96,9 @@ class RepositoryController extends Controller {
                     $this->get("logger")->debug("Could not parse data for url '$getcapa_url_usrPwd'");
                     throw new \Exception("Preview: Could not parse data for url '$getcapa_url_usrPwd'");
                 }
+                $this->getDoctrine()->getEntityManager()->persist($wmssource);
+                $this->getDoctrine()->getEntityManager()->flush();
+
             }else{
                 throw new \Exception("Preview: Server said '".$result->getStatusCode() . " ". $result->getStatusMessage(). "'");
             }
@@ -106,5 +110,19 @@ class RepositoryController extends Controller {
                         "MapbenderWmsBundle:Repository:new.html.twig", array("form" => $form->createView()));
     }
 
+    /**
+     * Recursively remove a nested Layerstructure
+     * @param GroupLayer
+     * @param EntityManager
+    */
+    public function removeRecursive(WmsLayerSource $wmslayer, $em){
+//        $this->removeRecursive($wmssource->getRootlayer(),
+//                        $this->getDoctrine()->getEntityManager());
+        foreach($wmslayer->getSublayer() as $sublayer){
+            $this->removeRecursive($sublayer, $em);
+        }
+        $em->remove($wmslayer);
+        $em->flush();
+    }
 }
 

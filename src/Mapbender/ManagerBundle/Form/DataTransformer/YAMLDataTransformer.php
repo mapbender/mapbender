@@ -26,7 +26,7 @@ class YAMLDataTransformer implements DataTransformerInterface
         $dumper = new Dumper();
 
         try {
-            $yaml = $dumper->dump($array);
+            $yaml = $dumper->dump($array, 2);
         } catch(DumpException $e) {
             throw new TransformationFailedException();
         }

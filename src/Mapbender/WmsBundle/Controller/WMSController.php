@@ -22,7 +22,7 @@ use Mapbender\WmsBundle\WmsEvents;
 * @package bkg
 * @author Karim Malhas <karim@malhas.de>
 */
-class WMSController {
+class WMSController extends Controller {
     
     /**
      * Shows the startpage of the WMS Bundle

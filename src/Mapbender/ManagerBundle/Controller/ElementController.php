@@ -280,7 +280,9 @@ class ElementController extends Controller {
                 'css' => array(
                     'bundles/mapbendermanager/codemirror2/lib/codemirror.css'));
         } else {
-            $formType->add('configuration', $class::getType());
+            $type = $class::getType();
+
+            $formType->add('configuration', new $type());
             $formTheme = $class::getFormTemplate();
             $formAssets = $class::getFormAssets();
         }

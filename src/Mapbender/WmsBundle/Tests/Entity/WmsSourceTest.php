@@ -7,14 +7,14 @@ use Doctrine\ORM\Tools\SchemaTool;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\WmsBundle\Entity\RequestInformation;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
-use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Component\Attribution;
-use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Identifier;
+use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\OnlineResource;
+use Mapbender\WmsBundle\Component\RequestInformation;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\WmsBundle\Entity\WmsSource;
 
 
 /*

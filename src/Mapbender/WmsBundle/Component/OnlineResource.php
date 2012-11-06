@@ -1,8 +1,8 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
+//use Doctrine\Common\Collections\ArrayCollection;
+//use Doctrine\ORM\Mapping as ORM;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\WmsBundle\Component\Attribution;
@@ -18,12 +18,14 @@ class OnlineResource {
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $format;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $format;
     
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $href;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $href;
 
     /**
      * Set format

@@ -4,16 +4,18 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\CoreBundle\Component\KeywordIn;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\WmsBundle\Entity\RequestInformation;
+use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\WmsBundle\Component\RequestInformation;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source {
+class WmsSource extends Source implements KeywordIn {
     
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -49,11 +51,18 @@ class WmsSource extends Source {
      * @ORM\Column(type="text",nullable=true)
      */
     protected $accessConstraints = "";
-     /**
+    
+    /**
+     * @ORM\Column(type="integer",nullable=true)
+     */
+    protected $layerLimit;
+    
+    /**
      * @ORM\Column(type="integer",nullable=true)
      */
     protected $maxWidth;
-     /**
+
+    /**
      * @ORM\Column(type="integer",nullable=true)
      */
     protected $maxHeight;
@@ -66,7 +75,7 @@ class WmsSource extends Source {
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $supportsSld = false;
+    protected $supportSld = false;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -82,41 +91,58 @@ class WmsSource extends Source {
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $remoteWfs = false;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $inlineFeature = false;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $remoteWcs = false;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $getCapabilities = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $getCapabilities = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $getMap = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $getMap = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $getFeatureInfo = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $getFeatureInfo = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $describeLayer = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $describeLayer = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $getLegendGraphic = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $getLegendGraphic = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $getStyles = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $getStyles = null;
 
     /**
      * @ORM\Column(type="object", nullable=true)
      */
-    protected $putStyles = null;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $putStyles = null;
 
     /**
      * @ORM\Column(type="text", nullable=true);
@@ -133,8 +159,17 @@ class WmsSource extends Source {
      */
     protected $layers;
 
+    
+    /**
+     * @var array $keywords the source keyword list
+     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
+     */
+    protected $keywords;
+
     public function __construct() {
+        $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
+        $this->exceptionFormats = array();
     }
     
     /**
@@ -278,6 +313,28 @@ class WmsSource extends Source {
     }
     
     /**
+     * Set layerLimit
+     *
+     * @param integer $layerLimit
+     * @return WmsSource
+     */
+    public function setLayerLimit($layerLimit) {
+        $this->layerLimit = $layerLimit;
+        return $this;
+    }
+
+    /**
+     * Get layerLimit
+     *
+     * @return integer 
+     */
+    public function getLayerLimit() {
+        return $this->layerLimit;
+    }
+    
+    
+    
+    /**
      * Set maxWidth
      *
      * @param integer $maxWidth
@@ -327,6 +384,17 @@ class WmsSource extends Source {
         $this->exceptionFormats = $exceptionFormats;
         return $this;
     }
+    
+    /**
+     * Add exceptionFormat
+     *
+     * @param array $exceptionFormat
+     * @return WmsSource
+     */
+    public function addExceptionFormat($exceptionFormat) {
+        $this->exceptionFormats[] = $exceptionFormat;
+        return $this;
+    }
 
     /**
      * Get exceptionFormats
@@ -338,23 +406,23 @@ class WmsSource extends Source {
     }
 
     /**
-     * Set supportsSld
+     * Set supportSld
      *
-     * @param boolean $supportsSld
+     * @param boolean $supportSld
      * @return WmsSource
      */
-    public function setSupportsSld($supportsSld) {
-        $this->supportsSld = $supportsSld;
+    public function setSupportSld($supportSld) {
+        $this->supportSld = $supportSld;
         return $this;
     }
 
     /**
-     * Get supportsSld
+     * Get supportSld
      *
      * @return boolean 
      */
-    public function getSupportsSld() {
-        return $this->supportsSld;
+    public function getSupportSld() {
+        return $this->supportSld;
     }
 
     /**
@@ -417,6 +485,46 @@ class WmsSource extends Source {
         return $this->remoteWfs;
     }
 
+    /**
+     * Set inlineFeature
+     *
+     * @param boolean $inlineFeature
+     * @return WmsSource
+     */
+    public function setInlineFeature($inlineFeature) {
+        $this->inlineFeature = $inlineFeature;
+        return $this;
+    }
+
+    /**
+     * Get inlineFeature
+     *
+     * @return boolean 
+     */
+    public function getInlineFeature() {
+        return $this->inlineFeature;
+    }
+
+    /**
+     * Set remoteWcs
+     *
+     * @param boolean $remoteWcs
+     * @return WmsSource
+     */
+    public function setRemoteWcs($remoteWcs) {
+        $this->remoteWcs = $remoteWcs;
+        return $this;
+    }
+
+    /**
+     * Get remoteWcs
+     *
+     * @return boolean 
+     */
+    public function getRemoteWcs() {
+        return $this->remoteWcs;
+    }
+    
     /**
      * Set getCapabilities
      *
@@ -627,5 +735,68 @@ class WmsSource extends Source {
         $this->layers->add($layer);
         return $this;
     }
+    
+    /**
+     * Get root layer
+     *
+     * @return WmsLayerSource 
+     */
+    public function getRootlayer() {
+        if($this->layers !== null && $this->layers->count() > 0){
+            return $this->layers->get(0);
+        } else {
+            return null;
+        }
+    }
+    
+    
+    
+    /**
+     * Set keywords
+     *
+     * @param array $keywords
+     * @return Source
+     */
+    public function setKeywords($keywords)
+    {
+        $this->keywords = $keywords;
+        return $this;
+    }
+
+    /**
+     * Get keywords
+     *
+     * @return string 
+     */
+    public function getKeywords()
+    {
+        return $this->keywords;
+    }
+    
+    /**
+     * Add keyword
+     *
+     * @param Keyword $keyword
+     * @return Source
+     */
+    public function addKeyword(Keyword $keyword)
+    {
+        $this->keywords->add($keyword);
+        return $this;
+    }
+    
+    public function getType(){
+        return "WMS";
+    }
+    
+    public function getClassname(){
+        return "Mapbender\WmsBundle\Entity\WmsSource";
+    }
+    
+//    public function __toString(){
+//        return (string) $this->getId();
+//    }
+    
+
 
 }

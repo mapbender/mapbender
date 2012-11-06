@@ -1,5 +1,5 @@
 <?php
-namespace Mapbender\WmsBundle\Entity;
+namespace Mapbender\WmsBundle\Component;
 
 
 /**
@@ -11,15 +11,18 @@ class RequestInformation {
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $httpGet;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $httpGet;
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $httpPost;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $httpPost;
     /**
      * ORM\Column(type="array", nullable=true)
      */
-    protected $formats;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $formats;
     
     /**
      * Creates a RequestInformation object from parameters

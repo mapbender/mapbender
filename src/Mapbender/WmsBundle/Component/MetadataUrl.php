@@ -10,11 +10,13 @@ class MetadataUrl {
     /**
      * ORM\Column(type="object", nullable=true)
      */
-    protected $onlineResource;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $onlineResource;
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    protected $type;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $type;
     
     /**
      * Creates a MetadataUrl object from parameters

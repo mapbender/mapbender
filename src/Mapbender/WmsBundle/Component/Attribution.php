@@ -12,59 +12,65 @@ class Attribution {
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    protected $title;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $title;
 
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    protected $onlineResource;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $onlineResource;
 
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    protected $logoUrl;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $logoUrl;
 
     /**
      * ORM\Column(type="string", nullable=false)
      */
-    protected $logoFormat;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $logoFormat;
 
     /**
      * ORM\Column(type="integer", nullable=false)
      */
-    protected $logoWidth;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $logoWidth;
 
     /**
      * ORM\Column(type="integer", nullable=false)
      */
-    protected $logoHeight;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $logoHeight;
 
-    /**
-     * Creates an Attribution object from parameters
-     * @param array $parameters
-     */
-    public static function create($parameters) {
-        $attr = new Attribution();
-        if (isset($parameters["title"])) {
-            $attr->title = $parameters["title"];
-        }
-        if (isset($parameters["onlineResource"])) {
-            $attr->onlineResource = $parameters["onlineResource"];
-        }
-        if (isset($parameters["logoUrl"])) {
-            $attr->logoUrl = $parameters["logoUrl"];
-        }
-        if (isset($parameters["logoFormat"])) {
-            $attr->logoFormat = $parameters["logoFormat"];
-        }
-        if (isset($parameters["logoWidth"])) {
-            $attr->logoWidth = $parameters["logoWidth"];
-        }
-        if (isset($parameters["logoHeight"])) {
-            $attr->logoHeight = $parameters["logoHeight"];
-        }
-        return $attr;
-    }
+//    /**
+//     * Creates an Attribution object from parameters
+//     * @param array $parameters
+//     */
+//    public static function create($parameters) {
+//        $attr = new Attribution();
+//        if (isset($parameters["title"])) {
+//            $attr->title = $parameters["title"];
+//        }
+//        if (isset($parameters["onlineResource"])) {
+//            $attr->onlineResource = $parameters["onlineResource"];
+//        }
+//        if (isset($parameters["logoUrl"])) {
+//            $attr->logoUrl = $parameters["logoUrl"];
+//        }
+//        if (isset($parameters["logoFormat"])) {
+//            $attr->logoFormat = $parameters["logoFormat"];
+//        }
+//        if (isset($parameters["logoWidth"])) {
+//            $attr->logoWidth = $parameters["logoWidth"];
+//        }
+//        if (isset($parameters["logoHeight"])) {
+//            $attr->logoHeight = $parameters["logoHeight"];
+//        }
+//        return $attr;
+//    }
 
     /**
      * Get title
@@ -168,20 +174,20 @@ class Attribution {
         $this->logoHeight = $value;
     }
 
-    /**
-     * Get object as array
-     * 
-     * @return array
-     */
-    public function toArray() {
-        return array(
-            "title" => $this->title,
-            "onlineResource" => $this->onlineResource,
-            "logoUrl" => $this->logoUrl,
-            "logoFormat" => $this->logoFormat,
-            "logoWidth" => $this->logoWidth,
-            "logoHeight" => $this->logoHeight
-        );
-    }
+//    /**
+//     * Get object as array
+//     * 
+//     * @return array
+//     */
+//    public function toArray() {
+//        return array(
+//            "title" => $this->title,
+//            "onlineResource" => $this->onlineResource,
+//            "logoUrl" => $this->logoUrl,
+//            "logoFormat" => $this->logoFormat,
+//            "logoWidth" => $this->logoWidth,
+//            "logoHeight" => $this->logoHeight
+//        );
+//    }
 
 }

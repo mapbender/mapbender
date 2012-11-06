@@ -31,8 +31,6 @@ abstract class WmsCapabilitiesParser {
         $this->xpath = new \DOMXPath($doc);
         $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
     } 
-    
-    
     protected function getValue($xpath, $contextElm=null){
         if (!$contextElm){
             $contextElm = $this->doc;

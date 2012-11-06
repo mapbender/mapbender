@@ -2,6 +2,7 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Source entity
@@ -25,7 +26,7 @@ abstract class Source {
 
     /**
      * @var string $title The source title
-     * @ORM\Column(type="string", length=128, nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      */
     protected $title;
     
@@ -37,14 +38,10 @@ abstract class Source {
     
     /**
      * @var string $description The source description
-     * @ORM\Column(type="string", length=128, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $description;
     
-    
-    public function __construct() {
-        
-    }
 
     /**
      * Get id
@@ -120,5 +117,23 @@ abstract class Source {
     public function getAlias()
     {
         return $this->alias;
+    }
+    
+    /**
+     * Get source type
+     *
+     * @return string 
+     */
+    public abstract function getType();
+    
+    /**
+     * Get class name
+     *
+     * @return string 
+     */
+    public abstract function getClassname();
+    
+    public function __toString(){
+        return (string) $this->id;
     }
 }
