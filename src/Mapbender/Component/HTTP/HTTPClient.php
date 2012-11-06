@@ -205,5 +205,4 @@ class HTTPClient {
         $result .= $mergedUrl['query'] ? '?' . $mergedUrl['query'] : "";
         return $result;
     }
-
 }
