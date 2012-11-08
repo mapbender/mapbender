@@ -14,7 +14,7 @@ use Mapbender\WmsBundle\Component\RequestInformation;
 /**
 * Class that Parses WMS 1.3.0 GetCapabilies Document 
 * @package Mapbender
-* @author Karim Malhas <karim@malhas.de>
+* @author Paul Schmidt <paul.schmidt@wheregroup.com>
 */
 class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
     
@@ -193,7 +193,7 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
         $wmslayer->setName($this->getValue("./wms:Name/text()", $contextElm));
         $wmslayer->setTitle($this->getValue("./wms:Title/text()", $contextElm));
         $wmslayer->setAbstract($this->getValue("./wms:Abstract/text()", $contextElm));
-        //@TODO wms:KeywordList/wms:Keyword - list
+        
         $keywordElList = $this->xpath->query("./wms:KeywordList/wms:Keyword", $contextElm);
         foreach($keywordElList as $keywordEl){
             $keyword = new Keyword();
@@ -209,14 +209,16 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
                 $wmslayer->addSrs($this->getValue("./text()", $item));
             }
         }
-        
-        $latlonBounds = new BoundingBox();
-        $latlonBounds->setSrs("EPSG:4326");
-        $latlonBounds->setMinx($this->getValue("./wms:EX_GeographicBoundingBox/wms:westBoundLongitude/text()", $contextElm));
-        $latlonBounds->setMiny($this->getValue("./wms:EX_GeographicBoundingBox/wms:southBoundLatitude/text()", $contextElm));
-        $latlonBounds->setMaxx($this->getValue("./wms:EX_GeographicBoundingBox/wms:eastBoundLongitude/text()", $contextElm));
-        $latlonBounds->setMaxy($this->getValue("./wms:EX_GeographicBoundingBox/wms:northBoundLatitude/text()", $contextElm));
-        $wmslayer->setLatlonBounds($latlonBounds);
+        $latlonbboxEl = $this->getValue("./wms:EX_GeographicBoundingBox", $contextElm);
+        if($latlonbboxEl !== null){
+            $latlonBounds = new BoundingBox();
+            $latlonBounds->setSrs("EPSG:4326");
+            $latlonBounds->setMinx($this->getValue("./wms:westBoundLongitude/text()", $latlonbboxEl));
+            $latlonBounds->setMiny($this->getValue("./wms:southBoundLatitude/text()", $latlonbboxEl));
+            $latlonBounds->setMaxx($this->getValue("./wms:eastBoundLongitude/text()", $latlonbboxEl));
+            $latlonBounds->setMaxy($this->getValue("./wms:northBoundLatitude/text()", $latlonbboxEl));
+            $wmslayer->setLatlonBounds($latlonBounds);
+        }
         
         $tempList = $this->xpath->query("./wms:BoundingBox", $contextElm);
         if($tempList !== null){
@@ -230,52 +232,27 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
                 $wmslayer->addBoundingBox($bbox);
             }
         }
-        /*@TODO wms:Dimension <element ref="wms:Dimension" minOccurs="0" maxOccurs="unbounded"/>
-         * <element name="Dimension">
-         * <annotation><documentation>The Dimension element declares the existence of a dimension and indicates what values along a dimension are valid.</documentation></annotation>
-         * <complexType><simpleContent><extension base="string">
-         * <attribute name="name" type="string" use="required"/>
-         * <attribute name="units" type="string" use="required"/>
-         * <attribute name="unitSymbol" type="string"/>
-         * <attribute name="default" type="string"/>
-         * <attribute name="multipleValues" type="boolean"/>
-         * <attribute name="nearestValue" type="boolean"/>
-         * <attribute name="current" type="boolean"/>
-         * </extension></simpleContent></complexType>
-         * </element>
-         */
+        
         $attributionEl = $this->getValue("./wms:Attribution", $contextElm);
         if($attributionEl !== null){
             $attribution = new Attribution();
             $attribution->setTitle($this->getValue("./wms:Title/text()", $attributionEl));
             $attribution->setOnlineResource($this->getValue("./wms:OnlineResource/text()", $attributionEl));
-            $attribution->setLogoUrl($this->getValue("./wms:LogoURL/wms:OnlineResource/text()", $attributionEl));
-            $attribution->setLogoFormat($this->getValue("./wms:LogoURL/wms:Format/text()", $attributionEl));
-            $attribution->setLogoWidth($this->getValue("./wms:LogoURL/@width", $attributionEl));
-            $attribution->setLogoHeight($this->getValue("./wms:LogoURL/@height", $attributionEl));
+            
+            $logoUrl = new LegendUrl();
+            $logoUrl->setHeight($this->getValue("./wms:LogoURL/@height", $attributionEl));
+            $logoUrl->setWidth($this->getValue("./wms:LogoURL/@width", $attributionEl));
+            $onlineResource = new OnlineResource();
+            $onlineResource->setHref($this->getValue("./wms:LogoURL/wms:OnlineResource/text()", $attributionEl));
+            $onlineResource->setFormat($this->getValue("./wms:LogoURL/wms:Format/text()", $attributionEl));
+            $logoUrl->setOnlineResource($onlineResource);
+            $attribution->setLogoUrl($logoUrl);
             $wmslayer->setAttribution($attribution);
         }
         
         $authorityList = $this->xpath->query("./wms:AuthorityURL", $contextElm);
         $identifierList = $this->xpath->query("./wms:Identifier", $contextElm);
-//        if($authorityList !== null && $identifierList !== null){
-//            $authorityArr = array();
-//            foreach ($authorityList as $authorityEl) {
-//                $authority = new Authority();
-//                $authority->setName($this->getValue("./@name", $authorityEl));
-//                $authority->setUrl($this->getValue("./wms:OnlineResource/text()", $authorityEl));
-//                $authorityArr[$authority->getName()] = $authority;
-//            }
-//            foreach ($identifierList as $identifierEl) {
-//                $identifier = new Identifier();
-//                $identifier->setValue($this->getValue("./@authority", $identifierEl));
-//                if(isset($authorityArr[$identifier->getValue()])){
-//                    $identifier->setAuthority($authorityArr[$identifier->getValue()]);
-//                    $identifierArr[$authority->getName()] = $authority;
-//                    $wmslayer->setIdentifier($identifier);
-//                }
-//            }
-//        }
+        
         if($authorityList !== null){
             foreach ($authorityList as $authorityEl) {
                 $authority = new Authority();
@@ -303,6 +280,22 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
                 $metadataUrl->setOnlineResource($onlineResource);
                 $metadataUrl->setType($this->getValue("./@type", $metadataUrlEl));
                 $wmslayer->addMetadataUrl($metadataUrl);
+            }
+        }
+
+        $dimentionList = $this->xpath->query("./wms:Dimension", $contextElm);
+        if($dimentionList !== null){
+            foreach ($dimentionList as $dimensionEl) {
+                $dimention = new Dimension();
+                $dimention->setName($this->getValue("./@name", $dimensionEl));//($this->getValue("./@CRS", $item));
+                $dimention->setUnits($this->getValue("./@units", $dimensionEl));
+                $dimention->setUnitSymbol($this->getValue("./@unitSymbol", $dimensionEl));
+                $dimention->setDefault($this->getValue("./@default", $dimensionEl));
+                $dimention->setMultipleValues($this->getValue("./@multipleValues", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
+                $dimention->setNearestValue($this->getValue("./@nearestValue", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
+                $dimention->setCurrent($this->getValue("./@current", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
+                $dimention->setExtentValue($this->getValue("./text()", $dimensionEl));
+                $wmslayer->addDimensionl($dimension);
             }
         }
         
@@ -335,25 +328,47 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
                 $style->setName($this->getValue("./wms:Name/text()", $item));
                 $style->setTitle($this->getValue("./wms:Title/text()", $item));
                 $style->setAbstract($this->getValue("./wms:Abstract/text()", $item));
-                $legendUrl = new LegendUrl();
-                $legendUrl->setWidth($this->getValue("./wms:LegendURL/@width", $item));
-                $legendUrl->setHeight($this->getValue("./wms:LegendURL/@height", $item));
-                $onlineResource = new OnlineResource();
-                $onlineResource->setFormat($this->getValue("./wms:LegendURL/wms:Format/text()", $item));
-                $onlineResource->setHref($this->getValue("./wms:LegendURL/wms:OnlineResource/xlink:href", $item));
-                $legendUrl->setOnlineResource($onlineResource);
-                $style->setLegendUrl($legendUrl);
+                
+                $legendUrlEl = $this->getValue("./wms:LegendURL", $item);
+                if($legendUrlEl !== null){
+                    $legendUrl = new LegendUrl();
+                    $legendUrl->setWidth($this->getValue("./@width", $legendUrlEl));
+                    $legendUrl->setHeight($this->getValue("./@height", $legendUrlEl));
+                    $onlineResource = new OnlineResource();
+                    $onlineResource->setFormat($this->getValue("./wms:Format/text()", $legendUrlEl));
+                    $onlineResource->setHref($this->getValue("./wms:OnlineResource/xlink:href", $legendUrlEl));
+                    $legendUrl->setOnlineResource($onlineResource);
+                    $style->setLegendUrl($legendUrl);
+                }
+                
+                $styleUrlEl = $this->getValue("./wms:StyleSheetURL", $item);
+                if($styleUrlEl !== null){
+                    $onlineResource = new OnlineResource();
+                    $onlineResource->setFormat($this->getValue("./wms:Format/text()", $styleUrlEl));
+                    $onlineResource->setHref($this->getValue("./wms:OnlineResource/xlink:href", $styleUrlEl));
+                    $style->setStyleUlr($onlineResource);
+                }
+                $stylesheetUrlEl = $this->getValue("./wms:StyleSheetURL", $item);
+                if($stylesheetUrlEl !== null){
+                    $onlineResource = new OnlineResource();
+                    $onlineResource->setFormat($this->getValue("./wms:Format/text()", $stylesheetUrlEl));
+                    $onlineResource->setHref($this->getValue("./wms:OnlineResource/xlink:href", $stylesheetUrlEl));
+                    $style->setStyleSheetUrl($onlineResource);
+                }
+
                 $wmslayer->addStyle($style);
             }
         }
         
-        $minScale = $this->getValue("./wms:MinScaleDenominator/text()", $contextElm);
-        if($minScale !== null){
-            $wmslayer->setMinScale(floatval($minScale));
-        }
-        $maxScale = $this->getValue("./wms:MaxScaleDenominator/text()", $contextElm);
-        if($maxScale !== null){
-            $wmslayer->setMaxScale(floatval($maxScale));
+        $minScaleEl = $this->getValue("./wms:MinScaleDenominator", $contextElm);
+        $maxScaleEl = $this->getValue("./wms:MaxScaleDenominator", $contextElm);
+        if($minScaleEl !== null || $minScaleEl !== null){
+            $scale = new MinMax();
+            $min = $this->getValue("./wms:MinScaleDenominator/text()", $contextElm);
+            $scale->setMin($min !== null ? floatval($min) : null);
+            $max = $this->getValue("./wms:MaxScaleDenominator/text()", $contextElm);
+            $scale->setMax($max !== null ? floatval($max) : null);
+            $wmslayer->setScale($scale);
         }
         
         $tempList = $this->xpath->query("./wms:Layer", $contextElm);
