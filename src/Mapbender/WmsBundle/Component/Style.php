@@ -39,6 +39,18 @@ class Style {
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $legendUrl;
     
+    /**
+     * ORM\Column(type="object", nullable=true)
+     */
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $styleSheetUrl;
+    
+    /**
+     * ORM\Column(type="object", nullable=true)
+     */
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $styleUrl;
+    
 
     /**
      * Set name
@@ -130,5 +142,51 @@ class Style {
     public function getLegendUrl()
     {
         return $this->legendUrl;
+    }
+    
+    /**
+     * Set styleSheetUrl
+     *
+     * @param OnlineResource $styleSheetUrl
+     * @return Style
+     */
+    public function setStyleSheetUrl(OnlineResource $styleSheetUrl)
+    {
+        $this->styleSheetUrl = $styleSheetUrl;
+    
+        return $this;
+    }
+
+    /**
+     * Get styleSheetUrl
+     *
+     * @return \stdClass 
+     */
+    public function getStyleSheetUrl()
+    {
+        return $this->styleSheetUrl;
+    }
+    
+    /**
+     * Set styleUlr
+     *
+     * @param OnlineResource $styleUlr
+     * @return Style
+     */
+    public function setStyleUlr(OnlineResource $styleUlr)
+    {
+        $this->styleUlr = $styleUlr;
+    
+        return $this;
+    }
+
+    /**
+     * Get styleUlr
+     *
+     * @return \stdClass 
+     */
+    public function getStyleUlr()
+    {
+        return $this->styleUlr;
     }
 }

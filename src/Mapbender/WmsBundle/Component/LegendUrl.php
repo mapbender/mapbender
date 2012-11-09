@@ -35,10 +35,10 @@ class LegendUrl {
     /**
      * Set onlineResource
      *
-     * @param string $onlineResource
+     * @param OnlineResource $onlineResource
      * @return LegendUrl
      */
-    public function setOnlineResource($onlineResource)
+    public function setOnlineResource(OnlineResource $onlineResource)
     {
         $this->onlineResource = $onlineResource;
     
@@ -48,7 +48,7 @@ class LegendUrl {
     /**
      * Get onlineResource
      *
-     * @return string 
+     * @return OnlineResource 
      */
     public function getOnlineResource()
     {

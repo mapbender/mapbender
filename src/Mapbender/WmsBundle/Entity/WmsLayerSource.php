@@ -11,8 +11,11 @@ use Mapbender\CoreBundle\Component\KeywordIn;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
+use Mapbender\WmsBundle\Component\Dimension;
+use Mapbender\WmsBundle\Component\Extent;
 use Mapbender\WmsBundle\Component\Identifier;
 use Mapbender\WmsBundle\Component\MetadataUrl;
+use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
 
@@ -115,14 +118,16 @@ class WmsLayerSource implements KeywordIn {
     protected $styles;
 
     /**
-     * @ORM\Column(type="float",nullable=true)
+     * @ORM\Column(type="object",nullable=true)
      */
-    protected $minScale;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $scale;
 
     /**
-     * @ORM\Column(type="float",nullable=true)
+     * @ORM\Column(type="object",nullable=true)
      */
-    protected $maxScale;
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $scaleHint;
 
     /**
      * @ORM\Column(type="object", nullable=true)
@@ -151,6 +156,16 @@ class WmsLayerSource implements KeywordIn {
     /**
      * @ORM\Column(type="array", nullable=true)
      */
+    protected $dimension;
+    
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    protected $extent;
+    
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
     protected $dataUrl;
     
     /**
@@ -169,6 +184,8 @@ class WmsLayerSource implements KeywordIn {
         $this->keywords = new ArrayCollection();
         $this->boundingBoxes = array();
         $this->metadataUrl = array();
+        $this->dimension = array();
+        $this->extent = array();
         $this->dataUrl = array();
         $this->featureListUrl = array();
         $this->styles = array();
@@ -551,43 +568,43 @@ class WmsLayerSource implements KeywordIn {
     }
 
     /**
-     * Set minScale
+     * Set scale
      *
-     * @param float $minScale
+     * @param MinMax $scale
      * @return WmsLayerSource
      */
-    public function setMinScale($minScale) {
-        $this->minScale = $minScale;
+    public function setScale(MinMax $scale) {
+        $this->scale = $scale;
         return $this;
     }
 
     /**
-     * Get minScale
+     * Get scale
      *
-     * @return float 
+     * @return MinMax 
      */
-    public function getMinScale() {
-        return $this->minScale;
+    public function getScale() {
+        return $this->scale;
     }
 
     /**
-     * Set maxScale
+     * Set scaleHint
      *
-     * @param float $maxScale
+     * @param MinMax $scaleHint
      * @return WmsLayerSource
      */
-    public function setMaxScale($maxScale) {
-        $this->maxScale = $maxScale;
+    public function setScaleHint(MinMax $scaleHint) {
+        $this->scaleHint = $scaleHint;
         return $this;
     }
 
     /**
-     * Get maxScale
+     * Get scaleHint
      *
-     * @return float 
+     * @return MinMax 
      */
-    public function getMaxScale() {
-        return $this->maxScale;
+    public function getScaleHint() {
+        return $this->scaleHint;
     }
 
     /**
@@ -732,6 +749,69 @@ class WmsLayerSource implements KeywordIn {
      */
     public function getMetadataUrl() {
         return $this->metadataUrl;
+    }
+    
+    /**
+     * Add dimension
+     *
+     * @param Dimension $dimension
+     * @return WmsLayerSource
+     */
+    public function addDimensionl(Dimension $dimension) {
+        $this->dimension[] = $dimension;
+        return $this;
+    }
+
+    /**
+     * Set dimension
+     *
+     * @param array $dimension
+     * @return WmsLayerSource
+     */
+    public function setDimension($dimension) {
+        $this->dimension = $dimension;
+        return $this;
+    }
+
+    /**
+     * Get dimension
+     *
+     * @return array 
+     */
+    public function getDimension() {
+        return $this->dimension;
+    }
+    
+    
+    /**
+     * Add extent
+     *
+     * @param Extent $extent
+     * @return WmsLayerSource
+     */
+    public function addExtent(Extent $extent) {
+        $this->extent[] = $extent;
+        return $this;
+    }
+
+    /**
+     * Set extent
+     *
+     * @param array $extent
+     * @return WmsLayerSource
+     */
+    public function setExtent($extent) {
+        $this->extent = $extent;
+        return $this;
+    }
+
+    /**
+     * Get extent
+     *
+     * @return array 
+     */
+    public function getExtent() {
+        return $this->extent;
     }
     
     /**
