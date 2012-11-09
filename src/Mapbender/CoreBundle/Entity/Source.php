@@ -42,7 +42,6 @@ abstract class Source {
      */
     protected $description;
     
-
     /**
      * Get id
      *
