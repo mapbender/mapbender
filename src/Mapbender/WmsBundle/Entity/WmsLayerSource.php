@@ -917,4 +917,37 @@ class WmsLayerSource implements KeywordIn {
     public function __toString(){
         return (string) $this->id;
     }
+
+    /**
+     * Add sublayer
+     *
+     * @param Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer
+     * @return WmsLayerSource
+     */
+    public function addSublayer(\Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer)
+    {
+        $this->sublayer[] = $sublayer;
+    
+        return $this;
+    }
+
+    /**
+     * Remove sublayer
+     *
+     * @param Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer
+     */
+    public function removeSublayer(\Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer)
+    {
+        $this->sublayer->removeElement($sublayer);
+    }
+
+    /**
+     * Remove keywords
+     *
+     * @param Mapbender\CoreBundle\Entity\Keyword $keywords
+     */
+    public function removeKeyword(\Mapbender\CoreBundle\Entity\Keyword $keywords)
+    {
+        $this->keywords->removeElement($keywords);
+    }
 }

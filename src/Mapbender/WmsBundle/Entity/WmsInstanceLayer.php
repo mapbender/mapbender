@@ -3,176 +3,371 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
+
 /**
  * WmsInstanceLayer class
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  *
- * 
  * @ORM\Entity
+ * @ORM\Table(name="mb_wms_wmsinstancelayer")
 */
 class WmsInstanceLayer {
+    
     /**
-    * @ORM\Id
-    * @ORM\Column(type="string", nullable=false)
-    */
-    protected $name;
-    /**
-     * @ORM\Column(type="integer", nullable=false)
+     * @var integer $id
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $instanceid = -1;
+    protected $id;
+
     /**
-     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\ManyToOne(targetEntity="WmsInstance", inversedBy="layers", cascade={"persist"})
+     * @ORM\JoinColumn(name="wmsinstance", referencedColumnName="id")
      */
-    protected $layerid = -1;
+    protected $wmsinstance;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="id", cascade={"refresh", "persist"})
+     * @ORM\JoinColumn(name="wmslayersource", referencedColumnName="id")
+     */
+    protected $wmslayersource;
+
     /**
      * @ORM\Column(type="string", nullable=true)
      */
     protected $title;
+
     /**
-     * @ORM\Column(type="boolean", nullable=false)
+     * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $visible = false;
+    protected $sublayer = true;
     /**
-    * @ORM\Column(type="boolean", nullable=false)
-    */
-    protected $queryable = false;
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $selected = true;
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $selected_default = true;
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $gfinfo = true;
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $gfinfo_default = true;
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    protected $minScale = 0;
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    protected $maxScale = 0;
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $style = "";
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $priority = 0;
     
+
     public function __construct() {
-    }
-    
-    public static function create($instanceid, $layerid,
-            $name, $title, $visible, $queryable) {
-        $wmsInstanceLayer = new WmsInstanceLayer();
-        $wmsInstanceLayer->instanceid = $instanceid;
-        $wmsInstanceLayer->layerid = $layerid;
-        $wmsInstanceLayer->name = $name;
-        $wmsInstanceLayer->title = $title;
-        $wmsInstanceLayer->visible = $visible;
-        $wmsInstanceLayer->queryable = $queryable;
-        return $wmsInstanceLayer;
-    }
-    
-    public static function createFromFullArray($array){
-        if($array !== null) {
-            return WmsInstanceLayer::create(
-                    isset($array['instanceid'])? $array['instanceid'] : "",
-                    isset($array['layerid'])? $array['layerid'] : "",
-                    isset($array['name'])? $array['name'] : "",
-                    isset($array['title'])? $array['title'] : "",
-                    isset($array['visible'])? $array['visible'] : false,
-                    isset($array['queryable'])? $array['queryable'] : null);
-        } else {
-            return null;
-        }
-    }
-    public function getAsArray(){
-        $array =  array(
-            'name' => $this->name,
-            'title' => $this->title,
-            'visible' => $this->visible);
-        if($this->queryable !== null){
-            $array['queryable'] = $this->queryable;
-        }
-        return $array;
-    }
-    
-    public function getAsFullArray(){
-        return array(
-            'instanceid' => $this->instanceid,
-            'layerid' => $this->layerid,
-            'name' => $this->name,
-            'title' => $this->title,
-            'visible' => $this->visible,
-            'queryable' => $this->queryable);
-    }
-    
-    public function setInstanceid($val){
-        $this->instanceid = $val;
-    }
-    
-    public function getInstanceid(){
-        return $this->instanceid;
-    }
-    
-    public function setlayerid($val){
-        $this->ilayerid = $val;
-    }
-    
-    public function getLayerid(){
-        return $this->layerid;
-    }
-    
-    public function setName($val){
-        $this->name = $val;
-    }
-    
-    public function getName(){
-        return $this->name;
-    }
-    
-    public function setTitle($val){
-        $this->title = $val;
-    }
-    
-    public function getTitle(){
-        return $this->title;
-    }
-    
-    public function setVisible($val){
-        if($val === null) {
-            $this->visible = false;
-        } else if(is_bool($val)) {
-            $this->visible = $val;
-        } else {
-            $this->visible = false;
-        }
-    }
-    
-    public function getVisible(){
-        return $this->visible;
-    }
-    
-    public function setQueryable($val){
-        if($val === null) {
-            $this->queryable = null;
-        } else if(is_bool($val)) {
-            $this->queryable = $val;
-        } else {
-            $this->queryable = null;
-        }
-    }
-    
-    public function getQueryable(){
-        return $this->queryable;
-    }
-    
-    public function completeForm($translator, $form, $read_only = false) {
-        $form->add('instanceid', 'hidden', array(
-            'data' => $this->instanceid,
-            'required'  => true));
-        $form->add('layerid', 'hidden', array(
-            'data' => $this->layerid,
-            'required'  => true));
-        $form->add('name', 'text', array(
-            'attr' => array('readonly' => 'readonly'),
-            'required'  => true,
-            'label' => $translator->trans('Name').":"));
-        $form->add('title', 'text', array(
-            'attr' => array('readonly' => 'readonly'),
-            'required'  => true,
-            'label' => $translator->trans('Title').":"));
-        $form->add('visible', 'checkbox', array(
-            'label' => $translator->trans('visible').":",
-            'required'  => false,
-            "read_only" => $read_only ? true : false));
-        if($this->queryable !== null) {
-            $form->add('queryable', 'checkbox', array(
-                'label' => $translator->trans('queryable').":",
-                'required'  => false,
-                "read_only" => $read_only ? true : false));
-        }
-        return $form;
+        
     }
 
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     * @return WmsInstanceLayer
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string 
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Set sublayer
+     *
+     * @param boolean $sublayer
+     * @return WmsInstanceLayer
+     */
+    public function setSublayer($sublayer)
+    {
+        $this->sublayer = $sublayer;
+    
+        return $this;
+    }
+
+    /**
+     * Get sublayer
+     *
+     * @return boolean 
+     */
+    public function getSublayer()
+    {
+        return $this->sublayer;
+    }
+
+    /**
+     * Set selected
+     *
+     * @param boolean $selected
+     * @return WmsInstanceLayer
+     */
+    public function setSelected($selected)
+    {
+        $this->selected = $selected;
+    
+        return $this;
+    }
+
+    /**
+     * Get selected
+     *
+     * @return boolean 
+     */
+    public function getSelected()
+    {
+        return $this->selected;
+    }
+
+    /**
+     * Set selected_default
+     *
+     * @param boolean $selectedDefault
+     * @return WmsInstanceLayer
+     */
+    public function setSelectedDefault($selectedDefault)
+    {
+        $this->selected_default = $selectedDefault;
+    
+        return $this;
+    }
+
+    /**
+     * Get selected_default
+     *
+     * @return boolean 
+     */
+    public function getSelectedDefault()
+    {
+        return $this->selected_default;
+    }
+
+    /**
+     * Set gfinfo
+     *
+     * @param boolean $gfinfo
+     * @return WmsInstanceLayer
+     */
+    public function setGfinfo($gfinfo)
+    {
+        $this->gfinfo = $gfinfo;
+    
+        return $this;
+    }
+
+    /**
+     * Get gfinfo
+     *
+     * @return boolean 
+     */
+    public function getGfinfo()
+    {
+        return $this->gfinfo;
+    }
+
+    /**
+     * Set gfinfo_default
+     *
+     * @param boolean $gfinfoDefault
+     * @return WmsInstanceLayer
+     */
+    public function setGfinfoDefault($gfinfoDefault)
+    {
+        $this->gfinfo_default = $gfinfoDefault;
+    
+        return $this;
+    }
+
+    /**
+     * Get gfinfo_default
+     *
+     * @return boolean 
+     */
+    public function getGfinfoDefault()
+    {
+        return $this->gfinfo_default;
+    }
+
+    /**
+     * Set minScale
+     *
+     * @param float $minScale
+     * @return WmsInstanceLayer
+     */
+    public function setMinScale($minScale)
+    {
+        $this->minScale = $minScale;
+    
+        return $this;
+    }
+
+    /**
+     * Get minScale
+     *
+     * @return float 
+     */
+    public function getMinScale()
+    {
+        return $this->minScale;
+    }
+
+    /**
+     * Set maxScale
+     *
+     * @param float $maxScale
+     * @return WmsInstanceLayer
+     */
+    public function setMaxScale($maxScale)
+    {
+        $this->maxScale = $maxScale;
+    
+        return $this;
+    }
+
+    /**
+     * Get maxScale
+     *
+     * @return float 
+     */
+    public function getMaxScale()
+    {
+        return $this->maxScale;
+    }
+
+    /**
+     * Set style
+     *
+     * @param string $style
+     * @return WmsInstanceLayer
+     */
+    public function setStyle($style)
+    {
+        $this->style = $style;
+    
+        return $this;
+    }
+
+    /**
+     * Get style
+     *
+     * @return string 
+     */
+    public function getStyle()
+    {
+        return $this->style;
+    }
+
+    /**
+     * Set priority
+     *
+     * @param integer $priority
+     * @return WmsInstanceLayer
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
+    
+        return $this;
+    }
+
+    /**
+     * Get priority
+     *
+     * @return integer 
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * Set wmsinstance
+     *
+     * @param WmsInstance $wmsinstance
+     * @return WmsInstanceLayer
+     */
+    public function setWmsinstance(WmsInstance $wmsinstance = null)
+    {
+        $this->wmsinstance = $wmsinstance;
+    
+        return $this;
+    }
+
+    /**
+     * Get wmsinstance
+     *
+     * @return WmsInstance 
+     */
+    public function getWmsinstance()
+    {
+        return $this->wmsinstance;
+    }
+
+    /**
+     * Set wmslayersource
+     *
+     * @param WmsLayerSource $wmslayersource
+     * @return WmsInstanceLayer
+     */
+    public function setWmslayersource(WmsLayerSource $wmslayersource = null)
+    {
+        $this->wmslayersource = $wmslayersource;
+    
+        return $this;
+    }
+
+    /**
+     * Get wmslayersource
+     *
+     * @return WmsLayerSource 
+     */
+    public function getWmslayersource()
+    {
+        return $this->wmslayersource;
+    }
 }

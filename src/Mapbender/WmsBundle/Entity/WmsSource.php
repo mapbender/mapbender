@@ -799,4 +799,24 @@ class WmsSource extends Source implements KeywordIn {
     
 
 
+
+    /**
+     * Remove layers
+     *
+     * @param Mapbender\WmsBundle\Entity\WmsLayerSource $layers
+     */
+    public function removeLayer(\Mapbender\WmsBundle\Entity\WmsLayerSource $layers)
+    {
+        $this->layers->removeElement($layers);
+    }
+
+    /**
+     * Remove keywords
+     *
+     * @param Mapbender\CoreBundle\Entity\Keyword $keywords
+     */
+    public function removeKeyword(\Mapbender\CoreBundle\Entity\Keyword $keywords)
+    {
+        $this->keywords->removeElement($keywords);
+    }
 }
