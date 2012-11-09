@@ -9,8 +9,10 @@ class MapbenderWmsBundle extends MapbenderBundle {
     {
         return array(
             'wms' => array(
+                'id'    => 'wms',
                 'label' => 'OGC Web Map Service (WMS)',
-                'manager' => 'mapbender_wms_repository'
+                'manager' => 'mapbender_wms_repository',
+                'startAction' => "MapbenderWmsBundle:Repository:start"
             )
         );
     }

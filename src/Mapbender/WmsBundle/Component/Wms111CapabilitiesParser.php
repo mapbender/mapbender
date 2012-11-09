@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\WmsBundle\Component\Exception\ParsingException;
+use Mapbender\WmsBundle\Entity\WmsSource;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;

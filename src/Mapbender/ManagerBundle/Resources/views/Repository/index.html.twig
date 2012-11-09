@@ -22,8 +22,8 @@
             <td>{{ source.description }}</td>
             <td>
                 <div class="entity-actions btn-group">
-                    <a class="action-edit btn" href="#" title="{{ 'Edit source' | trans }}">{{ 'Edit' | trans }}</a>
-                    <a class="action-delete btn" href="#" title="{{ 'Delete source' | trans }}">{{ 'Delete' | trans }}</a>
+                    <a class="action-view btn" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'View' | trans }}">{{ 'Edit' | trans }}</a>
+                    <a class="action-delete btn btn-warning" href="{{ url("mapbender_manager_repository_delete",{"source":source.id,"return":"index"}) }} " title="{{ 'Edit' | trans }}">{{ 'Delete' | trans }}</a>
                 </div>
             </td>
         </tr>

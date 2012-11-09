@@ -1,0 +1,130 @@
+{% extends "FOMManagerBundle::manager.html.twig" %}
+{% from "MapbenderWmsBundle:Repository:macros.html.twig" import requestinformation  %}
+
+
+{% block title %}{{ 'WMS' | trans }} {{ wms.title }}{% endblock %}
+
+
+{% block manager_content %}
+
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#wms-metadata" data-toggle="tab">{{ 'Metadata' | trans}}</a></li>
+    <li><a href="#wms-contact" data-toggle="tab">{{ 'Contact' | trans}}</a></li>
+    <li><a href="#wms-service" data-toggle="tab">{{ 'Service' | trans}}</a></li>
+    <li><a href="#wms-layers" data-toggle="tab">{{ 'Layers' | trans}}</a></li>
+</ul>
+
+<div class="tab-content">
+    <section id="wms-metadata" class="tab-pane active">
+        <dl class="dl-horizontal">
+            <dt>{{ "Title" | trans }}</dt>
+            <dd>{{ wms.title }}</dd>
+
+            <dt>{{ "Name" | trans }}</dt>
+            <dd>{{ wms.name }}</dd>
+
+            <dt>{{ "Abstract" | trans }}</dt>
+            <dd>{{ wms.description }}</dd>
+
+            <dt>{{ "Online Resource" | trans }}</dt>
+            <dd>{{ wms.onlineResource }}</dd>
+
+            <dt>{{ "Fees" | trans }}</dt>
+            <dd>{{ wms.fees }}</dd>
+
+            <dt>{{ "Access constraints" | trans }}</dt>
+            <dd>{{ wms.accessConstraints }}</dd>
+        </dl>
+    </section>
+
+    <section id="wms-contact" class="tab-pane">
+        <dl class="dl-horizontal">
+            <dt>{{ "Person" | trans }}</dt>
+            <dd>{{ wms.contact.person }}</dd>
+
+            <dt>{{ "Organization" | trans }}</dt>
+            <dd>{{ wms.contact.organization }}</dd>
+
+            <dt>{{ "Position" | trans }}</dt>
+            <dd>{{ wms.contact.position }}</dd>
+
+            <dt>{{ "Telephone" | trans }}</dt>
+            <dd>{{ wms.contact.voiceTelephone }}</dd>
+
+            <dt>{{ "Facsimile" | trans }}</dt>
+            <dd>{{ wms.contact.facsimileTelephone }}</dd>
+
+            <dt>{{ "Email" | trans }}</dt>
+            <dd>{{ wms.contact.electronicMailAddress }}</dd>
+
+            <dt>{{ "Address" | trans }}</dt>
+            <dd>{{ wms.contact.address }}</dd>
+
+            <dt>{{ "Addresstype" | trans }}</dt>
+            <dd>{{ wms.contact.addressType }}</dd>
+
+            <dt>{{ "City" | trans }}</dt>
+            <dd>{{ wms.contact.addressCity }}</dd>
+
+            <dt>{{ "State" | trans }}</dt>
+            <dd>{{ wms.contact.addressStateOrProvince }}</dd>
+
+            <dt>{{ "Postcode" | trans }}</dt>
+            <dd>{{ wms.contact.addressPostcode }}</dd>
+
+            <dt>{{ "Country" | trans }}</dt>
+            <dd>{{ wms.contact.addressCountry }}</dd>
+        </dl>
+    </section>
+
+    <section id="wms-service" class="tab-pane">
+        <dl class="dl-horizontal">
+            <dt>{{ "Version" | trans }}</dt>
+            <dd>{{ wms.version }}</dd>
+        </dl>
+
+{#        {% for format in wms. #}
+
+        
+        {% if wms.getCapabilities is not empty %}
+            {{ requestinformation(wms.getCapabilities, "GetCapabilities") }}
+        {% endif %}
+
+        {% if wms.getMap is not empty %}
+            {{ requestinformation(wms.getMap, "GetMap") }}
+        {% endif %}
+
+        {% if wms.getFeatureinfo is not empty %}
+            {{ requestinformation(wms.getFeatureinfo, "GetFeatureinfo") }}
+        {% endif %}
+
+        {% if wms.getLegendGraphic is not empty %}
+            {{ requestinformation(wms.getLegendGraphic, "GetLegendGraphic") }}
+        {% endif %}
+
+        {% if wms.describeLayer is not empty %}
+            {{ requestinformation(wms.describeLayer, "DescribeLayer") }}
+        {% endif %}
+
+        {% if wms.getStyles is not empty %}
+            {{ requestinformation(wms.getStyles, "GetStyles") }}
+        {% endif %}
+
+        {% if wms.putStyles is not empty %}
+            {{ requestinformation(wms.putStyles, "PutStyles") }}
+        {% endif %}
+    
+
+        
+    </section>
+
+    <section id="wms-layers" class="tab-pane">
+   </section>
+</div>
+<footer>
+    <div class="btn-group">
+        <a class="btn btn-warning" href="{{ url("mapbender_manager_repository_delete",{"source":wms.id ,"return":"view"} ) }}">Delete</a>
+    </div>
+</footer>
+
+{% endblock %}

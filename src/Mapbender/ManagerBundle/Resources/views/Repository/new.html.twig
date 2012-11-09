@@ -4,9 +4,27 @@
 
 {% block manager_content %}
 
+{#
 <div class="btn-group btn-group-vertical">
     {% for manager in managers %}
     <a class="btn" href="{{ url(manager.manager ~ '_new') }}">{{ manager.label | trans }}</a>
+    {% endfor %}
+</div>
+#}
+
+<ul class="nav nav-tabs">
+    {% for manager in managers %}
+    <li><a href="#manager-{{ manager.label }}" data-toggle="tab">{{ manager.label | trans}}</a></li>
+    {% endfor %}
+</ul>
+<div class="tab-content">
+    {% for manager in managers %}
+    {# TODO: label is not a good candidate for useage in an id, how to fix? #}
+    <section id="#manager-{{ manager.label }}">
+    
+    {% render manager.startAction %}
+    
+    </section>
     {% endfor %}
 </div>
 

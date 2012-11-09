@@ -40,12 +40,24 @@ class RepositoryController extends Controller {
         }
         $parsedQuery = HTTPClient::parseQueryString($parsedUrl['query']);
 
-        $resultQuery = array();
+        $resultQuery    = array();
+        $found_version  = false;
+        $found_request  = false;
+        $found_service  = false;
+        
+        $default_version = "1.3.0";
         foreach ($parsedQuery as $key => $value) {
             if (!in_array($key, $sessionids)) {
                 $resultQuery[$key] = $value;
             }
+            if(strtolower($key)  == "version"){ $found_version = true; }
+            if(strtolower($key)  == "request"){ $found_request = true; }
+            if(strtolower($key)  == "service"){ $found_service = true; }
         }
+        if(!$found_version) { $resultQuery["VERSION"] = $default_version; } 
+        if(!$found_request) { $resultQuery["REQUEST"] = "GetCapabilities"; } 
+        if(!$found_service) { $resultQuery["service"] = "WMS"; } 
+        
 
         $parsedUrl['query'] = HTTPClient::buildQueryString($resultQuery);
         return HTTPClient::buildUrl($parsedUrl);
@@ -61,6 +73,33 @@ class RepositoryController extends Controller {
         return array(
             "form" => $form->createView()
         );
+    }
+
+    /**
+     * @ManagerRoute("/start")
+     * @Method({ "GET" })
+     * @Template
+     */
+    public function startAction() {
+        $form = $this->get("form.factory")->create(new WmsSourceSimpleType(), new WmsSource());
+        return array(
+            "form" => $form->createView()
+        );
+    }
+
+    /**
+    * @ManagerRoute("{wms}")
+    * @Method({ "GET"})
+    * @Template
+    */
+    public function viewAction(WmsSource $wms){
+        return array("wms" => $wms);
+    
+/*
+        return $this
+            ->get("templating")
+            ->render("MapbenderWmsBundle:Repository:view.html.twig",array("wms" => $wms));
+*/
     }
 
     /**
@@ -108,8 +147,7 @@ class RepositoryController extends Controller {
         if (!$getcapa_url) {
             $this->get('session')->setFlash('error', "url not set");
         }
-        return $this->render(
-                        "MapbenderWmsBundle:Repository:new.html.twig", array("form" => $form->createView()));
+        return $this->redirect($this->generateUrl("mapbender_manager_repository_view",array("sourceId"=>$wmssource->getId()), true));
     }
 
     /**
@@ -127,4 +165,3 @@ class RepositoryController extends Controller {
         $em->flush();
     }
 }
-
