@@ -135,6 +135,15 @@ class RepositoryController extends Controller {
                     $this->get("logger")->debug("Could not parse data for url '$getcapa_url_usrPwd'");
                     throw new \Exception("Preview: Could not parse data for url '$getcapa_url_usrPwd'");
                 }
+                $wmsWithSameTitle  =$this->getDoctrine()
+                    ->getEntityManager()
+                    ->getRepository("MapbenderWmsBundle:WmsSource")
+                    ->findByTitle($wmssource->getTitle());
+
+                if(count($wmsWithSameTitle) > 0) {
+                    $wmssource->setAlias(count($wmsWithSameTitle));
+                } 
+                
                 $this->getDoctrine()->getEntityManager()->persist($wmssource);
                 $this->getDoctrine()->getEntityManager()->flush();
 //                $this->removeRecursive($wmssource->getRootlayer(), $this->getDoctrine()->getEntityManager());
