@@ -16,6 +16,9 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
 use Mapbender\WmsBundle\Form\Type\WmsSourceType;
+
+use Mapbender\WmtsBundle\Entity\WmtsSource;
+use Mapbender\WmtsBundle\Form\Type\WmtsSourceSimpleType;
 use Mapbender\Component\HTTP\HTTPClient;
 
 /**
@@ -88,12 +91,12 @@ class RepositoryController extends Controller {
     }
 
     /**
-    * @ManagerRoute("{wms}")
+    * @ManagerRoute("{wmts}")
     * @Method({ "GET"})
     * @Template
     */
-    public function viewAction(WmsSource $wms){
-        return array("wms" => $wms);
+    public function viewAction(WmtsSource $wmts){
+        return array("wmts" => $wmts);
     
 /*
         return $this
