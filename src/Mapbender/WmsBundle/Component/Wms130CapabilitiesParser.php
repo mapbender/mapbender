@@ -74,7 +74,9 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
             $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
             $keyword->setSourceclass($wms->getClassname());
             $keyword->setSourceid($wms);
-            $wms->addKeyword($keyword);
+
+            // FIXME: breaks sqlite
+            //$wms->addKeyword($keyword);
         }
         
         $wms->setOnlineResource($this->getValue("./wms:OnlineResource/@xlink:href", $contextElm));
@@ -200,7 +202,9 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
             $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
             $keyword->setSourceclass($wmslayer->getClassname());
             $keyword->setSourceid($wmslayer);
-            $wmslayer->addKeyword($keyword);
+
+            // FIXME: breaks sqlite
+            //$wmslayer->addKeyword($keyword);
         }
         
         $tempList = $this->xpath->query("./wms:CRS", $contextElm);
