@@ -8,7 +8,6 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
-use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Component\RequestInformation;
 

@@ -34,7 +34,7 @@ abstract class Source {
      * @var string $alias The source alias
      * @ORM\Column(type="string", length=128, nullable=true)
      */
-    protected $alias;
+    protected $alias = "";
     
     /**
      * @var string $description The source description

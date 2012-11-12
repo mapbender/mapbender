@@ -11,21 +11,21 @@
     {% endfor %}
 </div>
 #}
+<div class="well">
+    <ul class="nav nav-tabs">
+        {% for manager in managers %}
+        <li{% if loop.first %} class="active"{% endif %}><a href="#manager-{{ manager.id }}" data-toggle="tab">{{ manager.label | trans}}</a></li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content">
+        {% for manager in managers %}
+        <section id="manager-{{ manager.id }}" class="tab-pane{% if loop.first %} active{% endif %}">
 
-<ul class="nav nav-tabs">
-    {% for manager in managers %}
-    <li><a href="#manager-{{ manager.label }}" data-toggle="tab">{{ manager.label | trans}}</a></li>
-    {% endfor %}
-</ul>
-<div class="tab-content">
-    {% for manager in managers %}
-    {# TODO: label is not a good candidate for useage in an id, how to fix? #}
-    <section id="#manager-{{ manager.label }}">
-    
-    {% render manager.startAction %}
-    
-    </section>
-    {% endfor %}
+        {% render manager.startAction %}
+
+        </section>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}
