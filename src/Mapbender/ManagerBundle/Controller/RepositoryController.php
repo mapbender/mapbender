@@ -16,6 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Response;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Entity\Source;
+//use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter;
 
 /**
  * @ManagerRoute("/repository")
@@ -62,9 +63,11 @@ class RepositoryController extends Controller {
     * @Template
     */
     public function viewAction($sourceId){
+        $source = $this->getDoctrine()
+                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         return  $this->forward(
-            "MapbenderWmsBundle:Repository:view",
-             array("id" => $sourceId)
+                $source->getBundlename().":"."Repository:view",
+             array("id" => $source->getId())
         );
     }
     
