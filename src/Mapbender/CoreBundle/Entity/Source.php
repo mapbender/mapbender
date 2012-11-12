@@ -132,6 +132,13 @@ abstract class Source {
      */
     public abstract function getClassname();
     
+    /**
+     * Get bundle name
+     * 
+     * @return string 
+     */
+    public abstract function getBundlename();
+    
     public function __toString(){
         return (string) $this->id;
     }

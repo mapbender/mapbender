@@ -9,6 +9,7 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\WmsBundle\Component\RequestInformation;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
  * @ORM\Entity
@@ -170,6 +171,20 @@ class WmsSource extends Source implements KeywordIn {
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->exceptionFormats = array();
+    }
+    
+    
+    
+    public function getType(){
+        return "WMS";
+    }
+    
+    public function getClassname(){
+        return "Mapbender\WmsBundle\Entity\WmsSource";
+    }
+    
+    public function getBundlename(){
+        return "MapbenderWmsBundle";
     }
     
     /**
@@ -785,14 +800,6 @@ class WmsSource extends Source implements KeywordIn {
         return $this;
     }
     
-    public function getType(){
-        return "WMS";
-    }
-    
-    public function getClassname(){
-        return "Mapbender\WmsBundle\Entity\WmsSource";
-    }
-    
 //    public function __toString(){
 //        return (string) $this->getId();
 //    }
@@ -803,9 +810,9 @@ class WmsSource extends Source implements KeywordIn {
     /**
      * Remove layers
      *
-     * @param Mapbender\WmsBundle\Entity\WmsLayerSource $layers
+     * @param WmsLayerSource $layers
      */
-    public function removeLayer(\Mapbender\WmsBundle\Entity\WmsLayerSource $layers)
+    public function removeLayer(WmsLayerSource $layers)
     {
         $this->layers->removeElement($layers);
     }
@@ -813,9 +820,9 @@ class WmsSource extends Source implements KeywordIn {
     /**
      * Remove keywords
      *
-     * @param Mapbender\CoreBundle\Entity\Keyword $keywords
+     * @param Keyword $keywords
      */
-    public function removeKeyword(\Mapbender\CoreBundle\Entity\Keyword $keywords)
+    public function removeKeyword(Keyword $keywords)
     {
         $this->keywords->removeElement($keywords);
     }
