@@ -128,4 +128,8 @@ parameters:
                         class: Mapbender\CoreBundle\Element\Toc
                         target: map
                         autoOpen: false
+                footer:
+                    coordinates:
+                        class: Mapbender\CoreBundle\Element\CoordinatesDisplay
+                        target: map
 
