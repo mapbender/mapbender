@@ -12,6 +12,9 @@ security:
                 class: FOM\UserBundle\Entity\User
                 property: username
 
+    acl:
+        connection: default
+
     firewalls:
         dev:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
