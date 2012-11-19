@@ -77,15 +77,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
         return $this->entity;
     }
 
-    /**
-     * Get allowed roles.
-     *
-     * @return array
-     */
-    public function getRoles() {
-        return $this->entity->getRoles()->toArray();
-    }
-
     /*************************************************************************
      *                                                                       *
      *             Shortcut functions for leaner Twig templates              *

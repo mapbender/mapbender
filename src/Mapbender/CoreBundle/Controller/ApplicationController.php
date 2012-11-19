@@ -101,7 +101,7 @@ class ApplicationController extends Controller {
     public function elementAction($slug, $id, $action) {
         $element = $this->getApplication($slug)->getElement($id);
 
-        $this->checkAllowedRoles($element->getRoles());
+        //$this->checkAllowedRoles($element->getRoles());
 
         return $element->httpAction($action);
     }
@@ -175,7 +175,7 @@ class ApplicationController extends Controller {
             throw new AccessDeniedException('This application is not published at the moment.');
         }
 
-        $this->checkAccess($application->getRoles());
+        //$this->checkAccess($application->getRoles());
     }
 
     /**
