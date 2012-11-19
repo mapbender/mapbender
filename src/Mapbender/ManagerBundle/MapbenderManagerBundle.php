@@ -28,4 +28,11 @@ class MapbenderManagerBundle extends MapbenderBundle
             ),
         );
     }
+
+    public function getRoles()
+    {
+        return array(
+            'ROLE_ADMIN_MAPBENDER_APPLICATION'
+                => 'Can administrate applications');
+    }
 }

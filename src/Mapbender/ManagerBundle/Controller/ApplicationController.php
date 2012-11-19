@@ -75,10 +75,17 @@ class ApplicationController extends Controller {
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-            // Credentials may be erased, triggering an failing update
-            $em->refresh($application->getOwner());
+
+            $em->getConnection()->beginTransaction();
+            
             $em->persist($application);
             $em->flush();
+
+            $aclManager = $this->get('fom.acl.manager');
+            $aclManager->setObjectACLFromForm($application, $form->get('acl'),
+                'object');
+
+            $em->getConnection()->commit();
 
             $this->get('session')->setFlash('notice',
                 'Your application has been saved.');
@@ -127,10 +134,33 @@ class ApplicationController extends Controller {
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-            $em->flush();
+            
+            $em->getConnection()->beginTransaction();
 
-            $this->get('session')->setFlash('notice',
-                'Your application has been updated.');
+            try {
+
+                $em->flush();
+
+                $aclManager = $this->get('fom.acl.manager');
+                $aclManager->setObjectACLFromForm($application,
+                    $form->get('acl'), 'object');
+
+                $em->getConnection()->commit();
+
+                $this->get('session')->setFlash('notice',
+                    'Your application has been updated.');
+            
+            } catch(\Exception $e) {
+            
+                $this->get('session')->setFlash('error',
+                    'There was an error trying to save your application.');
+                $em->getConnection()->rollback();
+                $em->close();
+            
+                if($this->container->getParameter('kernel.debug'))  {
+                    throw($e);
+                }   
+            }
 
             return $this->redirect(
                 $this->generateUrl('mapbender_manager_application_edit', array(
@@ -210,8 +240,18 @@ class ApplicationController extends Controller {
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
+
+            $aclProvider = $this->get('security.acl.provider');
+
+            $em->getConnection()->beginTransaction();
+            
+            $oid = ObjectIdentity::fromDomainObject($application);
+            $aclProvider->deleteAcl($oid);
+
             $em->remove($application);
             $em->flush();
+
+            $em->commit();
 
             $this->get('session')->setFlash('notice',
                 'Your application has been deleted.');

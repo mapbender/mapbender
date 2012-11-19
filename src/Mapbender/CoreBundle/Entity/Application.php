@@ -74,13 +74,6 @@ class Application {
     protected $owner;
 
     /**
-     * @ORM\ManyToMany(targetEntity="FOM\UserBundle\Entity\Role")
-     *     cascade={"persist"})
-     * @ORM\JoinTable(name="mb_application_roles")
-     */
-    protected $roles;
-
-    /**
      * @ORM\Column(type="boolean")
      */
     protected $published;
@@ -98,7 +91,6 @@ class Application {
     public function __construct() {
         $this->elements = new ArrayCollection();
         $this->layersets = new ArrayCollection();
-        $this->roles = new ArrayCollection();
     }
 
     /**
@@ -279,24 +271,6 @@ class Application {
      */
     public function getOwner() {
         return $this->owner;
-    }
-
-    /**
-     * Add roles
-     *
-     * @param Role $role
-     */
-    public function addRole(Role $role) {
-        $this->role[] = $role;
-    }
-
-    /**
-     * Get allowed roles
-     *
-     * @return array
-     */
-    public function getRoles() {
-        return $this->roles;
     }
 
     /**
