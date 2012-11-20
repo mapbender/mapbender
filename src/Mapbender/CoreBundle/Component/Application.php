@@ -276,11 +276,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
         // Convert to asset
         $asset = new StringAsset(json_encode((object) $configuration));
-
-        // TODO: Determine modification timestamp for caching
-        // $asset->setLastModified(new DateTime());
-
-        return $asset;
+        return $asset->dump();
     }
 
     /**

@@ -34,6 +34,6 @@
 {% endif %}
 <script type="text/javascript">
     var Mapbender = Mapbender || {};
-    Mapbender.configuration = {{ application.configuration.dump | raw }}</script>
+    Mapbender.configuration = {{ application.configuration | raw }}</script>
 {% endblock %}
 

@@ -55,10 +55,10 @@ class ApplicationController extends Controller {
         $asset_modification_time = new \DateTime();
         $asset_modification_time->setTimestamp($assets->getLastModified());
 
-        //TODO: Make filters part of the bundle configuration
-        //TODO: I'd like to have source maps support in here for easier
-        //    debugging of minified code, see
-        //    http://www.thecssninja.com/javascript/source-mapping
+        // @TODO: Make filters part of the bundle configuration
+        // @TODO: I'd like to have source maps support in here for easier
+        //      debugging of minified code, see
+        //      http://www.thecssninja.com/javascript/source-mapping
         $filters = array(
             'js' => array(),
             'css' => array($this->container->get('assetic.filter.cssrewrite')));
@@ -66,18 +66,10 @@ class ApplicationController extends Controller {
         // Set target path for CSS rewrite to work
         $target = $this->get('request')->server->get('DOCUMENT_ROOT')
             . $this->get('request')->server->get('REQUEST_URI');
-        $assets->setTargetPath($target);
-
-        foreach($filters[$type] as $filter) {
-            $assets->ensureFilter($filter);
-        }
 
         $mimetypes = array(
             'css' => 'text/css',
             'js' => 'application/javascript');
-
-        $response = new Response();
-        $response->headers->set('Content-Type', $mimetypes[$type]);
 
         if(!$this->container->getParameter('kernel.debug')) {
             //TODO: use max(asset_modification_time, application_update_time)
@@ -87,7 +79,20 @@ class ApplicationController extends Controller {
             }
         }
 
-        $response->setContent($assets->dump());
+        // @TODO: I'd rather use $assets->dump, but that clones each asset
+        // which assigns a new weird targetPath. Gotta check that some time.
+        $parts = [];
+        foreach($assets->all() as $asset) {
+            foreach($filters[$type] as $filter) {
+                $asset->ensureFilter($filter);
+            }
+            $asset->setTargetPath($target);
+            $parts[] = $asset->dump();
+        }
+
+        $response = new Response();
+        $response->headers->set('Content-Type', $mimetypes[$type]);
+        $response->setContent(implode("\n", $parts));
         return $response;
     }
 
