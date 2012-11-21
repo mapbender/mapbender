@@ -29,7 +29,7 @@ class ApplicationController extends Controller {
     private function getUrls($slug) {
         return array(
             'base' => $this->get('request')->getBaseUrl(),
-            // TODO: Can this be done less hack-ish?
+            // @TODO: Can this be done less hack-ish?
             'asset' => rtrim($this->get('templating.helper.assets')
                 ->getUrl('.'), '.'),
             'element' => $this->get('router')
@@ -51,6 +51,7 @@ class ApplicationController extends Controller {
      * @Route("/application/{slug}/assets/{type}")
      */
     public function assetsAction($slug, $type) {
+        $response = new Response();
         $assets = $this->getApplication($slug)->getAssets($type);
         $asset_modification_time = new \DateTime();
         $asset_modification_time->setTimestamp($assets->getLastModified());
@@ -71,13 +72,13 @@ class ApplicationController extends Controller {
             'css' => 'text/css',
             'js' => 'application/javascript');
 
-        if(!$this->container->getParameter('kernel.debug')) {
+        //if(!$this->container->getParameter('kernel.debug')) {
             //TODO: use max(asset_modification_time, application_update_time)
             $response->setLastModified($asset_modification_time);
             if($response->isNotModified($this->get('request'))) {
                 return $response;
             }
-        }
+        //}
 
         // @TODO: I'd rather use $assets->dump, but that clones each asset
         // which assigns a new weird targetPath. Gotta check that some time.
@@ -90,7 +91,7 @@ class ApplicationController extends Controller {
             $parts[] = $asset->dump();
         }
 
-        $response = new Response();
+        
         $response->headers->set('Content-Type', $mimetypes[$type]);
         $response->setContent(implode("\n", $parts));
         return $response;
