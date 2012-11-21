@@ -81,7 +81,7 @@ class ApplicationController extends Controller {
 
         // @TODO: I'd rather use $assets->dump, but that clones each asset
         // which assigns a new weird targetPath. Gotta check that some time.
-        $parts = [];
+        $parts = array();
         foreach($assets->all() as $asset) {
             foreach($filters[$type] as $filter) {
                 $asset->ensureFilter($filter);
