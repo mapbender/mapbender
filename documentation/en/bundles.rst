@@ -11,4 +11,5 @@ Bundle Documentation
    ../mapbender/src/Mapbender/WmcBundle/Resources/doc/index
    ../mapbender/src/Mapbender/MonitoringBundle/Resources/doc/index
    ../mapbender/src/Mapbender/ManagerBundle/Resources/doc/index
+   ../fom/src/FOM/UserBundle/Resources/doc/index
 
