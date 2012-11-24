@@ -126,13 +126,6 @@ abstract class Source {
     public abstract function getType();
     
     /**
-     * Get class name
-     *
-     * @return string 
-     */
-    public abstract function getClassname();
-    
-    /**
      * Get bundle name
      * 
      * @return string 
