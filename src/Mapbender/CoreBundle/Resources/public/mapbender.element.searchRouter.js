@@ -2,11 +2,16 @@
 
 $.widget('mapbender.mbSearchRouter', {
     options: {
-        asDialog: true
+        asDialog: true,     // Display as jQuery UI dialog
+        timeoutFactor: 2    // use delay * timeoutFactor before showing
+                            // autocomplete again after a search has been
+                            // started
     },
 
     callbackUrl: null,
     selected: null,
+    highlightLayer: null,
+    lastSearch: new Date(),
 
     /**
      * Widget creator
@@ -29,11 +34,24 @@ $.widget('mapbender.mbSearchRouter', {
             $.proxy(this._setupAutocomplete, this));
 
         // Prepare search button
-        $('a[role="search_router_search"]').click($.proxy(this._search, this));
+        $('a[role="search_router_search"]').button()
+            .click($.proxy(this._search, this));
+
+        // Form submit
+        this.element.delegate('form', 'submit', $.proxy(this._search, this));
+
+        // Click single search result
+        this.element.delegate('.search-results tr', 'click',
+            $.proxy(this._highlightClick, this));
+        
+        // Mouseover single search result
+        this.element.delegate('.search-results tr', 'mouseover',
+            $.proxy(this._highlightOver, this));
     },
 
     /**
      * Set up autocomplete widgets for all inputs with data-autcomplete="on"
+     *
      * @param  integer      idx   Running index
      * @param  HTMLDomNode  input Input element
      */
@@ -43,6 +61,7 @@ $.widget('mapbender.mbSearchRouter', {
         input.autocomplete({
             delay: input.data('autocomplete-delay') || 500,
             minLength: input.data('autocomplete-minlength') || 3,
+            search: $.proxy(this._autocompleteSearch, this),
             source: function(request, response) {
                 self._autocompleteSource(input, request, response);
             },
@@ -84,6 +103,7 @@ $.widget('mapbender.mbSearchRouter', {
     _selectSearch: function(event) {
         this.selected = $(event.target).val();
 
+        this._getLayer().removeAllFeatures();
         var container = $('.search-results', this.element).empty(),
             headers = this.options.routes[this.selected].results.headers;
 
@@ -101,7 +121,27 @@ $.widget('mapbender.mbSearchRouter', {
     },
 
     /**
-     * Autocomplete source handler, does all Ajax magic
+     * Autocomplete search handler.
+     *
+     * Checks if enough time has been passed since the last search. Basically
+     * this prevents an autocomplete poping up when a search is triggered by
+     * keybord.
+     *
+     * @param  jQuery.Event event search event
+     * @param  Object       ui    n/a
+     */
+    _autocompleteSearch: function(event, ui) {
+        var delay = $(event.target).autocomplete('option', 'delay'),
+            diff = (new Date()) - this.lastSearch;
+
+        if(diff <= delay * this.options.timeoutFactor) {
+            event.preventDefault();
+        }
+    },
+
+    /**
+     * Autocomplete source handler, does all Ajax magic.
+     *
      * @param  HTMLDomNode target   Input element
      * @param  Object      request  Request object with term attribute
      * @param  function    response Autocomplete callback
@@ -133,7 +173,8 @@ $.widget('mapbender.mbSearchRouter', {
     },
 
     /**
-     * Store autocomplete key if suggestion was selected
+     * Store autocomplete key if suggestion was selected.
+     *
      * @param  jQuery.Event event Selection event
      * @param  Object       ul    Selected item
      */
@@ -145,18 +186,22 @@ $.widget('mapbender.mbSearchRouter', {
     },
 
     /**
-     * Remove stored autocomplete key when key was pressed
+     * Remove stored autocomplete key when key was pressed.
+     *
      * @param  jQuery.Event event Keydown event
      */
     _autocompleteKeydown: function(event) {
-        $(event.target).data('autocomplete-key', undefined);
+        $(event.target).removeData('autocomplete-key');
     },
 
     /**
-     * Does search for current form
+     * Does search for current form.
+     *
      * @param  jQEvent event  jQuery Event
      */
     _search: function(event) {
+        // Store start time for preventing "concurrent" autocompletes
+        this.lastSearch = new Date();
         event.preventDefault();
         var form = $('form[name="' + this.selected + '"]'),
             url = this.callbackUrl + 'search',
@@ -192,22 +237,47 @@ $.widget('mapbender.mbSearchRouter', {
     },
 
     /**
-     * Rebuilds result table with search result data
+     * Rebuilds result table with search result data.
+     *
      * @param Object data Result data
      */
     _setSearchResults: function(data) {
-        var fragment = document.createDocumentFragment(),
-            headers = this.options.routes[this.selected].results.headers,
-            tbody = $('.search-results tbody', this.element).empty();
+        var headers = this.options.routes[this.selected].results.headers,
+            table = $('.search-results table', this.element),
+            tbody = $('<tbody></tbody>'),
+            layer = this._getLayer();
+        
+        $('tbody', table).remove();
+        layer.removeAllFeatures();
 
         for(var result in data) {
             var row = $('<tr></tr>');
+            row.data('feature', data[result]);
             for(var header in headers) {
                 d = data[result][headers[header]];
                 row.append($('<td>' + (d || '') + '</td>'));
             }
             tbody.append(row);
         }
+
+        table.append(tbody);
+
+        // Build highlight layer
+        var format = new OpenLayers.Format.WKT(),
+            features = [];
+        $('tr', tbody).each(function(idx, row) {
+            row = $(row);
+            var f = $.extend({}, row.data('feature')),
+                feature = format.read(f.geom);
+            
+            delete f.geom;
+            feature.attributes = f;
+
+            features.push(feature);
+
+            row.data('feature', feature);
+        });
+        layer.addFeatures(features);
     },
 
     /**
@@ -224,6 +294,55 @@ $.widget('mapbender.mbSearchRouter', {
     _setInactive: function() {
         var outer = this.options.asDialog ? this.element.parent() : this.element;
         outer.removeClass('search-active');
+    },
+
+    /**
+     * Get highlight layer. Will construct one if neccessary.
+     *
+     * @return OpenLayers.Layer.Vector Highlight layer
+     */
+    _getLayer: function() {
+        if(this.highlightLayer === null) {
+            this.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight');
+        }
+
+        if(this.highlightLayer.map === null) {
+            var map = $('#' + this.options.target).data('mbMap').map.olMap;
+            map.addLayer(this.highlightLayer);
+        }
+
+        return this.highlightLayer;
+    },
+
+    /**
+     * Callback for a search result row mouseover.
+     *
+     * @param  jQuery.Event event mouseover event
+     */
+    _highlightOver: function(event) {
+        var row = $(event.currentTarget),
+            feature = row.data(feature);
+    },
+
+    /**
+     * Callback for a search result row click.
+     *
+     * @param  jQuery.Event event Click event
+     */
+    _highlightClick: function(event) {
+        var row = $(event.currentTarget),
+            feature = row.data('feature'),
+            extent = feature.geometry.getBounds(),
+            map = feature.layer.map,
+            zoom = map.getZoomForExtent(extent);
+
+        if(zoom < map.getZoom()) {
+            map.zoomToExtent(extent);
+        } else {
+            var centroid = feature.geometry.getCentroid(),
+                lonlat = new OpenLayers.LonLat(centroid.x, centroid.y);
+                map.panTo(lonlat);
+        }
     }
 });
 

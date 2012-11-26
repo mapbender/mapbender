@@ -102,6 +102,9 @@ class SearchRouter extends Element
             $form->bind($data[$target]);
 
             parse_str($request->get('autocomplete_keys'), $autocomplete_keys);
+            if(array_key_exists($target, $autocomplete_keys)) {
+                $autocomplete_keys = $autocomplete_keys[$target];
+            }
 
             $conf = $conf['routes'][$target];
             $engine = new $conf['class']($this->container);
