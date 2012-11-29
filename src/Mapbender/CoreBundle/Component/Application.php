@@ -11,6 +11,7 @@ use Assetic\Asset\FileAsset;
 use Assetic\Asset\StringAsset;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Application is the main Mapbender3 class.
@@ -286,7 +287,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
      * @return Element
      */
     public function getElement($id) {
-        throw new \RuntimeException('NIY getElement');
+        $elements = $this->getElements();
+        foreach($elements as $region => $element_list) {
+            foreach($element_list as $element) {
+                if($id === $element->getId()) {
+                    return $element;
+                }
+            }
+        }
+        throw new NotFoundHttpException();
     }
 
     /**
