@@ -7,6 +7,7 @@ $.widget("mapbender.mbMap", {
         layerset: null, //mapset for main map
         dpi: OpenLayers.DOTS_PER_INCH,
         srs: 'EPSG:4326',
+        otherSrs: '',
         units: 'degrees',
         extents: {
             max: [-180, -90, 180, 90],
@@ -15,19 +16,39 @@ $.widget("mapbender.mbMap", {
         maxResolution: 'auto',
         imgPath: 'bundles/mapbendercore/mapquery/lib/openlayers/img'
     },
-
+    
+    layersOrigExtents: {},
+    mapOrigExtents: {},
     map: null,
     highlightLayer: null,
 
     _create: function() {
         var self = this,
             me = $(this.element);
-
+            
+        // set a map's origin extents
+        this.mapOrigExtent = {}
+        var extProjection = new OpenLayers.Projection(this.options.srs);
+        if(extProjection.projCode === 'EPSG:4326') {
+            extProjection.proj.units = 'degrees';
+        }
+        this.mapOrigExtents = {
+            max: {
+                projection: extProjection,
+                extent: this.options.extents.max ?
+                    new OpenLayers.Bounds(this.options.extents.max) : null},
+            min: {
+                projection: extProjection,
+                extent: this.options.extents.min ? 
+                    new OpenLayers.Bounds(this.options.extents.min) : null}
+        };
+        
         if(typeof(this.options.dpi) !== 'undefined') {
             OpenLayers.DOTS_PER_INCH = this.options.dpi;
         }
-
-        OpenLayers.ImgPath = Mapbender.configuration.assetPath + this.options.imgPath + '/';
+        
+        OpenLayers.ImgPath = Mapbender.configuration.assetPath
+            + this.options.imgPath + '/';
 
         // Prepare initial layers
         var layers = [];
@@ -62,21 +83,26 @@ $.widget("mapbender.mbMap", {
                 this.options.units = 'degrees';
             }
         }
+        
+        
+        if(this.options.otherSrs){
+            
+        }
 
         function addSubs(layer){
             if(layer.sublayers) {
                 $.each(layer.sublayers, function(idx, val) {
-                           layers.push(val);
-                           addSubs(val);
-                       });
+                    layers.push(val);
+                    addSubs(val);
+                });
             }
         }
 
         $.each(Mapbender.configuration.layersets[this.options.layerset], function(idx, layerDef) {
-                   layers.push(self._convertLayerDef.call(self, layerDef));
-                   self.rootLayers.push(layers[layers.length-1]);
-                   addSubs(layers[layers.length-1]);
-                   allOverlays = allOverlays && (layerDef.configuration.baselayer !== true);
+            layers.push(self._convertLayerDef.call(self, layerDef));
+            self.rootLayers.push(layers[layers.length-1]);
+            addSubs(layers[layers.length-1]);
+            allOverlays = allOverlays && (layerDef.configuration.baselayer !== true);
         });
 
         // TODO find out how to do a proper menu with jquery ui
@@ -90,92 +116,91 @@ $.widget("mapbender.mbMap", {
         var hasNavigation = false;
         if(this.options.controls) {
             $.each(this.options.controls, function(idx, control) {
-                       switch(idx) {
-                       case 'pan':
-                           $('#' + control.target).css('display', 'block')
-                               .click(function() { self.map.mode('pan'); });
-                           control = 'DragPan';
-                           break;
-                       case 'zoomin':
-                           $('#' + control.target).css('display', 'block')
-                               .click(function() { self.map.mode('zoomin'); });
-                           control = 'ZoomIn';
-                           break;
-                       case 'zoomout':
-                           $('#' + control.target).css('display', 'block')
-                               .click(function() { self.map.mode('zoomout'); });
-                           control = 'ZoomOut';
-                           break;
-                       case 'zoombox':
-                           $('#' + control.target).css('display', 'block')
-                               .click(function() { self.map.mode('zoombox'); });
-                           control = 'ZoomBox';
-                           break;
-                       case 'zoomhome':
-                       case 'zoomnext':
-                       case 'zoomlast':
-                       case 'zoomcoordinate':
-                       case 'zoomscale':
-                           $('#' + control.target).css('display', 'block');
-                           break;
-                       }
-                       if(idx === 'zoomhome') {
-                           $('#' + control.target).click($.proxy(self.zoomToFullExtent, self));
-                       } else if(idx === 'zoomlast') {
-                           if(!hasNavigation) {
-                               controls.push(hasNavigation = new OpenLayers.Control.NavigationHistory());
+                switch(idx) {
+                   case 'pan':
+                       $('#' + control.target).css('display', 'block')
+                           .click(function() { self.map.mode('pan'); });
+                       control = 'DragPan';
+                       break;
+                   case 'zoomin':
+                       $('#' + control.target).css('display', 'block')
+                           .click(function() { self.map.mode('zoomin'); });
+                       control = 'ZoomIn';
+                       break;
+                   case 'zoomout':
+                       $('#' + control.target).css('display', 'block')
+                           .click(function() { self.map.mode('zoomout'); });
+                       control = 'ZoomOut';
+                       break;
+                   case 'zoombox':
+                       $('#' + control.target).css('display', 'block')
+                           .click(function() { self.map.mode('zoombox'); });
+                       control = 'ZoomBox';
+                       break;
+                   case 'zoomhome':
+                   case 'zoomnext':
+                   case 'zoomlast':
+                   case 'zoomcoordinate':
+                   case 'zoomscale':
+                       $('#' + control.target).css('display', 'block');
+                       break;
+               }
+               if(idx === 'zoomhome') {
+                   $('#' + control.target).click($.proxy(self.zoomToFullExtent, self));
+               } else if(idx === 'zoomlast') {
+                   if(!hasNavigation) {
+                       controls.push(hasNavigation = new OpenLayers.Control.NavigationHistory());
+                   }
+                   $('#' + control.target).click($.proxy(hasNavigation.previousTrigger, hasNavigation));
+               } else if(idx === 'zoomnext') {
+                   if(!hasNavigation) {
+                       controls.push(hasNavigation = new OpenLayers.Control.NavigationHistory());
+                   }
+                   $('#' + control.target).click($.proxy(hasNavigation.nextTrigger, hasNavigation));
+               } else if(idx === 'zoomcoordinate') {
+                   $('#mb-zoom-coordinate-dialog').dialog({
+                       autoOpen: false,
+                       buttons: {
+                           Zoom: function() {
+                               var x = $('#mb-zoom-coordinate-x')[0].value;
+                               var y = $('#mb-zoom-coordinate-y')[0].value;
+                               self.center({position: [x, y]});
+                               $( this ).dialog( "close" );
+                           },
+                           Cancel: function() {
+                               $( this ).dialog( "close" );
                            }
-                           $('#' + control.target).click($.proxy(hasNavigation.previousTrigger, hasNavigation));
-                       } else if(idx === 'zoomnext') {
-                           if(!hasNavigation) {
-                               controls.push(hasNavigation = new OpenLayers.Control.NavigationHistory());
-                           }
-                           $('#' + control.target).click($.proxy(hasNavigation.nextTrigger, hasNavigation));
-                       } else if(idx === 'zoomcoordinate') {
-                           $('#mb-zoom-coordinate-dialog').dialog(
-                               {
-                                   autoOpen: false,
-                                   buttons: {
-                                       Zoom: function() {
-                                           var x = $('#mb-zoom-coordinate-x')[0].value;
-                                           var y = $('#mb-zoom-coordinate-y')[0].value;
-                                           self.center({position: [x, y]});
-                                           $( this ).dialog( "close" );
-                                       },
-                                       Cancel: function() {
-                                           $( this ).dialog( "close" );
-                                       }
-                                   }});
-                           $('#' + control.target).click(function(){ $('#mb-zoom-coordinate-dialog').dialog('open'); });
-                       } else if(idx === 'zoomscale') {
+                   }});
+                   $('#' + control.target).click(function(){ $('#mb-zoom-coordinate-dialog').dialog('open'); });
+                } else if(idx === 'zoomscale') {
 
-                           $('#mb-zoom-scale-dialog').dialog(
-                               {
-                                   autoOpen: false,
-                                   buttons: {
-                                       Zoom: function() {
-                                           var scale = $('#mb-zoom-scale-select')[0].value;
-                                           self.map.olMap.zoomToScale(scale);
-                                           $( this ).dialog( "close" );
-                                       },
-                                       Cancel: function() {
-                                           $( this ).dialog( "close" );
-                                       }
-                                   }});
-                           $('#' + control.target).click(function(){
-                                                             var scales = self.map.olMap.scales;
-                                                             var html = '';
-                                                             $.each(scales, function(idx, val) {
-                                                                        html += '<option>' + val + '</option>';
-                                                                    });
-                                                             $('#mb-zoom-scale-select').html(html);
-                                                             $('#mb-zoom-scale-dialog').dialog('open');
-                                                         });
-                       } else {
-                           var ctrl = new OpenLayers.Control[control]();
-                           controls.push(ctrl);
-                       }
-                   });
+                    $('#mb-zoom-scale-dialog').dialog({
+                        autoOpen: false,
+                        buttons: {
+                            Zoom: function() {
+                                var scale = $('#mb-zoom-scale-select')[0].value;
+                                self.map.olMap.zoomToScale(scale);
+                                $( this ).dialog( "close" );
+                            },
+                            Cancel: function() {
+                                $( this ).dialog( "close" );
+                            }
+                        }
+                    });
+                    $('#' + control.target).click(function(){
+                        var scales = self.map.olMap.scales;
+                        var html = '';
+                        $.each(scales, function(idx, val) {
+                            html += '<option>' + val + '</option>';
+                        });
+                        $('#mb-zoom-scale-select').html(html);
+                        $('#mb-zoom-scale-dialog').dialog('open');
+                    });
+               } else {
+                   var ctrl = new OpenLayers.Control[control]();
+                   controls.push(ctrl);
+               }
+           });
         }
 
         var mapOptions = {
@@ -580,6 +605,94 @@ $.widget("mapbender.mbMap", {
         var listener = Mapbender.layer[layer.olLayer.type].onLoadStart;
         if(typeof listener === 'function') {
             listener.call(layer);
+            this._addOrigLayerExtent(layer);
+        }
+    },
+    
+    /*
+     * Sets a new map's projection.
+     */
+    setMapProjection: function(newProj){
+        var self = this;
+        var oldProj = this.map.olMap.getProjectionObject();
+        var center = this.map.olMap.getCenter().transform(oldProj, newProj);
+        this.map.olMap.projection = newProj;
+        this.map.olMap.displayProjection= newProj;
+        this.map.olMap.units = newProj.proj.units;
+
+        this.map.olMap.maxExtent = this._transformExtent(
+                this.mapOrigExtents.max, newProj);
+        $.each(self.map.olMap.layers, function(idx, layer){
+//            if(layer.isBaseLayer){
+            layer.projection = newProj;
+            layer.units = newProj.proj.units;
+            if(!self.layersOrigExtents[layer.id]){
+                self._addOrigLayerExtent(layer);
+            }
+            if(layer.maxExtent && layer.maxExtent != self.map.olMap.maxExtent){
+                layer.maxExtent = self._transformExtent(
+                        self.layersOrigExtents[layer.id].max, newProj);
+            }
+
+            if(layer.minExtent){
+                layer.minExtent = self._transformExtent(
+                        self.layersOrigExtents[layer.id].minExtent, newProj);
+            }
+            layer.initResolutions();
+//            }  
+        });
+        this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
+    },
+    
+    /*
+     * Transforms an extent into destProjection projection.
+     */
+    _transformExtent: function(extentObj, destProjection){
+        if(extentObj.extent != null){
+            if(extentObj.projection.projCode == destProjection.projCode){
+                return extentObj.extent.clone();
+            } else {
+                var newextent = extentObj.extent.clone();
+                newextent.transform(extentObj.projection, destProjection);
+                return newextent;
+            }
+        } else {
+            return null;
+        }
+    },
+
+    /**
+     * Adds a layer's original extent into the widget layersOrigExtent.
+     */
+    _addOrigLayerExtent: function(layer) {
+        if(layer.olLayer) {
+            layer = layer.olLayer;
+        }
+        if(!this.layersOrigExtents[layer.id]){
+            var extProjection = new OpenLayers.Projection(this.options.srs);
+            if(extProjection.projCode === 'EPSG:4326') {
+                extProjection.proj.units = 'degrees';
+            }
+            this.layersOrigExtents[layer.id] = {
+                max: {
+                    projection: extProjection,
+                    extent: layer.maxExtent ? layer.maxExtent.clone() : null},
+                min: {
+                    projection: extProjection,
+                    extent: layer.minExtent ? layer.minExtent.clone() : null}
+            };
+        }
+    },
+    
+    /**
+     * Removes a layer's origin extent from the widget layersOrigExtent.
+     */
+    _removeOrigLayerExtent: function(layer) {
+        if(layer.olLayer) {
+            layer = layer.olLayer;
+        }
+        if(this.layersOrigExtent[layer.id]){
+            delete(this.layersOrigExtent[layer.id]);
         }
     },
 
@@ -587,7 +700,9 @@ $.widget("mapbender.mbMap", {
     /**
      * Listen to removed layer in the MapQuery object
      */
-    _onRemoveLayer: function(event, layer) {}
+    _onRemoveLayer: function(event, layer) {
+        this._removeOrigLayerExtent(layer);
+    }
 });
 
 })(jQuery);

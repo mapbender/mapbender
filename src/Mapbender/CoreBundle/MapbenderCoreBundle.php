@@ -28,7 +28,11 @@ class MapbenderCoreBundle extends MapbenderBundle {
             'Mapbender\CoreBundle\Element\FeatureInfo',
             'Mapbender\CoreBundle\Element\Ruler',
             'Mapbender\CoreBundle\Element\Map',
-            'Mapbender\CoreBundle\Element\Toc');
+            'Mapbender\CoreBundle\Element\Toc',
+            'Mapbender\CoreBundle\Element\SrsSelector',
+            'Mapbender\CoreBundle\Element\Legend',
+            'Mapbender\CoreBundle\Element\Copyright',
+            'Mapbender\CoreBundle\Element\ScaleSelector');
     }
 }
 

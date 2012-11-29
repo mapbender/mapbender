@@ -1,0 +1,6 @@
+<div id="{{ id }}-div" class="mb-element mb-element-scaleselector-div">
+{% if configuration.title is defined and configuration.title != '' %}
+    <label for="{{ id }}">{{ configuration.title|trans }} 1:</label>
+{% endif %}
+    <select id="{{ id }}" class="mb-element mb-element-scaleselector"></select>
+</div>
