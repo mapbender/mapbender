@@ -4,3 +4,6 @@
     background: url('image/activity.gif') 100% 50% no-repeat;
 }
 
+.olMap.mb-feature-info-active {
+    cursor: crosshair;
+}

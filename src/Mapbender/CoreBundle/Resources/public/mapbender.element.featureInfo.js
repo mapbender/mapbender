@@ -29,16 +29,19 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
         var self = this;
         this._super('activate');
         this.map = $('#' + this.options.target).data('mapQuery');
+        $('#' + this.options.target).addClass('mb-feature-info-active');
         this.mapClickHandler = function(e) {
             self._triggerFeatureInfo.call(self, e);
-        }
+        };
         this.map.element.bind('click', self.mapClickHandler);
     },
 
     deactivate: function() {
         this._super('deactivate');
-        if(this.map)
+        if(this.map) {
+            $('#' + this.options.target).removeClass('mb-feature-info-active');
             this.map.element.unbind('click', this.mapClickHandler);
+        }
     },
 
     /**
