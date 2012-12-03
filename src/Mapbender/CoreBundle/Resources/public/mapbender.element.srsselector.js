@@ -3,6 +3,7 @@
 $.widget("mapbender.mbSrsSelector", {
     options: {
 //        crsList:[{name: "EPSG:25832", title: "ETRS89 / UTM Zone 32N"}]
+        targets: {map: "map", coordsdisplay: "coordinates" }
     },
 
 //    elementUrl: null,
@@ -10,41 +11,31 @@ $.widget("mapbender.mbSrsSelector", {
     op_sel: null,
     
     mapWidget: null,
-//    
-//    origExtents: {},
 
     _create: function() {
+//        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
+        $(document).one('mapbender.setupfinished', $.proxy(this._mapbenderSetupFinished, this));
+    },
+    
+    _mapbenderSetupFinished: function() {
+        this._init(); 
+    },
+//    
+    _init: function(){
         var self = this;
         var me = $(this.element);
-//        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
         this.mapWidget = $('#' + self.options.targets.map);
         var mbMap = this.mapWidget.data('mbMap');
         var options = "";
-        options += '<option value="' + mbMap.options.srs + '">' + mbMap.options.srs + '</option>';
-        var otherSrs = mbMap.options.otherSrs.split(",");
-        for(var i = 0; i < otherSrs.length; i++){
-            options += '<option value="' + otherSrs[i] + '">' + otherSrs[i] + '</option>';
+        var allSrs = mbMap.getAllSrs();
+        for(srs in allSrs){
+            options += '<option value="' + srs + '">' + allSrs[srs] + '</option>';
         }
         $("#"+me.attr('id')).html(options);
         this.op_sel = "#"+me.attr('id')+" option";
         $(self.element).val(mbMap.map.olMap.getProjection());
-        $(self.element).change($.proxy(self._switchCrs, self));
-        
-//        $(document).one('mapbender.setupfinished', $.proxy(this._mapbenderSetupFinished, this));
+        $(self.element).change($.proxy(self._switchSrs, self));
     },
-    
-//    _mapbenderSetupFinished: function() {
-//      this._init(); 
-//    },
-//    
-//    _init: function(){
-//        var self = this;
-//        var me = $(this.element);
-//        this.op_sel = "#"+me.attr('id')+" option";
-//        var mbMap = $('#' + self.options.targets).data('mbMap');
-//        $(self.element).val(mbMap.map.olMap.getProjection());
-//        $(self.element).change($.proxy(self._switchCrs, self));
-//    },
     
     showHidde: function() {
         var self = this;
@@ -59,38 +50,45 @@ $.widget("mapbender.mbSrsSelector", {
         }
     },
     
-    _switchCrs: function(evt) {
-        var dest = new OpenLayers.Projection(this.getSelectedCrs());
+    _switchSrs: function(evt) {
+        var old = this.mapWidget.data('mbMap').map.olMap.getProjectionObject();
+        var dest = new OpenLayers.Projection(this.getSelectedSrs());
+//        if(old.projCode == dest.projCode){
+//            return true;
+//        }
+        window.console && console.log("switch STS from:"+old.projCode
+            +" into:"+dest.projCode, dest.readyToUse);
+        
         if(dest.projCode === 'EPSG:4326') {
             dest.proj.units = 'degrees';
         }
-
         this.mapWidget.mbMap("setMapProjection", dest);
+//        $('#' + this.options.targets.coordsdisplay).mbCoordinatesDisplay("reset");
         $('.mb-element-coordsdisplay').mbCoordinatesDisplay("reset");
         return true;
     },
     
-    selectCrs: function(crs) {
-        if(this.isCrsSupported(crs)){
+    selectSrs: function(crs) {
+        if(this.isSrsSupported(crs)){
             $(this.op_sel + '[value="'+crs+'"]').attr('selected',true);
-            this._switchCrs();
+            this._switchSrs();
             return true;
         } return false;
     },
     
-    getSelectedCrs: function() {
+    getSelectedSrs: function() {
         return $(this.element).val();
     },
     
-    isCrsSupported: function(crs) {
+    isSrsSupported: function(crs) {
         if(typeof($(this.op_sel + '[value="'+crs+'"]').val()) !== 'undefined'){
             return true;
         }
         return false;
     },
     
-    isCrsEnabled: function(crs) {
-        if(!this.isCrsSupported(crs))
+    isSrsEnabled: function(crs) {
+        if(!this.isSrsSupported(crs))
             return false;
         if($(this.op_sel + '[value="'+crs+'"]').attr("disabled")){
             return false;
@@ -98,9 +96,9 @@ $.widget("mapbender.mbSrsSelector", {
         return true;
     },
 
-    disableCrs: function(crs){
+    disableSrs: function(crs){
         if($.type(crs) === "string"){
-            if(this.isCrsSupported(crs)){
+            if(this.isSrsSupported(crs)){
                 $(this.op_sel + '[value="'+crs+'"]').attr("disabled", "disabled");
                 return true;
             } else {
@@ -115,7 +113,7 @@ $.widget("mapbender.mbSrsSelector", {
                 } else {
                     crsName = idx;
                 }
-                if(this.isCrsSupported(crsName)){
+                if(this.isSrsSupported(crsName)){
                     $(this.op_sel + '[value="'+crsName+'"]').attr("disabled", "disabled");
                     res = true;
                 }
@@ -125,9 +123,9 @@ $.widget("mapbender.mbSrsSelector", {
         return false;
     },
 
-    enableCrs: function(crs){
+    enableSrs: function(crs){
         if($.type(crs) === "string"){
-            if(this.isCrsSupported(crs)){
+            if(this.isSrsSupported(crs)){
                 $(this.op_sel + '[value="'+crs+'"]').removeAttr("disabled");
                 return true;
             } else {
@@ -142,7 +140,7 @@ $.widget("mapbender.mbSrsSelector", {
                 } else {
                     crsName = idx;
                 }
-                if(this.isCrsSupported(crsName)){
+                if(this.isSrsSupported(crsName)){
                     $(this.op_sel + '[value="'+crsName+'"]').removeAttr("disabled");
                     res = true;
                 }
@@ -152,10 +150,10 @@ $.widget("mapbender.mbSrsSelector", {
         return false;
     },
     
-    enableOnlyCrs: function(crs){
-        this.disableAllCrs();
+    enableOnlySrs: function(crs){
+        this.disableAllSrs();
         if($.type(crs) === "string"){
-            if(this.isCrsSupported(crs)){
+            if(this.isSrsSupported(crs)){
                 $(this.op_sel + '[value="'+crs+'"]').removeAttr("disabled");
                 return true;
             } else {
@@ -170,7 +168,7 @@ $.widget("mapbender.mbSrsSelector", {
                 } else {
                     crsName = idx;
                 }
-                if(this.isCrsSupported(crsName)){
+                if(this.isSrsSupported(crsName)){
                     $(this.op_sel + '[value="'+crsName+'"]').removeAttr("disabled");
                     res = true;
                 }
@@ -180,10 +178,10 @@ $.widget("mapbender.mbSrsSelector", {
         return false;
     },
     
-    getFullCrsObj: function(crs){
+    getFullSrsObj: function(crs){
         var result = [];
         if($.type(crs) === "string"){
-            if(this.isCrsSupported(crs)){
+            if(this.isSrsSupported(crs)){
                 return [{name: crs, title: $(this.op_sel + '[value="'+crs+'"]').text()}];
             }
         } else if($.type(crs) === "object"){
@@ -215,7 +213,7 @@ $.widget("mapbender.mbSrsSelector", {
 //                } else {
 //                    crsName = idx;
 //                }
-//                if(this.isCrsSupported(crsName)){
+//                if(this.isSrsSupported(crsName)){
 //                    result[crsName] = $(this.op_sel + '[value="'+crsName+'"]').text();
 //                }
 //            }
@@ -224,24 +222,24 @@ $.widget("mapbender.mbSrsSelector", {
         return [];
     },
 
-    enableAllCrs: function(){
+    enableAllSrs: function(){
         $.each($(this.op_sel), function(idx, val){
             $(this).removeAttr("disabled");
         });
         return true;
     },
     
-    disableAllCrs: function(){
+    disableAllSrs: function(){
         $.each($(this.op_sel), function(idx, val){
             $(this).attr("disabled","disabled");
         });
         return true;
     },
     
-    getInnerJoinCrs: function(crsesArr){
+    getInnerJoinSrs: function(crsesArr){
         var result = new Array();
 //        for(var j = 0; j < crsesArr.length; j++){
-//            if(this.isCrsSupported(crsesArr[j])){
+//            if(this.isSrsSupported(crsesArr[j])){
 //                result.push(crsesArr[j]);
 //            }
 //        }
