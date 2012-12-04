@@ -14,6 +14,10 @@ mapbender_managerbundle:
 mapbender_wmsbundle:
     resource: "@MapbenderWmsBundle/Controller/"
     type: annotation
+    
+mapbender_wmtsbundle:
+    resource: "@MapbenderWmtsBundle/Controller/"
+    type: annotation
 
 fom_managerbundle:
     resource: "@FOMManagerBundle/Controller"

@@ -55,7 +55,7 @@ parameters:
                         layers:
                             - { name: osm_roads, title: OpenStreetMap WMS }
                         tiled: false
-                        baselayer: false
+#                        baselayer: false
                     mapbender_users:
                         class: Mapbender\WmsBundle\WmsLayer
                         title: Mapbender Users
@@ -114,9 +114,11 @@ parameters:
                         units: degrees
                         extents:
                             start: [-43.313833377731, 33.006761223615, 65.104961268907, 59.198710149963]
-                            max: [-180,-90,180,90]
+                            max: [-179,-89,179.999,89.99]
+                            min: [-179,-89,179.999,89.99]
                         scales: [25000000, 10000000,5000000,1000000,500000]
                         maxResolution: 'auto'
+                        otherSrs: ["EPSG:25832","EPSG:25833"]
                         #overview:
                         #    layerset: overview
                     zoombar:
@@ -128,8 +130,32 @@ parameters:
                         class: Mapbender\CoreBundle\Element\Toc
                         target: map
                         autoOpen: false
+                    copyright:
+                        class: Mapbender\CoreBundle\Element\Copyright
+                        copyrigh_text: '© XXX, 2012'
+                        dialog_link: Terms of use
+                        dialog_content: 'Terms of use (Content)'
+                        dialog_title: 'Terms of use'
                 footer:
                     coordinates:
                         class: Mapbender\CoreBundle\Element\CoordinatesDisplay
                         target: map
-
+                        
+                    srsselector:
+                        class: Mapbender\CoreBundle\Element\SrsSelector
+                        targets: { map: map, coordsdisplay: coordinates }
+                        title: SRS Selector
+                        autoOpen: false
+                        
+                    legend:
+                        class: Mapbender\CoreBundle\Element\Legend
+                        target: map
+                        title: Legend
+                        dialogtitle: "Legend view"
+                        nolegend: "No legend available"
+                        
+                    scaleselector:
+                        class: Mapbender\CoreBundle\Element\ScaleSelector
+                        target: map
+                        title: Scale
+                        
