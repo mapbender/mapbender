@@ -1,4 +1,32 @@
-<div class="alert alert-error">
-Sorry, this hasn't been implemented yet.
+<div class="">
+{% if application.layersets|length > 0 %}
+    <ul class="unstyled">
+    {% for layerset in application.layersets %}
+    <li>
+        <table class="table table-striped" id="layerset-list">
+            <thead>
+                <tr>
+                    <th>{{ 'Title' | trans }}</th>
+                    <th>{{ 'Actions' | trans }}</th>
+                </tr>
+            </thead>
+            <tbody id="{{layerset.id }}" >
+                {% for layer in layerset.layers %}
+                    <tr data-source-id="{{ layer.id }}">
+                        <td>{{ layer.title }}</td>
+                        <td>
+                            <div class="entity-actions btn-group">
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </li>    
+    {% endfor %}
+    </ul>
+{% else %}
+    {{ 'No Sources added' | trans }}
+{% endif %}
+<button type="button" data-toggle="modal" data-target="#repository-list-modal" class="btn" >{{ "Add Source" | trans }}</button>
 </div>
-

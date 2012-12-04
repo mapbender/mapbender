@@ -95,9 +95,8 @@ $.widget("mapbender.mbMap", {
         if(typeof(this.options.dpi) !== 'undefined') {
             OpenLayers.DOTS_PER_INCH = this.options.dpi;
         }
-        
-        OpenLayers.ImgPath = Mapbender.configuration.assetPath
-            + this.options.imgPath + '/';
+
+        OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + this.options.imgPath + '/';
 
         // Prepare initial layers
         var layers = [];

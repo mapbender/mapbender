@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 
 /**
  * WmsInstance class
@@ -15,8 +16,9 @@ use Mapbender\WmsBundle\Entity\WmsSource;
  * 
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstanse")
+ * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
  */
-class WmsInstance {
+class WmsInstance extends SourceInstance {
 
     /**
      *  @ORM\Id
@@ -348,5 +350,12 @@ class WmsInstance {
     public function removeLayer(WmsInstanceLayer $layers)
     {
         $this->layers->removeElement($layers);
+    }
+
+    public static function fromWmsSource(WmsSource $wmsSource){
+        $instance = new self();
+        $instance->setWmsSource($wmsSource);
+        $instance->setTitle($wmsSource->getTitle());
+        return $instance;
     }
 }

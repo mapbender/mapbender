@@ -7,8 +7,13 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Assetic\Asset\AssetCollection;
+use Assetic\Asset\AssetReference;
 use Assetic\Asset\FileAsset;
+use Assetic\FilterManager;
 use Assetic\Asset\StringAsset;
+use Assetic\AssetManager;
+use Assetic\Factory\AssetFactory;
+
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -145,7 +150,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
      * Filters can be applied later on with the ensureFilter method.
      *
      * @param string $type Can be 'css' or 'js' to indicate which assets to dump
-     * @return AsseticCollection
+     * @return AsseticFactory
      */
     public function getAssets($type) {
         if($type !== 'css' && $type !== 'js') {
@@ -153,7 +158,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
                 '\' is unknown.');
         }
 
-        $assets = new AssetCollection();
+        // Add all assets to an asset manager first to avoid duplication
+        $assets = new AssetManager();
 
         if($type === 'js') {
             // Mapbender API
@@ -201,10 +207,25 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             $this->addAsset($assets, $type, $file);
         }
 
-        return $assets;
+        // Load extra assets given by application
+        $extra_assets = $this->getEntity()->getExtraAssets();
+        if(is_array($extra_assets) && array_key_exists($type, $extra_assets)) {
+            foreach($extra_assets[$type] as $asset) {
+                $asset = trim($asset);
+                $this->addAsset($assets, $type, $asset);
+            }
+        }
+
+        // Get all assets out of the manager and into an collection
+        $collection = new AssetCollection();
+        foreach($assets->getNames() as $name) {
+            $collection->add($assets->get($name));
+        }
+
+        return $collection;
     }
 
-    private function addAsset($collection, $type, $reference) {
+    private function addAsset($manager, $type, $reference) {
         $locator = $this->container->get('file_locator');
         $file = $locator->locate($reference);
 
@@ -235,8 +256,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             array(),
             $sourceBase,
             $sourcePath);
-
-        $collection->add($asset);
+        $name = str_replace(array('@', '/', '.', '-'), '__', $reference);
+        $manager->set($name, $asset);
     }
 
     /**

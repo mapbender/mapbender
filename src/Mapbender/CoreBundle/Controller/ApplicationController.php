@@ -154,53 +154,20 @@ class ApplicationController extends Controller {
     /**
      * Check access permissions for given application.
      *
-     * This will first check if the current user is the owner, in which case
-     * access will be granted without regarding published state or required
-     * roles for the application. The same is true for the root account user.
-     * Then access will be denied if the application is not currently
-     * published, and the lastly checkAccess will be called to check if the
-     * current user has at least one of the roles required by the application.
-     * Denied access or insufficient authorization will throw the corresponding
-     * exception which are then picked up by Symfony's security layer.
+     * This will check if any ACE in the ACL for the given applications entity
+     * grants the VIEW permission.
      *
      * @param Application $application
      */
     public function checkApplicationAccess(Application $application) {
-        $user = $this->get('security.context')->getToken()->getUser();
-        $owner = $application->getEntity()->getOwner();
-
-        if(is_object($user) && $owner->equals($user)) {
-            return;
-        }
-
-        if($user instanceof User and $user->getId() == 1) {
-            return;
+        $securityContext = $this->get('security.context');
+        $granted = $securityContext->isGranted('VIEW', $application->getEntity());
+        if(false === $granted) {
+            throw new AccessDeniedException('You are not granted view permissions for this application.');
         }
 
         if(!$application->getEntity()->isPublished()) {
-            throw new AccessDeniedException('This application is not published at the moment.');
-        }
-
-        //$this->checkAccess($application->getRoles());
-    }
-
-    /**
-     * Check access permissions for given roles.
-     *
-     * Check if the allowed roles set by the application or element are matched
-     * by the current user. If no roles are required by the application
-     * configuration, this will still require IS_AUTHENTICATED_ANONYMOUSLY to
-     * guarantee a session.
-     * May throw an AccessDeniedException.
-     */
-    private function checkAccess(array $allowedRoles) {
-        if(count($allowedRoles) == 0) {
-            $allowedRoles = 'IS_AUTHENTICATED_ANONYMOUSLY';
-        }
-
-        if(!$this->get('security.context')->isGranted($allowedRoles)) {
-            throw new AccessDeniedException(
-                "You are not allowed to access this application");
+            throw new AccessDeniedException('This application is not published at the moment');
         }
     }
 }

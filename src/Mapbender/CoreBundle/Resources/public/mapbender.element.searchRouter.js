@@ -26,12 +26,16 @@ $.widget('mapbender.mbSearchRouter', {
             '/' + this.element.attr('id') + '/';
 
         // Listen to changes of search select
-        $('select#search_routes_route', this.element).change(
-            $.proxy(this._selectSearch, this)).change();
+        var routeSelect = $('select#search_routes_route', this.element);
+        routeSelect.change($.proxy(this._selectSearch, this));
 
         // Prepare autocompletes
         $('form input[data-autocomplete="on"]', this.element).each(
             $.proxy(this._setupAutocomplete, this));
+        $('form input[data-autocomplete^="custom:"]').each(
+            $.proxy(this._setupCustomAutocomplete, this));
+            
+        routeSelect.change();
 
         // Prepare search button
         $('a[role="search_router_search"]').button()
@@ -41,12 +45,27 @@ $.widget('mapbender.mbSearchRouter', {
         this.element.delegate('form', 'submit', $.proxy(this._search, this));
 
         // Click single search result
-        this.element.delegate('.search-results tr', 'click',
+        this.element.delegate('.search-results tbody tr', 'click',
             $.proxy(this._highlightClick, this));
         
         // Mouseover single search result
         this.element.delegate('.search-results tr', 'mouseover',
             $.proxy(this._highlightOver, this));
+            
+        this.element.bind('keydown', function(event) {
+            event.stopPropagation();
+        });
+        
+        var routeCount = 0;
+        for(route in this.options.routes) {
+            if(this.options.routes.hasOwnProperty(route)) {
+                routeCount++;
+            }
+        }
+        if(routeCount === 1) {
+            $('#search_routes_route_control_group').hide()
+                .next('hr').hide();
+        }
     },
 
     /**
@@ -67,6 +86,11 @@ $.widget('mapbender.mbSearchRouter', {
             },
             select: this._autocompleteSelect
         }).keydown(this._autocompleteKeydown);
+    },
+    
+    _setupCustomAutocomplete: function(idx, input) {
+        var plugin = $(input).data('autocomplete').substr(7);
+        $(input)[plugin]();
     },
 
     destroy: function() {
@@ -104,8 +128,19 @@ $.widget('mapbender.mbSearchRouter', {
         this.selected = $(event.target).val();
 
         this._getLayer().removeAllFeatures();
-        var container = $('.search-results', this.element).empty(),
-            headers = this.options.routes[this.selected].results.headers;
+        var container = $('.search-results', this.element).empty();
+        
+        if(this.options.routes[this.selected].hideSearchButton === true) {
+            $('a[role="search_router_search"]').hide();
+        } else {
+            $('a[role="search_router_search"]').show();            
+        }
+        
+        if(typeof this.options.routes[this.selected].results === 'undefined') {
+            return;
+        }
+        
+        var headers = this.options.routes[this.selected].results.headers;
 
         var table = $('<table></table>'),
             thead = $('<thead><tr></tr></thead>').appendTo(table);
