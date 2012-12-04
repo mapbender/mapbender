@@ -55,6 +55,14 @@ class Layer {
     protected $weight;
 
     /**
+    * @var SourceInstance
+    * @ORM\OneToOne(targetEntity="SourceInstance", cascade={"persist"})
+    */
+    protected $sourceInstance;
+
+
+
+    /**
      * Set id. DANGER
      *
      * Set the entity id. DO NOT USE THIS unless you know what you're doing.
@@ -169,6 +177,22 @@ class Layer {
      */
     public function getLayerset() {
         return $this->layerset;
+    }
+
+    /**
+    * Set SourceInstance
+    * @param SourceInstance $sourceInstance
+    */
+    public function setSourceInstance(SourceInstance $sourceInstance){
+        $this->sourceInstance = $sourceInstance;
+    }
+
+    /**
+    * Get SourceInstance
+    */
+
+    public function getSourceInstance(){
+        return $this->sourceInstance;
     }
 }
 

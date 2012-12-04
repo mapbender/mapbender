@@ -13,9 +13,17 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
+use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\Layer;
+
+//FIXME: make this work without an explicit import
+use Mapbender\WmsBundle\Entity\WmsInstance;
+
+
 
 class ApplicationController extends Controller {
    /**
@@ -111,11 +119,16 @@ class ApplicationController extends Controller {
         $form = $this->createApplicationForm($application);
 
         $templateClass = $application->getTemplate();
+        $em = $this->getDoctrine()->getEntityManager();
+        $query = $em->createQuery(
+                "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
+        $sources = $query->getResult();
 
         return array(
             'application' => $application,
             'regions' => $templateClass::getRegions(),
             'available_elements' => $this->getElementList(),
+            'sources' => $sources,
             'form' => $form->createView(),
             'form_name' => $form->getName());
     }
@@ -210,6 +223,57 @@ class ApplicationController extends Controller {
             'newState' => $newState ? 'enabled' : 'disabled',
             'message' => $message)), 200, array(
                 'Content-Type' => 'application/json'));
+    }
+
+    /**
+    * Add a new Source to the Layerset
+    * @ManagerRoute("/application/{slug}/layerset")
+    * @Method("POST")
+    */ 
+    public function addLayerset($slug, Request $request){
+        $sourceId   = $request->get("sourceId");
+        $source     = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:Source")
+                        ->find($sourceId);
+
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        //FIXME: We are working with a single Layerset for now, change this
+        // when we need more complex configuration
+        $layerset = null;
+        if(count($application->getLayersets()) == 0){
+            $layerset = new Layerset();
+            $layerset->setTitle("main");
+            $application->addLayersets($layerset);
+            $layerset->setApplication($application);
+        }else{
+            $layersets = $application->getLayersets();
+            $layerset = $layersets[0];
+        }
+        
+        $layer = new Layer();
+        $layer->setTitle($source->getTitle());
+        $layer->setLayerset($layerset);
+        //FIXME: make generic
+        $layer->setClass(get_class($source));
+        $layer->setWeight("0");
+        $sourceInstance = WmsInstance::fromWmsSource($source);
+        $layer->setSourceInstance($sourceInstance);
+        
+
+        $layerset->addLayers($layer);
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->persist($application);
+        $em->persist($layerset);
+        $em->persist($layer);
+        $em->persist($sourceInstance);
+        $em->flush();
+
+        return $this->redirect(
+            $this->generateUrl(
+                "mapbender_manager_application_edit",
+                array("slug" => $slug)
+            )
+        );
     }
 
     /**
