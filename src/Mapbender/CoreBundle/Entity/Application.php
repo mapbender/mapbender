@@ -91,7 +91,7 @@ class Application {
     /**
      * @Assert\File(maxSize="102400")
      */
-    public $screenshotFile;
+    protected $screenshotFile;
 
     public function __construct() {
         $this->elements = new ArrayCollection();
