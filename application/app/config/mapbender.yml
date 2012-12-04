@@ -47,6 +47,7 @@ parameters:
                         url: http://www.catais.org/geoserver/wms?SERVICE=WMS
                         layers:
                             - { name: 'ne2:ne2', title: 'Natural Earth 2'}
+                        visible: true
                         tiled: true
                     osm_roads:
                         class: Mapbender\WmsBundle\WmsLayer
@@ -55,7 +56,8 @@ parameters:
                         layers:
                             - { name: osm_roads, title: OpenStreetMap WMS }
                         tiled: false
-#                        baselayer: false
+                        visible: true
+                        baselayer: false
                     mapbender_users:
                         class: Mapbender\WmsBundle\WmsLayer
                         title: Mapbender Users
@@ -114,8 +116,7 @@ parameters:
                         units: degrees
                         extents:
                             start: [-43.313833377731, 33.006761223615, 65.104961268907, 59.198710149963]
-                            max: [-179,-89,179.999,89.99]
-                            min: [-179,-89,179.999,89.99]
+                            max: [-180,-90,180,90]
                         scales: [25000000, 10000000,5000000,1000000,500000]
                         maxResolution: 'auto'
                         otherSrs: ["EPSG:25832","EPSG:25833"]

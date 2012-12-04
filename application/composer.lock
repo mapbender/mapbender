@@ -1,5 +1,5 @@
 {
-    "hash": "cf7682f86f1eb4188d637a7cb89daa2f",
+    "hash": "1c498ef29403c991222f11eee4c08b54",
     "packages": [
         {
             "name": "doctrine/common",
@@ -75,19 +75,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal",
-                "reference": "292d5edd17e0a9b9a7ee9eb20d6ae1033059153f"
+                "reference": "22a30c9cece379eab619727c83e1859288f32f89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/dbal/archive/292d5edd17e0a9b9a7ee9eb20d6ae1033059153f.zip",
-                "reference": "292d5edd17e0a9b9a7ee9eb20d6ae1033059153f",
+                "url": "https://github.com/doctrine/dbal/archive/22a30c9cece379eab619727c83e1859288f32f89.zip",
+                "reference": "22a30c9cece379eab619727c83e1859288f32f89",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
                 "doctrine/common": "2.3.*"
             },
-            "time": "2012-11-12 10:41:11",
+            "time": "2012-11-25 18:03:29",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -139,12 +139,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/DoctrineBundle.git",
-                "reference": "47df202dfb4ad38e15d6aed8a53e722b30c9f9fd"
+                "reference": "ac854d9452272d43b80a9043e0f33c2b9dd2cdd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/DoctrineBundle/archive/47df202dfb4ad38e15d6aed8a53e722b30c9f9fd.zip",
-                "reference": "47df202dfb4ad38e15d6aed8a53e722b30c9f9fd",
+                "url": "https://github.com/doctrine/DoctrineBundle/archive/ac854d9452272d43b80a9043e0f33c2b9dd2cdd5.zip",
+                "reference": "ac854d9452272d43b80a9043e0f33c2b9dd2cdd5",
                 "shasum": ""
             },
             "require": {
@@ -152,7 +152,7 @@
                 "doctrine/dbal": ">=2.2,<2.4-dev",
                 "symfony/framework-bundle": ">=2.1,<2.3-dev",
                 "symfony/doctrine-bridge": ">=2.1,<2.3-dev",
-                "jdorn/sql-formatter": "v1.0.1"
+                "jdorn/sql-formatter": ">=1.1,<2.0"
             },
             "require-dev": {
                 "doctrine/orm": ">=2.2,<2.4-dev",
@@ -162,7 +162,7 @@
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
             },
-            "time": "2012-11-16 13:54:33",
+            "time": "2012-11-21 09:23:38",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -207,12 +207,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/doctrine2.git",
-                "reference": "77d060ab74212919f1eaace72842ea43bf420f43"
+                "reference": "a3fea32e0e655a1c3e6bd56d3d2147d2c7d27cbd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/doctrine2/archive/77d060ab74212919f1eaace72842ea43bf420f43.zip",
-                "reference": "77d060ab74212919f1eaace72842ea43bf420f43",
+                "url": "https://github.com/doctrine/doctrine2/archive/a3fea32e0e655a1c3e6bd56d3d2147d2c7d27cbd.zip",
+                "reference": "a3fea32e0e655a1c3e6bd56d3d2147d2c7d27cbd",
                 "shasum": ""
             },
             "require": {
@@ -224,7 +224,7 @@
             "suggest": {
                 "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
             },
-            "time": "2012-11-12 14:49:41",
+            "time": "2012-11-25 19:16:21",
             "bin": [
                 "bin/doctrine",
                 "bin/doctrine.php"
@@ -278,12 +278,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle",
-                "reference": "106eeeb69090addef0fd06a0d294fcea985695fb"
+                "reference": "9c0d11d9b5370489eabbb84cb190af4fb4f8f1df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle/archive/106eeeb69090addef0fd06a0d294fcea985695fb.zip",
-                "reference": "106eeeb69090addef0fd06a0d294fcea985695fb",
+                "url": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle/archive/9c0d11d9b5370489eabbb84cb190af4fb4f8f1df.zip",
+                "reference": "9c0d11d9b5370489eabbb84cb190af4fb4f8f1df",
                 "shasum": ""
             },
             "require": {
@@ -291,7 +291,7 @@
                 "symfony/framework-bundle": ">=2.0,<2.3-dev",
                 "symfony/serializer": ">=2.0,<2.3-dev"
             },
-            "time": "2012-11-13 00:53:20",
+            "time": "2012-11-23 13:45:30",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -561,6 +561,41 @@
             ]
         },
         {
+            "name": "jms/parser-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git://github.com/schmittjoh/parser-lib",
+                "reference": "1321c02e6c804852c26effd7663f10d01f3a2500"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/schmittjoh/parser-lib/archive/1321c02e6c804852c26effd7663f10d01f3a2500.zip",
+                "reference": "1321c02e6c804852c26effd7663f10d01f3a2500",
+                "shasum": ""
+            },
+            "require": {
+                "phpoption/phpoption": ">=0.9,<2.0-dev"
+            },
+            "time": "2012-11-20 10:40:10",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "JMS\\": "src/"
+                }
+            },
+            "license": [
+                "Apache2"
+            ],
+            "description": "A library for easily creating recursive-descent parsers."
+        },
+        {
             "name": "jms/security-extra-bundle",
             "version": "1.2.x-dev",
             "target-dir": "JMS/SecurityExtraBundle",
@@ -622,6 +657,76 @@
                 "security",
                 "secure",
                 "expression"
+            ]
+        },
+        {
+            "name": "jms/serializer-bundle",
+            "version": "dev-master",
+            "target-dir": "JMS/SerializerBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/schmittjoh/JMSSerializerBundle.git",
+                "reference": "d87e8d19ee35a4d3dced79fb2b3eee277d0f9f05"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/schmittjoh/JMSSerializerBundle/archive/d87e8d19ee35a4d3dced79fb2b3eee277d0f9f05.zip",
+                "reference": "d87e8d19ee35a4d3dced79fb2b3eee277d0f9f05",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2",
+                "jms/metadata": ">=1.1.0,<1.3-dev",
+                "jms/parser-lib": "1.*"
+            },
+            "conflict": {
+                "symfony/framework-bundle": "<2.1-dev"
+            },
+            "require-dev": {
+                "twig/twig": ">=1.8,<2.0-dev",
+                "doctrine/orm": ">=2.1,<2.4-dev",
+                "symfony/framework-bundle": ">=2.1,<2.2-dev",
+                "symfony/yaml": ">=2.1,<2.3-dev",
+                "symfony/form": ">=2.1,<2.3-dev",
+                "symfony/validator": ">=2.1,<2.3-dev",
+                "symfony/doctrine-bridge": ">=2.1,<2.2-dev",
+                "symfony/translation": ">=2.1,<2.3-dev"
+            },
+            "suggest": {
+                "symfony/framework-bundle": "2.*"
+            },
+            "time": "2012-11-17 14:36:35",
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "JMS\\SerializerBundle": ""
+                }
+            },
+            "license": [
+                "Apache2"
+            ],
+            "authors": [
+                {
+                    "name": "Johannes M. Schmitt",
+                    "email": "schmittjoh@gmail.com",
+                    "homepage": "https://github.com/schmittjoh",
+                    "role": "Developer of wrapped JMSSerializerBundle"
+                }
+            ],
+            "description": "Allows you to easily serialize, and deserialize object graphs of any complexity",
+            "homepage": "http://jmsyst.com/bundles/JMSSerializerBundle",
+            "keywords": [
+                "json",
+                "xml",
+                "serialization",
+                "deserialization",
+                "jaxb"
             ]
         },
         {
@@ -896,6 +1001,55 @@
             "keywords": [
                 "Symfony2",
                 "composer"
+            ]
+        },
+        {
+            "name": "phpoption/phpoption",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git://github.com/schmittjoh/php-option",
+                "reference": "b9c60ebf8242cf409d8734b6a757ba0ce1691493"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/schmittjoh/php-option/archive/b9c60ebf8242cf409d8734b6a757ba0ce1691493.zip",
+                "reference": "b9c60ebf8242cf409d8734b6a757ba0ce1691493",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2012-11-18 14:14:12",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "PhpOption\\": "src/"
+                }
+            },
+            "license": [
+                "Apache2"
+            ],
+            "authors": [
+                {
+                    "name": "Johannes M. Schmitt",
+                    "email": "schmittjoh@gmail.com",
+                    "homepage": "https://github.com/schmittjoh",
+                    "role": "Developer of wrapped JMSSerializerBundle"
+                }
+            ],
+            "description": "Option Type for PHP",
+            "keywords": [
+                "php",
+                "language",
+                "type",
+                "option"
             ]
         },
         {
@@ -1266,12 +1420,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "b3c3e89462d058afc35c59cdd71a4b6c4b6cdbcc"
+                "reference": "ed6a345162bbfcae9b23ddbd0ec47b295832d9eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/archive/b3c3e89462d058afc35c59cdd71a4b6c4b6cdbcc.zip",
-                "reference": "b3c3e89462d058afc35c59cdd71a4b6c4b6cdbcc",
+                "url": "https://github.com/symfony/symfony/archive/ed6a345162bbfcae9b23ddbd0ec47b295832d9eb.zip",
+                "reference": "ed6a345162bbfcae9b23ddbd0ec47b295832d9eb",
                 "shasum": ""
             },
             "require": {
@@ -1320,7 +1474,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "1.*"
             },
-            "time": "2012-11-20 13:21:33",
+            "time": "2012-11-26 10:27:20",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1406,18 +1560,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "9b75e2c7ae51b66fd4bb2ffbf1d2f28a8604e8f6"
+                "reference": "b58df0e1ae4b664f561bfaeffdb673829daa6b79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/archive/9b75e2c7ae51b66fd4bb2ffbf1d2f28a8604e8f6.zip",
-                "reference": "9b75e2c7ae51b66fd4bb2ffbf1d2f28a8604e8f6",
+                "url": "https://github.com/fabpot/Twig/archive/b58df0e1ae4b664f561bfaeffdb673829daa6b79.zip",
+                "reference": "b58df0e1ae4b664f561bfaeffdb673829daa6b79",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "2012-11-19 07:06:38",
+            "time": "2012-11-26 10:25:49",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1458,6 +1612,7 @@
     "stability-flags": {
         "friendsofsymfony/jsrouting-bundle": 20,
         "kriswallsmith/buzz": 20,
+        "jms/serializer-bundle": 20,
         "mopa/bootstrap-bundle": 20
     }
 }

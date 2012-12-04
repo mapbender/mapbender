@@ -22,6 +22,8 @@
         "friendsofsymfony/jsrouting-bundle": "dev-master",
         "kriswallsmith/buzz": "dev-master",
 
+	"jms/serializer-bundle": "dev-master",
+
         "mopa/bootstrap-bundle": "dev-master"
     },
     "scripts": {
@@ -44,7 +46,6 @@
     "minimum-stability": "dev",
     "extra": {
         "symfony-app-dir": "app",
-        "symfony-web-dir": "web",
-        "symfony-assets-install": "symlink"
+        "symfony-web-dir": "web"
     }
 }
