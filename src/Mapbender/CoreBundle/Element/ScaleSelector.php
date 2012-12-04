@@ -1,0 +1,59 @@
+<?php
+
+namespace Mapbender\CoreBundle\Element;
+
+use Mapbender\CoreBundle\Component\Element;
+
+/**
+ * A ScaleSelector
+ * 
+ * Displays and changes a map scale.
+ * 
+ * @author Paul Schmidt
+ */
+class ScaleSelector extends Element {
+    
+    public static function getClassTitle() {
+        return "Scale selector";
+    }
+
+    public static function getClassDescription() {
+        return "Displays and changes a map scale.";
+    }
+
+    public static function getClassTags() {
+        return array('scale', 'selector');
+    }
+
+    public function getAssets() {
+        return array(
+            'js' => array(
+                'mapbender.element.scaleselector.js'
+            ),
+            'css' => array(
+                'mapbender.elements.css'
+            )
+        );
+    }
+    
+    public static function getDefaultConfiguration() {
+        return array(
+            "target" => "map",
+            "title" => "Scale");
+    }
+
+    public function getWidgetName() {
+        return 'mapbender.mbScaleSelector';
+    }
+
+    public function render() {
+        $id = $this->getId();
+        $conf = $this->getConfiguration();
+        return $this->container->get('templating')
+                ->render('MapbenderCoreBundle:Element:scaleselector.html.twig',
+                        array(
+                            'id' => $this->getId(),
+                            'configuration' => $this->getConfiguration()));
+    }
+}
+

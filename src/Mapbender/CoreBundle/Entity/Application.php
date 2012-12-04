@@ -84,6 +84,11 @@ class Application {
     protected $screenshot;
 
     /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    protected $extra_assets;
+
+    /**
      * @Assert\File(maxSize="102400")
      */
     public $screenshotFile;
@@ -274,12 +279,34 @@ class Application {
     }
 
     /**
+     * Set extra assets
+     * 
+     * @param array $extra_assets
+     */
+    public function setExtraAssets(array $extra_assets)
+    {
+        $this->extra_assets = $extra_assets;
+        return $this;
+    }
+
+    /**
+     * Get extra assets
+     *
+     * @return array
+     */
+    public function getExtraAssets()
+    {
+        return $this->extra_assets;
+    }
+
+    /**
      * Set published
      *
      * @param boolean $published
      */
     public function setPublished($published) {
         $this->published = $published;
+        return $this;
     }
 
     /**

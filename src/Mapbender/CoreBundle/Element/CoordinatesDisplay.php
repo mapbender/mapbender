@@ -33,7 +33,7 @@ class CoordinatesDisplay extends Element
     {
         return array(
             'js' => array('mapbender.element.coordinatesdisplay.js'),
-            'css' => array('mapbender.element.coordinatesdisplay.css')
+            'css' => array('mapbender.elements.css')
         );
     }
 

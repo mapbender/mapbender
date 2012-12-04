@@ -126,3 +126,29 @@ body.mb-activity .mb-element-activityindicator {
     background: url('image/activity.gif');
 }
 
+.mb-element-coordsdisplay-div {
+    position:relative;
+    width: 180px
+}
+
+.mb-element-srsselector-div {
+    position:relative;
+    width: 200px;
+}
+
+.mb-element-copyright {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    width: 200px;
+    background-color: white;
+    z-index: 2000;
+}
+
+.mb-element-copyright-link {
+    cursor: pointer;
+}
+
+.mb-element-copyright-dialog {
+    display: none;
+}

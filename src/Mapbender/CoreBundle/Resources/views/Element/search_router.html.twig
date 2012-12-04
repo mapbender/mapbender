@@ -1,0 +1,15 @@
+<div class="mb-element mb-element-search-router" id="{{ element.id }}" title="{{ element.title }}">
+    {{ form_row(element.getRouteSelectForm.route) }}
+    <hr/>
+    <div class="search-forms">
+    {% for form in element.forms %}
+    <form name="{{ form.name }}">
+        {{ form_row(form.createView) }}
+    {% endfor %}
+    </form>
+    </div>
+    <a href="#" role="search_router_search">{{ 'Search' | trans }}</a>
+    <hr/>
+    <div class="search-results">
+    </div>
+</div>
