@@ -207,6 +207,15 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             $this->addAsset($assets, $type, $file);
         }
 
+        // Load extra assets given by application
+        $extra_assets = $this->getEntity()->getExtraAssets();
+        if(is_array($extra_assets) && array_key_exists($type, $extra_assets)) {
+            foreach($extra_assets[$type] as $asset) {
+                $asset = trim($asset);
+                $this->addAsset($assets, $type, $asset);
+            }
+        }
+
         // Get all assets out of the manager and into an collection
         $collection = new AssetCollection();
         foreach($assets->getNames() as $name) {
@@ -247,7 +256,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             array(),
             $sourceBase,
             $sourcePath);
-        $name = str_replace(array('@', '/', '.'), '__', $reference);
+        $name = str_replace(array('@', '/', '.', '-'), '__', $reference);
         $manager->set($name, $asset);
     }
 

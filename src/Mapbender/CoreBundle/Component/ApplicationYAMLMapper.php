@@ -75,6 +75,10 @@ class ApplicationYAMLMapper {
             ->setTemplate($definition['template'])
             ->setPublished($definition['published']);
 
+        if(array_key_exists('extra_assets', $definition)) {
+            $application->setExtraAssets($definition['extra_assets']);
+        }
+
         // Then create elements
         foreach($definition['elements'] as $region => $elementsDefinition) {
             $weight = 0;
