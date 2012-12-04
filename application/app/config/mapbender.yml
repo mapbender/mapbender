@@ -47,6 +47,7 @@ parameters:
                         url: http://www.catais.org/geoserver/wms?SERVICE=WMS
                         layers:
                             - { name: 'ne2:ne2', title: 'Natural Earth 2'}
+                        visible: true
                         tiled: true
                     osm_roads:
                         class: Mapbender\WmsBundle\WmsLayer
@@ -55,6 +56,7 @@ parameters:
                         layers:
                             - { name: osm_roads, title: OpenStreetMap WMS }
                         tiled: false
+                        visible: true
                         baselayer: false
                     mapbender_users:
                         class: Mapbender\WmsBundle\WmsLayer
