@@ -62,7 +62,7 @@ class Application {
     protected $elements;
 
     /**
-     * @ORM\OneToMany(targetEntity="Element", mappedBy="application")
+     * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application")
      *      cascade={"persist"})
      */
     protected $layersets;
