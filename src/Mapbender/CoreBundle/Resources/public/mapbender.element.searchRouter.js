@@ -105,7 +105,7 @@ $.widget('mapbender.mbSearchRouter', {
      */
     open: function() {
         if(true === this.options.asDialog) {
-            this._super('open');
+            this.element.dialog('open');
         }
     },
 
@@ -115,7 +115,7 @@ $.widget('mapbender.mbSearchRouter', {
      */
     close: function() {
         if(true === this.options.asDialog) {
-            this._super('close');
+            this.element.dialog('close');
         }
     },
 
