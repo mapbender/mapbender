@@ -1,0 +1,28 @@
+{% extends "FOMManagerBundle::manager.html.twig" %}
+
+{% set layer_title = layer.title %}
+{% set layer_id = layer.id %}
+
+{% block title %}{% trans %}Delete layer %layer_title%{% endtrans %}{% endblock %}
+
+{% block manager_css %}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/css/jquery-ui-1.8.16.css') }}" />
+{% endblock %}
+
+{% block manager_content %}
+
+<form id="layer-delete" action="{{ path('mapbender_manager_application_layerdelete', { 'slug': application.slug, 'layerId' : layer.id }) }}" method="post" {{ form_enctype(form)}}>
+    <header>
+    {% trans %}Do you really want to remove the layer with the title <em>%layer_title%</em> and the id <em>%layer_id%</em>?{% endtrans %}
+    </header>
+    {{ form_widget(form) }}
+    <footer class="actions">
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Delete' | trans }}" class="btn btn-danger"/>
+            <a href="{{ url('mapbender_manager_application_edit',{'slug': application.slug}) }}" class="btn">{{ 'Cancel' | trans}}</a>
+        </div>
+    </footer>
+</form>
+
+{% endblock %}
+

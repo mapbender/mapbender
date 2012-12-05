@@ -38,7 +38,7 @@ class Layerset {
     protected $application;
 
     /**
-     * @ORM\OneToMany(targetEntity="Layer", mappedBy="application",
+     * @ORM\OneToMany(targetEntity="Layer", mappedBy="layerset",
      *     cascade={"persist"})
      */
     protected $layers;
