@@ -277,6 +277,46 @@ class ApplicationController extends Controller {
     }
 
     /**
+     * Confirm removal of a layer
+     * @ManagerRoute("/application/{slug}/layer/{layerId}")
+     * @Method("GET")
+     * @Template("MapbenderManagerBundle:Application:deleteLayer.html.twig")
+    */
+    public function confirmLayerDelete($slug, $layerId ){
+        $layer     = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:Layer")
+                        ->find($layerId);
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        return array(
+            'application' => $application,
+            'layer' => $layer,
+            'form'  => $this->createDeleteForm($layer->getId())->createView()
+        );
+    }
+    /**
+     * Delete a layer from a layerset
+     * @ManagerRoute("/application/{slug}/layer/{layerId}")
+     * @Method("POST")
+     * @Template("MapbenderManagerBundle:Application:deleteLayer.html.twig")
+    */
+    public function layerDelete($slug, $layerId ){
+        $layer     = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:Layer")
+                        ->find($layerId);
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->remove($layer);
+        $em->flush();
+        $this->get('session')->setFlash('notice',
+             'Your Layer has been deleted.');
+        return $this->redirect(
+            $this->generateUrl('mapbender_manager_application_edit',
+            array(
+                "slug" => $slug
+            )
+        ));
+    }
+
+    /**
      * Delete confirmation page
      * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")
