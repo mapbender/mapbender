@@ -46,6 +46,7 @@ class Map extends Element {
                 'mapquery/lib/openlayers/OpenLayers.js',
                 'mapquery/lib/jquery/jquery.tmpl.js',
                 'mapquery/src/jquery.mapquery.core.js',
+                'proj4js/proj4js-compressed.js',
                 'mapbender.element.map.js'),
             'css' => array(
                 //TODO: Split up
