@@ -5,13 +5,18 @@ html, body {
 
 .region#top {
     position: absolute;
-    z-index: 2000;
+    z-index: 2;
     background: url('top_bg.png');
     width: 100%;
 }
 
 .region#content {
-    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
 }
 
 .olControlPanZoomBar {

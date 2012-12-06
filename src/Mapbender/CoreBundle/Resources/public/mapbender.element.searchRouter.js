@@ -12,6 +12,8 @@ $.widget('mapbender.mbSearchRouter', {
     selected: null,
     highlightLayer: null,
     lastSearch: new Date(),
+    resultCallbackEvent: null,
+    resultCallbackProxy: null,
 
     /**
      * Widget creator
@@ -34,7 +36,8 @@ $.widget('mapbender.mbSearchRouter', {
             $.proxy(this._setupAutocomplete, this));
         $('form input[data-autocomplete^="custom:"]').each(
             $.proxy(this._setupCustomAutocomplete, this));
-            
+        
+        this.resultCallbackProxy = $.proxy(this._resultCallback, this);
         routeSelect.change();
 
         // Prepare search button
@@ -43,14 +46,6 @@ $.widget('mapbender.mbSearchRouter', {
 
         // Form submit
         this.element.delegate('form', 'submit', $.proxy(this._search, this));
-
-        // Click single search result
-        this.element.delegate('.search-results tbody tr', 'click',
-            $.proxy(this._highlightClick, this));
-        
-        // Mouseover single search result
-        this.element.delegate('.search-results tr', 'mouseover',
-            $.proxy(this._highlightOver, this));
             
         this.element.bind('keydown', function(event) {
             event.stopPropagation();
@@ -105,7 +100,7 @@ $.widget('mapbender.mbSearchRouter', {
      */
     open: function() {
         if(true === this.options.asDialog) {
-            this._super('open');
+            this.element.dialog('open');
         }
     },
 
@@ -115,7 +110,7 @@ $.widget('mapbender.mbSearchRouter', {
      */
     close: function() {
         if(true === this.options.asDialog) {
-            this._super('close');
+            this.element.dialog('close');
         }
     },
 
@@ -133,10 +128,12 @@ $.widget('mapbender.mbSearchRouter', {
         if(this.options.routes[this.selected].hideSearchButton === true) {
             $('a[role="search_router_search"]').hide();
         } else {
-            $('a[role="search_router_search"]').show();            
+            $('a[role="search_router_search"]').show();
         }
+
+        this._setupResultCallback();
         
-        if(typeof this.options.routes[this.selected].results === 'undefined') {
+        if(typeof this.options.routes[this.selected].results.headers === 'undefined') {
             return;
         }
         
@@ -338,7 +335,9 @@ $.widget('mapbender.mbSearchRouter', {
      */
     _getLayer: function() {
         if(this.highlightLayer === null) {
-            this.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight');
+            this.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight', {
+                styleMap: new OpenLayers.StyleMap(this.options.style)
+            });
         }
 
         if(this.highlightLayer.map === null) {
@@ -350,34 +349,75 @@ $.widget('mapbender.mbSearchRouter', {
     },
 
     /**
-     * Callback for a search result row mouseover.
-     *
-     * @param  jQuery.Event event mouseover event
+     * Set up result callback (zoom on click for example)
      */
-    _highlightOver: function(event) {
-        var row = $(event.currentTarget),
-            feature = row.data(feature);
+    _setupResultCallback: function() {
+        var anchor = $('.search-results', this.element);
+        if(this.resultCallbackEvent !== null) {
+            anchor.undelegate('tbody tr', this.resultCallbackEvent,
+                this.resultCallbackProxy);
+            this.resultCallbackEvent = null;
+        }
+
+        var event = this.options.routes[this.selected].results.callback.event;
+        if(typeof event === 'string') {
+            anchor.delegate('tbody tr', event, this.resultCallbackProxy);
+            this.resultCallbackEvent = event;
+        }
     },
 
     /**
-     * Callback for a search result row click.
+     * Result callback
      *
-     * @param  jQuery.Event event Click event
+     * @param  jQuery.Event event Mouse event
      */
-    _highlightClick: function(event) {
+    _resultCallback: function(event) {
         var row = $(event.currentTarget),
             feature = row.data('feature'),
-            extent = feature.geometry.getBounds(),
+            featureExtent = feature.geometry.getBounds(),
             map = feature.layer.map,
-            zoom = map.getZoomForExtent(extent);
+            callbackConf = this.options.routes[this.selected].results.callback;
 
-        if(zoom < map.getZoom()) {
-            map.zoomToExtent(extent);
-        } else {
-            var centroid = feature.geometry.getCentroid(),
-                lonlat = new OpenLayers.LonLat(centroid.x, centroid.y);
-                map.panTo(lonlat);
+        // buffer, if needed
+        if(callbackConf.options && callbackConf.options.buffer) {
+            var radius = callbackConf.options.buffer;
+            featureExtent.top += radius;
+            featureExtent.right += radius;
+            featureExtent.bottom -= radius;
+            featureExtent.left -= radius;
         }
+
+        // get zoom for buffered extent
+        var zoom = map.getZoomForExtent(featureExtent);
+
+        // restrict zoom if needed
+        if(callbackConf.options &&
+            (callbackConf.options.maxScale || callbackConf.options.minScale)) {
+
+            var res = map.getResolutionForZoom(zoom);
+            var units = map.baseLayer.units;
+            var scale = OpenLayers.Util.getScaleFromResolution(res, units);
+
+            
+            if(callbackConf.options.maxScale) {
+                var maxRes = OpenLayers.Util.getResolutionFromScale(
+                    callbackConf.options.maxScale, map.baseLayer.units);
+                if(Math.round(res) < maxRes) {
+                    zoom = map.getZoomForResolution(maxRes);
+                }
+            }
+
+            if(callbackConf.options.minScale) {
+                var minRes = OpenLayers.Util.getResolutionFromScale(
+                    callbackConf.options.minScale, map.baseLayer.units);
+                if(Math.round(res) > minRes) {
+                    zoom = map.getZoomForResolution(minRes);
+                }
+            }
+        }
+
+        // finally, zoom
+        map.setCenter(featureExtent.getCenterLonLat(), zoom);
     }
 });
 

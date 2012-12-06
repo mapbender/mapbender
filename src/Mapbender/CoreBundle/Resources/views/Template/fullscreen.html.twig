@@ -32,8 +32,8 @@
     {{ element.render() | raw }}
 {% endfor %}
 {% endif %}
+</div>
 <script type="text/javascript">
     var Mapbender = Mapbender || {};
     Mapbender.configuration = {{ application.configuration | raw }}</script>
 {% endblock %}
-
