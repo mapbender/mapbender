@@ -1,11 +1,13 @@
 {% extends 'FOMManagerBundle::manager.html.twig' %}
 
+{% set placeholder = asset('bundles/mapbendercore/image/placeholder_map.png') %}
+
 {% block manager_content %}
 <ul class="thumbnails">
 {% for application in applications %}
     <li class="span3">
         <div class="thumbnail">
-            <img src="http://placehold.it/260x180" title="screenshot">
+            <img src="{{ application.screenshot|default(placeholder) }}" title="screenshot">
             <div class="caption">
                 <h5><a href="{{ url('mapbender_core_application_application', { 'slug': application.slug }) }}">{{ application.title }}</a></h5>
                 <p>{{ application.description }}</p>
