@@ -54,9 +54,9 @@ $.widget("mapbender.mbLegend", {
             var temp = self._getLayerLegend(val);
             if(val.options.isBaseLayer) {
                 baseLnum++;
-                baseLayers.push(temp);
+                baseLayers = baseLayers.concat(temp); // XXXXXXXXXX
             } else {
-                otherLayers.push(temp);
+                otherLayers = otherLayers.concat(temp); // XXXXXXXXXX
             }
         });
         var options = {autoHeight: false, collapsible: true};
@@ -69,18 +69,20 @@ $.widget("mapbender.mbLegend", {
     showLegend: function(evt) {
         if(typeof(evt) === 'undefined')
             return;
-        var legends = [this._getLayerLegend(evt.data)];
+        var legends = this._getLayerLegend(evt.data);
         this._showLegendDialog(legends, {autoHeight: false, collapsible: true}, 0, "");
     },
     
     _getLayerLegend: function(val){
-        var legend = {title: "", url: null};
+        var legend;
         if(val.options.type == "wms") { // wms & wmc
             if(val.options.wms_parameters) { // wmc
-                legend.title = val.options.label;
+                legend = {
+                    title: val.options.label};
                 if(val.options.wms_parameters.legend) {
-                    legend.url = val.options.wms_parameters.legend.href
+                    legend.urls = val.options.wms_parameters.legend.href;
                 }
+                legend = [legend];
             } else { // wms
 //                var glgUrl = val.olLayer.url + (val.olLayer.url.match(/\?/) ? '&' : '?');
 //                glgUrl += 'service=WMS&request=GetLegendGraphic&version=1.1.1&format=image/png&layer=';
@@ -89,26 +91,33 @@ $.widget("mapbender.mbLegend", {
                 if(val.olLayer.configuration.configuration.legendgraphic) {
                     glgUrl = val.olLayer.configuration.configuration.legendgraphic + "&format=" + val.olLayer.format;
                 }
+                legend = [];
                 $.each(val.options.allLayers, function(idx, val_) {
                     // the val_.legend is determinated from getCapabilities absolute correct !!!
-                    legend.title = val_.title;
+                    var l = {
+                        title: val_.title};
                     if(val_.legend) {
-                        legend.url = val_.legend;
+                        l.url = val_.legend;
                     } else if(glgUrl) {
+                        var url = glgUrl;
                         if(val_.style){
-                            glgUrl += "&style=" + val_.style;
+                            url += "&style=" + val_.style;
                         }
-                        glgUrl += "&layer=" + val_.name;
-                        legend.url = glgUrl;
+                        url += "&layer=" + val_.name;
+                        l.url = url;
                     }
+                    legend.push(l);
                 });
             }
         } else  if(val.options.type == "wmts") { // wmts
-            legend.title = val.options.layer;
-            if(val.options.configuration.configuration.legendurl
-                && val.options.configuration.configuration.legendurl != "") {
-                legend.url = val.options.configuration.configuration.legendurl ;
+            legend = {
+                title: val.options.layer
+            };
+            if(val.options.configuration.configuration.legendurl &&
+                val.options.configuration.configuration.legendurl !== "") {
+                legend.urls = val.options.configuration.configuration.legendurl;
             }
+            legend = [legend];
         }
         return legend;
     },
