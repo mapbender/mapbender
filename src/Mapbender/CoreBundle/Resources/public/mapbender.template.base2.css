@@ -1,0 +1,181 @@
+/* line 9, sass/mapbender.template.base2.scss */
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+/* line 15, sass/mapbender.template.base2.scss */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* line 20, sass/mapbender.template.base2.scss */
+body {
+  color: #3f3f3f;
+  padding: 20px;
+  background-image: url("image/noise.png");
+}
+
+/* line 26, sass/mapbender.template.base2.scss */
+.logo {
+  width: 200px;
+  height: 144px;
+  position: absolute;
+  left: 20px;
+}
+
+/* line 33, sass/mapbender.template.base2.scss */
+.sideBar {
+  margin-top: 40px;
+  width: 200px !important;
+  padding-top: 20px;
+  position: absolute;
+  top: 140px;
+  bottom: 20px;
+  border-top: solid 1px #cccccc;
+}
+
+/* line 42, sass/mapbender.template.base2.scss */
+.osgeo {
+  margin-top: 20px;
+}
+
+/* line 43, sass/mapbender.template.base2.scss */
+a, a:visited {
+  color: #0098C9;
+}
+
+/* line 45, sass/mapbender.template.base2.scss */
+.overviewMap {
+  position: absolute;
+  width: 200px !important;
+  right: -10px;
+  top: -10px;
+  z-index: 1000;
+  border-left: solid 5px #0098C9;
+  border-bottom: solid 5px #0098C9;
+  border-top: solid 10px #0098C9;
+  border-right: solid 10px #0098C9;
+}
+/* line 56, sass/mapbender.template.base2.scss */
+.overviewMap .olControlOverviewMapElement {
+  background-color: transparent !important;
+  padding: 0px;
+}
+/* line 58, sass/mapbender.template.base2.scss */
+.overviewMap .olMap {
+  margin: 0px;
+  position: absolute;
+  width: 100% !important;
+  background-color: white !important;
+}
+
+/* line 66, sass/mapbender.template.base2.scss */
+.top {
+  position: absolute;
+  height: 36px;
+  left: 260px;
+  top: 20px;
+  width: 700px;
+  border-bottom: 1px solid #a2c515;
+}
+/* line 75, sass/mapbender.template.base2.scss */
+.top .ui-button-text {
+  padding: 5px 10px 5px 10px;
+  font-size: 16px;
+  line-height: 16px;
+  background-color: #0098C9;
+  border: solid 1px #007196;
+  color: white;
+}
+/* line 83, sass/mapbender.template.base2.scss */
+.top .ui-button-text:hover {
+  background-color: #00abe3;
+  -webkit-box-shadow: none;
+}
+
+/* line 90, sass/mapbender.template.base2.scss */
+.content {
+  position: absolute;
+  width: 700px;
+  height: 500px;
+  border: 10px solid #B5DC17;
+  top: 56px;
+  bottom: 50px !important;
+  left: 260px !important;
+}
+/* line 99, sass/mapbender.template.base2.scss */
+.content .mb-element-zoombar {
+  top: 10px !important;
+  left: 10px !important;
+  z-index: 1000 !important;
+}
+/* line 100, sass/mapbender.template.base2.scss */
+.content .mb-element-map {
+  background-color: #fff;
+}
+/* line 102, sass/mapbender.template.base2.scss */
+.content .olControlScale {
+  z-index: 1000 !important;
+  right: 5px;
+  bottom: 5px;
+}
+
+/* line 110, sass/mapbender.template.base2.scss */
+.footer {
+  position: absolute;
+  height: 30px;
+  top: 555px;
+  left: 260px;
+  width: 700px;
+  border-top: 1px solid #a2c515;
+}
+/* line 119, sass/mapbender.template.base2.scss */
+.footer .mb-element-srsselector-div {
+  position: absolute;
+  top: 5px;
+  right: 0;
+}
+/* line 124, sass/mapbender.template.base2.scss */
+.footer .mb-element-srsselector-div select {
+  width: 100%;
+  border: 1px solid #cccccc;
+  color: #3f3f3f;
+}
+/* line 127, sass/mapbender.template.base2.scss */
+.footer .mb-element-coordsdisplay-div {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  font-size: 14px;
+}
+
+/* line 137, sass/mapbender.template.base2.scss */
+.zoom .zoom-prev, .zoom .zoom-next {
+  display: inline;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+/* line 138, sass/mapbender.template.base2.scss */
+.zoom .zoom-prev {
+  float: left;
+}
+/* line 139, sass/mapbender.template.base2.scss */
+.zoom .zoom-next {
+  float: right;
+}
+/* line 140, sass/mapbender.template.base2.scss */
+.zoom .zoom-box {
+  clear: both;
+}
+/* line 141, sass/mapbender.template.base2.scss */
+.zoom .zoom-slider {
+  height: 50px !important;
+}
+/* line 143, sass/mapbender.template.base2.scss */
+.zoom .zoom-slider li {
+  margin-top: -20px !important;
+  content: ' ';
+}
