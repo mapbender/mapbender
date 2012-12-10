@@ -65,8 +65,9 @@ class ApplicationController extends Controller {
             'css' => array($this->container->get('assetic.filter.cssrewrite')));
 
         // Set target path for CSS rewrite to work
-        $target = $this->get('request')->server->get('SCRIPT_FILENAME')
-            . $this->get('request')->server->get('PATH_INFO');
+        // Replace backward slashes (Windows paths) with forward slashes...
+        $target = str_replace('\\', '/', $this->get('request')->server->get('SCRIPT_FILENAME')
+            . $this->get('request')->server->get('PATH_INFO'));
 
         $mimetypes = array(
             'css' => 'text/css',
