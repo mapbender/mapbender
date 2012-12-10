@@ -98,6 +98,7 @@ $.widget("mapbender.mbMap", {
         }
 
         $.each(Mapbender.configuration.layersets[this.options.layerset], function(idx, layerDef) {
+            layerDef.id = idx;
             layers.push(self._convertLayerDef.call(self, layerDef));
             self.rootLayers.push(layers[layers.length-1]);
             addSubs(layers[layers.length-1]);
@@ -505,8 +506,7 @@ $.widget("mapbender.mbMap", {
             throw "Layer type " + layerDef.type + " is not supported by mapbender.mapquery-map";
         }
         // TODO object should be cleaned up
-        var l = $.extend(Mapbender.layer[layerDef.type].create(layerDef), { mapbenderId: layerDef.id, configuration: layerDef });
-
+        var l = $.extend({}, Mapbender.layer[layerDef.type].create(layerDef), { mapbenderId: layerDef.id, configuration: layerDef });
         if(layerDef.configuration.sublayers) {
             l.sublayers = [];
             $.each(layerDef.configuration.sublayers, function(idx, val) {
