@@ -7,7 +7,7 @@ $.widget("mapbender.mbMap", {
         layerset: null, //mapset for main map
         dpi: OpenLayers.DOTS_PER_INCH,
         srs: 'EPSG:4326',
-        otherSrs: '',
+        otherSrs: [],
         units: 'degrees',
         extents: {
             max: [-180, -90, 180, 90],
@@ -16,16 +16,65 @@ $.widget("mapbender.mbMap", {
         maxResolution: 'auto',
         imgPath: 'bundles/mapbendercore/mapquery/lib/openlayers/img'
     },
-    
+    allSrsTemp: [],
+    allSrs: {},
+    numSrs: 0,
+    proj4js: null,
     layersOrigExtents: {},
     mapOrigExtents: {},
     map: null,
     highlightLayer: null,
 
     _create: function() {
+//        var self = this,
+//            me = $(this.element);
+        this.allSrsTemp = this.options.otherSrs.slice(0);
+        this.allSrsTemp.unshift(this.options.srs);
+        this.proj4js = new Proj4js.Proj("EPSG:4326");
+//        this.numSrs = this.allSrsTemp.length;
+        this._loadSrs();
+//        for(var i = 0; i < allSrs_.length; i++){
+//            this.allSrs[allSrs_[i]] = false;
+//            pr.initialize(allSrs_[i], $.proxy(self.setSupportedSrs, self));
+//        }
+//        var pr = new Proj4js.Proj(this.options.srs);
+//        Proj4js.Proj.initialize(this.options.srs);
+//        console.log(pr.readyToUse);
+//        var pr = new Proj4js.Proj(this.options.srs);
+//        pr.initialize(this.options.otherSrs[0], $.proxy(self.setSupportedSrs, self));
+//        console.log(pr.readyToUse);
+//        if(allSrs.length > 1){
+//            this._loadProjections(allSrs, 0);
+//        } else {
+//            this._init();
+//        }
+//        $(Proj4js).ready(function(){
+//            
+//        });
+//        this._init();
+            
+    },
+    
+    _loadSrs: function(){
+        this.proj4js.initialize(this.allSrsTemp[this.numSrs], $.proxy(this.setSupportedSrs, this));
+    },
+    
+    setSupportedSrs: function(srs){
+        window.console && console.log("srs:"+srs.srsCode+" initialized");
+        this.allSrs[srs.srsCode] = srs.srsCode;
+        this.numSrs++;
+        if(this.numSrs == this.allSrsTemp.length){
+            window.console && console.log("all srs initialized");
+            this._oinito();
+        } else {
+            this._loadSrs();
+        }
+    },
+
+    _oinito: function(){
+        console.log("mbMap init");
         var self = this,
             me = $(this.element);
-            
         // set a map's origin extents
         this.mapOrigExtent = {}
         var extProjection = new OpenLayers.Projection(this.options.srs);
@@ -53,7 +102,7 @@ $.widget("mapbender.mbMap", {
         var layers = [];
         this.rootLayers = [];
         var allOverlays = true;
-
+//        Proj4js.reportError = self.loadProjection();
         // TODO think about integrating proj4js properly into Mapbender and/or Mapquery
         // could also integrate transformation on server side
         if(this.options.targetsrs && window.Proj4js) {
@@ -84,9 +133,9 @@ $.widget("mapbender.mbMap", {
         }
         
         
-        if(this.options.otherSrs){
-            
-        }
+//        if(this.options.otherSrs){
+//            
+//        }
 
         function addSubs(layer){
             if(layer.sublayers) {
@@ -324,8 +373,9 @@ $.widget("mapbender.mbMap", {
         }
 
         self._trigger('ready');
+        window.console && console.log("map initialized");
     },
-
+    
     /**
      * DEPRECATED
      */
@@ -701,6 +751,10 @@ $.widget("mapbender.mbMap", {
      */
     _onRemoveLayer: function(event, layer) {
         this._removeOrigLayerExtent(layer);
+    },
+    
+    getAllSrs: function(){
+        return this.allSrs;
     }
 });
 

@@ -11,12 +11,16 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
+use Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
 use Mapbender\WmsBundle\Form\Type\WmsSourceType;
+use Mapbender\WmsBundle\Form\Type\WmsInstanceType;
 use Mapbender\Component\HTTP\HTTPClient;
+use Mapbender\CoreBundle\Component\Utils;
 
 /**
  * @ManagerRoute("/repository/wms")
@@ -163,7 +167,7 @@ class RepositoryController extends Controller {
      * Recursively remove a nested Layerstructure
      * @param GroupLayer
      * @param EntityManager
-    */
+     */
     public function removeRecursive(WmsLayerSource $wmslayer, $em){
 //        $this->removeRecursive($wmssource->getRootlayer(),
 //                        $this->getDoctrine()->getEntityManager());
@@ -172,5 +176,84 @@ class RepositoryController extends Controller {
         }
         $em->remove($wmslayer);
         $em->flush();
+    }
+    
+    /**
+     * Edits, saves the WmsInstance
+     * 
+     * @ManagerRoute("/instance/{slug}/{instanceId}")
+     * @Template("MapbenderWmsBundle:Repository:instance.html.twig")
+     */ 
+    public function instanceAction($slug, $instanceId){
+        if ($this->getRequest()->getMethod() == 'POST'){ //save
+            $wmsinstance = $this->getDoctrine()
+                    ->getRepository("MapbenderWmsBundle:WmsInstance")
+                    ->find($instanceId);
+            $wmsinstance_req = new WmsInstance();
+            $wmsinstance_req->setWmssource($wmsinstance->getWmssource());
+            $form_req = $this->createForm(
+                    new WmsInstanceInstanceLayersType(), $wmsinstance_req);
+            $form_req->bindRequest($this->get('request'));
+            $form = $this->createForm(
+                    new WmsInstanceInstanceLayersType(), $wmsinstance);
+            $form->bindRequest($this->get('request'));
+            $wmsinstance->setTransparency(
+                    Utils::getBool($wmsinstance_req->getTransparency()));
+            $wmsinstance->setVisible(
+                    Utils::getBool($wmsinstance_req->getVisible()));
+            $wmsinstance->setOpacity(
+                     Utils::getBool($wmsinstance_req->getOpacity()));
+            $wmsinstance->setProxy(
+                     Utils::getBool($wmsinstance_req->getProxy()));
+            $wmsinstance->setTiled(
+                     Utils::getBool($wmsinstance_req->getTiled()));
+            foreach ($wmsinstance->getLayers() as $layer) {
+                foreach ($wmsinstance_req->getLayers() as $layer_tmp) {
+                    if($layer_tmp->getId() === $layer->getId()){
+                        $layer->setActive(Utils::getBool(
+                                $layer_tmp->getActive()));
+                        $layer->setSelected(Utils::getBool(
+                                $layer_tmp->getSelected()));
+                        $layer->setSelectedDefault(Utils::getBool(
+                                $layer_tmp->getSelectedDefault()));
+                        $layer->setGfinfo(Utils::getBool(
+                                $layer_tmp->getGfinfo(),true));
+                        $layer->setGfinfoDefault(Utils::getBool(
+                                $layer_tmp->getGfinfoDefault(),true));
+                        break;
+                    }
+                }
+            }
+            if($form->isValid()) { //save
+                $this->getDoctrine()->getEntityManager()->persist($wmsinstance);
+                $configuration = $wmsinstance->getConfiguration();
+                foreach ($wmsinstance->getMblayer() as $mblayer) {
+                    $mblayer->setConfiguration($configuration);
+                    $this->getDoctrine()->getEntityManager()->persist($mblayer);
+                }
+                $this->getDoctrine()->getEntityManager()->flush();
+                
+                $this->get('session')->setFlash(
+                        'notice', 'Your Wms Instance has been changed.');
+                return $this->redirect($this->generateUrl(
+                        'mapbender_manager_application_edit',
+                        array("slug" => $slug)));
+            } else { // edit
+                return array(
+                    "form" => $form->createView(),
+                    "slug" => $slug,
+                    "instance" => $wmsinstance);
+            }
+        } else { // edit
+            $wmsinstance = $this->getDoctrine()
+                    ->getRepository("MapbenderWmsBundle:WmsInstance")
+                    ->find($instanceId);
+            $form = $this->createForm(
+                    new WmsInstanceInstanceLayersType(), $wmsinstance);
+            return array(
+                "form" => $form->createView(),
+                "slug" => $slug,
+                "instance" => $wmsinstance);
+        }
     }
 }

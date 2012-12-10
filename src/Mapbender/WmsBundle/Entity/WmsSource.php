@@ -4,7 +4,6 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Component\KeywordIn;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
@@ -16,7 +15,7 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source implements KeywordIn {
+class WmsSource extends Source {
     
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -156,16 +155,22 @@ class WmsSource extends Source implements KeywordIn {
     protected $password = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="layers", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="wmssource", cascade={"persist","remove"})
      */
     protected $layers;
 
+    // FIXME: keywords cascade remove RM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
     
     /**
      * @var array $keywords the source keyword list
-     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist"})
      */
     protected $keywords;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="wmssource", cascade={"persist","remove"})
+     */
+    protected $wmsinstance;
 
     public function __construct() {
         $this->keywords = new ArrayCollection();
@@ -179,12 +184,12 @@ class WmsSource extends Source implements KeywordIn {
         return "WMS";
     }
     
-    public function getClassname(){
-        return "Mapbender\WmsBundle\Entity\WmsSource";
+    public function getManagertype(){
+        return "wms";
     }
     
-    public function getBundlename(){
-        return "MapbenderWmsBundle";
+    public function getClassname(){
+        return get_class();
     }
     
     /**
@@ -799,13 +804,6 @@ class WmsSource extends Source implements KeywordIn {
         $this->keywords->add($keyword);
         return $this;
     }
-    
-//    public function __toString(){
-//        return (string) $this->getId();
-//    }
-    
-
-
 
     /**
      * Remove layers
@@ -825,5 +823,36 @@ class WmsSource extends Source implements KeywordIn {
     public function removeKeyword(Keyword $keywords)
     {
         $this->keywords->removeElement($keywords);
+    }
+    
+    /**
+     * Create a WmsInstace
+     */
+    public function createInstance(){
+        $instance = new WmsInstance();
+        $instance->setWmsSource($this);
+        $instance->setTitle($this->getTitle());
+        $num = 0;
+        $layers = array();
+        foreach($this->getLayers() as $wmslayer){
+            $instLayer = new WmsInstanceLayer();
+            $instLayer->setWmsinstance($instance);
+            $instLayer->setWmslayersource($wmslayer);
+            $instLayer->setTitle($wmslayer->getTitle());
+            // @TODO min max from scaleHint
+            $instLayer->setMinScale(
+                    $wmslayer->getScale() !== null ?
+                    $wmslayer->getScale()->getMin() : null);
+            $instLayer->setMaxScale(
+                    $wmslayer->getScale() !== null ?
+                    $wmslayer->getScale()->getMax() : null);
+            $queryable = $wmslayer->getQueryable();
+            $instLayer->setGfinfo($queryable === null || !$queryable ? null : $queryable);
+            $instLayer->setGfinfoDefault($queryable === null || !$queryable ? null : $queryable);
+            $num++;
+            $instLayer->setPriority($num);
+            $instance->addLayer($instLayer);
+        }
+        return $instance;
     }
 }

@@ -3,6 +3,8 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Mapbender\CoreBundle\Component\InstanceIn;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
@@ -14,7 +16,7 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
 */
-class WmsInstanceLayer {
+class WmsInstanceLayer implements InstanceIn {
     
     /**
      * @var integer $id
@@ -44,7 +46,12 @@ class WmsInstanceLayer {
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $sublayer = true;
+    protected $sublayer;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $active = true;
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -56,19 +63,19 @@ class WmsInstanceLayer {
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $gfinfo = true;
+    protected $gfinfo;
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $gfinfo_default = true;
+    protected $gfinfo_default;
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    protected $minScale = 0;
+    protected $minScale;
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    protected $maxScale = 0;
+    protected $maxScale;
     /**
      * @ORM\Column(type="string", nullable=true)
      */
@@ -76,7 +83,7 @@ class WmsInstanceLayer {
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    protected $priority = 0;
+    protected $priority;
     
 
     public function __construct() {
@@ -139,6 +146,29 @@ class WmsInstanceLayer {
     public function getSublayer()
     {
         return $this->sublayer;
+    }
+    
+    /**
+     * Set active
+     *
+     * @param boolean $active
+     * @return WmsInstanceLayer
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+    
+        return $this;
+    }
+
+    /**
+     * Get active
+     *
+     * @return boolean 
+     */
+    public function getActive()
+    {
+        return $this->active;
     }
 
     /**
@@ -369,5 +399,29 @@ class WmsInstanceLayer {
     public function getWmslayersource()
     {
         return $this->wmslayersource;
+    }
+    
+    /**
+     * Get a layer configuration.
+     * @return array
+     */
+    public function getConfiguration(){
+        $configuration = array(
+            "name" => $this->wmslayersource->getName(),
+            "title" => $this->title,
+            "grfinfo" => $this->gfinfo,
+            "gfinfo_default" => $this->gfinfo_default,
+            "maxScale" => $this->maxScale,
+            "minScale" => $this->minScale,
+            "selected" => $this->selected,
+            "selected_default" => $this->selected_default,
+            "style" => $this->style,
+//            "" => $this->,
+//            "" => $this->,
+//            "" => $this->,
+//            "" => $this->,
+//            "" => $this->,
+        );
+        return $configuration;
     }
 }

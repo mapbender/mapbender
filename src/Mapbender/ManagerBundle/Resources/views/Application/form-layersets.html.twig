@@ -16,13 +16,14 @@
                         <td>{{ layer.title }}</td>
                         <td>
                             <div class="entity-actions btn-group">
-                                <a 
-                                    class="btn btn-warning" 
+                                <button type="button" data-href="{{ url("mapbender_manager_repository_instance",{"slug": application.slug, "layerId": layer.id})  }}"
+                                        data-toggle="modal" data-target="#repository-instance-modal" class="btn edit-instance">{{ 'Edit Source Instance' | trans }}</button>
+                                <a class="btn btn-warning" 
                                     href="{{ url("mapbender_manager_application_confirmlayerdelete",{
                                         "slug": application.slug,
                                         "layerId": layer.id
                                     })  }}"
-                                >Delete</a>
+                                >{{ 'Delete' | trans }}</a>
                             </div>
                         </td>
                     </tr>

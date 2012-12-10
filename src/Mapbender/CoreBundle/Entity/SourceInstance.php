@@ -1,6 +1,12 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\HasInstanceIn;
+use Mapbender\CoreBundle\Component\InstanceIn;
+
+use Mapbender\CoreBundle\Entity\Layer;
 
 /**
  * @author Karim Malhas
@@ -12,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  * ORM\DiscriminatorMap({"mb_core_sourceinstance" = "SourceInstance"})
  */
 
-class SourceInstance {
+abstract class SourceInstance implements InstanceIn {
 
     /**
      * @var integer $id
@@ -27,12 +33,22 @@ class SourceInstance {
      * @ORM\Column(type="string", nullable=true)
      */
     protected $title;
-    
+
     /**
-     * @var string $alias The source alias
-     * @ORM\Column(type="string", length=128, nullable=true)
-     */
-    protected $type;
+    * @var SourceInstance
+    * @ORM\OneToMany(targetEntity="Layer", mappedBy="sourceInstance", cascade={"persist","refresh", "remove"})
+    */
+    protected $mblayer;
+    
+    public function __construct() {
+        $this->mblayer = new ArrayCollection();
+    }
+    
+//    /**
+//     * @var string $alias The source alias
+//     * @ORM\Column(type="string", length=128, nullable=true)
+//     */
+//    protected $type;
 
     public function getId(){
         return $id;
@@ -45,13 +61,46 @@ class SourceInstance {
     public function setTitle($title){
         $this->title = $title;
     } 
-
-    public function getType(){
-        return $this->type;
-    }
-   
-    public function setType($type){
-        $this->type = $type;
+    
+    public function getMblayer(){
+        return $this->mblayer;
     } 
+
+    public function setMblayer(ArrayCollection $mblayers){
+        $this->mblayer = $mblayers;
+        return $this;
+    }
+    public function addMblayer(Layer $mblayer){
+        $this->mblayer->add($mblayer);
+        return $this;
+    }
+
+    public abstract function getType();
+//    public function getType(){
+//        return $this->type;
+//    }
+//   
+//    public function setType($type){
+//        $this->type = $type;
+//    } 
+    
+    /**
+     * Get manager type 
+     *
+     * @return string 
+     */
+    public abstract function getManagerType();
+    
+    /**
+     * Get full class name
+     * 
+     * @return string 
+     */
+    public function getClassname(){
+        return get_class();
+    }
+    
+    public abstract function getConfiguration();
+    
 
 }

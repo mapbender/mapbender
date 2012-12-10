@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @author Christian Wygoda
  *
  * @ORM\Entity
- * @ORM\Table(name="mb_layerset")
+ * @ORM\Table(name="mb_core_layerset")
  */
 class Layerset {
     /**
@@ -38,8 +38,7 @@ class Layerset {
     protected $application;
 
     /**
-     * @ORM\OneToMany(targetEntity="Layer", mappedBy="layerset",
-     *     cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Layer", mappedBy="layerset", cascade={"persist","remove"})
      */
     protected $layers;
 

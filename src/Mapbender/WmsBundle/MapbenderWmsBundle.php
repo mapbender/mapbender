@@ -12,7 +12,8 @@ class MapbenderWmsBundle extends MapbenderBundle {
                 'id'    => 'wms',
                 'label' => 'OGC WMS',
                 'manager' => 'mapbender_wms_repository',
-                'startAction' => "MapbenderWmsBundle:Repository:start"
+                'startAction' => "MapbenderWmsBundle:Repository:start",
+                'bundle' => "MapbenderWmsBundle"
             )
         );
     }
