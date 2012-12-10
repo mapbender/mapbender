@@ -65,8 +65,10 @@ class RepositoryController extends Controller {
     public function viewAction($sourceId){
         $source = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$source->getManagertype()];
         return  $this->forward(
-                $source->getBundlename().":"."Repository:view",
+                $manager['bundle'] . ":" . "Repository:view",
              array("id" => $source->getId())
         );
     }
@@ -93,6 +95,23 @@ class RepositoryController extends Controller {
         $em->flush();
         $this->get('session')->setFlash('info',"Service deleted");
         return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
+    }
+    
+    /**
+     * 
+     * @ManagerRoute("/application/{slug}/instance/{layerId}")
+     */ 
+    public function instanceAction($slug, $layerId){
+        $mblayer = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:Layer")
+                        ->find($layerId);
+        $sourceInst = $mblayer->getSourceInstance();
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$sourceInst->getManagertype()];
+        return  $this->forward(
+                $manager['bundle'] . ":" . "Repository:instance",
+                array("slug" => $slug, "instanceId" => $sourceInst->getId())
+        );
     }
 
 }

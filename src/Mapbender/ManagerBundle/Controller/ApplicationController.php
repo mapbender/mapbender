@@ -21,7 +21,8 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Layer;
 
 //FIXME: make this work without an explicit import
-use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\CoreBundle\Entity\SourceInstance;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 
 
@@ -253,11 +254,11 @@ class ApplicationController extends Controller {
         $layer = new Layer();
         $layer->setTitle($source->getTitle());
         $layer->setLayerset($layerset);
-        //FIXME: make generic
-        $layer->setClass(get_class($source));
-        $layer->setWeight("0");
-        $sourceInstance = WmsInstance::fromWmsSource($source);
+        $sourceInstance = $source->createInstance();
+        $layer->setConfiguration($sourceInstance->getConfiguration());
         $layer->setSourceInstance($sourceInstance);
+        $layer->setClass($sourceInstance->getClassname());
+        $layer->setWeight("0");
         
 
         $layerset->addLayers($layer);
@@ -283,7 +284,7 @@ class ApplicationController extends Controller {
      * @Template("MapbenderManagerBundle:Application:deleteLayer.html.twig")
     */
     public function confirmLayerDelete($slug, $layerId ){
-        $layer     = $this->getDoctrine()
+        $layer = $this->getDoctrine()
                         ->getRepository("MapbenderCoreBundle:Layer")
                         ->find($layerId);
         $application = $this->get('mapbender')->getApplicationEntity($slug);
@@ -300,14 +301,18 @@ class ApplicationController extends Controller {
      * @Template("MapbenderManagerBundle:Application:deleteLayer.html.twig")
     */
     public function layerDelete($slug, $layerId ){
-        $layer     = $this->getDoctrine()
+        $layer = $this->getDoctrine()
                         ->getRepository("MapbenderCoreBundle:Layer")
                         ->find($layerId);
         $em = $this->getDoctrine()->getEntityManager();
+        
+        $sourceInstance = $layer->getSourceInstance();
+        $em->remove($sourceInstance);
+//        $em->flush();
         $em->remove($layer);
         $em->flush();
         $this->get('session')->setFlash('notice',
-             'Your Layer has been deleted.');
+             'Your Layer has been deleted with all Instances.');
         return $this->redirect(
             $this->generateUrl('mapbender_manager_application_edit',
             array(

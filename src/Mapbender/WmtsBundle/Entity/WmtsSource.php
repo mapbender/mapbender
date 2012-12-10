@@ -3,7 +3,6 @@ namespace Mapbender\WmtsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Component\KeywordIn;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
@@ -14,10 +13,10 @@ use Mapbender\CoreBundle\Entity\Keyword;
  * Description of WmtsSource
  *
  * @ORM\Entity
- * @ORM\Table(name="mb_wmts_wmssource")
+ * @ORM\Table(name="mb_wmts_wmtssource")
  * ORM\DiscriminatorMap({"mb_wmts_wmssource" = "WmtsSource"})
  */
-class WmtsSource extends Source implements KeywordIn {
+class WmtsSource extends Source {
     
     /**
     * @ORM\Column(type="string", nullable=true)
@@ -169,17 +168,16 @@ class WmtsSource extends Source implements KeywordIn {
     
     
     public function getType(){
-        return "WMS";
+        return "WMTS";
+    }
+    
+    public function getManagerType(){
+        return "wmts";
     }
     
     public function getClassname(){
-        return "Mapbender\WmsBundle\Entity\WmsSource";
+        return "Mapbender\WmtsBundle\Entity\WmtsSource";
     }
-    
-    public function getBundlename(){
-        return "MapbenderWmsBundle";
-    }
-
 
     /**
      * Set version
@@ -342,4 +340,14 @@ class WmtsSource extends Source implements KeywordIn {
         return $this->password;
     }
 
+    /**
+     * Create a WmsInstace
+     */
+    public function createInstance(){
+        $instance = new WmtsInstance();
+        $instance->setWmtsSource($this);
+        $instance->setTitle($this->getTitle());
+        //@TODO ...
+        return $instance;
+    }
 }

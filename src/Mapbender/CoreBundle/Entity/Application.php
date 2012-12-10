@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  *
  * @ORM\Entity
- * @ORM\Table(name="mb_application")
+ * @ORM\Table(name="mb_core_application")
  * @ORM\HasLifecycleCallbacks
  */
 class Application {
@@ -62,7 +62,7 @@ class Application {
     protected $elements;
 
     /**
-     * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application")
+     * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"persist", "remove"})
      *      cascade={"persist"})
      */
     protected $layersets;

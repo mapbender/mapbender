@@ -8,6 +8,7 @@
 {% block manager_js %}
 <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/edit-source.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
@@ -63,5 +64,20 @@
             </tbody>
         </table>
     </div>
+</div>
+
+<div id="repository-instance-modal"  class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{ "Edit Instance"|trans }}</h3>
+    </div>
+    <div class="modal-body"></div>
+</div>
+<div id="repository-instancelayers-modal"  class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{ "Edit Instance Layers"|trans }}</h3>
+    </div>
+    <div class="modal-body"></div>
 </div>
 {% endblock %}

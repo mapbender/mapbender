@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  *
  * @ORM\Entity
- * @ORM\Table(name="mb_element")
+ * @ORM\Table(name="mb_core_element")
  */
 class Element {
     /**

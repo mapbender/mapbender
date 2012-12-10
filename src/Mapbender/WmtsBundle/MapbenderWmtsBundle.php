@@ -13,7 +13,8 @@ class MapbenderWmtsBundle extends MapbenderBundle {
                 'id'    => 'wmts',
                 'label' => 'OGC WMTS',
                 'manager' => 'mapbender_wmts_repository',
-                'startAction' => "MapbenderWmtsBundle:Repository:start"
+                'startAction' => "MapbenderWmtsBundle:Repository:start",
+                'bundle' => "MapbenderWmtsBundle"
             )
         );
     }

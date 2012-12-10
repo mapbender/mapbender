@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+//use Mapbender\CoreBundle\Entity\Layer;
 
 /**
  * WmsInstance class
@@ -20,29 +21,29 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
  */
 class WmsInstance extends SourceInstance {
 
-    /**
-     *  @ORM\Id
-     *  @ORM\Column(type="integer")
-     *  @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+//    /**
+//     *  @ORM\Id
+//     *  @ORM\Column(type="integer")
+//     *  @ORM\GeneratedValue(strategy="AUTO")
+//     */
+//    protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="id", cascade={"refresh", "persist"})
+     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="wmsinstance", cascade={"refresh", "persist"})
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
     protected $wmssource;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="id", cascade={"refresh", "persist"})
+     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="wmsinstance", cascade={"refresh", "persist", "remove"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      */
     protected $layers; //{ name: 1,   title: Webatlas,   visible: true }
 
-    /**
-     * @ORM\Column(type="string", nullable=false)
-     */
-    protected $title;
+//    /**
+//     * @ORM\Column(type="string", nullable=false)
+//     */
+//    protected $title;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -63,11 +64,16 @@ class WmsInstance extends SourceInstance {
      * @ORM\Column(type="string", nullable=true)
      */
     protected $exceptionformat = null;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $transparency = false;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $visibile = true;
+    protected $visible = true;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -224,24 +230,45 @@ class WmsInstance extends SourceInstance {
     }
 
     /**
-     * Set visibile
+     * Set transparency
      *
-     * @param boolean $visibile
+     * @param boolean $transparency
      * @return WmsInstance
      */
-    public function setVisibile($visibile) {
-        $this->visibile = $visibile;
+    public function setTransparency($transparency) {
+        $this->transparency = $transparency;
 
         return $this;
     }
 
     /**
-     * Get visibile
+     * Get transparency
      *
      * @return boolean 
      */
-    public function getVisibile() {
-        return $this->visibile;
+    public function getTransparency() {
+        return $this->transparency;
+    }
+
+    /**
+     * Set visible
+     *
+     * @param boolean $visible
+     * @return WmsInstance
+     */
+    public function setVisible($visible) {
+        $this->visible = $visible;
+
+        return $this;
+    }
+
+    /**
+     * Get visible
+     *
+     * @return boolean 
+     */
+    public function getVisible() {
+        return $this->visible;
     }
 
     /**
@@ -335,9 +362,9 @@ class WmsInstance extends SourceInstance {
      * @param WmsInstanceLayer $layers
      * @return WmsInstance
      */
-    public function addLayer(WmsInstanceLayer $layers)
+    public function addLayer(WmsInstanceLayer $layer)
     {
-        $this->layers[] = $layers;
+        $this->layers->add($layer);
     
         return $this;
     }
@@ -351,11 +378,48 @@ class WmsInstance extends SourceInstance {
     {
         $this->layers->removeElement($layers);
     }
-
-    public static function fromWmsSource(WmsSource $wmsSource){
-        $instance = new self();
-        $instance->setWmsSource($wmsSource);
-        $instance->setTitle($wmsSource->getTitle());
-        return $instance;
+    
+    public function getType(){
+        return "WMS Instance";
+    }
+    
+    public function getManagerType(){
+        return "wms";
+    }
+    
+    /**
+     * Get an Instance Configuration.
+     * @return array
+     */
+    public function getConfiguration(){
+        $layers = array();
+        $infoLayers = array();
+        foreach ($this->layers as $layer){
+            if($layer->getActive()){
+                $layers[$layer->getPriority()] = $layer->getConfiguration();
+                if($layer->getGfinfo() !== null && $layer->getGfinfo()){
+                    $infoLayers[$layer->getPriority()] = $layer->getTitle();
+                }
+            }
+        }
+        ksort($layers);
+        $layers = array_values($layers);
+        ksort($infoLayers);
+        $infoLayers = array_values($infoLayers);
+        $configuration = array(
+            "title" => $this->title,
+            "url" => $this->wmssource->getOriginUrl(),
+            "title" => $this->title,
+            "visible" => $this->visible,
+            "format" => $this->format,
+            
+            "layers" => $layers,
+            "queryLayers" => $infoLayers,
+            
+            "queryFormat" => $this->infoformat,
+            "transparent" => $this->transparency, //TODO
+            "opacity" => $this->opacity
+        );
+        return $configuration;
     }
 }

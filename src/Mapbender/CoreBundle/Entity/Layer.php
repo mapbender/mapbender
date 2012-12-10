@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Christian Wygoda
  *
  * @ORM\Entity
- * @ORM\Table(name="mb_layer")
+ * @ORM\Table(name="mb_core_layer")
  */
 class Layer {
     /**
@@ -56,7 +56,8 @@ class Layer {
 
     /**
     * @var SourceInstance
-    * @ORM\OneToOne(targetEntity="SourceInstance", cascade={"persist"})
+    * @ORM\ManyToOne(targetEntity="SourceInstance", cascade={"persist", "refresh"})
+    * @ORM\JoinColumn(name="sourceInstance", referencedColumnName="id")
     */
     protected $sourceInstance;
 

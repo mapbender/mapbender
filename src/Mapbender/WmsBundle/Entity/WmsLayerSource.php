@@ -6,9 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
-use Mapbender\WmsBundle\Component\IdentifierAuthority;
-use Mapbender\CoreBundle\Component\KeywordIn;
 use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Dimension;
@@ -18,12 +17,13 @@ use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
+use Mapbender\CoreBundle\Component\Utils;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
  */
-class WmsLayerSource implements KeywordIn {
+class WmsLayerSource {
 
     /**
      * @var integer $id
@@ -40,13 +40,13 @@ class WmsLayerSource implements KeywordIn {
     protected $wmssource;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="layer", cascade={"refresh", "persist"})
+     * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="sublayer", cascade={"refresh", "persist"})
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
      */
     protected $parent = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent", cascade={"persist"})
      */
     protected $sublayer;
 
@@ -68,7 +68,7 @@ class WmsLayerSource implements KeywordIn {
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $queryable = false;
+    protected $queryable;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -173,9 +173,11 @@ class WmsLayerSource implements KeywordIn {
      */
     protected $featureListUrl;
     
+    
+    // FIXME: keywords cascade remove ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
     /**
      * @var array $keywords the source keyword list
-     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist"})
      */
     protected $keywords;
     
@@ -248,6 +250,29 @@ class WmsLayerSource implements KeywordIn {
     }
 
     /**
+     * Add sublayer
+     *
+     * @param Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer
+     * @return WmsLayerSource
+     */
+    public function addSublayer(\Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer)
+    {
+        $this->sublayer[] = $sublayer;
+    
+        return $this;
+    }
+
+    /**
+     * Remove sublayer
+     *
+     * @param Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer
+     */
+    public function removeSublayer(\Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer)
+    {
+        $this->sublayer->removeElement($sublayer);
+    }
+    
+    /**
      * Set name
      *
      * @param string $name
@@ -314,7 +339,7 @@ class WmsLayerSource implements KeywordIn {
      * @return WmsLayerSource
      */
     public function setQueryable($queryable) {
-        $this->queryable = $queryable;
+        $this->queryable = Utils::getBool($queryable);
         return $this;
     }
 
@@ -910,35 +935,20 @@ class WmsLayerSource implements KeywordIn {
         return $this;
     }
     
+    public function getType(){
+        return "WMS";
+    }
+    
+    public function getManagerType(){
+        return "wms";
+    }
+    
     public function getClassname(){
-        return "Mapbender\WmsBundle\Entity\WmsLayerSource";
+        return get_class();
     }
     
     public function __toString(){
         return (string) $this->id;
-    }
-
-    /**
-     * Add sublayer
-     *
-     * @param Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer
-     * @return WmsLayerSource
-     */
-    public function addSublayer(\Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer)
-    {
-        $this->sublayer[] = $sublayer;
-    
-        return $this;
-    }
-
-    /**
-     * Remove sublayer
-     *
-     * @param Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer
-     */
-    public function removeSublayer(\Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer)
-    {
-        $this->sublayer->removeElement($sublayer);
     }
 
     /**

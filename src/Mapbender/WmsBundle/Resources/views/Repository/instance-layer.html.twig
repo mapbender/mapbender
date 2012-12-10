@@ -1,0 +1,22 @@
+{% extends "FOMManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ 'Service Repository' | trans }}{% endblock %}
+
+{% block manager_css %}
+{% endblock %}
+
+{% block manager_js %}
+<script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"></script>
+{% endblock %}
+
+{% block manager_content %}
+<div class="well">
+<p>{{ 'Wms Instance Layers' | trans }}</p>
+{{ form_errors(form) }}
+    <form action="{{path('mapbender_wms_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post">
+        {{form_rest(form)}}
+        <input type="submit" name="save" value="{{"Save"|trans}}" />
+    </form>
+</div>
+{% endblock %}

@@ -4,6 +4,9 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Mapbender\CoreBundle\Component\EntityIdentifierIn;
+use Mapbender\CoreBundle\Component\HasInstanceIn;
+
 /**
  * Source entity
  *
@@ -15,7 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_source" = "Source"})
  */
-abstract class Source {
+abstract class Source implements EntityIdentifierIn, HasInstanceIn {
     /**
      * @var integer $id
      * @ORM\Id
@@ -126,13 +129,27 @@ abstract class Source {
     public abstract function getType();
     
     /**
+     * Get manager type 
+     *
+     * @return string 
+     */
+    public abstract function getManagertype();
+    
+    /**
      * Get bundle name
      * 
      * @return string 
      */
-    public abstract function getBundlename();
+    public abstract function getClassname();
+    
+    /**
+     * Create Instance
+     */
+    public abstract function createInstance();
     
     public function __toString(){
         return (string) $this->id;
     }
+    
+    
 }
