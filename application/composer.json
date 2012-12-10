@@ -22,8 +22,6 @@
         "friendsofsymfony/jsrouting-bundle": "dev-master",
         "kriswallsmith/buzz": "dev-master",
 
-	"jms/serializer-bundle": "dev-master",
-
         "mopa/bootstrap-bundle": "dev-master"
     },
     "scripts": {

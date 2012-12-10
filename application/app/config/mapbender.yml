@@ -141,22 +141,217 @@ parameters:
                     coordinates:
                         class: Mapbender\CoreBundle\Element\CoordinatesDisplay
                         target: map
-                        
-                    srsselector:
-                        class: Mapbender\CoreBundle\Element\SrsSelector
-                        targets: { map: map, coordsdisplay: coordinates }
-                        title: SRS Selector
-                        autoOpen: false
-                        
+        mapbender_user2:
+            title: Mapbender Base 1 Demo Map
+            description: ""
+            published: true
+            #roles: [ROLE_USER]
+            template:  Mapbender\CoreBundle\Template\Base
+            layersets:
+                main:
+                    ne2:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: Natural Earth
+                        url: http://www.catais.org/geoserver/wms?SERVICE=WMS
+                        layers:
+                            - { name: 'ne2:ne2', title: 'Natural Earth 2'}
+                        visible: true
+                        tiled: true
+                    osm_roads:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: OpenStreetMap Roads
+                        url: http://osm.omniscale.net/proxy/service?
+                        layers:
+                            - { name: osm_roads, title: OpenStreetMap WMS }
+                        tiled: false
+                        visible: true
+                        baselayer: false
+                    mapbender_users:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: Mapbender Users
+                        url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
+                        layers:
+                            - { name: Mapbender_User,    title : User,  visible: true }
+                            - { name: Mapbender_Names,   title : Name,   visible: true, queryable: true }
+                        queryLayers: [Mapbender_Names]
+                        queryFormat: text/html
+                        baselayer: false
+                        visible: true
+                        format: image/png
+                        transparent: true
+                        tiled: false
+                        opacity: 85
+                overview:
+                    demis:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: Demis World Map
+                        url: http://www.catais.org/geoserver/wms?SERVICE=WMS
+                        layers:
+                            - { name: 'ne2:ne2', title: 'Natural Earth 2'}
+                        baselayer: true
+            elements:
+                top:
+                    toc-button:
+                        title: Maps
+                        tooltip: Maps
+                        class: Mapbender\CoreBundle\Element\Button
+                        target: toc
+                        action: open
+                    about:
+                        title: About
+                        tooltip: Find out more about Mapbender3
+                        class: Mapbender\CoreBundle\Element\AboutDialog
+                    fi:
+                        title: Information
+                        class: Mapbender\CoreBundle\Element\FeatureInfo
+                        tooltip: Information
+                        icon: featureinfo
+                        label: false
+                        target: map
                     legend:
+                        title: Legend
                         class: Mapbender\CoreBundle\Element\Legend
                         target: map
-                        title: Legend
-                        dialogtitle: "Legend view"
-                        nolegend: "No legend available"
-                        
-                    scaleselector:
-                        class: Mapbender\CoreBundle\Element\ScaleSelector
+                        tooltip: Legend
+                content:
+                    map:
+                        title: Main Map
+                        class: Mapbender\CoreBundle\Element\Map
+                        layerset: main
+                        srs: EPSG:4326
+                        units: degrees
+                        extents:
+                            start: [-43.313833377731, 33.006761223615, 65.104961268907, 59.198710149963]
+                            max: [-180,-90,180,90]
+                        scales: [25000000, 10000000,5000000,1000000,500000]
+                        maxResolution: 'auto'
+                        overview:
+                           div: overviewMap
+                           layerset: overview
+                    zoombar:
+                        class: Mapbender\CoreBundle\Element\ZoomBar
                         target: map
-                        title: Scale
-                        
+                        position: ['1em', '4em']
+                    toc:
+                        title: Table of Contents
+                        class: Mapbender\CoreBundle\Element\Toc
+                        target: map
+                        autoOpen: false
+                footer:
+                    coordinates:
+                        class: Mapbender\CoreBundle\Element\CoordinatesDisplay
+                        target: map
+                        empty:  "x: 0 y: 0"
+                        prefix: "x: "
+                        separator:  " y: "
+                    srs:
+                        class: Mapbender\CoreBundle\Element\SrsSelector
+                        targets:
+                            map: map
+        mapbender_user3:
+            title: Mapbender Base 2 Demo Map
+            description: ""
+            published: true
+            #roles: [ROLE_USER]
+            template:  Mapbender\CoreBundle\Template\Base2
+            layersets:
+                main:
+                    ne2:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: Natural Earth
+                        url: http://www.catais.org/geoserver/wms?SERVICE=WMS
+                        layers:
+                            - { name: 'ne2:ne2', title: 'Natural Earth 2'}
+                        visible: true
+                        tiled: true
+                    osm_roads:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: OpenStreetMap Roads
+                        url: http://osm.omniscale.net/proxy/service?
+                        layers:
+                            - { name: osm_roads, title: OpenStreetMap WMS }
+                        tiled: false
+                        visible: true
+                        baselayer: false
+                    mapbender_users:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: Mapbender Users
+                        url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
+                        layers:
+                            - { name: Mapbender_User,    title : User,  visible: true }
+                            - { name: Mapbender_Names,   title : Name,   visible: true, queryable: true }
+                        queryLayers: [Mapbender_Names]
+                        queryFormat: text/html
+                        baselayer: false
+                        visible: true
+                        format: image/png
+                        transparent: true
+                        tiled: false
+                        opacity: 85
+                overview:
+                    demis:
+                        class: Mapbender\WmsBundle\WmsLayer
+                        title: Demis World Map
+                        url: http://www.catais.org/geoserver/wms?SERVICE=WMS
+                        layers:
+                            - { name: 'ne2:ne2', title: 'Natural Earth 2'}
+                        baselayer: true
+            elements:
+                top:
+                    toc-button:
+                        title: Maps
+                        tooltip: Maps
+                        class: Mapbender\CoreBundle\Element\Button
+                        target: toc
+                        action: open
+                    about:
+                        title: About
+                        tooltip: Find out more about Mapbender3
+                        class: Mapbender\CoreBundle\Element\AboutDialog
+                    fi:
+                        title: Information
+                        class: Mapbender\CoreBundle\Element\FeatureInfo
+                        tooltip: Information
+                        icon: featureinfo
+                        label: false
+                        target: map
+                    legend:
+                        title: Legend
+                        class: Mapbender\CoreBundle\Element\Legend
+                        target: map
+                        tooltip: Legend
+                content:
+                    map:
+                        title: Main Map
+                        class: Mapbender\CoreBundle\Element\Map
+                        layerset: main
+                        srs: EPSG:4326
+                        units: degrees
+                        extents:
+                            start: [-43.313833377731, 33.006761223615, 65.104961268907, 59.198710149963]
+                            max: [-180,-90,180,90]
+                        scales: [25000000, 10000000,5000000,1000000,500000]
+                        maxResolution: 'auto'
+                        overview:
+                           div: overviewMap
+                           layerset: overview
+                    zoombar:
+                        class: Mapbender\CoreBundle\Element\ZoomBar
+                        target: map
+                        position: ['1em', '4em']
+                    toc:
+                        title: Table of Contents
+                        class: Mapbender\CoreBundle\Element\Toc
+                        target: map
+                        autoOpen: false
+                footer:
+                    coordinates:
+                        class: Mapbender\CoreBundle\Element\CoordinatesDisplay
+                        target: map
+                        empty:  "x: 0 y: 0"
+                        prefix: "x: "
+                        separator:  " y: "
+                    srs:
+                        class: Mapbender\CoreBundle\Element\SrsSelector
+                        targets:
+                            map: map
