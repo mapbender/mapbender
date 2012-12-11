@@ -219,6 +219,7 @@ parameters:
                         class: Mapbender\CoreBundle\Element\Map
                         layerset: main
                         srs: EPSG:4326
+                        otherSrs: ["EPSG:25832","EPSG:25833"]
                         units: degrees
                         extents:
                             start: [-43.313833377731, 33.006761223615, 65.104961268907, 59.198710149963]
@@ -326,6 +327,7 @@ parameters:
                         class: Mapbender\CoreBundle\Element\Map
                         layerset: main
                         srs: EPSG:4326
+                        otherSrs: ["EPSG:25832","EPSG:25833"]
                         units: degrees
                         extents:
                             start: [-43.313833377731, 33.006761223615, 65.104961268907, 59.198710149963]
