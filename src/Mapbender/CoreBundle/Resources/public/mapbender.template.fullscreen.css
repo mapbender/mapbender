@@ -30,3 +30,10 @@ html, body {
     bottom: 0;
     left: 0;
 }
+
+.ie7 .zoom-prev, .ie7 .zoom-next{display:inline;margin-top:5px;margin-bottom:5px;}
+.ie7 .zoom-prev, .ie7 .zoom-slider li{float:left;}
+.ie7 .ui-sortable-helper{left:0px;}
+.ie7 .zoom-next{float:right;}
+.ie7 .zoom-box, .ie7 .zoom-out{clear:both;}
+.mb-element-zoombar{top:70px !important;left:20px !important;z-index:1000 !important;}
