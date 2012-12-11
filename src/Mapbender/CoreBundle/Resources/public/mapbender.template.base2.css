@@ -93,11 +93,6 @@ a, a:visited {
   bottom: 50px !important;
   left: 260px !important;
 }
-.content .mb-element-zoombar {
-  top: 10px !important;
-  left: 10px !important;
-  z-index: 1000 !important;
-}
 .content .mb-element-map {
   background-color: #fff;
 }
@@ -130,4 +125,32 @@ a, a:visited {
   left: 0;
   top: 8px;
   font-size: 14px;
+}
+
+.ie7 .zoom-prev, .ie7 .zoom-next {
+  display: inline;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.ie7 .zoom-prev, .ie7 .zoom-slider li {
+  float: left;
+}
+
+.ie7 .ui-sortable-helper {
+  left: 0px;
+}
+
+.ie7 .zoom-next {
+  float: right;
+}
+
+.ie7 .zoom-box, .ie7 .zoom-out {
+  clear: both;
+}
+
+.mb-element-zoombar {
+  top: 10px !important;
+  left: 10px !important;
+  z-index: 1000 !important;
 }
