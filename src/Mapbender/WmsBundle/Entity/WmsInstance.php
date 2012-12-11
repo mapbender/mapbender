@@ -379,6 +379,10 @@ class WmsInstance extends SourceInstance {
         $this->layers->removeElement($layers);
     }
     
+    public function __toString(){
+        return (string) $this->getId();
+    }
+    
     public function getType(){
         return "WMS Instance";
     }

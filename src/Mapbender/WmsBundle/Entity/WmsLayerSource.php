@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
@@ -244,33 +245,44 @@ class WmsLayerSource {
         return $this->parent;
     }
     
-    
+    /**
+     * 
+     * @return ArrayCollection
+     */
     public function getSublayer(){
         return $this->sublayer;
+    }
+    
+    /**
+     * 
+     * @return ArrayCollection
+     */
+    public function setSublayer($sublayer){
+        $this->sublayer = $sublayer;
     }
 
     /**
      * Add sublayer
      *
-     * @param Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer
+     * @param WmsLayerSource $sublayer
      * @return WmsLayerSource
      */
-    public function addSublayer(\Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer)
+    public function addSublayer(WmsLayerSource $sublayer)
     {
-        $this->sublayer[] = $sublayer;
+        $this->sublayer->add($sublayer);
     
         return $this;
     }
-
-    /**
-     * Remove sublayer
-     *
-     * @param Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer
-     */
-    public function removeSublayer(\Mapbender\WmsBundle\Entity\WmsLayerSource $sublayer)
-    {
-        $this->sublayer->removeElement($sublayer);
-    }
+//
+//    /**
+//     * Remove sublayer
+//     *
+//     * @param WmsLayerSource $sublayer
+//     */
+//    public function removeSublayer(WmsLayerSource $sublayer)
+//    {
+//        $this->sublayer->removeElement($sublayer);
+//    }
     
     /**
      * Set name
@@ -586,9 +598,9 @@ class WmsLayerSource {
         if($this->getParent() !== null){ // add styles from parent
             return array_merge(
                     $this->getParent()->getStyles(),
-                    $this->getStyles());
+                    $this->styles);
         } else {
-            $this->getStyles();
+            return $this->styles;
         }
     }
 

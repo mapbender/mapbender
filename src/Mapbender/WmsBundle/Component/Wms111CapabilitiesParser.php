@@ -417,7 +417,7 @@ class Wms111CapabilitiesParser extends WmsCapabilitiesParser {
                 $subwmslayer = $this->parseLayer($wms, new WmsLayerSource(), $item);
                 $subwmslayer->setParent($wmslayer);
                 $subwmslayer->setWmsSource($wms);
-                $wmslayer->getSublayer()->add($subwmslayer);
+                $wmslayer->addSublayer($subwmslayer);
                 $wms->addLayer($subwmslayer);
             }
         }

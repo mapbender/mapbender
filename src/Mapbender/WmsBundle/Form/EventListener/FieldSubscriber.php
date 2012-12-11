@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 
-class AddNameFieldSubscriber implements EventSubscriberInterface
+class FieldSubscriber implements EventSubscriberInterface
 {
     private $factory;
 
@@ -31,13 +31,30 @@ class AddNameFieldSubscriber implements EventSubscriberInterface
             return;
         }
 
-        
         $queryable = $data->getWmslayersource()->getQueryable();
         if($queryable === true){
             $form->remove('gfinfo');
             $form->add($this->factory->createNamed(
-                    'gfinfo', 'checkbox', null,
-                    array('disabled' => false, "required" => false)));
+                    'gfinfo', 'checkbox', null, array(
+                        'disabled' => false,
+                        "required" => false)));
+            $form->remove('gfinfo_default');
+            $form->add($this->factory->createNamed(
+                    'gfinfo_default', 'checkbox', null, array(
+                        'disabled' => false,
+                        "required" => false)));
         }
+        $arrStyles = $data->getWmslayersource()->getStyles();
+        $styleOpt = array("" => "");
+        foreach ($arrStyles as $style) {
+            $styleOpt[$style->getName()] = $style->getTitle();
+        }
+        
+        $form->remove('style');
+        $form->add($this->factory->createNamed(
+                'style', 'choice', null, array(
+                    'label' => 'style',
+                    'choices' => $styleOpt,
+                    "required" => false)));
     }
 }

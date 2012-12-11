@@ -123,5 +123,9 @@ class Layerset {
     public function getLayers() {
         return $this->layers;
     }
+    
+    public function __toString(){
+        return (string) $this->getId();
+    }
 }
 

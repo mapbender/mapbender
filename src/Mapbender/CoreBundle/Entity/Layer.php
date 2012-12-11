@@ -37,7 +37,7 @@ class Layer {
     protected $class;
 
     /**
-     * @var array $configuration The element configuration
+     * @var array $configuration The layer configuration
      * @ORM\Column(type="array", nullable=true)
      */
     protected $configuration;
@@ -56,7 +56,7 @@ class Layer {
 
     /**
     * @var SourceInstance
-    * @ORM\ManyToOne(targetEntity="SourceInstance", cascade={"persist", "refresh"})
+    * @ORM\ManyToOne(targetEntity="SourceInstance", inversedBy="mblayer")
     * @ORM\JoinColumn(name="sourceInstance", referencedColumnName="id")
     */
     protected $sourceInstance;
@@ -194,6 +194,10 @@ class Layer {
 
     public function getSourceInstance(){
         return $this->sourceInstance;
+    }
+    
+    public function __toString(){
+        return (string) $this->getId();
     }
 }
 
