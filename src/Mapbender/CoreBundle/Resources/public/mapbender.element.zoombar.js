@@ -7,6 +7,7 @@ $.widget("mapbender.mbZoomBar", {
         position: [0, 0],
         draggable: true},
 
+    mapDiv: null,
     map: null,
     zoomslider: null,
     navigationHistoryControl: null,
@@ -15,7 +16,12 @@ $.widget("mapbender.mbZoomBar", {
     _create: function() {
         var self = this;
 
-        this.map = $('#' + this.options.target).data('mbMap').map.olMap;
+        this.mapDiv = $('#' + this.options.target);
+        this.mapDiv.bind('mbmapready', $.proxy(this._setup, this));
+    },
+
+    _setup: function() {
+        this.map = this.mapDiv.data('mbMap').map.olMap;
         this._setupSlider();
         this._setupZoomButtons();
         this._setupPanButtons();

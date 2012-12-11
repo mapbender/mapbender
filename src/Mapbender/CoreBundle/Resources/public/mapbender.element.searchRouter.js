@@ -38,7 +38,9 @@ $.widget('mapbender.mbSearchRouter', {
             $.proxy(this._setupCustomAutocomplete, this));
         
         this.resultCallbackProxy = $.proxy(this._resultCallback, this);
-        routeSelect.change();
+        $('#' + this.options.target.map).bind('mbmapready', function() {
+            routeSelect.change();
+        });
 
         // Prepare search button
         $('a[role="search_router_search"]').button()

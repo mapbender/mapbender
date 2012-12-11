@@ -7,6 +7,7 @@ $.widget("mapbender.mbToc", $.ui.dialog, {
         target: null
     },
 
+    mapDiv: null,
     map: null,
 
     _create: function() {
@@ -18,7 +19,12 @@ $.widget("mapbender.mbToc", $.ui.dialog, {
 
         this._super('_create');
 
-        this.map = $('#' + this.options.target).data('mapQuery');
+        this.mapDiv = $('#' + this.options.target);
+        this.mapDiv.bind('mbmapready', $.proxy(this._setup, this));
+    },
+
+    _setup: function() {
+        this.map = this.mapDiv.data('mapQuery');
         var wmcStorage = $('.mb-element-wmc-storage');
         wmcStorage.bind('mbwmcstorageloaddone', $.proxy(this.reload, this));
 
