@@ -4,6 +4,13 @@
 
 {% block title %}{{ 'WMS' | trans }} {{ wms.title }}{% endblock %}
 
+{% block manager_css %}
+<link rel="stylesheet" href="{{ asset('bundles/mapbenderwms/repository/repository.css') }}" />
+{% endblock %}
+{% block manager_js %}
+<script type="text/javascript" src="{{ asset('bundles/mapbenderwms/repository/repository.js') }}"></script>
+{% endblock %}
+
 
 {% block manager_content %}
 
@@ -119,6 +126,9 @@
     </section>
 
     <section id="wms-layers" class="tab-pane">
+    {#% for layer in wms.layers %}
+    {% endfor %#}
+        {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': wms.rootlayer }%}
    </section>
 </div>
 <footer>

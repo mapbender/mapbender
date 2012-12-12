@@ -562,7 +562,7 @@ class WmsLayerSource {
                     $this->getParent()->getSrs(),
                     $this->srs);
         } else {
-            $this->srs;
+            return $this->srs;
         }
     }
     

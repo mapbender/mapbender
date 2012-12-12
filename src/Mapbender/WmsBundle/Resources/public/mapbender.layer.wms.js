@@ -4,7 +4,7 @@ $.extend(true, Mapbender, { layer: {
         create: function(layerDef) {
             var layers = [];
             var queryLayers = [];
-
+            
             $.each(layerDef.configuration.layers, function(idx, layer) {
                 var layerDef = $.extend({},
                     { visible: true, queryable: false }, layer );

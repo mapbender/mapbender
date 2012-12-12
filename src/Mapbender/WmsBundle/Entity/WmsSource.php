@@ -763,11 +763,17 @@ class WmsSource extends Source {
      * @return WmsLayerSource 
      */
     public function getRootlayer() {
-        if($this->layers !== null && $this->layers->count() > 0){
-            return $this->layers->get(0);
-        } else {
-            return null;
+        foreach ($this->layers as $layer) {
+            if($layer->getParent() === null){
+                return $layer;
+            }
         }
+        return null;
+//        if($this->layers !== null && $this->layers->count() > 0){
+//            return $this->layers->get(0);
+//        } else {
+//            return null;
+//        }
     }
     
     
