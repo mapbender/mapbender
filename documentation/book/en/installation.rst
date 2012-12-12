@@ -90,6 +90,10 @@ Symfony2 will create the database schema for you, if you ask nicely:
 
     :command:`app/console doctrine:schema:create`
 
+We also need to initialize the security system's database tables seperately:
+
+    :command:`app/console init:acl`
+
 Copying the bundles' assets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
