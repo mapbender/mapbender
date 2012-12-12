@@ -4,7 +4,7 @@ namespace Mapbender\WmsBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Mapbender\WmsBundle\Form\EventListener\AddNameFieldSubscriber;
+use Mapbender\WmsBundle\Form\EventListener\FieldSubscriber;
 
 //use Mapbender\WmsBundle\Entity\WmsInstance;
 
@@ -30,28 +30,31 @@ class WmsInstanceLayerType extends AbstractType {
     }
     
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $subscriber = new AddNameFieldSubscriber($builder->getFormFactory());
+        $subscriber = new FieldSubscriber($builder->getFormFactory());
         $builder->addEventSubscriber($subscriber);
         $choices = range(1, $options["num_layers"]);
-////        if(array_key_exists('data', $options)) {
-////            $sourceLayer = $options['data']->getWmslayersource();
-////        }
         $builder->add('title', 'text', array(
-            'required' => false))
+                    'required' => false))
+            ->add('active', 'checkbox', array(
+                        'required' => false))
             ->add('selected', 'checkbox', array(
-                'required' => false))
+                        'required' => false))
             ->add('selected_default', 'checkbox', array(
-                'required' => false))
+                        'required' => false))
             ->add('gfinfo', 'checkbox', array(
-                'required' => false,'disabled' => true))
+                        'required' => false,
+                        'disabled' => true))
             ->add('gfinfo_default', 'checkbox', array(
-                'required' => false))
+                        'required' => false,
+                        'disabled' => true))
             ->add('minScale', 'text', array(
                     'required' => false))
             ->add('maxScale', 'text', array(
                     'required' => false))
-            ->add('style', 'text', array(
-                    'required' => false))
+            ->add('style', 'choice', array(
+                    'label' => 'style',
+                    'choices' => array(),
+                    'required'  => false))
             ->add('priority', 'choice', array(
                     'label' => 'priority',
                     'choices' => $choices,

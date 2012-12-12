@@ -16,15 +16,15 @@ $.widget("mapbender.mbCoordinatesDisplay", {
         var self = this;
         var me = $(this.element);
         this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
-        $(document).one('mapbender.setupfinished', $.proxy(this._mapbenderSetupFinished, this));
+        $('#' + this.options.target).bind('mbmapready', $.proxy(this._mapbenderSetupFinished, this));
     },
 
     _mapbenderSetupFinished: function() {
-      this._init();
+      this._setup();
       this._reset();
     },
 
-    _init: function(){
+    _setup: function(){
         var self = this;
         var mbMap = $('#' + this.options.target).data('mbMap');
         var layers = mbMap.map.layers();

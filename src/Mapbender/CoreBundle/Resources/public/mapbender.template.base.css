@@ -1,11 +1,9 @@
-/* line 7, sass/mapbender.template.base.scss */
 * {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
 }
 
-/* line 13, sass/mapbender.template.base.scss */
 html, body {
   height: 100%;
   margin: 0;
@@ -16,13 +14,12 @@ html, body {
   background-image: linear-gradient(top, #ffffff, #f2f2f2);
 }
 
-/* line 19, sass/mapbender.template.base.scss */
 body {
+  font-family: Verdana,Arial,sans-serif;
   padding: 20px;
   background-image: url("image/noise.png");
 }
 
-/* line 24, sass/mapbender.template.base.scss */
 .box {
   border: solid 1px #bfbfbf;
   -webkit-box-shadow: #bfbfbf 0px 0px 8px;
@@ -30,12 +27,10 @@ body {
   box-shadow: #bfbfbf 0px 0px 8px;
 }
 
-/* line 28, sass/mapbender.template.base.scss */
 .osgeo {
   margin-top: 40px;
 }
 
-/* line 30, sass/mapbender.template.base.scss */
 .top {
   position: absolute;
   left: 290px;
@@ -44,7 +39,6 @@ body {
   height: 180px;
   border-bottom: 1px solid #4d4d4d;
 }
-/* line 38, sass/mapbender.template.base.scss */
 .top .logo {
   width: 200px;
   height: 144px;
@@ -52,7 +46,6 @@ body {
   right: 0px;
   top: -10px;
 }
-/* line 46, sass/mapbender.template.base.scss */
 .top .inner {
   position: absolute;
   width: 100%;
@@ -74,33 +67,27 @@ body {
   background-image: -o-linear-gradient(top, #7a7a7a, #4c4c4c);
   background-image: linear-gradient(top, #7a7a7a, #4c4c4c);
 }
-/* line 57, sass/mapbender.template.base.scss */
 .top .inner .ui-button {
   height: 26px;
 }
-/* line 58, sass/mapbender.template.base.scss */
 .top .inner .ui-button-text {
   font-size: 16px;
   line-height: 16px;
 }
 
-/* line 65, sass/mapbender.template.base.scss */
 .overviewMap {
   width: 250px !important;
   background-color: #fff;
 }
-/* line 69, sass/mapbender.template.base.scss */
 .overviewMap .olControlOverviewMapElement {
   background-color: transparent !important;
 }
-/* line 71, sass/mapbender.template.base.scss */
 .overviewMap .olMap {
   position: absolute;
   width: 100% !important;
   background-color: white !important;
 }
 
-/* line 78, sass/mapbender.template.base.scss */
 .sideBar {
   margin-top: 20px;
   width: 250px !important;
@@ -116,7 +103,6 @@ body {
   background-image: linear-gradient(top, #ffffff, #dddddd);
 }
 
-/* line 89, sass/mapbender.template.base.scss */
 .content {
   position: absolute;
   right: 20px;
@@ -124,21 +110,17 @@ body {
   bottom: 50px !important;
   left: 290px !important;
 }
-/* line 96, sass/mapbender.template.base.scss */
 .content .mb-element-zoombar {
   top: 10px !important;
 }
-/* line 97, sass/mapbender.template.base.scss */
 .content .mb-element-map {
   background-color: #fff;
 }
-/* line 99, sass/mapbender.template.base.scss */
 .content .olControlScale {
   right: 20px;
   bottom: 5px;
 }
 
-/* line 105, sass/mapbender.template.base.scss */
 .footer {
   position: absolute;
   height: 30px;
@@ -162,21 +144,46 @@ body {
   -moz-box-shadow: #a6a6a6 0px 0px 8px;
   box-shadow: #a6a6a6 0px 0px 8px;
 }
-/* line 118, sass/mapbender.template.base.scss */
 .footer .mb-element-srsselector-div {
   position: absolute;
   top: 2px;
   right: 20px;
 }
-/* line 123, sass/mapbender.template.base.scss */
 .footer .mb-element-srsselector-div select {
   width: 100%;
 }
-/* line 126, sass/mapbender.template.base.scss */
 .footer .mb-element-coordsdisplay-div {
   position: absolute;
   left: 20px;
   top: 5px;
   font-size: 14px;
   color: white;
+}
+
+.ie7 .zoom-prev, .ie7 .zoom-next {
+  display: inline;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.ie7 .zoom-prev, .ie7 .zoom-slider li {
+  float: left;
+}
+
+.ie7 .ui-sortable-helper {
+  left: 0px;
+}
+
+.ie7 .zoom-next {
+  float: right;
+}
+
+.ie7 .zoom-box, .ie7 .zoom-out {
+  clear: both;
+}
+
+.mb-element-zoombar {
+  top: 30px !important;
+  left: 20px !important;
+  z-index: 1000 !important;
 }

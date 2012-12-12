@@ -41,12 +41,17 @@ class WmsInstanceLayer implements InstanceIn {
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    protected $title;
-
+    protected $parent;
+    
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $sublayer;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $title;
     
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -87,7 +92,8 @@ class WmsInstanceLayer implements InstanceIn {
     
 
     public function __construct() {
-        
+        $this->sublayer = array();
+        $this->style = "";
     }
 
 
@@ -126,9 +132,9 @@ class WmsInstanceLayer implements InstanceIn {
     }
 
     /**
-     * Set sublayer
+     * Set sublayer as array of string
      *
-     * @param boolean $sublayer
+     * @param array $sublayer
      * @return WmsInstanceLayer
      */
     public function setSublayer($sublayer)
@@ -137,15 +143,51 @@ class WmsInstanceLayer implements InstanceIn {
     
         return $this;
     }
+    
+    /**
+     * Set sublayer as array of string
+     *
+     * @param string $sublayer
+     * @return WmsInstanceLayer
+     */
+    public function addSublayer($sublayer)
+    {
+        $this->sublayer[] = $sublayer;
+    
+        return $this;
+    }
 
     /**
      * Get sublayer
      *
-     * @return boolean 
+     * @return string 
      */
     public function getSublayer()
     {
         return $this->sublayer;
+    }
+    
+    /**
+     * Set parent
+     *
+     * @param string $parent
+     * @return WmsInstanceLayer
+     */
+    public function setParent($parent)
+    {
+        $this->parent = $parent;
+    
+        return $this;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return string 
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
     
     /**
@@ -399,6 +441,10 @@ class WmsInstanceLayer implements InstanceIn {
     public function getWmslayersource()
     {
         return $this->wmslayersource;
+    }
+    
+    public function __toString(){
+        return (string) $this->getId();
     }
     
     /**

@@ -56,20 +56,17 @@ class Application {
     protected $template;
 
     /**
-     * @ORM\OneToMany(targetEntity="Element", mappedBy="application")
-     *     cascade={"persist" })
+     * @ORM\OneToMany(targetEntity="Element", mappedBy="application", cascade={"persist", "remove"})
      */
     protected $elements;
 
     /**
      * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"persist", "remove"})
-     *      cascade={"persist"})
      */
     protected $layersets;
 
     /**
-     * @ORM\ManyToOne(targetEntity="FOM\UserBundle\Entity\User")
-     *     cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="FOM\UserBundle\Entity\User", cascade={"persist"})
      */
     protected $owner;
 

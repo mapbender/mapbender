@@ -8,6 +8,7 @@ use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\WmsBundle\Component\RequestInformation;
+use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
@@ -825,6 +826,10 @@ class WmsSource extends Source {
         $this->keywords->removeElement($keywords);
     }
     
+    public function __toString(){
+        return (string) $this->getId();
+    }
+    
     /**
      * Create a WmsInstace
      */
@@ -838,6 +843,11 @@ class WmsSource extends Source {
             $instLayer = new WmsInstanceLayer();
             $instLayer->setWmsinstance($instance);
             $instLayer->setWmslayersource($wmslayer);
+            $instLayer->setParent($wmslayer->getParent() !== null ?
+                    $wmslayer->getParent()->getName() : null);
+            foreach ($wmslayer->getSublayer() as $sublayer) {
+                $instLayer->addSublayer($sublayer->getName());
+            }
             $instLayer->setTitle($wmslayer->getTitle());
             // @TODO min max from scaleHint
             $instLayer->setMinScale(
@@ -847,8 +857,8 @@ class WmsSource extends Source {
                     $wmslayer->getScale() !== null ?
                     $wmslayer->getScale()->getMax() : null);
             $queryable = $wmslayer->getQueryable();
-            $instLayer->setGfinfo($queryable === null || !$queryable ? null : $queryable);
-            $instLayer->setGfinfoDefault($queryable === null || !$queryable ? null : $queryable);
+            $instLayer->setGfinfo(Utils::getBool($queryable));
+            $instLayer->setGfinfoDefault(Utils::getBool($queryable));
             $num++;
             $instLayer->setPriority($num);
             $instance->addLayer($instLayer);
