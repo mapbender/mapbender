@@ -22,7 +22,7 @@
         {% for application in applications %}
         <tr data-application-slug="{{ application.slug }}" data-application-id="{{ application.id }}">
             <td>
-                <i class="application-state icon-eye-{% if application.published %}open{% else %}close{% endif %}" title={{ 'Toggle application state quickly' | trans }}></i>
+                <i class="application-state icon-eye-{% if application.published %}open{% else %}close{% endif %}" title="{{ 'Publish / Unpublish application' | trans }}"></i>
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') %}
                 <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) }}" title="{{ 'Edit' | trans }}">{{ application.title }}</a>
             {% else %}
@@ -33,7 +33,7 @@
             <td>{{ application.description }}</td>
             <td>
                 <div class="entity-actions btn-group">
-                    <a class="action-view btn" href="#">{{ 'View' | trans }}</a>
+                    <a class="action-view btn" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}">{{ 'View' | trans }}</a>
                 {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') %}
                     <a class="action-edit btn" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug }) }}" title="{{ 'Edit application' | trans }}">{{ 'Edit' | trans }}</a>
                 {% endif %}

@@ -193,7 +193,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         // Load all layer assets
         foreach($this->getLayersets() as $layerset) {
             foreach($layerset->layerObjects as $layer) {
-                foreach($layer->getAssets($type) as $asset) {
+                $layer_assets = $layer->getAssets();
+                foreach($layer_assets[$type] as $asset) {
                     $this->addAsset($assets, $type, $this->getReference($layer,
                         $asset));
                 }
@@ -429,18 +430,24 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
     public function getLayersets() {
         if($this->layers === null) {
+
             // Set up all elements (by region)
             $this->layers = array();
             foreach($this->entity->getLayersets() as $layerset) {
                 $layerset->layerObjects = array();
                 foreach($layerset->getLayers() as $entity) {
-                    $class = $entity->getClass();
-                    $layer = new $class($this->container, $entity);
-
-                    $layerset->layerObjects[] = $layer;
+                    if($this->getEntity()->getSource() === Entity::SOURCE_YAML) {
+                        $class = $entity->getClass();
+                        $layer = new $class($this->container, $entity);
+                        $layerset->layerObjects[] = $layer;
+                    } else {
+                        //print_r(get_class($entity->getSourceInstance()));die;
+                        $layerset->layerObjects[] = $entity->getSourceInstance();
+                    }
                 }
                 $this->layers[$layerset->getId()] = $layerset;
             }
+
         }
         return $this->layers;
     }

@@ -36,7 +36,8 @@ class ElementController extends Controller {
         }
 
         return array(
-            'elements' => $elements);
+            'elements' => $elements,
+            'region' => $this->get('request')->get('region'));
     }
 
     /**
@@ -59,7 +60,7 @@ class ElementController extends Controller {
         // Get first region (by default)
         $template = $application->getTemplate();
         $regions = $template::getRegions();
-        $region = $regions[0];
+        $region = $this->get('request')->get('region');
 
         $element = $this->getDefaultElement($class, $region);
         $form = $this->getElementForm($element);

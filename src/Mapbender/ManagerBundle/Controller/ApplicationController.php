@@ -86,7 +86,7 @@ class ApplicationController extends Controller {
             $em = $this->getDoctrine()->getEntityManager();
 
             $em->getConnection()->beginTransaction();
-            
+
             $em->persist($application);
             $em->flush();
 
@@ -148,7 +148,7 @@ class ApplicationController extends Controller {
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-            
+
             $em->getConnection()->beginTransaction();
 
             try {
@@ -163,17 +163,17 @@ class ApplicationController extends Controller {
 
                 $this->get('session')->setFlash('notice',
                     'Your application has been updated.');
-            
+
             } catch(\Exception $e) {
-            
+
                 $this->get('session')->setFlash('error',
                     'There was an error trying to save your application.');
                 $em->getConnection()->rollback();
                 $em->close();
-            
+
                 if($this->container->getParameter('kernel.debug'))  {
                     throw($e);
-                }   
+                }
             }
 
             return $this->redirect(
@@ -230,7 +230,7 @@ class ApplicationController extends Controller {
     * Add a new Source to the Layerset
     * @ManagerRoute("/application/{slug}/layerset")
     * @Method("POST")
-    */ 
+    */
     public function addLayerset($slug, Request $request){
         $sourceId   = $request->get("sourceId");
         $source     = $this->getDoctrine()
@@ -250,7 +250,7 @@ class ApplicationController extends Controller {
             $layersets = $application->getLayersets();
             $layerset = $layersets[0];
         }
-        
+
         $layer = new Layer();
         $layer->setTitle($source->getTitle());
         $layer->setLayerset($layerset);
@@ -259,7 +259,7 @@ class ApplicationController extends Controller {
         $layer->setSourceInstance($sourceInstance);
         $layer->setClass($sourceInstance->getClassname());
         $layer->setWeight("0");
-        
+
 
         $layerset->addLayers($layer);
         $em = $this->getDoctrine()->getEntityManager();
@@ -305,7 +305,7 @@ class ApplicationController extends Controller {
                         ->getRepository("MapbenderCoreBundle:Layer")
                         ->find($layerId);
         $em = $this->getDoctrine()->getEntityManager();
-        
+
         $sourceInstance = $layer->getSourceInstance();
         $em->remove($sourceInstance);
 //        $em->flush();
@@ -353,7 +353,7 @@ class ApplicationController extends Controller {
             $aclProvider = $this->get('security.acl.provider');
 
             $em->getConnection()->beginTransaction();
-            
+
             $oid = ObjectIdentity::fromDomainObject($application);
             $aclProvider->deleteAcl($oid);
 

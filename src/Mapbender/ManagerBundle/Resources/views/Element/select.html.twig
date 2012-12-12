@@ -6,7 +6,7 @@
 
 {% for class, meta in elements %}
 <div data-tags="{{ meta.tags | join(',') | lower }}">
-    <a href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': class}) }}">{{ meta.title }}</a>
+    <a href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': class, 'region': region}) }}">{{ meta.title }}</a>
     <div>{{ meta.description | trans }}</div>
 </div>
 {% endfor %}

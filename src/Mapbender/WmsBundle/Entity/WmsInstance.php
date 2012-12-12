@@ -14,7 +14,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
  * WmsInstance class
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
- * 
+ *
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstanse")
  * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
@@ -64,7 +64,7 @@ class WmsInstance extends SourceInstance {
      * @ORM\Column(type="string", nullable=true)
      */
     protected $exceptionformat = null;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
@@ -97,7 +97,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId() {
         return $this->id;
@@ -118,7 +118,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get layers
      *
-     * @return array 
+     * @return array
      */
     public function getLayers() {
         return $this->layers;
@@ -139,7 +139,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle() {
         return $this->title;
@@ -160,7 +160,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get srs
      *
-     * @return array 
+     * @return array
      */
     public function getSrs() {
         return $this->srs;
@@ -181,10 +181,10 @@ class WmsInstance extends SourceInstance {
     /**
      * Get format
      *
-     * @return string 
+     * @return string
      */
     public function getFormat() {
-        return $this->format;
+        return $this->format !== null ? $this->format : 'image/png' ;
     }
 
     /**
@@ -202,7 +202,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get infoformat
      *
-     * @return string 
+     * @return string
      */
     public function getInfoformat() {
         return $this->infoformat;
@@ -223,7 +223,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get exceptionformat
      *
-     * @return string 
+     * @return string
      */
     public function getExceptionformat() {
         return $this->exceptionformat;
@@ -244,7 +244,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get transparency
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getTransparency() {
         return $this->transparency;
@@ -265,7 +265,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get visible
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getVisible() {
         return $this->visible;
@@ -286,7 +286,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get opacity
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getOpacity() {
         return $this->opacity;
@@ -307,7 +307,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get proxy
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getProxy() {
         return $this->proxy;
@@ -328,7 +328,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get tiled
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getTiled() {
         return $this->tiled;
@@ -349,7 +349,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get wmssource
      *
-     * @return WmsSource 
+     * @return WmsSource
      */
     public function getWmssource() {
         return $this->wmssource;
@@ -365,7 +365,7 @@ class WmsInstance extends SourceInstance {
     public function addLayer(WmsInstanceLayer $layer)
     {
         $this->layers->add($layer);
-    
+
         return $this;
     }
 
@@ -378,19 +378,27 @@ class WmsInstance extends SourceInstance {
     {
         $this->layers->removeElement($layers);
     }
-    
+
     public function __toString(){
         return (string) $this->getId();
     }
-    
+
     public function getType(){
-        return "WMS Instance";
+        return "wms";
     }
-    
+
     public function getManagerType(){
         return "wms";
     }
-    
+
+    public function getAssets()
+    {
+        return array(
+            'js' => array(
+                '@MapbenderWmsBundle/Resources/public/mapbender.layer.wms.js'),
+            'css' => array());
+    }
+
     /**
      * Get an Instance Configuration.
      * @return array
@@ -412,16 +420,17 @@ class WmsInstance extends SourceInstance {
         $infoLayers = array_values($infoLayers);
         $configuration = array(
             "title" => $this->title,
-            "url" => $this->wmssource->getOriginUrl(),
-            "title" => $this->title,
-            "visible" => $this->visible,
-            "format" => $this->format,
-            
+            //"url" => $this->wmssource->getOriginUrl(),
+            "url" => $this->wmssource->getOnlineResource(),
+            "title" => $this->getTitle(),
+            "visible" => $this->getVisible(),
+            "format" => $this->getFormat(),
+
             "layers" => $layers,
             "queryLayers" => $infoLayers,
-            
+
             "queryFormat" => $this->infoformat,
-            "transparent" => $this->transparency, //TODO
+            "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
             "opacity" => $this->opacity
         );
         return $configuration;
