@@ -84,15 +84,9 @@ abstract class Layer {
      * Get the assets as an AsseticCollection.
      * Filters can be applied later on with the ensureFilter method.
      *
-     * @param string $type Can be 'css' or 'js' to indicate which assets to dump
-     * @return AsseticCollection
+     * @return array
      */
-    public function getAssets($type) {
-        if($type !== 'css' && $type !== 'js') {
-            throw new \RuntimeException('Asset type \'' . $type .
-                '\' is unknown.');
-        }
-
+    public function getAssets() {
         return array();
     }
 

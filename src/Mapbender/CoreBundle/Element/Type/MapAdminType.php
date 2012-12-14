@@ -54,7 +54,8 @@ class MapAdminType extends AbstractType {
                 'label' => 'OpenLayers image path'
             ))
             ->add('otherSrs', 'text', array(
-                'label' => 'Other Spatial Reference Systems'
+                'label' => 'Other Spatial Reference Systems',
+                'required' => false
             ));
     }
 }

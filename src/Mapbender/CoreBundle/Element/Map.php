@@ -27,7 +27,7 @@ class Map extends Element {
             'layerset' => null,
             'dpi' => 72,
             'srs' => 'EPSG:4326',
-            'otherSrs' => "EPSG:25832",
+            'otherSrs' => array(),
             'units' => 'degrees',
             'extents' => array(
                 'max' => array(-180, -90, 180, 90),
@@ -85,12 +85,14 @@ class Map extends Element {
             }
         }
 
+        // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
         if(!isset($configuration['otherSrs']) || $configuration['otherSrs'] === null){
-            $configuration['otherSrs'] = "";
+            $configuration['otherSrs'] = array();
+        } elseif(is_string($configuration['otherSrs'])) {
+            $configuration['otherSrs'] = explode(',', $configuration['otherSrs']);
         }
-//        $configuration['otherSrs'] = "EPSG:25832";
-//        $srs = "EPSG:25832";
+
         if($srs) {
             foreach (explode(",", $configuration['otherSrs']) as $value) {
                 if(strtoupper($value) === strtoupper($srs)){
@@ -105,6 +107,7 @@ class Map extends Element {
             $configuration = array_merge($configuration,
                 array('targetsrs' => $srs));
         }
+
         return $configuration;
     }
 

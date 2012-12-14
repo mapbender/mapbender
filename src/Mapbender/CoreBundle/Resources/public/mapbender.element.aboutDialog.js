@@ -9,7 +9,7 @@ $.widget("mapbender.mbAboutDialog", {
     _create: function() {
         var self = this;
         var me = $(this.element);
-        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
+        this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
         me.button();
         me.click(function() { self._onClick.call(self); });
     },
@@ -23,37 +23,22 @@ $.widget("mapbender.mbAboutDialog", {
 
     _initDialog: function() {
         var self = this;
-        this.dlg = $('<div></div>')
-            .attr('id', 'mb-about-dialog')
-            .html('Mapbender3 pre')
-            .appendTo($('body'))
-            .dialog({
-                title: 'About Mapbender',
-                autoOpen: false,
-                modal: true
-            });
-
-        /*
-        $.ajax({
-            url: this.elementUrl + 'about',
-            dataType: 'json',
-            context: self,
-            success: self._onAjaxSuccess,
-            error: self._onAjaxError
-        });
-        */
-    },
-
-    _onAjaxSuccess: function(data) {
-        var html = '<ul>';
-        $.each(data, function(key, val) {
-            html += '<li>' + key +  ': ' + val + '</li>';
-        });
-        html += '</ul>';
-        this.dlg.html(html);
-    },
-
-    _onAjaxError: function(XHR, d, f) {
+        if(this.dlg === null) {
+            this.dlg = $('<div></div>')
+                .attr('id', 'mb-about-dialog')
+                .appendTo($('body'))
+                .dialog({
+                    title: 'About Mapbender',
+                    autoOpen: false,
+                    modal: true
+                });
+                $.get(this.elementUrl + 'about', function(data) {
+                    self.dlg.html(data);
+                    self.dlg.dialog('open');
+                });
+        } else {
+            this.dlg.dialog('open');
+        }
     }
 });
 

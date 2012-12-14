@@ -14,14 +14,10 @@ class WmsLayer extends Layer {
         return 'wms';
     }
 
-    public function getAssets($type) {
-        parent::getAssets($type);
-        switch($type) {
-        case 'js':
-            return array('@MapbenderWmsBundle/Resources/public/mapbender.layer.wms.js');
-        case 'css':
-            return array();
-        }
+    public function getAssets() {
+        return array(
+            'js' => array('@MapbenderWmsBundle/Resources/public/mapbender.layer.wms.js'),
+            'css' => array());
     }
 
     public function loadLayer(){

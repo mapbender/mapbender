@@ -34,20 +34,10 @@ class AboutDialog extends Element {
         $response = new Response();
         switch($action) {
             case 'about':
-                $user = $this->get('security.context')->getToken()->getUser();
-                if($user instanceof UserInterface) {
-                    $username = $user->getUsername();
-                } else {
-                    $username = $user;
-                }
+                $about = $this->container->get('templating')
+                    ->render('MapbenderCoreBundle:Element:about_dialog_content.html.twig');
 
-                $about = array(
-                    'version' => '3.0 alpha',
-                    'user' => $username
-                );
-
-                $response->setContent(json_encode($about));
-                $response->headers->set('Content-Type', 'application/json');
+                $response->setContent($about);
                 return $response;
         }
     }

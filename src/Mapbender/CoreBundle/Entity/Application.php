@@ -277,7 +277,7 @@ class Application {
 
     /**
      * Set extra assets
-     * 
+     *
      * @param array $extra_assets
      */
     public function setExtraAssets(array $extra_assets)
@@ -320,14 +320,14 @@ class Application {
             $this->preparedElements = array();
 
             foreach($this->getElements() as $element) {
-                $region = $element->getRegion();
-                if(!array_key_exists($region, $this->preparedElements)) {
-                    $this->preparedElements[$region] = array();
+                $elementRegion = $element->getRegion();
+                if(!array_key_exists($elementRegion, $this->preparedElements)) {
+                    $this->preparedElements[$elementRegion] = array();
                 }
-                $this->preparedElements[$region][] = $element;
+                $this->preparedElements[$elementRegion][] = $element;
             }
 
-            foreach($this->preparedElements as $region => $elements) {
+            foreach($this->preparedElements as $elementRegion => $elements) {
                 usort($elements, function($a, $b) {
                     return $a->getWeight() - $b->getWeight();
                 });

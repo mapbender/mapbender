@@ -6,25 +6,19 @@ $.widget("mapbender.mbSrsSelector", {
         targets: {map: "map", coordsdisplay: "coordinates" }
     },
 
-//    elementUrl: null,
-    
     op_sel: null,
-    
+
     mapWidget: null,
 
     _create: function() {
-//        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
-        $(document).one('mapbender.setupfinished', $.proxy(this._mapbenderSetupFinished, this));
+        this.mapWidget = $('#' + this.options.targets.map);
+        this.mapWidget.one('mbmapready', $.proxy(this._setup, this));
     },
-    
-    _mapbenderSetupFinished: function() {
-        this._init(); 
-    },
-//    
-    _init: function(){
+
+    _setup: function(){
+        console.log("XXX");
         var self = this;
         var me = $(this.element);
-        this.mapWidget = $('#' + self.options.targets.map);
         var mbMap = this.mapWidget.data('mbMap');
         var options = "";
         var allSrs = mbMap.getAllSrs();
@@ -36,7 +30,7 @@ $.widget("mapbender.mbSrsSelector", {
         $(self.element).val(mbMap.map.olMap.getProjection());
         $(self.element).change($.proxy(self._switchSrs, self));
     },
-    
+
     showHidde: function() {
         var self = this;
         var div_id = '#'+$(self.element).attr('id')+'-div';
@@ -49,7 +43,7 @@ $.widget("mapbender.mbSrsSelector", {
             $(div_id).css('display', 'none');
         }
     },
-    
+
     _switchSrs: function(evt) {
         var old = this.mapWidget.data('mbMap').map.olMap.getProjectionObject();
         var dest = new OpenLayers.Projection(this.getSelectedSrs());
@@ -58,7 +52,7 @@ $.widget("mapbender.mbSrsSelector", {
 //        }
         window.console && console.log("switch STS from:"+old.projCode
             +" into:"+dest.projCode, dest.readyToUse);
-        
+
         if(dest.projCode === 'EPSG:4326') {
             dest.proj.units = 'degrees';
         }
@@ -67,7 +61,7 @@ $.widget("mapbender.mbSrsSelector", {
         $('.mb-element-coordsdisplay').mbCoordinatesDisplay("reset");
         return true;
     },
-    
+
     selectSrs: function(crs) {
         if(this.isSrsSupported(crs)){
             $(this.op_sel + '[value="'+crs+'"]').attr('selected',true);
@@ -75,18 +69,18 @@ $.widget("mapbender.mbSrsSelector", {
             return true;
         } return false;
     },
-    
+
     getSelectedSrs: function() {
         return $(this.element).val();
     },
-    
+
     isSrsSupported: function(crs) {
         if(typeof($(this.op_sel + '[value="'+crs+'"]').val()) !== 'undefined'){
             return true;
         }
         return false;
     },
-    
+
     isSrsEnabled: function(crs) {
         if(!this.isSrsSupported(crs))
             return false;
@@ -149,7 +143,7 @@ $.widget("mapbender.mbSrsSelector", {
         }
         return false;
     },
-    
+
     enableOnlySrs: function(crs){
         this.disableAllSrs();
         if($.type(crs) === "string"){
@@ -177,7 +171,7 @@ $.widget("mapbender.mbSrsSelector", {
         }
         return false;
     },
-    
+
     getFullSrsObj: function(crs){
         var result = [];
         if($.type(crs) === "string"){
@@ -197,8 +191,8 @@ $.widget("mapbender.mbSrsSelector", {
                         result.push({name: $(option).val(), title: $(option).text()});
                     }
                 }
-//                
-//                
+//
+//
 //                for(var j = 0; j < crsesArr.length; j++){
 //                    if(option.val() == crsesArr[j]){
 //                        result.push(crsesArr[j]);
@@ -228,14 +222,14 @@ $.widget("mapbender.mbSrsSelector", {
         });
         return true;
     },
-    
+
     disableAllSrs: function(){
         $.each($(this.op_sel), function(idx, val){
             $(this).attr("disabled","disabled");
         });
         return true;
     },
-    
+
     getInnerJoinSrs: function(crsesArr){
         var result = new Array();
 //        for(var j = 0; j < crsesArr.length; j++){
@@ -252,7 +246,7 @@ $.widget("mapbender.mbSrsSelector", {
         });
         return result;
     },
-    
+
     getInnerJoinArrays: function(arr1, arr2){
         var result = [];
         for(var i = 0; i < arr1.lenght; i++){

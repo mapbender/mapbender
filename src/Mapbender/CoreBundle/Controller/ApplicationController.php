@@ -41,7 +41,6 @@ class ApplicationController extends Controller {
             ->generate('mapbender_core_proxy_proxy'));
     }
 
-
     /**
      * Asset controller.
      *
@@ -92,7 +91,7 @@ class ApplicationController extends Controller {
             $parts[] = $asset->dump();
         }
 
-        
+
         $response->headers->set('Content-Type', $mimetypes[$type]);
         $response->setContent(implode("\n", $parts));
         return $response;

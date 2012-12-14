@@ -39,11 +39,11 @@ abstract class SourceInstance implements InstanceIn {
     * @ORM\OneToMany(targetEntity="Layer", mappedBy="sourceInstance", cascade={"persist","refresh", "remove"})
     */
     protected $mblayer;
-    
+
     public function __construct() {
         $this->mblayer = new ArrayCollection();
     }
-    
+
 //    /**
 //     * @var string $alias The source alias
 //     * @ORM\Column(type="string", length=128, nullable=true)
@@ -52,19 +52,19 @@ abstract class SourceInstance implements InstanceIn {
 
     public function getId(){
         return $id;
-    } 
+    }
 
     public function getTitle(){
         return $this->title;
     }
-   
+
     public function setTitle($title){
         $this->title = $title;
-    } 
-    
+    }
+
     public function getMblayer(){
         return $this->mblayer;
-    } 
+    }
 
     public function setMblayer(ArrayCollection $mblayers){
         $this->mblayer = $mblayers;
@@ -79,28 +79,33 @@ abstract class SourceInstance implements InstanceIn {
 //    public function getType(){
 //        return $this->type;
 //    }
-//   
+//
 //    public function setType($type){
 //        $this->type = $type;
-//    } 
-    
+//    }
+
     /**
-     * Get manager type 
+     * Get manager type
      *
-     * @return string 
+     * @return string
      */
     public abstract function getManagerType();
-    
+
     /**
      * Get full class name
-     * 
-     * @return string 
+     *
+     * @return string
      */
     public function getClassname(){
         return get_class();
     }
-    
+
     public abstract function getConfiguration();
-    
+
+    public function getAssets()
+    {
+        return array();
+    }
+
 
 }

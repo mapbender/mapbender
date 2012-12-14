@@ -12,12 +12,12 @@ class GroupType extends AbstractType {
 	public function getName() {
 		return "Group";
 	}
-	
+
 	public function buildForm(FormBuilderInterface $builder,array $options) {
 
 		$builder->add("name","text",array(
 		));
-		
+
 		$builder->add("description","textarea",array(
 			"required" => false
 		));
