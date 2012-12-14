@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
+ * A WmsSource entity presents an OGC WMS.
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
@@ -19,143 +20,170 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
 class WmsSource extends Source {
     
     /**
+     * @var string An origin WMS URL
      * @ORM\Column(type="string", nullable=true)
      */
     protected $originUrl = "";
 
     /**
+     * @var string A WMS name
      * @ORM\Column(type="string", nullable=true)
      */
     protected $name = "";
 
     /**
+     * @var string A WMS version
      * @ORM\Column(type="string", nullable=true)
      */
     protected $version = "";
 
     /**
+     * @var string A WMS online resource
      * @ORM\Column(type="string",nullable=true)
      */
     protected $onlineResource;
 
     /**
+     * @var Contact A contact.
      * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist","remove"})
      */
     protected $contact;
 
     /**
+     * @var string A fees.
      * @ORM\Column(type="text", nullable=true)
      */
     protected $fees = "";
 
     /**
+     * @var string An access constraints.
      * @ORM\Column(type="text",nullable=true)
      */
     protected $accessConstraints = "";
     
     /**
+     * @var integer A limit of the layers
      * @ORM\Column(type="integer",nullable=true)
      */
     protected $layerLimit;
     
     /**
+     * @var integer A maximum width of the GetMap image
      * @ORM\Column(type="integer",nullable=true)
      */
     protected $maxWidth;
 
     /**
+     * @var integer A maximum height of the GetMap image
      * @ORM\Column(type="integer",nullable=true)
      */
     protected $maxHeight;
 
     /**
+     * @var array A list of supported exception formats
      * @ORM\Column(type="array",nullable=true)
      */
     protected $exceptionFormats = array();
 
     /**
+     * @var boolean A SLD support
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $supportSld = false;
 
     /**
+     * @var boolean A user layer
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $userLayer = false;
 
     /**
+     * @var boolean A user layer
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $userStyle = false;
 
     /**
+     * @var boolean A remote WFS
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $remoteWfs = false;
     
     /**
+     * @var boolean A inline feature
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $inlineFeature = false;
     
     /**
+     * @var boolean A remote WCS
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $remoteWcs = false;
 
     /**
+     * @var RequestInformation A request information for the GetCapabilities operation
      * @ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $getCapabilities = null;
 
     /**
+     * @var RequestInformation A request information for the GetMap operation
      * @ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $getMap = null;
 
     /**
+     * @var RequestInformation A request information for the GetFeatureInfo operation
      * @ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $getFeatureInfo = null;
 
     /**
+     * @var RequestInformation A request information for the DescribeLayer operation
      * @ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $describeLayer = null;
 
     /**
+     * @var RequestInformation A request information for the GetLegendGraphic operation
      * @ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $getLegendGraphic = null;
 
     /**
+     * @var RequestInformation A request information for the GetStyles operation
      * @ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $getStyles = null;
 
     /**
+     * @var RequestInformation A request information for the PutStyles operation
      * @ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $putStyles = null;
 
     /**
-     * @ORM\Column(type="text", nullable=true);
+     * @var RequestInformation A request information for the PutStyles operation
+     * @ORM\Column(type="string", nullable=true);
      */
     protected $username = null;
 
     /**
-     * @ORM\Column(type="text", nullable=true);
+     * @var string A password
+     * @ORM\Column(type="string", nullable=true);
      */
     protected $password = null;
 
     /**
+     * @var ArrayCollections A list of WMS layers
      * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="wmssource", cascade={"persist","remove"})
      */
     protected $layers;
@@ -163,12 +191,13 @@ class WmsSource extends Source {
     // FIXME: keywords cascade remove RM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
     
     /**
-     * @var array $keywords the source keyword list
+     * @var ArrayCollections A list of WMS keywords
      * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist"})
      */
     protected $keywords;
     
     /**
+     * @var ArrayCollections A list of WMS instances
      * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="wmssource", cascade={"persist","remove"})
      */
     protected $wmsinstance;

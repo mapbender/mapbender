@@ -8,49 +8,60 @@ namespace Mapbender\CoreBundle\Component;
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
 class BoundingBox {
+    
     /**
+     * @var srs Spatial reference system
+     * 
      * ORM\Column(type="string", nullable=false)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $srs;
+    
     /**
+     * @var minx Minimum X of the Bounding Box
      * ORM\Column(type="float", nullable=false)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $minx;
+    
     /**
+     * @var miny Minimum Y of the Bounding Box
      * ORM\Column(type="float", nullable=false)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $miny;
+    
     /**
+     * @var maxx Maximum X of the Bounding Box
      * ORM\Column(type="float", nullable=false)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $maxx;
+    
     /**
+     * @var maxy Maximum Y of the Bounding Box
      * ORM\Column(type="float", nullable=false)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $maxy;
     
-    /**
-     * Creates a BoundingBox object from parameters
-     * @param array $parameters
-     */
-    public static function create(array $parameters) {
-        try {
-            $bbox = new BoundingBox();
-            $bbox->setSrs($parameters["srs"]);
-            $bbox->setMinx($parameters["minx"]);
-            $bbox->setMaxx($parameters["maxx"]);
-            $bbox->setMiny($parameters["miny"]);
-            $bbox->setMaxy($parameters["maxy"]);
-            return $bbox;
-        } catch(\Exception $e){
-            return null;
-        }
-    }
+//    /**
+//     * Creates a BoundingBox object from parameters
+//     * @param array $parameters
+//     */
+//    public static function create(array $parameters) {
+//        try {
+//            $bbox = new BoundingBox();
+//            $bbox->setSrs($parameters["srs"]);
+//            $bbox->setMinx($parameters["minx"]);
+//            $bbox->setMaxx($parameters["maxx"]);
+//            $bbox->setMiny($parameters["miny"]);
+//            $bbox->setMaxy($parameters["maxy"]);
+//            return $bbox;
+//        } catch(\Exception $e){
+//            return null;
+//        }
+//    }
     
     /**
      * Get srs

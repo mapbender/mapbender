@@ -2,7 +2,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 /**
- * EntityIdentifierIn interface.
+ * EntityIdentifierIn defines the functions for Source, SourceInstance classes.
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */

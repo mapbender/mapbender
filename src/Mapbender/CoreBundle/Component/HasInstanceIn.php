@@ -2,14 +2,15 @@
 namespace Mapbender\CoreBundle\Component;
 
 /**
- * HasInstanceIn interface.
+ * HasInstanceIn interface references SourceInstance.
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
 interface HasInstanceIn {
 
     /**
-     * Creates an Instance.
+     * Creates a SourceInstance.
+     * @return SourceInstance 
      */
     public function createInstance();
 }

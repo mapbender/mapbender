@@ -2,13 +2,15 @@
 namespace Mapbender\CoreBundle\Component;
 
 /**
- * InstanceIn interface.
+ * InstanceIn interface references the mapbender client's configuration.
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
 interface InstanceIn {
+    
     /**
-     * Creates and gets the mapbender configuration.
+     * Creates the mapbender client's configuration.
+     * @return array configuration parameters
      */
     public function getConfiguration();
 }

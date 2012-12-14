@@ -5,16 +5,21 @@ namespace Mapbender\CoreBundle\Component;
 /**
  * The class with utility functions.
  *
- * @deprecated Will be replaced by OWSProxy3
  * @author Paul Schmidt
  */
 class Utils {
     
-    public static function getBool($bool, $nullable = false){
+    /**
+     * Checks the variable $booleanOrNull and returns the boolean or null.
+     * @param type $booleanOrNull
+     * @param type $nullable
+     * @return boolean if $nullable is false, otherwise boolean or null.
+     */
+    public static function getBool($booleanOrNull, $nullable = false){
         if($nullable){
-            return $bool;
+            return $booleanOrNull;
         } else {
-            return $bool === null ? false : $bool;
+            return $booleanOrNull === null ? false : $booleanOrNull;
         }
     }
 }
