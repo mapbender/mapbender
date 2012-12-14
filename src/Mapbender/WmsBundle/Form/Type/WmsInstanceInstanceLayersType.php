@@ -64,9 +64,10 @@ class WmsInstanceInstanceLayersType extends AbstractType
         $builder->add('proxy', 'checkbox', array(
             'label' => 'proxy',
             'required'  => false));
-        $builder->add('opacity', 'checkbox', array(
-            'label' => 'opacity',
-            'required'  => false));
+        $builder->add('opacity', 'choice', array(
+                    'label' => 'opacity',
+                    'choices' => range(0, 100, 10),
+                    'required'  => true)); 
         $builder->add('transparency', 'checkbox', array(
             'label' => 'transparency',
             'required'  => false));

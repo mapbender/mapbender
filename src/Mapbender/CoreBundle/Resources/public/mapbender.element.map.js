@@ -51,14 +51,14 @@ $.widget("mapbender.mbMap", {
         this.allSrs[srs.srsCode] = srs.srsCode;
         this.numSrs++;
         if(this.numSrs == this.allSrsTemp.length){
-            window.console && console.log("all srs initialized");
-            this._oinito();
+//            window.console && console.log("all srs initialized");
+            this._initWidget();
         } else {
             this._loadSrs();
         }
     },
 
-    _oinito: function(){
+    _initWidget: function(){
         //console.log("mbMap init");
         var self = this,
             me = $(this.element);

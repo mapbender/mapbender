@@ -185,6 +185,7 @@ class WmsSource extends Source {
     /**
      * @var ArrayCollections A list of WMS layers
      * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="wmssource", cascade={"persist","remove"})
+     * @ORM\OrderBy({"id" = "asc"})
      */
     protected $layers;
 
@@ -199,6 +200,7 @@ class WmsSource extends Source {
     /**
      * @var ArrayCollections A list of WMS instances
      * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="wmssource", cascade={"persist","remove"})
+     * 
      */
     protected $wmsinstance;
 
@@ -894,9 +896,9 @@ class WmsSource extends Source {
             $queryable = $wmslayer->getQueryable();
             $instLayer->setGfinfo(Utils::getBool($queryable));
             $instLayer->setGfinfoDefault(Utils::getBool($queryable));
-            $num++;
             $instLayer->setPriority($num);
             $instance->addLayer($instLayer);
+            $num++;
         }
         return $instance;
     }

@@ -37,6 +37,7 @@ class WmsInstance extends SourceInstance {
     /**
      * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="wmsinstance", cascade={"refresh", "persist", "remove"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
+     * @ORM\OrderBy({"priority" = "asc"})
      */
     protected $layers; //{ name: 1,   title: Webatlas,   visible: true }
 
@@ -76,9 +77,9 @@ class WmsInstance extends SourceInstance {
     protected $visible = true;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
-    protected $opacity = true;
+    protected $opacity = 100;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -92,6 +93,7 @@ class WmsInstance extends SourceInstance {
 
     public function __construct() {
         $this->layers = new ArrayCollection();
+        $this->opacity = 100;
     }
 
     /**
@@ -274,7 +276,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Set opacity
      *
-     * @param boolean $opacity
+     * @param integer $opacity
      * @return WmsInstance
      */
     public function setOpacity($opacity) {
@@ -286,7 +288,7 @@ class WmsInstance extends SourceInstance {
     /**
      * Get opacity
      *
-     * @return boolean
+     * @return integer
      */
     public function getOpacity() {
         return $this->opacity;
@@ -407,31 +409,26 @@ class WmsInstance extends SourceInstance {
         $layers = array();
         $infoLayers = array();
         foreach ($this->layers as $layer){
-            if($layer->getActive()){
-                $layers[$layer->getPriority()] = $layer->getConfiguration();
+            if($layer->getActive() === true){
+                $layers[] = $layer->getConfiguration();
                 if($layer->getGfinfo() !== null && $layer->getGfinfo()){
-                    $infoLayers[$layer->getPriority()] = $layer->getTitle();
+                    $infoLayers[] = $layer->getTitle();
                 }
             }
         }
-        ksort($layers);
-        $layers = array_values($layers);
-        ksort($infoLayers);
-        $infoLayers = array_values($infoLayers);
         $configuration = array(
             "title" => $this->title,
-            //"url" => $this->wmssource->getOriginUrl(),
-            "url" => $this->wmssource->getOnlineResource(),
+            "url" => $this->wmssource->getGetMap()->getHttpGet(),
             "title" => $this->getTitle(),
             "visible" => $this->getVisible(),
             "format" => $this->getFormat(),
 
-            "layers" => $layers,
-            "queryLayers" => $infoLayers,
+            "layers" => array_reverse ($layers),
+            "queryLayers" => array_reverse ($infoLayers),
 
             "queryFormat" => $this->infoformat,
             "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
-            "opacity" => $this->opacity
+            "opacity" => $this->opacity / 10
         );
         return $configuration;
     }

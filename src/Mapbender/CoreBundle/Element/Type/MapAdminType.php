@@ -47,6 +47,10 @@ class MapAdminType extends AbstractType {
                 'label' => 'Start. extent',
                 'property_path' => '[extents][start]'
             ))
+            ->add('scales', 'text', array(
+                'label' => 'Scales (csv)',
+                'required' => true
+            ))
             ->add('maxResolution', 'text', array(
                 'label' => 'Max. resolution'
             ))

@@ -32,7 +32,6 @@ class WmsInstanceLayerType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $subscriber = new FieldSubscriber($builder->getFormFactory());
         $builder->addEventSubscriber($subscriber);
-        $choices = range(1, $options["num_layers"]);
         $builder->add('title', 'text', array(
                     'required' => false))
             ->add('active', 'checkbox', array(
@@ -57,7 +56,7 @@ class WmsInstanceLayerType extends AbstractType {
                     'required'  => false))
             ->add('priority', 'choice', array(
                     'label' => 'priority',
-                    'choices' => $choices,
+                    'choices' => range(0, $options["num_layers"] - 1, 1),
                     'required'  => true));      
     }
 }

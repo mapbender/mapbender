@@ -82,27 +82,29 @@ class ApplicationYAMLMapper {
         // Then create elements
         foreach($definition['elements'] as $region => $elementsDefinition) {
             $weight = 0;
-            foreach($elementsDefinition as $id => $elementDefinition) {
-                $configuration = $elementDefinition;
-                unset($configuration['class']);
-                unset($configuration['title']);
+            if($elementsDefinition !== null){
+                foreach($elementsDefinition as $id => $elementDefinition) {
+                    $configuration = $elementDefinition;
+                    unset($configuration['class']);
+                    unset($configuration['title']);
 
-                $class = $elementDefinition['class'];
-                $title = array_key_exists('title', $elementDefinition) ?
-                    $elementDefinition['title'] :
-                    $class::getClassTitle();
+                    $class = $elementDefinition['class'];
+                    $title = array_key_exists('title', $elementDefinition) ?
+                        $elementDefinition['title'] :
+                        $class::getClassTitle();
 
-                $element = new Element();
-                $element
-                    ->setId($id)
-                    ->setClass($elementDefinition['class'])
-                    ->setTitle($title)
-                    ->setConfiguration($configuration)
-                    ->setRegion($region)
-                    ->setWeight($weight++)
-                    ->setApplication($application);
-                //TODO: Roles
-                $application->addElements($element);
+                    $element = new Element();
+                    $element
+                        ->setId($id)
+                        ->setClass($elementDefinition['class'])
+                        ->setTitle($title)
+                        ->setConfiguration($configuration)
+                        ->setRegion($region)
+                        ->setWeight($weight++)
+                        ->setApplication($application);
+                    //TODO: Roles
+                    $application->addElements($element);
+                }
             }
         }
 
