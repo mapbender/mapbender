@@ -17,5 +17,6 @@ parameters:
 
     fom:
         server_name:   Mapbender3
+        server_version: 3.0pre2
         server_logo:   bundles/mapbendercore/image/logo_mb3.png
 
