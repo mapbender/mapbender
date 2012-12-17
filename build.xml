@@ -255,8 +255,9 @@
         <phplint>
             <fileset dir=".">
                 <include name="application/src/**/*.php" />
-                <include name="application/vendor/bundles/BKG/**/*.php" />
-                <include name="application/vendor/bundles/MB/**/*.php" />
+                <include name="application/mapbender/**/*.php" />
+                <include name="application/fom/**/*.php" />
+                <include name="application/owsproxy/**/*.php" />
             </fileset>
         </phplint>
     </target>
