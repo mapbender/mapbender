@@ -21,6 +21,11 @@ class AboutDialog extends Element {
     public function getWidgetName() {
         return 'mapbender.mbAboutDialog';
     }
+    
+     public static function getDefaultConfiguration() {
+        return array(
+            "tooltip" => "About");
+    }
 
     public function getAssets() {
         return array(
@@ -47,6 +52,7 @@ class AboutDialog extends Element {
             ->render('MapbenderCoreBundle:Element:about_dialog.html.twig',
                 array(
                     'id' => $this->getId(),
+                    'title' => $this->getTitle(),
                     'configuration' => $this->getConfiguration()));
     }
 }

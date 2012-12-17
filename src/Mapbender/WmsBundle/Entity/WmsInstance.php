@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-//use Mapbender\CoreBundle\Entity\Layer;
+use Mapbender\CoreBundle\Component\InstanceIn;
 
 /**
  * WmsInstance class
@@ -19,7 +19,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
  * @ORM\Table(name="mb_wms_wmsinstanse")
  * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
  */
-class WmsInstance extends SourceInstance {
+class WmsInstance extends SourceInstance implements InstanceIn {
 
 //    /**
 //     *  @ORM\Id

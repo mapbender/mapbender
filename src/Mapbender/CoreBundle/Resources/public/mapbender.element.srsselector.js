@@ -2,7 +2,6 @@
 
 $.widget("mapbender.mbSrsSelector", {
     options: {
-//        crsList:[{name: "EPSG:25832", title: "ETRS89 / UTM Zone 32N"}]
         targets: {map: "map", coordsdisplay: "coordinates" }
     },
 
@@ -11,19 +10,21 @@ $.widget("mapbender.mbSrsSelector", {
     mapWidget: null,
 
     _create: function() {
+        var self = this;
         this.mapWidget = $('#' + this.options.targets.map);
-        this.mapWidget.one('mbmapready', $.proxy(this._setup, this));
+        $(document).one('mapbender.setupfinished', function() {
+            $('#' + self.options.targets.map).mbMap('ready', $.proxy(self._setup, self));
+        });
     },
 
     _setup: function(){
-        console.log("XXX");
         var self = this;
         var me = $(this.element);
         var mbMap = this.mapWidget.data('mbMap');
         var options = "";
         var allSrs = mbMap.getAllSrs();
         for(srs in allSrs){
-            options += '<option value="' + srs + '">' + allSrs[srs] + '</option>';
+            options += '<option value="' + srs + '">' + allSrs[srs].title + '</option>';
         }
         $("#"+me.attr('id')).html(options);
         this.op_sel = "#"+me.attr('id')+" option";
@@ -47,9 +48,6 @@ $.widget("mapbender.mbSrsSelector", {
     _switchSrs: function(evt) {
         var old = this.mapWidget.data('mbMap').map.olMap.getProjectionObject();
         var dest = new OpenLayers.Projection(this.getSelectedSrs());
-//        if(old.projCode == dest.projCode){
-//            return true;
-//        }
         window.console && console.log("switch STS from:"+old.projCode
             +" into:"+dest.projCode, dest.readyToUse);
 
@@ -57,8 +55,7 @@ $.widget("mapbender.mbSrsSelector", {
             dest.proj.units = 'degrees';
         }
         this.mapWidget.mbMap("setMapProjection", dest);
-//        $('#' + this.options.targets.coordsdisplay).mbCoordinatesDisplay("reset");
-        $('.mb-element-coordsdisplay').mbCoordinatesDisplay("reset");
+        $('#' + this.options.targets.coordsdisplay).mbCoordinatesDisplay("reset");
         return true;
     },
 

@@ -1,6 +1,6 @@
 <div id="{{ id }}-div" class="mb-element-coordsdisplay-div">
 {% if configuration.title is defined %}
-    <label for="{{ id }}">{{ configuration.title|trans }}:</label>
+    <label for="{{ id }}">{{ title|trans }}:</label>
 {% endif %}
-    <div id="{{ id }}" class="mb-element mb-element-coordsdisplay"><span></div>
+    <div id="{{ id }}" class="mb-element mb-element-coordsdisplay" title="{{ configuration.tooltip|default(title)|trans }}"><span></div>
 </div>

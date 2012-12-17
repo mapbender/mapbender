@@ -128,7 +128,8 @@ body.mb-activity .mb-element-activityindicator {
 
 .mb-element-coordsdisplay-div {
     position:relative;
-    width: 180px
+    width: 180px;
+    height: 20px;
 }
 
 .mb-element-srsselector-div {

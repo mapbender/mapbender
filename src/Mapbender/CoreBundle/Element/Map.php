@@ -88,17 +88,19 @@ class Map extends Element {
 
         // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
+        
         if(!isset($configuration['otherSrs']) || $configuration['otherSrs'] === null){
             $configuration['otherSrs'] = array();
         } elseif(is_string($configuration['otherSrs'])) {
             $configuration['otherSrs'] = explode(',', $configuration['otherSrs']);
         }
         
-        if(isset($configuration['scales']) && $configuration['scales'] !== null){
+        if(isset($configuration['scales']) && $configuration['scales'] !== null && is_string($configuration['scales'])){
             $configuration['scales'] = explode(",", $configuration['scales']);
-        } else {
-            unset($configuration['scales']);
         }
+//        else {
+//            unset($configuration['scales']);
+//        }
 
         if($srs) {
             foreach (explode(",", $configuration['otherSrs']) as $value) {
@@ -114,7 +116,24 @@ class Map extends Element {
             $configuration = array_merge($configuration,
                 array('targetsrs' => $srs));
         }
-
+        $defSRS = $configuration["srs"];
+        $srsDefs = array();
+        // TEMP START @TODO from database
+        $temp = array(
+            "EPSG:4326" => array("name" => "EPSG:4326", "title" => "WGS 84", "definition" => "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"),
+            "EPSG:31466" => array("name" => "EPSG:31466", "title" => "3-degree Gauss-Kruger zone 2", "definition" => "+proj=tmerc +lat_0=0 +lon_0=6 +k=1 +x_0=2500000 +y_0=0 +ellps=bessel +datum=potsdam +units=m +no_defs"),
+            "EPSG:31467" => array("name" => "EPSG:31467", "title" => "3-degree Gauss-Kruger zone 3", "definition" => "+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +datum=potsdam +units=m +no_defs"),
+            "EPSG:31468" => array("name" => "EPSG:31468", "title" => "3-degree Gauss-Kruger zone 4", "definition" => "+proj=tmerc +lat_0=0 +lon_0=12 +k=1 +x_0=4500000 +y_0=0 +ellps=bessel +datum=potsdam +units=m +no_defs"),
+            "EPSG:25832" => array("name" => "EPSG:25832", "title" => "UTM zone 32N", "definition" => "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs"),
+            "EPSG:25833" => array("name" => "EPSG:25833", "title" => "UTM zone 33N", "definition" => "+proj=utm +zone=33 +ellps=GRS80 +units=m +no_defs"),
+        );
+        $srsDefs[$defSRS] = $temp[$defSRS];
+        foreach($configuration['otherSrs'] as $othersrs){
+            $srsDefs[$othersrs] = $temp[$othersrs];
+        }
+        unset($configuration['otherSrs']);
+        // TEMP END
+        $configuration["srsDefs"] = $srsDefs;
         return $configuration;
     }
 

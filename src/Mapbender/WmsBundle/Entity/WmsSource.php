@@ -10,6 +10,8 @@ use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\CoreBundle\Component\EntityIdentifierIn;
+use Mapbender\CoreBundle\Component\HasInstanceIn;
 
 /**
  * A WmsSource entity presents an OGC WMS.
@@ -17,7 +19,7 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source {
+class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
     
     /**
      * @var string An origin WMS URL

@@ -24,6 +24,7 @@ class Button extends Element {
 
     public static function getDefaultConfiguration() {
         return array(
+            'tooltip' => 'button',
             'target' => null,
             'click' => null,
             'icon' => null,
@@ -46,7 +47,7 @@ class Button extends Element {
         return $this->container->get('templating')
             ->render('MapbenderCoreBundle:Element:button.html.twig', array(
                 'id' => $this->getId(),
-                'label' => $this->getTitle(),
+                'title' => $this->getTitle(),
                 'configuration' => $this->entity->getConfiguration()));
     }
 }

@@ -27,6 +27,7 @@ class Ruler extends Element {
 
     public static function getDefaultConfiguration() {
         return array(
+            'tooltip' => "ruler",
             'type' => 'line');
     }
 
@@ -36,10 +37,11 @@ class Ruler extends Element {
 
     public function render() {
         return $this->container->get('templating')
-            ->render('MapbenderCoreBundle:Element:measure_dialog.html.twig',
-                array(
-                    'id' => $this->getId(),
-                    'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:measure_dialog.html.twig',
+                    array(
+                        'id' => $this->getId(),
+                        'title' => $this->getTitle(),
+                        'configuration' => $this->getConfiguration()));
     }
 }
 

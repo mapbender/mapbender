@@ -38,6 +38,7 @@ class Copyright extends Element {
 
     public static function getDefaultConfiguration() {
         return array(
+            'tooltip' => 'Copyright',
             "copyrigh_text" => "© XXX, 2012",
             "dialog_link" => "Terms of use",
             "dialog_content" => "Terms of use (Content)",
@@ -53,6 +54,7 @@ class Copyright extends Element {
                 ->render('MapbenderCoreBundle:Element:copyright.html.twig',
                         array(
                             'id' => $this->getId(),
+                            'title' => $this->getTitle(),
                             'configuration' => $this->getConfiguration()));
     }
 }

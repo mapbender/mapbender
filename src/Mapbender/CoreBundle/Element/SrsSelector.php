@@ -41,7 +41,7 @@ class SrsSelector extends Element {
     public static function getDefaultConfiguration() {
         return array(
             "targets" => array(
-                "map" => "map",
+                "map" => null,
                 "coordsdisplay" => "coordinates" ));
     }
     
@@ -59,6 +59,7 @@ class SrsSelector extends Element {
                 ->render('MapbenderCoreBundle:Element:srsselector.html.twig',
                         array(
                             'id' => $this->getId(),
+                            "title" => $this->getTitle(),
                             'configuration' => $this->getConfiguration()));
     }
 }

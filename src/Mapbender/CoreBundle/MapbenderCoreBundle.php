@@ -28,14 +28,15 @@ class MapbenderCoreBundle extends MapbenderBundle
         return array(
             'Mapbender\CoreBundle\Element\AboutDialog',
             'Mapbender\CoreBundle\Element\Button',
-            'Mapbender\CoreBundle\Element\FeatureInfo',
-            'Mapbender\CoreBundle\Element\Ruler',
-            'Mapbender\CoreBundle\Element\Map',
-            'Mapbender\CoreBundle\Element\Toc',
-            'Mapbender\CoreBundle\Element\SrsSelector',
-            'Mapbender\CoreBundle\Element\Legend',
+            'Mapbender\CoreBundle\Element\CoordinatesDisplay',
             'Mapbender\CoreBundle\Element\Copyright',
-            'Mapbender\CoreBundle\Element\ScaleSelector');
+            'Mapbender\CoreBundle\Element\FeatureInfo',
+            'Mapbender\CoreBundle\Element\Legend',
+            'Mapbender\CoreBundle\Element\Map',
+            'Mapbender\CoreBundle\Element\Ruler',
+            'Mapbender\CoreBundle\Element\ScaleSelector',
+            'Mapbender\CoreBundle\Element\SrsSelector',
+            'Mapbender\CoreBundle\Element\Toc');
     }
 }
 

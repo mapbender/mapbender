@@ -40,13 +40,15 @@ class CoordinatesDisplay extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'formatoutput' => true,
-            'empty' => 'x= -<br>y= -',
+            'tooltip' => 'coordinates display',
+//            'formatoutput' => true,
+            'empty' => 'x= - y= -',
             'displaystring' => '',
             'prefix' => '',
-            'separator' => '<br/>y= ',
-            'suffix' => '',
-            'target' => null);
+            'separator' => ' y= ',
+//            'suffix' => '',
+            'target' => null
+            );
     }
 
     public function getWidgetName()
@@ -56,9 +58,11 @@ class CoordinatesDisplay extends Element
 
     public function render()
     {
+        $a = $this->getConfiguration();
         return $this->container->get('templating')
             ->render('MapbenderCoreBundle:Element:coordinatesdisplay.html.twig', array(
                 'id' => $this->getId(),
+                'title' => $this->getTitle(),
                 'configuration' => $this->getConfiguration()));
     }
 }

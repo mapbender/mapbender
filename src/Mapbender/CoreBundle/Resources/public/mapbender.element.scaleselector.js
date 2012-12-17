@@ -2,7 +2,7 @@
 
 $.widget("mapbender.mbScaleSelector", {
     options: {
-        target: map
+        target: null
     },
 
     elementUrl: null,
@@ -10,8 +10,10 @@ $.widget("mapbender.mbScaleSelector", {
     _create: function() {
         var self = this;
         var me = $(this.element);
-        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
-        $(document).one('mapbender.setupfinished', $.proxy(this._mapbenderSetupFinished, this));
+//        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
+         $(document).one('mapbender.setupfinished', function() {
+            $('#' + self.option.target).mbMap('ready', $.proxy(self._init, self));
+        });
     },
     
     _init: function(){
@@ -39,10 +41,6 @@ $.widget("mapbender.mbScaleSelector", {
         var map = $('#' + this.options.target).data('mbMap');
         var scale = Math.round(map.map.olMap.getScale());
         $(this.element).val(Math.round(scale));
-    },
-    
-    _mapbenderSetupFinished: function() {
-      this._init(); 
     },
 
     _destroy: $.noop

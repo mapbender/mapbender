@@ -38,8 +38,8 @@ class ScaleSelector extends Element {
     
     public static function getDefaultConfiguration() {
         return array(
-            "target" => "map",
-            "title" => "Scale");
+            "target" => null,
+            "tooltip" => "Scale");
     }
 
     public function getWidgetName() {
@@ -47,12 +47,11 @@ class ScaleSelector extends Element {
     }
 
     public function render() {
-        $id = $this->getId();
-        $conf = $this->getConfiguration();
         return $this->container->get('templating')
                 ->render('MapbenderCoreBundle:Element:scaleselector.html.twig',
                         array(
                             'id' => $this->getId(),
+                            "title" => $this->getTitle(),
                             'configuration' => $this->getConfiguration()));
     }
 }

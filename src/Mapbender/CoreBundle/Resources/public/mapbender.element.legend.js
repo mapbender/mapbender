@@ -15,13 +15,16 @@ $.widget("mapbender.mbLegend", {
         var self = this;
         var me = $(this.element);
         this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
-        this._init(); 
+        $(document).one('mapbender.setupfinished', function() {
+            $('#' + self.options.target).mbMap('ready', $.proxy(self._init, self));
+        });
+//        this._init(); 
 //        $(document).one('mapbender.setupfinished', $.proxy(this._mapbenderSetupFinished, this));
     },
     
-    _mapbenderSetupFinished: function() {
-      this._init(); 
-    },
+//    _mapbenderSetupFinished: function() {
+//      this._init(); 
+//    },
     
     _init: function(){
         var self = this;

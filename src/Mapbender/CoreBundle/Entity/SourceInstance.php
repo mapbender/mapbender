@@ -18,7 +18,7 @@ use Mapbender\CoreBundle\Entity\Layer;
  * ORM\DiscriminatorMap({"mb_core_sourceinstance" = "SourceInstance"})
  */
 
-abstract class SourceInstance implements InstanceIn {
+abstract class SourceInstance {
 
     /**
      * @var integer $id
@@ -100,7 +100,7 @@ abstract class SourceInstance implements InstanceIn {
         return get_class();
     }
 
-    public abstract function getConfiguration();
+//    public abstract function getConfiguration();
 
     public function getAssets()
     {

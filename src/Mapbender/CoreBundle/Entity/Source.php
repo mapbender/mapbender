@@ -18,7 +18,7 @@ use Mapbender\CoreBundle\Component\HasInstanceIn;
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_source" = "Source"})
  */
-abstract class Source implements EntityIdentifierIn, HasInstanceIn {
+abstract class Source {
     /**
      * @var integer $id
      * @ORM\Id
@@ -121,31 +121,31 @@ abstract class Source implements EntityIdentifierIn, HasInstanceIn {
         return $this->alias;
     }
     
-    /**
-     * Get source type
-     *
-     * @return string 
-     */
-    public abstract function getType();
-    
-    /**
-     * Get manager type 
-     *
-     * @return string 
-     */
-    public abstract function getManagertype();
-    
-    /**
-     * Get bundle name
-     * 
-     * @return string 
-     */
-    public abstract function getClassname();
-    
-    /**
-     * Create Instance
-     */
-    public abstract function createInstance();
+//    /**
+//     * Get source type
+//     *
+//     * @return string 
+//     */
+//    public abstract function getType();
+//    
+//    /**
+//     * Get manager type 
+//     *
+//     * @return string 
+//     */
+//    public abstract function getManagertype();
+//    
+//    /**
+//     * Get bundle name
+//     * 
+//     * @return string 
+//     */
+//    public abstract function getClassname();
+//    
+//    /**
+//     * Create Instance
+//     */
+//    public abstract function createInstance();
     
     public function __toString(){
         return (string) $this->id;

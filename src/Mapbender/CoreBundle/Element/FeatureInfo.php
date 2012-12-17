@@ -28,6 +28,13 @@ class FeatureInfo extends Element
     {
         return array('button', 'featureinfo');
     }
+    
+    public static function getDefaultConfiguration()
+    {
+        return array(
+            'tooltip' => 'Feature Info',
+            "target" => null);
+    }
 
     public function getWidgetName()
     {
@@ -54,7 +61,7 @@ class FeatureInfo extends Element
             ->render('MapbenderCoreBundle:Element:button.html.twig', array(
                 'id' => $this->getId(),
                 'configuration' => $configuration,
-                'label' => 'Feature info'));
+                'title' => $this->getTitle()));
     }
 }
 

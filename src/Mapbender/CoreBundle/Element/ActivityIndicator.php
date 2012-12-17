@@ -24,6 +24,7 @@ class ActivityIndicator extends Element {
 
     static function getDefaultConfiguration() {
         return array(
+            'tooltip' => 'background activity',
             'activityClass' => 'mb-activity',
             'ajaxActivityClass' => 'mb-activity-ajax',
             'tileActivityClass' => 'mb-activity-tile');
@@ -45,6 +46,7 @@ class ActivityIndicator extends Element {
              ->render('MapbenderCoreBundle:Element:activityindicator.html.twig',
                  array(
                     'id' => $this->id,
+                    'title' => $this->getTitle(),
                     'configuration' => $this->configuration));
     }
 }
