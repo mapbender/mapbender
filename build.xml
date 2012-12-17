@@ -229,10 +229,7 @@
             <fileset  dir=".">
                 <include name="application/doc/api" />
                 <include name="application/doc/*.html" />
-                <include name="application/web/doc/" />
-                <include name="features/behat.yml" />
                 <include name="artefacts/**" />
-                <include name="application/vendor/**" />
             </fileset>
         </delete>
         <delete dir="artefacts" />
@@ -258,8 +255,9 @@
         <phplint>
             <fileset dir=".">
                 <include name="application/src/**/*.php" />
-                <include name="application/vendor/bundles/BKG/**/*.php" />
-                <include name="application/vendor/bundles/MB/**/*.php" />
+                <include name="application/mapbender/**/*.php" />
+                <include name="application/fom/**/*.php" />
+                <include name="application/owsproxy/**/*.php" />
             </fileset>
         </phplint>
     </target>
