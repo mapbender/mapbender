@@ -19,12 +19,13 @@ use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
 use Mapbender\CoreBundle\Component\Utils;
+use Mapbender\CoreBundle\Component\EntityIdentifierIn;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
  */
-class WmsLayerSource {
+class WmsLayerSource implements EntityIdentifierIn {
 
     /**
      * @var integer $id
@@ -947,17 +948,17 @@ class WmsLayerSource {
         return $this;
     }
     
-//    public function getType(){
-//        return "WMS";
-//    }
-//    
-//    public function getManagerType(){
-//        return "wms";
-//    }
-//    
-//    public function getClassname(){
-//        return get_class();
-//    }
+    public function getType(){
+        return "WMS";
+    }
+    
+    public function getManagerType(){
+        return "wms";
+    }
+    
+    public function getClassname(){
+        return get_class();
+    }
     
     public function __toString(){
         return (string) $this->id;
