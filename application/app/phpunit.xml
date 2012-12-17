@@ -32,6 +32,8 @@
         <whitelist>
             <directory>../src</directory>
             <directory>../mapbender/src</directory>
+            <directory>../owsproxy/src</directory>
+            <directory>../fom/src</directory>
             <exclude>
                 <directory>../src/*/*Bundle/Resources</directory>
                 <directory>../src/*/*Bundle/Tests</directory>
@@ -42,14 +44,22 @@
                 <directory>../mapbender/src/*/Bundle/*Bundle/Resources</directory>
                 <directory>../mapbender/src/*/Bundle/*Bundle/Tests</directory>
                 <file>../mapbender/src/Mapbender/Example.php</file>
+                <directory>../owsproxy/src/*/*Bundle/Resources</directory>
+                <directory>../owsproxy/src/*/*Bundle/Tests</directory>
+                <directory>../owsproxy/src/*/Bundle/*Bundle/Resources</directory>
+                <directory>../owsproxy/src/*/Bundle/*Bundle/Tests</directory>
+                <directory>../fom/src/*/*Bundle/Resources</directory>
+                <directory>../fom/src/*/*Bundle/Tests</directory>
+                <directory>../fom/src/*/Bundle/*Bundle/Resources</directory>
+                <directory>../fom/src/*/Bundle/*Bundle/Tests</directory>
             </exclude>
         </whitelist>
     </filter>
 
-    <!--logging>
+    <logging>
         <log type="coverage-html"   target="../../testresults/coverage" charset="UTF-8" />
         <log type="coverage-clover" target="../../testresults/clover.xml" charset="UTF-8" />
         <log type="junit"           target="../../testresults/junit.xml" logIncompleteSkipped="false" />
-    </logging-->
+    </logging>
 
 </phpunit>
