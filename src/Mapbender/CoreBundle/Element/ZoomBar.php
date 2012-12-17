@@ -38,6 +38,8 @@ EOT;
 
     public static function getDefaultConfiguration() {
         return array(
+            
+            'tooltip' => "",
             'stepSize' => 50,
             'stepByPixel' => false,
             'position' => array(0, 0),
@@ -52,6 +54,7 @@ EOT;
         return $this->container->get('templating')
             ->render('MapbenderCoreBundle:Element:zoombar.html.twig', array(
                 'id' => $this->getId(),
+                "title" => $this->getTitle(),
                 'configuration' => $this->getConfiguration()));
     }
 }

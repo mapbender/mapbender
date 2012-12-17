@@ -36,7 +36,8 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Ruler',
             'Mapbender\CoreBundle\Element\ScaleSelector',
             'Mapbender\CoreBundle\Element\SrsSelector',
-            'Mapbender\CoreBundle\Element\Toc');
+            'Mapbender\CoreBundle\Element\Toc',
+            'Mapbender\CoreBundle\Element\ZoomBar');
     }
 }
 

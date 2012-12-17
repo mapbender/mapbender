@@ -25,7 +25,8 @@ class Toc extends Element {
     public static function getDefaultConfiguration() {
         return array(
             'target' => null,
-            'autoOpen' => true);
+            'autoOpen' => true,
+            'tooltip' => "Table of content");
     }
 
     public function getWidgetName() {
@@ -43,6 +44,7 @@ class Toc extends Element {
         return $this->container->get('templating')
             ->render('MapbenderCoreBundle:Element:toc.html.twig', array(
                 'id' => $this->getId(),
+                "title" => $this->getTitle(),
                 'configuration' => $this->getConfiguration()));
     }
 }
