@@ -229,10 +229,7 @@
             <fileset  dir=".">
                 <include name="application/doc/api" />
                 <include name="application/doc/*.html" />
-                <include name="application/web/doc/" />
-                <include name="features/behat.yml" />
                 <include name="artefacts/**" />
-                <include name="application/vendor/**" />
             </fileset>
         </delete>
         <delete dir="artefacts" />
