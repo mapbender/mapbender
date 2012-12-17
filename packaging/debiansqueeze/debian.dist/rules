@@ -7,5 +7,5 @@ PKGNAME=@@deb.name@@
 
 override_dh_auto_install:
 	mkdir -p $$(pwd)/debian/$(PKGNAME)/usr/share/$(PKGNAME)/
-	cp -r app mapbender doc src vendor web $$(pwd)/debian/$(PKGNAME)/usr/share/$(PKGNAME)/
+	cp -r app mapbender documentation owsproxy fom src vendor web $$(pwd)/debian/$(PKGNAME)/usr/share/$(PKGNAME)/
 
