@@ -230,6 +230,7 @@
                 <include name="application/doc/api" />
                 <include name="application/doc/*.html" />
                 <include name="artefacts/**" />
+                <include name="testresults/**" />
             </fileset>
         </delete>
         <delete dir="artefacts" />
@@ -237,6 +238,9 @@
     </target>
     
     <target name="unittest" depends="lint">
+        <exec command="phpunit -c application/app --process-isolation" passthru="true" checkreturn="false" /> 
+        <!--
+            this doesn't do enough of what I want to do
         <phpunit bootstrap="application/app/bootstrap.php.cache" haltonfailure="true" >
             <formatter type="plain" usefile="false" />
             <batchtest>
@@ -246,6 +250,7 @@
                 </fileset>
             </batchtest>
         </phpunit>
+            -->
     </target>
     
     <target name="test" depends="unittest">
