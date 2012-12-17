@@ -17,7 +17,11 @@ $.widget("mapbender.mbZoomBar", {
         var self = this;
 
         this.mapDiv = $('#' + this.options.target);
-        this.mapDiv.bind('mbmapready', $.proxy(this._setup, this));
+        // FIXME: rework initialization
+        //this.mapDiv.bind('mbmapready', $.proxy(this._setup, this));
+        $(document).one('mapbender.setupfinished', function() {
+            self.mapDiv.mbMap('ready', $.proxy(self._setup, self));
+        });
     },
 
     _setup: function() {

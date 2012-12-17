@@ -11,6 +11,7 @@ $.widget("mapbender.mbToc", $.ui.dialog, {
     map: null,
 
     _create: function() {
+        var self = this;
         var me = $(this.element);
         me.find('div#open-button .button')
             .click($.proxy(this.open, this));
@@ -20,7 +21,11 @@ $.widget("mapbender.mbToc", $.ui.dialog, {
         this._super('_create');
 
         this.mapDiv = $('#' + this.options.target);
-        this.mapDiv.bind('mbmapready', $.proxy(this._setup, this));
+        // FIXME: rework initialization
+        //this.mapDiv.bind('mbmapready', $.proxy(this._setup, this));
+        $(document).one('mapbender.setupfinished', function() {
+            self.mapDiv.mbMap('ready', $.proxy(self._setup, self));
+        });
     },
 
     _setup: function() {
