@@ -171,8 +171,8 @@ class WmsSourceTest extends \PHPUnit_Framework_TestCase {
         $this->entityManager->flush();
         $repo = $this->container->get("doctrine")->getRepository("MapbenderWmsBundle:WmsSource");
         $wms_new = $repo->findOneByName("NAME");
-        $this->assertEquals($wms_new->getLayers()->get(0)->getAttribution()->getTitle(),
-                $wms->getLayers()->get(0)->getAttribution()->getTitle());
+        $this->assertEquals($wms_new->getRootLayer()->getAttribution()->getTitle(),
+                $wms->getRootLayer()->getAttribution()->getTitle());
     }
     
     public function testWmsLayerSourceLatlonBoundingBox() {
@@ -197,8 +197,8 @@ class WmsSourceTest extends \PHPUnit_Framework_TestCase {
         $this->entityManager->flush();
         $repo = $this->container->get("doctrine")->getRepository("MapbenderWmsBundle:WmsSource");
         $wms_new = $repo->findOneByName("NAME");
-        $this->assertEquals($wms_new->getLayers()->get(0)->getLatlonBounds(),
-                $wms->getLayers()->get(0)->getLatlonBounds());
+        $this->assertEquals($wms_new->getRootLayer()->getLatlonBounds(),
+                $wms->getRootLayer()->getLatlonBounds());
     }
     
     public function testWmsLayerSourceBoundingBoxes() {
@@ -232,12 +232,12 @@ class WmsSourceTest extends \PHPUnit_Framework_TestCase {
         $repo = $this->container->get("doctrine")->getRepository("MapbenderWmsBundle:WmsSource");
         $wms_new = $repo->findOneByName("NAME");
         
-        $this->assertEquals($wms_new->getLayers()->get(0)->getBoundingBoxes(),
-                $wms->getLayers()->get(0)->getBoundingBoxes());
-        $this->assertEquals($wms_new->getLayers()->get(0)->getBoundingBoxes()->get(0)->getSrs(),
-                $wms->getLayers()->get(0)->getBoundingBoxes()->get(0)->getSrs());
-        $this->assertEquals($wms_new->getLayers()->get(0)->getBoundingBoxes()->get(1)->getSrs(),
-                $wms->getLayers()->get(0)->getBoundingBoxes()->get(1)->getSrs());
+        $this->assertEquals($wms_new->getRootLayer()->getBoundingBoxes(),
+                $wms->getRootLayer()->getBoundingBoxes());
+        $bboxes_new = $wms_new->getRootLayer()->getBoundingBoxes();
+        $bboxes = $wms->getRootLayer()->getBoundingBoxes();
+        $this->assertEquals($bboxes_new[0]->getSrs(), $bboxes[0]->getSrs());
+        $this->assertEquals($bboxes_new[1]->getSrs(), $bboxes[1]->getSrs());
     }
     
     
@@ -270,12 +270,13 @@ class WmsSourceTest extends \PHPUnit_Framework_TestCase {
         $repo = $this->container->get("doctrine")->getRepository("MapbenderWmsBundle:WmsSource");
         $wms_new = $repo->findOneByName("NAME");
         
-        $this->assertEquals($wms_new->getLayers()->get(0)->getMetadataUrl()->get(0)->getType(),
-                $wms->getLayers()->get(0)->getMetadataUrl()->get(0)->getType());
-        $this->assertEquals($wms_new->getLayers()->get(0)->getMetadataUrl()->get(0)->getOnlineResource()->getHref(),
-                $wms->getLayers()->get(0)->getMetadataUrl()->get(0)->getOnlineResource()->getHref());
-        $this->assertEquals($wms_new->getLayers()->get(0)->getMetadataUrl()->get(1)->getOnlineResource()->getHref(),
-                $wms->getLayers()->get(0)->getMetadataUrl()->get(1)->getOnlineResource()->getHref());
+        $md_new = $wms_new->getRootLayer()->getMetadataUrl();
+        $md = $wms->getRootLayer()->getMetadataUrl();
+        $this->assertEquals($md_new[0]->getType(), $md[0]->getType());
+        $this->assertEquals($md_new[0]->getOnlineResource()->getHref(),
+               $md[0]->getOnlineResource()->getHref());
+        $this->assertEquals($md_new[1]->getOnlineResource()->getHref(),
+                $md[1]->getOnlineResource()->getHref());
     }
     
     public function testWmsLayerSourceIdentfier() {
@@ -301,12 +302,12 @@ class WmsSourceTest extends \PHPUnit_Framework_TestCase {
         $repo = $this->container->get("doctrine")->getRepository("MapbenderWmsBundle:WmsSource");
         $wms_new = $repo->findOneByName("NAME");
         
-        $this->assertEquals($wms_new->getLayers()->get(0)->getIdentifier(),
-                $wms->getLayers()->get(0)->getIdentifier());
-        $this->assertEquals($wms_new->getLayers()->get(0)->getIdentifier()->getValue(),
-                $wms->getLayers()->get(0)->getIdentifier()->getValue());
-        $this->assertEquals($wms_new->getLayers()->get(0)->getIdentifier()->getAuthority()->getUrl(),
-                $wms->getLayers()->get(0)->getIdentifier()->getAuthority()->getUrl());
+        $this->assertEquals($wms_new->getRootLayer()->getIdentifier(),
+                $wms->getRootLayer()->getIdentifier());
+        $this->assertEquals($wms_new->getRootLayer()->getIdentifier()->getValue(),
+                $wms->getRootLayer()->getIdentifier()->getValue());
+        $this->assertEquals($wms_new->getRootLayer()->getIdentifier()->getAuthority()->getUrl(),
+                $wms->getRootLayer()->getIdentifier()->getAuthority()->getUrl());
     }
     
 
