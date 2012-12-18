@@ -457,14 +457,19 @@ class WmsInstanceLayer implements InstanceIn {
             "title" => $this->title,
             "grfinfo" => $this->gfinfo,
             "gfinfo_default" => $this->gfinfo_default,
-            // minScale of OpenLayers = maxScale of WMS,
-            // maxScale of OpenLayers = minScale of WMS
-            "maxScale" => $this->minScale,
-            "minScale" => $this->maxScale,
             "selected" => $this->selected,
             "selected_default" => $this->selected_default,
             "style" => $this->style,
         );
+        
+            // minScale of OpenLayers = maxScale of WMS,
+            // maxScale of OpenLayers = minScale of WMS
+        if($this->minScale !== null){
+            $configuration["maxScale"] = $this->minScale;
+        }
+        if($this->minScale !== null){
+            $configuration["minScale"] = $this->maxScale;
+        }
         return $configuration;
     }
 }

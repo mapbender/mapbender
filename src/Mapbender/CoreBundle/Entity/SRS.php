@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Layerset configuration entity
  *
- * @author Christian Wygoda
+ * @author Paul Schmidt
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_core_srs")
@@ -51,6 +51,16 @@ class SRS {
      */
     public function getId(){
         return $this->id;
+    }
+    
+    /**
+     * Sets the id
+     * @param integer $id
+     * @return \Mapbender\CoreBundle\Entity\SRS
+     */
+    public function setId($id){
+        $this->id = $id;
+        return $this;
     }
     
     /**

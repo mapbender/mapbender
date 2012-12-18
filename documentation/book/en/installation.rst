@@ -55,6 +55,7 @@ Configuring your Mapbender3 installation is made up of the following steps:
 * Copying the bundles' assets to the public web directory
 * Initializing the role system
 * Creating the "root" user
+* Inserting srs parameters
 
 All can be done using the console utility provided by Symfony2, the awesome
 framework Mapbender3 is build upon. There's a mayor caveat though you should
@@ -125,3 +126,10 @@ This will interactively ask all information needed and create the user in the
 database.
 
 Now head over to your installation in your browser and enjoy.
+
+Inserting srs parameters
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Inserting from srs parameters into the database occurs using the command:
+
+    :command:`app/console doctrine:fixtures:load  --append`
