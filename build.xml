@@ -277,4 +277,10 @@
     <target name="submoduleupdate">
         <exec command="git submodule foreach 'git pull || :'" />
     </target>
+
+    <target name="update" >
+        <exec command="git pull" checkreturn="true" passthru="true" />
+        <exec command="git submodule update --init --recursive" checkreturn="true" passthru="true" />
+        <phing target="deps" />
+    </target>
 </project>
