@@ -218,7 +218,7 @@
         <exec command="php composer.phar install" dir="application" passthru="true"/>
     </target>
 
-    <target name="prepare" depends="deps,doc,unittest">
+    <target name="prepare" depends="deps,doc">
         <exec command="application/app/console assets:install application/web/" />
         <exec command="application/app/console assetic:dump --env=prod --no-debug" />
     </target>
@@ -276,5 +276,11 @@
 
     <target name="submoduleupdate">
         <exec command="git submodule foreach 'git pull || :'" />
+    </target>
+
+    <target name="update" >
+        <exec command="git pull" checkreturn="true" passthru="true" />
+        <exec command="git submodule update --init --recursive" checkreturn="true" passthru="true" />
+        <phing target="deps" />
     </target>
 </project>
