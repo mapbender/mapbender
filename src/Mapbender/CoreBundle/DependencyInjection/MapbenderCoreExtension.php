@@ -21,6 +21,9 @@ class MapbenderCoreExtension extends Extension {
         $container->setParameter("mapbender.max_registration_time", intval($config["max_registration_time"]));
         $container->setParameter("mapbender.max_reset_time", intval($config["max_reset_time"]));
 
+        $now = new \DateTime('now');
+        $container->setParameter("mapbender.cache_creation", $now->format('c'));
+
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
     }

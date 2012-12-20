@@ -7,6 +7,7 @@
 namespace Mapbender\CoreBundle\Controller;
 
 use Mapbender\CoreBundle\Component\Application;
+use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -51,7 +52,8 @@ class ApplicationController extends Controller {
      */
     public function assetsAction($slug, $type) {
         $response = new Response();
-        $assets = $this->getApplication($slug)->getAssets($type);
+        $application = $this->getApplication($slug);
+        $assets = $application->getAssets($type);
         $asset_modification_time = new \DateTime();
         $asset_modification_time->setTimestamp($assets->getLastModified());
 
@@ -72,13 +74,22 @@ class ApplicationController extends Controller {
             'css' => 'text/css',
             'js' => 'application/javascript');
 
-        //if(!$this->container->getParameter('kernel.debug')) {
-            //TODO: use max(asset_modification_time, application_update_time)
-            $response->setLastModified($asset_modification_time);
-            if($response->isNotModified($this->get('request'))) {
-                return $response;
-            }
-        //}
+        $application_update_time = new \DateTime();
+        $application_entity = $this->getApplication($slug)->getEntity();
+
+        // Determine last-modified timestamp for both DB- and YAML-based apps
+        if($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
+            $updateTime = max($application->getEntity()->getUpdated(),
+                $asset_modification_time);
+        } else {
+            $cacheUpdateTime = new \DateTime($this->container->getParameter('mapbender.cache_creation'));
+            $updateTime = max($cacheUpdateTime, $asset_modification_time);
+        }
+
+        $response->setLastModified($updateTime);
+        if($response->isNotModified($this->get('request'))) {
+            return $response;
+        }
 
         // @TODO: I'd rather use $assets->dump, but that clones each asset
         // which assigns a new weird targetPath. Gotta check that some time.

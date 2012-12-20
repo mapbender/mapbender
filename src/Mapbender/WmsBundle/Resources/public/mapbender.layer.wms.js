@@ -8,7 +8,7 @@ $.extend(true, Mapbender, { layer: {
             $.each(layerDef.configuration.layers, function(idx, layer) {
                 var layerDef = $.extend({},
                     { visible: true, queryable: false }, layer );
-                if(layerDef.visible) {
+                if(layerDef.visible && typeof layerDef.name === 'string' && layerDef.name.length > 0) {
                     layers.push(layerDef.name);
                 }
                 if(layerDef.queryable) {
