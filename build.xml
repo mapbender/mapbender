@@ -33,6 +33,8 @@
 
     <property name="opensuserpm.sign" >no</property>
 
+    <property name="unittest-js.output">text</property>
+
     <!--
         Custom Task definitions
     -->
@@ -218,7 +220,7 @@
         <exec command="php composer.phar install" dir="application" passthru="true"/>
     </target>
 
-    <target name="prepare" depends="deps,doc,unittest">
+    <target name="prepare" depends="deps,doc">
         <exec command="application/app/console assets:install application/web/" />
         <exec command="application/app/console assetic:dump --env=prod --no-debug" />
     </target>
@@ -237,26 +239,38 @@
         <!-- clean the assets from web! -->
     </target>
     
-    <target name="unittest" depends="lint">
+    <target name="unittest" depends="unittest-php, unittest-js"></target>
+    <target name="unittest-php" depends="lint-php">
         <exec command="phpunit -c application/app --process-isolation" passthru="true" checkreturn="false" /> 
-        <!--
-            this doesn't do enough of what I want to do
-        <phpunit bootstrap="application/app/bootstrap.php.cache" haltonfailure="true" >
-            <formatter type="plain" usefile="false" />
-            <batchtest>
-                <fileset dir="application/">
-                    <include name="src/**/**/*Bundle/Tests/**Test.php" />
-                    <include name="src/**/Bundle/*Bundle/Tests/**Test.php" />
-                </fileset>
-            </batchtest>
-        </phpunit>
-            -->
+    </target>
+    <target name="unittest-js">
+        <property name="unittest-js.root"></property>
+        <foreach param="bundledir-short" absparam="bundledir" target="unittest-js-bundle">
+            <fileset dir="application/mapbender">
+                <include name="application/mapbender/**/*Bundle" />
+            </fileset>
+        </foreach>
+    </target>
+    <target name="unittest-js-bundle" >
+        <php expression="str_replace('/','_','${bundledir}')" returnProperty="bundledir_escaped"/>
+        <property name="testfile" value="/tmp/${bundledir_escaped}-test.js" />
+        <property name="resultfile" value="testresults/${bundledir_escaped}-junit.xml" />
+        <delete file="${testfile}" quiet="yes" />
+        <append destFile="${testfile}" file="test/qunit-head.js" />
+        <append destFile="${testfile}" >
+            <fileset dir="${bundledir}/Tests/Resources/public/">
+                <include name="**/*.js" />
+            </fileset>
+        </append>
+        <append destFile="${testfile}" file="test/qunit-foot.js" />
+        <exec dir="test" command="java -jar ../bin/js.jar ${testfile}"  output="${resultfile}" passthru="true" checkreturn="false" />
+        <delete file="${testfile}" quiet="yes" />
     </target>
     
     <target name="test" depends="unittest">
     </target>
 
-    <target name="lint">
+    <target name="lint-php">
         <phplint>
             <fileset dir=".">
                 <include name="application/src/**/*.php" />
