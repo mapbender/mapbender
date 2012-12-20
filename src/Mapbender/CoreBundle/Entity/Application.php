@@ -90,6 +90,11 @@ class Application {
      */
     protected $screenshotFile;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $updated;
+
     public function __construct() {
         $this->elements = new ArrayCollection();
         $this->layersets = new ArrayCollection();
@@ -313,6 +318,27 @@ class Application {
      */
     public function isPublished() {
         return $this->published;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param DateTime $updated
+     */
+    public function setUpdated(\DateTime $updated)
+    {
+        $this->updated = $updated;
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return DateTime
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
     }
 
     public function getElementsByRegion($region = null) {

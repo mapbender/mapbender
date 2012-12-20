@@ -87,6 +87,8 @@ class ApplicationController extends Controller {
 
             $em->getConnection()->beginTransaction();
 
+            $application->setUpdated(new \DateTime('now'));
+
             $em->persist($application);
             $em->flush();
 
@@ -150,6 +152,8 @@ class ApplicationController extends Controller {
             $em = $this->getDoctrine()->getEntityManager();
 
             $em->getConnection()->beginTransaction();
+            
+            $application->setUpdated(new \DateTime('now'));
 
             try {
 
