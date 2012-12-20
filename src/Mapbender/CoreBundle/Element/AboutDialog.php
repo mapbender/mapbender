@@ -24,7 +24,8 @@ class AboutDialog extends Element {
     
      public static function getDefaultConfiguration() {
         return array(
-            "tooltip" => "About");
+            "tooltip" => "About",
+            "targets" => array());
     }
 
     public function getAssets() {

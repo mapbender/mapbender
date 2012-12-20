@@ -60,19 +60,35 @@ class WmsInstanceLayer implements InstanceIn {
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
+    protected $allowselected = true;
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
     protected $selected = true;
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $selected_default = true;
+    protected $info;
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $gfinfo;
+    protected $allowinfo;
+
+     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $toggle = true;
+    
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $gfinfo_default;
+    protected $allowtoggle = true;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $allowreorder = true;
+    
     /**
      * @ORM\Column(type="float", nullable=true)
      */
@@ -214,6 +230,29 @@ class WmsInstanceLayer implements InstanceIn {
     }
 
     /**
+     * Set allowselected
+     *
+     * @param boolean $allowselected
+     * @return WmsInstanceLayer
+     */
+    public function setAllowselected($allowselected)
+    {
+        $this->allowselected = $allowselected;
+    
+        return $this;
+    }
+
+    /**
+     * Get allowselected
+     *
+     * @return boolean 
+     */
+    public function getAllowselected()
+    {
+        return $this->allowselected;
+    }
+
+    /**
      * Set selected
      *
      * @param boolean $selected
@@ -237,74 +276,114 @@ class WmsInstanceLayer implements InstanceIn {
     }
 
     /**
-     * Set selected_default
+     * Set info
      *
-     * @param boolean $selectedDefault
+     * @param boolean $info
      * @return WmsInstanceLayer
      */
-    public function setSelectedDefault($selectedDefault)
+    public function setInfo($info)
     {
-        $this->selected_default = $selectedDefault;
+        $this->info = $info;
     
         return $this;
     }
 
     /**
-     * Get selected_default
+     * Get info
      *
      * @return boolean 
      */
-    public function getSelectedDefault()
+    public function getInfo()
     {
-        return $this->selected_default;
+        return $this->info;
     }
 
     /**
-     * Set gfinfo
+     * Get toggle
      *
-     * @param boolean $gfinfo
+     * @return boolean $toggle
+     */
+    public function getToggle()
+    {
+        return $this->toggle;
+    }
+
+    /**
+     * Set toggle
+     *
+     * @param string $toggle
+     */
+    public function setToggle($toggle)
+    {
+        $this->toggle = $toggle;
+        return $this;
+    }
+    
+    /**
+     * Set allowinfo
+     *
+     * @param boolean $allowinfo
      * @return WmsInstanceLayer
      */
-    public function setGfinfo($gfinfo)
+    public function setAllowinfo($allowinfo)
     {
-        $this->gfinfo = $gfinfo;
+        $this->allowinfo = $allowinfo;
     
         return $this;
     }
 
     /**
-     * Get gfinfo
+     * Get allowinfo
      *
      * @return boolean 
      */
-    public function getGfinfo()
+    public function getAllowinfo()
     {
-        return $this->gfinfo;
+        return $this->allowinfo;
     }
 
     /**
-     * Set gfinfo_default
+     * Get allowtoggle
      *
-     * @param boolean $gfinfoDefault
-     * @return WmsInstanceLayer
+     * @return boolean $allowtoggle
      */
-    public function setGfinfoDefault($gfinfoDefault)
+    public function getAllowtoggle()
     {
-        $this->gfinfo_default = $gfinfoDefault;
-    
+        return $this->allowtoggle;
+    }
+
+    /**
+     * Set allowtoggle
+     *
+     * @param boolean $allowtoggle
+     */
+    public function setAllowtoggle($allowtoggle)
+    {
+        $this->allowtoggle = $allowtoggle;
         return $this;
     }
-
+    
     /**
-     * Get gfinfo_default
+     * Get allowreorder
      *
-     * @return boolean 
+     * @return boolean $allowreorder
      */
-    public function getGfinfoDefault()
+    public function getAllowreorder()
     {
-        return $this->gfinfo_default;
+        return $this->allowreorder;
     }
 
+    /**
+     * Set allowreorder
+     *
+     * @param boolean $allowreorder
+     */
+    public function setAllowreorder($allowreorder)
+    {
+        $this->allowreorder = $allowreorder;
+        return $this;
+    }
+    
     /**
      * Set minScale
      *
@@ -455,10 +534,17 @@ class WmsInstanceLayer implements InstanceIn {
         $configuration = array(
             "name" => $this->wmslayersource->getName(),
             "title" => $this->title,
-            "grfinfo" => $this->gfinfo,
-            "gfinfo_default" => $this->gfinfo_default,
-            "selected" => $this->selected,
-            "selected_default" => $this->selected_default,
+            
+            "info" => $this->getInfo(),
+            "selected" => $this->getSelected(),
+            "toggle" => $this->getToggle() ? "open" : "closed",
+            "allow" => array(
+                "info" => $this->getAllowinfo(),
+                "selected" => $this->getAllowselected(),
+                "toggle" => $this->getAllowtoggle(),
+                "reorder" => $this->getAllowreorder(),
+            ),
+            
             "style" => $this->style,
         );
         

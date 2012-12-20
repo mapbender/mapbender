@@ -10,6 +10,7 @@ use Mapbender\CoreBundle\Component\Element;
  * @author Christian Wygoda
  */
 class Toc extends Element {
+    
     static public function getClassTitle() {
         return "Table of contents";
     }
@@ -24,6 +25,7 @@ class Toc extends Element {
 
     public static function getDefaultConfiguration() {
         return array(
+            'title: ' => 'Table of Content',
             'target' => null,
             'autoOpen' => true,
             'tooltip' => "Table of content");
@@ -31,6 +33,11 @@ class Toc extends Element {
 
     public function getWidgetName() {
         return 'mapbender.mbToc';
+    }
+    
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\TocAdminType';
     }
 
     public function getAssets() {

@@ -2,7 +2,7 @@
 
 $.widget("mapbender.mbSrsSelector", {
     options: {
-        targets: {map: "map", coordsdisplay: "coordinates" }
+        targets: {map: null, coordinatesdisplay: null }
     },
 
     op_sel: null,
@@ -48,14 +48,16 @@ $.widget("mapbender.mbSrsSelector", {
     _switchSrs: function(evt) {
         var old = this.mapWidget.data('mbMap').map.olMap.getProjectionObject();
         var dest = new OpenLayers.Projection(this.getSelectedSrs());
-        window.console && console.log("switch STS from:"+old.projCode
+        window.console && console.log("switch SRS from:"+old.projCode
             +" into:"+dest.projCode, dest.readyToUse);
 
         if(dest.projCode === 'EPSG:4326') {
             dest.proj.units = 'degrees';
         }
         this.mapWidget.mbMap("setMapProjection", dest);
-        $('#' + this.options.targets.coordsdisplay).mbCoordinatesDisplay("reset");
+        if(this.options.targets.coordinatesdisplay){
+            $('#' + this.options.targets.coordinatesdisplay).mbCoordinatesDisplay("reset");
+        }
         return true;
     },
 

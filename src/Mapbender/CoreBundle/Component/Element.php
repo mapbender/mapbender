@@ -225,7 +225,18 @@ abstract class Element {
      * @return array
      */
     public function getConfiguration() {
-        return $this->entity->getConfiguration();
+        $configuration = $this->entity->getConfiguration();
+        
+        if(isset($configuration["scales"])){
+            // sort scales high to low
+            $scales = preg_split("/\s?,\s?/", $configuration["scales"]);
+            $scales = array_map(
+                    create_function('$value', 'return (int)$value;'),
+                    $scales );
+            arsort($scales, SORT_NUMERIC);
+            $configuration["scales"] = implode(",", $scales);
+        }
+        return $configuration;
     }
 
     /**

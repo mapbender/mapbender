@@ -38,12 +38,21 @@ class WmsInstanceLayerType extends AbstractType {
                         'required' => false))
             ->add('selected', 'checkbox', array(
                         'required' => false))
-            ->add('selected_default', 'checkbox', array(
-                        'required' => false))
-            ->add('gfinfo', 'checkbox', array(
+            ->add('info', 'checkbox', array(
                         'required' => false,
                         'disabled' => true))
-            ->add('gfinfo_default', 'checkbox', array(
+            ->add('toggle', 'checkbox', array(
+                        'required' => false,
+                        'disabled' => true))
+            ->add('allowselected', 'checkbox', array(
+                        'required' => false))
+            ->add('allowinfo', 'checkbox', array(
+                        'required' => false,
+                        'disabled' => true))
+            ->add('allowtoggle', 'checkbox', array(
+                        'required' => false,
+                        'disabled' => true))
+            ->add('allowreorder', 'checkbox', array(
                         'required' => false,
                         'disabled' => true))
             ->add('minScale', 'text', array(

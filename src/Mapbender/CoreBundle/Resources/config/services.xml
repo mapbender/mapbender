@@ -18,6 +18,11 @@
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
         </service>
+        
+        <service id="target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
+            <argument type="service" id="service_container" />
+            <tag name="form.type" alias="target_element"/>
+        </service>
     </services>
 </container>
 

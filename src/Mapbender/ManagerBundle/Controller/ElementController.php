@@ -16,7 +16,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Form\Type\BaseElementType;
+use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
+use Mapbender\CoreBundle\Validator\Constraints\ContainsElementTarget;
+use Mapbender\CoreBundle\Validator\Constraints\ContainsElementTargetValidator;
 
 class ElementController extends Controller {
     /**
@@ -63,7 +66,7 @@ class ElementController extends Controller {
         $region = $this->get('request')->get('region');
 
         $element = $this->getDefaultElement($class, $region);
-        $form = $this->getElementForm($element);
+        $form = $this->getElementForm($application, $element);
 
         return array(
             'form' => $form['form']->createView(),
@@ -84,7 +87,7 @@ class ElementController extends Controller {
         $data = $this->get('request')->get('form');
         $element = $this->getDefaultElement($data['class'], $data['region']);
         $element->setApplication($application);
-        $form = $this->getElementForm($element);
+        $form = $this->getElementForm($application, $element);
         $form['form']->bindRequest($this->get('request'));
 
         if($form['form']->isValid()) {
@@ -123,7 +126,7 @@ class ElementController extends Controller {
                 . $id .'" does not exist.');
         }
 
-        $form = $this->getElementForm($element);
+        $form = $this->getElementForm($application, $element);
 
         return array(
             'form' => $form['form']->createView(),
@@ -150,7 +153,7 @@ class ElementController extends Controller {
                 . $id .'" does not exist.');
         }
 
-        $form = $this->getElementForm($element);
+        $form = $this->getElementForm($application, $element);
         $form['form']->bindRequest($this->get('request'));
 
         if($form['form']->isValid()) {
@@ -255,16 +258,15 @@ class ElementController extends Controller {
      * @param string $class
      * @return dsd
      */
-    private function getElementForm($element)
+    private function getElementForm($application, $element)
     {
         $class = $element->getClass();
-
+        
         // Create base form shared by all elements
         $formType = $this->createFormBuilder($element)
             ->add('title', 'text')
             ->add('class', 'hidden')
             ->add('region', 'hidden');
-
         // Get configuration form, either basic YAML one or special form
         $configurationFormType = $class::getType();
         if($configurationFormType === null) {
@@ -283,7 +285,9 @@ class ElementController extends Controller {
         } else {
             $type = $class::getType();
 
-            $formType->add('configuration', new $type());
+            $formType->add('configuration', new $type(), array(
+                'application' => $application
+            ));
             $formTheme = $class::getFormTemplate();
             $formAssets = $class::getFormAssets();
         }
@@ -304,12 +308,16 @@ class ElementController extends Controller {
     public function getDefaultElement($class, $region)
     {
         $element = new Element();
+        $configuration = $class::getDefaultConfiguration();
+//        if(isset($configuration["targets"])){
+//            unset($configuration["targets"]);
+//        }
         $element
             ->setClass($class)
             ->setRegion($region)
             ->setWeight(0)
             ->setTitle($class::getClassTitle())
-            ->setConfiguration($class::getDefaultConfiguration());
+            ->setConfiguration($configuration);
 
         return $element;
     }

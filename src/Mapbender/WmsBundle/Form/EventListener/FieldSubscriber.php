@@ -33,14 +33,14 @@ class FieldSubscriber implements EventSubscriberInterface
 
         $queryable = $data->getWmslayersource()->getQueryable();
         if($queryable === true){
-            $form->remove('gfinfo');
+            $form->remove('info');
             $form->add($this->factory->createNamed(
-                    'gfinfo', 'checkbox', null, array(
+                    'info', 'checkbox', null, array(
                         'disabled' => false,
                         "required" => false)));
-            $form->remove('gfinfo_default');
+            $form->remove('allowinfo');
             $form->add($this->factory->createNamed(
-                    'gfinfo_default', 'checkbox', null, array(
+                    'allowinfo', 'checkbox', null, array(
                         'disabled' => false,
                         "required" => false)));
         }

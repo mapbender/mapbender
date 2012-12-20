@@ -24,16 +24,22 @@ class Button extends Element {
 
     public static function getDefaultConfiguration() {
         return array(
+            'title' => 'button',
             'tooltip' => 'button',
             'target' => null,
             'click' => null,
             'icon' => null,
-            'label' => true,
+//            'label' => null,
             'group' => null);
     }
 
     public function getWidgetName() {
         return 'mapbender.mbButton';
+    }
+    
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\ButtonAdminType';
     }
 
     public function getAssets() {

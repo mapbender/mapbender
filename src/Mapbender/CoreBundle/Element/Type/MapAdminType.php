@@ -15,6 +15,7 @@ class MapAdminType extends AbstractType {
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
+            'application' => null,
             'available_templates' => array()));
     }
 

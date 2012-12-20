@@ -216,10 +216,10 @@ class RepositoryController extends Controller {
                                 $layer_tmp->getSelected()));
                         $layer->setSelectedDefault(Utils::getBool(
                                 $layer_tmp->getSelectedDefault()));
-                        $layer->setGfinfo(Utils::getBool(
-                                $layer_tmp->getGfinfo(),true));
-                        $layer->setGfinfoDefault(Utils::getBool(
-                                $layer_tmp->getGfinfoDefault(),true));
+                        $layer->setInfo(Utils::getBool(
+                                $layer_tmp->getInfo(),true));
+                        $layer->setAllowinfo(Utils::getBool(
+                                $layer_tmp->getAllowinfo(),true));
                         break;
                     }
                 }

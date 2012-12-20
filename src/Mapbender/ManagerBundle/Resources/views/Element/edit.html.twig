@@ -36,7 +36,9 @@
     {{ form_row(form.region) }}
 
     {{ form_row(form.title) }}
-
+    {% if form.targets is defined %}
+    {{ form_row(form.targets) }}
+    {% endif %}
     <hr/>
 
     {% if theme is defined and theme != '' %}

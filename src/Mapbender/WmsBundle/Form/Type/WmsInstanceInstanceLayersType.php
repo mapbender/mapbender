@@ -35,7 +35,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
             $formats[$value] = $value;
         }
         $builder->add('format', 'choice', array(
-            'label' => 'format',
+//            'label' => 'format',
             'choices' => $formats,
             'required'  => true));
         $arr = $wmsinstance->getWmssource()->getGetFeatureInfo()->getFormats()!== null?
@@ -45,7 +45,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
             $formats[$value] = $value;
         }
         $builder->add('infoformat', 'choice', array(
-            'label' => 'infoformat',
+//            'label' => 'infoformat',
             'choices' => $formats,
             'required'  => true));
         $arr = $wmsinstance->getWmssource()->getExceptionFormats()!== null?
@@ -54,33 +54,57 @@ class WmsInstanceInstanceLayersType extends AbstractType
         foreach ($arr as $value) {
             $formats[$value] = $value;
         }
+        $opacity = array();
+        foreach (range(0, 100, 10) as $value) {
+            $opacity[$value] = $value;
+        }
         $builder->add('exceptionformat', 'choice', array(
-            'label' => 'exceptionformat',
-            'choices' => $formats,
-            'required'  => true));            
-        $builder->add('visible', 'checkbox', array(
-            'label' => 'visible',
-            'required'  => false));
-        $builder->add('proxy', 'checkbox', array(
-            'label' => 'proxy',
-            'required'  => false));
-        $builder->add('opacity', 'choice', array(
-                    'label' => 'opacity',
-                    'choices' => range(0, 100, 10),
-                    'required'  => true)); 
-        $builder->add('transparency', 'checkbox', array(
-            'label' => 'transparency',
-            'required'  => false));
-        $builder->add('tiled', 'checkbox', array(
-            'label' => 'tiled',
-            'required'  => false));
-        $builder->add('layers', 'collection', array(
-           'type' => new WmsInstanceLayerType(),
-            'options' => array(
-                'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
-//                'data' => $wmsinstance
-                'num_layers' => count($wmsinstance->getLayers())
-            )
+//                    'label' => 'exceptionformat',
+                    'choices' => $formats,
+                    'required'  => true))
+                ->add('visible', 'checkbox', array(
+//                    'label' => 'visible',
+                    'required'  => false))
+                ->add('proxy', 'checkbox', array(
+//                    'label' => 'proxy',
+                    'required'  => false))
+                ->add('opacity', 'choice', array(
+//                            'label' => 'opacity',
+                            'choices' => range(0, 100),
+                            'required'  => true))
+                ->add('transparency', 'checkbox', array(
+//                    'label' => 'transparency',
+                    'required'  => false))
+                ->add('tiled', 'checkbox', array(
+//                    'label' => 'tiled',
+                    'required'  => false))
+                ->add('info', 'checkbox', array(
+//                    'label' => 'info',
+                    'required'  => false))
+                ->add('selected', 'checkbox', array(
+//                    'label' => 'selected',
+                    'required'  => false))
+                ->add('toggle', 'choice', array(
+                    'choices' => array("open" => "open", "closed" => "closed"),
+//                    'label' => 'toggle',
+                    'required'  => true))
+                ->add('allowinfo', 'checkbox', array(
+//                    'label' => 'allowinfo',
+                    'required'  => false))
+                ->add('allowselected', 'checkbox', array(
+//                    'label' => 'allowselected',
+                    'required'  => false))
+                ->add('allowtoggle', 'checkbox', array(
+//                    'label' => 'allowtoggle',
+                    'required'  => false))
+                ->add('allowreorder', 'checkbox', array(
+//                    'label' => 'allowreorder',
+                    'required'  => false))
+                ->add('layers', 'collection', array(
+                    'type' => new WmsInstanceLayerType(),
+                    'options' => array(
+                        'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
+                        'num_layers' => count($wmsinstance->getLayers()))
         ));
     }
 }

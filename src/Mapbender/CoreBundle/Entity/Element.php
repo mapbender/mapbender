@@ -195,5 +195,9 @@ class Element {
     public function getApplication() {
         return $this->application;
     }
+    
+    public function __toString() {
+        return (string) $this->id;
+    }
 }
 

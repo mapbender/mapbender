@@ -876,6 +876,7 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
         $instance = new WmsInstance();
         $instance->setWmsSource($this);
         $instance->setTitle($this->getTitle());
+        $instance->setOpacity(100);
         $num = 0;
         $layers = array();
         foreach($this->getLayers() as $wmslayer){
@@ -896,8 +897,11 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
                     $wmslayer->getScale() !== null ?
                     $wmslayer->getScale()->getMax() : null);
             $queryable = $wmslayer->getQueryable();
-            $instLayer->setGfinfo(Utils::getBool($queryable));
-            $instLayer->setGfinfoDefault(Utils::getBool($queryable));
+            $instLayer->setInfo(Utils::getBool($queryable));
+            $instLayer->setAllowinfo(Utils::getBool($queryable));
+            
+//            $instLayer->setInfo(Utils::getBool($queryable));
+//            $instLayer->setAllowinfo(Utils::getBool($queryable));
             $instLayer->setPriority($num);
             $instance->addLayer($instLayer);
             $num++;

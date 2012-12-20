@@ -79,7 +79,7 @@ class WmsInstance extends SourceInstance implements InstanceIn {
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    protected $opacity = 100;
+    protected $opacity;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -90,10 +90,46 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $tiled = false;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $info = true;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $selected = true;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $toggle;
+    
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $allowinfo = true;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $allowselected = true;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $allowtoggle = true;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $allowreorder = true;
 
     public function __construct() {
         $this->layers = new ArrayCollection();
-        $this->opacity = 100;
+        $this->opacity;
     }
 
     /**
@@ -381,6 +417,158 @@ class WmsInstance extends SourceInstance implements InstanceIn {
         $this->layers->removeElement($layers);
     }
 
+    /**
+     * Get info
+     *
+     * @return boolean $info
+     */
+    public function getInfo()
+    {
+        return $this->info;
+    }
+
+    /**
+     * Set info
+     *
+     * @param boolean $info
+     */
+    public function setInfo($info)
+    {
+        $this->info = $info;
+        return $this;
+    }
+
+    /**
+     * Get selected
+     *
+     * @return boolean $selected
+     */
+    public function getSelected()
+    {
+        return $this->selected;
+    }
+
+    /**
+     * Set selected
+     *
+     * @param boolean $selected
+     */
+    public function setSelected($selected)
+    {
+        $this->selected = $selected;
+        return $this;
+    }
+
+    /**
+     * Get toggle
+     *
+     * @return boolean $toggle
+     */
+    public function getToggle()
+    {
+        return $this->toggle;
+    }
+
+    /**
+     * Set toggle
+     *
+     * @param string $toggle
+     */
+    public function setToggle($toggle)
+    {
+        $this->toggle = $toggle;
+        return $this;
+    }
+
+    /**
+     * Get allowinfo
+     *
+     * @return boolean $allowinfo
+     */
+    public function getAllowinfo()
+    {
+        return $this->allowinfo;
+    }
+
+    /**
+     * Set allowinfo
+     *
+     * @param boolean $allowinfo
+     */
+    public function setAllowinfo($allowinfo)
+    {
+        $this->allowinfo = $allowinfo;
+        return $this;
+    }
+
+    /**
+     * Get allowselected
+     *
+     * @return boolean $allowselected
+     */
+    public function getAllowselected()
+    {
+        return $this->allowselected;
+    }
+
+    /**
+     * Set allowselected
+     *
+     * @param boolean $allowselected
+     */
+    public function setAllowselected($allowselected)
+    {
+        $this->allowselected = $allowselected;
+        return $this;
+    }
+
+    /**
+     * Get allowtoggle
+     *
+     * @return boolean $allowtoggle
+     */
+    public function getAllowtoggle()
+    {
+        return $this->allowtoggle;
+    }
+
+    /**
+     * Set allowtoggle
+     *
+     * @param boolean $allowtoggle
+     */
+    public function setAllowtoggle($allowtoggle)
+    {
+        $this->allowtoggle = $allowtoggle;
+        return $this;
+    }
+
+    /**
+     * Get allowreorder
+     *
+     * @return boolean $allowreorder
+     */
+    public function getAllowreorder()
+    {
+        return $this->allowreorder;
+    }
+
+    /**
+     * Set allowreorder
+     *
+     * @param boolean $allowreorder
+     */
+    public function setAllowreorder($allowreorder)
+    {
+        $this->allowreorder = $allowreorder;
+        return $this;
+    }
+    
+    
+    
+    
+    
+
     public function __toString(){
         return (string) $this->getId();
     }
@@ -411,7 +599,7 @@ class WmsInstance extends SourceInstance implements InstanceIn {
         foreach ($this->layers as $layer){
             if($layer->getActive() === true){
                 $layers[] = $layer->getConfiguration();
-                if($layer->getGfinfo() !== null && $layer->getGfinfo()){
+                if($layer->getInfo() !== null && $layer->getInfo()){
                     $infoLayers[] = $layer->getTitle();
                 }
             }
@@ -423,12 +611,23 @@ class WmsInstance extends SourceInstance implements InstanceIn {
             "visible" => $this->getVisible(),
             "format" => $this->getFormat(),
 
-            "layers" => array_reverse ($layers),
-            "queryLayers" => array_reverse ($infoLayers),
-
             "queryFormat" => $this->infoformat,
             "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
-            "opacity" => $this->opacity / 10
+            "opacity" => $this->opacity / 100,
+            
+            "info" => $this->getInfo(),
+            "selected" => $this->getSelected(),
+            "toggle" => $this->getToggle() ? "open" : "closed",
+            "allow" => array(
+                "info" => $this->getAllowinfo(),
+                "selected" => $this->getAllowselected(),
+                "toggle" => $this->getAllowtoggle(),
+                "reorder" => $this->getAllowreorder(),
+            ),
+            
+
+            "layers" => array_reverse ($layers),
+            "queryLayers" => array_reverse ($infoLayers)
         );
         return $configuration;
     }

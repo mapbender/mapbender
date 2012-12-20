@@ -25,30 +25,28 @@ class SrsSelector extends Element {
     public static function getClassTags() {
         return array('spatial', 'reference', 'system', 'selector');
     }
+    
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\SrsSelectorAdminType';
+    }
 
     public function getAssets() {
         return array(
-            'js' => array('mapbender.element.srsselector.js',
-                'proj4js/proj4js-compressed.js',
-//                'proj4js/defs/EPSG4326.js',
-//                'proj4js/defs/EPSG25832.js',
-//                'proj4js/defs/EPSG25833.js',
-                ),
+            'js' => array(
+                'mapbender.element.srsselector.js',
+                'proj4js/proj4js-compressed.js'),
             'css' => array('mapbender.elements.css')
         );
     }
 
     public static function getDefaultConfiguration() {
         return array(
+            "tooltip" => "SRS Selector",
             "targets" => array(
                 "map" => null,
-                "coordsdisplay" => "coordinates" ));
+                "coordinatesdisplay" => null));
     }
-    
-//    public static function getConfiguration() {
-//        $configuration = $this->configuration;
-//        return $configuration;
-//    }
 
     public function getWidgetName() {
         return 'mapbender.mbSrsSelector';

@@ -28,6 +28,11 @@ class CoordinatesDisplay extends Element
     {
         return array('coordinates', 'display', 'mouse', 'position');
     }
+    
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\CoordinatesDisplayAdminType';
+    }
 
     public function getAssets()
     {
@@ -44,7 +49,7 @@ class CoordinatesDisplay extends Element
 //            'formatoutput' => true,
             'empty' => 'x= - y= -',
             'displaystring' => '',
-            'prefix' => '',
+            'prefix' => 'x= ',
             'separator' => ' y= ',
 //            'suffix' => '',
             'target' => null

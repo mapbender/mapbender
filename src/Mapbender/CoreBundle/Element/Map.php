@@ -33,7 +33,7 @@ class Map extends Element {
                 'max' => array(-180, -90, 180, 90),
                 'start' => array(-180, -90, 180, 90)),
             'maxResolution' => 'auto',
-            "scales:" => array(25000000, 10000000,5000000,1000000,500000),
+            "scales" => "25000000,10000000,5000000,1000000,500000",
             'imgPath' => 'bundles/mapbendercore/mapquery/lib/openlayers/img');
     }
 
