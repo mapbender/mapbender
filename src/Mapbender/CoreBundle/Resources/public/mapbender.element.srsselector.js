@@ -19,22 +19,21 @@ $.widget("mapbender.mbSrsSelector", {
 
     _setup: function(){
         var self = this;
-        var me = $(this.element);
         var mbMap = this.mapWidget.data('mbMap');
         var options = "";
         var allSrs = mbMap.getAllSrs();
         for(srs in allSrs){
             options += '<option value="' + srs + '">' + allSrs[srs].title + '</option>';
         }
-        $("#"+me.attr('id')).html(options);
-        this.op_sel = "#"+me.attr('id')+" option";
-        $(self.element).val(mbMap.map.olMap.getProjection());
-        $(self.element).change($.proxy(self._switchSrs, self));
+        $("#"+$(this.element).attr('id')+" select").html(options);
+        this.op_sel = "#"+$(this.element).attr('id')+" select option";
+        $("#"+$(this.element).attr('id')+" select").val(mbMap.map.olMap.getProjection());
+        $("#"+$(this.element).attr('id')+" select").change($.proxy(self._switchSrs, self));
     },
 
     showHidde: function() {
         var self = this;
-        var div_id = '#'+$(self.element).attr('id')+'-div';
+        var div_id = '#'+$(self.element).attr('id');
 
         if($(self.element).css('display') && $(self.element).css('display') == 'none'){
             $(self.element).css('display', 'inline');
@@ -48,8 +47,8 @@ $.widget("mapbender.mbSrsSelector", {
     _switchSrs: function(evt) {
         var old = this.mapWidget.data('mbMap').map.olMap.getProjectionObject();
         var dest = new OpenLayers.Projection(this.getSelectedSrs());
-        window.console && console.log("switch SRS from:"+old.projCode
-            +" into:"+dest.projCode, dest.readyToUse);
+//        window.console && console.log("switch SRS from:"+old.projCode
+//            +" into:"+dest.projCode, dest.readyToUse);
 
         if(dest.projCode === 'EPSG:4326') {
             dest.proj.units = 'degrees';
@@ -70,7 +69,7 @@ $.widget("mapbender.mbSrsSelector", {
     },
 
     getSelectedSrs: function() {
-        return $(this.element).val();
+        return $("#"+$(this.element).attr('id')+" select").val();
     },
 
     isSrsSupported: function(crs) {

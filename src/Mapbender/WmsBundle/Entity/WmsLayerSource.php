@@ -36,19 +36,19 @@ class WmsLayerSource implements EntityIdentifierIn {
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers", cascade={"refresh", "persist"})
+     * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
     protected $wmssource;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="sublayer", cascade={"refresh", "persist"})
+     * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="sublayer")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
      */
     protected $parent = null;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent")
      */
     protected $sublayer;
 

@@ -40,6 +40,11 @@ class FeatureInfo extends Element
     {
         return 'mapbender.mbFeatureInfo';
     }
+    
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\FeatureInfoAdminType';
+    }
 
     public function getAssets()
     {

@@ -84,17 +84,17 @@ class RepositoryController extends Controller {
     }
 
     /**
-     * deletes a WMS
+     * deletes a Source
      * @ManagerRoute("/source/{source}/delete")
      * @Method({"POST"})
     */
     public function deleteAction(Source $source){
-
-        $em = $this->getDoctrine()->getEntityManager();
-        $em->remove($source);
-        $em->flush();
-        $this->get('session')->setFlash('info',"Service deleted");
-        return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$source->getManagertype()];
+        return  $this->forward(
+                $manager['bundle'] . ":" . "Repository:delete",
+                array("sourceId" => $source->getId())
+        );
     }
     
     /**

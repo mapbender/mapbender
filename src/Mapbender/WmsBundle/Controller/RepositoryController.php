@@ -162,6 +162,30 @@ class RepositoryController extends Controller {
         }
         return $this->redirect($this->generateUrl("mapbender_manager_repository_view",array("sourceId"=>$wmssource->getId()), true));
     }
+    
+    /**
+     * deletes a WmsSource
+     * @ManagerRoute("/{sourceId}/delete")
+     * @Method({"GET"})
+    */
+    public function deleteAction($sourceId){
+        $wmssource = $this->getDoctrine()
+                    ->getRepository("MapbenderWmsBundle:WmsSource")
+                    ->find($sourceId);
+        $wmsinstances = $this->getDoctrine()
+                    ->getRepository("MapbenderWmsBundle:WmsInstance")
+                    ->findByWmssource($sourceId);
+        $em = $this->getDoctrine()->getEntityManager();
+        foreach ($wmsinstances as $wmsinstance) {
+            $em->remove($wmsinstance);
+            $em->flush();
+        }
+        $this->removeRecursive($wmssource->getRootlayer(), $em);
+        $em->remove($wmssource);
+        $em->flush();
+        $this->get('session')->setFlash('info',"Service deleted");
+        return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
+    }
 
     /**
      * Recursively remove a nested Layerstructure

@@ -126,13 +126,13 @@ body.mb-activity .mb-element-activityindicator {
     background: url('image/activity.gif');
 }
 
-.mb-element-coordsdisplay-div {
+.mb-element-coordsdisplay {
     position:relative;
     width: 180px;
     height: 20px;
 }
 
-.mb-element-srsselector-div {
+.mb-element-srsselector {
     position:relative;
     width: 200px;
 }

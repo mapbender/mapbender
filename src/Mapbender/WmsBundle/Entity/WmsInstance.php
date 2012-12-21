@@ -29,7 +29,7 @@ class WmsInstance extends SourceInstance implements InstanceIn {
 //    protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="wmsinstance", cascade={"refresh", "persist"})
+     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="wmsinstance", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
     protected $wmssource;

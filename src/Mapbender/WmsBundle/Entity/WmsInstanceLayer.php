@@ -27,13 +27,13 @@ class WmsInstanceLayer implements InstanceIn {
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsInstance", inversedBy="layers", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="WmsInstance", inversedBy="layers", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmsinstance", referencedColumnName="id")
      */
     protected $wmsinstance;
     
     /**
-     * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="id", cascade={"refresh", "persist"})
+     * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="id", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmslayersource", referencedColumnName="id")
      */
     protected $wmslayersource;

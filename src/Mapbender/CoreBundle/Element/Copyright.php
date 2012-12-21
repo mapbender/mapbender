@@ -24,6 +24,11 @@ class Copyright extends Element {
     public static function getClassTags() {
         return array('copyright', 'terms of use');
     }
+    
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\CopyrightAdminType';
+    }
 
     public function getAssets() {
         return array(

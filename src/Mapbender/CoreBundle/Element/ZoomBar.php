@@ -38,8 +38,7 @@ EOT;
 
     public static function getDefaultConfiguration() {
         return array(
-            
-            'tooltip' => "",
+            'tooltip' => null,
             'stepSize' => 50,
             'stepByPixel' => false,
             'position' => array(0, 0),

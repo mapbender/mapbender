@@ -25,8 +25,15 @@ class Ruler extends Element {
             'css' => array('@MapbenderCoreBundle/Resources/public/mapbender.elements.css'));
     }
 
+    
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\RulerAdminType';
+    }
+    
     public static function getDefaultConfiguration() {
         return array(
+            'target' => null,
             'tooltip' => "ruler",
             'type' => 'line');
     }

@@ -25,10 +25,10 @@ class Toc extends Element {
 
     public static function getDefaultConfiguration() {
         return array(
-            'title: ' => 'Table of Content',
+            'title: ' => 'Table of Contents',
             'target' => null,
             'autoOpen' => true,
-            'tooltip' => "Table of content");
+            'tooltip' => "Table of contents");
     }
 
     public function getWidgetName() {

@@ -43,7 +43,12 @@ class Legend extends Element {
             "dialogtitle" => "Legend view",
             "nolegend" => "No legend available");
     }
-
+    
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\LegendAdminType';
+    }
+    
     public function getWidgetName() {
         return 'mapbender.mbLegend';
     }

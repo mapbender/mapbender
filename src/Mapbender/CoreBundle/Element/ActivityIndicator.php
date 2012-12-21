@@ -19,7 +19,7 @@ class ActivityIndicator extends Element {
     }
 
     static function getClassTags() {
-        return array();
+        return array("Activity", "Indicator");
     }
 
     static function getDefaultConfiguration() {
@@ -34,6 +34,11 @@ class ActivityIndicator extends Element {
         return 'mapbender.mbActivityIndicator';
     }
 
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\ActivityIndicatorAdminType';
+    }
+    
     public function getAssets() {
         return array(
             'js' => array('mapbender.element.activityindicator.js'),
@@ -42,12 +47,12 @@ class ActivityIndicator extends Element {
     }
 
      public function render() {
-         return $this->get('templating')
+         return $this->container->get('templating')
              ->render('MapbenderCoreBundle:Element:activityindicator.html.twig',
                  array(
-                    'id' => $this->id,
+                    'id' => $this->getId(),
                     'title' => $this->getTitle(),
-                    'configuration' => $this->configuration));
+                    'configuration' => $this->getConfiguration()));
     }
 }
 

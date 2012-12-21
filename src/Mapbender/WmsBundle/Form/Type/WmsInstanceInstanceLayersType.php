@@ -84,8 +84,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 ->add('selected', 'checkbox', array(
 //                    'label' => 'selected',
                     'required'  => false))
-                ->add('toggle', 'choice', array(
-                    'choices' => array("open" => "open", "closed" => "closed"),
+                ->add('toggle', 'checkbox', array(
 //                    'label' => 'toggle',
                     'required'  => true))
                 ->add('allowinfo', 'checkbox', array(

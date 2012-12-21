@@ -144,15 +144,15 @@ body {
   -moz-box-shadow: #a6a6a6 0px 0px 8px;
   box-shadow: #a6a6a6 0px 0px 8px;
 }
-.footer .mb-element-srsselector-div {
+.footer .mb-element-srsselector {
   position: absolute;
   top: 2px;
   right: 20px;
 }
-.footer .mb-element-srsselector-div select {
+.footer .mb-element-srsselector select {
   width: 100%;
 }
-.footer .mb-element-coordsdisplay-div {
+.footer .mb-element-coordsdisplay {
   position: absolute;
   left: 20px;
   top: 5px;

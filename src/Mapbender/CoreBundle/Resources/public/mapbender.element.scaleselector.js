@@ -17,22 +17,24 @@ $.widget("mapbender.mbScaleSelector", {
     },
     
     _init: function(){
-        var mbMap = $('#' + this.options.target).data('mbMap');
-        var scale = mbMap.map.olMap.getScale();
-        var scales = mbMap.scales();
-        var html = '';
-        $.each(scales, function(idx, val) {
-            val = Math.round(val);
-            html += '<option value="' + val + '">' + val + '</option>';
-        });
-        $(this.element).html(html);
-        $(this.element).change($.proxy(this._zoomToScale, this));
-        $(this.element).val(scale);
-        mbMap.map.olMap.events.register('zoomend', this, $.proxy(this._updateScale, this));
+        if(this.options.target){
+            var mbMap = $('#' + this.options.target).data('mbMap');
+            var scale = mbMap.map.olMap.getScale();
+            var scales = mbMap.scales();
+            var html = '';
+            $.each(scales, function(idx, val) {
+                val = Math.round(val);
+                html += '<option value="' + val + '">' + val + '</option>';
+            });
+            $("#"+$(this.element).attr('id')+" select").html(html);
+            $("#"+$(this.element).attr('id')+" select").change($.proxy(this._zoomToScale, this));
+            $("#"+$(this.element).attr('id')+" select").val(scale);
+            mbMap.map.olMap.events.register('zoomend', this, $.proxy(this._updateScale, this));
+        }
     },
     
     _zoomToScale: function(){
-        var scale = $(this.element).val();
+        var scale = $("#"+$(this.element).attr('id')+" select").val();
         var map = $('#' + this.options.target).data('mbMap');
         map.zoomToScale(scale);
     },
@@ -40,7 +42,7 @@ $.widget("mapbender.mbScaleSelector", {
     _updateScale: function(){
         var map = $('#' + this.options.target).data('mbMap');
         var scale = Math.round(map.map.olMap.getScale());
-        $(this.element).val(Math.round(scale));
+        $("#"+$(this.element).attr('id')+" select").val(Math.round(scale));
     },
 
     _destroy: $.noop

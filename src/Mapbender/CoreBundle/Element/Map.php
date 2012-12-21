@@ -88,12 +88,21 @@ class Map extends Element {
 
         // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
-
-        $allsrs = explode(",", $configuration["srs"] . (strlen(trim($configuration["otherSrs"])) > 0 ? "," . $configuration["otherSrs"] : ""));
+        $allsrs = array($configuration["srs"]);
+        if(isset($configuration["otherSrs"])){
+            if(is_array($configuration["otherSrs"])){
+                $allsrs = array_merge($allsrs, $configuration["otherSrs"]);
+            } else if(is_string($configuration["otherSrs"])
+                    && strlen(trim($configuration["otherSrs"])) > 0){
+                $allsrs = array_merge($allsrs,
+                       preg_split("/\s?,\s?/", $configuration["otherSrs"]));
+            }
+        }
         unset($configuration['otherSrs']);
         $em = $this->container->get("doctrine")->getEntityManager();
         $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
-                . " Where srs.name IN (:name)  ORDER BY srs.id ASC")->setParameter('name', $allsrs);
+                . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
+                ->setParameter('name', $allsrs);
         $srses = $query->getResult();
         foreach ($srses as $srsTemp) {
             $configuration["srsDefs"][$srsTemp->getName()] = array(
@@ -101,12 +110,13 @@ class Map extends Element {
                 "title" => $srsTemp->getTitle(),
                 "definition" => $srsTemp->getDefinition());
         }
-//        $configuration["srsDefs"] = $srsDefs;
 
         if(!isset($configuration['scales'])){
             throw new \RuntimeException('The scales does not defined.');
-        } else if($configuration['scales'] !== null && is_string($configuration['scales'])){
-            $configuration['scales'] = explode(",", $configuration['scales']);
+        } else if(isset($configuration['scales'])
+                && is_string($configuration['scales'])){
+            $configuration['scales'] = preg_split(
+                    "/\s?,\s?/", $configuration['scales']);
         }
 
         if($srs) {

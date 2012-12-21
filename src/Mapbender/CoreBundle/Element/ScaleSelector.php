@@ -36,6 +36,11 @@ class ScaleSelector extends Element {
         );
     }
     
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\ScaleSelectorAdminType';
+    }
+    
     public static function getDefaultConfiguration() {
         return array(
             "target" => null,
