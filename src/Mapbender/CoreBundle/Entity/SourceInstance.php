@@ -106,6 +106,8 @@ abstract class SourceInstance {
     {
         return array();
     }
+    
+    public abstract function getSource();
 
 
 }

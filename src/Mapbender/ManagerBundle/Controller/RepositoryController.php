@@ -30,8 +30,6 @@ class RepositoryController extends Controller {
      * @Template
      */
     public function indexAction($page) {
-//        $sources = $this->getDoctrine()->getEntityManager()
-//                ->findAll("Mapbender\CoreBundle\Entity\Source");
         $em = $this->getDoctrine()->getEntityManager();
         $query = $em->createQuery(
                 "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");

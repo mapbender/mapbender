@@ -39,6 +39,7 @@ EOT;
     public static function getDefaultConfiguration() {
         return array(
             'tooltip' => null,
+            'target' => null,
             'stepSize' => 50,
             'stepByPixel' => false,
             'position' => array(0, 0),
@@ -55,6 +56,11 @@ EOT;
                 'id' => $this->getId(),
                 "title" => $this->getTitle(),
                 'configuration' => $this->getConfiguration()));
+    }
+    
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\ZoomBarAdminType';
     }
 }
 

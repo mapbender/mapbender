@@ -6,6 +6,8 @@
         <table class="table table-striped" id="layerset-list">
             <thead>
                 <tr>
+                    <th>{{ 'SourceId' | trans }}</th>
+                    <th>{{ 'Type' | trans }}</th>
                     <th>{{ 'Title' | trans }}</th>
                     <th>{{ 'Actions' | trans }}</th>
                 </tr>
@@ -13,6 +15,8 @@
             <tbody>
                 {% for layer in layerset.layers %}
                     <tr data-source-id="{{ layer.id }}">
+                        <td>{{ layer.sourceinstance.source.id }}</td>
+                        <td>{{ layer.sourceinstance.source.type }}</td>
                         <td>{{ layer.title }}</td>
                         <td>
                             <div class="entity-actions btn-group">

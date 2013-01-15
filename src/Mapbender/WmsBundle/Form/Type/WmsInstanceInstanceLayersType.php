@@ -70,8 +70,8 @@ class WmsInstanceInstanceLayersType extends AbstractType
                     'required'  => false))
                 ->add('opacity', 'choice', array(
 //                            'label' => 'opacity',
-                            'choices' => range(0, 100),
-                            'required'  => true))
+                    'choices' => $opacity,//range(0, 100),
+                    'required'  => true))
                 ->add('transparency', 'checkbox', array(
 //                    'label' => 'transparency',
                     'required'  => false))
@@ -86,7 +86,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
                     'required'  => false))
                 ->add('toggle', 'checkbox', array(
 //                    'label' => 'toggle',
-                    'required'  => true))
+                    'required'  => false))
                 ->add('allowinfo', 'checkbox', array(
 //                    'label' => 'allowinfo',
                     'required'  => false))

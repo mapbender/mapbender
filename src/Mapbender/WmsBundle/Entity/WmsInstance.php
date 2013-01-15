@@ -16,7 +16,7 @@ use Mapbender\CoreBundle\Component\InstanceIn;
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  *
  * @ORM\Entity
- * @ORM\Table(name="mb_wms_wmsinstanse")
+ * @ORM\Table(name="mb_wms_wmsinstance")
  * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
  */
 class WmsInstance extends SourceInstance implements InstanceIn {
@@ -32,7 +32,7 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="wmsinstance", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
-    protected $wmssource;
+    protected $source;
 
     /**
      * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="wmsinstance", cascade={"refresh", "persist", "remove"})
@@ -378,8 +378,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param WmsSource $wmssource
      * @return WmsInstance
      */
-    public function setWmssource(WmsSource $wmssource = null) {
-        $this->wmssource = $wmssource;
+    public function setSource(WmsSource $wmssource = null) {
+        $this->source = $wmssource;
 
         return $this;
     }
@@ -389,8 +389,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return WmsSource
      */
-    public function getWmssource() {
-        return $this->wmssource;
+    public function getSource() {
+        return $this->source;
     }
 
 
@@ -614,7 +614,7 @@ class WmsInstance extends SourceInstance implements InstanceIn {
             "queryFormat" => $this->infoformat,
             "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
             "opacity" => $this->opacity / 100,
-            
+            "tiled" => $this->tiled,
             "info" => $this->getInfo(),
             "selected" => $this->getSelected(),
             "toggle" => $this->getToggle() ? "open" : "closed",

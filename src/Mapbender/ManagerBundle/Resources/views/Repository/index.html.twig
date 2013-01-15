@@ -6,6 +6,7 @@
 <table class="table table-striped" id="repository-list">
     <thead>
         <tr>
+            <th>{{ 'Id' | trans }}</th>
             <th>{{ 'Type' | trans }}</th>
             <th>{{ 'Title' | trans }}</th>
             <th>{{ 'Alias' | trans }}</th>
@@ -16,6 +17,7 @@
     <tbody>
         {% for source in sources %}
         <tr data-source-id="{{ source.id }}">
+            <td>{{ source.id }}</td>
             <td>{{ source.type }}</td>
             <td>{{ source.title }}</td>
             <td>{{ source.alias }}</td>
