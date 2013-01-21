@@ -42,7 +42,8 @@ parameters:
             layersets:
                 main:
                     osm:
-                        class: Mapbender\WmsBundle\WmsLayer
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Open Street Map
                         url: http://osm.omniscale.net/proxy/service?
                         layers:
@@ -51,7 +52,8 @@ parameters:
                         visible: true
                         baselayer: false
                     mapbender_users:
-                        class: Mapbender\WmsBundle\WmsLayer
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Mapbender Users
                         url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
                         layers:
@@ -67,7 +69,8 @@ parameters:
                         legendgraphic: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS
                 overview:
                     osm_overview:
-                        class: Mapbender\WmsBundle\WmsLayer
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Open Street Map
                         url: http://osm.omniscale.net/proxy/service?
                         layers:
@@ -156,7 +159,8 @@ parameters:
             layersets:
                 main:
                     osm:
-                        class: Mapbender\WmsBundle\WmsLayer
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Open Street Map
                         url: http://osm.omniscale.net/proxy/service?
                         layers:
@@ -165,7 +169,8 @@ parameters:
                         visible: true
                         baselayer: false
                     mapbender_users:
-                        class: Mapbender\WmsBundle\WmsLayer
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Mapbender Users
                         url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
                         layers:
@@ -181,7 +186,8 @@ parameters:
                         legendgraphic: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS
                 overview:
                     osm_overview:
-                        class: Mapbender\WmsBundle\WmsLayer
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Open Street Map
                         url: http://osm.omniscale.net/proxy/service?
                         layers:
@@ -197,10 +203,12 @@ parameters:
                         class: Mapbender\CoreBundle\Element\Button
                         target: toc
                         action: open
+                        icon: featureinfo
                     about:
                         title: About
                         tooltip: Find out more about Mapbender3
                         class: Mapbender\CoreBundle\Element\AboutDialog
+                        icon: featureinfo
                     fi:
                         title: Information
                         tooltip: Information
@@ -213,6 +221,7 @@ parameters:
                         class: Mapbender\CoreBundle\Element\Legend
                         target: map
                         tooltip: Legend
+                        icon: featureinfo
                 content:
                     zoombar:
                         class: Mapbender\CoreBundle\Element\ZoomBar
@@ -264,7 +273,8 @@ parameters:
             layersets:
                 main:
                     osm:
-                        class: Mapbender\WmsBundle\WmsLayer
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Open Street Map
                         url: http://osm.omniscale.net/proxy/service?
                         layers:
@@ -273,7 +283,8 @@ parameters:
                         visible: true
                         baselayer: false
                     mapbender_users:
-                        class: Mapbender\WmsBundle\WmsLayer
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Mapbender Users
                         url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
                         layers:
@@ -291,7 +302,8 @@ parameters:
                         legendgraphic: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS
                 overview:
                     osm_overview:
-                        class: Mapbender\WmsBundle\WmsLayer
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Open Street Map
                         url: http://osm.omniscale.net/proxy/service?
                         layers:
