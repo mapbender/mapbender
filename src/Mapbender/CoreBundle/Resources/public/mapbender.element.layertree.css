@@ -1,0 +1,18 @@
+.mb-element-layertree {
+    font: normal 10pt sans-serif;
+}
+
+.mb-element-layertree li>input[type=checkbox] {
+    margin  : 0;
+    padding : 0;
+}
+
+
+.mb-element-layertree li.queryable>input[type=checkbox] {
+
+}
+
+.mb-element-layertree li>a {
+    text-decoration :   none;
+    font-color: inherit;
+}
