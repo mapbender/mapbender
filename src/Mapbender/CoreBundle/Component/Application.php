@@ -435,14 +435,17 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             $this->layers = array();
             foreach($this->entity->getLayersets() as $layerset) {
                 $layerset->layerObjects = array();
-                foreach($layerset->getLayers() as $entity) {
+                foreach($layerset->getSourceInstances() as $instance) {
                     if($this->getEntity()->getSource() === Entity::SOURCE_YAML) {
-                        $class = $entity->getClass();
-                        $layer = new $class($this->container, $entity);
-                        $layerset->layerObjects[] = $layer;
+//                        $class = $entity->getClass();
+//                        $layer = new $class($this->container, $entity);
+//                        $layerset->layerObjects[] = $layer;
+                        
+                        $layerset->layerObjects[] = $instance;
                     } else {
-                        //print_r(get_class($entity->getSourceInstance()));die;
-                        $layerset->layerObjects[] = $entity->getSourceInstance();
+//                        //print_r(get_class($entity->getSourceInstance()));die;
+//                        $layerset->layerObjects[] = $instance->getSourceInstance();
+                        $layerset->layerObjects[] = $instance;
                     }
                 }
                 $this->layers[$layerset->getId()] = $layerset;

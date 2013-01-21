@@ -44,19 +44,16 @@ class WmsInstanceLayerType extends AbstractType {
                 'required' => false,
                 'disabled' => true))
             ->add('toggle', 'checkbox', array(
-                'required' => false,
-                'disabled' => true))
+                'required' => false))
             ->add('allowselected', 'checkbox', array(
                 'required' => false))
             ->add('allowinfo', 'checkbox', array(
                 'required' => false,
                 'disabled' => true))
             ->add('allowtoggle', 'checkbox', array(
-                'required' => false,
-                'disabled' => true))
+                'required' => false))
             ->add('allowreorder', 'checkbox', array(
-                'required' => false,
-                'disabled' => true))
+                'required' => false))
             ->add('minScale', 'text', array(
                 'required' => false))
             ->add('maxScale', 'text', array(
@@ -64,10 +61,10 @@ class WmsInstanceLayerType extends AbstractType {
             ->add('style', 'choice', array(
                 'label' => 'style',
                 'choices' => array(),
-                'required'  => false))
-            ->add('priority', 'choice', array(
-                'label' => 'priority',
-                'choices' => range(0, $options["num_layers"] - 1, 1),
-                'required'  => true));      
+                'required'  => false));
+//            ->add('priority', 'choice', array(
+//                'label' => 'priority',
+//                'choices' => range(0, $options["num_layers"] - 1, 1),
+//                'required'  => false));      
     }
 }

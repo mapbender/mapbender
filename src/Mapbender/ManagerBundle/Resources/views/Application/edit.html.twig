@@ -3,12 +3,13 @@
 {% block title %}{{ application.title }}{% endblock %}
 
 {% block manager_css %}
+<link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/style/style.css') }}" >
 {% endblock %}
 
 {% block manager_js %}
 <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/edit-source.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/edit.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
@@ -37,6 +38,7 @@
         <table class="table table-striped" id="repository-list">
             <thead>
                 <tr>
+                    <th>{{ 'SourceId' | trans }}</th>
                     <th>{{ 'Type' | trans }}</th>
                     <th>{{ 'Title' | trans }}</th>
                     <th>{{ 'Alias' | trans }}</th>
@@ -47,6 +49,7 @@
             <tbody>
                 {% for source in sources %}
                 <tr data-source-id="{{ source.id }}">
+                    <td>{{ source.id }}</td>
                     <td>{{ source.type }}</td>
                     <td>{{ source.title }}</td>
                     <td>{{ source.alias }}</td>

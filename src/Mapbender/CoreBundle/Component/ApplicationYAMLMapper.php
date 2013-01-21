@@ -9,7 +9,7 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Entity\Layer;
+//use Mapbender\CoreBundle\Entity\Layer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -125,19 +125,25 @@ class ApplicationYAMLMapper {
             $weight = 0;
             foreach($layerDefinitions as $id => $layerDefinition) {
                 $configuration = $layerDefinition;
+                $class = $configuration['class'];
                 unset($configuration['class']);
                 unset($configuration['title']);
+                $instance = new $class();
+                $instance->setId($id)
+                        ->setTitle($layerDefinition['title']);
+                $instance->setConfiguration($configuration)
+                        ->setWeight($weight++)
+                        ->setLayerset($layerset);
+//                $layer = new Layer();
+//                $layer
+//                    ->setId($id)
+//                    ->setClass($layerDefinition['class'])
+//                    ->setTitle($layerDefinition['title'])
+//                    ->setConfiguration($configuration)
+//                    ->setWeight($weight++)
+//                    ->setLayerset($layerset);
 
-                $layer = new Layer();
-                $layer
-                    ->setId($id)
-                    ->setClass($layerDefinition['class'])
-                    ->setTitle($layerDefinition['title'])
-                    ->setConfiguration($configuration)
-                    ->setWeight($weight++)
-                    ->setLayerset($layerset);
-
-                $layerset->addLayers($layer);
+                $layerset->addInstance($instance);
             }
             $application->addLayersets($layerset);
         }

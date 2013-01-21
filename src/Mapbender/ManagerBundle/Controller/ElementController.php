@@ -92,6 +92,14 @@ class ElementController extends Controller {
 
         if($form['form']->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
+            $query = $em->createQuery(
+                    "SELECT e FROM MapbenderCoreBundle:Element e"
+                    ." WHERE e.region=:reg AND e.application=:app");
+            $query->setParameters(array(
+                "reg" => $element->getRegion(),
+                "app" => $element->getApplication()->getId()));
+            $elements = $query->getResult();
+            $element->setWeight(count($elements) + 1);
             $em->persist($element);
             $em->flush();
 
@@ -226,6 +234,23 @@ class ElementController extends Controller {
 
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
+            $query = $em->createQuery(
+                    "SELECT e FROM MapbenderCoreBundle:Element e"
+                    ." WHERE e.region=:reg AND e.application=:app"
+                    ." AND e.weight>=:min ORDER BY e.weight ASC");
+            $query->setParameters(array(
+                "reg" => $element->getRegion(),
+                "app" => $element->getApplication()->getId(),
+                "min" => $element->getWeight()));
+            $elements = $query->getResult();
+            foreach ($elements as $elm) {
+                if($elm->getId() !== $element->getId()){
+                    $elm->setWeight($elm->getWeight() - 1);
+                }
+            }
+            foreach ($elements as $elm) {
+                $em->persist($elm);
+            }
             $em->remove($element);
             $em->flush();
 
@@ -240,6 +265,111 @@ class ElementController extends Controller {
                 'element' => $element,
                 'form' => $this->createDeleteForm($id)->createView());
         }
+    }
+    
+    /**
+     * Delete element
+     *
+     * @ManagerRoute("application/element/{id}/priority")
+     * @Method("POST")
+     */
+    public function priorityAction($id)
+    {
+        $element = $this->getDoctrine()
+            ->getRepository('MapbenderCoreBundle:Element')
+            ->findOneById($id);
+
+        if(!$element) {
+            throw $this->createNotFoundException('The element with the id "'
+                . $id .'" does not exist.');
+        }
+        $number = $this->get("request")->get("number");
+        $newregion = $this->get("request")->get("region");
+        if(intval($number) === $element->getWeight()){
+            return new Response(json_encode(array(
+                'error' => '',
+                'result' => 'ok')),
+                    200,
+                    array('Content-Type' => 'application/json'));
+        }
+        if($element->getRegion() === $newregion){
+            $em = $this->getDoctrine()->getEntityManager();
+            $query = $em->createQuery(
+                    "SELECT e FROM MapbenderCoreBundle:Element e"
+                    ." WHERE e.region=:reg AND e.application=:app"
+                    ." AND e.weight>=:min AND e.weight<=:max"
+                    ." ORDER BY e.weight ASC");
+            $query->setParameters(array(
+                "reg" => $newregion,
+                "app" => $element->getApplication()->getId(),
+                "min" => $element->getWeight() < $number ? $element->getWeight() : $number,
+                "max" => $element->getWeight() > $number ? $element->getWeight() : $number));
+            $elements = $query->getResult();
+            $asc = $element->getWeight() < $number;
+            foreach ($elements as $elm) {
+                if($elm->getId() === $element->getId()){
+                    $elm->setWeight($number);
+                } else {
+                    if($asc){
+                        $elm->setWeight($elm->getWeight() - 1);
+                    } else {
+                        $elm->setWeight($elm->getWeight() + 1);
+                    }
+                }
+            }
+            foreach ($elements as $elm) {
+                $em->persist($elm);
+            }
+            $em->flush();
+        } else {
+            // handle old region
+            $em = $this->getDoctrine()->getEntityManager();
+            $query = $em->createQuery(
+                    "SELECT e FROM MapbenderCoreBundle:Element e"
+                    ." WHERE e.region=:reg AND e.application=:app"
+                    ." AND e.weight>=:min ORDER BY e.weight ASC");
+            $query->setParameters(array(
+                "reg" => $element->getRegion(),
+                "app" => $element->getApplication()->getId(),
+                "min" => $element->getWeight()));
+            $elements = $query->getResult();
+            foreach ($elements as $elm) {
+                if($elm->getId() !== $element->getId()){
+                    $elm->setWeight($elm->getWeight() - 1);
+                }
+            }
+            foreach ($elements as $elm) {
+                $em->persist($elm);
+            }
+            $em->flush();
+            // handle new region
+            $query = $em->createQuery(
+                    "SELECT e FROM MapbenderCoreBundle:Element e"
+                    ." WHERE e.region=:reg AND e.application=:app"
+                    ." AND e.weight>=:min ORDER BY e.weight ASC");
+            $query->setParameters(array(
+                "reg" => $newregion,
+                "app" => $element->getApplication()->getId(),
+                "min" => $number));
+            $elements = $query->getResult();
+            foreach ($elements as $elm) {
+                if($elm->getId() !== $element->getId()){
+                    $elm->setWeight($elm->getWeight() + 1);
+                }
+            }
+            foreach ($elements as $elm) {
+                $em->persist($elm);
+            }
+            $em->flush();
+            $element->setWeight($number);
+            $element->setRegion($newregion);
+            $em->persist($element);
+            $em->flush();
+        }
+        return new Response(json_encode(array(
+            'error' => '',
+            'result' => 'ok')), 200, array(
+                'Content-Type' => 'application/json'));
     }
 
     /**

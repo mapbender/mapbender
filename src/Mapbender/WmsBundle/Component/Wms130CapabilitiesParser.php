@@ -380,12 +380,12 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
             foreach ($tempList as $item) {
                 $subwmslayer = $this->parseLayer($wms, new WmsLayerSource(), $item);
                 $subwmslayer->setParent($wmslayer);
-                $subwmslayer->setWmsSource($wms);
+                $subwmslayer->setSource($wms);
                 $wmslayer->addSublayer($subwmslayer);
                 $wms->addLayer($subwmslayer);
             }
         }
-        $wmslayer->setWmsSource($wms);
+        $wmslayer->setSource($wms);
         return $wmslayer;
     }
 }

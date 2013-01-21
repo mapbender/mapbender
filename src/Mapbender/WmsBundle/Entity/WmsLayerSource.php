@@ -39,7 +39,7 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
-    protected $wmssource;
+    protected $source;
 
     /**
      * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="sublayer")
@@ -212,8 +212,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param $wmssource
      * @return WmsSource 
      */
-    public function setWmssource(WmsSource $wmssource) {
-        $this->wmssource = $wmssource;
+    public function setSource(WmsSource $wmssource) {
+        $this->source = $wmssource;
         return $this;
     }
     
@@ -222,8 +222,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return WmsSource 
      */
-    public function getWmssource() {
-        return $this->wmssource;
+    public function getSource() {
+        return $this->source;
     }
 
     /**

@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\HasInstanceIn;
 use Mapbender\CoreBundle\Component\InstanceIn;
 
-use Mapbender\CoreBundle\Entity\Layer;
+//use Mapbender\CoreBundle\Entity\Layer;
 
 /**
  * @author Karim Malhas
@@ -34,24 +34,31 @@ abstract class SourceInstance {
      */
     protected $title;
 
+//    /**
+//    * @var SourceInstance
+//    * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="sourceInstance", cascade={"persist","refresh"})
+//    * @ORM\JoinColumn(name="layerset", referencedColumnName="id")
+//    */
+    
+    
     /**
-    * @var SourceInstance
-    * @ORM\OneToMany(targetEntity="Layer", mappedBy="sourceInstance", cascade={"persist","refresh", "remove"})
-    */
-    protected $mblayer;
+     * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="instances", cascade={"persist","refresh"})
+     * @ORM\JoinColumn(name="layerset", referencedColumnName="id")
+     */
+    protected $layerset;
+    
+    /**
+     * @var integer $weight The sorting weight for display
+     * @ORM\Column(type="integer")
+     */
+    protected $weight;
 
     public function __construct() {
-        $this->mblayer = new ArrayCollection();
+        
     }
 
-//    /**
-//     * @var string $alias The source alias
-//     * @ORM\Column(type="string", length=128, nullable=true)
-//     */
-//    protected $type;
-
     public function getId(){
-        return $id;
+        return $this->id;
     }
 
     public function getTitle(){
@@ -62,35 +69,6 @@ abstract class SourceInstance {
         $this->title = $title;
     }
 
-    public function getMblayer(){
-        return $this->mblayer;
-    }
-
-    public function setMblayer(ArrayCollection $mblayers){
-        $this->mblayer = $mblayers;
-        return $this;
-    }
-    public function addMblayer(Layer $mblayer){
-        $this->mblayer->add($mblayer);
-        return $this;
-    }
-
-    public abstract function getType();
-//    public function getType(){
-//        return $this->type;
-//    }
-//
-//    public function setType($type){
-//        $this->type = $type;
-//    }
-
-    /**
-     * Get manager type
-     *
-     * @return string
-     */
-    public abstract function getManagerType();
-
     /**
      * Get full class name
      *
@@ -100,14 +78,89 @@ abstract class SourceInstance {
         return get_class();
     }
 
-//    public abstract function getConfiguration();
+//    
 
     public function getAssets()
     {
         return array();
     }
     
+    /**
+     * Set weight
+     *
+     * @param integer $weight
+     */
+    public function setWeight($weight) {
+        $this->weight = $weight;
+        return $this;
+    }
+
+    /**
+     * Get weight
+     *
+     * @return integer
+     */
+    public function getWeight() {
+        return $this->weight;
+    }
+    
+    
+    
+    /**
+     *  Set the layerset
+     * @param Layerset $layerset Layerset
+     * @return Sourceinstance
+     */
+    public function setLayerset($layerset)
+    {
+        $this->layerset = $layerset;
+        return $this;
+    }
+    
+    /**
+     *  Get the layerset
+     * @return Layerset
+     */
+    public function getLayerset()
+    {
+        $this->layerset;
+    }
+    /**
+     * Get type
+     *
+     * @return string
+     */
+    public abstract function getType();
+
+    /**
+     * Get manager type
+     *
+     * @return string
+     */
+    public abstract function getManagerType();
+    
+    /**
+     * Get instance source 
+     * @return InstanceSource
+     */
     public abstract function getSource();
+    
+    /**
+     * Set id
+     * @param integer $id id
+     */
+    public abstract function setId($id);
+    
+    /**
+     * Set configuration of the source instance
+     * @param array $configuration configuration of the source instance
+     */
+    public abstract function setConfiguration($configuration);
+    
+    /**
+     *  Get configuration of the source instance
+     */
+    public abstract function getConfiguration();
 
 
 }

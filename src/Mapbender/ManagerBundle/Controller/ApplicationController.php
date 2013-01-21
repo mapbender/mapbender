@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Entity\Layer;
+//use Mapbender\CoreBundle\Entity\Layer;
 
 //FIXME: make this work without an explicit import
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -107,7 +107,8 @@ class ApplicationController extends Controller {
 
         return array(
             'application' => $application,
-            'form' => $form->createView());
+            'form' => $form->createView(),
+            'form_name' => $form->getName());
     }
 
     /**
@@ -255,74 +256,67 @@ class ApplicationController extends Controller {
             $layerset = $layersets[0];
         }
 
-        $layer = new Layer();
-        $layer->setTitle($source->getTitle());
-        $layer->setLayerset($layerset);
         $sourceInstance = $source->createInstance();
-        $layer->setConfiguration($sourceInstance->getConfiguration());
-        $layer->setSourceInstance($sourceInstance);
-        $layer->setClass($sourceInstance->getClassname());
-        $layer->setWeight("0");
+        $sourceInstance->setLayerset($layerset);
+        $sourceInstance->setWeight($layerset->getInstances()->count());
 
 
-        $layerset->addLayers($layer);
+        $layerset->addInstance($sourceInstance);
         $em = $this->getDoctrine()->getEntityManager();
         $em->persist($application);
         $em->persist($layerset);
-        $em->persist($layer);
+        
+//        $sourceInstance->setLayerset($layerset);
         $em->persist($sourceInstance);
         $em->flush();
 
         return $this->redirect(
             $this->generateUrl(
                 "mapbender_manager_application_edit",
-                array("slug" => $slug)
-            )
+                array("slug" => $slug))."#layersets"
         );
     }
 
     /**
-     * Confirm removal of a layer
-     * @ManagerRoute("/application/{slug}/layer/{layerId}")
+     * Confirm removal of a source instance
+     * @ManagerRoute("/application/{slug}/instance/{instanceId}")
      * @Method("GET")
-     * @Template("MapbenderManagerBundle:Application:deleteLayer.html.twig")
+     * @Template("MapbenderManagerBundle:Application:deleteInstance.html.twig")
     */
-    public function confirmLayerDelete($slug, $layerId ){
-        $layer = $this->getDoctrine()
-                        ->getRepository("MapbenderCoreBundle:Layer")
-                        ->find($layerId);
+    public function confirmInstanceDelete($slug, $instanceId ){
+        $instance = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:SourceInstance")
+                        ->find($instanceId);
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         return array(
             'application' => $application,
-            'layer' => $layer,
-            'form'  => $this->createDeleteForm($layer->getId())->createView()
+            'instance' => $instance,
+            'form'  => $this->createDeleteForm($instance->getId())->createView()
         );
     }
     /**
-     * Delete a layer from a layerset
-     * @ManagerRoute("/application/{slug}/layer/{layerId}")
+     * Delete a source instance from a layerset
+     * @ManagerRoute("/application/{slug}/instance/{instanceId}")
      * @Method("POST")
-     * @Template("MapbenderManagerBundle:Application:deleteLayer.html.twig")
+     * @Template("MapbenderManagerBundle:Application:deleteInstance.html.twig")
     */
-    public function layerDelete($slug, $layerId ){
-        $layer = $this->getDoctrine()
-                        ->getRepository("MapbenderCoreBundle:Layer")
-                        ->find($layerId);
+    public function instanceDelete($slug, $instanceId ){
+        $instance = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:SourceInstance")
+                        ->find($instanceId);
         $em = $this->getDoctrine()->getEntityManager();
 
-        $sourceInstance = $layer->getSourceInstance();
-        $em->remove($sourceInstance);
-//        $em->flush();
-        $em->remove($layer);
+//        $sourceInstance = $layer->getSourceInstance();
+//        $em->remove($sourceInstance);
+////        $em->flush();
+        $em->remove($instance);
         $em->flush();
         $this->get('session')->setFlash('notice',
-             'Your Layer has been deleted with all Instances.');
+             'Your Source Instance has been deleted.');
         return $this->redirect(
             $this->generateUrl('mapbender_manager_application_edit',
-            array(
-                "slug" => $slug
-            )
-        ));
+                    array("slug" => $slug))."#layersets"
+        );
     }
 
     /**

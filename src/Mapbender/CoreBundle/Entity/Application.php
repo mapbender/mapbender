@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Applicaton entity
@@ -12,6 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  *
  * @ORM\Entity
+ * @UniqueEntity("title")
+ * @UniqueEntity("slug")
  * @ORM\Table(name="mb_core_application")
  * @ORM\HasLifecycleCallbacks
  */
@@ -57,6 +60,7 @@ class Application {
 
     /**
      * @ORM\OneToMany(targetEntity="Element", mappedBy="application", cascade={"persist", "remove"})
+     * @ORM\OrderBy({"weight" = "asc"})
      */
     protected $elements;
 

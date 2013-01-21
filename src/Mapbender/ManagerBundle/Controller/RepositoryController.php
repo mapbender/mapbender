@@ -97,13 +97,13 @@ class RepositoryController extends Controller {
     
     /**
      * 
-     * @ManagerRoute("/application/{slug}/instance/{layerId}")
+     * @ManagerRoute("/application/{slug}/instance/{instanceId}")
      */ 
-    public function instanceAction($slug, $layerId){
-        $mblayer = $this->getDoctrine()
-                        ->getRepository("MapbenderCoreBundle:Layer")
-                        ->find($layerId);
-        $sourceInst = $mblayer->getSourceInstance();
+    public function instanceAction($slug, $instanceId){
+        $sourceInst = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:SourceInstance")
+                        ->find($instanceId);
+//        $sourceInst = $mblayer->getSourceInstance();
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
         return  $this->forward(
@@ -111,5 +111,42 @@ class RepositoryController extends Controller {
                 array("slug" => $slug, "instanceId" => $sourceInst->getId())
         );
     }
-
+    
+    /**
+     * 
+     * @ManagerRoute("/application/{slug}/instance/{layersetId}/weight/{instanceId}")
+     */ 
+    public function instanceWeightAction($slug, $layersetId, $instanceId){
+        $sourceInst = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:SourceInstance")
+                        ->find($instanceId);
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$sourceInst->getManagertype()];
+        return  $this->forward(
+                $manager['bundle'] . ":" . "Repository:instanceweight",
+                array("slug" => $slug,
+                    "layersetId" => $layersetId,
+                    "instanceId" => $sourceInst->getId())
+        );
+    }
+    
+    /**
+     * 
+     * @ManagerRoute("/application/{slug}/instanceLayer/{instanceId}/weight/{instLayerId}")
+     */ 
+    public function instanceLayerWeightAction($slug, $instanceId, $instLayerId){
+        $sourceInst = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:SourceInstance")
+                        ->find($instanceId);
+//        $sourceInst = $mblayer->getSourceInstance();
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$sourceInst->getManagertype()];
+        return  $this->forward(
+                $manager['bundle'] . ":" . "Repository:instancelayerpriority",
+                array("slug" => $slug,
+                    "instanceId" => $sourceInst->getId(),
+                    "instLayerId" => $instLayerId)
+        );
+    }
+    
 }

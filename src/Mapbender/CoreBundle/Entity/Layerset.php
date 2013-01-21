@@ -38,12 +38,13 @@ class Layerset {
     protected $application;
 
     /**
-     * @ORM\OneToMany(targetEntity="Layer", mappedBy="layerset", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"persist", "refresh","remove"})
+     * @ORM\OrderBy({"weight" = "asc"})
      */
-    protected $layers;
+    protected $instances;
 
     public function __construct() {
-        $this->layers = new ArrayCollection();
+        $this->instances = new ArrayCollection();
     }
 
     /**
@@ -107,21 +108,33 @@ class Layerset {
     }
 
     /**
-     * Add layers
+     * Add SourceInstance
      *
-     * @param Layer $layer
+     * @param SourceInstance $instance
      */
-    public function addLayers(Layer $layers) {
-        $this->layers[] = $layers;
+    public function addInstance(SourceInstance $instance) {
+        $this->instances->add($instance);
+    }
+    
+    /**
+     * Set instances
+     *
+     * @param Doctrine\Common\Collections\Collection $instances
+     * Collection of the SourceInstances
+     * @return Layerset
+     */
+    public function setInstances($instances) {
+        $this->instances = $instances;
+        return $this;
     }
 
     /**
-     * Get layers
+     * Get instances
      *
      * @return Doctrine\Common\Collections\Collection
      */
-    public function getLayers() {
-        return $this->layers;
+    public function getInstances() {
+        return $this->instances;
     }
     
     public function __toString(){

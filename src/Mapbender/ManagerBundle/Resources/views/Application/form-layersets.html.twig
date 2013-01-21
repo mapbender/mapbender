@@ -1,44 +1,27 @@
-<div class="">
 {% if application.layersets|length > 0 %}
-    <ul class="unstyled">
-    {% for layerset in application.layersets %}
-    <li>
-        <table class="table table-striped" id="layerset-list">
-            <thead>
-                <tr>
-                    <th>{{ 'SourceId' | trans }}</th>
-                    <th>{{ 'Type' | trans }}</th>
-                    <th>{{ 'Title' | trans }}</th>
-                    <th>{{ 'Actions' | trans }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for layer in layerset.layers %}
-                    <tr data-source-id="{{ layer.id }}">
-                        <td>{{ layer.sourceinstance.source.id }}</td>
-                        <td>{{ layer.sourceinstance.source.type }}</td>
-                        <td>{{ layer.title }}</td>
-                        <td>
-                            <div class="entity-actions btn-group">
-                                <button type="button" data-href="{{ url("mapbender_manager_repository_instance",{"slug": application.slug, "layerId": layer.id})  }}"
-                                        data-toggle="modal" data-target="#repository-instance-modal" class="btn edit-instance">{{ 'Edit Source Instance' | trans }}</button>
-                                <a class="btn btn-warning" 
-                                    href="{{ url("mapbender_manager_application_confirmlayerdelete",{
-                                        "slug": application.slug,
-                                        "layerId": layer.id
-                                    })  }}"
-                                >{{ 'Delete' | trans }}</a>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </li>    
+{% for layerset in application.layersets %}
+<ul class="layerset" data-id="">
+    <li class="header">
+        <span class="sourceid">{{ 'SourceId' | trans }}</span>
+        <span class="type">{{ 'Type' | trans }}</span>
+        <span class="title">{{ 'Title' | trans }}</span>
+        <span class="actions">{{ 'Actions' | trans }}</span>
+    </li>
+    {% for instance in layerset.instances %}
+    <li class="sourceinst" data-id="{{ instance.id }}" data-href="{{ path('mapbender_manager_repository_instanceweight', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}">
+        <span class="sourceid">{{ instance.source.id }}</span>
+        <span class="type">{{ instance.source.type }}</span>
+        <span class="title">{{ instance.title }}</span>
+        <div class="btn-group">
+            <a href="{{ url("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})  }}" class="btn">{{ 'Edit Source Instance' | trans }}</a>
+            <a href="{{ url("mapbender_manager_application_confirminstancedelete",{"slug": application.slug, "instanceId": instance.id}) }}" class="btn btn-warning">{{ 'Delete' | trans }}</a>
+        </div>
+    </li>
     {% endfor %}
-    </ul>
+</ul>
+{% endfor %}
 {% else %}
     {{ 'No Sources added' | trans }}
 {% endif %}
 <button type="button" data-toggle="modal" data-target="#repository-list-modal" class="btn" >{{ "Add Source" | trans }}</button>
-</div>
+

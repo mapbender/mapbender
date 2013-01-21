@@ -1,29 +1,22 @@
 {% for region in regions %}
 <h3>{{ region | capitalize }} <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="btn btn-small" title="{{ 'Add element' | trans}}"><i class="icon-plus-sign"></i></a></h3>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th class="weight"></th>
-            <th class="title">{{ 'Title' | trans }}</th>
-            <th class="type">{{ 'Type' | trans }}</th>
-            <th class="actions">{{ 'Actions' | trans }}</th>
-        </tr>
-    </thead>
-    <tbody>
+
+<ul class="elements" data-region="{{ region }}">
+    <li class="header">
+        <span class="title">{{ 'Title' | trans }}</span>
+        <span class="type">{{ 'Type' | trans }}</span>
+        <span class="actions">{{ 'Actions' | trans }}</span>
+    </li>
     {% for element in application.getElementsByRegion(region) %}
-        <tr>
-            <td class="sort-grip"><span class="up"></span><span class="down"></span></td>
-            <td>{{ element.title }}</td>
-            <td>{{ element_class_title(element) }}</td>
-            <td>
-                <div class="btn-group">
-                    <a href="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}" class="btn">{{ 'Edit' | trans }}</a>
-                    <a href="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}" class="btn btn-warning">{{ 'Delete' | trans }}</a>
-                </div>
-            </td>
-        </tr>
+    <li class="element" data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_priority', {'id': element.id})}}">
+        <span class="title">{{ element.title }}</span>
+        <span class="type">{{ element_class_title(element) }}</span>
+            <div class="btn-group">
+                <a href="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}" class="btn">{{ 'Edit' | trans }}</a>
+                <a href="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}" class="btn btn-warning">{{ 'Delete' | trans }}</a>
+            </div>
+    </li>
     {% endfor %}
-   </tbody>
-</table>
+</ul>
 {% endfor %}
 

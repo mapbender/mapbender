@@ -24,7 +24,7 @@
             <td>
                 <i class="application-state icon-eye-{% if application.published %}open{% else %}close{% endif %}" title="{{ 'Publish / Unpublish application' | trans }}"></i>
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') %}
-                <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) }}" title="{{ 'Edit' | trans }}">{{ application.title }}</a>
+                <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) }}#base" title="{{ 'Edit' | trans }}">{{ application.title }}</a>
             {% else %}
                 {{ application.title }}
             {% endif %}
@@ -35,7 +35,7 @@
                 <div class="entity-actions btn-group">
                     <a class="action-view btn" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}">{{ 'View' | trans }}</a>
                 {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') %}
-                    <a class="action-edit btn" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug }) }}" title="{{ 'Edit application' | trans }}">{{ 'Edit' | trans }}</a>
+                    <a class="action-edit btn" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}#base" title="{{ 'Edit application' | trans }}">{{ 'Edit' | trans }}</a>
                 {% endif %}
                 {#    <a class="action-clone btn" href="#">{{ 'Clone' | trans }}</a> #}
                 {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') %}

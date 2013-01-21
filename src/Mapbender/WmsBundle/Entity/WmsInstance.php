@@ -20,13 +20,11 @@ use Mapbender\CoreBundle\Component\InstanceIn;
  * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
  */
 class WmsInstance extends SourceInstance implements InstanceIn {
-
-//    /**
-//     *  @ORM\Id
-//     *  @ORM\Column(type="integer")
-//     *  @ORM\GeneratedValue(strategy="AUTO")
-//     */
-//    protected $id;
+    
+    /**
+     * @var array $configuration The instance configuration
+     */
+    protected $configuration;
 
     /**
      * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="wmsinstance", cascade={"refresh"})
@@ -69,7 +67,7 @@ class WmsInstance extends SourceInstance implements InstanceIn {
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $transparency = false;
+    protected $transparency = true;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -79,7 +77,7 @@ class WmsInstance extends SourceInstance implements InstanceIn {
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    protected $opacity;
+    protected $opacity = 100;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -104,7 +102,7 @@ class WmsInstance extends SourceInstance implements InstanceIn {
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $toggle;
+    protected $toggle = true;
     
     
     /**
@@ -133,12 +131,80 @@ class WmsInstance extends SourceInstance implements InstanceIn {
     }
 
     /**
+     * Set id
+     * @param integer $id
+     * @return WmsInstance
+     */
+    public function setId($id) {
+        $this->id = $id;
+
+        return $this;
+    }
+    
+    /**
      * Get id
      *
      * @return integer
      */
     public function getId() {
         return $this->id;
+    }
+    
+    /**
+     * Set configuration
+     *
+     * @param array $configuration
+     */
+    public function setConfiguration($configuration) {
+        $this->configuration = $configuration;
+        return $this;
+    }
+
+    /**
+     * Get an Instance Configuration.
+     * @return array
+     */
+    public function getConfiguration(){
+        if($this->configuration !== null) { // from yaml
+            return $this->configuration;
+        }
+        // from db
+        $layers = array();
+        $infoLayers = array();
+        foreach ($this->layers as $layer){
+            if($layer->getActive() === true){
+                $layers[] = $layer->getConfiguration();
+                if($layer->getInfo() !== null && $layer->getInfo()){
+                    $infoLayers[] = $layer->getTitle();
+                }
+            }
+        }
+        $configuration = array(
+            "title" => $this->title,
+            "url" => $this->source->getGetMap()->getHttpGet(),
+            "title" => $this->getTitle(),
+            "visible" => $this->getVisible(),
+            "format" => $this->getFormat(),
+
+            "queryFormat" => $this->infoformat,
+            "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
+            "opacity" => $this->opacity / 100,
+            "tiled" => $this->tiled,
+            "info" => $this->getInfo(),
+            "selected" => $this->getSelected(),
+            "toggle" => $this->getToggle() ? "open" : "closed",
+            "allow" => array(
+                "info" => $this->getAllowinfo(),
+                "selected" => $this->getAllowselected(),
+                "toggle" => $this->getAllowtoggle(),
+                "reorder" => $this->getAllowreorder(),
+            ),
+            
+
+            "layers" => array_reverse ($layers),
+            "queryLayers" => array_reverse ($infoLayers)
+        );
+        return $configuration;
     }
 
     /**
@@ -587,48 +653,5 @@ class WmsInstance extends SourceInstance implements InstanceIn {
             'js' => array(
                 '@MapbenderWmsBundle/Resources/public/mapbender.layer.wms.js'),
             'css' => array());
-    }
-
-    /**
-     * Get an Instance Configuration.
-     * @return array
-     */
-    public function getConfiguration(){
-        $layers = array();
-        $infoLayers = array();
-        foreach ($this->layers as $layer){
-            if($layer->getActive() === true){
-                $layers[] = $layer->getConfiguration();
-                if($layer->getInfo() !== null && $layer->getInfo()){
-                    $infoLayers[] = $layer->getTitle();
-                }
-            }
-        }
-        $configuration = array(
-            "title" => $this->title,
-            "url" => $this->wmssource->getGetMap()->getHttpGet(),
-            "title" => $this->getTitle(),
-            "visible" => $this->getVisible(),
-            "format" => $this->getFormat(),
-
-            "queryFormat" => $this->infoformat,
-            "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
-            "opacity" => $this->opacity / 100,
-            "tiled" => $this->tiled,
-            "info" => $this->getInfo(),
-            "selected" => $this->getSelected(),
-            "toggle" => $this->getToggle() ? "open" : "closed",
-            "allow" => array(
-                "info" => $this->getAllowinfo(),
-                "selected" => $this->getAllowselected(),
-                "toggle" => $this->getAllowtoggle(),
-                "reorder" => $this->getAllowreorder(),
-            ),
-            
-
-            "layers" => array_reverse ($layers),
-            "queryLayers" => array_reverse ($infoLayers)
-        );
-        return $configuration;
     }
 }

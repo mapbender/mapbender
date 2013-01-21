@@ -186,7 +186,7 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
 
     /**
      * @var ArrayCollections A list of WMS layers
-     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="wmssource", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="source", cascade={"persist","remove"})
      * @ORM\OrderBy({"id" = "asc"})
      */
     protected $layers;
@@ -201,7 +201,7 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
     
     /**
      * @var ArrayCollections A list of WMS instances
-     * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="wmssource", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="source", cascade={"persist","remove"})
      * 
      */
     protected $wmsinstance;
@@ -874,9 +874,9 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      */
     public function createInstance(){
         $instance = new WmsInstance();
-        $instance->setWmsSource($this);
+        $instance->setSource($this);
         $instance->setTitle($this->getTitle());
-        $instance->setOpacity(100);
+//        $instance->setOpacity(100);
         $num = 0;
         $layers = array();
         foreach($this->getLayers() as $wmslayer){

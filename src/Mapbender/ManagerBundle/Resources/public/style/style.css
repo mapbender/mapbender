@@ -1,0 +1,270 @@
+
+
+
+/* ELEMENTS START */
+ul.elements {
+    list-style-type: none;
+    float: none;
+    margin: 0px;
+    min-width: 30px;
+    width: 100%
+}
+
+ul.elements li {
+    height: 32px;
+}
+ul.elements li span {
+    text-align: left;
+    display: inline-block;
+}
+
+ul.elements li span.title {
+    width: 32%;
+}
+
+ul.elements li span.type {
+    width: 32%;
+}
+
+ul.elements span.actions {
+    width: 32%;
+}
+
+ul.elements li.element {
+    background-color: #eee;
+    margin-top: 4px;
+    cursor: ns-resize;
+    padding: 4px;
+}
+
+ul.elements li.header {
+    background-color: #ddd;
+    cursor: default;
+    font-weight: bold;
+}
+
+ul.elements li.element div.btn-group {
+    float: right;
+}
+/* ELEMENTS END */
+
+/* LAYERSET START */
+ul.layerset {
+    list-style-type: none;
+    float: none;
+    margin: 0 0 4px 0;
+    min-width: 30px;
+    width: 100%
+}
+
+ul.layerset li {
+    height: 32px;
+    overflow: hidden;
+}
+
+ul.layerset li.header {
+    background-color: #ddd;
+    cursor: default;
+    font-weight: bold;
+    padding: 0px;
+}
+
+ul.layerset li.sourceinst {
+    background-color: #eee;
+    margin-top: 4px;
+    cursor: ns-resize;
+    padding: 0px;
+}
+
+ul.layerset li.sourceinst div.btn-group {
+    float: right;
+}
+
+ul.layerset li span {
+    text-align: left;
+    display: inline-block;
+}
+
+ul.layerset li.header span {
+    text-align: center;
+    font-size: smaller;
+}
+
+ul.layerset li span.sourceid {
+    width: 10%;
+}
+
+ul.layerset li span.type {
+    width: 10%;
+}
+
+ul.layerset li span.title {
+    width: 30%;
+}
+
+ul.layerset li.header span.actions {
+    width: 44%;
+}
+/* LAYERSET END */
+
+/* INSTANCEPARAMETER START */
+div.sourcecontent {
+    width: 940px;
+}
+
+div.sourcecontent td label {
+    display: inline !important;
+    width: 0px !important;
+    min-height: 0px !important;
+    padding-left: 0px !important;
+}
+
+div.sourcecontent table td {
+    padding: 0px;
+}
+
+div.sourcecontent td.coltitle {
+    width: 180px;
+}
+
+div.sourcecontent td.colselect {
+    width: 150px;
+}
+div.sourcecontent td.colselect select {
+    width: 98%;
+}
+div.sourcecontent td.colinputcheckbox {
+    width: 40px;
+}
+/* INSTANCEPARAMETER END */
+
+/* INSTANCElAYER LIST START */
+ul.layercollection {
+    list-style-type: none;
+    float: none;
+    margin: 10px 0px 10px 0px;
+    padding: 0px;
+    min-width: 30px;
+    /*width: 100%;*/
+}
+
+ul.layercollection li {
+    height: 32px;
+    padding: 0px;
+    
+}
+
+ul.layercollection li.header {
+    background-color: #ccc;
+    cursor: default;
+    font-weight: bold;
+    /*padding: 4px;*/
+    height: 64px;
+}
+
+ul.layercollection li.inlayer {
+    background-color: #eee;
+    margin-top: 4px;
+    cursor: ns-resize;
+    /*padding: 4px;*/
+}
+
+ul.layercollection li.rootlayer table {
+    background-color: #ddd;
+}
+
+ul.layercollection li table {
+    width: 100%;
+    border-spacing: 0px;
+    border-collapse: collapse;
+    /*border: thin solid black;*/
+}
+
+ul.layercollection li td {
+    text-align: left;
+    display: inline-block;
+    border: 1px solid #E3E3E3;
+    height: 30px;
+    margin: 0px;
+    overflow: hidden;
+    vertical-align: middle;
+    text-align: center;
+}
+
+ul.layercollection td.colnum {
+    width: 2%;
+}
+ul.layercollection td.colparent {
+    width: 5%;
+}
+
+ul.layercollection td.colname {
+    width: 10%;
+}
+
+ul.layercollection td.coltitle {
+    width: 10%;
+}
+
+ul.layercollection td.colminscale {
+    width: 6%;
+}
+
+ul.layercollection td.colmaxscale {
+    width: 6%;
+}
+
+ul.layercollection td.colstyle {
+    width: 6%;
+}
+
+ul.layercollection td.colactive {
+    width: 6%;
+}
+
+ul.layercollection td.colselected {
+    width: 6%;
+}
+
+ul.layercollection td.colinfo {
+    width: 6%;
+}
+
+
+ul.layercollection td.coltoggle {
+    width: 6%;
+}
+
+ul.layercollection td.colallowselected {
+    width: 6%;
+}
+
+ul.layercollection td.colallowinfo {
+    width: 6%;
+}
+
+ul.layercollection td.colallowtoggle {
+    width: 6%;
+}
+
+ul.layercollection td.colallowreorder {
+    width: 6%;
+}
+
+ul.layercollection td.colpriority {
+    width: 6%;
+}
+
+ul.layercollection li td input {
+    margin: 0px !important;
+    padding: 0px !important;
+    height: 28px !important;
+    width: 98% !important;
+}
+ul.layercollection li td select {
+    margin: 0px !important;
+    padding: 0px !important;
+    height: 28px !important;
+    width: 98% !important;
+}
+/* INSTANCElAYER LIST END */

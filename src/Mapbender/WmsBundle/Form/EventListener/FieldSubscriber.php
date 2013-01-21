@@ -31,8 +31,7 @@ class FieldSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $queryable = $data->getWmslayersource()->getQueryable();
-        if($queryable === true){
+        if($data->getWmslayersource()->getQueryable() === true){
             $form->remove('info');
             $form->add($this->factory->createNamed(
                     'info', 'checkbox', null, array(

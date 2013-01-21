@@ -26,10 +26,10 @@ class WmsInstanceInstanceLayersType extends AbstractType
     
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title', 'text');
+//        $builder->add('title', 'text');
         $wmsinstance = $options["data"];
-        $arr = $wmsinstance->getWmssource()->getGetMap()->getFormats()!== null?
-                    $wmsinstance->getWmssource()->getGetMap()->getFormats(): array();
+        $arr = $wmsinstance->getSource()->getGetMap()->getFormats()!== null?
+                    $wmsinstance->getSource()->getGetMap()->getFormats(): array();
         $formats = array();
         foreach ($arr as $value) {
             $formats[$value] = $value;
@@ -38,8 +38,8 @@ class WmsInstanceInstanceLayersType extends AbstractType
 //            'label' => 'format',
             'choices' => $formats,
             'required'  => true));
-        $arr = $wmsinstance->getWmssource()->getGetFeatureInfo()->getFormats()!== null?
-                $wmsinstance->getWmssource()->getGetFeatureInfo()->getFormats(): array();
+        $arr = $wmsinstance->getSource()->getGetFeatureInfo()->getFormats()!== null?
+                $wmsinstance->getSource()->getGetFeatureInfo()->getFormats(): array();
         $formats = array();
         foreach ($arr as $value) {
             $formats[$value] = $value;
@@ -48,8 +48,8 @@ class WmsInstanceInstanceLayersType extends AbstractType
 //            'label' => 'infoformat',
             'choices' => $formats,
             'required'  => true));
-        $arr = $wmsinstance->getWmssource()->getExceptionFormats()!== null?
-                $wmsinstance->getWmssource()->getExceptionFormats(): array();
+        $arr = $wmsinstance->getSource()->getExceptionFormats()!== null?
+                $wmsinstance->getSource()->getExceptionFormats(): array();
         $formats = array();
         foreach ($arr as $value) {
             $formats[$value] = $value;
