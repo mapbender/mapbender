@@ -6,8 +6,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Mapbender\CoreBundle\Form\Type\ExtentType;
+use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Element\DataTranformer\LayersetNameTranformer;
 
 class MapAdminType extends AbstractType {
+    
     public function getName() {
         return 'map';
     }
@@ -20,11 +23,21 @@ class MapAdminType extends AbstractType {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
+        $app = $options['application'];
+        $layersets = array();
+        foreach ($app->getLayersets() as $layerset) {
+            $layersets[$layerset->getId()] = $layerset->getTitle();
+        }
+
         $builder
+//            ->add('layersets', 'entity', array(
+//                'class' => 'Mapbender\\CoreBundle\\Entity\\Layerset',
+//                'property' => 'title'
+//            ))
             ->add('layerset', 'choice', array(
-                'label' => 'Layer set',
-                'disabled' => true,
-                'required' => false))
+                'label' => 'Layerset',
+                "required" => true,
+                'choices' => $layersets))
             ->add('dpi', 'integer', array(
                 'label' => 'DPI'
             ))

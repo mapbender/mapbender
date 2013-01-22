@@ -16,8 +16,6 @@ class TargetElementType extends AbstractType
     
     public function __construct(ContainerInterface $container)
     {
-        $a = func_get_args();
-        $b = 0;
         $this->container = $container;
     }
     

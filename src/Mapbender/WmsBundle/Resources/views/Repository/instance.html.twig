@@ -117,9 +117,9 @@
                 data-href="{{url("mapbender_manager_repository_instancelayerweight", {"slug": slug, "instanceId": instance.id, "instLayerId": layer.vars.value.id})}}">
                 <table>
                     <tr>
-                        <td class="colnum" title="{{ "Order"|trans }}">{{ layer.vars.data.wmslayersource.id - root.id }}</td>
-                        <td class="colparent" title="{{ "Layer's Parent"|trans }}">{% if layer.vars.data.wmslayersource.parent != null %} {{layer.vars.data.wmslayersource.parent.id - root.id }} {% else %}  {% endif %}</td>
-                        <td class="colname" title="{{ "Layer's Name"|trans }}">{{ layer.vars.data.wmslayersource.name}} </td>
+                        <td class="colnum" title="{{ "Order"|trans }}"><input type="text" readonly="readonly" value="{{ layer.vars.data.wmslayersource.id - root.id }}" /></td>
+                        <td class="colparent" title="{{ "Layer's Parent"|trans }}"><input type="text" readonly="readonly" value="{% if layer.vars.data.wmslayersource.parent != null %} {{layer.vars.data.wmslayersource.parent.id - root.id }} {% else %}  {% endif %}" /></td>
+                        <td class="colname" title="{{ "Layer's Name"|trans }}"><input type="text" readonly="readonly" value="{{ layer.vars.data.wmslayersource.name}}" /></td>
                         <td class="coltitle" title="{{ "Layer's Title"|trans }}">{{ form_widget(layer.title) }}</td>
                         <td class="colminscale" title="{{ "MinScale"|trans }}">{{ form_widget(layer.minScale) }}</td>
                         <td class="colmaxscale" title="{{ "MaxSclase"|trans }}">{{ form_widget(layer.maxScale) }}</td>

@@ -312,7 +312,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         $elements = $this->getElements();
         foreach($elements as $region => $element_list) {
             foreach($element_list as $element) {
-                if($id === $element->getId()) {
+                if($id == $element->getId()) {
                     return $element;
                 }
             }
@@ -435,7 +435,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
             $this->layers = array();
             foreach($this->entity->getLayersets() as $layerset) {
                 $layerset->layerObjects = array();
-                foreach($layerset->getSourceInstances() as $instance) {
+                foreach($layerset->getInstances() as $instance) {
                     if($this->getEntity()->getSource() === Entity::SOURCE_YAML) {
 //                        $class = $entity->getClass();
 //                        $layer = new $class($this->container, $entity);

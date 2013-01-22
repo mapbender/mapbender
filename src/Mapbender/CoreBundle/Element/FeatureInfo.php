@@ -33,6 +33,8 @@ class FeatureInfo extends Element
     {
         return array(
             'tooltip' => 'Feature Info',
+            'label' => true,
+            'icon' => 'featureinfo',
             "target" => null);
     }
 

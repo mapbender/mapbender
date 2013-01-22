@@ -6,7 +6,7 @@ use Mapbender\CoreBundle\Component\Template;
 
 class Base2 extends Template {
     public static function getTitle() {
-        return 'Mapbender\'s simple template';
+        return 'Base2: Mapbender\'s simple template';
     }
 
     public function getAssets($type) {

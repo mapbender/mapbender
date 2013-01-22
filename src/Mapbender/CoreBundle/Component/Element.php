@@ -225,7 +225,18 @@ abstract class Element {
      * @return array
      */
     public function getConfiguration() {
+//        $configuration = $this->entity->getConfiguration();
+        
         $configuration = $this->entity->getConfiguration();
+//        $config = $this->entity->getConfiguration();
+//        //@TODO merge recursive $this->entity->getConfiguration() and $this->getDefaultConfiguration()
+//        $def_configuration = $this->getDefaultConfiguration();
+//        $configuration = array();
+//        foreach ($def_configuration as $key => $val) {
+//            if(isset($config[$key])){
+//                $configuration[$key] = $config[$key];
+//            }
+//        }
         
         if(isset($configuration["scales"])){
             $scales = array();

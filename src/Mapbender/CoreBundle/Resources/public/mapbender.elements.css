@@ -130,11 +130,18 @@ body.mb-activity .mb-element-activityindicator {
     position:relative;
     width: 180px;
     height: 20px;
+    display: inline-block;
 }
 
 .mb-element-srsselector {
     position:relative;
     width: 200px;
+    display: inline-block;
+}
+.mb-element-scaleselector {
+    position:relative;
+    width: 200px;
+    display: inline-block;
 }
 
 .mb-element-copyright {

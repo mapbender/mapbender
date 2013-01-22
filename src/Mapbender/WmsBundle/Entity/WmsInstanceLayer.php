@@ -534,7 +534,7 @@ class WmsInstanceLayer implements InstanceIn {
         $configuration = array(
             "name" => $this->wmslayersource->getName(),
             "title" => $this->title,
-            
+            "queryable" => $this->getInfo(),
             "info" => $this->getInfo(),
             "selected" => $this->getSelected(),
             "toggle" => $this->getToggle() ? "open" : "closed",

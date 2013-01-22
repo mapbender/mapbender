@@ -30,7 +30,8 @@ class Button extends Element {
             'click' => null,
             'icon' => null,
 //            'label' => null,
-            'group' => null);
+            'group' => null,
+            'action' => null);
     }
 
     public function getWidgetName() {

@@ -12,17 +12,27 @@ class Layertree extends Element {
         return "Layertree";
     }
 
+    static public function getClassDescription() {
+        return "Tree of map's layers";
+    }
+    
     public function getDescription() {
         return "Shows a treeview of the layers on the map";
     }
 
     public function getTags() {
-        return array();
+        return array('Layertree', 'Layer');
     }
     
     public function getWidgetName() {
         return 'mapbender.mbLayertree';
     }
+    
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\LayertreeAdminType';
+    }
+    
     public function getAssets() {
         return array(
             'js' => array(
@@ -36,19 +46,21 @@ class Layertree extends Element {
 
     static public function getDefaultConfiguration() {
         return array(
+            "target" => null,
+            "autoOpen" => false
         );
     }
 
-    public function httpAction($action) {
-        $response = new Response();
-
-        $data = array(
-            'message' => 'Hello World'
-        );
-        $response->setContent(json_encode($data));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
-    }
+//    public function httpAction($action) {
+//        $response = new Response();
+//
+//        $data = array(
+//            'message' => 'Hello World'
+//        );
+//        $response->setContent(json_encode($data));
+//        $response->headers->set('Content-Type', 'application/json');
+//        return $response;
+//    }
 
     public function render() {
         return $this->container->get('templating')->render(

@@ -4,11 +4,11 @@ $.widget("mapbender.mbLayertree", {
     options: {},
 
     elementUrl: null,
-    layerconf : null;
+    layerconf : null,
 
     _create: function() {
         var self = this;
-        var me = $(this.element);
+        var me = this.element;
         this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
         window.setTimeout(function(){
             var $map = $("#" + self.options.target).data().mapQuery;
@@ -49,7 +49,10 @@ $.widget("mapbender.mbLayertree", {
         }
     },
 
-    _layerNode: function(layer){
+    _layerNode: function(layer, layer_conf){
+        if(!layer_conf) {
+            layer_conf = layer.olLayer.configuration.configuration;
+        }
         var visible_checked = layer.visible() ? 'checked="checked"':'';
         return $(
              '<li data-layerid="'+layer.id+'" title="'+ layer.label +'" class="queryable" ">'

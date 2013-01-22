@@ -20,7 +20,12 @@ class MapbenderCoreBundle extends MapbenderBundle
 {
     public function getTemplates()
     {
-        return array('Mapbender\CoreBundle\Template\Fullscreen');
+        return array(
+            'Mapbender\CoreBundle\Template\Fullscreen',
+            'Mapbender\CoreBundle\Template\Base',
+            'Mapbender\CoreBundle\Template\Base2',
+            'Mapbender\CoreBundle\Template\SidebarLeft'
+            );
     }
 
     public function getElements()
@@ -39,6 +44,7 @@ class MapbenderCoreBundle extends MapbenderBundle
 //            'Mapbender\CoreBundle\Element\SearchRouter',
             'Mapbender\CoreBundle\Element\SrsSelector',
             'Mapbender\CoreBundle\Element\Toc',
+            'Mapbender\CoreBundle\Element\Layertree',
             'Mapbender\CoreBundle\Element\ZoomBar');
     }
 }

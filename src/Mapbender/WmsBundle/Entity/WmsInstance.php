@@ -185,6 +185,7 @@ class WmsInstance extends SourceInstance implements InstanceIn {
             "title" => $this->getTitle(),
             "visible" => $this->getVisible(),
             "format" => $this->getFormat(),
+            "info_format" => $this->getInfoformat(),
 
             "queryFormat" => $this->infoformat,
             "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
