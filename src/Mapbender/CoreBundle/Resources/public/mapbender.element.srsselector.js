@@ -10,6 +10,12 @@ $.widget("mapbender.mbSrsSelector", {
     mapWidget: null,
 
     _create: function() {
+        if(this.options.targets.map === null
+            || this.options.targets.map.replace(/^\s+|\s+$/g, '') === ""
+            || !$('#' + this.options.targets.map)){
+            alert('The target element "map" is not defined for a SRSselector.');
+            return;
+        }
         var self = this;
         this.mapWidget = $('#' + this.options.targets.map);
         $(document).one('mapbender.setupfinished', function() {
@@ -45,7 +51,7 @@ $.widget("mapbender.mbSrsSelector", {
     },
 
     _switchSrs: function(evt) {
-        var old = this.mapWidget.data('mbMap').map.olMap.getProjectionObject();
+//        var old = this.mapWidget.data('mbMap').map.olMap.getProjectionObject();
         var dest = new OpenLayers.Projection(this.getSelectedSrs());
 //        window.console && console.log("switch SRS from:"+old.projCode
 //            +" into:"+dest.projCode, dest.readyToUse);
@@ -54,7 +60,10 @@ $.widget("mapbender.mbSrsSelector", {
             dest.proj.units = 'degrees';
         }
         this.mapWidget.mbMap("setMapProjection", dest);
-        if(this.options.targets.coordinatesdisplay){
+//        window.console && console.log($('#' + this.options.targets.coordinatesdisplay));
+        if(this.options.targets.coordinatesdisplay !== null
+            && this.options.targets.coordinatesdisplay.replace(/^\s+|\s+$/g, '') !== ""
+            && $('#' + this.options.targets.coordinatesdisplay)){
             $('#' + this.options.targets.coordinatesdisplay).mbCoordinatesDisplay("reset");
         }
         return true;

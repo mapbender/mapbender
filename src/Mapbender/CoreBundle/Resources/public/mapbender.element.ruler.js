@@ -2,7 +2,7 @@
 
 $.widget("mapbender.mbRuler", {
     options: {
-        target: undefined,
+        target: null,
         click: undefined,
         icon: undefined,
         label: true,
@@ -22,6 +22,12 @@ $.widget("mapbender.mbRuler", {
     _create: function() {
         if(this.options.type !== 'line' && this.options.type !== 'area') {
             throw 'mbRuler: Type must be line or area.';
+        }
+        if(this.options.target === null
+            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || !$('#' + this.options.target)){
+            alert('The target element "map" is not defined for a Ruler ' + this.options.type + '.');
+            return;
         }
 
         var sm = $.extend(true, {}, OpenLayers.Feature.Vector.style, {

@@ -12,19 +12,19 @@ $.widget("mapbender.mbLegend", {
     elementUrl: null,
 
     _create: function() {
+        if(this.options.target === null
+            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || !$('#' + this.options.target)){
+            alert('The target element "map" is not defined for  a Legend.');
+            return;
+        }
         var self = this;
         var me = $(this.element);
         this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
         $(document).one('mapbender.setupfinished', function() {
             $('#' + self.options.target).mbMap('ready', $.proxy(self._init, self));
         });
-//        this._init(); 
-//        $(document).one('mapbender.setupfinished', $.proxy(this._mapbenderSetupFinished, this));
     },
-    
-//    _mapbenderSetupFinished: function() {
-//      this._init(); 
-//    },
     
     _init: function(){
         var self = this;

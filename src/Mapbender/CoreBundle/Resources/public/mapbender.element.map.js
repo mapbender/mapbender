@@ -38,34 +38,8 @@ $.widget("mapbender.mbMap", {
         }
         for(srsdef in this.options.srsDefs){
             Proj4js.defs[srsdef] = this.options.srsDefs[srsdef].definition;
-//            this.allSrs[srsdef] = this.options.srsDefs[srsdef].title;
         }
-//
-//        this.allSrsTemp = this.options.otherSrs.slice(0);
-//        this.allSrsTemp.unshift(this.options.srs);
-//        this.proj4js = new Proj4js.Proj("EPSG:4326");
-//        this._loadSrs();
-//
-//    },
-//
-//    _loadSrs: function(){
-//        this.proj4js.initialize(this.allSrsTemp[this.numSrs], $.proxy(this.setSupportedSrs, this));
-//    },
-//
-//    setSupportedSrs: function(srs){
-//        //window.console && console.log("srs:"+srs.srsCode+" initialized");
-//        this.allSrs[srs.srsCode] = srs.srsCode;
-//        this.numSrs++;
-//        if(this.numSrs == this.allSrsTemp.length){
-////            window.console && console.log("all srs initialized");
-//            this._initWidget();
-//        } else {
-//            this._loadSrs();
-//        }
-//    },
-//
-//    _initWidget: function(){
-//        //console.log("mbMap init");
+
         var self = this,
             me = $(this.element);
         // set a map's origin extents
@@ -125,11 +99,6 @@ $.widget("mapbender.mbMap", {
             }
         }
 
-
-//        if(this.options.otherSrs){
-//
-//        }
-
         function addSubs(layer){
             if(layer.sublayers) {
                 $.each(layer.sublayers, function(idx, val) {
@@ -139,12 +108,14 @@ $.widget("mapbender.mbMap", {
             }
         }
 
-        $.each(Mapbender.configuration.layersets[this.options.layerset], function(idx, layerDef) {
-            layerDef.id = idx;
-            layers.push(self._convertLayerDef.call(self, layerDef));
-            self.rootLayers.push(layers[layers.length-1]);
-            addSubs(layers[layers.length-1]);
-            allOverlays = allOverlays && (layerDef.configuration.baselayer !== true);
+        $.each(Mapbender.configuration.layersets[this.options.layerset].reverse(), function(idx, defArr) {
+            $.each(defArr, function(idx, layerDef) {
+                layerDef.id = idx;
+                layers.push(self._convertLayerDef.call(self, layerDef));
+                self.rootLayers.push(layers[layers.length-1]);
+                addSubs(layers[layers.length-1]);
+                allOverlays = allOverlays && (layerDef.configuration.baselayer !== true);
+            });
         });
 
         // TODO find out how to do a proper menu with jquery ui

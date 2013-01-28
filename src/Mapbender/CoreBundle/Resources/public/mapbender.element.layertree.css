@@ -16,3 +16,18 @@
     text-decoration :   none;
     font-color: inherit;
 }
+
+.mb-element-layertree ul {
+    min-width: 10px;
+}
+
+.mb-element-layertree ul ul {
+    padding-left: 10px;
+}
+
+.mb-element-layertree .opened {
+    display: block;
+}
+.mb-element-layertree .closed {
+    display: none;
+}

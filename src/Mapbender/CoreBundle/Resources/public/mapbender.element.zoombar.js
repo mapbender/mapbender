@@ -2,6 +2,7 @@
 
 $.widget("mapbender.mbZoomBar", {
     options: {
+        target: null,
         stepSize: 50,
         stepByPixel: false,
         position: [0, 0],
@@ -14,6 +15,12 @@ $.widget("mapbender.mbZoomBar", {
     zoomBoxControl: null,
 
     _create: function() {
+        if(this.options.target === null
+            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || !$('#' + this.options.target)){
+            alert('The target element "map" is not defined for a Zoombar.');
+            return;
+        }
         var self = this;
 
         this.mapDiv = $('#' + this.options.target);

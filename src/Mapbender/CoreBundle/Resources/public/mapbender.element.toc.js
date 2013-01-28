@@ -11,6 +11,12 @@ $.widget("mapbender.mbToc", $.ui.dialog, {
     map: null,
 
     _create: function() {
+        if(this.options.target === null
+            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || !$('#' + this.options.target)){
+            alert('The target element "map" is not defined for a ToC.');
+            return;
+        }
         var self = this;
         var me = $(this.element);
         me.find('div#open-button .button')

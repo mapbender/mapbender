@@ -8,29 +8,35 @@ $.widget("mapbender.mbScaleSelector", {
     elementUrl: null,
 
     _create: function() {
+        if(this.options.target === null
+            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || !$('#' + this.options.target)){
+            alert('The target element "map" is not defined for a ScaleSelector.');
+            return;
+        }
         var self = this;
         var me = $(this.element);
-//        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
-         $(document).one('mapbender.setupfinished', function() {
-            $('#' + self.option.target).mbMap('ready', $.proxy(self._init, self));
+        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
+        
+        $(document).one('mapbender.setupfinished', function() {
+            $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
         });
+            
     },
     
-    _init: function(){
-        if(this.options.target){
-            var mbMap = $('#' + this.options.target).data('mbMap');
-            var scale = mbMap.map.olMap.getScale();
-            var scales = mbMap.scales();
-            var html = '';
-            $.each(scales, function(idx, val) {
-                val = Math.round(val);
-                html += '<option value="' + val + '">' + val + '</option>';
-            });
-            $("#"+$(this.element).attr('id')+" select").html(html);
-            $("#"+$(this.element).attr('id')+" select").change($.proxy(this._zoomToScale, this));
-            $("#"+$(this.element).attr('id')+" select").val(scale);
-            mbMap.map.olMap.events.register('zoomend', this, $.proxy(this._updateScale, this));
-        }
+    _setup: function(){
+        var mbMap = $('#' + this.options.target).data('mbMap');
+        var scale = mbMap.map.olMap.getScale();
+        var scales = mbMap.scales();
+        var html = '';
+        $.each(scales, function(idx, val) {
+            val = Math.round(val);
+            html += '<option value="' + val + '">' + val + '</option>';
+        });
+        $("#"+$(this.element).attr('id')+" select").html(html);
+        $("#"+$(this.element).attr('id')+" select").change($.proxy(this._zoomToScale, this));
+        $("#"+$(this.element).attr('id')+" select").val(scale);
+        mbMap.map.olMap.events.register('zoomend', this, $.proxy(this._updateScale, this));
     },
     
     _zoomToScale: function(){

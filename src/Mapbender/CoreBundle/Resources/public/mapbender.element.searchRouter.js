@@ -19,6 +19,12 @@ $.widget('mapbender.mbSearchRouter', {
      * Widget creator
      */
     _create: function() {
+        if(this.options.target.map === null
+            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || !$('#' + this.options.target)){
+            alert('The target element "map" is not defined for a SearchRouter.');
+            return;
+        }
         if(true === this.options.asDialog) {
             this.element.dialog(this.options);
         }

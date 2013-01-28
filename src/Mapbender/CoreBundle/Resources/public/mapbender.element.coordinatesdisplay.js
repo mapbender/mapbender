@@ -2,28 +2,24 @@
 
 $.widget("mapbender.mbCoordinatesDisplay", {
     options: {
+        target: null,
         empty: 'x= -<br>y= -',
         prefix: 'x= ',
         separator: '<br/>y= ',
         suffix: ''
     },
 
-    elementUrl: null,
-
-    crs: null,
-
     _create: function() {
+        if(this.options.target === null
+            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || !$('#' + this.options.target)){
+            alert('The target element "map" is not defined for a coordinatesDisplay.');
+            return;
+        }
         var self = this;
-        var me = $(this.element);
-        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
         $(document).one('mapbender.setupfinished', function() {
-            $('#' + self.options.target).mbMap('ready', $.proxy(self._start, self));
+            $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
         });
-    },
-
-    _start: function() {
-      this._setup();
-      this._reset();
     },
 
     _setup: function(){
@@ -34,17 +30,16 @@ $.widget("mapbender.mbCoordinatesDisplay", {
             var layer = layers[i];
             if(layer.options.isBaseLayer){
                 layer.olLayer.events.register('loadend', layer.olLayer, function(e){
-                     self._reset();
+                     self.reset();
                 });
             }
         }
+        this.reset();
     },
 
-    _reset: function(){
+    reset: function(){
         var self = this;
         var mbMap = $('#' + this.options.target).data('mbMap');
-        var list = mbMap.map.olMap.getControlsByClass('OpenLayers.Control.MousePosition');
-
         if(this.crs != null && this.crs == mbMap.map.olMap.getProjectionObject().projCode)
             return;
         if(typeof(self.options.formatoutput) !== 'undefined'){
@@ -65,7 +60,7 @@ $.widget("mapbender.mbCoordinatesDisplay", {
                 mbMap.map.olMap.removeControl(mouseContr);
             var options = {
                 id: $(self.element).attr('id'),
-                element: $(self.element)[0],
+                div: $(self.element)[0],
                 emptyString: self.options.empty,
                 prefix: self.options.prefix,
                 separator: self.options.separator,
@@ -74,10 +69,6 @@ $.widget("mapbender.mbCoordinatesDisplay", {
             mbMap.map.olMap.addControl(new OpenLayers.Control.MousePosition(options));
             this.crs = mbMap.map.olMap.getProjectionObject().projCode;
         }
-    },
-
-    reset: function(){
-        this._reset();
     },
 
     showHidde: function() {
