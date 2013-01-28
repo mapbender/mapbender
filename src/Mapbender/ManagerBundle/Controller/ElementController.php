@@ -100,6 +100,8 @@ class ElementController extends Controller {
                 "app" => $element->getApplication()->getId()));
             $elements = $query->getResult();
             $element->setWeight(count($elements) + 1);
+            $application = $element->getApplication();
+            $application->setUpdated(new \DateTime());
             $em->persist($element);
             $em->flush();
 
@@ -166,6 +168,8 @@ class ElementController extends Controller {
 
         if($form['form']->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
+            $application = $element->getApplication();
+            $application->setUpdated(new \DateTime());
             $em->persist($element);
             $em->flush();
 
@@ -320,6 +324,9 @@ class ElementController extends Controller {
             foreach ($elements as $elm) {
                 $em->persist($elm);
             }
+            $application = $element->getApplication();
+            $application->setUpdated(new \DateTime());
+            $em->persist($application);
             $em->flush();
         } else {
             // handle old region
@@ -364,6 +371,9 @@ class ElementController extends Controller {
             $element->setWeight($number);
             $element->setRegion($newregion);
             $em->persist($element);
+            $application = $element->getApplication();
+            $application->setUpdated(new \DateTime());
+            $em->persist($application);
             $em->flush();
         }
         return new Response(json_encode(array(

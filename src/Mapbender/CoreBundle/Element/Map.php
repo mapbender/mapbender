@@ -27,11 +27,11 @@ class Map extends Element {
             'layerset' => null,
             'dpi' => 72,
             'srs' => 'EPSG:4326',
-            'otherSrs' => array(),
+            'otherSrs' => "EPSG:31466,EPSG:31467",
             'units' => 'degrees',
             'extents' => array(
-                'max' => array(-180, -90, 180, 90),
-                'start' => array(-180, -90, 180, 90)),
+                'max' => array(0, 40, 20, 60),
+                'start' => array(5, 45, 15, 55)),
             'maxResolution' => 'auto',
             "scales" => "25000000,10000000,5000000,1000000,500000",
             'imgPath' => 'bundles/mapbendercore/mapquery/lib/openlayers/img');

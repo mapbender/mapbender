@@ -9,8 +9,14 @@ namespace Mapbender\CoreBundle\Component;
 interface InstanceIn {
     
     /**
-     * Creates the mapbender client's configuration.
+     * Creates the mapbender configuration.
      * @return array configuration parameters
      */
     public function getConfiguration();
+    
+    /**
+     * Creates the mapbender layer tree configuration.
+     * @return array configuration parameters
+     */
+    public function getLayertreeConfiguration();
 }

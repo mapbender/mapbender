@@ -176,7 +176,7 @@ class WmsInstanceLayer implements InstanceIn {
     /**
      * Get sublayer
      *
-     * @return string 
+     * @return array 
      */
     public function getSublayer()
     {
@@ -531,19 +531,24 @@ class WmsInstanceLayer implements InstanceIn {
      * @return array
      */
     public function getConfiguration(){
+        
         $configuration = array(
+            "id" => $this->id,
             "name" => $this->wmslayersource->getName(),
             "title" => $this->title,
+            "sublayers" => $this->sublayer,
+            "parent" => $this->wmslayersource->getParent() !== null ?
+                $this->wmslayersource->getParent()->getId() : null,
             "queryable" => $this->getInfo(),
-            "info" => $this->getInfo(),
-            "selected" => $this->getSelected(),
-            "toggle" => $this->getToggle() ? "open" : "closed",
-            "allow" => array(
-                "info" => $this->getAllowinfo(),
-                "selected" => $this->getAllowselected(),
-                "toggle" => $this->getAllowtoggle(),
-                "reorder" => $this->getAllowreorder(),
-            ),
+//            "info" => $this->getInfo(),
+//            "selected" => $this->getSelected(),
+//            "toggle" => $this->getToggle() ? "open" : "closed",
+//            "allow" => array(
+//                "info" => $this->getAllowinfo(),
+//                "selected" => $this->getAllowselected(),
+//                "toggle" => $this->getAllowtoggle(),
+//                "reorder" => $this->getAllowreorder(),
+//            ),
             
             "style" => $this->style,
         );
@@ -557,5 +562,21 @@ class WmsInstanceLayer implements InstanceIn {
             $configuration["minScale"] = $this->maxScale;
         }
         return $configuration;
+    }
+    
+    public function getLayertreeConfiguration(){
+        return array(
+            "id" => $this->id,
+            "parent" => $this->parent,
+            "info" => $this->info,
+            "selected" => $this->selected,
+            "toggle" => $this->toggle,
+            "allow" => array(
+                "info" => $this->allowinfo,
+                "selected" => $this->allowselected,
+                "toggle" => $this->allowtoggle,
+                "reorder" => $this->allowreorder,
+            )
+        );
     }
 }

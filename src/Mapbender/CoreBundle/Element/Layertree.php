@@ -47,6 +47,7 @@ class Layertree extends Element {
     static public function getDefaultConfiguration() {
         return array(
             "target" => null,
+            "type" => null,
             "autoOpen" => false
         );
     }

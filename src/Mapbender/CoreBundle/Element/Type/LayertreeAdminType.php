@@ -27,6 +27,9 @@ class LayertreeAdminType extends AbstractType
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
+                ->add('type', 'choice', array(
+                    'required' => true,
+                    'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
                 ->add('autoOpen', 'checkbox', array(
                     'required' => false));
     }

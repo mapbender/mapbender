@@ -876,9 +876,16 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
         $instance = new WmsInstance();
         $instance->setSource($this);
         $instance->setTitle($this->getTitle());
+        $formats = $this->getGetMap()->getFormats();
+        $instance->setFormat(count($formats) > 0 ? $formats[0]: null);
+        $infoformats = $this->getGetFeatureInfo() !== null ?
+                $this->getGetFeatureInfo()->getFormats() : array();
+        $instance->setInfoformat(count($infoformats) > 0 ? $infoformats[0]: null);
+        $excformats = $this->getExceptionFormats();
+        $instance->setExceptionformat(count($excformats) > 0 ? $excformats[0]: null);
 //        $instance->setOpacity(100);
         $num = 0;
-        $layers = array();
+//        $layers = array();
         foreach($this->getLayers() as $wmslayer){
             $instLayer = new WmsInstanceLayer();
             $instLayer->setWmsinstance($instance);
@@ -886,7 +893,7 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
             $instLayer->setParent($wmslayer->getParent() !== null ?
                     $wmslayer->getParent()->getName() : null);
             foreach ($wmslayer->getSublayer() as $sublayer) {
-                $instLayer->addSublayer($sublayer->getName());
+                $instLayer->addSublayer($sublayer->getId());
             }
             $instLayer->setTitle($wmslayer->getTitle());
             // @TODO min max from scaleHint

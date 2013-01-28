@@ -1,12 +1,12 @@
 {% for region in regions %}
 <h3>{{ region | capitalize }} <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="btn btn-small" title="{{ 'Add element' | trans}}"><i class="icon-plus-sign"></i></a></h3>
 
+<div class="elementsheader">
+    <span class="title">{{ 'Title' | trans }}</span>
+    <span class="type">{{ 'Type' | trans }}</span>
+    <span class="actions">{{ 'Actions' | trans }}</span>
+</div>
 <ul class="elements" data-region="{{ region }}">
-    <li class="header">
-        <span class="title">{{ 'Title' | trans }}</span>
-        <span class="type">{{ 'Type' | trans }}</span>
-        <span class="actions">{{ 'Actions' | trans }}</span>
-    </li>
     {% for element in application.getElementsByRegion(region) %}
     <li class="element" data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_priority', {'id': element.id})}}">
         <span class="title">{{ element.title }}</span>

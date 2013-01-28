@@ -18,6 +18,23 @@ ul.elements li span {
     display: inline-block;
 }
 
+div.elementsheader span {
+    text-align: left;
+    display: inline-block;
+}
+
+div.elementsheader span.title {
+    width: 32%;
+}
+
+div.elementsheader span.type {
+    width: 32%;
+}
+
+div.elementsheader span.actions {
+    width: 32%;
+}
+
 ul.elements li span.title {
     width: 32%;
 }
@@ -145,6 +162,8 @@ ul.layercollection {
     margin: 10px 0px 10px 0px;
     padding: 0px;
     min-width: 30px;
+    
+    font-size: smaller;
     /*width: 100%;*/
 }
 
@@ -159,7 +178,7 @@ ul.layercollection li.header {
     cursor: default;
     font-weight: bold;
     /*padding: 4px;*/
-    height: 64px;
+    height: 78px;
 }
 
 ul.layercollection li.inlayer {
@@ -169,7 +188,7 @@ ul.layercollection li.inlayer {
     /*padding: 4px;*/
 }
 
-ul.layercollection li.rootlayer table {
+ul.layercollection li.node table {
     background-color: #ddd;
 }
 
@@ -184,11 +203,17 @@ ul.layercollection li td {
     text-align: left;
     display: inline-block;
     border: 1px solid #E3E3E3;
-    height: 30px;
+    height: 28px;
     margin: 0px;
     overflow: hidden;
     vertical-align: middle;
     text-align: center;
+}
+ul.layercollection li tr.caption td {
+    height: 40px;            
+}
+ul.layercollection li tr.group td {
+    text-align: left;
 }
 
 ul.layercollection td.colnum {
@@ -219,43 +244,43 @@ ul.layercollection td.colstyle {
 }
 
 ul.layercollection td.colactive {
-    width: 6%;
+    width: 5%;
 }
 
 ul.layercollection td.colselected {
-    width: 6%;
+    width: 5%;
 }
 
 ul.layercollection td.colinfo {
-    width: 6%;
+    width: 5%;
 }
 
 
 ul.layercollection td.coltoggle {
-    width: 6%;
+    width: 5%;
 }
 
 ul.layercollection td.colallowselected {
-    width: 6%;
+    width: 5%;
 }
 
 ul.layercollection td.colallowinfo {
-    width: 6%;
+    width: 5%;
 }
 
 ul.layercollection td.colallowtoggle {
-    width: 6%;
+    width: 5%;
 }
 
 ul.layercollection td.colallowreorder {
-    width: 6%;
+    width: 5%;
 }
 
 ul.layercollection td.colpriority {
-    width: 6%;
+    width: 5%;
 }
 
-ul.layercollection li td input {
+ul.layercollection li td input[type=text] {
     margin: 0px !important;
     padding: 0px !important;
     height: 28px !important;
@@ -267,4 +292,7 @@ ul.layercollection li td select {
     height: 28px !important;
     width: 98% !important;
 }
+/*ul.layercollection li table tr td input[type=checkbox] {
+    width: 50% !important;
+}*/
 /* INSTANCElAYER LIST END */

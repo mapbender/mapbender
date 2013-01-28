@@ -76,7 +76,7 @@
         <ul class="layercollection">
             <li class="header">
                 <table>
-                    <tr>
+                    <tr class="caption">
                         <td class="colnum">Nr</td>
                         <td class="colparent">Parent</td>
                         <td class="colname">Name</td>
@@ -84,16 +84,16 @@
                         <td class="colminscale">minsc</td>
                         <td class="colmaxscale">maxsc</td>
                         <td class="colstyle">style</td>
-                        <td class="colactive">act</td>
-                        <td class="colselected">sel</td>
+                        <td class="colactive">active</td>
+                        <td class="colselected">select</td>
+                        <td class="colallowselected">allow<br/>select</td>
                         <td class="colinfo">info</td>
+                        <td class="colallowinfo">allow<br/>info</td>
                         <td class="coltoggle">toggle</td>
-                        <td class="colallowselected">asel</td>
-                        <td class="colallowinfo">ainfo</td>
-                        <td class="colallowtoggle">atoggle</td>
-                        <td class="colallowreorder">areorder</td>
+                        <td class="colallowtoggle">allow<br/>toggle</td>
+                        <td class="colallowreorder">allow<br/>reorder</td>
                     </tr>
-                    <tr>
+                    <tr class="group">
                         <td class="colnum"></td>
                         <td class="colparent"></td>
                         <td class="colname"></td>
@@ -103,17 +103,18 @@
                         <td class="colstyle"></td>
                         <td class="colactive"><input type="checkbox" /></td>
                         <td class="colselected"><input type="checkbox" /></td>
-                        <td class="colinfo"><input type="checkbox" /></td>
-                        <td class="coltoggle"><input type="checkbox" /></td>
                         <td class="colallowselected"><input type="checkbox" /></td>
+                        <td class="colinfo"><input type="checkbox" /></td>
                         <td class="colallowinfo"><input type="checkbox" /></td>
+                        <td class="coltoggle"><input type="checkbox" /></td>
                         <td class="colallowtoggle"><input type="checkbox" /></td>
                         <td class="colallowreorder"><input type="checkbox" /></td>
                     </tr>
                 </table>
             </li>
             {% for layer in form.layers %}
-            <li class="inlayer{% if layer.vars.data.wmslayersource.id - root.id == 0 %} rootlayer{% endif %}" data-id="{{ layer.vars.value.id }}"
+            {% set node = layer.vars.data.sublayer|length > 0 %}
+            <li class="inlayer{% if node %} node{% endif %}" data-id="{{ layer.vars.value.id }}"
                 data-href="{{url("mapbender_manager_repository_instancelayerweight", {"slug": slug, "instanceId": instance.id, "instLayerId": layer.vars.value.id})}}">
                 <table>
                     <tr>
@@ -126,10 +127,10 @@
                         <td class="colstyle" title="{{ "Style"|trans }}">{{ form_widget(layer.style) }}</td>
                         <td class="colactive" title="{{ "Active"|trans }}">{{ form_widget(layer.active) }}</td>
                         <td class="colselected" title="{{ "Selected  at TOC"|trans }}">{{ form_widget(layer.selected) }}</td>
-                        <td class="colinfo" title="{{ "FeatureInfo at TOC"|trans }}">{{ form_widget(layer.info) }}</td>
-                        <td class="coltoggle" title="{{ "Toggle at TOC"|trans }}">{{ form_widget(layer.toggle) }}</td>
                         <td class="colallowselected" title="{{ "Allow Select at TOC"|trans }}">{{ form_widget(layer.allowselected) }}</td>
+                        <td class="colinfo" title="{{ "FeatureInfo at TOC"|trans }}">{{ form_widget(layer.info) }}</td>
                         <td class="colallowinfo" title="{{ "Allow FeatureInfo at TOC"|trans }}">{{ form_widget(layer.allowinfo) }}</td>
+                        <td class="coltoggle" title="{{ "Toggle at TOC"|trans }}">{{ form_widget(layer.toggle) }}</td>
                         <td class="colallowtoggle" title="{{ "Allow Toggle at TOC"|trans }}">{{ form_widget(layer.allowtoggle) }}</td>
                         <td class="colallowreorder" title="{{ "Allow Reorder at TOC"|trans }}">{{ form_widget(layer.allowreorder) }}</td>
                         <!--td class="colpriority" title="{#{ "Priority"|trans }#}">{#{ form_widget(layer.priority) }#}</td-->

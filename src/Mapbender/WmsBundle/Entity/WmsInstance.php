@@ -171,8 +171,18 @@ class WmsInstance extends SourceInstance implements InstanceIn {
         // from db
         $layers = array();
         $infoLayers = array();
+        $rootlayer = null;
         foreach ($this->layers as $layer){
-            if($layer->getActive() === true){
+            if($layer->getWmslayersource()->getParent() === null){
+                $rootlayer = $layer;
+                break;
+            }
+        }
+        
+        foreach ($this->layers as $layer){
+            if($layer->getActive() === true
+                    && $layer->getWmslayersource()->getParent() !== null
+                    ){ //only active and not wms root layer
                 $layers[] = $layer->getConfiguration();
                 if($layer->getInfo() !== null && $layer->getInfo()){
                     $infoLayers[] = $layer->getTitle();
@@ -180,9 +190,11 @@ class WmsInstance extends SourceInstance implements InstanceIn {
             }
         }
         $configuration = array(
-            "title" => $this->title,
+            "id" =>$rootlayer->getId(),
+            "title" => $rootlayer->getTitle() !== null
+                && $rootlayer->getTitle() !== "" ?
+                $rootlayer->getTitle() : $this->title,
             "url" => $this->source->getGetMap()->getHttpGet(),
-            "title" => $this->getTitle(),
             "visible" => $this->getVisible(),
             "format" => $this->getFormat(),
             "info_format" => $this->getInfoformat(),
@@ -191,21 +203,21 @@ class WmsInstance extends SourceInstance implements InstanceIn {
             "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
             "opacity" => $this->opacity / 100,
             "tiled" => $this->tiled,
-            "info" => $this->getInfo(),
-            "selected" => $this->getSelected(),
-            "toggle" => $this->getToggle() ? "open" : "closed",
-            "allow" => array(
-                "info" => $this->getAllowinfo(),
-                "selected" => $this->getAllowselected(),
-                "toggle" => $this->getAllowtoggle(),
-                "reorder" => $this->getAllowreorder(),
-            ),
-            
-
             "layers" => array_reverse ($layers),
-            "queryLayers" => array_reverse ($infoLayers)
+            "queryLayers" => array_reverse ($infoLayers),
+            "layertree" => $this->getLayertreeConfiguration()
         );
         return $configuration;
+    }
+    
+    public function getLayertreeConfiguration(){
+        $layertree = array();
+        foreach ($this->layers as $layer){
+            if($layer->getActive() === true){
+                $layertree[$layer->getId()] = $layer->getLayertreeConfiguration();
+            }
+        }
+        return $layertree;
     }
 
     /**
