@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AboutDialog extends Element {
     static public function getClassTitle() {
-        return "About dialog";
+        return "About Dialog";
     }
 
     static public function getClassDescription() {
@@ -44,6 +44,8 @@ class AboutDialog extends Element {
                 array(
                     'id' => $this->getId(),
                     'title' => $this->getTitle(),
+                    'label' => true,
+                    'icon' => 'abouticon',
                     'configuration' => $this->getConfiguration()));
     }
 

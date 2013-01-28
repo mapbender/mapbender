@@ -26,10 +26,10 @@ class Button extends Element {
         return array(
             'title' => 'button',
             'tooltip' => 'button',
+            'label' => true,
+            'icon' => 'icon',
             'target' => null,
             'click' => null,
-            'icon' => null,
-//            'label' => null,
             'group' => null,
             'action' => null);
     }

@@ -14,7 +14,7 @@ use Mapbender\CoreBundle\Component\Element;
 class Legend extends Element {
 
     public static function getClassTitle() {
-        return "Map's Legend";
+        return "Legend";
     }
 
     public static function getClassDescription() {
@@ -40,7 +40,7 @@ class Legend extends Element {
         return array(
             "target" => null,
             "tooltip" => "Legend",
-            "dialogtitle" => "Legend view",
+//            "dialogtitle" => "Legend",
             "nolegend" => "No legend available");
     }
     

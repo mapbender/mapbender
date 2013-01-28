@@ -7,7 +7,7 @@ use Mapbender\CoreBundle\Component\Element;
 
 class Ruler extends Element {
     static public function getClassTitle() {
-        return 'Line/Area ruler';
+        return 'Line/Area Ruler';
     }
 
     static public function getClassDescription() {

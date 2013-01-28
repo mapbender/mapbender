@@ -15,19 +15,19 @@ use Mapbender\CoreBundle\Component\Element;
  */
 class ZoomBar extends Element {
     public static function getClassTitle() {
-        return "Pan/Zoom Bar";
+        return "Navigation Toolbar";
     }
 
     public static function getClassDescription() {
         return <<<EOT
-The Zoombar element provides a control to pan and zoom, similar to the
-OpenLayers PanZoomBar control. This element though is easier to use when
-custom styling is needed.
+The Navigation Toolbar element provides a floating control to pan and zoom,
+similar to the OpenLayers PanZoomBar control. This element though is easier to
+use when custom styling is needed.
 EOT;
     }
 
     public static function getClassTags() {
-        return array('zoom', 'pan', 'control', 'panel');
+        return array('zoom', 'pan', 'control', 'navigation', 'panel');
     }
 
     public function getAssets() {

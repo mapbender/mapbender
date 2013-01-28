@@ -44,8 +44,9 @@ class MapbenderCoreBundle extends MapbenderBundle
 //            'Mapbender\CoreBundle\Element\SearchRouter',
             'Mapbender\CoreBundle\Element\SrsSelector',
             'Mapbender\CoreBundle\Element\Toc',
-            'Mapbender\CoreBundle\Element\Layertree',
-            'Mapbender\CoreBundle\Element\ZoomBar');
+//            'Mapbender\CoreBundle\Element\Layertree',
+            'Mapbender\CoreBundle\Element\ZoomBar'
+            );
     }
 }
 

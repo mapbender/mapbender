@@ -15,7 +15,9 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
 
 class MapbenderWmcBundle extends MapbenderBundle {
     public function getElements() {
-        return array('Mapbender\WmcBundle\Element\WmcStorage');
+        return array(
+//            'Mapbender\WmcBundle\Element\WmcStorage'
+            );
     }
 }
 

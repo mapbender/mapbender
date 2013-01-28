@@ -145,6 +145,7 @@ class ApplicationController extends Controller {
      */
     public function updateAction($slug) {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $templateClassOld = $application->getTemplate();
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
 
@@ -153,11 +154,19 @@ class ApplicationController extends Controller {
             $em = $this->getDoctrine()->getEntityManager();
 
             $em->getConnection()->beginTransaction();
-            
+            $templateClassNew = $application->getTemplate();
+            $regions = $templateClassNew::getRegions();
+            if($templateClassOld !== $templateClassNew && count($regions) > 0){
+                foreach ($application->getElements() as $element) {
+                    if(!in_array($element->getRegion(), $regions)){
+                        $element->setRegion($regions[0]);
+                        
+                    }
+                }
+            }
             $application->setUpdated(new \DateTime('now'));
 
             try {
-
                 $em->flush();
 
                 $aclManager = $this->get('fom.acl.manager');

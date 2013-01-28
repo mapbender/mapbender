@@ -7,6 +7,7 @@
     <span class="actions">{{ 'Actions' | trans }}</span>
 </div>
 <ul class="elements" data-region="{{ region }}">
+    <li class="dummy"></li>
     {% for element in application.getElementsByRegion(region) %}
     <li class="element" data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_priority', {'id': element.id})}}">
         <span class="title">{{ element.title }}</span>

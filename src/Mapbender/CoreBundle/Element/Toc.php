@@ -12,7 +12,7 @@ use Mapbender\CoreBundle\Component\Element;
 class Toc extends Element {
     
     static public function getClassTitle() {
-        return "Table of contents";
+        return "Table of Contents";
     }
 
     static public function getClassDescription() {
@@ -25,7 +25,7 @@ class Toc extends Element {
 
     public static function getDefaultConfiguration() {
         return array(
-            'title: ' => 'Table of Contents',
+            'title' => 'Table of Contents',
             'target' => null,
             'autoOpen' => true,
             'tooltip' => "Table of contents");

@@ -16,7 +16,7 @@ class CoordinatesDisplay extends Element
 {
     public static function getClassTitle()
     {
-        return 'Coordinates display';
+        return 'Coordinates Display';
     }
 
     public static function getClassDescription()
@@ -46,6 +46,7 @@ class CoordinatesDisplay extends Element
     {
         return array(
             'tooltip' => 'coordinates display',
+            'label' => true,
 //            'formatoutput' => true,
             'empty' => 'x= - y= -',
             'displaystring' => '',

@@ -14,7 +14,7 @@ use Mapbender\CoreBundle\Component\Element;
 class ScaleSelector extends Element {
     
     public static function getClassTitle() {
-        return "Scale selector";
+        return "Scale Selector";
     }
 
     public static function getClassDescription() {
@@ -44,6 +44,7 @@ class ScaleSelector extends Element {
     public static function getDefaultConfiguration() {
         return array(
             "target" => null,
+            'label' => false,
             "tooltip" => "Scale");
     }
 

@@ -9,7 +9,7 @@ $(function() {
 //    });
     $("ul.elements" ).sortable({
         connectWith: "ul.elements",
-        items: "li:not(.header .node)",
+        items: "li:not(.dummy)",
         stop: function( event, ui ) {
 //            console.log($(ui.item).parent());
             $(ui.item).parent().find("li").each(function(idx, elm){
@@ -18,7 +18,7 @@ $(function() {
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
                         data: {
-                            number: idx,
+                            number: idx - 1,
                             region: $(ui.item).parent().attr("data-region")
                         },
                         success: function(data, textStatus, jqXHR){

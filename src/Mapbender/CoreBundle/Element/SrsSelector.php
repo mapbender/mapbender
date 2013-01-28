@@ -14,7 +14,7 @@ use Mapbender\CoreBundle\Component\Element;
 class SrsSelector extends Element {
 
     public static function getClassTitle() {
-        return 'Spatial reference system selector';
+        return 'Spatial Reference System Selector';
     }
 
     public static function getClassDescription() {
@@ -43,6 +43,7 @@ class SrsSelector extends Element {
     public static function getDefaultConfiguration() {
         return array(
             "tooltip" => "SRS Selector",
+            'label' => false,
             "targets" => array(
                 "map" => null,
                 "coordinatesdisplay" => null));

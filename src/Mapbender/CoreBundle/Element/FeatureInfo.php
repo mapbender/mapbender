@@ -16,7 +16,7 @@ class FeatureInfo extends Element
 {
     static public function getClassTitle()
     {
-        return "Feature info";
+        return "Feature Info";
     }
 
     static public function getClassDescription()
