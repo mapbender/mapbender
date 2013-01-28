@@ -288,12 +288,21 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
         // Get all layer configurations
         $configuration['layersets'] = array();
         foreach($this->getLayersets() as $layerset) {
-            $cnfiguration['layersets'][$layerset->getId()] = array();
+            $configuration['layersets'][$layerset->getId()] = array();
+            $num = 0;
             foreach($layerset->layerObjects as $layer) {
-                $configuration['layersets'][$layerset->getId()][$layer->getId()] = array(
-                    'type' => $layer->getType(),
-                    'title' => $layer->getTitle(),
-                    'configuration' => $layer->getConfiguration());
+                $layerconf = array(
+                    $layer->getId() => array(
+                        'type' => $layer->getType(),
+                        'title' => $layer->getTitle(),
+                        'configuration' => $layer->getConfiguration()));
+                if($layer->getProxy()){
+                    $str = $configuration['application']["urls"]["proxy"]
+                        . "?url=" . urldecode($layerconf[$layer->getId()]["configuration"]["url"]);
+                    $layerconf[$layer->getId()]["configuration"]["url"] = $str;
+                }
+                $configuration['layersets'][$layerset->getId()][$num] = $layerconf;
+                $num++;
             }
         }
 
