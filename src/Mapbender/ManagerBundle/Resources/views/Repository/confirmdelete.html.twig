@@ -4,15 +4,15 @@
 
 {% block manager_content %}
 <p>{{ "Really delete? "}}</p>
-<div class="repository-actions btn-group">
-    <form method="POST" action="{{ url( "mapbender_manager_repository_delete",{"source": source.id}) }}" >
-        <input type="submit" class="btn btn-primary" value="OK"  />
-    </form>
-    {% if app.request.get('return') == "view" %}
-        <a class="btn btn-secondary" href="{{ url("mapbender_manager_repository_view",{"sourceId": source.id}) }}" title="{{ 'Cancel' | trans }}">{{ 'Cancel' | trans }}</a>
-    {% else  %}
-        <a class="btn btn-secondary" href="{{ url("mapbender_manager_repository_index" ) }}" title="{{ 'Cancel' | trans }}">{{ 'Cancel' | trans }}</a>
-    {% endif %}
 
-</div>
+<form method="POST" action="{{ url( "mapbender_manager_repository_delete",{"source": source.id}) }}" >
+    <div class="btn-group repository-actions">
+        <input type="submit" class="btn btn-primary" value="OK"  />
+        {% if app.request.get('return') == "view" %}
+            <a class="btn btn-secondary" href="{{ url("mapbender_manager_repository_view",{"sourceId": source.id}) }}" title="{{ 'Cancel' | trans }}">{{ 'Cancel' | trans }}</a>
+        {% else  %}
+            <a class="btn btn-secondary" href="{{ url("mapbender_manager_repository_index" ) }}" title="{{ 'Cancel' | trans }}">{{ 'Cancel' | trans }}</a>
+        {% endif %}
+    </div>
+</form>
 {% endblock %}

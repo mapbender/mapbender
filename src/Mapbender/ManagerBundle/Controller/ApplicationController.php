@@ -86,10 +86,16 @@ class ApplicationController extends Controller {
             $em = $this->getDoctrine()->getEntityManager();
 
             $em->getConnection()->beginTransaction();
-
+            
+            $layerset = new Layerset();
+            $layerset->setTitle("main");
+            $application->addLayersets($layerset);
+            $layerset->setApplication($application);
+            
             $application->setUpdated(new \DateTime('now'));
 
             $em->persist($application);
+            $em->persist($layerset);
             $em->flush();
 
             $aclManager = $this->get('fom.acl.manager');
