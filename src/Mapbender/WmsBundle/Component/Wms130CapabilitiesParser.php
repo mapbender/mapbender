@@ -34,7 +34,8 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
     public function parse(){
         $wms  = new WmsSource();
         $root = $this->doc->documentElement;
-
+        
+        $wms->setVersion($this->getValue("./@version", $root));
         $this->parseService($wms, $this->getValue("./wms:Service", $root));
         $capabilities =  $this->xpath->query("./wms:Capability/*", $root);
         foreach($capabilities as $capabilityEl){

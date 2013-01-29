@@ -11,14 +11,14 @@ $(function() {
         connectWith: "ul.elements",
         items: "li:not(.dummy)",
         stop: function( event, ui ) {
-//            console.log($(ui.item).parent());
+            console.log(event, ui, $(ui.item).parent());
             $(ui.item).parent().find("li").each(function(idx, elm){
                 if($(elm).attr("data-href")===$(ui.item).attr("data-href")){
                     $.ajax({
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
                         data: {
-                            number: idx - 1,
+                            number: idx,
                             region: $(ui.item).parent().attr("data-region")
                         },
                         success: function(data, textStatus, jqXHR){
