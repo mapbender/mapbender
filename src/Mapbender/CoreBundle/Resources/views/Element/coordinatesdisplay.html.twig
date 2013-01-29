@@ -1,1 +1,6 @@
-<div id="{{ id }}" class="mb-element mb-element-coordsdisplay"></div>
+<div id="{{ id }}" class="mb-element mb-element-coordsdisplay">
+{% if configuration.label == true %}
+    <label>{{ title| trans }} :</label>
+{% endif %}
+    <div id="coordinatesdisplay"></div>
+</div>

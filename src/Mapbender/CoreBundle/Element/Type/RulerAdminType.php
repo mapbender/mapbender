@@ -15,8 +15,7 @@ class RulerAdminType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null,
-//            'target' => null
+            'application' => null
             ));
     }
     
@@ -28,6 +27,8 @@ class RulerAdminType extends AbstractType
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
-                ->add('type', 'text', array('required' => false));
+                ->add('type', 'choice', array(
+                    'required' => true,
+                    'choices' => array("line" => "line", "area" => "area")));
     }
 }

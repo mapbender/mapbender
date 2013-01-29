@@ -21,11 +21,13 @@
                 <dd>{{ layer.fixedHeight }}</dd>
                 <dt>{{ "LatlonBounds" | trans }}</dt>
                 <dd>
+                    {% if layer.latlonBounds != null %}
                     {{ layer.latlonBounds.srs }} 
                     {{ layer.latlonBounds.minx }},
                     {{ layer.latlonBounds.miny }},
                     {{ layer.latlonBounds.maxx }},
                     {{ layer.latlonBounds.maxy }}
+                    {% endif %}
                 </dd>
                 <dt>{{ "BoundingBox" | trans }}</dt>
                 <dd>

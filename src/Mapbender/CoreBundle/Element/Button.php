@@ -27,7 +27,7 @@ class Button extends Element {
             'title' => 'button',
             'tooltip' => 'button',
             'label' => true,
-            'icon' => 'icon',
+            'icon' => null,
             'target' => null,
             'click' => null,
             'group' => null,

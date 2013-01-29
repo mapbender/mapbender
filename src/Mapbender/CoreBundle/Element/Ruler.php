@@ -35,7 +35,7 @@ class Ruler extends Element {
         return array(
             'target' => null,
             'tooltip' => "ruler",
-            'type' => 'line');
+            'type' => null);
     }
 
     public function getWidgetName() {

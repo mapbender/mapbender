@@ -298,6 +298,9 @@ class ElementController extends Controller {
         }
         if($element->getRegion() === $newregion){
             $em = $this->getDoctrine()->getEntityManager();
+            $element->setWeight($number);
+            $em->persist($element);
+            $em->flush();
             $query = $em->createQuery(
                     "SELECT e FROM MapbenderCoreBundle:Element e"
                     ." WHERE e.region=:reg AND e.application=:app"

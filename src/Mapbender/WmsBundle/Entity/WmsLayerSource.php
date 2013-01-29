@@ -483,12 +483,12 @@ class WmsLayerSource implements EntityIdentifierIn {
      */
     public function getLatlonBounds() {
 //        //@TODO check layer inheritance if layer->latlonBounds === null
-//        if($this->latlonBounds === null && $this->getParent() !== null){
-//            return $this->getParent()->getLatlonBounds();
-//        } else {
-//            return $this->latlonBounds;
-//        }
-        return $this->latlonBounds;
+        if($this->latlonBounds === null && $this->getParent() !== null){
+            return $this->getParent()->getLatlonBounds();
+        } else {
+            return $this->latlonBounds;
+        }
+//        return $this->latlonBounds;
     }
     
     /**

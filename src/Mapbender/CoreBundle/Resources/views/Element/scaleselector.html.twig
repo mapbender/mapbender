@@ -1,6 +1,6 @@
 <div id="{{ id }}" class="mb-element mb-element-scaleselector">
-{% if configuration.title is defined and configuration.title != '' %}
-    <label for="{{ id }}-scale">{{ title|trans }} 1:</label>
+{% if configuration.label == true %}
+    <label for="scaleselector">{{ title|trans }} 1:</label>
 {% endif %}
-    <select id="{{ id }}-scale" title="{{ configuration.tooltip|default(title)|trans }}"></select>
+    <select id="scaleselector" title="{{ configuration.tooltip|default(title)|trans }}"></select>
 </div>
