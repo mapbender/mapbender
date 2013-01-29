@@ -1,6 +1,6 @@
 <div id="{{ id }}" class="mb-element mb-element-srsselector">
-{% if configuration.title is defined %}
-    <label for="{{ id }}-srs">{{ title|trans }}:</label>
+{% if configuration.label == true %}
+    <label for="srsselector">{{ title|trans }}:</label>
 {% endif %}
-    <select id="{{ id }}-srs" title="{{ configuration.tooltip|default(title)|trans }}"></select>
+    <select id="srsselector" title="{{ configuration.tooltip|default(title)|trans }}"></select>
 </div>

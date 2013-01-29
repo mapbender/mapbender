@@ -27,7 +27,10 @@ class AboutDialog extends Element {
     }
     
     public static function getDefaultConfiguration() {
-        return array("tooltip" => "About");
+        return array(
+            "tooltip" => "About",
+            'label' => true,
+            'icon' => 'abouticon');
     }
     
     public static function getType()
@@ -44,8 +47,6 @@ class AboutDialog extends Element {
                 array(
                     'id' => $this->getId(),
                     'title' => $this->getTitle(),
-                    'label' => true,
-                    'icon' => 'abouticon',
                     'configuration' => $this->getConfiguration()));
     }
 
