@@ -39,7 +39,7 @@ class ApplicationController extends Controller {
             'trans' => $this->get('router')
                 ->generate('mapbender_core_translation_trans'),
             'proxy' => $this->get('router')
-            ->generate('owsproxy3_core_owsproxy_entrypoint'));
+            ->generate('mapbender_core_proxy_proxy'));
     }
 
     /**
