@@ -16,7 +16,7 @@ use Mapbender\WmsBundle\Component\RequestInformation;
 * @package Mapbender
 * @author Paul Schmidt <paul.schmidt@wheregroup.com>
 */
-class Wms111CapabilitiesParser extends WmsCapabilitiesParser {
+class WmsCapabilitiesParser111 extends WmsCapabilitiesParser {
     
     
     public function __construct(\DOMDocument $doc){
