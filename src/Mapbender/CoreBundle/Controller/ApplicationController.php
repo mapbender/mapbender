@@ -177,7 +177,7 @@ class ApplicationController extends Controller {
             throw new AccessDeniedException('You are not granted view permissions for this application.');
         }
 
-        if(!$application->getEntity()->isPublished()) {
+        if(!$application->getEntity()->isPublished() and !$securityContext->isGranted('EDIT', $application->getEntity())) {
             throw new AccessDeniedException('This application is not published at the moment');
         }
     }

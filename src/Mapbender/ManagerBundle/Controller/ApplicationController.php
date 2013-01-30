@@ -23,6 +23,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 //FIXME: make this work without an explicit import
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 
 
@@ -47,9 +48,21 @@ class ApplicationController extends Controller {
      * @Template
      */
     public function indexAction() {
-        $applications = $this->get('mapbender')->getApplicationEntities();
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
 
-        return array('applications' => $applications);
+        $applications = $this->get('mapbender')->getApplicationEntities();
+        $allowed_applications = array();
+        foreach($applications as $application) {
+            if($securityContext->isGranted('VIEW', $application)) {
+                $allowed_applications[] = $application;
+            }
+        }
+
+        return array(
+            'applications' => $allowed_applications,
+            'create_permission' => $securityContext->isGranted('CREATE', $oid)
+        );
     }
 
     /**
@@ -61,6 +74,14 @@ class ApplicationController extends Controller {
      */
     public function newAction() {
         $application = new Application();
+
+        // ACL access check
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', get_class($application));
+        if(false === $securityContext->isGranted('CREATE', $oid)) {
+            throw new AccessDeniedException();
+        }
+
         $form = $this->createApplicationForm($application);
 
         return array(
@@ -78,6 +99,14 @@ class ApplicationController extends Controller {
      */
     public function createAction() {
         $application = new Application();
+
+        // ACL access check
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', get_class($application));
+        if(false === $securityContext->isGranted('CREATE', $oid)) {
+            throw new AccessDeniedException();
+        }
+
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
 
@@ -120,6 +149,13 @@ class ApplicationController extends Controller {
      */
     public function editAction($slug) {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
+        // ACL access check
+        $securityContext = $this->get('security.context');
+        if(false === $securityContext->isGranted('EDIT', $application)) {
+            throw new AccessDeniedException();
+        }
+
         $form = $this->createApplicationForm($application);
 
         $templateClass = $application->getTemplate();
@@ -145,6 +181,13 @@ class ApplicationController extends Controller {
      */
     public function updateAction($slug) {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
+        // ACL access check
+        $securityContext = $this->get('security.context');
+        if(false === $securityContext->isGranted('EDIT', $application)) {
+            throw new AccessDeniedException();
+        }
+
         $templateClassOld = $application->getTemplate();
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
@@ -160,7 +203,7 @@ class ApplicationController extends Controller {
                 foreach ($application->getElements() as $element) {
                     if(!in_array($element->getRegion(), $regions)){
                         $element->setRegion($regions[0]);
-                        
+
                     }
                 }
             }
@@ -211,6 +254,13 @@ class ApplicationController extends Controller {
      */
     public function toggleStateAction($slug) {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
+        // ACL access check
+        $securityContext = $this->get('security.context');
+        if(false === $securityContext->isGranted('EDIT', $application)) {
+            throw new AccessDeniedException();
+        }
+
         $em = $this->getDoctrine()->getEntityManager();
 
         $requestedState = $this->get('request')->get('state');
@@ -274,7 +324,7 @@ class ApplicationController extends Controller {
         $em = $this->getDoctrine()->getEntityManager();
         $em->persist($application);
         $em->persist($layerset);
-        
+
 //        $sourceInstance->setLayerset($layerset);
         $em->persist($sourceInstance);
         $em->flush();
@@ -336,6 +386,13 @@ class ApplicationController extends Controller {
      */
     public function confirmDeleteAction($slug) {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
+        // ACL access check
+        $securityContext = $this->get('security.context');
+        if(false === $securityContext->isGranted('EDIT', $application)) {
+            throw new AccessDeniedException();
+        }
+
         $id = $application->getId();
         return array(
             'application' => $application,
@@ -350,6 +407,13 @@ class ApplicationController extends Controller {
      */
     public function deleteAction($slug) {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
+        // ACL access check
+        $securityContext = $this->get('security.context');
+        if(false === $securityContext->isGranted('EDIT', $application)) {
+            throw new AccessDeniedException();
+        }
+
         $form = $this->createDeleteForm($application->getId());
         $request = $this->getRequest();
 
