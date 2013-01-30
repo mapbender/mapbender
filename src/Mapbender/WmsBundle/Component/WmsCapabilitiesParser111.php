@@ -18,17 +18,9 @@ use Mapbender\WmsBundle\Component\RequestInformation;
 */
 class Wms111CapabilitiesParser extends WmsCapabilitiesParser {
     
+    
     public function __construct(\DOMDocument $doc){
         parent::__construct($doc);
-
-//        foreach( $this->xpath->query('namespace::*', $this->doc->documentElement) as $node ) {
-//            $nsPrefix = $node->prefix;
-//            $nsUri = $node->nodeValue;
-//            if($nsPrefix == "" && $nsUri == "http://www.opengis.net/wms"){
-//                $nsPrefix = "wms";
-//            }
-//            $this->xpath->registerNamespace($nsPrefix , $nsUri);
-//        }
     }
     
     public function parse(){

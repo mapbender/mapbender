@@ -55,11 +55,8 @@ abstract class WmsCapabilitiesParser {
      * 
      */
     abstract public function parse();
-
-    /**
-    * @param String The document to be parsed
-    */
-    static  function create($data, $validate = false){
+    
+    public static function createDocument($data, $validate = false){
         $doc = new \DOMDocument();
         if(!@$doc->loadXML($data)){
             throw new ParsingException("Could not parse CapabilitiesDocument.");
@@ -75,26 +72,39 @@ abstract class WmsCapabilitiesParser {
             throw new  ParsingException($message);
         }
 
-        $version = $doc->documentElement->getAttribute("version");
-        switch($version){
-
-            case "1.0.0":
-                return  new Wms100CapabilitiesParser($doc);
-            case "1.1.0":
-                return  new Wms110CapabilitiesParser($doc);
-            case "1.1.1":
-                return  new Wms111CapabilitiesParser($doc);
-            case "1.3.0":
-                return  new Wms130CapabilitiesParser($doc);
-            default: 
-                throw new ParsingException("Could not determine WMS Version");
-            break;
-
-        }
-
         if($validate && !@$this->doc->validate()){
             // TODO logging
         };
+        return $doc;
+    }
+    
+    public static function getVersion(\DOMDocument $doc){
+        return $doc->documentElement->getAttribute("version");
+    }
+    
+    public static function isVersionSupported($version) {
+        switch($version){
+            case "1.1.1":
+                return  true;
+            case "1.3.0":
+                return  true;
+            default:
+                return false;
+            break;
+        }
+    }
+    
+    public static function getParser(\DOMDocument $doc){
+        $version = $doc->documentElement->getAttribute("version");
+        switch($version){
+            case "1.1.1":
+                return  new WmsCapabilitiesParser111($doc);
+            case "1.3.0":
+                return  new WmsCapabilitiesParser130($doc);
+            default:
+                throw new ParsingException("Could not determine WMS Version");
+            break;
+        }
     }
     
 }
