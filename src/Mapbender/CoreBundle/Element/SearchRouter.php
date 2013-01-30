@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *                  type: text # element type
  *                  options: # form options
  *                      required: true # false by default
- * 
+ *
  * @author Christian Wygoda
  */
 class SearchRouter extends Element
@@ -52,7 +52,13 @@ class SearchRouter extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.searchRouter.js'),
+            'js' => array(
+                'vendor/underscore.js',
+                'vendor/json2.js',
+                'vendor/backbone.js',
+                'mapbender.element.searchRouter.Feature.js',
+                'mapbender.element.searchRouter.Search.js',
+                'mapbender.element.searchRouter.js'),
             'css' => array('mapbender.element.searchRouter.css'));
     }
 
@@ -62,60 +68,64 @@ class SearchRouter extends Element
         $response->headers->set('Content-Type', 'application/json');
         $request = $this->container->get('request');
 
-        if('autocomplete' === $action) {
-            // Get search config
-            parse_str($request->get('target'), $target_array);
-            $conf_id = array_keys($target_array);
-            $conf_id = $conf_id[0];
-
-            $conf = $this->getConfiguration();
-            if(!array_key_exists($conf_id, $conf['routes'])) {
-                throw new NotFoundHttpException();
-            }
-            $conf = $conf['routes'][$conf_id];
-            $engine = new $conf['class']($this->container);
-
-            $target = substr($request->get('target'), strlen($conf_id));
-            parse_str($request->get('data'), $data);
-
-            $response->setContent(json_encode($engine->autocomplete(
-                $target,
-                $request->get('term'),
-                $data[$conf_id],
-                $request->get('srs'),
-                $request->get('extent'))));
-            return $response;
+        list($target, $action) = explode('/', $action);
+        $conf = $this->getConfiguration();
+        if(!array_key_exists($target, $conf['routes'])) {
+            throw new NotFoundHttpException();
         }
 
-        if('search' === $action) {
-            $target = $request->get('target');
-            
+        if('autocomplete' === $action) {
+            $data = json_decode($request->getContent());
+
+            // Get search config
             $conf = $this->getConfiguration();
             if(!array_key_exists($target, $conf['routes'])) {
                 throw new NotFoundHttpException();
             }
+            $conf = $conf['routes'][$target];
+            $engine = new $conf['class']($this->container);
+
+            $results = $engine->autocomplete(
+                $conf,
+                $data->key,
+                $data->value,
+                $data->properties,
+                $data->srs,
+                $data->extent);
+
+            $response->setContent(json_encode(array(
+                'key' => $data->key,
+                'value' => $data->value,
+                'properties' => $data->properties,
+                'results' => $results
+                )));
+            return $response;
+        }
+
+        if('search' === $action) {
 
             $this->setupForms();
             $form = $this->forms[$target];
-            parse_str($request->get('data'), $data);
-
-            $form->bind($data[$target]);
-
-            parse_str($request->get('autocomplete_keys'), $autocomplete_keys);
-            if(array_key_exists($target, $autocomplete_keys)) {
-                $autocomplete_keys = $autocomplete_keys[$target];
-            }
+            $data = json_decode($request->getContent());
+            $form->bind(get_object_vars($data->properties));
 
             $conf = $conf['routes'][$target];
             $engine = new $conf['class']($this->container);
-            $response->setContent(json_encode($engine->search(
+            $query = array(
+                'form' => $form->getData(),
+                'autocomplete_keys' => get_object_vars($data->autocomplete_keys)
+            );
+            $features = $engine->search(
                 $conf,
-                array(
-                    'form' => $form->getData(),
-                    'autocomplete' => $autocomplete_keys
-                ),
+                $query,
                 $request->get('srs'),
-                $request->get('extent'))));
+                $request->get('extent'));
+
+            // Return GeoJSON FeatureCollection
+            $response->setContent(json_encode(array(
+                'type' => 'FeatureCollection',
+                'features' => $features,
+                'query' => $query['form'])));
             return $response;
         }
 
@@ -131,7 +141,7 @@ class SearchRouter extends Element
 
     /**
      * Create form for selecting search route (= search form) to display.
-     * 
+     *
      * @return Symfony\Component\Form\Form Search route select form
      */
     public function getRouteSelectForm() {
@@ -172,7 +182,7 @@ class SearchRouter extends Element
 
     /**
      * Set up a single form.
-     * 
+     *
      * @param  string $name Form name for FormBuilder
      * @param  array  $conf Search form configuration
      * @return [type]       Form

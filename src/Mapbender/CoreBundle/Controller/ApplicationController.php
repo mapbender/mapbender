@@ -113,7 +113,8 @@ class ApplicationController extends Controller {
      *
      * Passes the request to the element's httpAction.
      * @Route("/application/{slug}/element/{id}/{action}",
-     *     defaults={ "id" = null, "action" = null })
+     *     defaults={ "id" = null, "action" = null },
+     *     requirements={ "action" = ".+" })
      */
     public function elementAction($slug, $id, $action) {
         $element = $this->getApplication($slug)->getElement($id);

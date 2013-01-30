@@ -14,51 +14,69 @@ $.widget('mapbender.mbSearchRouter', {
     lastSearch: new Date(),
     resultCallbackEvent: null,
     resultCallbackProxy: null,
+    searchModel: null,
+    autocompleteModel: null,
 
     /**
      * Widget creator
      */
     _create: function() {
-        if(this.options.target.map === null
-            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
-            || !$('#' + this.options.target)){
+        if(this.options.target.map === null ||
+            this.options.target.replace(/^\s+|\s+$/g, '') === "" ||
+            !$('#' + this.options.target)) {
             alert('The target element "map" is not defined for a SearchRouter.');
             return;
         }
+
+        var self = this;
         if(true === this.options.asDialog) {
             this.element.dialog(this.options);
         }
 
-        // Prepare callback URL
+        // Prepare callback URL and Search Model
         this.callbackUrl = Mapbender.configuration.application.urls.element +
             '/' + this.element.attr('id') + '/';
+        this.searchModel = new Mapbender.SearchModel(null, null, this);
 
-        // Listen to changes of search select
-        var routeSelect = $('select#search_routes_route', this.element);
-        routeSelect.change($.proxy(this._selectSearch, this));
+        // bind form reset to reset search model
+        this.element.delegate('.search-forms form', 'reset', function() {
+            self.searchModel.reset();
+        });
+        // bind form submit to send search model
+        this.element.delegate('.search-forms form', 'submit', function(evt) {
+            self.searchModel.submit(evt);
+        });
+        // bind result to result list and map view
+        this.searchModel.on('change:results', this._searchResults, this);
+
+        this.searchModel.on('request', this._setActive, this);
+        this.searchModel.on('error sync', this._setInactive, this);
+
+        this.resultCallbackProxy = $.proxy(this._resultCallback, this);
 
         // Prepare autocompletes
         $('form input[data-autocomplete="on"]', this.element).each(
             $.proxy(this._setupAutocomplete, this));
-        $('form input[data-autocomplete^="custom:"]').each(
-            $.proxy(this._setupCustomAutocomplete, this));
-        
-        this.resultCallbackProxy = $.proxy(this._resultCallback, this);
-        $('#' + this.options.target.map).bind('mbmapready', function() {
-            routeSelect.change();
-        });
 
-        // Prepare search button
-        $('a[role="search_router_search"]').button()
-            .click($.proxy(this._search, this));
+        // Prepare search button (trigger form submit)
+        $('a[role="search_router_search"]')
+            .button()
+            .click(function() {
+                $('form[name="' + self.selected + '"]', self.element).submit();
+            });
 
-        // Form submit
-        this.element.delegate('form', 'submit', $.proxy(this._search, this));
-            
+        // Prevent map getting cursors keys
         this.element.bind('keydown', function(event) {
             event.stopPropagation();
         });
-        
+
+        // Listen to changes of search select (switching and forms resetting)
+        var routeSelect = $('select#search_routes_route', this.element);
+        routeSelect.change($.proxy(this._selectSearch, this));
+        $('#' + this.options.target.map).mbMap('ready', function() {
+            routeSelect.change();
+        });
+        // But if there's only one search, we actually don't need the select
         var routeCount = 0;
         for(route in this.options.routes) {
             if(this.options.routes.hasOwnProperty(route)) {
@@ -69,31 +87,6 @@ $.widget('mapbender.mbSearchRouter', {
             $('#search_routes_route_control_group').hide()
                 .next('hr').hide();
         }
-    },
-
-    /**
-     * Set up autocomplete widgets for all inputs with data-autcomplete="on"
-     *
-     * @param  integer      idx   Running index
-     * @param  HTMLDomNode  input Input element
-     */
-    _setupAutocomplete: function(idx, input) {
-        var self = this;
-        input = $(input);
-        input.autocomplete({
-            delay: input.data('autocomplete-delay') || 500,
-            minLength: input.data('autocomplete-minlength') || 3,
-            search: $.proxy(this._autocompleteSearch, this),
-            source: function(request, response) {
-                self._autocompleteSource(input, request, response);
-            },
-            select: this._autocompleteSelect
-        }).keydown(this._autocompleteKeydown);
-    },
-    
-    _setupCustomAutocomplete: function(idx, input) {
-        var plugin = $(input).data('autocomplete').substr(7);
-        $(input)[plugin]();
     },
 
     destroy: function() {
@@ -128,36 +121,93 @@ $.widget('mapbender.mbSearchRouter', {
      * @param  jqEvent event Change event
      */
     _selectSearch: function(event) {
-        this.selected = $(event.target).val();
+        var selected = this.selected = $(event.target).val();
 
-        this._getLayer().removeAllFeatures();
-        var container = $('.search-results', this.element).empty();
-        
         if(this.options.routes[this.selected].hideSearchButton === true) {
             $('a[role="search_router_search"]').hide();
         } else {
             $('a[role="search_router_search"]').show();
         }
 
-        this._setupResultCallback();
-        
-        if(typeof this.options.routes[this.selected].results.headers === 'undefined') {
-            return;
+        $('form', this.element).each(function() {
+            var form = $(this);
+            if(form.attr('name') == selected) {
+                form.show();
+            } else {
+                form.hide();
+            }
+            form.get(0).reset();
+        });
+
+        var container = $('.search-results', this.element).empty();
+        if('table' === this.options.routes[this.selected].results.view) {
+            this._prepareResultTable(container);
         }
-        
-        var headers = this.options.routes[this.selected].results.headers;
+    },
 
-        var table = $('<table></table>'),
-            thead = $('<thead><tr></tr></thead>').appendTo(table);
+    /**
+     * Set up autocomplete widgets for all inputs with data-autcomplete="on"
+     *
+     * @param  integer      idx   Running index
+     * @param  HTMLDomNode  input Input element
+     */
+    _setupAutocomplete: function(idx, input) {
+        var self = this;
+        input = $(input);
+        input.autocomplete({
+            delay: input.data('autocomplete-delay') || 500,
+            minLength: input.data('autocomplete-minlength') || 3,
+            search: $.proxy(this._autocompleteSearch, this),
+            source: function(request, response) {
+                self._autocompleteSource(input, request, response);
+            },
+            select: this._autocompleteSelect
+        }).keydown(this._autocompleteKeydown);
+    },
 
-        for(var header in headers) {
-            thead.append($('<th>' + header + '</th>'));
+    /**
+     * Autocomplete source handler, does all Ajax magic.
+     *
+     * @param  HTMLDomNode target   Input element
+     * @param  Object      request  Request object with term attribute
+     * @param  function    response Autocomplete callback
+     */
+    _autocompleteSource: function(target, request, response) {
+        if(!target.data('autocompleteModel')) {
+            var model = new Mapbender.AutocompleteModel(null, {
+                router: this
+            });
+            target.data('autocompleteModel', model);
+
+            model.on('request', this._setActive, this);
+            model.on('sync', function() {
+                response(model.get('results'));
+            });
+            model.on('error', response([]));
         }
-        
-        table.append($('<tbody></tbody>'));
-        
-        container.append(table);
 
+        target.data('autocompleteModel').submit(target, request);
+    },
+
+    /**
+     * Store autocomplete key if suggestion was selected.
+     *
+     * @param  jQuery.Event event Selection event
+     * @param  Object       ul    Selected item
+     */
+    _autocompleteSelect: function(event, ui) {
+        if(typeof ui.item.key !== 'undefined') {
+            $(event.target).attr('data-autocomplete-key', ui.item.key);
+        }
+    },
+
+    /**
+     * Remove stored autocomplete key when key was pressed.
+     *
+     * @param  jQuery.Event event Keydown event
+     */
+    _autocompleteKeydown: function(event) {
+        $(event.target).removeAttr('data-autocomplete-key');
     },
 
     /**
@@ -165,7 +215,7 @@ $.widget('mapbender.mbSearchRouter', {
      *
      * Checks if enough time has been passed since the last search. Basically
      * this prevents an autocomplete poping up when a search is triggered by
-     * keybord.
+     * keyboard.
      *
      * @param  jQuery.Event event search event
      * @param  Object       ui    n/a
@@ -180,143 +230,69 @@ $.widget('mapbender.mbSearchRouter', {
     },
 
     /**
-     * Autocomplete source handler, does all Ajax magic.
-     *
-     * @param  HTMLDomNode target   Input element
-     * @param  Object      request  Request object with term attribute
-     * @param  function    response Autocomplete callback
+     * Prepare search result table
      */
-    _autocompleteSource: function(target, request, response) {
-        var url = this.callbackUrl + 'autocomplete';
-
-        var data = {
-            target: target.attr('name'),
-            term: request.term,
-            data: target.closest('form').serialize(),
-            srs: null,
-            extent: null
-        };
-
-        var _error = function() {
-            response([]);
-        };
-
-        this._setActive();
-        $.ajax({
-            url: url,
-            data: data,
-            type: 'POST',
-            success: response,
-            error: _error,
-            complete: $.proxy(this._setInactive, this)
-        });
-    },
-
-    /**
-     * Store autocomplete key if suggestion was selected.
-     *
-     * @param  jQuery.Event event Selection event
-     * @param  Object       ul    Selected item
-     */
-    _autocompleteSelect: function(event, ul) {
-        var suggestions = $(this).data('autocomplete-suggestions');
-        if(typeof ul.item.key !== 'undefined') {
-            $(event.target).data('autocomplete-key', ul.item.key);
+    _prepareResultTable: function(container) {
+        if(typeof this.options.routes[this.selected].results.headers === 'undefined') {
+            return;
         }
+
+        var headers = this.options.routes[this.selected].results.headers;
+
+        var table = $('<table></table>'),
+            thead = $('<thead><tr></tr></thead>').appendTo(table);
+
+        for(var header in headers) {
+            thead.append($('<th>' + headers[header] + '</th>'));
+        }
+
+        table.append($('<tbody></tbody>'));
+
+        container.append(table);
+
+        this._setupResultCallback();
     },
 
     /**
-     * Remove stored autocomplete key when key was pressed.
-     *
-     * @param  jQuery.Event event Keydown event
+     * Update result list when search model's results property was changed
      */
-    _autocompleteKeydown: function(event) {
-        $(event.target).removeData('autocomplete-key');
-    },
-
-    /**
-     * Does search for current form.
-     *
-     * @param  jQEvent event  jQuery Event
-     */
-    _search: function(event) {
-        // Store start time for preventing "concurrent" autocompletes
-        this.lastSearch = new Date();
-        event.preventDefault();
-        var form = $('form[name="' + this.selected + '"]'),
-            url = this.callbackUrl + 'search',
-            autocomplete_keys = [];
-
-
-        $(':input', form).each(function(idx, input) {
-            input = $(input);
-            var autocomplete_key = input.data('autocomplete-key');
-            if(typeof autocomplete_key !== 'undefined') {
-                autocomplete_keys.push(
-                    encodeURIComponent(input.attr('name')) + '=' +
-                    encodeURIComponent(autocomplete_key));
-            }
-        });
-
-        var data = {
-            target: this.selected,
-            data: form.serialize(),
-            autocomplete_keys: autocomplete_keys.join('&'),
-            srs: null,
-            extent: null
-        };
-
-        this._setActive();
-        $.ajax({
-            url: url,
-            data: data,
-            type: 'POST',
-            success: $.proxy(this._setSearchResults, this),
-            complete: $.proxy(this._setInactive, this)
-        });
+    _searchResults: function(model, results, options) {
+        if('table' === this.options.routes[this.selected].results.view) {
+            this._searchResultsTable(model, results, options);
+        }
     },
 
     /**
      * Rebuilds result table with search result data.
      *
-     * @param Object data Result data
+     * @param SearchModel       model   Search model
+     * @param FeatureCollection results Search result feature collection
+     * @param object            options Backbone options
      */
-    _setSearchResults: function(data) {
+    _searchResultsTable: function(model, results, options) {
         var headers = this.options.routes[this.selected].results.headers,
             table = $('.search-results table', this.element),
             tbody = $('<tbody></tbody>'),
             layer = this._getLayer();
-        
+
         $('tbody', table).remove();
         layer.removeAllFeatures();
+        features = [];
 
-        for(var result in data) {
+        results.each(function(feature, idx) {
             var row = $('<tr></tr>');
-            row.data('feature', data[result]);
+            row.data('feature', feature);
             for(var header in headers) {
-                d = data[result][headers[header]];
+                d = feature.get('properties')[header];
                 row.append($('<td>' + (d || '') + '</td>'));
             }
+            row.data('feature', feature);
             tbody.append(row);
-        }
+
+            features.push(feature.getFeature());
+        });
 
         table.append(tbody);
-
-        // Build highlight layer
-        var format = new OpenLayers.Format.WKT(),
-            features = [];
-        $('tr', tbody).each(function(idx, row) {
-            row = $(row);
-            var f = $.extend({}, row.data('feature')),
-                feature = format.read(f.geom);
-            
-            delete f.geom;
-            feature.attributes = f;
-
-            features.push(feature);
-
-            row.data('feature', feature);
-        });
         layer.addFeatures(features);
     },
 
@@ -338,6 +314,7 @@ $.widget('mapbender.mbSearchRouter', {
 
     /**
      * Get highlight layer. Will construct one if neccessary.
+     * @TODO: Backbonify (view)
      *
      * @return OpenLayers.Layer.Vector Highlight layer
      */
@@ -349,7 +326,7 @@ $.widget('mapbender.mbSearchRouter', {
         }
 
         if(this.highlightLayer.map === null) {
-            var map = $('#' + this.options.target).data('mbMap').map.olMap;
+            var map = $('#' + this.options.target.map).data('mbMap').map.olMap;
             map.addLayer(this.highlightLayer);
         }
 
@@ -381,7 +358,7 @@ $.widget('mapbender.mbSearchRouter', {
      */
     _resultCallback: function(event) {
         var row = $(event.currentTarget),
-            feature = row.data('feature'),
+            feature = row.data('feature').getFeature(),
             featureExtent = feature.geometry.getBounds(),
             map = feature.layer.map,
             callbackConf = this.options.routes[this.selected].results.callback;
@@ -406,7 +383,7 @@ $.widget('mapbender.mbSearchRouter', {
             var units = map.baseLayer.units;
             var scale = OpenLayers.Util.getScaleFromResolution(res, units);
 
-            
+
             if(callbackConf.options.maxScale) {
                 var maxRes = OpenLayers.Util.getResolutionFromScale(
                     callbackConf.options.maxScale, map.baseLayer.units);
