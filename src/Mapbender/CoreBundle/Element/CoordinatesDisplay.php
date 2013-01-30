@@ -49,7 +49,7 @@ class CoordinatesDisplay extends Element
             'label' => true,
 //            'formatoutput' => true,
             'empty' => 'x= - y= -',
-            'displaystring' => '',
+//            'displaystring' => '',
             'prefix' => 'x= ',
             'separator' => ' y= ',
 //            'suffix' => '',

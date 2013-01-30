@@ -298,59 +298,81 @@ class ElementController extends Controller {
         }
         if($element->getRegion() === $newregion){
             $em = $this->getDoctrine()->getEntityManager();
+            $element->setWeight($number);
+            $em->persist($element);
+            $em->flush();
             $query = $em->createQuery(
                     "SELECT e FROM MapbenderCoreBundle:Element e"
                     ." WHERE e.region=:reg AND e.application=:app"
-                    ." AND e.weight>=:min AND e.weight<=:max"
+//                    ." AND e.weight>=:min AND e.weight<=:max"
                     ." ORDER BY e.weight ASC");
             $query->setParameters(array(
                 "reg" => $newregion,
-                "app" => $element->getApplication()->getId(),
-                "min" => $element->getWeight() < $number ? $element->getWeight() : $number,
-                "max" => $element->getWeight() > $number ? $element->getWeight() : $number));
+                "app" => $element->getApplication()->getId()));
             $elements = $query->getResult();
-            $asc = $element->getWeight() < $number;
-            foreach ($elements as $elm) {
-                if($elm->getId() === $element->getId()){
-                    $elm->setWeight($number);
-                } else {
-                    if($asc){
-                        $elm->setWeight($elm->getWeight() - 1);
-                    } else {
-                        $elm->setWeight($elm->getWeight() + 1);
-                    }
-                }
-            }
-            foreach ($elements as $elm) {
-                $em->persist($elm);
-            }
             
-            $query = $em->createQuery(
-                    "SELECT e FROM MapbenderCoreBundle:Element e"
-                    ." WHERE e.region<>:reg AND e.application=:app"
-                    ." AND e.weight>=:min AND e.weight<=:max"
-                    ." ORDER BY e.region,e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $newregion,
-                "app" => $element->getApplication()->getId(),
-                "min" => $element->getWeight() < $number ? $element->getWeight() : $number,
-                "max" => $element->getWeight() > $number ? $element->getWeight() : $number));
-            $elements = $query->getResult();
-            $asc = $element->getWeight() < $number;
+            $num = 0;
             foreach ($elements as $elm) {
-                if($elm->getId() === $element->getId()){
-                    $elm->setWeight($number);
-                } else {
-                    if($asc){
-                        $elm->setWeight($elm->getWeight() - 1);
+                if($num === intval($element->getWeight())){
+                    if($element->getId() === $elm->getId()){
+                        $num++;
                     } else {
-                        $elm->setWeight($elm->getWeight() + 1);
+                        $num++;
+                        $elm->setWeight($num);
+                        $num++;
+                    }
+                } else {
+                    if($element->getId() !== $elm->getId()){
+                        $elm->setWeight($num);
+                        $num++;
                     }
                 }
             }
             foreach ($elements as $elm) {
                 $em->persist($elm);
             }
+//            $asc = $element->getWeight() < $number;
+//            foreach ($elements as $elm) {
+//                if($elm->getId() === $element->getId()){
+//                    $elm->setWeight($number);
+//                } else {
+//                    if($asc){
+//                        $elm->setWeight($elm->getWeight() - 1);
+//                    } else {
+//                        $elm->setWeight($elm->getWeight() + 1);
+//                    }
+//                }
+//            }
+//            foreach ($elements as $elm) {
+//                $em->persist($elm);
+//            }
+            
+//            $query = $em->createQuery(
+//                    "SELECT e FROM MapbenderCoreBundle:Element e"
+//                    ." WHERE e.region<>:reg AND e.application=:app"
+//                    ." AND e.weight>=:min AND e.weight<=:max"
+//                    ." ORDER BY e.region,e.weight ASC");
+//            $query->setParameters(array(
+//                "reg" => $newregion,
+//                "app" => $element->getApplication()->getId(),
+//                "min" => $element->getWeight() < $number ? $element->getWeight() : $number,
+//                "max" => $element->getWeight() > $number ? $element->getWeight() : $number));
+//            $elements = $query->getResult();
+//            $asc = $element->getWeight() < $number;
+//            foreach ($elements as $elm) {
+//                if($elm->getId() === $element->getId()){
+//                    $elm->setWeight($number);
+//                } else {
+//                    if($asc){
+//                        $elm->setWeight($elm->getWeight() - 1);
+//                    } else {
+//                        $elm->setWeight($elm->getWeight() + 1);
+//                    }
+//                }
+//            }
+//            foreach ($elements as $elm) {
+//                $em->persist($elm);
+//            }
             $application = $element->getApplication();
             $application->setUpdated(new \DateTime());
             $em->persist($application);

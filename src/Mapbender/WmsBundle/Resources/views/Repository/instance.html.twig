@@ -15,6 +15,7 @@
 {% block manager_content %}
 <div class="well">
 <h3>{{ 'Wms Instance' | trans }}: {{ form.vars.value.title }}: {{ instance.source.id }}</h3>
+<p><b>{{ 'origin URL' | trans }}:</b> {{ instance.source.originUrl }}</p>
 {% set root = instance.source.getRootlayer() %}
 {{ form_errors(form) }}
     <form action="{{path('mapbender_wms_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post">

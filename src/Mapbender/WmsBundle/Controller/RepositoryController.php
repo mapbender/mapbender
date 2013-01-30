@@ -146,7 +146,9 @@ class RepositoryController extends Controller {
 
                 if(count($wmsWithSameTitle) > 0) {
                     $wmssource->setAlias(count($wmsWithSameTitle));
-                } 
+                }
+                
+                $wmssource->setOriginUrl($getcapa_url_usrPwd);
                 
                 $this->getDoctrine()->getEntityManager()->persist($wmssource);
                 $this->getDoctrine()->getEntityManager()->flush();

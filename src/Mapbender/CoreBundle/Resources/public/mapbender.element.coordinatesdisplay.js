@@ -60,7 +60,7 @@ $.widget("mapbender.mbCoordinatesDisplay", {
                 mbMap.map.olMap.removeControl(mouseContr);
             var options = {
                 id: $(self.element).attr('id'),
-                div: $(self.element)[0],
+                div: $($(self.element)[0]).find('div#coordinatesdisplay')[0],
                 emptyString: self.options.empty,
                 prefix: self.options.prefix,
                 separator: self.options.separator,

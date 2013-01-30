@@ -9,14 +9,13 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class FeatureInfoAdminType extends AbstractType
 {
     public function getName() {
-        return 'ruler';
+        return 'featureinfo';
     }
     
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null,
-//            'target' => null
+            'application' => null
             ));
     }
     

@@ -11,14 +11,16 @@ $(function() {
         connectWith: "ul.elements",
         items: "li:not(.dummy)",
         stop: function( event, ui ) {
-//            console.log($(ui.item).parent());
+//            console.log(event, ui, $(ui.item).parent());
             $(ui.item).parent().find("li").each(function(idx, elm){
+                console.log(idx, elm);
                 if($(elm).attr("data-href")===$(ui.item).attr("data-href")){
+                    console.log(idx, elm, $(elm).parent().find("li.dummy").length);
                     $.ajax({
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
                         data: {
-                            number: idx - 1,
+                            number: idx - $(elm).parent().find("li.dummy").length,
                             region: $(ui.item).parent().attr("data-region")
                         },
                         success: function(data, textStatus, jqXHR){

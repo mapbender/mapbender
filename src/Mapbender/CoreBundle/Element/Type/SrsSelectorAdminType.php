@@ -23,6 +23,7 @@ class SrsSelectorAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
+                ->add('label', 'checkbox', array('required' => false))
                 ->add('target_map', 'target_element', array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],

@@ -29,12 +29,25 @@
 
             <dt>{{ "Name" | trans }}</dt>
             <dd>{{ wms.name }}</dd>
+            
+            <dt>{{ "Version" | trans }}</dt>
+            <dd>{{ wms.version }}</dd>
+            
+            <dt>{{ "Origin URL" | trans }}</dt>
+            <dd>{{ wms.originUrl }}</dd>
 
             <dt>{{ "Abstract" | trans }}</dt>
             <dd>{{ wms.description }}</dd>
 
             <dt>{{ "Online Resource" | trans }}</dt>
             <dd>{{ wms.onlineResource }}</dd>
+            
+            <dt>{{ "Exception Formats" | trans }}</dt>
+            <dd>{% for exc in wms.exceptionFormats %}
+                    {% if not loop.first %},{% endif %}
+                    {{ exc }}
+                {% endfor %}
+            </dd>
 
             <dt>{{ "Fees" | trans }}</dt>
             <dd>{{ wms.fees }}</dd>
