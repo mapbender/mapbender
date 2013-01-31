@@ -1,5 +1,4 @@
 (function($) {
-
 $.widget("mapbender.mbToc", $.ui.dialog, {
     options: {
         title: 'Table of Contents',

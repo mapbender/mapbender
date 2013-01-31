@@ -2,171 +2,179 @@
 
 $.widget("mapbender.mbLegend", {
     options: {
-        dialogtitle: "Legend view",
+        title: 'Legende',
+        autoOpen: true,
+        target: null,
         nolegend: "No legend available",
         maxDialogWidth: $(window).width() - 100,
-        maxDialogHeight: $(window).height() - 100
+        maxDialogHeight: $(window).height() - 100,
+    
+        maxImgWidth: 0,
+        maxImgHeight: 0
     },
-    maxImgWidth: 0,
-    maxImgHeight: 0,
-    elementUrl: null,
 
     _create: function() {
         if(this.options.target === null
             || this.options.target.replace(/^\s+|\s+$/g, '') === ""
             || !$('#' + this.options.target)){
-            alert('The target element "map" is not defined for  a Legend.');
+            alert('The target element "map" is not defined for a Legend Dialog.');
             return;
         }
         var self = this;
-        var me = $(this.element);
-        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
         $(document).one('mapbender.setupfinished', function() {
-            $('#' + self.options.target).mbMap('ready', $.proxy(self._init, self));
+            $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
         });
     },
-    
-    _init: function(){
+
+    _setup: function() {
         var self = this;
         var me = $(this.element);
-        this.op_sel = "#"+me.attr('id')+" option";
-        $(self.element).button().bind('click', $.proxy(self._showAllLegends, self));
+        if(this.options.elementType === "dialog") {
+            this.element.dialog({
+                width: 500,
+                autoOpen: false,
+                 heightStyle: "content",
+                title: self.options.title
+            });
+        }
+        if(this.options.autoOpen){
+            this.open();
+        }
     },
     
     _checkMaxImgWidth: function(val){
-        if(this.maxImgWidth < val)
-            this.maxImgWidth = val;
+        if(this.options.maxImgWidth < val)
+            this.options.maxImgWidth = val;
     },
     
     _checkMaxImgHeight: function(val){
-        if(this.maxImgHeight < val)
-            this.maxImgHeight = val;
+        if(this.options.maxImgHeight < val)
+            this.options.maxImgHeight = val;
     },
-    
-    _showAllLegends: function(evt) {
-        this.maxImgWidth = 0;
-        this.maxImgHeight = 0;
+    _getLayers: function() {
         var self = this;
         var mbMap = $('#' + this.options.target).data('mbMap');
         var layers = mbMap.map.layers();
-        var baseLnum = 0;
-        var baseLayers = [];
-        var otherLayers = [];
-        $.each(layers, function(idx, val){
-            if (!val.visible()){return ;}
-            var temp = self._getLayerLegend(val);
-            if(val.options.isBaseLayer) {
-                baseLnum++;
-                baseLayers = baseLayers.concat(temp); // XXXXXXXXXX
-            } else {
-                otherLayers = otherLayers.concat(temp); // XXXXXXXXXX
-            }
-        });
-        var options = {autoHeight: false, collapsible: true};
-        if (baseLnum > 0 && otherLayers.length > 0) {
-            options['active'] = baseLnum;
+        var allLayers = [];
+//        $.each(layers, function(idx, val){
+//            if (!val.visible()){return ;}
+//            allLayers.push(self._getLayer(val));
+//        });
+        for(var i = 0; i < layers.length; i++){
+            if (!layers[i].visible()){return ;}
+            allLayers.push(self._getLayer(layers[i]));
         }
-        this._showLegendDialog(baseLayers.concat(otherLayers), options, 0, "");
+        return allLayers;
     },
     
-    showLegend: function(evt) {
-        if(typeof(evt) === 'undefined')
-            return;
-        var legends = this._getLayerLegend(evt.data);
-        this._showLegendDialog(legends, {autoHeight: false, collapsible: true}, 0, "");
+    _getLayer: function(layer) {
+        return {title: layer.label, sublayers: this._getSublayers(layer)};
     },
     
-    _getLayerLegend: function(val){
-        var legend;
-        if(val.options.type == "wms") { // wms & wmc
-            if(val.options.wms_parameters) { // wmc
-                legend = {
-                    title: val.options.label};
-                if(val.options.wms_parameters.legend) {
-                    legend.urls = val.options.wms_parameters.legend.href;
-                }
-                legend = [legend];
-            } else { // wms
-//                var glgUrl = val.olLayer.url + (val.olLayer.url.match(/\?/) ? '&' : '?');
-//                glgUrl += 'service=WMS&request=GetLegendGraphic&version=1.1.1&format=image/png&layer=';
-
-                var glgUrl;
-                if(val.olLayer.configuration.configuration.legendgraphic) {
-                    glgUrl = val.olLayer.configuration.configuration.legendgraphic + "&format=" + val.olLayer.format;
-                }
-                legend = [];
-                $.each(val.options.allLayers, function(idx, val_) {
-                    // the val_.legend is determinated from getCapabilities absolute correct !!!
-                    var l = {
-                        title: val_.title};
-                    if(val_.legend) {
-                        l.url = val_.legend;
-                    } else if(glgUrl) {
-                        var url = glgUrl;
-                        if(val_.style){
-                            url += "&style=" + val_.style;
-                        }
-                        url += "&layer=" + val_.name;
-                        l.url = url;
-                    }
-                    legend.push(l);
-                });
-            }
-        } else  if(val.options.type == "wmts") { // wmts
-            legend = {
-                title: val.options.layer
-            };
-            if(val.options.configuration.configuration.legendurl &&
-                val.options.configuration.configuration.legendurl !== "") {
-                legend.urls = val.options.configuration.configuration.legendurl;
-            }
-            legend = [legend];
-        }
-        return legend;
-    },
-    
-    _showLegendDialog: function(legends, accordionoptions, idx, content){
+    _getSublayers: function(layer){
         var self = this;
-        var legend = legends[idx];
-        var id = $(self.element).attr("id");
-        if(legends.length > idx){
-            if(legend.url != null && legend.url.length > 0){
-                $("#" + id + "-dialog").html('<img id="testload" style="display: none;" src="' + legend.url + '"></img>');
-                $("#" + id + "-dialog img#testload").load(function() {
-                    var width = $(this).width(), height = $(this).height();
-                    self._checkMaxImgWidth(width);
-                    self._checkMaxImgHeight(height);
-                    var html = '<h3><a href="#">' + legend.title + '</a></h3>';
-                    html += '<div class="legend-img-div"><img src="' + legend.url + '"></img></div>';
-                    self._showLegendDialog(legends, accordionoptions, idx + 1, content + html);
-                }).error(function() {
-                    var html = '<h3><a href="#">' + legend.title + '</a></h3>';
-                    html += '<div class="legend-text-div">' + self.options.nolegend + ' </div>';
-                    self._showLegendDialog(legends,  accordionoptions, idx + 1, content + html);
-                });
-            } else {
-                var html = '<h3><a href="#">' + legend.title + '</a></h3>';
-                html += '<div class="legend-text-div">' + self.options.nolegend + ' </div>';
-                self._showLegendDialog(legends, accordionoptions, idx + 1, content + html);
+        var sublayers = [];
+        if(layer.options.type == "wms") { // wms & wmc
+            if(layer.options.wms_parameters) { // wmc
+                //@TODO
+            } else { // wms
+//                $.each(layer.options.allLayers, function(idx, val_) {
+//                    sublayers.push(self._getSublayer(val_, "wms"));
+//                });
+                for(var i = 0; i < layer.options.allLayers.length; i++){
+                    sublayers.push(self._getSublayer(layer.options.allLayers[i], "wms"));
+                }
             }
+        } else  if(layer.options.type == "wmts") { // wmts
+            //@TODO
+        }
+        return sublayers;
+    },
+    
+    _getSublayer: function(sublayer, type){
+        var self = this;
+        var sublayerLeg = {title: sublayer.title};
+        if(type === "wmc"){
+            //@TODO
+        } else if(type === "wms"){
+            if(sublayer.legend) {
+                sublayerLeg["legend"] = sublayer.legend;
+            }
+        } else if(type === "wtms"){
+            //@TODO
+        }
+        return sublayerLeg;
+    },
+    
+    _createLegend: function(layers, layidx, sublayidx, html, reshtml) {
+        var self = this;
+        if(layers.length > layidx){
+                var layer = layers[layidx];
+                if(layers[layidx].sublayers.length > sublayidx){
+                    if(layers[layidx].sublayers[sublayidx].legend){
+                        $(self.element).find("#imgtest").html('<img id="testload" style="display: none;" src="' + layers[layidx].sublayers[sublayidx].legend.url + '"></img>');
+                        $(self.element).find("#imgtest #testload").load(function() {
+//                            var width = this.width, height = this.height;
+                            self._checkMaxImgWidth(this.width);
+                            self._checkMaxImgHeight(this.height);
+    //                        window.console && console.log( sublayer.legend.url);
+                            html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
+                            html += '<div class="legend-img-div"><img src="' + layers[layidx].sublayers[sublayidx].legend.url + '"></img></div>';
+                            self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
+                        }).error(function() {
+                            html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
+                            html += '<div class="legend-text-div">' + self.options.nolegend + ' </div>';
+                            self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
+                        });
+                    } else {
+                        html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
+                        html += '<div class="legend-text-div">' + self.options.nolegend + ' </div>';
+                        self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
+                    }
+                } else {
+                    var html_ = ' <div class="layerlegends">'
+                         +  ' <h3><a href="#">' + layer.title + '</a></h3>'
+                         +  ' <div class="sublayerlegends">';
+                    html_+=  html;
+                    html_+=' </div>'
+                         +  ' </div>';
+                    reshtml += html_;
+                    self._createLegend(layers, ++layidx, 0, "", reshtml);
+                }
         } else {
-            content = '<div id="legend-accordion">' + content + '</div>';
-            $("#" + $(self.element).attr("id") + "-dialog").html(content).dialog({
-                title: self.options.dialogtitle,
-                maxHeight: self.options.maxDialogHeight + "px",
-                maxWidth: self.options.maxDialogWidth,
-                minWidth:  self.maxImgWidth != 0 ? self.maxImgWidth : 300
-//                ,resizable: false
-            });
-            $("div#legend-accordion").accordion(accordionoptions);
-            
-            $("#" + $(self.element).attr("id") + "-dialog").css({
-                "max-height": (self.options.maxDialogHeight - 50) +"px"
-            });
+            $(self.element).find("#imgtest").html("");
+            $(this.element).find('#legends:eq(0)').html(reshtml);
+            if(this.options.elementType === "dialog") {
+                this.element.dialog("option", "maxHeight", self.options.maxDialogHeight + "px");
+                this.element.dialog("option", "maxWidth", self.options.maxDialogWidth);
+                this.element.dialog("option", "minWidth", self.options.maxImgWidth != 0 ? self.maxImgWidth + 100 : 300);
+                this.element.dialog("option", "width", self.options.maxImgWidth != 0 ? self.maxImgWidth + 200 : 300);
+//                this.element.dialog({
+//                    maxHeight: self.options.maxDialogHeight,
+//                    maxWidth: self.options.maxDialogWidth,
+//                    minWidth: self.options.maxImgWidth != 0 ? self.maxImgWidth + 100 : 300,
+//                    width: self.options.maxImgWidth != 0 ? self.maxImgWidth + 200 : 600});
+                this.element.dialog('open');
+                $(this.element).css({
+                    "max-height": (this.options.maxDialogHeight - 50) +"px"
+                });
+            }
+            if(this.options.displayType === 'accordion'){
+                $(this.element).find('.sublayerlegends').each(function(){
+                    $(this).accordion({autoHeight: false, collapsible: true, active: false});
+                });
+                $(this.element).find('.layerlegends').each(function(){
+                    $(this).accordion({autoHeight: false, collapsible: true, active: false});
+                });
+            }
         }
     },
     
-    _destroy: $.noop
+    open: function() {
+        var layers = this._getLayers();
+        this._createLegend(layers, 0, 0, "", "");
+    }
+
 });
 
 })(jQuery);

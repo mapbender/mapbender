@@ -133,7 +133,15 @@ class RepositoryController extends Controller {
                     $this->get("logger")->debug("$getcapa_url_usrPwd returned no data");
                     throw new \Exception("Preview: Service '$getcapa_url_usrPwd' returned no Data");
                 }
-                $wmsParser = WmsCapabilitiesParser::create($result->getData());
+                $doc = WmsCapabilitiesParser::createDocument($result->getData());
+                $version = WmsCapabilitiesParser::getVersion($doc);
+                if(!WmsCapabilitiesParser::isVersionSupported($version)){
+                    $this->get('session')->setFlash('error', 'The WMS version "'
+                            . $version . '" is not supported.');
+                    return $this->redirect($this->generateUrl(
+                            "mapbender_manager_repository_new",array(), true));
+                }
+                $wmsParser = WmsCapabilitiesParser::getParser($doc);
                 $wmssource = $wmsParser->parse();
                 if(!$wmssource){
                     $this->get("logger")->debug("Could not parse data for url '$getcapa_url_usrPwd'");
@@ -147,14 +155,11 @@ class RepositoryController extends Controller {
                 if(count($wmsWithSameTitle) > 0) {
                     $wmssource->setAlias(count($wmsWithSameTitle));
                 }
-                
+
                 $wmssource->setOriginUrl($getcapa_url_usrPwd);
-                
+
                 $this->getDoctrine()->getEntityManager()->persist($wmssource);
                 $this->getDoctrine()->getEntityManager()->flush();
-//                $this->removeRecursive($wmssource->getRootlayer(), $this->getDoctrine()->getEntityManager());
-//                $this->getDoctrine()->getEntityManager()->remove($wmssource);
-//                $this->getDoctrine()->getEntityManager()->flush();
             }else{
                 throw new \Exception("Preview: Server said '".$result->getStatusCode() . " ". $result->getStatusMessage(). "'");
             }

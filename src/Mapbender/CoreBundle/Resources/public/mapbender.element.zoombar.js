@@ -185,10 +185,10 @@ $.widget("mapbender.mbZoomBar", {
                     pan(0, -stepSize.y);
                     break;
                 case 'pan-right':
-                    pan(stepSize.x, 0);
+                    pan(+stepSize.x, 0);
                     break;
                 case 'pan-down':
-                    pan(0, stepSize.y);
+                    pan(0, +stepSize.y);
                     break;
                 case 'pan-left':
                     pan(-stepSize.x, 0);
