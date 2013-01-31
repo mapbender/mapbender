@@ -48,5 +48,11 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\ZoomBar'
             );
     }
+
+    public function getACLClasses()
+    {
+        return array(
+            'Mapbender\CoreBundle\Entity\Application' => 'Application');
+    }
 }
 
