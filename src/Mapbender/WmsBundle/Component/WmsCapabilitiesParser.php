@@ -1,7 +1,8 @@
 <?php
 
 namespace Mapbender\WmsBundle\Component;
-use Mapbender\WmsBundle\Component\Exception\ParsingException;
+
+use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 
 /**
 * Class that Parses WMS GetCapabilies Document 
@@ -59,39 +60,29 @@ abstract class WmsCapabilitiesParser {
     public static function createDocument($data, $validate = false){
         $doc = new \DOMDocument();
         if(!@$doc->loadXML($data)){
-            throw new ParsingException("Could not parse CapabilitiesDocument.");
-        }
-        // WMS 1.0.0
-        if($doc->documentElement->tagName == "WMTException"){
-            $message=$doc->documentElement->nodeValue;
-            throw new ParsingException($message);
+            return new XmlParseException("Could not parse CapabilitiesDocument.");
         }
         
         if($doc->documentElement->tagName == "ServiceExceptionReport"){
             $message=$doc->documentElement->nodeValue;
-            throw new  ParsingException($message);
+            return new  XmlParseException($message);
+        }
+        
+        if($doc->documentElement->tagName !== "WMS_Capabilities"
+                && $doc->documentElement->tagName !== "WMT_MS_Capabilities"){
+            return new XmlParseException("No supported CapabilitiesDocument");
         }
 
         if($validate && !@$this->doc->validate()){
             // TODO logging
         };
-        return $doc;
-    }
-    
-    public static function getVersion(\DOMDocument $doc){
-        return $doc->documentElement->getAttribute("version");
-    }
-    
-    public static function isVersionSupported($version) {
-        switch($version){
-            case "1.1.1":
-                return  true;
-            case "1.3.0":
-                return  true;
-            default:
-                return false;
-            break;
+        
+        $version = $doc->documentElement->getAttribute("version");
+        if($version !== "1.1.1" && $version !== "1.3.0"){
+            return new XmlParseException('The WMS version "'
+                            . $version . '" is not supported.');
         }
+        return $doc;
     }
     
     public static function getParser(\DOMDocument $doc){

@@ -22,6 +22,8 @@ use Mapbender\WmsBundle\Form\Type\WmsInstanceType;
 use Mapbender\Component\HTTP\HTTPClient;
 use Mapbender\CoreBundle\Component\Utils;
 
+use Mapbender\CoreBundle\Component\Exception\XmlParseException;
+
 /**
  * @ManagerRoute("/repository/wms")
  */
@@ -128,46 +130,62 @@ class RepositoryController extends Controller {
                     $wmssource_req->getUsername(),
                     $wmssource_req->getPassword());
             $result = $client->open($getcapa_url_usrPwd);
-            if($result->getStatusCode() == 200){
-                if(!$result->getData()){
-                    $this->get("logger")->debug("$getcapa_url_usrPwd returned no data");
-                    throw new \Exception("Preview: Service '$getcapa_url_usrPwd' returned no Data");
-                }
-                $doc = WmsCapabilitiesParser::createDocument($result->getData());
-                $version = WmsCapabilitiesParser::getVersion($doc);
-                if(!WmsCapabilitiesParser::isVersionSupported($version)){
-                    $this->get('session')->setFlash('error', 'The WMS version "'
-                            . $version . '" is not supported.');
-                    return $this->redirect($this->generateUrl(
-                            "mapbender_manager_repository_new",array(), true));
-                }
-                $wmsParser = WmsCapabilitiesParser::getParser($doc);
-                $wmssource = $wmsParser->parse();
-                if(!$wmssource){
-                    $this->get("logger")->debug("Could not parse data for url '$getcapa_url_usrPwd'");
-                    throw new \Exception("Preview: Could not parse data for url '$getcapa_url_usrPwd'");
-                }
-                $wmsWithSameTitle  =$this->getDoctrine()
-                    ->getEntityManager()
-                    ->getRepository("MapbenderWmsBundle:WmsSource")
-                    ->findByTitle($wmssource->getTitle());
-
-                if(count($wmsWithSameTitle) > 0) {
-                    $wmssource->setAlias(count($wmsWithSameTitle));
-                }
-
-                $wmssource->setOriginUrl($getcapa_url_usrPwd);
-
-                $this->getDoctrine()->getEntityManager()->persist($wmssource);
-                $this->getDoctrine()->getEntityManager()->flush();
-            }else{
-                throw new \Exception("Preview: Server said '".$result->getStatusCode() . " ". $result->getStatusMessage(). "'");
+            if($result->getStatusCode() != 200){
+                $this->get("logger")->debug("Preview: Server said '"
+                        .$result->getStatusCode() . " "
+                        . $result->getStatusMessage(). "'");
+                $this->get('session')->setFlash('error',
+                        "Preview: Server said '".$result->getStatusCode() . " "
+                        . $result->getStatusMessage(). "'");
+                return $this->redirect($this->generateUrl(
+                        "mapbender_manager_repository_new",array(), true));
             }
+            if(!$result->getData()){
+                $this->get("logger")->debug("$getcapa_url_usrPwd returned no data");
+                $this->get('session')->setFlash('error', 'Service "'
+                        .$getcapa_url_usrPwd.'" returned no Data');
+                return $this->redirect($this->generateUrl(
+                        "mapbender_manager_repository_new",array(), true));
+            }
+            $doc = WmsCapabilitiesParser::createDocument($result->getData());
+            if($doc instanceof XmlParseException){
+                $this->get("logger")->debug($doc->getMessage());
+                $this->get('session')->setFlash('error', $doc->getMessage());
+                return $this->redirect($this->generateUrl(
+                        "mapbender_manager_repository_new",array(), true));
+            }
+            $wmsParser = WmsCapabilitiesParser::getParser($doc);
+            $wmssource = $wmsParser->parse();
+            if(!$wmssource){
+                $this->get("logger")->debug('Could not parse data for url "'
+                        .$getcapa_url_usrPwd.'"');
+                $this->get('session')->setFlash('error',
+                        'Could not parse data for url "'
+                        .$getcapa_url_usrPwd.'"');
+                return $this->redirect($this->generateUrl(
+                        "mapbender_manager_repository_new",array(), true));
+            }
+            $wmsWithSameTitle  =$this->getDoctrine()
+                ->getEntityManager()
+                ->getRepository("MapbenderWmsBundle:WmsSource")
+                ->findByTitle($wmssource->getTitle());
+
+            if(count($wmsWithSameTitle) > 0) {
+                $wmssource->setAlias(count($wmsWithSameTitle));
+            }
+
+            $wmssource->setOriginUrl($getcapa_url_usrPwd);
+
+            $this->getDoctrine()->getEntityManager()->persist($wmssource);
+            $this->getDoctrine()->getEntityManager()->flush();
+                
         }
         if (!$getcapa_url) {
             $this->get('session')->setFlash('error', "url not set");
         }
-        return $this->redirect($this->generateUrl("mapbender_manager_repository_view",array("sourceId"=>$wmssource->getId()), true));
+        return $this->redirect($this->generateUrl(
+                "mapbender_manager_repository_view",array(
+                    "sourceId"=>$wmssource->getId()), true));
     }
     
     /**
