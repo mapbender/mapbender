@@ -56,14 +56,14 @@ $.widget("mapbender.mbLegend", {
         var mbMap = $('#' + this.options.target).data('mbMap');
         var layers = mbMap.map.layers();
         var allLayers = [];
-//        $.each(layers, function(idx, val){
-//            if (!val.visible()){return ;}
-//            allLayers.push(self._getLayer(val));
-//        });
-        for(var i = 0; i < layers.length; i++){
-            if (!layers[i].visible()){return ;}
-            allLayers.push(self._getLayer(layers[i]));
-        }
+        $.each(layers, function(idx, val){
+            if (!val.visible()){return ;}
+            allLayers.push(self._getLayer(val));
+        });
+//        for(var i = 0; i < layers.length; i++){
+//            if (!layers[i].visible()){return ;}
+//            allLayers.push(self._getLayer(layers[i]));
+//        }
         return allLayers;
     },
     
