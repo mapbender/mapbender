@@ -11,18 +11,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * SearchRouter element.
  *
- *
- *
- *  routes:
- *      test:
- *          title: Test search Route
- *          class: Acme\TestSearchEngine
- *          form: # Declare form elements here
- *              nav_point: # element name
- *                  type: text # element type
- *                  options: # form options
- *                      required: true # false by default
- *
  * @author Christian Wygoda
  */
 class SearchRouter extends Element

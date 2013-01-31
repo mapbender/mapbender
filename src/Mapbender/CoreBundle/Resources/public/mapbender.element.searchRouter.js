@@ -21,7 +21,7 @@ $.widget('mapbender.mbSearchRouter', {
      * Widget creator
      */
     _create: function() {
-        if(this.options.target.map === null ||
+        if(this.options.target === null ||
             this.options.target.replace(/^\s+|\s+$/g, '') === "" ||
             !$('#' + this.options.target)) {
             alert('The target element "map" is not defined for a SearchRouter.');
@@ -73,7 +73,7 @@ $.widget('mapbender.mbSearchRouter', {
         // Listen to changes of search select (switching and forms resetting)
         var routeSelect = $('select#search_routes_route', this.element);
         routeSelect.change($.proxy(this._selectSearch, this));
-        $('#' + this.options.target.map).mbMap('ready', function() {
+        $('#' + this.options.target).mbMap('ready', function() {
             routeSelect.change();
         });
         // But if there's only one search, we actually don't need the select
@@ -326,7 +326,7 @@ $.widget('mapbender.mbSearchRouter', {
         }
 
         if(this.highlightLayer.map === null) {
-            var map = $('#' + this.options.target.map).data('mbMap').map.olMap;
+            var map = $('#' + this.options.target).data('mbMap').map.olMap;
             map.addLayer(this.highlightLayer);
         }
 

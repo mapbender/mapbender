@@ -21,7 +21,7 @@ Mapbender.AutocompleteModel = Backbone.Model.extend({
         var properties = {},
             form = input.closest('form'),
             basename = form.attr('name'),
-            map = $('#' + this.router.options.target.map).data('mbMap').map.olMap,
+            map = $('#' + this.router.options.target).data('mbMap').map.olMap,
             name = input.attr('name');
 
         _.each($(':input', form), function(input, idx, all) {
@@ -105,7 +105,7 @@ Mapbender.SearchModel = Backbone.Model.extend({
             }
         });
 
-        var map = $('#' + this.router.options.target.map).data('mbMap').map.olMap;
+        var map = $('#' + this.router.options.target).data('mbMap').map.olMap;
 
         this.set({
             properties: properties,
