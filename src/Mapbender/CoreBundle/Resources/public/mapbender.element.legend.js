@@ -55,7 +55,7 @@ $.widget("mapbender.mbLegend", {
         var self = this;
         var mbMap = $('#' + this.options.target).data('mbMap');
         var layers = mbMap.map.layers();
-        var allLayers = [];
+        var allLayers = [];fi
         $.each(layers, function(idx, val){
             if (!val.visible()){return ;}
             allLayers.push(self._getLayer(val));
