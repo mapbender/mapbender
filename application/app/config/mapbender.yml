@@ -143,11 +143,13 @@ parameters:
                     coordinates:
                         class: Mapbender\CoreBundle\Element\CoordinatesDisplay
                         target: map
+                        label: true
                         empty:  "x: 0 y: 0"
                         prefix: "x: "
                         separator:  " y: "
                     srs:
                         class: Mapbender\CoreBundle\Element\SrsSelector
+                        label: true
                         targets:
                             map: map
         mapbender_user2:
@@ -257,11 +259,13 @@ parameters:
                     coordinates:
                         class: Mapbender\CoreBundle\Element\CoordinatesDisplay
                         target: map
+                        label: true
                         empty:  "x: - y: -"
                         prefix: "x: "
                         separator:  " y: "
                     srs:
                         class: Mapbender\CoreBundle\Element\SrsSelector
+                        label: true
                         targets:
                             map: map
         mapbender_user3:
@@ -370,10 +374,12 @@ parameters:
                     coordinates:
                         class: Mapbender\CoreBundle\Element\CoordinatesDisplay
                         target: map
+                        label: true
                         empty:  "x: - y: -"
                         prefix: "x: "
                         separator:  " y: "
                     srs:
                         class: Mapbender\CoreBundle\Element\SrsSelector
+                        label: true
                         targets:
                             map: map
