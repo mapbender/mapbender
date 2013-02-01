@@ -97,9 +97,13 @@ parameters:
                         class: Mapbender\CoreBundle\Element\Button
                         target: toc
                         action: open
+                        icon: tocicon
+                        label: true
                     about:
                         title: About
                         tooltip: About
+                        label: false
+                        icon: abouticon
                         class: Mapbender\CoreBundle\Element\AboutDialog
                     fi:
                         title: FeatureInfo
@@ -142,16 +146,21 @@ parameters:
                 footer:
                     coordinates:
                         class: Mapbender\CoreBundle\Element\CoordinatesDisplay
+                        title: Coordinates Display
+                        tooltip: Coordinates Display
                         target: map
-                        label: true
+                        label: false
                         empty:  "x: 0 y: 0"
                         prefix: "x: "
                         separator:  " y: "
                     srs:
                         class: Mapbender\CoreBundle\Element\SrsSelector
-                        label: true
+                        title: SRS Selector
+                        tooltip: SRS Selector
+                        label: false
                         targets:
                             map: map
+                            coordinatesdisplay: coordinates
         mapbender_user2:
             title: Mapbender Base Style Demo Map Version 2: Germany
             description: "Base style colored with expanding mapframe"
@@ -205,12 +214,14 @@ parameters:
                         class: Mapbender\CoreBundle\Element\Button
                         target: toc
                         action: open
-                        icon: featureinfo
+                        icon: tocicon
+                        label: true
                     about:
                         title: About
                         tooltip: Find out more about Mapbender3
                         class: Mapbender\CoreBundle\Element\AboutDialog
-                        icon: featureinfo
+                        icon: abouticon
+                        label: true
                     fi:
                         title: Information
                         tooltip: Information
@@ -218,12 +229,24 @@ parameters:
                         icon: featureinfo
                         label: true
                         target: map
-                    legend:
+                    legend-button:
                         title: Legend
-                        class: Mapbender\CoreBundle\Element\Legend
-                        target: map
                         tooltip: Legend
-                        icon: featureinfo
+                        class: Mapbender\CoreBundle\Element\Button
+                        icon: legendicon
+                        label: true
+                        target: legend
+                        action: open
+                    legend:
+                        title: Legend Dialog
+                        tooltip: Legend Dialog
+                        class: Mapbender\CoreBundle\Element\Legend
+                        elementType: dialog
+                        autoOpen: false
+                        displayType: accordion
+                        hiddeemptylayers: false
+                        target: map
+                        nolegend: No legend available
                 content:
                     zoombar:
                         class: Mapbender\CoreBundle\Element\ZoomBar
@@ -246,6 +269,7 @@ parameters:
                            layerset: overview
                     toc:
                         title: Table of Contents
+                        tooltip: Table of Contents
                         class: Mapbender\CoreBundle\Element\Toc
                         target: map
                         autoOpen: false
@@ -258,16 +282,21 @@ parameters:
                 footer:
                     coordinates:
                         class: Mapbender\CoreBundle\Element\CoordinatesDisplay
+                        title: Coordinates Display
+                        tooltip: Coordinates Display
                         target: map
-                        label: true
+                        label: false
                         empty:  "x: - y: -"
                         prefix: "x: "
                         separator:  " y: "
                     srs:
                         class: Mapbender\CoreBundle\Element\SrsSelector
-                        label: true
+                        title: SRS Selector
+                        tooltip: SRS Selector
+                        label: false
                         targets:
                             map: map
+                            coordinatesdisplay: coordinates
         mapbender_user3:
             title: Mapbender Base Style Demo Version 3: Bonn
             description: "Base style 3 with colored mapframes with fixed size"
@@ -323,10 +352,14 @@ parameters:
                         class: Mapbender\CoreBundle\Element\Button
                         target: toc
                         action: open
+                        icon: tocicon
+                        label: true
                     about:
                         title: About
                         tooltip: Find out more about Mapbender3
                         class: Mapbender\CoreBundle\Element\AboutDialog
+                        icon: abouticon
+                        label: true
                     fi:
                         title: Information
                         class: Mapbender\CoreBundle\Element\FeatureInfo
@@ -334,11 +367,24 @@ parameters:
                         icon: featureinfo
                         label: false
                         target: map
+                    legend-button:
+                        title: Legend
+                        tooltip: Legend
+                        class: Mapbender\CoreBundle\Element\Button
+                        icon: legendicon
+                        label: true
+                        target: legend
+                        action: open
                     legend:
                         title: Legend
-                        class: Mapbender\CoreBundle\Element\Legend
-                        target: map
                         tooltip: Legend
+                        class: Mapbender\CoreBundle\Element\Legend
+                        elementType: dialog
+                        autoOpen: false
+                        displayType: accordion
+                        hiddeemptylayers: false
+                        target: map
+                        nolegend: No legend available
                 content:
                     map:
                         title: Main Map
@@ -361,6 +407,7 @@ parameters:
                         position: ['1em', '4em']
                     toc:
                         title: Table of Contents
+                        tooltip: Table of Contents
                         class: Mapbender\CoreBundle\Element\Toc
                         target: map
                         autoOpen: false
@@ -373,13 +420,18 @@ parameters:
                 footer:
                     coordinates:
                         class: Mapbender\CoreBundle\Element\CoordinatesDisplay
+                        title: Coordinates Display
+                        tooltip: Coordinates Display
                         target: map
-                        label: true
+                        label: false
                         empty:  "x: - y: -"
                         prefix: "x: "
                         separator:  " y: "
                     srs:
                         class: Mapbender\CoreBundle\Element\SrsSelector
-                        label: true
+                        title: SRS Selector
+                        tooltip: SRS Selector
+                        label: false
                         targets:
                             map: map
+                            coordinatesdisplay: coordinates
