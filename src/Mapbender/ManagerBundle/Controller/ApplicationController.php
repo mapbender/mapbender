@@ -323,7 +323,8 @@ class ApplicationController extends Controller {
 
         $sourceInstance = $source->createInstance();
         $sourceInstance->setLayerset($layerset);
-        $sourceInstance->setWeight($layerset->getInstances()->count());
+//        $sourceInstance->setWeight($layerset->getInstances()->count());
+        $sourceInstance->setWeight(-1);
 
 
         $layerset->addInstance($sourceInstance);
