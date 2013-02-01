@@ -150,7 +150,7 @@ body.mb-activity .mb-element-activityindicator {
     left: 4px;
     width: 200px;
     background-color: white;
-    z-index: 1100;
+    z-index: auto;
 }
 
 .mb-element-copyright-link {

@@ -43,6 +43,7 @@ class Legend extends Element {
             "autoOpen" => false,
             "displayType" => null,
             "tooltip" => "Legend",
+            "hiddeemptylayer" => false,
 //            "dialogtitle" => "Legend",
             "nolegend" => "No legend available");
     }

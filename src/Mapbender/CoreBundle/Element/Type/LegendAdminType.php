@@ -33,6 +33,7 @@ class LegendAdminType extends AbstractType
                     'choices' => array(
                         "accordion" => "accordion",
                         "list" => "list")))
+                ->add('hiddeemptylayers', 'checkbox', array('required' => false))
                 ->add('target', 'target_element', array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],

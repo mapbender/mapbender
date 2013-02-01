@@ -122,13 +122,17 @@ $.widget("mapbender.mbLegend", {
                             html += '<div class="legend-img-div"><img src="' + layers[layidx].sublayers[sublayidx].legend.url + '"></img></div>';
                             self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
                         }).error(function() {
-                            html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
-                            html += '<div class="legend-text-div">' + self.options.nolegend + ' </div>';
-                            self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
+                            if(!this.options.hiddeemptylayers){
+                                html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
+                                html += '<div class="legend-text-div">' + self.options.nolegend + ' </div>';
+                            }
+                                self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
                         });
                     } else {
-                        html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
-                        html += '<div class="legend-text-div">' + self.options.nolegend + ' </div>';
+                        if(!this.options.hiddeemptylayers){
+                            html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
+                            html += '<div class="legend-text-div">' + self.options.nolegend + ' </div>';
+                        }
                         self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
                     }
                 } else {
