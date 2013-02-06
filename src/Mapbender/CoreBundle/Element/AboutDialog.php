@@ -42,6 +42,7 @@ class AboutDialog extends Element {
         return 'mapbender.mbAboutDialog';
     }
     public function render() {
+        $configuration = $this->getConfiguration();
         return $this->container->get('templating')
             ->render('MapbenderCoreBundle:Element:about_dialog.html.twig',
                 array(

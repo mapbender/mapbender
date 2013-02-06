@@ -113,7 +113,8 @@ class ApplicationController extends Controller {
      *
      * Passes the request to the element's httpAction.
      * @Route("/application/{slug}/element/{id}/{action}",
-     *     defaults={ "id" = null, "action" = null })
+     *     defaults={ "id" = null, "action" = null },
+     *     requirements={ "action" = ".+" })
      */
     public function elementAction($slug, $id, $action) {
         $element = $this->getApplication($slug)->getElement($id);
@@ -177,7 +178,7 @@ class ApplicationController extends Controller {
             throw new AccessDeniedException('You are not granted view permissions for this application.');
         }
 
-        if(!$application->getEntity()->isPublished()) {
+        if(!$application->getEntity()->isPublished() and !$securityContext->isGranted('EDIT', $application->getEntity())) {
             throw new AccessDeniedException('This application is not published at the moment');
         }
     }

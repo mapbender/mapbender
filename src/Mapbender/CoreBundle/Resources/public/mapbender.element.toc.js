@@ -1,5 +1,4 @@
 (function($) {
-
 $.widget("mapbender.mbToc", $.ui.dialog, {
     options: {
         title: 'Table of Contents',
@@ -132,7 +131,7 @@ $.widget("mapbender.mbToc", $.ui.dialog, {
 
         if(layer.options.allLayers) {
             var layers = $('<ol><ol>');
-            $.each(layer.options.allLayers, function(idx, sublayer) {
+            $.each(layer.options.allLayers.reverse(), function(idx, sublayer) {
                 var li = $('<li></li>')
                     .addClass('layer')
                     .data('layer', sublayer.name);

@@ -2,9 +2,7 @@
 
 namespace Mapbender\WmsBundle\Component;
 
-use Mapbender\WmsBundle\Component\Exception\ParsingException;
 use Mapbender\WmsBundle\Entity\WmsSource;
-
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
@@ -16,19 +14,11 @@ use Mapbender\WmsBundle\Component\RequestInformation;
 * @package Mapbender
 * @author Paul Schmidt <paul.schmidt@wheregroup.com>
 */
-class Wms111CapabilitiesParser extends WmsCapabilitiesParser {
+class WmsCapabilitiesParser111 extends WmsCapabilitiesParser {
+    
     
     public function __construct(\DOMDocument $doc){
         parent::__construct($doc);
-
-//        foreach( $this->xpath->query('namespace::*', $this->doc->documentElement) as $node ) {
-//            $nsPrefix = $node->prefix;
-//            $nsUri = $node->nodeValue;
-//            if($nsPrefix == "" && $nsUri == "http://www.opengis.net/wms"){
-//                $nsPrefix = "wms";
-//            }
-//            $this->xpath->registerNamespace($nsPrefix , $nsUri);
-//        }
     }
     
     public function parse(){

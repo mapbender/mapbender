@@ -24,9 +24,11 @@ class ButtonAdminType extends AbstractType
                 ->add('icon', 'choice', array(
                     'required' => false,
                     "choices" => array(
-                        "measlineicon",
-                        "measareaicon",
-                        "tocicon")))
+                        "measurelineicon" => "measurelineicon",
+                        "measureareaicon" => "measureareaicon",
+                        "tocicon" => "tocicon",
+                        "legendicon" => "legendicon",
+                        "defaulticon" => "defaulticon")))
                 ->add('label', 'checkbox', array('required' => false))
                 ->add('target', 'target_element', array(
                     'element_class' => '%Mapbender%',

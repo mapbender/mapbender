@@ -1,6 +1,6 @@
 $(function() {
 //    $('ul.sourcecollection li fieldset legend').live("click", function(event){
-//        console.log("click", $(this).parent().next("div"));
+//        window.console && console.log("click", $(this).parent().next("div"));
 //        if($(this).parent().parent().find("div.sourcecontent").css("display") === "none"){
 //            $(this).parent().parent().find("div.sourcecontent").css({"display": "block"});
 //        } else {
@@ -11,11 +11,11 @@ $(function() {
         connectWith: "ul.elements",
         items: "li:not(.dummy)",
         stop: function( event, ui ) {
-//            console.log(event, ui, $(ui.item).parent());
+//            window.console && console.log(event, ui, $(ui.item).parent());
             $(ui.item).parent().find("li").each(function(idx, elm){
-                console.log(idx, elm);
+                window.console && console.log(idx, elm);
                 if($(elm).attr("data-href")===$(ui.item).attr("data-href")){
-                    console.log(idx, elm, $(elm).parent().find("li.dummy").length);
+                    window.console && console.log(idx, elm, $(elm).parent().find("li.dummy").length);
                     $.ajax({
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
@@ -40,7 +40,7 @@ $(function() {
         connectWith: "ul.layerset",
         items: "li:not(.header)",
         stop: function( event, ui ) {
-//            console.log($(ui.item).parent());
+//            window.console && console.log($(ui.item).parent());
             $(ui.item).parent().find("li").each(function(idx, elm){
                 if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
                     $.ajax({

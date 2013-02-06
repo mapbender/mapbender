@@ -1,7 +1,8 @@
 <?php
 
 namespace Mapbender\WmsBundle\Component;
-use Mapbender\WmsBundle\Component\Exception\ParsingException;
+
+use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 
 /**
 * Class that Parses WMS GetCapabilies Document 
@@ -55,46 +56,46 @@ abstract class WmsCapabilitiesParser {
      * 
      */
     abstract public function parse();
-
-    /**
-    * @param String The document to be parsed
-    */
-    static  function create($data, $validate = false){
+    
+    public static function createDocument($data, $validate = false){
         $doc = new \DOMDocument();
         if(!@$doc->loadXML($data)){
-            throw new ParsingException("Could not parse CapabilitiesDocument.");
-        }
-        // WMS 1.0.0
-        if($doc->documentElement->tagName == "WMTException"){
-            $message=$doc->documentElement->nodeValue;
-            throw new ParsingException($message);
+            return new XmlParseException("Could not parse CapabilitiesDocument.");
         }
         
         if($doc->documentElement->tagName == "ServiceExceptionReport"){
             $message=$doc->documentElement->nodeValue;
-            throw new  ParsingException($message);
+            return new  XmlParseException($message);
         }
-
-        $version = $doc->documentElement->getAttribute("version");
-        switch($version){
-
-            case "1.0.0":
-                return  new Wms100CapabilitiesParser($doc);
-            case "1.1.0":
-                return  new Wms110CapabilitiesParser($doc);
-            case "1.1.1":
-                return  new Wms111CapabilitiesParser($doc);
-            case "1.3.0":
-                return  new Wms130CapabilitiesParser($doc);
-            default: 
-                throw new ParsingException("Could not determine WMS Version");
-            break;
-
+        
+        if($doc->documentElement->tagName !== "WMS_Capabilities"
+                && $doc->documentElement->tagName !== "WMT_MS_Capabilities"){
+            return new XmlParseException("No supported CapabilitiesDocument");
         }
 
         if($validate && !@$this->doc->validate()){
             // TODO logging
         };
+        
+        $version = $doc->documentElement->getAttribute("version");
+        if($version !== "1.1.1" && $version !== "1.3.0"){
+            return new XmlParseException('The WMS version "'
+                            . $version . '" is not supported.');
+        }
+        return $doc;
+    }
+    
+    public static function getParser(\DOMDocument $doc){
+        $version = $doc->documentElement->getAttribute("version");
+        switch($version){
+            case "1.1.1":
+                return  new WmsCapabilitiesParser111($doc);
+            case "1.3.0":
+                return  new WmsCapabilitiesParser130($doc);
+            default:
+                throw new ParsingException("Could not determine WMS Version");
+            break;
+        }
     }
     
 }

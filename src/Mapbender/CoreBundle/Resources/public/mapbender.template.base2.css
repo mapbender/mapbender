@@ -111,8 +111,8 @@ a, a:visited {
   border-top: 1px solid #a2c515;
 }
 .footer .mb-element-srsselector {
-  position: absolute;
-  top: 5px;
+/*  position: absolute;
+  top: 5px;*/
   right: 0;
 }
 .footer .mb-element-srsselector select {
@@ -121,9 +121,9 @@ a, a:visited {
   color: #3f3f3f;
 }
 .footer .mb-element-coordsdisplay {
-  position: absolute;
+/*  position: absolute;
   left: 0;
-  top: 8px;
+  top: 8px;*/
   font-size: 14px;
 }
 

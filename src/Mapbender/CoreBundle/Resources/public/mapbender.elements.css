@@ -128,7 +128,7 @@ body.mb-activity .mb-element-activityindicator {
 
 .mb-element-coordsdisplay {
     position:relative;
-    width: 180px;
+    min-width: 220px;
     height: 20px;
     display: inline-block;
 }
@@ -150,7 +150,7 @@ body.mb-activity .mb-element-activityindicator {
     left: 4px;
     width: 200px;
     background-color: white;
-    z-index: 2000;
+    z-index: auto;
 }
 
 .mb-element-copyright-link {
@@ -159,4 +159,46 @@ body.mb-activity .mb-element-activityindicator {
 
 .mb-element-copyright-dialog {
     display: none;
+}
+
+.abouticon {
+    background: url('icons/featureinfo.png');
+    background-repeat: no-repeat;
+    padding-left: 30px;
+}
+
+.featureinfoicon {
+    background: url('icons/featureinfo.png');
+    background-repeat: no-repeat;
+    padding-left: 30px;
+}
+
+.measurelineicon {
+    background: url('icons/measureline.png');
+    background-repeat: no-repeat;
+    padding-left: 30px;
+}
+
+.measureareaicon {
+    background: url('icons/measurearea.png');
+    background-repeat: no-repeat;
+    padding-left: 30px;
+}
+
+.tocicon {
+    background: url('icons/toc.png');
+    background-repeat: no-repeat;
+    padding-left: 30px;
+}
+
+.legendicon {
+    background: url('icons/legend.png');
+    background-repeat: no-repeat;
+    padding-left: 30px;
+}
+
+.defaulticon {
+    background: url('image/activity.gif');
+    background-repeat: no-repeat;
+    padding-left: 30px;
 }

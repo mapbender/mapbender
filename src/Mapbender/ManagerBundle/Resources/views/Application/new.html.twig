@@ -3,10 +3,13 @@
 {% block title %}{{ "New application" | trans}}{% endblock %}
 
 {% block manager_css %}
+
 <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.css') }}" />
 {% endblock %}
 
 {% block manager_js %}
+<script type="application/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
+<script type="application/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"</script>
 <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/form.js') }}"></script>

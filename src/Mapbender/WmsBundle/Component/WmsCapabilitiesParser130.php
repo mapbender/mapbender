@@ -2,8 +2,6 @@
 
 namespace Mapbender\WmsBundle\Component;
 
-use Mapbender\WmsBundle\Component\Exception\ParsingException;
-
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
@@ -16,7 +14,7 @@ use Mapbender\WmsBundle\Component\RequestInformation;
 * @package Mapbender
 * @author Paul Schmidt <paul.schmidt@wheregroup.com>
 */
-class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
+class WmsCapabilitiesParser130 extends WmsCapabilitiesParser {
     
     public function __construct(\DOMDocument $doc){
         parent::__construct($doc);
@@ -341,7 +339,7 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
                     $legendUrl->setHeight($this->getValue("./@height", $legendUrlEl));
                     $onlineResource = new OnlineResource();
                     $onlineResource->setFormat($this->getValue("./wms:Format/text()", $legendUrlEl));
-                    $onlineResource->setHref($this->getValue("./wms:OnlineResource/xlink:href", $legendUrlEl));
+                    $onlineResource->setHref($this->getValue("./wms:OnlineResource/@xlink:href", $legendUrlEl));
                     $legendUrl->setOnlineResource($onlineResource);
                     $style->setLegendUrl($legendUrl);
                 }
@@ -350,14 +348,14 @@ class Wms130CapabilitiesParser extends WmsCapabilitiesParser {
                 if($styleUrlEl !== null){
                     $onlineResource = new OnlineResource();
                     $onlineResource->setFormat($this->getValue("./wms:Format/text()", $styleUrlEl));
-                    $onlineResource->setHref($this->getValue("./wms:OnlineResource/xlink:href", $styleUrlEl));
+                    $onlineResource->setHref($this->getValue("./wms:OnlineResource/@xlink:href", $styleUrlEl));
                     $style->setStyleUlr($onlineResource);
                 }
                 $stylesheetUrlEl = $this->getValue("./wms:StyleSheetURL", $item);
                 if($stylesheetUrlEl !== null){
                     $onlineResource = new OnlineResource();
                     $onlineResource->setFormat($this->getValue("./wms:Format/text()", $stylesheetUrlEl));
-                    $onlineResource->setHref($this->getValue("./wms:OnlineResource/xlink:href", $stylesheetUrlEl));
+                    $onlineResource->setHref($this->getValue("./wms:OnlineResource/@xlink:href", $stylesheetUrlEl));
                     $style->setStyleSheetUrl($onlineResource);
                 }
 

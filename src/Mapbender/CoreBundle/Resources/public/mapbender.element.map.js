@@ -304,8 +304,10 @@ $.widget("mapbender.mbMap", {
             var layers_ = [];
             $.each(Mapbender.configuration
                     .layersets[this.options.overview.layerset],
-                    function(idx, layerDef) {
-                layers_.push(self._convertLayerDef.call(self, layerDef));
+                    function(idx, item) {
+                $.each(item, function(idx2, layerDef) {
+                    layers_.push(self._convertLayerDef.call(self, layerDef));
+                });
             });
 
             var res = $.MapQuery.Layer.types[layers_[0].type]
@@ -721,7 +723,7 @@ $.widget("mapbender.mbMap", {
     getAllSrs: function(){
         return this.options.srsDefs;
     },
-    
+
     ready: function(callback) {
         if(this.readyState === true) {
             callback();
@@ -729,7 +731,7 @@ $.widget("mapbender.mbMap", {
             this.readyCallbacks.push(callback);
         }
     },
-    
+
     _ready: function() {
         for(callback in this.readyCallbacks) {
             callback();
