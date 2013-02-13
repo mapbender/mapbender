@@ -117,7 +117,7 @@ abstract class WmsCapabilitiesParser
         if($version !== "1.1.1" && $version !== "1.3.0")
         {
             throw new NotSupportedVersionException('The WMS version "'
-                            . $version . '" is not supported.');
+                    . $version . '" is not supported.');
         }
         return $doc;
     }
@@ -133,7 +133,6 @@ abstract class WmsCapabilitiesParser
     public static function getParser(\DOMDocument $doc)
     {
         $version = $doc->documentElement->getAttribute("version");
-        throw new NotSupportedVersionException("Could not determine WMS Version");
         switch($version)
         {
             case "1.1.1":

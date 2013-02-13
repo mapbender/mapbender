@@ -1,8 +1,8 @@
 <?php
+
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Mapbender\CoreBundle\Component\InstanceIn;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstance;
@@ -16,9 +16,11 @@ use Mapbender\CoreBundle\Component\Utils;
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
-*/
-class WmsInstanceLayer implements InstanceIn {
-    
+ */
+class WmsInstanceLayer
+        implements InstanceIn
+{
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -32,7 +34,7 @@ class WmsInstanceLayer implements InstanceIn {
      * @ORM\JoinColumn(name="wmsinstance", referencedColumnName="id")
      */
     protected $wmsinstance;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="id", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmslayersource", referencedColumnName="id")
@@ -43,7 +45,7 @@ class WmsInstanceLayer implements InstanceIn {
      * @ORM\Column(type="string", nullable=true)
      */
     protected $parent;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
@@ -53,67 +55,72 @@ class WmsInstanceLayer implements InstanceIn {
      * @ORM\Column(type="string", nullable=true)
      */
     protected $title;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $active = true;
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $allowselected = true;
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $selected = true;
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $info;
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $allowinfo;
 
-     /**
+    /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $toggle = true;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $allowtoggle = true;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $allowreorder = true;
-    
+
     /**
      * @ORM\Column(type="float", nullable=true)
      */
     protected $minScale;
+
     /**
      * @ORM\Column(type="float", nullable=true)
      */
     protected $maxScale;
+
     /**
      * @ORM\Column(type="string", nullable=true)
      */
     protected $style = "";
+
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
     protected $priority;
-    
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->sublayer = array();
         $this->style = "";
     }
-
-
 
     /**
      * Get id
@@ -134,7 +141,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setTitle($title)
     {
         $this->title = $title;
-    
+
         return $this;
     }
 
@@ -157,10 +164,10 @@ class WmsInstanceLayer implements InstanceIn {
     public function setSublayer($sublayer)
     {
         $this->sublayer = $sublayer;
-    
+
         return $this;
     }
-    
+
     /**
      * Set sublayer as array of string
      *
@@ -170,7 +177,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function addSublayer($sublayer)
     {
         $this->sublayer[] = $sublayer;
-    
+
         return $this;
     }
 
@@ -183,7 +190,7 @@ class WmsInstanceLayer implements InstanceIn {
     {
         return $this->sublayer;
     }
-    
+
     /**
      * Set parent
      *
@@ -193,7 +200,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setParent($parent)
     {
         $this->parent = $parent;
-    
+
         return $this;
     }
 
@@ -206,7 +213,7 @@ class WmsInstanceLayer implements InstanceIn {
     {
         return $this->parent;
     }
-    
+
     /**
      * Set active
      *
@@ -216,7 +223,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setActive($active)
     {
         $this->active = $active;
-    
+
         return $this;
     }
 
@@ -239,7 +246,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setAllowselected($allowselected)
     {
         $this->allowselected = $allowselected;
-    
+
         return $this;
     }
 
@@ -262,7 +269,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setSelected($selected)
     {
         $this->selected = $selected;
-    
+
         return $this;
     }
 
@@ -285,7 +292,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setInfo($info)
     {
         $this->info = $info;
-    
+
         return $this;
     }
 
@@ -319,7 +326,7 @@ class WmsInstanceLayer implements InstanceIn {
         $this->toggle = $toggle;
         return $this;
     }
-    
+
     /**
      * Set allowinfo
      *
@@ -329,7 +336,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setAllowinfo($allowinfo)
     {
         $this->allowinfo = $allowinfo;
-    
+
         return $this;
     }
 
@@ -363,7 +370,7 @@ class WmsInstanceLayer implements InstanceIn {
         $this->allowtoggle = $allowtoggle;
         return $this;
     }
-    
+
     /**
      * Get allowreorder
      *
@@ -384,7 +391,7 @@ class WmsInstanceLayer implements InstanceIn {
         $this->allowreorder = $allowreorder;
         return $this;
     }
-    
+
     /**
      * Set minScale
      *
@@ -394,7 +401,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setMinScale($minScale)
     {
         $this->minScale = $minScale;
-    
+
         return $this;
     }
 
@@ -417,7 +424,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setMaxScale($maxScale)
     {
         $this->maxScale = $maxScale;
-    
+
         return $this;
     }
 
@@ -440,7 +447,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setStyle($style)
     {
         $this->style = $style;
-    
+
         return $this;
     }
 
@@ -463,7 +470,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setPriority($priority)
     {
         $this->priority = $priority;
-    
+
         return $this;
     }
 
@@ -486,7 +493,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setWmsinstance(WmsInstance $wmsinstance = null)
     {
         $this->wmsinstance = $wmsinstance;
-    
+
         return $this;
     }
 
@@ -509,7 +516,7 @@ class WmsInstanceLayer implements InstanceIn {
     public function setWmslayersource(WmsLayerSource $wmslayersource = null)
     {
         $this->wmslayersource = $wmslayersource;
-    
+
         return $this;
     }
 
@@ -522,44 +529,50 @@ class WmsInstanceLayer implements InstanceIn {
     {
         return $this->wmslayersource;
     }
-    
-    public function __toString(){
+
+    public function __toString()
+    {
         return (string) $this->getId();
     }
-    
+
     /**
      * Get a layer configuration.
      * @return array
      */
-    public function getConfiguration(){
+    public function getConfiguration()
+    {
         $configuration = array(
             "id" => $this->id,
             "name" => $this->wmslayersource->getName(),
             "title" => $this->title,
             "sublayers" => $this->sublayer,
             "parent" => $this->wmslayersource->getParent() !== null ?
-                $this->wmslayersource->getParent()->getId() : null,
+                    $this->wmslayersource->getParent()->getId() : null,
             "queryable" => $this->getInfo(),
             "style" => $this->style,
         );
-        
-            // minScale of OpenLayers = maxScale of WMS,
-            // maxScale of OpenLayers = minScale of WMS
-        if($this->minScale !== null){
+
+        // minScale of OpenLayers = maxScale of WMS,
+        // maxScale of OpenLayers = minScale of WMS
+        if($this->minScale !== null)
+        {
             $configuration["maxScale"] = $this->minScale;
         }
-        if($this->minScale !== null){
+        if($this->minScale !== null)
+        {
             $configuration["minScale"] = $this->maxScale;
         }
-        
-        if(count($this->wmslayersource->getStyles()) > 0){
+
+        if(count($this->wmslayersource->getStyles()) > 0)
+        {
             $styles = $this->wmslayersource->getStyles();
             $legendurl = $styles[0]->getLegendUrl(); // first style object
             $configuration["legend"] = array(
                 "url" => $legendurl->getOnlineResource()->getHref(),
                 "width" => $legendurl->getWidth(),
                 "height" => $legendurl->getHeight());
-        } else if($this->wmsinstance->getSource()->getGetLegendGraphic() !== null){
+        } else if($this->wmsinstance->getSource()->getGetLegendGraphic() !== null)
+        {
             $legend = $this->wmsinstance->getSource()->getGetLegendGraphic();
             $url = $legend->getHttpGet();
             $formats = $legend->getFormats();
@@ -575,8 +588,9 @@ class WmsInstanceLayer implements InstanceIn {
         }
         return $configuration;
     }
-    
-    public function getLayertreeConfiguration(){
+
+    public function getLayertreeConfiguration()
+    {
         return array(
             "id" => $this->id,
             "parent" => $this->parent,
@@ -591,4 +605,5 @@ class WmsInstanceLayer implements InstanceIn {
             )
         );
     }
+
 }

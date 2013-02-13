@@ -7,7 +7,8 @@ namespace Mapbender\WmsBundle\Component;
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
-class Authority {
+class Authority
+{
 
     /**
      * ORM\Column(type="string", nullable=true)
@@ -41,7 +42,8 @@ class Authority {
      * 
      * @return string
      */
-    public function getUrl() {
+    public function getUrl()
+    {
         return $this->url;
     }
 
@@ -50,7 +52,8 @@ class Authority {
      * @param string $value 
      * @return Authority
      */
-    public function setUrl($value) {
+    public function setUrl($value)
+    {
         $this->url = $value;
         return $this;
     }
@@ -60,7 +63,8 @@ class Authority {
      * 
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -69,7 +73,8 @@ class Authority {
      * @param string $value 
      * @return Authority
      */
-    public function setName($value) {
+    public function setName($value)
+    {
         $this->name = $value;
         return $this;
     }
@@ -85,5 +90,4 @@ class Authority {
 //            "url" => $this->url
 //        );
 //    }
-
 }

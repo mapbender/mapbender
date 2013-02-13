@@ -1,7 +1,8 @@
-<?php
-
-namespace Mapbender\WmsBundle\Component;
-
-interface LayerInterface {
-
-}
+<?php //
+//
+//namespace Mapbender\WmsBundle\Component;
+//
+//interface LayerInterface
+//{
+//    
+//}

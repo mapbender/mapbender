@@ -12,6 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 interface SearchEngine
 {
+
     /**
      * Constructor, receives the DI container for access to everything else.
      * 

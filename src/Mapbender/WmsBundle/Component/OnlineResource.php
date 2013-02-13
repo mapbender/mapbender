@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Component;
 
 //use Doctrine\Common\Collections\ArrayCollection;
@@ -12,15 +13,15 @@ use Mapbender\WmsBundle\Component\Identifier;
 /**
  * LegendUrl class.
  */
-class OnlineResource {
-
+class OnlineResource
+{
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $format;
-    
+
     /**
      * ORM\Column(type="string", nullable=true)
      */
@@ -36,7 +37,7 @@ class OnlineResource {
     public function setFormat($format)
     {
         $this->format = $format;
-    
+
         return $this;
     }
 
@@ -59,7 +60,7 @@ class OnlineResource {
     public function setHref($href)
     {
         $this->href = $href;
-    
+
         return $this;
     }
 
@@ -72,4 +73,5 @@ class OnlineResource {
     {
         return $this->href;
     }
+
 }

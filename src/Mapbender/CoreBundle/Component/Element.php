@@ -13,7 +13,6 @@ use Mapbender\CoreBundle\Entity\Element as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-
 /**
  * Base class for all Mapbender elements.
  *
@@ -22,7 +21,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * @author Christian Wygoda
  */
-abstract class Element {
+abstract class Element
+{
+
     /**
      * Application
      * @var Application An application object
@@ -48,18 +49,18 @@ abstract class Element {
      * @param Application $application The application object
      * @param ContainerInterface $container The container object
      */
-    public function __construct(Application $application,
-        ContainerInterface $container, Entity $entity) {
+    public function __construct(Application $application, ContainerInterface $container, Entity $entity)
+    {
         $this->application = $application;
         $this->container = $container;
         $this->entity = $entity;
     }
 
-    /*************************************************************************
+    /*     * ***********************************************************************
      *                                                                       *
      *                              Class metadata                           *
      *                                                                       *
-     *************************************************************************/
+     * *********************************************************************** */
 
     /**
      * Returns the element class title
@@ -69,7 +70,8 @@ abstract class Element {
      *
      * @return string
      */
-    static public function getClassTitle() {
+    static public function getClassTitle()
+    {
         throw new \RuntimeException('getClassTitle needs to be implemented');
     }
 
@@ -81,7 +83,8 @@ abstract class Element {
      *
      * @return string
      */
-    static public function getClassDescription() {
+    static public function getClassDescription()
+    {
         throw new \RuntimeException('getClassDescription needs to be implemented');
     }
 
@@ -93,7 +96,8 @@ abstract class Element {
      *
      * @return array
      */
-    static public function getClassTags() {
+    static public function getClassTags()
+    {
         return array();
     }
 
@@ -104,15 +108,16 @@ abstract class Element {
      *
      * @return array
      */
-    static public function getDefaultConfiguration() {
+    static public function getDefaultConfiguration()
+    {
         return array();
     }
 
-    /*************************************************************************
+    /*     * ***********************************************************************
      *                                                                       *
      *                    Configuration entity handling                      *
      *                                                                       *
-     *************************************************************************/
+     * *********************************************************************** */
 
     /**
      * Get a configuration value by path.
@@ -127,7 +132,8 @@ abstract class Element {
      * @param string $path The configuration path to retrieve.
      * @return mixed
      */
-    final public function get($path) {
+    final public function get($path)
+    {
         throw new \RuntimeException('NIY get ' . $path . ' ' . get_class($this));
     }
 
@@ -137,7 +143,8 @@ abstract class Element {
      * @param string $path the configuration path to set
      * @param mixed $value the value to set
      */
-    final public function set($path, $value) {
+    final public function set($path, $value)
+    {
         throw new \RuntimeException('NIY set');
     }
 
@@ -146,22 +153,24 @@ abstract class Element {
      *
      * @return object $entity
      */
-    public function getEntity() {
+    public function getEntity()
+    {
         return $this->entity;
     }
 
-    /*************************************************************************
+    /*     * ***********************************************************************
      *                                                                       *
      *             Shortcut functions for leaner Twig templates              *
      *                                                                       *
-     *************************************************************************/
+     * *********************************************************************** */
 
     /**
      * Get the element ID
      *
      * @return string
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->entity->getId();
     }
 
@@ -170,7 +179,8 @@ abstract class Element {
      *
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->entity->getTitle();
     }
 
@@ -179,15 +189,16 @@ abstract class Element {
      *
      * @return string
      */
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->entity->getDescription();
     }
 
-    /*************************************************************************
+    /*     * ***********************************************************************
      *                                                                       *
      *                              Frontend stuff                           *
      *                                                                       *
-     *************************************************************************/
+     * *********************************************************************** */
 
     /**
      * Render the element HTML fragment.
@@ -211,7 +222,8 @@ abstract class Element {
      *
      * @return array
      */
-    public function getAssets() {
+    public function getAssets()
+    {
         return array();
     }
 
@@ -224,9 +236,10 @@ abstract class Element {
      *
      * @return array
      */
-    public function getConfiguration() {
+    public function getConfiguration()
+    {
 //        $configuration = $this->entity->getConfiguration();
-        
+
         $configuration = $this->entity->getConfiguration();
 //        $config = $this->entity->getConfiguration();
 //        //@TODO merge recursive $this->entity->getConfiguration() and $this->getDefaultConfiguration()
@@ -237,18 +250,20 @@ abstract class Element {
 //                $configuration[$key] = $config[$key];
 //            }
 //        }
-        
-        if(isset($configuration["scales"])){
+
+        if(isset($configuration["scales"]))
+        {
             $scales = array();
-            if(is_string($configuration["scales"])){ // from database
+            if(is_string($configuration["scales"]))
+            { // from database
                 $scales = preg_split("/\s?,\s?/", $configuration["scales"]);
-            } else if(is_array($configuration["scales"])) { // from twig
+            } else if(is_array($configuration["scales"]))
+            { // from twig
                 $scales = $configuration["scales"];
             }
             // sort scales high to low
             $scales = array_map(
-                    create_function('$value', 'return (int)$value;'),
-                    $scales );
+                    create_function('$value', 'return (int)$value;'), $scales);
             arsort($scales, SORT_NUMERIC);
             $configuration["scales"] = $scales;
         }
@@ -271,15 +286,16 @@ abstract class Element {
      * @param string $action The action to perform
      * @return Response
      */
-    public function httpAction($action) {
+    public function httpAction($action)
+    {
         throw new NotFoundHttpException('This element has no Ajax handler.');
     }
 
-    /*************************************************************************
+    /*     * ***********************************************************************
      *                                                                       *
      *                          Backend stuff                                *
      *                                                                       *
-     *************************************************************************/
+     * *********************************************************************** */
 
     /**
      * Get the element configuration form type.
@@ -289,7 +305,8 @@ abstract class Element {
      *
      * @return Symfony\Component\FormTypeInterface
      */
-    public static function getType() {
+    public static function getType()
+    {
         return null;
     }
 
@@ -298,7 +315,8 @@ abstract class Element {
      *
      * @return string
      */
-    public static function getFormTemplate() {
+    public static function getFormTemplate()
+    {
         return null;
     }
 
@@ -307,10 +325,12 @@ abstract class Element {
      *
      * @return array
      */
-    public static function getFormAssets() {
+    public static function getFormAssets()
+    {
         return array(
             'js' => array(),
             'css' => array());
     }
+
 }
 
