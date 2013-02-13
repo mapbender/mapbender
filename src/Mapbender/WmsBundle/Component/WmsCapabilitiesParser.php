@@ -27,7 +27,8 @@ abstract class WmsCapabilitiesParser
     protected $xpath;
 
     /**
-     *
+     * Creates an instance
+     * 
      * @param \DOMDocument $doc 
      */
     public function __construct(\DOMDocument $doc)
@@ -37,6 +38,13 @@ abstract class WmsCapabilitiesParser
         $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
     }
 
+    /**
+     * Finds the value 
+     * @param string $xpath xpath expression
+     * @param \DOMNode $contextElm the node to use as context for evaluating the
+     * XPath expression.
+     * @return string the value of item or the selected item or null
+     */
     protected function getValue($xpath, $contextElm = null)
     {
         if(!$contextElm)
@@ -66,10 +74,20 @@ abstract class WmsCapabilitiesParser
     }
 
     /**
-     * 
+     * Parses the capabilities document
      */
     abstract public function parse();
 
+    /**
+     * Creates a document
+     * 
+     * @param string $data the string containing the XML
+     * @param boolean $validate to validate of xml
+     * @return \DOMDocument a GetCapabilites document
+     * @throws XmlParseException if a GetCapabilities xml is not valid
+     * @throws WmsException if an service exception
+     * @throws NotSupportedVersionException if a service version is not supported
+     */
     public static function createDocument($data, $validate = false)
     {
         $doc = new \DOMDocument();
@@ -104,6 +122,14 @@ abstract class WmsCapabilitiesParser
         return $doc;
     }
 
+    /**
+     * Gets a capabilities parser
+     * 
+     * @param \DOMDocument $doc the GetCapabilities document
+     * @return \Mapbender\WmsBundle\Component\WmsCapabilitiesParser111
+     * |\Mapbender\WmsBundle\Component\WmsCapabilitiesParser130 a capabilities parser
+     * @throws NotSupportedVersionException if a service version is not supported
+     */
     public static function getParser(\DOMDocument $doc)
     {
         $version = $doc->documentElement->getAttribute("version");
