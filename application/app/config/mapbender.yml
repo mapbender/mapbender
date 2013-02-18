@@ -41,16 +41,6 @@ parameters:
             template:  Mapbender\CoreBundle\Template\Fullscreen
             layersets:
                 main:
-                    osm:
-#                        class: Mapbender\WmsBundle\WmsLayer
-                        class: Mapbender\WmsBundle\Entity\WmsInstance
-                        title: Open Street Map
-                        url: http://osm.omniscale.net/proxy/service?
-                        layers:
-                            - { name: osm, title: Open Street Map WMS Omniscale }
-                        tiled: false
-                        visible: true
-                        baselayer: false
                     mapbender_users:
 #                        class: Mapbender\WmsBundle\WmsLayer
                         class: Mapbender\WmsBundle\Entity\WmsInstance
@@ -67,6 +57,16 @@ parameters:
                         tiled: false
                         opacity: 85
                         legendgraphic: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS
+                    osm:
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
+                        title: Open Street Map
+                        url: http://osm.omniscale.net/proxy/service?
+                        layers:
+                            - { name: osm, title: Open Street Map WMS Omniscale }
+                        tiled: false
+                        visible: true
+                        baselayer: false
                 overview:
                     osm_overview:
 #                        class: Mapbender\WmsBundle\WmsLayer
@@ -169,16 +169,6 @@ parameters:
             template:  Mapbender\CoreBundle\Template\Base
             layersets:
                 main:
-                    osm:
-#                        class: Mapbender\WmsBundle\WmsLayer
-                        class: Mapbender\WmsBundle\Entity\WmsInstance
-                        title: Open Street Map
-                        url: http://osm.omniscale.net/proxy/service?
-                        layers:
-                            - { name: osm, title: Open Street Map WMS Omniscale}
-                        tiled: false
-                        visible: true
-                        baselayer: false
                     mapbender_users:
 #                        class: Mapbender\WmsBundle\WmsLayer
                         class: Mapbender\WmsBundle\Entity\WmsInstance
@@ -195,6 +185,16 @@ parameters:
                         tiled: false
                         opacity: 85
                         legendgraphic: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS
+                    osm:
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
+                        title: Open Street Map
+                        url: http://osm.omniscale.net/proxy/service?
+                        layers:
+                            - { name: osm, title: Open Street Map WMS Omniscale}
+                        tiled: false
+                        visible: true
+                        baselayer: false
                 overview:
                     osm_overview:
 #                        class: Mapbender\WmsBundle\WmsLayer
@@ -305,16 +305,6 @@ parameters:
             template:  Mapbender\CoreBundle\Template\Base2
             layersets:
                 main:
-                    osm:
-#                        class: Mapbender\WmsBundle\WmsLayer
-                        class: Mapbender\WmsBundle\Entity\WmsInstance
-                        title: Open Street Map
-                        url: http://osm.omniscale.net/proxy/service?
-                        layers:
-                            - { name: osm, title: Open Street Map WMS Omniscale}
-                        tiled: false
-                        visible: true
-                        baselayer: false
                     mapbender_users:
 #                        class: Mapbender\WmsBundle\WmsLayer
                         class: Mapbender\WmsBundle\Entity\WmsInstance
@@ -333,6 +323,16 @@ parameters:
                         tiled: false
                         opacity: 85
                         legendgraphic: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS
+                    osm:
+#                        class: Mapbender\WmsBundle\WmsLayer
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
+                        title: Open Street Map
+                        url: http://osm.omniscale.net/proxy/service?
+                        layers:
+                            - { name: osm, title: Open Street Map WMS Omniscale}
+                        tiled: false
+                        visible: true
+                        baselayer: false
                 overview:
                     osm_overview:
 #                        class: Mapbender\WmsBundle\WmsLayer
