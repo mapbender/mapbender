@@ -298,7 +298,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
                         'configuration' => $layer->getConfiguration()));
                 if($layer->getProxy()){
                     $str = $configuration['application']["urls"]["proxy"]
-                        . "?url=" . urldecode($layerconf[$layer->getId()]["configuration"]["url"]);
+                        . "?url=" . urlencode($layerconf[$layer->getId()]["configuration"]["url"]);
                     $layerconf[$layer->getId()]["configuration"]["url"] = $str;
                 }
                 $configuration['layersets'][$layerset->getId()][$num] = $layerconf;
