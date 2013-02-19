@@ -23,6 +23,8 @@ use Mapbender\Component\HTTP\HTTPClient;
 use Mapbender\CoreBundle\Component\Utils;
 
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
+use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
+use Mapbender\WmsBundle\Component\Exception\WmsException;
 
 /**
  * @ManagerRoute("/repository/wms")
@@ -147,15 +149,18 @@ class RepositoryController extends Controller {
                 return $this->redirect($this->generateUrl(
                         "mapbender_manager_repository_new",array(), true));
             }
-            $doc = WmsCapabilitiesParser::createDocument($result->getData());
-            if($doc instanceof XmlParseException){
-                $this->get("logger")->debug($doc->getMessage());
-                $this->get('session')->setFlash('error', $doc->getMessage());
+            $wmssource = null;
+            try{
+                $doc = WmsCapabilitiesParser::createDocument($result->getData());
+                $wmsParser = WmsCapabilitiesParser::getParser($doc);
+                $wmssource = $wmsParser->parse();
+            }catch(\Exception $e){
+                $this->get("logger")->debug($e->getMessage());
+                $this->get('session')->setFlash('error', $e->getMessage());
                 return $this->redirect($this->generateUrl(
                         "mapbender_manager_repository_new",array(), true));
             }
-            $wmsParser = WmsCapabilitiesParser::getParser($doc);
-            $wmssource = $wmsParser->parse();
+
             if(!$wmssource){
                 $this->get("logger")->debug('Could not parse data for url "'
                         .$getcapa_url_usrPwd.'"');

@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Component;
 
 /**
@@ -6,60 +7,63 @@ namespace Mapbender\WmsBundle\Component;
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
-class Extent {
-    
+class Extent
+{
+
     /**
      * ORM\Column(type="string", nullable=false)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $name;
-    
+
     /**
      * ORM\Column(type="string", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $default;
-    
+
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $multipleValues;
-    
+
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $nearestValue;
-    
+
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $current;
-    
+
     /**
      * ORM\Column(type="string", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $extentValue;
-    
+
     /**
      * Set name
      * 
      * @param string $value 
      * @return Dimension
      */
-    public function setName($value) {
+    public function setName($value)
+    {
         $this->name = $value;
     }
-    
+
     /**
      * Get name
      * 
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -69,16 +73,18 @@ class Extent {
      * @param string $value 
      * @return Dimension
      */
-    public function setDefault($value) {
+    public function setDefault($value)
+    {
         $this->default = $value;
     }
-    
+
     /**
      * Get default
      * 
      * @return string
      */
-    public function getDefault() {
+    public function getDefault()
+    {
         return $this->default;
     }
 
@@ -88,16 +94,18 @@ class Extent {
      * @param boolean $value 
      * @return Dimension
      */
-    public function setMultipleValues($value) {
+    public function setMultipleValues($value)
+    {
         $this->multipleValues = $value;
     }
-    
+
     /**
      * Get multipleValues
      * 
      * @return boolean
      */
-    public function getMultipleValues() {
+    public function getMultipleValues()
+    {
         return $this->multipleValues;
     }
 
@@ -107,16 +115,18 @@ class Extent {
      * @param boolean $value 
      * @return Dimension
      */
-    public function setNearestValue($value) {
+    public function setNearestValue($value)
+    {
         $this->nearestValue = $value;
     }
-    
+
     /**
      * Get nearestValue
      * 
      * @return boolean
      */
-    public function getNearestValue() {
+    public function getNearestValue()
+    {
         return $this->nearestValue;
     }
 
@@ -126,16 +136,18 @@ class Extent {
      * @param boolean $value 
      * @return Dimension
      */
-    public function setCurrent($value) {
+    public function setCurrent($value)
+    {
         $this->current = $value;
     }
-    
+
     /**
      * Get current
      * 
      * @return boolean
      */
-    public function getCurrent() {
+    public function getCurrent()
+    {
         return $this->current;
     }
 
@@ -145,16 +157,18 @@ class Extent {
      * @param string $value 
      * @return Dimension
      */
-    public function setExtentValue($value) {
+    public function setExtentValue($value)
+    {
         $this->extentValue = $value;
     }
-    
+
     /**
      * Get extentValue
      * 
      * @return string
      */
-    public function getExtentValue() {
+    public function getExtentValue()
+    {
         return $this->extentValue;
     }
 

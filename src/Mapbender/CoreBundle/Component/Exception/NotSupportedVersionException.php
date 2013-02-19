@@ -3,11 +3,11 @@
 namespace Mapbender\CoreBundle\Component\Exception;
 
 /**
- * The XmlParseException
+ * The NotSupportedVersionException
  * @package Mapbender
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
-class XmlParseException
+class NotSupportedVersionException
         extends \Exception
 {
     

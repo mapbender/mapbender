@@ -7,7 +7,8 @@ namespace Mapbender\WmsBundle\Component;
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
-class Attribution {
+class Attribution
+{
 
     /**
      * ORM\Column(type="string", nullable=false)
@@ -44,7 +45,6 @@ class Attribution {
 //     */
 //    //@TODO Doctrine bug: "protected" replaced with "public"
 //    public $logoHeight;
-
 //    /**
 //     * Creates an Attribution object from parameters
 //     * @param array $parameters
@@ -77,7 +77,8 @@ class Attribution {
      * 
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
 
@@ -85,7 +86,8 @@ class Attribution {
      * Set title
      * @param string $value 
      */
-    public function setTitle($value) {
+    public function setTitle($value)
+    {
         $this->title = $value;
     }
 
@@ -94,7 +96,8 @@ class Attribution {
      * 
      * @return string
      */
-    public function getOnlineResource() {
+    public function getOnlineResource()
+    {
         return $this->onlineResource;
     }
 
@@ -102,7 +105,8 @@ class Attribution {
      * Set onlineResource
      * @param string $value 
      */
-    public function setOnlineResource($value) {
+    public function setOnlineResource($value)
+    {
         $this->onlineResource = $value;
     }
 
@@ -111,7 +115,8 @@ class Attribution {
      * 
      * @return string
      */
-    public function getLogoUrl() {
+    public function getLogoUrl()
+    {
         return $this->logoUrl;
     }
 
@@ -119,7 +124,8 @@ class Attribution {
      * Set logoUrl
      * @param string $value 
      */
-    public function setLogoUrl(LegendUrl $value) {
+    public function setLogoUrl(LegendUrl $value)
+    {
         $this->logoUrl = $value;
         return $this;
     }
@@ -174,7 +180,6 @@ class Attribution {
 //    public function setLogoHeight($value) {
 //        $this->logoHeight = $value;
 //    }
-
 //    /**
 //     * Get object as array
 //     * 
@@ -190,5 +195,4 @@ class Attribution {
 //            "logoHeight" => $this->logoHeight
 //        );
 //    }
-
 }

@@ -172,6 +172,13 @@ $.extend(true, Mapbender, { layer: {
                 return null;
             }
         },
+        
+       getPrintConfig: function(layer, bounds) {
+           return {
+               type: 'wms',
+               url: layer.getURL(bounds)
+           };
+       },
 
         /**
          * The Mapbender map object calls this function when a new layer is

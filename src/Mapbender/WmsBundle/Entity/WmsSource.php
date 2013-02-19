@@ -19,8 +19,11 @@ use Mapbender\CoreBundle\Component\HasInstanceIn;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
-    
+class WmsSource
+        extends Source
+        implements EntityIdentifierIn, HasInstanceIn
+{
+
     /**
      * @var string An origin WMS URL
      * @ORM\Column(type="string", nullable=true)
@@ -62,13 +65,13 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @ORM\Column(type="text",nullable=true)
      */
     protected $accessConstraints = "";
-    
+
     /**
      * @var integer A limit of the layers
      * @ORM\Column(type="integer",nullable=true)
      */
     protected $layerLimit;
-    
+
     /**
      * @var integer A maximum width of the GetMap image
      * @ORM\Column(type="integer",nullable=true)
@@ -110,13 +113,13 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $remoteWfs = false;
-    
+
     /**
      * @var boolean A inline feature
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $inlineFeature = false;
-    
+
     /**
      * @var boolean A remote WCS
      * @ORM\Column(type="boolean", nullable=true)
@@ -192,13 +195,13 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
     protected $layers;
 
     // FIXME: keywords cascade remove RM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
-    
+
     /**
      * @var ArrayCollections A list of WMS keywords
      * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist"})
      */
     protected $keywords;
-    
+
     /**
      * @var ArrayCollections A list of WMS instances
      * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="source", cascade={"persist","remove"})
@@ -206,33 +209,36 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      */
     protected $wmsinstance;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->exceptionFormats = array();
     }
-    
-    
-    
-    public function getType(){
+
+    public function getType()
+    {
         return "WMS";
     }
-    
-    public function getManagertype(){
+
+    public function getManagertype()
+    {
         return "wms";
     }
-    
-    public function getClassname(){
+
+    public function getClassname()
+    {
         return get_class();
     }
-    
+
     /**
      * Set originUrl
      *
      * @param string $originUrl
      * @return WmsSource
      */
-    public function setOriginUrl($originUrl) {
+    public function setOriginUrl($originUrl)
+    {
         $this->originUrl = $originUrl;
         return $this;
     }
@@ -242,7 +248,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return string 
      */
-    public function getOriginUrl() {
+    public function getOriginUrl()
+    {
         return $this->originUrl;
     }
 
@@ -252,7 +259,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param string $name
      * @return WmsSource
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
@@ -262,7 +270,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return string 
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -272,7 +281,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param string $version
      * @return WmsSource
      */
-    public function setVersion($version) {
+    public function setVersion($version)
+    {
         $this->version = $version;
         return $this;
     }
@@ -282,7 +292,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return string 
      */
-    public function getVersion() {
+    public function getVersion()
+    {
         return $this->version;
     }
 
@@ -292,7 +303,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param string $onlineResource
      * @return WmsSource
      */
-    public function setOnlineResource($onlineResource) {
+    public function setOnlineResource($onlineResource)
+    {
         $this->onlineResource = $onlineResource;
         return $this;
     }
@@ -302,7 +314,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return string 
      */
-    public function getOnlineResource() {
+    public function getOnlineResource()
+    {
         return $this->onlineResource;
     }
 
@@ -312,7 +325,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param string $contact
      * @return WmsSource
      */
-    public function setContact($contact) {
+    public function setContact($contact)
+    {
         $this->contact = $contact;
         return $this;
     }
@@ -322,7 +336,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return string 
      */
-    public function getContact() {
+    public function getContact()
+    {
         return $this->contact;
     }
 
@@ -332,7 +347,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param text $fees
      * @return WmsSource
      */
-    public function setFees($fees) {
+    public function setFees($fees)
+    {
         $this->fees = $fees;
         return $this;
     }
@@ -342,7 +358,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return text 
      */
-    public function getFees() {
+    public function getFees()
+    {
         return $this->fees;
     }
 
@@ -352,7 +369,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param text $accessConstraints
      * @return WmsSource
      */
-    public function setAccessConstraints($accessConstraints) {
+    public function setAccessConstraints($accessConstraints)
+    {
         $this->accessConstraints = $accessConstraints;
         return $this;
     }
@@ -362,17 +380,19 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return text 
      */
-    public function getAccessConstraints() {
+    public function getAccessConstraints()
+    {
         return $this->accessConstraints;
     }
-    
+
     /**
      * Set layerLimit
      *
      * @param integer $layerLimit
      * @return WmsSource
      */
-    public function setLayerLimit($layerLimit) {
+    public function setLayerLimit($layerLimit)
+    {
         $this->layerLimit = $layerLimit;
         return $this;
     }
@@ -382,19 +402,19 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return integer 
      */
-    public function getLayerLimit() {
+    public function getLayerLimit()
+    {
         return $this->layerLimit;
     }
-    
-    
-    
+
     /**
      * Set maxWidth
      *
      * @param integer $maxWidth
      * @return WmsSource
      */
-    public function setMaxWidth($maxWidth) {
+    public function setMaxWidth($maxWidth)
+    {
         $this->maxWidth = $maxWidth;
         return $this;
     }
@@ -404,17 +424,19 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return integer 
      */
-    public function getMaxWidth() {
+    public function getMaxWidth()
+    {
         return $this->maxWidth;
     }
-    
+
     /**
      * Set maxHeight
      *
      * @param integer $maxHeight
      * @return WmsSource
      */
-    public function setMaxHeight($maxHeight) {
+    public function setMaxHeight($maxHeight)
+    {
         $this->maxHeight = $maxHeight;
         return $this;
     }
@@ -424,7 +446,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return integer 
      */
-    public function getMaxHeight() {
+    public function getMaxHeight()
+    {
         return $this->maxHeight;
     }
 
@@ -434,18 +457,20 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param array $exceptionFormats
      * @return WmsSource
      */
-    public function setExceptionFormats($exceptionFormats) {
+    public function setExceptionFormats($exceptionFormats)
+    {
         $this->exceptionFormats = $exceptionFormats;
         return $this;
     }
-    
+
     /**
      * Add exceptionFormat
      *
      * @param array $exceptionFormat
      * @return WmsSource
      */
-    public function addExceptionFormat($exceptionFormat) {
+    public function addExceptionFormat($exceptionFormat)
+    {
         $this->exceptionFormats[] = $exceptionFormat;
         return $this;
     }
@@ -455,7 +480,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return array 
      */
-    public function getExceptionFormats() {
+    public function getExceptionFormats()
+    {
         return $this->exceptionFormats;
     }
 
@@ -465,7 +491,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param boolean $supportSld
      * @return WmsSource
      */
-    public function setSupportSld($supportSld) {
+    public function setSupportSld($supportSld)
+    {
         $this->supportSld = $supportSld;
         return $this;
     }
@@ -475,7 +502,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return boolean 
      */
-    public function getSupportSld() {
+    public function getSupportSld()
+    {
         return $this->supportSld;
     }
 
@@ -485,7 +513,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param boolean $userLayer
      * @return WmsSource
      */
-    public function setUserLayer($userLayer) {
+    public function setUserLayer($userLayer)
+    {
         $this->userLayer = $userLayer;
         return $this;
     }
@@ -495,7 +524,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return boolean 
      */
-    public function getUserLayer() {
+    public function getUserLayer()
+    {
         return $this->userLayer;
     }
 
@@ -505,7 +535,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param boolean $userStyle
      * @return WmsSource
      */
-    public function setUserStyle($userStyle) {
+    public function setUserStyle($userStyle)
+    {
         $this->userStyle = $userStyle;
         return $this;
     }
@@ -515,7 +546,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return boolean 
      */
-    public function getUserStyle() {
+    public function getUserStyle()
+    {
         return $this->userStyle;
     }
 
@@ -525,7 +557,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param boolean $remoteWfs
      * @return WmsSource
      */
-    public function setRemoteWfs($remoteWfs) {
+    public function setRemoteWfs($remoteWfs)
+    {
         $this->remoteWfs = $remoteWfs;
         return $this;
     }
@@ -535,7 +568,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return boolean 
      */
-    public function getRemoteWfs() {
+    public function getRemoteWfs()
+    {
         return $this->remoteWfs;
     }
 
@@ -545,7 +579,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param boolean $inlineFeature
      * @return WmsSource
      */
-    public function setInlineFeature($inlineFeature) {
+    public function setInlineFeature($inlineFeature)
+    {
         $this->inlineFeature = $inlineFeature;
         return $this;
     }
@@ -555,7 +590,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return boolean 
      */
-    public function getInlineFeature() {
+    public function getInlineFeature()
+    {
         return $this->inlineFeature;
     }
 
@@ -565,7 +601,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param boolean $remoteWcs
      * @return WmsSource
      */
-    public function setRemoteWcs($remoteWcs) {
+    public function setRemoteWcs($remoteWcs)
+    {
         $this->remoteWcs = $remoteWcs;
         return $this;
     }
@@ -575,17 +612,19 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return boolean 
      */
-    public function getRemoteWcs() {
+    public function getRemoteWcs()
+    {
         return $this->remoteWcs;
     }
-    
+
     /**
      * Set getCapabilities
      *
      * @param Object $getCapabilities
      * @return WmsSource
      */
-    public function setGetCapabilities(RequestInformation $getCapabilities) {
+    public function setGetCapabilities(RequestInformation $getCapabilities)
+    {
         $this->getCapabilities = $getCapabilities;
         return $this;
     }
@@ -595,7 +634,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return Object 
      */
-    public function getGetCapabilities() {
+    public function getGetCapabilities()
+    {
         return $this->getCapabilities;
     }
 
@@ -605,7 +645,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param RequestInformation $getMap
      * @return WmsSource
      */
-    public function setGetMap(RequestInformation $getMap) {
+    public function setGetMap(RequestInformation $getMap)
+    {
         $this->getMap = $getMap;
         return $this;
     }
@@ -615,7 +656,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return Object 
      */
-    public function getGetMap() {
+    public function getGetMap()
+    {
         return $this->getMap;
     }
 
@@ -625,7 +667,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param RequestInformation $getFeatureInfo
      * @return WmsSource
      */
-    public function setGetFeatureInfo(RequestInformation $getFeatureInfo) {
+    public function setGetFeatureInfo(RequestInformation $getFeatureInfo)
+    {
         $this->getFeatureInfo = $getFeatureInfo;
         return $this;
     }
@@ -635,7 +678,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return Object 
      */
-    public function getGetFeatureInfo() {
+    public function getGetFeatureInfo()
+    {
         return $this->getFeatureInfo;
     }
 
@@ -645,7 +689,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param RequestInformation $describeLayer
      * @return WmsSource
      */
-    public function setDescribeLayer(RequestInformation $describeLayer) {
+    public function setDescribeLayer(RequestInformation $describeLayer)
+    {
         $this->describeLayer = $describeLayer;
         return $this;
     }
@@ -655,7 +700,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return Object 
      */
-    public function getDescribeLayer() {
+    public function getDescribeLayer()
+    {
         return $this->describeLayer;
     }
 
@@ -665,7 +711,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param RequestInformation $getLegendGraphic
      * @return WmsSource
      */
-    public function setGetLegendGraphic(RequestInformation $getLegendGraphic) {
+    public function setGetLegendGraphic(RequestInformation $getLegendGraphic)
+    {
         $this->getLegendGraphic = $getLegendGraphic;
         return $this;
     }
@@ -675,7 +722,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return Object 
      */
-    public function getGetLegendGraphic() {
+    public function getGetLegendGraphic()
+    {
         return $this->getLegendGraphic;
     }
 
@@ -685,7 +733,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param RequestInformation $getStyles
      * @return WmsSource
      */
-    public function setGetStyles(RequestInformation $getStyles) {
+    public function setGetStyles(RequestInformation $getStyles)
+    {
         $this->getStyles = $getStyles;
         return $this;
     }
@@ -695,7 +744,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return Object 
      */
-    public function getGetStyles() {
+    public function getGetStyles()
+    {
         return $this->getStyles;
     }
 
@@ -705,7 +755,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param RequestInformation $putStyles
      * @return WmsSource
      */
-    public function setPutStyles(RequestInformation $putStyles) {
+    public function setPutStyles(RequestInformation $putStyles)
+    {
         $this->putStyles = $putStyles;
         return $this;
     }
@@ -715,7 +766,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return Object 
      */
-    public function getPutStyles() {
+    public function getPutStyles()
+    {
         return $this->putStyles;
     }
 
@@ -725,7 +777,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param text $username
      * @return WmsSource
      */
-    public function setUsername($username) {
+    public function setUsername($username)
+    {
         $this->username = $username;
         return $this;
     }
@@ -735,7 +788,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return text 
      */
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->username;
     }
 
@@ -745,7 +799,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param text $password
      * @return WmsSource
      */
-    public function setPassword($password) {
+    public function setPassword($password)
+    {
         $this->password = $password;
         return $this;
     }
@@ -755,7 +810,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return text 
      */
-    public function getPassword() {
+    public function getPassword()
+    {
         return $this->password;
     }
 
@@ -765,7 +821,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param array $layers
      * @return WmsSource
      */
-    public function setLayers($layers) {
+    public function setLayers($layers)
+    {
         $this->layers = $layers;
         return $this;
     }
@@ -775,7 +832,8 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      *
      * @return array 
      */
-    public function getLayers() {
+    public function getLayers()
+    {
         return $this->layers;
     }
 
@@ -785,19 +843,23 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
      * @param WmsLayerSource $layer
      * @return WmsSource
      */
-    public function addLayer(WmsLayerSource $layer) {
+    public function addLayer(WmsLayerSource $layer)
+    {
         $this->layers->add($layer);
         return $this;
     }
-    
+
     /**
      * Get root layer
      *
      * @return WmsLayerSource 
      */
-    public function getRootlayer() {
-        foreach ($this->layers as $layer) {
-            if($layer->getParent() === null){
+    public function getRootlayer()
+    {
+        foreach($this->layers as $layer)
+        {
+            if($layer->getParent() === null)
+            {
                 return $layer;
             }
         }
@@ -808,9 +870,7 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
 //            return null;
 //        }
     }
-    
-    
-    
+
     /**
      * Set keywords
      *
@@ -832,7 +892,7 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
     {
         return $this->keywords;
     }
-    
+
     /**
      * Add keyword
      *
@@ -864,49 +924,53 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
     {
         $this->keywords->removeElement($keywords);
     }
-    
-    public function __toString(){
+
+    public function __toString()
+    {
         return (string) $this->getId();
     }
-    
+
     /**
      * Create a WmsInstace
      */
-    public function createInstance(){
+    public function createInstance()
+    {
         $instance = new WmsInstance();
         $instance->setSource($this);
         $instance->setTitle($this->getTitle());
         $formats = $this->getGetMap()->getFormats();
-        $instance->setFormat(count($formats) > 0 ? $formats[0]: null);
+        $instance->setFormat(count($formats) > 0 ? $formats[0] : null);
         $infoformats = $this->getGetFeatureInfo() !== null ?
                 $this->getGetFeatureInfo()->getFormats() : array();
-        $instance->setInfoformat(count($infoformats) > 0 ? $infoformats[0]: null);
+        $instance->setInfoformat(count($infoformats) > 0 ? $infoformats[0] : null);
         $excformats = $this->getExceptionFormats();
-        $instance->setExceptionformat(count($excformats) > 0 ? $excformats[0]: null);
+        $instance->setExceptionformat(count($excformats) > 0 ? $excformats[0] : null);
 //        $instance->setOpacity(100);
         $num = 0;
 //        $layers = array();
-        foreach($this->getLayers() as $wmslayer){
+        foreach($this->getLayers() as $wmslayer)
+        {
             $instLayer = new WmsInstanceLayer();
             $instLayer->setWmsinstance($instance);
             $instLayer->setWmslayersource($wmslayer);
             $instLayer->setParent($wmslayer->getParent() !== null ?
-                    $wmslayer->getParent()->getName() : null);
-            foreach ($wmslayer->getSublayer() as $sublayer) {
+                            $wmslayer->getParent()->getName() : null);
+            foreach($wmslayer->getSublayer() as $sublayer)
+            {
                 $instLayer->addSublayer($sublayer->getId());
             }
             $instLayer->setTitle($wmslayer->getTitle());
             // @TODO min max from scaleHint
             $instLayer->setMinScale(
                     $wmslayer->getScale() !== null ?
-                    $wmslayer->getScale()->getMin() : null);
+                            $wmslayer->getScale()->getMin() : null);
             $instLayer->setMaxScale(
                     $wmslayer->getScale() !== null ?
-                    $wmslayer->getScale()->getMax() : null);
+                            $wmslayer->getScale()->getMax() : null);
             $queryable = $wmslayer->getQueryable();
             $instLayer->setInfo(Utils::getBool($queryable));
             $instLayer->setAllowinfo(Utils::getBool($queryable));
-            
+
 //            $instLayer->setInfo(Utils::getBool($queryable));
 //            $instLayer->setAllowinfo(Utils::getBool($queryable));
             $instLayer->setPriority($num);
@@ -915,4 +979,5 @@ class WmsSource extends Source implements EntityIdentifierIn, HasInstanceIn {
         }
         return $instance;
     }
+
 }

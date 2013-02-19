@@ -9,24 +9,31 @@ use Mapbender\CoreBundle\Component\Layer;
  *
  * @author Christian Wygoda
  */
-class WmsLayer extends Layer {
-    public function getType() {
+class WmsLayer
+        extends Layer
+{
+
+    public function getType()
+    {
         return 'wms';
     }
 
-    public function getAssets() {
+    public function getAssets()
+    {
         return array(
             'js' => array('@MapbenderWmsBundle/Resources/public/mapbender.layer.wms.js'),
             'css' => array());
     }
 
-    public function loadLayer(){
+    public function loadLayer()
+    {
         $em = $this->application->get("doctrine")->getEntityManager();
         $query = $em->createQuery(
-            'SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.layersetid = :layersetid AND i.layerid= :layerid'
-            )->setParameter('layersetid', $this->layerSetId)->setParameter('layerid', $this->layerId);
+                        'SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.layersetid = :layersetid AND i.layerid= :layerid'
+                )->setParameter('layersetid', $this->layerSetId)->setParameter('layerid', $this->layerId);
         $wmsinstanceList = $query->getResult();
-        foreach($wmsinstanceList as $wmsinstance){
+        foreach($wmsinstanceList as $wmsinstance)
+        {
             $wms = $wmsinstance->getService();
             $this->configuration["proxy"] = $wmsinstance->getProxy();
             $this->configuration["baselayer"] = $wmsinstance->getBaselayer();
@@ -40,5 +47,6 @@ class WmsLayer extends Layer {
             $this->configuration["tiled"] = $wmsinstance->getTiled();
         }
     }
+
 }
 
