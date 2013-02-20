@@ -40,6 +40,7 @@ EOT;
         return array(
             'tooltip' => null,
             'target' => null,
+//            'components' => null,
             'stepSize' => 50,
             'stepByPixel' => false,
             'position' => array(0, 0),

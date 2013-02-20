@@ -13,6 +13,7 @@ use Assetic\FilterManager;
 use Assetic\Asset\StringAsset;
 use Assetic\AssetManager;
 use Assetic\Factory\AssetFactory;
+
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -324,7 +325,7 @@ class Application
                 if($layer->getProxy())
                 {
                     $str = $configuration['application']["urls"]["proxy"]
-                            . "?url=" . urldecode($layerconf[$layer->getId()]["configuration"]["url"]);
+                        . "?url=" . urlencode($layerconf[$layer->getId()]["configuration"]["url"]);
                     $layerconf[$layer->getId()]["configuration"]["url"] = $str;
                 }
                 $configuration['layersets'][$layerset->getId()][$num] = $layerconf;
@@ -516,6 +517,7 @@ class Application
                 }
                 $this->layers[$layerset->getId()] = $layerset;
             }
+
         }
         return $this->layers;
     }
