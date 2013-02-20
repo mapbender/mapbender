@@ -10,4 +10,4 @@
 	url = https://github.com/mapbender/fom.git
 [submodule "application/owsproxy"]
 	path = application/owsproxy
-	url = git@github.com:mapbender/owsproxy3.git
+	url = https://github.com/mapbender/owsproxy3.git
