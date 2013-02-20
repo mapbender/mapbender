@@ -375,6 +375,14 @@ parameters:
                         label: true
                         target: legend
                         action: open
+                    print-button:
+                        title: Print
+                        tooltip: Print PDF
+                        class: Mapbender\CoreBundle\Element\Button
+                        icon: printicon
+                        label: true
+                        target: printclient
+                        action: open
                     legend:
                         title: Legend
                         tooltip: Legend
@@ -417,6 +425,59 @@ parameters:
                         dialog_link: Terms of use
                         dialog_content: 'Terms of use (Content)'
                         dialog_title: 'Terms of use'
+                    printclient:
+                        class: Mapbender\CoreBundle\Element\PrintClient
+                        target: map
+                        autoOpen: false
+                        print_directly: true
+                        printer:
+                            service: http://localhost/print/printService.php
+                            metadata: ~
+                        formats:
+                            a4:
+                                label:  A4
+                                orientations:
+                                    portrait:
+                                        label: Portrait
+                                        height: 21
+                                        width: 17
+                                    landscape:
+                                        label: Landscape
+                                        height: 17
+                                        width: 21
+                                scales: [5000, 10000, 25000]
+                                quality_levels: 
+                                    72: Entwurf
+                                    288: Dokument
+                                title_block_selector: true
+                                rotatable: true
+                                free_extent: true
+                                optional_fields: ~
+                            a3:
+                                label:  A3
+                                orientations:
+                                    portrait:
+                                        label: Portrait
+                                        height: 42
+                                        width: 29
+                                    landscape:
+                                        label: Landscape
+                                        height: 29
+                                        width: 42
+                                scales: ~
+                                quality_levels: ~
+                                title_block_selector: false
+                                rotatable: true
+                                free_extent: false
+                                optional_fields:
+                                    bearbeiter:
+                                        type: text
+                                        options:
+                                            required: false
+                                    genehmigt:
+                                        type: checkbox
+                                        options:
+                                            label: Genehmigt
                 footer:
                     coordinates:
                         class: Mapbender\CoreBundle\Element\CoordinatesDisplay
