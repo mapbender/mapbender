@@ -5,27 +5,42 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 
 /**
- * A legend
+ * The Legend class shows legends of the map's layers.
  * 
- * Shows legends of the map's layers.
- * 
- * @author Paul Schmidt
+ * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
-class Legend extends Element {
+class Legend extends Element
+{
 
-    public static function getClassTitle() {
+    /**
+     * @inheritdoc
+     */
+    public static function getClassTitle()
+    {
         return "Legend Object";
     }
 
-    public static function getClassDescription() {
+    /**
+     * @inheritdoc
+     */
+    public static function getClassDescription()
+    {
         return "The legend object shows the legend of the map's layers.";
     }
 
-    public static function getClassTags() {
+    /**
+     * @inheritdoc
+     */
+    public static function getClassTags()
+    {
         return array('legend', "dialog");
     }
 
-    public function getAssets() {
+    /**
+     * @inheritdoc
+     */
+    public function getAssets()
+    {
         return array(
             'js' => array(
                 'mapbender.element.legend.js'
@@ -36,34 +51,52 @@ class Legend extends Element {
         );
     }
 
-    public static function getDefaultConfiguration() {
+    /**
+     * @inheritdoc
+     */
+    public static function getDefaultConfiguration()
+    {
         return array(
             "target" => null,
             "elementType" => null,
-            "autoOpen" => false,
             "displayType" => null,
+            "noLegend" => "No legend available",
+            "autoOpen" => false,
             "tooltip" => "Legend",
-            "hiddeemptylayer" => false,
-//            "dialogtitle" => "Legend",
-            "nolegend" => "No legend available");
+            "hideEmptyLayers" => true,
+            "generateGetLegendGraphicUrl" => false,
+            "showWmsTitle" => true,
+            "showLayerTitle" => true,
+            "showGroupedLayerTitle" => true);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\LegendAdminType';
     }
-    
-    public function getWidgetName() {
+
+    /**
+     * @inheritdoc
+     */
+    public function getWidgetName()
+    {
         return 'mapbender.mbLegend';
     }
 
-    public function render() {
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:legend.html.twig',
-                        array(
-                            'id' => $this->getId(),
+    /**
+     * @inheritdoc
+     */
+    public function render()
+    {
+        return $this->container->get('templating')->render(
+                        'MapbenderCoreBundle:Element:legend.html.twig',
+                        array('id' => $this->getId(),
                             "title" => $this->getTitle(),
                             'configuration' => $this->getConfiguration()));
     }
+
 }
 

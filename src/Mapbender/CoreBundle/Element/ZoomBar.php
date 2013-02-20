@@ -13,12 +13,22 @@ use Mapbender\CoreBundle\Component\Element;
  *
  * @author Christian Wygoda
  */
-class ZoomBar extends Element {
-    public static function getClassTitle() {
+class ZoomBar extends Element
+{
+
+    /**
+     * @inheritdoc
+     */
+    public static function getClassTitle()
+    {
         return "Navigation Toolbar";
     }
 
-    public static function getClassDescription() {
+    /**
+     * @inheritdoc
+     */
+    public static function getClassDescription()
+    {
         return <<<EOT
 The Navigation Toolbar element provides a floating control to pan and zoom,
 similar to the OpenLayers PanZoomBar control. This element though is easier to
@@ -26,17 +36,29 @@ use when custom styling is needed.
 EOT;
     }
 
-    public static function getClassTags() {
+    /**
+     * @inheritdoc
+     */
+    public static function getClassTags()
+    {
         return array('zoom', 'pan', 'control', 'navigation', 'panel');
     }
 
-    public function getAssets() {
+    /**
+     * @inheritdoc
+     */
+    public function getAssets()
+    {
         return array(
             'js' => array('mapbender.element.zoombar.js'),
             'css' => array('mapbender.element.zoombar.css'));
     }
 
-    public static function getDefaultConfiguration() {
+    /**
+     * @inheritdoc
+     */
+    public static function getDefaultConfiguration()
+    {
         return array(
             'tooltip' => null,
             'target' => null,
@@ -47,21 +69,34 @@ EOT;
             'draggable' => true);
     }
 
-    public function getWidgetName() {
+    /**
+     * @inheritdoc
+     */
+    public function getWidgetName()
+    {
         return 'mapbender.mbZoomBar';
     }
 
-    public function render() {
+    /**
+     * @inheritdoc
+     */
+    public function render()
+    {
         return $this->container->get('templating')
-            ->render('MapbenderCoreBundle:Element:zoombar.html.twig', array(
-                'id' => $this->getId(),
-                "title" => $this->getTitle(),
-                'configuration' => $this->getConfiguration()));
+                        ->render('MapbenderCoreBundle:Element:zoombar.html.twig',
+                                 array(
+                            'id' => $this->getId(),
+                            "title" => $this->getTitle(),
+                            'configuration' => $this->getConfiguration()));
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\ZoomBarAdminType';
     }
+
 }
 

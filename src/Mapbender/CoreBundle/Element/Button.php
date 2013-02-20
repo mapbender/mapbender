@@ -9,20 +9,38 @@ use Mapbender\CoreBundle\Component\Element;
  *
  * @author Christian Wygoda
  */
-class Button extends Element {
-    static public function getClassTitle() {
+class Button extends Element
+{
+
+    /**
+     * @inheritdoc
+     */
+    static public function getClassTitle()
+    {
         return "Button";
     }
 
-    static public function getClassDescription() {
+    /**
+     * @inheritdoc
+     */
+    static public function getClassDescription()
+    {
         return "Renders a button";
     }
 
-    static public function getClassTags() {
+    /**
+     * @inheritdoc
+     */
+    static public function getClassTags()
+    {
         return array('Button');
     }
 
-    public static function getDefaultConfiguration() {
+    /**
+     * @inheritdoc
+     */
+    public static function getDefaultConfiguration()
+    {
         return array(
             'title' => 'button',
             'tooltip' => 'button',
@@ -34,28 +52,45 @@ class Button extends Element {
             'action' => null);
     }
 
-    public function getWidgetName() {
+    /**
+     * @inheritdoc
+     */
+    public function getWidgetName()
+    {
         return 'mapbender.mbButton';
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\ButtonAdminType';
     }
 
-    public function getAssets() {
+    /**
+     * @inheritdoc
+     */
+    public function getAssets()
+    {
         return array(
             'js' => array('mapbender.element.button.js'),
             //TODO: Split up
             'css' => array('mapbender.elements.css'));
     }
 
-    public function render() {
+    /**
+     * @inheritdoc
+     */
+    public function render()
+    {
         return $this->container->get('templating')
-            ->render('MapbenderCoreBundle:Element:button.html.twig', array(
-                'id' => $this->getId(),
-                'title' => $this->getTitle(),
-                'configuration' => $this->entity->getConfiguration()));
+                        ->render('MapbenderCoreBundle:Element:button.html.twig',
+                                 array(
+                            'id' => $this->getId(),
+                            'title' => $this->getTitle(),
+                            'configuration' => $this->entity->getConfiguration()));
     }
+
 }
 

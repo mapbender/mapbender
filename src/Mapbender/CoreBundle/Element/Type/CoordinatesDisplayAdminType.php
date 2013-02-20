@@ -6,25 +6,40 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * 
+ */
 class CoordinatesDisplayAdminType extends AbstractType
 {
-    public function getName() {
+
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
         return 'coordinatesdisplay';
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
             'application' => null,
 //            'target' => null
-            ));
+        ));
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
                 ->add('label', 'checkbox', array('required' => false))
-                ->add('target', 'target_element', array(
+                ->add('target', 'target_element',
+                      array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],
                     'property_path' => '[target]',
@@ -32,6 +47,7 @@ class CoordinatesDisplayAdminType extends AbstractType
                 ->add('empty', 'text', array('required' => false))
                 ->add('prefix', 'text', array('required' => false))
                 ->add('separator', 'text', array('required' => false))
-                ;
+        ;
     }
+
 }

@@ -33,14 +33,17 @@ class LegendAdminType extends AbstractType
                     'choices' => array(
                         "accordion" => "accordion",
                         "list" => "list")))
-                ->add('hideemptylayers', 'checkbox', array('required' => false))
                 ->add('target', 'target_element', array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
-//                ->add('dialogtitle', 'text', array('required' => false))
-                ->add('nolegend', 'text', array('required' => false))
+                ->add('hideEmptyLayers', 'checkbox', array('required' => false))
+                ->add('generateGetLegendGraphicUrl', 'checkbox', array('required' => false))
+                ->add('showWmsTitle', 'checkbox', array('required' => false))
+                ->add('showLayerTitle', 'checkbox', array('required' => false))
+                ->add('showGroupedLayerTitle', 'checkbox', array('required' => false))
+                ->add('noLegend', 'text', array('required' => false))
                 ;
         
     }

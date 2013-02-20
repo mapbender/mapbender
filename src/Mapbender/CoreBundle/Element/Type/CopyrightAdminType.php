@@ -6,20 +6,34 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * 
+ */
 class CopyrightAdminType extends AbstractType
 {
-    public function getName() {
+
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
         return 'copyright';
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
             'application' => null,
 //            'target' => null
-            ));
+        ));
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
@@ -28,4 +42,5 @@ class CopyrightAdminType extends AbstractType
                 ->add('dialog_content', 'textarea', array('required' => false))
                 ->add('dialog_title', 'text', array('required' => false));
     }
+
 }

@@ -7,33 +7,65 @@ use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class Layertree extends Element {
-    static public  function getClassTitle() {
+/**
+ * 
+ */
+class Layertree extends Element
+{
+
+    /**
+     * @inheritdoc
+     */
+    static public function getClassTitle()
+    {
         return "Layertree";
     }
 
-    static public function getClassDescription() {
+    /**
+     * @inheritdoc
+     */
+    static public function getClassDescription()
+    {
         return "Tree of map's layers";
     }
-    
-    public function getDescription() {
+
+    /**
+     * @inheritdoc
+     */
+    public function getDescription()
+    {
         return "Shows a treeview of the layers on the map";
     }
 
-    public function getTags() {
+    /**
+     * @inheritdoc
+     */
+    public function getTags()
+    {
         return array('Layertree', 'Layer');
     }
-    
-    public function getWidgetName() {
+
+    /**
+     * @inheritdoc
+     */
+    public function getWidgetName()
+    {
         return 'mapbender.mbLayertree';
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\LayertreeAdminType';
     }
-    
-    public function getAssets() {
+
+    /**
+     * @inheritdoc
+     */
+    public function getAssets()
+    {
         return array(
             'js' => array(
                 'mapbender.element.layertree.js'
@@ -44,7 +76,11 @@ class Layertree extends Element {
         );
     }
 
-    static public function getDefaultConfiguration() {
+    /**
+     * @inheritdoc
+     */
+    static public function getDefaultConfiguration()
+    {
         return array(
             "target" => null,
             "type" => null,
@@ -62,15 +98,20 @@ class Layertree extends Element {
 //        $response->headers->set('Content-Type', 'application/json');
 //        return $response;
 //    }
-
-    public function render() {
+    /**
+     * @inheritdoc
+     */
+    public function render()
+    {
         return $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:layertree.html.twig', array(
-                'id' => $this->getId(),
-                'configuration' => $this->entity->getConfiguration(),
-                'title' => $this->getTitle()
-                )
-            );
+                        'MapbenderCoreBundle:Element:layertree.html.twig',
+                        array(
+                    'id' => $this->getId(),
+                    'configuration' => $this->entity->getConfiguration(),
+                    'title' => $this->getTitle()
+                        )
+        );
     }
+
 }
 
