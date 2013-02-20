@@ -79,6 +79,20 @@ fom_user:
     max_reset_time: 1
     mail_from_address: wizard@oz.net
     mail_from_name: Wizard of Oz
+    
+# OWSProxy Configuration    
+ows_proxy3_core:
+    logging: true
+    obfuscate_client_ip: true
+    
+#    proxy:
+#        host: localhost
+#        port: 8888
+#        user: user
+#        password: password
+#        noproxy:
+#            - host_a
+#            - host_b
 
 # Mapbender Configuration
 mapbender_core: ~
