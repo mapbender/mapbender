@@ -429,4 +429,39 @@ class RepositoryController extends Controller
                     'Content-Type' => 'application/json'));
     }
 
+    /**
+     * Sets enabled/disabled for the WmsInstance
+     * 
+     * @ManagerRoute("/instance/{slug}/enabled/{instanceId}")
+     */
+    public function instanceEnabledAction($slug, $instanceId)
+    {
+        $enabled = $this->get("request")->get("enabled");
+        $wmsinstance = $this->getDoctrine()
+                ->getRepository("MapbenderWmsBundle:WmsInstance")
+                ->find($instanceId);
+        if(!$wmsinstance)
+        {
+            return new Response(
+                            json_encode(array(
+                                'error' => 'The wms instance with the id "' . $instanceId . '" does not exist.',
+                                'result' => 'ok')),
+                            200,
+                            array('Content-Type' => 'application/json'));
+        } else
+        {
+            $enabled = $enabled === null ? false : $enabled;
+            $wmsinstance->setEnabled($enabled);
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->persist($wmsinstance);
+            $em->flush();
+            return new Response(
+                            json_encode(array(
+                                'error' => '',
+                                'result' => 'ok')),
+                            200,
+                            array('Content-Type' => 'application/json'));
+        }
+    }
+
 }

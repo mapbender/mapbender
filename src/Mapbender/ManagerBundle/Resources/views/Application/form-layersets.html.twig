@@ -2,6 +2,7 @@
 {% for layerset in application.layersets %}
 <ul class="layerset" data-id="">
     <li class="header">
+        <span class="enabled">{{ 'Enabled' | trans }}</span>
         <span class="sourceid">{{ 'SourceId' | trans }}</span>
         <span class="type">{{ 'Type' | trans }}</span>
         <span class="title">{{ 'Title' | trans }}</span>
@@ -9,6 +10,7 @@
     </li>
     {% for instance in layerset.instances %}
     <li class="sourceinst" data-id="{{ instance.id }}" data-href="{{ path('mapbender_manager_repository_instanceweight', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}">
+        <span class="enabled"><input data-href="{{ path('mapbender_manager_repository_instanceenabled', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}" data-id="{{ instance.id }}" type="checkbox" {% if instance.enabled %} checked="checked" {% endif %} /></span>
         <span class="sourceid">{{ instance.source.id }}</span>
         <span class="type">{{ instance.source.type }}</span>
         <span class="title">{{ instance.title }}</span>

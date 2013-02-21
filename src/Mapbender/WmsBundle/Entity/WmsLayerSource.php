@@ -64,7 +64,7 @@ class WmsLayerSource
     protected $title = "";
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $abstract = "";
 

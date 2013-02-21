@@ -584,7 +584,7 @@ class WmsInstanceLayer
                     . "&sld_version=1.1.0";
             $legendgraphic = Utils::getHttpUrl($url, $params);
             $configuration["legend"] = array(
-                "url" => $legendgraphic);
+                "graphic" => $legendgraphic);
         }
         return $configuration;
     }

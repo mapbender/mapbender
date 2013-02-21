@@ -449,46 +449,51 @@ class Application
         }
     }
 
-    /**
-     * @TODO: Needs documentation
-     */
-    public function reloadLayers($layersetId, $layeridToRemove, $layersToLoad)
-    {
-        // remove old layer configuration
-        if(isset($this->configuration['layersets'][$layersetId][$layeridToRemove]))
-        {
-            unset($this->configuration['layersets'][$layersetId][$layeridToRemove]);
-        }
-        // create a new layer configuration
-        $newLayers = array();
-        foreach($this->layersets[$layersetId] as $layersAtLs)
-        {
-            if($layersAtLs->getLayerId() == $layeridToRemove)
-            {
-                foreach($layersToLoad as $layer_ToLoad)
-                {
-                    $class = $layer_ToLoad['loaderClass'];
-                    $layerL = new $class(
-                                    $layersetId,
-                                    $layer_ToLoad['layerId'],
-                                    array("class" => $layer_ToLoad['loaderClass']),
-                                    $this);
-                    $layerL->loadLayer();
-                    $this->configuration['layersets'][$layersetId][$layer_ToLoad['layerId']] = $layerL->getConfiguration();
-                    $newLayers[] = $layerL;
-                }
-            } else
-            {
-                $newLayers[] = $layersAtLs;
-            }
-        }
-        if(isset($this->layersets[$layersetId]))
-        {
-            unset($this->layersets[$layersetId]);
-        }
-        $this->layersets[$layersetId] = $newLayers;
-    }
+//    /**
+//     * @TODO: Needs documentation
+//     */
+//    public function reloadLayers($layersetId, $layeridToRemove, $layersToLoad)
+//    {
+//        // remove old layer configuration
+//        if(isset($this->configuration['layersets'][$layersetId][$layeridToRemove]))
+//        {
+//            unset($this->configuration['layersets'][$layersetId][$layeridToRemove]);
+//        }
+//        // create a new layer configuration
+//        $newLayers = array();
+//        foreach($this->layersets[$layersetId] as $layersAtLs)
+//        {
+//            if($layersAtLs->getLayerId() == $layeridToRemove)
+//            {
+//                foreach($layersToLoad as $layer_ToLoad)
+//                {
+//                    $class = $layer_ToLoad['loaderClass'];
+//                    $layerL = new $class(
+//                                    $layersetId,
+//                                    $layer_ToLoad['layerId'],
+//                                    array("class" => $layer_ToLoad['loaderClass']),
+//                                    $this);
+//                    $layerL->loadLayer();
+//                    $this->configuration['layersets'][$layersetId][$layer_ToLoad['layerId']] = $layerL->getConfiguration();
+//                    $newLayers[] = $layerL;
+//                }
+//            } else
+//            {
+//                $newLayers[] = $layersAtLs;
+//            }
+//        }
+//        if(isset($this->layersets[$layersetId]))
+//        {
+//            unset($this->layersets[$layersetId]);
+//        }
+//        $this->layersets[$layersetId] = $newLayers;
+//    }
 
+    /**
+     * Returns all layersets
+     * 
+     * @return array the layersets
+     */
     public function getLayersets()
     {
         if($this->layers === null)
@@ -510,9 +515,10 @@ class Application
                         $layerset->layerObjects[] = $instance;
                     } else
                     {
-//                        //print_r(get_class($entity->getSourceInstance()));die;
-//                        $layerset->layerObjects[] = $instance->getSourceInstance();
-                        $layerset->layerObjects[] = $instance;
+                        if($instance->getEnabled()){
+//                            $layerset->layerObjects[] = $instance->getSourceInstance();
+                            $layerset->layerObjects[] = $instance;
+                        }
                     }
                 }
                 $this->layers[$layerset->getId()] = $layerset;

@@ -106,6 +106,10 @@ ul.layerset li.header span {
     font-size: smaller;
 }
 
+ul.layerset li span.enabled {
+    width: 10%;
+}
+
 ul.layerset li span.sourceid {
     width: 10%;
 }
@@ -115,11 +119,11 @@ ul.layerset li span.type {
 }
 
 ul.layerset li span.title {
-    width: 30%;
+    width: 27%;
 }
 
 ul.layerset li.header span.actions {
-    width: 44%;
+    width: 37%;
 }
 /* LAYERSET END */
 
