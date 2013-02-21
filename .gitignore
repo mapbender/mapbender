@@ -13,3 +13,4 @@ extra/
 *.rpm
 *.deb
 local.properties
+/nbproject/private/
