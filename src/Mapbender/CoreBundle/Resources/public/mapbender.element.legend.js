@@ -6,6 +6,15 @@
             autoOpen: true,
             target: null,
             noLegend: "No legend available",
+            
+            elementType: "dialog",
+            displayType: "list",
+            hideEmptyLayers: true,
+            generateGetLegendGraphicUr: false,
+            showWmsTitle: true,
+            showLayerTitle: true,
+            showGroupedLayerTitle: true,
+            
             maxDialogWidth: $(window).width() - 100,
             maxDialogHeight: $(window).height() - 100,
     
@@ -60,53 +69,62 @@
                 if (!val.visible()){
                     return ;
                 }
-                allLayers.push(self._getLayer(val));
+                allLayers.push(self._getLayer(val, 1));
             });
             return allLayers;
         },
     
-        _getLayer: function(layer) {
+        _getLayer: function(layer, level) {
             return {
                 title: layer.label, 
-                sublayers: this._getSublayers(layer)
+                level: level,
+                sublayers: this._getSublayers(layer, level + 1)
                 };
         },
     
-        _getSublayers: function(layer){
+        _getSublayers: function(layer, level){
             var self = this;
             var sublayers = [];
-            if(layer.options.type == "wms") { // wms & wmc
-                if(layer.options.wms_parameters) { // wmc
+            if(layer.options){
+                if(layer.options.type == "wms") { // wms & wmc
+                    if(layer.options.wms_parameters) { // wmc
+                    //@TODO
+                    } else { // wms
+                        $.each(layer.options.allLayers.reverse(), function(idx, val_) {
+                            sublayers.push(self._getSublayer(val_, "wms", level));
+                        });
+                    }
+                } else  if(layer.options.type == "wmts") { // wmts
                 //@TODO
-                } else { // wms
-                    $.each(layer.options.allLayers, function(idx, val_) {
-                        sublayers.push(self._getSublayer(val_, "wms"));
-                    });
                 }
-            } else  if(layer.options.type == "wmts") { // wmts
-            //@TODO
             }
             return sublayers;
         },
     
-        _getSublayer: function(sublayer, type){
+        _getSublayer: function(sublayer, type, level){
             var self = this;
             var sublayerLeg = {
-                title: sublayer.title
+                title: sublayer.title,
+                level: level,
+                isNode: sublayer.sublayers.length > 0 ? true : false
                 };
             if(type === "wmc"){
             //@TODO
             } else if(type === "wms"){
                 if(sublayer.legend) {
-                    sublayerLeg["legend"] = sublayer.legend;
+                    if(sublayer.legend.url){
+                        sublayerLeg["legend"] = sublayer.legend;
+                    } else if(self.options.generateGetLegendGraphicUrl && sublayer.legend.graphic ){
+                        sublayerLeg["legend"] = {url: sublayer.legend.graphic};
+                    }
                 }
             } else if(type === "wtms"){
             //@TODO
             }
             return sublayerLeg;
         },
-    
-        _createLegendI: function(layers, layidx, sublayidx, html, reshtml) {
+
+        _createLegend: function(layers, layidx, sublayidx, html, reshtml) {
             var self = this;
             if(layers.length > layidx){
                 var layer = layers[layidx];
@@ -118,34 +136,76 @@
                             self._checkMaxImgWidth(this.width);
                             self._checkMaxImgHeight(this.height);
                             //                        window.console && console.log( sublayer.legend.url);
-                            html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
-                            html += '<div class="legend-img-div"><img src="' + layers[layidx].sublayers[sublayidx].legend.url + '"></img></div>';
+                            if(layers[layidx].sublayers[sublayidx].isNode){
+                                if(self.options.showGroupedLayerTitle){
+                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                }
+                            } else {
+                                if(self.options.showLayerTitle){
+                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                }
+                            }
+                            html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' image"><img src="' + layers[layidx].sublayers[sublayidx].legend.url + '"></img></li>';
                             self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
                         }).error(function() {
-                            if(!this.options.hideEmptyLayers){
-                                html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
-                                html += '<div class="legend-text-div">' + self.options.noLegend + ' </div>';
+                            if(!self.options.hideEmptyLayers){
+                                if(layers[layidx].sublayers[sublayidx].isNode){
+                                    if(self.options.showGroupedLayerTitle){
+                                        html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                    }
+                                } else {
+                                    if(self.options.showLayerTitle){
+                                        html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                    }
+                                }
+                                html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' text">' + self.options.noLegend + '</li>';
+                            } else {
+                                if(layers[layidx].sublayers[sublayidx].isNode){
+                                    if(self.options.showGroupedLayerTitle){
+                                        html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                    }
+                                }
                             }
                             self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
                         });
                     } else {
-                        if(!this.options.hideEmptyLayers){
-                            html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
-                            html += '<div class="legend-text-div">' + self.options.noLegend + ' </div>';
+                        if(!self.options.hideEmptyLayers){
+                            if(layers[layidx].sublayers[sublayidx].isNode){
+                                if(self.options.showGroupedLayerTitle){
+                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                }
+                            } else {
+                                if(self.options.showLayerTitle){
+                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                }
+                            }
+                            html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' text">' + self.options.noLegend + '</li>';
+                        } else {
+                            if(layers[layidx].sublayers[sublayidx].isNode){
+                                if(self.options.showGroupedLayerTitle){
+                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                }
+                            }
                         }
                         self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
                     }
                 } else {
-                    var html_ = ' <div class="layerlegends">'
-                    +  ' <h3><a href="#">' + layer.title + '</a></h3>'
-                    +  ' <div class="sublayerlegends">';
-                    html_+=  html;
-                    html_+=' </div>'
-                    +  ' </div>';
+                    var html_ = '';
+                    if(self.options.showWmsTitle){
+                        html_ += '<li class="ebene' + layer.level + ' title">' + layer.title + '</li>';
+                    }
+                    if(html.length > 0) {
+                        html_ += '<ul class="ebene' + layer.level + '">';
+                        html_+=  html;
+                        html_+=  '</ul>';
+                    }
                     reshtml += html_;
                     self._createLegend(layers, ++layidx, 0, "", reshtml);
                 }
             } else {
+                if(self.options.showWmsTitle){
+                    reshtml = '<ul>' + reshtml + '</ul>';
+                }
                 $(self.element).find("#imgtest").html("");
                 $(this.element).find('#legends:eq(0)').html(reshtml);
                 if(this.options.elementType === "dialog") {
@@ -153,95 +213,15 @@
                     this.element.dialog("option", "maxWidth", self.options.maxDialogWidth);
                     this.element.dialog("option", "minWidth", self.options.maxImgWidth != 0 ? self.maxImgWidth + 100 : 300);
                     this.element.dialog("option", "width", self.options.maxImgWidth != 0 ? self.maxImgWidth + 200 : 300);
-                    //                this.element.dialog({
-                    //                    maxHeight: self.options.maxDialogHeight,
-                    //                    maxWidth: self.options.maxDialogWidth,
-                    //                    minWidth: self.options.maxImgWidth != 0 ? self.maxImgWidth + 100 : 300,
-                    //                    width: self.options.maxImgWidth != 0 ? self.maxImgWidth + 200 : 600});
                     this.element.dialog('open');
                     $(this.element).css({
                         "max-height": (this.options.maxDialogHeight - 50) +"px"
                     });
                 }
                 if(this.options.displayType === 'accordion'){
-                    $(this.element).find('.sublayerlegends').each(function(){
+                    $(this.element).find('ul.ebene1').each(function(){
                         $(this).accordion({
-                            autoHeight: false, 
-                            collapsible: true, 
-                            active: false
-                        });
-                    });
-                    $(this.element).find('.layerlegends').each(function(){
-                        $(this).accordion({
-                            autoHeight: false, 
-                            collapsible: true, 
-                            active: false
-                        });
-                    });
-                }
-            }
-        },
-    
-        _createLegend: function(layers, level, layidx, sublayidx, html, reshtml) {
-            var self = this;
-            if(layers.length > layidx){
-                var layer = layers[layidx];
-                if(layers[layidx].sublayers.length > sublayidx){
-                    if(layers[layidx].sublayers[sublayidx].legend){
-                        $(self.element).find("#imgtest").html('<img id="testload" style="display: none;" src="' + layers[layidx].sublayers[sublayidx].legend.url + '"></img>');
-                        $(self.element).find("#imgtest #testload").load(function() {
-                            //                            var width = this.width, height = this.height;
-                            self._checkMaxImgWidth(this.width);
-                            self._checkMaxImgHeight(this.height);
-                            //                        window.console && console.log( sublayer.legend.url);
-                            html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
-                            html += '<div class="legend-img-div"><img src="' + layers[layidx].sublayers[sublayidx].legend.url + '"></img></div>';
-                            self._createLegend(layers, level, layidx, ++sublayidx, html, reshtml);
-                        }).error(function() {
-                            if(!this.options.hideEmptyLayers){
-                                html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
-                                html += '<div class="legend-text-div">' + self.options.noLegend + ' </div>';
-                            }
-                            self._createLegend(layers, level, layidx, ++sublayidx, html, reshtml);
-                        });
-                    } else {
-                        if(!this.options.hideEmptyLayers){
-                            html += '<h3><a href="#">' + layers[layidx].sublayers[sublayidx].title + '</a></h3>';
-                            html += '<div class="legend-text-div">' + self.options.noLegend + ' </div>';
-                        }
-                        self._createLegend(layers, level, layidx, ++sublayidx, html, reshtml);
-                    }
-                } else {
-                    var html_ = ' <div class="layerlegends">'
-                    +  ' <h3><a href="#">' + layer.title + '</a></h3>'
-                    +  ' <div class="sublayerlegends">';
-                    html_+=  html;
-                    html_+=' </div>'
-                    +  ' </div>';
-                    reshtml += html_;
-                    self._createLegend(layers, level, ++layidx, 0, "", reshtml);
-                }
-            } else {
-                $(self.element).find("#imgtest").html("");
-                $(this.element).find('#legends:eq(0)').html(reshtml);
-                if(this.options.elementType === "dialog") {
-                    this.element.dialog("option", "maxHeight", self.options.maxDialogHeight + "px");
-                    this.element.dialog("option", "maxWidth", self.options.maxDialogWidth);
-                    this.element.dialog("option", "minWidth", self.options.maxImgWidth != 0 ? self.maxImgWidth + 100 : 300);
-                    this.element.dialog("option", "width", self.options.maxImgWidth != 0 ? self.maxImgWidth + 200 : 300);
-                    //                this.element.dialog({
-                    //                    maxHeight: self.options.maxDialogHeight,
-                    //                    maxWidth: self.options.maxDialogWidth,
-                    //                    minWidth: self.options.maxImgWidth != 0 ? self.maxImgWidth + 100 : 300,
-                    //                    width: self.options.maxImgWidth != 0 ? self.maxImgWidth + 200 : 600});
-                    this.element.dialog('open');
-                    $(this.element).css({
-                        "max-height": (this.options.maxDialogHeight - 50) +"px"
-                    });
-                }
-                if(this.options.displayType === 'accordion'){
-                    $(this.element).find('.sublayerlegends').each(function(){
-                        $(this).accordion({
+                            header: "li.title",
                             autoHeight: false, 
                             collapsible: true, 
                             active: false
@@ -260,7 +240,7 @@
     
         open: function() {
             var layers = this._getLayers();
-            this._createLegend(layers, 1, 0, 0, "", "");
+            this._createLegend(layers, 0, 0, "", "");
         }
 
     });

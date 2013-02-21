@@ -7,7 +7,7 @@ use Mapbender\CoreBundle\Component\Element;
 /**
  * The Legend class shows legends of the map's layers.
  * 
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class Legend extends Element
 {
