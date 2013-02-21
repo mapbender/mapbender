@@ -43,7 +43,9 @@ class PrintClient extends Element
         return array(
             'js' => array(
                 'mapbender.element.printClient.js'),
-            'css' => array());
+            'css' => array(
+                'mapbender.element.printClient.css'
+            ));
     }
 
     /**
@@ -76,12 +78,29 @@ class PrintClient extends Element
     public function render()
     {
         $configuration = $this->getConfiguration();
+        $forms = array();
+        foreach($configuration['formats'] as $key => $config) {
+            if(!array_key_exists('optional_fields', $config) or !is_array($config['optional_fields'])) {
+                continue;
+            }
+
+            $form_builder = $this->container->get('form.factory')->createNamedBuilder('extra', 'form', null, array(
+                'csrf_protection' => false
+            ));
+            foreach($config['optional_fields'] as $k => $c) {
+                $options = array_key_exists('options', $c) ? $c['options'] : array();
+                $form_builder->add($k, $c['type'], $options);
+            }
+            $forms[$key] = $form_builder->getForm()->createView();
+        }
+        
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:printclient.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            'title' => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+            ->render('MapbenderCoreBundle:Element:printclient.html.twig',
+                array(
+                    'id' => $this->getId(),
+                    'title' => $this->getTitle(),
+                    'configuration' => $this->getConfiguration(),
+                    'forms' => $forms));
     }
 
     /**
@@ -100,11 +119,12 @@ class PrintClient extends Element
 
                 // Forward to Printer Service URL using OWSProxy
                 $configuration = $this->getConfiguration();
-                $this->container->get('http_kernel')->forward(
-                        'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-                        array(
-                    'url' => $configuration['printer']['service']
-                        )
+                return  $this->container->get('http_kernel')->forward(
+                    'OwsProxy3CoreBundle:OwsProxy:genericProxy',
+                    array(
+                        'url' => $configuration['printer']['service'],
+                        'content' => $content
+                    )
                 );
         }
     }

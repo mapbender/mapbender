@@ -153,6 +153,12 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             free_extent.parent().hide();
         }
         
+        // Copy extra fields
+        var extra_fields = $('.extra_fields', this.element).empty(),
+            extra_form = $('.extra_forms form[name="' + format_key  + '"]');
+        if(extra_form.length > 0) {
+            extra_fields.html(extra_form.html());
+        }
     },
     
     _updateGeometry: function(reset) {
@@ -300,13 +306,22 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
                 data.layers.push(Mapbender.layer[type].getPrintConfig(layer, this.map.map.olMap.getExtent()));
             }
         }
+        
+        // Collect extra fields
+        var extra = {};
+        var form_array = $('.format-form form', this.element).serializeArray();
+        $.each(form_array, function(idx, field) {
+            if('extra[' === field.name.substr(0, 6)) {
+                extra[field.name.substr(6, field.name.length - 7)] = field.value;
+            }
+        });
+        data.extra = extra;        
+        
         if (this.options.print_directly) {
             this._printDirectly(data);
         } else {
             //@TODO
         }
-        
-        console.log("Druck jetzt!", data);
     },
     
     _printDirectly: function(data){
@@ -315,8 +330,10 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             url: url,
             type: 'POST',
             contentType: "application/json; charset=utf-8",
+            //contentType: "application/x-www-form-urlencoded",
             dataType: "json",
             data: JSON.stringify(data)
+            //data: data
         })
     }
 });

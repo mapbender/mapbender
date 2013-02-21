@@ -49,7 +49,18 @@
                 <input type="checkbox" name="title_block_selector"/>
                 <label for="title_block_selector">{{ 'Title Block' | trans }}</label>
             </div>
+                
+            <div class="extra_fields">
+            </div>
 
         </form>
+    </div>
+        
+    <div class="extra_forms">
+        {% for key, form in forms %}
+        <form name="{{ key }}">
+            {{ form_widget(form) }}
+        </form>
+        {% endfor %}
     </div>
 </div>
