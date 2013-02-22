@@ -19,7 +19,7 @@ $.extend(true, Mapbender, { layer: {
             var finalUrl = layerDef.configuration.url;
 
             if(layerDef.configuration.proxy === true) {
-                finalUrl = OpenLayers.ProxyHost + finalUrl;
+                finalUrl = this._addProxy(finalUrl);
             }
 
             mqLayerDef = {
@@ -46,12 +46,24 @@ $.extend(true, Mapbender, { layer: {
             };
             return mqLayerDef;
         },
+        
+        _addProxy: function(url) {
+            return OpenLayers.ProxyHost + url;
+        },
+        
+        _removeProxy: function(url) {
+            if(url.indexOf(OpenLayers.ProxyHost) === 0) {
+                return url.substring(OpenLayers.ProxyHost.length);
+            }
+            return url;
+        },
 
         featureInfo: function(layer, x, y, callback) {
             if(layer.options.queryLayers.length === 0) {
                 return;
             }
             var param_tmp = {
+                SERVICE: 'WMS',
                 REQUEST: 'GetFeatureInfo',
                 VERSION: layer.olLayer.params.VERSION,
                 EXCEPTIONS: "application/vnd.ogc.se_xml",
@@ -88,14 +100,15 @@ $.extend(true, Mapbender, { layer: {
 
 
             // this clever shit was taken from $.ajax
-            requestUrl = layer.options.url;
+            var requestUrl = this._removeProxy(layer.options.url);
+            
             requestUrl += (/\?/.test(layer.options.url) ? '&' : '?') + params;
-
+            
             $.ajax({
                 url: Mapbender.configuration.application.urls.proxy,
                 contentType: contentType_,
                 data: {
-                    url: requestUrl
+                    url: encodeURIComponent(requestUrl)
                 },
                 success: function(data) {
                     callback({
