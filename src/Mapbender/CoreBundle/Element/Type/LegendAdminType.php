@@ -47,8 +47,9 @@ class LegendAdminType extends AbstractType
                       array(
                     'required' => true,
                     'choices' => array(
-                        "accordion" => "accordion",
-                        "list" => "list")))
+                        "list" => "list",
+                        "accordion" => "accordion"
+                        )))
                 ->add('target', 'target_element',
                       array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
@@ -56,13 +57,14 @@ class LegendAdminType extends AbstractType
                     'property_path' => '[target]',
                     'required' => false))
                 ->add('hideEmptyLayers', 'checkbox', array('required' => false))
+                
+                ->add('noLegend', 'text', array('required' => false))
                 ->add('generateGetLegendGraphicUrl', 'checkbox',
                       array('required' => false))
                 ->add('showWmsTitle', 'checkbox', array('required' => false))
                 ->add('showLayerTitle', 'checkbox', array('required' => false))
                 ->add('showGroupedLayerTitle', 'checkbox',
                       array('required' => false))
-                ->add('noLegend', 'text', array('required' => false))
         ;
     }
 
