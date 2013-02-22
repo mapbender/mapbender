@@ -322,13 +322,6 @@ class Application
                         'type' => $layer->getType(),
                         'title' => $layer->getTitle(),
                         'configuration' => $layer->getConfiguration()));
-                if($layer->getProxy())
-                {
-//                    $str = $configuration['application']["urls"]["proxy"]
-//                        . "?url=" . urlencode($layerconf[$layer->getId()]["configuration"]["url"]);
-                    $str = $layerconf[$layer->getId()]["configuration"]["url"];
-                    $layerconf[$layer->getId()]["configuration"]["url"] = $str;
-                }
                 $configuration['layersets'][$layerset->getId()][$num] = $layerconf;
                 $num++;
             }

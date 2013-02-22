@@ -206,6 +206,7 @@ class WmsInstance
             && $rootlayer->getTitle() !== "" ?
                     $rootlayer->getTitle() : $this->title,
             "url" => $this->source->getGetMap()->getHttpGet(),
+            "proxy" => $this->getProxy(),
             "visible" => $this->getVisible(),
             "format" => $this->getFormat(),
             "info_format" => $this->getInfoformat(),
