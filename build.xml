@@ -238,7 +238,9 @@
     </target>
     
     <target name="unittest" depends="lint">
-        <exec command="phpunit -c application/app --process-isolation" passthru="true" checkreturn="false" /> 
+        <echo>Unitests are disabled</echo>
+        <!-- <exec command="phpunit -c application/app -
+             -process-isolation" passthru="true" checkreturn="false" /> --> 
         <!--
             this doesn't do enough of what I want to do
         <phpunit bootstrap="application/app/bootstrap.php.cache" haltonfailure="true" >
