@@ -16,6 +16,10 @@ class MapbenderManagerBundle extends MapbenderBundle
                 'route' => 'mapbender_manager_application_index',
                 'routes' => array(
                     'mapbender_manager_application',
+                ),
+                'subroutes' => array(
+                    array('title'=>'New Application', 
+                          'route'=>'mapbender_manager_application_new')
                 )
             ),
             array(
@@ -24,6 +28,10 @@ class MapbenderManagerBundle extends MapbenderBundle
                 'route' => 'mapbender_manager_repository_index',
                 'routes' => array(
                     'mapbender_manager_repository',
+                ),
+                'subroutes' => array(
+                    0 => array('title'=>'Add Service', 
+                               'route'=>'mapbender_manager_repository_new')
                 )
             ),
         );
