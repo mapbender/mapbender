@@ -62,7 +62,12 @@ EOT;
         return array(
             'tooltip' => null,
             'target' => null,
-            'components' => array(),
+            'components' => array(
+                "pan",
+                "history",
+                "zoom_box",
+                "zoom_max",
+                "zoom_slieder"),
             'stepSize' => 50,
             'stepByPixel' => false,
             'position' => array(0, 0),
