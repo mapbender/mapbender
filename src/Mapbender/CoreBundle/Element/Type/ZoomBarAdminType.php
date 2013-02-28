@@ -45,7 +45,7 @@ class ZoomBarAdminType extends AbstractType
                     'property_path' => '[target]',
                     'required' => false))
                 ->add('stepSize', 'text',
-                      array('required' => false, 'data' => 50))
+                      array('required' => false))
                 ->add('stepByPixel', 'choice',
                       array(
                     'choices' => array('true' => 'true', 'false' => 'false')))

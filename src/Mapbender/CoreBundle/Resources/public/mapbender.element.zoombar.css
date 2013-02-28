@@ -99,6 +99,21 @@
     display: block;
 }
 
+.mb-element-zoombar div.zoom-world {
+    background: url('image/zoom-world-mini.png') 50% 0px no-repeat;
+    margin: 3px 0;
+}
+
+.mb-element-zoombar div.zoom-world.active {
+    background: url('image/zoom-world-mini.png') 50% 0px no-repeat;
+    margin: 3px 0;
+}
+.mb-element-zoombar div.zoom-world a {
+    
+    height: 25px;
+    display: block;
+}
+
 .mb-element-zoombar div.zoom-in,
 .mb-element-zoombar div.zoom-out {
     background: url('image/zoombar-zoom-buttons.png') no-repeat;
