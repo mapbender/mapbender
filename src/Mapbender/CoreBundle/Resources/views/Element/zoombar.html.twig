@@ -1,27 +1,33 @@
 {% spaceless %}
 <div id="{{ id }}" class="mb-element mb-element-zoombar">
+    {% if 'pan' in configuration.components %}
     <div class="pan">
         <a class="pan-up" title="{{ "Pan up" | trans }}"></a>
         <a class="pan-right" title="{{ "Pan right" | trans }}"></a>
         <a class="pan-down" title="{{ "Pan down" | trans }}"></a>
         <a class="pan-left" title="{{ "Pan left" | trans }}"></a>
     </div>
-
+    {% endif %}
     <div class="zoom">
+        {% if 'history' in configuration.components %}
         <div class="zoom-prev">
             <a title="{{ "Go back" | trans }}"></a>
         </div>
         <div class="zoom-next">
             <a title="{{ "Go forward" | trans }}"></a>
         </div>
-        
+        {% endif %}
+        {% if 'zoom_box' in configuration.components %}
         <div class="zoom-box">
             <a title="{{ "Zoom by box" | trans }}"></a>
         </div>
+        {% endif %}
+        {% if 'zoom_max' in configuration.components %}
         <div class="zoom-world">
             <a title="{{ "Zoom by world" | trans }}"></a>
         </div>
-
+        {% endif %}
+        {% if 'zoom_slieder' in configuration.components %}
         <div class="zoom-in">
             <a title="{{ "Zoom in" | trans }}"></a>
         </div>
@@ -31,6 +37,7 @@
         <div class="zoom-out">
             <a title="{{ "Zoom out" | trans }}"></a>
         </div>
+        {% endif %}
     </div>
 
     <div class="bottom"></div>

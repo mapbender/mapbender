@@ -38,14 +38,23 @@ class ZoomBarAdminType extends AbstractType
     {
 
         $builder->add('tooltip', 'text', array('required' => false))
+                ->add('components', 'choice',
+                      array(
+                    'required' => true,
+                    'multiple' => true,
+                    'choices' => array(
+                        "pan" => "pan",
+                        "history" => "history",
+                        "zoom_box" => "zoom box",
+                        "zoom_max" => "zoom to max extent",
+                        "zoom_slieder" => "zoom slider")))
                 ->add('target_map', 'target_element',
                       array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
-                ->add('stepSize', 'text',
-                      array('required' => false))
+                ->add('stepSize', 'text', array('required' => false))
                 ->add('stepByPixel', 'choice',
                       array(
                     'choices' => array('true' => 'true', 'false' => 'false')))
