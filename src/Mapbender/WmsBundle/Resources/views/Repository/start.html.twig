@@ -1,6 +1,25 @@
-{{ form_errors(form) }}
-<form action="{{path('mapbender_wms_repository_create')}}" method="post">
-    {{form_rest(form)}}
-     <input class="btn btn-primary" type="submit" name="load" value="{{"Load"|trans}}" />
-</form>
+<fieldset class="serviceAddBox left">
+  <legend>OGC WMS</legend>
+  <form action="{{path('mapbender_wms_repository_create')}}" method="post" novalidate="novalidate">
+      {{ form_errors(form) }}
 
+      {{ form_errors(form.originUrl) }}
+      <label class="left label" for="{{ form.originUrl.get('id') }}">{{"Serviceurl:" | trans}}</label>
+      {{ form_widget(form.originUrl, { 'attr': {'class': 'input'} }) }}
+      <div class="clearContainer"></div>
+
+      {{ form_errors(form.username) }}
+      <label class="left label" for="{{ form.username.get('id') }}">{{"Username:" | trans}}</label>
+      {{ form_widget(form.username, { 'attr': {'class': 'input'} }) }}
+      <div class="clearContainer"></div>
+
+      {{ form_errors(form.password) }}
+      <label class="left label" for="{{ form.password.get('id') }}">{{"Password:" | trans}}</label>
+      {{ form_widget(form.password, { 'attr': {'class': 'input'} }) }}
+      <div class="clearContainer"></div>
+
+      {{form_rest(form)}}
+
+      <input class="button right" type="submit" name="load" value="{{"Load"|trans}}" />
+  </form>
+</fieldset>

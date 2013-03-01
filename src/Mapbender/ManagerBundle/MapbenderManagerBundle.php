@@ -11,6 +11,13 @@ class MapbenderManagerBundle extends MapbenderBundle
     {
         return array(
             array(
+                'weight' => 0,
+                'title' => 'Startpage',
+                'route' => 'mapbender_start',
+                'routes' => array('mapbender_start'),
+                'subroutes' => array()
+            ),
+            array(
                 'weight' => 10,
                 'title' => 'Applications',
                 'route' => 'mapbender_manager_application_index',
