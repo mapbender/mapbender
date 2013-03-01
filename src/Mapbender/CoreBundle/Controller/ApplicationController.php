@@ -173,12 +173,28 @@ class ApplicationController extends Controller {
      */
     public function checkApplicationAccess(Application $application) {
         $securityContext = $this->get('security.context');
-        $granted = $securityContext->isGranted('VIEW', $application->getEntity());
+
+        $application_entity = $application->getEntity();
+        if($application_entity::SOURCE_YAML === $application_entity->getSource()
+                && count($application_entity->yaml_roles)) {
+            $passed = false;
+            foreach($application_entity->yaml_roles as $role) {
+                if($securityContext->isGranted($role)) {
+                    $passed = true;
+                    break; 
+                }
+            }
+            if(!$passed) {
+                throw new AccessDeniedException('You are not granted view permissions for this application.');
+            }
+        }
+
+        $granted = $securityContext->isGranted('VIEW', $application_entity);
         if(false === $granted) {
             throw new AccessDeniedException('You are not granted view permissions for this application.');
         }
 
-        if(!$application->getEntity()->isPublished() and !$securityContext->isGranted('EDIT', $application->getEntity())) {
+        if(!$application_entity->isPublished() and !$securityContext->isGranted('EDIT', $application_entity)) {
             throw new AccessDeniedException('This application is not published at the moment');
         }
     }

@@ -124,6 +124,12 @@ class ApplicationYAMLMapper
                 ->getRepository('FOMUserBundle:User')
                 ->find(1);
         $application->setOwner($owner);
+
+        $application->yaml_roles = array();
+        if(array_key_exists('roles', $definition)) {
+            $application->yaml_roles = $definition['roles'];
+        }
+        
         // TODO: Add roles, entity needs work first
         // Create layersets and layers
         foreach($definition['layersets'] as $id => $layerDefinitions)
