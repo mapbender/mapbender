@@ -20,14 +20,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @author Christian Wygoda
  */
-class ApplicationYAMLMapper {
+class ApplicationYAMLMapper
+{
+
     /**
      * The service container
      * @var ContainerInterface
      */
     private $container;
 
-    public function __construct(ContainerInterface $container) {
+    public function __construct(ContainerInterface $container)
+    {
         $this->container = $container;
     }
 
@@ -36,13 +39,16 @@ class ApplicationYAMLMapper {
      *
      * @return array
      */
-    public function getApplications() {
+    public function getApplications()
+    {
         $definitions = $this->container->getParameter('applications');
 
         $applications = array();
-        foreach($definitions as $slug => $def) {
+        foreach($definitions as $slug => $def)
+        {
             $application = $this->getApplication($slug);
-            if($application !== null) {
+            if($application !== null)
+            {
                 $applications[] = $application;
             }
         }
@@ -58,9 +64,11 @@ class ApplicationYAMLMapper {
      * @param string $slug
      * @return Application
      */
-    public function getApplication($slug) {
+    public function getApplication($slug)
+    {
         $definitions = $this->container->getParameter('applications');
-        if(!array_key_exists($slug, $definitions)) {
+        if(!array_key_exists($slug, $definitions))
+        {
             return null;
         }
 
@@ -69,39 +77,43 @@ class ApplicationYAMLMapper {
         // First, create an application entity
         $application = new ApplicationEntity();
         $application
-            ->setSlug($slug)
-            ->setTitle($definition['title'])
-            ->setDescription($definition['description'])
-            ->setTemplate($definition['template'])
-            ->setPublished($definition['published']);
+                ->setSlug($slug)
+                ->setTitle($definition['title'])
+                ->setDescription($definition['description'])
+                ->setTemplate($definition['template'])
+                ->setPublished($definition['published']);
 
-        if(array_key_exists('extra_assets', $definition)) {
+        if(array_key_exists('extra_assets', $definition))
+        {
             $application->setExtraAssets($definition['extra_assets']);
         }
 
         // Then create elements
-        foreach($definition['elements'] as $region => $elementsDefinition) {
+        foreach($definition['elements'] as $region => $elementsDefinition)
+        {
             $weight = 0;
-            if($elementsDefinition !== null){
-                foreach($elementsDefinition as $id => $elementDefinition) {
+            if($elementsDefinition !== null)
+            {
+                foreach($elementsDefinition as $id => $elementDefinition)
+                {
                     $configuration = $elementDefinition;
                     unset($configuration['class']);
                     unset($configuration['title']);
 
                     $class = $elementDefinition['class'];
                     $title = array_key_exists('title', $elementDefinition) ?
-                        $elementDefinition['title'] :
-                        $class::getClassTitle();
+                            $elementDefinition['title'] :
+                            $class::getClassTitle();
 
                     $element = new Element();
                     $element
-                        ->setId($id)
-                        ->setClass($elementDefinition['class'])
-                        ->setTitle($title)
-                        ->setConfiguration($configuration)
-                        ->setRegion($region)
-                        ->setWeight($weight++)
-                        ->setApplication($application);
+                            ->setId($id)
+                            ->setClass($elementDefinition['class'])
+                            ->setTitle($title)
+                            ->setConfiguration($configuration)
+                            ->setRegion($region)
+                            ->setWeight($weight++)
+                            ->setApplication($application);
                     //TODO: Roles
                     $application->addElements($element);
                 }
@@ -109,21 +121,28 @@ class ApplicationYAMLMapper {
         }
 
         $owner = $this->container->get('doctrine')
-            ->getRepository('FOMUserBundle:User')
-            ->find(1);
+                ->getRepository('FOMUserBundle:User')
+                ->find(1);
         $application->setOwner($owner);
-        // TODO: Add roles, entity needs work first
 
+        $application->yaml_roles = array();
+        if(array_key_exists('roles', $definition)) {
+            $application->yaml_roles = $definition['roles'];
+        }
+        
+        // TODO: Add roles, entity needs work first
         // Create layersets and layers
-        foreach($definition['layersets'] as $id => $layerDefinitions) {
+        foreach($definition['layersets'] as $id => $layerDefinitions)
+        {
             $layerset = new Layerset();
             $layerset
-                ->setId($id)
-                ->setTitle('YAML - ' . $id)
-                ->setApplication($application);
+                    ->setId($id)
+                    ->setTitle('YAML - ' . $id)
+                    ->setApplication($application);
 
             $weight = 0;
-            foreach($layerDefinitions as $id => $layerDefinition) {
+            foreach($layerDefinitions as $id => $layerDefinition)
+            {
                 $configuration = $layerDefinition;
                 $class = $configuration['class'];
                 unset($configuration['class']);
@@ -152,5 +171,6 @@ class ApplicationYAMLMapper {
 
         return $application;
     }
+
 }
 

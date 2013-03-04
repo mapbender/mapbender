@@ -4,7 +4,6 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -19,8 +18,11 @@ use Mapbender\CoreBundle\Component\InstanceIn;
  * @ORM\Table(name="mb_wms_wmsinstance")
  * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
  */
-class WmsInstance extends SourceInstance implements InstanceIn {
-    
+class WmsInstance
+        extends SourceInstance
+        implements InstanceIn
+{
+
     /**
      * @var array $configuration The instance configuration
      */
@@ -38,7 +40,6 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @ORM\OrderBy({"priority" = "asc"})
      */
     protected $layers; //{ name: 1,   title: Webatlas,   visible: true }
-
 //    /**
 //     * @ORM\Column(type="string", nullable=false)
 //     */
@@ -88,44 +89,44 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $tiled = false;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $info = true;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $selected = true;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $toggle = true;
-    
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $allowinfo = true;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $allowselected = true;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $allowtoggle = true;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $allowreorder = true;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->layers = new ArrayCollection();
         $this->opacity;
     }
@@ -135,27 +136,30 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param integer $id
      * @return WmsInstance
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
 
         return $this;
     }
-    
+
     /**
      * Get id
      *
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
-    
+
     /**
      * Set configuration
      *
      * @param array $configuration
      */
-    public function setConfiguration($configuration) {
+    public function setConfiguration($configuration)
+    {
         $this->configuration = $configuration;
         return $this;
     }
@@ -164,56 +168,66 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * Get an Instance Configuration.
      * @return array
      */
-    public function getConfiguration(){
-        if($this->configuration !== null) { // from yaml
+    public function getConfiguration()
+    {
+        if($this->configuration !== null)
+        { // from yaml
             return $this->configuration;
         }
         // from db
         $layers = array();
         $infoLayers = array();
         $rootlayer = null;
-        foreach ($this->layers as $layer){
-            if($layer->getWmslayersource()->getParent() === null){
+        foreach($this->layers as $layer)
+        {
+            if($layer->getWmslayersource()->getParent() === null)
+            {
                 $rootlayer = $layer;
                 break;
             }
         }
-        
-        foreach ($this->layers as $layer){
+
+        foreach($this->layers as $layer)
+        {
             if($layer->getActive() === true
                     && $layer->getWmslayersource()->getParent() !== null
-                    ){ //only active and not wms root layer
+            )
+            { //only active and not wms root layer
                 $layers[] = $layer->getConfiguration();
-                if($layer->getInfo() !== null && $layer->getInfo()){
+                if($layer->getInfo() !== null && $layer->getInfo())
+                {
                     $infoLayers[] = $layer->getTitle();
                 }
             }
         }
         $configuration = array(
-            "id" =>$rootlayer->getId(),
+            "id" => $rootlayer->getId(),
             "title" => $rootlayer->getTitle() !== null
-                && $rootlayer->getTitle() !== "" ?
-                $rootlayer->getTitle() : $this->title,
+            && $rootlayer->getTitle() !== "" ?
+                    $rootlayer->getTitle() : $this->title,
             "url" => $this->source->getGetMap()->getHttpGet(),
+            "proxy" => $this->getProxy(),
             "visible" => $this->getVisible(),
             "format" => $this->getFormat(),
             "info_format" => $this->getInfoformat(),
-
             "queryFormat" => $this->infoformat,
             "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
             "opacity" => $this->opacity / 100,
             "tiled" => $this->tiled,
-            "layers" => array_reverse ($layers),
-            "queryLayers" => array_reverse ($infoLayers),
+            "layers" => array_reverse($layers),
+            "queryLayers" => array_reverse($infoLayers),
             "layertree" => $this->getLayertreeConfiguration()
         );
         return $configuration;
     }
-    
-    public function getLayertreeConfiguration(){
+
+    public function getLayertreeConfiguration()
+    {
         $layertree = array();
-        foreach ($this->layers as $layer){
-            if($layer->getActive() === true){
+        foreach($this->layers as $layer)
+        {
+            if($layer->getActive() === true)
+            {
                 $layertree[$layer->getId()] = $layer->getLayertreeConfiguration();
             }
         }
@@ -226,7 +240,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param array $layers
      * @return WmsInstance
      */
-    public function setLayers($layers) {
+    public function setLayers($layers)
+    {
         $this->layers = $layers;
 
         return $this;
@@ -237,7 +252,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return array
      */
-    public function getLayers() {
+    public function getLayers()
+    {
         return $this->layers;
     }
 
@@ -247,7 +263,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param string $title
      * @return WmsInstance
      */
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         $this->title = $title;
 
         return $this;
@@ -258,7 +275,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
 
@@ -268,7 +286,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param array $srs
      * @return WmsInstance
      */
-    public function setSrs($srs) {
+    public function setSrs($srs)
+    {
         $this->srs = $srs;
 
         return $this;
@@ -279,7 +298,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return array
      */
-    public function getSrs() {
+    public function getSrs()
+    {
         return $this->srs;
     }
 
@@ -289,7 +309,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param string $format
      * @return WmsInstance
      */
-    public function setFormat($format) {
+    public function setFormat($format)
+    {
         $this->format = $format;
 
         return $this;
@@ -300,8 +321,9 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return string
      */
-    public function getFormat() {
-        return $this->format !== null ? $this->format : 'image/png' ;
+    public function getFormat()
+    {
+        return $this->format !== null ? $this->format : 'image/png';
     }
 
     /**
@@ -310,7 +332,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param string $infoformat
      * @return WmsInstance
      */
-    public function setInfoformat($infoformat) {
+    public function setInfoformat($infoformat)
+    {
         $this->infoformat = $infoformat;
 
         return $this;
@@ -321,7 +344,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return string
      */
-    public function getInfoformat() {
+    public function getInfoformat()
+    {
         return $this->infoformat;
     }
 
@@ -331,7 +355,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param string $exceptionformat
      * @return WmsInstance
      */
-    public function setExceptionformat($exceptionformat) {
+    public function setExceptionformat($exceptionformat)
+    {
         $this->exceptionformat = $exceptionformat;
 
         return $this;
@@ -342,7 +367,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return string
      */
-    public function getExceptionformat() {
+    public function getExceptionformat()
+    {
         return $this->exceptionformat;
     }
 
@@ -352,7 +378,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param boolean $transparency
      * @return WmsInstance
      */
-    public function setTransparency($transparency) {
+    public function setTransparency($transparency)
+    {
         $this->transparency = $transparency;
 
         return $this;
@@ -363,7 +390,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return boolean
      */
-    public function getTransparency() {
+    public function getTransparency()
+    {
         return $this->transparency;
     }
 
@@ -373,7 +401,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param boolean $visible
      * @return WmsInstance
      */
-    public function setVisible($visible) {
+    public function setVisible($visible)
+    {
         $this->visible = $visible;
 
         return $this;
@@ -384,7 +413,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return boolean
      */
-    public function getVisible() {
+    public function getVisible()
+    {
         return $this->visible;
     }
 
@@ -394,7 +424,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param integer $opacity
      * @return WmsInstance
      */
-    public function setOpacity($opacity) {
+    public function setOpacity($opacity)
+    {
         $this->opacity = $opacity;
 
         return $this;
@@ -405,7 +436,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return integer
      */
-    public function getOpacity() {
+    public function getOpacity()
+    {
         return $this->opacity;
     }
 
@@ -415,7 +447,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param boolean $proxy
      * @return WmsInstance
      */
-    public function setProxy($proxy) {
+    public function setProxy($proxy)
+    {
         $this->proxy = $proxy;
 
         return $this;
@@ -426,7 +459,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return boolean
      */
-    public function getProxy() {
+    public function getProxy()
+    {
         return $this->proxy;
     }
 
@@ -436,7 +470,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param boolean $tiled
      * @return WmsInstance
      */
-    public function setTiled($tiled) {
+    public function setTiled($tiled)
+    {
         $this->tiled = $tiled;
 
         return $this;
@@ -447,7 +482,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return boolean
      */
-    public function getTiled() {
+    public function getTiled()
+    {
         return $this->tiled;
     }
 
@@ -457,7 +493,8 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      * @param WmsSource $wmssource
      * @return WmsInstance
      */
-    public function setSource(WmsSource $wmssource = null) {
+    public function setSource(WmsSource $wmssource = null)
+    {
         $this->source = $wmssource;
 
         return $this;
@@ -468,10 +505,10 @@ class WmsInstance extends SourceInstance implements InstanceIn {
      *
      * @return WmsSource
      */
-    public function getSource() {
+    public function getSource()
+    {
         return $this->source;
     }
-
 
     /**
      * Add layers
@@ -642,21 +679,19 @@ class WmsInstance extends SourceInstance implements InstanceIn {
         $this->allowreorder = $allowreorder;
         return $this;
     }
-    
-    
-    
-    
-    
 
-    public function __toString(){
+    public function __toString()
+    {
         return (string) $this->getId();
     }
 
-    public function getType(){
+    public function getType()
+    {
         return "wms";
     }
 
-    public function getManagerType(){
+    public function getManagerType()
+    {
         return "wms";
     }
 
@@ -667,4 +702,5 @@ class WmsInstance extends SourceInstance implements InstanceIn {
                 '@MapbenderWmsBundle/Resources/public/mapbender.layer.wms.js'),
             'css' => array());
     }
+
 }

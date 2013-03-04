@@ -4,7 +4,6 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -25,7 +24,9 @@ use Mapbender\CoreBundle\Component\EntityIdentifierIn;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
  */
-class WmsLayerSource implements EntityIdentifierIn {
+class WmsLayerSource
+        implements EntityIdentifierIn
+{
 
     /**
      * @var integer $id
@@ -63,7 +64,7 @@ class WmsLayerSource implements EntityIdentifierIn {
     protected $title = "";
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $abstract = "";
 
@@ -108,12 +109,12 @@ class WmsLayerSource implements EntityIdentifierIn {
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $boundingBoxes;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
     protected $srs;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
@@ -142,8 +143,7 @@ class WmsLayerSource implements EntityIdentifierIn {
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $identifier;
-    
-    
+
     /**
      * @ORM\Column(type="array",nullable=true)
      */
@@ -154,36 +154,35 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @ORM\Column(type="array", nullable=true)
      */
     protected $metadataUrl;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
     protected $dimension;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
     protected $extent;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
     protected $dataUrl;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
     protected $featureListUrl;
-    
-    
     // FIXME: keywords cascade remove ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
     /**
      * @var array $keywords the source keyword list
      * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist"})
      */
     protected $keywords;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         $this->sublayer = new ArrayCollection();
         $this->keywords = new ArrayCollection();
         $this->boundingBoxes = array();
@@ -203,26 +202,29 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return integer 
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
-    
+
     /**
      * Set wmssource
      * @param $wmssource
      * @return WmsSource 
      */
-    public function setSource(WmsSource $wmssource) {
+    public function setSource(WmsSource $wmssource)
+    {
         $this->source = $wmssource;
         return $this;
     }
-    
+
     /**
      * Get wmssource
      *
      * @return WmsSource 
      */
-    public function getSource() {
+    public function getSource()
+    {
         return $this->source;
     }
 
@@ -232,7 +234,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param Object $parent
      * @return WmsLayerSource
      */
-    public function setParent(WmsLayerSource $parent) {
+    public function setParent(WmsLayerSource $parent)
+    {
         $this->parent = $parent;
         return $this;
     }
@@ -242,23 +245,26 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return Object 
      */
-    public function getParent() {
+    public function getParent()
+    {
         return $this->parent;
     }
-    
+
     /**
      * 
      * @return ArrayCollection
      */
-    public function getSublayer(){
+    public function getSublayer()
+    {
         return $this->sublayer;
     }
-    
+
     /**
      * 
      * @return ArrayCollection
      */
-    public function setSublayer($sublayer){
+    public function setSublayer($sublayer)
+    {
         $this->sublayer = $sublayer;
     }
 
@@ -271,9 +277,10 @@ class WmsLayerSource implements EntityIdentifierIn {
     public function addSublayer(WmsLayerSource $sublayer)
     {
         $this->sublayer->add($sublayer);
-    
+
         return $this;
     }
+
 //
 //    /**
 //     * Remove sublayer
@@ -284,14 +291,15 @@ class WmsLayerSource implements EntityIdentifierIn {
 //    {
 //        $this->sublayer->removeElement($sublayer);
 //    }
-    
+
     /**
      * Set name
      *
      * @param string $name
      * @return WmsLayerSource
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
@@ -301,7 +309,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return string 
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -311,7 +320,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param string $title
      * @return WmsLayerSource
      */
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         $this->title = $title;
         return $this;
     }
@@ -321,7 +331,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return string 
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
 
@@ -331,7 +342,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param string $abstract
      * @return WmsLayerSource
      */
-    public function setAbstract($abstract) {
+    public function setAbstract($abstract)
+    {
         $this->abstract = $abstract;
         return $this;
     }
@@ -341,7 +353,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return string 
      */
-    public function getAbstract() {
+    public function getAbstract()
+    {
         return $this->abstract;
     }
 
@@ -351,7 +364,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param boolean $queryable
      * @return WmsLayerSource
      */
-    public function setQueryable($queryable) {
+    public function setQueryable($queryable)
+    {
         $this->queryable = Utils::getBool($queryable);
         return $this;
     }
@@ -361,7 +375,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return boolean 
      */
-    public function getQueryable() {
+    public function getQueryable()
+    {
         return $this->queryable;
     }
 
@@ -371,7 +386,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param integer $cascaded
      * @return WmsLayerSource
      */
-    public function setCascaded($cascaded) {
+    public function setCascaded($cascaded)
+    {
         $this->cascaded = $cascaded;
         return $this;
     }
@@ -381,7 +397,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return integer 
      */
-    public function getCascaded() {
+    public function getCascaded()
+    {
         return $this->cascaded;
     }
 
@@ -391,7 +408,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param boolean $opaque
      * @return WmsLayerSource
      */
-    public function setOpaque($opaque) {
+    public function setOpaque($opaque)
+    {
         $this->opaque = $opaque;
         return $this;
     }
@@ -401,7 +419,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return boolean 
      */
-    public function getOpaque() {
+    public function getOpaque()
+    {
         return $this->opaque;
     }
 
@@ -411,7 +430,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param boolean $noSubset
      * @return WmsLayerSource
      */
-    public function setNoSubset($noSubset) {
+    public function setNoSubset($noSubset)
+    {
         $this->noSubset = $noSubset;
         return $this;
     }
@@ -421,7 +441,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return boolean 
      */
-    public function getNoSubset() {
+    public function getNoSubset()
+    {
         return $this->noSubset;
     }
 
@@ -431,7 +452,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param integer $fixedWidth
      * @return WmsLayerSource
      */
-    public function setFixedWidth($fixedWidth) {
+    public function setFixedWidth($fixedWidth)
+    {
         $this->fixedWidth = $fixedWidth;
         return $this;
     }
@@ -441,7 +463,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return integer 
      */
-    public function getFixedWidth() {
+    public function getFixedWidth()
+    {
         return $this->fixedWidth;
     }
 
@@ -451,7 +474,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param integer $fixedHeight
      * @return WmsLayerSource
      */
-    public function setFixedHeight($fixedHeight) {
+    public function setFixedHeight($fixedHeight)
+    {
         $this->fixedHeight = $fixedHeight;
         return $this;
     }
@@ -461,7 +485,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return integer 
      */
-    public function getFixedHeight() {
+    public function getFixedHeight()
+    {
         return $this->fixedHeight;
     }
 
@@ -471,7 +496,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param BoundingBox $latlonBounds
      * @return WmsLayerSource
      */
-    public function setLatlonBounds(BoundingBox $latlonBounds) {
+    public function setLatlonBounds(BoundingBox $latlonBounds)
+    {
         $this->latlonBounds = $latlonBounds;
         return $this;
     }
@@ -481,23 +507,27 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return Object 
      */
-    public function getLatlonBounds() {
+    public function getLatlonBounds()
+    {
 //        //@TODO check layer inheritance if layer->latlonBounds === null
-        if($this->latlonBounds === null && $this->getParent() !== null){
+        if($this->latlonBounds === null && $this->getParent() !== null)
+        {
             return $this->getParent()->getLatlonBounds();
-        } else {
+        } else
+        {
             return $this->latlonBounds;
         }
 //        return $this->latlonBounds;
     }
-    
+
     /**
      * Add boundingBox
      *
      * @param BoundingBox $boundingBoxes
      * @return WmsLayerSource
      */
-    public function addBoundingBox(BoundingBox $boundingBoxes) {
+    public function addBoundingBox(BoundingBox $boundingBoxes)
+    {
         $this->boundingBoxes[] = $boundingBoxes;
         return $this;
     }
@@ -508,7 +538,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param array $boundingBoxes
      * @return WmsLayerSource
      */
-    public function setBoundingBoxes($boundingBoxes) {
+    public function setBoundingBoxes($boundingBoxes)
+    {
         $this->boundingBoxes = $boundingBoxes;
         return $this;
     }
@@ -518,7 +549,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return array 
      */
-    public function getBoundingBoxes() {
+    public function getBoundingBoxes()
+    {
 //        //@TODO check layer inheritance if count(layer->boundingBoxes) === 0
 //        if(count($this->boundingBoxes) === 0 && $this->getParent() !== null){
 //            return $this->getParent()->getBoundingBoxes();
@@ -527,25 +559,27 @@ class WmsLayerSource implements EntityIdentifierIn {
 //        }
         return $this->boundingBoxes;
     }
-    
+
     /**
      * Set srs
      *
      * @param array $srs
      * @return WmsLayerSource
      */
-    public function setSrs($srs) {
+    public function setSrs($srs)
+    {
         $this->srs = $srs;
         return $this;
     }
-    
+
     /**
      * Add srs
      *
      * @param string $srs
      * @return WmsLayerSource
      */
-    public function addSrs($srs) {
+    public function addSrs($srs)
+    {
         $this->srs[] = $srs;
         return $this;
     }
@@ -556,24 +590,27 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return array 
      */
-    public function getSrs() {
+    public function getSrs()
+    {
 //        return $this->srs;
-        if($this->getParent() !== null){ // add crses from parent
+        if($this->getParent() !== null)
+        { // add crses from parent
             return array_merge(
-                    $this->getParent()->getSrs(),
-                    $this->srs);
-        } else {
+                            $this->getParent()->getSrs(), $this->srs);
+        } else
+        {
             return $this->srs;
         }
     }
-    
+
     /**
      * Add style
      *
      * @param Style $style
      * @return WmsLayerSource
      */
-    public function addStyle(Style $style) {
+    public function addStyle(Style $style)
+    {
         $this->styles[] = $style;
         return $this;
     }
@@ -584,7 +621,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param array $styles
      * @return WmsLayerSource
      */
-    public function setStyles($styles) {
+    public function setStyles($styles)
+    {
         $this->styles = $styles;
         return $this;
     }
@@ -595,12 +633,14 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return array 
      */
-    public function getStyles() {
-        if($this->getParent() !== null){ // add styles from parent
+    public function getStyles()
+    {
+        if($this->getParent() !== null)
+        { // add styles from parent
             return array_merge(
-                    $this->getParent()->getStyles(),
-                    $this->styles);
-        } else {
+                            $this->getParent()->getStyles(), $this->styles);
+        } else
+        {
             return $this->styles;
         }
     }
@@ -611,7 +651,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param MinMax $scale
      * @return WmsLayerSource
      */
-    public function setScale(MinMax $scale) {
+    public function setScale(MinMax $scale)
+    {
         $this->scale = $scale;
         return $this;
     }
@@ -621,7 +662,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return MinMax 
      */
-    public function getScale() {
+    public function getScale()
+    {
         return $this->scale;
     }
 
@@ -631,7 +673,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param MinMax $scaleHint
      * @return WmsLayerSource
      */
-    public function setScaleHint(MinMax $scaleHint) {
+    public function setScaleHint(MinMax $scaleHint)
+    {
         $this->scaleHint = $scaleHint;
         return $this;
     }
@@ -641,7 +684,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return MinMax 
      */
-    public function getScaleHint() {
+    public function getScaleHint()
+    {
         return $this->scaleHint;
     }
 
@@ -651,7 +695,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param Attribution $attribution
      * @return WmsLayerSource
      */
-    public function setAttribution(Attribution $attribution) {
+    public function setAttribution(Attribution $attribution)
+    {
         $this->attribution = $attribution;
         return $this;
     }
@@ -661,17 +706,19 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return Object 
      */
-    public function getAttribution() {
+    public function getAttribution()
+    {
         return $this->attribution;
     }
-    
+
     /**
      * Add identifier
      *
      * @param Identifier $identifier
      * @return WmsLayerSource
      */
-    public function addIdentifier(Identifier $identifier) {
+    public function addIdentifier(Identifier $identifier)
+    {
         $this->identifier[] = $identifier;
         return $this;
     }
@@ -682,7 +729,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param array $identifier
      * @return WmsLayerSource
      */
-    public function setIdentifier($identifier) {
+    public function setIdentifier($identifier)
+    {
         $this->identifier = $identifier;
         return $this;
     }
@@ -692,22 +740,28 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return Identifier 
      */
-    public function getIdentifier() {
+    public function getIdentifier()
+    {
         return $this->identifier;
     }
-    
+
     /**
      * Get identifier
      *
      * @return array 
      */
-    public function getIdentifierAuthority() {
+    public function getIdentifierAuthority()
+    {
         $result = array();
         $authorities = $this->getAuthority();
-        if(count($this->identifier) != 0 && count($authorities) != 0){
-            foreach($this->identifier as $identifier) {
-                foreach($authorities as $authority) {
-                    if($authority->getName() == $identifier->getAuthority()){
+        if(count($this->identifier) != 0 && count($authorities) != 0)
+        {
+            foreach($this->identifier as $identifier)
+            {
+                foreach($authorities as $authority)
+                {
+                    if($authority->getName() == $identifier->getAuthority())
+                    {
                         $ident_auth = new IdentifierAuthority();
                         $ident_auth->setAuthority($authority);
                         $ident_auth->setIdentifier($identifier);
@@ -715,18 +769,18 @@ class WmsLayerSource implements EntityIdentifierIn {
                     }
                 }
             }
-            
         }
         return $result;
     }
-    
+
     /**
      * Add authority
      *
      * @param Authority $authority
      * @return WmsLayerSource
      */
-    public function addAuthority(Authority $authority) {
+    public function addAuthority(Authority $authority)
+    {
         $this->authority[] = $authority;
         return $this;
     }
@@ -737,7 +791,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param array $authority
      * @return WmsLayerSource
      */
-    public function setAuthority($authority) {
+    public function setAuthority($authority)
+    {
         $this->authority = $authority;
         return $this;
     }
@@ -747,24 +802,26 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return Authority
      */
-    public function getAuthority() {
-        if($this->getParent() !== null){ // add crses from parent
+    public function getAuthority()
+    {
+        if($this->getParent() !== null)
+        { // add crses from parent
             return array_merge(
-                    $this->getParent()->getAuthority(),
-                    $this->authority);
-        } else {
+                            $this->getParent()->getAuthority(), $this->authority);
+        } else
+        {
             $this->authority;
         }
     }
-    
-    
+
     /**
      * Add metadataUrl
      *
      * @param array $metadataUrl
      * @return WmsLayerSource
      */
-    public function addMetadataUrl(MetadataUrl $metadataUrl) {
+    public function addMetadataUrl(MetadataUrl $metadataUrl)
+    {
         $this->metadataUrl[] = $metadataUrl;
         return $this;
     }
@@ -775,7 +832,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param array $metadataUrl
      * @return WmsLayerSource
      */
-    public function setMetadataUrl($metadataUrl) {
+    public function setMetadataUrl($metadataUrl)
+    {
         $this->metadataUrl = $metadataUrl;
         return $this;
     }
@@ -785,17 +843,19 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return array 
      */
-    public function getMetadataUrl() {
+    public function getMetadataUrl()
+    {
         return $this->metadataUrl;
     }
-    
+
     /**
      * Add dimension
      *
      * @param Dimension $dimension
      * @return WmsLayerSource
      */
-    public function addDimensionl(Dimension $dimension) {
+    public function addDimensionl(Dimension $dimension)
+    {
         $this->dimension[] = $dimension;
         return $this;
     }
@@ -806,7 +866,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param array $dimension
      * @return WmsLayerSource
      */
-    public function setDimension($dimension) {
+    public function setDimension($dimension)
+    {
         $this->dimension = $dimension;
         return $this;
     }
@@ -816,18 +877,19 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return array 
      */
-    public function getDimension() {
+    public function getDimension()
+    {
         return $this->dimension;
     }
-    
-    
+
     /**
      * Add extent
      *
      * @param Extent $extent
      * @return WmsLayerSource
      */
-    public function addExtent(Extent $extent) {
+    public function addExtent(Extent $extent)
+    {
         $this->extent[] = $extent;
         return $this;
     }
@@ -838,7 +900,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param array $extent
      * @return WmsLayerSource
      */
-    public function setExtent($extent) {
+    public function setExtent($extent)
+    {
         $this->extent = $extent;
         return $this;
     }
@@ -848,17 +911,19 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return array 
      */
-    public function getExtent() {
+    public function getExtent()
+    {
         return $this->extent;
     }
-    
+
     /**
      * Add dataUrl
      *
      * @param array $dataUrl
      * @return WmsLayerSource
      */
-    public function addDataUrl(OnlineResource $dataUrl) {
+    public function addDataUrl(OnlineResource $dataUrl)
+    {
         $this->dataUrl[] = $dataUrl;
         return $this;
     }
@@ -869,7 +934,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param array $dataUrl
      * @return WmsLayerSource
      */
-    public function setDataUrl($dataUrl) {
+    public function setDataUrl($dataUrl)
+    {
         $this->dataUrl = $dataUrl;
         return $this;
     }
@@ -879,7 +945,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return array 
      */
-    public function getDataUrl() {
+    public function getDataUrl()
+    {
         return $this->dataUrl;
     }
 
@@ -889,7 +956,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param array $featureListUrl
      * @return WmsLayerSource
      */
-    public function addFeatureListUrl(OnlineResource $featureListUrl) {
+    public function addFeatureListUrl(OnlineResource $featureListUrl)
+    {
         $this->featureListUrl[] = $featureListUrl;
         return $this;
     }
@@ -900,7 +968,8 @@ class WmsLayerSource implements EntityIdentifierIn {
      * @param array $featureListUrl
      * @return WmsLayerSource
      */
-    public function setFeatureListUrl($featureListUrl) {
+    public function setFeatureListUrl($featureListUrl)
+    {
         $this->featureListUrl = $featureListUrl;
         return $this;
     }
@@ -910,10 +979,11 @@ class WmsLayerSource implements EntityIdentifierIn {
      *
      * @return array 
      */
-    public function getFeatureListUrl() {
+    public function getFeatureListUrl()
+    {
         return $this->featureListUrl;
     }
-    
+
     /**
      * Set keywords
      *
@@ -935,7 +1005,7 @@ class WmsLayerSource implements EntityIdentifierIn {
     {
         return $this->keywords;
     }
-    
+
     /**
      * Add keyword
      *
@@ -947,20 +1017,24 @@ class WmsLayerSource implements EntityIdentifierIn {
         $this->keywords->add($keyword);
         return $this;
     }
-    
-    public function getType(){
+
+    public function getType()
+    {
         return "WMS";
     }
-    
-    public function getManagerType(){
+
+    public function getManagerType()
+    {
         return "wms";
     }
-    
-    public function getClassname(){
+
+    public function getClassname()
+    {
         return get_class();
     }
-    
-    public function __toString(){
+
+    public function __toString()
+    {
         return (string) $this->id;
     }
 
@@ -973,4 +1047,5 @@ class WmsLayerSource implements EntityIdentifierIn {
     {
         $this->keywords->removeElement($keywords);
     }
+
 }

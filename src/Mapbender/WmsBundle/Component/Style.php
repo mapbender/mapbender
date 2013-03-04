@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Component;
 
 //use Doctrine\Common\Collections\ArrayCollection;
@@ -12,8 +13,8 @@ use Mapbender\WmsBundle\Component\Identifier;
 /**
  * Style class.
  */
-class Style {
-
+class Style
+{
 
     /**
      * ORM\Column(type="string", nullable=true)
@@ -26,31 +27,30 @@ class Style {
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $title = "";
-    
+
     /**
      * ORM\Column(type="string", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $abstract = "";
-    
+
     /**
      * ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $legendUrl;
-    
+
     /**
      * ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $styleSheetUrl;
-    
+
     /**
      * ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $styleUrl;
-    
 
     /**
      * Set name
@@ -61,7 +61,7 @@ class Style {
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -84,7 +84,7 @@ class Style {
     public function setTitle($title)
     {
         $this->title = $title;
-    
+
         return $this;
     }
 
@@ -107,7 +107,7 @@ class Style {
     public function setAbstract($abstract)
     {
         $this->abstract = $abstract;
-    
+
         return $this;
     }
 
@@ -130,7 +130,7 @@ class Style {
     public function setLegendUrl(LegendUrl $legendUrl)
     {
         $this->legendUrl = $legendUrl;
-    
+
         return $this;
     }
 
@@ -143,7 +143,7 @@ class Style {
     {
         return $this->legendUrl;
     }
-    
+
     /**
      * Set styleSheetUrl
      *
@@ -153,7 +153,7 @@ class Style {
     public function setStyleSheetUrl(OnlineResource $styleSheetUrl)
     {
         $this->styleSheetUrl = $styleSheetUrl;
-    
+
         return $this;
     }
 
@@ -166,7 +166,7 @@ class Style {
     {
         return $this->styleSheetUrl;
     }
-    
+
     /**
      * Set styleUlr
      *
@@ -176,7 +176,7 @@ class Style {
     public function setStyleUlr(OnlineResource $styleUlr)
     {
         $this->styleUlr = $styleUlr;
-    
+
         return $this;
     }
 
@@ -189,4 +189,5 @@ class Style {
     {
         return $this->styleUlr;
     }
+
 }

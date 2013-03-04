@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Component;
 
 /**
@@ -7,60 +8,67 @@ namespace Mapbender\WmsBundle\Component;
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
-class IdentifierAuthority {
+class IdentifierAuthority
+{
+
     /**
      * Identifier
      * 
      * @var Identifier 
      */
     protected $identifier;
-    
+
     /**
      * Authority
      * 
      * @var Authority
      */
     protected $authority;
-    
+
     /**
      * Set authority
      * 
      * @param Authority $authority
      * @return IdentifierAuthority 
      */
-    public function setAuthority(Authority $authority){
+    public function setAuthority(Authority $authority)
+    {
         $this->authority = $authority;
         return $this;
     }
-    
+
     /**
      * Get authority
      * 
      * @return Authority
      */
-    public function getAuthority(){
+    public function getAuthority()
+    {
         return $this->authority;
     }
-    
+
     /**
      * Set identifier
      * 
      * @param Identifier $identifier
      * @return IdentifierAuthority 
      */
-    public function setIdentifier(Identifier $identifier){
+    public function setIdentifier(Identifier $identifier)
+    {
         $this->identifier = $identifier;
         return $this;
     }
-    
+
     /**
      * Get identifier
      * 
      * @return Identifier
      */
-    public function getIdentifier(){
+    public function getIdentifier()
+    {
         return $this->identifier;
     }
+
 }
 
 ?>

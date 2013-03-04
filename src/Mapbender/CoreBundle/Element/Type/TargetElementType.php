@@ -10,30 +10,47 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Mapbender\CoreBundle\Form\DataTransformer\ElementIdTransformer;
 
+/**
+ * 
+ */
 class TargetElementType extends AbstractType
 {
+    /**
+     *
+     * @var type 
+     */
     protected $container;
-    
+    /**
+     * @inheritdoc
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
-    
+    /**
+     * @inheritdoc
+     */
     public function getContainer()
     {
         return $this->container;
     }
-    
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return 'target_element';
     }
-    
+    /**
+     * @inheritdoc
+     */
     public function getParent()
     {
         return 'entity';
     }
-    
+    /**
+     * @inheritdoc
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $type = $this;
@@ -66,7 +83,9 @@ class TargetElementType extends AbstractType
             }
         ));
     }
-    
+    /**
+     * @inheritdoc
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $entityManager = $this->container->get('doctrine')->getEntityManager();

@@ -39,7 +39,7 @@ $.widget("mapbender.mbZoomBar", {
         this.map.events.register('zoomend', this, this._zoom2Slider);
         this._zoom2Slider();
 
-        if(this.options.draggable === true) {
+        if(this.options.draggable === "true") {
             this.element.draggable({
                 containment: this.element.closest('.region'),
                 start: function() { $(this).add('dragging'); }
@@ -47,11 +47,16 @@ $.widget("mapbender.mbZoomBar", {
         }
 
         this.element.css({
-            left: this.options.position[0],
-            top: this.options.position[1]});
+            left: this.options.position[0] + "px",
+            top: this.options.position[1] + "px"});
+        $(this.element).find('.zoom-world a').bind("click" ,$.proxy(this._worldZoom, this));
     },
 
     _destroy: $.noop,
+    
+    _worldZoom: function(e) {
+        this.map.zoomToMaxExtent();
+    },
 
     _setupSlider: function() {
         this.zoomslider = this.element.find('ol.zoom-slider')
@@ -167,10 +172,10 @@ $.widget("mapbender.mbZoomBar", {
         var self = this;
         var pan = $.proxy(this.map.pan, this.map);
         var stepSize = {
-            x: this.options.stepSize,
-            y: this.options.stepSize};
+            x: parseInt(this.options.stepSize),
+            y: parseInt(this.options.stepSize)};
 
-        if(!this.options.stepByPixel) {
+        if(this.options.stepByPixel === "false") {
             stepSize = {
                 x: Math.max(Math.min(stepSize.x, 100), 0) / 100.0 *
                     this.map.getSize().w,

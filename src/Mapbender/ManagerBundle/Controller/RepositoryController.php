@@ -132,6 +132,24 @@ class RepositoryController extends Controller {
     
     /**
      * 
+     * @ManagerRoute("/application/{slug}/instance/{layersetId}/enabled/{instanceId}")
+     */ 
+    public function instanceEnabledAction($slug, $layersetId, $instanceId){
+        $sourceInst = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:SourceInstance")
+                        ->find($instanceId);
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$sourceInst->getManagertype()];
+        return  $this->forward(
+                $manager['bundle'] . ":" . "Repository:instanceenabled",
+                array("slug" => $slug,
+                    "layersetId" => $layersetId,
+                    "instanceId" => $sourceInst->getId())
+        );
+    }
+    
+    /**
+     * 
      * @ManagerRoute("/application/{slug}/instanceLayer/{instanceId}/weight/{instLayerId}")
      */ 
     public function instanceLayerWeightAction($slug, $instanceId, $instLayerId){

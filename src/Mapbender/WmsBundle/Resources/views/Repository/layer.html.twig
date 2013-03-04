@@ -87,7 +87,7 @@
                 {% if layer.attribution is defined and layer.attribution != '' %}
                     {{ "Title" | trans }}:{{ layer.attribution.title }}<br/>
                     {{ "OnlineResource" | trans }}:
-                    {{ layer.attribution.onlineResource.format }} {{ layer.attribution.onlineResource.href }}<br/>
+                    {{ layer.attribution.onlineResource }}<br/>
                     {{ "LogoUrl" | trans }}:
                     {{ layer.attribution.logoUrl.width }}X{{layer.attribution.logoUrl.height }}
                     {{ layer.attribution.logoUrl.onlineResource.format }} {{ layer.attribution.logoUrl.onlineResource.href }}

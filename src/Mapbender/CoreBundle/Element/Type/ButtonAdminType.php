@@ -1,27 +1,43 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * 
+ */
 class ButtonAdminType extends AbstractType
 {
-    public function getName() {
+
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
         return 'toc';
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
             'application' => null
-            ));
+        ));
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
-                ->add('icon', 'choice', array(
+                ->add('icon', 'choice',
+                      array(
                     'required' => false,
                     "choices" => array(
                         "measurelineicon" => "measurelineicon",
@@ -30,7 +46,8 @@ class ButtonAdminType extends AbstractType
                         "legendicon" => "legendicon",
                         "defaulticon" => "defaulticon")))
                 ->add('label', 'checkbox', array('required' => false))
-                ->add('target', 'target_element', array(
+                ->add('target', 'target_element',
+                      array(
                     'element_class' => '%Mapbender%',
                     'application' => $options['application'],
                     'property_path' => '[target]',
@@ -39,4 +56,5 @@ class ButtonAdminType extends AbstractType
                 ->add('group', 'text', array('required' => false))
                 ->add('action', 'text', array('required' => false));
     }
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Component;
 
 /**
@@ -6,7 +7,8 @@ namespace Mapbender\CoreBundle\Component;
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
-interface HasInstanceIn {
+interface HasInstanceIn
+{
 
     /**
      * Creates a SourceInstance.

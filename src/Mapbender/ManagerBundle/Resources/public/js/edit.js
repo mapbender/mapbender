@@ -36,6 +36,23 @@ $(function() {
             });
         }
     });
+    $('ul.layerset input[type="checkbox"]').click(function() {
+        $.ajax({
+            url: $(this).attr("data-href"),
+            type: "POST",
+            data: {
+                enabled: $(this).is(":checked")
+            },
+            success: function(data, textStatus, jqXHR){
+                if(data.error && data.error !== ''){
+                    document.location.href = document.location.href;
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown ){
+                document.location.href = document.location.href;
+            }
+        });
+    });
     $("ul.layerset" ).sortable({
         connectWith: "ul.layerset",
         items: "li:not(.header)",

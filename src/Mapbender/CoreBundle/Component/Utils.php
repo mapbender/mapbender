@@ -7,22 +7,26 @@ namespace Mapbender\CoreBundle\Component;
  *
  * @author Paul Schmidt
  */
-class Utils {
-    
+class Utils
+{
+
     /**
      * Checks the variable $booleanOrNull and returns the boolean or null.
      * @param type $booleanOrNull
      * @param type $nullable
      * @return boolean if $nullable is false, otherwise boolean or null.
      */
-    public static function getBool($booleanOrNull, $nullable = false){
-        if($nullable){
+    public static function getBool($booleanOrNull, $nullable = false)
+    {
+        if($nullable)
+        {
             return $booleanOrNull;
-        } else {
+        } else
+        {
             return $booleanOrNull === null ? false : $booleanOrNull;
         }
     }
-    
+
     /**
      * Generats an URL from base url and GET parameters
      * 
@@ -30,31 +34,43 @@ class Utils {
      * @param string $parameters GET Parameters as array or as string
      * @return generated Url
      */
-    public static function getHttpUrl($baseUrl, $parameters) {
+    public static function getHttpUrl($baseUrl, $parameters)
+    {
         $url = "";
         $pos = strpos($baseUrl, "?");
-        if($pos === false){
+        if($pos === false)
+        {
             $url = $baseUrl . "?";
-        } else if(strlen($baseUrl) - 1 !== $pos){
+        } else if(strlen($baseUrl) - 1 !== $pos)
+        {
             $pos = strpos($baseUrl, "&");
-            if($pos === false){
+            if($pos === false)
+            {
                 $url = $baseUrl . "&";
-            } else if(strlen($baseUrl) - 1 !== $pos){
+            } else if(strlen($baseUrl) - 1 !== $pos)
+            {
                 $url = $baseUrl . "&";
-            } else {
+            } else
+            {
                 $url = $baseUrl;
             }
-        } else {
+        } else
+        {
             $url = $baseUrl;
         }
-        if(is_string($parameters)){
+        if(is_string($parameters))
+        {
             return $url . $parameters;
-        } else if(is_array($parameters)){
+        } else if(is_array($parameters))
+        {
             $params = array();
-            foreach ($parameters as $key => $value) {
-                if(is_string($key)){
+            foreach($parameters as $key => $value)
+            {
+                if(is_string($key))
+                {
                     $params[] = $key . "=" . $value;
-                } else {
+                } else
+                {
                     $params[] = $value;
                 }
             }
@@ -62,4 +78,5 @@ class Utils {
         }
         return null;
     }
+
 }

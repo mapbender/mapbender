@@ -9,12 +9,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @author Christian Wygoda
  */
-abstract class Template {
+abstract class Template
+{
+
     protected $container;
     protected $application;
 
-    public function __construct(ContainerInterface $container,
-        Application $application) {
+    public function __construct(ContainerInterface $container, Application $application)
+    {
         $this->container = $container;
         $this->application = $application;
     }
@@ -27,7 +29,8 @@ abstract class Template {
      *
      * @return string
      */
-    static public function getTitle() {
+    static public function getTitle()
+    {
         throw new \RuntimeException('getTitle must be implemented in subclasses');
     }
 
@@ -46,10 +49,12 @@ abstract class Template {
      * @param string $type Asset type to list, can be 'css' or 'js'
      * @return array
      */
-    public function getAssets($type) {
-        if($type !== 'css' && $type !== 'js') {
+    public function getAssets($type)
+    {
+        if($type !== 'css' && $type !== 'js')
+        {
             throw new \RuntimeException('The asset type \'' . $type .
-                '\' is not supported.');
+                    '\' is not supported.');
         }
 
         return array();
@@ -60,7 +65,8 @@ abstract class Template {
      *
      * @return array
      */
-    static public function getRegions() {
+    static public function getRegions()
+    {
         throw new \RuntimeException('getTitle must be implemented in subclasses');
     }
 
@@ -73,7 +79,6 @@ abstract class Template {
      * @param boolean $js   Whether to include the JavaScript
      * @return string $html The rendered HTML
      */
-    abstract public function render($format = 'html', $html = true, $css = true,
-        $js = true);
+    abstract public function render($format = 'html', $html = true, $css = true, $js = true);
 }
 

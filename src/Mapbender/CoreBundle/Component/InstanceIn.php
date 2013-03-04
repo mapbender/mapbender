@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Component;
 
 /**
@@ -6,14 +7,15 @@ namespace Mapbender\CoreBundle\Component;
  *
  * @author Paul Schmidt <paul.schmidt@wheregroup.com>
  */
-interface InstanceIn {
-    
+interface InstanceIn
+{
+
     /**
      * Creates the mapbender configuration.
      * @return array configuration parameters
      */
     public function getConfiguration();
-    
+
     /**
      * Creates the mapbender layer tree configuration.
      * @return array configuration parameters

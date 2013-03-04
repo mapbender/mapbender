@@ -53,6 +53,11 @@ abstract class SourceInstance {
      */
     protected $weight;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $enabled = true;
+
     public function __construct() {
         
     }
@@ -124,6 +129,25 @@ abstract class SourceInstance {
     public function getLayerset()
     {
         $this->layerset;
+    }
+    
+    /**
+     * Set enabled
+     *
+     * @param integer $weight
+     */
+    public function setEnabled($enabled) {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
+    /**
+     * Get enabled
+     *
+     * @return integer
+     */
+    public function getEnabled() {
+        return $this->enabled;
     }
     /**
      * Get type

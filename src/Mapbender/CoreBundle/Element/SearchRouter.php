@@ -15,28 +15,48 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SearchRouter extends Element
 {
+
+    /**
+     *
+     * @var type 
+     */
     protected $forms;
 
+    /**
+     * @inheritdoc
+     */
     static public function getClassTitle()
     {
         return "Search Router";
     }
 
+    /**
+     * @inheritdoc
+     */
     static public function getClassDescription()
     {
         return "Configurable search routing element";
     }
 
+    /**
+     * @inheritdoc
+     */
     static public function getClassTags()
     {
         return array('Search', 'Router');
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getWidgetName()
     {
         return 'mapbender.mbSearchRouter';
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getAssets()
     {
         return array(
@@ -50,6 +70,9 @@ class SearchRouter extends Element
             'css' => array('mapbender.element.searchRouter.css'));
     }
 
+    /**
+     * @inheritdoc
+     */
     public function httpAction($action)
     {
         $response = new Response();
@@ -58,39 +81,39 @@ class SearchRouter extends Element
 
         list($target, $action) = explode('/', $action);
         $conf = $this->getConfiguration();
-        if(!array_key_exists($target, $conf['routes'])) {
+        if(!array_key_exists($target, $conf['routes']))
+        {
             throw new NotFoundHttpException();
         }
 
-        if('autocomplete' === $action) {
+        if('autocomplete' === $action)
+        {
             $data = json_decode($request->getContent());
 
             // Get search config
             $conf = $this->getConfiguration();
-            if(!array_key_exists($target, $conf['routes'])) {
+            if(!array_key_exists($target, $conf['routes']))
+            {
                 throw new NotFoundHttpException();
             }
             $conf = $conf['routes'][$target];
             $engine = new $conf['class']($this->container);
 
             $results = $engine->autocomplete(
-                $conf,
-                $data->key,
-                $data->value,
-                $data->properties,
-                $data->srs,
-                $data->extent);
+                    $conf, $data->key, $data->value, $data->properties,
+                    $data->srs, $data->extent);
 
             $response->setContent(json_encode(array(
-                'key' => $data->key,
-                'value' => $data->value,
-                'properties' => $data->properties,
-                'results' => $results
-                )));
+                        'key' => $data->key,
+                        'value' => $data->value,
+                        'properties' => $data->properties,
+                        'results' => $results
+                    )));
             return $response;
         }
 
-        if('search' === $action) {
+        if('search' === $action)
+        {
 
             $this->setupForms();
             $form = $this->forms[$target];
@@ -104,27 +127,27 @@ class SearchRouter extends Element
                 'autocomplete_keys' => get_object_vars($data->autocomplete_keys)
             );
             $features = $engine->search(
-                $conf,
-                $query,
-                $request->get('srs'),
-                $request->get('extent'));
+                    $conf, $query, $request->get('srs'), $request->get('extent'));
 
             // Return GeoJSON FeatureCollection
             $response->setContent(json_encode(array(
-                'type' => 'FeatureCollection',
-                'features' => $features,
-                'query' => $query['form'])));
+                        'type' => 'FeatureCollection',
+                        'features' => $features,
+                        'query' => $query['form'])));
             return $response;
         }
 
         throw new NotFoundHttpException();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function render()
     {
         return $this->container->get('templating')
-            ->render('MapbenderCoreBundle:Element:search_router.html.twig',
-                array('element' => $this));
+                        ->render('MapbenderCoreBundle:Element:search_router.html.twig',
+                                 array('element' => $this));
     }
 
     /**
@@ -132,13 +155,13 @@ class SearchRouter extends Element
      *
      * @return Symfony\Component\Form\Form Search route select form
      */
-    public function getRouteSelectForm() {
+    public function getRouteSelectForm()
+    {
         $configuration = $this->getConfiguration();
 
         $form = $this->container->get('form.factory')->createNamed(
-            'search_routes',
-            new SearchRouterSelectType(),
-            null, array('routes' => $configuration['routes']));
+                'search_routes', new SearchRouterSelectType(), null,
+                array('routes' => $configuration['routes']));
 
         return $form->createView();
     }
@@ -148,9 +171,11 @@ class SearchRouter extends Element
      */
     protected function setupForms()
     {
-        if(null === $this->forms) {
+        if(null === $this->forms)
+        {
             $configuration = $this->getConfiguration();
-            foreach($configuration['routes'] as $name => $conf) {
+            foreach($configuration['routes'] as $name => $conf)
+            {
                 $this->forms[$name] = $this->setupForm($name, $conf);
             }
         }
@@ -160,8 +185,10 @@ class SearchRouter extends Element
      * Get all forms.
      * @return array Search forms
      */
-    public function getForms() {
-        if(null === $this->forms) {
+    public function getForms()
+    {
+        if(null === $this->forms)
+        {
             $this->setupForms();
         }
 
@@ -175,14 +202,13 @@ class SearchRouter extends Element
      * @param  array  $conf Search form configuration
      * @return [type]       Form
      */
-    protected function setupForm($name, array $conf) {
+    protected function setupForm($name, array $conf)
+    {
         $form = $this->container->get('form.factory')->createNamed(
-            $name,
-            new SearchRouterFormType(),
-            null, array('fields' => $conf));
+                $name, new SearchRouterFormType(), null,
+                array('fields' => $conf));
 
         return $form;
     }
-
 
 }

@@ -11,27 +11,47 @@ use Mapbender\CoreBundle\Component\Element;
  * 
  * @author Paul Schmidt
  */
-class SrsSelector extends Element {
+class SrsSelector extends Element
+{
 
-    public static function getClassTitle() {
+    /**
+     * @inheritdoc
+     */
+    public static function getClassTitle()
+    {
         return 'Spatial Reference System Selector';
     }
 
-    public static function getClassDescription() {
+    /**
+     * @inheritdoc
+     */
+    public static function getClassDescription()
+    {
         return "The spatial reference system selector changes the map's
             spatial reference system.";
     }
 
-    public static function getClassTags() {
+    /**
+     * @inheritdoc
+     */
+    public static function getClassTags()
+    {
         return array('spatial', 'reference', 'system', 'selector');
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\SrsSelectorAdminType';
     }
 
-    public function getAssets() {
+    /**
+     * @inheritdoc
+     */
+    public function getAssets()
+    {
         return array(
             'js' => array(
                 'mapbender.element.srsselector.js',
@@ -40,7 +60,11 @@ class SrsSelector extends Element {
         );
     }
 
-    public static function getDefaultConfiguration() {
+    /**
+     * @inheritdoc
+     */
+    public static function getDefaultConfiguration()
+    {
         return array(
             "tooltip" => "SRS Selector",
             'label' => false,
@@ -49,16 +73,25 @@ class SrsSelector extends Element {
                 "coordinatesdisplay" => null));
     }
 
-    public function getWidgetName() {
+    /**
+     * @inheritdoc
+     */
+    public function getWidgetName()
+    {
         return 'mapbender.mbSrsSelector';
     }
 
-    public function render() {
+    /**
+     * @inheritdoc
+     */
+    public function render()
+    {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:srsselector.html.twig',
-                        array(
+                        ->render('MapbenderCoreBundle:Element:srsselector.html.twig',
+                                 array(
                             'id' => $this->getId(),
                             "title" => $this->getTitle(),
                             'configuration' => $this->getConfiguration()));
     }
+
 }

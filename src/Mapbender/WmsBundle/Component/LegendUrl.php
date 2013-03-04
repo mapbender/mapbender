@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Component;
 
 //use Doctrine\Common\Collections\ArrayCollection;
@@ -12,8 +13,9 @@ use Mapbender\WmsBundle\Component\Identifier;
 /**
  * LegendUrl class.
  */
-class LegendUrl {
-    
+class LegendUrl
+{
+
     /**
      * ORM\Column(type="string", nullable=true)
      */
@@ -25,7 +27,7 @@ class LegendUrl {
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $width;
-    
+
     /**
      * ORM\Column(type="integer", nullable=true)
      */
@@ -41,7 +43,7 @@ class LegendUrl {
     public function setOnlineResource(OnlineResource $onlineResource)
     {
         $this->onlineResource = $onlineResource;
-    
+
         return $this;
     }
 
@@ -64,7 +66,7 @@ class LegendUrl {
     public function setWidth($width)
     {
         $this->width = $width;
-    
+
         return $this;
     }
 
@@ -87,7 +89,7 @@ class LegendUrl {
     public function setHeight($height)
     {
         $this->height = $height;
-    
+
         return $this;
     }
 
@@ -100,4 +102,5 @@ class LegendUrl {
     {
         return $this->height;
     }
+
 }

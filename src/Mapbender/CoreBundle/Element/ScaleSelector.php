@@ -11,21 +11,38 @@ use Mapbender\CoreBundle\Component\Element;
  * 
  * @author Paul Schmidt
  */
-class ScaleSelector extends Element {
-    
-    public static function getClassTitle() {
+class ScaleSelector extends Element
+{
+
+    /**
+     * @inheritdoc
+     */
+    public static function getClassTitle()
+    {
         return "Scale Selector";
     }
 
-    public static function getClassDescription() {
+    /**
+     * @inheritdoc
+     */
+    public static function getClassDescription()
+    {
         return "Displays and changes a map scale.";
     }
 
-    public static function getClassTags() {
+    /**
+     * @inheritdoc
+     */
+    public static function getClassTags()
+    {
         return array('scale', 'selector');
     }
 
-    public function getAssets() {
+    /**
+     * @inheritdoc
+     */
+    public function getAssets()
+    {
         return array(
             'js' => array(
                 'mapbender.element.scaleselector.js'
@@ -35,30 +52,46 @@ class ScaleSelector extends Element {
             )
         );
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\ScaleSelectorAdminType';
     }
-    
-    public static function getDefaultConfiguration() {
+
+    /**
+     * @inheritdoc
+     */
+    public static function getDefaultConfiguration()
+    {
         return array(
             "target" => null,
             'label' => false,
             "tooltip" => "Scale");
     }
 
-    public function getWidgetName() {
+    /**
+     * @inheritdoc
+     */
+    public function getWidgetName()
+    {
         return 'mapbender.mbScaleSelector';
     }
 
-    public function render() {
+    /**
+     * @inheritdoc
+     */
+    public function render()
+    {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:scaleselector.html.twig',
-                        array(
+                        ->render('MapbenderCoreBundle:Element:scaleselector.html.twig',
+                                 array(
                             'id' => $this->getId(),
                             "title" => $this->getTitle(),
                             'configuration' => $this->getConfiguration()));
     }
+
 }
 

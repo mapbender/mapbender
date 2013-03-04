@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Component;
 
 class SQLSearchEngine
 {
+
     protected $container;
 
     public function __construct($container)
@@ -29,23 +30,26 @@ class SQLSearchEngine
     public function autocomplete($config, $key, $value, $properties, $srs, $extent)
     {
         // First, get DBAL connection service, either given one or default one
-        $connection = $config['class_options']['connection'] ?: 'default';
+        $connection = $config['class_options']['connection'] ? : 'default';
         $connection = $this->container->get('doctrine.dbal.' . $connection . '_connection');
         $qb = $connection->createQueryBuilder();
 
         $keys = array($key);
         $values = array($value);
-        if(array_key_exists('split', $config['form'][$key])) {
+        if(array_key_exists('split', $config['form'][$key]))
+        {
             $keys = $config['form'][$key]['split'];
             $values = explode(' ', $value);
         }
 
         // Build SELECT
-        $select = implode(', ', array_map(function($attribute) {
-            return 't.' . $attribute;
-        }, $keys));
-        if(array_key_exists('autocomplete-key', $config['form'][$key])) {
-             $select .= ', t.' . $config['form'][$key]['autocomplete-key'];
+        $select = implode(', ', array_map(function($attribute)
+                        {
+                            return 't.' . $attribute;
+                        }, $keys));
+        if(array_key_exists('autocomplete-key', $config['form'][$key]))
+        {
+            $select .= ', t.' . $config['form'][$key]['autocomplete-key'];
         }
         $qb->select($select);
 
@@ -55,9 +59,10 @@ class SQLSearchEngine
         // Build WHERE condition
         $cond = $qb->expr()->andx();
         $params = array();
-        for($i = 0; $i < count($keys); $i++) {
+        for($i = 0; $i < count($keys); $i++)
+        {
             // @todo: Platform independency (::varchar, lower)
-            $cond->add($qb->expr()->like('LOWER(t.'. $keys[$i] . '::varchar)', '?'));
+            $cond->add($qb->expr()->like('LOWER(t.' . $keys[$i] . '::varchar)', '?'));
             $params[] = '%' . (count($values) > $i ? strtolower($values[$i]) : '') . '%';
         }
         $qb->where($cond);
@@ -67,22 +72,26 @@ class SQLSearchEngine
         $stmt = $connection->executeQuery($qb->getSql(), $params);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        array_walk($rows, function(&$row) use ($key, $keys, $config) {
-            $value = array();
-            foreach($keys as $k) {
-                $value[] = $row[$k];
-            }
+        array_walk($rows, function(&$row) use ($key, $keys, $config)
+                {
+                    $value = array();
+                    foreach($keys as $k)
+                    {
+                        $value[] = $row[$k];
+                    }
 
-            if(array_key_exists('autocomplete-key', $config['form'][$key])) {
-                $row = array(
-                    'key' => $row[$config['form'][$key]['autocomplete-key']],
-                    'value' => implode(' ', $value));
-            } else {
-                $row = array(
-                    'value' => implode(' ', $value)
-                );
-            }
-        });
+                    if(array_key_exists('autocomplete-key', $config['form'][$key]))
+                    {
+                        $row = array(
+                            'key' => $row[$config['form'][$key]['autocomplete-key']],
+                            'value' => implode(' ', $value));
+                    } else
+                    {
+                        $row = array(
+                            'value' => implode(' ', $value)
+                        );
+                    }
+                });
 
         return $rows;
     }
@@ -103,14 +112,15 @@ class SQLSearchEngine
     public function search($config, $data, $srs, $extent)
     {
         // First, get DBAL connection service, either given one or default one
-        $connection = $config['class_options']['connection'] ?: 'default';
+        $connection = $config['class_options']['connection'] ? : 'default';
         $connection = $this->container->get('doctrine.dbal.' . $connection . '_connection');
         $qb = $connection->createQueryBuilder();
 
         // Build SELECT
-        $select = implode(', ', array_map(function($attribute) {
-            return 't.' . $attribute;
-        }, $config['class_options']['attributes']));
+        $select = implode(', ', array_map(function($attribute)
+                        {
+                            return 't.' . $attribute;
+                        }, $config['class_options']['attributes']));
         // Add geometry to SELECT
         // // @todo: Platform independency (ST_AsGeoJSON)
         $select .= ', ST_AsGeoJSON(' . $config['class_options']['geometry_attribute'] . ') as geom';
@@ -122,23 +132,26 @@ class SQLSearchEngine
         // Build WHERE condition
         $cond = $qb->expr()->andx();
         $params = array();
-        foreach($data['form'] as $key => $value) {
-            if(array_key_exists($key, $data['autocomplete_keys'])) {
+        foreach($data['form'] as $key => $value)
+        {
+            if(array_key_exists($key, $data['autocomplete_keys']))
+            {
                 // Autocomplete value given, match to configured attribute
                 $cond->add($qb->expr()->eq(
-                    't.' . $config['form'][$key]['autocomplete-key'],
-                    $data['autocomplete_keys'][$key]));
-            }
-            else if(array_key_exists('split', $config['form'][$key])) {
+                                't.' . $config['form'][$key]['autocomplete-key'], $data['autocomplete_keys'][$key]));
+            } else if(array_key_exists('split', $config['form'][$key]))
+            {
                 // Split
                 $keys = $config['form'][$key]['split'];
                 $values = explode(' ', $value);
-                for($i=0; $i < count($keys); $i++) {
+                for($i = 0; $i < count($keys); $i++)
+                {
                     // @todo: Platform independency (::varchar, lower)
-                    $cond->add($qb->expr()->like('LOWER(t.'. $keys[$i] . '::varchar)', '?'));
+                    $cond->add($qb->expr()->like('LOWER(t.' . $keys[$i] . '::varchar)', '?'));
                     $params[] = '%' . (count($values) > $i ? strtolower($values[$i]) : '') . '%';
                 }
-            } else {
+            } else
+            {
                 $cond->add($qb->expr()->like('t.' . $key, '?'));
                 $params[] = '%' . $value . '%';
             }
@@ -151,16 +164,18 @@ class SQLSearchEngine
         $rows = $stmt->fetchAll();
 
         // Rewrite rows as GeoJSON features
-        array_walk($rows, function(&$row) {
-            $feature = array(
-                'type' => 'Feature',
-                'properties' => $row,
-                'geometry' => json_decode($row['geom'])
-            );
-            unset($feature['properties']['geom']);
-            $row = $feature;
-        });
+        array_walk($rows, function(&$row)
+                {
+                    $feature = array(
+                        'type' => 'Feature',
+                        'properties' => $row,
+                        'geometry' => json_decode($row['geom'])
+                    );
+                    unset($feature['properties']['geom']);
+                    $row = $feature;
+                });
 
         return $rows;
     }
+
 }

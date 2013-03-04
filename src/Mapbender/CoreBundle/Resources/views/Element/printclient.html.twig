@@ -1,0 +1,66 @@
+<div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title|trans }}">
+    <div class="format-selector">
+    </div>
+    <div class="format-form">
+        <form id="formats" action="">
+            <div>
+                <label>{{ 'Format' | trans }}</label>
+                <select name="format" >
+                    {% for id, format in configuration.formats %}
+                    <option value="{{ id }}">{{ format.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+                
+            <div>
+                <label for="orienation">{{ 'Orientation' | trans }}</label>
+                <select name="orientation" >
+                </select>
+            </div>
+
+            <div>
+                <label for="quality">{{ 'Quality' | trans }}</label>
+                <select name="quality" >
+                </select>
+            </div>
+            
+            <div>
+                <label for="scale_text">{{ 'Scale' | trans }}</label>
+                <input type="text" name="scale_text" size="8"/>                
+            </div>
+            
+            <div>
+                <label for="scale_select">{{ 'Scale' | trans }}</label>
+                <select name="scale_select">
+                </select>
+            </div>
+          
+            <div>
+                <label for="rotation">{{ 'Rotation' | trans }}</label>
+                <input type="text" name="rotation" size="3"/>                
+            </div>      
+                        
+            <div>
+                <input type="checkbox" name="free_extent"/>
+                <label for="free_extent">{{ 'Free Extent' | trans }}</label>
+            </div>
+                
+            <div>
+                <input type="checkbox" name="title_block_selector"/>
+                <label for="title_block_selector">{{ 'Title Block' | trans }}</label>
+            </div>
+                
+            <div class="extra_fields">
+            </div>
+
+        </form>
+    </div>
+        
+    <div class="extra_forms">
+        {% for key, form in forms %}
+        <form name="{{ key }}">
+            {{ form_widget(form) }}
+        </form>
+        {% endfor %}
+    </div>
+</div>
