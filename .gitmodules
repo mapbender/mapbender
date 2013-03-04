@@ -8,3 +8,6 @@
 [submodule "application/fom"]
 	path = application/fom
 	url = https://github.com/mapbender/fom.git
+[submodule "application/owsproxy"]
+	path = application/owsproxy
+	url = https://github.com/mapbender/owsproxy3.git
