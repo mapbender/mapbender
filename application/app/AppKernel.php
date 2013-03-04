@@ -26,6 +26,7 @@ class AppKernel extends Kernel
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
 
             // FoM bundles
+            new FOM\CoreBundle\FOMCoreBundle(),
             new FOM\ManagerBundle\FOMManagerBundle(),
             new FOM\UserBundle\FOMUserBundle(),
 
