@@ -1,13 +1,15 @@
 {% macro requestinformation(requestinformation, title) %}
-<dl class="dl-horizontal">
-    <dt>{{ title }} GET</dt>
-    <dd>{{ requestinformation.httpGet }}</dd>
-    
-    <dt>{{ title }} POST</dt>
-    <dd>{{ requestinformation.httpPost }}</dd>
-    <dt>{{title}} {{ "Formats" | trans }}</dt>
-    {% for format in requestinformation.formats %}
-    <dd>{{ format }}</dd>
-    {% endfor %}
-</dl>
+  <div class="labelAlt">{{ title }} GET:</div>
+  <div class="metaText">{{ requestinformation.httpGet }}</div>
+  <div class="clearContainer"></div>
+
+  <div class="labelAlt">{{ title }} POST:</div>
+  <div class="metaText">{{ requestinformation.httpPost }}</div>
+  <div class="clearContainer"></div>
+
+  <div class="labelAlt">{{title}} {{ "Formats" | trans }}:</div>
+  {% for format in requestinformation.formats %}
+    <div class="metaText metaFormats">{{ format }}</div>
+  {% endfor %}
+  <div class="clearContainer"></div>
 {% endmacro %}

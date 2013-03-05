@@ -1,153 +1,134 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 {% from "MapbenderWmsBundle:Repository:macros.html.twig" import requestinformation  %}
 
+{% block title %}{{ 'WMS' | trans }}{{ wms.title }}{% endblock %}
 
-{% block title %}{{ 'WMS' | trans }} {{ wms.title }}{% endblock %}
-
-{% block manager_css %}
-<link rel="stylesheet" href="{{ asset('bundles/mapbenderwms/repository/repository.css') }}" />
-{% endblock %}
 {% block manager_js %}
 <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/repository/repository.js') }}"></script>
 {% endblock %}
 
-
 {% block manager_content %}
 
-<ul class="nav nav-tabs">
-    <li class="active"><a href="#wms-metadata" data-toggle="tab">{{ 'Metadata' | trans}}</a></li>
-    <li><a href="#wms-contact" data-toggle="tab">{{ 'Contact' | trans}}</a></li>
-    <li><a href="#wms-service" data-toggle="tab">{{ 'Service' | trans}}</a></li>
-    <li><a href="#wms-layers" data-toggle="tab">{{ 'Layers' | trans}}</a></li>
-</ul>
-
-<div class="tab-content">
-    <section id="wms-metadata" class="tab-pane active">
-        <dl class="dl-horizontal">
-            <dt>{{ "Title" | trans }}</dt>
-            <dd>{{ wms.title }}</dd>
-
-            <dt>{{ "Name" | trans }}</dt>
-            <dd>{{ wms.name }}</dd>
-            
-            <dt>{{ "Version" | trans }}</dt>
-            <dd>{{ wms.version }}</dd>
-            
-            <dt>{{ "Origin URL" | trans }}</dt>
-            <dd>{{ wms.originUrl }}</dd>
-
-            <dt>{{ "Abstract" | trans }}</dt>
-            <dd>{{ wms.description }}</dd>
-
-            <dt>{{ "Online Resource" | trans }}</dt>
-            <dd>{{ wms.onlineResource }}</dd>
-            
-            <dt>{{ "Exception Formats" | trans }}</dt>
-            <dd>{% for exc in wms.exceptionFormats %}
-                    {% if not loop.first %},{% endif %}
-                    {{ exc }}
-                {% endfor %}
-            </dd>
-
-            <dt>{{ "Fees" | trans }}</dt>
-            <dd>{{ wms.fees }}</dd>
-
-            <dt>{{ "Access constraints" | trans }}</dt>
-            <dd>{{ wms.accessConstraints }}</dd>
-        </dl>
-    </section>
-
-    <section id="wms-contact" class="tab-pane">
-        <dl class="dl-horizontal">
-            <dt>{{ "Person" | trans }}</dt>
-            <dd>{{ wms.contact.person }}</dd>
-
-            <dt>{{ "Organization" | trans }}</dt>
-            <dd>{{ wms.contact.organization }}</dd>
-
-            <dt>{{ "Position" | trans }}</dt>
-            <dd>{{ wms.contact.position }}</dd>
-
-            <dt>{{ "Telephone" | trans }}</dt>
-            <dd>{{ wms.contact.voiceTelephone }}</dd>
-
-            <dt>{{ "Facsimile" | trans }}</dt>
-            <dd>{{ wms.contact.facsimileTelephone }}</dd>
-
-            <dt>{{ "Email" | trans }}</dt>
-            <dd>{{ wms.contact.electronicMailAddress }}</dd>
-
-            <dt>{{ "Address" | trans }}</dt>
-            <dd>{{ wms.contact.address }}</dd>
-
-            <dt>{{ "Addresstype" | trans }}</dt>
-            <dd>{{ wms.contact.addressType }}</dd>
-
-            <dt>{{ "City" | trans }}</dt>
-            <dd>{{ wms.contact.addressCity }}</dd>
-
-            <dt>{{ "State" | trans }}</dt>
-            <dd>{{ wms.contact.addressStateOrProvince }}</dd>
-
-            <dt>{{ "Postcode" | trans }}</dt>
-            <dd>{{ wms.contact.addressPostcode }}</dd>
-
-            <dt>{{ "Country" | trans }}</dt>
-            <dd>{{ wms.contact.addressCountry }}</dd>
-        </dl>
-    </section>
-
-    <section id="wms-service" class="tab-pane">
-        <dl class="dl-horizontal">
-            <dt>{{ "Version" | trans }}</dt>
-            <dd>{{ wms.version }}</dd>
-        </dl>
-
-{#        {% for format in wms. #}
-
-        
-        {% if wms.getCapabilities is not empty %}
-            {{ requestinformation(wms.getCapabilities, "GetCapabilities") }}
-        {% endif %}
-
-        {% if wms.getMap is not empty %}
-            {{ requestinformation(wms.getMap, "GetMap") }}
-        {% endif %}
-
-        {% if wms.getFeatureinfo is not empty %}
-            {{ requestinformation(wms.getFeatureinfo, "GetFeatureinfo") }}
-        {% endif %}
-
-        {% if wms.getLegendGraphic is not empty %}
-            {{ requestinformation(wms.getLegendGraphic, "GetLegendGraphic") }}
-        {% endif %}
-
-        {% if wms.describeLayer is not empty %}
-            {{ requestinformation(wms.describeLayer, "DescribeLayer") }}
-        {% endif %}
-
-        {% if wms.getStyles is not empty %}
-            {{ requestinformation(wms.getStyles, "GetStyles") }}
-        {% endif %}
-
-        {% if wms.putStyles is not empty %}
-            {{ requestinformation(wms.putStyles, "PutStyles") }}
-        {% endif %}
-    
-
-        
-    </section>
-
-    <section id="wms-layers" class="tab-pane">
-    {#% for layer in wms.layers %}
-    {% endfor %#}
-        {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': wms.rootlayer }%}
-   </section>
-</div>
-<footer>
-    <div class="btn-group">
-        <a class="btn btn-warning" href="{{ url("mapbender_manager_repository_delete",{"source":wms.id ,"return":"view"} ) }}">Delete</a>
+<div id="serviceTabContainer" class="tabContainer">
+  <ul class="tabs">
+    <li id="tab1" class="tab active">{{"Metadata" | trans }}</li>
+    <li id="tab2" class="tab">{{"Contact" | trans }}</li>
+    <li id="tab3" class="tab">{{"Service" | trans }}</li>
+    <li id="tab4" class="tab">{{"Layers" | trans }}</li>
+  </ul>
+  <div id="tabContainer1" class="container active serviceContainer serviceMetaContainer">
+    <div class="labelAlt">{{ "Title" | trans }}:</div><div class="metaText">{{ wms.title }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelAlt">{{ "Name" | trans }}:</div><div class="metaText">{{ wms.name }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelAlt">{{ "Version" | trans }}:</div><div class="metaText">{{ wms.version }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelAlt">{{ "Origin URL" | trans }}:</div><div class="metaText metaUrl">{{ wms.originUrl }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelAlt">{{ "Abstract" | trans }}:</div><div class="metaText">{{ wms.description }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelAlt">{{ "Online Resource" | trans }}:</div><div class="metaText">{{ wms.onlineResource }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelAlt">{{ "Exception Formats" | trans }}:</div>
+    <div class="metaText">
+      {% for exc in wms.exceptionFormats %}
+        {% if not loop.first %},{% endif %}
+        {{ exc }}
+      {% endfor %}
     </div>
-</footer>
+    <div class="clearContainer"></div>
+    <div class="labelAlt">{{ "Fees" | trans }}:</div><div class="metaText">{{ wms.fees }}</div>
+    <div class="clearContainer"></div>
+    <div class="labelAlt">{{ "Access constraints" | trans }}:</div><div class="metaText">{{ wms.accessConstraints }}</div>
+    <div class="clearContainer"></div>
+  </div>
+  <div id="tabContainer2" class="container serviceContainer serviceContactContainer">
+    <div class="labelAlt">{{ "Person" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.person }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "Organization" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.organization }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "Position" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.position }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "Telephone" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.voiceTelephone }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "Facsimile" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.facsimileTelephone }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "Email" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.electronicMailAddress }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "Address" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.address }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "Addresstype" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.addressType }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "City" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.addressCity }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "State" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.addressStateOrProvince }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "Postcode" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.addressPostcode }}</div>
+    <div class="clearContainer"></div>
+
+    <div class="labelAlt">{{ "Country" | trans }}:</div>
+    <div class="metaText">{{ wms.contact.addressCountry }}</div>
+    <div class="clearContainer"></div>
+  </div>
+  <div id="tabContainer3" class="container serviceContainer serviceServiceContainer">
+    <div class="labelAlt">{{ "Version" | trans }}:</div>
+    <div class="metaText">{{ wms.version }}</div>
+    <div class="clearContainer"></div>
+
+    {% if wms.getCapabilities is not empty %}
+    {{ requestinformation(wms.getCapabilities, "GetCapabilities") }}
+    {% endif %}
+
+    {% if wms.getMap is not empty %}
+    {{ requestinformation(wms.getMap, "GetMap") }}
+    {% endif %}
+
+    {% if wms.getFeatureinfo is not empty %}
+    {{ requestinformation(wms.getFeatureinfo, "GetFeatureinfo") }}
+    {% endif %}
+
+    {% if wms.getLegendGraphic is not empty %}
+    {{ requestinformation(wms.getLegendGraphic, "GetLegendGraphic") }}
+    {% endif %}
+
+    {% if wms.describeLayer is not empty %}
+    {{ requestinformation(wms.describeLayer, "DescribeLayer") }}
+    {% endif %}
+
+    {% if wms.getStyles is not empty %}
+    {{ requestinformation(wms.getStyles, "GetStyles") }}
+    {% endif %}
+
+    {% if wms.putStyles is not empty %}
+    {{ requestinformation(wms.putStyles, "PutStyles") }}
+    {% endif %}
+  </div>
+  <div id="tabContainer4" class="container serviceContainer serviceLayersContainer">
+    {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': wms.rootlayer, 'itemLevel': 1 }%}
+  </div>
+</div>
+
+<a class="button" href="{{ url("mapbender_manager_repository_delete",{"source":wms.id ,"return":"view"} ) }}">Delete</a>
 
 {% endblock %}

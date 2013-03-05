@@ -1,185 +1,254 @@
-<fieldset class="layer">
-            <legend>{{ layer.title }}</legend>
-            <dl class="dl-horizontal hidde">
-                <dt>{{ "Name" | trans }}</dt>
-                <dd>{{ layer.name }}</dd>
-                <dt>{{ "Title" | trans }}</dt>
-                <dd>{{ layer.title }}</dd>
-                <dt>{{ "Abstract" | trans }}</dt>
-                <dd>{{ layer.abstract }}</dd>
-                <dt>{{ "Queryable" | trans }}</dt>
-                <dd>{{ layer.queryable }}</dd>
-                <dt>{{ "Cascaded" | trans }}</dt>
-                <dd>{{ layer.cascaded }}</dd>
-                <dt>{{ "Opaque" | trans }}</dt>
-                <dd>{{ layer.opaque }}</dd>
-                <dt>{{ "NoSubset" | trans }}</dt>
-                <dd>{{ layer.noSubset }}</dd>
-                <dt>{{ "FixedWidth" | trans }}</dt>
-                <dd>{{ layer.fixedWidth }}</dd>
-                <dt>{{ "FixedHeight" | trans }}</dt>
-                <dd>{{ layer.fixedHeight }}</dd>
-                <dt>{{ "LatlonBounds" | trans }}</dt>
-                <dd>
-                    {% if layer.latlonBounds != null %}
-                    {{ layer.latlonBounds.srs }} 
-                    {{ layer.latlonBounds.minx }},
-                    {{ layer.latlonBounds.miny }},
-                    {{ layer.latlonBounds.maxx }},
-                    {{ layer.latlonBounds.maxy }}
-                    {% endif %}
-                </dd>
-                <dt>{{ "BoundingBox" | trans }}</dt>
-                <dd>
-                    {% for bbox in layer.boundingBoxes %}
-                        {% if not loop.first %}<br/>{% endif %}
-                        {{ bbox.srs }} 
-                        {{ bbox.minx }},
-                        {{ bbox.miny }},
-                        {{ bbox.maxx }},
-                        {{ bbox.maxy }}
-                    {% endfor %}
-                </dd>
-                <dt>{{ "Srs" | trans }}</dt>
-                <dd>
-                    {% for srs in layer.srs %}
-                        {% if not loop.first %},{% endif %}{{ srs }}
-                    {% endfor %}
-                </dd>
-                <dt>{{ "Styles" | trans }}</dt>
-                <dd>
-                    {% if layer.styles|length > 0 %}
-                    {% for style in layer.styles %}
-                        {% if not loop.first %}<br/>{% endif %}
-                        {{ "Name" | trans }}: {{ style.name }}<br/>
-                        {{ "Title" | trans }}</dt>: {{ style.title }}<br/>
-                        {{ "Abstract" | trans }}: {{ style.abstract }}<br/>
-                        {{ "LegendUrl" | trans }}: 
-                        {{ style.legendUrl.width }}X{{ style.legendUrl.height }}
-                        {{ style.legendUrl.onlineResource.format }} {{ style.legendUrl.onlineResource.href }}<br/>
-                        {{ "StyleSheetUrl" | trans }}:
-                        {% if layer.styleSheetUrl is defined %}
-                            {{ style.styleSheetUrl.format }} {{ style.styleSheetUrl.href }}
-                        {% endif %}<br/>
-                        {{ "StyleUrl" | trans }}:
-                        {% if layer.styleUrl is defined %}
-                            {{ style.styleUrl.format }} {{ style.styleUrl.href }}
-                        {% endif %}
-                    {% endfor %}
-                    {% endif %}
-                </dd>
-                {% if layer.scale is defined and layer.scale != '' %}
-                <dt>{{ "Scale" | trans }}</dt>
-                <dd>
-                    {{ "Min" | trans }}:{{ layer.scale.min }}<br/>
-                    {{ "Max" | trans }}:{{ layer.scale.max }}
-                </dd>
-                {% endif %}
-                {% if layer.scaleHint is defined and layer.scaleHint != '' %}
-                <dt>{{ "ScaleHint" | trans }}</dt>
-                <dd>
-                    {{ "Min" | trans }}:{{ layer.scaleHint.min }}<br/>
-                    {{ "Max" | trans }}:{{ layer.scaleHint.max }}
-                </dd>
-                {% endif %}
-                <dt>{{ "Attribution" | trans }}</dt>
-                <dd>
-                {% if layer.attribution is defined and layer.attribution != '' %}
-                    {{ "Title" | trans }}:{{ layer.attribution.title }}<br/>
-                    {{ "OnlineResource" | trans }}:
-                    {{ layer.attribution.onlineResource }}<br/>
-                    {{ "LogoUrl" | trans }}:
-                    {{ layer.attribution.logoUrl.width }}X{{layer.attribution.logoUrl.height }}
-                    {{ layer.attribution.logoUrl.onlineResource.format }} {{ layer.attribution.logoUrl.onlineResource.href }}
-                {% endif %}
-                </dd>
-                <dt>{{ "Identifier" | trans }}</dt>
-                <dd>
-                {% if layer.identifier is defined  %}
-                {% for identifier in layer.identifier %}
-                    {% if identifier.authority is defined and identifier.authority != '' %}
-                    {% if not loop.first %}<br/>{% endif %}
-                    {{ "Authority" | trans }}: 
-                    {{ "Url" | trans }} {{ identifier.authority.url }}
-                    {{ "Name" | trans }} {{ identifier.authority.name }}<br/>
-                    {% endif %}
-                    {% if identifier.value is defined %}
-                    {{ "Value" | trans }}: {{ identifier.value }}<br/>
-                    {% endif %}
-                {% endfor %}
-                {% endif %}
-                </dd>
-                <dt>{{ "Authority" | trans }}</dt>
-                <dd>
-                    {% if layer.authority is defined %}
-                    {% for authority in layer.authority %}
-                    {{ "Url" | trans }} {{ authority.url }}
-                    {% if authority.name is defined %}
-                    {{ "Name" | trans }} {{ authority.name }}<br/>
-                    {% endif%}
-                    {% endfor %}
-                    {% endif%}
-                </dd>
-                <dt>{{ "MetadataUrl" | trans }}</dt>
-                <dd>
-                    {% if layer.metadataUrl is defined %}
-                    {% for metadataUrl in layer.metadataUrl %}
-                        {% if not loop.first %}<br/>{% endif %}
-                        {{ metadataUrl.type }} {{ metadataUrl.onlineresource.format }} {{ metadataUrl.onlineresource.href }}
-                    {% endfor %}
-                    {% endif%}
-                </dd>
-                <dt>{{ "Dimension" | trans }}</dt>
-                <dd>
-                    {% if layer.dimension is defined %}
-                    {% for dimension in layer.dimension %}
-                        {% if not loop.first %}<br/>{% endif %}
-                        {{ dimension.name }} {{ dimension.units }} {{ dimension.unitSymbol }}
-                        {{ dimension.default }} {{ dimension.multipleValues }} {{ dimension.nearestValue }}
-                        {{ dimension.current }} {{ dimension.extentValue }}
-                    {% endfor %}
-                    {% endif%}
-                </dd>
-                <dt>{{ "Extent" | trans }}</dt>
-                <dd>
-                    {% if layer.extent is defined %}
-                    {% for extent in layer.extent %}
-                        {% if not loop.first %}<br/>{% endif %}
-                        {{ extent.name }} {{ extent.default }} {{ extent.multipleValues }}
-                        {{ extent.nearestValue }} {{ extent.current }} {{ extent.extentValue }}
-                    {% endfor %}
-                    {% endif%}
-                </dd>
-                <dt>{{ "DataUrl" | trans }}</dt>
-                <dd>
-                    {% if layer.dataUrl is defined %}
-                    {% for dataUrl in layer.dataUrl %}
-                        {% if not loop.first %}<br/>{% endif %}
-                        {{ dataUrl.format }} {{ dataUrl.href }}
-                    {% endfor %}
-                    {% endif%}
-                </dd>
-                <dt>{{ "FeatureListUrl" | trans }}</dt>
-                <dd>
-                    {% if layer.featureListUrl is defined %}
-                    {% for featureUrl in layer.featureListUrl %}
-                        {% if not loop.first %}<br/>{% endif %}
-                        {{ featureUrl.format }} {{ featureUrl.href }}
-                    {% endfor %}
-                    {% endif%}
-                </dd>
-                <dt>{{ "Keywords" | trans }}</dt>
-                <dd>
-                    {#% if layer.keywords is defined and layer.keywords != null%}
-                    {% for keyword in layer.keywords %}
-                        {% if not loop.first %},{% endif %}{{ keyword.value }}
-                    {% endfor %}
-                    {% endif%#}
-                </dd>
-            </dl>
-            {% if layer.sublayer|length > 0 %}
-            {% for sublayer in layer.sublayer %}
-                {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': sublayer }%}
-            {% endfor %}
-            {% endif %}
-        </fieldset>
+<ul class="itemLevel{{itemLevel}} list {% if itemLevel > 1 %}closed{% endif %}">
+  <li class="subTitle">{{ layer.title }}</li>
+  <li>
+    <span class="labelAlt">{{"Name" | trans }}:</span>
+    <span class="metaText">{{ layer.name }}</span>
+  </li>
+  <li>
+    <span class="labelAlt">{{"Title" | trans }}:</span>
+    <span class="metaText">{{ layer.title }}</span>
+  </li>
+  <li>
+    <span class="labelAlt">{{"Abstract" | trans }}:</span>
+    <span class="metaText">{{ layer.abstract }}</span>
+  </li>
+  <li>
+    <span class="labelAlt">{{"Queryable" | trans }}:</span>
+    <span class="metaText">{{ layer.queryable }}</span>
+  </li>
+  <li>
+    <span class="labelAlt">{{"Cascaded" | trans }}:</span>
+    <span class="metaText">{{ layer.cascaded }}</span>
+  </li>
+  <li>
+    <span class="labelAlt">{{"Opaque" | trans }}:</span>
+    <span class="metaText">{{ layer.opaque }}</span>
+  </li>
+  <li>
+    <span class="labelAlt">{{"NoSubset" | trans }}:</span>
+    <span class="metaText">{{ layer.noSubset }}</span>
+  </li>
+  <li>
+    <span class="labelAlt">{{"FixedWidth" | trans }}:</span>
+    <span class="metaText">{{ layer.fixedWidth }}</span>
+  </li>
+  <li>
+    <span class="labelAlt">{{"FixedHeight" | trans }}:</span>
+    <span class="metaText">{{ layer.fixedHeight }}</span>
+  </li>
+  <li>
+    <span class="labelAlt">{{ "LatlonBounds" | trans }}:</span>
+    {% if layer.latlonBounds != null %}
+      <span class="metaText">{{ layer.latlonBounds.srs }}</span>
+      <span class="metaText">{{ layer.latlonBounds.minx }},</span>
+      <span class="metaText">{{ layer.latlonBounds.miny }},</span>
+      <span class="metaText">{{ layer.latlonBounds.maxx }},</span>
+      <span class="metaText">{{ layer.latlonBounds.maxy }}</span>
+    {% endif %}
+  </li>
+  <li>
+    <span class="labelAlt">{{ "BoundingBox" | trans }}:</span>
+    <ul class="left">
+      {% for bbox in layer.boundingBoxes %}
+        <li>
+          <span class="metaText">{{ bbox.srs }} {{ bbox.minx }},{{ bbox.miny }},{{ bbox.maxx }},{{ bbox.maxy }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </li>
+  <li>
+    <span class="labelAlt">{{ "Srs" | trans }}:</span>
+    {% for srs in layer.srs %}
+      {% if not loop.first %},{% endif %}<span class="metaText">{{ srs }}</span>
+    {% endfor %}
+  </li>
+  <li>
+    <span class="labelAlt">{{ "Styles" | trans }}:</span>
+    {% if layer.styles|length > 0 %}
+      {% for style in layer.styles %}
+        {% if not loop.first %}<br/>{% endif %}
+        <ul class="left">
+          <li><span class="metaText">{{ "Name" | trans }}: {{ style.name }}</span></li>
+          <li><span class="metaText">{{ "Title" | trans }}</dt>: {{ style.title }}</span></li>
+          <li><span class="metaText">{{ "Abstract" | trans }}: {{ style.abstract }}</span></li>
+          <li>
+            <span class="metaText">
+              {{ "LegendUrl" | trans }}: 
+              {{ style.legendUrl.width }}X{{ style.legendUrl.height }}
+              {{ style.legendUrl.onlineResource.format }} {{ style.legendUrl.onlineResource.href }}
+            </span>
+          </li>
+        </ul>
+        <span class="metaText">
+          {{ "StyleSheetUrl" | trans }}:
+
+          {% if layer.styleSheetUrl is defined %}
+            {{ style.styleSheetUrl.format }} {{ style.styleSheetUrl.href }}
+          {% endif %}<br/>
+        </span>
+
+        <span class="metaText">
+          {{ "StyleUrl" | trans }}:
+          {% if layer.styleUrl is defined %}
+            {{ style.styleUrl.format }} {{ style.styleUrl.href }}
+          {% endif %}
+        </span>
+        {% endfor %}
+    {% endif %}
+  </li>
+  {% if layer.scale is defined and layer.scale != '' %}
+    <li>
+      <span class="labelAlt">{{ "Scale" | trans }}:</span>
+      <span class="metaText">
+        {{ "Min" | trans }}:{{ layer.scale.min }}<br/>
+        {{ "Max" | trans }}:{{ layer.scale.max }}</span>
+    </li>
+  {% endif %}
+  {% if layer.scaleHint is defined and layer.scaleHint != '' %}
+  <li>
+    <span class="labelAlt">{{ "ScaleHint" | trans }}:</span>
+    <span class="metaText">
+      {{ "Min" | trans }}:{{ layer.scaleHint.min }}<br/>
+      {{ "Max" | trans }}:{{ layer.scaleHint.max }}
+    </span>
+  {% endif %}
+  </li>
+  <li>
+    <span class="labelAlt">{{ "Attribution" | trans }}:</span>
+    {% if layer.attribution is defined and layer.attribution != '' %}
+      <ul class="left">
+        <li>
+          <span class="metaText">{{ "Title" | trans }}:{{ layer.attribution.title }}</span>
+        </li>
+        <li>
+          <span class="metaText">{{ "OnlineResource" | trans }}:{{ layer.attribution.onlineResource }}</span>
+        </li>
+        <li>
+          <span class="metaText">
+            {{ "LogoUrl" | trans }}:
+            {{ layer.attribution.logoUrl.width }}X{{layer.attribution.logoUrl.height }}
+            {{ layer.attribution.logoUrl.onlineResource.format }} {{ layer.attribution.logoUrl.onlineResource.href }}
+          </span>
+        </li>
+      </ul>
+    {% endif %}
+  </li>
+  <li>
+    <span class="labelAlt">{{ "Identifier" | trans }}:</span>
+    {% if layer.identifier is defined  %}
+      <ul>
+        {% for identifier in layer.identifier %}
+          {% if identifier.authority is defined and identifier.authority != '' %}
+            <li>
+              <span class="metaText">
+                {{ "Authority" | trans }}: 
+                {{ "Url" | trans }} {{ identifier.authority.url }}
+                {{ "Name" | trans }} {{ identifier.authority.name }}
+              </span>
+            </li>
+          {% endif %}
+          {% if identifier.value is defined %}
+            <li><span class="metaText">{{ "Value" | trans }}: {{ identifier.value }}</span></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <span class="metaText"></span>
+  </li>
+  <li>
+    <span class="labelAlt">{{ "Authority" | trans }}:</span>
+      {% if layer.authority is defined %}
+        <ul>
+        {% for authority in layer.authority %}
+          <li>
+            <span class="metaText">
+        {{ "Url" | trans }} {{ authority.url }}
+        {% if authority.name is defined %}
+        {{ "Name" | trans }} {{ authority.name }}<br/>
+        {% endif%}
+        {% endfor %}
+        </ul>
+      {% endif%}
+  </li>
+  <li>
+    <span class="labelAlt">{{ "MetadataUrl" | trans }}:</span>
+    {% if layer.metadataUrl is defined %}
+      <ul>
+      {% for metadataUrl in layer.metadataUrl %}
+        <li>
+          <span class="metaText">
+            {{ metadataUrl.type }} {{ metadataUrl.onlineresource.format }} {{ metadataUrl.onlineresource.href }}
+          </span>
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif%}
+  </li>
+  <li>
+    <span class="labelAlt">{{ "Dimension" | trans }}:</span>
+    {% if layer.dimension is defined %}
+      <ul>
+      {% for dimension in layer.dimension %}
+        <li>
+          <span class="metaText">
+            {{ dimension.name }} {{ dimension.units }} {{ dimension.unitSymbol }}
+            {{ dimension.default }} {{ dimension.multipleValues }} {{ dimension.nearestValue }}
+            {{ dimension.current }} {{ dimension.extentValue }}
+          <span>
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif%}
+  </li>
+  <li>
+    <span class="labelAlt">{{ "Extent" | trans }}:</span>
+    {% if layer.extent is defined %}
+      <ul>
+      {% for extent in layer.extent %}
+        <li>
+          <span class="metaText">
+            {{ extent.name }} {{ extent.default }} {{ extent.multipleValues }}
+            {{ extent.nearestValue }} {{ extent.current }} {{ extent.extentValue }}
+          <span>
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif%}
+  </li>
+  <li>
+    <span class="labelAlt">{{ "DataUrl" | trans }}:</span>
+    {% if layer.dataUrl is defined %}
+      <ul>
+      {% for dataUrl in layer.dataUrl %}
+        <li>
+          <span class="metaText">
+            {{ dataUrl.format }} {{ dataUrl.href }}
+          <span>
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif%}
+  </li>
+  <li>
+    <span class="labelAlt">{{ "FeatureListUrl" | trans }}:</span>
+    {% if layer.featureListUrl is defined %}
+      <ul>
+      {% for featureUrl in layer.featureListUrl %}
+        <li>
+          <span class="metaText">
+            {{ featureUrl.format }} {{ featureUrl.href }}
+          <span>
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif%}
+  </li>
+
+  {% if layer.sublayer|length > 0 %}
+    {% for sublayer in layer.sublayer %}
+      <li>
+        {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': sublayer, 'itemLevel': itemLevel + 1 }%}
+      </li>
+    {% endfor %}
+  {% endif %}
+</ul>
