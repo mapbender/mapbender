@@ -34,13 +34,17 @@ $.widget("mapbender.mbCoordinatesDisplay", {
                 });
             }
         }
-        this.reset();
+        $(document).bind('mbsrsselectorsrschanged', $.proxy(self._reset, self));
+        this._reset();
     },
 
-    reset: function(){
+    _reset: function(event, srs){
         var self = this;
         var mbMap = $('#' + this.options.target).data('mbMap');
-        if(this.crs != null && this.crs == mbMap.map.olMap.getProjectionObject().projCode)
+        if(!srs){
+            srs = { projection: mbMap.map.olMap.getProjectionObject()};
+        }
+        if(this.crs != null && this.crs == srs.projection.projCode)
             return;
         if(typeof(self.options.formatoutput) !== 'undefined'){
             var isdeg = mbMap.map.olMap.units === 'degrees';
@@ -53,7 +57,7 @@ $.widget("mapbender.mbCoordinatesDisplay", {
                     return out.replace("$lat$", pos.lat.toFixed(isdeg ? 5 : 0));
                 }
             }));
-            this.crs = mbMap.map.olMap.getProjectionObject().projCode;
+            this.crs = srs.projection.projCode;
         } else {
             var mouseContr = mbMap.map.olMap.getControl($(self.element).attr('id'));
             if(mouseContr != null)
@@ -65,9 +69,9 @@ $.widget("mapbender.mbCoordinatesDisplay", {
                 prefix: self.options.prefix,
                 separator: self.options.separator,
                 suffix: self.options.suffix,
-                displayProjection: mbMap.map.olMap.getProjectionObject()};
+                displayProjection: srs.projection };
             mbMap.map.olMap.addControl(new OpenLayers.Control.MousePosition(options));
-            this.crs = mbMap.map.olMap.getProjectionObject().projCode;
+            this.crs = srs.projection.projCode;
         }
     },
 
