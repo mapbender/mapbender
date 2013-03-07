@@ -374,5 +374,9 @@ class Application {
             return $this->preparedElements;
         }
     }
+    
+    public function __toString(){
+        return (string) $this->getId();
+    }
 }
 

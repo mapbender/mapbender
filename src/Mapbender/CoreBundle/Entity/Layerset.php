@@ -7,6 +7,9 @@
 namespace Mapbender\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\UniqueConstraint;
+
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Layerset configuration entity
@@ -14,7 +17,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @author Christian Wygoda
  *
  * @ORM\Entity
- * @ORM\Table(name="mb_core_layerset")
+ * @ORM\Table(name="mb_core_layerset",uniqueConstraints={@UniqueConstraint(name="layerset_idx", columns={"application_id", "title"})})
+ * @UniqueEntity(fields={"application", "title"}, message ="Duplicate entry for key 'title'.")
  */
 class Layerset {
     /**
@@ -38,7 +42,8 @@ class Layerset {
     protected $application;
 
     /**
-     * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"persist", "refresh","remove"})
+     * @ORM\OneToMany(targetEntity="SourceInstance", mappedBy="layerset", cascade={"refresh","persist", "remove"})
+     * @ORM\JoinColumn(name="instances", referencedColumnName="id")
      * @ORM\OrderBy({"weight" = "asc"})
      */
     protected $instances;

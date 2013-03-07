@@ -702,5 +702,16 @@ class WmsInstance
                 '@MapbenderWmsBundle/Resources/public/mapbender.layer.wms.js'),
             'css' => array());
     }
+    
+    public function getLayerset()
+    {
+        parent::getLayerset();
+    }
+    
+//    public function setLayerset(\Mapbender\CoreBundle\Entity\Layerset $layerset)
+//    {
+//        parent::setLayerset($layerset);
+//        return $this;
+//    }
 
 }

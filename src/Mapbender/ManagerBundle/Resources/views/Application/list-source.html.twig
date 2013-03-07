@@ -1,0 +1,52 @@
+{% extends "FOMManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ application.title }}{% endblock %}
+
+{% block manager_css %}
+<link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/style/style.css') }}" >
+{% endblock %}
+
+{% block manager_js %}
+<script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/edit.js') }}"></script>
+{% endblock %}
+
+{% block manager_content %}
+
+<div >
+    <div>
+        <h3>{{ "Select Source"|trans }}</h3>
+    </div>
+    <div>
+        <table class="table table-striped" id="repository-list">
+            <thead>
+                <tr>
+                    <th>{{ 'SourceId' | trans }}</th>
+                    <th>{{ 'Type' | trans }}</th>
+                    <th>{{ 'Title' | trans }}</th>
+                    <th>{{ 'Alias' | trans }}</th>
+                    <th>{{ 'Description' | trans }}</th>
+                    <th>{{ 'Actions' | trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for source in sources %}
+                <tr data-source-id="{{ source.id }}">
+                    <td>{{ source.id }}</td>
+                    <td>{{ source.type }}</td>
+                    <td>{{ source.title }}</td>
+                    <td>{{ source.alias }}</td>
+                    <td>{{ source.description }}</td>
+                    <td>
+                        <div class="entity-actions btn-group">
+                            <button class="btn layerset-action" data-href="{{ path("mapbender_manager_application_addinstance",{'slug': application.slug, "layersetId": layerset.id, "sourceId": source.id}) }}">{{ 'Add' | trans}}</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

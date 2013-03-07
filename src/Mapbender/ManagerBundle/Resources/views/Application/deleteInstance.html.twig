@@ -11,7 +11,7 @@
 
 {% block manager_content %}
 
-<form id="instance-delete" action="{{ path('mapbender_manager_application_instancedelete', { 'slug': application.slug, 'instanceId' : instance.id }) }}" method="post" {{ form_enctype(form)}}>
+<form id="instance-delete" action="{{ path('mapbender_manager_application_deleteinstance', { 'slug': application.slug, 'layersetId': layerset.id, 'instanceId' : instance.id }) }}" method="post" {{ form_enctype(form)}}>
     <header>
     {% trans %}Do you really want to remove the instance with the title <em>%instance_title%</em> and the id <em>%instance_id%</em>?{% endtrans %}
     </header>
@@ -19,7 +19,7 @@
     <footer class="actions">
         <div class="btn-group">
             <input type="submit" value="{{ 'Delete' | trans }}" class="btn btn-danger"/>
-            <a href="{{ url('mapbender_manager_application_edit',{'slug': application.slug}) }}#layers" class="btn">{{ 'Cancel' | trans}}</a>
+            <a href="{{ url('mapbender_manager_application_edit',{'slug': application.slug}) }}#layersets" class="btn">{{ 'Cancel' | trans}}</a>
         </div>
     </footer>
 </form>
