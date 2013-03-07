@@ -2,7 +2,7 @@
 
 $.widget("mapbender.mbSrsSelector", {
     options: {
-        targets: {map: null, coordinatesdisplay: null }
+        target: null
     },
 
     op_sel: null,
@@ -10,16 +10,16 @@ $.widget("mapbender.mbSrsSelector", {
     mapWidget: null,
 
     _create: function() {
-        if(this.options.targets.map === null
-            || this.options.targets.map.replace(/^\s+|\s+$/g, '') === ""
-            || !$('#' + this.options.targets.map)){
-            alert('The target element "map" is not defined for a SRSselector.');
+        if(this.options.target === null
+            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || !$('#' + this.options.target)){
+            alert('The target element is not defined for a SRSselector.');
             return;
         }
         var self = this;
-        this.mapWidget = $('#' + this.options.targets.map);
+        this.mapWidget = $('#' + this.options.target);
         $(document).one('mapbender.setupfinished', function() {
-            $('#' + self.options.targets.map).mbMap('ready', $.proxy(self._setup, self));
+            $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
         });
     },
 
@@ -51,21 +51,11 @@ $.widget("mapbender.mbSrsSelector", {
     },
 
     _switchSrs: function(evt) {
-//        var old = this.mapWidget.data('mbMap').map.olMap.getProjectionObject();
         var dest = new OpenLayers.Projection(this.getSelectedSrs());
-//        window.console && console.log("switch SRS from:"+old.projCode
-//            +" into:"+dest.projCode, dest.readyToUse);
-
         if(dest.projCode === 'EPSG:4326') {
             dest.proj.units = 'degrees';
         }
-        this.mapWidget.mbMap("setMapProjection", dest);
-//        window.console && console.log($('#' + this.options.targets.coordinatesdisplay));
-        if(this.options.targets.coordinatesdisplay !== null
-            && this.options.targets.coordinatesdisplay.replace(/^\s+|\s+$/g, '') !== ""
-            && $('#' + this.options.targets.coordinatesdisplay)){
-            $('#' + this.options.targets.coordinatesdisplay).mbCoordinatesDisplay("reset");
-        }
+        this._trigger('srsChanged', null, { projection: dest});
         return true;
     },
 

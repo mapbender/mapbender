@@ -38,19 +38,12 @@ class SrsSelectorAdminType extends AbstractType
     {
         $builder->add('tooltip', 'text', array('required' => false))
                 ->add('label', 'checkbox', array('required' => false))
-                ->add('target_map', 'target_element',
+                ->add('target', 'target_element',
                       array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],
-                    'property_path' => '[targets][map]',
-                    'required' => false))
-                ->add('target_coords', 'target_element',
-                      array(
-                    'element_class' => 'Mapbender\\CoreBundle\\Element\\CoordinatesDisplay',
-                    'application' => $options['application'],
-                    'property_path' => '[targets][coordinatesdisplay]',
-                    'required' => false)
-        );
+                    'property_path' => '[target]',
+                    'required' => false));
     }
 
 }

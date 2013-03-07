@@ -68,9 +68,7 @@ class SrsSelector extends Element
         return array(
             "tooltip" => "SRS Selector",
             'label' => false,
-            "targets" => array(
-                "map" => null,
-                "coordinatesdisplay" => null));
+            "target" => null);
     }
 
     /**
