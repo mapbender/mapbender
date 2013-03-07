@@ -26,6 +26,7 @@ $.widget("mapbender.mbMap", {
     highlightLayer: null,
     readyState: false,
     readyCallbacks: [],
+    controls: [],
 
     _create: function() {
         // @TODO: This works around the fake layerset for now
@@ -299,46 +300,9 @@ $.widget("mapbender.mbMap", {
             }
         }
 
-        if(this.options.overview) {
-
-            var layers_ = [];
-            $.each(Mapbender.configuration
-                    .layersets[this.options.overview.layerset],
-                    function(idx, item) {
-                $.each(item, function(idx2, layerDef) {
-                    layers_.push(self._convertLayerDef.call(self, layerDef));
-                });
-            });
-
-            var res = $.MapQuery.Layer.types[layers_[0].type]
-                .call(this, layers_[0]);
-
-            var div = $("#"+this.options.overview.div);
-            div = div.size() > 0 ? div.get(0): undefined;
-            var overviewOptions = {
-                layers: [res.layer],
-                div: div,
-                mapOptions: {
-                    maxExtent: OpenLayers.Bounds.fromArray(this.options.extents.max),
-                    projection: new OpenLayers.Projection(this.options.srs),
-                    theme: null
-                }
-            };
-
-            if(this.options.overview.fixed) {
-                $.extend(overviewOptions, {
-                    minRatio: 1,
-                    maxRatio: 1000000000
-                });
-            }
-            var overviewControl = new OpenLayers.Control.OverviewMap(overviewOptions);
-            this.map.olMap.addControl(overviewControl);
-        }
-        if(controls.length === 0) {
-            this.map.olMap.addControl(new OpenLayers.Control.Scale());
-        }
-
+        this.controls = controls;
         //self._trigger('ready');
+        $(document).bind('mbsrsselectorsrschanged', $.proxy(self._changeMapProjection, self));
         this._ready();
         //window.console && console.log("map initialized");
     },
@@ -628,31 +592,31 @@ $.widget("mapbender.mbMap", {
     /*
      * Sets a new map's projection.
      */
-    setMapProjection: function(newProj){
+    _changeMapProjection: function(event, srs){
         var self = this;
         var oldProj = this.map.olMap.getProjectionObject();
-        var center = this.map.olMap.getCenter().transform(oldProj, newProj);
-        this.map.olMap.projection = newProj;
-        this.map.olMap.displayProjection= newProj;
-        this.map.olMap.units = newProj.proj.units;
+        var center = this.map.olMap.getCenter().transform(oldProj, srs.projection);
+        this.map.olMap.projection = srs.projection;
+        this.map.olMap.displayProjection= srs.projection;
+        this.map.olMap.units = srs.projection.proj.units;
 
         this.map.olMap.maxExtent = this._transformExtent(
-                this.mapOrigExtents.max, newProj);
+                this.mapOrigExtents.max, srs.projection);
         $.each(self.map.olMap.layers, function(idx, layer){
 //            if(layer.isBaseLayer){
-            layer.projection = newProj;
-            layer.units = newProj.proj.units;
+            layer.projection = srs.projection;
+            layer.units = srs.projection.proj.units;
             if(!self.layersOrigExtents[layer.id]){
                 self._addOrigLayerExtent(layer);
             }
             if(layer.maxExtent && layer.maxExtent != self.map.olMap.maxExtent){
                 layer.maxExtent = self._transformExtent(
-                        self.layersOrigExtents[layer.id].max, newProj);
+                        self.layersOrigExtents[layer.id].max, srs.projection);
             }
 
             if(layer.minExtent){
                 layer.minExtent = self._transformExtent(
-                        self.layersOrigExtents[layer.id].minExtent, newProj);
+                        self.layersOrigExtents[layer.id].minExtent, srs.projection);
             }
             layer.initResolutions();
 //            }
