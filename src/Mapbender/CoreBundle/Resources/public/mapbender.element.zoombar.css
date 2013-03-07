@@ -100,12 +100,12 @@
 }
 
 .mb-element-zoombar div.zoom-world {
-    background: url('image/zoom-world-mini.png') 50% 0px no-repeat;
+    background: url('image/zoom-world-mini-grey.png') 50% 0px no-repeat;
     margin: 3px 0;
 }
 
 .mb-element-zoombar div.zoom-world.active {
-    background: url('image/zoom-world-mini.png') 50% 0px no-repeat;
+    background: url('image/zoom-world-mini-gray.png') 50% 0px no-repeat;
     margin: 3px 0;
 }
 .mb-element-zoombar div.zoom-world a {
