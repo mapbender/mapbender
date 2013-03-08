@@ -33,7 +33,6 @@
         
     
     <div id="content" class="region content">
-        <div id="overviewMap" class="overviewMap"></div>
         {% if application.elements.content is defined %}
         {% for element in application.elements.content %}
             {{ element.render() | raw }}

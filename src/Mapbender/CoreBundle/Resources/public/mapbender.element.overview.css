@@ -1,0 +1,83 @@
+
+
+.mb-element-overview {
+    padding-left: 20px;
+}
+
+.mb-element-overview .handle {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    background: white url("icons/overview-minimize.png")  no-repeat;
+}
+
+.mb-element-overview.closed #mb-element-overview-map {
+    display: none;
+}
+
+.mb-element-overview.closed .handle {
+    background: white url("icons/overview-maximize.png") no-repeat;
+}
+
+.mb-element-overview.left-top {
+    position: absolute;
+    padding-left: 0px;
+    padding-right: 20px;
+    left: 0px;
+    top: 0px;
+    z-index: 1009;
+}
+
+.mb-element-overview.left-top .handle {
+    top: 0px;
+    right: 0px;
+}
+
+.mb-element-overview.left-bottom {
+    position: absolute;
+    padding-left: 0px;
+    padding-right: 20px;
+    left: 0px;
+    bottom: 0px;
+    z-index: 1009;
+}
+
+.mb-element-overview.left-bottom .handle {
+    bottom: 0px;
+    right: 0px;
+}
+
+.mb-element-overview.right-top {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    z-index: 1009;
+}
+
+.mb-element-overview.right-top .handle {
+    top: 0px;
+    left: 0px;
+}
+
+.mb-element-overview.right-bottom {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    z-index: 1009;
+}
+
+.mb-element-overview.right-bottom .handle {
+    bottom: 0px;
+    left: 0px;
+}
+
+.mb-element-overview.inline .handle {
+    display: none;
+}
+
+#mb-element-overview-map .olControlOverviewMapElement {
+    background-color: white;
+    border: 1px solid #888;
+    padding: 2px;
+}

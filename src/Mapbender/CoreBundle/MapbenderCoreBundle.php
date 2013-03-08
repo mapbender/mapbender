@@ -39,6 +39,7 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\FeatureInfo',
             'Mapbender\CoreBundle\Element\Legend',
             'Mapbender\CoreBundle\Element\Map',
+            'Mapbender\CoreBundle\Element\Overview',
             'Mapbender\CoreBundle\Element\Ruler',
             'Mapbender\CoreBundle\Element\ScaleSelector',
 //            'Mapbender\CoreBundle\Element\SearchRouter',
