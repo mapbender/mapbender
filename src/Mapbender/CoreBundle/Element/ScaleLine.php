@@ -9,7 +9,7 @@ use Mapbender\CoreBundle\Component\Element;
  *
  * @author Paul Schmidt
  */
-class Overview extends Element
+class ScaleLine extends Element
 {
 
     /**
@@ -17,7 +17,7 @@ class Overview extends Element
      */
     static public function getClassTitle()
     {
-        return "Overview";
+        return "ScaleLine";
     }
 
     /**
@@ -25,7 +25,7 @@ class Overview extends Element
      */
     static public function getClassDescription()
     {
-        return "Overview";
+        return "ScaleLine";
     }
 
     /**
@@ -33,7 +33,7 @@ class Overview extends Element
      */
     static public function getClassTags()
     {
-        return array('Overview', "Map's overview");
+        return array('ScaleLine', "Map's scale line");
     }
 
     /**
@@ -42,20 +42,17 @@ class Overview extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'title' => 'Overview',
-            'tooltip' => "Overview",
-            'layerset' => null,
+            'title' => 'Scale Line',
+            'tooltip' => 'Scale Line',
             'target' => null,
-            'width' => 200,
-            'height' => 100,
-            'position' => array(
+            'maxWidth' => 200,
+            'position' => array(0, 0),
+            'anchor' => array(
                 'inline',
                 'left-top',
                 'left-bottom',
                 'right-top',
-                'right-bottom'),
-            'maximized' => true,
-            'fixed' => true);
+                'right-bottom'));
     }
 
     /**
@@ -63,7 +60,7 @@ class Overview extends Element
      */
     public function getWidgetName()
     {
-        return 'mapbender.mbOverview';
+        return 'mapbender.mbScaleline';
     }
 
     /**
@@ -71,7 +68,7 @@ class Overview extends Element
      */
     public static function getType()
     {
-        return 'Mapbender\CoreBundle\Element\Type\OverviewAdminType';
+        return 'Mapbender\CoreBundle\Element\Type\ScaleLineAdminType';
     }
 
     /**
@@ -80,9 +77,9 @@ class Overview extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.overview.js'),
+            'js' => array('mapbender.element.scaleline.js'),
             //TODO: Split up
-            'css' => array('mapbender.element.overview.css'));
+            'css' => array('mapbender.element.scaleline.css'));
     }
 
     /**
@@ -91,7 +88,7 @@ class Overview extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:overview.html.twig',
+                        ->render('MapbenderCoreBundle:Element:scaleline.html.twig',
                                  array(
                             'id' => $this->getId(),
                             "title" => $this->getTitle(),
