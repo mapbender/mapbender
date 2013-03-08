@@ -10,9 +10,6 @@
     <nav class="actions">
         <a href="{{ path('mapbender_wms_wms_confirmdelete',{'wmsId':wms.id}) }}">{% trans %}Delete{% endtrans %}</a>
         <a href="{{ path("mapbender_wms_wms_update",{'wmsId':wms.id}) }}">{% trans %}Update{% endtrans %}</a>
-{#
-        <a class="disabled" href="">{% trans %}Edit{% endtrans %}</a>
-#}
     </nav>
 {% endblock %}
 
@@ -44,7 +41,6 @@
             title: '{{ wms.getTitle() }}',
             url: '{{ wms.getRequestGetMapGET() }}',
             layers: '{{ wms.getAllLayerNames() }}',
-    {#        format: '{{ wms.getDefaultRequestGetMapFormat() }}', #}
             format: 'image/png',
             projection: '{{ wms.getRootLayer().getDefaultSRS() }}',
             bounds: {

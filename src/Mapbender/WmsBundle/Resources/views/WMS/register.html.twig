@@ -28,17 +28,6 @@
     		<input type="submit" name="save" value="{% trans %}Load{% endtrans %}" /> 			
         	</fieldset>
         </form>
-{#
-		 <fieldset>
-   			<legend>Capabilities-URL hochladen</legend>
-			
-        <form name="upload" action="{{ path('mapbender_wms_wms_preview')  }}" method="POST">
-            <input type="file" name="getcapa_file" id="getcapa_file />
-            <label for="getcapa_file">{% trans %}<br/><br/>Capabilities File{% endtrans %}</label>
-            <input type="submit" name="save" value="{% trans %}Load{% endtrans %}" />
-        </form>
-		</fieldset>
-#}
         <div id="wmspreview" title="WMS Preview" style="display: none">
             <p>{% trans %}Loading WMS{% endtrans %} <img src="{{ asset('bundles/mbwms/img/spinner.gif') }}" alt="{{ "loading"|trans }}..." title="{{ "loading"|trans}}... "/></p>
         </div>

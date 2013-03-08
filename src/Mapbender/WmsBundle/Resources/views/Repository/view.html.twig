@@ -11,12 +11,12 @@
 
 <div id="serviceTabContainer" class="tabContainer">
   <ul class="tabs">
-    <li id="tab1" class="tab active">{{"Metadata" | trans }}</li>
-    <li id="tab2" class="tab">{{"Contact" | trans }}</li>
-    <li id="tab3" class="tab">{{"Service" | trans }}</li>
-    <li id="tab4" class="tab">{{"Layers" | trans }}</li>
+    <li id="tabMetaData" class="tab active">{{"Metadata" | trans }}</li>
+    <li id="tabContact" class="tab">{{"Contact" | trans }}</li>
+    <li id="tabService" class="tab">{{"Service" | trans }}</li>
+    <li id="tabLayers" class="tab">{{"Layers" | trans }}</li>
   </ul>
-  <div id="tabContainer1" class="container active serviceContainer serviceMetaContainer">
+  <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
     <div class="labelAlt">{{ "Title" | trans }}:</div><div class="metaText">{{ wms.title }}</div>
     <div class="clearContainer"></div>
     <div class="labelAlt">{{ "Name" | trans }}:</div><div class="metaText">{{ wms.name }}</div>
@@ -42,7 +42,7 @@
     <div class="labelAlt">{{ "Access constraints" | trans }}:</div><div class="metaText">{{ wms.accessConstraints }}</div>
     <div class="clearContainer"></div>
   </div>
-  <div id="tabContainer2" class="container serviceContainer serviceContactContainer">
+  <div id="containerContact" class="container serviceContainer serviceContactContainer">
     <div class="labelAlt">{{ "Person" | trans }}:</div>
     <div class="metaText">{{ wms.contact.person }}</div>
     <div class="clearContainer"></div>
@@ -91,7 +91,7 @@
     <div class="metaText">{{ wms.contact.addressCountry }}</div>
     <div class="clearContainer"></div>
   </div>
-  <div id="tabContainer3" class="container serviceContainer serviceServiceContainer">
+  <div id="containerService" class="container serviceContainer serviceServiceContainer">
     <div class="labelAlt">{{ "Version" | trans }}:</div>
     <div class="metaText">{{ wms.version }}</div>
     <div class="clearContainer"></div>
@@ -124,11 +124,11 @@
     {{ requestinformation(wms.putStyles, "PutStyles") }}
     {% endif %}
   </div>
-  <div id="tabContainer4" class="container serviceContainer serviceLayersContainer">
+  <div id="containerLayers" class="container serviceContainer serviceLayersContainer">
     {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': wms.rootlayer, 'itemLevel': 1 }%}
   </div>
 </div>
 
-<a class="button" href="{{ url("mapbender_manager_repository_delete",{"source":wms.id ,"return":"view"} ) }}">Delete</a>
+<a class="button right" href="{{ url("mapbender_manager_repository_delete",{"source":wms.id ,"return":"view"} ) }}">Delete</a>
 
 {% endblock %}
