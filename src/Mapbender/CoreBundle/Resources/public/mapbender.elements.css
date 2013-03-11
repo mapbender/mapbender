@@ -144,23 +144,6 @@ body.mb-activity .mb-element-activityindicator {
     display: inline-block;
 }
 
-.mb-element-copyright {
-    position: absolute;
-    bottom: 4px;
-    left: 4px;
-    width: 200px;
-    background-color: white;
-    z-index: auto;
-}
-
-.mb-element-copyright-link {
-    cursor: pointer;
-}
-
-.mb-element-copyright-dialog {
-    display: none;
-}
-
 .abouticon {
     background: url('icons/featureinfo.png');
     background-repeat: no-repeat;

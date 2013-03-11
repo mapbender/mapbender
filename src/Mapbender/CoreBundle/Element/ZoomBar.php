@@ -68,9 +68,15 @@ EOT;
                 "zoom_box",
                 "zoom_max",
                 "zoom_slieder"),
+            'anchor' => array(
+                'inline',
+                'left-top',
+                'left-bottom',
+                'right-top',
+                'right-bottom'),
+            'position' => array('0px', '0px'),
             'stepSize' => 50,
             'stepByPixel' => false,
-            'position' => array(0, 0),
             'draggable' => true);
     }
 

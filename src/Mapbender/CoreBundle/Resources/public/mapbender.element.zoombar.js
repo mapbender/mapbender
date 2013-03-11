@@ -18,14 +18,12 @@ $.widget("mapbender.mbZoomBar", {
         if(this.options.target === null
             || this.options.target.replace(/^\s+|\s+$/g, '') === ""
             || !$('#' + this.options.target)){
-            alert('The target element "map" is not defined for a Zoombar.');
+            alert('The target element "map" is not defined for a Navigation Bar.');
             return;
         }
         var self = this;
 
         this.mapDiv = $('#' + this.options.target);
-        // FIXME: rework initialization
-        //this.mapDiv.bind('mbmapready', $.proxy(this._setup, this));
         $(document).one('mapbender.setupfinished', function() {
             self.mapDiv.mbMap('ready', $.proxy(self._setup, self));
         });
@@ -45,10 +43,28 @@ $.widget("mapbender.mbZoomBar", {
                 start: function() { $(this).add('dragging'); }
             });
         }
-
-        this.element.css({
-            left: this.options.position[0] + "px",
-            top: this.options.position[1] + "px"});
+        
+        if(this.options.anchor === "left-top"){
+            $(this.element).css({
+                left: this.options.position[0],
+                top: this.options.position[1]
+            });
+        } else if(this.options.anchor === "right-top"){
+            $(this.element).css({
+                right: this.options.position[0],
+                top: this.options.position[1]
+            });
+        } else if(this.options.anchor === "left-bottom"){
+            $(this.element).css({
+                left: this.options.position[0],
+                bottom: this.options.position[1]
+            });
+        } else if(this.options.anchor === "right-bottom"){
+            $(this.element).css({
+                right: this.options.position[0],
+                bottom: this.options.position[1]
+            });
+        }
         $(this.element).find('.zoom-world a').bind("click" ,$.proxy(this._worldZoom, this));
     },
 

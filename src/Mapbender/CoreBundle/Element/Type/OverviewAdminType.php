@@ -58,7 +58,7 @@ class OverviewAdminType extends AbstractType
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
-                ->add('position', "choice",
+                ->add('anchor', "choice",
                       array(
                     'required' => true,
                     "choices" => array(
@@ -67,6 +67,10 @@ class OverviewAdminType extends AbstractType
                         'left-bottom' => 'left-bottom',
                         'right-top' => 'right-top',
                         'right-bottom' => 'right-bottom')))
+                ->add('position', new PositionType(),
+                      array(
+                    'label' => 'Position',
+                    'property_path' => '[position]'))
                 ->add('maximized', 'checkbox', array('required' => false))
                 ->add('fixed', 'checkbox', array('required' => false))
                 ->add('width', 'text', array('required' => true))

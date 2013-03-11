@@ -56,7 +56,7 @@ class Copyright extends Element
                 'mapbender.element.copyright.js'
             ),
             'css' => array(
-                'mapbender.elements.css'
+                'mapbender.element.copyright.css'
             )
         );
     }
@@ -71,7 +71,15 @@ class Copyright extends Element
             "copyrigh_text" => "© XXX, 2012",
             "dialog_link" => "Terms of use",
             "dialog_content" => "Terms of use (Content)",
-            "dialog_title" => "Terms of use");
+            "dialog_title" => "Terms of use",
+            'width' => "200px",
+            'anchor' => array(
+                'inline',
+                'left-top',
+                'left-bottom',
+                'right-top',
+                'right-bottom'),
+            'position' => array('0px', '0px'));
     }
 
     /**

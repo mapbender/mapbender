@@ -30,16 +30,35 @@
          */
         _setup: function() {
             var self = this;
+            if(this.options.anchor === "left-top"){
+                $(this.element).css({
+                    left: this.options.position[0],
+                    top: this.options.position[1]
+                });
+            } else if(this.options.anchor === "right-top"){
+                $(this.element).css({
+                    right: this.options.position[0],
+                    top: this.options.position[1]
+                });
+            } else if(this.options.anchor === "left-bottom"){
+                $(this.element).css({
+                    left: this.options.position[0],
+                    bottom: this.options.position[1]
+                });
+            } else if(this.options.anchor === "right-bottom"){
+                $(this.element).css({
+                    right: this.options.position[0],
+                    bottom: this.options.position[1]
+                });
+            }
             var mbMap = $('#' + this.options.target).data('mbMap');
-            $(this.element).addClass(this.options.position);
+            $(this.element).addClass(this.options.anchor);
             if(!this.options.maximized) {
                 $(this.element).addClass("closed");
             }
             
             var max_ext = this.options.extents && this.options.extents.max ? this.options.extents.max : mbMap.options.extents.max;
             max_ext = max_ext ? OpenLayers.Bounds.fromArray(max_ext) : null;
-//            var min_ext = this.options.extents && this.options.extents.min ? this.options.extents.min : mbMap.options.extents.min;
-//            min_ext = min_ext ? OpenLayers.Bounds.fromArray(min_ext) : null;
             var proj = this.options.srs ? new OpenLayers.Projection(this.options.srs) : mbMap.map.olMap.getProjectionObject();
             if(proj.projCode === 'EPSG:4326') {
                 proj.proj.units = 'degrees';
@@ -70,10 +89,6 @@
                     projection: proj,
                     extent: max_ext
                 }
-//                min: {
-//                    projection: proj,
-//                    extent: min_ext
-//                }
             };
             
             this.overview = new OpenLayers.Control.OverviewMap({
@@ -95,7 +110,7 @@
                 });
             }
             mbMap.map.olMap.addControl(this.overview);
-            $(document).bind('mbsrsselectorsrschanged', $.proxy(this._changeSrs, this));
+            $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
             $(self.element).find('.handle').bind('click', $.proxy(this._openClose, this));
         },
         
@@ -141,7 +156,6 @@
             this.overview.ovmap.maxExtent = this._transformExtent(
                 this.mapOrigExtents.max, srs.projection);
             $.each(self.overview.ovmap.layers, function(idx, layer){
-                //            if(layer.isBaseLayer){
                 layer.projection = srs.projection;
                 layer.units = srs.projection.proj.units;
                 if(!self.layersOrigExtents[layer.id]){
@@ -151,13 +165,7 @@
                     layer.maxExtent = self._transformExtent(
                         self.layersOrigExtents[layer.id].max, srs.projection);
                 }
-
-//                if(layer.minExtent){
-//                    layer.minExtent = self._transformExtent(
-//                        self.layersOrigExtents[layer.id].minExtent, srs.projection);
-//                }
                 layer.initResolutions();
-            //            }
             });
             this.overview.update();
             this.overview.ovmap.setCenter(center, this.overview.ovmap.getZoom(), false, true);
@@ -171,19 +179,11 @@
                 layer = layer.olLayer;
             }
             if(!this.layersOrigExtents[layer.id]){
-//                var extProjection = new OpenLayers.Projection(this.options.srs);
-//                if(extProjection.projCode === 'EPSG:4326') {
-//                    extProjection.proj.units = 'degrees';
-//                }
                 this.layersOrigExtents[layer.id] = {
                     max: {
                         projection: this.startproj,
                         extent: layer.maxExtent ? layer.maxExtent.clone() : null
                     }
-//                    min: {
-//                        projection: extProjection,
-//                        extent: layer.minExtent ? layer.minExtent.clone() : null
-//                    }
                 };
             }
         }

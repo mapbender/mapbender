@@ -1,0 +1,21 @@
+.mb-element-copyright {
+    position: absolute;
+    font-size: 11px;
+    padding: 4px;
+    background-color: white;
+    z-index: 1009;
+}
+
+.mb-element-copyright.inline {
+    position: static;
+}
+.mb-element-copyright-link {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.mb-element-copyright-dialog {
+    display: none;
+}
+
+

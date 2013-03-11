@@ -48,12 +48,13 @@ class Overview extends Element
             'target' => null,
             'width' => 200,
             'height' => 100,
-            'position' => array(
+            'anchor' => array(
                 'inline',
                 'left-top',
                 'left-bottom',
                 'right-top',
                 'right-bottom'),
+            'position' => array('0px', '0px'),
             'maximized' => true,
             'fixed' => true);
     }

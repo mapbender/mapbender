@@ -58,6 +58,15 @@ class ZoomBarAdminType extends AbstractType
                 ->add('stepByPixel', 'choice',
                       array(
                     'choices' => array('true' => 'true', 'false' => 'false')))
+                ->add('anchor', "choice",
+                      array(
+                    'required' => true,
+                    "choices" => array(
+                        'inline' => 'inline',
+                        'left-top' => 'left-top',
+                        'left-bottom' => 'left-bottom',
+                        'right-top' => 'right-top',
+                        'right-bottom' => 'right-bottom')))
                 ->add('position', new PositionType(),
                       array(
                     'label' => 'Position',
