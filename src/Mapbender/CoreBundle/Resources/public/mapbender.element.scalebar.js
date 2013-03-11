@@ -1,17 +1,18 @@
 (function($) {
 
-    $.widget("mapbender.mbScaleline", {
+    $.widget("mapbender.mbScalebar", {
         options: {
         },
+        scalebar: null,
 
         /**
-         * Creates the scale line
+         * Creates the scale bar
          */
         _create: function() {
             if(this.options.target === null
                 || this.options.target.replace(/^\s+|\s+$/g, '') === ""
                 || !$('#' + this.options.target)){
-                alert('The target element "map" is not defined for a scale line.');
+                alert('The target element "map" is not defined for a scale bar.');
                 return;
             }
             var self = this;
@@ -21,64 +22,61 @@
         },
         
         /**
-         * Initializes the scale line
+         * Initializes the scale bar
          */
         _setup: function() {
-            var self = this;
             var mbMap = $('#' + this.options.target).data('mbMap');
-//            $(this.element).addClass(this.options.anchor);
             if(this.options.anchor === "left-top"){
                 $(this.element).css({
-                    left: this.options.position[0] + "px",
-                    top: this.options.position[1] + "px"
+                    left: this.options.position[0],
+                    top: this.options.position[1]
                 });
             } else if(this.options.anchor === "right-top"){
                 $(this.element).css({
-                    right: this.options.position[0] + "px",
-                    top: this.options.position[1] + "px"
+                    right: this.options.position[0],
+                    top: this.options.position[1]
                 });
             } else if(this.options.anchor === "left-bottom"){
                 $(this.element).css({
-                    left: this.options.position[0] + "px",
-                    bottom: this.options.position[1] + "px"
+                    left: this.options.position[0],
+                    bottom: this.options.position[1]
                 });
             } else if(this.options.anchor === "right-bottom"){
                 $(this.element).css({
-                    right: this.options.position[0] + "px",
-                    bottom: this.options.position[1] + "px"
+                    right: this.options.position[0],
+                    bottom: this.options.position[1]
                 });
             }
-//            $(this.element).css({ width: this.options.maxWidth });
+            
             var projection = mbMap.map.olMap.getProjectionObject();
-            var scalelineOptions = {
+            var scalebarOptions = {
                 div: $(this.element).get(0),
                 maxWidth: this.options.maxWidth,
-                geodesic: projection.projCode === "EPSG:900913" ? true : false,
+                geodesic: projection.units = 'degrees' ? true : false,
                 topOutUnits: "km",
                 topInUnits: "m",
                 bottomOutUnits: "mi",
                 bottomInUnits: "ft"
-//                ,
-//                div: $(this.element).get(0)
             };
-            this.scaleline = new OpenLayers.Control.ScaleLine(scalelineOptions);
-
-            mbMap.map.olMap.addControl(this.scaleline);
-            $(document).bind('mbsrsselectorsrschanged', $.proxy(this._changeSrs, this));
+            this.scalebar = new OpenLayers.Control.ScaleLine(scalebarOptions);
+            
+            mbMap.map.olMap.addControl(this.scalebar);
+            if($.inArray("km", this.options.units) === -1){
+                $(this.element).find('div.olControlScaleLineTop').css({display: 'none'});
+            }
+            if($.inArray("ml", this.options.units) === -1){
+                $(this.element).find('div.olControlScaleLineBottom').css({display: 'none'});
+            }
+            $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
         },
         
         
         /**
-         * Cahnges the scale line srs
+         * Cahnges the scale bar srs
          */
         _changeSrs: function(event, srs){
-            if(srs.projection.projCode === "EPSG:900913"){
-                this.scaleline.geodesic = true;
-            } else {
-                this.scaleline.geodesic = false;
-            }
-            this.scaleline.setMap($('#' + this.options.target).data('mbMap').map.olMap);
-            this.scaleline.update();
+            this.scalebar.geodesic = srs.projection.units = 'degrees' ? true : false;
+            this.scalebar.update();
         }
         
     });

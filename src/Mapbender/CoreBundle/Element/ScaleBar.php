@@ -9,7 +9,7 @@ use Mapbender\CoreBundle\Component\Element;
  *
  * @author Paul Schmidt
  */
-class ScaleLine extends Element
+class ScaleBar extends Element
 {
 
     /**
@@ -17,7 +17,7 @@ class ScaleLine extends Element
      */
     static public function getClassTitle()
     {
-        return "ScaleLine";
+        return "ScaleBar";
     }
 
     /**
@@ -25,7 +25,7 @@ class ScaleLine extends Element
      */
     static public function getClassDescription()
     {
-        return "ScaleLine";
+        return "ScaleBar";
     }
 
     /**
@@ -33,7 +33,7 @@ class ScaleLine extends Element
      */
     static public function getClassTags()
     {
-        return array('ScaleLine', "Map's scale line");
+        return array('ScaleBar', "Map's scale bar");
     }
 
     /**
@@ -42,17 +42,18 @@ class ScaleLine extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'title' => 'Scale Line',
-            'tooltip' => 'Scale Line',
+            'title' => 'Scale Bar',
+            'tooltip' => 'Scale Bar',
             'target' => null,
             'maxWidth' => 200,
-            'position' => array(0, 0),
             'anchor' => array(
                 'inline',
                 'left-top',
                 'left-bottom',
                 'right-top',
-                'right-bottom'));
+                'right-bottom'),
+            'units' => array("km"),
+            'position' => array('0px', '0px'));
     }
 
     /**
@@ -60,7 +61,7 @@ class ScaleLine extends Element
      */
     public function getWidgetName()
     {
-        return 'mapbender.mbScaleline';
+        return 'mapbender.mbScalebar';
     }
 
     /**
@@ -68,7 +69,7 @@ class ScaleLine extends Element
      */
     public static function getType()
     {
-        return 'Mapbender\CoreBundle\Element\Type\ScaleLineAdminType';
+        return 'Mapbender\CoreBundle\Element\Type\ScaleBarAdminType';
     }
 
     /**
@@ -77,9 +78,9 @@ class ScaleLine extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.scaleline.js'),
+            'js' => array('mapbender.element.scalebar.js'),
             //TODO: Split up
-            'css' => array('mapbender.element.scaleline.css'));
+            'css' => array('mapbender.element.scalebar.css'));
     }
 
     /**
@@ -88,7 +89,7 @@ class ScaleLine extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:scaleline.html.twig',
+                        ->render('MapbenderCoreBundle:Element:scalebar.html.twig',
                                  array(
                             'id' => $this->getId(),
                             "title" => $this->getTitle(),

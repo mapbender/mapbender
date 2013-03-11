@@ -4,7 +4,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Mapbender\CoreBundle\Form\Type\PositionXYType;
+use Mapbender\CoreBundle\Form\Type\PositionType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Mapbender\CoreBundle\Form\Type\ExtentType;
 use Mapbender\CoreBundle\Entity\Layerset;
@@ -13,7 +13,7 @@ use Mapbender\CoreBundle\Element\DataTranformer\LayersetNameTranformer;
 /**
  * 
  */
-class ScaleLineAdminType extends AbstractType
+class ScaleBarAdminType extends AbstractType
 {
 
     /**
@@ -21,7 +21,7 @@ class ScaleLineAdminType extends AbstractType
      */
     public function getName()
     {
-        return 'scaleline';
+        return 'scalebar';
     }
 
     /**
@@ -63,10 +63,17 @@ class ScaleLineAdminType extends AbstractType
                         'left-bottom' => 'left-bottom',
                         'right-top' => 'right-top',
                         'right-bottom' => 'right-bottom')))
-                ->add('position', new PositionXYType(),
+                ->add('position', new PositionType(),
                       array(
                     'label' => 'Position',
-                    'property_path' => '[position]'));
+                    'property_path' => '[position]'))
+                ->add('units', 'choice',
+                      array(
+                    'required' => true,
+                    'multiple' => true,
+                    'choices' => array(
+                        'km' => 'kilometer',
+                        'ml' => 'mile')));
     }
 
 }
