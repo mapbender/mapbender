@@ -28,8 +28,8 @@
             var mbMap = this.mapWidget.data('mbMap');
             var options = "";
             var allSrs = mbMap.getAllSrs();
-            for(srs in allSrs){
-                options += '<option value="' + srs + '">' + allSrs[srs].title + '</option>';
+            for(var i = 0; i < allSrs.length; i++){
+                options += '<option value="' + allSrs[i].name + '">' + allSrs[i].title + '</option>';
             }
             $("#"+$(this.element).attr('id')+" select").html(options);
             this.op_sel = "#"+$(this.element).attr('id')+" select option";
@@ -55,7 +55,7 @@
             if(dest.projCode === 'EPSG:4326') {
                 dest.proj.units = 'degrees';
             }
-            this._trigger('srsChanged', null, {
+            this._trigger('srsSwitched', null, {
                 projection: dest
             });
             return true;

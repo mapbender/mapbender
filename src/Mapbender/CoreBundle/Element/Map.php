@@ -89,7 +89,7 @@ class Map extends Element
         $configuration = parent::getConfiguration();
 
         $extra = array();
-        $srs = $this->container->get('request')->get('srs');
+        $srs_req = $this->container->get('request')->get('srs');
         $poi = $this->container->get('request')->get('poi');
         if($poi)
         {
@@ -121,34 +121,67 @@ class Map extends Element
 
         // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
-        $allsrs = array($configuration["srs"]);
+        $allsrs = array();
+        if(is_int(stripos($configuration["srs"], "/"))){
+            $allsrs = explode("/", $configuration["srs"]);
+            $configuration["srs"] = $allsrs[0];
+        } else {
+            $allsrs[$configuration["srs"]] = "";
+        }
+        
         if(isset($configuration["otherSrs"]))
         {
             if(is_array($configuration["otherSrs"]))
             {
-                $allsrs = array_merge($allsrs, $configuration["otherSrs"]);
+                $otherSrs = $configuration["otherSrs"];
             } else if(is_string($configuration["otherSrs"])
                     && strlen(trim($configuration["otherSrs"])) > 0)
             {
-                $allsrs = array_merge($allsrs,
-                                      preg_split("/\s?,\s?/",
-                                                 $configuration["otherSrs"]));
+                $otherSrs = preg_split("/\s?,\s?/",
+                                                 $configuration["otherSrs"]);
+            }
+            foreach($otherSrs as $srs){
+                if(is_int(stripos($srs, "/"))){
+                    $srsHlp = explode("/", $configuration["srs"]);
+                    $allsrs[trim($srsHlp[0])] = trim($srsHlp[1]);
+                } else {
+                    $allsrs[trim($srs)] = "";
+                }
             }
         }
         unset($configuration['otherSrs']);
         $em = $this->container->get("doctrine")->getEntityManager();
         $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
                         . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
-                ->setParameter('name', $allsrs);
+                ->setParameter('name', array_keys($allsrs));
         $srses = $query->getResult();
+        
+        $ressrses = array();
         foreach($srses as $srsTemp)
         {
-            $configuration["srsDefs"][$srsTemp->getName()] = array(
+            $ressrses[$srsTemp->getName()] = array(
                 "name" => $srsTemp->getName(),
-                "title" => $srsTemp->getTitle(),
+                "title" => $allsrs[$srsTemp->getName()] !== "" ? $allsrs[$srsTemp->getName()] : $srsTemp->getTitle(),
                 "definition" => $srsTemp->getDefinition());
         }
-
+        
+        if($srs_req)
+        {
+            if(!isset($ressrses[$srs]))
+            {
+                throw new \RuntimeException('The srs: "' . $srs_req
+                        . '" does not supported.');
+            }
+            $configuration = array_merge($configuration,
+                                         array('targetsrs' => $srs_req));
+        }
+        /* sort the ressrses */
+        foreach($allsrs as $key => $value)
+        {
+            if(isset($ressrses[$key])){
+                $configuration["srsDefs"][] = $ressrses[$key];
+            }
+        }
         if(!isset($configuration['scales']))
         {
             throw new \RuntimeException('The scales does not defined.');
@@ -157,17 +190,6 @@ class Map extends Element
         {
             $configuration['scales'] = preg_split(
                     "/\s?,\s?/", $configuration['scales']);
-        }
-
-        if($srs)
-        {
-            if(!isset($configuration["srsDefs"][$srs]))
-            {
-                throw new \RuntimeException('The srs: "' . $srs
-                        . '" does not supported.');
-            }
-            $configuration = array_merge($configuration,
-                                         array('targetsrs' => $srs));
         }
         return $configuration;
     }

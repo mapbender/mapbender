@@ -34,7 +34,7 @@ $.widget("mapbender.mbCoordinatesDisplay", {
                 });
             }
         }
-        $(document).bind('mbsrsselectorsrschanged', $.proxy(self._reset, self));
+        $(document).bind('mbmapsrschanged', $.proxy(self._reset, self));
         this._reset();
     },
 

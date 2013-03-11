@@ -37,10 +37,12 @@ $.widget("mapbender.mbMap", {
             });
             this.option('layerset', layersetIds[0]);
         }
-        for(srsdef in this.options.srsDefs){
-            Proj4js.defs[srsdef] = this.options.srsDefs[srsdef].definition;
+//        for(srsdef in this.options.srsDefs){
+//            Proj4js.defs[srsdef] = this.options.srsDefs[srsdef].definition;
+//        }
+        for(var i = 0; i < this.options.srsDefs.length; i++){
+            Proj4js.defs[this.options.srsDefs[i].name] = this.options.srsDefs[i].definition;
         }
-
         var self = this,
             me = $(this.element);
         // set a map's origin extents
@@ -302,7 +304,7 @@ $.widget("mapbender.mbMap", {
 
         this.controls = controls;
         //self._trigger('ready');
-        $(document).bind('mbsrsselectorsrschanged', $.proxy(self._changeMapProjection, self));
+        $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeMapProjection, self));
         this._ready();
         //window.console && console.log("map initialized");
     },
@@ -622,6 +624,9 @@ $.widget("mapbender.mbMap", {
 //            }
         });
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
+        this._trigger('srsChanged', null, {
+            projection: srs.projection
+        });
     },
 
     /*
