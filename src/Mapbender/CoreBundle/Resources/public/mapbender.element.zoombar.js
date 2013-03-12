@@ -37,13 +37,13 @@ $.widget("mapbender.mbZoomBar", {
         this.map.events.register('zoomend', this, this._zoom2Slider);
         this._zoom2Slider();
 
-        if(this.options.draggable === "true") {
+        if(this.options.draggable === true) {
             this.element.draggable({
                 containment: this.element.closest('.region'),
                 start: function() { $(this).add('dragging'); }
             });
         }
-        
+//        $(this.element).addClass(this.options.anchor);
         if(this.options.anchor === "left-top"){
             $(this.element).css({
                 left: this.options.position[0],

@@ -87,7 +87,24 @@ class Map extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-
+        
+        if(isset($configuration["scales"]))
+        {
+            $scales = array();
+            if(is_string($configuration["scales"]))
+            { // from database
+                $scales = preg_split("/\s?,\s?/", $configuration["scales"]);
+            } else if(is_array($configuration["scales"]))
+            { // from twig
+                $scales = $configuration["scales"];
+            }
+            // sort scales high to low
+            $scales = array_map(
+                    create_function('$value', 'return (int)$value;'), $scales);
+            arsort($scales, SORT_NUMERIC);
+            $configuration["scales"] = $scales;
+        }
+        
         $extra = array();
         $srs_req = $this->container->get('request')->get('srs');
         $poi = $this->container->get('request')->get('poi');

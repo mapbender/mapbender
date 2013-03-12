@@ -45,4 +45,3 @@ html, body {
 .ie7 .ui-sortable-helper{left:0px;}
 .ie7 .zoom-next{float:right;}
 .ie7 .zoom-box, .ie7 .zoom-out{clear:both;}
-.mb-element-zoombar{top:70px !important;left:20px !important;z-index:1000 !important;}

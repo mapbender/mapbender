@@ -49,7 +49,8 @@ abstract class Element
      * @param Application $application The application object
      * @param ContainerInterface $container The container object
      */
-    public function __construct(Application $application, ContainerInterface $container, Entity $entity)
+    public function __construct(Application $application,
+            ContainerInterface $container, Entity $entity)
     {
         $this->application = $application;
         $this->container = $container;
@@ -250,23 +251,6 @@ abstract class Element
 //                $configuration[$key] = $config[$key];
 //            }
 //        }
-
-        if(isset($configuration["scales"]))
-        {
-            $scales = array();
-            if(is_string($configuration["scales"]))
-            { // from database
-                $scales = preg_split("/\s?,\s?/", $configuration["scales"]);
-            } else if(is_array($configuration["scales"]))
-            { // from twig
-                $scales = $configuration["scales"];
-            }
-            // sort scales high to low
-            $scales = array_map(
-                    create_function('$value', 'return (int)$value;'), $scales);
-            arsort($scales, SORT_NUMERIC);
-            $configuration["scales"] = $scales;
-        }
         return $configuration;
     }
 
@@ -330,6 +314,63 @@ abstract class Element
         return array(
             'js' => array(),
             'css' => array());
+    }
+
+    /**
+     * Merges the defalut configuration and configuration of an element.
+     * 
+     * @param \Mapbender\CoreBundle\Component\Element $element
+     * @return array merged configuration
+     */
+    public static function mergeConfigurations(Element $element)
+    {
+        $def = $element->getDefaultConfiguration();
+        $conf = $element->entity->getConfiguration();
+        $result = $element->mergeArrays($def, $conf, array());
+        return $result;
+//        return $element->mergeArrays($element->getDefaultConfiguration(),
+//                                    $this->entity->getConfiguration(), array());
+    }
+
+    /**
+     *  Merges the default configuration array and the configuration array
+     * 
+     * @param array $default the element default configuration
+     * @param array $main the element configuration
+     * @param array $result the result configuration
+     * @return array the result configuration
+     */
+    public static function mergeArrays($default, $main, $result)
+    {
+        if(isset($main["class"]))
+        {
+            $result["class"] = $main["class"];
+        }
+        foreach($default as $key => $value)
+        {
+            if(isset($main[$key]))
+            {
+                if(is_array($value))
+                {
+                    if(is_array($main[$key]))
+                    {
+                        $result[$key] = Element::mergeArrays($value,
+                                                             $main[$key],
+                                                             array());
+                    } else
+                    {
+                        $result[$key] = $value;
+                    }
+                } else
+                {
+                    $result[$key] = $main[$key];
+                }
+            } else
+            {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
     }
 
 }

@@ -68,13 +68,8 @@ EOT;
                 "zoom_box",
                 "zoom_max",
                 "zoom_slieder"),
-            'anchor' => array(
-                'inline',
-                'left-top',
-                'left-bottom',
-                'right-top',
-                'right-bottom'),
-            'position' => array('0px', '0px'),
+            'anchor' => 'left-top',
+            'position' => array('20px', '20px'),
             'stepSize' => 50,
             'stepByPixel' => false,
             'draggable' => true);

@@ -149,9 +149,3 @@ a, a:visited {
 .ie7 .zoom-box, .ie7 .zoom-out {
   clear: both;
 }
-
-/*.mb-element-zoombar {
-  top: 10px !important;
-  left: 10px !important;
-  z-index: 1000 !important;
-}*/

@@ -73,12 +73,7 @@ class Copyright extends Element
             "dialog_content" => "Terms of use (Content)",
             "dialog_title" => "Terms of use",
             'width' => "200px",
-            'anchor' => array(
-                'inline',
-                'left-top',
-                'left-bottom',
-                'right-top',
-                'right-bottom'),
+            'anchor' => 'left-bottom',
             'position' => array('0px', '0px'));
     }
 

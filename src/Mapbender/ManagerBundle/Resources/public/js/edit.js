@@ -7,6 +7,7 @@ $(function() {
     $("ul.elements" ).sortable({
         connectWith: "ul.elements",
         items: "li:not(.dummy)",
+        distance: 20,
         stop: function( event, ui ) {
 //            window.console && console.log(event, ui, $(ui.item).parent());
             $(ui.item).parent().find("li").each(function(idx, elm){
@@ -53,6 +54,7 @@ $(function() {
     $("ul.layerset" ).sortable({
         connectWith: "ul.layerset",
         items: "li:not(.header)",
+        distance: 20,
         stop: function( event, ui ) {
 //            window.console && console.log($(ui.item).parent());
             $(ui.item).parent().find("li").each(function(idx, elm){
@@ -82,6 +84,7 @@ $(function() {
     $("ul.layercollection" ).sortable({
         connectWith: "ul.layercollection",
         items: "li:not(.header)",
+        distance: 20,
         stop: function( event, ui ) {
             $(ui.item).parent().find("li").each(function(idx, elm){
                 if($(elm).attr("data-id")===$(ui.item).attr("data-id")){

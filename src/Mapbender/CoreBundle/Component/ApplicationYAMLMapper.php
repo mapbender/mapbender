@@ -8,6 +8,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Entity\Layerset;
 //use Mapbender\CoreBundle\Entity\Layer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -97,6 +98,11 @@ class ApplicationYAMLMapper
                 foreach($elementsDefinition as $id => $elementDefinition)
                 {
                     $configuration = $elementDefinition;
+                    $entity_class = $configuration['class'];
+                    
+                    $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
+                    $elComp = new $entity_class($appl, $this->container, new \Mapbender\CoreBundle\Entity\Element());
+                    $configuration = ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration, array());
                     unset($configuration['class']);
                     unset($configuration['title']);
 
@@ -106,6 +112,8 @@ class ApplicationYAMLMapper
                             $class::getClassTitle();
 
                     $element = new Element();
+//                    $elComp = new ElementComponent()
+                   
                     $element
                             ->setId($id)
                             ->setClass($elementDefinition['class'])

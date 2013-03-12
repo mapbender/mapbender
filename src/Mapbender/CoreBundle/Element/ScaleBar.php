@@ -46,14 +46,9 @@ class ScaleBar extends Element
             'tooltip' => 'Scale Bar',
             'target' => null,
             'maxWidth' => 200,
-            'anchor' => array(
-                'inline',
-                'left-top',
-                'left-bottom',
-                'right-top',
-                'right-bottom'),
-            'units' => array("km"),
-            'position' => array('0px', '0px'));
+            'anchor' => 'right-bottom',
+            'units' => "km",
+            'position' => array('20px', '20px'));
     }
 
     /**

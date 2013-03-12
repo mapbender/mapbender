@@ -28,7 +28,7 @@ $.widget("mapbender.mbLayertree", {
     
     _setup: function(){
         var self = this;
-        if(self.options.type === 'dialog' && self.options.autoOpen === true){
+        if(self.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true){
             self.open();
         }
         var me = this.element;

@@ -25,7 +25,7 @@ class Overview extends Element
      */
     static public function getClassDescription()
     {
-        return "Overview";
+        return "Overview Map";
     }
 
     /**
@@ -48,7 +48,7 @@ class Overview extends Element
             'target' => null,
             'width' => 200,
             'height' => 100,
-            'anchor' => 'left-top',
+            'anchor' => 'right-top',
             'position' => array('0px', '0px'),
             'maximized' => true,
             'fixed' => true);
