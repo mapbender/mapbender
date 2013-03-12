@@ -48,7 +48,7 @@ class ScaleSelector extends Element
                 'mapbender.element.scaleselector.js'
             ),
             'css' => array(
-                'mapbender.elements.css'
+                'mapbender.element.scaleselector.css'
             )
         );
     }

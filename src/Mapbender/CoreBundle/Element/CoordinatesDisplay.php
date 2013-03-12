@@ -54,7 +54,7 @@ class CoordinatesDisplay extends Element
     {
         return array(
             'js' => array('mapbender.element.coordinatesdisplay.js'),
-            'css' => array('mapbender.elements.css')
+            'css' => array('mapbender.element.coordinatesdisplay.css')
         );
     }
 
@@ -66,12 +66,10 @@ class CoordinatesDisplay extends Element
         return array(
             'tooltip' => 'coordinates display',
             'label' => false,
-//            'formatoutput' => true,
+            'numDigits' => 2,
             'empty' => 'x= - y= -',
-//            'displaystring' => '',
             'prefix' => 'x= ',
             'separator' => ' y= ',
-//            'suffix' => '',
             'target' => null
         );
     }

@@ -56,7 +56,7 @@ class SrsSelector extends Element
             'js' => array(
                 'mapbender.element.srsselector.js',
                 'proj4js/proj4js-compressed.js'),
-            'css' => array('mapbender.elements.css')
+            'css' => array('mapbender.element.srsselector.css')
         );
     }
 

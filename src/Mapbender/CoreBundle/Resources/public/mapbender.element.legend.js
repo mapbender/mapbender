@@ -106,7 +106,7 @@
             var sublayerLeg = {
                 title: sublayer.title,
                 level: level,
-                isNode: sublayer.sublayers.length > 0 ? true : false
+                isNode: sublayer.sublayers && sublayer.sublayers.length > 0 ? true : false
                 };
             if(type === "wmc"){
             //@TODO

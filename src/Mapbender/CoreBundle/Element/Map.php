@@ -122,9 +122,10 @@ class Map extends Element
         // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
         $allsrs = array();
-        if(is_int(stripos($configuration["srs"], "/"))){
-            $allsrs = explode("/", $configuration["srs"]);
-            $configuration["srs"] = $allsrs[0];
+        if(is_int(stripos($configuration["srs"], "|"))){
+            $srsHlp = explode("|", $configuration["srs"]);
+            $configuration["srs"] = $srsHlp[0];
+            $allsrs[$srsHlp[0]] = $srsHlp[1];
         } else {
             $allsrs[$configuration["srs"]] = "";
         }
@@ -141,8 +142,8 @@ class Map extends Element
                                                  $configuration["otherSrs"]);
             }
             foreach($otherSrs as $srs){
-                if(is_int(stripos($srs, "/"))){
-                    $srsHlp = explode("/", $configuration["srs"]);
+                if(is_int(stripos($srs, "|"))){
+                    $srsHlp = explode("|", $configuration["srs"]);
                     $allsrs[trim($srsHlp[0])] = trim($srsHlp[1]);
                 } else {
                     $allsrs[trim($srs)] = "";

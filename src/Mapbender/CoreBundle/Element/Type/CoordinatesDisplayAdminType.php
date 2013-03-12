@@ -37,6 +37,7 @@ class CoordinatesDisplayAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
+                ->add('numDigits', 'text', array('required' => true))
                 ->add('label', 'checkbox', array('required' => false))
                 ->add('target', 'target_element',
                       array(

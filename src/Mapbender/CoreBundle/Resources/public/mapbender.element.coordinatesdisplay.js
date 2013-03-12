@@ -52,6 +52,7 @@ $.widget("mapbender.mbCoordinatesDisplay", {
                 id: $(self.element).attr('id'),
                 element: $(self.element)[0],
                 emptyString: self.options.empty,
+                numDigits: self.options.numDigits,
                 formatOutput: function(pos) {
                     var out = self.options.displaystring.replace("$lon$",pos.lon.toFixed(isdeg ? 5 : 0));
                     return out.replace("$lat$", pos.lat.toFixed(isdeg ? 5 : 0));
@@ -69,6 +70,7 @@ $.widget("mapbender.mbCoordinatesDisplay", {
                 prefix: self.options.prefix,
                 separator: self.options.separator,
                 suffix: self.options.suffix,
+                numDigits: self.options.numDigits,
                 displayProjection: srs.projection };
             mbMap.map.olMap.addControl(new OpenLayers.Control.MousePosition(options));
             this.crs = srs.projection.projCode;

@@ -126,24 +126,6 @@ body.mb-activity .mb-element-activityindicator {
     background: url('image/activity.gif');
 }
 
-.mb-element-coordsdisplay {
-    position:relative;
-    min-width: 220px;
-    height: 20px;
-    display: inline-block;
-}
-
-.mb-element-srsselector {
-    position:relative;
-    width: 200px;
-    display: inline-block;
-}
-.mb-element-scaleselector {
-    position:relative;
-    width: 200px;
-    display: inline-block;
-}
-
 .abouticon {
     background: url('icons/featureinfo.png');
     background-repeat: no-repeat;
