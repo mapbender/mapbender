@@ -19,7 +19,7 @@
             maxDialogHeight: $(window).height() - 100,
     
             maxImgWidth: 0,
-            maxImgHeight: 0
+            maxImgHeight: 0            
         },
 
         _create: function() {
@@ -66,9 +66,9 @@
             var layers = mbMap.map.layers();
             var allLayers = [];
             $.each(layers, function(idx, val){
-                if (!val.visible()){
-                    return ;
-                }
+//                if (!val.visible()){
+//                    return ;
+//                }
                 allLayers.push(self._getLayer(val, 1));
             });
             return allLayers;
@@ -76,6 +76,7 @@
     
         _getLayer: function(layer, level) {
             return {
+                visible: layer.visible() ? '' : ' notvisible',
                 title: layer.label, 
                 level: level,
                 sublayers: this._getSublayers(layer, level + 1)
@@ -104,6 +105,7 @@
         _getSublayer: function(sublayer, type, level){
             var self = this;
             var sublayerLeg = {
+                visible: '', // visible
                 title: sublayer.title,
                 level: level,
                 isNode: sublayer.sublayers && sublayer.sublayers.length > 0 ? true : false
@@ -138,31 +140,31 @@
                             //                        window.console && console.log( sublayer.legend.url);
                             if(layers[layidx].sublayers[sublayidx].isNode){
                                 if(self.options.showGroupedLayerTitle){
-                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
                                 }
                             } else {
                                 if(self.options.showLayerTitle){
-                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
                                 }
                             }
-                            html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' image"><img src="' + layers[layidx].sublayers[sublayidx].legend.url + '"></img></li>';
+                            html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' image"><img src="' + layers[layidx].sublayers[sublayidx].legend.url + '"></img></li>';
                             self._createLegend(layers, layidx, ++sublayidx, html, reshtml);
                         }).error(function() {
                             if(!self.options.hideEmptyLayers){
                                 if(layers[layidx].sublayers[sublayidx].isNode){
                                     if(self.options.showGroupedLayerTitle){
-                                        html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                        html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
                                     }
                                 } else {
                                     if(self.options.showLayerTitle){
-                                        html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                        html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
                                     }
                                 }
-                                html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' text">' + self.options.noLegend + '</li>';
+                                html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' text">' + self.options.noLegend + '</li>';
                             } else {
                                 if(layers[layidx].sublayers[sublayidx].isNode){
                                     if(self.options.showGroupedLayerTitle){
-                                        html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                        html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
                                     }
                                 }
                             }
@@ -172,18 +174,18 @@
                         if(!self.options.hideEmptyLayers){
                             if(layers[layidx].sublayers[sublayidx].isNode){
                                 if(self.options.showGroupedLayerTitle){
-                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
                                 }
                             } else {
                                 if(self.options.showLayerTitle){
-                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
                                 }
                             }
-                            html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' text">' + self.options.noLegend + '</li>';
+                            html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' text">' + self.options.noLegend + '</li>';
                         } else {
                             if(layers[layidx].sublayers[sublayidx].isNode){
                                 if(self.options.showGroupedLayerTitle){
-                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
+                                    html += '<li class="ebene' + layers[layidx].sublayers[sublayidx].level + layers[layidx].sublayers[sublayidx].visible + ' title">' + layers[layidx].sublayers[sublayidx].title + '</li>';
                                 }
                             }
                         }

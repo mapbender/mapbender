@@ -156,12 +156,6 @@ body.mb-activity .mb-element-activityindicator {
     padding-left: 30px;
 }
 
-.legendicon {
-    background: url('icons/legend.png');
-    background-repeat: no-repeat;
-    padding-left: 30px;
-}
-
 .defaulticon {
     background: url('image/activity.gif');
     background-repeat: no-repeat;
