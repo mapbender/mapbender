@@ -98,13 +98,12 @@ class ApplicationYAMLMapper
                 foreach($elementsDefinition as $id => $elementDefinition)
                 {
                     $configuration = $elementDefinition;
-                    $entity_class = $configuration['class'];
-                    
+                    unset($configuration['class']);
+                    unset($configuration['title']);
+                    $entity_class = $elementDefinition['class'];
                     $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
                     $elComp = new $entity_class($appl, $this->container, new \Mapbender\CoreBundle\Entity\Element());
                     $configuration = ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration, array());
-                    unset($configuration['class']);
-                    unset($configuration['title']);
 
                     $class = $elementDefinition['class'];
                     $title = array_key_exists('title', $elementDefinition) ?

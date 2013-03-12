@@ -317,50 +317,26 @@ abstract class Element
     }
 
     /**
-     * Merges the defalut configuration and configuration of an element.
-     * 
-     * @param \Mapbender\CoreBundle\Component\Element $element
-     * @return array merged configuration
-     */
-    public static function mergeConfigurations(Element $element)
-    {
-        $def = $element->getDefaultConfiguration();
-        $conf = $element->entity->getConfiguration();
-        $result = $element->mergeArrays($def, $conf, array());
-        return $result;
-//        return $element->mergeArrays($element->getDefaultConfiguration(),
-//                                    $this->entity->getConfiguration(), array());
-    }
-
-    /**
      *  Merges the default configuration array and the configuration array
      * 
-     * @param array $default the element default configuration
-     * @param array $main the element configuration
+     * @param array $default the default configuration of an element
+     * @param array $main the configuration of an element
      * @param array $result the result configuration
      * @return array the result configuration
      */
     public static function mergeArrays($default, $main, $result)
     {
-        if(isset($main["class"]))
+        foreach($main as $key => $value)
         {
-            $result["class"] = $main["class"];
-        }
-        foreach($default as $key => $value)
-        {
-            if(isset($main[$key]))
+            if($value === null)
             {
-                if(is_array($value))
+                $result[$key] = null;
+            } else if(is_array($value))
+            {
+                if(isset($default[$key]))
                 {
-                    if(is_array($main[$key]))
-                    {
-                        $result[$key] = Element::mergeArrays($value,
-                                                             $main[$key],
-                                                             array());
-                    } else
-                    {
-                        $result[$key] = $value;
-                    }
+                    $result[$key] = Element::mergeArrays($default[$key],
+                                                         $main[$key], array());
                 } else
                 {
                     $result[$key] = $main[$key];
@@ -368,6 +344,16 @@ abstract class Element
             } else
             {
                 $result[$key] = $value;
+            }
+        }
+        if($default !== null && is_array($default))
+        {
+            foreach($default as $key => $value)
+            {
+                if(!isset($result[$key]) && $value !== null)
+                {
+                    $result[$key] = $value;
+                }
             }
         }
         return $result;

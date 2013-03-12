@@ -47,7 +47,7 @@ class ScaleBar extends Element
             'target' => null,
             'maxWidth' => 200,
             'anchor' => 'right-bottom',
-            'units' => "km",
+            'units' => array("km"),
             'position' => array('20px', '20px'));
     }
 
