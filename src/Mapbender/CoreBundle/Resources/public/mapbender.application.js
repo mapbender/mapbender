@@ -16,6 +16,10 @@ Mapbender.setup = function() {
     $(document).trigger('mapbender.setupfinished');
 };
 
+Mapbender.error = function(message){
+    alert(message);
+};
+
 // This calls on document.ready and won't be called when inserted dynamically
 // into a existing page. In such case, Mapbender.setup has to be called
 // explicitely, see mapbender.application.json.js

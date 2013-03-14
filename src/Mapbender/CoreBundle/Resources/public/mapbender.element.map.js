@@ -110,9 +110,10 @@ $.widget("mapbender.mbMap", {
                 });
             }
         }
-
+        var hasLayers = false;
         $.each(Mapbender.configuration.layersets[this.options.layerset].reverse(), function(idx, defArr) {
             $.each(defArr, function(idx, layerDef) {
+                hasLayers = true;
                 layerDef.id = idx;
                 layers.push(self._convertLayerDef.call(self, layerDef));
                 self.rootLayers.push(layers[layers.length-1]);
@@ -307,6 +308,9 @@ $.widget("mapbender.mbMap", {
         $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeMapProjection, self));
         this._ready();
         //window.console && console.log("map initialized");
+        if(!hasLayers){
+            Mapbender.error('The element "map" has no layer.');
+        }
     },
 
     /**

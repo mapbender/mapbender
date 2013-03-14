@@ -24,9 +24,9 @@ $.widget("mapbender.mbRuler", {
             throw 'mbRuler: Type must be line or area.';
         }
         if(this.options.target === null
-            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || new String(this.options.target).replace(/^\s+|\s+$/g, '') === ""
             || !$('#' + this.options.target)){
-            alert('The target element "map" is not defined for a Ruler ' + this.options.type + '.');
+            Mapbender.error('The target element "map" is not defined for a Ruler ' + this.options.type + '.');
             return;
         }
 

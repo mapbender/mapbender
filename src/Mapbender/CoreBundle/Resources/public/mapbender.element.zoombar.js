@@ -16,9 +16,9 @@ $.widget("mapbender.mbZoomBar", {
 
     _create: function() {
         if(this.options.target === null
-            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || new String(this.options.target).replace(/^\s+|\s+$/g, '') === ""
             || !$('#' + this.options.target)){
-            alert('The target element "map" is not defined for a Navigation Bar.');
+            Mapbender.error('The target element "map" is not defined for a Navigation Bar.');
             return;
         }
         var self = this;

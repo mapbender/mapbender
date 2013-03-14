@@ -24,9 +24,9 @@
 
         _create: function() {
             if(this.options.target === null
-                || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+                || new String(this.options.target).replace(/^\s+|\s+$/g, '') === ""
                 || !$('#' + this.options.target)){
-                alert('The target element "map" is not defined for a Legend Dialog.');
+                Mapbender.error('The target element "map" is not defined for a Legend Dialog.');
                 return;
             }
             var self = this;

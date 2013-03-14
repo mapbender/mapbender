@@ -11,9 +11,9 @@
 
         _create: function() {
             if(this.options.target === null
-                || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+                || new String(this.options.target).replace(/^\s+|\s+$/g, '') === ""
                 || !$('#' + this.options.target)){
-                alert('The target element is not defined for a SRSselector.');
+                Mapbender.error('The target element is not defined for a SRSselector.');
                 return;
             }
             var self = this;

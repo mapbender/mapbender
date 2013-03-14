@@ -11,9 +11,9 @@ $.widget("mapbender.mbToc", $.ui.dialog, {
 
     _create: function() {
         if(this.options.target === null
-            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+            || new String(this.options.target).replace(/^\s+|\s+$/g, '') === ""
             || !$('#' + this.options.target)){
-            alert('The target element "map" is not defined for a ToC.');
+            Mapbender.error('The target element "map" is not defined for a ToC.');
             return;
         }
         var self = this;

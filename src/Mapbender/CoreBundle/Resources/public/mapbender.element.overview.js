@@ -14,9 +14,9 @@
          */
         _create: function() {
             if(this.options.target === null
-                || this.options.target.replace(/^\s+|\s+$/g, '') === ""
+                || new String(this.options.target).replace(/^\s+|\s+$/g, '') === ""
                 || !$('#' + this.options.target)){
-                alert('The target element "map" is not defined for an overview.');
+                Mapbender.error('The target element "map" is not defined for an overview.');
                 return;
             }
             var self = this;
@@ -84,6 +84,10 @@
                         }
                     });
                 });
+            if(layers_overview.length === 0){
+                Mapbender.error('The overview element has no layer.');
+                return;
+            }
             this.mapOrigExtents = {
                 max: {
                     projection: proj,
