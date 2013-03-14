@@ -290,6 +290,13 @@ class ApplicationController extends Controller
     public function confirmDeleteAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+        if($application === null)
+        {
+            $this->get('session')->setFlash('error',
+                                            'Your application has been already deleted.');
+            return $this->redirect(
+                            $this->generateUrl('mapbender_manager_application_index'));
+        }
         // ACL access check
         $this->checkGranted('EDIT', $application);
 
@@ -541,14 +548,14 @@ class ApplicationController extends Controller
         $sourceInstance = $source->createInstance();
         $sourceInstance->setLayerset($layerset);
         $sourceInstance->setWeight(-1);
-        
+
         $layerset->addInstance($sourceInstance);
         $em = $this->getDoctrine()->getEntityManager();
         $em->persist($sourceInstance);
         $em->persist($application);
         $em->persist($layerset);
         $em->flush();
-        
+
         $num = 0;
         foreach($layerset->getInstances() as $instance)
         {
@@ -689,7 +696,7 @@ class ApplicationController extends Controller
                 throw new AccessDeniedException();
             }
         } else if($action === "VIEW" && !$securityContext->isGranted($action,
-                                                                    $object))
+                                                                     $object))
         {
             throw new AccessDeniedException();
         } else if($action === "EDIT" && !$securityContext->isGranted($action,
