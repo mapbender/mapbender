@@ -8,14 +8,17 @@ class MapbenderWmtsBundle extends MapbenderBundle {
     
     public function getRepositoryManagers()
     {
-        return array(
-            'wmts' => array(
-                'id'    => 'wmts',
-                'label' => 'OGC WMTS',
-                'manager' => 'mapbender_wmts_repository',
-                'startAction' => "MapbenderWmtsBundle:Repository:start",
-                'bundle' => "MapbenderWmtsBundle"
-            )
-        );
+        // VH: 20130313 - under development
+        // return array(
+        //     'wmts' => array(
+        //         'id'    => 'wmts',
+        //         'label' => 'OGC WMTS',
+        //         'manager' => 'mapbender_wmts_repository',
+        //         'startAction' => "MapbenderWmtsBundle:Repository:start",
+        //         'bundle' => "MapbenderWmtsBundle"
+        //     )
+        // );
+
+        return array();
     }
 }

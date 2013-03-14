@@ -1,13 +1,13 @@
 {% macro requestinformation(requestinformation, title) %}
-  <div class="labelAlt">{{ title }} GET:</div>
+  <div class="labelText">{{ title }} GET:</div>
   <div class="metaText">{{ requestinformation.httpGet }}</div>
   <div class="clearContainer"></div>
 
-  <div class="labelAlt">{{ title }} POST:</div>
+  <div class="labelText">{{ title }} POST:</div>
   <div class="metaText">{{ requestinformation.httpPost }}</div>
   <div class="clearContainer"></div>
 
-  <div class="labelAlt">{{title}} {{ "Formats" | trans }}:</div>
+  <div class="labelText">{{title}} {{ "Formats" | trans }}:</div>
   {% for format in requestinformation.formats %}
     <div class="metaText metaFormats">{{ format }}</div>
   {% endfor %}

@@ -1,5 +1,5 @@
 $(function() {
-    $(".subTitle").bind("click", function(){
+    $(".openCloseTitle").bind("click", function(){
         var parent = $(this).parent();
 
         if(parent.hasClass("closed")){

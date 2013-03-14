@@ -1,23 +1,12 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'Service Repository' | trans }}{% endblock %}
+{% block title %}{{ 'Add Service' | trans }}{% endblock %}
 
 {% block manager_content %}
 
-<div class="well">
-{#  <ul class="nav nav-tabs">
-    {% for manager in managers %}
-    <li{% if loop.first %} class="active"{% endif %}><a href="#manager-{{ manager.id }}" data-toggle="tab">{{ manager.label | trans}}</a></li>
-    {% endfor %}
-  </ul> #}
-  
-    {% for manager in managers %}
-      <section id="manager-{{ manager.id }}" class="tab-pane{% if loop.first %} active{% endif %}">
-        {% render manager.startAction %}
-      </section>
-    {% endfor %}
-  
-    <div class="clearContainer"></div>
-</div>
+{% for manager in managers %}
+  {% render manager.startAction %}
+  <div class="clearContainer"></div>
+{% endfor %}
 
 {% endblock %}

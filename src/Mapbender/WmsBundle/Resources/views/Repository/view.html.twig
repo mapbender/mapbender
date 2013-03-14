@@ -1,13 +1,15 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 {% from "MapbenderWmsBundle:Repository:macros.html.twig" import requestinformation  %}
 
-{% block title %}{{ 'WMS' | trans }}{{ wms.title }}{% endblock %}
+{% block title %}{{ 'WMS' | trans }} {{ wms.title }}{% endblock %}
 
 {% block manager_js %}
 <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/repository/repository.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
+
+<a class="button right" href="{{ url("mapbender_manager_repository_delete",{"source":wms.id ,"return":"view"} ) }}">{{"Delete" | trans }}</a>
 
 <div id="serviceTabContainer" class="tabContainer">
   <ul class="tabs">
@@ -17,19 +19,19 @@
     <li id="tabLayers" class="tab">{{"Layers" | trans }}</li>
   </ul>
   <div id="containerMetaData" class="container active serviceContainer serviceMetaContainer">
-    <div class="labelAlt">{{ "Title" | trans }}:</div><div class="metaText">{{ wms.title }}</div>
+    <div class="labelText">{{ "Title" | trans }}:</div><div class="metaText">{{ wms.title }}</div>
     <div class="clearContainer"></div>
-    <div class="labelAlt">{{ "Name" | trans }}:</div><div class="metaText">{{ wms.name }}</div>
+    <div class="labelText">{{ "Name" | trans }}:</div><div class="metaText">{{ wms.name }}</div>
     <div class="clearContainer"></div>
-    <div class="labelAlt">{{ "Version" | trans }}:</div><div class="metaText">{{ wms.version }}</div>
+    <div class="labelText">{{ "Version" | trans }}:</div><div class="metaText">{{ wms.version }}</div>
     <div class="clearContainer"></div>
-    <div class="labelAlt">{{ "Origin URL" | trans }}:</div><div class="metaText metaUrl">{{ wms.originUrl }}</div>
+    <div class="labelText">{{ "Origin URL" | trans }}:</div><div class="metaText metaUrl">{{ wms.originUrl }}</div>
     <div class="clearContainer"></div>
-    <div class="labelAlt">{{ "Abstract" | trans }}:</div><div class="metaText">{{ wms.description }}</div>
+    <div class="labelText">{{ "Abstract" | trans }}:</div><div class="metaText">{{ wms.description }}</div>
     <div class="clearContainer"></div>
-    <div class="labelAlt">{{ "Online Resource" | trans }}:</div><div class="metaText">{{ wms.onlineResource }}</div>
+    <div class="labelText">{{ "Online Resource" | trans }}:</div><div class="metaText">{{ wms.onlineResource }}</div>
     <div class="clearContainer"></div>
-    <div class="labelAlt">{{ "Exception Formats" | trans }}:</div>
+    <div class="labelText">{{ "Exception Formats" | trans }}:</div>
     <div class="metaText">
       {% for exc in wms.exceptionFormats %}
         {% if not loop.first %},{% endif %}
@@ -37,62 +39,62 @@
       {% endfor %}
     </div>
     <div class="clearContainer"></div>
-    <div class="labelAlt">{{ "Fees" | trans }}:</div><div class="metaText">{{ wms.fees }}</div>
+    <div class="labelText">{{ "Fees" | trans }}:</div><div class="metaText">{{ wms.fees }}</div>
     <div class="clearContainer"></div>
-    <div class="labelAlt">{{ "Access constraints" | trans }}:</div><div class="metaText">{{ wms.accessConstraints }}</div>
+    <div class="labelText">{{ "Access constraints" | trans }}:</div><div class="metaText">{{ wms.accessConstraints }}</div>
     <div class="clearContainer"></div>
   </div>
   <div id="containerContact" class="container serviceContainer serviceContactContainer">
-    <div class="labelAlt">{{ "Person" | trans }}:</div>
+    <div class="labelText">{{ "Person" | trans }}:</div>
     <div class="metaText">{{ wms.contact.person }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "Organization" | trans }}:</div>
+    <div class="labelText">{{ "Organization" | trans }}:</div>
     <div class="metaText">{{ wms.contact.organization }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "Position" | trans }}:</div>
+    <div class="labelText">{{ "Position" | trans }}:</div>
     <div class="metaText">{{ wms.contact.position }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "Telephone" | trans }}:</div>
+    <div class="labelText">{{ "Telephone" | trans }}:</div>
     <div class="metaText">{{ wms.contact.voiceTelephone }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "Facsimile" | trans }}:</div>
+    <div class="labelText">{{ "Facsimile" | trans }}:</div>
     <div class="metaText">{{ wms.contact.facsimileTelephone }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "Email" | trans }}:</div>
+    <div class="labelText">{{ "Email" | trans }}:</div>
     <div class="metaText">{{ wms.contact.electronicMailAddress }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "Address" | trans }}:</div>
+    <div class="labelText">{{ "Address" | trans }}:</div>
     <div class="metaText">{{ wms.contact.address }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "Addresstype" | trans }}:</div>
+    <div class="labelText">{{ "Addresstype" | trans }}:</div>
     <div class="metaText">{{ wms.contact.addressType }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "City" | trans }}:</div>
+    <div class="labelText">{{ "City" | trans }}:</div>
     <div class="metaText">{{ wms.contact.addressCity }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "State" | trans }}:</div>
+    <div class="labelText">{{ "State" | trans }}:</div>
     <div class="metaText">{{ wms.contact.addressStateOrProvince }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "Postcode" | trans }}:</div>
+    <div class="labelText">{{ "Postcode" | trans }}:</div>
     <div class="metaText">{{ wms.contact.addressPostcode }}</div>
     <div class="clearContainer"></div>
 
-    <div class="labelAlt">{{ "Country" | trans }}:</div>
+    <div class="labelText">{{ "Country" | trans }}:</div>
     <div class="metaText">{{ wms.contact.addressCountry }}</div>
     <div class="clearContainer"></div>
   </div>
   <div id="containerService" class="container serviceContainer serviceServiceContainer">
-    <div class="labelAlt">{{ "Version" | trans }}:</div>
+    <div class="labelText">{{ "Version" | trans }}:</div>
     <div class="metaText">{{ wms.version }}</div>
     <div class="clearContainer"></div>
 
@@ -128,7 +130,7 @@
     {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': wms.rootlayer, 'itemLevel': 1 }%}
   </div>
 </div>
-
-<a class="button right" href="{{ url("mapbender_manager_repository_delete",{"source":wms.id ,"return":"view"} ) }}">Delete</a>
+<a class="button right" href="{{ url("mapbender_manager_repository_delete",{"source":wms.id ,"return":"view"} ) }}">{{"Delete" | trans }}</a>
+<div class="clearContainer"></div>
 
 {% endblock %}
