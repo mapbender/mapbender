@@ -6,18 +6,31 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Mapbender\CoreBundle\Entity\SRS;
 
-class LoadEpsgData implements FixtureInterface {
+/**
+ * The LoadEpsgData loads the epsg parameter from a text file into a database table.
+ * 
+ * @author Paul Schmidt
+ */
+class LoadEpsgData implements FixtureInterface
+{
 
-    public function load(ObjectManager $manager) {
-        $filepath = __DIR__.'/../../Resources/proj4/proj4js_epsg.txt';
+    /**
+     * @inheritdoc
+     */
+    public function load(ObjectManager $manager)
+    {
+        $filepath = __DIR__ . '/../../../Resources/proj4/proj4js_epsg.txt';
         $file = @fopen($filepath, "r");
-        while (!feof($file)) {
+        while(!feof($file))
+        {
             $help = trim(str_ireplace("\n", "", fgets($file)));
-            if(strlen($help) === 0){
+            if(strlen($help) === 0)
+            {
                 continue;
             }
             $temp = explode("|", $help);
-            if($temp[0] === null || strlen($temp[0]) === 0){
+            if($temp[0] === null || strlen($temp[0]) === 0)
+            {
                 continue;
             }
             $srs = new SRS();
