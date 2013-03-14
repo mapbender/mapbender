@@ -97,13 +97,14 @@ class ApplicationYAMLMapper
             {
                 foreach($elementsDefinition as $id => $elementDefinition)
                 {
-                    $configuration = $elementDefinition;
-                    unset($configuration['class']);
-                    unset($configuration['title']);
+                    $configuration_ = $elementDefinition;
+                    unset($configuration_['class']);
+                    unset($configuration_['title']);
                     $entity_class = $elementDefinition['class'];
                     $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
                     $elComp = new $entity_class($appl, $this->container, new \Mapbender\CoreBundle\Entity\Element());
-                    $configuration = ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration, array());
+                    $defConfig = $elComp->getDefaultConfiguration();
+                    $configuration = ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_, array());
 
                     $class = $elementDefinition['class'];
                     $title = array_key_exists('title', $elementDefinition) ?
@@ -171,7 +172,7 @@ class ApplicationYAMLMapper
 
                 $layerset->addInstance($instance);
             }
-            $application->addLayersets($layerset);
+            $application->addLayerset($layerset);
         }
 
         $application->setSource(ApplicationEntity::SOURCE_YAML);

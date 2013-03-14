@@ -350,7 +350,10 @@ abstract class Element
         {
             foreach($default as $key => $value)
             {
-                if(!isset($result[$key]) && $value !== null)
+                if(!isset($result[$key])
+                        || (isset($result[$key])
+                            && $result[$key] === null
+                            && $value !== null))
                 {
                     $result[$key] = $value;
                 }

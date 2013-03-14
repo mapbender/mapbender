@@ -234,8 +234,8 @@ class Application {
      *
      * @param Layerset $layerset
      */
-    public function addLayersets(Layerset $layersets) {
-        $this->layersets[] = $layersets;
+    public function addLayerset(Layerset $layerset) {
+        $this->layersets[] = $layerset;
     }
 
     /**

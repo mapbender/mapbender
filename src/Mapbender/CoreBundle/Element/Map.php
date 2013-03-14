@@ -45,13 +45,13 @@ class Map extends Element
             'layerset' => null,
             'dpi' => 72,
             'srs' => 'EPSG:4326',
-            'otherSrs' => "EPSG:31466,EPSG:31467",
+            'otherSrs' => array("EPSG:31466","EPSG:31467"),
             'units' => 'degrees',
             'extents' => array(
                 'max' => array(0, 40, 20, 60),
                 'start' => array(5, 45, 15, 55)),
             'maxResolution' => 'auto',
-            "scales" => "25000000,10000000,5000000,1000000,500000",
+            "scales" => array(25000000,10000000,5000000,1000000,500000),
             'imgPath' => 'bundles/mapbendercore/mapquery/lib/openlayers/img');
     }
 
@@ -203,8 +203,7 @@ class Map extends Element
         if(!isset($configuration['scales']))
         {
             throw new \RuntimeException('The scales does not defined.');
-        } else if(isset($configuration['scales'])
-                && is_string($configuration['scales']))
+        } else if(is_string($configuration['scales']))
         {
             $configuration['scales'] = preg_split(
                     "/\s?,\s?/", $configuration['scales']);
