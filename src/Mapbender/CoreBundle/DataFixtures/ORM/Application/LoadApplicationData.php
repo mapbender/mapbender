@@ -44,11 +44,23 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
         foreach($definitions as $slug => $definition)
         {
             $timestamp = round((microtime(true) * 1000));
+            if(!key_exists('title', $definition))
+            {
+                $definition['title'] = "TITLE " . $timestamp;
+            }
+
+            if(!key_exists('published', $definition))
+            {
+                $definition['published'] = false;
+            } else
+            {
+                $definition['published'] = (boolean) $definition['published'];
+            }
             // First, create an application entity
             $application = new ApplicationEntity();
             $application
-                    ->setSlug($timestamp."_".$slug)
-                    ->setTitle($timestamp." ".$definition['title'])
+                    ->setSlug($timestamp . "_" . $slug)
+                    ->setTitle($timestamp . " " . $definition['title'])
                     ->setDescription($definition['description'])
                     ->setTemplate($definition['template'])
                     ->setPublished($definition['published'])
@@ -87,10 +99,12 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 if($elementsDefinition !== null)
                 {
                     $weight = 0;
-                    foreach($elementsDefinition as $element_yml_id => $elementDefinition)
+                    foreach($elementsDefinition as $element_yml_id =>
+                                $elementDefinition)
                     {
                         $class = $elementDefinition['class'];
-                        $title = array_key_exists('title', $elementDefinition) ?
+                        $title = array_key_exists('title', $elementDefinition)
+                                && $elementDefinition['title'] !== null ?
                                 $elementDefinition['title'] :
                                 $class::getClassTitle();
 
@@ -110,22 +124,10 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                     }
                 }
             }
-//            print_r($elements_map);
-//            print_r($layersets_map);
             // Then merge default configuration and elements configuration
             foreach($application->getElements() as $element)
-            {      
+            {
                 $configuration_yml = $element->getConfiguration();
-//                if(key_exists("target", $configuration_yml)
-//                        && key_exists($configuration_yml["target"], $elements_map))
-//                {
-//                    $configuration_yml["target"] = $elements_map[$configuration_yml["target"]];
-//                }
-//                if(key_exists("layerset", $configuration_yml)
-//                        && key_exists($configuration_yml["layerset"], $layersets_map))
-//                {
-//                    $configuration_yml["layerset"] = $layersets_map[$configuration_yml["layerset"]];
-//                }
                 $entity_class = $configuration_yml['class'];
                 $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
                 $elComp = new $entity_class($appl, $this->container, new Element());
@@ -135,20 +137,20 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 $configuration = ElementComponent::mergeArrays(
                                 $elComp->getDefaultConfiguration(),
                                 $configuration_yml, array());
-                
+
                 if(key_exists("target", $configuration)
-                       && $configuration["target"] !== null
+                        && $configuration["target"] !== null
                         && key_exists($configuration["target"], $elements_map))
                 {
                     $configuration["target"] = $elements_map[$configuration["target"]];
                 }
                 if(key_exists("layerset", $configuration_yml)
-                       && $configuration["layerset"] !== null
+                        && $configuration["layerset"] !== null
                         && key_exists($configuration["layerset"], $layersets_map))
                 {
                     $configuration["layerset"] = $layersets_map[$configuration["layerset"]];
                 }
-                
+
                 $class = $elementDefinition['class'];
                 $title = array_key_exists('title', $elementDefinition) ?
                         $elementDefinition['title'] :

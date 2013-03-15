@@ -72,8 +72,20 @@ class ApplicationYAMLMapper
         {
             return null;
         }
-
+        $timestamp = round((microtime(true) * 1000));
         $definition = $definitions[$slug];
+        if(!key_exists('title', $definition))
+        {
+            $definition['title'] = "TITLE ". $timestamp;
+        }
+
+        if(!key_exists('published', $definition))
+        {
+            $definition['published'] = false;
+        } else 
+        {
+            $definition['published'] = (boolean) $definition['published'];
+        }
 
         // First, create an application entity
         $application = new ApplicationEntity();

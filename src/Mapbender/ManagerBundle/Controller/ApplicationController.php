@@ -108,6 +108,7 @@ class ApplicationController extends Controller
         $form->bindRequest($request);
         if($form->isValid())
         {
+            $application->setUpdated(new \DateTime('now'));
             $em = $this->getDoctrine()->getEntityManager();
 
             $em->getConnection()->beginTransaction();
