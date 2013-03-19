@@ -1,9 +1,9 @@
 <?php
+
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Mapbender\CoreBundle\Component\EntityIdentifierIn;
 use Mapbender\CoreBundle\Component\HasInstanceIn;
 
@@ -18,7 +18,9 @@ use Mapbender\CoreBundle\Component\HasInstanceIn;
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_source" = "Source"})
  */
-abstract class Source {
+abstract class Source
+{
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -32,19 +34,19 @@ abstract class Source {
      * @ORM\Column(type="string", nullable=true)
      */
     protected $title;
-    
+
     /**
      * @var string $alias The source alias
      * @ORM\Column(type="string", length=128, nullable=true)
      */
     protected $alias = "";
-    
+
     /**
      * @var string $description The source description
      * @ORM\Column(type="text", nullable=true)
      */
     protected $description;
-    
+
     /**
      * Get id
      *
@@ -76,7 +78,7 @@ abstract class Source {
     {
         return $this->title;
     }
-    
+
     /**
      * Set description
      *
@@ -120,7 +122,7 @@ abstract class Source {
     {
         return $this->alias;
     }
-    
+
 //    /**
 //     * Get source type
 //     *
@@ -146,10 +148,10 @@ abstract class Source {
 //     * Create Instance
 //     */
 //    public abstract function createInstance();
-    
-    public function __toString(){
+
+    public function __toString()
+    {
         return (string) $this->id;
     }
-    
-    
+
 }

@@ -5,6 +5,7 @@
  */
 
 namespace Mapbender\CoreBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,7 +16,9 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="mb_core_element")
  */
-class Element {
+class Element
+{
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -55,6 +58,11 @@ class Element {
     protected $region;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $published = true;
+
+    /**
      * @var integer $weight The sorting weight for display
      * @ORM\Column(type="integer")
      */
@@ -68,7 +76,8 @@ class Element {
      * ApplicationYAMLMapper class. Maybe this could be done using a proxy
      * class instead?
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
         return $this;
     }
@@ -78,7 +87,8 @@ class Element {
      *
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -87,7 +97,8 @@ class Element {
      *
      * @param string $title
      */
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         $this->title = $title;
         return $this;
     }
@@ -97,7 +108,8 @@ class Element {
      *
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
 
@@ -106,7 +118,8 @@ class Element {
      *
      * @param string $class
      */
-    public function setClass($class) {
+    public function setClass($class)
+    {
         $this->class = $class;
         return $this;
     }
@@ -116,7 +129,8 @@ class Element {
      *
      * @return string
      */
-    public function getClass() {
+    public function getClass()
+    {
         return $this->class;
     }
 
@@ -125,7 +139,8 @@ class Element {
      *
      * @param array $configuration
      */
-    public function setConfiguration($configuration) {
+    public function setConfiguration($configuration)
+    {
         $this->configuration = $configuration;
         return $this;
     }
@@ -135,7 +150,8 @@ class Element {
      *
      * @return array
      */
-    public function getConfiguration() {
+    public function getConfiguration()
+    {
         return $this->configuration;
     }
 
@@ -144,7 +160,8 @@ class Element {
      *
      * @param string $region
      */
-    public function setRegion($region) {
+    public function setRegion($region)
+    {
         $this->region = $region;
         return $this;
     }
@@ -154,8 +171,30 @@ class Element {
      *
      * @return string
      */
-    public function getRegion() {
+    public function getRegion()
+    {
         return $this->region;
+    }
+
+    /**
+     * Set published
+     *
+     * @param boolean $published
+     */
+    public function setPublished($published)
+    {
+        $this->published = $published;
+        return $this;
+    }
+
+    /**
+     * Is published?
+     *
+     * @return boolean
+     */
+    public function isPublished()
+    {
+        return $this->published;
     }
 
     /**
@@ -163,7 +202,8 @@ class Element {
      *
      * @param integer $weight
      */
-    public function setWeight($weight) {
+    public function setWeight($weight)
+    {
         $this->weight = $weight;
         return $this;
     }
@@ -173,7 +213,8 @@ class Element {
      *
      * @return integer
      */
-    public function getWeight() {
+    public function getWeight()
+    {
         return $this->weight;
     }
 
@@ -182,7 +223,8 @@ class Element {
      *
      * @param Mapbender\CoreBundle\Entity\Application $application
      */
-    public function setApplication(\Mapbender\CoreBundle\Entity\Application $application) {
+    public function setApplication(\Mapbender\CoreBundle\Entity\Application $application)
+    {
         $this->application = $application;
         return $this;
     }
@@ -192,12 +234,15 @@ class Element {
      *
      * @return Mapbender\CoreBundle\Entity\Application
      */
-    public function getApplication() {
+    public function getApplication()
+    {
         return $this->application;
     }
-    
-    public function __toString() {
+
+    public function __toString()
+    {
         return (string) $this->id;
     }
+
 }
 

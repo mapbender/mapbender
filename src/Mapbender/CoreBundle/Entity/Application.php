@@ -310,7 +310,8 @@ class Application {
      *
      * @param boolean $published
      */
-    public function setPublished($published) {
+    public function setPublished($published)
+    {
         $this->published = $published;
         return $this;
     }
@@ -320,7 +321,8 @@ class Application {
      *
      * @return boolean
      */
-    public function isPublished() {
+    public function isPublished()
+    {
         return $this->published;
     }
 
