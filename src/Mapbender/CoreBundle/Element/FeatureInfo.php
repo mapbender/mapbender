@@ -47,9 +47,10 @@ class FeatureInfo extends Element
     {
         return array(
             'tooltip' => 'Feature Info',
-            'label' => true,
-            'icon' => 'featureinfoicon',
-            "target" => null);
+//            'label' => true,
+//            'icon' => 'featureinfoicon',
+            "target" => null,
+            "autoOpen" => false);
     }
 
     /**

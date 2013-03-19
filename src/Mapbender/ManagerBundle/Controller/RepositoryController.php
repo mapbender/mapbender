@@ -56,13 +56,14 @@ class RepositoryController extends Controller {
     }
 
     /**
-    * @ManagerRoute("/source/{sourceId}")
+    * @ManagerRoute("/source/{id}")
     * @Method({"GET"})
     * @Template
+    * @ParamConverter("source", class="Mapbender\CoreBundle\Entity\Source")
     */
-    public function viewAction($sourceId){
-        $source = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+    public function viewAction(Source $source){
+//        $source = $this->getDoctrine()
+//                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
         return  $this->forward(
@@ -72,19 +73,20 @@ class RepositoryController extends Controller {
     }
     
     /**
-    * @ManagerRoute("/source/{sourceId}/delete")
+    * @ManagerRoute("/source/{id}/delete")
     * @Method({"GET"})
     * @Template
-    * @ParamConverter
+    * @ParamConverter("source", class="Mapbender\CoreBundle\Entity\Source")
     */
-    public function confirmdeleteAction(Source $sourceId){
-        return array("source" => $sourceId);
+    public function confirmdeleteAction(Source $source){
+        return array("source" => $source);
     }
 
     /**
      * deletes a Source
-     * @ManagerRoute("/source/{source}/delete")
+     * @ManagerRoute("/source/{id}/delete")
      * @Method({"POST"})
+     * @ParamConverter("source", class="Mapbender\CoreBundle\Entity\Source")
     */
     public function deleteAction(Source $source){
         $managers = $this->get('mapbender')->getRepositoryManagers();

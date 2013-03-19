@@ -1,6 +1,6 @@
 (function($) {
 
-$.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
+$.widget("mapbender.mbFeatureInfo", {
     options: {
         layers: undefined,
         target: undefined,
