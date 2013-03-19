@@ -21,7 +21,7 @@ class FeatureInfo extends Element
      */
     static public function getClassTitle()
     {
-        return "Feature Info";
+        return "Feature Info Dialog";
     }
 
     /**
@@ -37,7 +37,7 @@ class FeatureInfo extends Element
      */
     static public function getClassTags()
     {
-        return array('button', 'featureinfo');
+        return array('dialog', 'featureinfo');
     }
 
     /**
@@ -46,9 +46,8 @@ class FeatureInfo extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'tooltip' => 'Feature Info',
-            'label' => true,
-            'icon' => 'featureinfoicon',
+            'tooltip' => 'Feature Info Dialog',
+            "autoOpen" => false,
             "target" => null);
     }
 
@@ -75,7 +74,7 @@ class FeatureInfo extends Element
     {
         return array(
             'js' => array(
-                'mapbender.element.button.js',
+//                'mapbender.element.button.js',
                 'mapbender.element.featureInfo.js'
             ),
             'css' => array(
@@ -91,7 +90,7 @@ class FeatureInfo extends Element
     {
         $configuration = parent::getConfiguration();
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:button.html.twig',
+                        ->render('MapbenderCoreBundle:Element:featureinfo.html.twig',
                                  array(
                             'id' => $this->getId(),
                             'configuration' => $configuration,

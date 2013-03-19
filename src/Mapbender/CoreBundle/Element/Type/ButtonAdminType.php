@@ -54,7 +54,8 @@ class ButtonAdminType extends AbstractType
                     'required' => false))
                 ->add('click', 'text', array('required' => false))
                 ->add('group', 'text', array('required' => false))
-                ->add('action', 'text', array('required' => false));
+                ->add('action', 'text', array('required' => false))
+                ->add('deactivate', 'text', array('required' => false));
     }
 
 }
