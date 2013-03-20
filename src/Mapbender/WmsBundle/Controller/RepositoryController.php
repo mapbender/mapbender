@@ -459,7 +459,7 @@ class RepositoryController extends Controller
                             array('Content-Type' => 'application/json'));
         } else
         {
-            $enabled = $enabled === null ? false : $enabled;
+            $enabled = $enabled === "true"  ? true : false;
             $wmsinstance->setEnabled($enabled);
             $em = $this->getDoctrine()->getEntityManager();
             $em->persist($wmsinstance);
