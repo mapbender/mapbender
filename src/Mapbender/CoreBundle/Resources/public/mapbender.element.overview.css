@@ -16,6 +16,7 @@
 
 .mb-element-overview.inline {
     position: static;
+    padding: 0px;
 }
 
 .mb-element-overview.inline .handle {

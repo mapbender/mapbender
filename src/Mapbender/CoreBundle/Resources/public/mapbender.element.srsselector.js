@@ -10,10 +10,7 @@
         mapWidget: null,
 
         _create: function() {
-            if(this.options.target === null
-                || new String(this.options.target).replace(/^\s+|\s+$/g, '') === ""
-                || !$('#' + this.options.target)){
-                Mapbender.error('The target element is not defined for a SRSselector.');
+            if(!Mapbender.checkTarget("mbSrsSelector", this.options.target)){
                 return;
             }
             var self = this;

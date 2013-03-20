@@ -15,10 +15,7 @@ $.widget("mapbender.mbZoomBar", {
     zoomBoxControl: null,
 
     _create: function() {
-        if(this.options.target === null
-            || new String(this.options.target).replace(/^\s+|\s+$/g, '') === ""
-            || !$('#' + this.options.target)){
-            Mapbender.error('The target element "map" is not defined for a Navigation Bar.');
+        if(!Mapbender.checkTarget("mbZoomBar", this.options.target)){
             return;
         }
         var self = this;
