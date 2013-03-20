@@ -60,13 +60,18 @@ class Element
     /**
      * @ORM\Column(type="boolean")
      */
-    protected $published = true;
+    protected $enabled = true;
 
     /**
      * @var integer $weight The sorting weight for display
      * @ORM\Column(type="integer")
      */
     protected $weight;
+    
+    public function __construct()
+    {
+        $this->enabled = true;
+    }
 
     /**
      * Set id. DANGER
@@ -177,24 +182,24 @@ class Element
     }
 
     /**
-     * Set published
+     * Set enabled
      *
-     * @param boolean $published
+     * @param boolean $enabled
      */
-    public function setPublished($published)
+    public function setEnabled($enabled)
     {
-        $this->published = $published;
+        $this->enabled = $enabled;
         return $this;
     }
 
     /**
-     * Is published?
+     * Is enabled?
      *
      * @return boolean
      */
-    public function isPublished()
+    public function getEnabled()
     {
-        return $this->published;
+        return $this->enabled;
     }
 
     /**
