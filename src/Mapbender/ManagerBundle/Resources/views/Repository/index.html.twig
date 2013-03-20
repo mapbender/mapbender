@@ -4,10 +4,10 @@
 
 {% block manager_content %}
 
-<label for="inputFilterServices" class="labelInput left">Filter:</label><input id="inputFilterServices" type="text" class="input listFilterInput filterService">
-<a class="button right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'Add new service' | trans }}">{{ 'Add' | trans }}</a>
+<label for="inputFilterServices" class="labelInput left">Filter:</label><input id="inputFilterServices" type="text" class="input listFilterInput">
+<a class="addIcon right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'Add new service' | trans }}"></a>
 
-<ul id="listFilterServices" class="listFilterContainer clear">
+<ul id="listFilterServices" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">
   {% for source in sources %}
     <li class="filterItem">
       <div class="col1">
@@ -20,14 +20,13 @@
           <div class="description">{{ source.description }}</div>
         {% endif %}
         <div class="buttonGroup">
-          <a class="button" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'View service metadata' | trans }}">{{ 'View' | trans }}</a>
-          <a class="button" href="{{ url("mapbender_manager_repository_delete",{"source":source.id,"return":"index"}) }} " title="{{ 'Delete service' | trans }}">{{ 'Delete' | trans }}</a>
+          <a class="viewIcon" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'View service metadata' | trans }}"></a>
+          <a class="deleteIcon" href="{{ url("mapbender_manager_repository_delete",{"source":source.id,"return":"index"}) }} " title="{{ 'Delete service' | trans }}"></a>
         </div>
       </div>
     </li>
   {% endfor %}  
 </ul>
 
-<a class="button right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'Add new service' | trans }}">{{ 'Add' | trans }}</a>
 <div class="clearContainer"></div>
 {% endblock %}

@@ -1,13 +1,14 @@
-{% set actions = {
-    'create': {
-        'display': create_permission,
-        'url': url('mapbender_manager_application_new'),
-        'title': 'Create new application',
-        'attr': {
-            'class': 'btn btn-primary'
+{% if create_permission is defined %}
+    {% set actions = {
+        'create': {
+            'display': create_permission,
+            'url': url('mapbender_manager_application_new'),
+            'title': 'Create new application',
+            'attr': {
+                'class': 'addIcon right'
+            }
         }
     }
-}
-%}
+    %}
+{% endif %}
 {% include "FOMManagerBundle:Manager:actions.html.twig" %}
-

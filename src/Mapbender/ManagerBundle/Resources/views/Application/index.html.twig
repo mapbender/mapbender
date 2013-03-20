@@ -1,59 +1,50 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
+{% set placeholder = asset('bundles/mapbendercore/image/placeholder_map.png') %}
+
 {% block title %}{{ "Applications" | trans }}{% endblock %}
 
 {% block manager_js %}
-<script type="text/javascript" src="{{ asset('bundles/fommanager/js/list.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-list.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
 
 {% if applications | length > 0 %}
-<table class="table table-striped" id="application-list">
-    <thead>
-        <tr>
-            <th>{{ "Title (Slug)" | trans }}</th>
-            <th>{{ "Description" | trans }}</th>
-            <th>{{ "Actions" | trans }}</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for application in applications %}
-        <tr data-application-slug="{{ application.slug }}" data-application-id="{{ application.id }}">
-            <td>
-                <i class="application-state icon-eye-{% if application.published %}open{% else %}close{% endif %}" title="{{ 'Publish / Unpublish application' | trans }}"></i>
-            {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-                <a href="{{ path('mapbender_manager_application_edit', {'slug': application.slug}) }}#base" title="{{ 'Edit' | trans }}">{{ application.title }}</a>
-            {% else %}
-                {{ application.title }}
-            {% endif %}
-                <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View' | trans }}">({{ application.slug }})</a>
-            </td>
-            <td>{{ application.description }}</td>
-            <td>
-                <div class="entity-actions btn-group">
-                    <a class="action-view btn" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}">{{ 'View' | trans }}</a>
-                {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-                    <a class="action-edit btn" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}#base" title="{{ 'Edit application' | trans }}">{{ 'Edit' | trans }}</a>
-                {% endif %}
-                {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
-                    <a class="action-delete btn btn-warning" href="{{ path('mapbender_manager_application_confirmdelete', { 'slug': application.slug }) }}">{{ 'Delete' | trans }}</a>
-                {% endif %}
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<div class="alert alert-info">
-{% trans %}
-You don't have any apps defined. Start by creating one now.
-{% endtrans %}
-</div>
-{% endif %}
+  <label for="inputFilterApplications" class="labelInput left">Filter:</label><input id="inputFilterApplications" type="text" class="input listFilterInput">
+  {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
 
-{% include "MapbenderManagerBundle:Application:actions.html.twig" %}
+  <ul id="listFilterApplications" class="listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
+    {% for application in applications %}
+      <li class="filterItem">
+        <div class="col1">
+          {#<img src="{{ application.screenshot|default(placeholder) }}" class="thumbnail" title="screenshot"/>#}
+        </div>
+        <div class="col2 box">
+          <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'View this application' | trans }}">
+            {{ application.title }}
+            <span class="smallerText">{{ application.slug }}</span>
+          </a>
+          <div class="description">{{ application.description }}</div>
+          <div class="buttonGroup">
+            <a class="viewIcon" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View application' | trans }}"></a>
+            {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
+            <a class="editIcon" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}#base" title="{{ 'Edit application' | trans }}"></a>
+            {% endif %}
+            {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
+            <a class="deleteIcon" href="{{ path('mapbender_manager_application_confirmdelete', { 'slug': application.slug }) }}" title="{{ 'Delete application' | trans }}"></a>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+    {% else %}
+      {% trans %}
+      <span class="description">You don't have any apps defined. Start by creating one now.</span>
+      {% endtrans %}
+    {% endfor %}
+  </ul>
+  <div class="clearContainer"></div>
+{% endif %}
+<div class="clearContainer"></div>
 
 {% endblock %}

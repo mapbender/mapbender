@@ -1,6 +1,6 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ "New application" | trans}}{% endblock %}
+{% block title %}{{ "New Application" | trans}}{% endblock %}
 
 {% block manager_css %}
 
@@ -18,26 +18,49 @@
 {% set form_errors = form_errors(form) %}
 
 {% block manager_content %}
-<p>{% trans %}Create a new application by providing basic information and then
-use the edit mode to add elements, layers and security.{% endtrans %}</p>
+  <div class="messageBox hint">
+    {% trans %}Create a new application by providing basic information and then
+    use the edit mode to choose template, add elements and layers.{% endtrans %}
+  </div>
 
-<form action="{{ path('mapbender_manager_application_create') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well">
-    {% if form_errors(form) %}
-    <div class="alert alert-error">
-        {{ form_errors(form) }}
+  <form action="{{ path('mapbender_manager_application_create') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} novalidate="novalidate">
+    {{ form_errors(form) }}
+
+    <div id="applicationTabContainer" class="tabContainer newApplicationTabContainer">
+      <ul class="tabs">
+        <li id="tabBaseData" class="tab active">{{"Base data" | trans }}</li>
+        <li id="tabSecurity" class="tab">{{"Security" | trans }}</li>
+      </ul>
+      <div id="containerBaseData" class="container active containerBaseData">
+        {{ form_errors(form.title) }}
+        {{ form_label(form.title, "Title:" | trans) }}
+        {{ form_widget(form.title, { 'attr': {'class': 'input'} }) }}
+
+        <div class="clearContainer"></div>
+
+        {{ form_errors(form.slug) }}
+        {{ form_label(form.slug, "Url title:" | trans) }}
+        {{ form_widget(form.slug, { 'attr': {'class': 'input'} }) }}<br>
+
+        <div class="clearContainer"></div>
+
+        {{ form_errors(form.description) }}
+        {{ form_label(form.description, "Description:" | trans) }}
+        {{ form_widget(form.description, { 'attr': {'class': 'input'} }) }}
+      </div>
+      <div id="containerSecurity" class="container">
+        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+      </div>
     </div>
-    {% endif %}
+
+    <div class="right">
+      <input type="submit" value="{{ 'Create' | trans }}" class="button"/>
+      <a href="{{ url('mapbender_manager_application_index') }}" class="button critical">{{ 'Cancel' | trans}}</a>
+    </div>
+
+    <div class="clearContainer"></div>
 
     {{ form_row(form._token) }}
+  </form>
 
-    {% include "MapbenderManagerBundle:Application:form-create.html.twig" %}
-
-    <footer>
-        <div class="btn-group">
-            <input type="submit" value="{{ 'Create' | trans }}" class="btn btn-primary"/>
-            <a href="{{ url('mapbender_manager_application_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
-        </div>
-    </footer>
-</form>
-
-{% endblock %}
+  {% endblock %}
