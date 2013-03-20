@@ -48,6 +48,7 @@ class FeatureInfo extends Element
         return array(
             'tooltip' => 'Feature Info Dialog',
             "autoOpen" => false,
+            "deactivateOnClose" => true,
             "target" => null);
     }
 

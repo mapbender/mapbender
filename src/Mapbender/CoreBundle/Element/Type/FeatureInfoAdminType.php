@@ -37,6 +37,7 @@ class FeatureInfoAdminType extends AbstractType
     {
         $builder->add('tooltip', 'text', array('required' => false))
                 ->add('autoOpen', 'checkbox', array('required' => false))
+                ->add('deactivateOnClose', 'checkbox', array('required' => false))
                 ->add('target', 'target_element',
                       array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
