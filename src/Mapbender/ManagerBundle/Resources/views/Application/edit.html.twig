@@ -2,10 +2,6 @@
 
 {% block title %}{{ application.title }}{% endblock %}
 
-{% block manager_css %}
-<link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/style/style.css') }}" >
-{% endblock %}
-
 {% block manager_js %}
 <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"></script>
@@ -13,22 +9,44 @@
 {% endblock %}
 
 {% block manager_content %}
+  <div class="messageBox hint">
+    {% trans %}
+      Required fields are marked with dark labels, while optional fields have lighter labels.
+    {% endtrans %}
+  </div>
 
-<form action="{{ path('mapbender_manager_application_update', { 'slug': application.slug }) }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well">
+  <form action="{{ path('mapbender_manager_application_update', { 'slug': application.slug }) }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}}  novalidate="novalidate">
+    <div id="applicationTabContainer" class="tabContainer newApplicationTabContainer">
+      <ul class="tabs">
+        <li id="tabBaseData" class="tab active">{{"Base data" | trans }}</li>
+        <li id="tabLayout" class="tab">{{"Layout" | trans }}</li>
+        <li id="tabLayers" class="tab">{{"Layers" | trans }}</li>
+        <li id="tabSecurity" class="tab">{{"Security" | trans }}</li>
+      </ul>
+      <div id="containerBaseData" class="container active containerBaseData">
+        {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
+      </div>
+      <div id="containerLayout" class="container">
+        {% include 'MapbenderManagerBundle:Application:form-elements.html.twig' %}
+      </div>
+      <div id="containerLayers" class="container">
+        {% include 'MapbenderManagerBundle:Application:form-layersets.html.twig' %}
+      </div>
+      <div id="containerSecurity" class="container">
+        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+      </div>
+    </div>
+
+    <div class="right">
+      <input type="submit" value="{{ 'Save' | trans }}" class="button"/>
+      <a href="{{ url('mapbender_manager_application_index') }}" class="button critical">{{ 'Cancel' | trans}}</a>
+    </div>
+
+    <div class="clearContainer"></div>
 
     {{ form_row(form._token) }}
-
-    {%include "MapbenderManagerBundle:Application:form-edit.html.twig" %}
-
-    <footer>
-        <div class="btn-group">
-            <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
-            <a href="{{ url('mapbender_manager_application_confirmdelete', { 'slug': application.slug } )}}" class="btn btn-warning">{{ 'Delete' | trans}}</a>
-            <a href="{{ url('mapbender_manager_application_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
-        </div>
-    </footer>
-</form>
-
+  </form>
+{# XXXVH: Dies für das Popup
 <div id="repository-list-modal"  class="modal hide fade">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -82,5 +100,5 @@
         <h3>{{ "Edit Instance Layers"|trans }}</h3>
     </div>
     <div class="modal-body"></div>
-</div>
-{% endblock %}
+  </div> #}
+  {% endblock %}

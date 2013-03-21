@@ -2,20 +2,13 @@
 
 {% block title %}{{ "New Application" | trans}}{% endblock %}
 
-{% block manager_css %}
-
-<link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.css') }}" />
-{% endblock %}
-
 {% block manager_js %}
 <script type="application/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
-<script type="application/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"</script>
+<script type="application/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/form.js') }}"></script>
 {% endblock %}
-
-{% set form_errors = form_errors(form) %}
 
 {% block manager_content %}
   <div class="messageBox hint">
@@ -24,29 +17,13 @@
   </div>
 
   <form action="{{ path('mapbender_manager_application_create') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} novalidate="novalidate">
-    {{ form_errors(form) }}
-
     <div id="applicationTabContainer" class="tabContainer newApplicationTabContainer">
       <ul class="tabs">
         <li id="tabBaseData" class="tab active">{{"Base data" | trans }}</li>
         <li id="tabSecurity" class="tab">{{"Security" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData">
-        {{ form_errors(form.title) }}
-        {{ form_label(form.title, "Title:" | trans) }}
-        {{ form_widget(form.title, { 'attr': {'class': 'input'} }) }}
-
-        <div class="clearContainer"></div>
-
-        {{ form_errors(form.slug) }}
-        {{ form_label(form.slug, "Url title:" | trans) }}
-        {{ form_widget(form.slug, { 'attr': {'class': 'input'} }) }}<br>
-
-        <div class="clearContainer"></div>
-
-        {{ form_errors(form.description) }}
-        {{ form_label(form.description, "Description:" | trans) }}
-        {{ form_widget(form.description, { 'attr': {'class': 'input'} }) }}
+        {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
       </div>
       <div id="containerSecurity" class="container">
         {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
@@ -62,5 +39,4 @@
 
     {{ form_row(form._token) }}
   </form>
-
-  {% endblock %}
+{% endblock %}
