@@ -48,13 +48,14 @@ class ButtonAdminType extends AbstractType
                 ->add('label', 'checkbox', array('required' => false))
                 ->add('target', 'target_element',
                       array(
-                    'element_class' => '%Mapbender%',
+                    'element_class' => '%Element%',
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
                 ->add('click', 'text', array('required' => false))
                 ->add('group', 'text', array('required' => false))
-                ->add('action', 'text', array('required' => false));
+                ->add('action', 'text', array('required' => false))
+                ->add('deactivate', 'text', array('required' => false));
     }
 
 }

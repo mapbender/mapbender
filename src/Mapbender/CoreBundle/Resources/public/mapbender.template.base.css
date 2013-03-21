@@ -110,9 +110,7 @@ body {
   bottom: 50px !important;
   left: 290px !important;
 }
-.content .mb-element-zoombar {
-  top: 10px !important;
-}
+
 .content .mb-element-map {
   background-color: #fff;
 }
@@ -181,9 +179,3 @@ body {
 .ie7 .zoom-box, .ie7 .zoom-out {
   clear: both;
 }
-
-/*.mb-element-zoombar {
-  top: 30px !important;
-  left: 20px !important;
-  z-index: 1000 !important;
-}*/

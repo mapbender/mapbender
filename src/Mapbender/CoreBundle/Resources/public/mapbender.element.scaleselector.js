@@ -8,10 +8,7 @@ $.widget("mapbender.mbScaleSelector", {
     elementUrl: null,
 
     _create: function() {
-        if(this.options.target === null
-            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
-            || !$('#' + this.options.target)){
-            alert('The target element "map" is not defined for a ScaleSelector.');
+        if(!Mapbender.checkTarget("mbScaleSelector", this.options.target)){
             return;
         }
         var self = this;

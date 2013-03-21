@@ -1,0 +1,28 @@
+{% extends "FOMManagerBundle::manager.html.twig" %}
+
+{% set layerset_title = layerset.title %}
+{% set layerset_id = layerset.id %}
+
+{% block title %}{% trans %}Delete layerset %layerset_title%{% endtrans %}{% endblock %}
+
+{% block manager_css %}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/mapbendermanager/css/jquery-ui-1.8.16.css') }}" />
+{% endblock %}
+
+{% block manager_content %}
+
+<form id="instance-delete" action="{{ path('mapbender_manager_application_deletelayerset', { 'slug': application.slug, 'layersetId' : layerset.id }) }}" method="post" {{ form_enctype(form)}}>
+    <header>
+    {% trans %}Do you really want to remove the layerset with the title <em>%layerset_title%</em> and the id <em>%layerset_id%</em>?{% endtrans %}
+    </header>
+    {{ form_widget(form) }}
+    <footer class="actions">
+        <div class="btn-group">
+            <input type="submit" value="{{ 'Delete' | trans }}" class="btn btn-danger"/>
+            <button data-href="{{ url('mapbender_manager_application_edit',{'slug': application.slug}) }}#layers" class="btn">{{ 'Cancel' | trans}}</button>
+        </div>
+    </footer>
+</form>
+
+{% endblock %}
+

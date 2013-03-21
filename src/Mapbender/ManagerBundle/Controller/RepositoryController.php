@@ -12,11 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Response;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Entity\Source;
-//use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter;
 
 /**
  * @ManagerRoute("/repository")
@@ -72,21 +70,24 @@ class RepositoryController extends Controller {
     }
     
     /**
-    * @ManagerRoute("/source/{sourceId}/delete")
+    * @ManagerRoute("/source/{sourceId}/confirmdelete")
     * @Method({"GET"})
     * @Template
-    * @ParamConverter
     */
-    public function confirmdeleteAction(Source $sourceId){
-        return array("source" => $sourceId);
+    public function confirmdeleteAction($sourceId){
+        $source = $this->getDoctrine()
+                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        return array("source" => $source);
     }
 
     /**
      * deletes a Source
-     * @ManagerRoute("/source/{source}/delete")
+     * @ManagerRoute("/source/{sourceId}/delete")
      * @Method({"POST"})
     */
-    public function deleteAction(Source $source){
+    public function deleteAction($sourceId){
+        $source = $this->getDoctrine()
+                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
         return  $this->forward(
@@ -117,17 +118,135 @@ class RepositoryController extends Controller {
      * @ManagerRoute("/application/{slug}/instance/{layersetId}/weight/{instanceId}")
      */ 
     public function instanceWeightAction($slug, $layersetId, $instanceId){
-        $sourceInst = $this->getDoctrine()
-                        ->getRepository("MapbenderCoreBundle:SourceInstance")
-                        ->find($instanceId);
-        $managers = $this->get('mapbender')->getRepositoryManagers();
-        $manager = $managers[$sourceInst->getManagertype()];
-        return  $this->forward(
-                $manager['bundle'] . ":" . "Repository:instanceweight",
-                array("slug" => $slug,
-                    "layersetId" => $layersetId,
-                    "instanceId" => $sourceInst->getId())
-        );
+        $number = $this->get("request")->get("number");
+        $layersetId_new = $this->get("request")->get("new_layersetId");
+        $instance = $this->getDoctrine()
+                ->getRepository('MapbenderWmsBundle:WmsInstance')
+                ->findOneById($instanceId);
+        
+        if(!$instance)
+        {
+            throw $this->createNotFoundException('The wms instance with"
+                ." the id "' . $instanceId . '" does not exist.');
+        }
+        if(intval($number) === $instance->getWeight() && $layersetId === $layersetId_new)
+        {
+            return new Response(json_encode(array(
+                                'error' => '',
+                                'result' => 'ok')), 200,
+                            array('Content-Type' => 'application/json'));
+        }
+        
+        if($layersetId === $layersetId_new)
+        {
+            $em = $this->getDoctrine()->getEntityManager();
+            $instance->setWeight($number);
+            $em->persist($instance);
+            $em->flush();
+            $query = $em->createQuery(
+                    "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
+                    . " WHERE i.layerset=:lsid ORDER BY i.weight ASC");
+            $query->setParameters(array("lsid" => $layersetId));
+            $instList = $query->getResult();
+
+            $num = 0;
+            foreach($instList as $inst)
+            {
+                if($num === intval($instance->getWeight()))
+                {
+                    if($instance->getId() === $inst->getId())
+                    {
+                        $num++;
+                    } else
+                    {
+                        $num++;
+                        $inst->setWeight($num);
+                        $num++;
+                    }
+                } else
+                {
+                    if($instance->getId() !== $inst->getId())
+                    {
+                        $inst->setWeight($num);
+                        $num++;
+                    }
+                }
+            }
+            foreach($instList as $inst)
+            {
+                $em->persist($inst);
+            }
+            $em->flush();
+        } else
+        {
+            $layerset_new = $this->getDoctrine()
+                ->getRepository("MapbenderCoreBundle:Layerset")
+                ->find($layersetId_new);
+            $em = $this->getDoctrine()->getEntityManager();
+            $instance->setLayerset($layerset_new);
+            $layerset_new->addInstance($instance);
+            $instance->setWeight($number);
+            $em->persist($layerset_new);
+            $em->persist($instance);
+            $em->flush();
+            
+            // order instances of the old layerset
+            $query = $em->createQuery(
+                    "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
+                    . " WHERE i.layerset=:lsid ORDER BY i.weight ASC");
+            $query->setParameters(array("lsid" => $layersetId));
+            $instList = $query->getResult();
+
+            $num = 0;
+            foreach($instList as $inst)
+            {
+                $inst->setWeight($num);
+                $em->persist($inst);
+                $num++;
+            }
+            $em->flush();
+            
+            // order instances of the new layerset 
+            $query = $em->createQuery(
+                    "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
+                    . " WHERE i.layerset=:lsid ORDER BY i.weight ASC");
+            $query->setParameters(array("lsid" => $layersetId_new));
+            $instList = $query->getResult();
+            $num = 0;
+            foreach($instList as $inst)
+            {
+                if($num === intval($instance->getWeight()))
+                {
+                    if($instance->getId() === $inst->getId())
+                    {
+                        $num++;
+                    } else
+                    {
+                        $num++;
+                        $inst->setWeight($num);
+                        $num++;
+                    }
+                } else
+                {
+                    if($instance->getId() !== $inst->getId())
+                    {
+                        $inst->setWeight($num);
+                        $num++;
+                    }
+                }
+            }
+            foreach($instList as $inst)
+            {
+                $em->persist($inst);
+                $em->flush();
+            }
+            
+        }
+
+        return new Response(json_encode(array(
+                            'error' => '',
+                            'result' => 'ok')), 200, array(
+                    'Content-Type' => 'application/json'));
     }
     
     /**

@@ -1,6 +1,6 @@
 (function($) {
 
-$.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
+$.widget("mapbender.mbFeatureInfo", $.ui.dialog, {//$.mapbender.mbButton, {
     options: {
         layers: undefined,
         target: undefined,
@@ -9,15 +9,18 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
 
     map: null,
     mapClickHandler: null,
-    dlg: null,
 
     _create: function() {
-        if(this.options.target === null
-            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
-            || !$('#' + this.options.target)){
-            alert('The target element "map" is not defined for a FeatureInfo.');
+        if(!Mapbender.checkTarget("mbFeatureInfo", this.options.target)){
             return;
         }
+        var self = this;
+        $(document).one('mapbender.setupfinished', function() {
+            $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
+        });
+    },
+
+    _setup: function(){
         this._super('_create');
     },
 
@@ -33,7 +36,7 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
 
     activate: function() {
         var self = this;
-        this._super('activate');
+        //        this._super('activate');
         this.map = $('#' + this.options.target).data('mapQuery');
         $('#' + this.options.target).addClass('mb-feature-info-active');
         this.mapClickHandler = function(e) {
@@ -43,34 +46,28 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
     },
 
     deactivate: function() {
-        this._super('deactivate');
         if(this.map) {
             $('#' + this.options.target).removeClass('mb-feature-info-active');
             this.map.element.unbind('click', this.mapClickHandler);
         }
+        if(this.element.data('dialog') && this.element.dialog('isOpen')) {
+            this.element.dialog('close');
+        }
     },
 
     /**
-     * Trigger the Feature Info call for each layer.
-     * Also set up feature info dialog if needed.
-     */
+ * Trigger the Feature Info call for each layer.
+ * Also set up feature info dialog if needed.
+ */
     _triggerFeatureInfo: function(e) {
         var self = this,
-            x = e.pageX - $(this.map.element).offset().left,
-            y = e.pageY - $(this.map.element).offset().top;
+        x = e.pageX - $(this.map.element).offset().left,
+        y = e.pageY - $(this.map.element).offset().top,
+        fi_exist = false;
 
-        if(!this.dlg) {
-            this.dlg = $('<div></div>')
-                .addClass('mb-element')
-                .attr('id', 'featureinfo-dialog')
-        }
-
-        this.dlg.empty();
-        var tabs = $('<div></div>')
-            .attr('id', 'featureinfo-tabs')
-            .appendTo(this.dlg);
-        var header = $('<ol></ol>')
-            .appendTo(tabs);
+        $(this.element).empty();
+        var tabs = $('<div></div>').attr('id', 'featureinfo-tabs').appendTo(this.element);
+        var header = $('<ol></ol>').appendTo(tabs);
 
         // Go over all layers
         $.each(this.map.layers(), function(idx, layer) {
@@ -87,48 +84,52 @@ $.widget("mapbender.mbFeatureInfo", $.mapbender.mbButton, {
             if(queryLayers.length === 0) {
                 return;
             }
-
+            fi_exist = true;
             // Prepare result tab list
-            header.append($('<li></li>')
-                .append($('<a></a>')
-                    .attr('href', '#' + layer.id)
-                    .html(layer.label)));
-            tabs.append($('<div></div>')
-                .attr('id', layer.id));
+            header.append($('<li></li>').append($('<a></a>').attr('href', '#' + layer.id).html(layer.label)));
+            tabs.append($('<div></div>').attr('id', layer.id));
 
             switch(layer.options.type) {
                 case 'wms':
-                    self.dlg.find('a[href=#' + layer.id + ']').addClass('loading');
+                    self.element.find('a[href=#' + layer.id + ']').addClass('loading');
                     Mapbender.layer.wms.featureInfo(layer, x, y, $.proxy(self._featureInfoCallback, self));
                     break;
             }
         });
-
-        tabs.tabs();
-        if(this.dlg.data('dialog')) {
-            this.dlg.dialog('open');
+        if(fi_exist){
+            tabs.tabs();
         } else {
-            this.dlg.dialog({
+            $('<p>No FeatureInfo layer exists.</p>').appendTo(this.element);
+        }
+        if(this.element.data('dialog')) {
+            this.element.dialog('open');
+        } else {
+            this.element.dialog({
                 title: 'Detail-Information',
                 width: 600,
                 height: 400
             });
             if(this.options.deactivateOnClose) {
-                this.dlg.bind('dialogclose', $.proxy(this.deactivate, this));
+                this.element.bind('dialogclose', $.proxy(this.deactivate, this));
             }
         }
     },
 
     /**
-     * Once data is coming back from each layer's FeatureInfo call,
-     * insert it into the corresponding tab.
-     */
+ * Once data is coming back from each layer's FeatureInfo call,
+ * insert it into the corresponding tab.
+ */
     _featureInfoCallback: function(data) {
+        var text = '';
+        try { // cut css
+            text = data.response.replace(/document.writeln[^;]*;/g, '')
+            .replace(/\n/g, '')
+            .replace(/<link[^>]*>/gi, '')
+            .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
+        } catch(e) {}
         //TODO: Needs some escaping love
-        this.dlg.find('a[href=#' + data.layerId + ']').removeClass('loading');
-        this.dlg.find('#' + data.layerId)
-            .html(data.response);
+        this.element.find('a[href=#' + data.layerId + ']').removeClass('loading');
+        this.element.find('#' + data.layerId).html(text);
     }
 });
-
 })(jQuery);

@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Mapbender\CoreBundle\Form\Type\ExtentType;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Element\DataTranformer\LayersetNameTranformer;
+use Mapbender\CoreBundle\Form\EventListener\MapFieldSubscriber;
 
 /**
  * 
@@ -38,6 +39,8 @@ class MapAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $subscriber = new MapFieldSubscriber($builder->getFormFactory());
+        $builder->addEventSubscriber($subscriber);
         $app = $options['application'];
         $layersets = array();
         foreach($app->getLayersets() as $layerset)
@@ -45,12 +48,7 @@ class MapAdminType extends AbstractType
             $layersets[$layerset->getId()] = $layerset->getTitle();
         }
 
-        $builder
-//            ->add('layersets', 'entity', array(
-//                'class' => 'Mapbender\\CoreBundle\\Entity\\Layerset',
-//                'property' => 'title'
-//            ))
-                ->add('layerset', 'choice',
+        $builder->add('layerset', 'choice',
                       array(
                     'label' => 'Layerset',
                     "required" => true,

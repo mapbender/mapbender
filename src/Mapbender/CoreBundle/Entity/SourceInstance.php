@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,8 +18,8 @@ use Mapbender\CoreBundle\Component\InstanceIn;
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_sourceinstance" = "SourceInstance"})
  */
-
-abstract class SourceInstance {
+abstract class SourceInstance
+{
 
     /**
      * @var integer $id
@@ -34,19 +35,12 @@ abstract class SourceInstance {
      */
     protected $title;
 
-//    /**
-//    * @var SourceInstance
-//    * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="sourceInstance", cascade={"persist","refresh"})
-//    * @ORM\JoinColumn(name="layerset", referencedColumnName="id")
-//    */
-    
-    
     /**
      * @ORM\ManyToOne(targetEntity="Layerset", inversedBy="instances", cascade={"persist","refresh"})
      * @ORM\JoinColumn(name="layerset", referencedColumnName="id")
      */
     protected $layerset;
-    
+
     /**
      * @var integer $weight The sorting weight for display
      * @ORM\Column(type="integer")
@@ -58,19 +52,23 @@ abstract class SourceInstance {
      */
     protected $enabled = true;
 
-    public function __construct() {
+    public function __construct()
+    {
         
     }
 
-    public function getId(){
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function getTitle(){
+    public function getTitle()
+    {
         return $this->title;
     }
 
-    public function setTitle($title){
+    public function setTitle($title)
+    {
         $this->title = $title;
     }
 
@@ -79,7 +77,8 @@ abstract class SourceInstance {
      *
      * @return string
      */
-    public function getClassname(){
+    public function getClassname()
+    {
         return get_class();
     }
 
@@ -89,13 +88,14 @@ abstract class SourceInstance {
     {
         return array();
     }
-    
+
     /**
      * Set weight
      *
      * @param integer $weight
      */
-    public function setWeight($weight) {
+    public function setWeight($weight)
+    {
         $this->weight = $weight;
         return $this;
     }
@@ -105,12 +105,11 @@ abstract class SourceInstance {
      *
      * @return integer
      */
-    public function getWeight() {
+    public function getWeight()
+    {
         return $this->weight;
     }
-    
-    
-    
+
     /**
      *  Set the layerset
      * @param Layerset $layerset Layerset
@@ -121,7 +120,7 @@ abstract class SourceInstance {
         $this->layerset = $layerset;
         return $this;
     }
-    
+
     /**
      *  Get the layerset
      * @return Layerset
@@ -130,13 +129,14 @@ abstract class SourceInstance {
     {
         $this->layerset;
     }
-    
+
     /**
      * Set enabled
      *
      * @param integer $weight
      */
-    public function setEnabled($enabled) {
+    public function setEnabled($enabled)
+    {
         $this->enabled = $enabled;
         return $this;
     }
@@ -146,9 +146,11 @@ abstract class SourceInstance {
      *
      * @return integer
      */
-    public function getEnabled() {
+    public function getEnabled()
+    {
         return $this->enabled;
     }
+
     /**
      * Get type
      *
@@ -162,29 +164,27 @@ abstract class SourceInstance {
      * @return string
      */
     public abstract function getManagerType();
-    
+
     /**
      * Get instance source 
      * @return InstanceSource
      */
     public abstract function getSource();
-    
+
     /**
      * Set id
      * @param integer $id id
      */
     public abstract function setId($id);
-    
+
     /**
      * Set configuration of the source instance
      * @param array $configuration configuration of the source instance
      */
     public abstract function setConfiguration($configuration);
-    
+
     /**
      *  Get configuration of the source instance
      */
     public abstract function getConfiguration();
-
-
 }

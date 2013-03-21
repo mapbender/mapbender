@@ -54,6 +54,7 @@ class PrintClient extends Element
     public static function getDefaultConfiguration()
     {
         return array(
+            "target" => null,
             "autoOpen" => false,
             "print_directly" => true,
             "printer" => Array(

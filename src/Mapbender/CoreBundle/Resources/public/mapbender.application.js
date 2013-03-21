@@ -16,6 +16,21 @@ Mapbender.setup = function() {
     $(document).trigger('mapbender.setupfinished');
 };
 
+Mapbender.error = function(message){
+    alert(message);
+};
+
+Mapbender.checkTarget = function(widgetName, target){
+    if(target === null || typeof(target) === 'undefined'
+        || new String(target).replace(/^\s+|\s+$/g, '') === ""
+        || !$('#' + target)){
+        Mapbender.error(widgetName + ': a target element is not defined.');
+        return false;
+    } else {
+        return true;
+    }
+};
+
 // This calls on document.ready and won't be called when inserted dynamically
 // into a existing page. In such case, Mapbender.setup has to be called
 // explicitely, see mapbender.application.json.js

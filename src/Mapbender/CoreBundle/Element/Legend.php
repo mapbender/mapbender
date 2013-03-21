@@ -46,7 +46,7 @@ class Legend extends Element
                 'mapbender.element.legend.js'
             ),
             'css' => array(
-                'mapbender.elements.css'
+                'mapbender.element.legend.css'
             )
         );
     }

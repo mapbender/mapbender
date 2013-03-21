@@ -4,12 +4,27 @@ namespace Mapbender\CoreBundle\Template;
 
 use Mapbender\CoreBundle\Component\Template;
 
-class Fullscreen extends Template {
-    public static function getTitle() {
+/**
+ * Template Fullscreen
+ * 
+ * @author Christian Wygoda
+ */
+class Fullscreen extends Template
+{
+
+    /**
+     * @inheritdoc
+     */
+    public static function getTitle()
+    {
         return 'Fullscreen: Mapbender\'s simple template';
     }
 
-    public function getAssets($type) {
+    /**
+     * @inheritdoc
+     */
+    public function getAssets($type)
+    {
         parent::getAssets($type);
         $assets = array(
             'css' => array('@MapbenderCoreBundle/Resources/public/mapbender.template.fullscreen.css'),
@@ -19,20 +34,28 @@ class Fullscreen extends Template {
         return $assets[$type];
     }
 
-    public static function getRegions() {
+    /**
+     * @inheritdoc
+     */
+    public static function getRegions()
+    {
         return array('top', 'content', 'footer');
     }
 
+    /**
+     * @inheritdoc
+     */
     public function render($format = 'html', $html = true, $css = true,
-        $js = true) {
+            $js = true)
+    {
         $templating = $this->container->get('templating');
         return $templating
-            ->render('MapbenderCoreBundle:Template:fullscreen.html.twig',
-                array(
-                    'html' => $html,
-                    'css' => $css,
-                    'js' => $js,
-                    'application' => $this->application));
+                        ->render('MapbenderCoreBundle:Template:fullscreen.html.twig',
+                                 array(
+                            'html' => $html,
+                            'css' => $css,
+                            'js' => $js,
+                            'application' => $this->application));
     }
 
 }

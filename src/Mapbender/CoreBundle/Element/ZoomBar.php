@@ -67,10 +67,11 @@ EOT;
                 "history",
                 "zoom_box",
                 "zoom_max",
-                "zoom_slieder"),
+                "zoom_slider"),
+            'anchor' => 'left-top',
+            'position' => array('20px', '20px'),
             'stepSize' => 50,
             'stepByPixel' => false,
-            'position' => array(0, 0),
             'draggable' => true);
     }
 

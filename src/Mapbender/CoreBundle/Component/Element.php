@@ -49,7 +49,8 @@ abstract class Element
      * @param Application $application The application object
      * @param ContainerInterface $container The container object
      */
-    public function __construct(Application $application, ContainerInterface $container, Entity $entity)
+    public function __construct(Application $application,
+            ContainerInterface $container, Entity $entity)
     {
         $this->application = $application;
         $this->container = $container;
@@ -250,23 +251,6 @@ abstract class Element
 //                $configuration[$key] = $config[$key];
 //            }
 //        }
-
-        if(isset($configuration["scales"]))
-        {
-            $scales = array();
-            if(is_string($configuration["scales"]))
-            { // from database
-                $scales = preg_split("/\s?,\s?/", $configuration["scales"]);
-            } else if(is_array($configuration["scales"]))
-            { // from twig
-                $scales = $configuration["scales"];
-            }
-            // sort scales high to low
-            $scales = array_map(
-                    create_function('$value', 'return (int)$value;'), $scales);
-            arsort($scales, SORT_NUMERIC);
-            $configuration["scales"] = $scales;
-        }
         return $configuration;
     }
 
@@ -330,6 +314,52 @@ abstract class Element
         return array(
             'js' => array(),
             'css' => array());
+    }
+
+    /**
+     *  Merges the default configuration array and the configuration array
+     * 
+     * @param array $default the default configuration of an element
+     * @param array $main the configuration of an element
+     * @param array $result the result configuration
+     * @return array the result configuration
+     */
+    public static function mergeArrays($default, $main, $result)
+    {
+        foreach($main as $key => $value)
+        {
+            if($value === null)
+            {
+                $result[$key] = null;
+            } else if(is_array($value))
+            {
+                if(isset($default[$key]))
+                {
+                    $result[$key] = Element::mergeArrays($default[$key],
+                                                         $main[$key], array());
+                } else
+                {
+                    $result[$key] = $main[$key];
+                }
+            } else
+            {
+                $result[$key] = $value;
+            }
+        }
+        if($default !== null && is_array($default))
+        {
+            foreach($default as $key => $value)
+            {
+                if(!isset($result[$key])
+                        || (isset($result[$key])
+                            && $result[$key] === null
+                            && $value !== null))
+                {
+                    $result[$key] = $value;
+                }
+            }
+        }
+        return $result;
     }
 
 }

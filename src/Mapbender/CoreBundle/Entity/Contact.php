@@ -1,8 +1,10 @@
 <?php
+
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Source entity
  *
@@ -11,7 +13,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  * @ORM\Table(name="mb_core_contact")
  */
-class Contact {
+class Contact
+{
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -19,67 +23,66 @@ class Contact {
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $person;
-    
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $position;
 
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $organization;
-    
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $voiceTelephone;
-    
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $facsimileTelephone;
-    
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $electronicMailAddress;
-    
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $address;
-    
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $addressType;
-    
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $addressCity;
-    
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $addressStateOrProvince;
-    
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $addressPostCode;
-    
+
     /**
-    * @ORM\Column(type="string",nullable=true)
-    */
+     * @ORM\Column(type="string",nullable=true)
+     */
     protected $addressCountry;
-    
-    
 
     /**
      * Set person
@@ -354,4 +357,5 @@ class Contact {
     {
         return $this->id;
     }
+
 }

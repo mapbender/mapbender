@@ -45,13 +45,13 @@ class Map extends Element
             'layerset' => null,
             'dpi' => 72,
             'srs' => 'EPSG:4326',
-            'otherSrs' => "EPSG:31466,EPSG:31467",
+            'otherSrs' => array("EPSG:31466","EPSG:31467"),
             'units' => 'degrees',
             'extents' => array(
                 'max' => array(0, 40, 20, 60),
                 'start' => array(5, 45, 15, 55)),
             'maxResolution' => 'auto',
-            "scales" => "25000000,10000000,5000000,1000000,500000",
+            "scales" => array(25000000,10000000,5000000,1000000,500000),
             'imgPath' => 'bundles/mapbendercore/mapquery/lib/openlayers/img');
     }
 
@@ -87,9 +87,26 @@ class Map extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-
+        
+        if(isset($configuration["scales"]))
+        {
+            $scales = array();
+            if(is_string($configuration["scales"]))
+            { // from database
+                $scales = preg_split("/\s?,\s?/", $configuration["scales"]);
+            } else if(is_array($configuration["scales"]))
+            { // from twig
+                $scales = $configuration["scales"];
+            }
+            // sort scales high to low
+            $scales = array_map(
+                    create_function('$value', 'return (int)$value;'), $scales);
+            arsort($scales, SORT_NUMERIC);
+            $configuration["scales"] = $scales;
+        }
+        
         $extra = array();
-        $srs = $this->container->get('request')->get('srs');
+        $srs_req = $this->container->get('request')->get('srs');
         $poi = $this->container->get('request')->get('poi');
         if($poi)
         {
@@ -121,53 +138,75 @@ class Map extends Element
 
         // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
-        $allsrs = array($configuration["srs"]);
+        $allsrs = array();
+        if(is_int(stripos($configuration["srs"], "|"))){
+            $srsHlp = explode("|", $configuration["srs"]);
+            $configuration["srs"] = $srsHlp[0];
+            $allsrs[$srsHlp[0]] = $srsHlp[1];
+        } else {
+            $allsrs[$configuration["srs"]] = "";
+        }
+        
         if(isset($configuration["otherSrs"]))
         {
             if(is_array($configuration["otherSrs"]))
             {
-                $allsrs = array_merge($allsrs, $configuration["otherSrs"]);
+                $otherSrs = $configuration["otherSrs"];
             } else if(is_string($configuration["otherSrs"])
                     && strlen(trim($configuration["otherSrs"])) > 0)
             {
-                $allsrs = array_merge($allsrs,
-                                      preg_split("/\s?,\s?/",
-                                                 $configuration["otherSrs"]));
+                $otherSrs = preg_split("/\s?,\s?/",
+                                                 $configuration["otherSrs"]);
+            }
+            foreach($otherSrs as $srs){
+                if(is_int(stripos($srs, "|"))){
+                    $srsHlp = explode("|", $configuration["srs"]);
+                    $allsrs[trim($srsHlp[0])] = trim($srsHlp[1]);
+                } else {
+                    $allsrs[trim($srs)] = "";
+                }
             }
         }
         unset($configuration['otherSrs']);
         $em = $this->container->get("doctrine")->getEntityManager();
         $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
                         . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
-                ->setParameter('name', $allsrs);
+                ->setParameter('name', array_keys($allsrs));
         $srses = $query->getResult();
+        
+        $ressrses = array();
         foreach($srses as $srsTemp)
         {
-            $configuration["srsDefs"][$srsTemp->getName()] = array(
+            $ressrses[$srsTemp->getName()] = array(
                 "name" => $srsTemp->getName(),
-                "title" => $srsTemp->getTitle(),
+                "title" => $allsrs[$srsTemp->getName()] !== "" ? $allsrs[$srsTemp->getName()] : $srsTemp->getTitle(),
                 "definition" => $srsTemp->getDefinition());
         }
-
-        if(!isset($configuration['scales']))
+        
+        if($srs_req)
         {
-            throw new \RuntimeException('The scales does not defined.');
-        } else if(isset($configuration['scales'])
-                && is_string($configuration['scales']))
-        {
-            $configuration['scales'] = preg_split(
-                    "/\s?,\s?/", $configuration['scales']);
-        }
-
-        if($srs)
-        {
-            if(!isset($configuration["srsDefs"][$srs]))
+            if(!isset($ressrses[$srs]))
             {
-                throw new \RuntimeException('The srs: "' . $srs
+                throw new \RuntimeException('The srs: "' . $srs_req
                         . '" does not supported.');
             }
             $configuration = array_merge($configuration,
-                                         array('targetsrs' => $srs));
+                                         array('targetsrs' => $srs_req));
+        }
+        /* sort the ressrses */
+        foreach($allsrs as $key => $value)
+        {
+            if(isset($ressrses[$key])){
+                $configuration["srsDefs"][] = $ressrses[$key];
+            }
+        }
+        if(!isset($configuration['scales']))
+        {
+            throw new \RuntimeException('The scales does not defined.');
+        } else if(is_string($configuration['scales']))
+        {
+            $configuration['scales'] = preg_split(
+                    "/\s?,\s?/", $configuration['scales']);
         }
         return $configuration;
     }

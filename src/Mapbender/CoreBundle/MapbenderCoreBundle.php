@@ -39,12 +39,14 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\FeatureInfo',
             'Mapbender\CoreBundle\Element\Legend',
             'Mapbender\CoreBundle\Element\Map',
+            'Mapbender\CoreBundle\Element\Overview',
             'Mapbender\CoreBundle\Element\Ruler',
+            'Mapbender\CoreBundle\Element\ScaleBar',
             'Mapbender\CoreBundle\Element\ScaleSelector',
 //            'Mapbender\CoreBundle\Element\SearchRouter',
             'Mapbender\CoreBundle\Element\SrsSelector',
             'Mapbender\CoreBundle\Element\Toc',
-            'Mapbender\CoreBundle\Element\Layertree',
+//            'Mapbender\CoreBundle\Element\Layertree',
             'Mapbender\CoreBundle\Element\ZoomBar',
             'Mapbender\CoreBundle\Element\PrintClient'
             );

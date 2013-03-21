@@ -111,9 +111,10 @@ a, a:visited {
   border-top: 1px solid #a2c515;
 }
 .footer .mb-element-srsselector {
-/*  position: absolute;
-  top: 5px;*/
-  right: 0;
+    position: absolute;
+    right: 0px;
+/*   top: 5px;*/
+   
 }
 .footer .mb-element-srsselector select {
   width: 100%;
@@ -148,9 +149,3 @@ a, a:visited {
 .ie7 .zoom-box, .ie7 .zoom-out {
   clear: both;
 }
-
-/*.mb-element-zoombar {
-  top: 10px !important;
-  left: 10px !important;
-  z-index: 1000 !important;
-}*/

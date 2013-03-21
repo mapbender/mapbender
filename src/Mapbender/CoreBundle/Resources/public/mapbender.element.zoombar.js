@@ -15,17 +15,12 @@ $.widget("mapbender.mbZoomBar", {
     zoomBoxControl: null,
 
     _create: function() {
-        if(this.options.target === null
-            || this.options.target.replace(/^\s+|\s+$/g, '') === ""
-            || !$('#' + this.options.target)){
-            alert('The target element "map" is not defined for a Zoombar.');
+        if(!Mapbender.checkTarget("mbZoomBar", this.options.target)){
             return;
         }
         var self = this;
 
         this.mapDiv = $('#' + this.options.target);
-        // FIXME: rework initialization
-        //this.mapDiv.bind('mbmapready', $.proxy(this._setup, this));
         $(document).one('mapbender.setupfinished', function() {
             self.mapDiv.mbMap('ready', $.proxy(self._setup, self));
         });
@@ -39,16 +34,34 @@ $.widget("mapbender.mbZoomBar", {
         this.map.events.register('zoomend', this, this._zoom2Slider);
         this._zoom2Slider();
 
-        if(this.options.draggable === "true") {
+        if(this.options.draggable === true) {
             this.element.draggable({
                 containment: this.element.closest('.region'),
                 start: function() { $(this).add('dragging'); }
             });
         }
-
-        this.element.css({
-            left: this.options.position[0] + "px",
-            top: this.options.position[1] + "px"});
+//        $(this.element).addClass(this.options.anchor);
+        if(this.options.anchor === "left-top"){
+            $(this.element).css({
+                left: this.options.position[0],
+                top: this.options.position[1]
+            });
+        } else if(this.options.anchor === "right-top"){
+            $(this.element).css({
+                right: this.options.position[0],
+                top: this.options.position[1]
+            });
+        } else if(this.options.anchor === "left-bottom"){
+            $(this.element).css({
+                left: this.options.position[0],
+                bottom: this.options.position[1]
+            });
+        } else if(this.options.anchor === "right-bottom"){
+            $(this.element).css({
+                right: this.options.position[0],
+                bottom: this.options.position[1]
+            });
+        }
         $(this.element).find('.zoom-world a').bind("click" ,$.proxy(this._worldZoom, this));
     },
 

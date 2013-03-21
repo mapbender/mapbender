@@ -12,6 +12,9 @@ $.widget("mapbender.mbLayertree", {
     consts: {service: "service", node: "node", wmslayer: "wmslayer"},
 
     _create: function() {
+        if(!Mapbender.checkTarget("mbLayertree", this.options.target)){
+            return;
+        }
         var self = this;
         var me = this.element;
         if(self.options.type === 'dialog'){
@@ -28,7 +31,7 @@ $.widget("mapbender.mbLayertree", {
     
     _setup: function(){
         var self = this;
-        if(self.options.type === 'dialog' && self.options.autoOpen === true){
+        if(self.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true){
             self.open();
         }
         var me = this.element;

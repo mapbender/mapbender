@@ -286,74 +286,83 @@ class RepositoryController extends Controller
         }
     }
 
-    /**
-     * Changes the priority of WmsInstanceLayers
-     * 
-     * @ManagerRoute("/{slug}/instance/{layersetId}/weight/{instanceId}")
-     */
-    public function instanceWeightAction($slug, $layersetId, $instanceId)
-    {
-        $number = $this->get("request")->get("number");
-//        $number = intval($number) - 1;
-        $instance = $this->getDoctrine()
-                ->getRepository('MapbenderWmsBundle:WmsInstance')
-                ->findOneById($instanceId);
-
-        if(!$instance)
-        {
-            throw $this->createNotFoundException('The wms instance with"
-                ." the id "' . $instanceId . '" does not exist.');
-        }
-        if(intval($number) === $instance->getWeight())
-        {
-            return new Response(json_encode(array(
-                                'error' => '',
-                                'result' => 'ok')), 200,
-                            array('Content-Type' => 'application/json'));
-        }
-        $em = $this->getDoctrine()->getEntityManager();
-        $instance->setWeight($number);
-        $em->persist($instance);
-        $em->flush();
-        $query = $em->createQuery(
-                "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
-                . " WHERE i.layerset=:lsid ORDER BY i.weight ASC");
-        $query->setParameters(array("lsid" => $layersetId));
-        $instList = $query->getResult();
-
-        $num = 0;
-        foreach($instList as $inst)
-        {
-            if($num === intval($instance->getWeight()))
-            {
-                if($instance->getId() === $inst->getId())
-                {
-                    $num++;
-                } else
-                {
-                    $num++;
-                    $inst->setWeight($num);
-                    $num++;
-                }
-            } else
-            {
-                if($instance->getId() !== $inst->getId())
-                {
-                    $inst->setWeight($num);
-                    $num++;
-                }
-            }
-        }
-        foreach($instList as $inst)
-        {
-            $em->persist($inst);
-        }
-        $em->flush();
-        return new Response(json_encode(array(
-                            'error' => '',
-                            'result' => 'ok')), 200, array(
-                    'Content-Type' => 'application/json'));
-    }
+//    /**
+//     * Changes the priority of WmsInstanceLayers
+//     * 
+//     * @ManagerRoute("/{slug}/instance/{layersetId}/weight/{instanceId}")
+//     */
+//    public function instanceWeightAction($slug, $layersetId, $instanceId)
+//    {
+//        $number = $this->get("request")->get("number");
+//        $new_layersetId = $this->get("request")->get("new_layersetId");
+////        $number = intval($number) - 1;
+//        $instance = $this->getDoctrine()
+//                ->getRepository('MapbenderWmsBundle:WmsInstance')
+//                ->findOneById($instanceId);
+//        
+//        if(!$instance)
+//        {
+//            throw $this->createNotFoundException('The wms instance with"
+//                ." the id "' . $instanceId . '" does not exist.');
+//        }
+//        if(intval($number) === $instance->getWeight() && $layersetId === $new_layersetId)
+//        {
+//            return new Response(json_encode(array(
+//                                'error' => '',
+//                                'result' => 'ok')), 200,
+//                            array('Content-Type' => 'application/json'));
+//        }
+//        $ls = $instance->getLayerset();
+//        if($layersetId === $new_layersetId)
+//        {
+//            $em = $this->getDoctrine()->getEntityManager();
+//            $instance->setWeight($number);
+//            $em->persist($instance);
+//            $em->flush();
+//            $query = $em->createQuery(
+//                    "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
+//                    . " WHERE i.layerset=:lsid ORDER BY i.weight ASC");
+//            $query->setParameters(array("lsid" => $layersetId));
+//            $instList = $query->getResult();
+//
+//            $num = 0;
+//            foreach($instList as $inst)
+//            {
+//                if($num === intval($instance->getWeight()))
+//                {
+//                    if($instance->getId() === $inst->getId())
+//                    {
+//                        $num++;
+//                    } else
+//                    {
+//                        $num++;
+//                        $inst->setWeight($num);
+//                        $num++;
+//                    }
+//                } else
+//                {
+//                    if($instance->getId() !== $inst->getId())
+//                    {
+//                        $inst->setWeight($num);
+//                        $num++;
+//                    }
+//                }
+//            }
+//            foreach($instList as $inst)
+//            {
+//                $em->persist($inst);
+//            }
+//            $em->flush();
+//        } else
+//        {
+//            
+//        }
+//
+//        return new Response(json_encode(array(
+//                            'error' => '',
+//                            'result' => 'ok')), 200, array(
+//                    'Content-Type' => 'application/json'));
+//    }
 
     /**
      * Changes the priority of WmsInstanceLayers
@@ -450,7 +459,7 @@ class RepositoryController extends Controller
                             array('Content-Type' => 'application/json'));
         } else
         {
-            $enabled = $enabled === null ? false : $enabled;
+            $enabled = $enabled === "true"  ? true : false;
             $wmsinstance->setEnabled($enabled);
             $em = $this->getDoctrine()->getEntityManager();
             $em->persist($wmsinstance);

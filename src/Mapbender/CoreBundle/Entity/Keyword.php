@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -12,7 +13,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  * @ORM\Table(name="mb_core_keyword")
  */
-class Keyword {
+class Keyword
+{
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -26,21 +29,21 @@ class Keyword {
      * @ORM\Column(type="string", nullable=false)
      */
     protected $value;
-    
+
     /**
      * @var string $title The source title
      * @ORM\Column(type="integer", nullable=false)
      */
     protected $sourceid;
-    
+
     /**
      * @var string $title The source title
      * @ORM\Column(type="string", nullable=false)
      */
     protected $sourceclass;
-    
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         
     }
 
@@ -75,8 +78,7 @@ class Keyword {
     {
         return $this->value;
     }
-    
-    
+
     /**
      * Set sourceid
      *
@@ -98,7 +100,7 @@ class Keyword {
     {
         return $this->sourceid;
     }
-    
+
     /**
      * Set sourceclass
      *
@@ -120,4 +122,5 @@ class Keyword {
     {
         return $this->sourceclass;
     }
+
 }

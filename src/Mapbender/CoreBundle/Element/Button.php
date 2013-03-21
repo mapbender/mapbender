@@ -49,7 +49,8 @@ class Button extends Element
             'target' => null,
             'click' => null,
             'group' => null,
-            'action' => null);
+            'action' => null,
+            'deactivate' => null);
     }
 
     /**

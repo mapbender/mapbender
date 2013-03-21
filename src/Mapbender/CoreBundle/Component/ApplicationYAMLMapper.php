@@ -8,6 +8,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Entity\Layerset;
 //use Mapbender\CoreBundle\Entity\Layer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -71,8 +72,20 @@ class ApplicationYAMLMapper
         {
             return null;
         }
-
+        $timestamp = round((microtime(true) * 1000));
         $definition = $definitions[$slug];
+        if(!key_exists('title', $definition))
+        {
+            $definition['title'] = "TITLE ". $timestamp;
+        }
+
+        if(!key_exists('published', $definition))
+        {
+            $definition['published'] = false;
+        } else 
+        {
+            $definition['published'] = (boolean) $definition['published'];
+        }
 
         // First, create an application entity
         $application = new ApplicationEntity();
@@ -96,9 +109,14 @@ class ApplicationYAMLMapper
             {
                 foreach($elementsDefinition as $id => $elementDefinition)
                 {
-                    $configuration = $elementDefinition;
-                    unset($configuration['class']);
-                    unset($configuration['title']);
+                    $configuration_ = $elementDefinition;
+                    unset($configuration_['class']);
+                    unset($configuration_['title']);
+                    $entity_class = $elementDefinition['class'];
+                    $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
+                    $elComp = new $entity_class($appl, $this->container, new \Mapbender\CoreBundle\Entity\Element());
+                    $defConfig = $elComp->getDefaultConfiguration();
+                    $configuration = ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_, array());
 
                     $class = $elementDefinition['class'];
                     $title = array_key_exists('title', $elementDefinition) ?
@@ -106,6 +124,8 @@ class ApplicationYAMLMapper
                             $class::getClassTitle();
 
                     $element = new Element();
+//                    $elComp = new ElementComponent()
+                   
                     $element
                             ->setId($id)
                             ->setClass($elementDefinition['class'])
@@ -164,7 +184,7 @@ class ApplicationYAMLMapper
 
                 $layerset->addInstance($instance);
             }
-            $application->addLayersets($layerset);
+            $application->addLayerset($layerset);
         }
 
         $application->setSource(ApplicationEntity::SOURCE_YAML);

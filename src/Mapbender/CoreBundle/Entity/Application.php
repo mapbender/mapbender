@@ -234,8 +234,8 @@ class Application {
      *
      * @param Layerset $layerset
      */
-    public function addLayersets(Layerset $layersets) {
-        $this->layersets[] = $layersets;
+    public function addLayerset(Layerset $layerset) {
+        $this->layersets[] = $layerset;
     }
 
     /**
@@ -310,7 +310,8 @@ class Application {
      *
      * @param boolean $published
      */
-    public function setPublished($published) {
+    public function setPublished($published)
+    {
         $this->published = $published;
         return $this;
     }
@@ -320,7 +321,8 @@ class Application {
      *
      * @return boolean
      */
-    public function isPublished() {
+    public function isPublished()
+    {
         return $this->published;
     }
 
@@ -373,6 +375,10 @@ class Application {
         } else {
             return $this->preparedElements;
         }
+    }
+    
+    public function __toString(){
+        return (string) $this->getId();
     }
 }
 

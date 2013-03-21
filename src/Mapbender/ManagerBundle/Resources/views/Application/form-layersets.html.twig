@@ -1,6 +1,13 @@
 {% if application.layersets|length > 0 %}
 {% for layerset in application.layersets %}
-<ul class="layerset" data-id="">
+<h3>{{ layerset.title | capitalize }}
+    <div class="btn-group">
+        <button class="btn layerset-action" data-href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Edit Layerset' | trans}}</button>
+        <button class="btn layerset-action btn-warning" data-href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Delete Layerset' | trans}}</button>
+        <button class="btn layerset-action" data-href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Add Instance' | trans}}</button>
+    </div>
+</h3>
+<ul class="layerset" data-id="{{ layerset.id }}">
     <li class="header">
         <span class="enabled">{{ 'Enabled' | trans }}</span>
         <span class="sourceid">{{ 'SourceId' | trans }}</span>
@@ -16,7 +23,7 @@
         <span class="title">{{ instance.title }}</span>
         <div class="btn-group">
             <a href="{{ url("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})  }}" class="btn">{{ 'Edit Source Instance' | trans }}</a>
-            <a href="{{ url("mapbender_manager_application_confirminstancedelete",{"slug": application.slug, "instanceId": instance.id}) }}" class="btn btn-warning">{{ 'Delete' | trans }}</a>
+            <a href="{{ url("mapbender_manager_application_confirmdeleteinstance",{"slug": application.slug, 'layersetId': layerset.id, "instanceId": instance.id}) }}" class="btn btn-warning">{{ 'Delete' | trans }}</a>
         </div>
     </li>
     {% endfor #}
@@ -25,5 +32,8 @@
 {% else %}
     {{ 'No Sources added' | trans }}
 {% endif %}
-<button type="button" data-toggle="modal" data-target="#repository-list-modal" class="btn" >{{ "Add Source" | trans }}</button>
+<br/>
+<div class="btn-group">
+    <button class="btn layerset-action" title="{{ 'Add Layerset' | trans}}" data-href="{{ path("mapbender_manager_application_newlayerset",{'slug': application.slug}) }}">{{ 'Add Layerset' | trans}}</button>
+</div>
 

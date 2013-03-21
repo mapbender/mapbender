@@ -1,0 +1,8 @@
+.mb-element-coordsdisplay {
+    font-size: 11px;
+    position:relative;
+    min-width: 220px;
+    height: 20px;
+    display: inline-block;
+}
+
