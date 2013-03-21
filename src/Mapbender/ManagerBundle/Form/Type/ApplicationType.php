@@ -45,7 +45,7 @@ class ApplicationType extends AbstractType {
             ->add('published', 'checkbox', array(
                 'required' => false,
                 'label' => 'Published'));
-            
+
             $builder->add('acl', 'acl', array(
                 'property_path' => false,
                 'data' => $options['data'],

@@ -419,7 +419,6 @@ class ApplicationController extends Controller {
         $form->bindRequest($request);
         if($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
-
             $aclProvider = $this->get('security.acl.provider');
 
             $em->getConnection()->beginTransaction();
@@ -429,7 +428,7 @@ class ApplicationController extends Controller {
 
             $em->remove($application);
             $em->flush();
-
+            
             $em->commit();
 
             $this->get('session')->setFlash('notice',
