@@ -14,11 +14,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Mapbender\CoreBundle\Entity\Layerset;
-//use Mapbender\CoreBundle\Entity\Layer;
 
 //FIXME: make this work without an explicit import
 use Mapbender\CoreBundle\Entity\SourceInstance;
@@ -200,6 +198,7 @@ class ApplicationController extends Controller {
 
         $form->bindRequest($request);
         if($form->isValid()) {
+
             $em = $this->getDoctrine()->getEntityManager();
 
             $em->getConnection()->beginTransaction();
@@ -226,9 +225,7 @@ class ApplicationController extends Controller {
 
                 $this->get('session')->setFlash('notice',
                     'Your application has been updated.');
-
             } catch(\Exception $e) {
-
                 $this->get('session')->setFlash('error',
                     'There was an error trying to save your application.');
                 $em->getConnection()->rollback();
@@ -323,7 +320,6 @@ class ApplicationController extends Controller {
 
         $sourceInstance = $source->createInstance();
         $sourceInstance->setLayerset($layerset);
-//        $sourceInstance->setWeight($layerset->getInstances()->count());
         $sourceInstance->setWeight(-1);
 
 
@@ -332,7 +328,6 @@ class ApplicationController extends Controller {
         $em->persist($application);
         $em->persist($layerset);
 
-//        $sourceInstance->setLayerset($layerset);
         $em->persist($sourceInstance);
         $em->flush();
 
@@ -372,9 +367,6 @@ class ApplicationController extends Controller {
                         ->find($instanceId);
         $em = $this->getDoctrine()->getEntityManager();
 
-//        $sourceInstance = $layer->getSourceInstance();
-//        $em->remove($sourceInstance);
-////        $em->flush();
         $em->remove($instance);
         $em->flush();
         $this->get('session')->setFlash('notice',
@@ -431,7 +423,7 @@ class ApplicationController extends Controller {
             $aclProvider = $this->get('security.acl.provider');
 
             $em->getConnection()->beginTransaction();
-
+            
             $oid = ObjectIdentity::fromDomainObject($application);
             $aclProvider->deleteAcl($oid);
 
