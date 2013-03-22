@@ -72,6 +72,7 @@ class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase {
         $this->assertSame("image/png",$array[0]);
         $this->assertSame("http://example.com/ohmyawms",$wms->getGetMap()->getHttpGet());
 
+        $rootLayer = $wms->getRootLayer();
         $array = $rootLayer->getSrs();
 
         $rootLayer = $wms->getRootLayer();
