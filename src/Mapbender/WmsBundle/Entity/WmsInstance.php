@@ -2,29 +2,28 @@
 
 namespace Mapbender\WmsBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Component\InstanceIn;
 
 /**
  * WmsInstance class
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstance")
  * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
  */
-class WmsInstance
-        extends SourceInstance
-        implements InstanceIn
+class WmsInstance extends SourceInstance
 {
 
     /**
      * @var array $configuration The instance configuration
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $configuration;
 
@@ -90,40 +89,40 @@ class WmsInstance
      */
     protected $tiled = false;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $info = true;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $selected = true;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $toggle = true;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowinfo = true;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowselected = true;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowtoggle = true;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $allowreorder = true;
+//    /**
+//     * @ORM\Column(type="boolean", nullable=true)
+//     */
+//    protected $info = true;
+//
+//    /**
+//     * @ORM\Column(type="boolean", nullable=true)
+//     */
+//    protected $selected = true;
+//
+//    /**
+//     * @ORM\Column(type="boolean", nullable=true)
+//     */
+//    protected $toggle = true;
+//
+//    /**
+//     * @ORM\Column(type="boolean", nullable=true)
+//     */
+//    protected $allowinfo = true;
+//
+//    /**
+//     * @ORM\Column(type="boolean", nullable=true)
+//     */
+//    protected $allowselected = true;
+//
+//    /**
+//     * @ORM\Column(type="boolean", nullable=true)
+//     */
+//    protected $allowtoggle = true;
+//
+//    /**
+//     * @ORM\Column(type="boolean", nullable=true)
+//     */
+//    protected $allowreorder = true;
 
     public function __construct()
     {
@@ -170,22 +169,63 @@ class WmsInstance
      */
     public function getConfiguration()
     {
-        if($this->configuration !== null)
-        { // from yaml
-            return $this->configuration;
+//        if($this->configuration === null)
+//        { // from yaml
+        $this->generateConfiguration();
+//        }
+        return $this->configuration;
+    }
+
+    public function generateConfiguration()
+    {
+        $rootlayer = $this->getRootlayer();
+        $configuration = array(
+            "type" => strtolower($this->getSource()->getType()),
+            "title" => $this->title,
+            "options" => array(
+                "url" => $this->source->getGetMap()->getHttpGet(),
+                "proxy" => $this->getProxy(),
+                "visible" => $this->getVisible(),
+                "format" => $this->getFormat(),
+                "info_format" => $this->getInfoformat(),
+                "queryFormat" => $this->infoformat,
+                "transparent" => $this->transparency,
+                "opacity" => $this->opacity / 100,
+                "tiled" => $this->tiled
+            ),
+            "children" => array($this->generateLayersConfiguration($rootlayer))
+        );
+        // TODO delete line, if client implements
+        $configuration = array_merge($configuration,
+                                     $this->createConfigurationOld());
+        $this->configuration = $configuration;
+    }
+
+    private function generateLayersConfiguration($layer,
+            $configuration = array())
+    {
+        if($layer->getActive() === true)
+        {
+            $children = array();
+            foreach($layer->getSublayer() as $sublayer)
+            {
+                $children[] = $this->generateLayersConfiguration($sublayer);
+            }
+            $layerConf = $layer->getConfiguration();
+            $configuration = array(
+                "configuration" => $layerConf,
+                "children" => $children);
         }
+        return $configuration;
+    }
+
+    // TODO delete line, if client implements
+    private function createConfigurationOld()
+    {
         // from db
         $layers = array();
         $infoLayers = array();
-        $rootlayer = null;
-        foreach($this->layers as $layer)
-        {
-            if($layer->getWmslayersource()->getParent() === null)
-            {
-                $rootlayer = $layer;
-                break;
-            }
-        }
+        $rootlayer = $this->getRootlayer();
 
         foreach($this->layers as $layer)
         {
@@ -216,22 +256,8 @@ class WmsInstance
             "tiled" => $this->tiled,
             "layers" => array_reverse($layers),
             "queryLayers" => array_reverse($infoLayers),
-            "layertree" => $this->getLayertreeConfiguration()
         );
         return $configuration;
-    }
-
-    public function getLayertreeConfiguration()
-    {
-        $layertree = array();
-        foreach($this->layers as $layer)
-        {
-            if($layer->getActive() === true)
-            {
-                $layertree[$layer->getId()] = $layer->getLayertreeConfiguration();
-            }
-        }
-        return $layertree;
     }
 
     /**
@@ -255,6 +281,23 @@ class WmsInstance
     public function getLayers()
     {
         return $this->layers;
+    }
+
+    /**
+     * Get root layer
+     *
+     * @return WmsInstanceLayer 
+     */
+    public function getRootlayer()
+    {
+        foreach($this->layers as $layer)
+        {
+            if($layer->getParent() === null)
+            {
+                return $layer;
+            }
+        }
+        return null;
     }
 
     /**
@@ -534,167 +577,24 @@ class WmsInstance
     }
 
     /**
-     * Get info
-     *
-     * @return boolean $info
+     * @inheritdoc
      */
-    public function getInfo()
-    {
-        return $this->info;
-    }
-
-    /**
-     * Set info
-     *
-     * @param boolean $info
-     */
-    public function setInfo($info)
-    {
-        $this->info = $info;
-        return $this;
-    }
-
-    /**
-     * Get selected
-     *
-     * @return boolean $selected
-     */
-    public function getSelected()
-    {
-        return $this->selected;
-    }
-
-    /**
-     * Set selected
-     *
-     * @param boolean $selected
-     */
-    public function setSelected($selected)
-    {
-        $this->selected = $selected;
-        return $this;
-    }
-
-    /**
-     * Get toggle
-     *
-     * @return boolean $toggle
-     */
-    public function getToggle()
-    {
-        return $this->toggle;
-    }
-
-    /**
-     * Set toggle
-     *
-     * @param string $toggle
-     */
-    public function setToggle($toggle)
-    {
-        $this->toggle = $toggle;
-        return $this;
-    }
-
-    /**
-     * Get allowinfo
-     *
-     * @return boolean $allowinfo
-     */
-    public function getAllowinfo()
-    {
-        return $this->allowinfo;
-    }
-
-    /**
-     * Set allowinfo
-     *
-     * @param boolean $allowinfo
-     */
-    public function setAllowinfo($allowinfo)
-    {
-        $this->allowinfo = $allowinfo;
-        return $this;
-    }
-
-    /**
-     * Get allowselected
-     *
-     * @return boolean $allowselected
-     */
-    public function getAllowselected()
-    {
-        return $this->allowselected;
-    }
-
-    /**
-     * Set allowselected
-     *
-     * @param boolean $allowselected
-     */
-    public function setAllowselected($allowselected)
-    {
-        $this->allowselected = $allowselected;
-        return $this;
-    }
-
-    /**
-     * Get allowtoggle
-     *
-     * @return boolean $allowtoggle
-     */
-    public function getAllowtoggle()
-    {
-        return $this->allowtoggle;
-    }
-
-    /**
-     * Set allowtoggle
-     *
-     * @param boolean $allowtoggle
-     */
-    public function setAllowtoggle($allowtoggle)
-    {
-        $this->allowtoggle = $allowtoggle;
-        return $this;
-    }
-
-    /**
-     * Get allowreorder
-     *
-     * @return boolean $allowreorder
-     */
-    public function getAllowreorder()
-    {
-        return $this->allowreorder;
-    }
-
-    /**
-     * Set allowreorder
-     *
-     * @param boolean $allowreorder
-     */
-    public function setAllowreorder($allowreorder)
-    {
-        $this->allowreorder = $allowreorder;
-        return $this;
-    }
-
-    public function __toString()
-    {
-        return (string) $this->getId();
-    }
-
     public function getType()
     {
         return "wms";
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getManagerType()
     {
         return "wms";
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getAssets()
     {
         return array(
@@ -702,16 +602,39 @@ class WmsInstance
                 '@MapbenderWmsBundle/Resources/public/mapbender.layer.wms.js'),
             'css' => array());
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getLayerset()
     {
         parent::getLayerset();
     }
     
-//    public function setLayerset(\Mapbender\CoreBundle\Entity\Layerset $layerset)
-//    {
-//        parent::setLayerset($layerset);
-//        return $this;
-//    }
+    
+    
+    /**
+     * @inheritdoc
+     */
+    public function remove(EntityManager $em)
+    {
+        $this->removeLayerRecursive($em, $this->getRootlayer());
+        $em->remove($this);
+    }
+    
+     /**
+     * Recursively remove a nested Layerstructure
+     * @param EntityManager $em
+     * @param WmsInstanceLayer $instLayer
+     */
+    private function removeLayerRecursive(EntityManager $em, WmsInstanceLayer $instLayer)
+    {
+        foreach($instLayer->getSublayer() as $sublayer)
+        {
+            $this->removeLayerRecursive($em, $sublayer);
+        }
+        $em->remove($instLayer);
+        $em->flush();
+    }
 
 }

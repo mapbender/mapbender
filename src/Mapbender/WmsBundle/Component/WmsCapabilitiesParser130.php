@@ -12,7 +12,7 @@ use Mapbender\WmsBundle\Component\RequestInformation;
 /**
  * Class that Parses WMS 1.3.0 GetCapabilies Document 
  * @package Mapbender
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class WmsCapabilitiesParser130
         extends WmsCapabilitiesParser
@@ -71,12 +71,6 @@ class WmsCapabilitiesParser130
             }
             /* @TODO add other wms:_ExtendedOperation ?? */
         }
-//        $this->parseCapabilityRequest($wms, $this->getValue("./wms:Capability/wms:Request", $root));
-//        $this->parseCapabilityException($wms, $this->getValue("./wms:Capability/wms:Exception", $root));
-//        $this->parseUserDefinedSymbolization($wms, $this->getValue("./wms:Capability/sld:UserDefinedSymbolization", $root));
-//        $rootlayer = new WmsLayerSource();
-//        $layer = $this->parseLayer($wms, $rootlayer, $this->getValue("./wms:Capability/wms:Layer", $root));
-//        $wms->addLayer($layer);
         return $wms;
     }
 

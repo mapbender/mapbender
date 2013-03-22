@@ -5,7 +5,7 @@ namespace Mapbender\WmsBundle\Component;
 /**
  * MinMax class.
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class MinMax
 {

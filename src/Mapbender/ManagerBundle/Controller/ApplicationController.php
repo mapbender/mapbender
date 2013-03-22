@@ -478,8 +478,14 @@ class ApplicationController extends Controller
                 ->find($layersetId);
         if($layerset !== null)
         {
-            $this->getDoctrine()->getEntityManager()->remove($layerset);
-            $this->getDoctrine()->getEntityManager()->flush();
+            $em = $this->getDoctrine()->getEntityManager();
+            
+            $em->getConnection()->beginTransaction();
+            
+            $em->remove($layerset);
+            $em->flush();
+            $em->getConnection()->commit();
+            
             $this->get("logger")->debug('The layerset "'
                     . $layerset->getId() . '"has been deleted.');
             $this->get('session')->setFlash('notice',
@@ -561,6 +567,7 @@ class ApplicationController extends Controller
         foreach($layerset->getInstances() as $instance)
         {
             $instance->setWeight($num);
+            $instance->generateConfiguration();
             $em->persist($instance);
             $em->flush();
             $num++;
@@ -613,22 +620,14 @@ class ApplicationController extends Controller
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
         $this->checkGranted('EDIT', $application);
-        $layerset = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:Layerset")
-                ->find($layersetId);
-        $instance = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:SourceInstance")
-                ->find($instanceId);
-        $em = $this->getDoctrine()->getEntityManager();
-
-        $em->remove($instance);
-        $em->flush();
-        $this->get('session')->setFlash('notice',
-                                        'Your Source Instance has been deleted.');
-        return $this->redirect(
-                        $this->generateUrl('mapbender_manager_application_edit',
-                                           array("slug" => $slug)) . "#layersets"
-        );
+        $sourceInst = $this->getDoctrine()
+                        ->getRepository("MapbenderCoreBundle:SourceInstance")
+                        ->find($instanceId);
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$sourceInst->getSource()->getManagertype()];
+        return  $this->forward(
+                $manager['bundle'] . ":" . "Repository:deleteInstance",
+                array("slug" => $slug, "instanceId" => $instanceId));
     }
 
     /* Instance block end */

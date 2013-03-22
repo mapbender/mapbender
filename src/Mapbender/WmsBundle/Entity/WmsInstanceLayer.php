@@ -3,8 +3,7 @@
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\InstanceIn;
-use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Component\InstanceLayerIn;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\CoreBundle\Component\Utils;
@@ -12,13 +11,12 @@ use Mapbender\CoreBundle\Component\Utils;
 /**
  * WmsInstanceLayer class
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  *
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
  */
-class WmsInstanceLayer
-        implements InstanceIn
+class WmsInstanceLayer implements InstanceLayerIn
 {
 
     /**
@@ -42,12 +40,14 @@ class WmsInstanceLayer
     protected $wmslayersource;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\ManyToOne(targetEntity="WmsInstanceLayer",inversedBy="sublayer")
+     * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=true)
      */
-    protected $parent;
+    protected $parent = null;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @ORM\OneToMany(targetEntity="WmsInstanceLayer",mappedBy="parent", cascade={"remove"})
+     * @ORM\OrderBy({"priority" = "asc"})
      */
     protected $sublayer;
 
@@ -194,7 +194,7 @@ class WmsInstanceLayer
     /**
      * Set parent
      *
-     * @param string $parent
+     * @param WmsInstanceLayer $parent
      * @return WmsInstanceLayer
      */
     public function setParent($parent)
@@ -207,7 +207,7 @@ class WmsInstanceLayer
     /**
      * Get parent
      *
-     * @return string 
+     * @return WmsInstanceLayer 
      */
     public function getParent()
     {
@@ -530,14 +530,16 @@ class WmsInstanceLayer
         return $this->wmslayersource;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function __toString()
     {
         return (string) $this->getId();
     }
 
     /**
-     * Get a layer configuration.
-     * @return array
+     * @inheritdoc
      */
     public function getConfiguration()
     {
@@ -545,22 +547,17 @@ class WmsInstanceLayer
             "id" => $this->id,
             "name" => $this->wmslayersource->getName(),
             "title" => $this->title,
-            "sublayers" => $this->sublayer,
-            "parent" => $this->wmslayersource->getParent() !== null ?
-                    $this->wmslayersource->getParent()->getId() : null,
             "queryable" => $this->getInfo(),
             "style" => $this->style,
         );
-
-        // minScale of OpenLayers = maxScale of WMS,
-        // maxScale of OpenLayers = minScale of WMS
+        
         if($this->minScale !== null)
         {
-            $configuration["maxScale"] = $this->minScale;
+            $configuration["minScale"] = $this->minScale;
         }
-        if($this->minScale !== null)
+        if($this->maxScale !== null)
         {
-            $configuration["minScale"] = $this->maxScale;
+            $configuration["maxScale"] = $this->maxScale;
         }
 
         if(count($this->wmslayersource->getStyles()) > 0)
@@ -586,14 +583,7 @@ class WmsInstanceLayer
             $configuration["legend"] = array(
                 "graphic" => $legendgraphic);
         }
-        return $configuration;
-    }
-
-    public function getLayertreeConfiguration()
-    {
-        return array(
-            "id" => $this->id,
-            "parent" => $this->parent,
+        $configuration["treeOptions"] = array(
             "info" => $this->info,
             "selected" => $this->selected,
             "toggle" => $this->toggle,
@@ -604,6 +594,7 @@ class WmsInstanceLayer
                 "reorder" => $this->allowreorder,
             )
         );
+        return $configuration;
     }
 
 }

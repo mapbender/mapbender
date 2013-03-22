@@ -8,9 +8,10 @@ use Mapbender\WmsBundle\Component\Exception\WmsException;
 
 /**
  * Class that Parses WMS GetCapabilies Document 
- * @package Mapbender
- * @author Karim Malhas <karim@malhas.de>
  * Parses WMS GetCapabilities documents
+ * 
+ * @author Karim Malhas
+ * @author Paul Schmidt
  */
 abstract class WmsCapabilitiesParser
 {

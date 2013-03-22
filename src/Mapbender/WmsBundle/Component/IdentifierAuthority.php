@@ -6,7 +6,7 @@ namespace Mapbender\WmsBundle\Component;
  * IdentifierAuthority class. An instance of the class IdentifierAuthority
  * conbines an Identifier with an Authority of a WmsLayerSource.
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class IdentifierAuthority
 {
