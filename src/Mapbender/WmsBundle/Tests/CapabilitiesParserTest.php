@@ -72,8 +72,10 @@ class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase {
         $this->assertSame("image/png",$array[0]);
         $this->assertSame("http://example.com/ohmyawms",$wms->getGetMap()->getHttpGet());
 
+        $array = $rootLayer->getSrs();
+
         $rootLayer = $wms->getRootLayer();
-        $this->assertEquals("EPSG:4326",$rootLayer->getSrs()[0]);
+        $this->assertEquals("EPSG:4326", $array[0]);
         $bb = $rootLayer->getLatLonBounds();
         $strbb = $bb->getMinx()." ".$bb->getMiny()." ".$bb->getMaxx()." ".$bb->getMaxy();
         $this->assertEquals("-10.4 35.7 -180 180",$strbb);
