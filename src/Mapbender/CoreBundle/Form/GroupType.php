@@ -1,25 +1,39 @@
 <?php
+
 namespace Mapbender\CoreBundle\Form;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * Description of GroupType
  *
- * @author apour
+ * @author Arash R. Pour
  */
-class GroupType extends AbstractType {
-	public function getName() {
-		return "Group";
-	}
+class GroupType extends AbstractType
+{
 
-	public function buildForm(FormBuilderInterface $builder,array $options) {
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
+        return "Group";
+    }
 
-		$builder->add("name","text",array(
-		));
+    /**
+     * @inheritdoc
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
 
-		$builder->add("description","textarea",array(
-			"required" => false
-		));
-	}
+        $builder->add("name", "text", array(
+        ));
+
+        $builder->add("description", "textarea",
+                      array(
+            "required" => false
+        ));
+    }
+
 }
