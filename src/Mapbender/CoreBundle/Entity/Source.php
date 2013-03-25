@@ -123,25 +123,6 @@ abstract class Source
     }
 
     /**
-     * Returns a source type
-     *
-     * @return String type
-     */
-    public abstract function getType();
-    
-    /**
-     * Returns a manager type 
-     *
-     * @return String a manager type
-     */
-    public abstract function getManagertype();
-    
-    /**
-     * Creates a SourceInstance
-     */
-    public abstract function createInstance();
-    
-    /**
      * Get full class name
      *
      * @return string
@@ -160,11 +141,28 @@ abstract class Source
     {
         return (string) $this->id;
     }
-    
+
+    /**
+     * Returns a source type
+     *
+     * @return String type
+     */
+    public abstract function getType();
+
+    /**
+     * Returns a manager type 
+     *
+     * @return String a manager type
+     */
+    public abstract function getManagertype();
+
+    /**
+     * Creates a SourceInstance
+     */
+    public abstract function createInstance();
+
     /**
      * Remove a source from a database
      */
     public abstract function remove(EntityManager $em);
-    
-
 }

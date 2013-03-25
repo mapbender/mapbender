@@ -170,6 +170,7 @@ class ApplicationYAMLMapper
                         ->setTitle($layerDefinition['title'])
                         ->setWeight($weight++)
                         ->setLayerset($layerset)
+                        ->setBaselayer(!isset($layerDefinition['baselayer']) ? false : $layerDefinition['baselayer'])
                         ->setProxy(!isset($layerDefinition['proxy']) ? false : $layerDefinition['proxy'])
                         ->setVisible(!isset($layerDefinition['visible']) ? true : $layerDefinition['visible'])
                         ->setFormat(!isset($layerDefinition['transparent']) ? true : $layerDefinition['transparent'])

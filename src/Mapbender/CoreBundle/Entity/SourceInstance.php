@@ -215,4 +215,17 @@ abstract class SourceInstance
      * @param EntityManager $em
      */
     public abstract function remove(EntityManager $em);
+    
+    /**
+     * Sets an instance as baselayer
+     * @param boolean $isBaselayer
+     */
+    public abstract function setBaselayer($isBaselayer);
+    
+    /**
+     * Returns true if an instance is a baselayer.
+     * 
+     * @return boolean is baselayer
+     */
+    public abstract function getBaselayer();
 }

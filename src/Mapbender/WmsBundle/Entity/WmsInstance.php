@@ -89,45 +89,14 @@ class WmsInstance extends SourceInstance
      */
     protected $tiled = false;
 
-//    /**
-//     * @ORM\Column(type="boolean", nullable=true)
-//     */
-//    protected $info = true;
-//
-//    /**
-//     * @ORM\Column(type="boolean", nullable=true)
-//     */
-//    protected $selected = true;
-//
-//    /**
-//     * @ORM\Column(type="boolean", nullable=true)
-//     */
-//    protected $toggle = true;
-//
-//    /**
-//     * @ORM\Column(type="boolean", nullable=true)
-//     */
-//    protected $allowinfo = true;
-//
-//    /**
-//     * @ORM\Column(type="boolean", nullable=true)
-//     */
-//    protected $allowselected = true;
-//
-//    /**
-//     * @ORM\Column(type="boolean", nullable=true)
-//     */
-//    protected $allowtoggle = true;
-//
-//    /**
-//     * @ORM\Column(type="boolean", nullable=true)
-//     */
-//    protected $allowreorder = true;
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $baselayer = false;
 
     public function __construct()
     {
         $this->layers = new ArrayCollection();
-        $this->opacity;
     }
 
     /**
@@ -194,13 +163,14 @@ class WmsInstance extends SourceInstance
             "title" => $this->title,
             "options" => array(
                 "url" => $this->configuration["url"],
-                "proxy" => $this->getProxy(),
-                "visible" => $this->getVisible(),
+                "proxy" => $this->proxy,
+                "visible" => $this->visible,
                 "format" => $this->getFormat(),
-                "info_format" => $this->getInfoformat(),
-                "transparent" => $this->transparency,
+                "info_format" => $this->infoformat,
+                "transparent" => $this->getFormat(),
                 "opacity" => $this->opacity / 100,
-                "tiled" => $this->tiled
+                "tiled" => $this->tiled,
+                "baselayer" => $this->baselayer
             )
         );
         if(!key_exists("children", $this->configuration)){
@@ -255,7 +225,8 @@ class WmsInstance extends SourceInstance
                 "info_format" => $this->getInfoformat(),
                 "transparent" => $this->transparency,
                 "opacity" => $this->opacity / 100,
-                "tiled" => $this->tiled
+                "tiled" => $this->tiled,
+                "baselayer" => $this->baselayer
             ),
             "children" => array($this->generateLayersConfiguration($rootlayer))
         );
@@ -599,6 +570,31 @@ class WmsInstance extends SourceInstance
     public function getTiled()
     {
         return $this->tiled;
+    }
+    
+    
+
+    /**
+     * Set baselayer
+     *
+     * @param boolean $baselayer
+     * @return WmsInstance
+     */
+    public function setBaselayer($baselayer)
+    {
+        $this->baselayer = $baselayer;
+
+        return $this;
+    }
+
+    /**
+     * Get baselayer
+     *
+     * @return boolean
+     */
+    public function getBaselayer()
+    {
+        return $this->baselayer;
     }
 
     /**
