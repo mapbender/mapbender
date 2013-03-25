@@ -57,6 +57,8 @@ $.widget('mapbender.mbSearchRouter', {
         // Prepare autocompletes
         $('form input[data-autocomplete="on"]', this.element).each(
             $.proxy(this._setupAutocomplete, this));
+        $('form input[data-autocomplete^="custom:"]', this.element).each(
+            $.proxy(this._setupCustomAutocomplete, this));
 
         // Prepare search button (trigger form submit)
         $('a[role="search_router_search"]')
@@ -164,6 +166,17 @@ $.widget('mapbender.mbSearchRouter', {
             },
             select: this._autocompleteSelect
         }).keydown(this._autocompleteKeydown);
+    },
+
+    /**
+     * Set up autocpmplete provided by custom widget (data-autcomplete="custom:<widget>")
+     *
+     * @param  integer      idx   Running index
+     * @param  HTMLDomNode  input Input element
+     */
+    _setupCustomAutocomplete: function(idx, input) {
+        var plugin = $(input).data('autocomplete').substr(7);
+        $(input)[plugin]();
     },
 
     /**
