@@ -1,34 +1,32 @@
 <?php
 
-/**
- * @author Christian Wygoda
- */
-
 namespace Mapbender\WmsBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\Response;
+use Mapbender\CoreBundle\Component\Utils;
+use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
+use Mapbender\WmsBundle\Component\Exception\WmsException;
+use Mapbender\CoreBundle\Component\Exception\XmlParseException;
+use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
 use Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
 use Mapbender\WmsBundle\Form\Type\WmsSourceType;
 use Mapbender\WmsBundle\Form\Type\WmsInstanceType;
-use Mapbender\CoreBundle\Component\Utils;
-use Mapbender\CoreBundle\Component\Exception\XmlParseException;
-use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
-use Mapbender\WmsBundle\Component\Exception\WmsException;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @ManagerRoute("/repository/wms")
+ * 
+ * @author Christian Wygoda
  */
 class RepositoryController extends Controller
 {
@@ -69,12 +67,6 @@ class RepositoryController extends Controller
     public function viewAction(WmsSource $wms)
     {
         return array("wms" => $wms);
-
-        /*
-          return $this
-          ->get("templating")
-          ->render("MapbenderWmsBundle:Repository:view.html.twig",array("wms" => $wms));
-         */
     }
 
     /**
@@ -147,14 +139,8 @@ class RepositoryController extends Controller
             $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
             $rootlayer = $wmssource->getLayers()->get(0);
             $this->getDoctrine()->getEntityManager()->persist($rootlayer);
-//            $this->getDoctrine()->getEntityManager()->flush();
-            $this->saveLayer($this->getDoctrine()->getEntityManager(), $rootlayer);
-//            $layers = array();
-//            foreach($wmssource->getLayers() as $layer_)
-//            {
-//                $this->getDoctrine()->getEntityManager()->persist($layer_);
-//                $layers[$layer_->getName()] = $layer_->getId();
-//            }
+            $this->saveLayer($this->getDoctrine()->getEntityManager(),
+                             $rootlayer);
             $this->getDoctrine()->getEntityManager()->persist($wmssource);
             $this->getDoctrine()->getEntityManager()->flush();
         }
@@ -191,19 +177,16 @@ class RepositoryController extends Controller
         $em->getConnection()->beginTransaction();
         foreach($wmsinstances as $wmsinstance)
         {
-//            $em->remove($wmsinstance);
             $wmsinstance->remove($em);
             $em->flush();
         }
         $wmssource->remove($em);
-//        $this->removeSourceRecursive($wmssource->getRootlayer(), $em);
-//        $em->remove($wmssource);
         $em->flush();
         $em->getConnection()->commit();
         $this->get('session')->setFlash('info', "Service deleted");
         return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
     }
-    
+
     /**
      * Removes a WmsInstance
      * 
@@ -282,12 +265,12 @@ class RepositoryController extends Controller
             { //save
                 $em = $this->getDoctrine()->getEntityManager();
                 $em->getConnection()->beginTransaction();
-                
+
                 $em->persist($wmsinstance);
                 $em->flush();
-                
+
                 $em->getConnection()->commit();
-                
+
                 $this->get('session')->setFlash(
                         'notice', 'Your Wms Instance has been changed.');
                 return $this->redirect($this->generateUrl(

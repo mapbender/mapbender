@@ -2,6 +2,9 @@
 
 namespace Mapbender\WmsBundle;
 
+/**
+ * WmsEvents
+ */
 final class WmsEvents
 {
     /**

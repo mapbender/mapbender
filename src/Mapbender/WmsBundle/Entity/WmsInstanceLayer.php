@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\InstanceLayerIn;
 use Mapbender\WmsBundle\Entity\WmsInstance;
@@ -118,8 +119,19 @@ class WmsInstanceLayer implements InstanceLayerIn
 
     public function __construct()
     {
-        $this->sublayer = array();
+        $this->sublayer = new ArrayCollection();
         $this->style = "";
+    }
+    
+    /**
+     * Set id
+     * @param integer $id
+     * @return WmsInstanceLayer
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
     }
 
     /**
@@ -171,12 +183,12 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Set sublayer as array of string
      *
-     * @param string $sublayer
+     * @param WmsInstanceLayer $sublayer
      * @return WmsInstanceLayer
      */
-    public function addSublayer($sublayer)
+    public function addSublayer(WmsInstanceLayer $sublayer)
     {
-        $this->sublayer[] = $sublayer;
+        $this->sublayer->add($sublayer);
 
         return $this;
     }
