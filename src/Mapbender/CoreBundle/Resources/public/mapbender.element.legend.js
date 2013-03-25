@@ -30,9 +30,8 @@
                 return;
             }
             var self = this;
-            $(document).one('mapbender.setupfinished', function() {
-                $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
-            });
+            
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
 
         _setup: function() {

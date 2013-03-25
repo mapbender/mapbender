@@ -73,8 +73,9 @@ $.widget('mapbender.mbSearchRouter', {
         // Listen to changes of search select (switching and forms resetting)
         var routeSelect = $('select#search_routes_route', this.element);
         routeSelect.change($.proxy(this._selectSearch, this));
-        $('#' + this.options.target).mbMap('ready', function() {
+        Mapbender.elementRegistry.onElementReady(this.options.target, function() {
             routeSelect.change();
+            self._trigger('ready');
         });
         // But if there's only one search, we actually don't need the select
         var routeCount = 0;
