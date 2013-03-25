@@ -78,8 +78,12 @@ $.widget("mapbender.mbButton", {
     deactivate: function() {
         if(this.options.target && this.options.deactivate) {
             var target = $('#' + this.options.target);
-            var widget = Mapbender.configuration.elements[this.options.target].init;
-            target[widget](this.options.deactivate);
+            var widget = Mapbender.configuration.elements[this.options.target].init.split('.');
+            if(widget.length == 1) {
+                target[widget[0]](this.options.deactivate);
+            } else {
+                target[widget[1]](this.options.deactivate);
+            }
         }
         if(this.active) {
             this.active = false;

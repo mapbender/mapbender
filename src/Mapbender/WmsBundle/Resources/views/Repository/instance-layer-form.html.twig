@@ -1,0 +1,49 @@
+
+{% if layer.parent == null %}
+    {% set type = "root" %}
+    {% set root = "root" %}
+    {% set node = "" %}
+    {% set node_icon = "&xdtri;" %}
+{% elseif layer.sublayer|length > 0 %}
+    {% set type = "node" %}
+    {% set root = "" %}
+    {% set node = "node inlayer" %}
+    {% set node_icon = "&xdtri;" %}
+{% else %}
+    {% set type = "item" %}
+    {% set root = "" %}
+    {% set node = "inlayer" %}
+    {% set node_icon = "&vrtri;" %}
+{% endif %}
+{% for form_layer in form_layers %}
+    {% if form_layer.vars.value.id == layer.id %}
+        <li class="{{ node }}{{ root }}" data-id="{{ form_layer.vars.value.id }}" data-type="{{ type }}"
+            data-href="{{url("mapbender_manager_repository_instancelayerweight", {"slug": slug, "instanceId": instance.id, "instLayerId": form_layer.vars.value.id})}}">
+            <div>
+                <span class="tree"><span>{{ node_icon|raw }}</span></span>
+                <span class="colnum" title="{{ "Order"|trans }}"><input type="text" readonly="readonly" value="{{instance.id}}{#{ layer.vars.data.wmslayersource.id - root.id }#}" /></span>
+                <span class="colname" title="{{ "Layer's Name"|trans }}"><input type="text" readonly="readonly" value="{{ form_layer.vars.data.wmslayersource.name}}" /></span>
+                <span class="coltitle" title="{{ "Layer's Title"|trans }}">{{ form_widget(form_layer.title) }}</span>
+                <span class="colminscale" title="{{ "MinScale"|trans }}">{{ form_widget(form_layer.minScale) }}</span>
+                <span class="colmaxscale" title="{{ "MaxSclase"|trans }}">{{ form_widget(form_layer.maxScale) }}</span>
+                <span class="colstyle" title="{{ "Style"|trans }}">{{ form_widget(form_layer.style) }}</span>
+                <span class="colactive" title="{{ "Active"|trans }}">{{ form_widget(form_layer.active) }}</span>
+                <span class="colselected" title="{{ "Selected  at TOC"|trans }}">{{ form_widget(form_layer.selected) }}</span>
+                <span class="colallowselected" title="{{ "Allow Select at TOC"|trans }}">{{ form_widget(form_layer.allowselected) }}</span>
+                <span class="colinfo" title="{{ "FeatureInfo at TOC"|trans }}">{{ form_widget(form_layer.info) }}</span>
+                <span class="colallowinfo" title="{{ "Allow FeatureInfo at TOC"|trans }}">{{ form_widget(form_layer.allowinfo) }}</span>
+                <span class="coltoggle" title="{{ "Toggle at TOC"|trans }}">{{ form_widget(form_layer.toggle) }}</span>
+                <span class="colallowtoggle" title="{{ "Allow Toggle at TOC"|trans }}">{{ form_widget(form_layer.allowtoggle) }}</span>
+                <span class="colallowreorder" title="{{ "Allow Reorder at TOC"|trans }}">{{ form_widget(form_layer.allowreorder) }}</span>
+            </div>
+            {% if layer.sublayer|length > 0 %}
+            <ul id="{{ type }}{{ layer.id }}">
+                <li class="dummy"></li>
+                {% for sublayer in layer.sublayer %}
+                    {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form_layers, 'layer': sublayer }%}
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </li>
+    {% endif %}
+{% endfor %}

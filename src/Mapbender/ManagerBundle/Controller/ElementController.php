@@ -431,6 +431,43 @@ class ElementController extends Controller
                             'result' => 'ok')), 200, array(
                     'Content-Type' => 'application/json'));
     }
+    
+    /**
+     * Delete element
+     *
+     * @ManagerRoute("application/element/{id}/enable")
+     * @Method("POST")
+     */
+    public function enableAction($id)
+    {
+        $element = $this->getDoctrine()
+                ->getRepository('MapbenderCoreBundle:Element')
+                ->findOneById($id);
+        
+        $enabled = $this->get("request")->get("enabled");
+        if(!$element)
+        {
+            return new Response(
+                            json_encode(array(
+                                'error' => 'An element with the id "' . $id . '" does not exist.',
+                                'result' => 'ok')),
+                            200,
+                            array('Content-Type' => 'application/json'));
+        } else
+        {
+            $enabled = $enabled === "true"  ? true : false;
+            $element->setEnabled($enabled);
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->persist($element);
+            $em->flush();
+            return new Response(
+                            json_encode(array(
+                                'error' => '',
+                                'result' => 'ok')),
+                            200,
+                            array('Content-Type' => 'application/json'));
+        }
+    }
 
     /**
      * Creates the form for the delete confirmation page

@@ -1,12 +1,10 @@
 <?php
+
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\HasInstanceIn;
-use Mapbender\CoreBundle\Component\InstanceIn;
-
-//use Mapbender\CoreBundle\Entity\Layer;
 
 /**
  * @author Karim Malhas
@@ -17,8 +15,8 @@ use Mapbender\CoreBundle\Component\InstanceIn;
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * ORM\DiscriminatorMap({"mb_core_sourceinstance" = "SourceInstance"})
  */
-
-abstract class SourceInstance {
+abstract class SourceInstance
+{
 
     /**
      * @var integer $id
@@ -39,7 +37,7 @@ abstract class SourceInstance {
      * @ORM\JoinColumn(name="layerset", referencedColumnName="id")
      */
     protected $layerset;
-    
+
     /**
      * @var integer $weight The sorting weight for display
      * @ORM\Column(type="integer")
@@ -51,61 +49,102 @@ abstract class SourceInstance {
      */
     protected $enabled = true;
 
-    public function __construct() {
+    /**
+     * Creates an instance
+     */
+    public function __construct()
+    {
         
     }
 
-    public function getId(){
+    /**
+     * Returns an id
+     * 
+     * @return integer id
+     */
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function getTitle(){
+    /**
+     * Returns a title
+     * 
+     * @param String title
+     */
+    public function getTitle()
+    {
         return $this->title;
     }
 
-    public function setTitle($title){
+    /**
+     * Sets a title
+     * 
+     * @param String $title
+     */
+    public function setTitle($title)
+    {
         $this->title = $title;
     }
 
     /**
-     * Get full class name
+     * Returns a source type
+     *
+     * @return String type
+     */
+    public abstract function getType();
+
+    /**
+     * Returns a manager type 
+     *
+     * @return String a manager type
+     */
+    public abstract function getManagertype();
+
+    /**
+     * Returns a full class name
      *
      * @return string
      */
-    public function getClassname(){
+    public function getClassname()
+    {
         return get_class();
     }
 
-//    
-
+    /**
+     * Returns assets
+     *
+     * @return array assets
+     */
     public function getAssets()
     {
         return array();
     }
-    
+
     /**
-     * Set weight
+     * Sets a weight
      *
      * @param integer $weight
      */
-    public function setWeight($weight) {
+    public function setWeight($weight)
+    {
         $this->weight = $weight;
         return $this;
     }
 
     /**
-     * Get weight
+     * Returns a weight
      *
      * @return integer
      */
-    public function getWeight() {
+    public function getWeight()
+    {
         return $this->weight;
     }
-    
-    
-    
+
     /**
-     *  Set the layerset
+     * Sets the layerset
+     * 
      * @param Layerset $layerset Layerset
      * @return Sourceinstance
      */
@@ -114,70 +153,66 @@ abstract class SourceInstance {
         $this->layerset = $layerset;
         return $this;
     }
-    
+
     /**
-     *  Get the layerset
+     * Returns the layerset
      * @return Layerset
      */
     public function getLayerset()
     {
         $this->layerset;
     }
-    
+
     /**
-     * Set enabled
+     * Sets an enabled
      *
-     * @param integer $weight
+     * @param integer $enabled
+     * @return SourceInstance SourceInstance
      */
-    public function setEnabled($enabled) {
+    public function setEnabled($enabled)
+    {
         $this->enabled = $enabled;
         return $this;
     }
 
     /**
-     * Get enabled
+     * Returns an enabled
      *
      * @return integer
      */
-    public function getEnabled() {
+    public function getEnabled()
+    {
         return $this->enabled;
     }
-    /**
-     * Get type
-     *
-     * @return string
-     */
-    public abstract function getType();
 
     /**
-     * Get manager type
-     *
-     * @return string
-     */
-    public abstract function getManagerType();
-    
-    /**
-     * Get instance source 
-     * @return InstanceSource
+     * Returns instance source 
+     * 
+     * @return Source
      */
     public abstract function getSource();
-    
+
     /**
-     * Set id
+     * Sets an id
      * @param integer $id id
      */
     public abstract function setId($id);
-    
+
     /**
-     * Set configuration of the source instance
-     * @param array $configuration configuration of the source instance
+     * Sets a configuration of a source instance
+     * 
+     * @param array $configuration configuration of a source instance
      */
     public abstract function setConfiguration($configuration);
-    
+
     /**
-     *  Get configuration of the source instance
+     *  Returns a configuration of a source instance
      */
     public abstract function getConfiguration();
-
-
+    
+    /**
+     * Remove a source instance from a database
+     * @param EntityManager $em
+     */
+    public abstract function remove(EntityManager $em);
 }

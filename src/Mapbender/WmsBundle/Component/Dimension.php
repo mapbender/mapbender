@@ -5,7 +5,7 @@ namespace Mapbender\WmsBundle\Component;
 /**
  * Identifier class.
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class Dimension
 {

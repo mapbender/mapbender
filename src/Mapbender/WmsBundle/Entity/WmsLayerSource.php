@@ -18,14 +18,12 @@ use Mapbender\WmsBundle\Component\MinMax;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
 use Mapbender\CoreBundle\Component\Utils;
-use Mapbender\CoreBundle\Component\EntityIdentifierIn;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
  */
 class WmsLayerSource
-        implements EntityIdentifierIn
 {
 
     /**
@@ -50,13 +48,14 @@ class WmsLayerSource
 
     /**
      * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent")
+     * @ORM\OrderBy({"id" = "asc"})
      */
     protected $sublayer;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    protected $name = "";
+    protected $name = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -1018,26 +1017,6 @@ class WmsLayerSource
         return $this;
     }
 
-    public function getType()
-    {
-        return "WMS";
-    }
-
-    public function getManagerType()
-    {
-        return "wms";
-    }
-
-    public function getClassname()
-    {
-        return get_class();
-    }
-
-    public function __toString()
-    {
-        return (string) $this->id;
-    }
-
     /**
      * Remove keywords
      *
@@ -1046,6 +1025,38 @@ class WmsLayerSource
     public function removeKeyword(\Mapbender\CoreBundle\Entity\Keyword $keywords)
     {
         $this->keywords->removeElement($keywords);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getType()
+    {
+        return "WMS";
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getManagerType()
+    {
+        return "wms";
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getClassname()
+    {
+        return get_class();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __toString()
+    {
+        return (string) $this->id;
     }
 
 }

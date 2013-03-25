@@ -2,16 +2,15 @@
 
 namespace Mapbender\WmsBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Entity\Source;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\RequestInformation;
-use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
-use Mapbender\CoreBundle\Component\EntityIdentifierIn;
-use Mapbender\CoreBundle\Component\HasInstanceIn;
 
 /**
  * A WmsSource entity presents an OGC WMS.
@@ -19,9 +18,7 @@ use Mapbender\CoreBundle\Component\HasInstanceIn;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource
-        extends Source
-        implements EntityIdentifierIn, HasInstanceIn
+class WmsSource extends Source
 {
 
     /**
@@ -224,11 +221,6 @@ class WmsSource
     public function getManagertype()
     {
         return "wms";
-    }
-
-    public function getClassname()
-    {
-        return get_class();
     }
 
     /**
@@ -931,7 +923,7 @@ class WmsSource
     }
 
     /**
-     * Create a WmsInstace
+     * @inheritdoc
      */
     public function createInstance()
     {
@@ -947,37 +939,85 @@ class WmsSource
         $instance->setExceptionformat(count($excformats) > 0 ? $excformats[0] : null);
 //        $instance->setOpacity(100);
         $num = 0;
-//        $layers = array();
-        foreach($this->getLayers() as $wmslayer)
-        {
-            $instLayer = new WmsInstanceLayer();
-            $instLayer->setWmsinstance($instance);
-            $instLayer->setWmslayersource($wmslayer);
-            $instLayer->setParent($wmslayer->getParent() !== null ?
-                            $wmslayer->getParent()->getName() : null);
-            foreach($wmslayer->getSublayer() as $sublayer)
-            {
-                $instLayer->addSublayer($sublayer->getId());
-            }
-            $instLayer->setTitle($wmslayer->getTitle());
-            // @TODO min max from scaleHint
-            $instLayer->setMinScale(
-                    $wmslayer->getScale() !== null ?
-                            $wmslayer->getScale()->getMin() : null);
-            $instLayer->setMaxScale(
-                    $wmslayer->getScale() !== null ?
-                            $wmslayer->getScale()->getMax() : null);
-            $queryable = $wmslayer->getQueryable();
-            $instLayer->setInfo(Utils::getBool($queryable));
-            $instLayer->setAllowinfo(Utils::getBool($queryable));
+        $wmslayer_root = $this->getRootlayer();
+        $instLayer_root = new WmsInstanceLayer();
+        $instLayer_root->setWmsinstance($instance);
+        $instLayer_root->setWmslayersource($wmslayer_root);
+        $instLayer_root->setTitle($wmslayer_root->getTitle());
+        // @TODO min max from scaleHint
+        $instLayer_root->setMinScale(
+                $wmslayer_root->getScale() !== null ?
+                        $wmslayer_root->getScale()->getMin() : null);
+        $instLayer_root->setMaxScale(
+                $wmslayer_root->getScale() !== null ?
+                        $wmslayer_root->getScale()->getMax() : null);
+        $queryable = $wmslayer_root->getQueryable();
+        $instLayer_root->setInfo(Utils::getBool($queryable));
+        $instLayer_root->setAllowinfo(Utils::getBool($queryable));
 
-//            $instLayer->setInfo(Utils::getBool($queryable));
-//            $instLayer->setAllowinfo(Utils::getBool($queryable));
-            $instLayer->setPriority($num);
-            $instance->addLayer($instLayer);
-            $num++;
-        }
+        $instLayer_root->setPriority($num);
+        $instance->addLayer($instLayer_root);
+        $this->addSublayer($instLayer_root, $wmslayer_root, $num, $instance);
         return $instance;
+    }
+
+    /**
+     * Adds sublayers
+     * 
+     * @param WmsInstanceLayer $instlayer
+     * @param WmsLayerSource $wmslayer
+     * @param integer $num
+     * @param WmsIstance $instance
+     */
+    private function addSublayer($instlayer, $wmslayer, $num, $instance)
+    {
+        foreach($wmslayer->getSublayer() as $wmssublayer)
+        {
+            $num++;
+            $instsublayer = new WmsInstanceLayer();
+            $instsublayer->setWmsinstance($instance);
+            $instsublayer->setWmslayersource($wmssublayer);
+            $instsublayer->setTitle($wmssublayer->getTitle());
+            // @TODO min max from scaleHint
+            $instsublayer->setMinScale(
+                    $wmssublayer->getScale() !== null ?
+                            $wmssublayer->getScale()->getMin() : null);
+            $instsublayer->setMaxScale(
+                    $wmssublayer->getScale() !== null ?
+                            $wmssublayer->getScale()->getMax() : null);
+            $queryable = $wmssublayer->getQueryable();
+            $instsublayer->setInfo(Utils::getBool($queryable));
+            $instsublayer->setAllowinfo(Utils::getBool($queryable));
+
+            $instsublayer->setPriority($num);
+            $instsublayer->setParent($instlayer);
+            $instance->addLayer($instsublayer);
+            $this->addSublayer($instsublayer, $wmssublayer, $num, $instance);
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function remove(EntityManager $em)
+    {
+        $this->removeSourceRecursive($em, $this->getRootlayer());
+        $em->remove($this);
+    }
+    
+    /**
+     * Recursively remove a nested Layerstructure
+     * @param WmsLayerSource
+     * @param EntityManager
+     */
+    private function removeSourceRecursive(EntityManager $em, WmsLayerSource $wmslayer)
+    {
+        foreach($wmslayer->getSublayer() as $sublayer)
+        {
+            $this->removeSourceRecursive($em, $sublayer);
+        }
+        $em->remove($wmslayer);
+        $em->flush();
     }
 
 }

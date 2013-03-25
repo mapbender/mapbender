@@ -6,6 +6,9 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Entity\Element;
 
+/**
+ * 
+ */
 class ElementIdTransformer implements DataTransformerInterface
 {
     /**
@@ -27,7 +30,6 @@ class ElementIdTransformer implements DataTransformerInterface
      * @param  Element|null $element
      * @return string
      */
-//    public function transform($element)
         public function transform($id)
     {
         if (!$id) {
@@ -47,11 +49,6 @@ class ElementIdTransformer implements DataTransformerInterface
         }
 
         return $element;
-//        if (null === $element) {
-//            return "";
-//        }
-//
-//        return (string) $element->getId();
     }
 
     /**
@@ -61,30 +58,11 @@ class ElementIdTransformer implements DataTransformerInterface
      * @return Element|null
      * @throws TransformationFailedException if object (element) is not found.
      */
-//    public function reverseTransform($id)
     public function reverseTransform($element)
     {
         if (null === $element) {
             return "";
         }
-
         return (string) $element->getId();
-//        if (!$id) {
-//            return null;
-//        }
-//
-//        $element = $this->om
-//            ->getRepository('MapbenderCoreBundle:Element')
-//            ->findOneBy(array('id' => $id))
-//        ;
-//
-//        if (null === $element) {
-//            throw new TransformationFailedException(sprintf(
-//                'An element with id "%s" does not exist!',
-//                $id
-//            ));
-//        }
-//
-//        return $element;
     }
 }

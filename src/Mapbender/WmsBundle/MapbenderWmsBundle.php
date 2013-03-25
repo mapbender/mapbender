@@ -4,10 +4,16 @@ namespace Mapbender\WmsBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 
+/**
+ * 
+ */
 class MapbenderWmsBundle
         extends MapbenderBundle
 {
 
+    /**
+     * @inheritdoc
+     */
     public function getRepositoryManagers()
     {
         return array(

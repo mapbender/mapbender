@@ -5,10 +5,10 @@
  */
 
 namespace Mapbender\CoreBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\UniqueConstraint;
-
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -20,7 +20,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="mb_core_layerset",uniqueConstraints={@UniqueConstraint(name="layerset_idx", columns={"application_id", "title"})})
  * @UniqueEntity(fields={"application", "title"}, message ="Duplicate entry for key 'title'.")
  */
-class Layerset {
+class Layerset
+{
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -48,7 +50,8 @@ class Layerset {
      */
     protected $instances;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->instances = new ArrayCollection();
     }
 
@@ -60,7 +63,8 @@ class Layerset {
      * ApplicationYAMLMapper class. Maybe this could be done using a proxy
      * class instead?
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
         return $this;
     }
@@ -70,7 +74,8 @@ class Layerset {
      *
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -79,7 +84,8 @@ class Layerset {
      *
      * @param string $title
      */
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         $this->title = $title;
         return $this;
     }
@@ -89,7 +95,8 @@ class Layerset {
      *
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
 
@@ -98,7 +105,8 @@ class Layerset {
      *
      * @param Application $application
      */
-    public function setApplication(Application $application) {
+    public function setApplication(Application $application)
+    {
         $this->application = $application;
         return $this;
     }
@@ -108,7 +116,8 @@ class Layerset {
      *
      * @return Application
      */
-    public function getApplication() {
+    public function getApplication()
+    {
         return $this->application;
     }
 
@@ -117,10 +126,11 @@ class Layerset {
      *
      * @param SourceInstance $instance
      */
-    public function addInstance(SourceInstance $instance) {
+    public function addInstance(SourceInstance $instance)
+    {
         $this->instances->add($instance);
     }
-    
+
     /**
      * Set instances
      *
@@ -128,7 +138,8 @@ class Layerset {
      * Collection of the SourceInstances
      * @return Layerset
      */
-    public function setInstances($instances) {
+    public function setInstances($instances)
+    {
         $this->instances = $instances;
         return $this;
     }
@@ -138,12 +149,15 @@ class Layerset {
      *
      * @return Doctrine\Common\Collections\Collection
      */
-    public function getInstances() {
+    public function getInstances()
+    {
         return $this->instances;
     }
-    
-    public function __toString(){
+
+    public function __toString()
+    {
         return (string) $this->getId();
     }
+
 }
 

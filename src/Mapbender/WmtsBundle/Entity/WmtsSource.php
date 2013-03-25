@@ -1,13 +1,12 @@
 <?php
 namespace Mapbender\WmtsBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Entity\Source;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
-//use Mapbender\WmsBundle\Component\RequestInformation;
-//use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\CoreBundle\Entity\Source;
 
 /**
  * Description of WmtsSource
@@ -349,5 +348,13 @@ class WmtsSource extends Source {
         $instance->setTitle($this->getTitle());
         //@TODO ...
         return $instance;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function remove(EntityManager $em)
+    {
+        
     }
 }

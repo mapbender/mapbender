@@ -5,7 +5,7 @@ namespace Mapbender\WmsBundle\Component;
 /**
  * Identifier class.
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class Identifier
 {
@@ -21,21 +21,6 @@ class Identifier
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $value;
-
-//    /**
-//     * Creates a Identifier object from parameters
-//     * @param array $parameters
-//     */
-//    public static function create($parameters){
-//        $obj = new Identifier();
-//        if(isset($parameters["authority"])){
-//            $obj->authority = Authority::create($parameters["authority"]);
-//        }
-//        if(isset($parameters["value"])){
-//            $obj->value = $parameters["value"];
-//        }
-//        return $obj;
-//    }
 
     /**
      * Get authority
@@ -78,16 +63,4 @@ class Identifier
         $this->value = $value;
         return $this;
     }
-
-//    /**
-//     * Get object as array
-//     * 
-//     * @return array
-//     */
-//    public function toArray() {
-//        return array (
-//            "authority" => $this->authority->toArray(),
-//            "value" => $this->getValue()
-//        );
-//    }
 }

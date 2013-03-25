@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
@@ -91,7 +92,6 @@ class RepositoryController extends Controller
         if($form->isValid())
         {
             $proxy_config = $this->container->getParameter("owsproxy.proxy");
-//            $headers = \OwsProxy3\CoreBundle\Component\Utils::getHeadersFromRequest($request);
             $proxy_query = ProxyQuery::createFromUrl(trim($wmssource_req->getOriginUrl()),
                                                           $wmssource_req->getUsername(),
                                                           $wmssource_req->getPassword());
@@ -145,7 +145,16 @@ class RepositoryController extends Controller
             }
 
             $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
-
+            $rootlayer = $wmssource->getLayers()->get(0);
+            $this->getDoctrine()->getEntityManager()->persist($rootlayer);
+//            $this->getDoctrine()->getEntityManager()->flush();
+            $this->saveLayer($this->getDoctrine()->getEntityManager(), $rootlayer);
+//            $layers = array();
+//            foreach($wmssource->getLayers() as $layer_)
+//            {
+//                $this->getDoctrine()->getEntityManager()->persist($layer_);
+//                $layers[$layer_->getName()] = $layer_->getId();
+//            }
             $this->getDoctrine()->getEntityManager()->persist($wmssource);
             $this->getDoctrine()->getEntityManager()->flush();
         }
@@ -155,8 +164,18 @@ class RepositoryController extends Controller
                             "sourceId" => $wmssource->getId()), true));
     }
 
+    private function saveLayer($em, $layer)
+    {
+        foreach($layer->getSublayer() as $sublayer)
+        {
+            $em->persist($sublayer);
+            $this->saveLayer($em, $sublayer);
+        }
+    }
+
     /**
-     * deletes a WmsSource
+     * Removes a WmsSource
+     * 
      * @ManagerRoute("/{sourceId}/delete")
      * @Method({"GET"})
      */
@@ -169,33 +188,43 @@ class RepositoryController extends Controller
                 ->getRepository("MapbenderWmsBundle:WmsInstance")
                 ->findBySource($sourceId);
         $em = $this->getDoctrine()->getEntityManager();
+        $em->getConnection()->beginTransaction();
         foreach($wmsinstances as $wmsinstance)
         {
-            $em->remove($wmsinstance);
+//            $em->remove($wmsinstance);
+            $wmsinstance->remove($em);
             $em->flush();
         }
-        $this->removeRecursive($wmssource->getRootlayer(), $em);
-        $em->remove($wmssource);
+        $wmssource->remove($em);
+//        $this->removeSourceRecursive($wmssource->getRootlayer(), $em);
+//        $em->remove($wmssource);
         $em->flush();
+        $em->getConnection()->commit();
         $this->get('session')->setFlash('info', "Service deleted");
         return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
     }
-
+    
     /**
-     * Recursively remove a nested Layerstructure
-     * @param GroupLayer
-     * @param EntityManager
+     * Removes a WmsInstance
+     * 
+     * @ManagerRoute("/{slug}/instance/{instanceId}/delete")
+     * @Method({"GET"})
      */
-    public function removeRecursive(WmsLayerSource $wmslayer, $em)
+    public function deleteInstanceAction($slug, $instanceId)
     {
-//        $this->removeRecursive($wmssource->getRootlayer(),
-//                        $this->getDoctrine()->getEntityManager());
-        foreach($wmslayer->getSublayer() as $sublayer)
-        {
-            $this->removeRecursive($sublayer, $em);
-        }
-        $em->remove($wmslayer);
+        $instance = $this->getDoctrine()
+                ->getRepository("MapbenderCoreBundle:SourceInstance")
+                ->find($instanceId);
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->getConnection()->beginTransaction();
+        $instance->remove($em);
         $em->flush();
+        $em->getConnection()->commit();
+        $this->get('session')->setFlash('notice',
+                                        'Your Source Instance has been deleted.');
+        return $this->redirect(
+                        $this->generateUrl('mapbender_manager_application_edit',
+                                           array("slug" => $slug)) . "#layersets");
     }
 
     /**
@@ -251,14 +280,14 @@ class RepositoryController extends Controller
             }
             if($form->isValid())
             { //save
-                $this->getDoctrine()->getEntityManager()->persist($wmsinstance);
-//                $configuration = $wmsinstance->getConfiguration();
-//                foreach ($wmsinstance->getMblayer() as $mblayer) {
-//                    $mblayer->setConfiguration($configuration);
-//                    $this->getDoctrine()->getEntityManager()->persist($mblayer);
-//                }
-                $this->getDoctrine()->getEntityManager()->flush();
-
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->getConnection()->beginTransaction();
+                
+                $em->persist($wmsinstance);
+                $em->flush();
+                
+                $em->getConnection()->commit();
+                
                 $this->get('session')->setFlash(
                         'notice', 'Your Wms Instance has been changed.');
                 return $this->redirect($this->generateUrl(
@@ -286,84 +315,6 @@ class RepositoryController extends Controller
         }
     }
 
-//    /**
-//     * Changes the priority of WmsInstanceLayers
-//     * 
-//     * @ManagerRoute("/{slug}/instance/{layersetId}/weight/{instanceId}")
-//     */
-//    public function instanceWeightAction($slug, $layersetId, $instanceId)
-//    {
-//        $number = $this->get("request")->get("number");
-//        $new_layersetId = $this->get("request")->get("new_layersetId");
-////        $number = intval($number) - 1;
-//        $instance = $this->getDoctrine()
-//                ->getRepository('MapbenderWmsBundle:WmsInstance')
-//                ->findOneById($instanceId);
-//        
-//        if(!$instance)
-//        {
-//            throw $this->createNotFoundException('The wms instance with"
-//                ." the id "' . $instanceId . '" does not exist.');
-//        }
-//        if(intval($number) === $instance->getWeight() && $layersetId === $new_layersetId)
-//        {
-//            return new Response(json_encode(array(
-//                                'error' => '',
-//                                'result' => 'ok')), 200,
-//                            array('Content-Type' => 'application/json'));
-//        }
-//        $ls = $instance->getLayerset();
-//        if($layersetId === $new_layersetId)
-//        {
-//            $em = $this->getDoctrine()->getEntityManager();
-//            $instance->setWeight($number);
-//            $em->persist($instance);
-//            $em->flush();
-//            $query = $em->createQuery(
-//                    "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
-//                    . " WHERE i.layerset=:lsid ORDER BY i.weight ASC");
-//            $query->setParameters(array("lsid" => $layersetId));
-//            $instList = $query->getResult();
-//
-//            $num = 0;
-//            foreach($instList as $inst)
-//            {
-//                if($num === intval($instance->getWeight()))
-//                {
-//                    if($instance->getId() === $inst->getId())
-//                    {
-//                        $num++;
-//                    } else
-//                    {
-//                        $num++;
-//                        $inst->setWeight($num);
-//                        $num++;
-//                    }
-//                } else
-//                {
-//                    if($instance->getId() !== $inst->getId())
-//                    {
-//                        $inst->setWeight($num);
-//                        $num++;
-//                    }
-//                }
-//            }
-//            foreach($instList as $inst)
-//            {
-//                $em->persist($inst);
-//            }
-//            $em->flush();
-//        } else
-//        {
-//            
-//        }
-//
-//        return new Response(json_encode(array(
-//                            'error' => '',
-//                            'result' => 'ok')), 200, array(
-//                    'Content-Type' => 'application/json'));
-//    }
-
     /**
      * Changes the priority of WmsInstanceLayers
      * 
@@ -372,15 +323,12 @@ class RepositoryController extends Controller
     public function instanceLayerPriorityAction($slug, $instanceId, $instLayerId)
     {
         $number = $this->get("request")->get("number");
-//        $number = intval($number) - 1;
         $instLay = $this->getDoctrine()
                 ->getRepository('MapbenderWmsBundle:WmsInstanceLayer')
                 ->findOneById($instLayerId);
 
         if(!$instLay)
         {
-//            throw $this->createNotFoundException('The wms instance layer with"
-//                ." the id "'. $instanceId .'" does not exist.');
             return new Response(json_encode(array(
                                 'error' => 'The wms instance layer with'
                                 . ' the id "' . $instanceId . '" does not exist.',
@@ -459,7 +407,7 @@ class RepositoryController extends Controller
                             array('Content-Type' => 'application/json'));
         } else
         {
-            $enabled = $enabled === null ? false : $enabled;
+            $enabled = $enabled === "true" ? true : false;
             $wmsinstance->setEnabled($enabled);
             $em = $this->getDoctrine()->getEntityManager();
             $em->persist($wmsinstance);

@@ -17,8 +17,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  * @ORM\Table(name="mb_core_srs")
  */
-class SRS {
-    
+class SRS
+{
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -26,7 +27,7 @@ class SRS {
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
+
     /**
      * @var string $name the name of the spatial reference system
      * @ORM\Column(type="string", nullable=false, length=15, unique=true)
@@ -44,76 +45,85 @@ class SRS {
      * @ORM\Column(type="string", length=512)
      */
     protected $definition;
-    
+
     /**
      * Gets the id
      * @return integer the id
      */
-    public function getId(){
+    public function getId()
+    {
         return $this->id;
     }
-    
+
     /**
      * Sets the id
      * @param integer $id
      * @return \Mapbender\CoreBundle\Entity\SRS
      */
-    public function setId($id){
+    public function setId($id)
+    {
         $this->id = $id;
         return $this;
     }
-    
+
     /**
      * Gets the name
      * @return string the name
      */
-    public function getName(){
+    public function getName()
+    {
         return $this->name;
     }
-    
+
     /**
      * Sets the srs name
      * @param string $name
      * @return \Mapbender\CoreBundle\Entity\SRS
      */
-    public function setName($name){
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
-    
+
     /**
      * Gets the title
      * @return string the srs title
      */
-    public function getTitle(){
+    public function getTitle()
+    {
         return $this->title;
     }
-    
+
     /**
      * Sets the srs title
      * @param string $title
      * @return \Mapbender\CoreBundle\Entity\SRS
      */
-    public function setTitle($title){
+    public function setTitle($title)
+    {
         $this->title = $title;
         return $this;
     }
-    
+
     /**
      * Gets the name
      * @return string the srs definition
      */
-    public function getDefinition(){
+    public function getDefinition()
+    {
         return $this->definition;
     }
-    
+
     /**
      * Sets the srs definition
      * @param string $definition
      * @return \Mapbender\CoreBundle\Entity\SRS
      */
-    public function setDefinition($definition){
+    public function setDefinition($definition)
+    {
         $this->definition = $definition;
         return $this;
     }
+
 }

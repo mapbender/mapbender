@@ -12,11 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Response;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Entity\Source;
-//use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter;
 
 /**
  * @ManagerRoute("/repository")
@@ -72,21 +70,24 @@ class RepositoryController extends Controller {
     }
     
     /**
-    * @ManagerRoute("/source/{sourceId}/delete")
+    * @ManagerRoute("/source/{sourceId}/confirmdelete")
     * @Method({"GET"})
     * @Template
-    * @ParamConverter
     */
-    public function confirmdeleteAction(Source $sourceId){
-        return array("source" => $sourceId);
+    public function confirmdeleteAction($sourceId){
+        $source = $this->getDoctrine()
+                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        return array("source" => $source);
     }
 
     /**
      * deletes a Source
-     * @ManagerRoute("/source/{source}/delete")
+     * @ManagerRoute("/source/{sourceId}/delete")
      * @Method({"POST"})
     */
-    public function deleteAction(Source $source){
+    public function deleteAction($sourceId){
+        $source = $this->getDoctrine()
+                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
         return  $this->forward(

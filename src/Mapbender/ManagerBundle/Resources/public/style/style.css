@@ -144,11 +144,11 @@ div.sourcecontent table td {
 }
 
 div.sourcecontent td.coltitle {
-    width: 180px;
+    width: 220px;
 }
 
 div.sourcecontent td.colselect {
-    width: 150px;
+    width: 200px;
 }
 div.sourcecontent td.colselect select {
     width: 98%;
@@ -170,39 +170,69 @@ ul.layercollection {
     /*width: 100%;*/
 }
 
+ul.layercollection div.group button {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 0px;
+}
+
+ul.layercollection ul {
+    list-style-type: none;
+    margin: 0px;
+}
+
 ul.layercollection li {
-    height: 32px;
+    /*height: 32px;*/
+    display: inline-block;
+    width: 100%;
     padding: 0px;
     
 }
 
 ul.layercollection li.header {
     background-color: #ccc;
-    cursor: default;
+    /*cursor: default;*/
     font-weight: bold;
     /*padding: 4px;*/
     height: 78px;
 }
 
+ul.layercollection li.root {
+    background-color: #eee;
+    margin-top: 4px;
+    /*cursor: default;*/
+/*    cursor: ns-resize;
+    padding: 4px;*/
+}
+
 ul.layercollection li.inlayer {
     background-color: #eee;
     margin-top: 4px;
-    cursor: ns-resize;
+    /*cursor: ns-resize;*/
     /*padding: 4px;*/
+}
+
+ul.layercollection li.dummy {
+    background-color: #eee;
+    /*cursor: default;*/
+    height: 5px;
 }
 
 ul.layercollection li.node table {
     background-color: #ddd;
 }
 
-ul.layercollection li table {
+ul.layercollection li div {
     width: 100%;
-    border-spacing: 0px;
+    text-align: right;
+    /*border-spacing: 0px;
     border-collapse: collapse;
-    /*border: thin solid black;*/
+    border: thin solid black;*/
 }
 
-ul.layercollection li td {
+ul.layercollection li span {
     text-align: left;
     display: inline-block;
     border: 1px solid #E3E3E3;
@@ -212,84 +242,128 @@ ul.layercollection li td {
     vertical-align: middle;
     text-align: center;
 }
-ul.layercollection li tr.caption td {
+ul.layercollection li div.caption span {
     height: 40px;            
 }
-ul.layercollection li tr.group td {
+ul.layercollection li div.group span {
     text-align: left;
 }
 
-ul.layercollection td.colnum {
-    width: 2%;
+ul.layercollection ul span.tree span {
+    position: relative;
+    left: 10px;
+    line-height: auto;
 }
-ul.layercollection td.colparent {
+ul.layercollection ul ul span.tree span {
+    position: relative;
+    left: 20px;
+}
+ul.layercollection ul ul ul span.tree span {
+    position: relative;
+    left: 30px;
+}
+
+ul.layercollection ul ul ul ul span.tree span {
+    position: relative;
+    left: 40px;
+}
+
+ul.layercollection li.header span.tree {
+    text-align: left;
+    width: 8%;
+}
+ul.layercollection span.tree {
+    text-align: left;
+    width:  8%;
+}
+/*.level1 {
+    position: relative;
+    left: 10px;
+    border: 0px;
+}
+.level2 {
+    position: relative;
+    left: 20px;
+    border: 0px;
+}
+
+.level3 {
+    position: relative;
+    left: 30px;
+    border: 0px;
+}*/
+
+ul.layercollection span.colnum {
+    width: 6%;
+}
+ul.layercollection span.colparent {
     width: 5%;
 }
 
-ul.layercollection td.colname {
+ul.layercollection span.colname {
     width: 10%;
 }
 
-ul.layercollection td.coltitle {
+ul.layercollection span.coltitle {
     width: 10%;
 }
 
-ul.layercollection td.colminscale {
+ul.layercollection span.colminscale {
     width: 6%;
 }
 
-ul.layercollection td.colmaxscale {
+ul.layercollection span.colmaxscale {
     width: 6%;
 }
 
-ul.layercollection td.colstyle {
+ul.layercollection span.colstyle {
     width: 6%;
 }
 
-ul.layercollection td.colactive {
+ul.layercollection span.colactive {
     width: 5%;
 }
 
-ul.layercollection td.colselected {
+ul.layercollection span.colselected {
     width: 5%;
 }
 
-ul.layercollection td.colinfo {
+ul.layercollection span.colinfo {
     width: 5%;
 }
 
 
-ul.layercollection td.coltoggle {
+ul.layercollection span.coltoggle {
     width: 5%;
 }
 
-ul.layercollection td.colallowselected {
+ul.layercollection span.colallowselected {
     width: 5%;
 }
 
-ul.layercollection td.colallowinfo {
+ul.layercollection span.colallowinfo {
     width: 5%;
 }
 
-ul.layercollection td.colallowtoggle {
+ul.layercollection span.colallowtoggle {
     width: 5%;
 }
 
-ul.layercollection td.colallowreorder {
+ul.layercollection span.colallowreorder {
     width: 5%;
 }
 
-ul.layercollection td.colpriority {
+ul.layercollection span.colpriority {
     width: 5%;
 }
 
-ul.layercollection li td input[type=text] {
+ul.layercollection li span input[type=text] {
     margin: 0px !important;
     padding: 0px !important;
     height: 28px !important;
     width: 98% !important;
 }
-ul.layercollection li td select {
+ul.layercollection li span select {
     margin: 0px !important;
     padding: 0px !important;
     height: 28px !important;
