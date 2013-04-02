@@ -70,7 +70,8 @@ $.widget("mapbender.mbGpsPosition", {
         markers = new OpenLayers.Layer.Markers( "Markers" );
         olmap.addLayer(markers); 
         var size = new OpenLayers.Size(20,20);
-        var icon = new OpenLayers.Icon('/mapbender-starter/application/mapbender/src/Mapbender/CoreBundle/Resources/public/image/marker_fett.gif', size);
+        //var icon = new OpenLayers.Icon('/mapbender-starter/application/mapbender/src/Mapbender/CoreBundle/Resources/public/image/marker_fett.gif', size);
+        var icon = new OpenLayers.Icon(Mapbender.configuration.application.urls.asset + 'bundles/mapbendercore/image/marker_fett.gif', size);
         markers.addMarker(new OpenLayers.Marker(position,icon));
     },
     

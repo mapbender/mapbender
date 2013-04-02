@@ -1,6 +1,6 @@
 .mb-element-zoombar {
     position: absolute;
-    z-index: 10000;
+    z-index: 1000;
     width: 34px;
 }
 
