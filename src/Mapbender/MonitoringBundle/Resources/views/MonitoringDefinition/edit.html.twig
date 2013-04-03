@@ -33,25 +33,8 @@
         <tr><th>{{"Nr"|trans}}</th><th>{{"date"|trans}}</th><th>{{"latency"|trans}}</th><th>{{"status"|trans}}</th><th>{{"changed"|trans}}</th></tr>
         </thead>
         <tbody>
-        {#% set num = 0 %}
-        {% for job in md.monitoringJobs %}
-            {% if num == 0 %}
-                <tr class="job job-last"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>{% if job.changed %}CHANGED{% endif %}</td></tr>
-            {% elseif num < 10 %}
-                {% if job.changed %}
-                <tr class="job job-previous"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>CHANGED</td></tr>
-                {% endif %}
-            {% endif %}
-            {% set num = num+1 %}
-        {% endfor %#}
         {% for job in lastjobs %}
             <tr class="job job-last"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>{% if job.changed %}CHANGED{% endif %}</td></tr>
-            {#% elseif num < 10 %}
-                {% if job.changed %}
-                <tr class="job job-previous"><td class="job-id">{{ job.id }}</td><td>{{ job.timestamp|date("d.m.Y H:i:s")}}</td><td>{{ job.latency }} ms</td><td>{{ job.status }}</td><td>CHANGED</td></tr>
-                {% endif %}
-            {% endif %}
-            {% set num = num+1 %#}
         {% endfor %}
         </tbody>
     </table>
