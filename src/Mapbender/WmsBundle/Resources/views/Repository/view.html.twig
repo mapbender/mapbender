@@ -9,7 +9,7 @@
 
 {% block manager_content %}
 
-<a class="deleteIcon right" title="{{"Delete this service" | trans}}" href="{{ url("mapbender_manager_repository_delete",{"source":wms.id ,"return":"view"} ) }}"></a>
+<a class="deleteIcon right" title="{{"Delete this service" | trans}}" href="{{ url("mapbender_manager_repository_delete",{"sourceId":wms.id ,"return":"view"} ) }}"></a>
 
 <div id="serviceTabContainer" class="tabContainer">
   <ul class="tabs">

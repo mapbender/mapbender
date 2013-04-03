@@ -9,12 +9,6 @@
 {% endblock %}
 
 {% block manager_content %}
-  <div class="messageBox hint">
-    {% trans %}
-      Required fields are marked with dark labels, while optional fields have lighter labels.
-    {% endtrans %}
-  </div>
-
   <form action="{{ path('mapbender_manager_application_update', { 'slug': application.slug }) }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}}  novalidate="novalidate">
     <div id="applicationTabContainer" class="tabContainer newApplicationTabContainer">
       <ul class="tabs">
@@ -46,7 +40,7 @@
 
     {{ form_row(form._token) }}
   </form>
-{# XXXVH: Dies für das Popup
+{# XXXVH: Stopped right here!
 <div id="repository-list-modal"  class="modal hide fade">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>

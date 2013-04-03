@@ -49,8 +49,7 @@ class ApplicationType extends AbstractType {
             $builder->add('acl', 'acl', array(
                 'property_path' => false,
                 'data' => $options['data'],
-                'permissions' => 'standard::object',
-                'label_render' => false));
+                'permissions' => 'standard::object'));
     }
 }
 

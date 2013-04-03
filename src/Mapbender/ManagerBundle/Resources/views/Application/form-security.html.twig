@@ -1,2 +1,4 @@
-{{ form_row(form.published) }}
-{{ form_row(form.acl) }}
+<a href="" class="addIcon right" title="{{'Add new user'|trans}}"></a>
+{{ form_widget(form.published, { 'attr': {'class': 'left'}}) }}{{ form_label(form.published) }}
+<div class="clearContainer"></div>
+{{ form_widget(form.acl) }}

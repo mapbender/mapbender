@@ -2,8 +2,6 @@
 {% block extent_widget %}
     <div class="form-inline">
         {% for child in form %}
-            {#{% set attr = child.get('attr')|default({})|merge({'placeholder': child.get('label')}) %}
-            <input{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %} type="{{ child.get('type')|default('text') }}" id="{{ child.get('id') }}" name="{{ child.get('full_name') }}" {% if required %}required="required"{% endif %} value="{{ child.get('value') }}">#}
             {{ form_widget(child) }}
         {% endfor %}
     </div>

@@ -9,7 +9,6 @@ $(function() {
         items: "li:not(.dummy)",
         distance: 20,
         stop: function( event, ui ) {
-//            window.console && console.log(event, ui, $(ui.item).parent());
             $(ui.item).parent().find("li").each(function(idx, elm){
                 window.console && console.log(idx, elm);
                 if($(elm).attr("data-href")===$(ui.item).attr("data-href")){
@@ -73,7 +72,6 @@ $(function() {
         items: "li:not(.header)",
         distance: 20,
         stop: function( event, ui ) {
-//            window.console && console.log($(ui.item).parent());
             $(ui.item).parent().find("li").each(function(idx, elm){
                 if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
                     window.console && console.log($(ui.item).parent());
