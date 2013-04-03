@@ -3,7 +3,7 @@
 {% block title %}{% trans %}Delete{% endtrans %} '{{ group.name }}'{% endblock %}
 
 {% block content %}
-  <div class="message">
+  <div>
     <p>{% trans %}Really Delete{% endtrans %} '{{group.name }}' ?</p>
     <form action="{{path("mapbender_core_group_delete",{"groupId":group.id})}}" method="post">
       <button>{% trans %}Delete{% endtrans%}</button>

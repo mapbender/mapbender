@@ -5,7 +5,7 @@
 {% block content %}
 
 {% if groupList|length >0 %}
-  <table class="listable" >
+  <table>
     <caption>{% trans %}Available Groups{% endtrans %}</caption>
     <thead>
       <tr>
@@ -18,8 +18,8 @@
       <tr>
         <td>{{ group.name }}</td>
         <td>
-          <a title="{{"Edit"|trans}} '{{group.name}}'"   class="edit" href="{{path("mapbender_core_group_edit",{"groupId":group.id})}}">{{ "Edit"|trans }}</a>
-          <a title="{{"Delete"|trans}} '{{group.name}}'" class="confirmdelete" href="{{path("mapbender_core_group_confirmdelete",{"groupId":group.id})}}">{{ "Delete"|trans }}</a>
+          <a title="{{"Edit"|trans}} '{{group.name}}'"   href="{{path("mapbender_core_group_edit",{"groupId":group.id})}}">{{ "Edit"|trans }}</a>
+          <a title="{{"Delete"|trans}} '{{group.name}}'" href="{{path("mapbender_core_group_confirmdelete",{"groupId":group.id})}}">{{ "Delete"|trans }}</a>
         </td>
       </tr>
       {% endfor %}
