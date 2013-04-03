@@ -12,10 +12,9 @@ use Mapbender\WmsBundle\Component\RequestInformation;
 /**
  * Class that Parses WMS 1.3.0 GetCapabilies Document 
  * @package Mapbender
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
-class WmsCapabilitiesParser111
-        extends WmsCapabilitiesParser
+class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
 {
 
     /**
@@ -60,12 +59,6 @@ class WmsCapabilitiesParser111
             }
             /* @TODO add other _ExtendedOperation ?? */
         }
-//        $this->parseCapabilityRequest($wms, $this->getValue("./Capability/Request", $root));
-//        $this->parseCapabilityException($wms, $this->getValue("./Capability/Exception", $root));
-//        $this->parseUserDefinedSymbolization($wms, $this->getValue("./Capability/sld:UserDefinedSymbolization", $root));
-//        $rootlayer = new WmsLayerSource();
-//        $layer = $this->parseLayer($wms, $rootlayer, $this->getValue("./Capability/Layer", $root));
-//        $wms->addLayer($layer);
         return $wms;
     }
 
@@ -82,7 +75,8 @@ class WmsCapabilitiesParser111
         $wms->setTitle($this->getValue("./Title/text()", $contextElm));
         $wms->setDescription($this->getValue("./Abstract/text()", $contextElm));
 
-        $keywordElList = $this->xpath->query("./KeywordList/Keyword", $contextElm);
+        $keywordElList = $this->xpath->query("./KeywordList/Keyword",
+                                             $contextElm);
         foreach($keywordElList as $keywordEl)
         {
             $keyword = new Keyword();
@@ -93,40 +87,40 @@ class WmsCapabilitiesParser111
             //$wms->addKeyword($keyword);
         }
 
-        $wms->setOnlineResource($this->getValue("./OnlineResource/@xlink:href", $contextElm));
+        $wms->setOnlineResource($this->getValue("./OnlineResource/@xlink:href",
+                                                $contextElm));
 
         $wms->setFees($this->getValue("./Fees/text()", $contextElm));
-        $wms->setAccessConstraints($this->getValue("./AccessConstraints/text()", $contextElm));
-
-//        $layerLimit = intval($this->getValue("./LayerLimit/text()", $contextElm));
-//        if($layerLimit > 0){
-//            $wms->setLayerLimit(intval($layerLimit));
-//        }
-//        
-//        $maxWidth = intval($this->getValue("./MaxWidth/text()", $contextElm));
-//        if($maxWidth > 0){
-//            $wms->setMaxWidth(intval($maxWidth));
-//        }
-//        $maxHeight = intval($this->getValue("./MaxHeight/text()", $contextElm));
-//        if($maxHeight > 0){
-//            $wms->setMaxHeight(intval($maxHeight));
-//        }
+        $wms->setAccessConstraints($this->getValue("./AccessConstraints/text()",
+                                                   $contextElm));
 
         $contact = new Contact();
-        $contact->setPerson($this->getValue("./ContactInformation/ContactPersonPrimary/ContactPerson/text()", $contextElm));
-        $contact->setOrganization($this->getValue("./ContactInformation/ContactPersonPrimary/ContactOrganization/text()", $contextElm));
-        $contact->setPosition($this->getValue("./ContactInformation/ContactPosition/text()", $contextElm));
+        $contact->setPerson($this->getValue("./ContactInformation/ContactPersonPrimary/ContactPerson/text()",
+                                            $contextElm));
+        $contact->setOrganization($this->getValue("./ContactInformation/ContactPersonPrimary/ContactOrganization/text()",
+                                                  $contextElm));
+        $contact->setPosition($this->getValue("./ContactInformation/ContactPosition/text()",
+                                              $contextElm));
 
-        $contact->setAddressType($this->getValue("./ContactInformation/ContactAddress/AddressType/text()", $contextElm));
-        $contact->setAddress($this->getValue("./ContactInformation/ContactAddress/Address/text()", $contextElm));
-        $contact->setAddressCity($this->getValue("./ContactInformation/ContactAddress/City/text()", $contextElm));
-        $contact->setAddressStateOrProvince($this->getValue("./ContactInformation/ContactAddress/StateOrProvince/text()", $contextElm));
-        $contact->setAddressPostCode($this->getValue("./ContactInformation/ContactAddress/PostCode/text()", $contextElm));
-        $contact->setAddressCountry($this->getValue("./ContactInformation/ContactAddress/Country/text()", $contextElm));
+        $contact->setAddressType($this->getValue("./ContactInformation/ContactAddress/AddressType/text()",
+                                                 $contextElm));
+        $contact->setAddress($this->getValue("./ContactInformation/ContactAddress/Address/text()",
+                                             $contextElm));
+        $contact->setAddressCity($this->getValue("./ContactInformation/ContactAddress/City/text()",
+                                                 $contextElm));
+        $contact->setAddressStateOrProvince($this->getValue("./ContactInformation/ContactAddress/StateOrProvince/text()",
+                                                            $contextElm));
+        $contact->setAddressPostCode($this->getValue("./ContactInformation/ContactAddress/PostCode/text()",
+                                                     $contextElm));
+        $contact->setAddressCountry($this->getValue("./ContactInformation/ContactAddress/Country/text()",
+                                                    $contextElm));
 
-        $contact->setVoiceTelephone($this->getValue("./ContactInformation/ContactVoiceTelephone/text()", $contextElm));
-        $contact->setFacsimileTelephone($this->getValue("./ContactInformation/ContactFacsimileTelephone/text()", $contextElm));
-        $contact->setElectronicMailAddress($this->getValue("./ContactInformation/ContactElectronicMailAddress/text()", $contextElm));
+        $contact->setVoiceTelephone($this->getValue("./ContactInformation/ContactVoiceTelephone/text()",
+                                                    $contextElm));
+        $contact->setFacsimileTelephone($this->getValue("./ContactInformation/ContactFacsimileTelephone/text()",
+                                                        $contextElm));
+        $contact->setElectronicMailAddress($this->getValue("./ContactInformation/ContactElectronicMailAddress/text()",
+                                                           $contextElm));
 
         $wms->setContact($contact);
     }
@@ -138,7 +132,8 @@ class WmsCapabilitiesParser111
      * @param \DOMElement $contextElm the element to use as context for the
      * Capabilities Request section
      */
-    private function parseCapabilityRequest(WmsSource $wms, \DOMElement $contextElm)
+    private function parseCapabilityRequest(WmsSource $wms,
+            \DOMElement $contextElm)
     {
         $operations = $this->xpath->query("./*", $contextElm);
         foreach($operations as $operation)
@@ -194,9 +189,11 @@ class WmsCapabilitiesParser111
             }
         }
         $requestImformation->setHttpGet($this->getValue(
-                        "./DCPType/HTTP/Get/OnlineResource/@xlink:href", $contextElm));
+                        "./DCPType/HTTP/Get/OnlineResource/@xlink:href",
+                        $contextElm));
         $requestImformation->setHttpPost($this->getValue(
-                        "./DCPType/HTTP/Post/OnlineResource/@xlink:href", $contextElm));
+                        "./DCPType/HTTP/Post/OnlineResource/@xlink:href",
+                        $contextElm));
 
         return $requestImformation;
     }
@@ -209,7 +206,8 @@ class WmsCapabilitiesParser111
      * @param \DOMElement $contextElm the element to use as context for the
      * Capability Exception section
      */
-    private function parseCapabilityException(WmsSource $wms, \DOMElement $contextElm)
+    private function parseCapabilityException(WmsSource $wms,
+            \DOMElement $contextElm)
     {
         $tempList = $this->xpath->query("./Format", $contextElm);
         if($tempList !== null)
@@ -229,7 +227,8 @@ class WmsCapabilitiesParser111
      * @param \DOMElement $contextElm the element to use as context for the
      * UserDefinedSymbolization section
      */
-    private function parseUserDefinedSymbolization(WmsSource $wms, \DOMElement $contextElm)
+    private function parseUserDefinedSymbolization(WmsSource $wms,
+            \DOMElement $contextElm)
     {
         if($contextElm !== null)
         {
@@ -237,7 +236,8 @@ class WmsCapabilitiesParser111
             $wms->setUserLayer($this->getValue("./@UserLayer", $contextElm));
             $wms->setUserStyle($this->getValue("./@UserStyle", $contextElm));
             $wms->setRemoteWfs($this->getValue("./@RemoteWFS", $contextElm));
-            $wms->setInlineFeature($this->getValue("./@InlineFeature", $contextElm));
+            $wms->setInlineFeature($this->getValue("./@InlineFeature",
+                                                   $contextElm));
             $wms->setRemoteWcs($this->getValue("./@RemoteWCS", $contextElm));
         }
     }
@@ -251,7 +251,8 @@ class WmsCapabilitiesParser111
      * Layer section
      * @return \Mapbender\WmsBundle\Entity\WmsLayerSource the created layer
      */
-    private function parseLayer(WmsSource $wms, WmsLayerSource $wmslayer, \DOMElement $contextElm)
+    private function parseLayer(WmsSource $wms, WmsLayerSource $wmslayer,
+            \DOMElement $contextElm)
     {
         $wmslayer->setQueryable($this->getValue("./@queryable", $contextElm));
         $wmslayer->setCascaded($this->getValue("./@cascaded", $contextElm));
@@ -264,7 +265,8 @@ class WmsCapabilitiesParser111
         $wmslayer->setTitle($this->getValue("./Title/text()", $contextElm));
         $wmslayer->setAbstract($this->getValue("./Abstract/text()", $contextElm));
 
-        $keywordElList = $this->xpath->query("./KeywordList/Keyword", $contextElm);
+        $keywordElList = $this->xpath->query("./KeywordList/Keyword",
+                                             $contextElm);
         foreach($keywordElList as $keywordEl)
         {
             $keyword = new Keyword();
@@ -329,14 +331,20 @@ class WmsCapabilitiesParser111
         if($attributionEl !== null)
         {
             $attribution = new Attribution();
-            $attribution->setTitle($this->getValue("./Title/text()", $attributionEl));
-            $attribution->setOnlineResource($this->getValue("./OnlineResource/@xlink:href", $attributionEl));
+            $attribution->setTitle($this->getValue("./Title/text()",
+                                                   $attributionEl));
+            $attribution->setOnlineResource($this->getValue("./OnlineResource/@xlink:href",
+                                                            $attributionEl));
             $logoUrl = new LegendUrl();
-            $logoUrl->setHeight($this->getValue("./LogoURL/@height", $attributionEl));
-            $logoUrl->setWidth($this->getValue("./LogoURL/@width", $attributionEl));
+            $logoUrl->setHeight($this->getValue("./LogoURL/@height",
+                                                $attributionEl));
+            $logoUrl->setWidth($this->getValue("./LogoURL/@width",
+                                               $attributionEl));
             $onlineResource = new OnlineResource();
-            $onlineResource->setHref($this->getValue("./LogoURL/OnlineResource/@xlink:href", $attributionEl));
-            $onlineResource->setFormat($this->getValue("./LogoURL/Format/text()", $attributionEl));
+            $onlineResource->setHref($this->getValue("./LogoURL/OnlineResource/@xlink:href",
+                                                     $attributionEl));
+            $onlineResource->setFormat($this->getValue("./LogoURL/Format/text()",
+                                                       $attributionEl));
             $logoUrl->setOnlineResource($onlineResource);
             $attribution->setLogoUrl($logoUrl);
             $wmslayer->setAttribution($attribution);
@@ -344,31 +352,14 @@ class WmsCapabilitiesParser111
 
         $authorityList = $this->xpath->query("./AuthorityURL", $contextElm);
         $identifierList = $this->xpath->query("./Identifier", $contextElm);
-//        if($authorityList !== null && $identifierList !== null){
-//            $authorityArr = array();
-//            foreach ($authorityList as $authorityEl) {
-//                $authority = new Authority();
-//                $authority->setName($this->getValue("./@name", $authorityEl));
-//                $authority->setUrl($this->getValue("./OnlineResource/@xlink:href", $authorityEl));
-//                $authorityArr[$authority->getName()] = $authority;
-//            }
-//            foreach ($identifierList as $identifierEl) {
-//                $identifier = new Identifier();
-//                $identifier->setValue($this->getValue("./@authority", $identifierEl));
-//                if(isset($authorityArr[$identifier->getValue()])){
-//                    $identifier->setAuthority($authorityArr[$identifier->getValue()]);
-//                    $identifierArr[$authority->getName()] = $authority;
-//                    $wmslayer->setIdentifier($identifier);
-//                }
-//            }
-//        }
         if($authorityList !== null)
         {
             foreach($authorityList as $authorityEl)
             {
                 $authority = new Authority();
                 $authority->setName($this->getValue("./@name", $authorityEl));
-                $authority->setUrl($this->getValue("./OnlineResource/@xlink:href", $authorityEl));
+                $authority->setUrl($this->getValue("./OnlineResource/@xlink:href",
+                                                   $authorityEl));
                 $wmslayer->addAuthority($authority);
             }
         }
@@ -377,7 +368,8 @@ class WmsCapabilitiesParser111
             foreach($identifierList as $identifierEl)
             {
                 $identifier = new Identifier();
-                $identifier->setAuthority($this->getValue("./@authority", $identifierEl));
+                $identifier->setAuthority($this->getValue("./@authority",
+                                                          $identifierEl));
                 $identifier->setValue($this->getValue("./text()", $identifierEl));
                 $wmslayer->setIdentifier($identifier);
             }
@@ -390,8 +382,10 @@ class WmsCapabilitiesParser111
             {
                 $metadataUrl = new MetadataUrl();
                 $onlineResource = new OnlineResource();
-                $onlineResource->setFormat($this->getValue("./Format/text()", $metadataUrlEl));
-                $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href", $metadataUrlEl));
+                $onlineResource->setFormat($this->getValue("./Format/text()",
+                                                           $metadataUrlEl));
+                $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href",
+                                                         $metadataUrlEl));
                 $metadataUrl->setOnlineResource($onlineResource);
                 $metadataUrl->setType($this->getValue("./@type", $metadataUrlEl));
                 $wmslayer->addMetadataUrl($metadataUrl);
@@ -406,7 +400,8 @@ class WmsCapabilitiesParser111
                 $dimension = new Dimension();
                 $dimension->setName($this->getValue("./@name", $dimensionEl)); //($this->getValue("./@CRS", $item));
                 $dimension->setUnits($this->getValue("./@units", $dimensionEl));
-                $dimension->setUnitSymbol($this->getValue("./@unitSymbol", $dimensionEl));
+                $dimension->setUnitSymbol($this->getValue("./@unitSymbol",
+                                                          $dimensionEl));
                 $wmslayer->addDimensionl($dimension);
             }
         }
@@ -419,9 +414,17 @@ class WmsCapabilitiesParser111
                 $extent = new Extent();
                 $extent->setName($this->getValue("./@name", $extentEl));
                 $extent->setDefault($this->getValue("./@default", $extentEl));
-                $extent->setMultipleValues($this->getValue("./@multipleValues", $extentEl) !== null ? (bool) $this->getValue("./@name", $extentEl) : null);
-                $extent->setNearestValue($this->getValue("./@nearestValue", $extentEl) !== null ? (bool) $this->getValue("./@name", $extentEl) : null);
-                $extent->setCurrent($this->getValue("./@current", $extentEl) !== null ? (bool) $this->getValue("./@name", $extentEl) : null);
+                $extent->setMultipleValues($this->getValue("./@multipleValues",
+                                                           $extentEl) !== null ? (bool) $this->getValue("./@name",
+                                                                                                        $extentEl)
+                                    : null);
+                $extent->setNearestValue($this->getValue("./@nearestValue",
+                                                         $extentEl) !== null ? (bool) $this->getValue("./@name",
+                                                                                                      $extentEl)
+                                    : null);
+                $extent->setCurrent($this->getValue("./@current", $extentEl) !== null
+                                    ? (bool) $this->getValue("./@name",
+                                                             $extentEl) : null);
                 $extent->setExtentValue($this->getValue("./text()", $extentEl));
                 $wmslayer->addExtent($extent);
             }
@@ -433,21 +436,26 @@ class WmsCapabilitiesParser111
             foreach($dataUrlList as $dataUrlEl)
             {
                 $onlineResource = new OnlineResource();
-                $onlineResource->setFormat($this->getValue("./Format/text()", $dataUrlEl));
-                $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href", $dataUrlEl));
+                $onlineResource->setFormat($this->getValue("./Format/text()",
+                                                           $dataUrlEl));
+                $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href",
+                                                         $dataUrlEl));
 
                 $wmslayer->addDataUrl($onlineResource);
             }
         }
 
-        $featureListUrlList = $this->xpath->query("./FeatureListURL", $contextElm);
+        $featureListUrlList = $this->xpath->query("./FeatureListURL",
+                                                  $contextElm);
         if($featureListUrlList !== null)
         {
             foreach($featureListUrlList as $featureListUrlEl)
             {
                 $onlineResource = new OnlineResource();
-                $onlineResource->setFormat($this->getValue("./Format/text()", $featureListUrlEl));
-                $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href", $featureListUrlEl));
+                $onlineResource->setFormat($this->getValue("./Format/text()",
+                                                           $featureListUrlEl));
+                $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href",
+                                                         $featureListUrlEl));
 
                 $wmslayer->addFeatureListUrl($onlineResource);
             }
@@ -467,11 +475,15 @@ class WmsCapabilitiesParser111
                 if($legendUrlEl !== null)
                 {
                     $legendUrl = new LegendUrl();
-                    $legendUrl->setWidth($this->getValue("./@width", $legendUrlEl));
-                    $legendUrl->setHeight($this->getValue("./@height", $legendUrlEl));
+                    $legendUrl->setWidth($this->getValue("./@width",
+                                                         $legendUrlEl));
+                    $legendUrl->setHeight($this->getValue("./@height",
+                                                          $legendUrlEl));
                     $onlineResource = new OnlineResource();
-                    $onlineResource->setFormat($this->getValue("./Format/text()", $legendUrlEl));
-                    $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href", $legendUrlEl));
+                    $onlineResource->setFormat($this->getValue("./Format/text()",
+                                                               $legendUrlEl));
+                    $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href",
+                                                             $legendUrlEl));
                     $legendUrl->setOnlineResource($onlineResource);
                     $style->setLegendUrl($legendUrl);
                 }
@@ -480,8 +492,10 @@ class WmsCapabilitiesParser111
                 if($styleUrlEl !== null)
                 {
                     $onlineResource = new OnlineResource();
-                    $onlineResource->setFormat($this->getValue("./Format/text()", $styleUrlEl));
-                    $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href", $styleUrlEl));
+                    $onlineResource->setFormat($this->getValue("./Format/text()",
+                                                               $styleUrlEl));
+                    $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href",
+                                                             $styleUrlEl));
                     $style->setStyleUlr($onlineResource);
                 }
 
@@ -489,8 +503,10 @@ class WmsCapabilitiesParser111
                 if($stylesheetUrlEl !== null)
                 {
                     $onlineResource = new OnlineResource();
-                    $onlineResource->setFormat($this->getValue("./Format/text()", $stylesheetUrlEl));
-                    $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href", $stylesheetUrlEl));
+                    $onlineResource->setFormat($this->getValue("./Format/text()",
+                                                               $stylesheetUrlEl));
+                    $onlineResource->setHref($this->getValue("./OnlineResource/@xlink:href",
+                                                             $stylesheetUrlEl));
                     $style->setStyleSheetUrl($onlineResource);
                 }
                 $wmslayer->addStyle($style);
@@ -512,7 +528,8 @@ class WmsCapabilitiesParser111
         {
             foreach($tempList as $item)
             {
-                $subwmslayer = $this->parseLayer($wms, new WmsLayerSource(), $item);
+                $subwmslayer = $this->parseLayer($wms, new WmsLayerSource(),
+                                                 $item);
                 $subwmslayer->setParent($wmslayer);
                 $subwmslayer->setSource($wms);
                 $wmslayer->addSublayer($subwmslayer);

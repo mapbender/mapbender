@@ -304,7 +304,7 @@ $.widget("mapbender.mbMap", {
         }
 
         this.controls = controls;
-        //self._trigger('ready');
+        self._trigger('ready');
         $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeMapProjection, self));
         this._ready();
         //window.console && console.log("map initialized");
@@ -698,6 +698,7 @@ $.widget("mapbender.mbMap", {
     },
 
     ready: function(callback) {
+        window.console && console.log("READY DEPRE:", callback);
         if(this.readyState === true) {
             callback();
         } else {
@@ -706,6 +707,7 @@ $.widget("mapbender.mbMap", {
     },
 
     _ready: function() {
+        window.console && console.log("_READY DEPRE");
         for(callback in this.readyCallbacks) {
             callback();
             delete(this.readyCallbacks[callback]);

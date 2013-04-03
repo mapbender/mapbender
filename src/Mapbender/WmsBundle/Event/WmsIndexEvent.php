@@ -4,8 +4,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class WmsIndexEvent extends Event {
 
-    
-
     /**
      * the List of Wms that was loaded
     */
@@ -21,6 +19,10 @@ class WmsIndexEvent extends Event {
         $wmsList = array();
         $columns = array();
     }
+    /**
+     * 
+     * @param type $wmsList
+     */
     public function setWmsList($wmsList){
         $this->wmsList = $wmsList; 
     }

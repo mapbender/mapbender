@@ -48,7 +48,8 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Toc',
 //            'Mapbender\CoreBundle\Element\Layertree',
             'Mapbender\CoreBundle\Element\ZoomBar',
-            'Mapbender\CoreBundle\Element\PrintClient'
+            'Mapbender\CoreBundle\Element\PrintClient',
+            'Mapbender\CoreBundle\Element\GpsPosition'
             );
     }
 

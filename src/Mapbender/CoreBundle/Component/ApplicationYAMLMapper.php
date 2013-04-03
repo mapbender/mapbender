@@ -126,14 +126,14 @@ class ApplicationYAMLMapper
                     $element = new Element();
 //                    $elComp = new ElementComponent()
                    
-                    $element
-                            ->setId($id)
+                    $element->setId($id)
                             ->setClass($elementDefinition['class'])
                             ->setTitle($title)
                             ->setConfiguration($configuration)
                             ->setRegion($region)
                             ->setWeight($weight++)
                             ->setApplication($application);
+                    
                     //TODO: Roles
                     $application->addElements($element);
                 }
@@ -163,25 +163,22 @@ class ApplicationYAMLMapper
             $weight = 0;
             foreach($layerDefinitions as $id => $layerDefinition)
             {
-                $configuration = $layerDefinition;
-                $class = $configuration['class'];
-                unset($configuration['class']);
-                unset($configuration['title']);
+                $class = $layerDefinition['class'];
+                unset($layerDefinition['class']);
                 $instance = new $class();
                 $instance->setId($id)
-                        ->setTitle($layerDefinition['title']);
-                $instance->setConfiguration($configuration)
+                        ->setTitle($layerDefinition['title'])
                         ->setWeight($weight++)
-                        ->setLayerset($layerset);
-//                $layer = new Layer();
-//                $layer
-//                    ->setId($id)
-//                    ->setClass($layerDefinition['class'])
-//                    ->setTitle($layerDefinition['title'])
-//                    ->setConfiguration($configuration)
-//                    ->setWeight($weight++)
-//                    ->setLayerset($layerset);
-
+                        ->setLayerset($layerset)
+                        ->setBaselayer(!isset($layerDefinition['baselayer']) ? false : $layerDefinition['baselayer'])
+                        ->setProxy(!isset($layerDefinition['proxy']) ? false : $layerDefinition['proxy'])
+                        ->setVisible(!isset($layerDefinition['visible']) ? true : $layerDefinition['visible'])
+                        ->setFormat(!isset($layerDefinition['transparent']) ? true : $layerDefinition['transparent'])
+                        ->setInfoformat(!isset($layerDefinition['info_format']) ? null : $layerDefinition['info_format'])
+                        ->setTransparency(!isset($layerDefinition['transparent']) ? true : $layerDefinition['transparent'])
+                        ->setOpacity(!isset($layerDefinition['opacity']) ? 1 : $layerDefinition['opacity'])
+                        ->setTiled(!isset($layerDefinition['tiled']) ? false : $layerDefinition['tiled'])
+                        ->setConfiguration($layerDefinition);
                 $layerset->addInstance($instance);
             }
             $application->addLayerset($layerset);

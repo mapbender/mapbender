@@ -5,7 +5,7 @@ namespace Mapbender\WmsBundle\Component;
 /**
  * MetadataUrl class.
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class MetadataUrl
 {

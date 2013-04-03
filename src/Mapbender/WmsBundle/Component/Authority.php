@@ -5,7 +5,7 @@ namespace Mapbender\WmsBundle\Component;
 /**
  * Authority class.
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class Authority
 {
@@ -21,21 +21,6 @@ class Authority
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $name;
-
-//    /**
-//     * Creates a Authority object from parameters
-//     * @param array $parameters
-//     */
-//    public static function create($parameters) {
-//        $obj = new Authority();
-//        if (isset($parameters["url"])) {
-//            $obj->url = $parameters["url"];
-//        }
-//        if (isset($parameters["name"])) {
-//            $obj->name = $parameters["name"];
-//        }
-//        return $obj;
-//    }
 
     /**
      * Get url
@@ -78,16 +63,4 @@ class Authority
         $this->name = $value;
         return $this;
     }
-
-//    /**
-//     * Get object as array
-//     * 
-//     * @return array
-//     */
-//    public function toArray() {
-//        return array(
-//            "name" => $this->name,
-//            "url" => $this->url
-//        );
-//    }
 }

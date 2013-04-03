@@ -21,9 +21,7 @@ $.widget("mapbender.mbZoomBar", {
         var self = this;
 
         this.mapDiv = $('#' + this.options.target);
-        $(document).one('mapbender.setupfinished', function() {
-            self.mapDiv.mbMap('ready', $.proxy(self._setup, self));
-        });
+        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
     },
 
     _setup: function() {
@@ -63,6 +61,8 @@ $.widget("mapbender.mbZoomBar", {
             });
         }
         $(this.element).find('.zoom-world a').bind("click" ,$.proxy(this._worldZoom, this));
+
+        this._trigger('ready');
     },
 
     _destroy: $.noop,

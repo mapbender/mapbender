@@ -3,11 +3,8 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\HasInstanceIn;
-use Mapbender\CoreBundle\Component\InstanceIn;
-
-//use Mapbender\CoreBundle\Entity\Layer;
 
 /**
  * @author Karim Malhas
@@ -52,28 +49,60 @@ abstract class SourceInstance
      */
     protected $enabled = true;
 
+    /**
+     * Creates an instance
+     */
     public function __construct()
     {
         
     }
 
+    /**
+     * Returns an id
+     * 
+     * @return integer id
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * Returns a title
+     * 
+     * @param String title
+     */
     public function getTitle()
     {
         return $this->title;
     }
 
+    /**
+     * Sets a title
+     * 
+     * @param String $title
+     */
     public function setTitle($title)
     {
         $this->title = $title;
     }
 
     /**
-     * Get full class name
+     * Returns a source type
+     *
+     * @return String type
+     */
+    public abstract function getType();
+
+    /**
+     * Returns a manager type 
+     *
+     * @return String a manager type
+     */
+    public abstract function getManagertype();
+
+    /**
+     * Returns a full class name
      *
      * @return string
      */
@@ -82,15 +111,18 @@ abstract class SourceInstance
         return get_class();
     }
 
-//    
-
+    /**
+     * Returns assets
+     *
+     * @return array assets
+     */
     public function getAssets()
     {
         return array();
     }
 
     /**
-     * Set weight
+     * Sets a weight
      *
      * @param integer $weight
      */
@@ -101,7 +133,7 @@ abstract class SourceInstance
     }
 
     /**
-     * Get weight
+     * Returns a weight
      *
      * @return integer
      */
@@ -111,7 +143,8 @@ abstract class SourceInstance
     }
 
     /**
-     *  Set the layerset
+     * Sets the layerset
+     * 
      * @param Layerset $layerset Layerset
      * @return Sourceinstance
      */
@@ -122,7 +155,7 @@ abstract class SourceInstance
     }
 
     /**
-     *  Get the layerset
+     * Returns the layerset
      * @return Layerset
      */
     public function getLayerset()
@@ -131,9 +164,10 @@ abstract class SourceInstance
     }
 
     /**
-     * Set enabled
+     * Sets an enabled
      *
-     * @param integer $weight
+     * @param integer $enabled
+     * @return SourceInstance SourceInstance
      */
     public function setEnabled($enabled)
     {
@@ -142,7 +176,7 @@ abstract class SourceInstance
     }
 
     /**
-     * Get enabled
+     * Returns an enabled
      *
      * @return integer
      */
@@ -152,39 +186,46 @@ abstract class SourceInstance
     }
 
     /**
-     * Get type
-     *
-     * @return string
-     */
-    public abstract function getType();
-
-    /**
-     * Get manager type
-     *
-     * @return string
-     */
-    public abstract function getManagerType();
-
-    /**
-     * Get instance source 
-     * @return InstanceSource
+     * Returns instance source 
+     * 
+     * @return Source
      */
     public abstract function getSource();
 
     /**
-     * Set id
+     * Sets an id
      * @param integer $id id
      */
     public abstract function setId($id);
 
     /**
-     * Set configuration of the source instance
-     * @param array $configuration configuration of the source instance
+     * Sets a configuration of a source instance
+     * 
+     * @param array $configuration configuration of a source instance
      */
     public abstract function setConfiguration($configuration);
 
     /**
-     *  Get configuration of the source instance
+     *  Returns a configuration of a source instance
      */
     public abstract function getConfiguration();
+    
+    /**
+     * Remove a source instance from a database
+     * @param EntityManager $em
+     */
+    public abstract function remove(EntityManager $em);
+    
+    /**
+     * Sets an instance as baselayer
+     * @param boolean $isBaselayer
+     */
+    public abstract function setBaselayer($isBaselayer);
+    
+    /**
+     * Returns true if an instance is a baselayer.
+     * 
+     * @return boolean is baselayer
+     */
+    public abstract function getBaselayer();
 }

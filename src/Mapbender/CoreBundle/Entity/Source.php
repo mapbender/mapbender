@@ -2,10 +2,9 @@
 
 namespace Mapbender\CoreBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Component\EntityIdentifierIn;
-use Mapbender\CoreBundle\Component\HasInstanceIn;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Source entity
@@ -123,35 +122,47 @@ abstract class Source
         return $this->alias;
     }
 
-//    /**
-//     * Get source type
-//     *
-//     * @return string 
-//     */
-//    public abstract function getType();
-//    
-//    /**
-//     * Get manager type 
-//     *
-//     * @return string 
-//     */
-//    public abstract function getManagertype();
-//    
-//    /**
-//     * Get bundle name
-//     * 
-//     * @return string 
-//     */
-//    public abstract function getClassname();
-//    
-//    /**
-//     * Create Instance
-//     */
-//    public abstract function createInstance();
+    /**
+     * Get full class name
+     *
+     * @return string
+     */
+    public function getClassname()
+    {
+        return get_class();
+    }
 
+    /**
+     * Returns a Source as String
+     * 
+     * @return String Source as String
+     */
     public function __toString()
     {
         return (string) $this->id;
     }
 
+    /**
+     * Returns a source type
+     *
+     * @return String type
+     */
+    public abstract function getType();
+
+    /**
+     * Returns a manager type 
+     *
+     * @return String a manager type
+     */
+    public abstract function getManagertype();
+
+    /**
+     * Creates a SourceInstance
+     */
+    public abstract function createInstance();
+
+    /**
+     * Remove a source from a database
+     */
+    public abstract function remove(EntityManager $em);
 }

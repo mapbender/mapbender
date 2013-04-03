@@ -10,18 +10,26 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 /**
  * Mapbender WMS extension loader
  *
- * @author Christian Wygoda <christian.wygoda@wheregroup.com>
+ * @author Christian Wygoda
  */
 class MapbenderWmsExtension
         extends Extension
 {
 
+    /**
+     * 
+     * @param array $configs
+     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getAlias()
     {
         return 'mapbender_wms';

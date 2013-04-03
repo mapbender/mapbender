@@ -2,16 +2,9 @@
 
 namespace Mapbender\WmsBundle\Component;
 
-//use Doctrine\Common\Collections\ArrayCollection;
-//use Doctrine\ORM\Mapping as ORM;
-
-use Mapbender\CoreBundle\Component\BoundingBox;
-use Mapbender\WmsBundle\Component\Attribution;
-use Mapbender\WmsBundle\Component\MetadataUrl;
-use Mapbender\WmsBundle\Component\Identifier;
-
 /**
  * Style class.
+ * @author Paul Schmidt
  */
 class Style
 {
