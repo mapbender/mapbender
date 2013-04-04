@@ -2,10 +2,11 @@
 
 {% block title %}{{ application.title }}{% endblock %}
 
-{% block manager_js %}
-<script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/edit.js') }}"></script>
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/edit.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}

@@ -1,26 +1,34 @@
-{% for region in regions %}
-<h3>{{ region | capitalize }} <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="btn btn-small" title="{{ 'Add element' | trans}}"><i class="icon-plus-sign"></i></a></h3>
+{{ form_label(form.template) }}{{ form_widget(form.template) }}
 
-<div class="elementsheader">
-    <span class="title">{{ '(Id) Title' | trans }}</span>
-    <span class="type">{{ 'Type' | trans }}</span>
-    <span class="actions">{{ 'Actions' | trans }}</span>
-</div>
-<ul class="elements" data-region="{{ region }}">
-    <li class="dummy"></li>
-    {% for element in application.getElementsByRegion(region) %}
-    <li class="element" data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
-        <span class="title">
-            <input data-href="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}" data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %} />
-            ({{element.id}}) {{ element.title }}
-        </span>
-        <span class="type">{{ element_class_title(element) }}</span>
+<!-- XXXVH Here the awesome templating plzzz!-->
+<div class="layout">
+  {% for region in regions %}
+    <div class="{{region}}">
+      <h3 class="subTitle">{{ region | capitalize }}</h3>
+      <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="addIcon right addElement" title="{{'Add new element'|trans}}"></a>
+
+      <div class="elementsheader">
+        <span class="title">{{ '(Id) Title' | trans }}</span>
+        <span class="type">{{ 'Type' | trans }}</span>
+        <span class="actions">{{ 'Actions' | trans }}</span>
+      </div>
+
+      <ul class="elements" data-region="{{ region }}">
+        <li class="dummy"></li>
+        {% for element in application.getElementsByRegion(region) %}
+          <li class="element" data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
+            <span class="title">
+              <input data-href="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}" data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %} />
+              ({{element.id}}) {{ element.title }}
+            </span>
+            <span class="type">{{ element_class_title(element) }}</span>
             <div class="btn-group">
-                <a href="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}" class="btn">{{ 'Edit' | trans }}</a>
-                <a href="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}" class="btn btn-warning">{{ 'Delete' | trans }}</a>
+              <a href="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}" class="btn">{{ 'Edit' | trans }}</a>
+              <a href="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}" class="btn btn-warning">{{ 'Delete' | trans }}</a>
             </div>
-    </li>
-    {% endfor %}
-</ul>
-{% endfor %}
-
+          </li>
+          {% endfor %}
+        </ul>
+    </div>
+  {% endfor %}
+</div>

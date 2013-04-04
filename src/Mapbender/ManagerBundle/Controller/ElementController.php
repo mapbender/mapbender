@@ -28,7 +28,7 @@ class ElementController extends Controller
      * Show element class selection
      *
      * @ManagerRoute("/application/{slug}/element/select")
-     * @Method("GET")
+     * @Method("POST")
      * @Template
      */
     public function selectAction($slug)
@@ -51,7 +51,7 @@ class ElementController extends Controller
      * Shows form for creating new element
      *
      * @ManagerRoute("/application/{slug}/element/new")
-     * @Method("GET")
+     * @Method("POST")
      * @Template("MapbenderManagerBundle:Element:edit.html.twig")
      */
     public function newAction($slug)
