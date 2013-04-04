@@ -476,6 +476,14 @@ class WmsCapabilitiesParser130
             $max = $this->getValue("./wms:MaxScaleDenominator/text()", $contextElm);
             $scale->setMax($max !== null ? floatval($max) : null);
             $wmslayer->setScale($scale);
+            
+            $scaleHint = new MinMax();
+            $minScaleHint = sqrt(2.0)*$scale->getMin()/($this->resolution/2.54*100);
+            $maxScaleHint = sqrt(2.0)*$scale->getMax()/($this->resolution/2.54*100);
+
+            $scaleHint->setMax($maxScaleHint);
+            $scaleHint->setMin($minScaleHint);
+            $wmslayer->setScaleHint($scaleHint);
         }
 
         $tempList = $this->xpath->query("./wms:Layer", $contextElm);
