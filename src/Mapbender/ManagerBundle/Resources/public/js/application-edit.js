@@ -152,4 +152,65 @@ $(function() {
         });
         return false;
     });
+
+
+
+
+    // Layout - Elements ---------------------------------------------------------------------------
+    function loadElementFormular(){
+        var url = $(this).attr("href");
+
+        if(url){
+            $.ajax({
+                url: url,
+                type: "POST",
+                success: function(data){
+                   $("#popupContent").wrap('<div id="contentWrapper"></div>').hide();
+                   $("#contentWrapper").append('<div id="popupSubContent"></div>');
+                   $("#popupSubContent").append(data);
+                   var subTitle = $("#popupSubContent").find("#form_title").val();
+                   $("#popupSubTitle").text(" - New " + subTitle);
+                   $("#popup").find(".buttonOk, .buttonBack").show();
+                }
+            });
+        }
+
+        return false;
+    }
+
+    $(".addElement").bind("click", function(){
+        if(!$('body').data('mbPopup')) {
+            $("body").mbPopup();
+            $("body").mbPopup('addButton', "Back", "button buttonBack left", function(){
+
+                $("#popupSubContent").remove();
+                $("#popupSubTitle").text("");
+                $("#popup").find(".buttonOk, .buttonBack").hide();
+                $("#popupContent").show();
+
+            }).mbPopup('showAjaxModal', 
+                              {title:"Select Element"},
+                              $(this).attr("href"), 
+                              function(){ //ok click
+                                $("#elementForm").submit();
+
+                                return false;
+                              },
+                              null,
+                              function(){  //afterLoad
+                                var popup = $("#popup");
+
+                                popup.find(".buttonOk, .buttonBack").hide();
+                                popup.find(".chooseElement").on("click", loadElementFormular)
+                              });
+        }
+        return false;
+    });
+
+
+
+
+
+    // Layers --------------------------------------------------------------------------------------
+
 });
