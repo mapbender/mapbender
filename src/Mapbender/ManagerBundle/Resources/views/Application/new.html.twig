@@ -7,23 +7,22 @@
   <script type="application/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-edit.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
-  <div class="messageBox hint">
-    {% trans %}Create a new application by providing basic information and then
-    use the edit mode to choose template, add elements and layers.{% endtrans %}
-  </div>
-
   <form action="{{ path('mapbender_manager_application_create') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} novalidate="novalidate">
-    <div id="applicationTabContainer" class="tabContainer newApplicationTabContainer">
+    <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
       <ul class="tabs">
         <li id="tabBaseData" class="tab active">{{"Base data" | trans }}</li>
         <li id="tabSecurity" class="tab">{{"Security" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData">
         {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
+        <div class="messageBox hint">
+          {% trans %}Create a new application by providing basic information and then
+          use the edit mode to choose template, add elements and layers.{% endtrans %}
+        </div>
       </div>
       <div id="containerSecurity" class="container">
         {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}

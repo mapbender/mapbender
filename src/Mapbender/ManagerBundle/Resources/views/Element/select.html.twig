@@ -1,7 +1,8 @@
 {% for class, meta in elements %}
 <div class="elementContainer" data-tags="{{ meta.tags | join(',') | lower }}">
-    <a class="linkButton" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': class, 'region': region}) }}">{{ meta.title }}</a>
-    <span class="description">{{ meta.description | trans }}</span>
+    <a class="subTitle chooseElement" title="Choose {{meta.title}} Element" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': class, 'region': region}) }}">{{ meta.title }}</a>
+    <a class="checkedIcon chooseElement" title="Choose {{meta.title}} Element" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': class, 'region': region}) }}"></a>
+    <div class="description">{{ meta.description | trans }}</div>
     <div class="clearContainer"></div>
 </div>
 {% endfor %}

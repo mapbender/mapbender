@@ -109,6 +109,7 @@ class ApplicationController extends Controller
         if($form->isValid())
         {
             $application->setUpdated(new \DateTime('now'));
+            $application->setTemplate("Mapbender\CoreBundle\Template\Fullscreen");
             $em = $this->getDoctrine()->getEntityManager();
 
             $em->getConnection()->beginTransaction();

@@ -4,8 +4,9 @@
 
 {% block title %}{{ "Applications" | trans }}{% endblock %}
 
-{% block manager_js %}
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application.js') }}"></script>
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-list.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
@@ -23,16 +24,21 @@
         <div class="col2 box">
           <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'View this application' | trans }}">
             {{ application.title }}
-            <span class="smallerText">{{ application.slug }}</span>
           </a>
+          <span class="smallerText">{{ application.slug }}</span>
           <div class="description">{{ application.description }}</div>
           <div class="buttonGroup">
             <a class="viewIcon" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View application' | trans }}"></a>
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-            <a class="editIcon" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}#base" title="{{ 'Edit application' | trans }}"></a>
+              <a class="editIcon" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}#base" title="{{ 'Edit application' | trans }}"></a>
             {% endif %}
+
+            {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') %}
+              <a href="#" class="publishIcon {% if application.published %}enabled{% else %}disabled{% endif %}" title="{{ 'Publish / Unpublish application' | trans }}" data-application-slug="{{ application.slug }}"></a>
+            {% endif %}
+
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
-            <a class="deleteIcon" href="{{ path('mapbender_manager_application_confirmdelete', { 'slug': application.slug }) }}" title="{{ 'Delete application' | trans }}"></a>
+              <a class="deleteIcon" href="{{path('mapbender_manager_application_delete', { 'slug': application.slug }) }}" title="{{ 'Delete application' | trans }} {{ application.title }}"></a>
             {% endif %}
           </div>
         </div>

@@ -1,27 +1,21 @@
-{% if application.layersets|length > 0 %}
+<a id="addEditLayers" href="#" class="addIcon right" title="{{ 'Add Layerset' | trans}}" data-href="{{ path("mapbender_manager_application_newlayerset",{'slug': application.slug}) }}"></a>
 {% for layerset in application.layersets %}
-<h3>{{ layerset.title | capitalize }}
-    <div>
-        <button class="layerset-action" data-href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Edit Layerset' | trans}}</button>
-        <button class="layerset-action btn-warning" data-href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Delete Layerset' | trans}}</button>
-        <button class="layerset-action" data-href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Add Instance' | trans}}</button>
-    </div>
-</h3>
-<ul class="layerset" data-id="{{ layerset.id }}">
-    <li class="header">
-        <span class="enabled">{{ 'Enabled' | trans }}</span>
-        <span class="sourceid">{{ 'SourceId' | trans }}</span>
-        <span class="type">{{ 'Type' | trans }}</span>
-        <span class="title">{{ 'Title' | trans }}</span>
-        <span class="actions">{{ 'Actions' | trans }}</span>
-    </li>
-</ul>
-{% endfor %}
+    <h3>{{ layerset.title | capitalize }}
+        <div>
+            <button class="layerset-action" data-href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Edit Layerset' | trans}}</button>
+            <button class="layerset-action btn-warning" data-href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Delete Layerset' | trans}}</button>
+            <button class="layerset-action" data-href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Add Instance' | trans}}</button>
+        </div>
+    </h3>
+    <ul class="layerset" data-id="{{ layerset.id }}">
+        <li class="header">
+            <span class="enabled">{{ 'Enabled' | trans }}</span>
+            <span class="sourceid">{{ 'SourceId' | trans }}</span>
+            <span class="type">{{ 'Type' | trans }}</span>
+            <span class="title">{{ 'Title' | trans }}</span>
+            <span class="actions">{{ 'Actions' | trans }}</span>
+        </li>
+    </ul>
 {% else %}
-    {{ 'No Sources added' | trans }}
-{% endif %}
-<br/>
-<div>
-    <button class="layerset-action" title="{{ 'Add Layerset' | trans}}" data-href="{{ path("mapbender_manager_application_newlayerset",{'slug': application.slug}) }}">{{ 'Add Layerset' | trans}}</button>
-</div>
-
+    <div class="description">{{ 'No Layers added' | trans }}</div>
+{% endfor %}
