@@ -230,5 +230,12 @@ class Map extends Element
         return 'Mapbender\CoreBundle\Element\Type\MapAdminType';
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:map.html.twig';
+    }
 }
 

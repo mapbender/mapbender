@@ -157,5 +157,13 @@ class Mapbender {
         $yamlMapper = new ApplicationYAMLMapper($this->container);
         return $yamlMapper->getApplication($slug);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:map.html.twig';
+    }
 }
 

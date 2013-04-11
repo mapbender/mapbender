@@ -90,5 +90,12 @@ class GpsPosition extends Element
                             'title' => $this->getTitle()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:gpsposition.html.twig';
+    }
 }
 

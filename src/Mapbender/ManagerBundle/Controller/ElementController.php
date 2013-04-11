@@ -60,6 +60,7 @@ class ElementController extends Controller
 
         // Get class for element
         $class = $this->getRequest()->get('class');
+
         if(!class_exists($class))
         {
             throw new \RuntimeException('An Element class "' . $class
@@ -333,7 +334,6 @@ class ElementController extends Controller
             $query = $em->createQuery(
                     "SELECT e FROM MapbenderCoreBundle:Element e"
                     . " WHERE e.region=:reg AND e.application=:app"
-//                    ." AND e.weight>=:min AND e.weight<=:max"
                     . " ORDER BY e.weight ASC");
             $query->setParameters(array(
                 "reg" => $newregion,
@@ -540,9 +540,6 @@ class ElementController extends Controller
     {
         $element = new Element();
         $configuration = $class::getDefaultConfiguration();
-//        if(isset($configuration["targets"])){
-//            unset($configuration["targets"]);
-//        }
         $element
                 ->setClass($class)
                 ->setRegion($region)

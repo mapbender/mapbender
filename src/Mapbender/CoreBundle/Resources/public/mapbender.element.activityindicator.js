@@ -35,6 +35,10 @@ $.widget("mapbender.mbActivityIndicator", {
         });
     },
 
+    destroy: function() {
+
+    }
+
     _bindToLayer: function(mqLayer) {
         mqLayer.olLayer.events.on({
             scope: this,

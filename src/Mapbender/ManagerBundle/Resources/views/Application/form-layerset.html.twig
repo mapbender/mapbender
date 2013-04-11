@@ -1,36 +1,12 @@
-{% extends "FOMManagerBundle::manager.html.twig" %}
-
-{% block title %}{{ application.title }}{% endblock %}
-
-{% block manager_css %}
-<link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/style/style.css') }}" >
-{% endblock %}
-
-{% block manager_js %}
-<script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/edit.js') }}"></script>
-{% endblock %}
-
-{% block manager_content %}
 {% if isnew %}
-    {% set form_caption =  "New Layerset" | trans %}
     {% set form_url =  path('mapbender_manager_application_savelayerset', { 'slug': application.slug}) %}
 {% else %}
-    {% set form_caption = "Edit Layerset" | trans %}
     {% set form_url =  path('mapbender_manager_application_savelayerset_1', { 'slug': application.slug, 'layersetId': form.vars.data.id}) %}
 {% endif %}
 
-<h2>{{ form_caption }}</h2>
+<form id="layersetForm" class="layersetForm" action="{{ form_url }}" method="post" name="{{ form.name }}" {{ form_enctype(form)}} novalidate="novalidate">
+    {{form_label(form.title)}}{{form_widget(form.title)}}
 
-<form action="{{ form_url }}" method="post" name="{{ form.name }}" {{ form_enctype(form)}} class="well">
-    {{ form_row(form._token) }}
-    {{ form_errors(form) }}
     {{ form_rest(form) }}
-    <div class="btn-group">    
-        <input class="btn" type="submit" value="{{ "Save" | trans }}"/>
-        <button class="btn layerset-action" data-href="{{ path("mapbender_manager_application_edit",{'slug': application.slug}) }}#layers">{{ 'Cansel' | trans}}</button>
-    </div>
+    {{ form_row(form._token) }}
 </form>
-
-{% endblock %}

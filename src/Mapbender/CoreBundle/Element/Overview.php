@@ -94,5 +94,12 @@ class Overview extends Element
                             'configuration' => $this->getConfiguration()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:overview.html.twig';
+    }
 }
 

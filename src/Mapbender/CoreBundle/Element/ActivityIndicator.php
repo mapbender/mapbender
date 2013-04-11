@@ -87,5 +87,12 @@ class ActivityIndicator extends Element
                             'configuration' => $this->getConfiguration()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:activityindicator.html.twig';
+    }
 }
 

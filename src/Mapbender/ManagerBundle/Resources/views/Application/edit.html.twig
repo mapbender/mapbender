@@ -23,13 +23,15 @@
       <div id="containerLayout" class="container containerLayout">
         {% include 'MapbenderManagerBundle:Application:form-elements.html.twig' %}
       </div>
-      <div id="containerLayers" class="container">
+      <div id="containerLayers" class="container containerLayers">
         {% include 'MapbenderManagerBundle:Application:form-layersets.html.twig' %}
       </div>
-      <div id="containerSecurity" class="container">
+      <div id="containerSecurity" class="container containerSecurity">
         {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
       </div>
     </div>
+
+    <div class="clearContainer"></div>
 
     <div class="right">
       <input type="submit" value="{{ 'Save' | trans }}" class="button"/>

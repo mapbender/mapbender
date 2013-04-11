@@ -66,9 +66,10 @@ class Copyright extends Element
      */
     public static function getDefaultConfiguration()
     {
+
         return array(
             'tooltip' => 'Copyright',
-            "copyrigh_text" => "© XXX, 2012",
+            "copyright_text" => "© Mapbender3, " . date("Y"),
             "dialog_link" => "Terms of use",
             "dialog_content" => "Terms of use (Content)",
             "dialog_title" => "Terms of use",
@@ -98,5 +99,12 @@ class Copyright extends Element
                             'configuration' => $this->getConfiguration()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:copyright.html.twig';
+    }
 }
 

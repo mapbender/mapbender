@@ -1,5 +1,5 @@
 {% if configuration.group is defined %}
-<label for="{{ id }}" title="{{ configuration.tooltip|default(title)|trans }}">{{ title|trans }}</label><input class="mb-element mb-element-button{% if configuration.icon is defined %} {{ configuration.icon }}{% endif %}" type="checkbox" name="mb-button-group[{{ configuration.group }}]" value="{{ id }}" id="{{ id }}"/>
+    <label for="{{ id }}" title="{{ configuration.tooltip|default(title)|trans }}">{{ title|trans }}</label><input class="mb-element mb-element-button{% if configuration.icon is defined %} {{ configuration.icon }}{% endif %}" type="checkbox" name="mb-button-group[{{ configuration.group }}]" value="{{ id }}" id="{{ id }}"/>
 {% else %}
-<button id="{{ id }}" class="mb-element mb-element-button{% if configuration.icon is defined %} {{ configuration.icon }}{% endif %}" title="{{ configuration.tooltip|default(title)|trans }}">{{ title|trans }}</button>
+    <button id="{{ id }}" class="mb-element mb-element-button{% if configuration.icon is defined %} {{ configuration.icon }}{% endif %}" title="{{ configuration.tooltip|default(title)|trans }}">{{ title|trans }}</button>
 {% endif %}

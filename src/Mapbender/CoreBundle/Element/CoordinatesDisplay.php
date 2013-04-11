@@ -96,5 +96,12 @@ class CoordinatesDisplay extends Element
                             'configuration' => $this->getConfiguration()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:coordinatesdisplay.html.twig';
+    }
 }
 

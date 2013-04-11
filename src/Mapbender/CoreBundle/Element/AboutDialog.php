@@ -69,6 +69,14 @@ class AboutDialog extends Element
     /**
      * @inheritdoc
      */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:about_dialog.html.twig';
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getWidgetName()
     {
         return 'mapbender.mbAboutDialog';
@@ -79,7 +87,6 @@ class AboutDialog extends Element
      */
     public function render()
     {
-        $configuration = $this->getConfiguration();
         return $this->container->get('templating')
                         ->render('MapbenderCoreBundle:Element:about_dialog.html.twig',
                                  array(
@@ -103,6 +110,5 @@ class AboutDialog extends Element
                 return $response;
         }
     }
-
 }
 

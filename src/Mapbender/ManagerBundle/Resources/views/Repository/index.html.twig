@@ -3,7 +3,7 @@
 {% block title %}{{ 'Services' | trans }}{% endblock %}
 
 {% block manager_content %}
-<label for="inputFilterServices" class="labelInput left">Filter:</label><input id="inputFilterServices" type="text" class="input listFilterInput">
+<label for="inputFilterServices" class="labelInput left">{{"Filter"|trans}}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
 <a class="addIcon right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'Add new service' | trans }}"></a>
 
 <ul id="listFilterServices" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">

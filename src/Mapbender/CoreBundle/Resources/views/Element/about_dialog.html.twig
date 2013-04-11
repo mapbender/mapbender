@@ -1,1 +1,1 @@
-<button id="{{ id }}" class="mb-element mb-element-aboutdialog{% if configuration.icon is defined %} {{ configuration.icon }}{% endif %}" title="{{ configuration.tooltip|default(title)|trans }}">{{ title|trans }}</button>
+<button id="{{ id }}" class="mb-element mb-element-aboutdialog" title="{{ configuration.tooltip|default(title)|trans }}">{% if configuration.label %}{{ title|trans }}{% endif %}</button>

@@ -130,4 +130,11 @@ class PrintClient extends Element
         }
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:printclient.html.twig';
+    }
 }

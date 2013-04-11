@@ -93,5 +93,12 @@ class Button extends Element
                             'configuration' => $this->entity->getConfiguration()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:button.html.twig';
+    }
 }
 

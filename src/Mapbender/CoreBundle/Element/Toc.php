@@ -88,5 +88,12 @@ class Toc extends Element
                             'configuration' => $this->getConfiguration()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:toc.html.twig';
+    }
 }
 

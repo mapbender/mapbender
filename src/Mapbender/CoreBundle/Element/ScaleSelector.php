@@ -93,5 +93,12 @@ class ScaleSelector extends Element
                             'configuration' => $this->getConfiguration()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:scaleselector.html.twig';
+    }
 }
 

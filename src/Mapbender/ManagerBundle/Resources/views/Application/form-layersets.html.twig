@@ -1,21 +1,42 @@
-<a id="addEditLayers" href="#" class="addIcon right" title="{{ 'Add Layerset' | trans}}" data-href="{{ path("mapbender_manager_application_newlayerset",{'slug': application.slug}) }}"></a>
-{% for layerset in application.layersets %}
-    <h3>{{ layerset.title | capitalize }}
-        <div>
-            <button class="layerset-action" data-href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Edit Layerset' | trans}}</button>
-            <button class="layerset-action btn-warning" data-href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Delete Layerset' | trans}}</button>
-            <button class="layerset-action" data-href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}">{{ 'Add Instance' | trans}}</button>
-        </div>
-    </h3>
-    <ul class="layerset" data-id="{{ layerset.id }}">
-        <li class="header">
-            <span class="enabled">{{ 'Enabled' | trans }}</span>
-            <span class="sourceid">{{ 'SourceId' | trans }}</span>
-            <span class="type">{{ 'Type' | trans }}</span>
-            <span class="title">{{ 'Title' | trans }}</span>
-            <span class="actions">{{ 'Actions' | trans }}</span>
-        </li>
-    </ul>
-{% else %}
-    <div class="description">{{ 'No Layers added' | trans }}</div>
-{% endfor %}
+<label for="inputFilterLayersets" class="labelInput left">{{"Filter layersets"|trans}}</label><input id="inputFilterLayersets" type="text" class="input listFilterInput">
+<a href="{{ path("mapbender_manager_application_newlayerset",{'slug': application.slug}) }}" class="addIcon right addLayerset" title="{{ 'Add Layerset' | trans}}"></a>
+<div class="clearContainer"></div>
+
+<ul id="listFilterLayersets" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">
+  {% for layerset in application.layersets %}
+    <li class="filterItem">
+      <table class="table layerset" data-id="{{ layerset.id }}">
+        <thead id="permissionsHead">
+          <tr>
+            <th class="subTitle">{{ layerset.title | capitalize }}</th>
+            <th class="iconColumn">
+              <a class="right addIcon addInstance" title="{{"Add Instance"|trans}}" href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+            </th>
+            <th class="iconColumn">
+              <a class="right editIcon editLayerset" title="{{"Edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+            </th>
+            <th class="iconColumn">
+              <a class="right deleteIcon deleteLayerset" title="{{"Delete"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="2">
+              <a class="publishIcon" title="" href="#"></a>
+              sdfsd
+            </td>
+            <td>
+              <a class="editIconSmall" title="" href="#"></a>
+            </td>
+            <td>
+              <a class="deleteIconSmall" title="" href="#"></a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </li>
+  {% else %}
+    <li class="description">{{ 'No Layers added' | trans }}</li>
+  {% endfor %}
+</ul>

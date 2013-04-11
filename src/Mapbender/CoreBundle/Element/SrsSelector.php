@@ -92,4 +92,11 @@ class SrsSelector extends Element
                             'configuration' => $this->getConfiguration()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:srsselector.html.twig';
+    }
 }

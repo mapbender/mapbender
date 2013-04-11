@@ -1,9 +1,4 @@
-$(function() {
-    $("button.layerset-action" ).bind("click", function(e) {
-        document.location.href = $(this).attr("data-href");
-        return false;
-    });
-    
+$(function() {    
     $("ul.elements" ).sortable({
         connectWith: "ul.elements",
         items: "li:not(.dummy)",
@@ -166,11 +161,11 @@ $(function() {
                 type: "POST",
                 success: function(data){
                    $("#popupContent").wrap('<div id="contentWrapper"></div>').hide();
-                   $("#contentWrapper").append('<div id="popupSubContent"></div>');
+                   $("#contentWrapper").append('<div id="popupSubContent" class="popupSubContent"></div>');
                    $("#popupSubContent").append(data);
                    var subTitle = $("#popupSubContent").find("#form_title").val();
-                   $("#popupSubTitle").text(" - New " + subTitle);
-                   $("#popup").find(".buttonOk, .buttonBack").show();
+                   $("#popupSubTitle").text(" - " + subTitle);
+                   $("#popup").find(".buttonYes, .buttonBack").show();
                 }
             });
         }
@@ -185,24 +180,25 @@ $(function() {
 
                 $("#popupSubContent").remove();
                 $("#popupSubTitle").text("");
-                $("#popup").find(".buttonOk, .buttonBack").hide();
+                $("#popup").find(".buttonYes, .buttonBack").hide();
                 $("#popupContent").show();
 
-            }).mbPopup('showAjaxModal', 
-                              {title:"Select Element"},
-                              $(this).attr("href"), 
-                              function(){ //ok click
-                                $("#elementForm").submit();
+            })
+            .mbPopup('showAjaxModal', 
+                     {title:"Add element to " + $(this).siblings(".subTitle").text().toLowerCase()},
+                     $(this).attr("href"), 
+                     function(){ //ok click
+                       $("#elementForm").submit();
+                       return false;
+                     },
+                     null,
+                     function(){  //afterLoad
+                        console.log("aaa")
+                       var popup = $("#popup");
 
-                                return false;
-                              },
-                              null,
-                              function(){  //afterLoad
-                                var popup = $("#popup");
-
-                                popup.find(".buttonOk, .buttonBack").hide();
-                                popup.find(".chooseElement").on("click", loadElementFormular)
-                              });
+                       popup.find(".buttonYes, .buttonBack").hide();
+                       popup.find(".chooseElement").on("click", loadElementFormular);
+                     });
         }
         return false;
     });
@@ -212,5 +208,70 @@ $(function() {
 
 
     // Layers --------------------------------------------------------------------------------------
+    // Add layerset action
+    $(".addLayerset").bind("click", function(){
+        if(!$('body').data('mbPopup')) {
+            $("body").mbPopup();
+            $("body").mbPopup('showAjaxModal', 
+                              {title:"Add layerset",
+                               btnOkLabel: "Add"},
+                              $(this).attr("href"), 
+                              function(){ //ok click
+                                $("#layersetForm").submit();
 
+                                return false;
+                              },
+                              null);
+        }
+        return false;
+    });
+    // Edit layerset action
+    $(".editLayerset").bind("click", function(){
+        if(!$('body').data('mbPopup')) {
+            $("body").mbPopup();
+            $("body").mbPopup('showAjaxModal', 
+                              {title:"Edit layerset",
+                               subTitle: " - " + $(this).siblings("legend").text(),
+                               btnOkLabel: "Save"},
+                              $(this).attr("href"), 
+                              function(){ //ok click
+                                $("#layersetForm").submit();
+
+                                return false;
+                              },
+                              null);
+        }
+        return false;
+    });
+    // Add Instance Action
+    $(".addInstance").bind("click", function(){
+        if(!$('body').data('mbPopup')) {
+            $("body").mbPopup();
+            $("body").mbPopup('showAjaxModal', 
+                              {title:"Select source",
+                               subTitle: " - " + $(this).siblings("legend").text()},
+                              $(this).attr("href"), 
+                              null,
+                              null);
+        }
+        return false;
+    });
+    // Delete layerset Action
+    $(".deleteLayerset").bind("click", function(){
+        if(!$('body').data('mbPopup')) {
+            $("body").mbPopup();
+            $("body").mbPopup('showAjaxModal', 
+                              {title:"Delete layerset",
+                               subTitle: " - " + $(this).siblings("legend").text(),
+                               btnOkLabel: "Delete"},
+                              $(this).attr("href"), 
+                              function(){ //ok click
+                                $("#deleteLaysersetForm").submit();
+
+                                return false;
+                              },
+                              null);
+        }
+        return false;
+    });
 });

@@ -1,0 +1,26 @@
+<div class="elementFormLegend elementForm">
+    {{ form_label(form.title) }}{{ form_widget(form.title) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.elementType) }}{{ form_widget(form.configuration.elementType) }}
+    <div class="clearContainer"></div>
+    {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{"Auto open"|trans}}</label>
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.displayType) }}{{ form_widget(form.configuration.displayType) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
+    <div class="clearContainer"></div>
+    {{ form_widget(form.configuration.hideEmptyLayers) }}<label for="{{form.configuration.hideEmptyLayers.vars.id}}" class="labelCheck">{{"Hide empty layers"|trans}}</label>
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.noLegend) }}{{ form_widget(form.configuration.noLegend) }}
+    <div class="clearContainer"></div>
+    {{ form_widget(form.configuration.generateGetLegendGraphicUrl) }}<label for="{{form.configuration.generateGetLegendGraphicUrl.vars.id}}" class="labelCheck">{{"Generate get legend graphic url"|trans}}</label>
+    <div class="clearContainer"></div>
+    {{ form_widget(form.configuration.showWmsTitle) }}<label for="{{form.configuration.showWmsTitle.vars.id}}" class="labelCheck">{{"Show WMS title"|trans}}</label>
+    <div class="clearContainer"></div>
+    {{ form_widget(form.configuration.showLayerTitle) }}<label for="{{form.configuration.showLayerTitle.vars.id}}" class="labelCheck">{{"Show layer title"|trans}}</label>
+    <div class="clearContainer"></div>
+    {{ form_widget(form.configuration.showGroupedLayerTitle) }}<label for="{{form.configuration.showGroupedLayerTitle.vars.id}}" class="labelCheck">{{"Show grouped layer title"|trans}}</label>
+    <div class="clearContainer"></div>
+</div>

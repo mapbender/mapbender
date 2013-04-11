@@ -98,5 +98,12 @@ class FeatureInfo extends Element
                             'title' => $this->getTitle()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:featureinfo.html.twig';
+    }
 }
 

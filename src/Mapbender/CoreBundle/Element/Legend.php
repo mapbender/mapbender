@@ -98,5 +98,12 @@ class Legend extends Element
                             'configuration' => $this->getConfiguration()));
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:legend.html.twig';
+    }
 }
 

@@ -28,7 +28,6 @@ class CopyrightAdminType extends AbstractType
     {
         $resolver->setDefaults(array(
             'application' => null,
-//            'target' => null
         ));
     }
 
@@ -38,7 +37,8 @@ class CopyrightAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
-                ->add('width', 'text', array('required' => true))->add('anchor', "choice",
+                ->add('width', 'text', array('required' => true))
+                ->add('anchor', "choice",
                       array(
                     'required' => true,
                     "choices" => array(
@@ -51,7 +51,7 @@ class CopyrightAdminType extends AbstractType
                       array(
                     'label' => 'Position',
                     'property_path' => '[position]'))
-                ->add('copyrigh_text', 'text', array('required' => false))
+                ->add('copyright_text', 'text', array('required' => false))
                 ->add('dialog_link', 'text', array('required' => false))
                 ->add('dialog_content', 'textarea', array('required' => false))
                 ->add('dialog_title', 'text', array('required' => false));

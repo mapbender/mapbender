@@ -285,7 +285,7 @@ class ApplicationController extends Controller
     /**
      * Delete confirmation page
      * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
-     * @Method("GET")
+     * @Method("POST")
      * @Template("MapbenderManagerBundle:Application:delete.html.twig")
      */
     public function confirmDeleteAction($slug)
@@ -356,7 +356,7 @@ class ApplicationController extends Controller
      * Create a form for a new layerset
      *
      * @ManagerRoute("/application/{slug}/layerset/new")
-     * @Method("GET")
+     * @Method("POST")
      * @Template("MapbenderManagerBundle:Application:form-layerset.html.twig")
      */
     public function newLayersetAction($slug)
@@ -379,7 +379,7 @@ class ApplicationController extends Controller
      * Create a new layerset from POSTed data
      *
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit")
-     * @Method("GET")
+     * @Method("POST")
      * @Template("MapbenderManagerBundle:Application:form-layerset.html.twig")
      */
     public function editLayersetAction($slug, $layersetId)
@@ -446,7 +446,7 @@ class ApplicationController extends Controller
      * A confirmation page for a layerset
      *
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/confirmdelete")
-     * @Method("GET")
+     * @Method("POST")
      * @Template("MapbenderManagerBundle:Application:deleteLayerset.html.twig")
      */
     public function confirmDeleteLayersetAction($slug, $layersetId)
@@ -508,7 +508,7 @@ class ApplicationController extends Controller
     /**
      * Add a new SourceInstance to the Layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/list")
-     * @Method("GET")
+     * @Method("POST")
      * @Template("MapbenderManagerBundle:Application:list-source.html.twig")
      */
     public function listInstanceAction($slug, $layersetId, Request $request)
@@ -535,7 +535,7 @@ class ApplicationController extends Controller
     /**
      * Add a new SourceInstance to the Layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/source/{sourceId}/add")
-     * @Method("GET")
+     * @Method("POST")
      */
     public function addInstanceAction($slug, $layersetId, $sourceId,
             Request $request)
@@ -587,7 +587,7 @@ class ApplicationController extends Controller
     /**
      * Confirm removal of a source instance
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete")
-     * @Method("GET")
+     * @Method("POST")
      * @Template("MapbenderManagerBundle:Application:deleteInstance.html.twig")
      */
     public function confirmDeleteInstanceAction($slug, $layersetId, $instanceId)
