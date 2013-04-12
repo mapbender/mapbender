@@ -96,19 +96,21 @@ $.extend(true, Mapbender, { layer: {
                 contentType_ += contentType_.length > 0 ? ";" : "" +
                     layer.options.configuration.configuration.info_charset;
             }
-            var params = $.param(param_tmp);
-
+            var params = [];
+            for(var p in param_tmp) {
+                params.push(p + '=' + param_tmp[p]);
+            }
 
             // this clever shit was taken from $.ajax
             var requestUrl = this._removeProxy(layer.options.url);
             
-            requestUrl += (/\?/.test(layer.options.url) ? '&' : '?') + params;
+            requestUrl += (/\?/.test(layer.options.url) ? '&' : '?') + params.join('&');
             
             $.ajax({
                 url: Mapbender.configuration.application.urls.proxy,
                 contentType: contentType_,
                 data: {
-                    url: encodeURIComponent(requestUrl)
+                    url: requestUrl
                 },
                 success: function(data) {
                     callback({
