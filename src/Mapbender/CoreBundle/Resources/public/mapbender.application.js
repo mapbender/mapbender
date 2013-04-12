@@ -8,9 +8,8 @@ Mapbender.ElementRegistry = function() {
         if(true === callback) {
             // Register as ready
             this.readyElements[targetId] = true;
-
             // Execute all callbacks registered so far
-            if('undefined' !== this.readyCallbacks[targetId]) {
+            if('undefined' !== typeof this.readyCallbacks[targetId]) {
                 for(var idx in this.readyCallbacks[targetId]) {
                     this.readyCallbacks[targetId][idx]();
                 }
@@ -46,7 +45,7 @@ Mapbender.setup = function() {
         $('#' + id).one(readyEvent, function(event) {
             for(var i in Mapbender.configuration.elements) {
                 var conf = Mapbender.configuration.elements[i],
-                    widget = data.init.split('.'),
+                    widget = conf.init.split('.'),
                     readyEvent = widget[1].toLowerCase() + 'ready';
                 if(readyEvent === event.type) {
                     Mapbender.elementRegistry.onElementReady(i, true);
