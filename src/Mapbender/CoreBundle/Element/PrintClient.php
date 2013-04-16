@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Response;
+use Mapbender\PrintBundle\Component\OdgParser;
 
 /**
  * 
@@ -24,7 +25,7 @@ class PrintClient extends Element
      */
     static public function getClassDescription()
     {
-        return "";
+        return "Please give me a description";
     }
 
     /**
@@ -80,19 +81,16 @@ class PrintClient extends Element
     {
         $configuration = $this->getConfiguration();
         $forms = array();
-        foreach($configuration['formats'] as $key => $config) {
-            if(!array_key_exists('optional_fields', $config) or !is_array($config['optional_fields'])) {
-                continue;
-            }
-
+        if (null !== $configuration['optional_fields']) 
+        {
             $form_builder = $this->container->get('form.factory')->createNamedBuilder('extra', 'form', null, array(
                 'csrf_protection' => false
             ));
-            foreach($config['optional_fields'] as $k => $c) {
+            foreach($configuration['optional_fields'] as $k => $c) {
                 $options = array_key_exists('options', $c) ? $c['options'] : array();
                 $form_builder->add($k, $c['type'], $options);
             }
-            $forms[$key] = $form_builder->getForm()->createView();
+            $forms['extra'] = $form_builder->getForm()->createView();
         }
         
         return $this->container->get('templating')
@@ -112,6 +110,34 @@ class PrintClient extends Element
         switch($action)
         {
             case 'direct':
+                
+                $request = $this->container->get('request');
+                $data = $request->request->all();
+                
+                foreach($request->request->keys() as $key) {
+                    $request->request->remove($key);
+                }
+                // keys, remove
+                foreach($data['layers'] as $idx => $layer) {
+                    $data['layers'][$idx ]= json_decode($layer, true);
+                }
+                $content = json_encode($data);
+                
+                // Forward to Printer Service URL using OWSProxy
+                $configuration = $this->getConfiguration();
+                $url = (null !== $configuration['printer']['service'] ?
+                        $configuration['printer']['service'] :
+                        $this->container->get('router')->generate('mapbender_print_print_service', array(), true));
+
+                return $this->container->get('http_kernel')->forward(
+                    'OwsProxy3CoreBundle:OwsProxy:genericProxy',
+                    array(
+                        'url' => $url,
+                        'content' => $content
+                    )
+                );
+                
+            case 'queued':
                 $content = $this->container->get('request')->getContent();
                 if(empty($content))
                 {
@@ -120,13 +146,25 @@ class PrintClient extends Element
 
                 // Forward to Printer Service URL using OWSProxy
                 $configuration = $this->getConfiguration();
-                return  $this->container->get('http_kernel')->forward(
+                $url = (null !== $configuration['printer']['service'] ?
+                        $configuration['printer']['service'] :
+                        $this->container->get('router')->generate('mapbender_print_print_service', array(), true));
+                return $this->container->get('http_kernel')->forward(
                     'OwsProxy3CoreBundle:OwsProxy:genericProxy',
                     array(
-                        'url' => $configuration['printer']['service'],
+                        'url' => $url,
                         'content' => $content
                     )
                 );
+            case 'template':
+                $response = new Response();
+                $response->headers->set('Content-Type', 'application/json');        
+                $request = $this->container->get('request');
+                $data = json_decode($request->getContent(),true);          
+                $odgParser = new OdgParser();
+                $size = $odgParser->getMapSize($data['template']);
+                $response->setContent($size->getContent());
+                return $response;
         }
     }
 
