@@ -2,7 +2,9 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use FPDF_FPDF;
 use FPDF_FPDI;
 use Buzz\Browser;
@@ -214,18 +216,19 @@ class PrintService
             $this->layer_urls[$k] = $url;
             
             //get image
-            $buzz = new Browser;
-            $response = $buzz->get($url);
-            
+            $attributes = array();
+            $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
+            $subRequest = new Request(array(
+                'url' => $url
+            ), array(), $attributes);
+            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);                
+                
+            $tempdir = $this->tempdir;
             $imagename = $tempdir.'/tempimage'.$k;
             
-            file_put_contents($imagename, $response->getContent());
+            file_put_contents($imagename, $response->getContent());         
             
-//            $handle = fopen($imagename, "w");
-//            fwrite($handle, $image);
-//            fclose($handle);
-            
-            switch($response->getHeader('Content-Type')) {
+            switch(trim($response->headers->get('content-type'))) {
                 case 'image/png' :
                     $im = imagecreatefrompng($imagename);
                     break;
@@ -236,8 +239,7 @@ class PrintService
                     $im = imagecreatefromgif($imagename);
                     break;
                 default: 
-                    print_r ($response->getContent());
-                    die(); 
+                    throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
             
             //rotate image
