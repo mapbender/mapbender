@@ -17,7 +17,7 @@ class LayertreeAdminType extends AbstractType
      */
     public function getName()
     {
-        return 'toc';
+        return 'layertree';
     }
 
     /**
