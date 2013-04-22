@@ -946,15 +946,18 @@ class WmsSource extends Source
         $instLayer_root->setTitle($wmslayer_root->getTitle());
         // @TODO min max from scaleHint
         $instLayer_root->setMinScale(
-                $wmslayer_root->getScale() !== null ?
-                        $wmslayer_root->getScale()->getMin() : null);
+                $wmslayer_root->getScaleRecursive() !== null ?
+                        $wmslayer_root->getScaleRecursive()->getMin() : null);
         $instLayer_root->setMaxScale(
-                $wmslayer_root->getScale() !== null ?
-                        $wmslayer_root->getScale()->getMax() : null);
+                $wmslayer_root->getScaleRecursive() !== null ?
+                        $wmslayer_root->getScaleRecursive()->getMax() : null);
         $queryable = $wmslayer_root->getQueryable();
         $instLayer_root->setInfo(Utils::getBool($queryable));
         $instLayer_root->setAllowinfo(Utils::getBool($queryable));
 
+        $instLayer_root->setToggle(true);
+        $instLayer_root->setAllowtoggle(true);
+        
         $instLayer_root->setPriority($num);
         $instance->addLayer($instLayer_root);
         $this->addSublayer($instLayer_root, $wmslayer_root, $num, $instance);
@@ -980,11 +983,11 @@ class WmsSource extends Source
             $instsublayer->setTitle($wmssublayer->getTitle());
             // @TODO min max from scaleHint
             $instsublayer->setMinScale(
-                    $wmssublayer->getScale() !== null ?
-                            $wmssublayer->getScale()->getMin() : null);
+                    $wmssublayer->getScaleRecursive() !== null ?
+                            $wmssublayer->getScaleRecursive()->getMin() : null);
             $instsublayer->setMaxScale(
-                    $wmssublayer->getScale() !== null ?
-                            $wmssublayer->getScale()->getMax() : null);
+                    $wmssublayer->getScaleRecursive() !== null ?
+                            $wmssublayer->getScaleRecursive()->getMax() : null);
             $queryable = $wmssublayer->getQueryable();
             $instsublayer->setInfo(Utils::getBool($queryable));
             $instsublayer->setAllowinfo(Utils::getBool($queryable));
@@ -992,6 +995,10 @@ class WmsSource extends Source
             $instsublayer->setPriority($num);
             $instsublayer->setParent($instlayer);
             $instance->addLayer($instsublayer);
+            if($wmssublayer->getSublayer()->count() > 0){
+                $instsublayer->setToggle(true);
+                $instsublayer->setAllowtoggle(true);
+            }
             $this->addSublayer($instsublayer, $wmssublayer, $num, $instance);
         }
     }

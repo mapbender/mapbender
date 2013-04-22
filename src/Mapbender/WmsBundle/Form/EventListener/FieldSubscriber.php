@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormEvents;
  */
 class FieldSubscriber implements EventSubscriberInterface
 {
-    
+
     /**
      * A FieldSubscriber's Factory
      * 
@@ -54,6 +54,36 @@ class FieldSubscriber implements EventSubscriberInterface
         if(null === $data)
         {
             return;
+        }
+
+        if($data->getSublayer()->count() > 0)
+        {
+            $form->remove('toggle');
+            $form->add($this->factory->createNamed(
+                            'toggle', 'checkbox', null,
+                            array(
+                        'disabled' => false,
+                        "required" => false)));
+            $form->remove('allowtoggle');
+            $form->add($this->factory->createNamed(
+                            'allowtoggle', 'checkbox', null,
+                            array(
+                        'required' => false,
+                        'disabled' => false)));
+        } else
+        {
+            $form->remove('toggle');
+            $form->add($this->factory->createNamed(
+                            'toggle', 'checkbox', null,
+                            array(
+                        'disabled' => true,
+                        "required" => false)));
+            $form->remove('allowtoggle');
+            $form->add($this->factory->createNamed(
+                            'allowtoggle', 'checkbox', null,
+                            array(
+                        'required' => false,
+                        'disabled' => true)));
         }
 
         if($data->getWmslayersource()->getQueryable() === true)

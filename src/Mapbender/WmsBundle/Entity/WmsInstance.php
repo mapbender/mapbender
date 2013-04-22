@@ -39,10 +39,6 @@ class WmsInstance extends SourceInstance
      * @ORM\OrderBy({"priority" = "asc"})
      */
     protected $layers; //{ name: 1,   title: Webatlas,   visible: true }
-//    /**
-//     * @ORM\Column(type="string", nullable=false)
-//     */
-//    protected $title;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -88,11 +84,6 @@ class WmsInstance extends SourceInstance
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $tiled = false;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    protected $baselayer = false;
 
     public function __construct()
     {
@@ -161,6 +152,7 @@ class WmsInstance extends SourceInstance
         $configuration = array(
             "type" => strtolower($this->getType()),
             "title" => $this->title,
+            "baseSource" => true,
             "options" => array(
                 "url" => $this->configuration["url"],
                 "proxy" => $this->proxy,
@@ -170,10 +162,11 @@ class WmsInstance extends SourceInstance
                 "transparent" => $this->getFormat(),
                 "opacity" => $this->opacity / 100,
                 "tiled" => $this->tiled,
-                "baselayer" => $this->baselayer
+                "baselayer" => false
             )
         );
-        if(!key_exists("children", $this->configuration)){
+        if(!key_exists("children", $this->configuration))
+        {
             $num = 0;
             $rootlayer = new WmsInstanceLayer();
             $rootlayer->setTitle($this->title)
@@ -199,12 +192,12 @@ class WmsInstance extends SourceInstance
                 $this->addLayer($layer);
             }
             $configuration["children"] = array($this->generateLayersConfiguration($rootlayer));
-        } else {
+        } else
+        {
             $configuration["children"] = $this->configuration["children"];
         }
         // TODO delete line, if client implements
-        $configuration = array_merge($configuration,
-                                     $this->configuration);
+        $configuration = array_merge($configuration, $this->configuration);
         $this->configuration = $configuration;
     }
 
@@ -214,9 +207,28 @@ class WmsInstance extends SourceInstance
     public function generateConfiguration()
     {
         $rootlayer = $this->getRootlayer();
+        $llbbox = $rootlayer->getWmslayersource()->getLatlonBounds();
+        $srses = array(
+            $llbbox->getSrs() => array(
+                floatval($llbbox->getMinx()),
+                floatval($llbbox->getMiny()),
+                floatval($llbbox->getMaxx()),
+                floatval($llbbox->getMaxy())
+            )
+        );
+        foreach($rootlayer->getWmslayersource()->getBoundingBoxes() as $bbox)
+        {
+            $srses = array_merge($srses,
+                                 array($bbox->getSrs() => array(
+                    floatval($bbox->getMinx()),
+                    floatval($bbox->getMiny()),
+                    floatval($bbox->getMaxx()),
+                    floatval($bbox->getMaxy()))));
+        }
         $configuration = array(
             "type" => strtolower($this->getType()),
             "title" => $this->title,
+            "baseSource" => true,
             "options" => array(
                 "url" => $this->source->getGetMap()->getHttpGet(),
                 "proxy" => $this->getProxy(),
@@ -226,13 +238,14 @@ class WmsInstance extends SourceInstance
                 "transparent" => $this->transparency,
                 "opacity" => $this->opacity / 100,
                 "tiled" => $this->tiled,
-                "baselayer" => $this->baselayer
+                "baselayer" => false,
+                "bbox" => $srses
             ),
             "children" => array($this->generateLayersConfiguration($rootlayer))
         );
-        // TODO delete line, if client implements
-        $configuration = array_merge($configuration,
-                                     $this->createConfigurationOld());
+//        // TODO delete line, if client implements
+//        $configuration = array_merge($configuration,
+//                                     $this->createConfigurationOld());
         $this->configuration = $configuration;
     }
 
@@ -251,56 +264,68 @@ class WmsInstance extends SourceInstance
             $children = array();
             foreach($layer->getSublayer() as $sublayer)
             {
-                $children[] = $this->generateLayersConfiguration($sublayer);
+                $configurationTemp = $this->generateLayersConfiguration($sublayer);
+                if(count($configurationTemp) > 0){
+                    $children[] = $configurationTemp;
+                }
             }
             $layerConf = $layer->getConfiguration();
             $configuration = array(
-                "configuration" => $layerConf,
-                "children" => $children);
-        }
-        return $configuration;
-    }
-
-    // TODO delete function, if client implements
-    private function createConfigurationOld()
-    {
-        // from db
-        $layers = array();
-        $infoLayers = array();
-        $rootlayer = $this->getRootlayer();
-
-        foreach($this->layers as $layer)
-        {
-            if($layer->getActive() === true
-                    && $layer->getWmslayersource()->getParent() !== null
-            )
-            { //only active and not wms root layer
-                $layers[] = $layer->getConfiguration();
-                if($layer->getInfo() !== null && $layer->getInfo())
-                {
-                    $infoLayers[] = $layer->getTitle();
-                }
+                "options" => $layerConf,
+                "state" => array(
+                    "visibility" => null,
+                    "info" => null,
+                    "outOfScale" => null,
+                    "outOfBounds" => null),);
+            if(count($children) > 0)
+            {
+                $configuration["children"] = $children;
             }
         }
-        $configuration = array(
-            "id" => $rootlayer->getId(),
-            "title" => $rootlayer->getTitle() !== null
-            && $rootlayer->getTitle() !== "" ?
-                    $rootlayer->getTitle() : $this->title,
-            "url" => $this->source->getGetMap()->getHttpGet(),
-            "proxy" => $this->getProxy(),
-            "visible" => $this->getVisible(),
-            "format" => $this->getFormat(),
-            "info_format" => $this->getInfoformat(),
-            "queryFormat" => $this->infoformat,
-            "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
-            "opacity" => $this->opacity / 100,
-            "tiled" => $this->tiled,
-            "layers" => array_reverse($layers),
-            "queryLayers" => array_reverse($infoLayers),
-        );
         return $configuration;
     }
+
+//
+//    // TODO delete function, if client implements
+//    private function createConfigurationOld()
+//    {
+//        // from db
+//        $layers = array();
+//        $infoLayers = array();
+//        $rootlayer = $this->getRootlayer();
+//
+//        foreach($this->layers as $layer)
+//        {
+//            if($layer->getActive() === true
+//                    && $layer->getWmslayersource()->getParent() !== null
+//            )
+//            { //only active and not wms root layer
+//                $layers[] = $layer->getConfiguration();
+//                if($layer->getInfo() !== null && $layer->getInfo())
+//                {
+//                    $infoLayers[] = $layer->getTitle();
+//                }
+//            }
+//        }
+//        $configuration = array(
+//            "id" => $rootlayer->getId(),
+//            "title" => $rootlayer->getTitle() !== null
+//            && $rootlayer->getTitle() !== "" ?
+//                    $rootlayer->getTitle() : $this->title,
+//            "url" => $this->source->getGetMap()->getHttpGet(),
+//            "proxy" => $this->getProxy(),
+//            "visible" => $this->getVisible(),
+//            "format" => $this->getFormat(),
+//            "info_format" => $this->getInfoformat(),
+//            "queryFormat" => $this->infoformat,
+//            "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
+//            "opacity" => $this->opacity / 100,
+//            "tiled" => $this->tiled,
+//            "layers" => array_reverse($layers),
+//            "queryLayers" => array_reverse($infoLayers),
+//        );
+//        return $configuration;
+//    }
 
     /**
      * Set layers
@@ -571,31 +596,6 @@ class WmsInstance extends SourceInstance
     {
         return $this->tiled;
     }
-    
-    
-
-    /**
-     * Set baselayer
-     *
-     * @param boolean $baselayer
-     * @return WmsInstance
-     */
-    public function setBaselayer($baselayer)
-    {
-        $this->baselayer = $baselayer;
-
-        return $this;
-    }
-
-    /**
-     * Get baselayer
-     *
-     * @return boolean
-     */
-    public function getBaselayer()
-    {
-        return $this->baselayer;
-    }
 
     /**
      * Set wmssource
@@ -666,7 +666,7 @@ class WmsInstance extends SourceInstance
     {
         return array(
             'js' => array(
-                '@MapbenderWmsBundle/Resources/public/mapbender.layer.wms.js'),
+                '@MapbenderWmsBundle/Resources/public/mapbender.source.wms.js'),
             'css' => array());
     }
 

@@ -85,12 +85,12 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $toggle = true;
+    protected $toggle;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    protected $allowtoggle = true;
+    protected $allowtoggle;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -557,20 +557,13 @@ class WmsInstanceLayer implements InstanceLayerIn
     {
         $configuration = array(
             "id" => $this->id,
-            "name" => $this->wmslayersource->getName(),
+            "name" => $this->wmslayersource->getName() !== null ? $this->wmslayersource->getName() : "",
             "title" => $this->title,
             "queryable" => $this->getInfo(),
             "style" => $this->style,
+            "minScale" => $this->minScale !== null ? floatval($this->minScale) : null,
+            "maxScale" => $this->maxScale !== null ? floatval($this->maxScale) : null
         );
-        
-        if($this->minScale !== null)
-        {
-            $configuration["minScale"] = $this->minScale;
-        }
-        if($this->maxScale !== null)
-        {
-            $configuration["maxScale"] = $this->maxScale;
-        }
 
         if(count($this->wmslayersource->getStyles()) > 0)
         {
@@ -578,8 +571,8 @@ class WmsInstanceLayer implements InstanceLayerIn
             $legendurl = $styles[0]->getLegendUrl(); // first style object
             $configuration["legend"] = array(
                 "url" => $legendurl->getOnlineResource()->getHref(),
-                "width" => $legendurl->getWidth(),
-                "height" => $legendurl->getHeight());
+                "width" => intval($legendurl->getWidth()),
+                "height" => intval($legendurl->getHeight()));
         } else if($this->wmsinstance->getSource()->getGetLegendGraphic() !== null)
         {
             $legend = $this->wmsinstance->getSource()->getGetLegendGraphic();
