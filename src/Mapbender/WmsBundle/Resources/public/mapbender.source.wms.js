@@ -32,8 +32,8 @@ $.extend(true, Mapbender, {
                     url:         finalUrl,
                     noMagic: true,
 
-                    layers:      layers.reverse(),//layersDefs,
-                    queryLayers: queryLayers,
+//                    layers:      layers.reverse(),//layersDefs,
+//                    queryLayers: queryLayers,
 
                     transparent: layerDef.configuration.options.transparent,
                     format:      layerDef.configuration.options.format,
@@ -383,6 +383,9 @@ $.extend(true, Mapbender, {
                 _source = $.extend(true, {}, source);//.configuration.children[0];
                 rootLayer = _source.configuration.children[0];
                 var options ={layers: [], found: false, cut_with: includeOffset};
+                if(rootLayer.options.id.toString() === offsetLayer.options.id.toString()){
+                    options.found = true;
+                }
                 options = _findLayers(rootLayer, offsetLayer, options);
                 return {source: _source, layers: options.layers};
                 
@@ -403,27 +406,8 @@ $.extend(true, Mapbender, {
                                 break;
                             }
                             options = _findLayers(layer.children[i], offsetLayer, options);
-//                            if(options.found){
-//                                if(layer.children[i].options.id.toString() === offsetLayer.options.id.toString()){
-//                                    if(options.cut_with){
-////                                        var lays = layer.children.splice(i, layer.children.length - i);
-////                                        options.layers = options.layers.concat(lays);
-//                                        options.layers.push(layer.children[i]);
-////                                        break;
-//                                    }
-//                                } else {
-////                                    var lays = layer.children.splice(i, layer.children.length - i);
-////                                    options.layers = options.layers.concat(lays);
-//                                    options.layers.push(layer.children[i]);
-////                                    break;
-//                                }
-//                                
-//                            }
                         }
                     }
-//                    if(layer && layer.options.id.toString() === offsetLayer.options.id.toString()){
-//                        options.found = true;
-//                    }
                     return options;
                 }
             },

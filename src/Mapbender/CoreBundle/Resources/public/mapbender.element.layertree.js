@@ -593,6 +593,12 @@
                 this.dlg.dialog('open');
             }
         },
+        
+        close: function(){
+            if(this.options.type === 'dialog' && this.dlg !== null){
+                this.dlg.dialog('close');
+            }
+        },
     
         _initDialog: function() {
             var self = this;
