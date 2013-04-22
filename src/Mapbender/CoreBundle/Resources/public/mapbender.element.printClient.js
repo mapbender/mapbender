@@ -302,8 +302,8 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
                 //   * TODO: Get Styles...
                 
                 // TODO: Implement this thing
-            } else if(Mapbender.layer[type] && typeof Mapbender.layer[type].getPrintConfig === 'function') {
-                data.layers.push(Mapbender.layer[type].getPrintConfig(layer, this.map.map.olMap.getExtent()));
+            } else if(Mapbender.source[type] && typeof Mapbender.source[type].getPrintConfig === 'function') {
+                data.layers.push(Mapbender.source[type].getPrintConfig(layer, this.map.map.olMap.getExtent()));
             }
         }
         

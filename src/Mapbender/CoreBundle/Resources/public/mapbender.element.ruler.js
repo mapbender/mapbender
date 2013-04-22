@@ -20,13 +20,21 @@ $.widget("mapbender.mbRuler", {
     total: null,
 
     _create: function() {
+        var self = this;
         if(this.options.type !== 'line' && this.options.type !== 'area') {
             throw 'mbRuler: Type must be line or area.';
         }
         if(!Mapbender.checkTarget("mbRuler", this.options.target)){
             return;
         }
+        
+        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+    },
 
+    /**
+     * Initializes the overview
+     */
+    _setup: function() {
         var sm = $.extend(true, {}, OpenLayers.Feature.Vector.style, {
             'default': this.options.style
         });

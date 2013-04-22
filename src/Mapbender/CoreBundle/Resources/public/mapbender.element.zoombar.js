@@ -19,12 +19,11 @@ $.widget("mapbender.mbZoomBar", {
             return;
         }
         var self = this;
-
-        this.mapDiv = $('#' + this.options.target);
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
     },
 
     _setup: function() {
+        this.mapDiv = $('#' + this.options.target);
         this.map = this.mapDiv.data('mbMap').map.olMap;
         this._setupSlider();
         this._setupZoomButtons();

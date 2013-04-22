@@ -15,9 +15,7 @@ $.widget("mapbender.mbGpsPosition", {
                 alert('The target element "map" is not defined for GPS-Postition.');
                 return;
             }
-        $(document).one('mapbender.setupfinished', function() {
-                $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
-            });
+        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         me.button();
         me.click(function() { self._timerGeolocation.call(self); });
     },

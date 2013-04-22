@@ -3,31 +3,31 @@
 OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
 
 $.widget("mapbender.mbMap", {
-    options: {
-        layerset: null, //mapset for main map
-        dpi: OpenLayers.DOTS_PER_INCH,
-        srs: 'EPSG:4326',
-        srsDefs: [],
-        units: 'degrees',
-        extents: {
-            max: [-180, -90, 180, 90],
-            start: [-180, -90, 180, 90]
-        },
-        maxResolution: 'auto',
-        imgPath: 'bundles/mapbendercore/mapquery/lib/openlayers/img'
-    },
+//    options: {
+//        layerset: null, //mapset for main map
+//        dpi: OpenLayers.DOTS_PER_INCH,
+//        srs: 'EPSG:4326',
+//        srsDefs: [],
+//        units: 'degrees',
+//        extents: {
+//            max: [-180, -90, 180, 90],
+//            start: [-180, -90, 180, 90]
+//        },
+//        maxResolution: 'auto',
+//        imgPath: 'bundles/mapbendercore/mapquery/lib/openlayers/img'
+//    },
     model: null,
 //    allSrsTemp: [],
 //    allSrs: {},
 //    numSrs: 0,
 //    proj4js: null,
-    layersOrigExtents: {},
-    mapOrigExtents: {},
+//    layersOrigExtents: {},
+//    mapOrigExtents: {},
     map: null,
-    highlightLayer: null,
+//    highlightLayer: null,
     readyState: false,
     readyCallbacks: [],
-    controls: [],
+//    controls: [],
 
     _create: function() {
         // @TODO: This works around the fake layerset for now
@@ -42,378 +42,10 @@ $.widget("mapbender.mbMap", {
             me = $(this.element);
         this.model = Mapbender.DefaultModel;
         this.model.init(this);
-//        for(srsdef in this.options.srsDefs){
-//            Proj4js.defs[srsdef] = this.options.srsDefs[srsdef].definition;
-//        }
-//        for(var i = 0; i < this.options.srsDefs.length; i++){
-//            Proj4js.defs[this.options.srsDefs[i].name] = this.options.srsDefs[i].definition;
-//        }
-        // set a map's origin extents
-//        this.mapOrigExtent = {}
-//        var extProjection = new OpenLayers.Projection(this.options.srs);
-//        if(extProjection.projCode === 'EPSG:4326') {
-//            extProjection.proj.units = 'degrees';
-//        }
-//        this.mapOrigExtents = {
-//            max: {
-//                projection: extProjection,
-//                extent: this.options.extents.max ?
-//                    new OpenLayers.Bounds(this.options.extents.max) : null},
-//            min: {
-//                projection: extProjection,
-//                extent: this.options.extents.min ?
-//                    new OpenLayers.Bounds(this.options.extents.min) : null}
-//        };
-//
-//        if(typeof(this.options.dpi) !== 'undefined') {
-//            OpenLayers.DOTS_PER_INCH = this.options.dpi;
-//        }
-
-//        OpenLayers.ImgPath = Mapbender.configuration.application.urls.asset + this.options.imgPath + '/';
-
-        // Prepare initial layers
-//        var layers = [];
-//        this.rootLayers = [];
-//        var allOverlays = true;
-////        Proj4js.reportError = self.loadProjection();
-//        // TODO think about integrating proj4js properly into Mapbender and/or Mapquery
-//        // could also integrate transformation on server side
-//        if(this.options.targetsrs && window.Proj4js) {
-//            var bbox = this.options.extents.max;
-//            var source = new Proj4js.Proj(this.options.srs);
-//            var dest = new Proj4js.Proj(this.options.targetsrs);
-//            var min = Proj4js.transform(source, dest, {x: bbox[0], y: bbox[1]});
-//            var max = Proj4js.transform(source, dest, {x: bbox[2], y: bbox[3]});
-//            var newExtent = [min.x, min.y, max.x, max.y];
-//            this.options.extents.max = newExtent;
-//            this.options.srs = this.options.targetsrs;
-//
-//            bbox = this.options.extents.start;
-//            min = Proj4js.transform(source, dest, {x: bbox[0], y: bbox[1]});
-//            max = Proj4js.transform(source, dest, {x: bbox[2], y: bbox[3]});
-//            this.options.extents.start = [min.x, min.y, max.x, max.y];
-//            if(this.options.extra && this.options.extra.type === 'bbox') {
-//                min = Proj4js.transform(source, dest, {x: this.options.extra.data.xmin, y: this.options.extra.data.ymin});
-//                max = Proj4js.transform(source, dest, {x: this.options.extra.data.xmax, y: this.options.extra.data.ymax});
-//                this.options.extra.data.xmin = min.x;
-//                this.options.extra.data.ymin = min.y;
-//                this.options.extra.data.xmax = max.x;
-//                this.options.extra.data.ymax = max.y;
-//            }
-//            if(this.options.targetsrs === 'EPSG:4326') {
-//                this.options.units = 'degrees';
-//            }
-//        }
-//
-//        function addSubs(layer){
-//            if(layer.sublayers) {
-//                $.each(layer.sublayers, function(idx, val) {
-//                    layers.push(val);
-//                    addSubs(val);
-//                });
-//            }
-//        }
-//        var hasLayers = false;
-//        $.each(Mapbender.configuration.layersets[this.options.layerset].reverse(), function(idx, defArr) {
-//            $.each(defArr, function(idx, layerDef) {
-//                hasLayers = true;
-//                layerDef.id = idx;
-//                layers.push(self._convertLayerDef.call(self, layerDef));
-//                self.rootLayers.push(layers[layers.length-1]);
-//                addSubs(layers[layers.length-1]);
-//                allOverlays = allOverlays && (layerDef.configuration.baselayer !== true);
-//            });
-//        });
-
-//        // TODO find out how to do a proper menu with jquery ui
-//        if(this.options.controlstype === 'menu') {
-//            $('#mb-element-maptools').buttonset();
-//        } else {
-//            $('#mb-element-maptools').buttonset();
-//        }
-//
-//        var controls = [];
-//        var hasNavigation = false;
-//        if(this.options.controls) {
-//            $.each(this.options.controls, function(idx, control) {
-//                switch(idx) {
-//                   case 'pan':
-//                       $('#' + control.target).css('display', 'block')
-//                           .click(function() { self.map.mode('pan'); });
-//                       control = 'DragPan';
-//                       break;
-//                   case 'zoomin':
-//                       $('#' + control.target).css('display', 'block')
-//                           .click(function() { self.map.mode('zoomin'); });
-//                       control = 'ZoomIn';
-//                       break;
-//                   case 'zoomout':
-//                       $('#' + control.target).css('display', 'block')
-//                           .click(function() { self.map.mode('zoomout'); });
-//                       control = 'ZoomOut';
-//                       break;
-//                   case 'zoombox':
-//                       $('#' + control.target).css('display', 'block')
-//                           .click(function() { self.map.mode('zoombox'); });
-//                       control = 'ZoomBox';
-//                       break;
-//                   case 'zoomhome':
-//                   case 'zoomnext':
-//                   case 'zoomlast':
-//                   case 'zoomcoordinate':
-//                   case 'zoomscale':
-//                       $('#' + control.target).css('display', 'block');
-//                       break;
-//               }
-//               if(idx === 'zoomhome') {
-//                   $('#' + control.target).click($.proxy(self.zoomToFullExtent, self));
-//               } else if(idx === 'zoomlast') {
-//                   if(!hasNavigation) {
-//                       controls.push(hasNavigation = new OpenLayers.Control.NavigationHistory());
-//                   }
-//                   $('#' + control.target).click($.proxy(hasNavigation.previousTrigger, hasNavigation));
-//               } else if(idx === 'zoomnext') {
-//                   if(!hasNavigation) {
-//                       controls.push(hasNavigation = new OpenLayers.Control.NavigationHistory());
-//                   }
-//                   $('#' + control.target).click($.proxy(hasNavigation.nextTrigger, hasNavigation));
-//               } else if(idx === 'zoomcoordinate') {
-//                   $('#mb-zoom-coordinate-dialog').dialog({
-//                       autoOpen: false,
-//                       buttons: {
-//                           Zoom: function() {
-//                               var x = $('#mb-zoom-coordinate-x')[0].value;
-//                               var y = $('#mb-zoom-coordinate-y')[0].value;
-//                               self.center({position: [x, y]});
-//                               $( this ).dialog( "close" );
-//                           },
-//                           Cancel: function() {
-//                               $( this ).dialog( "close" );
-//                           }
-//                   }});
-//                   $('#' + control.target).click(function(){ $('#mb-zoom-coordinate-dialog').dialog('open'); });
-//                } else if(idx === 'zoomscale') {
-//
-//                    $('#mb-zoom-scale-dialog').dialog({
-//                        autoOpen: false,
-//                        buttons: {
-//                            Zoom: function() {
-//                                var scale = $('#mb-zoom-scale-select')[0].value;
-//                                self.map.olMap.zoomToScale(scale);
-//                                $( this ).dialog( "close" );
-//                            },
-//                            Cancel: function() {
-//                                $( this ).dialog( "close" );
-//                            }
-//                        }
-//                    });
-//                    $('#' + control.target).click(function(){
-//                        var scales = self.map.olMap.scales;
-//                        var html = '';
-//                        $.each(scales, function(idx, val) {
-//                            html += '<option>' + val + '</option>';
-//                        });
-//                        $('#mb-zoom-scale-select').html(html);
-//                        $('#mb-zoom-scale-dialog').dialog('open');
-//                    });
-//               } else {
-//                   var ctrl = new OpenLayers.Control[control]();
-//                   controls.push(ctrl);
-//               }
-//           });
-//        }
-        
-//        var mapOptions = {
-//            maxExtent: this.options.extents.max,
-//            zoomToMaxExtent: false,
-//            maxResolution: this.options.maxResolution,
-//            numZoomLevels: this.options.numZoomLevels,
-//            projection: new OpenLayers.Projection(this.options.srs),
-//            displayProjection: new OpenLayers.Projection(this.options.srs),
-//            units: this.options.units,
-//            allOverlays: allOverlays,
-//            theme: null
-//            //layers: layers
-//        };
-//
-//        var mapOptions = mapConfig.mapOptions;
-//        if(controls.length !== 0) mapOptions.controls = controls;
-//
-//        if(this.options.scales) {
-//            $.extend(mapOptions, {
-//                scales: this.options.scales
-//            });
-//        }
-//
-//        me.mapQuery(mapOptions);
-//        this.map = me.data('mapQuery');
-//        
-//        if(hasNavigation){
-//            hasNavigation.setMap(this.map.olMap);
-//            hasNavigation.activate();
-//        }
-//
-//        //TODO: Bind all events
-//        this.map.bind('zoomend', function() { self._trigger('zoomend', arguments); });
-//
-//        // We have to add our listeners to the map before adding layers...
-//        // This might change in the future, when the MapQuery map accepts
-//        // listeners as options
-//        this.map.bind('mqAddLayer', $.proxy(this._onAddLayer, this));
-//        this.map.bind('mqRemoveLayer', $.proxy(this._onRemoveLayer, this));
-//
-//        this.map.layers(mapConfig.layers);
-//        this.map.center({ box: this.options.extents.max });
-//
-//        if(this.options.extents.start) {
-//            this.map.center({
-//                box: this.options.extents.start
-//            });
-//        }
-//        if(this.options.extra.type) {
-//            switch(this.options.extra.type) {
-//                case 'poi':
-//                    this.map.center({
-//                        position: [ this.options.extra.data.x,
-//                            this.options.extra.data.y ]
-//                    });
-//                    if(this.options.extra.data.scale) {
-//                        this.zoomToScale(this.options.extra.data.scale);
-//                    }
-//
-//                    if(this.options.extra.data.label) {
-//                        var position = new OpenLayers.LonLat(
-//                            this.options.extra.data.x,
-//                            this.options.extra.data.y);
-//                        var popup = new OpenLayers.Popup.FramedCloud('chicken',
-//                            position,
-//                            null,
-//                            this.options.extra.data.label,
-//                            null,
-//                            true,
-//                            function() {
-//                                self.removePopup(this);
-//                                this.destroy();
-//                            });
-//                        this.addPopup(popup);
-//                    }
-//                    break;
-//                case 'bbox':
-//                    this.map.center({
-//                        box: [
-//                            this.options.extra.data.xmin, this.options.extra.data.ymin,
-//                            this.options.extra.data.xmax, this.options.extra.data.ymax
-//                        ]});
-//            }
-//        }
-//
-//        this.controls = controls;
-//        //self._trigger('ready');
-//        $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeMapProjection, self));
-//        this._ready();
-////        //window.console && console.log("map initialized");
-    },
-    
-    addNavigation: function(){
-        var self = this;
-        // TODO find out how to do a proper menu with jquery ui
-        if(this.options.controlstype === 'menu') {
-            $('#mb-element-maptools').buttonset();
-        } else {
-            $('#mb-element-maptools').buttonset();
-        }
-
-        var controls = [];
-        var hasNavigation = false;
-        if(this.options.controls) {
-            $.each(this.options.controls, function(idx, control) {
-                switch(idx) {
-                   case 'pan':
-                       $('#' + control.target).css('display', 'block')
-                           .click(function() { self.map.mode('pan'); });
-                       control = 'DragPan';
-                       break;
-                   case 'zoomin':
-                       $('#' + control.target).css('display', 'block')
-                           .click(function() { self.map.mode('zoomin'); });
-                       control = 'ZoomIn';
-                       break;
-                   case 'zoomout':
-                       $('#' + control.target).css('display', 'block')
-                           .click(function() { self.map.mode('zoomout'); });
-                       control = 'ZoomOut';
-                       break;
-                   case 'zoombox':
-                       $('#' + control.target).css('display', 'block')
-                           .click(function() { self.map.mode('zoombox'); });
-                       control = 'ZoomBox';
-                       break;
-                   case 'zoomhome':
-                   case 'zoomnext':
-                   case 'zoomlast':
-                   case 'zoomcoordinate':
-                   case 'zoomscale':
-                       $('#' + control.target).css('display', 'block');
-                       break;
-               }
-               if(idx === 'zoomhome') {
-                   $('#' + control.target).click($.proxy(self.zoomToFullExtent, self));
-               } else if(idx === 'zoomlast') {
-                   if(!hasNavigation) {
-                       controls.push(hasNavigation = new OpenLayers.Control.NavigationHistory());
-                   }
-                   $('#' + control.target).click($.proxy(hasNavigation.previousTrigger, hasNavigation));
-               } else if(idx === 'zoomnext') {
-                   if(!hasNavigation) {
-                       controls.push(hasNavigation = new OpenLayers.Control.NavigationHistory());
-                   }
-                   $('#' + control.target).click($.proxy(hasNavigation.nextTrigger, hasNavigation));
-               } else if(idx === 'zoomcoordinate') {
-                   $('#mb-zoom-coordinate-dialog').dialog({
-                       autoOpen: false,
-                       buttons: {
-                           Zoom: function() {
-                               var x = $('#mb-zoom-coordinate-x')[0].value;
-                               var y = $('#mb-zoom-coordinate-y')[0].value;
-                               self.center({position: [x, y]});
-                               $( this ).dialog( "close" );
-                           },
-                           Cancel: function() {
-                               $( this ).dialog( "close" );
-                           }
-                   }});
-                   $('#' + control.target).click(function(){ $('#mb-zoom-coordinate-dialog').dialog('open'); });
-                } else if(idx === 'zoomscale') {
-
-                    $('#mb-zoom-scale-dialog').dialog({
-                        autoOpen: false,
-                        buttons: {
-                            Zoom: function() {
-                                var scale = $('#mb-zoom-scale-select')[0].value;
-                                self.map.olMap.zoomToScale(scale);
-                                $( this ).dialog( "close" );
-                            },
-                            Cancel: function() {
-                                $( this ).dialog( "close" );
-                            }
-                        }
-                    });
-                    $('#' + control.target).click(function(){
-                        var scales = self.map.olMap.scales;
-                        var html = '';
-                        $.each(scales, function(idx, val) {
-                            html += '<option>' + val + '</option>';
-                        });
-                        $('#mb-zoom-scale-select').html(html);
-                        $('#mb-zoom-scale-dialog').dialog('open');
-                    });
-               } else {
-                   var ctrl = new OpenLayers.Control[control]();
-                   controls.push(ctrl);
-               }
-           });
-        }
-        return controls;
+        this.options = { layerDefs: []}; // romove all options
+        this.map = me.data('mapQuery');
+        self._trigger('ready');
+        this._ready();
     },
 
     /**
@@ -422,7 +54,113 @@ $.widget("mapbender.mbMap", {
     "goto": function(options) {
         this.map.center(options);
     },
+    
+    addSource: function(sourceDef){
+        this.model.addSource(sourceDef, null, null);
+    },
+    
+    /**
+     * Triggers an event from the model.
+     * options.name - name of the event,
+     * options.value - parameter in the form of:
+     * options.value.mapquerylayer - for a MapQuery.Layer,
+     * options.value.source - for a source from the model.sourceTree,
+     * options.value.tochange - for a "tochange" object
+     * (see model.createToChangeObj(id)),
+     * options.value.changed -  for a "changed" object
+     * (see model.createChangedObj(id)).
+     **/
+    fireModelEvent: function(options){
+        window.console && console.log("fireEvent:", options);
+        this._trigger(options.name, null, options.value);
+    },
+    
+    /**
+     * Returns a sourceTree from model.
+     **/
+    getSourceTree: function() {
+        return this.model.sourceTree;
+    },
 
+    genereateSourceId: function() {
+        return this.model.generateSourceId();
+    },
+    
+    getAllSrs: function(){
+        return this.model.getAllSrs();
+    },
+    
+    getModel: function(){
+        return this.model;
+    },
+    
+    zoomIn: function() {
+        // TODO: MapQuery?
+        this.map.olMap.zoomIn();
+    },
+
+    zoomOut: function() {
+        // TODO: MapQuery?
+        this.map.olMap.zoomOut();
+    },
+
+    zoomToFullExtent: function() {
+        // TODO: MapQuery?
+        this.map.olMap.zoomToMaxExtent();
+    },
+
+    zoomToExtent: function(extent, scale) {
+        //TODO: MapQuery?
+        this.map.olMap.zoomToExtent(extent);
+        if(scale) {
+            this.map.olMap.zoomToScale(scale, true);
+        }
+    },
+
+    zoomToScale: function(scale) {
+        this.map.olMap.zoomToScale(scale, true);
+    },
+
+    panMode: function() {
+        this.map.mode('pan');
+    },
+
+    addPopup: function(popup) {
+        //TODO: MapQuery
+        this.map.olMap.addPopup(popup);
+    },
+
+    removePopup: function(popup) {
+        //TODO: MapQuery
+        this.map.olMap.removePopup(popup);
+    },
+
+    scales: function() {
+        var scales = [];
+        for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
+            var res = this.map.olMap.getResolutionForZoom(i);
+            scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
+        }
+        return scales;
+    },
+    
+    ready: function(callback) {
+        window.console && console.log("READY DEPRE:", callback);
+        if(this.readyState === true) {
+            callback();
+        } else {
+            this.readyCallbacks.push(callback);
+        }
+    },
+
+    _ready: function() {
+        window.console && console.log("_READY DEPRE");
+        for(callback in this.readyCallbacks) {
+            callback();
+            delete(this.readyCallbacks[callback]);
+        }
+        this.readyState = true;
+    }
 //    center: function(options) {
 //        this.map.center(options);
 //    },
@@ -605,48 +343,6 @@ $.widget("mapbender.mbMap", {
 //        }
 //        return l;
 //    },
-
-    zoomIn: function() {
-        // TODO: MapQuery?
-        this.map.olMap.zoomIn();
-    },
-
-    zoomOut: function() {
-        // TODO: MapQuery?
-        this.map.olMap.zoomOut();
-    },
-
-    zoomToFullExtent: function() {
-        // TODO: MapQuery?
-        this.map.olMap.zoomToMaxExtent();
-    },
-
-    zoomToExtent: function(extent, scale) {
-        //TODO: MapQuery?
-        this.map.olMap.zoomToExtent(extent);
-        if(scale) {
-            this.map.olMap.zoomToScale(scale, true);
-        }
-    },
-
-    zoomToScale: function(scale) {
-        this.map.olMap.zoomToScale(scale, true);
-    },
-
-    panMode: function() {
-        this.map.mode('pan');
-    },
-
-    addPopup: function(popup) {
-        //TODO: MapQuery
-        this.map.olMap.addPopup(popup);
-    },
-
-    removePopup: function(popup) {
-        //TODO: MapQuery
-        this.map.olMap.removePopup(popup);
-    },
-
 //    removeById: function(id) {
 //        var self = this;
 //        function _remove(_, layer) {
@@ -677,26 +373,17 @@ $.widget("mapbender.mbMap", {
 //        });
 //        return layer;
 //    },
-
-    scales: function() {
-        var scales = [];
-        for(var i = 0; i < this.map.olMap.getNumZoomLevels(); ++i) {
-            var res = this.map.olMap.getResolutionForZoom(i);
-            scales.push(OpenLayers.Util.getScaleFromResolution(res, this.map.olMap.units));
-        }
-        return scales;
-    },
-
-    /**
-     * Listen to newly added layers in the MapQuery object
-     */
-    _onAddLayer: function(event, layer) {
-        var listener = Mapbender.layer[layer.olLayer.type].onLoadStart;
-        if(typeof listener === 'function') {
-            listener.call(layer);
-//            this._addOrigLayerExtent(layer);
-        }
-    },
+//
+//    /**
+//     * Listen to newly added layers in the MapQuery object
+//     */
+//    _onAddLayer: function(event, layer) {
+//        var listener = Mapbender.layer[layer.olLayer.type].onLoadStart;
+//        if(typeof listener === 'function') {
+//            listener.call(layer);
+////            this._addOrigLayerExtent(layer);
+//        }
+//    },
 
 //    /*
 //     * Sets a new map's projection.
@@ -787,36 +474,14 @@ $.widget("mapbender.mbMap", {
 //            delete(this.layersOrigExtent[layer.id]);
 //        }
 //    },
-
-
-    /**
-     * Listen to removed layer in the MapQuery object
-     */
-    _onRemoveLayer: function(event, layer) {
-        this._removeOrigLayerExtent(layer);
-    },
-
-    getAllSrs: function(){
-        return this.options.srsDefs;
-    },
-
-    ready: function(callback) {
-        window.console && console.log("READY DEPRE:", callback);
-        if(this.readyState === true) {
-            callback();
-        } else {
-            this.readyCallbacks.push(callback);
-        }
-    },
-
-    _ready: function() {
-        window.console && console.log("_READY DEPRE");
-        for(callback in this.readyCallbacks) {
-            callback();
-            delete(this.readyCallbacks[callback]);
-        }
-        this.readyState = true;
-    }
+//
+//
+//    /**
+//     * Listen to removed layer in the MapQuery object
+//     */
+//    _onRemoveLayer: function(event, layer) {
+//        this._removeOrigLayerExtent(layer);
+//    },
 });
 
 })(jQuery);
