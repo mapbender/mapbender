@@ -35,9 +35,7 @@ class LayertreeAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-//                ->add('tooltip', 'text', array('required' => false))
-                ->add('target', 'target_element',
+        $builder->add('target', 'target_element',
                       array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],
@@ -49,7 +47,19 @@ class LayertreeAdminType extends AbstractType
                     'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
                 ->add('autoOpen', 'checkbox',
                       array(
-                    'required' => false));
+                    'required' => false))
+                ->add('displaytype', 'choice',
+                      array(
+                    'required' => true,
+                    'choices' => array('tree' => 'Tree', 'list' => 'List')))
+                ->add('useAccordion', 'checkbox',
+                      array(
+                    'required' => false))
+                ->add('titlemaxlength', 'integer',
+                      array('required' => true))
+                ->add('showBaseSource', 'checkbox',
+                          array(
+                        'required' => false));
     }
 
 }
