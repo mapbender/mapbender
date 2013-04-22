@@ -145,12 +145,12 @@ $.widget("mapbender.mbZoomBar", {
             }
         });
 
-        this.element.find('div.zoom-prev').bind('click',
-            $.proxy(this.navigationHistoryControl.previousTrigger,
-            this.navigationHistoryControl));
-        this.element.find('div.zoom-next').bind('click',
-            $.proxy(this.navigationHistoryControl.nextTrigger,
-            this.navigationHistoryControl));
+        this.element.find('div.zoom-prev').bind('click', function() {
+            self.navigationHistoryControl.previous.trigger();
+        });
+        this.element.find('div.zoom-next').bind('click', function() {
+            self.navigationHistoryControl.next.trigger();
+        });
 
         this.element.find('div.zoom-in a').bind('click',
             $.proxy(this.map.zoomIn, this.map));
