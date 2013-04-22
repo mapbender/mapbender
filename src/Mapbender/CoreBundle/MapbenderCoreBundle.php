@@ -18,6 +18,9 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
  */
 class MapbenderCoreBundle extends MapbenderBundle
 {
+    /**
+     * @inheritdoc
+     */
     public function getTemplates()
     {
         return array(
@@ -28,6 +31,9 @@ class MapbenderCoreBundle extends MapbenderBundle
             );
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getElements()
     {
         return array(
@@ -46,13 +52,16 @@ class MapbenderCoreBundle extends MapbenderBundle
 //            'Mapbender\CoreBundle\Element\SearchRouter',
             'Mapbender\CoreBundle\Element\SrsSelector',
             'Mapbender\CoreBundle\Element\Toc',
-//            'Mapbender\CoreBundle\Element\Layertree',
+            'Mapbender\CoreBundle\Element\Layertree',
             'Mapbender\CoreBundle\Element\ZoomBar',
             'Mapbender\CoreBundle\Element\PrintClient',
             'Mapbender\CoreBundle\Element\GpsPosition'
             );
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getACLClasses()
     {
         return array(
