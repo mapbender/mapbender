@@ -7,7 +7,7 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             fillOpacity:   0.5,
             strokeColor:   '#000000',
             strokeOpacity: 1.0,
-            strokeWidth:    3
+            strokeWidth:    2
         },
         position: {
             my: 'right top',
@@ -21,27 +21,32 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
     feature: null,
     lastScale: null,
     lastRotation: null,
+    width: null,
+    height: null,
     
-    _create: function() {
-        var self = this;
-        
-        this._super('_create');
-        
+    _create: function() 
+    {
+        var self = this;       
+        this._super('_create');      
         this._super('option', 'position', $.extend({}, this.options.position, {
             of: window
         }));
         
-        this.option('buttons', {
-            'Print': $.proxy(this._print, this)
-        });
-        
+//        this.option('buttons', {
+//            'Print': $.proxy(this._print, this)
+//        });
+        $('#printbutton', this.element)
+            .bind('click', $.proxy(this._print, this));
         this._loadPrintFormats();
         
-        $('select[name="format"],select[name="orientation"],input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
+        $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
             .bind('change', $.proxy(this._updateGeometry, this));
         $('input[name="scale_text"], input[name="rotation"]', this.element)
             .bind('keyup', $.proxy(this._updateGeometry, this));
-        $('input[name="free_extent"]', this.element).bind('change',$.proxy(this._updateElements, this));      
+        $('input[name="free_extent"]', this.element).bind('change',$.proxy(this._updateElements, this));
+        $('select[name="template"]', this.element)
+            .bind('change', $.proxy(this._getPrintSize, this))
+            .trigger('change');
     },
     
     open: function() {     
@@ -60,47 +65,22 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
     
     _loadPrintFormats: function() {
         //console.log(this.options);
+        var self = this;
         if(null !== this.options.printer.metadata) {
             throw "Not implemented";
         }
         
-        $('select[name="format"]', this.element)
-            .bind('change', $.proxy(this._selectFormat, this))
-            .trigger('change');
-    },
-    
-    _selectFormat: function(event) {
-        var format_key = $(event.target).val(),
-            format = this.options.formats[format_key],
-            count = 0;
-        
-        var orientation = $('select[name="orientation"]', this.element);
-        orientation.empty();
-        
-        for(key in format.orientations) {
-            orientation.append($('<option></option>', {
-                'value': key,
-                'html': format.orientations[key].label
-            }));
-            count++;
-        }
-        if(count < 2) {
-            orientation.parent().hide();
-        } else {
-            orientation.parent().show();
-        }
-        
-        count = 0;
+        var count = 0;
+        var quality_levels = this.options.quality_levels;
         var quality = $('select[name="quality"]', this.element);
-        quality.empty();
-        
-        if (null === format.quality_levels){
+        quality.empty();  
+        if (null === quality_levels){
             quality.parent().hide();
         } else {
-            for(key in format.quality_levels) {
+            for(key in quality_levels) {
                 quality.append($('<option></option>', {
                     'value': key,
-                    'html': format.quality_levels[key]
+                    'html': quality_levels[key]
                 }));
                 count++;
             }
@@ -113,16 +93,15 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         
         var scale_text = $('input[name="scale_text"]', this.element),
             scale_select = $('select[name="scale_select"]', this.element);
-        if(null === format.scales) {
+        if(null === this.options.scales) {
             var scale = 5000;
-            scale_text.val(scale)
-                .parent().show();
+            scale_text.val(scale).parent().show();
             scale_select.empty().parent().hide()
         } else {
             scale_text.val('').parent().hide();
             scale_select.empty();
-            for(key in format.scales) {
-                var scale = format.scales[key];
+            for(key in this.options.scales) {
+                var scale = this.options.scales[key];
                 scale_select.append($('<option></option>', {                    
                     'value': scale,
                     'html': '1:' + scale
@@ -131,23 +110,29 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             scale_select.parent().show();
         }
         
-        var title_block_selector = $('input[name="title_block_selector"]', this.element); 
-        if(true === format.title_block_selector){
-            title_block_selector.get(0).checked = true;
-            title_block_selector.parent().show();
-        } else {
-            title_block_selector.parent().hide();
-        }
-        
         var rotation = $('input[name="rotation"]', this.element); 
-        if(true === format.rotatable){
+        if(true === this.options.rotatable){
             rotation.val(0).parent().show();
+            var slider = $( "<div id='slider' ></div>" ).insertAfter( rotation ).slider({
+                min: 0,
+                max: 360,
+                range: "min",
+                step: 5,
+                value: rotation.val(),
+                slide: function( event, ui ) {
+                    rotation.val(ui.value);
+                    self._updateGeometry(false);
+                }
+            });
+            $(rotation).keyup(function() {
+                slider.slider( "value", this.value );
+            }); 
         } else {
             rotation.parent().hide();
         }
         
         var free_extent = $('input[name="free_extent"]', this.element); 
-        if(true === format.free_extent){
+        if(true === this.options.free_extent){
             free_extent.parent().show();
         } else {
             free_extent.parent().hide();
@@ -155,7 +140,7 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         
         // Copy extra fields
         var extra_fields = $('.extra_fields', this.element).empty(),
-            extra_form = $('.extra_forms form[name="' + format_key  + '"]');
+            extra_form = $('.extra_forms form[name="extra"]');
         if(extra_form.length > 0) {
             extra_fields.html(extra_form.html());
         }
@@ -166,17 +151,18 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             return;
         }
         
-        var format = this.element.find('select[name="format"]').val();
-        var orientation = this.element.find('select[name="orientation"]').val();
-        var size = this.options.formats[format].orientations[orientation];
-        var width = size.width;
-        var height = size.height;
+        //var format = this.element.find('select[name="format"]').val();
+        var template = this.element.find('select[name="template"]').val();
+        //var orientation = this.element.find('select[name="orientation"]').val();
+        //var size = this.options.formats[format].orientations[orientation];
+        var width = this.width;
+        var height = this.height;
         var scale = this._getPrintScale();
         var rotation = $('input[name="rotation"]').val();
         
         if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
             if(null !== this.lastScale) {
-                $('input[name="scale_text"]').val(this.lastScale).change();                
+                //$('input[name="scale_text"]').val(this.lastScale).change();                
             }
             return;
         }        
@@ -193,8 +179,8 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         this.lastScale = scale;
         
         var world_size = {
-                x: size.width * scale / 100,
-                y: size.height * scale / 100
+                x: width * scale / 100,
+                y: height * scale / 100
             };
         
         var center = (reset === true || !this.feature) ?
@@ -213,13 +199,48 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             center.lat + 0.5 * world_size.y).toGeometry(), {});
         this.feature.world_size = world_size;
         this.feature.geometry.rotate(rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
+        /*
+        var centroid = this.feature.geometry.getCentroid();
+        var centroid_lonlat = new OpenLayers.LonLat(centroid.x,centroid.y);
+        var centroid_pixel = this.map.map.olMap.getViewPortPxFromLonLat(centroid_lonlat);
+        var centroid_geodesSize = this.map.map.olMap.getGeodesicPixelSize(centroid_pixel);
         
+        //var geodes_width = size.width * scale / (centroid_geodesSize.w * 100000);
+        //var geodes_height = size.height * scale / (centroid_geodesSize.h * 100000);
+        var geodes_diag = Math.sqrt(centroid_geodesSize.w*centroid_geodesSize.w + centroid_geodesSize.h*centroid_geodesSize.h) / Math.sqrt(2) * 100000;
+        
+        var geodes_width = size.width * scale / (geodes_diag);
+        var geodes_height = size.height * scale / (geodes_diag);
+        
+        var ll_pixel_x = centroid_pixel.x - (geodes_width) / 2;
+        var ll_pixel_y = centroid_pixel.y + (geodes_height) / 2;
+        var ur_pixel_x = centroid_pixel.x + (geodes_width) / 2;
+        var ur_pixel_y = centroid_pixel.y - (geodes_height) /2 ;
+        var ll_pixel = new OpenLayers.Pixel(ll_pixel_x, ll_pixel_y);
+        var ur_pixel = new OpenLayers.Pixel(ur_pixel_x, ur_pixel_y);
+        var ll_lonlat = this.map.map.olMap.getLonLatFromPixel(ll_pixel);
+        var ur_lonlat = this.map.map.olMap.getLonLatFromPixel(ur_pixel);
+        
+        console.log(geodes_diag);
+               
+        console.log(ll_lonlat, ur_lonlat, ll_pixel, ur_pixel, geodes_width, geodes_height);
+        this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
+            ll_lonlat.lon,
+            ur_lonlat.lat,
+            ur_lonlat.lon,
+            ll_lonlat.lat).toGeometry(), {});
+        this.feature.world_size = {
+            x: ur_lonlat.lon - ll_lonlat.lon,
+            y: ur_lonlat.lat - ll_lonlat.lat
+        };
+        */
         this.layer.addFeatures(this.feature);
         this.layer.redraw();
     },
     
     _updateElements: function() {
-        var isFreeExtent = $('input[name="free_extent"]', this.element).get(0).checked;
+        var isFreeExtent = $('input[name="free_extent"]', this.element).get(0).checked,
+            self = this;
         
         if(this.isOpen() && !isFreeExtent) {
             if(null === this.layer) {
@@ -231,7 +252,11 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
                 });
             }
             if(null === this.control) {
-                this.control = new OpenLayers.Control.DragFeature(this.layer);
+                this.control = new OpenLayers.Control.DragFeature(this.layer,  {
+                    onComplete: function() {
+                        self._updateGeometry(false);
+                    }
+                });
             }
             this.map.map.olMap.addLayer(this.layer);
             this.map.map.olMap.addControl(this.control);
@@ -254,24 +279,21 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
     },
     
     _print: function() {
+        if (this.options.print_directly) {
+            this._printDirectly()
+        } else {
+            //@TODO
+            this._printQueued();
+        }
+    },
+    
+    _getPrintExtent: function() {
         var isFreeExtent = $('input[name="free_extent"]', this.element).get(0).checked,
             data = {
-                format: $('select[name="format"]', this.element).val(),
-                orientation: $('select[name="orientation"]', this.element).val(),
-                quality: $('select[name="quality"]', this.element).val(),
-                rotation: $('input[name="rotation"]', this.element).val(),
-                isFreeExtent: isFreeExtent,
-                extent: {
-                    width: null,
-                    height: null
-                },
-                center: {
-                    x: null,
-                    y: null
-                },
-                layers: []
+                extent: {},
+                center: {}
             };
-        
+            
         if(isFreeExtent) {
             var extent = this.map.map.olMap.getExtent();
             data.extent.width = extent.right - extent.left;
@@ -283,13 +305,58 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             data.extent.height = this.feature.world_size.y;
             data.center.x = this.feature.geometry.getBounds().getCenterLonLat().lon;
             data.center.y = this.feature.geometry.getBounds().getCenterLonLat().lat;
-        }
+        }  
+        
+        return data;
+    },
+    
+    _printDirectly: function() {
+        var form = $('form#formats', this.element),
+            extent = this._getPrintExtent();
+        
+        var template_key = this.element.find('select[name="template"]').val(),
+            format = this.options.templates[template_key].format;
+        
+        // Felder für extent, center und layer dynamisch einbauen
+        var fields = $();
+        
+        $.merge(fields, $('<input />', {
+            type: 'hidden',
+            name: 'format',
+            value: format
+        }));
+        
+        $.merge(fields, $('<input />', {
+            type: 'hidden',
+            name: 'extent[width]',
+            value: extent.extent.width
+        }));
+        
+        $.merge(fields, $('<input />', {
+            type: 'hidden',
+            name: 'extent[height]',
+            value: extent.extent.height
+        }));
+        
+        $.merge(fields, $('<input />', {
+            type: 'hidden',
+            name: 'center[x]',
+            value: extent.center.x
+        }));
+        
+        $.merge(fields, $('<input />', {
+            type: 'hidden',
+            name: 'center[y]',
+            value: extent.center.y
+        }));
         
         var layers = this.map.map.olMap.layers;
         for(var i = 0; i < layers.length; i++) {
             var layer = layers[i],
                 type = layer.CLASS_NAME;
-                
+            if(!layer.geVisibility()){
+                continue;
+            }    
             if(!(0 === type.indexOf('OpenLayers.Layer.'))) {
                 window.console && console.log('Layer is of unknown type for print.', layer);
                 continue;
@@ -303,37 +370,112 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
                 
                 // TODO: Implement this thing
             } else if(Mapbender.layer[type] && typeof Mapbender.layer[type].getPrintConfig === 'function') {
-                data.layers.push(Mapbender.layer[type].getPrintConfig(layer, this.map.map.olMap.getExtent()));
+                $.merge(fields, $('<input />', {
+                    type: 'hidden',
+                    name: 'layers[' + i + ']',
+                    value: JSON.stringify(Mapbender.layer[type].getPrintConfig(layer, this.map.map.olMap.getExtent()))
+                }));
             }
         }
         
-        // Collect extra fields
-        var extra = {};
-        var form_array = $('.format-form form', this.element).serializeArray();
-        $.each(form_array, function(idx, field) {
-            if('extra[' === field.name.substr(0, 6)) {
-                extra[field.name.substr(6, field.name.length - 7)] = field.value;
-            }
-        });
-        data.extra = extra;        
+        fields.appendTo(form);
+        // Post in neuen Tab (action bei form anpassen)
         
-        if (this.options.print_directly) {
-            this._printDirectly(data);
-        } else {
-            //@TODO
-        }
+        var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
+        form.attr('action', url);
+        form.attr('target', '_blank');
+        form.attr('method', 'post');
+        form.submit();
+        
+        // Felder und action wieder rausnehmen
+        //console.log(fields);
+        //form.attr('action', null);
+        //fields.remove();
     },
     
-    _printDirectly: function(data){
-        var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
+//    _printQueued: function(){
+//        var isFreeExtent = $('input[name="free_extent"]', this.element).get(0).checked,
+//            data = {
+//                format: $('select[name="format"]', this.element).val(),
+//                orientation: $('select[name="orientation"]', this.element).val(),
+//                quality: $('select[name="quality"]', this.element).val(),
+//                rotation: $('input[name="rotation"]', this.element).val(),
+//                isFreeExtent: isFreeExtent,
+//                extent: {
+//                    width: null,
+//                    height: null
+//                },
+//                center: {
+//                    x: null,
+//                    y: null
+//                },
+//                layers: []
+//            };
+//        
+//        $.extend(true, data, this._getPrintExtent());
+//        
+//        var layers = this.map.map.olMap.layers;
+//        for(var i = 0; i < layers.length; i++) {
+//            var layer = layers[i],
+//                type = layer.CLASS_NAME;
+//                
+//            if(!(0 === type.indexOf('OpenLayers.Layer.'))) {
+//                window.console && console.log('Layer is of unknown type for print.', layer);
+//                continue;
+//            }
+//            
+//            type = type.substr(17).toLowerCase();
+//            if(type === 'vector') {
+//                // Vector layers are all the same:
+//                //   * Get all features as GeoJSON
+//                //   * TODO: Get Styles...
+//                
+//                // TODO: Implement this thing
+//            } else if(Mapbender.layer[type] && typeof Mapbender.layer[type].getPrintConfig === 'function') {
+//                data.layers.push(Mapbender.layer[type].getPrintConfig(layer, this.map.map.olMap.getExtent()));
+//            }
+//        }
+//        
+//        // Collect extra fields
+//        var extra = {};
+//        var form_array = $('.format-form form', this.element).serializeArray();
+//        $.each(form_array, function(idx, field) {
+//            if('extra[' === field.name.substr(0, 6)) {
+//                extra[field.name.substr(6, field.name.length - 7)] = field.value;
+//            }
+//        });
+//        data.extra = extra;        
+//        
+//        var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
+//        $.ajax({
+//            url: url,
+//            type: 'POST',
+//            contentType: "application/json; charset=utf-8",
+//            dataType: "json",
+//            data: JSON.stringify(data),
+//            success: function(data) {
+//                //@TODO
+//            }
+//        })
+//    },
+    
+    _getPrintSize: function() {
+        var self = this;
+        var template = $('select[name="template"]', this.element).val();
+        data = {template: template};
+        var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/template';
         $.ajax({
             url: url,
             type: 'POST',
             contentType: "application/json; charset=utf-8",
-            //contentType: "application/x-www-form-urlencoded",
             dataType: "json",
-            data: JSON.stringify(data)
-            //data: data
+            data: JSON.stringify(data),
+            success: function(data) {
+                console.log('size: '+data['width']+' '+data['height']);
+                self.width = data['width'];
+                self.height = data['height'];
+                self._updateGeometry();
+            }
         })
     }
 });

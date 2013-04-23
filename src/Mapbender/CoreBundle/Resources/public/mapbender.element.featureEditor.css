@@ -1,0 +1,41 @@
+#featureeditor{
+    max-height: 600px;
+}
+#page2 {
+  display: none;
+  font-size: small;
+}
+
+#resulttable {
+    font-size: small;
+    text-align:left;
+    border-collapse: separate;
+    border-spacing: 0px 2px;
+}
+
+#resulttable tr:nth-child(even) td{
+    background-color: LightGray;
+}
+
+#tablehead, th {
+    font-weight: bold;
+    padding-right: 10px;
+    padding-bottom: 5px;
+}
+
+#tablecontent, td {
+    width: 100px;
+    font-weight: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    padding-right: 10px;
+}
+
+#featureposition {
+    display: none;
+}
+
+#buttontd {
+    width: 20px;
+}
