@@ -28,7 +28,6 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
     {
         var self = this;       
         this._super('_create');      
-        this._super('option', 'title', 'Drucken');
         this._super('option', 'position', $.extend({}, this.options.position, {
             of: window
         }));
@@ -314,9 +313,18 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
     _printDirectly: function() {
         var form = $('form#formats', this.element),
             extent = this._getPrintExtent();
-
+        
+        var template_key = this.element.find('select[name="template"]').val(),
+            format = this.options.templates[template_key].format;
+        
         // Felder für extent, center und layer dynamisch einbauen
         var fields = $();
+        
+        $.merge(fields, $('<input />', {
+            type: 'hidden',
+            name: 'format',
+            value: format
+        }));
         
         $.merge(fields, $('<input />', {
             type: 'hidden',
@@ -346,7 +354,9 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         for(var i = 0; i < layers.length; i++) {
             var layer = layers[i],
                 type = layer.CLASS_NAME;
-                
+            if(!layer.geVisibility()){
+                continue;
+            }    
             if(!(0 === type.indexOf('OpenLayers.Layer.'))) {
                 window.console && console.log('Layer is of unknown type for print.', layer);
                 continue;
@@ -368,7 +378,7 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             }
         }
         
-        fields.appendTo(form);      
+        fields.appendTo(form);
         // Post in neuen Tab (action bei form anpassen)
         
         var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';   
