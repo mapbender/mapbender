@@ -540,6 +540,7 @@ Mapbender.DefaultModel = {
         if(mapQueryLayer){
             sourceDef.mqlid = mapQueryLayer.id;
             sourceDef.ollid = mapQueryLayer.olLayer.id;
+            mapQueryLayer.source = sourceDef;
 //            this.sourceTree.push(sourceDef);
             var added = this.createChangedObj(sourceDef);
             added.before = before;

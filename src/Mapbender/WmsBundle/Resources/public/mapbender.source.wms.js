@@ -88,7 +88,7 @@ $.extend(true, Mapbender, {
             },
 
             featureInfo: function(layer, x, y, callback) {
-                if(layer.options.queryLayers.length === 0) {
+                if(layer.olLayer.queryLayers.length === 0) {
                     return;
                 }
                 var param_tmp = {
@@ -97,33 +97,33 @@ $.extend(true, Mapbender, {
                     VERSION: layer.olLayer.params.VERSION,
                     EXCEPTIONS: "application/vnd.ogc.se_xml",
                     FORMAT: layer.olLayer.params.FORMAT,
-                    INFO_FORMAT: layer.options.configuration.configuration.info_format || "text/plain",
+                    INFO_FORMAT: layer.source.configuration.options.info_format || "text/plain",
                     SRS: layer.olLayer.params.SRS,
                     BBOX: layer.map.center().box.join(','),
                     WIDTH: $(layer.map.element).width(),
                     HEIGHT: $(layer.map.element).height(),
                     X: x,
                     Y: y,
-                    LAYERS: layer.options.queryLayers.join(','),
-                    QUERY_LAYERS: layer.options.queryLayers.join(',')
+                    LAYERS: layer.olLayer.queryLayers.join(','),
+                    QUERY_LAYERS: layer.olLayer.queryLayers.join(',')
                 };
                 var contentType_ = "";
-                if(typeof(layer.options.configuration.configuration.info_format)
+                if(typeof(layer.source.configuration.options.info_format)
                     !== 'undefined'){
                     param_tmp["INFO_FORMAT"] =
-                    layer.options.configuration.configuration.info_format;
+                    layer.source.configuration.options.info_format;
                 //                contentType_ +=
                 //                    layer.options.configuration.configuration.info_format;
                 }
-                if(typeof(layer.options.configuration.configuration.feature_count)
+                if(typeof(layer.source.configuration.options.feature_count)
                     !== 'undefined'){
                     param_tmp["FEATURE_COUNT"] =
-                    layer.options.configuration.configuration.feature_count;
+                    layer.source.configuration.options.feature_count;
                 }
-                if(typeof(layer.options.configuration.configuration.info_charset)
+                if(typeof(layer.source.configuration.options.info_charset)
                     !== 'undefined'){
                     contentType_ += contentType_.length > 0 ? ";" : "" +
-                    layer.options.configuration.configuration.info_charset;
+                    layer.source.configuration.options.info_charset;
                 }
                 var params = $.param(param_tmp);
 
@@ -240,12 +240,12 @@ $.extend(true, Mapbender, {
                                 title: layer.title,
                                 treeOptions: {
                                     allow: {
-                                        info: false,
+                                        info: layer.queryable ? true: false,
                                         reorder: true,
                                         selected: true,
                                         toggle: true
                                     },
-                                    info: null,
+                                    info: layer.queryable ? true: null,
                                     selected: true,
                                     toggle: true
                                 }

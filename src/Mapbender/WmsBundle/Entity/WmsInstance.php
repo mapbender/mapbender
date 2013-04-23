@@ -159,7 +159,7 @@ class WmsInstance extends SourceInstance
                 "visible" => $this->visible,
                 "format" => $this->getFormat(),
                 "info_format" => $this->infoformat,
-                "transparent" => $this->getFormat(),
+                "transparent" => $this->transparency,
                 "opacity" => $this->opacity / 100,
                 "tiled" => $this->tiled,
                 "baselayer" => false
