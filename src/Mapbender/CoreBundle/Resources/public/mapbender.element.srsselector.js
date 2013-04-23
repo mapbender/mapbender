@@ -15,9 +15,7 @@
             }
             var self = this;
             this.mapWidget = $('#' + this.options.target);
-            $(document).one('mapbender.setupfinished', function() {
-                $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
-            });
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
 
         _setup: function(){

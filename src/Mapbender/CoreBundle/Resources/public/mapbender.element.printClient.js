@@ -113,7 +113,7 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         var rotation = $('input[name="rotation"]', this.element); 
         if(true === this.options.rotatable){
             rotation.val(0).parent().show();
-            var slider = $( "<div id='slider' ></div>" ).insertAfter( rotation ).slider({
+            var slider = $( "<br><br><div id='slider' ></div><br>" ).insertAfter( rotation ).slider({
                 min: 0,
                 max: 360,
                 range: "min",
@@ -381,8 +381,10 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         fields.appendTo(form);
         // Post in neuen Tab (action bei form anpassen)
         
-        var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
-        form.attr('action', url);
+        var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';   
+        
+        //form.attr('action', url);
+        form.get(0).setAttribute('action', url);
         form.attr('target', '_blank');
         form.attr('method', 'post');
         form.submit();
@@ -471,7 +473,7 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             dataType: "json",
             data: JSON.stringify(data),
             success: function(data) {
-                console.log('size: '+data['width']+' '+data['height']);
+                //console.log('size: '+data['width']+' '+data['height']);
                 self.width = data['width'];
                 self.height = data['height'];
                 self._updateGeometry();

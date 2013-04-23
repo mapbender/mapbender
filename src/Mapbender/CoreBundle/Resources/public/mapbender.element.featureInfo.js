@@ -15,9 +15,7 @@ $.widget("mapbender.mbFeatureInfo", $.ui.dialog, {//$.mapbender.mbButton, {
             return;
         }
         var self = this;
-        $(document).one('mapbender.setupfinished', function() {
-            $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
-        });
+        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
     },
 
     _setup: function(){
@@ -92,7 +90,7 @@ $.widget("mapbender.mbFeatureInfo", $.ui.dialog, {//$.mapbender.mbButton, {
             switch(layer.options.type) {
                 case 'wms':
                     self.element.find('a[href=#' + layer.id + ']').addClass('loading');
-                    Mapbender.layer.wms.featureInfo(layer, x, y, $.proxy(self._featureInfoCallback, self));
+                    Mapbender.source.wms.featureInfo(layer, x, y, $.proxy(self._featureInfoCallback, self));
                     break;
             }
         });

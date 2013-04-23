@@ -17,9 +17,7 @@ $.widget("mapbender.mbOverview", {
             return;
         }
         var self = this;
-        $(document).one('mapbender.setupfinished', function() {
-            $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
-        });
+        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
     },
 
     /**
@@ -53,13 +51,8 @@ $.widget("mapbender.mbOverview", {
         if(!this.options.maximized) {
             $(this.element).addClass("closed");
         }
-
-        var max_ext = this.options.extents && this.options.extents.max ? this.options.extents.max : mbMap.options.extents.max;
-        max_ext = max_ext ? OpenLayers.Bounds.fromArray(max_ext) : null;
-        var proj = this.options.srs ? new OpenLayers.Projection(this.options.srs) : mbMap.map.olMap.getProjectionObject();
-        if(proj.projCode === 'EPSG:4326') {
-            proj.proj.units = 'degrees';
-        }
+        var proj = mbMap.model.mapMaxExtent.projection;
+        var max_ext = mbMap.model.mapMaxExtent.extent;
         this.startproj = proj;
         var layers_overview = [];
         $.each(Mapbender.configuration.layersets[self.options.layerset],
@@ -67,14 +60,13 @@ $.widget("mapbender.mbOverview", {
                 $.each(item, function(idx2, layerDef) {
                     if(layerDef.type === "wms"){
                         var ls = "";
-                        $.each(layerDef.configuration.layers, function(idx3, layDef) {
-                            if(layDef.name && layDef.name !== ""){
-                                ls += "," + layDef.name;
-                            }
-                        });
+                        var layers = Mapbender.source[layerDef.type].getLayersList(layerDef, layerDef.configuration.children[0], true);
+                        for(var i = 0; i < layers.layers.length; i++){
+                            ls += layers.layers[i].options.name !== "" ? "," + layers.layers[i].options.name : "";
+                        }
                         layers_overview.push(new OpenLayers.Layer.WMS(
                             layerDef.title,
-                            layerDef.configuration.url, {
+                            layerDef.configuration.options.url, {
                                 layers: ls.substring(1)
                             }));
                         self._addOrigLayerExtent(layerDef);
@@ -188,7 +180,6 @@ $.widget("mapbender.mbOverview", {
             };
         }
     }
-
 });
 
 })(jQuery);

@@ -107,32 +107,42 @@ class Map extends Element
         
         $extra = array();
         $srs_req = $this->container->get('request')->get('srs');
-        $poi = $this->container->get('request')->get('poi');
-        if($poi)
+        if($srs_req)
         {
-            $extra['type'] = 'poi';
-            $point = split(',', $poi['point']);
-            $extra['data'] = array(
-                'x' => floatval($point[0]),
-                'y' => floatval($point[1]),
-                'label' => $poi['label'],
-                'scale' => $poi['scale']
-            );
-        }
-
-        $bbox = $this->container->get('request')->get('bbox');
-        if(!$poi && $bbox)
-        {
-            $bbox = explode(',', $bbox);
-            if(count($bbox) === 4)
+            if(!isset($ressrses[$srs]))
             {
-                $extra['type'] = 'bbox';
+                throw new \RuntimeException('The srs: "' . $srs_req
+                        . '" does not supported.');
+            }
+            $configuration = array_merge($configuration,
+                                         array('targetsrs' => $srs_req));
+            $poi = $this->container->get('request')->get('poi');
+            if($poi)
+            {
+                $extra['type'] = 'poi';
+                $point = split(',', $poi['point']);
                 $extra['data'] = array(
-                    'xmin' => floatval($bbox[0]),
-                    'ymin' => floatval($bbox[1]),
-                    'xmax' => floatval($bbox[2]),
-                    'ymax' => floatval($bbox[3])
+                    'x' => floatval($point[0]),
+                    'y' => floatval($point[1]),
+                    'label' => $poi['label'],
+                    'scale' => $poi['scale']
                 );
+            }
+
+            $bbox = $this->container->get('request')->get('bbox');
+            if(!$poi && $bbox)
+            {
+                $bbox = explode(',', $bbox);
+                if(count($bbox) === 4)
+                {
+                    $extra['type'] = 'bbox';
+                    $extra['data'] = array(
+                        floatval($bbox[0]),
+                        floatval($bbox[1]),
+                        floatval($bbox[2]),
+                        floatval($bbox[3])
+                    );
+                }
             }
         }
 
@@ -181,17 +191,6 @@ class Map extends Element
                 "name" => $srsTemp->getName(),
                 "title" => $allsrs[$srsTemp->getName()] !== "" ? $allsrs[$srsTemp->getName()] : $srsTemp->getTitle(),
                 "definition" => $srsTemp->getDefinition());
-        }
-        
-        if($srs_req)
-        {
-            if(!isset($ressrses[$srs]))
-            {
-                throw new \RuntimeException('The srs: "' . $srs_req
-                        . '" does not supported.');
-            }
-            $configuration = array_merge($configuration,
-                                         array('targetsrs' => $srs_req));
         }
         /* sort the ressrses */
         foreach($allsrs as $key => $value)

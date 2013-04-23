@@ -665,6 +665,20 @@ class WmsLayerSource
     {
         return $this->scale;
     }
+    
+    /**
+     * Get scale
+     *
+     * @return MinMax 
+     */
+    public function getScaleRecursive()
+    {
+        if($this->scale === null && $this->getParent() !== null){
+            return $this->getParent()->getScale();
+        } else {
+            return $this->scale;
+        }
+    }
 
     /**
      * Set scaleHint
