@@ -10,6 +10,15 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
 class MapbenderWmsBundle
         extends MapbenderBundle
 {
+    /**
+     * @inheritdoc
+     */
+    public function getElements()
+    {
+        return array(
+            'Mapbender\WmsBundle\Element\WmsLoader'
+            );
+    }
 
     /**
      * @inheritdoc

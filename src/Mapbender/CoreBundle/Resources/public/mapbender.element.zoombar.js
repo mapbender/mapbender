@@ -19,12 +19,11 @@ $.widget("mapbender.mbZoomBar", {
             return;
         }
         var self = this;
-
-        this.mapDiv = $('#' + this.options.target);
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
     },
 
     _setup: function() {
+        this.mapDiv = $('#' + this.options.target);
         this.map = this.mapDiv.data('mbMap').map.olMap;
         this._setupSlider();
         this._setupZoomButtons();
@@ -146,12 +145,12 @@ $.widget("mapbender.mbZoomBar", {
             }
         });
 
-        this.element.find('div.zoom-prev').bind('click',
-            $.proxy(this.navigationHistoryControl.previousTrigger,
-            this.navigationHistoryControl));
-        this.element.find('div.zoom-next').bind('click',
-            $.proxy(this.navigationHistoryControl.nextTrigger,
-            this.navigationHistoryControl));
+        this.element.find('div.zoom-prev').bind('click', function() {
+            self.navigationHistoryControl.previous.trigger();
+        });
+        this.element.find('div.zoom-next').bind('click', function() {
+            self.navigationHistoryControl.next.trigger();
+        });
 
         this.element.find('div.zoom-in a').bind('click',
             $.proxy(this.map.zoomIn, this.map));

@@ -63,11 +63,12 @@ class Legend extends Element
             "noLegend" => "No legend available",
             "autoOpen" => true,
             "tooltip" => "Legend",
+            "checkGraphic" => false,
             "hideEmptyLayers" => true,
-            "generateGetLegendGraphicUrl" => false,
-            "showWmsTitle" => true,
+            "generateLegendGraphicUrl" => false,
+            "showSourceTitle" => true,
             "showLayerTitle" => true,
-            "showGroupedLayerTitle" => true);
+            "showGrouppedTitle" => true);
     }
 
     /**

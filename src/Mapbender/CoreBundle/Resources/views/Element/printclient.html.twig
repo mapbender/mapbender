@@ -1,43 +1,35 @@
 <div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title|trans }}">
-    <div class="format-selector">
-    </div>
     <div class="format-form">
         <form id="formats" action="">
             <div>
-                <label>{{ 'Format' | trans }}</label>
-                <select name="format" >
-                    {% for id, format in configuration.formats %}
-                    <option value="{{ id }}">{{ format.label }}</option>
+                <label class="printlabel">{{ 'Template' | trans }}</label>
+                <select name="template" >
+                    {% for id, template in configuration.templates %}
+                    <option value="{{ id }}">{{ template.label }}</option>
                     {% endfor %}
                 </select>
-            </div>
-                
-            <div>
-                <label for="orienation">{{ 'Orientation' | trans }}</label>
-                <select name="orientation" >
-                </select>
-            </div>
+            </div>     
 
             <div>
-                <label for="quality">{{ 'Quality' | trans }}</label>
+                <label class="printlabel" for="quality">{{ 'Auflösung' | trans }}</label>
                 <select name="quality" >
                 </select>
             </div>
             
             <div>
-                <label for="scale_text">{{ 'Scale' | trans }}</label>
+                <label class="printlabel" for="scale_text">{{ 'Maßstab' | trans }}</label>
                 <input type="text" name="scale_text" size="8"/>                
             </div>
             
             <div>
-                <label for="scale_select">{{ 'Scale' | trans }}</label>
+                <label class="printlabel" for="scale_select">{{ 'Maßstab' | trans }}</label>
                 <select name="scale_select">
                 </select>
             </div>
           
             <div>
-                <label for="rotation">{{ 'Rotation' | trans }}</label>
-                <input type="text" name="rotation" size="3"/>                
+                <label class="printlabel" for="rotation">{{ 'Rotation' | trans }}</label>
+                <input type="text" name="rotation" size="3"/>
             </div>      
                         
             <div>
@@ -45,14 +37,10 @@
                 <label for="free_extent">{{ 'Free Extent' | trans }}</label>
             </div>
                 
-            <div>
-                <input type="checkbox" name="title_block_selector"/>
-                <label for="title_block_selector">{{ 'Title Block' | trans }}</label>
-            </div>
-                
             <div class="extra_fields">
             </div>
-
+            <br>
+            <button id="printbutton">Drucken</button>
         </form>
     </div>
         

@@ -26,6 +26,13 @@ abstract class WmsCapabilitiesParser
      * An Xpath-instance
      */
     protected $xpath;
+    
+    /**
+     * The resolution
+     * 
+     * @var integer 
+     */
+    protected $resolution = 72;
 
     /**
      * Creates an instance
@@ -37,6 +44,15 @@ abstract class WmsCapabilitiesParser
         $this->doc = $doc;
         $this->xpath = new \DOMXPath($doc);
         $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
+    }
+    
+    /**
+     * Sets the resolution
+     * 
+     * @param integer $resolution
+     */
+    protected function setReslolution($resolution){
+        $this->resolution = $resolution;
     }
 
     /**

@@ -15,9 +15,7 @@ $.widget("mapbender.mbScaleSelector", {
         var me = $(this.element);
         this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
         
-        $(document).one('mapbender.setupfinished', function() {
-            $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
-        });
+        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
             
     },
     

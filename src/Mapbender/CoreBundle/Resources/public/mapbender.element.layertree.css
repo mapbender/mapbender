@@ -12,10 +12,10 @@
 
 }
 
-.mb-element-layertree li>a {
+/*.mb-element-layertree li>a {
     text-decoration :   none;
     font-color: inherit;
-}
+}*/
 
 .mb-element-layertree ul {
     min-width: 10px;
@@ -25,9 +25,66 @@
     padding-left: 10px;
 }
 
-.mb-element-layertree .opened {
+.mb-element-layertree .openned {
     display: block;
 }
 .mb-element-layertree .closed {
     display: none;
+}
+.mb-element-layertree span {
+    display: inline-block;
+}
+.mb-element-layertree span.spinner {
+    width: 14px;
+    height: 14px;
+}
+.mb-element-layertree span.spinner.loading {
+    background: url('icons/spinner.gif') no-repeat;
+}
+
+.mb-element-layertree span.state {
+    width: 14px;
+    height: 14px;
+}
+
+.mb-element-layertree span.state.error {
+    background: url('icons/error.png') no-repeat;
+}
+
+.mb-element-layertree span.state.invisible {
+    background: url('icons/invisible.png') 0 2px no-repeat;
+}
+
+.mb-element-layertree span.toggleable {
+    cursor: pointer;
+    color: blue;
+}
+
+.mb-element-layertree .menubutton {
+    cursor: pointer;
+}
+
+.mb-element-layertree .removebutton {
+    cursor: pointer;
+}
+
+.mb-element-layertree li {
+    display: block;
+}
+
+.mb-element-layertree li div {
+    display: inline-block;
+}
+
+.mb-element-layertree li div.layer {
+    width: 100%;
+}
+
+.mb-element-layertree li div.layer-added {
+    position: absolute;
+    right: 0px;
+}
+
+.mb-element-layertree span.removebutton {
+    font-size: 20px;
 }

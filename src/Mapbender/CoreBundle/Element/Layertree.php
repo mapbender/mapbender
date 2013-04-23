@@ -84,7 +84,11 @@ class Layertree extends Element
         return array(
             "target" => null,
             "type" => null,
-            "autoOpen" => false
+            "displaytype" => null,
+            "useAccordion" => false,
+            "titlemaxlength" => intval(20),
+            "autoOpen" => false,
+            "showBaseSource" => true
         );
     }
 

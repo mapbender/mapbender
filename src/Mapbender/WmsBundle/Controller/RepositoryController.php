@@ -265,7 +265,7 @@ class RepositoryController extends Controller
             { //save
                 $em = $this->getDoctrine()->getEntityManager();
                 $em->getConnection()->beginTransaction();
-
+                $wmsinstance->generateConfiguration();
                 $em->persist($wmsinstance);
                 $em->flush();
 
@@ -358,11 +358,19 @@ class RepositoryController extends Controller
                 }
             }
         }
+        $em->getConnection()->beginTransaction();
         foreach($instList as $inst)
         {
             $em->persist($inst);
         }
         $em->flush();
+        $wmsinstance = $this->getDoctrine()
+                ->getRepository("MapbenderCoreBundle:SourceInstance")
+                ->find($instanceId);
+        $wmsinstance->generateConfiguration();
+        $em->persist($wmsinstance);
+        $em->flush();
+        $em->getConnection()->commit();
         return new Response(json_encode(array(
                             'error' => '',
                             'result' => 'ok')), 200, array(

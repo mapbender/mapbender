@@ -15,7 +15,7 @@ ul.elements li {
 }
 ul.elements li span {
     text-align: left;
-    display: inline-block;
+    display: inline;
 }
 
 div.elementsheader span {
@@ -37,14 +37,17 @@ div.elementsheader span.actions {
 
 ul.elements li span.title {
     width: 32%;
+    overflow: hidden;
 }
 
 ul.elements li span.type {
-    width: 32%;
+    width: 30%;
+    overflow: hidden;
 }
 
 ul.elements span.actions {
     width: 32%;
+    overflow: hidden;
 }
 
 ul.elements li.element {
@@ -98,7 +101,7 @@ ul.layerset li.sourceinst div.btn-group {
 
 ul.layerset li span {
     text-align: left;
-    display: inline-block;
+    display: inline;
 }
 
 ul.layerset li.header span {
@@ -115,7 +118,7 @@ ul.layerset li span.sourceid {
 }
 
 ul.layerset li span.type {
-    width: 10%;
+    width: 8%;
 }
 
 ul.layerset li span.title {
