@@ -196,8 +196,6 @@ class WmsInstance extends SourceInstance
         {
             $configuration["children"] = $this->configuration["children"];
         }
-        // TODO delete line, if client implements
-        $configuration = array_merge($configuration, $this->configuration);
         $this->configuration = $configuration;
     }
 

@@ -288,12 +288,12 @@
                 if(layer.isNode){
                     html += this._createNodeTitleLine(layer);
                 }else{
-                    if(layer.legend.url){
+                    if(layer.legend && layer.legend.url){
                         html += this._createTitleLine(layer, false);
                         html += this._createImageLine(layer, false);
                     } else {
                         html += this._createTitleLine(layer, true);
-                        html += this._createImageLine(layer, true);
+                        html += this._createTextLine(layer, true);
                     }
                 }
             }
