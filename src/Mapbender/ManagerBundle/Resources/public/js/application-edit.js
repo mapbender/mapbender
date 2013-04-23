@@ -249,7 +249,7 @@ $(function() {
             $("body").mbPopup();
             $("body").mbPopup('showAjaxModal', 
                               {title:"Select source",
-                               subTitle: " - " + $(this).siblings("legend").text()},
+                               subTitle: " - " + $(this).parent().siblings(".subTitle").text()},
                               $(this).attr("href"), 
                               null,
                               null);
