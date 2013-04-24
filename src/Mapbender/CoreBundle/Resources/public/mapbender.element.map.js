@@ -93,6 +93,15 @@
         getModel: function(){
             return this.model;
         },
+        /*
+         * Changes the map's projection.
+         */
+        changeProjection: function(srs){
+            if(typeof srs === "string")
+                this.model.changeProjection(this.model.getProj(srs));
+            else
+                this.model.changeProjection(srs);
+        },
         /**
          * Zooms the map in
          */

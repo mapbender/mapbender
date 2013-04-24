@@ -465,7 +465,6 @@ Mapbender.DefaultModel = {
                 }
             });
         }
-        
     },
     
     /**
@@ -590,7 +589,6 @@ Mapbender.DefaultModel = {
         if(mapQueryLayer){
             sourceDef.mqlid = mapQueryLayer.id;
             sourceDef.ollid = mapQueryLayer.olLayer.id;
-            
             var changed = this.createChangedObj(tochange.source);
             var result = {
                 info: [], 
@@ -600,6 +598,7 @@ Mapbender.DefaultModel = {
                 this.map.olMap.getScale(), tochange, result);
             mapQueryLayer.olLayer.queryLayers = result.info;
             mapQueryLayer.source = this.getSource({id: sourceDef.id});
+            this._addLayerMaxExtent(mapQueryLayer);
             var added = this.createChangedObj(sourceDef);
             added.before = before;
             added.after = after;
@@ -646,6 +645,7 @@ Mapbender.DefaultModel = {
             if(!Mapbender.source[toremove.source.type].hasLayers(toremove.source, true)){
                 var removedMq = mqLayer.remove();
                 if(removedMq){
+                    this._removeLayerMaxExtent(removedMq);
                     sourceRemoved = true;
                     for (var i = 0; i < this.sourceTree.length; i++){
                         if(this.sourceTree[i].id.toString() === toremove.source.id.toString()){
@@ -1123,9 +1123,16 @@ Mapbender.DefaultModel = {
     },
     
     /*
-     * Sets a new map's projection.
+     * Changes the map's projection.
      */
     _changeProjection: function(event, srs){
+        this.changeProjection(srs);
+    },
+    
+    /*
+     * Changes the map's projection.
+     */
+    changeProjection: function(srs){
         var self = this;
         var oldProj = this.map.olMap.getProjectionObject();
         var center = this.map.olMap.getCenter().transform(oldProj, srs.projection);
@@ -1152,12 +1159,6 @@ Mapbender.DefaultModel = {
         this.center({
             position: [center.lon, center.lat]
         });
-        //        this.mbMap.fireModelEvent({
-        //            name: 'srsChanged', 
-        //            value: {
-        //                projection: srs.projection
-        //            }
-        //        });
         this.mbMap._trigger('srsChanged', null, {
             projection: srs.projection
         });

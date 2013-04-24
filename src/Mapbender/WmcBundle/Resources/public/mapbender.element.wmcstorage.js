@@ -162,28 +162,25 @@
                 Mapbender.error('The projection:"'+wmc.projection+'" is not supported by this application.');
                 return;
             }
-            if(true)
-            //        /**
-            //         * First, remove all layers
-            //         * Then add layers from WMC
-            //         */
-            //        $.each(map.map.layers(), function(idx, layer) {
-            //            layer.remove();
-            //        });
+            // remove all sources from model
+//            var sources = map.getSources();
+//            for(i = (sources.length - 1); i > -1; i--){
+//                map.removeSource(sources[i]);
+//            }
 
             /**
          * Set projection, maxExtent and bounds
          */
-            map.map.olMap.projection = wmc.projection;
-            map.map.olMap.maxExtent = wmc.maxExtent;
+//            map.map.olMap.projection = wmc.projection;
+//            map.map.olMap.maxExtent = wmc.maxExtent;
 
             /**
          * Load layers from WMC into map
          */
             //TODO: queryLayers, opacity
-            var hasBaseLayer = false;
+//            var hasBaseLayer = false;
             var layerDefs = $.map(wmc.layersContext, function(layerContext) {
-                hasBaseLayer |= layerContext.isBaselayer;
+//                hasBaseLayer |= layerContext.isBaselayer;
                 return {
                     type: 'wms',
                     label: layerContext.title,
@@ -199,7 +196,7 @@
                     tiled: !layerContext.singleTile
                 };
             });
-            map.map.olMap.allOverlays = hasBaseLayer ? false : true;
+//            map.map.olMap.allOverlays = hasBaseLayer ? false : true;
             $.each(layerDefs, function(idx, layerDef) {
                 map.map.layers(layerDef);
             });

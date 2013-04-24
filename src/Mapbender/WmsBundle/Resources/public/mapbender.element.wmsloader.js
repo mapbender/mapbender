@@ -64,7 +64,7 @@
         _getCapabilitiesUrlSuccess: function(xml, getCapabilitiesUrl) {
             var id = $('#' + this.options.target).data('mbMap').genereateSourceId();
             var layerDef = Mapbender.source.wms.layersFromCapabilities(xml, id);
-            $('#' + this.options.target).data('mbMap').addSource(layerDef);
+            $('#' + this.options.target).data('mbMap').addSource(layerDef, null, null);
         },
         
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR) {
