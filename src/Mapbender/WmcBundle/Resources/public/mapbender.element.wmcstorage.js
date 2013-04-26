@@ -69,6 +69,7 @@
         },
 
         _load: function(params, options) {
+            var self = this;
             $.ajax({
                 url: this.elementUrl + 'load?' + $.param({
                     params: params
@@ -91,7 +92,11 @@
                 xmlDoc.async = false;
                 xmlDoc.loadXML(doc);
             }
-            xmlDoc && this._loadSuccess(xmlDoc);
+            xmlDoc && this._loadDocSuccess(xmlDoc);
+        },
+        
+        loadWmcJson: function(json) {
+            json && this._loadJsonSuccess(json);
         },
 
         download: function(wmc) {
@@ -140,7 +145,7 @@
             $(this.element).find('div#wmc-save-error').show().siblings().hide();
         },
 
-        _loadSuccess: function(data, options) {
+        _loadDocSuccess: function(data, options) {
             options = options || {};
             var me = $(this.element),
                 format = new OpenLayers.Format.WMC(),
@@ -207,6 +212,79 @@
             this._trigger('loaddone');
 
             this.close();
+        },
+        
+        _loadJsonSuccess: function(wmc, options) {
+            options = options || {};
+            var me = $(this.element),
+//                format = new OpenLayers.Format.WMC(),
+                map = $('#' + this.options.target).data('mbMap');
+//
+//            me.find('div#wmc-load-spinner').show().siblings().hide();
+//
+//            var wmc = format.read(data);
+            // Check if wmc.projection supported
+            var supported = map.getAllSrs();
+            var found = false;
+            for(var i = 0; i < supported.length; i++){
+                if(wmc.general.bbox.srs.toUpperCase() === supported[i].name.toUpperCase()){
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                Mapbender.error('The projection:"'+wmc.general.bbox.srs+'" is not supported by this application.');
+                return;
+            }
+            // remove all sources from model
+            var sources = map.getSourceTree();
+            for(i = (sources.length - 1); i > -1; i--){
+                map.removeSource(sources[i]);
+            }
+            
+            for(i = 0; i < wmc.sources.length; i++){
+                map.addSource(wmc.sources[i]);
+            }
+
+            /**
+         * Set projection, maxExtent and bounds
+         */
+//            map.map.olMap.projection = wmc.projection;
+//            map.map.olMap.maxExtent = wmc.maxExtent;
+
+            /**
+         * Load layers from WMC into map
+         */
+//            //TODO: queryLayers, opacity
+////            var hasBaseLayer = false;
+//            var layerDefs = $.map(wmc.layersContext, function(layerContext) {
+////                hasBaseLayer |= layerContext.isBaselayer;
+//                return {
+//                    type: 'wms',
+//                    label: layerContext.title,
+//                    url: layerContext.url,
+//
+//                    allLayers: layerContext.allLayers,
+//                    layers: layerContext.name,
+//                    transparent: layerContext.transparent,
+//                    format: layerContext.formats[0].value,
+//                    isBaseLayer: layerContext.isBaseLayer,
+//
+//                    visible: layerContext.visibility,
+//                    tiled: !layerContext.singleTile
+//                };
+//            });
+////            map.map.olMap.allOverlays = hasBaseLayer ? false : true;
+//            $.each(layerDefs, function(idx, layerDef) {
+//                map.map.layers(layerDef);
+//            });
+//            if(!options.dontZoom) {
+//                map.zoomToExtent(wmc.bounds);
+//            }
+//
+//            this._trigger('loaddone');
+//
+//            this.close();
         },
 
         _loadError: function(jqXHR, textStatus, errorThrown) {

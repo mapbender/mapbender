@@ -51,6 +51,12 @@
         /**
          *
          */
+        getMapState: function(){
+            return this.model.getMapState();
+        },
+        /**
+         *
+         */
         addSource: function(sourceDef){
             this.model.addSource(sourceDef, null, null);
         },
