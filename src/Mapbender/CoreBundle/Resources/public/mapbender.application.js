@@ -181,7 +181,8 @@ Mapbender.DefaultModel = {
             displayProjection: this.proj,
             units: this.proj.proj.units,
             allOverlays: allOverlays,
-            theme: null
+            theme: null,
+            layers: [{type: "wms", name: "FAKE"}]
         };
 
         if(this.mbMap.options.scales) {
