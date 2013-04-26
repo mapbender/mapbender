@@ -172,10 +172,10 @@ class ApplicationYAMLMapper
                         ->setLayerset($layerset)
                         ->setProxy(!isset($layerDefinition['proxy']) ? false : $layerDefinition['proxy'])
                         ->setVisible(!isset($layerDefinition['visible']) ? true : $layerDefinition['visible'])
-                        ->setFormat(!isset($layerDefinition['transparent']) ? true : $layerDefinition['transparent'])
+                        ->setFormat(!isset($layerDefinition['format']) ? true : $layerDefinition['format'])
                         ->setInfoformat(!isset($layerDefinition['info_format']) ? null : $layerDefinition['info_format'])
                         ->setTransparency(!isset($layerDefinition['transparent']) ? true : $layerDefinition['transparent'])
-                        ->setOpacity(!isset($layerDefinition['opacity']) ? 1 : $layerDefinition['opacity'])
+                        ->setOpacity(!isset($layerDefinition['opacity']) ? 100 : $layerDefinition['opacity'])
                         ->setTiled(!isset($layerDefinition['tiled']) ? false : $layerDefinition['tiled'])
                         ->setConfiguration($layerDefinition);
                 $layerset->addInstance($instance);

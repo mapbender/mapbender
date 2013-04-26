@@ -159,7 +159,7 @@ class WmsInstance extends SourceInstance
                 "visible" => $this->visible,
                 "format" => $this->getFormat(),
                 "info_format" => $this->infoformat,
-                "transparent" => $this->getFormat(),
+                "transparent" => $this->transparency,
                 "opacity" => $this->opacity / 100,
                 "tiled" => $this->tiled,
                 "baselayer" => false
@@ -196,8 +196,6 @@ class WmsInstance extends SourceInstance
         {
             $configuration["children"] = $this->configuration["children"];
         }
-        // TODO delete line, if client implements
-        $configuration = array_merge($configuration, $this->configuration);
         $this->configuration = $configuration;
     }
 
