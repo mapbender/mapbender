@@ -165,7 +165,8 @@ class PrintClient extends Element
                 $response->headers->set('Content-Type', 'application/json');        
                 $request = $this->container->get('request');
                 $data = json_decode($request->getContent(),true);          
-                $odgParser = new OdgParser();
+                $container = $this->container;
+                $odgParser = new OdgParser($container);
                 $size = $odgParser->getMapSize($data['template']);
                 $response->setContent($size->getContent());
                 return $response;

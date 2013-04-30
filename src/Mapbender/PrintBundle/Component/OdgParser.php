@@ -6,10 +6,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class OdgParser
 {
+    public function __construct($container)
+    {
+        $this->container = $container;
+    }
     
     private function readOdgFile($template, $file)
     {
-        $odgfile = __DIR__. '/../Templates/'.$template.'.odg';
+        $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
+        $odgfile = $resource_dir.'/templates/'.$template.'.odg';
         $open = zip_open($odgfile);
         while($zip_entry = zip_read($open)) {
             if (zip_entry_name($zip_entry) == $file){

@@ -34,8 +34,6 @@ class PrintService
         $this->createUrlArray();     
         $this->setMapParameter();
 
-        $this->rotate();
-
         if ($this->data['rotation'] == 0)
         {
             $this->setExtent();
@@ -54,7 +52,7 @@ class PrintService
      */
     private function getTemplateConf($template) 
     {
-        $odgParser = new OdgParser();
+        $odgParser = new OdgParser($this->container);
         $this->conf = $odgParser->getConf($template);    
 //        print "<pre>";
 //        print_r($this->conf);
@@ -265,7 +263,7 @@ class PrintService
             $final_image = imagecreatetruecolor($this->image_width, $this->image_height);
 
             $transColor1 = imagecolorallocatealpha($final_image, 0, 0, 0, 127);
-            $transColor2 = imagecolorallocatealpha($rotatedImage, 0, 0, 0, 127);
+            $transColor2 = imagecolorallocatealpha($rotatedImage, 255, 255, 255, 127);
             
             imagecolortransparent($final_image ,  $transColor1);
             imagecolortransparent($rotatedImage , $transColor2);        
@@ -284,11 +282,12 @@ class PrintService
     private function buildPdf() 
     {
         $tempdir = $this->tempdir;
+        $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $format = substr($this->data['template'],0,2);
         $this->pdf = new FPDF_FPDI($this->orientation,'mm',$format);
         $pdf = $this->pdf;
         $template = $this->data['template'];
-        $pdffile = __DIR__. '/../Templates/'.$template.'.pdf'; 
+        $pdffile = $resource_dir.'/templates/'.$template.'.pdf'; 
         $pagecount = $pdf->setSourceFile($pdffile);
         $tplidx = $pdf->importPage(1);
         
@@ -297,9 +296,9 @@ class PrintService
         
         $pdf->SetFont('Arial','',$this->conf['title']['fontsize']);
         $pdf->SetXY($this->conf['title']['x']*10, $this->conf['title']['y']*10); 
-        if ($this->data['extra']['titel'] != null)
+        if ($this->data['extra']['title'] != null)
         {
-            $pdf->Cell($this->conf['title']['width']*10,$this->conf['title']['height']*10,$this->data['extra']['titel']);
+            $pdf->Cell($this->conf['title']['width']*10,$this->conf['title']['height']*10,$this->data['extra']['title']);
             
         }     
         
@@ -318,12 +317,11 @@ class PrintService
             $tempdir = sys_get_temp_dir();
             foreach ($this->layer_urls as $k => $url) 
             {
-                $pdf->Image($tempdir.'/rotated_image'.$k.'.png', $this->x_ul, $this->y_ul, $this->width, $this->height, 'png');
+                $pdf->Image($tempdir.'/tempimage'.$k, $this->x_ul, $this->y_ul, $this->width, $this->height, 'png');
                 unlink($tempdir.'/tempimage'.$k);
-                unlink($tempdir.'/rotated_image'.$k.'.png');
             }
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);     
-            $pdf->Image(__DIR__. '/../Images/northarrow.png', 
+            $pdf->Image($resource_dir.'/images/northarrow.png', 
                         $this->conf['northarrow']['x']*10, 
                         $this->conf['northarrow']['y']*10, 
                         $this->conf['northarrow']['width']*10, 
@@ -356,8 +354,9 @@ class PrintService
     private function rotateNorthArrow()
     {
         $tempdir = $this->tempdir;
+        $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $rotation = $this->data['rotation'];
-        $northarrow = __DIR__. '/../Images/northarrow.png';
+        $northarrow = $resource_dir.'/images/northarrow.png';
         $im = imagecreatefrompng($northarrow);
         $transColor = imagecolorallocatealpha($im, 255, 255, 255, 127);
         $rotated = imagerotate($im , $rotation ,$transColor);
@@ -369,7 +368,7 @@ class PrintService
         }else{
             $src_img = imagecreatefrompng($tempdir.'/rotatednorth.png');
             $srcsize = getimagesize($tempdir.'/rotatednorth.png');
-            $destsize = getimagesize(__DIR__. '/../Images/northarrow.png');
+            $destsize = getimagesize($resource_dir.'/images/northarrow.png');
             $x = ($srcsize[0] - $destsize[0]) / 2;
             $y = ($srcsize[1] - $destsize[1]) / 2;
             $dst_img = imagecreatetruecolor($destsize[0], $destsize[1]);

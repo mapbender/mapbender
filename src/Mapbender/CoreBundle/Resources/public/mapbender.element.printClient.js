@@ -350,11 +350,12 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             value: extent.center.y
         }));
         
-        var layers = this.map.map.olMap.layers;
-        for(var i = 0; i < layers.length; i++) {
-            var layer = layers[i],
-                type = layer.CLASS_NAME;
-            if(!layer.geVisibility()){
+        var sources = this.map.getSourceTree();
+        for(var i = 0; i < sources.length; i++) {
+            var layer = this.map.map.layersList[sources[i].mqlid],
+                type = layer.olLayer.CLASS_NAME,
+                visible = layer.visible();
+            if(!visible){
                 continue;
             }    
             if(!(0 === type.indexOf('OpenLayers.Layer.'))) {
@@ -362,18 +363,18 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
                 continue;
             }
             
-            type = type.substr(17).toLowerCase();
-            if(type === 'vector') {
+//            type = type.substr(17).toLowerCase();
+            if(layer.olLayer.type === 'vector') {
                 // Vector layers are all the same:
                 //   * Get all features as GeoJSON
                 //   * TODO: Get Styles...
                 
                 // TODO: Implement this thing
-            } else if(Mapbender.layer[type] && typeof Mapbender.layer[type].getPrintConfig === 'function') {
+            } else if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
                 $.merge(fields, $('<input />', {
                     type: 'hidden',
                     name: 'layers[' + i + ']',
-                    value: JSON.stringify(Mapbender.layer[type].getPrintConfig(layer, this.map.map.olMap.getExtent()))
+                    value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent()))
                 }));
             }
         }
