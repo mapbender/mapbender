@@ -399,7 +399,8 @@ Mapbender.DefaultModel = {
         }
         var changed = this.createChangedObj(source);
         var result = {
-            visible: [], 
+            visible: [],
+            info: [],
             changed: changed
         };
         result = Mapbender.source[source.type].checkLayers(source,
@@ -408,6 +409,7 @@ Mapbender.DefaultModel = {
         mqLayer.layers = result.visible;
         mqLayer.olLayer.layers = mqLayer.layers;
         mqLayer.olLayer.params.LAYERS = mqLayer.layers;
+        mqLayer.olLayer.queryLayers = result.info;
         return result.changed;
     },
     
