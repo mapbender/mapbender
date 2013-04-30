@@ -15,7 +15,7 @@ use Mapbender\MonitoringBundle\Form\SchedulerProfileType;
 /**
  * Description of SchedulerProfileController
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class SchedulerProfileController extends Controller {
     

@@ -7,7 +7,7 @@
 ///**
 // * WmtsInstance class
 // *
-// * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+// * @author Paul Schmidt
 // *
 // * 
 // * @ORM\Entity

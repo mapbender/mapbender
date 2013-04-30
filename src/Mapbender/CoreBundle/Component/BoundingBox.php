@@ -5,7 +5,7 @@ namespace Mapbender\CoreBundle\Component;
 /**
  * BoundingBox class.
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class BoundingBox
 {
