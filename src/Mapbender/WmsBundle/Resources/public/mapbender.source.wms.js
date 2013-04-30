@@ -167,7 +167,13 @@ $.extend(true, Mapbender, {
                 .appendTo($('body'));
             },
 
-            layersFromCapabilities: function(xml, id) {
+            layersFromCapabilities: function(xml, id, defFormat, defInfoformat) {
+                if(!defFormat){
+                    defFormat = "image/png";
+                }
+                if(!defInfoformat){
+                    defInfoformat = "text/html";
+                }
                 var parser = new OpenLayers.Format.WMSCapabilities(),
                 capabilities = parser.read(xml);
 
@@ -180,16 +186,16 @@ $.extend(true, Mapbender, {
                     var format;
                     var formats = capabilities.capability.request.getmap.formats;
                     for(var i = 0; i < formats.length; i++){
-                        if(formats[i].toLowerCase() === "image/png")
-                            format = "image/png";
+                        if(formats[i].toLowerCase().indexOf(defFormat)!== -1)
+                            format = formats[i];
                     }
                     if(!format)
                         format = formats[0];
                     var infoformat;
                     var infoformats = capabilities.capability.request.getfeatureinfo.formats;
                     for(var i = 0; i < infoformats.length; i++){
-                        if(infoformats[i].toLowerCase() === "image/png")
-                            infoformat = "image/png";
+                        if(infoformats[i].toLowerCase().indexOf(defInfoformat)!== -1)
+                            infoformat = infoformats[i];
                     }
                     if(!infoformat)
                         infoformat = infoformats[0];

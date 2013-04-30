@@ -13,7 +13,7 @@ use Mapbender\WmtsBundle\Component\Exception\ParsingException;
 /**
 * Class that Parses WMTS GetCapabilies Document 
 * @package Mapbender
-* @author paul Schmidt <paul.schmidt@wheregroup.com>
+* @author paul Schmidt
  * 
 * Parses WMTS GetCapabilities documents
 */

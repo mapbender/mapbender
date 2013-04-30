@@ -48,11 +48,61 @@
         "goto": function(options) {
             this.map.center(options);
         },
+        
+        /**
+         *
+         */
+        setProjection: function(){
+            
+        },
+        setExtent: function(extent){
+            this.model.extent = extent;
+        },
+        setMaxExtent: function(extent, projection){
+            if(typeof projection === "string")
+                this.model.mapMaxExtent = {
+                    projection: this.model.getProj(projection),
+                    extent: extent
+                };
+            else
+                this.model.mapMaxExtent = {
+                    projection: projection,
+                    extent: extent
+                };
+        },
+        /**
+         *
+         */
+        getMapState: function(){
+            return this.model.getMapState();
+        },
         /**
          *
          */
         addSource: function(sourceDef){
             this.model.addSource(sourceDef, null, null);
+        },
+        /**
+         *
+         */
+        removeSource: function(source){
+            if(source && source.source){
+                this.model.removeSource(source);
+            } else if(source){
+                this.model.removeSource(this.model.createChangedObj(source));
+            }
+        },
+        /**
+         *
+         */
+        changeSource: function(source, changetype){
+            if(source && source.source && source.type !== ""){
+                this.model.changeSource(source);
+            } else if(source && changetype !== ""){
+                var tochange = this.model.createToChangeObj(source);
+                tochange.type = changetype;
+                this.model.changeSource(tochange);
+            }
         },
         /**
          * Triggers an event from the model.
@@ -98,9 +148,9 @@
          */
         changeProjection: function(srs){
             if(typeof srs === "string")
-                this.model.changeProjection(this.model.getProj(srs));
+                this.model.changeProjection({projection: this.model.getProj(srs)});
             else
-                this.model.changeProjection(srs);
+                this.model.changeProjection({projection: srs});
         },
         /**
          * Zooms the map in

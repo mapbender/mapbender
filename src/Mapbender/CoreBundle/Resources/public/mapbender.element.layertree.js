@@ -114,12 +114,17 @@
                                     tomove['layerId'] = tomoveId;
                                 }
                                 var tochange = self.model.createToChangeObj(tomove.source);
-                                tochange.type = "source_move";
-                                tochange.children.before = after;
-                                tochange.children.after = before;
-                                tochange.children.tomove = tomove;
-                                self.model.changeSource(tochange);
-                                break;
+                                if(tochange !== null){
+                                    tochange.type = "source_move";
+                                    tochange.children.before = after;
+                                    tochange.children.after = before;
+                                    tochange.children.tomove = tomove;
+                                    self.model.changeSource(tochange);
+                                    break;
+                                } else {
+                                    $(that).sortable('cancel');
+                                    return;
+                                }
                             }
                         }
                     }
@@ -140,7 +145,7 @@
                 if(!hasChildren){
                     var li_s = this._createSourceTree(added.source, added.source, this.model.getScale());
                     var first_li = $(this.element).find('ul.layers:first li:first');
-                    if(first_li){
+                    if(first_li && first_li.length !== 0){
                         first_li.before(li_s);
                     } else {
                         $(this.element).find('ul.layers:first').append($(li_s));
@@ -204,6 +209,8 @@
         
         _onSourceLoadStart: function(event, option){
             //            window.console && console.log("mbLayertree._onSourceLoadStart:", event);
+            if(!option.source)
+                return;
             var source = option.source;
             if(this.options.displaytype === "tree"){
                 var source_li = $(this.element).find('li[data-sourceid="'+source.id+'"]');
@@ -235,6 +242,8 @@
         
         _onSourceLoadEnd: function(event, option){
             //            window.console && console.log("mbLayertree._onSourceLoadEnd:", event);
+            if(!option.source)
+                return;
             var source = option.source;
             if(this.options.displaytype === "tree"){
                 var source_li = $(this.element).find('li[data-sourceid="'+source.id+'"]');
@@ -248,6 +257,8 @@
         },
         _onSourceLoadError: function(event, option){
             //            window.console && console.log("mbLayertree._onSourceLoadError:", event);
+            if(!option.source)
+                return;
             if(this.options.displaytype === "tree"){
                 var source_li = $(this.element).find('li[data-sourceid="'+option.source.id+'"]');
                 if(source_li.find('span.spinner:first').hasClass('loading')){
