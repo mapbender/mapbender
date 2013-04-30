@@ -225,7 +225,6 @@ class WmsInstance extends SourceInstance
                     floatval($bbox->getMaxx()),
                     floatval($bbox->getMaxy()))));
         }
-        $this->setSource(new WmsSource());
         $wmsconf = new WmsInstanceConfiguration();
         $wmsconf->setType(strtolower($this->getType()));
         $wmsconf->setTitle($this->title);
@@ -242,7 +241,7 @@ class WmsInstance extends SourceInstance
                 ->setTiled($this->tiled)
                 ->setBbox($srses);
         $wmsconf->setOptions($options);
-        $wmsconf->setChildren($this->generateLayersConfiguration($rootlayer));
+        $wmsconf->setChildren(array($this->generateLayersConfiguration($rootlayer)));
         $this->configuration = $wmsconf->toArray();
     }
 
