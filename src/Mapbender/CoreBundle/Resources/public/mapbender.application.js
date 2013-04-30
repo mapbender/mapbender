@@ -473,7 +473,8 @@ Mapbender.DefaultModel = {
         });
         var changed = this.createChangedObj(source);
         var result = {
-            visible: [], 
+            visible: [],
+            info: [],
             changed: changed
         };
         result = Mapbender.source[source.type].checkLayers(source,
