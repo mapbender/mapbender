@@ -146,72 +146,72 @@
         },
 
         _loadDocSuccess: function(data, options) {
-            options = options || {};
-            var me = $(this.element),
-                format = new OpenLayers.Format.WMC(),
-                map = $('#' + this.options.target).data('mbMap');
-
-            me.find('div#wmc-load-spinner').show().siblings().hide();
-
-            var wmc = format.read(data);
-            // Check if wmc.projection supported
-            var supported = map.getAllSrs();
-            var found = false;
-            for(var i = 0; i < supported.length; i++){
-                if(wmc.projection.toUpperCase() === supported[i].name.toUpperCase()){
-                    found = true;
-                    break;
-                }
-            }
-            if(!found){
-                Mapbender.error('The projection:"'+wmc.projection+'" is not supported by this application.');
-                return;
-            }
-            // remove all sources from model
-//            var sources = map.getSources();
-//            for(i = (sources.length - 1); i > -1; i--){
-//                map.removeSource(sources[i]);
+//            options = options || {};
+//            var me = $(this.element),
+//                format = new OpenLayers.Format.WMC(),
+//                map = $('#' + this.options.target).data('mbMap');
+//
+//            me.find('div#wmc-load-spinner').show().siblings().hide();
+//
+//            var wmc = format.read(data);
+//            // Check if wmc.projection supported
+//            var supported = map.getAllSrs();
+//            var found = false;
+//            for(var i = 0; i < supported.length; i++){
+//                if(wmc.projection.toUpperCase() === supported[i].name.toUpperCase()){
+//                    found = true;
+//                    break;
+//                }
 //            }
-
-            /**
-         * Set projection, maxExtent and bounds
-         */
-//            map.map.olMap.projection = wmc.projection;
-//            map.map.olMap.maxExtent = wmc.maxExtent;
-
-            /**
-         * Load layers from WMC into map
-         */
-            //TODO: queryLayers, opacity
-//            var hasBaseLayer = false;
-            var layerDefs = $.map(wmc.layersContext, function(layerContext) {
-//                hasBaseLayer |= layerContext.isBaselayer;
-                return {
-                    type: 'wms',
-                    label: layerContext.title,
-                    url: layerContext.url,
-
-                    allLayers: layerContext.allLayers,
-                    layers: layerContext.name,
-                    transparent: layerContext.transparent,
-                    format: layerContext.formats[0].value,
-                    isBaseLayer: layerContext.isBaseLayer,
-
-                    visible: layerContext.visibility,
-                    tiled: !layerContext.singleTile
-                };
-            });
-//            map.map.olMap.allOverlays = hasBaseLayer ? false : true;
-            $.each(layerDefs, function(idx, layerDef) {
-                map.map.layers(layerDef);
-            });
-            if(!options.dontZoom) {
-                map.zoomToExtent(wmc.bounds);
-            }
-
-            this._trigger('loaddone');
-
-            this.close();
+//            if(!found){
+//                Mapbender.error('The projection:"'+wmc.projection+'" is not supported by this application.');
+//                return;
+//            }
+//            // remove all sources from model
+////            var sources = map.getSources();
+////            for(i = (sources.length - 1); i > -1; i--){
+////                map.removeSource(sources[i]);
+////            }
+//
+//            /**
+//         * Set projection, maxExtent and bounds
+//         */
+////            map.map.olMap.projection = wmc.projection;
+////            map.map.olMap.maxExtent = wmc.maxExtent;
+//
+//            /**
+//         * Load layers from WMC into map
+//         */
+//            //TODO: queryLayers, opacity
+////            var hasBaseLayer = false;
+//            var layerDefs = $.map(wmc.layersContext, function(layerContext) {
+////                hasBaseLayer |= layerContext.isBaselayer;
+//                return {
+//                    type: 'wms',
+//                    label: layerContext.title,
+//                    url: layerContext.url,
+//
+//                    allLayers: layerContext.allLayers,
+//                    layers: layerContext.name,
+//                    transparent: layerContext.transparent,
+//                    format: layerContext.formats[0].value,
+//                    isBaseLayer: layerContext.isBaseLayer,
+//
+//                    visible: layerContext.visibility,
+//                    tiled: !layerContext.singleTile
+//                };
+//            });
+////            map.map.olMap.allOverlays = hasBaseLayer ? false : true;
+//            $.each(layerDefs, function(idx, layerDef) {
+//                map.map.layers(layerDef);
+//            });
+//            if(!options.dontZoom) {
+//                map.zoomToExtent(wmc.bounds);
+//            }
+//
+//            this._trigger('loaddone');
+//
+//            this.close();
         },
         
         _loadJsonSuccess: function(wmc, options) {
@@ -229,6 +229,14 @@
             for(var i = 0; i < supported.length; i++){
                 if(wmc.general.bbox.srs.toUpperCase() === supported[i].name.toUpperCase()){
                     found = true;
+                    var bbox = wmc.general.bbox;
+                    var extent = OpenLayers.Bounds.fromArray([bbox.minx, bbox.miny, bbox.maxx, bbox.maxy]);
+                    map.setExtent(extent);
+                    var bboxm = wmc.general.maxBbox;
+                    var extentm = OpenLayers.Bounds.fromArray([bboxm.minx, bboxm.miny, bboxm.maxx, bboxm.maxy]);
+                    map.setMaxExtent(extentm, bbox.srs);
+                    map.changeProjection(bbox.srs);
+                    map.zoomToExtent(extent);
                     break;
                 }
             }

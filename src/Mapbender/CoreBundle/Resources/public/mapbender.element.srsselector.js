@@ -50,9 +50,7 @@
             if(dest.projCode === 'EPSG:4326') {
                 dest.proj.units = 'degrees';
             }
-            this._trigger('srsSwitched', null, {
-                projection: dest
-            });
+            this._trigger('srsSwitched', null, { projection: dest });
             return true;
         },
 

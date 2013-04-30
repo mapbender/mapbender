@@ -360,7 +360,7 @@ Mapbender.DefaultModel = {
      *Creates a "tochange" object
      */
     createToChangeObj: function(source){
-        if(!source.id){
+        if(!source || !source.id){
             return null;
         }
         return {
@@ -374,7 +374,7 @@ Mapbender.DefaultModel = {
      *Creates a "changed" object
      */
     createChangedObj: function(source){
-        if(!source.id){
+        if(!source || !source.id){
             return null;
         }
         return {
@@ -710,7 +710,7 @@ Mapbender.DefaultModel = {
             if(!Mapbender.source[toremove.source.type].hasLayers(toremove.source, true)){
                 var removedMq = mqLayer.remove();
                 if(removedMq){
-                    this._removeLayerMaxExtent(removedMq);
+                    this._removeLayerMaxExtent(mqLayer);
                     sourceRemoved = true;
                     for (var i = 0; i < this.sourceTree.length; i++){
                         if(this.sourceTree[i].id.toString() === toremove.source.id.toString()){
@@ -746,6 +746,26 @@ Mapbender.DefaultModel = {
                     value: removedObj
                 });
                 this._checkAndRedrawSource(toremove.source, mqLayer);
+            }
+        } else if(mqLayer){
+            var removedMq = mqLayer.remove();
+            if(removedMq){
+                this._removeLayerMaxExtent(mqLayer);
+                sourceRemoved = true;
+                for (var i = 0; i < this.sourceTree.length; i++){
+                    if(this.sourceTree[i].id.toString() === toremove.source.id.toString()){
+                        this.sourceTree.splice(i, 1);
+                        break;
+                    }
+                }
+                if(this.map.layersList[toremove.source.mqlid]){
+                    delete(this.map.layersList[toremove.source.mqlid]);
+                }
+                var removedObj = this.createChangedObj(toremove.source);
+                this.mbMap.fireModelEvent({
+                    name: 'sourceRemoved', 
+                    value: removedObj
+                });
             }
         }
         if(toconcat1 && toconcat2 && sourceRemoved){
@@ -1231,7 +1251,7 @@ Mapbender.DefaultModel = {
         });
         //        this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
         this.center({
-            position: [center.lon, center.lat]
+            position: [center.lon, center.lat], zoom: this.map.olMap.getZoom()
         });
         this.mbMap._trigger('srsChanged', null, {
             projection: srs.projection
@@ -1293,8 +1313,8 @@ Mapbender.DefaultModel = {
         if(layer.olLayer) {
             layer = layer.olLayer;
         }
-        if(this.layersOrigExtent[layer.id]){
-            delete(this.layersOrigExtent[layer.id]);
+        if(this.layersMaxExtent[layer.id]){
+            delete(this.layersMaxExtent[layer.id]);
         }
     }
     
