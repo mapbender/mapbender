@@ -529,7 +529,7 @@ $.extend(true, Mapbender, {
                             result.changed.children[layer.options.id] = layerChanged;
                         }
                     }
-                    if(layer.options.treeOptions.info === true){
+                    if(layer.options.treeOptions.info === true && layer.state.visibility){
                         result.info.push(layer.options.name);
                     }
                     if(layer.children){
@@ -618,6 +618,9 @@ $.extend(true, Mapbender, {
                             && layer.options.name.length > 0){
                             layer.state.visibility = true;
                             result.visible.push(layer.options.name);
+                            if(layer.options.treeOptions.info === true){
+                                result.info.push(layer.options.name);
+                            }
                         } else {
                             layer.state.visibility = false;
                         }
