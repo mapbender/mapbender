@@ -53,13 +53,13 @@ class MapAdminType extends AbstractType
                     'label' => 'Layerset',
                     "required" => true,
                     'choices' => $layersets))
-                ->add('dpi', 'integer',
+                ->add('dpi', 'text',
                       array(
                     'label' => 'DPI'
                 ))
                 ->add('srs', 'text',
                       array(
-                    'label' => 'Spatial Reference System'
+                    'label' => 'SRS'
                 ))
                 ->add('units', 'choice',
                       array(
@@ -92,11 +92,11 @@ class MapAdminType extends AbstractType
                 ))
                 ->add('imgPath', 'text',
                       array(
-                    'label' => 'OpenLayers image path'
+                    'label' => 'OL image path'
                 ))
                 ->add('otherSrs', 'text',
                       array(
-                    'label' => 'Other Spatial Reference Systems',
+                    'label' => 'Other SRS',
                     'required' => false
                 ));
     }

@@ -9,7 +9,10 @@
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.units) }}{{ form_widget(form.configuration.units) }}
     <div class="clearContainer"></div>
-    {{ form_label(form.configuration.extent_max) }}{{ form_widget(form.configuration.extent_max) }}
+    <label class="labelInput">{{"Max. extent"|trans}}</label>
+    
+    {{ form_widget(form.configuration.extent_max) }}
+
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.extent_start) }}{{ form_widget(form.configuration.extent_start) }}
     <div class="clearContainer"></div>
