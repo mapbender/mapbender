@@ -5,6 +5,8 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
+use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
@@ -149,22 +151,21 @@ class WmsInstance extends SourceInstance
     public function generateYmlConfiguration()
     {
         $this->setSource(new WmsSource());
-        $configuration = array(
-            "type" => strtolower($this->getType()),
-            "title" => $this->title,
-            "baseSource" => true,
-            "options" => array(
-                "url" => $this->configuration["url"],
-                "proxy" => $this->proxy,
-                "visible" => $this->visible,
-                "format" => $this->getFormat(),
-                "info_format" => $this->infoformat,
-                "transparent" => $this->getFormat(),
-                "opacity" => $this->opacity / 100,
-                "tiled" => $this->tiled,
-                "baselayer" => false
-            )
-        );
+        $wmsconf = new WmsInstanceConfiguration();
+        $wmsconf->setType(strtolower($this->getType()));
+        $wmsconf->setTitle($this->title);
+        $wmsconf->setIsBaseSource(true);
+        
+        $options = new WmsInstanceConfigurationOptions();
+        $options->setUrl($this->configuration["url"])
+                ->setProxy($this->proxy)
+                ->setVisible($this->visible)
+                ->setFormat($this->getFormat())
+                ->setInfoformat($this->infoformat)
+                ->setTransparency($this->transparency)
+                ->setOpacity($this->opacity / 100)
+                ->setTiled($this->tiled);
+        $wmsconf->setOptions($options);
         if(!key_exists("children", $this->configuration))
         {
             $num = 0;
@@ -191,14 +192,13 @@ class WmsInstance extends SourceInstance
                 $rootlayer->addSublayer($layer);
                 $this->addLayer($layer);
             }
-            $configuration["children"] = array($this->generateLayersConfiguration($rootlayer));
+            $children = array($this->generateLayersConfiguration($rootlayer));
+            $wmsconf->setChildren($children);
         } else
         {
-            $configuration["children"] = $this->configuration["children"];
+            $wmsconf->setChildren($this->configuration["children"]);
         }
-        // TODO delete line, if client implements
-        $configuration = array_merge($configuration, $this->configuration);
-        $this->configuration = $configuration;
+        $this->configuration = $wmsconf->toArray();
     }
 
     /**
@@ -225,28 +225,24 @@ class WmsInstance extends SourceInstance
                     floatval($bbox->getMaxx()),
                     floatval($bbox->getMaxy()))));
         }
-        $configuration = array(
-            "type" => strtolower($this->getType()),
-            "title" => $this->title,
-            "baseSource" => true,
-            "options" => array(
-                "url" => $this->source->getGetMap()->getHttpGet(),
-                "proxy" => $this->getProxy(),
-                "visible" => $this->getVisible(),
-                "format" => $this->getFormat(),
-                "info_format" => $this->getInfoformat(),
-                "transparent" => $this->transparency,
-                "opacity" => $this->opacity / 100,
-                "tiled" => $this->tiled,
-                "baselayer" => false,
-                "bbox" => $srses
-            ),
-            "children" => array($this->generateLayersConfiguration($rootlayer))
-        );
-//        // TODO delete line, if client implements
-//        $configuration = array_merge($configuration,
-//                                     $this->createConfigurationOld());
-        $this->configuration = $configuration;
+        $wmsconf = new WmsInstanceConfiguration();
+        $wmsconf->setType(strtolower($this->getType()));
+        $wmsconf->setTitle($this->title);
+        $wmsconf->setIsBaseSource(true);
+        
+        $options = new WmsInstanceConfigurationOptions();
+        $options->setUrl($this->source->getGetMap()->getHttpGet())
+                ->setProxy($this->getProxy())
+                ->setVisible($this->getVisible())
+                ->setFormat($this->getFormat())
+                ->setInfoformat($this->getInfoformat())
+                ->setTransparency($this->transparency)
+                ->setOpacity($this->opacity / 100)
+                ->setTiled($this->tiled)
+                ->setBbox($srses);
+        $wmsconf->setOptions($options);
+        $wmsconf->setChildren(array($this->generateLayersConfiguration($rootlayer)));
+        $this->configuration = $wmsconf->toArray();
     }
 
     /**
@@ -284,48 +280,6 @@ class WmsInstance extends SourceInstance
         }
         return $configuration;
     }
-
-//
-//    // TODO delete function, if client implements
-//    private function createConfigurationOld()
-//    {
-//        // from db
-//        $layers = array();
-//        $infoLayers = array();
-//        $rootlayer = $this->getRootlayer();
-//
-//        foreach($this->layers as $layer)
-//        {
-//            if($layer->getActive() === true
-//                    && $layer->getWmslayersource()->getParent() !== null
-//            )
-//            { //only active and not wms root layer
-//                $layers[] = $layer->getConfiguration();
-//                if($layer->getInfo() !== null && $layer->getInfo())
-//                {
-//                    $infoLayers[] = $layer->getTitle();
-//                }
-//            }
-//        }
-//        $configuration = array(
-//            "id" => $rootlayer->getId(),
-//            "title" => $rootlayer->getTitle() !== null
-//            && $rootlayer->getTitle() !== "" ?
-//                    $rootlayer->getTitle() : $this->title,
-//            "url" => $this->source->getGetMap()->getHttpGet(),
-//            "proxy" => $this->getProxy(),
-//            "visible" => $this->getVisible(),
-//            "format" => $this->getFormat(),
-//            "info_format" => $this->getInfoformat(),
-//            "queryFormat" => $this->infoformat,
-//            "transparent" => $this->transparency, //@TODO: This must be "transparent", not "transparency"
-//            "opacity" => $this->opacity / 100,
-//            "tiled" => $this->tiled,
-//            "layers" => array_reverse($layers),
-//            "queryLayers" => array_reverse($infoLayers),
-//        );
-//        return $configuration;
-//    }
 
     /**
      * Set layers

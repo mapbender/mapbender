@@ -34,7 +34,7 @@ $.widget("mapbender.mbFeatureInfo", $.ui.dialog, {//$.mapbender.mbButton, {
 
     activate: function() {
         var self = this;
-        //        this._super('activate');
+//                this._super('open');
         this.map = $('#' + this.options.target).data('mapQuery');
         $('#' + this.options.target).addClass('mb-feature-info-active');
         this.mapClickHandler = function(e) {
@@ -66,20 +66,20 @@ $.widget("mapbender.mbFeatureInfo", $.ui.dialog, {//$.mapbender.mbButton, {
         $(this.element).empty();
         var tabs = $('<div></div>').attr('id', 'featureinfo-tabs').appendTo(this.element);
         var header = $('<ol></ol>').appendTo(tabs);
-
+        var layers = this.map.layers();
         // Go over all layers
         $.each(this.map.layers(), function(idx, layer) {
             if(!layer.visible()) {
                 return;
             }
-
-            var queryLayers = [];
-            $.each(layer.options.allLayers, function(idx, l) {
-                if(l.queryable === true && $.inArray(l.name, layer.olLayer.params.LAYERS) !== -1) {
-                    queryLayers.push(l.name);
-                }
-            });
-            if(queryLayers.length === 0) {
+//            var queryLayers = layer.olLayer.queryLayers;
+//            var queryLayers = [];
+//            $.each(layer.options.allLayers, function(idx, l) {
+//                if(l.queryable === true && $.inArray(l.name, layer.olLayer.params.LAYERS) !== -1) {
+//                    queryLayers.push(l.name);
+//                }
+//            });
+            if(!layer.olLayer.queryLayers || layer.olLayer.queryLayers.length === 0) {
                 return;
             }
             fi_exist = true;

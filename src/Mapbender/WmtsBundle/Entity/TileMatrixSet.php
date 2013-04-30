@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * TileMatrixSet class
  *
- * @author Paul Schmidt <paul.schmidt@wheregroup.com>
+ * @author Paul Schmidt
  */
 class TileMatrixSet {
     /**  @var string title */

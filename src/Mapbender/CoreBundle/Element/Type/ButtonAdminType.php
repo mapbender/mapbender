@@ -17,7 +17,7 @@ class ButtonAdminType extends AbstractType
      */
     public function getName()
     {
-        return 'toc';
+        return 'button';
     }
 
     /**

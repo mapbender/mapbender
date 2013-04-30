@@ -88,7 +88,7 @@ $.extend(true, Mapbender, {
             },
 
             featureInfo: function(layer, x, y, callback) {
-                if(layer.options.queryLayers.length === 0) {
+                if(layer.olLayer.queryLayers.length === 0) {
                     return;
                 }
                 var param_tmp = {
@@ -97,33 +97,33 @@ $.extend(true, Mapbender, {
                     VERSION: layer.olLayer.params.VERSION,
                     EXCEPTIONS: "application/vnd.ogc.se_xml",
                     FORMAT: layer.olLayer.params.FORMAT,
-                    INFO_FORMAT: layer.options.configuration.configuration.info_format || "text/plain",
+                    INFO_FORMAT: layer.source.configuration.options.info_format || "text/plain",
                     SRS: layer.olLayer.params.SRS,
                     BBOX: layer.map.center().box.join(','),
                     WIDTH: $(layer.map.element).width(),
                     HEIGHT: $(layer.map.element).height(),
                     X: x,
                     Y: y,
-                    LAYERS: layer.options.queryLayers.join(','),
-                    QUERY_LAYERS: layer.options.queryLayers.join(',')
+                    LAYERS: layer.olLayer.queryLayers.join(','),
+                    QUERY_LAYERS: layer.olLayer.queryLayers.join(',')
                 };
                 var contentType_ = "";
-                if(typeof(layer.options.configuration.configuration.info_format)
+                if(typeof(layer.source.configuration.options.info_format)
                     !== 'undefined'){
                     param_tmp["INFO_FORMAT"] =
-                    layer.options.configuration.configuration.info_format;
+                    layer.source.configuration.options.info_format;
                 //                contentType_ +=
                 //                    layer.options.configuration.configuration.info_format;
                 }
-                if(typeof(layer.options.configuration.configuration.feature_count)
+                if(typeof(layer.source.configuration.options.feature_count)
                     !== 'undefined'){
                     param_tmp["FEATURE_COUNT"] =
-                    layer.options.configuration.configuration.feature_count;
+                    layer.source.configuration.options.feature_count;
                 }
-                if(typeof(layer.options.configuration.configuration.info_charset)
+                if(typeof(layer.source.configuration.options.info_charset)
                     !== 'undefined'){
                     contentType_ += contentType_.length > 0 ? ";" : "" +
-                    layer.options.configuration.configuration.info_charset;
+                    layer.source.configuration.options.info_charset;
                 }
                 var params = $.param(param_tmp);
 
@@ -167,7 +167,13 @@ $.extend(true, Mapbender, {
                 .appendTo($('body'));
             },
 
-            layersFromCapabilities: function(xml, id) {
+            layersFromCapabilities: function(xml, id, defFormat, defInfoformat) {
+                if(!defFormat){
+                    defFormat = "image/png";
+                }
+                if(!defInfoformat){
+                    defInfoformat = "text/html";
+                }
                 var parser = new OpenLayers.Format.WMSCapabilities(),
                 capabilities = parser.read(xml);
 
@@ -180,16 +186,16 @@ $.extend(true, Mapbender, {
                     var format;
                     var formats = capabilities.capability.request.getmap.formats;
                     for(var i = 0; i < formats.length; i++){
-                        if(formats[i].toLowerCase() === "image/png")
-                            format = "image/png";
+                        if(formats[i].toLowerCase().indexOf(defFormat)!== -1)
+                            format = formats[i];
                     }
                     if(!format)
                         format = formats[0];
                     var infoformat;
                     var infoformats = capabilities.capability.request.getfeatureinfo.formats;
                     for(var i = 0; i < infoformats.length; i++){
-                        if(infoformats[i].toLowerCase() === "image/png")
-                            infoformat = "image/png";
+                        if(infoformats[i].toLowerCase().indexOf(defInfoformat)!== -1)
+                            infoformat = infoformats[i];
                     }
                     if(!infoformat)
                         infoformat = infoformats[0];
@@ -240,12 +246,12 @@ $.extend(true, Mapbender, {
                                 title: layer.title,
                                 treeOptions: {
                                     allow: {
-                                        info: false,
+                                        info: layer.queryable ? true: false,
                                         reorder: true,
                                         selected: true,
                                         toggle: true
                                     },
-                                    info: null,
+                                    info: layer.queryable ? true: null,
                                     selected: true,
                                     toggle: true
                                 }
@@ -523,7 +529,7 @@ $.extend(true, Mapbender, {
                             result.changed.children[layer.options.id] = layerChanged;
                         }
                     }
-                    if(layer.options.treeOptions.info === true){
+                    if(layer.options.treeOptions.info === true && layer.state.visibility){
                         result.info.push(layer.options.name);
                     }
                     if(layer.children){
@@ -612,6 +618,9 @@ $.extend(true, Mapbender, {
                             && layer.options.name.length > 0){
                             layer.state.visibility = true;
                             result.visible.push(layer.options.name);
+                            if(layer.options.treeOptions.info === true){
+                                result.info.push(layer.options.name);
+                            }
                         } else {
                             layer.state.visibility = false;
                         }
