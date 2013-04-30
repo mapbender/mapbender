@@ -81,7 +81,7 @@ class PrintClient extends Element
     {
         $configuration = $this->getConfiguration();
         $forms = array();
-        if (null !== $configuration['optional_fields']) 
+        if (isset($configuration['optional_fields']) && null !== $configuration['optional_fields']) 
         {
             $form_builder = $this->container->get('form.factory')->createNamedBuilder('extra', 'form', null, array(
                 'csrf_protection' => false
