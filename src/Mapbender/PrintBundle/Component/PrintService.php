@@ -36,14 +36,14 @@ class PrintService
 
         $this->rotate();
 
-//        if ($this->data['rotation'] == 0)
-//        {
-//            $this->setExtent();
-//            $this->setImageSize();    
-//            $this->getImages();
-//        }else{
-//            $this->rotate();
-//        }
+        if ($this->data['rotation'] == 0)
+        {
+            $this->setExtent();
+            $this->setImageSize();    
+            $this->getImages();
+        }else{
+            $this->rotate();
+        }
         
         $this->buildPdf();
     }
@@ -68,9 +68,9 @@ class PrintService
      */
     private function createUrlArray()
     {
-        for ($i=0; $i<count($this->data['layers']); $i++)
+        foreach ($this->data['layers'] as $i => $layer) 
         {
-            $url = strstr($this->data['layers'][$i+1]['url'], 'BBOX', true);
+            $url = strstr($this->data['layers'][$i]['url'], 'BBOX', true);
             $this->layer_urls[$i] = $url;  
         }
     }
@@ -139,27 +139,34 @@ class PrintService
     {       
         foreach ($this->layer_urls as $k => $url) 
         {          
-            $buzz = new Browser;
-            $buzz->timeout = 10000;
-            $response = $buzz->get($url);
+            $attributes = array();
+            $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
+            $subRequest = new Request(array(
+                'url' => $url
+            ), array(), $attributes);
+            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);                
+                
+            $tempdir = $this->tempdir;
+            $imagename = $tempdir.'/tempimage'.$k;
             
-//        print "<pre>";
-//        print_r($response);
-//        print "</pre>";
-//        die();
-
-            if ($response->getHeader('Content-Type') != 'image/png'){
-                print_r ($response->getContent());
-                die();
+            file_put_contents($imagename, $response->getContent());         
+            
+            switch(trim($response->headers->get('content-type'))) {
+                case 'image/png' :
+                    $im = imagecreatefrompng($imagename);
+                    break;
+                case 'image/jpeg' :
+                    $im = imagecreatefromjpeg($imagename);
+                    break;
+                case 'image/gif' : 
+                    $im = imagecreatefromgif($imagename);
+                    break;
+                default: 
+                    throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
-            $image =  $response->getContent();
-            $imagename = $this->tempdir.'/tempimage'.$k.'.png';
-            $handle = fopen($imagename, "w");
-            fwrite($handle, $image);
-            fclose($handle);
 
             //interlace
-            //$this->checkInterlace($imagename);
+            $this->checkInterlace($imagename);
         }
     }     
     

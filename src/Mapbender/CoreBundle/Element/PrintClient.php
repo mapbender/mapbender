@@ -62,7 +62,11 @@ class PrintClient extends Element
                 "service" => null,
                 "metadata" => null,
             ),
-            "formats" => Array(),
+            "templates" => Array(),
+            "scales" => null,
+            "quality_levels" => Array(),
+            "rotatable" => true,
+            "optional_fields" => Array()
         );
     }
 
