@@ -11,11 +11,11 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @author Paul Schmidt
  *
- * @ORM\Entity
- * @ORM\Table(name="mb_core_applicationstate")
- * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorColumn(name="discr", type="string")
- * ORM\DiscriminatorMap({"mb_core_source" = "Source"})
+ * @#ORM\Entity
+ * @#ORM\Table(name="mb_core_applicationstate")
+ * @#ORM\InheritanceType("JOINED")
+ * @#ORM\DiscriminatorColumn(name="discr", type="string")
+ * #ORM\DiscriminatorMap({"mb_core_source" = "Source"})
  */
 class ApplicationState
 {
