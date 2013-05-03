@@ -10,6 +10,9 @@ use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
+use Mapbender\WmsBundle\Component\Style;
+use Mapbender\WmsBundle\Component\OnlineResource;
+use Mapbender\WmsBundle\Component\LegendUrl;
 
 /**
  * WmsInstance class
@@ -182,6 +185,21 @@ class WmsInstance extends SourceInstance
                 $layer = new WmsInstanceLayer();
                 $layersource = new WmsLayerSource();
                 $layersource->setName($layerDef["name"]);
+                if(isset($layerDef["legendurl"])){
+                    $style = new Style();
+                    $style->setName(null);
+                    $style->setTitle(null);
+                    $style->setAbstract(null);
+                    $legendUrl = new LegendUrl();
+                    $legendUrl->setWidth(null);
+                    $legendUrl->setHeight(null);
+                    $onlineResource = new OnlineResource();
+                    $onlineResource->setFormat(null);
+                    $onlineResource->setHref($layerDef["legendurl"]);
+                    $legendUrl->setOnlineResource($onlineResource);
+                    $style->setLegendUrl($legendUrl);
+                    $layersource->addStyle($style);
+                }
                 $layer->setTitle($layerDef["title"])
                         ->setId($num)
                         ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
