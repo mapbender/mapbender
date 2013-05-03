@@ -252,7 +252,10 @@ $(function() {
                                subTitle: " - " + $(this).parent().siblings(".subTitle").text()},
                               $(this).attr("href"), 
                               null,
-                              null);
+                              null,
+                              function(){
+                                $("#popup").find(".buttonYes").hide();
+                              });
         }
         return false;
     });

@@ -176,7 +176,6 @@ class ApplicationController extends Controller
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
         $this->checkGranted('EDIT', $application);
-
         $templateClassOld = $application->getTemplate();
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
@@ -233,7 +232,8 @@ class ApplicationController extends Controller
         }
 
         $this->get('session')->setFlash('error',
-                                        'Your form has errors, please review them below.');
+                                       'Your form has errors, please review them below.');
+
 
         return array(
             'application' => $application,

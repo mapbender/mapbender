@@ -5,26 +5,25 @@
 <ul id="listFilterLayersets" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">
   {% for layerset in application.layersets %}
     <li class="filterItem">
-      <table class="table layerset" data-id="{{ layerset.id }}">
-        <thead id="permissionsHead">
+      <table class="tableCore layerset" data-id="{{ layerset.id }}">
+        <thead>
           <tr>
             <th class="subTitle">{{ layerset.title | capitalize }}</th>
             <th class="iconColumn">
-              <a class="right addIcon addInstance" title="{{"Add Instance"|trans}}" href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+              <a class="right addIconSmall addInstance" title="{{"Add Instance"|trans}}" href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
             </th>
             <th class="iconColumn">
-              <a class="right editIcon editLayerset" title="{{"Edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+              <a class="right editIconSmall editLayerset" title="{{"Edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
             </th>
             <th class="iconColumn">
-              <a class="right deleteIcon deleteLayerset" title="{{"Delete"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+              <a class="right deleteIconSmall deleteLayerset" title="{{"Delete"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
             </th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td colspan="2">
-              <a class="publishIcon" title="" href="#"></a>
-              sdfsd
+              <a class="publishIconSmall" title="" href="#"></a><span>asdas</span>
             </td>
             <td>
               <a class="editIconSmall" title="" href="#"></a>

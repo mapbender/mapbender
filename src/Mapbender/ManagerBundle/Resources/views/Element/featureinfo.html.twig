@@ -1,6 +1,7 @@
 <div class="elementFormFeatureInfo elementForm">
-    {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{"Auto open"|trans}}</label>
-    <div class="clearContainer"></div>
+    <div class="left">
+        {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{"Auto open"|trans}}</label>
+    </div>
     {{ form_widget(form.configuration.deactivateOnClose) }}<label for="{{form.configuration.deactivateOnClose.vars.id}}" class="labelCheck">{{"Deactivate on close"|trans}}</label>
     <div class="clearContainer"></div>
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
