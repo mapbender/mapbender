@@ -23,7 +23,6 @@ class AppKernel extends Kernel
 
             // Extra bundles required by Mapbender3/OWSProxy3
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
-            new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
 
             // FoM bundles
             new FOM\CoreBundle\FOMCoreBundle(),

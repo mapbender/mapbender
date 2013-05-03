@@ -23,6 +23,9 @@ twig:
     strict_variables: %kernel.debug%
     globals:
         fom:    %fom%
+    form:
+        resources:
+            - 'FOMCoreBundle:Form:fields.html.twig'
 
 # Assetic Configuration
 assetic:
@@ -61,12 +64,6 @@ swiftmailer:
     password:  %mailer_password%
     spool:     { type: memory }
 
-# Mopa Bootstrap
-mopa_bootstrap:
-    form:
-        show_legend: false # default is true
-        show_child_legend: false # default is true
-        error_type: block # or inline which is default
 
 # FOM Manager Configuration
 fom_manager:
