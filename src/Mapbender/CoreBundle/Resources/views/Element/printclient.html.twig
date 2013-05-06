@@ -9,43 +9,35 @@
                     {% endfor %}
                 </select>
             </div>     
-
+            <br>
             <div>
                 <label class="printlabel" for="quality">{{ 'Auflösung' | trans }}</label>
-                <select name="quality" >
-                </select>
+                <select name="quality" ></select>
             </div>
-            
+            <br>
             <div>
                 <label class="printlabel" for="scale_text">{{ 'Maßstab' | trans }}</label>
                 <input type="text" name="scale_text" size="8"/>                
             </div>
-            
             <div>
                 <label class="printlabel" for="scale_select">{{ 'Maßstab' | trans }}</label>
-                <select name="scale_select">
-                </select>
+                <select name="scale_select"></select>
             </div>
-          
+            <br>
             <div>
                 <label class="printlabel" for="rotation">{{ 'Rotation' | trans }}</label>
                 <input type="text" name="rotation" size="3"/>
             </div>      
-                        
-            <div>
-                <input type="checkbox" name="free_extent"/>
-                <label for="free_extent">{{ 'Free Extent' | trans }}</label>
-            </div>
-                
-            <div class="extra_fields">
+            <br>    
+            <div id="extra_fields">
             </div>
             <br>
             <button id="printbutton">Drucken</button>
-            <div class="layers"></div>
+            <div id="layers"></div>
         </form>
     </div>
         
-    <div class="extra_forms">
+    <div id="extra_forms">
         {% for key, form in forms %}
         <form name="{{ key }}">
             {{ form_widget(form) }}
