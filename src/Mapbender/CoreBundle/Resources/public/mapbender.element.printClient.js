@@ -313,7 +313,7 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
     _printDirectly: function() {
         var form = $('form#formats', this.element),
             extent = this._getPrintExtent();
-        
+        form.find('div.layers').html('');
         var template_key = this.element.find('select[name="template"]').val(),
             format = this.options.templates[template_key].format;
         
@@ -350,12 +350,13 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             value: extent.center.y
         }));
         
-        var sources = this.map.getSourceTree();
+        var sources = this.map.getSourceTree(), num = 0;
+        
         for(var i = 0; i < sources.length; i++) {
             var layer = this.map.map.layersList[sources[i].mqlid],
-                type = layer.olLayer.CLASS_NAME,
-                visible = layer.visible();
-            if(!visible){
+                type = layer.olLayer.CLASS_NAME;
+//            if(!sources[i].configuration.children[0].state.visibility){
+            if(layer.olLayer.params.LAYERS.length === 0){
                 continue;
             }    
             if(!(0 === type.indexOf('OpenLayers.Layer.'))) {
@@ -373,13 +374,14 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             } else if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
                 $.merge(fields, $('<input />', {
                     type: 'hidden',
-                    name: 'layers[' + i + ']',
+                    name: 'layers[' + num + ']',
                     value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent()))
                 }));
+                num++;
             }
         }
         
-        fields.appendTo(form);
+        fields.appendTo(form.find('div.layers'));
         // Post in neuen Tab (action bei form anpassen)
         
         var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';   
