@@ -238,8 +238,8 @@ $.extend(true, Mapbender, {
                                 legend: legend, // inheritance from style
                                 bbox: null, // inheritance replace
                                 srslist: null,
-                                maxScale: layer.minScale ? layer.minScale : parent.options.maxScale, // inheritance replace
-                                minScale: layer.maxScale ? layer.maxScale : parent.options.minScale, // inheritance replace
+                                maxScale: layer.minScale ? layer.minScale : parent && parent.options.maxScale ? parent.options.maxScale : null, // inheritance replace
+                                minScale: layer.maxScale ? layer.maxScale : parent && parent.options.minScale ? parent.options.minScale : null, // inheritance replace
                                 name: layer.name, // inheritance
                                 queryable: layer.queryable,
                                 style: layer.styles.length === 0 ? null : layer.styles[0].name, // inheritance add
