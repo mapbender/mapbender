@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use FPDF_FPDF;
 use FPDF_FPDI;
-use Buzz\Browser;
+use Mapbender\PrintBundle\Component\PDF_ImageAlpha;
 
 /**
  * The print service.
@@ -30,21 +30,23 @@ class PrintService
     {
         $this->data = json_decode($content, true);
         $template = $this->data['template'];
+//        print "<pre>";
+//        print_r($this->data);
+//        print "</pre>";
+//        die();
         $this->getTemplateConf($template);         
         $this->createUrlArray();     
         $this->setMapParameter();
 
-        $this->rotate();
-
-//        if ($this->data['rotation'] == 0)
-//        {
-//            $this->setExtent();
-//            $this->setImageSize();    
-//            $this->getImages();
-//        }else{
-//            $this->rotate();
-//        }
-        
+        if ($this->data['rotation'] == 0)
+        {
+            $this->setExtent();
+            $this->setImageSize();    
+            $this->getImages();
+        }else{
+            $this->rotate();
+        }
+        //$this->test();
         $this->buildPdf();
     }
     
@@ -54,7 +56,7 @@ class PrintService
      */
     private function getTemplateConf($template) 
     {
-        $odgParser = new OdgParser();
+        $odgParser = new OdgParser($this->container);
         $this->conf = $odgParser->getConf($template);    
 //        print "<pre>";
 //        print_r($this->conf);
@@ -68,9 +70,9 @@ class PrintService
      */
     private function createUrlArray()
     {
-        for ($i=0; $i<count($this->data['layers']); $i++)
+        foreach ($this->data['layers'] as $i => $layer) 
         {
-            $url = strstr($this->data['layers'][$i+1]['url'], 'BBOX', true);
+            $url = strstr($this->data['layers'][$i]['url'], 'BBOX', true);
             $this->layer_urls[$i] = $url;  
         }
     }
@@ -126,7 +128,11 @@ class PrintService
         {
             $width = '&WIDTH='.$this->image_width;
             $height = '&HEIGHT='.$this->image_height;
-            $url .= $width.$height;//'&map_resolution=288';
+            $url .= $width.$height;
+            if ($this->data['quality'] == '288')
+            {
+               $url .= '&map_resolution=288';
+            }       
             $this->layer_urls[$k] = $url;
         }
     }
@@ -139,43 +145,53 @@ class PrintService
     {       
         foreach ($this->layer_urls as $k => $url) 
         {          
-            $buzz = new Browser;
-            $buzz->timeout = 10000;
-            $response = $buzz->get($url);
+            $attributes = array();
+            $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
+            $subRequest = new Request(array(
+                'url' => $url
+            ), array(), $attributes, array(), array(), array(), '');
+            $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+
+            $tempdir = $this->tempdir;
+            $imagename = $tempdir.'/tempimage'.$k;
             
-//        print "<pre>";
-//        print_r($response);
-//        print "</pre>";
-//        die();
-
-            if ($response->getHeader('Content-Type') != 'image/png'){
-                print_r ($response->getContent());
-                die();
+            file_put_contents($imagename, $response->getContent());         
+            
+            switch(trim($response->headers->get('content-type'))) {
+                case 'image/png' :
+                    $im = imagecreatefrompng($imagename);
+                    break;
+                case 'image/jpeg' :
+                    $im = imagecreatefromjpeg($imagename);
+                    break;
+                case 'image/gif' : 
+                    $im = imagecreatefromgif($imagename);
+                    break;
+                default: 
+                    continue;
+                    $this->container->get("logger")->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
+                    //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
-            $image =  $response->getContent();
-            $imagename = $this->tempdir.'/tempimage'.$k.'.png';
-            $handle = fopen($imagename, "w");
-            fwrite($handle, $image);
-            fclose($handle);
-
-            //interlace
-            //$this->checkInterlace($imagename);
+            
+            imagesavealpha($im, true);
+            imagepng($im , $imagename);  
+            
         }
-    }     
-    
-    /**
-     * Disable interlace.
-     * 
-     */
-    private function checkInterlace($imagename)
-    {
-        $im = imagecreatefrompng($imagename);
-        if (imageinterlace($im) == 1)
+        // create final merged image
+        $finalimagename = $tempdir.'/mergedimage.png'; 
+        $finalImage = imagecreatetruecolor($this->image_width, $this->image_height);
+        $bg = ImageColorAllocate($finalImage, 255, 255, 255);
+        imagefilledrectangle($finalImage,0,0,$this->image_width, $this->image_height,$bg);
+        imagepng($finalImage , $finalimagename);
+        foreach ($this->layer_urls as $k => $url)
         {
-            imageinterlace($im, 0);
-            imagepng($im, $imagename);
+            $dest = imagecreatefrompng($finalimagename);
+            $src = imagecreatefrompng($tempdir.'/tempimage'.$k);
+            imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width , $this->image_height);
+            imagepng($dest , $finalimagename);
+            unlink($tempdir.'/tempimage'.$k);
         }
-    }    
+    }       
     
     /**
      * Todo
@@ -220,7 +236,7 @@ class PrintService
             $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
             $subRequest = new Request(array(
                 'url' => $url
-            ), array(), $attributes);
+            ), array(), $attributes, array(), array(), array(), '');
             $response = $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);                
                 
             $tempdir = $this->tempdir;
@@ -239,34 +255,47 @@ class PrintService
                     $im = imagecreatefromgif($imagename);
                     break;
                 default: 
-                    throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
+                    continue;
+                    //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
             
             //rotate image
             $transColor = imagecolorallocatealpha($im, 255, 255, 255, 127);
             $rotatedImage = imagerotate($im , $rotation, $transColor);
+            imagealphablending($rotatedImage, false);
             imagesavealpha($rotatedImage, true);
             imagepng($rotatedImage , $imagename);
             
-            //create finalimage 
+            //clip image from rotated
             $rotated_width = round(abs(sin(deg2rad($rotation))*$neededImageHeight)+abs(cos(deg2rad($rotation))*$neededImageWidth));
             $rotated_height = round(abs(sin(deg2rad($rotation))*$neededImageWidth)+abs(cos(deg2rad($rotation))*$neededImageHeight));
             $newx = ($rotated_width - $this->image_width ) / 2  ;
             $newy = ($rotated_height - $this->image_height ) / 2  ;
                 
-            $finalimagename = $tempdir.'/rotated_image'.$k.'.png';  
-            $final_image = imagecreatetruecolor($this->image_width, $this->image_height);
+            $clippedImageName = $tempdir.'/clipped_image'.$k.'.png';  
+            $clippedImage = imagecreatetruecolor($this->image_width, $this->image_height);
 
-            $transColor1 = imagecolorallocatealpha($final_image, 0, 0, 0, 127);
-            $transColor2 = imagecolorallocatealpha($rotatedImage, 0, 0, 0, 127);
+            imagealphablending($clippedImage, false);
+            imagesavealpha($clippedImage, true);
             
-            imagecolortransparent($final_image ,  $transColor1);
-            imagecolortransparent($rotatedImage , $transColor2);        
-
-            imagecopymerge($final_image , $rotatedImage , 0 , 0 , $newx , $newy , 
-                           $this->image_width , $this->image_height, 100 );
-
-            imagepng($final_image , $finalimagename);
+            imagecopy($clippedImage , $rotatedImage , 0 , 0 , $newx , $newy , $this->image_width , $this->image_height );    
+            imagepng($clippedImage , $clippedImageName);
+            
+            unlink($tempdir.'/tempimage'.$k);
+        }
+        // create final merged image
+        $finalimagename = $tempdir.'/mergedimage.png'; 
+        $finalImage = imagecreatetruecolor($this->image_width, $this->image_height);
+        $bg = ImageColorAllocate($finalImage, 255, 255, 255);
+        imagefilledrectangle($finalImage,0,0,$this->image_width, $this->image_height,$bg);
+        imagepng($finalImage , $finalimagename);
+        foreach ($this->layer_urls as $k => $url)
+        {
+            $dest = imagecreatefrompng($finalimagename);
+            $src = imagecreatefrompng($tempdir.'/clipped_image'.$k.'.png');
+            imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width , $this->image_height);
+            imagepng($dest , $finalimagename);
+            unlink($tempdir.'/clipped_image'.$k.'.png');
         }
     }	
     
@@ -276,47 +305,68 @@ class PrintService
      */
     private function buildPdf() 
     {
+        require('PDF_ImageAlpha.php');
         $tempdir = $this->tempdir;
+        $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $format = substr($this->data['template'],0,2);
-        $this->pdf = new FPDF_FPDI($this->orientation,'mm',$format);
+        $this->pdf = new PDF_ImageAlpha($this->orientation,'mm',$format);
+        //$this->pdf = new FPDF_FPDI($this->orientation,'mm',$format);
         $pdf = $this->pdf;
         $template = $this->data['template'];
-        $pdffile = __DIR__. '/../Templates/'.$template.'.pdf'; 
+        $pdffile = $resource_dir.'/templates/'.$template.'.pdf'; 
         $pagecount = $pdf->setSourceFile($pdffile);
         $tplidx = $pdf->importPage(1);
         
         $pdf->addPage();
         $pdf->useTemplate($tplidx);
         
-        $pdf->SetFont('Arial','',$this->conf['title']['fontsize']);
-        $pdf->SetXY($this->conf['title']['x']*10, $this->conf['title']['y']*10); 
-        if ($this->data['extra']['titel'] != null)
-        {
-            $pdf->Cell($this->conf['title']['width']*10,$this->conf['title']['height']*10,$this->data['extra']['titel']);
-            
-        }     
-        
-        $pdf->SetFont('Arial','',$this->conf['scale']['fontsize']);
-        $pdf->SetXY($this->conf['scale']['x']*10, $this->conf['scale']['y']*10); 
-        $pdf->Cell($this->conf['scale']['width']*10,$this->conf['scale']['height']*10,'1 : '.$this->data['scale_select']);
-        
-        $date = new \DateTime;
-        $pdf->SetFont('Arial','',$this->conf['date']['fontsize']);
-        $pdf->SetXY($this->conf['date']['x']*10, $this->conf['date']['y']*10); 
-        $pdf->Cell($this->conf['date']['width']*10,$this->conf['date']['height']*10,$date->format('d.m.Y'));
-        
+        foreach ($this->conf['fields'] as $k => $v) {
+            $pdf->SetFont('Arial','',$this->conf['fields'][$k]['fontsize']);
+            $pdf->SetXY($this->conf['fields'][$k]['x']*10, $this->conf['fields'][$k]['y']*10);
+            switch($k) {
+                case 'date' :
+                    $date = new \DateTime;
+                    $pdf->Cell($this->conf['fields']['date']['width']*10,$this->conf['fields']['date']['height']*10,$date->format('d.m.Y'));
+                    break;
+                case 'scale' :
+                    if (isset($this->data['scale_select']))
+                    {
+                        $pdf->Cell($this->conf['fields']['scale']['width']*10,$this->conf['fields']['scale']['height']*10,'1 : '.$this->data['scale_select']);
+                    }else{
+                        $pdf->Cell($this->conf['fields']['scale']['width']*10,$this->conf['fields']['scale']['height']*10,'1 : '.$this->data['scale_text']);
+                    }
+                    break;
+                default:
+                    if (isset($this->data['extra'][$k]))
+                    {
+                        $pdf->Cell($this->conf['fields'][$k]['width']*10,$this->conf['fields'][$k]['height']*10,$this->data['extra'][$k]);
+                    }
+                    break;
+            }
+        }
         
         if ($this->data['rotation'] == 0)
         {       
             $tempdir = sys_get_temp_dir();
             foreach ($this->layer_urls as $k => $url) 
-            {
-                $pdf->Image($tempdir.'/rotated_image'.$k.'.png', $this->x_ul, $this->y_ul, $this->width, $this->height, 'png');
-                unlink($tempdir.'/tempimage'.$k);
-                unlink($tempdir.'/rotated_image'.$k.'.png');
-            }
+//            {
+//                $pdf->Image($tempdir.'/tempimage'.$k, 
+//                            $this->x_ul, 
+//                            $this->y_ul, 
+//                            $this->width, 
+//                            $this->height,
+//                            'png','',false,0,5,-1*0);
+//                //unlink($tempdir.'/tempimage'.$k);
+//            }
+            $pdf->Image($tempdir.'/mergedimage.png', 
+                            $this->x_ul, 
+                            $this->y_ul, 
+                            $this->width, 
+                            $this->height,
+                            'png','',false,0,5,-1*0);
+            
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);     
-            $pdf->Image(__DIR__. '/../Images/northarrow.png', 
+            $pdf->Image($resource_dir.'/images/northarrow.png', 
                         $this->conf['northarrow']['x']*10, 
                         $this->conf['northarrow']['y']*10, 
                         $this->conf['northarrow']['width']*10, 
@@ -324,17 +374,22 @@ class PrintService
             
         }else{
             $this->rotateNorthArrow();
-            foreach ($this->layer_urls as $k => $url)
-            {
-                $pdf->Image($tempdir.'/rotated_image'.$k.'.png', 
+//            foreach ($this->layer_urls as $k => $url)
+//            {
+//                $pdf->Image($tempdir.'/rotated_image'.$k.'.png', 
+//                            $this->x_ul, 
+//                            $this->y_ul, 
+//                            $this->width, 
+//                            $this->height, 
+//                            'png','',false,0,5,-1*0);
+//            }
+            $pdf->Image($tempdir.'/mergedimage.png', 
                             $this->x_ul, 
                             $this->y_ul, 
                             $this->width, 
-                            $this->height, 
-                            'png');
-                unlink($tempdir.'/tempimage'.$k);
-                unlink($tempdir.'/rotated_image'.$k.'.png');
-            }
+                            $this->height,
+                            'png','',false,0,5,-1*0);
+            
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height); 
         }
         
@@ -349,8 +404,9 @@ class PrintService
     private function rotateNorthArrow()
     {
         $tempdir = $this->tempdir;
+        $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $rotation = $this->data['rotation'];
-        $northarrow = __DIR__. '/../Images/northarrow.png';
+        $northarrow = $resource_dir.'/images/northarrow.png';
         $im = imagecreatefrompng($northarrow);
         $transColor = imagecolorallocatealpha($im, 255, 255, 255, 127);
         $rotated = imagerotate($im , $rotation ,$transColor);
@@ -358,11 +414,11 @@ class PrintService
         
         if ($rotation == 90 || $rotation == 270)
         {
-            
+            //
         }else{
             $src_img = imagecreatefrompng($tempdir.'/rotatednorth.png');
             $srcsize = getimagesize($tempdir.'/rotatednorth.png');
-            $destsize = getimagesize(__DIR__. '/../Images/northarrow.png');
+            $destsize = getimagesize($resource_dir.'/images/northarrow.png');
             $x = ($srcsize[0] - $destsize[0]) / 2;
             $y = ($srcsize[1] - $destsize[1]) / 2;
             $dst_img = imagecreatetruecolor($destsize[0], $destsize[1]);
@@ -375,8 +431,6 @@ class PrintService
                     $this->conf['northarrow']['y']*10, 
                     $this->conf['northarrow']['width']*10, 
                     $this->conf['northarrow']['height']*10);      
-        unlink($tempdir.'/rotatednorth.png');
-
-        
+        unlink($tempdir.'/rotatednorth.png');   
     }
 }

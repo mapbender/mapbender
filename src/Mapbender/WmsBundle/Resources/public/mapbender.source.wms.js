@@ -167,7 +167,13 @@ $.extend(true, Mapbender, {
                 .appendTo($('body'));
             },
 
-            layersFromCapabilities: function(xml, id) {
+            layersFromCapabilities: function(xml, id, defFormat, defInfoformat) {
+                if(!defFormat){
+                    defFormat = "image/png";
+                }
+                if(!defInfoformat){
+                    defInfoformat = "text/html";
+                }
                 var parser = new OpenLayers.Format.WMSCapabilities(),
                 capabilities = parser.read(xml);
 
@@ -180,16 +186,16 @@ $.extend(true, Mapbender, {
                     var format;
                     var formats = capabilities.capability.request.getmap.formats;
                     for(var i = 0; i < formats.length; i++){
-                        if(formats[i].toLowerCase() === "image/png")
-                            format = "image/png";
+                        if(formats[i].toLowerCase().indexOf(defFormat)!== -1)
+                            format = formats[i];
                     }
                     if(!format)
                         format = formats[0];
                     var infoformat;
                     var infoformats = capabilities.capability.request.getfeatureinfo.formats;
                     for(var i = 0; i < infoformats.length; i++){
-                        if(infoformats[i].toLowerCase() === "image/png")
-                            infoformat = "image/png";
+                        if(infoformats[i].toLowerCase().indexOf(defInfoformat)!== -1)
+                            infoformat = infoformats[i];
                     }
                     if(!infoformat)
                         infoformat = infoformats[0];
@@ -232,8 +238,8 @@ $.extend(true, Mapbender, {
                                 legend: legend, // inheritance from style
                                 bbox: null, // inheritance replace
                                 srslist: null,
-                                maxScale: layer.minScale ? layer.minScale : parent.options.maxScale, // inheritance replace
-                                minScale: layer.maxScale ? layer.maxScale : parent.options.minScale, // inheritance replace
+                                maxScale: layer.minScale ? layer.minScale : parent && parent.options.maxScale ? parent.options.maxScale : null, // inheritance replace
+                                minScale: layer.maxScale ? layer.maxScale : parent && parent.options.minScale ? parent.options.minScale : null, // inheritance replace
                                 name: layer.name, // inheritance
                                 queryable: layer.queryable,
                                 style: layer.styles.length === 0 ? null : layer.styles[0].name, // inheritance add
@@ -523,7 +529,7 @@ $.extend(true, Mapbender, {
                             result.changed.children[layer.options.id] = layerChanged;
                         }
                     }
-                    if(layer.options.treeOptions.info === true){
+                    if(layer.options.treeOptions.info === true && layer.state.visibility){
                         result.info.push(layer.options.name);
                     }
                     if(layer.children){
@@ -612,6 +618,9 @@ $.extend(true, Mapbender, {
                             && layer.options.name.length > 0){
                             layer.state.visibility = true;
                             result.visible.push(layer.options.name);
+                            if(layer.options.treeOptions.info === true){
+                                result.info.push(layer.options.name);
+                            }
                         } else {
                             layer.state.visibility = false;
                         }

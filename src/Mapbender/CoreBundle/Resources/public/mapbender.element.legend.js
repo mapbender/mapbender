@@ -92,10 +92,12 @@
                 alert("legende layer added");
             }
             if(!hasChildren){
-                if(added.after){
+                if(added.after && added.after.source){
                     $(this.element).find('[data-sourceid="'+added.after.source.id+'"]:last').after($(html));
-                } else if(added.before){
+                } else if(added.before && added.before.source){
                     $(this.element).find('[data-sourceid="'+added.before.source.id+'"]:first').before($(html));
+                } else {
+                    $(this.element).find('ul').append($(html));
                 }
             }
         },

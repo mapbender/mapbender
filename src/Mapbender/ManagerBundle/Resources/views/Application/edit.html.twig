@@ -14,7 +14,7 @@
 
 {% block manager_content %}
 
-<form action="{{ path('mapbender_manager_application_update', { 'slug': application.slug }) }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well">
+<form action="{{ path('mapbender_manager_application_update', { 'slug': slug }) }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} class="well">
 
     {{ form_row(form._token) }}
 
@@ -23,7 +23,7 @@
     <footer>
         <div class="btn-group">
             <input type="submit" value="{{ 'Update' | trans }}" class="btn btn-primary"/>
-            <a href="{{ url('mapbender_manager_application_confirmdelete', { 'slug': application.slug } )}}" class="btn btn-warning">{{ 'Delete' | trans}}</a>
+            <a href="{{ url('mapbender_manager_application_confirmdelete', { 'slug': slug } )}}" class="btn btn-warning">{{ 'Delete' | trans}}</a>
             <a href="{{ url('mapbender_manager_application_index') }}" class="btn">{{ 'Cancel' | trans}}</a>
         </div>
     </footer>
@@ -56,7 +56,7 @@
                     <td>{{ source.description }}</td>
                     <td>
                         <div class="entity-actions btn-group">
-                            <form method="post" class="action-add" action="{#{ url("mapbender_manager_application_addlayerset",{"slug":application.slug} ) }#}" title="{{ 'Add' | trans }}" >
+                            <form method="post" class="action-add" action="{#{ url("mapbender_manager_application_addlayerset",{"slug": slug} ) }#}" title="{{ 'Add' | trans }}" >
                                 <input type="hidden" name="sourceId" value="{{ source.id }}" />
                                 <input class="btn" type="submit" value="{{ 'Add' | trans }}" />
                             </form>

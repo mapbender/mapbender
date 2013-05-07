@@ -158,6 +158,7 @@ class ApplicationController extends Controller
         return array(
             'application' => $application,
             'regions' => $templateClass::getRegions(),
+            'slug' => $slug,
             'available_elements' => $this->getElementList(),
             'sources' => $sources,
             'form' => $form->createView(),
@@ -229,15 +230,43 @@ class ApplicationController extends Controller
             return $this->redirect(
                             $this->generateUrl('mapbender_manager_application_edit',
                                                array(
-                                'slug' => $slug)));
+                                'slug' => $application->getSlug())));
         }
+        $error = "error";
 
-        $this->get('session')->setFlash('error',
-                                        'Your form has errors, please review them below.');
+        if(count($form->getErrors()) > 0)
+        {
+            $error = $form->getErrors();
+            $error = $error[0]->getMessageTemplate();
+        } else
+        {
+            foreach($form->getChildren() as $child)
+            {
+                if(count($child->getErrors()) > 0)
+                {
+                    $error = $child->getErrors();
+                    $error = $error[0]->getMessageTemplate();
+                    break;
+                }
+            }
+        }
+        $this->get('session')->setFlash('error', $error);
 
-        return array(
-            'application' => $application,
-            'form' => $form->createView());
+        $templateClass = $application->getTemplate();
+        $em = $this->getDoctrine()->getEntityManager();
+        $query = $em->createQuery(
+                "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
+        $sources = $query->getResult();
+        return new Response($this->container->get('templating')
+                                ->render('MapbenderManagerBundle:Application:edit.html.twig',
+                                         array(
+                                    'application' => $application,
+                                    'regions' => $templateClass::getRegions(),
+                                    'slug' => $slug,
+                                    'available_elements' => $this->getElementList(),
+                                    'sources' => $sources,
+                                    'form' => $form->createView(),
+                                    'form_name' => $form->getName())));
     }
 
     /**
@@ -479,13 +508,13 @@ class ApplicationController extends Controller
         if($layerset !== null)
         {
             $em = $this->getDoctrine()->getEntityManager();
-            
+
             $em->getConnection()->beginTransaction();
-            
+
             $em->remove($layerset);
             $em->flush();
             $em->getConnection()->commit();
-            
+
             $this->get("logger")->debug('The layerset "'
                     . $layerset->getId() . '"has been deleted.');
             $this->get('session')->setFlash('notice',
@@ -621,13 +650,13 @@ class ApplicationController extends Controller
         // ACL access check
         $this->checkGranted('EDIT', $application);
         $sourceInst = $this->getDoctrine()
-                        ->getRepository("MapbenderCoreBundle:SourceInstance")
-                        ->find($instanceId);
+                ->getRepository("MapbenderCoreBundle:SourceInstance")
+                ->find($instanceId);
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getSource()->getManagertype()];
-        return  $this->forward(
-                $manager['bundle'] . ":" . "Repository:deleteInstance",
-                array("slug" => $slug, "instanceId" => $instanceId));
+        return $this->forward(
+                        $manager['bundle'] . ":" . "Repository:deleteInstance",
+                        array("slug" => $slug, "instanceId" => $instanceId));
     }
 
     /* Instance block end */
