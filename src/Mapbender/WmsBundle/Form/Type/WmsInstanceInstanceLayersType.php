@@ -52,24 +52,23 @@ class WmsInstanceInstanceLayersType extends AbstractType
                       array(
             'choices' => $formats,
             'required' => true));
-        $arr = $wmsinstance->getSource()->getGetFeatureInfo()->getFormats() !== null
-                    ?
-                $wmsinstance->getSource()->getGetFeatureInfo()->getFormats() : array();
-        $formats = array();
+        $gfi = $wmsinstance->getSource()->getGetFeatureInfo();
+        $arr = $gfi && $gfi->getFormats() !== null ? $gfi->getFormats() : array();
+        $formats_gfi = array();
         foreach($arr as $value)
         {
-            $formats[$value] = $value;
+            $formats_gfi[$value] = $value;
         }
         $builder->add('infoformat', 'choice',
                       array(
-            'choices' => $formats,
-            'required' => true));
+            'choices' => $formats_gfi,
+            'required' => false));
         $arr = $wmsinstance->getSource()->getExceptionFormats() !== null ?
                 $wmsinstance->getSource()->getExceptionFormats() : array();
-        $formats = array();
+        $formats_exc = array();
         foreach($arr as $value)
         {
-            $formats[$value] = $value;
+            $formats_exc[$value] = $value;
         }
         $opacity = array();
         foreach(range(0, 100, 10) as $value)
@@ -78,8 +77,8 @@ class WmsInstanceInstanceLayersType extends AbstractType
         }
         $builder->add('exceptionformat', 'choice',
                       array(
-                    'choices' => $formats,
-                    'required' => true))
+                    'choices' => $formats_exc,
+                    'required' => false))
                 ->add('visible', 'checkbox',
                       array(
                     'required' => false))
