@@ -98,10 +98,10 @@ class OdgParser
             $x= $node->getAttribute('svg:x');
             $y = $node->getAttribute('svg:y');
             
-            $data[$name]['width'] = substr($width, 0, -2);
-            $data[$name]['height'] = substr($height, 0, -2);
-            $data[$name]['x'] = substr($x, 0, -2);
-            $data[$name]['y'] = substr($y, 0, -2);
+            $data['fields'][$name]['width'] = substr($width, 0, -2);
+            $data['fields'][$name]['height'] = substr($height, 0, -2);
+            $data['fields'][$name]['x'] = substr($x, 0, -2);
+            $data['fields'][$name]['y'] = substr($y, 0, -2);
             
             
             $textnode = $xpath->query("draw:text-box/text:p/text:span",$node)->item(0);
@@ -111,8 +111,8 @@ class OdgParser
                 $stylenode = $xpath->query('//style:style[@style:name="'.$style.'"]/style:text-properties');
                 $fontsize = $stylenode->item(0)->getAttribute('fo:font-size');
                 $font = $stylenode->item(0)->getAttribute('fo:font-family');
-                $data[$name]['fontsize'] = $fontsize;
-                $data[$name]['font'] = $font;
+                $data['fields'][$name]['fontsize'] = $fontsize;
+                $data['fields'][$name]['font'] = $font;
             }
         }
         return $data;

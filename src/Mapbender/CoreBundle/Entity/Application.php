@@ -45,6 +45,11 @@ class Application {
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\Regex(
+     *     pattern="/^[0-9\-\_a-zA-Z]+$/",
+     *     match=true,
+     *     message="The slag value is wrong."
+     * )
      */
     protected $slug;
 
