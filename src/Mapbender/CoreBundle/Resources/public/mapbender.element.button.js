@@ -32,7 +32,7 @@ $.widget("mapbender.mbButton", {
             this.button.checked = false;
         }
 
-        $(this.button).button(o)
+        $(this.button)
             .bind('click', $.proxy(self._onClick, self))
             .bind('mbButtonDeactivate', $.proxy(self.deactivate, self));
     },

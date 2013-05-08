@@ -17,7 +17,7 @@ class Fullscreen extends Template
      */
     public static function getTitle()
     {
-        return 'Fullscreen: Mapbender\'s simple template';
+        return 'Fullscreen template';
     }
 
     /**
@@ -27,7 +27,7 @@ class Fullscreen extends Template
     {
         parent::getAssets($type);
         $assets = array(
-            'css' => array('@MapbenderCoreBundle/Resources/public/mapbender.template.fullscreen.css'),
+            'css' => array('@FOMCoreBundle/Resources/public/css/frontend/fullscreen.css'),
             'js' => array(),
         );
 
@@ -39,7 +39,7 @@ class Fullscreen extends Template
      */
     public static function getRegions()
     {
-        return array('top', 'content', 'footer');
+        return array('toolbar', 'sidepane', 'content');
     }
 
     /**

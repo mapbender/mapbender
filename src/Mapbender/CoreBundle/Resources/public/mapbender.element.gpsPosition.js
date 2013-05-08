@@ -16,7 +16,6 @@ $.widget("mapbender.mbGpsPosition", {
                 return;
             }
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
-        me.button();
         me.click(function() { self._timerGeolocation.call(self); });
     },
     

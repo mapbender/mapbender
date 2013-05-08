@@ -10,7 +10,6 @@
             var self = this;
             var me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            me.button();
             me.click(function() {
                 self._onClick.call(self);
             });

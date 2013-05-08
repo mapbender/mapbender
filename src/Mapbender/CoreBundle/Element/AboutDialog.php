@@ -54,8 +54,7 @@ class AboutDialog extends Element
     {
         return array(
             "tooltip" => "About",
-            'label' => true,
-            'icon' => 'abouticon');
+            'label' => true);
     }
 
     /**

@@ -1,3 +1,1 @@
-<button id="{{ id }}" class="mb-element mb-element-gpsposition{% if configuration.icon is defined %} {{ configuration.icon }}{% endif %}" title="{{ configuration.tooltip|default(title)|trans }}">{{ title|trans }}</button>
-
-
+<span id="{{ id }}" class="mb-gpsButton icon-gps icon-middle" title="{{ configuration.tooltip|default(title)|trans }}">{% if configuration.label %}{{ title|trans }}{% endif %}</span>
