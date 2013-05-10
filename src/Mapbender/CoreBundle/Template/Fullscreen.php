@@ -39,7 +39,7 @@ class Fullscreen extends Template
      */
     public static function getRegions()
     {
-        return array('toolbar', 'sidepane', 'content');
+        return array('toolbar', 'sidepane', 'content', 'footer');
     }
 
     /**
