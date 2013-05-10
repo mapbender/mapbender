@@ -18,7 +18,7 @@
   <ul id="listFilterApplications" class="listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
     {% for application in applications %}
       <li class="filterItem">
-        <div class="col1">
+        <div class="col1 iconAppDefault">
           {#<img src="{{ application.screenshot|default(placeholder) }}" class="thumbnail" title="screenshot"/>#}
         </div>
         <div class="col2 box">
@@ -28,28 +28,28 @@
           <span class="smallerText">{{ application.slug }}</span>
           <div class="description">{{ application.description }}</div>
           <div class="buttonGroup">
-            <a class="viewIcon" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View application' | trans }}"></a>
+            <a class="iconView iconBig" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View application' | trans }}"></a>
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-              <a class="editIcon" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}#base" title="{{ 'Edit application' | trans }}"></a>
+              <a class="iconEdit iconBig" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}#base" title="{{ 'Edit application' | trans }}"></a>
             {% endif %}
 
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') %}
-              <a href="#" class="publishIcon {% if application.published %}enabled{% else %}disabled{% endif %}" title="{{ 'Publish / Unpublish application' | trans }}" data-application-slug="{{ application.slug }}"></a>
+              <a href="#" class="iconPublish iconBig {% if application.published %}enabled iconPublishActive{% else %}disabled{% endif %}" title="{{ 'Publish / Unpublish application' | trans }}" data-application-slug="{{ application.slug }}"></a>
             {% endif %}
 
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
-              <a class="deleteIcon" href="{{path('mapbender_manager_application_delete', { 'slug': application.slug }) }}" title="{{ 'Delete application' | trans }} {{ application.title }}"></a>
+              <a class="iconRemove iconBig" href="{{path('mapbender_manager_application_delete', { 'slug': application.slug }) }}" title="{{ 'Delete application' | trans }} {{ application.title }}"></a>
             {% endif %}
           </div>
         </div>
       </li>
-    {% else %}
-      {% trans %}
-      <span class="description">You don't have any apps defined. Start by creating one now.</span>
-      {% endtrans %}
     {% endfor %}
   </ul>
   <div class="clearContainer"></div>
+{% else %}
+  {% trans %}
+    <span class="description">You don't have any apps defined. Start by creating one now.</span>
+  {% endtrans %}
 {% endif %}
 <div class="clearContainer"></div>
 

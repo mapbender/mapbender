@@ -3,29 +3,35 @@
 {% block title %}{{ 'Services' | trans }}{% endblock %}
 
 {% block manager_content %}
-<label for="inputFilterServices" class="labelInput left">{{"Filter"|trans}}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
-<a class="addIcon right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'Add new service' | trans }}"></a>
+<a class="iconAdd iconBig right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'Add new service' | trans }}"></a>
+{% if sources|length > 0 %}
+  <label for="inputFilterServices" class="labelInput left">{{"Filter"|trans}}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
 
-<ul id="listFilterServices" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">
-  {% for source in sources %}
-    <li class="filterItem">
-      <div class="col1">
-        <span class="smallerText">{{ source.id }}</span><br>
-        <span class="smallerText">{{ source.type }}</span>
-      </div>
-      <div class="col2 box">
-        <a href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
-        {% if source.description|trim|length > 0 %}
-          <div class="description">{{ source.description }}</div>
-        {% endif %}
-        <div class="buttonGroup">
-          <a class="viewIcon" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'View service metadata' | trans }}"></a>
-          <a class="deleteIcon" href="{{ url("mapbender_manager_repository_delete",{"sourceId":source.id,"return":"index"}) }} " title="{{ 'Delete service' | trans }}"></a>
+  <ul id="listFilterServices" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">
+    {% for source in sources %}
+      <li class="filterItem">
+        <div class="col1">
+          <span class="smallerText">{{ source.id }}</span><br>
+          <span class="smallerText">{{ source.type }}</span>
         </div>
-      </div>
-    </li>
-  {% endfor %}  
-</ul>
+        <div class="col2 box">
+          <a href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" class="title">{{ source.title }}<span class="smallerText"> {{ source.alias }}</span></a>
+          {% if source.description|trim|length > 0 %}
+            <div class="description">{{ source.description }}</div>
+          {% endif %}
+          <div class="buttonGroup">
+            <a class="iconView iconBig" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'View service metadata' | trans }}"></a>
+            <a class="iconDelete bigIcon" href="{{ url("mapbender_manager_repository_delete",{"sourceId":source.id,"return":"index"}) }} " title="{{ 'Delete service' | trans }}"></a>
+          </div>
+        </div>
+      </li>
+    {% endfor %}  
+  </ul>
+{% else %}
+  {% trans %}
+    <span class="description">You don't have any services defined. Start by loading one now.</span>
+  {% endtrans %}
+{% endif %}
 
 <div class="clearContainer"></div>
 {% endblock %}

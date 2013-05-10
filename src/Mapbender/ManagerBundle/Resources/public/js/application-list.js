@@ -1,6 +1,6 @@
 $(function(){
     // Switch application state via Ajax when the current state icon is clicked
-    $('#listFilterApplications').find(".publishIcon").bind('click', function() {
+    $('#listFilterApplications').find(".iconPublish").bind('click', function() {
         var me             = $(this);
         var url            = Routing.generate('mapbender_manager_application_togglestate', 
                                               {slug: me.attr('data-application-slug')})
@@ -8,10 +8,10 @@ $(function(){
 
         if(me.hasClass("enabled")){
             requestedState = "disabled";
-            me.removeClass("enabled").addClass(requestedState);
+            me.removeClass("enabled").removeClass("iconPublishActive").addClass(requestedState);
         }else{
             requestedState = "enabled";
-            me.removeClass("disabled").addClass(requestedState);
+            me.removeClass("disabled").addClass(requestedState).addClass("iconPublishActive");
         }
 
         var errorHandler = function() {

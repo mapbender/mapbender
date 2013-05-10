@@ -23,5 +23,5 @@ $('.listFilterContainer').find(".deleteIcon").bind("click", function(){
     return false;
 });
 $(".checkbox").bind("click", function(e){
-  $("#selectedUsersGroups").text(($(".tableUserGroups").find(".checkWrapper.checked").length))
+  $("#selectedUsersGroups").text(($(".tableUserGroups").find(".iconCheckboxActive").length))
 });

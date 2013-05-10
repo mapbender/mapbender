@@ -1,11 +1,11 @@
 {{ form_label(form.template) }}{{ form_widget(form.template) }}
 
-<!-- XXXVH Here the awesome templating plzzz!-->
+<!-- XXXVH Awesome templating engine plzzz!-->
 <div class="layout">
   {% for region in regions %}
     <div class="{{region}}">
       <h3 class="subTitle">{{ region | capitalize }}</h3>
-      <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="addIcon right addElement" title="{{'Add new element'|trans}}"></a>
+      <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconBig right addElement" title="{{'Add new element'|trans}}"></a>
 
       <div class="elementsheader">
         <span class="title">{{ '(Id) Title' | trans }}</span>
