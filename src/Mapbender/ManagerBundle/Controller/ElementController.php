@@ -237,7 +237,6 @@ class ElementController extends Controller
      *
      * @ManagerRoute("application/{slug}/element/{id}/delete")
      * @Method("POST")
-     * @Template
      */
     public function deleteAction($slug, $id)
     {
@@ -253,48 +252,37 @@ class ElementController extends Controller
                     . $id . '" does not exist.');
         }
 
-        $form = $this->createDeleteForm($id);
-        $form->bindRequest($this->getRequest());
-
-        if($form->isValid())
+        $em = $this->getDoctrine()->getEntityManager();
+        $query = $em->createQuery(
+                "SELECT e FROM MapbenderCoreBundle:Element e"
+                . " WHERE e.region=:reg AND e.application=:app"
+                . " AND e.weight>=:min ORDER BY e.weight ASC");
+        $query->setParameters(array(
+            "reg" => $element->getRegion(),
+            "app" => $element->getApplication()->getId(),
+            "min" => $element->getWeight()));
+        $elements = $query->getResult();
+        foreach($elements as $elm)
         {
-            $em = $this->getDoctrine()->getEntityManager();
-            $query = $em->createQuery(
-                    "SELECT e FROM MapbenderCoreBundle:Element e"
-                    . " WHERE e.region=:reg AND e.application=:app"
-                    . " AND e.weight>=:min ORDER BY e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $element->getRegion(),
-                "app" => $element->getApplication()->getId(),
-                "min" => $element->getWeight()));
-            $elements = $query->getResult();
-            foreach($elements as $elm)
+            if($elm->getId() !== $element->getId())
             {
-                if($elm->getId() !== $element->getId())
-                {
-                    $elm->setWeight($elm->getWeight() - 1);
-                }
+                $elm->setWeight($elm->getWeight() - 1);
             }
-            foreach($elements as $elm)
-            {
-                $em->persist($elm);
-            }
-            $em->remove($element);
-            $em->flush();
-
-            $this->get('session')->setFlash('info',
-                                            'Your element has been removed.');
-
-            return $this->redirect(
-                            $this->generateUrl('mapbender_manager_application_edit',
-                                               array(
-                                'slug' => $slug)) . '#elements');
-        } else
-        {
-            return array(
-                'element' => $element,
-                'form' => $this->createDeleteForm($id)->createView());
         }
+        foreach($elements as $elm)
+        {
+            $em->persist($elm);
+        }
+        $em->remove($element);
+        $em->flush();
+
+        $this->get('session')->setFlash('info',
+                                        'Your element has been removed.');
+
+        return $this->redirect(
+                        $this->generateUrl('mapbender_manager_application_edit',
+                                           array(
+                            'slug' => $slug)) . '#elements');
     }
 
     /**

@@ -190,7 +190,6 @@ $(function() {
                      },
                      null,
                      function(){  //afterLoad
-                        console.log("aaa")
                        var popup = $("#popup");
 
                        popup.find(".buttonYes, .buttonBack").hide();
@@ -199,10 +198,6 @@ $(function() {
         }
         return false;
     });
-
-
-
-
 
     // Layers --------------------------------------------------------------------------------------
     // Add layerset action
@@ -276,7 +271,7 @@ $(function() {
         return false;
     });
 
-    // Delete layerset Action
+    // Edit element
     $(".iconEdit").bind("click", function() {
         var url = $(this).attr("data-url");
 
@@ -297,7 +292,8 @@ $(function() {
         return false;
     });
 
-    $('.iconRemove').find(".iconRemove").bind("click", function(){
+    // Delete element
+    $('.iconRemove').bind("click", function(){
         var me  = $(this);
         var title = me.attr('title');
 
