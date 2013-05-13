@@ -3,23 +3,24 @@
   <form action="{{path('mapbender_wms_repository_create')}}" method="post" novalidate="novalidate">
       {{ form_errors(form) }}
 
-      {{ form_errors(form.originUrl) }}
       <label class="left labelInput" for="{{ form.originUrl.get('id') }}">{{"Serviceurl:" | trans}}</label>
       {{ form_widget(form.originUrl, { 'attr': {'class': 'input'} }) }}
       <div class="clearContainer"></div>
 
-      {{ form_errors(form.username) }}
       <label class="left labelInput" for="{{ form.username.get('id') }}">{{"Username:" | trans}}</label>
       {{ form_widget(form.username, { 'attr': {'class': 'input'} }) }}
       <div class="clearContainer"></div>
 
-      {{ form_errors(form.password) }}
       <label class="left labelInput" for="{{ form.password.get('id') }}">{{"Password:" | trans}}</label>
       {{ form_widget(form.password, { 'attr': {'class': 'input'} }) }}
       <div class="clearContainer"></div>
 
       {{form_rest(form)}}
 
-      <input class="button right" type="submit" name="load" value="{{"Load"|trans}}" />
+      <div class="right">
+        <input class="button" type="submit" name="load" value="{{"Load"|trans}}" />
+        <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">Cancel</a>
+      </div>
+      <div class="clearContainer"></div>
   </form>
 </fieldset>

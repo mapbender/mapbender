@@ -151,11 +151,16 @@ class RepositoryController extends Controller
                              $rootlayer);
             $this->getDoctrine()->getEntityManager()->persist($wmssource);
             $this->getDoctrine()->getEntityManager()->flush();
+
+            return $this->redirect($this->generateUrl(
+                                    "mapbender_manager_repository_view",
+                                    array(
+                                "sourceId" => $wmssource->getId()), true));
         }
-        return $this->redirect($this->generateUrl(
-                                "mapbender_manager_repository_view",
-                                array(
-                            "sourceId" => $wmssource->getId()), true));
+
+        return array(
+            'form' => $form->createView(),
+            'form_name' => $form->getName());
     }
 
     private function saveLayer($em, $layer)

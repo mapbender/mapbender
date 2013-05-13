@@ -1,13 +1,30 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'Service Repository' | trans }}{% endblock %}
+{% block title %}{{ 'Add Service' | trans }}{% endblock %}
 
 {% block manager_content %}
 
-    {{ form_errors(form) }}
-    <form action="{{path('mapbender_wms_repository_create')}}" method="post">
-        {{form_rest(form)}}
-        <input type="submit" name="load" value="{{"Load"|trans}}" />
-    </form>
+<fieldset class="serviceAddBox left box">
+  <legend>{{"OGC WMS"|trans}}</legend>
+    <form action="{{path('mapbender_wms_repository_create')}}" method="post" novalidate="novalidate">
 
+        <label class="left labelInput" for="{{ form.originUrl.get('id') }}">{{"Serviceurl:" | trans}}</label>
+        {{ form_widget(form.originUrl, { 'attr': {'class': 'input'} }) }}
+        <div class="clearContainer"></div>
+
+        <label class="left labelInput" for="{{ form.username.get('id') }}">{{"Username:" | trans}}</label>
+        {{ form_widget(form.username, { 'attr': {'class': 'input'} }) }}
+        <div class="clearContainer"></div>
+
+        <label class="left labelInput" for="{{ form.password.get('id') }}">{{"Password:" | trans}}</label>
+        {{ form_widget(form.password, { 'attr': {'class': 'input'} }) }}
+        <div class="clearContainer"></div>
+
+        {{form_rest(form)}}
+        <div class="right">
+            <input class="button" type="submit" name="load" value="{{"Load"|trans}}" />
+            <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">Cancel</a>
+        </div>
+    </form>
+</fieldset>
 {% endblock %}

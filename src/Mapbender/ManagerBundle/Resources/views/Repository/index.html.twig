@@ -21,7 +21,7 @@
           {% endif %}
           <div class="buttonGroup">
             <a class="iconView iconBig" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'View service metadata' | trans }}"></a>
-            <a class="iconDelete bigIcon" href="{{ url("mapbender_manager_repository_delete",{"sourceId":source.id,"return":"index"}) }} " title="{{ 'Delete service' | trans }}"></a>
+            <a class="iconRemove iconBig" href="{{ url("mapbender_manager_repository_delete",{"sourceId":source.id,"return":"index"}) }} " title="{{ 'Delete service' | trans }}"></a>
           </div>
         </div>
       </li>

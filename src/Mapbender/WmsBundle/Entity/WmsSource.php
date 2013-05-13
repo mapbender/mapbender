@@ -11,6 +11,7 @@ use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A WmsSource entity presents an OGC WMS.
@@ -24,6 +25,8 @@ class WmsSource extends Source
     /**
      * @var string An origin WMS URL
      * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank()
+     * @Assert\Url()
      */
     protected $originUrl = "";
 
