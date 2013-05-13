@@ -40,6 +40,7 @@ class Application {
 
     /**
      * @ORM\Column(type="string", length=128, unique=true)
+     * @Assert\NotBlank()
      */
     protected $title;
 

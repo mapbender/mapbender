@@ -39,28 +39,30 @@ $(function(){
     });
 
     // Delete application via Ajax
-    $('#listFilterApplications').find(".deleteIcon").bind("click", function(){
+    $('#listFilterApplications').find(".iconRemove").bind("click", function(){
         var me  = $(this);
-        var url = ""; // Need a url > Routing.generate('mapbender_manager_application_delete',
-        //                             {slug: me.attr('data-application-slug')})
-
+        var url = $(this).attr('data-url');
+        var slug =  $(this).attr('data-slug');
         var title = me.parent().siblings(".title").text();
 
         if(!$('body').data('mbPopup')) {
             $("body").mbPopup();
-            $("body").mbPopup('showModal', 
-                              {title:"Confirm delete",
-                                      subTitle: title,
-                                      content:"Do you really want to delete the application " + title + "?"},
-                                      function(){
-                                        $.ajax({
-                                            url: url,
-                                            type: 'POST',
-                                            success: function(data) {
-                                                console.log(data)
-                                            }
-                                        });
-                                      });
+            $("body").mbPopup('showModal',
+                {
+                    title:"Confirm delete",
+                    subTitle: title,
+                    content:"Do you really want to delete the application " + title + "?"
+                },
+                function(){
+                    $.ajax({
+                        url: url,
+                        data : {'slug': slug},
+                        type: 'POST',
+                        success: function(data) {
+                            window.location.reload();
+                        }
+                    });
+                });
         }
         return false;
     });
