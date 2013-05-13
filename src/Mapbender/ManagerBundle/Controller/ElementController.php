@@ -276,13 +276,10 @@ class ElementController extends Controller
         $em->remove($element);
         $em->flush();
 
-        $this->get('session')->setFlash('info',
+        $this->get('session')->setFlash('success',
                                         'Your element has been removed.');
 
-        return $this->redirect(
-                        $this->generateUrl('mapbender_manager_application_edit',
-                                           array(
-                            'slug' => $slug)) . '#elements');
+        return new Response();
     }
 
     /**
