@@ -24,9 +24,6 @@
             var self = this;
             var me = this.element;
             this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
-            // FIXME: fix to on when updating jquery 
-            //        me.find('input[name="enabled"]').live("change",{self:self},self.on_layer_toggle_enabled);
-            //        me.find('input[name="queryable"]').live("change",{self:self},self.on_layer_toggle_queryable);
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
     
@@ -39,7 +36,7 @@
             this.model = $("#" + self.options.target).data("mbMap").getModel();
             var sources = this.model.getSources();
             for(var i = (sources.length - 1); i > -1; i--){
-                if(!sources[i].configuration.baseSource || (sources[i].configuration.baseSource && this.options.showBaseSource)){
+                if(!sources[i].configuration.isBaseSource || (sources[i].configuration.isBaseSource && this.options.showBaseSource)){
                     if(this.options.displaytype === "tree"){
                         var li_s = this._createSourceTree(sources[i], sources[i], this.model.getScale());
                         me.find("ul.layers:first").append($(li_s));
@@ -115,7 +112,7 @@
                                 }
                                 var tochange = self.model.createToChangeObj(tomove.source);
                                 if(tochange !== null){
-                                    tochange.type = "source_move";
+                                    tochange.type = {layerTree: "move"};
                                     tochange.children.before = after;
                                     tochange.children.after = before;
                                     tochange.children.tomove = tomove;
@@ -556,7 +553,7 @@
                     }
                 }
             };
-            tochange.type = "tree_selected";
+            tochange.type = {layerTree: "select"};
             this.model.changeSource(tochange);
         },
     
@@ -571,7 +568,7 @@
                     }
                 }
             };
-            tochange.type = "tree_info";
+            tochange.type =  {layerTree: "info"};
             this.model.changeSource(tochange);
         },
         
@@ -581,6 +578,7 @@
             var toremove = this.model.createToChangeObj(this.model.getSource({id: sourceId}));
             var layerOpts = this.model.getSourceLayerById(toremove.source, layer_id);
             toremove.children[layer_id] = layerOpts.layer;
+            toremove.type =  {layerTree: "remove"};
             this.model.removeSource(toremove);
         },
         

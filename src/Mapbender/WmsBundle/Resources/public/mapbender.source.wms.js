@@ -617,9 +617,9 @@ $.extend(true, Mapbender, {
                             && !layer.state.outOfBounds
                             && layer.options.name.length > 0){
                             layer.state.visibility = true;
-                            result.visible.push(layer.options.name);
+                            result.layers.push(layer.options.name);
                             if(layer.options.treeOptions.info === true){
-                                result.info.push(layer.options.name);
+                                result.infolayers.push(layer.options.name);
                             }
                         } else {
                             layer.state.visibility = false;
@@ -649,6 +649,15 @@ $.extend(true, Mapbender, {
                         result.changed.children[layer.options.id] = layerChanged;
                     }
                     return layer;
+                }
+            },
+            
+            changeOptions: function(tochange){
+                if(typeof tochange.options !== 'undefined'
+                    && typeof tochange.options.visibility !== 'undefined'){
+                    tochange.source.configuration.children[0].options.treeOptions.selected = tochange.options.visibility;
+                } else {
+                    // @TODO
                 }
             }
         }
