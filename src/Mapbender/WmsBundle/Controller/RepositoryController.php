@@ -83,6 +83,14 @@ class RepositoryController extends Controller
         $form->bindRequest($request);
         if($form->isValid())
         {
+            $purl = parse_url($wmssource_req->getOriginUrl());
+            if(!isset($purl['scheme']) || !isset($purl['host'])){
+                $this->get("logger")->debug("The url is not valid.");
+                $this->get('session')->setFlash('error', "The url is not valid.");
+                return $this->redirect($this->generateUrl(
+                                        "mapbender_manager_repository_new",
+                                        array(), true));
+            }
             $proxy_config = $this->container->getParameter("owsproxy.proxy");
             $proxy_query = ProxyQuery::createFromUrl(trim($wmssource_req->getOriginUrl()),
                                                           $wmssource_req->getUsername(),
