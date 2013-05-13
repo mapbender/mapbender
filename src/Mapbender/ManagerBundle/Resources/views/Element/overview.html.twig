@@ -9,10 +9,17 @@
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.anchor) }}{{ form_widget(form.configuration.anchor) }}
     <div class="clearContainer"></div>
-    {{ form_label(form.configuration.position) }}{{ form_widget(form.configuration.position) }}
+
+    <label class="labelInput">{{"Position"|trans}}</label>
+    <div class="singleRow">
+        {{form_label(form.configuration.position.0)}}
+        {{form_widget(form.configuration.position.0)}}
+        {{form_label(form.configuration.position.1)}}
+        {{form_widget(form.configuration.position.1)}}
+    </div>
+
     <div class="clearContainer"></div>
-    {{ form_widget(form.configuration.maximized) }}<label for="{{form.configuration.maximized.vars.id}}" class="labelCheck">{{"Maximize"|trans}}</label>
-    <div class="clearContainer"></div>
+    <div class="left">{{ form_widget(form.configuration.maximized) }}<label for="{{form.configuration.maximized.vars.id}}" class="labelCheck">{{"Maximize"|trans}}</label></div>
     {{ form_widget(form.configuration.fixed) }}<label for="{{form.configuration.fixed.vars.id}}" class="labelCheck">{{"Fix"|trans}}</label>
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.width) }}{{ form_widget(form.configuration.width) }}
