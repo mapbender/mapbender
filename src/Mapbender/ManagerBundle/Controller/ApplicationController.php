@@ -26,19 +26,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ApplicationController extends Controller
 {
-
-    /**
-     * Convenience route, simply redirects to the index action.
-     *
-     * @ManagerRoute("/application")
-     * @Method("GET")
-     */
-    public function index2Action()
-    {
-        return $this->redirect(
-                        $this->generateUrl('mapbender_manager_application_index'));
-    }
-
     /**
      * Render a list of applications the current logged in user has access
      * to.
@@ -304,35 +291,11 @@ class ApplicationController extends Controller
         }
 
         return new Response(json_encode(array(
-                            'oldState' => $currentState ? 'enabled' : 'disabled',
-                            'newState' => $newState ? 'enabled' : 'disabled',
-                            'message' => $message)), 200, array(
-                    'Content-Type' => 'application/json'));
-    }
-
-    /**
-     * Delete confirmation page
-     * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
-     * @Method("POST")
-     * @Template("MapbenderManagerBundle:Application:delete.html.twig")
-     */
-    public function confirmDeleteAction($slug)
-    {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
-        if($application === null)
-        {
-            $this->get('session')->setFlash('error',
-                                            'Your application has been already deleted.');
-            return $this->redirect(
-                            $this->generateUrl('mapbender_manager_application_index'));
-        }
-        // ACL access check
-        $this->checkGranted('EDIT', $application);
-
-        $id = $application->getId();
-        return array(
-            'application' => $application,
-            'form' => $this->createDeleteForm($id)->createView());
+            'oldState' => $currentState ? 'enabled' : 'disabled',
+            'newState' => $newState ? 'enabled' : 'disabled',
+            'message' => $message)), 200, array(
+            'Content-Type' => 'application/json'
+        ));
     }
 
     /**
@@ -347,35 +310,21 @@ class ApplicationController extends Controller
         // ACL access check
         $this->checkGranted('DELETE', $application);
 
-        $form = $this->createDeleteForm($application->getId());
-        $request = $this->getRequest();
-
-        $form->bindRequest($request);
-        if($form->isValid())
-        {
+        try {
             $em = $this->getDoctrine()->getEntityManager();
-
             $aclProvider = $this->get('security.acl.provider');
-
             $em->getConnection()->beginTransaction();
-
             $oid = ObjectIdentity::fromDomainObject($application);
             $aclProvider->deleteAcl($oid);
-
             $em->remove($application);
             $em->flush();
-
             $em->commit();
-
-            $this->get('session')->setFlash('notice',
-                                            'Your application has been deleted.');
-        } else
-        {
-            $this->get('session')->setFlash('error',
-                                            'Your application couldn\'t be deleted.');
+            $this->get('session')->setFlash('notice','Your application has been deleted.');
+        } catch(Exception $e) {
+            $this->get('session')->setFlash('error','Your application couldn\'t be deleted.');
         }
-        return $this->redirect(
-                        $this->generateUrl('mapbender_manager_application_index'));
+
+        return new Response();
     }
 
     /* Layerset block start */
