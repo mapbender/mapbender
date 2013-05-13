@@ -51,6 +51,7 @@ class Application {
      *     match=true,
      *     message="The slag value is wrong."
      * )
+     * @Assert\NotBlank()
      */
     protected $slug;
 
