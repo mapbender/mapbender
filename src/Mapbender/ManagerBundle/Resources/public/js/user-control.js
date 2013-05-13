@@ -72,7 +72,10 @@ $(function(){
                 function(){
                     $.ajax({
                         url: me.attr('data-url'),
-                        data : {'id': me.attr('data-id')},
+                        data : {
+                            'slug': me.attr('data-slug'),
+                            'id': me.attr('data-id')
+                        },
                         type: 'POST',
                         success: function(data) {
                             window.location.reload();

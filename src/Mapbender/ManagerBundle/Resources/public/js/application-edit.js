@@ -148,9 +148,6 @@ $(function() {
         return false;
     });
 
-
-
-
     // Layout - Elements ---------------------------------------------------------------------------
     function loadElementFormular(){
         var url = $(this).attr("href");
@@ -158,7 +155,7 @@ $(function() {
         if(url){
             $.ajax({
                 url: url,
-                type: "POST",
+                type: "GET",
                 success: function(data){
                    $("#popupContent").wrap('<div id="contentWrapper"></div>').hide();
                    $("#contentWrapper").append('<div id="popupSubContent" class="popupSubContent"></div>');
@@ -259,21 +256,68 @@ $(function() {
         }
         return false;
     });
+
     // Delete layerset Action
     $(".deleteLayerset").bind("click", function(){
         if(!$('body').data('mbPopup')) {
             $("body").mbPopup();
-            $("body").mbPopup('showAjaxModal', 
-                              {title:"Delete layerset",
-                               subTitle: " - " + $(this).siblings("legend").text(),
-                               btnOkLabel: "Delete"},
-                              $(this).attr("href"), 
-                              function(){ //ok click
-                                $("#deleteLaysersetForm").submit();
+            $("body").mbPopup('showAjaxModal', {
+                title:"Delete layerset",
+                subTitle: " - " + $(this).siblings("legend").text(),
+                btnOkLabel: "Delete"
+            },
+            $(this).attr("href"), 
+            function(){ //ok click
+                $("#deleteLaysersetForm").submit();
+                return false;
+            },
+            null);
+        }
+        return false;
+    });
 
-                                return false;
-                              },
-                              null);
+    // Delete layerset Action
+    $(".iconEdit").bind("click", function() {
+        var url = $(this).attr("data-url");
+
+        if(!$('body').data('mbPopup')) {
+            $("body").mbPopup();
+            $("body").mbPopup('showAjaxModal', {
+                    title:"Edit element",
+                    method: 'GET'
+                },
+                url, 
+                function(){ //ok click
+                    $("#elementForm").submit();
+                    return false;
+                },
+                null
+            );
+        }
+        return false;
+    });
+
+    $('.iconRemove').find(".iconRemove").bind("click", function(){
+        var me  = $(this);
+        var title = me.attr('title');
+
+        if(!$('body').data('mbPopup')) {
+            $("body").mbPopup();
+            $("body").mbPopup('showModal',
+                {
+                    title:"Confirm delete",
+                    content:"Do you really want to delete the user " + title + "?"
+                },
+                function(){
+                    $.ajax({
+                        url: me.attr('data-url'),
+                        data : {'id': me.attr('data-id')},
+                        type: 'POST',
+                        success: function(data) {
+                            window.location.reload();
+                        }
+                    });
+                });
         }
         return false;
     });

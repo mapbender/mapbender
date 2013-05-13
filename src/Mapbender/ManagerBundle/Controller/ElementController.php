@@ -51,7 +51,7 @@ class ElementController extends Controller
      * Shows form for creating new element
      *
      * @ManagerRoute("/application/{slug}/element/new")
-     * @Method("POST")
+     * @Method("GET")
      * @Template("MapbenderManagerBundle:Element:edit.html.twig")
      */
     public function newAction($slug)
