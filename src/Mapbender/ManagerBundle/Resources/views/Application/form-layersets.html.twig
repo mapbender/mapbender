@@ -1,41 +1,47 @@
-<label for="inputFilterLayersets" class="labelInput left">{{"Filter layersets"|trans}}</label><input id="inputFilterLayersets" type="text" class="input listFilterInput">
 <a href="{{ path("mapbender_manager_application_newlayerset",{'slug': application.slug}) }}" class="iconAdd right addLayerset iconBig" title="{{ 'Add Layerset' | trans}}"></a>
-<div class="clearContainer"></div>
+{% if application.layersets|length > 0 %}
+  <label for="inputFilterLayersets" class="labelInput left">{{"Filter layersets"|trans}}</label><input id="inputFilterLayersets" type="text" class="input listFilterInput">
+  <div class="clearContainer"></div>
 
-<ul id="listFilterLayersets" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">
-  {% for layerset in application.layersets %}
-    <li class="filterItem">
-      <table class="tableCore layerset" data-id="{{ layerset.id }}">
-        <thead>
-          <tr>
-            <th class="subTitle">{{ layerset.title | capitalize }}</th>
-            <th class="iconColumn">
-              <a class="right addIconSmall addInstance" title="{{"Add Instance"|trans}}" href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
-            </th>
-            <th class="iconColumn">
-              <a class="right editIconSmall editLayerset" title="{{"Edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
-            </th>
-            <th class="iconColumn">
-              <a class="right deleteIconSmall deleteLayerset" title="{{"Delete"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="2">
-              <a class="publishIconSmall" title="" href="#"></a><span>asdas</span>
-            </td>
-            <td>
-              <a class="editIconSmall" title="" href="#"></a>
-            </td>
-            <td>
-              <a class="deleteIconSmall" title="" href="#"></a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </li>
-  {% else %}
-    <li class="description">{{ 'No Layers added' | trans }}</li>
-  {% endfor %}
-</ul>
+  <ul id="listFilterLayersets" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">
+    {% for layerset in application.layersets %}
+      <li class="filterItem">
+        <table class="tableCore layerset" data-id="{{ layerset.id }}">
+          <thead>
+            <tr>
+              <th colspan="2" class="subTitle">{{ layerset.title | capitalize }} asd asd asjdaj sdj</th>
+              <th></th>
+              <th class="iconColumn">
+                <a class="iconAdd iconSmall addInstance" title="{{"Add Instance"|trans}}" href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+              </th>
+              <th class="iconColumn">
+                <a class="iconEdit iconSmall editLayerset" title="{{"Edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+              </th>
+              <th class="iconColumn">
+                <a class="iconRemove iconSmall deleteLayerset" title="{{"Delete"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="iconColumn">
+                <a class="iconPublish iconSmall" title="" href="#"></a>
+              </td>
+              <td colspan="2">
+                asdasds
+              </td>
+              <td class="iconColumn">
+                <a class="iconEdit iconSmall" title="" href="#"></a>
+              </td>
+              <td class="iconColumn">
+                <a class="iconRemove iconSmall" title="" href="#"></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="description">{{ 'No Layers added' | trans }}</p>
+{% endif %}
