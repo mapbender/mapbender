@@ -9,7 +9,8 @@ $(function() {
             $("body").mbPopup('showModal',
                 {
                     title:"Confirm delete",
-                    content:"Confirm delete - " + title + "?"
+                    subTitle: " - service",
+                    content:"Delete " + title + "?"
                 },
                 function(){
                     $.ajax({

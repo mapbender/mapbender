@@ -35,7 +35,7 @@
 
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
               <span class="iconRemove iconBig"  
-                title="{{ 'Delete application' | trans }} {{ application.title }}"
+                title="{{ application.title }}"
                 data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}" 
                 data-slug="{{ application.slug }}"
               ></span>

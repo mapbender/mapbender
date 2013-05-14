@@ -109,7 +109,7 @@ class ApplicationController extends Controller
 
             $em->getConnection()->commit();
 
-            $this->get('session')->setFlash('notice',
+            $this->get('session')->setFlash('success',
                                             'Your application has been saved.');
 
             return $this->redirect(
@@ -198,7 +198,7 @@ class ApplicationController extends Controller
 
                 $em->getConnection()->commit();
 
-                $this->get('session')->setFlash('notice',
+                $this->get('session')->setFlash('success',
                                                 'Your application has been updated.');
             } catch(\Exception $e)
             {
@@ -319,7 +319,7 @@ class ApplicationController extends Controller
             $em->remove($application);
             $em->flush();
             $em->commit();
-            $this->get('session')->setFlash('notice','Your application has been deleted.');
+            $this->get('session')->setFlash('success','Your application has been deleted.');
         } catch(Exception $e) {
             $this->get('session')->setFlash('error','Your application couldn\'t be deleted.');
         }
@@ -465,7 +465,7 @@ class ApplicationController extends Controller
 
             $this->get("logger")->debug('The layerset "'
                     . $layerset->getId() . '"has been deleted.');
-            $this->get('session')->setFlash('notice',
+            $this->get('session')->setFlash('success',
                                             'Your layerset has been deleted.');
             return $this->redirect($this->generateUrl(
                                     'mapbender_manager_application_edit',
@@ -552,7 +552,7 @@ class ApplicationController extends Controller
 
         $this->get("logger")->debug('A new instance "'
                 . $sourceInstance->getId() . '"has been created.');
-        $this->get('session')->setFlash('notice',
+        $this->get('session')->setFlash('success',
                                         'A new instance has been created.');
         return $this->redirect(
                         $this->generateUrl(

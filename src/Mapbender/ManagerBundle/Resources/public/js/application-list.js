@@ -50,8 +50,8 @@ $(function(){
             $("body").mbPopup('showModal',
                 {
                     title:"Confirm delete",
-                    subTitle: title,
-                    content:"Do you really want to delete the application " + title + "?"
+                    subTitle: " - application",
+                    content:"Delete " + title + "?"
                 },
                 function(){
                     $.ajax({
