@@ -55,7 +55,7 @@ class LayertreeAdminType extends AbstractType
                 ->add('useAccordion', 'checkbox',
                       array(
                     'required' => false))
-                ->add('titlemaxlength', 'integer',
+                ->add('titlemaxlength', 'text',
                       array('required' => true))
                 ->add('showBaseSource', 'checkbox',
                           array(
