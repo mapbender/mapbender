@@ -39,8 +39,7 @@ $(function(){
             $("body").mbPopup('showModal',
                 {
                     title:"Confirm delete",
-                    subTitle: title,
-                    content:"Do you really want to delete the group " + title + "?"
+                    content: title + "?"
                 },
                 function(){
                     $.ajax({
@@ -66,8 +65,7 @@ $(function(){
             $("body").mbPopup('showModal',
                 {
                     title:"Confirm delete",
-                    subTitle: title,
-                    content:"Do you really want to delete the user " + title + "?"
+                    content: title + "?"
                 },
                 function(){
                     $.ajax({

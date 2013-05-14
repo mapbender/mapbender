@@ -302,7 +302,7 @@ $(function() {
             $("body").mbPopup('showModal',
                 {
                     title:"Confirm delete",
-                    content:"Do you really want to delete the user " + title + "?"
+                    content:"Confirm delete - " + title + "?"
                 },
                 function(){
                     $.ajax({

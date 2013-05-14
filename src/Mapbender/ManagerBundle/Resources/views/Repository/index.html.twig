@@ -2,6 +2,11 @@
 
 {% block title %}{{ 'Services' | trans }}{% endblock %}
 
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/service-list.js') }}"></script>
+{% endblock %}
+
 {% block manager_content %}
 <a class="iconAdd iconBig right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'Add new service' | trans }}"></a>
 {% if sources|length > 0 %}
@@ -21,7 +26,10 @@
           {% endif %}
           <div class="buttonGroup">
             <a class="iconView iconBig" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'View service metadata' | trans }}"></a>
-            <a class="iconRemove iconBig" href="{{ url("mapbender_manager_repository_delete",{"sourceId":source.id,"return":"index"}) }} " title="{{ 'Delete service' | trans }}"></a>
+               <span class="iconRemove iconBig"  
+                title="{{ source.title }}"
+                data-url="{{ url("mapbender_manager_repository_delete",{"sourceId":source.id}) }}" 
+                data-id="{{ source.id }}"></span>
           </div>
         </div>
       </li>
