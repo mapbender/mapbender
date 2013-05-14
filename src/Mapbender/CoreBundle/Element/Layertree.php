@@ -92,16 +92,6 @@ class Layertree extends Element
         );
     }
 
-//    public function httpAction($action) {
-//        $response = new Response();
-//
-//        $data = array(
-//            'message' => 'Hello World'
-//        );
-//        $response->setContent(json_encode($data));
-//        $response->headers->set('Content-Type', 'application/json');
-//        return $response;
-//    }
     /**
      * @inheritdoc
      */
@@ -117,5 +107,12 @@ class Layertree extends Element
         );
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:layer_tree.html.twig';
+    }
 }
 

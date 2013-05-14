@@ -22,7 +22,7 @@ class Ruler extends Element
      */
     static public function getClassDescription()
     {
-        return "Please give me a description";
+        return "";
     }
 
     /**
@@ -50,6 +50,14 @@ class Ruler extends Element
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\RulerAdminType';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:ruler.html.twig';
     }
 
     /**

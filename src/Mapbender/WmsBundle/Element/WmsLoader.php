@@ -26,7 +26,7 @@ class WmsLoader extends Element
      */
     static public function getClassDescription()
     {
-        return "WMS Loader";
+        return "";
     }
 
     /**
@@ -48,7 +48,6 @@ class WmsLoader extends Element
             "autoOpen" => false,
             "defaulformat" => "png",
             "defaultinfoformat" => "html"
-//            "toc" => ""
         );
     }
 
@@ -80,6 +79,14 @@ class WmsLoader extends Element
     public static function getType()
     {
         return 'Mapbender\WmsBundle\Element\Type\WmsLoaderAdminType';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:wms_loader.html.twig';
     }
 
     /**

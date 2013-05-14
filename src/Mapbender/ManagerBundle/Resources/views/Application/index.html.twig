@@ -1,7 +1,5 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% set placeholder = asset('bundles/mapbendercore/image/placeholder_map.png') %}
-
 {% block title %}{{ "Applications" | trans }}{% endblock %}
 
 {% block js %}
@@ -18,9 +16,7 @@
   <ul id="listFilterApplications" class="listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
     {% for application in applications %}
       <li class="filterItem">
-        <div class="col1 iconAppDefault">
-          {#<img src="{{ application.screenshot|default(placeholder) }}" class="thumbnail" title="screenshot"/>#}
-        </div>
+        <div class="col1 iconAppDefault"></div>
         <div class="col2 box">
           <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'View this application' | trans }}">
             {{ application.title }}

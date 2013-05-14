@@ -25,7 +25,7 @@ class ScaleBar extends Element
      */
     static public function getClassDescription()
     {
-        return "ScaleBar";
+        return "";
     }
 
     /**

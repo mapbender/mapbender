@@ -25,7 +25,7 @@ class Overview extends Element
      */
     static public function getClassDescription()
     {
-        return "Overview Map";
+        return "Renders a small overview map";
     }
 
     /**

@@ -1,11 +1,10 @@
-<div class="elementFormToolbar elementForm">
+<div class="elementFormRuler elementForm">
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
     <div class="clearContainer"></div>
-
-
-
-    {{ form_widget(form.configuration.label) }}<label for="{{form.configuration.label.vars.id}}" class="labelCheck">{{"Show label"|trans}}</label>
+    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.type) }}{{ form_widget(form.configuration.type) }}
     <div class="clearContainer"></div>
 </div>

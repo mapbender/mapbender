@@ -1,0 +1,16 @@
+<div class="elementFormWmsLoader elementForm">
+    <div class="left">
+        {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{"Auto open"|trans}}</label>
+    </div>
+    <div class="clearContainer"></div>
+    {{ form_label(form.title) }}{{ form_widget(form.title) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.defaultformat) }}{{ form_widget(form.configuration.defaultformat) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.defaultinfoformat) }}{{ form_widget(form.configuration.defaultinfoformat) }}
+    <div class="clearContainer"></div>
+</div>

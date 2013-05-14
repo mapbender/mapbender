@@ -29,11 +29,9 @@ class ZoomBar extends Element
      */
     public static function getClassDescription()
     {
-        return <<<EOT
-The Navigation Toolbar element provides a floating control to pan and zoom,
+        return "The Navigation Toolbar element provides a floating control to pan and zoom,
 similar to the OpenLayers PanZoomBar control. This element though is easier to
-use when custom styling is needed.
-EOT;
+use when custom styling is needed.";
     }
 
     /**
@@ -61,7 +59,7 @@ EOT;
     {
         return array(
             'tooltip' => null,
-            'target' => null,
+            'target_map' => null,
             'components' => array(
                 "pan",
                 "history",
@@ -104,5 +102,12 @@ EOT;
         return 'Mapbender\CoreBundle\Element\Type\ZoomBarAdminType';
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:zoombar.html.twig';
+    }
 }
 

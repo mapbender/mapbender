@@ -1,0 +1,34 @@
+<div class="elementFormLayerTree elementForm">
+    <div class="left">
+        {{ form_widget(form.configuration.showBaseSource) }}<label for="{{form.configuration.showBaseSource.vars.id}}" class="labelCheck">{{"Draggable"|trans}}</label>
+    </div>
+    {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{"Auto open"|trans}}</label>
+    <div class="clearContainer"></div>
+    {{ form_label(form.title) }}{{ form_widget(form.title) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.type) }}{{ form_widget(form.configuration.type) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.displaytype) }}{{ form_widget(form.configuration.displaytype) }}
+    <div class="clearContainer"></div>
+
+    {{form_rest(form)}}
+    
+{#    
+    {{ form_label(form.configuration.components) }}{{ form_widget(form.configuration.components) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.stepSize) }}{{ form_widget(form.configuration.stepSize) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.stepByPixel) }}{{ form_widget(form.configuration.stepByPixel) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.anchor) }}{{ form_widget(form.configuration.anchor) }}
+    <div class="clearContainer"></div>
+    <label class="labelInput">{{"Position"|trans}}</label>
+    <div class="singleRow">
+        {{form_label(form.configuration.position.0)}}
+        {{form_widget(form.configuration.position.0)}}
+        {{form_label(form.configuration.position.1)}}
+        {{form_widget(form.configuration.position.1)}}
+    </div>#}
+</div>
