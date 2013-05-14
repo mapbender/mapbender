@@ -28,7 +28,7 @@ class ElementController extends Controller
      * Show element class selection
      *
      * @ManagerRoute("/application/{slug}/element/select")
-     * @Method("POST")
+     * @Method({"GET","POST"})
      * @Template
      */
     public function selectAction($slug)
