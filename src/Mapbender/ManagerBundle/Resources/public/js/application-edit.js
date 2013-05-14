@@ -211,7 +211,7 @@ $(function() {
                               function(){ //ok click
                                 $("#layersetForm").submit();
 
-                                return false;
+                                //return false;
                               },
                               null);
         }

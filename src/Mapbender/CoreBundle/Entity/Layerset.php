@@ -9,6 +9,7 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\UniqueConstraint;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -34,6 +35,7 @@ class Layerset
     /**
      * @var string $title The layerset title
      * @ORM\Column(type="string", length=128)
+     * @Assert\NotBlank()
      */
     protected $title;
 
