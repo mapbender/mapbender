@@ -70,6 +70,14 @@ class ScaleBar extends Element
     /**
      * @inheritdoc
      */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderManagerBundle:Element:scale_bar.html.twig';
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getAssets()
     {
         return array(
