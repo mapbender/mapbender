@@ -272,7 +272,7 @@ $(function() {
     });
 
     // Edit element
-    $(".iconEdit").bind("click", function() {
+    $(".editElement").bind("click", function() {
         var url = $(this).attr("data-url");
 
         if(!$('body').data('mbPopup')) {
@@ -293,7 +293,7 @@ $(function() {
     });
 
     // Delete element
-    $('.iconRemove').bind("click", function(){
+    $('.removeElement').bind("click", function(){
         var me  = $(this);
         var title = me.attr('title');
 
