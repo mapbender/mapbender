@@ -54,8 +54,8 @@ class WmsLoaderAdminType extends AbstractType
                         "html" => "text/html",
                         "xml" => "text/xml",
                         "plain" => "text/plain")))
-                ->add('autoOpen', 'checkbox', array('required' => false));
-//                ->add('toc', 'text', array('required' => false));
+                ->add('autoOpen', 'checkbox', array('required' => false))
+                ->add('splitLayers', 'checkbox', array('required' => false));
     }
 
 }
