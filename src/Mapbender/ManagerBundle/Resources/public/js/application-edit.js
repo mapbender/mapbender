@@ -286,7 +286,11 @@ $(function() {
                     $("#elementForm").submit();
                     return false;
                 },
-                null
+                null,
+                function(){
+                    $("#popupContent").removeClass("popupContent")
+                                      .addClass("popupSubContent");
+                }
             );
         }
         return false;
