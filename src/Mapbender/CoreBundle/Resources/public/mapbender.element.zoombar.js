@@ -37,7 +37,6 @@ $.widget("mapbender.mbZoomBar", {
                 start: function() { $(this).add('dragging'); }
             });
         }
-//        $(this.element).addClass(this.options.anchor);
         if(this.options.anchor === "left-top"){
             $(this.element).css({
                 left: this.options.position[0],

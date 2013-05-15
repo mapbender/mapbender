@@ -9,7 +9,7 @@
         <table class="tableCore layerset" data-id="{{ layerset.id }}">
           <thead>
             <tr>
-              <th class="subTitle">{{ layerset.title | capitalize }} asd asd asjdaj sdj</th>
+              <th class="subTitle">{{ layerset.title }}</th>
               <th class="iconColumn">
                 <a class="iconAdd iconSmall addInstance" title="{{"Add Instance"|trans}}" href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
                 <a class="iconEdit iconSmall editLayerset" title="{{"Edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
