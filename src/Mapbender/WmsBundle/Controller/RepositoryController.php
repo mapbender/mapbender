@@ -216,11 +216,9 @@ class RepositoryController extends Controller
         $instance->remove($em);
         $em->flush();
         $em->getConnection()->commit();
-        $this->get('session')->setFlash('notice',
+        $this->get('session')->setFlash('success',
                                         'Your Source Instance has been deleted.');
-        return $this->redirect(
-                        $this->generateUrl('mapbender_manager_application_edit',
-                                           array("slug" => $slug)) . "#layersets");
+        return new Response();
     }
 
     /**

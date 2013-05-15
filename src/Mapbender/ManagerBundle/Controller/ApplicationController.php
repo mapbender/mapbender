@@ -515,7 +515,7 @@ class ApplicationController extends Controller
     /**
      * Add a new SourceInstance to the Layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/source/{sourceId}/add")
-     * @Method("POST")
+     * @Method("GET")
      */
     public function addInstanceAction($slug, $layersetId, $sourceId,
             Request $request)
@@ -567,7 +567,7 @@ class ApplicationController extends Controller
     /**
      * Confirm removal of a source instance
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete")
-     * @Method("POST")
+     * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:deleteInstance.html.twig")
      */
     public function confirmDeleteInstanceAction($slug, $layersetId, $instanceId)
@@ -593,7 +593,7 @@ class ApplicationController extends Controller
      * Delete a source instance from a layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete")
      * @Method("POST")
-     * @Template("MapbenderManagerBundle:Application:deleteInstance.html.twig")
+     * 
      */
     public function deleteInstanceAction($slug, $layersetId, $instanceId)
     {
@@ -603,8 +603,10 @@ class ApplicationController extends Controller
         $sourceInst = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:SourceInstance")
                 ->find($instanceId);
+
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getSource()->getManagertype()];
+
         return $this->forward(
                         $manager['bundle'] . ":" . "Repository:deleteInstance",
                         array("slug" => $slug, "instanceId" => $instanceId));
