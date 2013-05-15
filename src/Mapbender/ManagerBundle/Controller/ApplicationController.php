@@ -212,12 +212,16 @@ class ApplicationController extends Controller
                     throw($e);
                 }
             }
-
             return $this->redirect(
                             $this->generateUrl('mapbender_manager_application_edit',
                                                array(
                                 'slug' => $application->getSlug())));
         }
+
+        if($application->getSlug() == "" && $slug != "") {
+            $application->setSlug($slug);
+        }
+
         $error = "error";
 
         if(count($form->getErrors()) > 0)
@@ -236,7 +240,6 @@ class ApplicationController extends Controller
                 }
             }
         }
-        $this->get('session')->setFlash('error', $error);
 
         $templateClass = $application->getTemplate();
         $em = $this->getDoctrine()->getEntityManager();
