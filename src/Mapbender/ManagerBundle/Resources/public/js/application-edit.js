@@ -1,7 +1,7 @@
 $(function() {    
-    $("ul.elements" ).sortable({
-        connectWith: "ul.elements",
-        items: "li:not(.dummy)",
+    $("table.elementsTable").sortable({
+        //connectWith: "table.elementsTable",
+        items: "tr:not(.dummy)",
         distance: 20,
         stop: function( event, ui ) {
             $(ui.item).parent().find("li").each(function(idx, elm){
@@ -28,6 +28,7 @@ $(function() {
             });
         }
     });
+
     $('ul.elements input[type="checkbox"]').click(function() {
         $.ajax({
             url: $(this).attr("data-href"),
@@ -45,6 +46,7 @@ $(function() {
             }
         });
     });
+
     $('ul.layerset input[type="checkbox"]').click(function() {
         $.ajax({
             url: $(this).attr("data-href"),
@@ -62,9 +64,9 @@ $(function() {
             }
         });
     });
-    $("ul.layerset" ).sortable({
-        connectWith: "ul.layerset",
-        items: "li:not(.header)",
+    $("table.layerset" ).sortable({
+        //connectWith: "table.layerset",
+        items: "tr:not(.header)",
         distance: 20,
         stop: function( event, ui ) {
             $(ui.item).parent().find("li").each(function(idx, elm){
@@ -90,6 +92,7 @@ $(function() {
             });
         }
     });
+
     $("ul.layercollection ul").each(function(){
         $(this).sortable({
             cursor: "move",
@@ -121,6 +124,7 @@ $(function() {
             }
         })
     });
+
     $('ul.layercollection li.node span.colactive:first input[type="checkbox"]').bind("change", function(e){
         if($(this).attr("checked") === "checked"){
             $(this).parent().parent().parent().parent().find('span.colactive input[type="checkbox"]').attr("checked", true).attr("disabled", false);
