@@ -119,6 +119,7 @@ class RepositoryController extends Controller {
     public function instanceWeightAction($slug, $layersetId, $instanceId){
         $number = $this->get("request")->get("number");
         $layersetId_new = $this->get("request")->get("new_layersetId");
+
         $instance = $this->getDoctrine()
                 ->getRepository('MapbenderWmsBundle:WmsInstance')
                 ->findOneById($instanceId);

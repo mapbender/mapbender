@@ -69,23 +69,23 @@ $(function() {
         items: "tr:not(.header)",
         distance: 20,
         stop: function( event, ui ) {
-            $(ui.item).parent().find("li").each(function(idx, elm){
+            $(ui.item).parent().find("tr").each(function(idx, elm){
                 if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
-                   
+
                     $.ajax({
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
                         data: {
-                            number: idx - $(elm).parent().find("li.header").length,
+                            number: idx - $(elm).parent().find("tr").length,
                             new_layersetId: $(elm).parent().attr("data-id")
                         },
                         success: function(data, textStatus, jqXHR){
-                            if(data.error && data.error !== ''){
-                                document.location.href = document.location.href;
-                            }
+                            // if(data.error && data.error !== ''){
+                            //     document.location.href = document.location.href;
+                            // }
                         },
                         error: function(jqXHR, textStatus, errorThrown ){
-                            document.location.href = document.location.href;
+                            // document.location.href = document.location.href;
                         }
                     });
                 }
