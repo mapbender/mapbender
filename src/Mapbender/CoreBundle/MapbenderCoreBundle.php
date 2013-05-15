@@ -23,12 +23,8 @@ class MapbenderCoreBundle extends MapbenderBundle
      */
     public function getTemplates()
     {
-        return array(
-            'Mapbender\CoreBundle\Template\Fullscreen',
-            'Mapbender\CoreBundle\Template\Base',
-            'Mapbender\CoreBundle\Template\Base2',
-            'Mapbender\CoreBundle\Template\SidebarLeft'
-            );
+        // I'am the one and only XD
+        return array('Mapbender\CoreBundle\Template\Fullscreen');
     }
 
     /**
@@ -49,7 +45,6 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Ruler',
             'Mapbender\CoreBundle\Element\ScaleBar',
             'Mapbender\CoreBundle\Element\ScaleSelector',
-//            'Mapbender\CoreBundle\Element\SearchRouter',
             'Mapbender\CoreBundle\Element\SrsSelector',
             'Mapbender\CoreBundle\Element\Toc',
             'Mapbender\CoreBundle\Element\Layertree',
