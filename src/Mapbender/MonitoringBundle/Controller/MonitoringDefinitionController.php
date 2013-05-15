@@ -182,7 +182,7 @@ class MonitoringDefinitionController extends Controller {
 			return $this->redirect($this->generateUrl("mapbender_monitoring_monitoringdefinition_index"));
 		}
 		
-		$this->get("session")->setFlash("info","Succsessfully deleted.");
+		$this->get("session")->setFlash("success","Your monitoring definition has been deleted.");
 		return $this->redirect($this->generateUrl("mapbender_monitoring_monitoringdefinition_index"));
 	}	
 	

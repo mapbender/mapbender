@@ -196,7 +196,7 @@ class RepositoryController extends Controller
         $wmssource->remove($em);
         $em->flush();
         $em->getConnection()->commit();
-        $this->get('session')->setFlash('info', "Service deleted");
+        $this->get('session')->setFlash('success', "Your service has been deleted");
         return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
     }
 
@@ -217,7 +217,7 @@ class RepositoryController extends Controller
         $em->flush();
         $em->getConnection()->commit();
         $this->get('session')->setFlash('success',
-                                        'Your Source Instance has been deleted.');
+                                        'Your source instance has been deleted.');
         return new Response();
     }
 

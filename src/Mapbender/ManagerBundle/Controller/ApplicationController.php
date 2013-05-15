@@ -409,7 +409,7 @@ class ApplicationController extends Controller
             $this->getDoctrine()->getEntityManager()->persist($layerset);
             $this->getDoctrine()->getEntityManager()->flush();
             $this->get("logger")->debug("Layerset saved");
-            $this->get('session')->setFlash('info', "Layerset saved");
+            $this->get('session')->setFlash('success', "Your layerset has been  saved");
             return $this->redirect($this->generateUrl(
                                     'mapbender_manager_application_edit',
                                     array('slug' => $slug)));

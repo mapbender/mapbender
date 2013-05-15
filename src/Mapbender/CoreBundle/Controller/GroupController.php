@@ -106,7 +106,7 @@ class GroupController extends Controller {
             return $this->redirect($this->generateUrl("mapbender_core_group_index"));
         }
 
-        $this->get("session")->setFlash("info","Succsessfully deleted.");
+        $this->get("session")->setFlash("success","Your group has been deleted.");
         return $this->redirect($this->generateUrl("mapbender_core_group_index"));
     }
 

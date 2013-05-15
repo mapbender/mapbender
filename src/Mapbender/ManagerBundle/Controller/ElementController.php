@@ -114,7 +114,7 @@ class ElementController extends Controller
             $em->persist($element);
             $em->flush();
 
-            $this->get('session')->setFlash('info',
+            $this->get('session')->setFlash('success',
                                             'Your element has been saved.');
 
             return $this->redirect(
@@ -189,7 +189,7 @@ class ElementController extends Controller
             $em->persist($element);
             $em->flush();
 
-            $this->get('session')->setFlash('info',
+            $this->get('session')->setFlash('success',
                                             'Your element has been saved.');
 
             return $this->redirect(
