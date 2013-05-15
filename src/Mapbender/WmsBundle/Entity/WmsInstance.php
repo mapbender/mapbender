@@ -178,7 +178,7 @@ class WmsInstance extends SourceInstance
                     ->setPriority($num)
                     ->setWmslayersource(new WmsLayerSource())
                     ->setWmsInstance($this);
-            $rootlayer->setToggle(true);
+            $rootlayer->setToggle(false);
             $rootlayer->setAllowtoggle(true);
             $this->addLayer($rootlayer);
             foreach($this->configuration["layers"] as $layerDef)
