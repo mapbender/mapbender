@@ -1,6 +1,6 @@
 $(function() {    
-    $("table.elementsTable").sortable({
-        //connectWith: "table.elementsTable",
+    $("table.elementsTable tbody").sortable({
+        connectWith: "table.elementsTable tbody",
         items: "tr:not(.dummy)",
         distance: 20,
         stop: function( event, ui ) {
@@ -64,14 +64,14 @@ $(function() {
             }
         });
     });
-    $("table.layerset" ).sortable({
-        //connectWith: "table.layerset",
+    $("table.layerset tbody" ).sortable({
+        connectWith: "table.layerset tbody",
         items: "tr:not(.header)",
         distance: 20,
         stop: function( event, ui ) {
             $(ui.item).parent().find("li").each(function(idx, elm){
                 if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
-                    window.console && console.log($(ui.item).parent());
+                   
                     $.ajax({
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
