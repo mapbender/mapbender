@@ -9,34 +9,29 @@
         <table class="tableCore layerset" data-id="{{ layerset.id }}">
           <thead>
             <tr>
-              <th colspan="2" class="subTitle">{{ layerset.title | capitalize }} asd asd asjdaj sdj</th>
-              <th></th>
+              <th class="subTitle">{{ layerset.title | capitalize }} asd asd asjdaj sdj</th>
               <th class="iconColumn">
                 <a class="iconAdd iconSmall addInstance" title="{{"Add Instance"|trans}}" href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
-              </th>
-              <th class="iconColumn">
                 <a class="iconEdit iconSmall editLayerset" title="{{"Edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
-              </th>
-              <th class="iconColumn">
                 <a class="iconRemove iconSmall deleteLayerset" title="{{"Delete"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_confirmdeletelayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td class="iconColumn">
-                <a class="iconPublish iconSmall" title="" href="#"></a>
-              </td>
-              <td colspan="2">
-                asdasds
-              </td>
-              <td class="iconColumn">
-                <a class="iconEdit iconSmall" title="" href="#"></a>
-              </td>
-              <td class="iconColumn">
-                <a class="iconRemove iconSmall" title="" href="#"></a>
-              </td>
-            </tr>
+            {% for instance in layerset.instances %}
+              <tr class="sourceinst" data-id="{{ instance.id }}" data-href="{{ path('mapbender_manager_repository_instanceweight', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}">
+                <td>
+                  <span class="title">{{ instance.title }}</span>
+                  <span class="type">{{ instance.source.type }}</span>
+                  <span class="sourceid">{{ instance.source.id }}</span>
+                </td>
+                <td class="iconColumn">
+                  <span class="iconPublish iconSmall enabled"><input data-href="{{ path('mapbender_manager_repository_instanceenabled', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}" data-id="{{ instance.id }}" type="checkbox" {% if instance.enabled %} checked="checked" {% endif %} /></span>
+                  <a class="iconEdit iconSmall" href="{{ url("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})  }}" class="btn">{{ 'Edit Source Instance' | trans }}</a>
+                  <a class="iconRemove iconSmall" href="{{ url("mapbender_manager_application_confirmdeleteinstance",{"slug": application.slug, 'layersetId': layerset.id, "instanceId": instance.id}) }}" class="btn btn-warning">{{ 'Delete' | trans }}</a>
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </li>

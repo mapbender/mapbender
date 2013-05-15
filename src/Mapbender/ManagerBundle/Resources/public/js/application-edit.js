@@ -285,6 +285,11 @@ $(function() {
                 function(){ //ok click
                     $("#elementForm").submit();
                     return false;
+                },
+                null,
+                function(){
+                    $("#popupContent").removeClass("popupContent")
+                                      .addClass("popupSubContent");
                 }
             );
         }

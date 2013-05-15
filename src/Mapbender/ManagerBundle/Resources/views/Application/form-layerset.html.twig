@@ -7,7 +7,5 @@
 <form id="layersetForm" class="layersetForm" action="{{ form_url }}" method="post" name="{{ form.name }}" {{ form_enctype(form)}} novalidate="novalidate">
     {{form_label(form.title)}}{{form_widget(form.title)}}
 
-    {{ form_rest(form) }}
-
     {{ form_row(form._token) }}
 </form>
