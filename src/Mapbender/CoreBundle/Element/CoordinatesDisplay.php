@@ -65,6 +65,7 @@ class CoordinatesDisplay extends Element
     {
         return array(
             'tooltip' => 'coordinates display',
+            'anchor' => 'right-bottom',
             'label' => false,
             'numDigits' => 2,
             'empty' => 'x= - y= -',

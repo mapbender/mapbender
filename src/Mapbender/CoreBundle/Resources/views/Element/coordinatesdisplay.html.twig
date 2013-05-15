@@ -1,6 +1,6 @@
-<span id="{{ id }}" class="mb-element mb-element-coordsdisplay">
-{% if configuration.label == true %}
-    <label>{{ title| trans }}</label>
-{% endif %}
-    <span id="coordinatesdisplay"></span>
+<span id="{{ id }}" class="mb-element mb-element-coordsdisplay {% if configuration.anchor is defined %} {{configuration.anchor}} {% endif %}">
+    {% if configuration.label == true %}
+        {{ title| trans }} :
+    {% endif %}
+    <span class="iconCoordinates iconBig" id="coordinatesdisplay"></span>
 </span>
