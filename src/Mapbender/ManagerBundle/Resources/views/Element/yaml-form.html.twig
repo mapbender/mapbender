@@ -3,6 +3,7 @@
       {% trans with {'%locale%': app.request.locale} %}
       Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element's configuration.{% endtrans %}
     </div>
-    {{ form_label(form.configuration) }}
-    {{ form_widget(form.configuration) }}
+    {{ form_label(form.title) }}{{ form_widget(form.title) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration) }}{{ form_widget(form.configuration) }}
 </div>

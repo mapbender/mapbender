@@ -25,7 +25,7 @@ class PrintClient extends Element
      */
     static public function getClassDescription()
     {
-        return "";
+        return "Render a Print dialog";
     }
 
     /**
