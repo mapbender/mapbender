@@ -58,10 +58,6 @@ class PrintClient extends Element
             "target" => null,
             "autoOpen" => false,
             "print_directly" => true,
-//            "printer" => Array(
-//                "service" => null,
-//                "metadata" => null,
-//            ),
             "templates" => array(
                 "A4Schachtschein" => array(
                     "label" => "A4 Schachtschein",
@@ -84,14 +80,6 @@ class PrintClient extends Element
         return 'mapbender.mbPrintClient';
     }
 
-//    /**
-//     * @inheritdoc
-//     */
-//    public static function getType()
-//    {
-//        return 'Mapbender\CoreBundle\Element\Type\PrintClientAdminType';
-//    }
-    
     /**
      * @inheritdoc
      */
