@@ -49,12 +49,12 @@
             this.map.center(options);
         },
         
-        /**
-         *
-         */
-        setProjection: function(){
-            
-        },
+//        /**
+//         *
+//         */
+//        setProjection: function(){
+//            
+//        },
         setExtent: function(extent){
             this.model.extent = extent;
         },
@@ -85,23 +85,18 @@
         /**
          *
          */
-        removeSource: function(source){
-            if(source && source.source){
-                this.model.removeSource(source);
-            } else if(source){
-                this.model.removeSource(this.model.createChangedObj(source));
+        removeSource: function(toChangeObj){
+            if(toChangeObj && toChangeObj.source && toChangeObj.type){
+                this.model.removeSource(toChangeObj);
             }
         },
+        
         /**
          *
          */
-        changeSource: function(source, changetype){
-            if(source && source.source && source.type !== ""){
-                this.model.changeSource(source);
-            } else if(source && changetype !== ""){
-                var tochange = this.model.createToChangeObj(source);
-                tochange.type = changetype;
-                this.model.changeSource(tochange);
+        changeSource: function(toChangeObj){
+            if(toChangeObj && toChangeObj.source && toChangeObj.type){
+                this.model.changeSource(toChangeObj);
             }
         },
         /**
@@ -143,6 +138,21 @@
         getModel: function(){
             return this.model;
         },
+        
+        getCenterOptions: function(){
+//            return this.map.center();
+            return {center: this.map.olMap.getCenter(), zoom: this.map.olMap.getZoom()};
+        },
+        
+        setCenter: function(options){
+            if(typeof options.box !== 'undefined' && typeof options.position !== 'undefined' && typeof options.zoom !== 'undefined')
+                this.map.center(options);
+            else if(typeof options.center !== 'undefined' && typeof options.zoom !== 'undefined'){
+                this.map.olMap.updateSize();
+                this.map.olMap.setCenter(options.center, options.zoom);
+            }
+        },
+        
         /*
          * Changes the map's projection.
          */
@@ -257,3 +267,7 @@
     });
 
 })(jQuery);
+
+$('body').delegate(':input', 'keydown', function(event) {
+    event.stopPropagation();
+});

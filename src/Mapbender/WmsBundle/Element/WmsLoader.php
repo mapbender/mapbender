@@ -46,7 +46,7 @@ class WmsLoader extends Element
             "tooltip" => "",
             "target" => null,
             "autoOpen" => false,
-            "defaulformat" => "png",
+            "defaultformat" => "png",
             "defaultinfoformat" => "html"
         );
     }

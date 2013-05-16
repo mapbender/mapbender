@@ -399,17 +399,17 @@ Mapbender.DefaultModel = {
         }
         var changed = this.createChangedObj(source);
         var result = {
-            visible: [],
-            info: [],
+            layers: [],
+            infolayers: [],
             changed: changed
         };
         result = Mapbender.source[source.type].checkLayers(source,
             this.map.olMap.getScale(), tochange, result);
 
-        mqLayer.layers = result.visible;
+        mqLayer.layers = result.layers;
         mqLayer.olLayer.layers = mqLayer.layers;
         mqLayer.olLayer.params.LAYERS = mqLayer.layers;
-        mqLayer.olLayer.queryLayers = result.info;
+        mqLayer.olLayer.queryLayers = result.infolayers;
         return result.changed;
     },
     
@@ -473,13 +473,13 @@ Mapbender.DefaultModel = {
         });
         var changed = this.createChangedObj(source);
         var result = {
-            visible: [],
-            info: [],
+            layers: [],
+            infolayers: [],
             changed: changed
         };
         result = Mapbender.source[source.type].checkLayers(source,
             this.map.olMap.getScale(), this.createToChangeObj(source),result);
-        mqSource.layers = result.visible;
+        mqSource.layers = result.layers;
         if(mqSource.layers.length === 0){
             mqSource.visibility = false;
         }
@@ -780,7 +780,30 @@ Mapbender.DefaultModel = {
      *
      */
     changeSource: function(tochange){
-        if(tochange.type === "tree_selected"){
+        if(typeof tochange.type.layerTree !== 'undefined'){
+            this._changeFromLayerTree(tochange);
+        } else if(tochange.type === "changeOptions"){
+            this.mbMap.fireModelEvent({
+                name: 'beforeSourceChanged', 
+                value: {
+                    tochange: tochange
+                }
+            });
+            result = Mapbender.source[tochange.source.type].changeOptions(tochange);
+            var mqLayer = this.map.layersList[tochange.source.mqlid];
+            var result = this._checkSource(tochange.source, mqLayer, tochange);
+            this.mbMap.fireModelEvent({
+                name: 'sourceChanged', 
+                value: {
+                    changed: result.changed
+                }
+            });
+            this._redrawSource(mqLayer);
+        }
+    },
+    
+    _changeFromLayerTree: function(tochange){
+        if(tochange.type.layerTree === "select"){
             this.mbMap.fireModelEvent({
                 name: 'beforeSourceChanged', 
                 value: {
@@ -796,7 +819,7 @@ Mapbender.DefaultModel = {
                 }
             });
             this._redrawSource(mqLayer);
-        } else if(tochange.type === "tree_info"){
+        } else if(tochange.type.layerTree === "info"){
             var mqLayer = this.map.layersList[tochange.source.mqlid];
             var changed = this.createChangedObj(tochange.source);
             var result = {
@@ -806,7 +829,7 @@ Mapbender.DefaultModel = {
             result = Mapbender.source[tochange.source.type].checkInfoLayers(tochange.source,
                 this.map.olMap.getScale(), tochange, result);
             mqLayer.olLayer.queryLayers = result.info;
-        } else if(tochange.type === "source_move"){
+        } else if(tochange.type.layerTree === "move"){
             var tomove = tochange.children.tomove;
             var before = tochange.children.before;
             var after = tochange.children.after;
