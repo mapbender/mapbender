@@ -97,7 +97,7 @@ class PrintClient extends Element
 //    {
 //        return 'Mapbender\CoreBundle\Element\Type\PrintClientAdminType';
 //    }
-
+    
     /**
      * @inheritdoc
      */
@@ -155,8 +155,7 @@ class PrintClient extends Element
 
                 // Forward to Printer Service URL using OWSProxy
                 $configuration = $this->getConfiguration();
-                $url = $this->container->get('router')->generate('mapbender_print_print_service',
-                                                                 array(), true);
+                $url =  $this->container->get('router')->generate('mapbender_print_print_service',array(),true);
 
                 return $this->container->get('http_kernel')->forward(
                                 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
