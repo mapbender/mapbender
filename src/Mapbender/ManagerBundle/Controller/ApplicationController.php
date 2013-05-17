@@ -65,6 +65,7 @@ class ApplicationController extends Controller
     public function newAction()
     {
         $application = new Application();
+
         // ACL access check
         $this->checkGranted('CREATE', $application);
 
@@ -86,6 +87,7 @@ class ApplicationController extends Controller
     public function createAction()
     {
         $application = new Application();
+
         // ACL access check
         $this->checkGranted('CREATE', $application);
 
@@ -132,6 +134,7 @@ class ApplicationController extends Controller
     public function editAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
         // ACL access check
         $this->checkGranted('EDIT', $application);
 
@@ -162,6 +165,7 @@ class ApplicationController extends Controller
     public function updateAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
         // ACL access check
         $this->checkGranted('EDIT', $application);
         $templateClassOld = $application->getTemplate();
@@ -267,6 +271,7 @@ class ApplicationController extends Controller
     public function toggleStateAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
         // ACL access check
         $this->checkGranted('EDIT', $application);
 
@@ -302,6 +307,32 @@ class ApplicationController extends Controller
     }
 
     /**
+     * Delete confirmation page
+     * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
+     * @Method("GET")
+     * @Template("MapbenderManagerBundle:Application:delete.html.twig")
+     */
+    public function confirmDeleteAction($slug)
+    {
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        if($application === null)
+        {
+            $this->get('session')->setFlash('error',
+                                            'Your application has been already deleted.');
+            return $this->redirect(
+                            $this->generateUrl('mapbender_manager_application_index'));
+        }
+
+        // ACL access check
+        $this->checkGranted('EDIT', $application);
+
+        $id = $application->getId();
+        return array(
+            'application' => $application,
+            'form' => $this->createDeleteForm($id)->createView());
+    }
+
+    /**
      * Delete application
      *
      * @ManagerRoute("/application/{slug}/delete", requirements = { "slug" = "[\w-]+" })
@@ -310,6 +341,7 @@ class ApplicationController extends Controller
     public function deleteAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
         // ACL access check
         $this->checkGranted('DELETE', $application);
 
@@ -565,35 +597,10 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Confirm removal of a source instance
-     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete")
-     * @Method("GET")
-     * @Template("MapbenderManagerBundle:Application:deleteInstance.html.twig")
-     */
-    public function confirmDeleteInstanceAction($slug, $layersetId, $instanceId)
-    {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
-        // ACL access check
-        $this->checkGranted('EDIT', $application);
-        $layerset = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:Layerset")
-                ->find($layersetId);
-        $instance = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:SourceInstance")
-                ->find($instanceId);
-        return array(
-            'application' => $application,
-            'layerset' => $layerset,
-            'instance' => $instance,
-            'form' => $this->createDeleteForm($instance->getId())->createView()
-        );
-    }
-
-    /**
      * Delete a source instance from a layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete")
      * @Method("POST")
-     * 
+     *
      */
     public function deleteInstanceAction($slug, $layersetId, $instanceId)
     {
@@ -662,8 +669,8 @@ class ApplicationController extends Controller
 
     /**
      * Checks the grant for an action and an object
-     * 
-     * @param string $action action "CREATE" 
+     *
+     * @param string $action action "CREATE"
      * @param \Object $object the object
      * @throws AccessDeniedException
      */

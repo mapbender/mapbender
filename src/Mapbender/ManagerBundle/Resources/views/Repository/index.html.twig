@@ -8,7 +8,9 @@
 {% endblock %}
 
 {% block manager_content %}
+{% if create_permission %}
 <a class="iconAdd iconBig right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'Add new service' | trans }}"></a>
+{% endif %}
 {% if sources|length > 0 %}
   <label for="inputFilterServices" class="labelInput left">{{"Filter"|trans}}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
 
@@ -26,14 +28,14 @@
           {% endif %}
           <div class="buttonGroup">
             <a class="iconView iconBig" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'View service metadata' | trans }}"></a>
-               <span class="iconRemove iconBig"  
+               <span class="iconRemove iconBig"
                 title="{{ source.title }}"
-                data-url="{{ url("mapbender_manager_repository_delete",{"sourceId":source.id}) }}" 
+                data-url="{{ url("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
                 data-id="{{ source.id }}"></span>
           </div>
         </div>
       </li>
-    {% endfor %}  
+    {% endfor %}
   </ul>
 {% else %}
   {% trans %}

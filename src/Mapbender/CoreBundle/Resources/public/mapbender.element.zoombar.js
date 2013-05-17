@@ -32,33 +32,12 @@ $.widget("mapbender.mbZoomBar", {
         this._zoom2Slider();
 
         if(this.options.draggable === true) {
-            this.element.draggable({
+            this.element.addClass("iconMove").draggable({
                 containment: this.element.closest('.region'),
                 start: function() { $(this).add('dragging'); }
             });
         }
-        if(this.options.anchor === "left-top"){
-            $(this.element).css({
-                left: this.options.position[0],
-                top: this.options.position[1]
-            });
-        } else if(this.options.anchor === "right-top"){
-            $(this.element).css({
-                right: this.options.position[0],
-                top: this.options.position[1]
-            });
-        } else if(this.options.anchor === "left-bottom"){
-            $(this.element).css({
-                left: this.options.position[0],
-                bottom: this.options.position[1]
-            });
-        } else if(this.options.anchor === "right-bottom"){
-            $(this.element).css({
-                right: this.options.position[0],
-                bottom: this.options.position[1]
-            });
-        }
-        $(this.element).find('.zoom-world a').bind("click" ,$.proxy(this._worldZoom, this));
+        $(this.element).find('.iconZoomMin').bind("click" ,$.proxy(this._worldZoom, this));
 
         this._trigger('ready');
     },
@@ -70,15 +49,15 @@ $.widget("mapbender.mbZoomBar", {
     },
 
     _setupSlider: function() {
-        this.zoomslider = this.element.find('ol.zoom-slider')
+        this.zoomslider = this.element.find('.zoomSlider .zoomSliderLevels')
             .hide()
             .empty();
 
         for(var i = 0; i < this.map.getNumZoomLevels(); i++) {
-            this.zoomslider.append($('<li></li>'));
+            this.zoomslider.append($('<li class="iconZoomLevel"></li>'));
         }
         this.zoomslider.find('li').last()
-            .addClass('active')
+            .addClass('iconZoomLevelSelected')
             .append($('<div></div>'));
 
         var step = [
@@ -135,25 +114,25 @@ $.widget("mapbender.mbZoomBar", {
         });
 
         this.map.addControl(this.zoomBoxControl);
-        this.element.find('div.zoom-box').bind('click', function() {
-            $(this).toggleClass('active');
-            if($(this).hasClass('active')) {
+        this.element.find('.zoomBox').bind('click', function() {
+            $(this).toggleClass('activeZoomIcon');
+            if($(this).hasClass('activeZoomIcon')) {
                 self.zoomBoxControl.activate();
             } else {
                 self.zoomBoxControl.deactivate();
             }
         });
 
-        this.element.find('div.zoom-prev').bind('click', function() {
+        this.element.find(".history .historyPrev").bind("click", function(){
             self.navigationHistoryControl.previous.trigger();
         });
-        this.element.find('div.zoom-next').bind('click', function() {
+        this.element.find(".history .historyNext").bind("click", function(){
             self.navigationHistoryControl.next.trigger();
         });
 
-        this.element.find('div.zoom-in a').bind('click',
+        this.element.find('.zoomSlider .iconZoomIn').bind('click',
             $.proxy(this.map.zoomIn, this.map));
-        this.element.find('div.zoom-out a').bind('click',
+        this.element.find('.zoomSlider .iconZoomOut').bind('click',
             $.proxy(this.map.zoomOut, this.map));
     },
 
@@ -176,7 +155,7 @@ $.widget("mapbender.mbZoomBar", {
         this.map.setCenter(center, zoom);
 
         this.zoomBoxControl.deactivate();
-        this.element.find('div.zoom-box').removeClass('active');
+        this.element.find('.zoomBox').removeClass('activeZoomIcon');
     },
 
     _setupPanButtons: function() {
@@ -194,24 +173,10 @@ $.widget("mapbender.mbZoomBar", {
                     this.map.getSize().h};
         }
 
-        this.element.find('div.pan a').click(function() {
-            var type = $(this).attr('class');
-            switch(type) {
-                case 'pan-up':
-                    pan(0, -stepSize.y);
-                    break;
-                case 'pan-right':
-                    pan(+stepSize.x, 0);
-                    break;
-                case 'pan-down':
-                    pan(0, +stepSize.y);
-                    break;
-                case 'pan-left':
-                    pan(-stepSize.x, 0);
-                    break;
-            }
-            return false;
-        });
+        this.element.find(".panUp").bind("click", function(){pan(0, -stepSize.y);});
+        this.element.find(".panRight").bind("click", function(){pan(+stepSize.x, 0);})
+        this.element.find(".panDown").bind("click", function(){pan(0, +stepSize.y);})
+        this.element.find(".panLeft").bind("click", function(){pan(-stepSize.x, 0);})
     },
 
     /**
@@ -230,11 +195,11 @@ $.widget("mapbender.mbZoomBar", {
     _zoom2Slider: function() {
         var position = this.map.getNumZoomLevels() - 1 - this.map.getZoom();
 
-        this.zoomslider.find('li.active')
-            .removeClass('active')
+        this.zoomslider.find('.iconZoomLevelSelected')
+            .removeClass('iconZoomLevelSelected')
             .empty();
         this.zoomslider.find('li').eq(position)
-            .addClass('active')
+            .addClass('iconZoomLevelSelected')
             .append($('<div></div>'));
     }
 });
