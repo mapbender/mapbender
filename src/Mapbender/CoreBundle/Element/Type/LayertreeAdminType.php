@@ -41,6 +41,12 @@ class LayertreeAdminType extends AbstractType
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
+                ->add('layerMenu', 'checkbox',
+                          array(
+                        'required' => false))
+                ->add('layerRemove', 'checkbox',
+                          array(
+                        'required' => false))
                 ->add('type', 'choice',
                       array(
                     'required' => true,
@@ -58,6 +64,9 @@ class LayertreeAdminType extends AbstractType
                 ->add('titlemaxlength', 'integer',
                       array('required' => true))
                 ->add('showBaseSource', 'checkbox',
+                          array(
+                        'required' => false))
+                ->add('showCaption', 'checkbox',
                           array(
                         'required' => false));
     }

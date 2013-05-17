@@ -70,11 +70,11 @@ Mapbender.error = function(message){
     alert(message);
 };
 
-Mapbender.checkTarget = function(widgetName, target){
+Mapbender.checkTarget = function(widgetName, target, targetname){
     if(target === null || typeof(target) === 'undefined'
         || new String(target).replace(/^\s+|\s+$/g, '') === ""
-        || !$('#' + target)){
-        Mapbender.error(widgetName + ': a target element is not defined.');
+        || $('#' + target).length === 0){
+        Mapbender.error(widgetName + ': a target element ' + (targetname ? '"' + targetname + '"' : '') + ' is not defined.');
         return false;
     } else {
         return true;
@@ -169,9 +169,9 @@ Mapbender.DefaultModel = {
             });
         });
         
-        if(!hasLayers){
-            Mapbender.error('The element "map" has no layer.');
-        }
+//        if(!hasLayers){
+//            Mapbender.error('The element "map" has no layer.');
+//        }
 
         var mapOptions = {
             maxExtent: this._transformExtent(this.mapMaxExtent, this.proj).toArray(),
@@ -789,14 +789,12 @@ Mapbender.DefaultModel = {
                     tochange: tochange
                 }
             });
-            result = Mapbender.source[tochange.source.type].changeOptions(tochange);
+            tochange = Mapbender.source[tochange.source.type].changeOptions(tochange);
             var mqLayer = this.map.layersList[tochange.source.mqlid];
             var result = this._checkSource(tochange.source, mqLayer, tochange);
             this.mbMap.fireModelEvent({
                 name: 'sourceChanged', 
-                value: {
-                    changed: result.changed
-                }
+                value: result
             });
             this._redrawSource(mqLayer);
         }
@@ -814,9 +812,7 @@ Mapbender.DefaultModel = {
             var result = this._checkSource(tochange.source, mqLayer, tochange);
             this.mbMap.fireModelEvent({
                 name: 'sourceChanged', 
-                value: {
-                    changed: result.changed
-                }
+                value: result
             });
             this._redrawSource(mqLayer);
         } else if(tochange.type.layerTree === "info"){
@@ -849,7 +845,8 @@ Mapbender.DefaultModel = {
                 var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, after.layerId);
                 layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, tomove.layerId);
                 this._reorderLayers(tomove.source, layerToMove.layer, afterLayer.parent, afterLayer.idx, before, after);
-            } else if(before && before.source.configuration.options.url === tomove.source.configuration.options.url){
+//            } else if(before && before.source.configuration.options.url === tomove.source.configuration.options.url){
+            } else if(before && before.source.origId === tomove.source.origId){
                 var count = Mapbender.source[tomove.source.type].layerCount(tomove.source);
                 if(count.simpleCount === 1){ // remove source
                     this._insertLayer(tomove, before, after);
@@ -858,7 +855,8 @@ Mapbender.DefaultModel = {
                     var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
                     this.addSource(source_new, before, after);
                 }
-            } else if(after && after.source.configuration.options.url === tomove.source.configuration.options.url){
+//            } else if(after && after.source.configuration.options.url === tomove.source.configuration.options.url){
+            } else if(after && after.source.origId === tomove.source.origId){
                 this._insertLayer(tomove, before, after);
             } else if(before && !after){
                 if(!tomove.layerId){ // move source for tree

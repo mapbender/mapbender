@@ -78,6 +78,7 @@
             $("ul.layers").each(function(){
                 var that = this;
                 $(that).sortable({
+                    axis: 'y',
                     items: "li:not(.notreorder)",
                     distance: 6,
                     stop: function( event, ui) {
@@ -96,23 +97,39 @@
                                     var beforeEl = list[i-1];
                                     var beforeId = $(beforeEl).attr("data-id");
                                     var beforeSourceId = $(beforeEl).attr('data-sourceid') ? $(beforeEl).attr('data-sourceid') : $(beforeEl).parents('li[data-sourceid]:first').attr('data-sourceid');//self._findSourceId($(beforeEl));
-                                    before = {source: self.model.getSource({id: beforeSourceId}), layerId: beforeId};
+                                    before = {
+                                        source: self.model.getSource({
+                                            id: beforeSourceId
+                                        }), 
+                                        layerId: beforeId
+                                    };
                                 }
                                 if(i < list.length - 1){
                                     var afterEl = list[i+1];
                                     var afterId = $(afterEl).attr("data-id");
                                     var afterSourceId = $(afterEl).attr('data-sourceid') ? $(afterEl).attr('data-sourceid') : $(afterEl).parents('li[data-sourceid]:first').attr('data-sourceid');//self._findSourceId($(afterEl));
-                                    after = {source:  self.model.getSource({id: afterSourceId}), layerId: afterId};
+                                    after = {
+                                        source:  self.model.getSource({
+                                            id: afterSourceId
+                                        }), 
+                                        layerId: afterId
+                                    };
                                 }
                                 var tomoveId = $(ui.item).attr("data-id");
                                 var tomoveSourceId = $(elm).attr('data-sourceid') ? $(elm).attr('data-sourceid') : $(elm).parents('li[data-sourceid]:first').attr('data-sourceid');
-                                tomove = { source: self.model.getSource({id: tomoveSourceId})};
+                                tomove = {
+                                    source: self.model.getSource({
+                                        id: tomoveSourceId
+                                    })
+                                };
                                 if($(ui.item).attr("data-type") !== self.consts.root){
                                     tomove['layerId'] = tomoveId;
                                 }
                                 var tochange = self.model.createToChangeObj(tomove.source);
                                 if(tochange !== null){
-                                    tochange.type = {layerTree: "move"};
+                                    tochange.type = {
+                                        layerTree: "move"
+                                    };
                                     tochange.children.before = after;
                                     tochange.children.after = before;
                                     tochange.children.tomove = tomove;
@@ -157,18 +174,26 @@
                     }
                 }
                 if(!hasChildren){
+                    $("ul.layers").each(function(){
+                        var that = this;
+                        $(that).sortable("destroy");
+                    });
+                    $( ".selector" ).sortable( "destroy" )
                     var li_s = this._createSourceList(added.source, added.source, this.model.getScale());
                     if(before && before.layerId){
                         $(this.element).find('ul.layers:first li[data-id="'+before.layerId+'"]').after(li_s);
                     } else if(after && after.layerId){
                         $(this.element).find('ul.layers:first li[data-id="'+after.layerId+'"]').before(li_s);
+                    } else if(!this.options.showBaseSource && after.source.configuration.isBaseSource){
+                        $(this.element).find('ul.layers:first').append(li_s);
                     }
+                    this._createSortable();
                 }
             }
         },
         
         _onSourceChanged: function(event, changed){
-            //            window.console && console.log("mbLayertree._onSourceChanged:", changed);
+            window.console && console.log("mbLayertree._onSourceChanged:", changed);
             if(this.options.displaytype === "tree"){
                 for(key in changed.children){
                     var changedEl = changed.children[key];
@@ -189,7 +214,17 @@
                     }
                 }
             } else if(this.options.displaytype === "list"){
-                var a = 0;
+                for(key in changed.children){
+                    var changedEl = changed.children[key];
+                    if(changedEl.treeElm.state.visibility){
+                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"]').removeClass("invisible");
+                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.state:first').attr("title", "");
+                    } else {
+                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"]').addClass("invisible");
+                        var tooltip = changedEl.state.outOfBounds ? "outOfBounds" : changedEl.state.outOfScale ? "outOfScale" : "parent invisible or not defined?";
+                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.state:first').attr("title", tooltip);
+                    }
+                }
             }
         },
         
@@ -204,8 +239,8 @@
             }
         },
         
-        _onSourceLoadStart: function(event, option){
-            //            window.console && console.log("mbLayertree._onSourceLoadStart:", event);
+        _onSourceLoadStart: function(event, option){ // sets "loading" for layers
+            window.console && console.log("mbLayertree._onSourceLoadStart:", event);
             if(!option.source)
                 return;
             var source = option.source;
@@ -228,16 +263,15 @@
                 
             } else if(this.options.displaytype === "list"){
                 $(this.element).find('li[data-sourceid="'+source.id+'"]').each(function(idx, elm){
-                    if($(elm).find('input[name="selected"]:first').is(':checked')){
-//                        && !$(elm).find('span.state:first').hasClass('invisible')){
-                        $(elm).find('span.state:first').removeClass('invisible').removeClass('error');
-                        $(elm).find('span.spinner:first').addClass('loading');
+                    if($(elm).find('input[name="selected"]:first').is(':checked')
+                        && !$(elm).hasClass('invisible')){
+                        $(elm).removeClass('error').addClass("loading");
                     }
                 });
             }
         },
         
-        _onSourceLoadEnd: function(event, option){
+        _onSourceLoadEnd: function(event, option){ // removes "loading" from layers
             //            window.console && console.log("mbLayertree._onSourceLoadEnd:", event);
             if(!option.source)
                 return;
@@ -249,10 +283,10 @@
                     
                 }
             } else if(this.options.displaytype === "list"){
-                $(this.element).find('li[data-sourceid="'+source.id+'"] span.spinner').removeClass('loading');
+                $(this.element).find('li[data-sourceid="'+source.id+'"]').removeClass('loading');
             }
         },
-        _onSourceLoadError: function(event, option){
+        _onSourceLoadError: function(event, option){ // sets "error" for layers
             //            window.console && console.log("mbLayertree._onSourceLoadError:", event);
             if(!option.source)
                 return;
@@ -267,13 +301,11 @@
                 });
             } else if(this.options.displaytype === "list"){
                 $(this.element).find('li[data-sourceid="'+option.source.id+'"]').each(function(idx, elm){
-                    $(elm).find('span.spinner:first').removeClass('loading');
-                    if($(elm).find('input[name="selected"]:first').is(':checked')
-                        && !$(elm).find('span.state:first').hasClass('invisible')){
-                        $(elm).find('span.state').removeClass('invisible').addClass('error').attr({
+                    if($(elm).find('input[name="selected"]:first').is(':checked')){
+                        $(elm).removeClass('invisible').removeClass('loading').addClass('error');
+                        $(elm).find('span.state').attr({
                             title: option.error.details
                         });
-                        
                     }
                 });
             }
@@ -304,7 +336,7 @@
                 }
                 if(added !== ""){
                     li += added
-//                li += this._createMenu();
+                //                li += this._createMenu();
                 }
                 if(sourceEl.children){
                     li +=     '<ul id="list-'+sourceEl.options.id+'" class="layers ' + config.toggle + '">';
@@ -315,8 +347,8 @@
                 }
                 
                 li +=
-//                    isroot ? '<div>' : ''+    
-                    '</li>';
+                //                    isroot ? '<div>' : ''+    
+                '</li>';
             }
             return li;
         },
@@ -338,13 +370,13 @@
                     +   '<input type="checkbox" title="selected" name="selected" '+ config.sel +' ' + config.selable + '/>'
                     +   '<input type="checkbox" title="query" name="info" '+ config.info +' ' + config.infoable + '/>'
                     +   '<span class="sourcetitle '+config.toggleable+'" title="'+sourceEl.options.title+'">' + this._subStringText(sourceEl.options.title) + '</span>';
-                    if(true){ //TODO check if menu available
+                    if(this.options.layerMenu){ //TODO check if menu available
                         li += '<span class="menubutton">&#9776;</span>';
                     }
-                    if(true){ //TODO check if close claseable
+                    if(this.options.layerRemove){ //TODO check if close claseable
                         li += '<span class="removebutton">&times;</span>';
                     }
-    //                li += this._createMenu();
+                    //                li += this._createMenu();
                     if(sourceEl.children){
                         li +=     '<ul id="list-'+sourceEl.options.id+'" class="layers ' + config.toggle + '">';
                         for(var j = 0; j < sourceEl.children.length; j++){
@@ -396,13 +428,13 @@
                     +   '<input type="checkbox" title="selected" name="selected" '+ config.sel +' ' + config.selable + '/>'
                     +   '<input type="checkbox" title="query" name="info" '+ config.info +' ' + config.infoable + '/>'
                     +   '<span class="sourcetitle '+config.toggleable+'" title="'+sourceEl.options.title+'">' + this._subStringText(sourceEl.options.title) + '</span>';
-                    if(true){ //TODO check if menu available
+                    if(this.options.layerMenu){
                         li += '<span class="menubutton">&#9776;</span>';
                     }
-                    if(true){ //TODO check if close claseable
+                    if(this.options.layerRemove){
                         li += '<span class="removebutton">&times;</span>';
                     }
-    //                li += this._createMenu();
+                    //                li += this._createMenu();
 
                     li += '</li>';
                 }
@@ -435,17 +467,17 @@
                     }
                     li += '</li>';
                     if(sourceEl.children){
-//                        li +=     '<ul id="list-'+sourceEl.options.id+'" class="layers ' + config.toggle + '">';
+                        //                        li +=     '<ul id="list-'+sourceEl.options.id+'" class="layers ' + config.toggle + '">';
                         for(var j = 0; j < sourceEl.children.length; j++){
                             li += this._createListNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found);
                         }
-//                        li +=     '</ul>';
+                    //                        li +=     '</ul>';
                     }
                     found = false;
                     return li;
                 }
                 if(sourceEl.children){
-//                    parent = parent.find('li[data-id="'+sourceEl.options.id+'"]:first');
+                    //                    parent = parent.find('li[data-id="'+sourceEl.options.id+'"]:first');
                     for(var j = 0; j < sourceEl.children.length; j++){
                         var li = this._createListNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found);
                         if(li !== null){
@@ -525,14 +557,14 @@
             }
             return conf;
         },
-//    
-//        _findSourceId: function(elm) {
-//            if(elm.attr("data-sourceid")){
-//                return elm.attr("data-sourceid");
-//            } else {
-//                return this._findSourceId(elm.parent());
-//            }
-//        },
+        //    
+        //        _findSourceId: function(elm) {
+        //            if(elm.attr("data-sourceid")){
+        //                return elm.attr("data-sourceid");
+        //            } else {
+        //                return this._findSourceId(elm.parent());
+        //            }
+        //        },
         
         _toggleContent: function(e){
             if($(e.target).parent().find("ul.layers").hasClass("closed")){
@@ -545,7 +577,9 @@
         _toggleSelected: function(e){
             var id = $(e.target).parents('li:first').attr('data-id');
             var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
-            var tochange = this.model.createToChangeObj(this.model.getSource({id: sourceId}));
+            var tochange = this.model.createToChangeObj(this.model.getSource({
+                id: sourceId
+            }));
             tochange.children[id] = {
                 options:{
                     treeOptions:{
@@ -553,14 +587,18 @@
                     }
                 }
             };
-            tochange.type = {layerTree: "select"};
+            tochange.type = {
+                layerTree: "select"
+            };
             this.model.changeSource(tochange);
         },
     
         _toggleInfo: function(e){
             var id = $(e.target).parents('li:first').attr('data-id');
             var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
-            var tochange = this.model.createToChangeObj(this.model.getSource({id: sourceId}));
+            var tochange = this.model.createToChangeObj(this.model.getSource({
+                id: sourceId
+            }));
             tochange.children[id] = {
                 options:{
                     treeOptions:{
@@ -568,17 +606,23 @@
                     }
                 }
             };
-            tochange.type =  {layerTree: "info"};
+            tochange.type =  {
+                layerTree: "info"
+            };
             this.model.changeSource(tochange);
         },
         
         _removeSource: function(e){
             var layer_id = $(e.target).parents("li:first").attr("data-id");
             var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
-            var toremove = this.model.createToChangeObj(this.model.getSource({id: sourceId}));
+            var toremove = this.model.createToChangeObj(this.model.getSource({
+                id: sourceId
+            }));
             var layerOpts = this.model.getSourceLayerById(toremove.source, layer_id);
             toremove.children[layer_id] = layerOpts.layer;
-            toremove.type =  {layerTree: "remove"};
+            toremove.type =  {
+                layerTree: "remove"
+            };
             this.model.removeSource(toremove);
         },
         
@@ -622,17 +666,17 @@
                 });
                 self.dlg.html($(self.element));
             }
-//            if(this.options.useAccordion){
-////                $(this.element).find('ul.layers > li').each(function(){
-//var a = $(this.element).find('ul.layers li[data-type="root"]');
-//                    $(this.element).find('ul.layers li[data-type="root"]').accordion({
-//                        header: 'div.title',
-//                        autoHeight: false, 
-//                        collapsible: true, 
-//                        active: false
-//                    });
-////                });
-//            }
+        //            if(this.options.useAccordion){
+        ////                $(this.element).find('ul.layers > li').each(function(){
+        //var a = $(this.element).find('ul.layers li[data-type="root"]');
+        //                    $(this.element).find('ul.layers li[data-type="root"]').accordion({
+        //                        header: 'div.title',
+        //                        autoHeight: false, 
+        //                        collapsible: true, 
+        //                        active: false
+        //                    });
+        ////                });
+        //            }
         },
     
         _destroy: $.noop
