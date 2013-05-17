@@ -63,12 +63,18 @@ class PrintClient extends Element
 //                "metadata" => null,
 //            ),
             "templates" => array(
-                "A4Schachtschein" => array(
-                    "label" => "A4 Schachtschein",
-                    "format" => "a4" ),
-                "A3Schachtschein" => array(
-                    "label" => "A3 Schachtschein",
-                    "format" => "a3" ),),
+                "a4portrait" => array(
+                    "label" => "A4 Portrait",
+                    "format" => "a4"),
+                "a4landscape" => array(
+                    "label" => "A4 Landscape",
+                    "format" => "a4"),
+                "a3portrait" => array(
+                    "label" => "A3 Portrait",
+                    "format" => "a3"),
+                "a3landscape" => array(
+                    "label" => "A3 Landscape",
+                    "format" => "a3")),
             "scales" => array(500, 1000, 5000, 10000, 25000),
             "quality_levels" => array("72" => "Entwurf", "288" => "Document"),
             "rotatable" => true,
@@ -91,7 +97,7 @@ class PrintClient extends Element
 //    {
 //        return 'Mapbender\CoreBundle\Element\Type\PrintClientAdminType';
 //    }
-    
+
     /**
      * @inheritdoc
      */
@@ -149,11 +155,8 @@ class PrintClient extends Element
 
                 // Forward to Printer Service URL using OWSProxy
                 $configuration = $this->getConfiguration();
-                $url = (null !== $configuration['printer']['service'] ?
-                                $configuration['printer']['service'] :
-                                $this->container->get('router')->generate('mapbender_print_print_service',
-                                                                          array(),
-                                                                          true));
+                $url = $this->container->get('router')->generate('mapbender_print_print_service',
+                                                                 array(), true);
 
                 return $this->container->get('http_kernel')->forward(
                                 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
