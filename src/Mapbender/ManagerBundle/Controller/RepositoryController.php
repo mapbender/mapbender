@@ -102,6 +102,12 @@ class RepositoryController extends Controller {
     public function deleteAction($sourceId){
         $source = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+
+        $securityContext = $this->get('security.context');
+        if(false === $securityContext->isGranted('DELETE', $source)) {
+            throw new AccessDeniedException();
+        }
+
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
         return  $this->forward(
