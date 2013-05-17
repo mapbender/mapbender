@@ -58,15 +58,27 @@ class PrintClient extends Element
             "target" => null,
             "autoOpen" => false,
             "print_directly" => true,
-            "printer" => Array(
-                "service" => null,
-                "metadata" => null,
-            ),
-            "templates" => Array(),
-            "scales" => null,
-            "quality_levels" => Array(),
+//            "printer" => Array(
+//                "service" => null,
+//                "metadata" => null,
+//            ),
+            "templates" => array(
+                "a4portrait" => array(
+                    "label" => "A4 Portrait",
+                    "format" => "a4"),
+                "a4landscape" => array(
+                    "label" => "A4 Landscape",
+                    "format" => "a4"),
+                "a3portrait" => array(
+                    "label" => "A3 Portrait",
+                    "format" => "a3"),
+                "a3landscape" => array(
+                    "label" => "A3 Landscape",
+                    "format" => "a3")),
+            "scales" => array(500, 1000, 5000, 10000, 25000, 50000, 75000, 100000),
+            "quality_levels" => array("72" => "Entwurf", "288" => "Document"),
             "rotatable" => true,
-            "optional_fields" => Array()
+            "optional_fields" => null
         );
     }
 
