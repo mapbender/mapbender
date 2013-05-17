@@ -152,7 +152,11 @@ $(function() {
         return false;
     });
 
+
+
     // Layout - Elements ---------------------------------------------------------------------------
+
+
     function loadElementFormular(){
         var url = $(this).attr("href");
 
@@ -161,12 +165,27 @@ $(function() {
                 url: url,
                 type: "GET",
                 success: function(data){
-                   $("#popupContent").wrap('<div id="contentWrapper"></div>').hide();
-                   $("#contentWrapper").append('<div id="popupSubContent" class="popupSubContent"></div>');
-                   $("#popupSubContent").append(data);
-                   var subTitle = $("#popupSubContent").find("#form_title").val();
-                   $("#popupSubTitle").text(" - " + subTitle);
-                   $("#popup").find(".buttonYes, .buttonBack").show();
+                    $("#popupContent").wrap('<div id="contentWrapper"></div>').hide();
+                    $("#contentWrapper").append('<div id="popupSubContent" class="popupSubContent"></div>');
+                    $("#popupSubContent").append(data);
+                    var subTitle = $("#popupSubContent").find("#form_title").val();
+                    $("#popupSubTitle").text(" - " + subTitle);
+                    $("#popup").find(".buttonYes, .buttonBack").show();
+
+/*                    $("#popupSubContent").find('form').one("submit", (function(e){
+                        $.post(
+                            $(this).attr('action'), 
+                            $(this).serialize(), function(response) {
+                                $("#popupSubContent").html('');
+                                $("#popupSubContent").append(response);
+                                var subTitle = $("#popupSubContent").find("#form_title").val();
+                                $("#popupSubTitle").text(" - " + subTitle);
+                                $("#popup").find(".buttonYes, .buttonBack").show();
+                        });
+
+                        e.preventDefault();
+                        return false;
+                    });*/
                 }
             });
         }

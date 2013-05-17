@@ -86,7 +86,7 @@ class ElementController extends Controller
      *
      * @ManagerRoute("/application/{slug}/element/new")
      * @Method("POST")
-     * @Template("MapbenderManagerBundle:Element:new.html.twig")
+     * @Template("MapbenderManagerBundle:Element:edit.html.twig")
      */
     public function createAction($slug)
     {
@@ -124,7 +124,7 @@ class ElementController extends Controller
         } else
         {
             return array(
-                'form' => $form['type']->getForm()->createView(),
+                'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
                 'assets' => $form['assets']);
         }
