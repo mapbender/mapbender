@@ -91,7 +91,7 @@ class Layertree extends Element
             "titlemaxlength" => intval(20),
             "autoOpen" => false,
             "showBaseSource" => true,
-            "showCaption" => true,
+            "showHeader" => false,
         );
     }
 

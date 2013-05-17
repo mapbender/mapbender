@@ -66,7 +66,7 @@ class LayertreeAdminType extends AbstractType
                 ->add('showBaseSource', 'checkbox',
                           array(
                         'required' => false))
-                ->add('showCaption', 'checkbox',
+                ->add('showHeader', 'checkbox',
                           array(
                         'required' => false));
     }
