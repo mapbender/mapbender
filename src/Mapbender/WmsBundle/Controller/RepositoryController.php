@@ -22,10 +22,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @ManagerRoute("/repository/wms")
- * 
+ *
  * @author Christian Wygoda
  */
 class RepositoryController extends Controller
@@ -78,6 +80,13 @@ class RepositoryController extends Controller
     {
         $request = $this->get('request');
         $wmssource_req = new WmsSource();
+
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if(false === $securityContext->isGranted('CREATE', $oid)) {
+            throw new AccessDeniedException();
+        }
+
         $form = $this->get("form.factory")->create(new WmsSourceSimpleType(),
                                                    $wmssource_req);
         $form->bindRequest($request);
@@ -174,7 +183,7 @@ class RepositoryController extends Controller
 
     /**
      * Removes a WmsSource
-     * 
+     *
      * @ManagerRoute("/{sourceId}/delete")
      * @Method({"GET"})
      */
@@ -202,7 +211,7 @@ class RepositoryController extends Controller
 
     /**
      * Removes a WmsInstance
-     * 
+     *
      * @ManagerRoute("/{slug}/instance/{instanceId}/delete")
      * @Method({"GET"})
      */
@@ -223,7 +232,7 @@ class RepositoryController extends Controller
 
     /**
      * Edits, saves the WmsInstance
-     * 
+     *
      * @ManagerRoute("/instance/{slug}/{instanceId}")
      * @Template("MapbenderWmsBundle:Repository:instance.html.twig")
      */
@@ -311,7 +320,7 @@ class RepositoryController extends Controller
 
     /**
      * Changes the priority of WmsInstanceLayers
-     * 
+     *
      * @ManagerRoute("/{slug}/instance/{instanceId}/priority/{instLayerId}")
      */
     public function instanceLayerPriorityAction($slug, $instanceId, $instLayerId)
@@ -390,7 +399,7 @@ class RepositoryController extends Controller
 
     /**
      * Sets enabled/disabled for the WmsInstance
-     * 
+     *
      * @ManagerRoute("/instance/{slug}/enabled/{instanceId}")
      */
     public function instanceEnabledAction($slug, $instanceId)
