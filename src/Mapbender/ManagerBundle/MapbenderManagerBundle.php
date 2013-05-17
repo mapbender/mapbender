@@ -4,6 +4,7 @@ namespace Mapbender\ManagerBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 class MapbenderManagerBundle extends MapbenderBundle
 {
@@ -18,8 +19,12 @@ class MapbenderManagerBundle extends MapbenderBundle
                     'mapbender_manager_application',
                 ),
                 'subroutes' => array(
-                    array('title'=>'New Application', 
-                          'route'=>'mapbender_manager_application_new')
+                    array('title'=>'New Application',
+                          'route'=>'mapbender_manager_application_new',
+                          'enabled' => function($securityContext) {
+                                $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+                                return $securityContext->isGranted('CREATE', $oid);
+                          })
                 )
             ),
             array(
@@ -30,8 +35,12 @@ class MapbenderManagerBundle extends MapbenderBundle
                     'mapbender_manager_repository',
                 ),
                 'subroutes' => array(
-                    0 => array('title'=>'Add Service', 
-                               'route'=>'mapbender_manager_repository_new')
+                    array('title'=>'Add Service',
+                           'route'=>'mapbender_manager_repository_new',
+                           'enabled' => function($securityContext) {
+                                $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+                                return $securityContext->isGranted('CREATE', $oid);
+                            })
                 )
             ),
         );

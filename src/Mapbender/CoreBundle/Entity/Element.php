@@ -7,6 +7,7 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Element configuration entity
@@ -30,6 +31,7 @@ class Element
     /**
      * @var string $title The element title
      * @ORM\Column(type="string", length=128)
+     * @Assert\NotBlank()
      */
     protected $title;
 

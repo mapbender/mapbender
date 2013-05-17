@@ -86,7 +86,7 @@ class ElementController extends Controller
      *
      * @ManagerRoute("/application/{slug}/element/new")
      * @Method("POST")
-     * @Template("MapbenderManagerBundle:Element:new.html.twig")
+     * @Template("MapbenderManagerBundle:Element:edit.html.twig")
      */
     public function createAction($slug)
     {
@@ -117,14 +117,11 @@ class ElementController extends Controller
             $this->get('session')->setFlash('success',
                                             'Your element has been saved.');
 
-            return $this->redirect(
-                            $this->generateUrl('mapbender_manager_application_edit',
-                                               array(
-                                'slug' => $slug)) . '#elements');
+            return new Response('', 201);
         } else
         {
             return array(
-                'form' => $form['type']->getForm()->createView(),
+                'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
                 'assets' => $form['assets']);
         }
@@ -192,10 +189,7 @@ class ElementController extends Controller
             $this->get('session')->setFlash('success',
                                             'Your element has been saved.');
 
-            return $this->redirect(
-                            $this->generateUrl('mapbender_manager_application_edit',
-                                               array(
-                                'slug' => $slug)) . '#elements');
+            return new Response('', 205);
         } else
         {
             return array(
