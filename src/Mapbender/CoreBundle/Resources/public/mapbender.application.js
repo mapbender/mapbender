@@ -789,14 +789,12 @@ Mapbender.DefaultModel = {
                     tochange: tochange
                 }
             });
-            result = Mapbender.source[tochange.source.type].changeOptions(tochange);
+            tochange = Mapbender.source[tochange.source.type].changeOptions(tochange);
             var mqLayer = this.map.layersList[tochange.source.mqlid];
             var result = this._checkSource(tochange.source, mqLayer, tochange);
             this.mbMap.fireModelEvent({
                 name: 'sourceChanged', 
-                value: {
-                    changed: result.changed
-                }
+                value: result
             });
             this._redrawSource(mqLayer);
         }
@@ -814,9 +812,7 @@ Mapbender.DefaultModel = {
             var result = this._checkSource(tochange.source, mqLayer, tochange);
             this.mbMap.fireModelEvent({
                 name: 'sourceChanged', 
-                value: {
-                    changed: result.changed
-                }
+                value: result
             });
             this._redrawSource(mqLayer);
         } else if(tochange.type.layerTree === "info"){

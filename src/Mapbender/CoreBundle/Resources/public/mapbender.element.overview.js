@@ -46,6 +46,9 @@ $.widget("mapbender.mbOverview", {
                 bottom: this.options.position[1]
             });
         }
+        $(this.element).css({
+            height: this.options.height
+        });
         var mbMap = $('#' + this.options.target).data('mbMap');
         $(this.element).addClass(this.options.anchor);
         if(!this.options.maximized) {
