@@ -27,6 +27,17 @@ class Size
     public $height = 0;
     
     /**
+     * 
+     * @param type $width width
+     * @param type $height height
+     */
+    public function __construct($width = null, $height = null)
+    {
+        $this->width = $width;
+        $this->height = $height;
+    }
+    
+    /**
      * Sets a width
      * 
      * @return Size 
@@ -62,6 +73,27 @@ class Size
      */
     public function getHeight(){
         return $this->height;
+    }
+    
+    /**
+     * Creates a Size from parameters (array("width"=>xx,"height"=>yy))
+     * 
+     * @param array $parameters
+     * @return Size
+     */
+    public static function create($parameters = array()){
+        return new Size(
+                isset($parameters["width"]) ? $parameters["width"] : null,
+                isset($parameters["height"]) ? $parameters["height"] : null);
+    }
+    
+    /**
+     * Returns a Size as an array
+     * 
+     * @return array
+     */
+    public function toArray(){
+        return array("width" => $this->width, "height" => $this->height);
     }
 }
 
