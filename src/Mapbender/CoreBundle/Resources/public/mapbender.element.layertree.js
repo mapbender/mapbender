@@ -54,6 +54,7 @@
             $(this.element).find('li input[name="selected"]').live("change", $.proxy(self._toggleSelected, self));
             $(this.element).find('li input[name="info"]').live("change", $.proxy(self._toggleInfo, self));
             $(this.element).find('li span.toggleable').live("click", $.proxy(self._toggleContent, self));
+            $(this.element).find('#delete-all').live("click", $.proxy(self._removeAllLayers, self));
             
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
@@ -639,6 +640,10 @@
         },
         _createLayerNode: function(ss){
         
+        },
+        
+        _removeAllLayers: function(e){
+            alert("es commt noch")
         },
     
         open: function(){
