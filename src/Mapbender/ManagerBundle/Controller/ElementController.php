@@ -117,10 +117,7 @@ class ElementController extends Controller
             $this->get('session')->setFlash('success',
                                             'Your element has been saved.');
 
-            return $this->redirect(
-                            $this->generateUrl('mapbender_manager_application_edit',
-                                               array(
-                                'slug' => $slug)) . '#elements');
+            return new Response('', 201);
         } else
         {
             return array(
@@ -192,10 +189,7 @@ class ElementController extends Controller
             $this->get('session')->setFlash('success',
                                             'Your element has been saved.');
 
-            return $this->redirect(
-                            $this->generateUrl('mapbender_manager_application_edit',
-                                               array(
-                                'slug' => $slug)) . '#elements');
+            return new Response('', 205);
         } else
         {
             return array(
