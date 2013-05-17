@@ -34,6 +34,8 @@
 </table>
 
 <div class="repository-actions btn-group">
+    {% if create_permission %}
     <a class="action-add btn btn-primary" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'Add new source' | trans }}">{{ 'Add' | trans }}</a>
+    {% endif %}
 </div>
 {% endblock %}

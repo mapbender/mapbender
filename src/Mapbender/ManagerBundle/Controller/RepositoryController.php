@@ -15,6 +15,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Entity\Source;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @ManagerRoute("/repository")
@@ -28,13 +30,18 @@ class RepositoryController extends Controller {
      * @Template
      */
     public function indexAction($page) {
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+
         $em = $this->getDoctrine()->getEntityManager();
         $query = $em->createQuery(
                 "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
+
         return array(
             'title' => 'Repository',
             'sources' => $sources,
+            'create_permission' => $securityContext->isGranted('CREATE', $oid)
         );
     }
 
@@ -47,6 +54,13 @@ class RepositoryController extends Controller {
      */
     public function newAction()
     {
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+
+        if(false === $securityContext->isGranted('CREATE', $oid)) {
+            throw new AccessDeniedException();
+        }
+
         $managers = $this->get('mapbender')->getRepositoryManagers();
         return array(
             'managers' => $managers
@@ -68,7 +82,7 @@ class RepositoryController extends Controller {
              array("id" => $source->getId())
         );
     }
-    
+
     /**
     * @ManagerRoute("/source/{sourceId}/confirmdelete")
     * @Method({"GET"})
@@ -95,11 +109,11 @@ class RepositoryController extends Controller {
                 array("sourceId" => $source->getId())
         );
     }
-    
+
     /**
-     * 
+     *
      * @ManagerRoute("/application/{slug}/instance/{instanceId}")
-     */ 
+     */
     public function instanceAction($slug, $instanceId){
         $sourceInst = $this->getDoctrine()
                         ->getRepository("MapbenderCoreBundle:SourceInstance")
@@ -112,18 +126,18 @@ class RepositoryController extends Controller {
                 array("slug" => $slug, "instanceId" => $sourceInst->getId())
         );
     }
-    
+
     /**
-     * 
+     *
      * @ManagerRoute("/application/{slug}/instance/{layersetId}/weight/{instanceId}")
-     */ 
+     */
     public function instanceWeightAction($slug, $layersetId, $instanceId){
         $number = $this->get("request")->get("number");
         $layersetId_new = $this->get("request")->get("new_layersetId");
         $instance = $this->getDoctrine()
                 ->getRepository('MapbenderWmsBundle:WmsInstance')
                 ->findOneById($instanceId);
-        
+
         if(!$instance)
         {
             throw $this->createNotFoundException('The wms instance with"
@@ -136,7 +150,7 @@ class RepositoryController extends Controller {
                                 'result' => 'ok')), 200,
                             array('Content-Type' => 'application/json'));
         }
-        
+
         if($layersetId === $layersetId_new)
         {
             $em = $this->getDoctrine()->getEntityManager();
@@ -189,7 +203,7 @@ class RepositoryController extends Controller {
             $em->persist($layerset_new);
             $em->persist($instance);
             $em->flush();
-            
+
             // order instances of the old layerset
             $query = $em->createQuery(
                     "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
@@ -205,8 +219,8 @@ class RepositoryController extends Controller {
                 $num++;
             }
             $em->flush();
-            
-            // order instances of the new layerset 
+
+            // order instances of the new layerset
             $query = $em->createQuery(
                     "SELECT i FROM MapbenderWmsBundle:WmsInstance i"
                     . " WHERE i.layerset=:lsid ORDER BY i.weight ASC");
@@ -240,7 +254,7 @@ class RepositoryController extends Controller {
                 $em->persist($inst);
                 $em->flush();
             }
-            
+
         }
 
         return new Response(json_encode(array(
@@ -248,11 +262,11 @@ class RepositoryController extends Controller {
                             'result' => 'ok')), 200, array(
                     'Content-Type' => 'application/json'));
     }
-    
+
     /**
-     * 
+     *
      * @ManagerRoute("/application/{slug}/instance/{layersetId}/enabled/{instanceId}")
-     */ 
+     */
     public function instanceEnabledAction($slug, $layersetId, $instanceId){
         $sourceInst = $this->getDoctrine()
                         ->getRepository("MapbenderCoreBundle:SourceInstance")
@@ -266,11 +280,11 @@ class RepositoryController extends Controller {
                     "instanceId" => $sourceInst->getId())
         );
     }
-    
+
     /**
-     * 
+     *
      * @ManagerRoute("/application/{slug}/instanceLayer/{instanceId}/weight/{instLayerId}")
-     */ 
+     */
     public function instanceLayerWeightAction($slug, $instanceId, $instLayerId){
         $sourceInst = $this->getDoctrine()
                         ->getRepository("MapbenderCoreBundle:SourceInstance")
@@ -285,5 +299,5 @@ class RepositoryController extends Controller {
                     "instLayerId" => $instLayerId)
         );
     }
-    
+
 }

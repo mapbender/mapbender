@@ -65,7 +65,8 @@ class MapbenderCoreBundle extends MapbenderBundle
     public function getACLClasses()
     {
         return array(
-            'Mapbender\CoreBundle\Entity\Application' => 'Application');
+            'Mapbender\CoreBundle\Entity\Application' => 'Application',
+            'Mapbender\CoreBundle\Entity\Source' => 'Service Source');
     }
 }
 

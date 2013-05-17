@@ -78,6 +78,7 @@ class ApplicationController extends Controller
     public function newAction()
     {
         $application = new Application();
+
         // ACL access check
         $this->checkGranted('CREATE', $application);
 
@@ -99,6 +100,7 @@ class ApplicationController extends Controller
     public function createAction()
     {
         $application = new Application();
+
         // ACL access check
         $this->checkGranted('CREATE', $application);
 
@@ -144,6 +146,7 @@ class ApplicationController extends Controller
     public function editAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
         // ACL access check
         $this->checkGranted('EDIT', $application);
 
@@ -174,6 +177,7 @@ class ApplicationController extends Controller
     public function updateAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
         // ACL access check
         $this->checkGranted('EDIT', $application);
 
@@ -278,6 +282,7 @@ class ApplicationController extends Controller
     public function toggleStateAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
         // ACL access check
         $this->checkGranted('EDIT', $application);
 
@@ -327,6 +332,7 @@ class ApplicationController extends Controller
             return $this->redirect(
                             $this->generateUrl('mapbender_manager_application_index'));
         }
+
         // ACL access check
         $this->checkGranted('EDIT', $application);
 
@@ -345,6 +351,7 @@ class ApplicationController extends Controller
     public function deleteAction($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
+
         // ACL access check
         $this->checkGranted('DELETE', $application);
 
@@ -709,8 +716,8 @@ class ApplicationController extends Controller
 
     /**
      * Checks the grant for an action and an object
-     * 
-     * @param string $action action "CREATE" 
+     *
+     * @param string $action action "CREATE"
      * @param \Object $object the object
      * @throws AccessDeniedException
      */
