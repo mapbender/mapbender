@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 /**
  * WmsSourceSimpleType class
  */
-class WmsSourceSimpleType extends AbstractType
+class OnlineResourceType extends AbstractType
 {
 
     /**
@@ -16,7 +16,7 @@ class WmsSourceSimpleType extends AbstractType
      */
     public function getName()
     {
-        return 'wmssource';
+        return 'onlineresource';
     }
 
     /**
@@ -24,23 +24,12 @@ class WmsSourceSimpleType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-                // Base data
-                ->add('originUrl', 'text',
+        $builder->add('format', 'text',
                       array(
-                    'required' => true,
-                    'attr' => array(
-                        'title' => 'The wms GetCapabilities url.')))
-                ->add('username', 'text',
+                    'required' => false,))
+                ->add('href', 'text',
                       array(
-                    'required' => false,
-                    'attr' => array(
-                        'title' => 'The usename.')))
-                ->add('password', 'text',
-                      array(
-                    'required' => false,
-                    'attr' => array(
-                        'title' => 'The password.')));
+                    'required' => false,));
     }
 
 }

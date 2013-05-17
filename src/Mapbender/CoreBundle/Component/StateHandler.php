@@ -209,19 +209,19 @@ class StateHandler
     /**
      * Creates a StateHandler from parameters
      * 
-     * @param type $parameters
+     * @param array $json
      * @return StateHandler 
      */
-    public static function create($parameters, $id = null, $name = null, $serverurl = null, $slug = null){
+    public static function create($json, $id = null, $name = null, $serverurl = null, $slug = null){
         $sh = new StateHandler();
         $sh->setId($id);
         $sh->setName($name);
         $sh->setServerurl($serverurl);
         $sh->setSlug($slug);
-        $sh->setWindow(Size::create($parameters["window"]));
-        $sh->setExtent(BoundingBox::create($parameters["extent"]));
-        $sh->setMaxextent(BoundingBox::create($parameters["maxextent"]));
-        $sh->setSources($parameters["sources"]);
+        $sh->setWindow(Size::create($json["window"]));
+        $sh->setExtent(BoundingBox::create($json["extent"]));
+        $sh->setMaxextent(BoundingBox::create($json["maxextent"]));
+        $sh->setSources($json["sources"]);
         return $sh;
     }
     

@@ -1,0 +1,16 @@
+<div id="{{ id }}" class="mb-element mb-element-wmceditor" title="{{ configuration.tooltip|default(title)|trans }}">
+    <ul>
+        <li><a href="#wmceditor-save">{{'Save'|trans }}</a></li>
+        <li><a href="#wmceditor-load">{{'Load'|trans }}</a><li>
+    </ul>
+    <div id="wmceditor-save">
+        <form method="post" id="save-wmc">
+            {{ form_widget(form) }}
+            <input type="submit" value="{{'Save'|trans }}" />
+        </form>
+    </div>
+    <div id="wmceditor-load">
+        {{'Load'|trans }}
+    </div>
+</div>
+

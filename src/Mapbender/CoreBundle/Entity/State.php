@@ -25,26 +25,26 @@ class State
     protected $id;
 
     /**
-     * @var string $title The source title
+     * @var string $title The state title
      * @ORM\Column(type="string", length=128, nullable=true)
      */
-    protected $name;
+    protected $title;
 
     /**
-     * @var string $title The source title
+     * @var string $title The server url
      * @ORM\Column(type="string", length=1024, nullable=true)
      */
     protected $serverurl;
 
     /**
-     * @var string $title The source title
+     * @var string $title The appllication slug
      * @ORM\Column(type="string", length=128, nullable=true)
      */
     protected $slug;
     
     /**
-     * @var string $title The source title
-     * @ORM\Column(type="text", nullable=false)
+     * @var string $json The json
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $json;
 
@@ -64,25 +64,25 @@ class State
     }
 
     /**
-     * Set name
+     * Set title
      *
-     * @param string $name
+     * @param string $title
      * @return State
      */
-    public function setName($name)
+    public function setTitle($title)
     {
-        $this->name = $name;
+        $this->title = $title;
         return $this;
     }
 
     /**
-     * Get name
+     * Get title
      *
      * @return string 
      */
-    public function getName()
+    public function getTitle()
     {
-        return $this->name;
+        return $this->title;
     }
 
     /**
