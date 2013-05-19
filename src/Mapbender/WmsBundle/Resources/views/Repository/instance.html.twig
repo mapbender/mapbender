@@ -1,52 +1,43 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'Service Repository' | trans }}{% endblock %}
-
-{% block manager_css %}
-<link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/style/style.css') }}" >
-{% endblock %}
+{% block title %}{{ 'Wms Instance' | trans }} - {{ form.vars.value.title }}{% endblock %}
 
 {% block manager_js %}
 <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/edit.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-edit.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
-<div class="well">
-<h3>{{ 'Wms Instance' | trans }}: {{ form.vars.value.title }}: {{ instance.source.id }}</h3>
-<p><b>{{ 'origin URL' | trans }}:</b> <a href="{{ instance.source.originUrl }}" target="_BLANK">{{ instance.source.originUrl }}</a></p>
+<div class="instanceContainer">
+  <span class="labelInput">{{ 'Origin URL' | trans }}</span>
+  <a class="linkButton" href="{{ instance.source.originUrl }}" target="_BLANK">{{ instance.source.originUrl }}</a>
+  <div class="clear"></div>
+
+
+  <div class="left leftContainer">
+    {{ form_label(form.format) }}{{ form_widget(form.format) }}
+    <div class="clear"></div>
+    {{ form_label(form.infoformat) }}{{ form_widget(form.infoformat) }}
+    <div class="clear"></div>
+    {{ form_label(form.exceptionformat) }}{{ form_widget(form.exceptionformat) }}
+    <div class="clear"></div>
+    {{ form_label(form.opacity) }}{{ form_widget(form.opacity) }}
+    <div class="clear"></div>
+  </div>
+
+  <div class="left rightContainer">
+    {{ form_widget(form.visible) }}<label for="{{form.visible.vars.id}}" class="labelCheck">{{"Visible"|trans}}</label>
+    <div class="clear"></div>
+    {{ form_widget(form.proxy) }}<label for="{{form.proxy.vars.id}}" class="labelCheck">{{"Proxy"|trans}}</label>
+    <div class="clear"></div>
+    {{ form_widget(form.transparency) }}<label for="{{form.transparency.vars.id}}" class="labelCheck">{{"Transparency"|trans}}</label>
+    <div class="clear"></div>
+    {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"Tiled"|trans}}</label>
+    <div class="clear"></div>
+  </div>
+
 {% set root = instance.source.getRootlayer() %}
-{{ form_errors(form) }}
-    <form action="{{path('mapbender_wms_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post">
-        <div class="sourcecontent">
-            <table>
-                <tr>
-                    <td class="coltitle">{{ form_label(form.format) }}:</td>
-                    <td class="colselect">{{ form_widget(form.format) }}</td>
-                    <td class="coltitle">{{ form_label(form.visible) }}:</td>
-                    <td class="colinputcheckbox">{{ form_widget(form.visible) }}</td>
-                </tr>
-                <tr>
-                    <td class="coltitle">{{ form_label(form.infoformat) }}:</td>
-                    <td class="colselect">{{ form_widget(form.infoformat) }}</td>
-                    <td class="coltitle">{{ form_label(form.proxy) }}:</td>
-                    <td class="colinputcheckbox">{{ form_widget(form.proxy) }}</td>
-                </tr>
-                <tr>
-                    <td class="coltitle">{{ form_label(form.exceptionformat) }}:</td>
-                    <td class="colselect">{{ form_widget(form.exceptionformat) }}</td>
-                    <td class="coltitle">{{ form_label(form.transparency) }}:</td>
-                    <td class="colinputcheckbox">{{ form_widget(form.transparency) }}</td>
-                </tr>
-                <tr>
-                    <td class="coltitle">{{ form_label(form.opacity) }}:</td>
-                    <td class="colselect">{{ form_widget(form.opacity) }}</td>
-                    <td class="coltitle">{{ form_label(form.tiled) }}:</td>
-                    <td class="colinputcheckbox">{{ form_widget(form.tiled) }}</td>
-                </tr>
-            </table>
-        </div>
+    <form action="{{path('mapbender_wms_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post" novalidate="novalidate" class="clear">
         <ul class="layercollection">
             <li class="header">
                 <div class="caption">
@@ -87,8 +78,11 @@
             {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form.layers, 'layer': instance.getrootlayer }%}
             {{form_rest(form)}}
         </ul>
-        <input type="submit" name="save" value="{{"Save"|trans}}" />
+        <div class="right">
+          <input class="button" type="submit" name="save" value="{{"Save"|trans}}" />
+          <a href="#" class="button critical">{{"Cancel"|trans}}</a>
+        </div>
         
     </form>
-</div>
-{% endblock %}
+  </div>
+  {% endblock %}

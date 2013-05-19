@@ -26,7 +26,7 @@
           <div class="buttonGroup">
             <a class="iconView iconBig" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View application' | trans }}"></a>
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-              <a class="iconEdit iconBig" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}#base" title="{{ 'Edit application' | trans }}"></a>
+              <a class="iconEdit iconBig" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'Edit application' | trans }}"></a>
             {% endif %}
 
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}

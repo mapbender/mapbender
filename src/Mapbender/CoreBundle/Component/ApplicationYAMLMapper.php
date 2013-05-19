@@ -124,7 +124,6 @@ class ApplicationYAMLMapper
                             $class::getClassTitle();
 
                     $element = new Element();
-//                    $elComp = new ElementComponent()
                    
                     $element->setId($id)
                             ->setClass($elementDefinition['class'])
