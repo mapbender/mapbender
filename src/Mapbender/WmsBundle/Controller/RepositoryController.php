@@ -50,7 +50,7 @@ class RepositoryController extends Controller
     /**
      * @ManagerRoute("/start")
      * @Method({ "GET" })
-     * @Template
+     * @Template("MapbenderWmsBundle:Repository:form.html.twig")
      */
     public function startAction()
     {
