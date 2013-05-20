@@ -9,16 +9,7 @@ $.extend(true, Mapbender, {
             
                 var rootLayer = layerDef.configuration.children[0];
                 this._readLayerDef(layersDefs, layers, queryLayers, rootLayer, true);
-                //            $.each(layerDef.configuration.layers, function(idx, layer) {
-                //                var layerDef = $.extend({},
-                //                    { visible: true, queryable: false }, layer );
-                //                if(layerDef.visible && typeof layerDef.name === 'string' && layerDef.name.length > 0) {
-                //                    layers.push(layerDef.name);
-                //                }
-                //                if(layerDef.queryable) {
-                //                    queryLayers.push(layerDef.name);
-                //                }
-                //            });
+
                 layersDefs.reverse();
                 var finalUrl = layerDef.configuration.options.url;
 
@@ -31,9 +22,6 @@ $.extend(true, Mapbender, {
                     label:       layerDef.title,
                     url:         finalUrl,
                     noMagic: true,
-
-//                    layers:      layers.reverse(),//layersDefs,
-//                    queryLayers: queryLayers,
 
                     transparent: layerDef.configuration.options.transparent,
                     format:      layerDef.configuration.options.format,

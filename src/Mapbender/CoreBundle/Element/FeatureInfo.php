@@ -75,7 +75,6 @@ class FeatureInfo extends Element
     {
         return array(
             'js' => array(
-//                'mapbender.element.button.js',
                 'mapbender.element.featureInfo.js'
             ),
             'css' => array(
