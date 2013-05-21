@@ -106,9 +106,10 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         }
         
         var rotation = $('input[name="rotation"]', this.element); 
+        var sliderDiv = $('#slider', this.element);
         if(true === this.options.rotatable){
             rotation.val(0).parent().show();
-            var slider = $( "<br><br><div id='slider' ></div><br>" ).insertAfter( rotation ).slider({
+            var slider = sliderDiv.slider({
                 min: 0,
                 max: 360,
                 range: "min",
@@ -125,7 +126,7 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         } else {
             rotation.parent().hide();
         }
-        
+        console.log('hier');
         // Copy extra fields
         var opt_fields = this.options.optional_fields;
         var hasAttr = false;
@@ -452,11 +453,12 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         $.ajax({
             url: url,
             type: 'POST',
-            contentType: "application/json; charset=utf-8",
+            //contentType: "application/json; charset=utf-8",
+            contentType: "application/json",
             dataType: "json",
             data: JSON.stringify(data),
             success: function(data) {
-                //console.log('size: '+data['width']+' '+data['height']);
+                console.log('size: '+data['width']+' '+data['height']);
                 self.width = data['width'];
                 self.height = data['height'];
                 self._updateGeometry();
