@@ -62,7 +62,6 @@ class GpsPosition extends Element
         return array(
             'tooltip' => "GPS-Position",
             'label' => true,
-            'icon' => 'gpsposition',
             'autoStart' => false,
             'target' => null,
             'refreshinterval' => '5000');

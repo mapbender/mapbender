@@ -1,8 +1,13 @@
 <div class="elementFormGps elementForm">
-    {{ form_widget(form.configuration.label) }}<label for="{{form.configuration.label.vars.id}}" class="labelCheck">{{"Show button label"|trans}}</label>
+    <div class="left">
+        {{ form_widget(form.configuration.label) }}<label for="{{form.configuration.label.vars.id}}" class="labelCheck">{{"Show button label"|trans}}</label>
+    </div>
+    {{ form_widget(form.configuration.autoStart) }}<label for="{{form.configuration.autoStart.vars.id}}" class="labelCheck">{{"Autostart"|trans}}</label>
     <div class="clearContainer"></div>
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.refreshinterval) }}{{ form_widget(form.configuration.refreshinterval) }}
     <div class="clearContainer"></div>
 </div>
