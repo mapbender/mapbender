@@ -126,7 +126,6 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         } else {
             rotation.parent().hide();
         }
-        console.log('hier');
         // Copy extra fields
         var opt_fields = this.options.optional_fields;
         var hasAttr = false;
@@ -458,7 +457,7 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             dataType: "json",
             data: JSON.stringify(data),
             success: function(data) {
-                console.log('size: '+data['width']+' '+data['height']);
+                //console.log('size: '+data['width']+' '+data['height']);
                 self.width = data['width'];
                 self.height = data['height'];
                 self._updateGeometry();
