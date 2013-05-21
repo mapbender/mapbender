@@ -66,5 +66,13 @@ class OnlineResource
     {
         return $this->href;
     }
+    
+    public static function create($format = null, $href = null)
+    {
+        $olr = new OnlineResource();
+        $olr->setFormat($format);
+        $olr->setHref($href);
+        return $olr;
+    }
 
 }

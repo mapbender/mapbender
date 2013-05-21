@@ -1,25 +1,24 @@
 <?php
 
-namespace Mapbender\WmsBundle\Element\Type;
+namespace Mapbender\WmcBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Description of WmsLoaderAdminType
+ * Description of WmcEditorAdminType
  *
  * @author Paul Schmidt
  */
-class WmsLoaderAdminType extends AbstractType
+class WmcEditorAdminType extends AbstractType
 {
-
     /**
      * @inheritdoc
      */
     public function getName()
     {
-        return 'wmsloader';
+        return 'wmceditor';
     }
 
     /**
@@ -44,20 +43,10 @@ class WmsLoaderAdminType extends AbstractType
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
-                ->add('defaultformat', 'choice',array(
-                    "choices" => array(
-                        "png" => "image/png",
-                        "gif" => "image/gif",
-                        "jpeg" => "image/jpeg")))
-                ->add('defaultinfoformat', 'choice',array(
-                    "choices" => array(
-                        "html" => "text/html",
-                        "xml" => "text/xml",
-                        "plain" => "text/plain")))
-                ->add('autoOpen', 'checkbox', array('required' => false))
-                ->add('splitLayers', 'checkbox', array('required' => false));
+                ->add('autoOpen', 'checkbox',
+                      array(
+                    'required' => false));
     }
-
 }
 
 ?>

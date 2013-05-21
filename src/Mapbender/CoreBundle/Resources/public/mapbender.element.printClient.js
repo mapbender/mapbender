@@ -61,9 +61,9 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
     
     _loadPrintFormats: function() {
         var self = this;
-        if(null !== this.options.printer.metadata) {
-            throw "Not implemented";
-        }
+//        if(null !== this.options.printer.metadata) {
+//            throw "Not implemented";
+//        }
         
         var count = 0;
         var quality_levels = this.options.quality_levels;
