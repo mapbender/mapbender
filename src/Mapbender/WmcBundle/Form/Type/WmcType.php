@@ -37,21 +37,22 @@ class WmcType extends AbstractType
     {
         $builder->add('state', new StateType(),
                       array(
-//                    'property_path' => '[state]',
                     'data_class' => 'Mapbender\CoreBundle\Entity\State'))
                 ->add('keywords', 'text',
                       array(
                     'required' => false))
-                ->add('abstract', 'textarea')
+                ->add('abstract', 'textarea',
+                      array(
+                    'required' => false))
                 ->add('logourl', new LegendUrlType(),
                       array(
-//                    'property_path' => '[logourl]',
                     'data_class' => 'Mapbender\WmsBundle\Component\LegendUrl'))
                 ->add('descriptionurl', new OnlineResourceType(),
                       array(
-//                    'property_path' => '[descriptionurl]',
                     'data_class' => 'Mapbender\WmsBundle\Component\OnlineResource'))
-                ->add('screenshot', 'file');
+                ->add('screenshot', 'file',
+                      array(
+                    'required' => false));
     }
 
 }

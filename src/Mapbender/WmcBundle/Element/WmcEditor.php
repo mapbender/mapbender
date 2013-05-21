@@ -88,7 +88,7 @@ class WmcEditor extends Element
             'js' => array(
                 'mapbender.element.wmceditor.js'
             ),
-            'css' => array()
+            'css' => array('mapbender.element.wmceditor.css')
         );
     }
 
@@ -211,33 +211,33 @@ class WmcEditor extends Element
                 $em->persist($wmc);
                 $em->flush();
 
-
-                if(!$wmc->getScreenshotPath())
+                if(!$wmc->getScreenshotPath() && $wmc->getScreenshot())
                 {
-                    $upload_directory = $this->getParameter("themenkartenscreenshot_directory");
+                    $basedir = $this->container->get('kernel')->getRootDir().'/..';
+                    $dirs= $this->container->getParameter("directories");
+                    $upload_directory = $basedir . $dirs["wmc"] ."/" . $this->application->getSlug();
+//                    $upload_directory = $this->getParameter("themenkartenscreenshot_directory");
                     $filename = sprintf('screenshot-%d.%s',
-                                        $themenkarte->getId(),
-                                        $themenkarte->getScreenshot()->guessExtension());
-                    $themenkarte->getScreenshot()
-                            ->move($upload_directory, $filename);
-                    $themenkarte->setScreenshotPath($filename);
+                                        $wmc->getId(),
+                                        $wmc->getScreenshot()->guessExtension());
+                    $wmc->getScreenshot()->move($upload_directory, $filename);
+                    $wmc->setScreenshotPath($filename);
                 }
 
-                $patern = array('/"?minScale"?:\s?null\s?,?/',
-                    '/"?maxScale"?:\s?null\s?,?/');
-                $rplmt = array("", "");
-                $services = preg_replace($patern, $rplmt,
-                                         $themenkarte->getServices());
-                $themenkarte->setServices($services);
+//                $patern = array('/"?minScale"?:\s?null\s?,?/', '/"?maxScale"?:\s?null\s?,?/');
+//                $rplmt = array("", "");
+//                $services = preg_replace($patern, $rplmt,
+//                                         $wmc->getServices());
+//                $wmc->setServices($services);
+//
+//                $em->persist($wmc);
+//                $em->flush();
+//
+//                $path = $this->getParameter("themenkartenwmc_directory");
+//                $path .= "/themenkarte_" . $wmc->getId() . "wmc.xml";
+//                file_put_contents($path, $wmc->getWmc() ? : "");
 
-                $em->persist($themenkarte);
-                $em->flush();
-
-                $path = $this->getParameter("themenkartenwmc_directory");
-                $path .= "/themenkarte_" . $themenkarte->getId() . "wmc.xml";
-                file_put_contents($path, $themenkarte->getWmc() ? : "");
-
-                $response->setContent($themenkarte->getId());
+                $response->setContent($wmc->getId());
             } else
             {
                 $response->setContent('error');

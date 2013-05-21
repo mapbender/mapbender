@@ -171,7 +171,7 @@
         _createWmcError: function(response) {
         //            window.console && console.log(response);
         //            this._reset();
-//                    alert('ERROR: Themenkarte gespeichert mit der id=' + response);
+                    alert('ERROR: Themenkarte gespeichert mit der id=' + response);
         }
     });
 

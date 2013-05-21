@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * A Wmc entity presents an OGC WMC.
  * @ORM\Entity
- * @ORM\Table(name="mb_wmc")
+ * @ORM\Table(name="mb_wmc_wmc")
  * ORM\DiscriminatorMap({"mb_wmc" = "Wmc"})
  */
 class Wmc
@@ -55,10 +55,10 @@ class Wmc
     public $descriptionurl;
     
     /**
-     * @var string $screenshot_path The wmc description
+     * @var string $screenshotPath The wmc description
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $screenshot_path;
+    private $screenshotPath;
 
     /**
      * @Assert\File(maxSize="6000000")
@@ -166,25 +166,25 @@ class Wmc
     }
     
     /**
-     * Set screenshot_path
+     * Set screenshotPath
      *
-     * @param string $screenshot_path
+     * @param string $screenshotPath
      * @return Source
      */
-    public function setScreenshot_path($screenshot_path)
+    public function setScreenshotPath($screenshotPath)
     {
-        $this->screenshot_path = $screenshot_path;
+        $this->screenshotPath = $screenshotPath;
         return $this;
     }
 
     /**
-     * Get screenshot_path
+     * Get screenshotPath
      *
      * @return string 
      */
-    public function getScreenshot_path()
+    public function getScreenshotPath()
     {
-        return $this->screenshot_path;
+        return $this->screenshotPath;
     }
 
     
