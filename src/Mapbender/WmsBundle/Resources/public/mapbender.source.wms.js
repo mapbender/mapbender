@@ -6,7 +6,7 @@ $.extend(true, Mapbender, {
                 var layers = [];
                 var queryLayers = [];
                 var layersDefs = [];
-            
+                layerDef.origId =  layerDef.id;
                 var rootLayer = layerDef.configuration.children[0];
                 this._readLayerDef(layersDefs, layers, queryLayers, rootLayer, true);
                 //            $.each(layerDef.configuration.layers, function(idx, layer) {
@@ -167,7 +167,7 @@ $.extend(true, Mapbender, {
                 .appendTo($('body'));
             },
 
-            layersFromCapabilities: function(xml, id, defFormat, defInfoformat) {
+            layersFromCapabilities: function(xml, id, splitLayers, defFormat, defInfoformat) {
                 if(!defFormat){
                     defFormat = "image/png";
                 }
@@ -203,6 +203,7 @@ $.extend(true, Mapbender, {
                     var def = {
                         type: 'wms',
                         id: id,
+                        origId: id,
                         title: capabilities.service.title,
                         configuration: {
                             baseSource: false,
@@ -272,9 +273,37 @@ $.extend(true, Mapbender, {
                         }
                         return def;
                     }
+                    function getSplitted(service, rootLayer, layer, result, num){
+                        
+                        if(num !== 0){
+                            var service_new = $.extend(true, {}, service);
+                            service_new.id = service_new.id + "_" + num;
+                            service_new.origid = service_new.id + "_" + num;
+                            var root_new = $.extend(true, {}, rootLayer);
+                            var layer_new = $.extend(true, {}, layer);
+                            if(layer_new.children)
+                                delete(layer_new.children);
+                            root_new.children = [layer_new];
+                            service_new.configuration.children = [root_new];
+                            return service_new;
+                        }
+                        if(layer.children){
+                            for(var i = 0; i < layer.children.length; i++){
+                                num++;
+                                result.push(getSplitted(service, rootLayer, layer.children[i], result, num));
+                            }
+                        }
+                    }
                     var layers = readCapabilities(capabilities.capability.nestedLayers[0], null, id, 0);
-                    def.configuration.children = [layers];
-                    return def;
+                    if(splitLayers){
+                        var service = $.extend(true, {}, def);
+                        var result = [];
+                        var defs = getSplitted(def, layers, layers, result, 0);
+                    } else {
+                        def.configuration.children = [layers];
+                        return [def];
+                    }
+                    
                 } else {
                     return null;
                 }
@@ -655,9 +684,11 @@ $.extend(true, Mapbender, {
             changeOptions: function(tochange){
                 if(typeof tochange.options !== 'undefined'
                     && typeof tochange.options.visibility !== 'undefined'){
-                    tochange.source.configuration.children[0].options.treeOptions.selected = tochange.options.visibility;
+                    tochange.children[tochange.source.configuration.children[0].options.id] = {options: {treeOptions: {selected: tochange.options.visibility}}};
+                    return tochange;
                 } else {
                     // @TODO
+                    return null;
                 }
             }
         }

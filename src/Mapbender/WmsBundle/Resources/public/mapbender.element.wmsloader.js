@@ -45,7 +45,28 @@
 
         loadWms: function(getCapabilitiesUrl) {
             if(getCapabilitiesUrl === null || getCapabilitiesUrl === '') return;
-
+            var params = OpenLayers.Util.getParameters(getCapabilitiesUrl);
+            var version, request, service;
+            for(param in params){
+                if(param.toUpperCase() === "VERSION"){
+                    version = params[param];
+                } else if(param.toUpperCase() === "REQUEST"){
+                    request = params[param];
+                } else if(param.toUpperCase() === "SERVICE"){
+                    service = params[param];
+                }
+            }
+            
+            if(service.toUpperCase() !== "WMS"){
+                Mapbender.error('WMSLoader: the service "'+service+'" is not supported!');
+                return false;
+            } else if(request.toUpperCase() !== "GETCAPABILITIES"){
+                Mapbender.error('WMSLoader: the WMS Operation "'+request+'" is not supported!');
+                return false;
+            } else if(!(version.toUpperCase() === "1.1.0" || version.toUpperCase() === "1.1.1" || version.toUpperCase() === "1.3.0")){
+                Mapbender.error('WMSLoader: the WMS version "'+version+'" is not supported!');
+                return false;
+            }
             // dataType is 'text' as otherwise jQuery tries to parse the response
             // and often fails with GetCapabilities documents.
             $.ajax({
@@ -63,8 +84,10 @@
         },
         _getCapabilitiesUrlSuccess: function(xml, getCapabilitiesUrl) {
             var id = $('#' + this.options.target).data('mbMap').genereateSourceId();
-            var layerDef = Mapbender.source.wms.layersFromCapabilities(xml, id);
-            $('#' + this.options.target).data('mbMap').addSource(layerDef, null, null);
+            var layerDefs = Mapbender.source.wms.layersFromCapabilities(xml, id, this.options.splitLayers);
+            $.each(layerDefs, function(idx, layerDef){
+                $('#' + this.options.target).data('mbMap').addSource(layerDef, null, null);
+            });
         },
         
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR) {
