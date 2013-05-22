@@ -62,15 +62,10 @@ class OverviewAdminType extends AbstractType
                       array(
                     'required' => true,
                     "choices" => array(
-                        'inline' => 'inline',
                         'left-top' => 'left-top',
                         'left-bottom' => 'left-bottom',
                         'right-top' => 'right-top',
                         'right-bottom' => 'right-bottom')))
-                ->add('position', new PositionType(),
-                      array(
-                    'label' => 'Position',
-                    'property_path' => '[position]'))
                 ->add('maximized', 'checkbox', array('required' => false))
                 ->add('fixed', 'checkbox', array('required' => false))
                 ->add('width', 'text', array('required' => true))

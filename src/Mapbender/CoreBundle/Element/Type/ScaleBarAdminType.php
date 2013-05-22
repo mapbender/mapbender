@@ -58,15 +58,10 @@ class ScaleBarAdminType extends AbstractType
                       array(
                     'required' => true,
                     "choices" => array(
-                        'inline' => 'inline',
                         'left-top' => 'left-top',
                         'left-bottom' => 'left-bottom',
                         'right-top' => 'right-top',
                         'right-bottom' => 'right-bottom')))
-                ->add('position', new PositionType(),
-                      array(
-                    'label' => 'Position',
-                    'property_path' => '[position]'))
                 ->add('units', 'choice',
                       array(
                     'required' => true,

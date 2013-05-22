@@ -75,10 +75,7 @@ class Map extends Element
                 'mapquery/src/jquery.mapquery.core.js',
                 'proj4js/proj4js-compressed.js',
                 'mapbender.element.map.js'),
-            'css' => array(
-                //TODO: Split up
-                'mapbender.elements.css',
-                'mapquery/lib/openlayers/theme/default/style.css'));
+            'css' => array());
     }
 
     /**

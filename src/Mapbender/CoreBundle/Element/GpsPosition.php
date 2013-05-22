@@ -43,7 +43,7 @@ class GpsPosition extends Element
             'js' => array(
                 'mapbender.element.button.js',
                 'mapbender.element.gpsPosition.js'),
-            'css' => array('mapbender.element.gpsPosition.css'));
+            'css' => array());
     }
 
     /**
