@@ -61,10 +61,6 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
     
     _loadPrintFormats: function() {
         var self = this;
-//        if(null !== this.options.printer.metadata) {
-//            throw "Not implemented";
-//        }
-        
         var count = 0;
         var quality_levels = this.options.quality_levels;
         var quality = $('select[name="quality"]', this.element);
@@ -190,41 +186,6 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             center.lat + 0.5 * world_size.y).toGeometry(), {});
         this.feature.world_size = world_size;
         this.feature.geometry.rotate(rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
-        /*
-        var centroid = this.feature.geometry.getCentroid();
-        var centroid_lonlat = new OpenLayers.LonLat(centroid.x,centroid.y);
-        var centroid_pixel = this.map.map.olMap.getViewPortPxFromLonLat(centroid_lonlat);
-        var centroid_geodesSize = this.map.map.olMap.getGeodesicPixelSize(centroid_pixel);
-        
-        //var geodes_width = size.width * scale / (centroid_geodesSize.w * 100000);
-        //var geodes_height = size.height * scale / (centroid_geodesSize.h * 100000);
-        var geodes_diag = Math.sqrt(centroid_geodesSize.w*centroid_geodesSize.w + centroid_geodesSize.h*centroid_geodesSize.h) / Math.sqrt(2) * 100000;
-        
-        var geodes_width = size.width * scale / (geodes_diag);
-        var geodes_height = size.height * scale / (geodes_diag);
-        
-        var ll_pixel_x = centroid_pixel.x - (geodes_width) / 2;
-        var ll_pixel_y = centroid_pixel.y + (geodes_height) / 2;
-        var ur_pixel_x = centroid_pixel.x + (geodes_width) / 2;
-        var ur_pixel_y = centroid_pixel.y - (geodes_height) /2 ;
-        var ll_pixel = new OpenLayers.Pixel(ll_pixel_x, ll_pixel_y);
-        var ur_pixel = new OpenLayers.Pixel(ur_pixel_x, ur_pixel_y);
-        var ll_lonlat = this.map.map.olMap.getLonLatFromPixel(ll_pixel);
-        var ur_lonlat = this.map.map.olMap.getLonLatFromPixel(ur_pixel);
-        
-        console.log(geodes_diag);
-               
-        console.log(ll_lonlat, ur_lonlat, ll_pixel, ur_pixel, geodes_width, geodes_height);
-        this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
-            ll_lonlat.lon,
-            ur_lonlat.lat,
-            ur_lonlat.lon,
-            ll_lonlat.lat).toGeometry(), {});
-        this.feature.world_size = {
-            x: ur_lonlat.lon - ll_lonlat.lon,
-            y: ur_lonlat.lat - ll_lonlat.lat
-        };
-        */
         this.layer.addFeatures(this.feature);
         this.layer.redraw();
     },
@@ -336,7 +297,6 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         for(var i = 0; i < sources.length; i++) {
             var layer = this.map.map.layersList[sources[i].mqlid],
                 type = layer.olLayer.CLASS_NAME;
-//            if(!sources[i].configuration.children[0].state.visibility){
             if(layer.olLayer.params.LAYERS.length === 0){
                 continue;
             }    
@@ -345,7 +305,6 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
                 continue;
             }
             
-//            type = type.substr(17).toLowerCase();
             if(layer.olLayer.type === 'vector') {
                 // Vector layers are all the same:
                 //   * Get all features as GeoJSON
@@ -366,83 +325,11 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
         
         var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';   
         
-        //form.attr('action', url);
         form.get(0).setAttribute('action', url);
         form.attr('target', '_blank');
         form.attr('method', 'post');
         form.submit();
-        
-        // Felder und action wieder rausnehmen
-        //console.log(fields);
-        //form.attr('action', null);
-        //fields.remove();
     },
-    
-//    _printQueued: function(){
-//        var isFreeExtent = $('input[name="free_extent"]', this.element).get(0).checked,
-//            data = {
-//                format: $('select[name="format"]', this.element).val(),
-//                orientation: $('select[name="orientation"]', this.element).val(),
-//                quality: $('select[name="quality"]', this.element).val(),
-//                rotation: $('input[name="rotation"]', this.element).val(),
-//                isFreeExtent: isFreeExtent,
-//                extent: {
-//                    width: null,
-//                    height: null
-//                },
-//                center: {
-//                    x: null,
-//                    y: null
-//                },
-//                layers: []
-//            };
-//        
-//        $.extend(true, data, this._getPrintExtent());
-//        
-//        var layers = this.map.map.olMap.layers;
-//        for(var i = 0; i < layers.length; i++) {
-//            var layer = layers[i],
-//                type = layer.CLASS_NAME;
-//                
-//            if(!(0 === type.indexOf('OpenLayers.Layer.'))) {
-//                window.console && console.log('Layer is of unknown type for print.', layer);
-//                continue;
-//            }
-//            
-//            type = type.substr(17).toLowerCase();
-//            if(type === 'vector') {
-//                // Vector layers are all the same:
-//                //   * Get all features as GeoJSON
-//                //   * TODO: Get Styles...
-//                
-//                // TODO: Implement this thing
-//            } else if(Mapbender.layer[type] && typeof Mapbender.layer[type].getPrintConfig === 'function') {
-//                data.layers.push(Mapbender.layer[type].getPrintConfig(layer, this.map.map.olMap.getExtent()));
-//            }
-//        }
-//        
-//        // Collect extra fields
-//        var extra = {};
-//        var form_array = $('.format-form form', this.element).serializeArray();
-//        $.each(form_array, function(idx, field) {
-//            if('extra[' === field.name.substr(0, 6)) {
-//                extra[field.name.substr(6, field.name.length - 7)] = field.value;
-//            }
-//        });
-//        data.extra = extra;        
-//        
-//        var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
-//        $.ajax({
-//            url: url,
-//            type: 'POST',
-//            contentType: "application/json; charset=utf-8",
-//            dataType: "json",
-//            data: JSON.stringify(data),
-//            success: function(data) {
-//                //@TODO
-//            }
-//        })
-//    },
     
     _getPrintSize: function() {
         var self = this;
@@ -456,7 +343,6 @@ $.widget("mapbender.mbPrintClient", $.ui.dialog, {
             dataType: "json",
             data: JSON.stringify(data),
             success: function(data) {
-                //console.log('size: '+data['width']+' '+data['height']);
                 self.width = data['width'];
                 self.height = data['height'];
                 self._updateGeometry();

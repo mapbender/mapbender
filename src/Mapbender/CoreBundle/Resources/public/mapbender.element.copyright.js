@@ -1,43 +1,24 @@
 (function($) {
 
-$.widget("mapbender.mbCopyright", {
-    options: {
-    },
+    $.widget("mapbender.mbCopyright", {
+        options: {},
 
-    _create: function() {
-        if(this.options.anchor === "left-top"){
-            $(this.element).css({
-                left: this.options.position[0],
-                top: this.options.position[1]
-            });
-        } else if(this.options.anchor === "right-top"){
-            $(this.element).css({
-                right: this.options.position[0],
-                top: this.options.position[1]
-            });
-        } else if(this.options.anchor === "left-bottom"){
-            $(this.element).css({
-                left: this.options.position[0],
-                bottom: this.options.position[1]
-            });
-        } else if(this.options.anchor === "right-bottom"){
-            $(this.element).css({
-                right: this.options.position[0],
-                bottom: this.options.position[1]
-            });
-        }
-        $(this.element).css({width: this.options.width});
-        $('#' + $(this.element).attr("id") + "-link").click($.proxy(this._showTermsOfUse, this));
-    },
+        _create: function() {
+            $('#' + $(this.element).attr("id") + "-link").click($.proxy(this._onClick, this));
+        },
 
-    _showTermsOfUse: function(evt){
-        $('#' + $(this.element).attr("id") + "-dialog").dialog({
-            autoOpen: true
-        });
-    },
+        _onClick: function() {
+            if(!$('body').data('mbPopup')) {
+                var source = $('#' + $(this.element).attr("id") + "-dialog");
+                var title = source.attr("title");
+                var content = source.find(".mb-element-copyright-content").text();
+                $("body").mbPopup();
+                $("body").mbPopup('showHint', {title:title, showHeader:true, content: content});
+            }
+        },
 
-    _destroy: $.noop
-});
+        _destroy: $.noop
+    });
 
 })(jQuery);
 

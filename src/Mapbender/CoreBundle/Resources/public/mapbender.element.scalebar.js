@@ -21,29 +21,9 @@
          */
         _setup: function() {
             var mbMap = $('#' + this.options.target).data('mbMap');
-            if(this.options.anchor === "left-top"){
-                $(this.element).css({
-                    left: this.options.position[0],
-                    top: this.options.position[1]
-                });
-            } else if(this.options.anchor === "right-top"){
-                $(this.element).css({
-                    right: this.options.position[0],
-                    top: this.options.position[1]
-                });
-            } else if(this.options.anchor === "left-bottom"){
-                $(this.element).css({
-                    left: this.options.position[0],
-                    bottom: this.options.position[1]
-                });
-            } else if(this.options.anchor === "right-bottom"){
-                $(this.element).css({
-                    right: this.options.position[0],
-                    bottom: this.options.position[1]
-                });
-            }
-            
             var projection = mbMap.map.olMap.getProjectionObject();
+
+            $(this.element).addClass(this.options.anchor);
             var scalebarOptions = {
                 div: $(this.element).get(0),
                 maxWidth: this.options.maxWidth,

@@ -246,8 +246,6 @@ $(function() {
                               $(this).attr("href"), 
                               function(){ //ok click
                                 $("#layersetForm").submit();
-
-                                //return false;
                               },
                               null);
         }
