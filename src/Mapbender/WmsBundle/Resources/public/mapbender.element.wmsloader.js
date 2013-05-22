@@ -83,10 +83,11 @@
             });
         },
         _getCapabilitiesUrlSuccess: function(xml, getCapabilitiesUrl) {
+            var self = this;
             var id = $('#' + this.options.target).data('mbMap').genereateSourceId();
             var layerDefs = Mapbender.source.wms.layersFromCapabilities(xml, id, this.options.splitLayers);
             $.each(layerDefs, function(idx, layerDef){
-                $('#' + this.options.target).data('mbMap').addSource(layerDef, null, null);
+                $('#' + self.options.target).data('mbMap').addSource(layerDef, null, null);
             });
         },
         

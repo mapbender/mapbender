@@ -278,7 +278,7 @@ $.extend(true, Mapbender, {
                         if(num !== 0){
                             var service_new = $.extend(true, {}, service);
                             service_new.id = service_new.id + "_" + num;
-                            service_new.origid = service_new.id + "_" + num;
+                            service_new.origId = service_new.id;
                             var root_new = $.extend(true, {}, rootLayer);
                             var layer_new = $.extend(true, {}, layer);
                             if(layer_new.children)
@@ -299,6 +299,7 @@ $.extend(true, Mapbender, {
                         var service = $.extend(true, {}, def);
                         var result = [];
                         var defs = getSplitted(def, layers, layers, result, 0);
+                        return result;
                     } else {
                         def.configuration.children = [layers];
                         return [def];
