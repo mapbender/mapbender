@@ -210,12 +210,18 @@ class Wmc
             $descriptionUrl = null)
     {
         $state = $state === null ? new State() : $state;
-        $logoUrl = $logoUrl === null ? LegendUrl::create() : logoUrl;
-        $descriptionUrl = $descriptionUrl === null ? OnlineResource::create() : $descriptionUrl;
         $wmc = new Wmc();
         $wmc->setState($state);
-        $wmc->setLogourl($logoUrl);
-        $wmc->setDescriptionurl($descriptionUrl);
+        $logoUrl = $logoUrl === null ? LegendUrl::create() : logoUrl;
+        if($logoUrl !== null)
+        {
+            $wmc->setLogourl($logoUrl);
+        }
+        $descriptionUrl = $descriptionUrl === null ? OnlineResource::create() : $descriptionUrl;
+        if($descriptionUrl !== null)
+        {
+            $wmc->setDescriptionurl($descriptionUrl);
+        }
         return $wmc;
     }
 

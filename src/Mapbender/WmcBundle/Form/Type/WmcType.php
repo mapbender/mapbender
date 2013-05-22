@@ -47,12 +47,12 @@ class WmcType extends AbstractType
                 ->add('logourl', new LegendUrlType(),
                       array(
                     'data_class' => 'Mapbender\WmsBundle\Component\LegendUrl'))
-                ->add('descriptionurl', new OnlineResourceType(),
-                      array(
-                    'data_class' => 'Mapbender\WmsBundle\Component\OnlineResource'))
                 ->add('screenshot', 'file',
                       array(
-                    'required' => false));
+                    'required' => true))
+                ->add('descriptionurl', new OnlineResourceType(),
+                      array(
+                    'data_class' => 'Mapbender\WmsBundle\Component\OnlineResource'));
     }
 
 }

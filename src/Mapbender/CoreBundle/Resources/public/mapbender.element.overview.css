@@ -2,7 +2,7 @@
     border: 1px solid #CCC;
     position: absolute;
     padding-left: 1px;
-    z-index: 1009;
+    z-index: 1000;
     cursor: pointer;
 }
 
