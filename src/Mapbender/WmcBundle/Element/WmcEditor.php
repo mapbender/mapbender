@@ -138,8 +138,12 @@ class WmcEditor extends Element
         switch($action)
         {
             case 'save':
-
                 return $this->save();
+                break;
+            case 'delete':
+                $wmcid = $this->container->get("request")->get("wmcid", null);
+                $this->container->get("request")->attributes->remove("wmcid");
+                return $this->delete($wmcid);
                 break;
             case 'update':
                 $tkid = $this->get("request")->get("tkid", null);
@@ -148,7 +152,7 @@ class WmcEditor extends Element
                 break;
             case 'get':
                 $tkid = $this->get("request")->get("tkid", null);
-                return $this->getTk($tkid);
+                return $this->getWmc($tkid);
                 break;
             case 'index':
                 return $this->index();
@@ -158,19 +162,18 @@ class WmcEditor extends Element
         }
     }
 
-    protected function getTk($id)
+    protected function getWmc($id)
     {
-        $themenkarte = $this
-                ->get('doctrine')
-                ->getRepository('Bkg\GeoportalBundle\Entity\Themenkarte')
+        $wmc = $this->container->get('doctrine')
+                ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
                 ->find($id);
-        $form = $this->getForm($themenkarte);
-        $responseBody = $this
+        $form = $this->getForm($wmc);
+        $responseBody = $this->container
                 ->get('templating')
-                ->render("BkgGeoportalBundle:Themenkarte:edit.html.twig",
+                ->render("MapbenderWmcBundle:Wmc:edit.html.twig",
                          array(
             "edit_form" => $form->createView(),
-            "entity" => $themenkarte));
+            "entity" => $wmc));
         $response = new Response();
         $response->setContent($responseBody);
         return $response;
@@ -233,9 +236,9 @@ class WmcEditor extends Element
                                                         $filename);
                             $wmc->setScreenshotPath($filename);
                             $format = $wmc->getScreenshot()->getClientMimeType();
-                            $url_base = $request->getScheme(). '://' . $request->getHttpHost() . $request->getBasePath();
+                            $url_base = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
                             $serverurl = $url_base . "/" . $dirs["wmc"];
-                            $logourl = $serverurl . "/" . $this->application->getSlug(). "/" . $filename;
+                            $logourl = $serverurl . "/" . $this->application->getSlug() . "/" . $filename;
                             $logoUrl = LegendUrl::create(null, null,
                                                          OnlineResource::create($format,
                                                                                 $logourl));
@@ -274,6 +277,25 @@ class WmcEditor extends Element
         return $response;
     }
 
+    private function delete($id)
+    {
+        $response = new Response();
+        $wmc = $this->container->get('doctrine')
+                ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
+                ->find($id);
+        if($wmc !== null)
+        {
+            $response->setContent($wmc->getId());
+            $em = $this->container->get('doctrine')->getEntityManager();
+            $em->remove($wmc);
+            $em->flush();
+        } else
+        {
+            $response->setContent('error');
+        }
+        return $response;
+    }
+
     public function generateMetadata($themenkarte)
     {
         return $this->get('templating')->render('BkgGeoportalBundle:Element:themenkarteneditor_wmcmetadata.html.twig',
@@ -292,7 +314,8 @@ class WmcEditor extends Element
             if($a)
             {
                 return $dir;
-            } else {
+            } else
+            {
                 return null;
             }
         } else

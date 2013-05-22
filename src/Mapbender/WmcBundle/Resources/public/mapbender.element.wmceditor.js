@@ -95,7 +95,7 @@
                     return false;
                 });
                 $(self.element).find("#wmceditor-load .delete").bind("click",function(){
-                    var url = $(this).attr("href");
+                    var url = self.elementUrl + 'delete?wmcid=' + $(this).attr("data-id");
                     $.post(url, function(){
                         $.proxy(self._reloadIndex,self)();
                     });
