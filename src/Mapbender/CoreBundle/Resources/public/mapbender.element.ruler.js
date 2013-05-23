@@ -85,12 +85,7 @@ $.widget("mapbender.mbRuler", {
 
         this.total = $('<div/>').appendTo(this.element);
 
-        this.element.dialog({
-            autoOpen: false,
-            title: this.options.title
-        });
-
-        this.element.bind('dialogclose', $.proxy(this.deactivate, this));
+        // this.element.bind('dialogclose', $.proxy(this.deactivate, this));
     },
 
     /**
@@ -102,7 +97,21 @@ $.widget("mapbender.mbRuler", {
         this.control.activate();
 
         this._reset();
-        this.element.dialog('open');
+
+        if(!$('body').data('mbPopup')) {
+            $("body").mbPopup();
+            $("body").mbPopup('addButton', "Close", "button right", function(){
+                        $("body").mbPopup('close');
+                        if(self.options.deactivate) {
+                            $.proxy(self.deactivate, self);
+                        }
+                     }).mbPopup('showCustom', {title:this.options.title, 
+                                           content: "Nothing selected.", 
+                                           showCloseButton: false,
+                                           modal:false, 
+                                           width:300,
+                                           draggable:true});
+        }
     },
 
     /**
@@ -121,7 +130,9 @@ $.widget("mapbender.mbRuler", {
 
     _reset: function() {
         this.segments.empty();
-        this.total.html('');
+        if($('body').data('mbPopup')) {
+            $("body").mbPopup('setContent', '');
+        }
     },
 
     _handleModify: function(event) {
@@ -130,7 +141,9 @@ $.widget("mapbender.mbRuler", {
         }
 
         var measure = this._getMeasureFromEvent(event);
-        this.total.html(measure);
+        if($('body').data('mbPopup')) {
+            $("body").mbPopup('setContent', measure);
+        }
     },
 
     _handlePartial: function(event) {

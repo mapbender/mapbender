@@ -42,6 +42,7 @@ class ButtonAdminType extends AbstractType
                     "choices" => array(
                         "" => "None",
                         "iconAbout" => "About",
+                        "iconAreaRuler" => "Area ruler",
                         "iconInfo" => "Feature info",
                         "iconGps" => "GPS",
                         "iconLegend" => "Legend",

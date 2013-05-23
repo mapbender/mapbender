@@ -103,7 +103,6 @@ $.widget("mapbender.mbFeatureInfo", {
             $("body").mbPopup();
             $("body").mbPopup('addButton', "Close", "button right", function(){
                         $("body").mbPopup('close');
-                        console.log(self.options.deactivateOnClose)
                         if(self.options.deactivateOnClose) {
                             $.proxy(self.deactivate, self);
                         }

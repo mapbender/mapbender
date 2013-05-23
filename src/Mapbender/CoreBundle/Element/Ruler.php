@@ -39,7 +39,8 @@ class Ruler extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js'),
+            'js' => array('@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),
             'css' => array());
     }
 
