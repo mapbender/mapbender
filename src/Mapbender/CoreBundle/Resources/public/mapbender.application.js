@@ -1244,24 +1244,6 @@ Mapbender.DefaultModel = {
         }
     },
     
-    _setBaseLayer: function(){
-        var sources = this.getSources();
-        var found = false;
-        for(var i = 0; i < sources.length; i++){
-            var mqLayer = this.map.layersList[sources[i].mqlid];
-            mqLayer.olLayer.isBaseLayer = false;
-        }
-        for(var i = 0; i < sources.length; i++){
-            var mqLayer = this.map.layersList[sources[i].mqlid];
-            if(mqLayer.visible() && !found){
-                found = true;
-                mqLayer.olLayer.isBaseLayer = true;
-                this.map.olMap.setBaseLayer(mqLayer.olLayer);
-                break;
-            }
-        }
-    },
-    
     /*
      * Changes the map's projection.
      */
@@ -1295,12 +1277,7 @@ Mapbender.DefaultModel = {
 
             layer.initResolutions();
         });
-        //        this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
-        this.center({
-            position: [center.lon, center.lat], 
-            zoom: this.map.olMap.getZoom()
-        });
-//        this._setBaseLayer();
+        this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
         this.mbMap._trigger('srsChanged', null, {
             projection: srs.projection
         });
