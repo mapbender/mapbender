@@ -87,8 +87,8 @@
             {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form.layers, 'layer': instance.getrootlayer }%}
             {{form_rest(form)}}
         </ul>
-        <input type="submit" name="save" value="{{"Save"|trans}}" />
-        
+        <input type="submit" name="save" class="button" value="{{'Save'|trans}}" />
+        <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{ 'Cancel'|trans }}</a>
     </form>
 </div>
 {% endblock %}
