@@ -29,7 +29,7 @@ $(function() {
         }
     });
 
-    $('ul.elements input[type="checkbox"]').click(function() {
+    $('tr.element .iconCheckboxActive input[type="checkbox"]').click(function() {
         $.ajax({
             url: $(this).attr("data-href"),
             type: "POST",
