@@ -56,7 +56,9 @@
                     service = params[param];
                 }
             }
-            
+            if(typeof version === 'undefined'){
+                version = "1.3.0";
+            }
             if(service.toUpperCase() !== "WMS"){
                 Mapbender.error('WMSLoader: the service "'+service+'" is not supported!');
                 return false;
