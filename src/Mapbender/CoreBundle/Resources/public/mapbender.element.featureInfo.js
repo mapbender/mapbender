@@ -1,6 +1,6 @@
 (function($) {
 
-$.widget("mapbender.mbFeatureInfo", $.ui.dialog, {
+$.widget("mapbender.mbFeatureInfo", {
     options: {
         layers: undefined,
         target: undefined,
@@ -47,9 +47,6 @@ $.widget("mapbender.mbFeatureInfo", $.ui.dialog, {
             $('#' + this.options.target).removeClass('mb-feature-info-active');
             this.map.element.unbind('click', this.mapClickHandler);
         }
-        if(this.element.data('dialog') && this.element.dialog('isOpen')) {
-            this.element.dialog('close');
-        }
     },
 
     /**
@@ -82,35 +79,43 @@ $.widget("mapbender.mbFeatureInfo", $.ui.dialog, {
             }
             fi_exist = true;
             // Prepare result tab list
-            newTab          = $('<li id="tab' + layer.id + '" class="tab">' + layer.label + '</li>');
+            newTab       = $('<li id="tab' + layer.id + '" class="tab">' + layer.label + '</li>');
             newContainer = $('<div id="container' + layer.id + '" class="container"></div>');
+
+            if(idx == 1){
+                newTab.addClass("active");
+                newContainer.addClass("active");
+            }
 
             header.append(newTab);
             tabContainer.append(newContainer);
 
             switch(layer.options.type) {
                 case 'wms':
-                    self.element.find('a[href=#' + layer.id + ']').addClass('loading');
                     Mapbender.source.wms.featureInfo(layer, x, y, $.proxy(self._featureInfoCallback, self));
                     break;
             }
         });
 
-        if(fi_exist){
-            if(!$('body').data('mbPopup')) {
-                $("body").mbPopup();
-                $("body").mbPopup('showHint', {title:"Detail information", showHeader:true, content: tabContainer, modal:false, width:600});
-            } else {
-                $("body").mbPopup();
-                $("body").mbPopup('showHint', {title:"Detail information", showHeader:true, content: "sss", modal:false});
+        var content = (fi_exist) ? tabContainer : '<p class="description">No feature info layer exists.</p>';
 
-                if(this.options.deactivateOnClose) {
-                    this.element.bind('dialogclose', $.proxy(this.deactivate, this));
-                }
-            }
-        } else {
+        if(!$('body').data('mbPopup')) {
             $("body").mbPopup();
-            $("body").mbPopup('showHint', {title:"Detail information", showHeader:true, content: '<p class="description">No feature info layer exists.</p>', modal:false});
+            $("body").mbPopup('addButton', "Close", "button right", function(){
+                        $("body").mbPopup('close');
+                        console.log(self.options.deactivateOnClose)
+                        if(self.options.deactivateOnClose) {
+                            $.proxy(self.deactivate, self);
+                        }
+                     }).mbPopup('showCustom', {title:"Detail information", 
+                                           content: content, 
+                                           showCloseButton: false,
+                                           modal:false, 
+                                           width:500, 
+                                           draggable:true});
+
+        }else{
+            $("body").mbPopup('setContent', content);
         }
     },
 
