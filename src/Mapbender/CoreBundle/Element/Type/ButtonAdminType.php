@@ -47,7 +47,7 @@ class ButtonAdminType extends AbstractType
                         "iconLegend" => "Legend",
                         "iconPrint" => "Print",
                         "iconSearch" => "Search",
-                        "iconToc" => "TOC",
+                        "iconLayertree" => "Layer tree",
                         "iconWms" => "WMS"
                         )))
                 ->add('label', 'checkbox', array('required' => false))

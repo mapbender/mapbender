@@ -207,7 +207,7 @@ $(function() {
 
             })
             .mbPopup('showAjaxModal', 
-                     {title:"Add element to " + $(this).siblings(".subTitle").text().toLowerCase()},
+                     {title:"Add element"},
                      $(this).attr("href"), 
                      function(){ //ok click
                        $("#elementForm").submit();
@@ -278,7 +278,7 @@ $(function() {
     });
 
     // Delete layerset Action
-    $(".deleteLayerset").bind("click", function(){
+    $(".removeLayerset").bind("click", function(){
         if(!$('body').data('mbPopup')) {
             $("body").mbPopup();
             $("body").mbPopup('showAjaxModal', {
@@ -348,8 +348,8 @@ $(function() {
         return false;
     });
 
-    // Delete element
-    $('.iconRemove').bind("click", function(){
+    // Delete instance
+    $('.removeInstance').bind("click", function(){
         var me  = $(this);
         var title = me.attr('title');
 

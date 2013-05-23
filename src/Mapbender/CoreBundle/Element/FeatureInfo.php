@@ -74,7 +74,9 @@ class FeatureInfo extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.featureInfo.js'),'css' => array()
+            'js' => array('mapbender.element.featureInfo.js',
+                          '@FOMCoreBundle/Resources/public/js/widgets/popup.js'
+                         ),'css' => array()
         );
     }
 
