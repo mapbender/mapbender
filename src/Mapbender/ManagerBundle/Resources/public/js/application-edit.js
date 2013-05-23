@@ -4,16 +4,14 @@ $(function() {
         items: "tr:not(.dummy)",
         distance: 20,
         stop: function( event, ui ) {
-            $(ui.item).parent().find("li").each(function(idx, elm){
-                window.console && console.log(idx, elm);
+            $(ui.item).parent().find("tr.element").each(function(idx, elm){
                 if($(elm).attr("data-href")===$(ui.item).attr("data-href")){
-                    window.console && console.log(idx, elm, $(elm).parent().find("li.dummy").length);
                     $.ajax({
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
                         data: {
-                            number: idx - $(elm).parent().find("li.dummy").length,
-                            region: $(ui.item).parent().attr("data-region")
+                            number: idx,
+                            region: $(ui.item).closest('table').attr("data-region")
                         },
                         success: function(data, textStatus, jqXHR){
                             if(data.error && data.error !== ''){
@@ -29,7 +27,7 @@ $(function() {
         }
     });
 
-    $('ul.elements input[type="checkbox"]').click(function() {
+    $('tr.element .iconCheckboxActive input[type="checkbox"]').click(function() {
         $.ajax({
             url: $(this).attr("data-href"),
             type: "POST",
@@ -270,20 +268,22 @@ $(function() {
         return false;
     });
     // Add Instance Action
-    $(".addInstance").bind("click", function(){
-        if(!$('body').data('mbPopup')) {
+    $(".addInstance").bind("click", function(event){
+        event.preventDefault();
+
+        if(!$('body').data('mapbenderMbPopup')) {
             $("body").mbPopup();
-            $("body").mbPopup('showAjaxModal', 
-                              {title:"Select source",
-                               subTitle: " - " + $(this).parent().siblings(".subTitle").text()},
-                              $(this).attr("href"), 
-                              null,
-                              null,
-                              function(){
-                                $("#popup").find(".buttonYes").hide();
-                              });
+            $("body").mbPopup('showAjaxModal', {
+                    title:"Select source",
+                    subTitle: " - " + $(this).parent().siblings(".subTitle").text()
+                },
+                $(this).attr("href"),
+                null,
+                null,
+                function(){
+                    $("#popup").find(".buttonYes").hide();
+                });
         }
-        return false;
     });
 
     // Delete layerset Action
