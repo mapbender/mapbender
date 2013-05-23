@@ -410,7 +410,7 @@ class ElementController extends Controller
                             'result' => 'ok')), 200, array(
                     'Content-Type' => 'application/json'));
     }
-    
+
     /**
      * Delete element
      *
@@ -422,7 +422,7 @@ class ElementController extends Controller
         $element = $this->getDoctrine()
                 ->getRepository('MapbenderCoreBundle:Element')
                 ->findOneById($id);
-        
+
         $enabled = $this->get("request")->get("enabled");
         if(!$element)
         {
