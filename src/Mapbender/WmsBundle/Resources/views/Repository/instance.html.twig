@@ -9,42 +9,42 @@
 
 {% block manager_content %}
 <div class="instanceContainer">
-  <div class="right">
-    <input class="button" type="submit" name="save" value="{{"Save"|trans}}" />
-    <a href="#" class="button critical">{{"Cancel"|trans}}</a>
-  </div>
-
-  <span class="labelInput">{{ 'Origin URL' | trans }}</span>
-  <a class="linkButton" href="{{ instance.source.originUrl }}" target="_BLANK">{{ instance.source.originUrl }}</a>
-  <div class="clear"></div>
-
-  <div class="metaData">
-    <div class="left leftContainer">
-      {{ form_label(form.format) }}{{ form_widget(form.format) }}
-      <div class="clear"></div>
-      {{ form_label(form.infoformat) }}{{ form_widget(form.infoformat) }}
-      <div class="clear"></div>
-      {{ form_label(form.exceptionformat) }}{{ form_widget(form.exceptionformat) }}
-      <div class="clear"></div>
-      {{ form_label(form.opacity) }}{{ form_widget(form.opacity) }}
-      <div class="clear"></div>
-    </div>
-
-    <div class="left rightContainer">
-      {{ form_widget(form.visible) }}<label for="{{form.visible.vars.id}}" class="labelCheck">{{"Visible"|trans}}</label>
-      <div class="clear"></div>
-      {{ form_widget(form.proxy) }}<label for="{{form.proxy.vars.id}}" class="labelCheck">{{"Proxy"|trans}}</label>
-      <div class="clear"></div>
-      {{ form_widget(form.transparency) }}<label for="{{form.transparency.vars.id}}" class="labelCheck">{{"Transparency"|trans}}</label>
-      <div class="clear"></div>
-      {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"Tiled"|trans}}</label>
-      <div class="clear"></div>
-    </div>
-  </div>
-
-
-  {% set root = instance.source.getRootlayer() %}
   <form action="{{path('mapbender_wms_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post" novalidate="novalidate" class="clear">
+
+    <div class="right">
+      <input class="button" type="submit" name="save" value="{{"Save"|trans}}" />
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"Cancel"|trans}}</a>
+    </div>
+
+    <span class="labelInput">{{ 'Origin URL' | trans }}</span>
+    <a class="linkButton" href="{{ instance.source.originUrl }}" target="_BLANK">{{ instance.source.originUrl }}</a>
+    <div class="clear"></div>
+
+    <div class="metaData">
+      <div class="left leftContainer">
+        {{ form_label(form.format) }}{{ form_widget(form.format) }}
+        <div class="clear"></div>
+        {{ form_label(form.infoformat) }}{{ form_widget(form.infoformat) }}
+        <div class="clear"></div>
+        {{ form_label(form.exceptionformat) }}{{ form_widget(form.exceptionformat) }}
+        <div class="clear"></div>
+        {{ form_label(form.opacity) }}{{ form_widget(form.opacity) }}
+        <div class="clear"></div>
+      </div>
+
+      <div class="left rightContainer">
+        {{ form_widget(form.visible) }}<label for="{{form.visible.vars.id}}" class="labelCheck">{{"Visible"|trans}}</label>
+        <div class="clear"></div>
+        {{ form_widget(form.proxy) }}<label for="{{form.proxy.vars.id}}" class="labelCheck">{{"Proxy"|trans}}</label>
+        <div class="clear"></div>
+        {{ form_widget(form.transparency) }}<label for="{{form.transparency.vars.id}}" class="labelCheck">{{"Transparency"|trans}}</label>
+        <div class="clear"></div>
+        {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"Tiled"|trans}}</label>
+        <div class="clear"></div>
+      </div>
+    </div>
+
+    {% set root = instance.source.getRootlayer() %}
     <table id="instanceTable" class="table instanceTable">
       <thead>
         <tr>
