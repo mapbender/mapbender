@@ -1,6 +1,6 @@
 (function($) {
 
-$.widget("mapbender.mbFeatureInfo", $.ui.dialog, {//$.mapbender.mbButton, {
+$.widget("mapbender.mbFeatureInfo", $.ui.dialog, {
     options: {
         layers: undefined,
         target: undefined,
@@ -63,9 +63,15 @@ $.widget("mapbender.mbFeatureInfo", $.ui.dialog, {//$.mapbender.mbButton, {
         fi_exist = false;
 
         $(this.element).empty();
-        var tabs = $('<div></div>').attr('id', 'featureinfo-tabs').appendTo(this.element);
-        var header = $('<ol></ol>').appendTo(tabs);
-        var layers = this.map.layers();
+
+        var tabContainer = $('<div id="featureInfoTabContainer" class="tabContainer featureInfoTabContainer">' + 
+                               '<ul class="tabs"></ul>' + 
+                             '</div>');
+        var header       = tabContainer.find(".tabs");
+        var layers       = this.map.layers();
+        var newTab, newContainer;
+
+        // XXXVH: Need to optimize this section for better performance!
         // Go over all layers
         $.each(this.map.layers(), function(idx, layer) {
             if(!layer.visible()) {
@@ -76,8 +82,11 @@ $.widget("mapbender.mbFeatureInfo", $.ui.dialog, {//$.mapbender.mbButton, {
             }
             fi_exist = true;
             // Prepare result tab list
-            header.append($('<li></li>').append($('<a></a>').attr('href', '#' + layer.id).html(layer.label)));
-            tabs.append($('<div></div>').attr('id', layer.id));
+            newTab          = $('<li id="tab' + layer.id + '" class="tab">' + layer.label + '</li>');
+            newContainer = $('<div id="container' + layer.id + '" class="container"></div>');
+
+            header.append(newTab);
+            tabContainer.append(newContainer);
 
             switch(layer.options.type) {
                 case 'wms':
@@ -86,22 +95,22 @@ $.widget("mapbender.mbFeatureInfo", $.ui.dialog, {//$.mapbender.mbButton, {
                     break;
             }
         });
+
         if(fi_exist){
-            tabs.tabs();
-        } else {
-            $('<p>No FeatureInfo layer exists.</p>').appendTo(this.element);
-        }
-        if(this.element.data('dialog')) {
-            this.element.dialog('open');
-        } else {
-            this.element.dialog({
-                title: 'Detail-Information',
-                width: 600,
-                height: 400
-            });
-            if(this.options.deactivateOnClose) {
-                this.element.bind('dialogclose', $.proxy(this.deactivate, this));
+            if(!$('body').data('mbPopup')) {
+                $("body").mbPopup();
+                $("body").mbPopup('showHint', {title:"Detail information", showHeader:true, content: tabContainer, modal:false, width:600});
+            } else {
+                $("body").mbPopup();
+                $("body").mbPopup('showHint', {title:"Detail information", showHeader:true, content: "sss", modal:false});
+
+                if(this.options.deactivateOnClose) {
+                    this.element.bind('dialogclose', $.proxy(this.deactivate, this));
+                }
             }
+        } else {
+            $("body").mbPopup();
+            $("body").mbPopup('showHint', {title:"Detail information", showHeader:true, content: '<p class="description">No feature info layer exists.</p>', modal:false});
         }
     },
 
@@ -118,8 +127,7 @@ $.widget("mapbender.mbFeatureInfo", $.ui.dialog, {//$.mapbender.mbButton, {
             .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
         } catch(e) {}
         //TODO: Needs some escaping love
-        this.element.find('a[href=#' + data.layerId + ']').removeClass('loading');
-        this.element.find('#' + data.layerId).html(text);
+        $('#container' + data.layerId).removeClass('loading').html(text);
     }
 });
 })(jQuery);

@@ -9,6 +9,7 @@ namespace Mapbender\CoreBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 /**
  * Welcome controller.
@@ -29,16 +30,20 @@ class WelcomeController extends Controller {
      * @Template()
      */
     public function listAction() {
-        $applications = $this->get('mapbender')->getApplicationEntities();
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
 
-        // Unset unpublished applications
-        foreach($applications as $key => $application) {
-            if(!$application->isPublished()) {
-                unset($applications[$key]);
+        $applications = $this->get('mapbender')->getApplicationEntities();
+        $allowed_applications = array();
+        foreach($applications as $application)
+        {
+            if($securityContext->isGranted('VIEW', $application))
+            {
+                $allowed_applications[] = $application;
             }
         }
 
-        return array('applications' => $applications);
+        return array('applications' => $allowed_applications);
     }
 }
 
