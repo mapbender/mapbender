@@ -292,7 +292,7 @@ class RepositoryController extends Controller
                 $em->getConnection()->commit();
 
                 $this->get('session')->setFlash(
-                        'notice', 'Your Wms Instance has been changed.');
+                        'success', 'Your Wms Instance has been changed.');
                 return $this->redirect($this->generateUrl(
                                         'mapbender_manager_application_edit',
                                         array("slug" => $slug)) . '#layersets');

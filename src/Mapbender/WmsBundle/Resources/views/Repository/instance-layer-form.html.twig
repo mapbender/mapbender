@@ -20,14 +20,15 @@
 
             <td class="minScaleColumn" title="{{ "MinScale"|trans }}">{{ form_widget(form_layer.minScale) }}</td>
             <td class="maxScaleColumn" title="{{ "MaxSclase"|trans }}">{{ form_widget(form_layer.maxScale) }}</td>
-            <td class="checkboxColumn" title="{{ "Active"|trans }}">{{ form_widget(form_layer.active) }}</td>
-            <td class="checkboxColumn odd" title="{{ "Selected  at TOC"|trans }}">{{ form_widget(form_layer.selected) }}</td>
-            <td class="checkboxColumn odd" title="{{ "Allow Select at TOC"|trans }}">{{ form_widget(form_layer.allowselected) }}</td>
-            <td class="checkboxColumn" title="{{ "FeatureInfo at TOC"|trans }}">{{ form_widget(form_layer.info) }}</td>
-            <td class="checkboxColumn" title="{{ "Allow FeatureInfo at TOC"|trans }}">{{ form_widget(form_layer.allowinfo) }}</td>
-            <td class="checkboxColumn odd" title="{{ "Toggle at TOC"|trans }}">{{ form_widget(form_layer.toggle) }}</td>
-            <td class="checkboxColumn odd" title="{{ "Allow Toggle at TOC"|trans }}">{{ form_widget(form_layer.allowtoggle) }}</td>
-            <td class="checkboxColumn" title="{{ "Allow Reorder at TOC"|trans }}">{{ form_widget(form_layer.allowreorder) }}</td>
+
+            <td class="checkboxColumn" data-cb="cb-active" title="{{ "Active"|trans }}">{{ form_widget(form_layer.active) }}</td>
+            <td class="checkboxColumn odd" data-cb="cb-select-on" title="{{ "Selected  at TOC"|trans }}">{{ form_widget(form_layer.selected) }}</td>
+            <td class="checkboxColumn odd" data-cb="cb-select-allow" title="{{ "Allow Select at TOC"|trans }}">{{ form_widget(form_layer.allowselected) }}</td>
+            <td class="checkboxColumn" data-cb="cb-info-on" title="{{ "FeatureInfo at TOC"|trans }}">{{ form_widget(form_layer.info) }}</td>
+            <td class="checkboxColumn" data-cb="cb-info-allow" title="{{ "Allow FeatureInfo at TOC"|trans }}">{{ form_widget(form_layer.allowinfo) }}</td>
+            <td class="checkboxColumn odd" data-cb="cb-toggle-on" title="{{ "Toggle at TOC"|trans }}">{{ form_widget(form_layer.toggle) }}</td>
+            <td class="checkboxColumn odd" data-cb="cb-toggle-allow" title="{{ "Allow Toggle at TOC"|trans }}">{{ form_widget(form_layer.allowtoggle) }}</td>
+            <td class="checkboxColumn" data-cb="cb-recorder-allow" title="{{ "Allow Reorder at TOC"|trans }}">{{ form_widget(form_layer.allowreorder) }}</td>
             <td>
               <span class="iconInfo" title="{{'More informations'|trans}}">
                 <div class="infoMsgBox hide">

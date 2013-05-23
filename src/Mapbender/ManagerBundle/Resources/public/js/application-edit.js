@@ -1,4 +1,4 @@
-$(function() {    
+$(function() {
     $("table.elementsTable tbody").sortable({
         connectWith: "table.elementsTable tbody",
         items: "tr:not(.dummy)",
@@ -27,7 +27,7 @@ $(function() {
         }
     });
 
-    $('tr.element .iconCheckboxActive input[type="checkbox"]').click(function() {
+    $('tr.element, tr.sourceinst').find('.iconCheckboxActive input[type="checkbox"]').click(function() {
         $.ajax({
             url: $(this).attr("data-href"),
             type: "POST",
@@ -45,45 +45,19 @@ $(function() {
         });
     });
 
-    $('ul.layerset input[type="checkbox"]').click(function() {
-        $.ajax({
-            url: $(this).attr("data-href"),
-            type: "POST",
-            data: {
-                enabled: $(this).is(":checked")
-            },
-            success: function(data, textStatus, jqXHR){
-                if(data.error && data.error !== ''){
-                    document.location.href = document.location.href;
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown ){
-                document.location.href = document.location.href;
-            }
-        });
-    });
-    $("table.layerset tbody" ).sortable({
-        connectWith: "table.layerset tbody",
+    $("table.layersetTable tbody" ).sortable({
+        connectWith: "table.layersetTable tbody",
         items: "tr:not(.header)",
         distance: 20,
         stop: function( event, ui ) {
             $(ui.item).parent().find("tr").each(function(idx, elm){
                 if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
-
                     $.ajax({
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
                         data: {
-                            number: idx - $(elm).parent().find("tr").length,
-                            new_layersetId: $(elm).parent().attr("data-id")
-                        },
-                        success: function(data, textStatus, jqXHR){
-                            // if(data.error && data.error !== ''){
-                            //     document.location.href = document.location.href;
-                            // }
-                        },
-                        error: function(jqXHR, textStatus, errorThrown ){
-                            // document.location.href = document.location.href;
+                            number: idx,
+                            new_layersetId: $(elm).closest('table').attr("data-id")
                         }
                     });
                 }
@@ -100,7 +74,7 @@ $(function() {
             stop: function( event, ui ) {
                 $(ui.item).parent().find("li").each(function(idx, elm){
                     if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
-                    
+
                         $.ajax({
                             url: $(ui.item).attr("data-href"),
                             type: "POST",
@@ -215,9 +189,9 @@ $(function() {
                 $("#popupContent").show();
 
             })
-            .mbPopup('showAjaxModal', 
+            .mbPopup('showAjaxModal',
                      {title:"Add element"},
-                     $(this).attr("href"), 
+                     $(this).attr("href"),
                      function(){ //ok click
                        $("#elementForm").submit();
                        return false;
@@ -238,10 +212,10 @@ $(function() {
     $(".addLayerset").bind("click", function(){
         if(!$('body').data('mbPopup')) {
             $("body").mbPopup();
-            $("body").mbPopup('showAjaxModal', 
+            $("body").mbPopup('showAjaxModal',
                               {title:"Add layerset",
                                btnOkLabel: "Add"},
-                              $(this).attr("href"), 
+                              $(this).attr("href"),
                               function(){ //ok click
                                 $("#layersetForm").submit();
                               },
@@ -253,11 +227,11 @@ $(function() {
     $(".editLayerset").bind("click", function(){
         if(!$('body').data('mbPopup')) {
             $("body").mbPopup();
-            $("body").mbPopup('showAjaxModal', 
+            $("body").mbPopup('showAjaxModal',
                               {title:"Edit layerset",
                                subTitle: " - " + $(this).siblings("legend").text(),
                                btnOkLabel: "Save"},
-                              $(this).attr("href"), 
+                              $(this).attr("href"),
                               function(){ //ok click
                                 $("#layersetForm").submit();
 
@@ -295,7 +269,7 @@ $(function() {
                 subTitle: " - " + $(this).siblings("legend").text(),
                 btnOkLabel: "Delete"
             },
-            $(this).attr("href"), 
+            $(this).attr("href"),
             function(){ //ok click
                 $("#deleteLaysersetForm").submit();
                 return false;
@@ -315,7 +289,7 @@ $(function() {
                     title:"Edit element",
                     method: 'GET'
                 },
-                url, 
+                url,
                 function(){ //ok click
                     $("#elementForm").submit();
                     return false;
@@ -385,5 +359,5 @@ $(function() {
                 });
         }
         return false;
-    });    
+    });
 });
