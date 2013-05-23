@@ -35,12 +35,14 @@ class WmsSourceSimpleType extends AbstractType
                       array(
                     'required' => false,
                     'attr' => array(
-                        'title' => 'The usename.')))
-                ->add('password', 'text',
+                        'title' => 'The username.',
+                        'autocomplete' => 'off')))
+                ->add('password', 'password',
                       array(
                     'required' => false,
                     'attr' => array(
-                        'title' => 'The password.')));
+                        'title' => 'The password.',
+                        'autocomplete' => 'off')));
     }
 
 }
