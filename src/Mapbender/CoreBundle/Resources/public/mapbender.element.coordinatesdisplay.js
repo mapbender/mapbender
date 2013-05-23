@@ -36,9 +36,9 @@ $.widget("mapbender.mbCoordinatesDisplay", {
     _reset: function(event, srs){
         var self = this;
         var mbMap = $('#' + this.options.target).data('mbMap');
-        if(!srs){
+//        if(!srs){
             srs = { projection: mbMap.map.olMap.getProjectionObject()};
-        }
+//        }
         if(this.crs != null && this.crs == srs.projection.projCode)
             return;
         if(typeof(self.options.formatoutput) !== 'undefined'){

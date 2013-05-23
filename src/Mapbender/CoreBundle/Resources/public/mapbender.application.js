@@ -200,7 +200,9 @@ Mapbender.DefaultModel = {
         
         $(this.mbMap.element).mapQuery(mapOptions);
         this.map = $(this.mbMap.element).data('mapQuery');
-        
+        this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
+        this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
+        this._addLayerMaxExtent(this.map.layersList.mapquery0);
         $.each(layers, function(idx, layer) {
             self._addSourceAtStart(layer);
         });
@@ -1242,6 +1244,24 @@ Mapbender.DefaultModel = {
         }
     },
     
+    _setBaseLayer: function(){
+        var sources = this.getSources();
+        var found = false;
+        for(var i = 0; i < sources.length; i++){
+            var mqLayer = this.map.layersList[sources[i].mqlid];
+            mqLayer.olLayer.isBaseLayer = false;
+        }
+        for(var i = 0; i < sources.length; i++){
+            var mqLayer = this.map.layersList[sources[i].mqlid];
+            if(mqLayer.visible() && !found){
+                found = true;
+                mqLayer.olLayer.isBaseLayer = true;
+                this.map.olMap.setBaseLayer(mqLayer.olLayer);
+                break;
+            }
+        }
+    },
+    
     /*
      * Changes the map's projection.
      */
@@ -1280,6 +1300,7 @@ Mapbender.DefaultModel = {
             position: [center.lon, center.lat], 
             zoom: this.map.olMap.getZoom()
         });
+//        this._setBaseLayer();
         this.mbMap._trigger('srsChanged', null, {
             projection: srs.projection
         });

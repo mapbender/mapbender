@@ -206,7 +206,7 @@ $.extend(true, Mapbender, {
                         origId: id,
                         title: capabilities.service.title,
                         configuration: {
-                            baseSource: false,
+                            isBaseSource: false,
                             options: {
                                 baselayer: false,
                                 bbox: bboxOb,
@@ -280,7 +280,9 @@ $.extend(true, Mapbender, {
                             service_new.id = service_new.id + "_" + num;
                             service_new.origId = service_new.id;
                             var root_new = $.extend(true, {}, rootLayer);
+                            root_new.options.id = service_new.id + "_0";
                             var layer_new = $.extend(true, {}, layer);
+                            layer_new.options.id = service_new.id + "_1";
                             if(layer_new.children)
                                 delete(layer_new.children);
                             root_new.children = [layer_new];

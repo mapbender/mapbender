@@ -44,6 +44,7 @@
         },
 
         loadWms: function(getCapabilitiesUrl) {
+            var self = this;
             if(getCapabilitiesUrl === null || getCapabilitiesUrl === '') return;
             var params = OpenLayers.Util.getParameters(getCapabilitiesUrl);
             var version, request, service;
@@ -77,11 +78,13 @@
                     url: getCapabilitiesUrl
                 },
                 dataType: 'text',
-                context: this,
-                success: function(xml) {
-                    this._getCapabilitiesUrlSuccess(xml, getCapabilitiesUrl);
+//                context: this,
+                success: function(data, textStatus, jqXHR) {
+                    self._getCapabilitiesUrlSuccess(data, getCapabilitiesUrl);
                 },
-                error: this._getCapabilitiesError
+                error: function(jqXHR, textStatus, errorThrown) {
+                    self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
+                }
             });
         },
         _getCapabilitiesUrlSuccess: function(xml, getCapabilitiesUrl) {

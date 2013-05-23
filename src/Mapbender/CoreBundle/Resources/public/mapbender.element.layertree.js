@@ -179,13 +179,14 @@
                         var that = this;
                         $(that).sortable("destroy");
                     });
-                    $( ".selector" ).sortable( "destroy" )
                     var li_s = this._createSourceList(added.source, added.source, this.model.getScale());
                     if(before && before.layerId){
                         $(this.element).find('ul.layers:first li[data-id="'+before.layerId+'"]').after(li_s);
                     } else if(after && after.layerId){
                         $(this.element).find('ul.layers:first li[data-id="'+after.layerId+'"]').before(li_s);
                     } else if(!this.options.showBaseSource && after.source.configuration.isBaseSource){
+                        $(this.element).find('ul.layers:first').append(li_s);
+                    } else if(!after.source.configuration.isBaseSource){
                         $(this.element).find('ul.layers:first').append(li_s);
                     }
                     this._createSortable();
