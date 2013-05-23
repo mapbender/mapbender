@@ -67,7 +67,9 @@ class Layerset
      */
     public function setId($id)
     {
-        $this->id = $id;
+        if(null !== $id) {
+            $this->id = $id;
+        }
         return $this;
     }
 
