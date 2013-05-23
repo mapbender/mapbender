@@ -268,20 +268,22 @@ $(function() {
         return false;
     });
     // Add Instance Action
-    $(".addInstance").bind("click", function(){
-        if(!$('body').data('mbPopup')) {
+    $(".addInstance").bind("click", function(event){
+        event.preventDefault();
+
+        if(!$('body').data('mapbenderMbPopup')) {
             $("body").mbPopup();
-            $("body").mbPopup('showAjaxModal', 
-                              {title:"Select source",
-                               subTitle: " - " + $(this).parent().siblings(".subTitle").text()},
-                              $(this).attr("href"), 
-                              null,
-                              null,
-                              function(){
-                                $("#popup").find(".buttonYes").hide();
-                              });
+            $("body").mbPopup('showAjaxModal', {
+                    title:"Select source",
+                    subTitle: " - " + $(this).parent().siblings(".subTitle").text()
+                },
+                $(this).attr("href"),
+                null,
+                null,
+                function(){
+                    $("#popup").find(".buttonYes").hide();
+                });
         }
-        return false;
     });
 
     // Delete layerset Action
