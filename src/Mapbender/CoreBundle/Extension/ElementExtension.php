@@ -33,7 +33,9 @@ class ElementExtension extends \Twig_Extension
     public function element_class_title($element)
     {
         $class = $element->getClass();
-        return $class::getClassTitle();
+        if(class_exists($class)) {
+            return $class::getClassTitle();
+        }
     }
 }
 
