@@ -40,7 +40,6 @@ class CoordinatesDisplayAdminType extends AbstractType
                       array(
                     'required' => true,
                     "choices" => array(
-                        'inline' => 'inline',
                         'left-top' => 'left-top',
                         'left-bottom' => 'left-bottom',
                         'right-top' => 'right-top',

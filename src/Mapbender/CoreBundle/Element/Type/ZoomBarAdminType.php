@@ -67,10 +67,6 @@ class ZoomBarAdminType extends AbstractType
                         'left-bottom' => 'left-bottom',
                         'right-top' => 'right-top',
                         'right-bottom' => 'right-bottom')))
-                ->add('position', new PositionType(),
-                      array(
-                    'label' => 'Position',
-                    'property_path' => '[position]'))
                 ->add('draggable', 'checkbox', array('required' => false));
     }
 

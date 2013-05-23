@@ -44,12 +44,7 @@ class ScaleSelector extends Element
     public function getAssets()
     {
         return array(
-            'js' => array(
-                'mapbender.element.scaleselector.js'
-            ),
-            'css' => array(
-                'mapbender.element.scaleselector.css'
-            )
+            'js' => array('mapbender.element.scaleselector.js'),'css' => array()
         );
     }
 

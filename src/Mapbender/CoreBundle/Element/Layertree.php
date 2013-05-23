@@ -66,13 +66,7 @@ class Layertree extends Element
      */
     public function getAssets()
     {
-        return array(
-            'js' => array(
-                'mapbender.element.layertree.js'
-            ),
-            'css' => array(
-                'mapbender.element.layertree.css'
-            )
+        return array('js' => array('mapbender.element.layertree.js'),'css' => array()
         );
     }
 

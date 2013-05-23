@@ -3,7 +3,6 @@
     $.widget("mapbender.mbAboutDialog", {
         options: {},
 
-        dlg: null,
         elementUrl: null,
 
         _create: function() {
@@ -16,29 +15,11 @@
         },
 
         _onClick: function() {
-            if(!this.dlg) {
-                this._initDialog();
-            }
-            this.dlg.dialog('open');
-        },
-
-        _initDialog: function() {
-            var self = this;
-            if(this.dlg === null) {
-                this.dlg = $('<div></div>')
-                .attr('id', 'mb-about-dialog')
-                .appendTo($('body'))
-                .dialog({
-                    title: 'About Mapbender',
-                    autoOpen: false,
-                    modal: true
-                });
+            if(!$('body').data('mbPopup')) {
                 $.get(this.elementUrl + 'about', function(data) {
-                    self.dlg.html(data);
-                    self.dlg.dialog('open');
+                    $("body").mbPopup();
+                    $("body").mbPopup('showHint', {title:"About Mapbender", showHeader:true, content: data});
                 });
-            } else {
-                this.dlg.dialog('open');
             }
         }
     });

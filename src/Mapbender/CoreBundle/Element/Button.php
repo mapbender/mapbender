@@ -76,8 +76,7 @@ class Button extends Element
     {
         return array(
             'js' => array('mapbender.element.button.js'),
-            //TODO: Split up
-            'css' => array('mapbender.elements.css'));
+            'css' => array());
     }
 
     /**

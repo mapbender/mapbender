@@ -2,17 +2,6 @@
     OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
     $.widget("mapbender.mbMap", {
         options: {
-        //        layerset: null, //mapset for main map
-        //        dpi: OpenLayers.DOTS_PER_INCH,
-        //        srs: 'EPSG:4326',
-        //        srsDefs: [],
-        //        units: 'degrees',
-        //        extents: {
-        //            max: [-180, -90, 180, 90],
-        //            start: [-180, -90, 180, 90]
-        //        },
-        //        maxResolution: 'auto',
-        //        imgPath: 'bundles/mapbendercore/mapquery/lib/openlayers/img'
         },
         model: null,
         map: null,
@@ -49,12 +38,6 @@
             this.map.center(options);
         },
         
-//        /**
-//         *
-//         */
-//        setProjection: function(){
-//            
-//        },
         setExtent: function(extent){
             this.model.extent = extent;
         },
@@ -140,7 +123,6 @@
         },
         
         getCenterOptions: function(){
-//            return this.map.center();
             return {center: this.map.olMap.getCenter(), zoom: this.map.olMap.getZoom()};
         },
         

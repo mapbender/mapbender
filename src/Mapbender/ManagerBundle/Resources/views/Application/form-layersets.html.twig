@@ -6,10 +6,13 @@
   <ul id="listFilterLayersets" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">
     {% for layerset in application.layersets %}
       <li class="filterItem">
-        <table class="tableCore layerset" data-id="{{ layerset.id }}">
+        <h3 class="left subTitle">{{ layerset.title }}</h3>
+        <table class="tableCore layersetTable" data-id="{{ layerset.id }}">
           <thead>
             <tr>
-              <th class="subTitle">{{ layerset.title }}</th>
+              <th>{{ 'Id' | trans }}</th>
+              <th>{{ 'Title' | trans }}</th>
+              <th>{{ 'Type' | trans }}</th>
               <th class="iconColumn">
                 <a class="iconAdd iconSmall addInstance" title="{{"Add Instance"|trans}}" href="{{ path("mapbender_manager_application_listinstance",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
                 <a class="iconEdit iconSmall editLayerset" title="{{"Edit"|trans}} {{layerset.title}}" href="{{ path("mapbender_manager_application_editlayerset",{'slug': application.slug, 'layersetId': layerset.id}) }}"></a>
@@ -20,16 +23,15 @@
           <tbody>
             {% for instance in layerset.instances %}
               <tr class="sourceinst" data-id="{{ instance.id }}" data-href="{{ path('mapbender_manager_repository_instanceweight', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}">
-                <td>
-                  <span class="title">{{ instance.title }}</span>
-                  <span class="type">{{ instance.source.type }}</span>
-                  <span class="sourceid">{{ instance.source.id }}</span>
-                </td>
+                <td class="idColumn description">{{ instance.source.id }}</td>
+                <td class="titleColumn description">{{ instance.title }}</td>
+                <td class="typeColumn description">{{ instance.source.type }}</td>
                 <td class="iconColumn">
-                  <span class="iconPublish iconSmall enabled"><input data-href="{{ path('mapbender_manager_repository_instanceenabled', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}" data-id="{{ instance.id }}" type="checkbox" {% if instance.enabled %} checked="checked" {% endif %} /></span>
-                  <a class="iconEdit iconSmall" href="{{ url("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})  }}" class="btn">{{ 'Edit Source Instance' | trans }}</a>
-
-                  <span class="iconRemove iconSmall" title="{{ instance.title }}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}" data-url="{{ url("mapbender_manager_application_deleteinstance",{"slug": application.slug, 'layersetId': layerset.id, "instanceId": instance.id}) }}"></span>
+                  <div class="checkWrapper left iconCheckbox {% if instance.enabled %}iconCheckboxActive{% endif %}" title="{{"Toggle show/hide instance"|trans}}">
+                    <input class="checkbox" data-href="{{ path('mapbender_manager_repository_instanceenabled', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}" data-id="{{ instance.id }}" type="checkbox" {% if instance.enabled %} checked="checked" {% endif %}>
+                  </div>
+                  <a class="iconEdit iconSmall editInstance" title="{{"Edit instance"|trans}} {{instance.title}}" href="{{ url("mapbender_manager_repository_instance",{"slug": application.slug, "instanceId": instance.id})  }}"></a>
+                  <span class="iconRemove iconSmall removeInstance" title="{{"Delete instance"|trans}} {{instance.title}}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}" data-url="{{ url("mapbender_manager_application_deleteinstance",{"slug": application.slug, 'layersetId': layerset.id, "instanceId": instance.id}) }}"></span>
                 </td>
               </tr>
             {% endfor %}

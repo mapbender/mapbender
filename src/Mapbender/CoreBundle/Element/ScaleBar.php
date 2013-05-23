@@ -47,8 +47,7 @@ class ScaleBar extends Element
             'target' => null,
             'maxWidth' => 200,
             'anchor' => 'right-bottom',
-            'units' => array("km"),
-            'position' => array('20px', '20px'));
+            'units' => array("km"));
     }
 
     /**
@@ -72,7 +71,7 @@ class ScaleBar extends Element
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:scale_bar.html.twig';
+        return 'MapbenderManagerBundle:Element:scalebar.html.twig';
     }
 
     /**
@@ -83,7 +82,7 @@ class ScaleBar extends Element
         return array(
             'js' => array('mapbender.element.scalebar.js'),
             //TODO: Split up
-            'css' => array('mapbender.element.scalebar.css'));
+            'css' => array());
     }
 
     /**

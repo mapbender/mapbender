@@ -1,8 +1,6 @@
 <fieldset class="serviceAddBox left box">
   <legend>{{"OGC WMS"|trans}}</legend>
   <form action="{{path('mapbender_wms_repository_create')}}" method="post" novalidate="novalidate">
-      {{ form_errors(form) }}
-
       <label class="left labelInput" for="{{ form.originUrl.get('id') }}">{{"Serviceurl:" | trans}}</label>
       {{ form_widget(form.originUrl, { 'attr': {'class': 'input'} }) }}
       <div class="clearContainer"></div>
@@ -15,12 +13,10 @@
       {{ form_widget(form.password, { 'attr': {'class': 'input'} }) }}
       <div class="clearContainer"></div>
 
-      {{form_rest(form)}}
-
       <div class="right">
         <input class="button" type="submit" name="load" value="{{"Load"|trans}}" />
         <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">Cancel</a>
       </div>
-      <div class="clearContainer"></div>
+      {{ form_row(form._token) }}
   </form>
 </fieldset>

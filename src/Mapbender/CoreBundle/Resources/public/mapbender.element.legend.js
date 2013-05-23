@@ -126,15 +126,6 @@
                     $(this.element).find('li[data-id="'+key+'"]').removeClass("notvisible");
                 } else {
                     $(this.element).find('li[data-id="'+key+'"]').addClass("notvisible");
-//                    if($(this.element).find('li[data-id="'+key+'"] input[name="selected"]:first').is(':checked')){
-//                        $(this.element).find('li[data-id="'+key+'"] span.state:first').addClass("invisible").attr({
-//                            title: changedEl.state.outOfScale ? "outOfScale" : "parent invisible"
-//                        });
-//                    } else {
-//                        $(this.element).find('li[data-id="'+key+'"] span.state:first').removeClass("invisible").attr({
-//                            title: ""
-//                        });
-//                    }
                 }
             }
         },
@@ -147,39 +138,13 @@
             }
             if(!hasLayers){
                 $(this.element).find('[data-sourceid="'+removed.source.id+'"]').remove();
-//                $(this.element).find('ul[data-sourceid="'+removed.source.id+'"]').remove();
             }
         },
         
         _onSourceLoadStart: function(event, option){
-            //            window.console && console.log("mbLayertree._onSourceLoadStart:", event);
-//            var source = option.source;
-//                var source_li = $(this.element).find('li[data-sourceid="'+source.id+'"]');
-//                if(source_li.find('input[name="selected"]:first').is(':checked')
-//                    && !source_li.find('span.state:first').hasClass('invisible')){
-//                    source_li.find('span.spinner:first').addClass('loading');
-//                    source_li.find('li').each(function(idx, el){
-//                        var li_el = $(el);
-//                        if(li_el.find('input[name="selected"]:first').is(':checked')
-//                            && !li_el.find('span.state:first').hasClass('invisible')){
-//                            li_el.find('span.spinner:first').addClass('loading');
-//                        }
-//                    });
-//                }
         },
         
         _onSourceLoadEnd: function(event, option){
-            //            window.console && console.log("mbLayertree._onSourceLoadEnd:", event);
-//            var source = option.source;
-//            if(this.options.displaytype === "tree"){
-//                var source_li = $(this.element).find('li[data-sourceid="'+source.id+'"]');
-//                if(source_li.find('span.spinner:first').hasClass('loading')){
-//                    source_li.find('span.spinner').removeClass('loading ');
-//                    
-//                }
-//            } else if(this.options.displaytype === "list"){
-//                $(this.element).find('li[data-sourceid="'+source.id+'"] span.spinner').removeClass('loading');
-//            }
         },
         _onSourceLoadError: function(event, option){
             //            window.console && console.log("mbLayertree._onSourceLoadError:", event);

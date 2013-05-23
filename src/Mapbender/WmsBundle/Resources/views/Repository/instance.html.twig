@@ -1,94 +1,111 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'Service Repository' | trans }}{% endblock %}
+{% block title %}{{ 'Wms Instance' | trans }} - {{ form.vars.value.title }}{% endblock %}
 
-{% block manager_css %}
-<link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/style/style.css') }}" >
-{% endblock %}
-
-{% block manager_js %}
-<script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/mopabootstrap/js/mopabootstrap-collection.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/edit.js') }}"></script>
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
-<div class="well">
-<h3>{{ 'Wms Instance' | trans }}: {{ form.vars.value.title }}: {{ instance.source.id }}</h3>
-<p><b>{{ 'origin URL' | trans }}:</b> <a href="{{ instance.source.originUrl }}" target="_BLANK">{{ instance.source.originUrl }}</a></p>
-{% set root = instance.source.getRootlayer() %}
-{{ form_errors(form) }}
-    <form action="{{path('mapbender_wms_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post">
-        <div class="sourcecontent">
-            <table>
-                <tr>
-                    <td class="coltitle">{{ form_label(form.format) }}:</td>
-                    <td class="colselect">{{ form_widget(form.format) }}</td>
-                    <td class="coltitle">{{ form_label(form.visible) }}:</td>
-                    <td class="colinputcheckbox">{{ form_widget(form.visible) }}</td>
-                </tr>
-                <tr>
-                    <td class="coltitle">{{ form_label(form.infoformat) }}:</td>
-                    <td class="colselect">{{ form_widget(form.infoformat) }}</td>
-                    <td class="coltitle">{{ form_label(form.proxy) }}:</td>
-                    <td class="colinputcheckbox">{{ form_widget(form.proxy) }}</td>
-                </tr>
-                <tr>
-                    <td class="coltitle">{{ form_label(form.exceptionformat) }}:</td>
-                    <td class="colselect">{{ form_widget(form.exceptionformat) }}</td>
-                    <td class="coltitle">{{ form_label(form.transparency) }}:</td>
-                    <td class="colinputcheckbox">{{ form_widget(form.transparency) }}</td>
-                </tr>
-                <tr>
-                    <td class="coltitle">{{ form_label(form.opacity) }}:</td>
-                    <td class="colselect">{{ form_widget(form.opacity) }}</td>
-                    <td class="coltitle">{{ form_label(form.tiled) }}:</td>
-                    <td class="colinputcheckbox">{{ form_widget(form.tiled) }}</td>
-                </tr>
-            </table>
-        </div>
-        <ul class="layercollection">
-            <li class="header">
-                <div class="caption">
-                    <span class="tree"></span>
-                    <span class="colnum">Id</span>
-                    <span class="colname">Name</span>
-                    <span class="coltitle">Title</span>
-                    <span class="colminscale">minsc</span>
-                    <span class="colmaxscale">maxsc</span>
-                    <span class="colstyle">style</span>
-                    <span class="colactive">active</span>
-                    <span class="colselected">select</span>
-                    <span class="colallowselected">allow<br/>select</span>
-                    <span class="colinfo">info</span>
-                    <span class="colallowinfo">allow<br/>info</span>
-                    <span class="coltoggle">toggle</span>
-                    <span class="colallowtoggle">allow<br/>toggle</span>
-                    <span class="colallowreorder">allow<br/>reorder</span>
-                </div>
-                <div class="group">
-                    <span class="tree"></span>
-                    <span class="colnum"></span>
-                    <span class="colname"></span>
-                    <span class="coltitle"></span>
-                    <span class="colminscale"></span>
-                    <span class="colmaxscale"></span>
-                    <span class="colstyle"></span>
-                    <span class="colactive"><button class="groupon" >on</button> <button class="groupoff" >off</button></span>
-                    <span class="colselected"><button class="groupon" >on</button> <button class="groupoff" >off</button></span>
-                    <span class="colallowselected"><button class="groupon" >on</button> <button class="groupoff" >off</button></span>
-                    <span class="colinfo"><button class="groupon" >on</button> <button class="groupoff" >off</button></span>
-                    <span class="colallowinfo"><button class="groupon" >on</button> <button class="groupoff" >off</button></span>
-                    <span class="coltoggle"><button class="groupon" >on</button> <button class="groupoff" >off</button></span>
-                    <span class="colallowtoggle"><button class="groupon" >on</button> <button class="groupoff" >off</button></span>
-                    <span class="colallowreorder"><button class="groupon" >on</button> <button class="groupoff" >off</button></span>
-                </div>
-            </li>
-            {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form.layers, 'layer': instance.getrootlayer }%}
-            {{form_rest(form)}}
-        </ul>
-        <input type="submit" name="save" class="button" value="{{'Save'|trans}}" />
-        <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{ 'Cancel'|trans }}</a>
-    </form>
+<div class="instanceContainer">
+  <div class="right">
+    <input class="button" type="submit" name="save" value="{{"Save"|trans}}" />
+    <a href="#" class="button critical">{{"Cancel"|trans}}</a>
+  </div>
+
+  <span class="labelInput">{{ 'Origin URL' | trans }}</span>
+  <a class="linkButton" href="{{ instance.source.originUrl }}" target="_BLANK">{{ instance.source.originUrl }}</a>
+  <div class="clear"></div>
+
+  <div class="metaData">
+    <div class="left leftContainer">
+      {{ form_label(form.format) }}{{ form_widget(form.format) }}
+      <div class="clear"></div>
+      {{ form_label(form.infoformat) }}{{ form_widget(form.infoformat) }}
+      <div class="clear"></div>
+      {{ form_label(form.exceptionformat) }}{{ form_widget(form.exceptionformat) }}
+      <div class="clear"></div>
+      {{ form_label(form.opacity) }}{{ form_widget(form.opacity) }}
+      <div class="clear"></div>
+    </div>
+
+    <div class="left rightContainer">
+      {{ form_widget(form.visible) }}<label for="{{form.visible.vars.id}}" class="labelCheck">{{"Visible"|trans}}</label>
+      <div class="clear"></div>
+      {{ form_widget(form.proxy) }}<label for="{{form.proxy.vars.id}}" class="labelCheck">{{"Proxy"|trans}}</label>
+      <div class="clear"></div>
+      {{ form_widget(form.transparency) }}<label for="{{form.transparency.vars.id}}" class="labelCheck">{{"Transparency"|trans}}</label>
+      <div class="clear"></div>
+      {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"Tiled"|trans}}</label>
+      <div class="clear"></div>
+    </div>
+  </div>
+
+
+  {% set root = instance.source.getRootlayer() %}
+  <form action="{{path('mapbender_wms_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post" novalidate="novalidate" class="clear">
+    <table id="instanceTable" class="table instanceTable">
+      <thead>
+        <tr>
+          <th></th>
+          {#<th class="smallText">{{"Id"|trans}}</th>
+          <th class="smallText">{{"Name"|trans}}</th>#}
+          <th>{{"Title"|trans}}</th>
+          <th>{{"Minsc"|trans}}</th>
+          <th>{{"Maxsc"|trans}}</th>
+          {#<th class="smallText">{{"Style"|trans}}</th>#}
+          <th class="checkboxColumn">{{"Active"|trans}}</th>
+          <th class="checkboxColumn odd" colspan="2">{{"Select"|trans}}</th>
+          <th class="checkboxColumn" colspan="2">{{"Info"|trans}}</th>
+          <th class="checkboxColumn odd" colspan="2">{{"Toggle"|trans}}</th>
+          <th class="checkboxColumn">{{"Reorder"|trans}}</th>
+          <th></th>
+        </tr>
+        <tr>
+          <th colspan="5"></th>
+
+          <th class="checkboxColumn smallText odd">{{"on"|trans}}</th>
+          <th class="checkboxColumn smallText odd">{{"allow"|trans}}</th>
+          <th class="checkboxColumn smallText">{{"on"|trans}}</th>
+          <th class="checkboxColumn smallText">{{"allow"|trans}}</th>
+          <th class="checkboxColumn smallText odd">{{"on"|trans}}</th>
+          <th class="checkboxColumn smallText odd">{{"allow"|trans}}</th>
+          <th class="checkboxColumn smallText">{{"allow"|trans}}</th>
+          <th></th>
+        </tr>
+        <tr>
+          <th colspan="4"></th>
+
+          <th class="checkboxColumn"><span class="iconCheckbox"></span></th>
+          <th class="checkboxColumn odd"><span class="iconCheckbox"></span></th>
+          <th class="checkboxColumn odd"><span class="iconCheckbox"></span></th>
+          <th class="checkboxColumn"><span class="iconCheckbox"></span></th>
+          <th class="checkboxColumn"><span class="iconCheckbox"></span></th>
+          <th class="checkboxColumn odd"><span class="iconCheckbox"></span></th>
+          <th class="checkboxColumn odd"><span class="iconCheckbox"></span></th>
+          <th class="checkboxColumn"><span class="iconCheckbox"></span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form.layers, 'layer': instance.getrootlayer }%}
+        <tr class="dummy">
+          <td colspan="20"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="clearContainer"></div>
+
+    <div class="right">
+      <input class="button" type="submit" name="save" value="{{"Save"|trans}}" />
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"Cancel"|trans}}</a>
+    </div>
+
+    <div class="clearContainer"></div>
+
+    {{ form_row(form._token) }}
+  </form>
 </div>
 {% endblock %}

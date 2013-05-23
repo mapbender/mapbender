@@ -47,9 +47,7 @@ use when custom styling is needed.";
      */
     public function getAssets()
     {
-        return array(
-            'js' => array('mapbender.element.zoombar.js'),
-            'css' => array('mapbender.element.zoombar.css'));
+        return array('js' => array('mapbender.element.zoombar.js'),'css' => array());
     }
 
     /**
@@ -67,7 +65,6 @@ use when custom styling is needed.";
                 "zoom_max",
                 "zoom_slider"),
             'anchor' => 'left-top',
-            'position' => array('20px', '20px'),
             'stepSize' => 50,
             'stepByPixel' => false,
             'draggable' => true);

@@ -25,27 +25,7 @@ $.widget("mapbender.mbOverview", {
      */
     _setup: function() {
         var self = this;
-        if(this.options.anchor === "left-top"){
-            $(this.element).css({
-                left: this.options.position[0],
-                top: this.options.position[1]
-            });
-        } else if(this.options.anchor === "right-top"){
-            $(this.element).css({
-                right: this.options.position[0],
-                top: this.options.position[1]
-            });
-        } else if(this.options.anchor === "left-bottom"){
-            $(this.element).css({
-                left: this.options.position[0],
-                bottom: this.options.position[1]
-            });
-        } else if(this.options.anchor === "right-bottom"){
-            $(this.element).css({
-                right: this.options.position[0],
-                bottom: this.options.position[1]
-            });
-        }
+
         var mbMap = $('#' + this.options.target).data('mbMap');
         $(this.element).addClass(this.options.anchor);
         if(!this.options.maximized) {
@@ -104,7 +84,7 @@ $.widget("mapbender.mbOverview", {
         }
         mbMap.map.olMap.addControl(this.overview);
         $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
-        $(self.element).find('.handle').bind('click', $.proxy(this._openClose, this));
+        $(self.element).find('.toggleOverview').bind('click', $.proxy(this._openClose, this));
     },
 
     /**

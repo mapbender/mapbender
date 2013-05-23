@@ -41,12 +41,7 @@ class PrintClient extends Element
      */
     public function getAssets()
     {
-        return array(
-            'js' => array(
-                'mapbender.element.printClient.js'),
-            'css' => array(
-                'mapbender.element.printClient.css'
-                ));
+        return array('js' => array('mapbender.element.printClient.js'),'css' => array());
     }
 
     /**

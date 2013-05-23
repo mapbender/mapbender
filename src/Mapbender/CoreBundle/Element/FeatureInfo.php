@@ -74,13 +74,7 @@ class FeatureInfo extends Element
     public function getAssets()
     {
         return array(
-            'js' => array(
-//                'mapbender.element.button.js',
-                'mapbender.element.featureInfo.js'
-            ),
-            'css' => array(
-                'mapbender.element.featureInfo.css'
-            )
+            'js' => array('mapbender.element.featureInfo.js'),'css' => array()
         );
     }
 

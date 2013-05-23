@@ -40,8 +40,7 @@ class Ruler extends Element
     {
         return array(
             'js' => array('@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js'),
-            //TODO: Split up
-            'css' => array('@MapbenderCoreBundle/Resources/public/mapbender.elements.css'));
+            'css' => array());
     }
 
     /**

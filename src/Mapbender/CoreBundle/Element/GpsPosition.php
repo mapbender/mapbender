@@ -43,7 +43,7 @@ class GpsPosition extends Element
             'js' => array(
                 'mapbender.element.button.js',
                 'mapbender.element.gpsPosition.js'),
-            'css' => array('mapbender.element.gpsPosition.css'));
+            'css' => array());
     }
 
     /**
@@ -62,7 +62,6 @@ class GpsPosition extends Element
         return array(
             'tooltip' => "GPS-Position",
             'label' => true,
-            'icon' => 'gpsposition',
             'autoStart' => false,
             'target' => null,
             'refreshinterval' => '5000');
