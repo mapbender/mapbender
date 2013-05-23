@@ -62,28 +62,19 @@ $(function() {
             }
         });
     });
-    $("table.layerset tbody" ).sortable({
-        connectWith: "table.layerset tbody",
+    $("table.layersetTable tbody" ).sortable({
+        connectWith: "table.layersetTable tbody",
         items: "tr:not(.header)",
         distance: 20,
         stop: function( event, ui ) {
             $(ui.item).parent().find("tr").each(function(idx, elm){
                 if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
-
                     $.ajax({
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
                         data: {
-                            number: idx - $(elm).parent().find("tr").length,
-                            new_layersetId: $(elm).parent().attr("data-id")
-                        },
-                        success: function(data, textStatus, jqXHR){
-                            // if(data.error && data.error !== ''){
-                            //     document.location.href = document.location.href;
-                            // }
-                        },
-                        error: function(jqXHR, textStatus, errorThrown ){
-                            // document.location.href = document.location.href;
+                            number: idx
+                            new_layersetId: $(elm).closest('table').attr("data-id")
                         }
                     });
                 }
