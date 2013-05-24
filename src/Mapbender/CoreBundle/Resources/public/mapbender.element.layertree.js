@@ -8,6 +8,7 @@
         },
         model: null,
         dlg: null,
+        template: null,
         //        elementUrl: null,
         layerconf : null,
         consts: {
@@ -33,13 +34,15 @@
                 self.open();
             }
             var me = this.element;
+            this.template = $(me).find('li').remove();
             this.model = $("#" + self.options.target).data("mbMap").getModel();
             var sources = this.model.getSources();
             for(var i = (sources.length - 1); i > -1; i--){
                 if(!sources[i].configuration.isBaseSource || (sources[i].configuration.isBaseSource && this.options.showBaseSource)){
                     if(this.options.displaytype === "tree"){
                         var li_s = this._createSourceTree(sources[i], sources[i], this.model.getScale());
-                        me.find("ul.layers:first").append($(li_s));
+                        //                        me.find("ul.layers:first").append($(li_s));
+                        me.find("ul.layers:first").append(li_s);
                     } else if(this.options.displaytype === "list"){
                         var li_s = self._createSourceList(sources[i], sources[i], this.model.getScale());
                         me.find("ul.layers:first").append($(li_s));
@@ -199,19 +202,14 @@
             if(this.options.displaytype === "tree"){
                 for(key in changed.children){
                     var changedEl = changed.children[key];
+                    var lif = $(this.element).find('li[data-id="'+key+'"]:first');
                     if(changedEl.treeElm.state.visibility){
-                        $(this.element).find('li[data-id="'+key+'"] span.state:first').removeClass("invisible").attr({
-                            title: ""
-                        });
+                        lif.removeClass("invisible").find('span.layer-state:first').attr("title","");
                     } else {
-                        if($(this.element).find('li[data-id="'+key+'"] input[name="selected"]:first').is(':checked')){
-                            $(this.element).find('li[data-id="'+key+'"] span.state:first').addClass("invisible").attr({
-                                title: changedEl.state.outOfScale ? "outOfScale" : "parent invisible"
-                            });
+                        if(lif.find('input[name="selected"]:first').is(':checked')){
+                            lif.addClass("invisible").find('span.layer-state:first').attr("title",changedEl.state.outOfScale ? "outOfScale" : "parent invisible");
                         } else {
-                            $(this.element).find('li[data-id="'+key+'"] span.state:first').removeClass("invisible").attr({
-                                title: ""
-                            });
+                            lif.removeClass("invisible").find('span.layer-state:first').attr("title","");
                         }
                     }
                 }
@@ -220,11 +218,11 @@
                     var changedEl = changed.children[key];
                     if(changedEl.treeElm.state.visibility){
                         $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"]').removeClass("invisible");
-                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.state:first').attr("title", "");
+                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.layer-state:first').attr("title", "");
                     } else {
                         $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"]').addClass("invisible");
                         var tooltip = changedEl.state.outOfBounds ? "outOfBounds" : changedEl.state.outOfScale ? "outOfScale" : "parent invisible or not defined?";
-                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.state:first').attr("title", tooltip);
+                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.layer-state:first').attr("title", tooltip);
                     }
                 }
             }
@@ -248,21 +246,17 @@
             var source = option.source;
             if(this.options.displaytype === "tree"){
                 var source_li = $(this.element).find('li[data-sourceid="'+source.id+'"]');
-                if(source_li.find('input[name="selected"]:first').is(':checked')
-                    && !source_li.find('span.state:first').hasClass('invisible')){
-                    source_li.find('span.spinner:first').addClass('loading');
+                if(source_li.find('input.layer-selected:first').is(':checked')
+                    && !source_li.hasClass('invisible')){
+                    source_li.addClass('loading');
                     source_li.find('li').each(function(idx, el){
                         var li_el = $(el);
-                        if(li_el.find('input[name="selected"]:first').is(':checked')
-                            && !li_el.find('span.state:first').hasClass('invisible')){
-                            li_el.find('span.spinner:first').addClass('loading');
+                        if(li_el.find('input.layer-selected:first').is(':checked')
+                            && !li_el.hasClass('invisible')){
+                            li_el.addClass('loading');
                         }
                     });
                 }
-                source_li.find('span.state.error').removeClass('error').attr({
-                    title: ""
-                });
-                
             } else if(this.options.displaytype === "list"){
                 $(this.element).find('li[data-sourceid="'+source.id+'"]').each(function(idx, elm){
                     if($(elm).find('input[name="selected"]:first').is(':checked')
@@ -280,10 +274,10 @@
             var source = option.source;
             if(this.options.displaytype === "tree"){
                 var source_li = $(this.element).find('li[data-sourceid="'+source.id+'"]');
-                if(source_li.find('span.spinner:first').hasClass('loading')){
-                    source_li.find('span.spinner').removeClass('loading ');
-                    
-                }
+                source_li.removeClass('loading').removeClass('error').find('span.layer-state:first').attr("title", "");
+                source_li.find('li').each(function(idx, el){
+                    $(el).removeClass('loading').removeClass('error').find('span.layer-state:first').attr("title", "");
+                });
             } else if(this.options.displaytype === "list"){
                 $(this.element).find('li[data-sourceid="'+source.id+'"]').removeClass('loading');
             }
@@ -294,12 +288,9 @@
                 return;
             if(this.options.displaytype === "tree"){
                 var source_li = $(this.element).find('li[data-sourceid="'+option.source.id+'"]');
-                if(source_li.find('span.spinner:first').hasClass('loading')){
-                    source_li.find('span.spinner:first').removeClass('loading');
-                // @TODO for layer ??
-                }
-                source_li.find('span.state').removeClass('invisible').addClass('error').attr({
-                    title: option.error.details
+                source_li.removeClass('loading').removeClass('invisible').addClass('error').find('span.layer-state:first').attr("title", option.error.details);
+                source_li.find('li').each(function(idx, el){
+                    $(el).removeClass('loading').removeClass('invisible').addClass('error').find('span.layer-state:first').attr("title", option.error.details);
                 });
             } else if(this.options.displaytype === "list"){
                 $(this.element).find('li[data-sourceid="'+option.source.id+'"]').each(function(idx, elm){
@@ -318,39 +309,33 @@
                 var li = "";
                 sourceEl.layers = [];
                 for(var i = 0; i < sourceEl.configuration.children.length; i++){
-                    li += this._createSourceTree(source, sourceEl.configuration.children[i], scale, sourceEl.type, true);
+                    li = this._createSourceTree(source, sourceEl.configuration.children[i], scale, sourceEl.type, true);
                 }
             } else {
                 var config = this._getNodeProporties(sourceEl);
-                var s_id = isroot ? ' data-sourceid="'+source.id+'"' : "";
-                var li ='<li'+s_id+' data-id="'+sourceEl.options.id+'" data-type="'+this._getNodeType(sourceEl, isroot)+'" class="' + config.reorder + '" >'
-                +   '<span class="spinner"></span>'
-                +   '<span class="state '+config.visibility.state+'" title="'+config.visibility.tooltip+'"></span>'
-                +   '<input type="checkbox" title="selected" name="selected" '+ config.sel +' ' + config.selable + '/>'
-                +   '<input type="checkbox" title="query" name="info" '+ config.info +' ' + config.infoable + '/>'
-                +   '<span class="sourcetitle '+config.toggleable+'" title="'+sourceEl.options.title+'">' + this._subStringText(sourceEl.options.title) + '</span>'
-                var added = "";
-                if(true){ //TODO check if menu available
-                    added += '<span class="menubutton">&#9776;</span>';
-                }
-                if(true){ //TODO check if close claseable
-                    added += '<span class="removebutton">&times;</span>';
-                }
-                if(added !== ""){
-                    li += added
-                //                li += this._createMenu();
-                }
+                var li = this.template.clone();
+                li.removeClass('hide-elm');
+                li.attr('data-id', sourceEl.options.id);
+                isroot ? li.attr('data-sourceid', source.id) : li.removeAttr('data-sourceid');
+                li.attr('data-type', this._getNodeType(sourceEl, isroot));
+                li.addClass(config.reorder);
+                li.find('.layer-state').attr('title', config.visibility.tooltip);//.addClass('config.visibility.state');
+                li.find('input.layer-selected').attr('checked', config.selected ? 'checked' : null);
+                if(!config.selectable) li.find('input.layer-selected').attr('disabled', 'disabled');
+                li.find('input.layer-info').attr('checked', config.info ? 'checked' : null);
+                if(!config.infoable) li.find('input.layer-info').attr('disabled', 'disabled');
+                li.find('.layer-title').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
+                if(config.toggleable) li.find('.layer-title').addClass('toggleable');
+                if(!this.options.layerMenu) li.find('.layer-menu-btn').remove();
+                if(!this.options.layerRemove) li.find('.layer-remove-btn').remove();
                 if(sourceEl.children){
-                    li +=     '<ul id="list-'+sourceEl.options.id+'" class="layers ' + config.toggle + '">';
+                    li.find('ul:first').attr('id', 'list-'+sourceEl.options.id);
                     for(var j = sourceEl.children.length; j > 0; j--){
-                        li += this._createSourceTree(source, sourceEl.children[j-1], scale, type, false);
+                        li.find('ul:first').append(this._createSourceTree(source, sourceEl.children[j-1], scale, type, false));
                     }
-                    li +=     '</ul>';
+                } else {
+                    li.find('ul:first').remove();
                 }
-                
-                li +=
-                //                    isroot ? '<div>' : ''+    
-                '</li>';
             }
             return li;
         },
@@ -359,34 +344,35 @@
             if(sourceEl.type){ // source
                 var li = "";
                 for(var i = 0; i < sourceEl.configuration.children.length; i++){
-                    li += this._createTreeNode(source, sourceEl.configuration.children[i], scale, layerToAdd, parent, sourceEl.type, true, false);
+                    li = this._createTreeNode(source, sourceEl.configuration.children[i], scale, layerToAdd, parent, sourceEl.type, true, false);
                 }
             } else {
                 if(layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found){
                     found = true;
                     var config = this._getNodeProporties(sourceEl);
-                    var s_id = isroot ? ' data-sourceid="'+source.id+'"' : "";
-                    var li ='<li'+s_id+' data-id="'+sourceEl.options.id+'" data-type="'+this._getNodeType(sourceEl, isroot)+'" class="' + config.reorder + '" >'
-                    +   '<span class="spinner"></span>'
-                    +   '<span class="state '+config.visibility.state+'" title="'+config.visibility.tooltip+'"></span>'
-                    +   '<input type="checkbox" title="selected" name="selected" '+ config.sel +' ' + config.selable + '/>'
-                    +   '<input type="checkbox" title="query" name="info" '+ config.info +' ' + config.infoable + '/>'
-                    +   '<span class="sourcetitle '+config.toggleable+'" title="'+sourceEl.options.title+'">' + this._subStringText(sourceEl.options.title) + '</span>';
-                    if(this.options.layerMenu){ //TODO check if menu available
-                        li += '<span class="menubutton">&#9776;</span>';
-                    }
-                    if(this.options.layerRemove){ //TODO check if close claseable
-                        li += '<span class="removebutton">&times;</span>';
-                    }
-                    //                li += this._createMenu();
+                    var li = this.template.clone();
+                    li.removeClass('hide-elm');
+                    li.attr('data-id', sourceEl.options.id);
+                    isroot ? li.attr('data-sourceid', source.id) : li.removeAttr('data-sourceid');
+                    li.attr('data-type', this._getNodeType(sourceEl, isroot));
+                    li.addClass(config.reorder);
+                    li.find('.layer-state').attr('title', config.visibility.tooltip);//.addClass(config.visibility.state);
+                    li.find('input.layer-selected').attr('checked', config.selected ? 'checked' : null);
+                    if(!config.selectable) li.find('input[name="selected"]').attr('disabled', 'disabled');
+                    li.find('input.layer-info').attr('checked', config.info ? 'checked' : null);
+                    if(!config.infoable) li.find('input[name="info"]').attr('disabled', 'disabled');
+                    li.find('.layer-title').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
+                    if(config.toggleable) li.find('.layer-title').addClass('toggleable');
+                    if(!this.options.layerMenu) li.find('.layer-menu-btn').remove();
+                    if(!this.options.layerRemove) li.find('.layer-remove-btn').remove();
                     if(sourceEl.children){
-                        li +=     '<ul id="list-'+sourceEl.options.id+'" class="layers ' + config.toggle + '">';
+                        li.find('ul:first').attr('id', 'list-'+sourceEl.options.id);
                         for(var j = 0; j < sourceEl.children.length; j++){
-                            li += this._createTreeNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found);
+                            li.find('ul:first').append(this._createTreeNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found));
                         }
-                        li +=     '</ul>';
+                    } else {
+                        li.find('ul').remove();
                     }
-                    li += '</li>';
                     found = false;
                     return li;
                 }
@@ -411,48 +397,65 @@
         
         _createSourceList: function(source, sourceEl, scale, type, isroot){
             if(sourceEl.type){ // source
-                var li = "";
+                var liarr = [];
                 sourceEl.layers = [];
                 for(var i = 0; i < sourceEl.configuration.children.length; i++){
-                    li += this._createSourceList(source, sourceEl.configuration.children[i], scale, sourceEl.type, true);
+                    liarr.concat(this._createSourceList(source, sourceEl.configuration.children[i], scale, sourceEl.type, true));
                 }
             } else {
-                var li ='';
+                var liarr = [];
                 if(sourceEl.children){
                     for(var j = sourceEl.children.length; j > 0; j--){
-                        li += this._createSourceList(source, sourceEl.children[j-1], scale, type, false);
+                        liarr.concat(this._createSourceList(source, sourceEl.children[j-1], scale, type, false));
                     }
                 } else {
                     var config = this._getNodeProporties(sourceEl);
-                    var li ='<li data-sourceid="'+source.id+'" data-id="'+sourceEl.options.id+'" data-type="'+this._getNodeType(sourceEl, isroot)+'" class="' + config.reorder + '" >'
-                    +   '<span class="spinner"></span>'
-                    +   '<span class="state '+config.visibility.state+'" title="'+config.visibility.tooltip+'"></span>'
-                    +   '<input type="checkbox" title="selected" name="selected" '+ config.sel +' ' + config.selable + '/>'
-                    +   '<input type="checkbox" title="query" name="info" '+ config.info +' ' + config.infoable + '/>'
-                    +   '<span class="sourcetitle '+config.toggleable+'" title="'+sourceEl.options.title+'">' + this._subStringText(sourceEl.options.title) + '</span>';
-                    if(this.options.layerMenu){
-                        li += '<span class="menubutton">&#9776;</span>';
-                    }
-                    if(this.options.layerRemove){
-                        li += '<span class="removebutton">&times;</span>';
-                    }
-                    //                li += this._createMenu();
-
-                    li += '</li>';
+//                    var li ='<li data-sourceid="'+source.id+'" data-id="'+sourceEl.options.id+'" data-type="'+this._getNodeType(sourceEl, isroot)+'" class="' + config.reorder + '" >'
+//                    +   '<span class="spinner"></span>'
+//                    +   '<span class="state '+config.visibility.state+'" title="'+config.visibility.tooltip+'"></span>'
+//                    +   '<input type="checkbox" title="selected" name="selected" '+ config.sel +' ' + config.selable + '/>'
+//                    +   '<input type="checkbox" title="query" name="info" '+ config.info +' ' + config.infoable + '/>'
+//                    +   '<span class="sourcetitle '+config.toggleable+'" title="'+sourceEl.options.title+'">' + this._subStringText(sourceEl.options.title) + '</span>';
+//                    if(this.options.layerMenu){
+//                        li += '<span class="menubutton">&#9776;</span>';
+//                    }
+//                    if(this.options.layerRemove){
+//                        li += '<span class="removebutton">&times;</span>';
+//                    }
+//                    //                li += this._createMenu();
+//
+//                    li += '</li>';
+                    
+                    var li = this.template.clone();
+                    li.removeClass('hide-elm');
+                    li.attr('data-sourceid', sourceEl.options.id).attr('data-id', sourceEl.options.id).attr('data-type', this._getNodeType(sourceEl, isroot)).addClass(config.reorder);
+                    li.find('.state').attr('title', config.visibility.tooltip).addClass('config.visibility.state');
+                    li.find('input[name="selected"]').attr('checked', config.selected ? 'checked' : null);
+                    if(!config.selectable) li.find('input[name="selected"]').attr('disabled', 'disabled');
+                    li.find('input[name="info"]').attr('checked', config.info ? 'checked' : null);
+                    if(!config.infoable) li.find('input[name="info"]').attr('disabled', 'disabled');
+                    li.find('.sourcetitle').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
+                    if(config.toggleable) li.find('.layer-title').addClass('toggleable');
+                    if(!this.options.layerMenu) li.find('.menubutton').remove();
+                    if(!this.options.layerRemove) li.find('.removebutton').remove();
+                    liarr.push(li);
                 }
             }
-            return li;
+            return liarr;
         },
         
         _createListNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found){
+            alert("not defined");
+            return;
             if(sourceEl.type){ // source
-                var li = "";
+                var liarr = [];
                 for(var i = 0; i < sourceEl.configuration.children.length; i++){
-                    li += this._createListNode(source, sourceEl.configuration.children[i], scale, layerToAdd, parent, sourceEl.type, true, false);
+                    liarr.concat(this._createListNode(source, sourceEl.configuration.children[i], scale, layerToAdd, parent, sourceEl.type, true, false));
                 }
             } else {
                 if(layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found){
                     found = true;
+                    var liarr = [];
                     var config = this._getNodeProporties(sourceEl);
                     var s_id = isroot ? '' : "";
                     var li ='<li data-sourceid="'+source.id+'" data-id="'+sourceEl.options.id+'" data-type="'+this._getNodeType(sourceEl, isroot)+'" class="' + config.reorder + '" >'
@@ -507,7 +510,10 @@
                         break;
                     }
                 }
-                return text;
+                if(text.length < 2 || text.length > this.options.titlemaxlength + 3)
+                    return text.substring(0,this.options.titlemaxlength)+"...";
+                else
+                    return text;
             }
         },
     
@@ -523,19 +529,32 @@
     
         _getNodeProporties: function(nodeConfig) {
             var conf =  {
-                sel: nodeConfig.options.treeOptions.selected ? 'checked="checked"' : '',
-                selable: nodeConfig.options.treeOptions.allow.selected ? '' : 'disabled="disabled"',
-                info: nodeConfig.options.treeOptions.info ? 'checked="checked"' : '',
-                infoable: nodeConfig.options.treeOptions.allow.info ? '' : 'disabled="disabled"',
-                reorder: nodeConfig.options.treeOptions.allow.reorder ? '' : 'notreorder'
+                selected: nodeConfig.options.treeOptions.selected,
+                selectable: nodeConfig.options.treeOptions.allow.selected,
+                info: nodeConfig.options.treeOptions.info,
+                infoable: nodeConfig.options.treeOptions.allow.info,
+                reorderable: nodeConfig.options.treeOptions.allow.reorder
+//                ,
+//                sel: nodeConfig.options.treeOptions.selected ? 'checked="checked"' : '',
+//                selable: nodeConfig.options.treeOptions.allow.selected ? '' : 'disabled="disabled"',
+//                info: nodeConfig.options.treeOptions.info ? 'checked="checked"' : '',
+//                infoable: nodeConfig.options.treeOptions.allow.info ? '' : 'disabled="disabled"',
+//                reorder: nodeConfig.options.treeOptions.allow.reorder ? '' : 'notreorder'
             };
             if(nodeConfig.children){
-                conf["toggle"] = nodeConfig.options.treeOptions.toggle ? '' : 'closed';
-                conf["toggleable"] = nodeConfig.options.treeOptions.allow.toggle ? 'toggleable' : '';
+                conf["toggle"] = nodeConfig.options.treeOptions.toggle;
+                conf["toggleable"] = nodeConfig.options.treeOptions.allow.toggle;
             } else {
-                conf["toggle"] = '';
-                conf["toggleable"] = '';
+                conf["toggle"] = null;
+                conf["toggleable"] = null;
             }
+//            if(nodeConfig.children){
+//                conf["toggle"] = nodeConfig.options.treeOptions.toggle ? '' : 'closed';
+//                conf["toggleable"] = nodeConfig.options.treeOptions.allow.toggle ? 'toggleable' : '';
+//            } else {
+//                conf["toggle"] = '';
+//                conf["toggleable"] = '';
+//            }
             if(nodeConfig.state.outOfScale){
                 conf["visibility"] = {
                     state: "invisible", 
@@ -569,10 +588,10 @@
         //        },
         
         _toggleContent: function(e){
-            if($(e.target).parent().find("ul.layers").hasClass("closed")){
-                $(e.target).parent().find("ul.layers").removeClass("closed");
+            if($(e.target).parents("li:first").find("ul.layers").hasClass("closed")){
+                $(e.target).parents("li:first").find("ul.layers").removeClass("closed");
             } else {
-                $(e.target).parent().find("ul.layers").addClass("closed");
+                $(e.target).parents("li:first").find("ul.layers").addClass("closed");
             }
         },
     
