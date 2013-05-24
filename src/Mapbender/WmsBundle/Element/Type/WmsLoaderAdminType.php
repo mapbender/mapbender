@@ -44,16 +44,16 @@ class WmsLoaderAdminType extends AbstractType
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
-                ->add('defaultformat', 'choice',array(
+                ->add('defaultFormat', 'choice',array(
                     "choices" => array(
-                        "png" => "image/png",
-                        "gif" => "image/gif",
-                        "jpeg" => "image/jpeg")))
-                ->add('defaultinfoformat', 'choice',array(
+                        "image/png" => "image/png",
+                        "image/gif" => "image/gif",
+                        "image/jpeg" => "image/jpeg")))
+                ->add('defaultInfoFormat', 'choice',array(
                     "choices" => array(
-                        "html" => "text/html",
-                        "xml" => "text/xml",
-                        "plain" => "text/plain")))
+                        "text/html" => "text/html",
+                        "text/xml" => "text/xml",
+                        "text/plain" => "text/plain")))
                 ->add('autoOpen', 'checkbox', array('required' => false))
                 ->add('splitLayers', 'checkbox', array('required' => false));
     }
