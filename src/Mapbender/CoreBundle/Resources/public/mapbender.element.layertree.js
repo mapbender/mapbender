@@ -352,6 +352,9 @@
                 if(!this.options.layerRemove) li.find('.layer-remove-btn').remove();
                 if(sourceEl.children){
                     li.find('ul:first').attr('id', 'list-'+sourceEl.options.id);
+                    if(config.toggle){
+                        li.find('ul:first').addClass("closed");
+                    }
                     for(var j = sourceEl.children.length; j > 0; j--){
                         li.find('ul:first').append(this._createSourceTree(source, sourceEl.children[j-1], scale, type, false));
                     }
@@ -602,10 +605,10 @@
         },
         
         _toggleContent: function(e){
-            if($(e.target).parents("li:first").find("ul.layers").hasClass("closed")){
-                $(e.target).parents("li:first").find("ul.layers").removeClass("closed");
+            if($(e.target).parents("li:first").find("ul.layers:first").hasClass("closed")){
+                $(e.target).parents("li:first").find("ul.layers:first").removeClass("closed");
             } else {
-                $(e.target).parents("li:first").find("ul.layers").addClass("closed");
+                $(e.target).parents("li:first").find("ul.layers:first").addClass("closed");
             }
         },
     

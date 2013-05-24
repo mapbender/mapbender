@@ -52,9 +52,21 @@
     visibility: hidden;
 }
 
+.mb-element-layertree span.layer-title {
+    color: #999;
+}
+
+.mb-element-layertree li.invisible span.layer-title {
+    color: #999;
+}
+
 .mb-element-layertree span.toggleable {
+    color: #0077b3;
     cursor: pointer;
-    color: blue;
+}
+
+.mb-element-layertree li.invisible span.toggleable {
+    color: #0077b3;
 }
 
 .mb-element-layertree .layer-menu-btn {
@@ -93,14 +105,6 @@
 .mb-element-layertree li.error>div span.layer-state {
     background: url('icons/error.png') no-repeat;
     visibility: visible;
-}
-
-.mb-element-layertree span.layer-title {
-    color: #0077b3;
-}
-
-.mb-element-layertree li.invisible span.layer-title {
-    color: #999;
 }
 
 .mb-element-layertree li.invisible>div span.layer-state {
