@@ -1,0 +1,22 @@
+<table class="records_list">
+    <thead>
+        <tr>
+            <th>{{'Id'|trans }}</th>
+            <th>{{'Title'|trans }}</th>
+            <th>{{'Description'|trans }}</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entity in entities %}
+        <tr>
+            <td class="id">{{ entity.id }}</td>
+            <td><a class="edit" href="#" data-id="{{ entity.id }}">{{ entity.state.title }}</a></td>
+            <td>{{ entity.abstract }}</td>
+            <td>
+                <a class="delete" href="#" data-id="{{ entity.id }}">{{'Delete'|trans }}</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

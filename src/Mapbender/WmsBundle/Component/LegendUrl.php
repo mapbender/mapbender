@@ -96,4 +96,21 @@ class LegendUrl
         return $this->height;
     }
 
+    public static function create($width = null, $height = null,
+            $onlineResource = null)
+    {
+        $onlineResource = $onlineResource === null ? OnlineResource::create() : $onlineResource;
+        if($onlineResource === null)
+        {
+            $lurl = null;
+        } else
+        {
+            $lurl = new LegendUrl();
+            $lurl->setWidth($width);
+            $lurl->setHeight($height);
+            $lurl->setOnlineResource($onlineResource);
+        }
+        return $lurl;
+    }
+
 }

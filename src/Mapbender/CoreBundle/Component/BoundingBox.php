@@ -46,23 +46,46 @@ class BoundingBox
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $maxy;
 
-//    /**
-//     * Creates a BoundingBox object from parameters
-//     * @param array $parameters
-//     */
-//    public static function create(array $parameters) {
-//        try {
-//            $bbox = new BoundingBox();
-//            $bbox->setSrs($parameters["srs"]);
-//            $bbox->setMinx($parameters["minx"]);
-//            $bbox->setMaxx($parameters["maxx"]);
-//            $bbox->setMiny($parameters["miny"]);
-//            $bbox->setMaxy($parameters["maxy"]);
-//            return $bbox;
-//        } catch(\Exception $e){
-//            return null;
-//        }
-//    }
+    /**
+     * Creates a BoundingBox from parameters
+     * 
+     * @param array $parameters
+     */
+    public static function create(array $parameters)
+    {
+        try
+        {
+            return new BoundingBox(
+                            isset($parameters["srs"]) ? $parameters["srs"] : null,
+                            isset($parameters["minx"]) ? $parameters["minx"] : null,
+                            isset($parameters["miny"]) ? $parameters["miny"] : null,
+                            isset($parameters["maxx"]) ? $parameters["maxx"] : null,
+                            isset($parameters["maxy"]) ? $parameters["maxy"] : null
+            );
+        } catch(\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Creates a BoundingBox
+     * 
+     * @param type $srs srs
+     * @param type $minx minx
+     * @param type $miny miny
+     * @param type $maxx maxx
+     * @param type $maxy maxy
+     */
+    public function __construct($srs = null, $minx = null, $miny = null,
+            $maxx = null, $maxy = null)
+    {
+        $this->srs = $srs;
+        $this->minx = $minx;
+        $this->miny = $miny;
+        $this->maxx = $maxx;
+        $this->maxy = $maxy;
+    }
 
     /**
      * Get srs
@@ -179,8 +202,8 @@ class BoundingBox
         return array(
             "srs" => $this->srs,
             "minx" => $this->minx,
-            "maxx" => $this->maxx,
             "miny" => $this->miny,
+            "maxx" => $this->maxx,
             "maxy" => $this->maxy
         );
     }

@@ -569,10 +569,12 @@ class WmsInstanceLayer implements InstanceLayerIn
         {
             $styles = $this->wmslayersource->getStyles();
             $legendurl = $styles[0]->getLegendUrl(); // first style object
+            if($legendurl !== null){
             $configuration["legend"] = array(
                 "url" => $legendurl->getOnlineResource()->getHref(),
                 "width" => intval($legendurl->getWidth()),
                 "height" => intval($legendurl->getHeight()));
+            }
         } else if($this->wmsinstance->getSource()->getGetLegendGraphic() !== null)
         {
             $legend = $this->wmsinstance->getSource()->getGetLegendGraphic();

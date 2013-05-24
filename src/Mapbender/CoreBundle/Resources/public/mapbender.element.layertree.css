@@ -1,27 +1,32 @@
 .mb-element-layertree {
+    position: relative;
     font: normal 10pt sans-serif;
 }
 
-.mb-element-layertree li>input[type=checkbox] {
+.mb-element-layertree a#delete-all {
+    position: absolute;
+    right: 2px;
+}
+
+.mb-element-layertree li>div input[type=checkbox] {
     margin  : 0;
     padding : 0;
 }
 
+/*.mb-element-layertree li.queryable>input[type=checkbox] {
 
-.mb-element-layertree li.queryable>input[type=checkbox] {
-
-}
+}*/
 
 /*.mb-element-layertree li>a {
     text-decoration :   none;
     font-color: inherit;
 }*/
 
-.mb-element-layertree ul {
+/*.mb-element-layertree ul {
     min-width: 10px;
-}
+}*/
 
-.mb-element-layertree ul ul {
+.mb-element-layertree>ul ul {
     padding-left: 10px;
 }
 
@@ -34,25 +39,17 @@
 .mb-element-layertree span {
     display: inline-block;
 }
-.mb-element-layertree span.spinner {
+.mb-element-layertree span.layer-spinner {
     width: 14px;
     height: 14px;
-}
-.mb-element-layertree span.spinner.loading {
     background: url('icons/spinner.gif') no-repeat;
+    visibility: hidden;
 }
 
-.mb-element-layertree span.state {
+.mb-element-layertree span.layer-state {
     width: 14px;
     height: 14px;
-}
-
-.mb-element-layertree span.state.error {
-    background: url('icons/error.png') no-repeat;
-}
-
-.mb-element-layertree span.state.invisible {
-    background: url('icons/invisible.png') 0 2px no-repeat;
+    visibility: hidden;
 }
 
 .mb-element-layertree span.toggleable {
@@ -60,11 +57,11 @@
     color: blue;
 }
 
-.mb-element-layertree .menubutton {
+.mb-element-layertree .layer-menu-btn {
     cursor: pointer;
 }
 
-.mb-element-layertree .removebutton {
+.mb-element-layertree .layer-remove-btn {
     cursor: pointer;
 }
 
@@ -72,10 +69,10 @@
     display: block;
 }
 
-.mb-element-layertree li div {
-    display: inline-block;
+.mb-element-layertree li div.layer-properties {
+    display: block;
 }
-
+/*
 .mb-element-layertree li div.layer {
     width: 100%;
 }
@@ -83,8 +80,65 @@
 .mb-element-layertree li div.layer-added {
     position: absolute;
     right: 0px;
-}
-
+}*/
+/*
 .mb-element-layertree span.removebutton {
     font-size: 20px;
+}*/
+
+.mb-element-layertree li.loading>div span.layer-spinner {
+    visibility: visible;
 }
+
+.mb-element-layertree li.error>div span.layer-state {
+    background: url('icons/error.png') no-repeat;
+    visibility: visible;
+}
+
+.mb-element-layertree span.layer-title {
+    color: #0077b3;
+}
+
+.mb-element-layertree li.invisible span.layer-title {
+    color: #999;
+}
+
+.mb-element-layertree li.invisible>div span.layer-state {
+    background: url('icons/invisible.png') 0 2px no-repeat;
+    visibility: visible;
+}
+
+.mb-element-layertree span.layer-menu-btn {
+    position: relative;
+}
+
+.mb-element-layertree div.layer-menu {
+    position: absolute;
+    border: 1px solid #000;
+    background-color: white;
+    width: 150px;
+    /*height: 150px;*/
+    z-index: 1010;
+}
+
+.mb-element-layertree .layer-menu .span-btn {
+    display: block;
+    cursor: pointer;
+    color: #0077b3;
+}
+
+.mb-element-layertree .layer-menu .span-btn.btn-disabled {
+    color: #999;
+    cursor: text;
+}
+
+.mb-element-layertree .layer-opacity {
+    width: 100%;
+}
+
+.mb-element-layertree .layer-opacity-slider {
+    margin: 0.8em 0.5em;
+    width: 90%;
+    z-index: 11;
+}
+

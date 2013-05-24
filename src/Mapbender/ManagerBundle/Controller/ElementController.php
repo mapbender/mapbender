@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Mapbender\CoreBundle\Component\Element As ComponentElement;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Form\Type\BaseElementType;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -113,7 +114,10 @@ class ElementController extends Controller
             $application->setUpdated(new \DateTime());
             $em->persist($element);
             $em->flush();
-
+            $entity_class = $element->getClass();
+            $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
+            $elComp = new $entity_class($appl, $this->container, $element);
+            $elComp->postSave();
             $this->get('session')->setFlash('success',
                                             'Your element has been saved.');
 
@@ -186,6 +190,10 @@ class ElementController extends Controller
             $em->persist($element);
             $em->flush();
 
+            $entity_class = $element->getClass();
+            $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
+            $elComp = new $entity_class($appl, $this->container, $element);
+            $elComp->postSave();
             $this->get('session')->setFlash('success',
                                             'Your element has been saved.');
 

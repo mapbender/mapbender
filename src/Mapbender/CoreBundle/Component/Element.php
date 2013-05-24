@@ -361,6 +361,14 @@ abstract class Element
         }
         return $result;
     }
+    
+    /**
+     * Post save
+     */
+    public function postSave()
+    {
+        
+    }
 
 }
 
