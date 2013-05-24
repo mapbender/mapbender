@@ -14,17 +14,19 @@ $(function() {
         var maxCount = $(this).closest('tr').siblings().length;
         var myClass = $(this).closest('td').attr('data-cb');
         var count = $(this).closest('tbody').find('td[data-cb="' + myClass + '"]').find('input:checked').length;
+        var disabled = $(this).closest('tbody').find('td[data-cb="' + myClass + '"]').find('.checkboxDisabled').length
     } else {
         var myClass = target;
         var maxCount = $('td[data-cb="' + myClass + '"]').length;
         var count = $('td[data-cb="' + myClass + '"]').closest('tbody').find('td[data-cb="' + myClass + '"]').find('input:checked').length;
+        var disabled = $('td[data-cb="' + myClass + '"]').closest('tbody').find('td[data-cb="' + myClass + '"]').find('.checkboxDisabled').length;
     }
 
     // none checked
     if(count === 0) {
         $('#' + myClass).removeClass().addClass('iconCheckbox');
     // all checked
-    } else if(maxCount === count) {
+    } else if((maxCount - disabled) === count) {
         $('#' + myClass).removeClass().addClass('iconCheckboxActive');
     // some checked
     } else {
@@ -37,6 +39,7 @@ $(function() {
 
 		$(this).closest('table')
 			.find('td[data-cb="' + myClass + '"]')
+      .find('div:not(.checkboxDisabled)')
 			.find('input').prop("checked", !$(this).hasClass("iconCheckboxActive"))
 			.change();
 
