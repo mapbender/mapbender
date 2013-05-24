@@ -220,9 +220,7 @@ class ApplicationController extends Controller
                             $this->generateUrl('mapbender_manager_application_edit',
                                                array(
                                 'slug' => $application->getSlug())));
-        }
-
-        if($application->getSlug() == "" && $slug != "") {
+        } else {
             $application->setSlug($slug);
         }
 

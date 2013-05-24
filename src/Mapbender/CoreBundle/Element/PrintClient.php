@@ -116,33 +116,28 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    public function httpAction($action)
-    {
-        switch($action)
-        {
+    public function httpAction($action) {
+        switch ($action) {
             case 'direct':
 
                 $request = $this->container->get('request');
                 $data = $request->request->all();
 
-                foreach($request->request->keys() as $key)
-                {
+                foreach ($request->request->keys() as $key) {
                     $request->request->remove($key);
                 }
                 // keys, remove
-                foreach($data['layers'] as $idx => $layer)
-                {
+                foreach ($data['layers'] as $idx => $layer) {
                     $data['layers'][$idx] = json_decode($layer, true);
                 }
                 $content = json_encode($data);
 
                 // Forward to Printer Service URL using OWSProxy
                 $configuration = $this->getConfiguration();
-                $url =  $this->container->get('router')->generate('mapbender_print_print_service',array(),true);
+                $url = $this->container->get('router')->generate('mapbender_print_print_service', array(), true);
 
                 return $this->container->get('http_kernel')->forward(
-                                'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-                                array(
+                                'OwsProxy3CoreBundle:OwsProxy:genericProxy', array(
                             'url' => $url,
                             'content' => $content
                                 )
@@ -150,8 +145,7 @@ class PrintClient extends Element
 
             case 'queued':
                 $content = $this->container->get('request')->getContent();
-                if(empty($content))
-                {
+                if (empty($content)) {
                     throw new \RuntimeException('No Request Data received');
                 }
 
@@ -159,12 +153,9 @@ class PrintClient extends Element
                 $configuration = $this->getConfiguration();
                 $url = (null !== $configuration['printer']['service'] ?
                                 $configuration['printer']['service'] :
-                                $this->container->get('router')->generate('mapbender_print_print_service',
-                                                                          array(),
-                                                                          true));
+                                $this->container->get('router')->generate('mapbender_print_print_service', array(), true));
                 return $this->container->get('http_kernel')->forward(
-                                'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-                                array(
+                                'OwsProxy3CoreBundle:OwsProxy:genericProxy', array(
                             'url' => $url,
                             'content' => $content
                                 )
