@@ -11,16 +11,16 @@
             </div>     
             <br>
             <div>
-                <label class="printlabel" for="quality">{{ 'Auflösung' | trans }}</label>
+                <label class="printlabel" for="quality">{{ 'Quality' | trans }}</label>
                 <select name="quality" ></select>
             </div>
             <br>
             <div>
-                <label class="printlabel" for="scale_text">{{ 'Maßstab' | trans }}</label>
+                <label class="printlabel" for="scale_text">{{ 'Scale' | trans }}</label>
                 <input type="text" name="scale_text" size="8"/>                
             </div>
             <div>
-                <label class="printlabel" for="scale_select">{{ 'Maßstab' | trans }}</label>
+                <label class="printlabel" for="scale_select">{{ 'Scale' | trans }}</label>
                 <select name="scale_select"></select>
             </div>
             <br>
@@ -28,11 +28,11 @@
                 <label class="printlabel" for="rotation">{{ 'Rotation' | trans }}</label>
                 <input type="text" name="rotation" size="3"/>
             </div>      
-            <br>    
+            <br>
+            <div id="slider"></div>
             <div id="extra_fields">
             </div>
             <br>
-            <button id="printbutton">Drucken</button>
             <div id="layers"></div>
         </form>
     </div>
