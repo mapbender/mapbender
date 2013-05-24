@@ -49,8 +49,9 @@
                     }
                 }
             }
+            this._setSourcesCount();
             
-            me.find("slider").slider();
+            me.find(".layer-opacity-slider").slider();
             
             this._createSortable();
 
@@ -66,8 +67,8 @@
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
             
-            $(this.element).find('.removebutton').live("click", $.proxy(self._removeSource, self));
-            $(this.element).find('.menubutton').live("click", $.proxy(self._showMenu, self));
+            $(this.element).find('.layer-remove-btn').live("click", $.proxy(self._removeSource, self));
+            $(this.element).find('.layer-menu-btn').live("click", $.proxy(self._toggleMenu, self));
             
             if(this.options.type === "dialog"){
                 this._initDialog();
@@ -195,6 +196,8 @@
                     this._createSortable();
                 }
             }
+            
+            this._setSourcesCount();
         },
         
         _onSourceChanged: function(event, changed){
@@ -237,6 +240,7 @@
             if(!hasLayers){
                 $(this.element).find('ul.layers:first li[data-sourceid="'+removed.source.id+'"]').remove();
             }
+            this._setSourcesCount();
         },
         
         _onSourceLoadStart: function(event, option){ // sets "loading" for layers
@@ -305,6 +309,7 @@
         },
     
         _createSourceTree: function(source, sourceEl, scale, type, isroot){
+            var self = this;
             if(sourceEl.type){ // source
                 var li = "";
                 sourceEl.layers = [];
@@ -326,7 +331,24 @@
                 if(!config.infoable) li.find('input.layer-info').attr('disabled', 'disabled');
                 li.find('.layer-title').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                 if(config.toggleable) li.find('.layer-title').addClass('toggleable');
-                if(!this.options.layerMenu) li.find('.layer-menu-btn').remove();
+                if(!this.options.layerMenu){
+                    li.find('.layer-menu-btn').remove();
+                } else {
+                    var menu = li.find('.layer-menu:first');
+                    if(!sourceEl.options.legend){
+                        menu.find('.layer-legend').addClass('btn-disabled');
+                    } else {
+                        menu.find('.layer-legend').bind("click", function(e){ e.stopPropagation(); self._showLegend(sourceEl); });
+                    }
+                    menu.find('.layer-kmlexport').bind("click", function(e){ e.stopPropagation(); self._exportKml(sourceEl); });
+                    if(sourceEl.options.maxScale !== null){
+                        menu.find('.layer-zoom').addClass('btn-disabled');
+                    }else {
+                        menu.find('.layer-zoom').bind("click", function(e){ e.stopPropagation(); self._zoomToLayer(sourceEl); });
+                    }
+                    menu.find('.layer-metadata').bind("click", function(e){ e.stopPropagation(); self._showMetadata(sourceEl); });
+                    
+                }
                 if(!this.options.layerRemove) li.find('.layer-remove-btn').remove();
                 if(sourceEl.children){
                     li.find('ul:first').attr('id', 'list-'+sourceEl.options.id);
@@ -578,14 +600,6 @@
             }
             return conf;
         },
-        //    
-        //        _findSourceId: function(elm) {
-        //            if(elm.attr("data-sourceid")){
-        //                return elm.attr("data-sourceid");
-        //            } else {
-        //                return this._findSourceId(elm.parent());
-        //            }
-        //        },
         
         _toggleContent: function(e){
             if($(e.target).parents("li:first").find("ul.layers").hasClass("closed")){
@@ -633,6 +647,16 @@
             this.model.changeSource(tochange);
         },
         
+        _toggleMenu: function(e){
+            console.log("TOGGLE MENU",e);
+            var menu = $(e.target).parent().find('div.layer-menu:first');
+            if(menu.hasClass("hide-elm")){
+                menu.removeClass("hide-elm");
+            } else {
+                menu.addClass("hide-elm");
+            }
+        },
+        
         _removeSource: function(e){
             var layer_id = $(e.target).parents("li:first").attr("data-id");
             var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
@@ -645,25 +669,55 @@
                 layerTree: "remove"
             };
             this.model.removeSource(toremove);
+            this._setSourcesCount();
         },
         
-        _showMenu: function(e){
-            var layer = 0;
-        },
-    
-        _createRootNode: function(ss){
-        
+        _showLegend: function(elm){
+            
+            window.console && console.log("_showLegend", elm);
         },
     
-        _createGroupNode: function(ss){
-        
+        _exportKml: function(elm){
+            window.console && console.log("_exportKml", elm);
         },
-        _createLayerNode: function(ss){
         
+        _zoomToLayer: function(elm){
+            window.console && console.log("_zoomToLayer", elm);
+        },
+        
+        _showMetadata: function(elm){
+            window.console && console.log("_showMetadata", elm);
+        },
+        
+        _setSourcesCount: function(){
+            var countObj = {};
+            $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm){
+                countObj[$(elm).attr('data-sourceid')] = true;
+            });
+            var num = 0;
+            for(s in countObj)
+                num ++;
+            $(this.element).find('#counter').text(num);
         },
         
         _removeAllLayers: function(e){
-            alert("es commt noch")
+            var self = this;
+            if(confirm("Really all sources delete?")){
+                $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm){
+                    var layer_id = $(elm).attr("data-id");
+                    var sourceId = $(elm).attr('data-sourceid');
+                    var toremove = self.model.createToChangeObj(self.model.getSource({
+                        id: sourceId
+                    }));
+                    var layerOpts = self.model.getSourceLayerById(toremove.source, layer_id);
+                    toremove.children[layer_id] = layerOpts.layer;
+                    toremove.type =  {
+                        layerTree: "remove"
+                    };
+                    self.model.removeSource(toremove);
+                });
+            }
+            this._setSourcesCount();
         },
     
         open: function(){

@@ -95,8 +95,50 @@
     visibility: visible;
 }
 
+.mb-element-layertree span.layer-title {
+    color: #0077b3;
+}
+
+.mb-element-layertree li.invisible span.layer-title {
+    color: #999;
+}
+
 .mb-element-layertree li.invisible>div span.layer-state {
     background: url('icons/invisible.png') 0 2px no-repeat;
     visibility: visible;
+}
+
+.mb-element-layertree span.layer-menu-btn {
+    position: relative;
+}
+
+.mb-element-layertree div.layer-menu {
+    position: absolute;
+    border: 1px solid #000;
+    background-color: white;
+    width: 150px;
+    /*height: 150px;*/
+    z-index: 1010;
+}
+
+.mb-element-layertree .layer-menu .span-btn {
+    display: block;
+    cursor: pointer;
+    color: #0077b3;
+}
+
+.mb-element-layertree .layer-menu .span-btn.btn-disabled {
+    color: #999;
+    cursor: text;
+}
+
+.mb-element-layertree .layer-opacity {
+    width: 100%;
+}
+
+.mb-element-layertree .layer-opacity-slider {
+    margin: 0.8em 0.5em;
+    width: 90%;
+    z-index: 11;
 }
 

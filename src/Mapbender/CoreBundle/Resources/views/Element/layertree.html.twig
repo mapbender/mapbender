@@ -7,7 +7,7 @@
             <input class="layer-info" type="checkbox" title="{{ 'FeatureInfo selector' | trans  }}" name="info">
             <span class="layer-title" title=""></span>
             <span class="layer-menu-btn">&#9776;
-                <div class="layer-menu" style="display:none">
+                <div class="layer-menu hide-elm">
                     <div class="layer-opacity">
                         <div class="layer-opacity-slider"></div>
                         <div class="layer-opacity-labels">
@@ -16,10 +16,10 @@
                             <span class="layer-opacity-label-zero">0 %</span>
                         </div>
                     </div>
-                    <button class="layer-zoom">{{'Zoom to layer'|trans }}</button>
-                    <button class="layer-metadaten">{{'Metadata'|trans }}</button>
-                    <button class="layer-legende">{{'Legend'|trans }}</button>
-                    <button class="layer-kml-export">{{'KML Export'|trans }}</button>
+                    <span class="layer-zoom span-btn">{{'Zoom to layer'|trans }}</span>
+                    <span class="layer-metadata span-btn">{{'Metadata'|trans }}</span>
+                    <span class="layer-legend span-btn">{{'Legend'|trans }}</span>
+                    <span class="layer-kmlexport span-btn">{{'KML Export'|trans }}</span>
                 </div>
             </span>
             <span class="layer-remove-btn">&times;</span>
