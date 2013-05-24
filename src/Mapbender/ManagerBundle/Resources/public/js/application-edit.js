@@ -27,7 +27,11 @@ $(function() {
         }
     });
 
-    $('tr.element, tr.sourceinst').find('.iconCheckboxActive input[type="checkbox"]').click(function() {
+    $('tr.element, tr.sourceinst').find('input[type="checkbox"]').click(function() {
+        if($(this).attr('data-href') === undefined) {
+            return;
+        }
+
         $.ajax({
             url: $(this).attr("data-href"),
             type: "POST",
@@ -89,7 +93,7 @@ $(function() {
                             },
                             error: function(jqXHR, textStatus, errorThrown ){
                                 document.location.href = document.location.href;
-                            }
+                            },
                         });
                     }
                 });
@@ -131,7 +135,6 @@ $(function() {
 
     function loadElementFormular(){
         var url = $(this).attr("href");
-
         if(url){
             $.ajax({
                 url: url,

@@ -40,7 +40,7 @@
         </form>
     </div>
         
-    <div id="extra_forms">
+    <div id="extra_forms" style="display:none">
         {% for key, form in forms %}
         <form name="{{ key }}">
             {{ form_widget(form) }}

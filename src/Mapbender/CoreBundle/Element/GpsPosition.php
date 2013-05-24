@@ -64,6 +64,7 @@ class GpsPosition extends Element
             'label' => true,
             'autoStart' => false,
             'target' => null,
+            'icon' => null,
             'refreshinterval' => '5000');
     }
     

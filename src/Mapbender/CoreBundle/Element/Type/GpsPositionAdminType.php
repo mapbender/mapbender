@@ -37,14 +37,15 @@ class GpsPositionAdminType extends AbstractType
     {
         $builder->add('tooltip', 'text', array('required' => false))
                 ->add('label', 'checkbox', array('required' => false))
+                ->add('autoStart', 'checkbox', array('required' => false))
                 ->add('target', 'target_element',
                       array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
-                ->add('icon', 'text', array('required' => false))
-                ->add('autoStart', 'checkbox', array('required' => false))
+                ->add('icon', 'text', array('required' => false))   
+                ->add('action', 'text', array('required' => false))
                 ->add('refreshinterval', 'text', array('required' => false));
     }
 
