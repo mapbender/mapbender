@@ -34,6 +34,10 @@
                   <span class="iconRemove iconSmall removeInstance" title="{{"Delete instance"|trans}} {{instance.title}}" data-id="{{ layerset.id }}" data-slug="{{ application.slug }}" data-url="{{ url("mapbender_manager_application_deleteinstance",{"slug": application.slug, 'layersetId': layerset.id, "instanceId": instance.id}) }}"></span>
                 </td>
               </tr>
+            {% else %}
+              <tr>
+                <td colspan="4" class="description">{{ 'No instances added' | trans }}</td>
+              </tr>
             {% endfor %}
           </tbody>
         </table>
