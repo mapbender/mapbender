@@ -1,8 +1,9 @@
 (function($) {
 
-    $.widget("mapbender.mbWmsloader", $.ui.dialog, {
+    $.widget("mapbender.mbWmsloader", {
         options: {
-            autoOpen: false
+            autoOpen: false,
+            title: "Load WMS"
         },
 
         elementUrl: null,
@@ -23,16 +24,10 @@
             var self = this;
             var me = $(this.element);
             this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
-            
-            me.mbWmsloader("option","buttons",{
-                "Cancel": function(){
-                    $(this).mbWmsloader("close");
-                },
-                "Ok": function(){
-                    self.loadWms.call(self,$(this).find(".url").val());
-                    $(this).mbWmsloader("close");
-                }
 
+            me.click(function() {
+                console.log("click")
+               self._onClick.call(self);
             });
 
             if(document.URL.indexOf('url=') !== -1) {
@@ -40,6 +35,23 @@
                 url = decodeURIComponent((url + ''));
                 url = decodeURIComponent((url + ''));
                 this.loadWms(url.replace(/\+/g, '%20'));
+            }
+        },
+
+        open: function() {
+            var self = this;
+
+            if(!$('body').data('mbPopup')) {
+                $("body").mbPopup();
+                var content = this.element.show();
+
+                $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
+                            $("body").mbPopup("close");
+                         }).mbPopup("addButton", "Load", "button right", function(){
+                            self.loadWms.call(self,$(this).find(".url").val());
+                            $("body").mbPopup("close");
+                         })
+                         .mbPopup('showCustom', {title:this.options.title, content: content});
             }
         },
 
@@ -68,7 +80,7 @@
         },
         
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR) {
-            alert("oh npo");
+            alert("oh npo"); //  ???
         },
 
         _destroy: $.noop

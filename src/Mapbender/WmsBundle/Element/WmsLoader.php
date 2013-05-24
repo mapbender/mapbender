@@ -64,7 +64,10 @@ class WmsLoader extends Element
      */
     public function getAssets()
     {
-        return array('js' => array('mapbender.element.wmsloader.js'),'css' => array());
+        return array('js' => array(
+            '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+            'mapbender.element.wmsloader.js'
+            ),'css' => array());
     }
 
     /**

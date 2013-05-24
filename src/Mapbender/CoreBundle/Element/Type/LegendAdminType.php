@@ -47,8 +47,11 @@ class LegendAdminType extends AbstractType
                       array(
                     'required' => true,
                     'choices' => array(
-                        "list" => "list",
-                        "accordion" => "accordion"
+                        "list" => "list"
+                        // WATCHOUT:
+                        // Accordion is not supported in v.3.0.0.0.
+                        // Support comes in the next versions
+                        // "accordion" => "accordion"
                         )))
                 ->add('target', 'target_element',
                       array(

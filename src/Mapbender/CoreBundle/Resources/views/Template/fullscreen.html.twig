@@ -10,7 +10,6 @@
 
 {% block js %}
   {{parent()}}
-  <script type="text/javascript" src="{{ asset('bundles/fomcore/js/frontend/components.js') }}"></script>
   <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
 {% endblock %}
 {% block frontend_content %}
