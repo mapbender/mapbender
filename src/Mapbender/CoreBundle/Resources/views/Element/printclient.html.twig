@@ -1,34 +1,36 @@
 <div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title|trans }}">
     <div class="format-form">
         <form id="formats" action="">
-            <div>
-                <label class="printlabel">{{ 'Template' | trans }}</label>
-                <select name="template" >
-                    {% for id, template in configuration.templates %}
+            <label class="labelInput">{{ 'Template' | trans }}</label>
+            <div class="dropdown">
+              <select name="template" class="hiddenDropdown">
+                  {% for id, template in configuration.templates %}
                     <option value="{{ id }}">{{ template.label }}</option>
-                    {% endfor %}
-                </select>
-            </div>     
-            <br>
-            <div>
-                <label class="printlabel" for="quality">{{ 'Quality' | trans }}</label>
-                <select name="quality" ></select>
+                  {% endfor %}
+              </select>
+              <div class="dropdownValue iconDown"></div>
+              <ul class="dropdownList"></ul>
+            </div>            
+
+            <label class="labelInput">{{ 'Quality' | trans }}</label>
+            <div class="dropdown">
+              <select name="quality" class="hiddenDropdown"></select>
+              <div class="dropdownValue iconDown"></div>
+              <ul class="dropdownList"></ul>
             </div>
-            <br>
-            <div>
-                <label class="printlabel" for="scale_text">{{ 'Scale' | trans }}</label>
-                <input type="text" name="scale_text" size="8"/>                
+
+            <label class="labelInput">{{ 'Scale' | trans }}</label>
+            <div class="dropdown">
+              <select name="scale_select" class="hiddenDropdown"></select>
+              <div class="dropdownValue iconDown"></div>
+              <ul class="dropdownList"></ul>
             </div>
-            <div>
-                <label class="printlabel" for="scale_select">{{ 'Scale' | trans }}</label>
-                <select name="scale_select"></select>
-            </div>
-            <br>
-            <div>
-                <label class="printlabel" for="rotation">{{ 'Rotation' | trans }}</label>
-                <input type="text" name="rotation" size="3"/>
-            </div>      
-            <br>
+
+
+            <label class="labelInput" for="rotation">{{ 'Rotation' | trans }}</label>
+            <input class="input" type="text" name="rotation"/>
+            <div class="clearContainer"></div>
+
             <div id="slider"></div>
             <div id="extra_fields">
             </div>

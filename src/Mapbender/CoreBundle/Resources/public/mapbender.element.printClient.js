@@ -49,12 +49,12 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
             if(!$('body').data('mbPopup')) {             
                 $("body").mbPopup();         
-                $("body").mbPopup("addButton", "Close", "button right", function(){
+                $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
                     //close
                     $("body").mbPopup("close");
                     self._close();
                     
-                }).mbPopup("addButton", "Print", "button left", function(){
+                }).mbPopup("addButton", "Print", "button right", function(){
                     //print
                     self._print();
                 }).mbPopup('showCustom', {
@@ -63,9 +63,11 @@
                     content: this.element, 
                     draggable: true,
                     width: 300,
-                    height: 100,
-                    showCloseButton: false
+                    height: 180,
+                    showCloseButton: false,
+                    overflow:true
                 });
+                me.show();
             }
             
             this._loadPrintFormats();           
@@ -74,7 +76,6 @@
         },
     
         _close: function() {
-            //this._super('close');
             this.popup = false;
             this._updateElements();
         },
@@ -84,6 +85,9 @@
             var count = 0;
             var quality_levels = this.options.quality_levels;
             var quality = $('select[name="quality"]', this.element);
+            var list = quality.siblings(".dropdownList");
+            var valueContainer = quality.siblings(".dropdownValue");
+
             quality.empty();  
             if (null === quality_levels){
                 quality.parent().hide();
@@ -91,8 +95,18 @@
                 for(key in quality_levels) {
                     quality.append($('<option></option>', {
                         'value': key,
-                        'html': quality_levels[key]
+                        'html': quality_levels[key],
+                        'class': "opt-" + count
                     }));
+                    list.append($('<li></li>', {
+                        'html': quality_levels[key],
+                        'class': "item-" + count
+                    }));
+
+                    if(count == 0){
+                        valueContainer.text(quality_levels[key]);
+                    }
+
                     count++;
                 }
                 if(count < 2) {
@@ -104,6 +118,9 @@
         
             var scale_text = $('input[name="scale_text"]', this.element),
             scale_select = $('select[name="scale_select"]', this.element);
+            list = scale_select.siblings(".dropdownList");
+            var valueContainer = scale_select.siblings(".dropdownValue");
+            count = 0;
             if(null === this.options.scales) {
                 var scale = 5000;
                 scale_text.val(scale).parent().show();
@@ -115,8 +132,17 @@
                     var scale = this.options.scales[key];
                     scale_select.append($('<option></option>', {                    
                         'value': scale,
-                        'html': '1:' + scale
+                        'html': '1:' + scale,
+                        'class': "item-" + count
                     }));
+                    list.append($('<li></li>', {
+                        'html': '1:' + scale,
+                        'class': "item-" + count
+                    }));
+                    if(count == 0){
+                        valueContainer.text('1:' + scale);
+                    }
+                    ++count;
                 }
                 scale_select.parent().show();
             }
