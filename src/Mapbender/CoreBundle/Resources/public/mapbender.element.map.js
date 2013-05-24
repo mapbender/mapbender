@@ -94,7 +94,6 @@
          * (see model.createChangedObj(id)).
          */
         fireModelEvent: function(options){
-            window.console && console.log("fireEvent:", options);
             this._trigger(options.name, null, options.value);
         },
         /**
@@ -216,7 +215,6 @@
          * 
          */
         ready: function(callback) {
-            window.console && console.log("READY DEPRE:", callback);
             if(this.readyState === true) {
                 callback();
             } else {
@@ -227,7 +225,6 @@
          * 
          */
         _ready: function() {
-            window.console && console.log("_READY DEPRE");
             for(callback in this.readyCallbacks) {
                 callback();
                 delete(this.readyCallbacks[callback]);

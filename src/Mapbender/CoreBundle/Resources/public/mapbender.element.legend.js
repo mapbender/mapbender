@@ -2,7 +2,7 @@
 
     $.widget("mapbender.mbLegend", {
         options: {
-            title: 'Legende',
+            title: 'Legend',
             autoOpen: true,
             target: null,
             noLegend: "No legend available",
@@ -16,9 +16,6 @@
             showSourceTitle: true,
             showLayerTitle: true,
             showGrouppedTitle: true,
-
-            maxDialogWidth: $(window).width() - 100,
-            maxDialogHeight: $(window).height() - 100,
 
             maxImgWidth: 0,
             maxImgHeight: 0            
@@ -48,14 +45,6 @@
             this.grouppedTitle = this.options.showGrouppedTitle ? "" : "notshow";
             this.hiddeEmpty = this.options.hideEmptyLayers ? "notshow" : "";
             
-            if(this.options.elementType === "dialog") {
-                this.element.dialog({
-                    width: 500,
-                    autoOpen: false,
-                    heightStyle: "content",
-                    title: self.options.title
-                });
-            }
             if(this.options.autoOpen){
                 this.open();
             }
@@ -119,7 +108,6 @@
         },
         
         _onSourceChanged: function(event, changed){
-            //            window.console && console.log("mbLayertree._onSourceChanged:", changed);
             for(key in changed.children){
                 var changedEl = changed.children[key];
                 if(changedEl.treeElm.state.visibility){
@@ -147,7 +135,6 @@
         _onSourceLoadEnd: function(event, option){
         },
         _onSourceLoadError: function(event, option){
-            //            window.console && console.log("mbLayertree._onSourceLoadError:", event);
             $(this.element).find('ul[data-sourceid="'+option.source.id+'"] li').addClass('notvisible');
         },
 
@@ -183,9 +170,11 @@
 
         _getSublayers: function(source, layer, level, children){
             var self = this;
+
             for(var i = (layer.children.length - 1); i > -1; i--){
                 children = children.concat(self._getSublayer(source, layer.children[i], "wms", level, []));
             }
+
             return children;
         },
 
@@ -220,11 +209,11 @@
         },
         
         _createNodeTitleLine: function(layer){
-            return '<li class="ebene'+layer.level+' '+layer.visible+' '+this.grouppedTitle+' title" data-id="'+layer.id+'">'+layer.title+'</li>';
+            return '<li class="ebene'+layer.level+' '+layer.visible+' '+this.grouppedTitle+' subTitle" data-id="'+layer.id+'">'+layer.title+'</li>';
         },
         
         _createTitleLine: function(layer, hide){
-            return '<li class="ebene'+layer.level+' '+layer.visible+' '+(hide?this.hiddeEmpty:'')+' title" data-id="'+layer.id+'">'+layer.title+'</li>';
+            return '<li class="ebene'+layer.level+' '+layer.visible+' '+(hide?this.hiddeEmpty:'')+' subTitle" data-id="'+layer.id+'">'+layer.title+'</li>';
         },
         
         _createImageLine: function(layer){
@@ -275,10 +264,8 @@
                     if(layers[layidx].children[sublayidx].legend){
                         $(self.element).find("#imgtest").html('<img id="testload" style="display: none;" src="' + layers[layidx].children[sublayidx].legend.url + '"></img>');
                         $(self.element).find("#imgtest #testload").load(function() {
-                            //                            var width = this.width, height = this.height; +' '
                             self._checkMaxImgWidth(self.width);
                             self._checkMaxImgHeight(self.height);
-                            //                        window.console && console.log( sublayer.legend.url);
                             if(layers[layidx].children[sublayidx].isNode){
                                 html += self._createNodeTitleLine(layers[layidx].children[sublayidx]);
                             } else {
@@ -324,34 +311,33 @@
         _createLegend: function(html){
             var self = this;
             $(self.element).find("#imgtest").html("");
-            $(this.element).find('#legends:eq(0)').html('<ul>' + html + '</ul>');
-            if(this.options.elementType === "dialog") {
-                this.element.dialog("option", "maxHeight", self.options.maxDialogHeight + "px");
-                this.element.dialog("option", "maxWidth", self.options.maxDialogWidth);
-                this.element.dialog("option", "minWidth", self.options.maxImgWidth != 0 ? self.maxImgWidth + 100 : 300);
-                this.element.dialog("option", "width", self.options.maxImgWidth != 0 ? self.maxImgWidth + 200 : 300);
-                this.element.dialog('open');
-                $(this.element).css({
-                    "max-height": (this.options.maxDialogHeight - 50) +"px"
-                });
+            if(this.options.elementType === "dialog" && !$('body').data('mbPopup')) {
+                $("body").mbPopup();
+                $("body").mbPopup('showHint', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, btnOkLabel:"Close"});
+            }else{
+                $(this.element).find('#legends:eq(0)').html('<ul>' + html + '</ul>');
             }
-            if(this.options.displayType === 'accordion'){
-                $(this.element).find('ul.ebene1').each(function(){
-                    $(this).accordion({
-                        header: "li.title",
-                        autoHeight: false, 
-                        collapsible: true, 
-                        active: false
-                    });
-                });
-                $(this.element).find('.layerlegends').each(function(){
-                    $(this).accordion({
-                        autoHeight: false, 
-                        collapsible: true, 
-                        active: false
-                    });
-                });
-            }
+
+            // WATCHOUT:
+            // Accordion is not supported in v.3.0.0.0.
+            // Support comes in the next versions
+            // if(this.options.displayType === 'accordion'){
+            //     $(this.element).find('ul.ebene1').each(function(){
+            //         $(this).accordion({
+            //             header: "li.title",
+            //             autoHeight: false, 
+            //             collapsible: true, 
+            //             active: false
+            //         });
+            //     });
+            //     $(this.element).find('.layerlegends').each(function(){
+            //         $(this).accordion({
+            //             autoHeight: false, 
+            //             collapsible: true, 
+            //             active: false
+            //         });
+            //     });
+            // }
         },
 
         open: function() {
@@ -365,7 +351,9 @@
         },
     
         close: function() {
-            this.element.dialog('close');
+            if(this.options.elementType === "dialog" && !$('body').data('mbPopup')) {
+               $("body").mbPopup("close");
+            }
         }
 
     });
