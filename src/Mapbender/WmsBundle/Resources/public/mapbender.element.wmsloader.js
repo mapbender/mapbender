@@ -89,10 +89,11 @@
         },
         _getCapabilitiesUrlSuccess: function(xml, getCapabilitiesUrl) {
             var self = this;
+            var mbMap = $('#' + self.options.target).data('mbMap');
             var id = $('#' + this.options.target).data('mbMap').genereateSourceId();
-            var layerDefs = Mapbender.source.wms.layersFromCapabilities(xml, id, this.options.splitLayers);
+            var layerDefs = Mapbender.source.wms.layersFromCapabilities(xml, id, this.options.splitLayers, mbMap.model, this.options.defaultFormat, this.options.defaultInfoFormat);
             $.each(layerDefs, function(idx, layerDef){
-                $('#' + self.options.target).data('mbMap').addSource(layerDef, null, null);
+                mbMap.addSource(layerDef, null, null);
             });
         },
         

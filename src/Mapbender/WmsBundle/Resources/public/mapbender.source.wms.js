@@ -167,7 +167,7 @@ $.extend(true, Mapbender, {
                 .appendTo($('body'));
             },
 
-            layersFromCapabilities: function(xml, id, splitLayers, defFormat, defInfoformat) {
+            layersFromCapabilities: function(xml, id, splitLayers, model, defFormat, defInfoformat) {
                 if(!defFormat){
                     defFormat = "image/png";
                 }
@@ -179,9 +179,19 @@ $.extend(true, Mapbender, {
 
                 if(typeof(capabilities.capability) !== 'undefined') {
                     var rootlayer = capabilities.capability.nestedLayers[0];
-                    var bboxOb = {};
+                    var bboxOb = {}, bboxSrs = null, bboxBounds = null;
                     for(bbox in rootlayer.bbox){
-                        bboxOb[bbox] = rootlayer.bbox[bbox].bbox;
+                        if(model.getProj(bbox) !== null){
+                            bboxOb[bbox] = rootlayer.bbox[bbox].bbox;
+                            bboxSrs = bbox;
+                            bboxBounds = OpenLayers.Bounds.fromArray(bboxOb[bbox]);
+                        }
+                    }
+                    for(srs in rootlayer.srs){
+                        if(rootlayer.srs[srs] === true && typeof bboxOb[srs] === 'undefined' && model.getProj(srs) !== null && bboxBounds !== null){
+                            var oldProj = model.getProj(bboxSrs);
+                            bboxOb[srs] = bboxBounds.transform(oldProj, model.getProj(srs)).toArray();
+                        }
                     }
                     var format;
                     var formats = capabilities.capability.request.getmap.formats;
@@ -209,8 +219,8 @@ $.extend(true, Mapbender, {
                             isBaseSource: false,
                             options: {
                                 baselayer: false,
-                                bbox: bboxOb,
-                                srslist: null,
+//                                bbox: bboxOb,
+                                srslist: bboxOb,
                                 format: format,
                                 info_format: infoformat,
                                 opacity: 1,
