@@ -57,10 +57,17 @@ class LayertreeAdminType extends AbstractType
                 ->add('displaytype', 'choice',
                       array(
                     'required' => true,
-                    'choices' => array('tree' => 'Tree', 'list' => 'List')))
-                ->add('useAccordion', 'checkbox',
-                      array(
-                    'required' => false))
+                    'choices' => array('tree' => 'Tree')
+                      // WATCHOUT:
+                      // List is not supported in v.3.0.0.0.
+                      // Support comes in the next versions
+                      // 'list' => 'List'
+                    ))
+                // WATCHOUT:
+                // Accordion is not supported in v.3.0.0.0.
+                // ->add('useAccordion', 'checkbox',
+                //       array(
+                //     'required' => false))
                 ->add('titlemaxlength', 'text',
                       array('required' => true))
                 ->add('showBaseSource', 'checkbox',

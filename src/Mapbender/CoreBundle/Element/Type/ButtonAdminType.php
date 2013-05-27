@@ -43,7 +43,7 @@ class ButtonAdminType extends AbstractType
                         "" => "None",
                         "iconAbout" => "About",
                         "iconAreaRuler" => "Area ruler",
-                        "iconInfo" => "Feature info",
+                        "iconInfoActive" => "Feature info",
                         "iconGps" => "GPS",
                         "iconLegend" => "Legend",
                         "iconPrint" => "Print",

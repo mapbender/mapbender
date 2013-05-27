@@ -46,7 +46,7 @@ $(function() {
   	toggleInstanceTableStatus(null, myClass);
   }
 
-  $("#instanceTable").on("click", ".iconInfo", showInfoBox); 
+  $("#instanceTable").on("click", ".iconMore", showInfoBox); 
   $('#instanceTable').on("click", ".checkbox", toggleInstanceTableStatus);
   $('#instanceTable').on("click", "thead span", toggleInstanceRowsStatus);
 

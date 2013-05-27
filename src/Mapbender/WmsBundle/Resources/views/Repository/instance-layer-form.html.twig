@@ -29,8 +29,8 @@
             <td class="checkboxColumn odd" data-cb="cb-toggle-on" title="{{ "Toggle at TOC"|trans }}">{{ form_widget(form_layer.toggle) }}</td>
             <td class="checkboxColumn odd" data-cb="cb-toggle-allow" title="{{ "Allow Toggle at TOC"|trans }}">{{ form_widget(form_layer.allowtoggle) }}</td>
             <td class="checkboxColumn" data-cb="cb-recorder-allow" title="{{ "Allow Reorder at TOC"|trans }}">{{ form_widget(form_layer.allowreorder) }}</td>
-            <td>
-              <span class="iconInfo" title="{{'More informations'|trans}}">
+            <td class="moreColumn">
+              <span class="iconMore" title="{{'More informations'|trans}}">
                 <div class="infoMsgBox hide">
                   <span class="labelText">{{ "Id"|trans }}</span><span class="smallText">{{instance.id}}</span><br>
                   <span class="labelText">{{ "Layer's Name"|trans }}</span><span class="smallText">{{ form_layer.vars.data.wmslayersource.name}}</span>
