@@ -146,11 +146,16 @@ $(function() {
                 },
                 201: function() {
                     $("body").mbPopup('close');
-                    window.location.reload();
+                    window.setTimeout(function() {
+                        window.location.reload();
+                    }, 10);
+
                 },
                 205: function() {
                     $("body").mbPopup('close');
-                    window.location.reload();
+                    window.setTimeout(function() {
+                        window.location.reload();
+                    }, 10);
                 }
             }
 
