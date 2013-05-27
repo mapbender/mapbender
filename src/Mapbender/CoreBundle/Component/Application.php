@@ -407,6 +407,9 @@ class Application
             foreach($this->entity->getElements() as $entity)
             {
                 $class = $entity->getClass();
+                if(!$entity->getEnabled()) {
+                    continue;
+                }
                 $element = new $class($this, $this->container, $entity);
                 $r = $entity->getRegion();
 
