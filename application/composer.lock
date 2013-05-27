@@ -1,8 +1,4 @@
 {
-    "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
-    ],
     "hash": "803118ce0f72cc4ee1aecf9904ac7932",
     "packages": [
         {
@@ -26,6 +22,7 @@
             "require-dev": {
                 "doctrine/cache": "1.*"
             },
+            "time": "2013-04-20 08:30:17",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -73,8 +70,7 @@
                 "annotations",
                 "docblock",
                 "parser"
-            ],
-            "time": "2013-04-20 08:30:17"
+            ]
         },
         {
             "name": "doctrine/cache",
@@ -96,6 +92,7 @@
             "conflict": {
                 "doctrine/common": ">2.2,<2.4"
             },
+            "time": "2013-05-13 02:51:07",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -142,8 +139,7 @@
             "keywords": [
                 "cache",
                 "caching"
-            ],
-            "time": "2013-05-13 02:51:07"
+            ]
         },
         {
             "name": "doctrine/collections",
@@ -151,21 +147,22 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/collections.git",
-                "reference": "df2138bcb467533bfe6b3a01301d480aec008b93"
+                "reference": "3db3ab843ff76774bee4679d4cb3a10cffb0a935"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/collections/zipball/df2138bcb467533bfe6b3a01301d480aec008b93",
-                "reference": "df2138bcb467533bfe6b3a01301d480aec008b93",
+                "url": "https://api.github.com/repos/doctrine/collections/zipball/3db3ab843ff76774bee4679d4cb3a10cffb0a935",
+                "reference": "3db3ab843ff76774bee4679d4cb3a10cffb0a935",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
             },
+            "time": "2013-05-26 05:21:22",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -209,8 +206,7 @@
                 "array",
                 "collections",
                 "iterator"
-            ],
-            "time": "2013-03-17 14:01:33"
+            ]
         },
         {
             "name": "doctrine/common",
@@ -234,6 +230,7 @@
                 "doctrine/lexer": "1.*",
                 "php": ">=5.3.2"
             },
+            "time": "2013-05-21 02:44:34",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -283,8 +280,7 @@
                 "eventmanager",
                 "persistence",
                 "spl"
-            ],
-            "time": "2013-05-21 02:44:34"
+            ]
         },
         {
             "name": "doctrine/data-fixtures",
@@ -312,6 +308,7 @@
                 "doctrine/orm": "For loading ORM fixtures",
                 "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures"
             },
+            "time": "2013-04-11 23:14:04",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -338,8 +335,7 @@
             "homepage": "http://www.doctrine-project.org",
             "keywords": [
                 "database"
-            ],
-            "time": "2013-04-11 23:14:04"
+            ]
         },
         {
             "name": "doctrine/dbal",
@@ -359,6 +355,7 @@
                 "doctrine/common": ">=2.3.0,<2.5-dev",
                 "php": ">=5.3.2"
             },
+            "time": "2013-05-21 05:53:02",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -401,8 +398,7 @@
                 "dbal",
                 "persistence",
                 "queryobject"
-            ],
-            "time": "2013-05-21 05:53:02"
+            ]
         },
         {
             "name": "doctrine/doctrine-bundle",
@@ -433,6 +429,7 @@
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
             },
+            "time": "2012-09-07 14:18:21",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -469,8 +466,7 @@
                 "dbal",
                 "orm",
                 "persistence"
-            ],
-            "time": "2012-09-07 14:18:21"
+            ]
         },
         {
             "name": "doctrine/doctrine-fixtures-bundle",
@@ -493,6 +489,7 @@
                 "php": ">=5.3.2",
                 "symfony/doctrine-bridge": ">=2.1.0,<2.4-dev"
             },
+            "time": "2013-04-27 11:57:35",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -527,8 +524,7 @@
             "keywords": [
                 "Fixture",
                 "persistence"
-            ],
-            "time": "2013-04-27 11:57:35"
+            ]
         },
         {
             "name": "doctrine/inflector",
@@ -547,6 +543,7 @@
             "require": {
                 "php": ">=5.3.2"
             },
+            "time": "2013-04-10 16:14:30",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -595,8 +592,7 @@
                 "pluralize",
                 "singularize",
                 "string"
-            ],
-            "time": "2013-04-10 16:14:30"
+            ]
         },
         {
             "name": "doctrine/lexer",
@@ -615,6 +611,7 @@
             "require": {
                 "php": ">=5.3.2"
             },
+            "time": "2013-03-07 12:15:25",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -652,8 +649,7 @@
             "keywords": [
                 "lexer",
                 "parser"
-            ],
-            "time": "2013-03-07 12:15:25"
+            ]
         },
         {
             "name": "doctrine/orm",
@@ -661,12 +657,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/doctrine2.git",
-                "reference": "425f375899b9b054867ea3a3cb752dabdd874651"
+                "reference": "9787b27518bf4e4da1523ced6bfca74e98397907"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/425f375899b9b054867ea3a3cb752dabdd874651",
-                "reference": "425f375899b9b054867ea3a3cb752dabdd874651",
+                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/9787b27518bf4e4da1523ced6bfca74e98397907",
+                "reference": "9787b27518bf4e4da1523ced6bfca74e98397907",
                 "shasum": ""
             },
             "require": {
@@ -678,6 +674,7 @@
             "suggest": {
                 "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
             },
+            "time": "2013-05-26 07:27:03",
             "bin": [
                 "bin/doctrine",
                 "bin/doctrine.php"
@@ -722,8 +719,7 @@
             "keywords": [
                 "database",
                 "orm"
-            ],
-            "time": "2013-05-11 07:51:12"
+            ]
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",
@@ -746,6 +742,7 @@
                 "symfony/framework-bundle": ">=2.0,<3.0",
                 "symfony/serializer": ">=2.0,<3.0"
             },
+            "time": "2013-05-13 10:00:39",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -776,8 +773,7 @@
             "homepage": "http://friendsofsymfony.github.com",
             "keywords": [
                 "Js Routing"
-            ],
-            "time": "2013-05-13 10:00:39"
+            ]
         },
         {
             "name": "jms/aop-bundle",
@@ -798,6 +794,7 @@
                 "jms/cg": "1.0.0",
                 "symfony/framework-bundle": "2.*"
             },
+            "time": "2012-01-02 12:50:26",
             "type": "symfony-bundle",
             "autoload": {
                 "psr-0": {
@@ -820,8 +817,7 @@
             "keywords": [
                 "annotations",
                 "aop"
-            ],
-            "time": "2012-01-02 12:50:26"
+            ]
         },
         {
             "name": "jms/cg",
@@ -840,6 +836,7 @@
             "require": {
                 "php": ">=5.3.0"
             },
+            "time": "2012-01-02 12:40:52",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -861,8 +858,7 @@
             "description": "Toolset for generating PHP code",
             "keywords": [
                 "code generation"
-            ],
-            "time": "2012-01-02 12:40:52"
+            ]
         },
         {
             "name": "jms/di-extra-bundle",
@@ -899,6 +895,7 @@
                 "symfony/validator": "*",
                 "symfony/yaml": "*"
             },
+            "time": "2012-09-21 08:56:32",
             "type": "symfony-bundle",
             "autoload": {
                 "psr-0": {
@@ -922,8 +919,7 @@
             "keywords": [
                 "annotations",
                 "dependency injection"
-            ],
-            "time": "2012-09-21 08:56:32"
+            ]
         },
         {
             "name": "jms/metadata",
@@ -942,6 +938,7 @@
             "require": {
                 "php": ">=5.3.0"
             },
+            "time": "2012-01-02 13:32:49",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -966,8 +963,7 @@
                 "metadata",
                 "xml",
                 "yaml"
-            ],
-            "time": "2012-01-02 13:32:49"
+            ]
         },
         {
             "name": "jms/security-extra-bundle",
@@ -1005,6 +1001,7 @@
                 "symfony/validator": "*",
                 "symfony/yaml": "*"
             },
+            "time": "2012-09-06 16:12:23",
             "type": "symfony-bundle",
             "autoload": {
                 "psr-0": {
@@ -1031,8 +1028,7 @@
                 "expression",
                 "secure",
                 "security"
-            ],
-            "time": "2012-09-06 16:12:23"
+            ]
         },
         {
             "name": "kriswallsmith/assetic",
@@ -1071,6 +1067,7 @@
                 "ptachoire/cssembed": "Assetic provides the integration with phpcssembed to embed data uris",
                 "twig/twig": "Assetic provides the integration with the Twig templating engine"
             },
+            "time": "2013-05-22 17:17:41",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1102,8 +1099,7 @@
                 "assets",
                 "compression",
                 "minification"
-            ],
-            "time": "2013-05-22 17:17:41"
+            ]
         },
         {
             "name": "kriswallsmith/buzz",
@@ -1128,6 +1124,7 @@
             "suggest": {
                 "ext-curl": "*"
             },
+            "time": "2013-05-19 03:41:15",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1150,8 +1147,7 @@
             "keywords": [
                 "curl",
                 "http client"
-            ],
-            "time": "2013-05-19 03:41:15"
+            ]
         },
         {
             "name": "monolog/monolog",
@@ -1178,6 +1174,7 @@
                 "ext-mongo": "Allow sending log messages to a MongoDB server",
                 "mlehner/gelf-php": "Allow sending log messages to a GrayLog2 server"
             },
+            "time": "2012-08-29 11:53:20",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1206,8 +1203,7 @@
             "keywords": [
                 "log",
                 "logging"
-            ],
-            "time": "2012-08-29 11:53:20"
+            ]
         },
         {
             "name": "sensio/distribution-bundle",
@@ -1227,6 +1223,7 @@
             "require": {
                 "symfony/framework-bundle": "2.1.*"
             },
+            "time": "2013-04-09 09:20:26",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1252,8 +1249,7 @@
             "keywords": [
                 "configuration",
                 "distribution"
-            ],
-            "time": "2013-04-09 09:20:26"
+            ]
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -1274,6 +1270,7 @@
                 "doctrine/common": ">=2.1,<2.5-dev",
                 "symfony/framework-bundle": "2.1.*"
             },
+            "time": "2013-04-05 06:59:04",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1299,8 +1296,7 @@
             "keywords": [
                 "annotations",
                 "controllers"
-            ],
-            "time": "2013-04-05 06:59:04"
+            ]
         },
         {
             "name": "sensio/generator-bundle",
@@ -1326,6 +1322,7 @@
                 "symfony/doctrine-bridge": "2.1.*",
                 "twig/twig": ">=1.8,<2.0-dev"
             },
+            "time": "2013-04-01 18:11:18",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1347,8 +1344,7 @@
                     "email": "fabien@symfony.com"
                 }
             ],
-            "description": "This bundle generates code for you",
-            "time": "2013-04-01 18:11:18"
+            "description": "This bundle generates code for you"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -1367,6 +1363,7 @@
             "require": {
                 "php": ">=5.2.4"
             },
+            "time": "2012-10-25 01:30:40",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1396,8 +1393,7 @@
             "keywords": [
                 "mail",
                 "mailer"
-            ],
-            "time": "2012-10-25 01:30:40"
+            ]
         },
         {
             "name": "symfony/assetic-bundle",
@@ -1431,6 +1427,7 @@
             "suggest": {
                 "symfony/twig-bundle": "~2.1"
             },
+            "time": "2013-05-16 05:32:23",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1459,8 +1456,7 @@
                 "assets",
                 "compression",
                 "minification"
-            ],
-            "time": "2013-05-16 05:32:23"
+            ]
         },
         {
             "name": "symfony/monolog-bundle",
@@ -1488,6 +1484,7 @@
                 "symfony/config": ">=2.1.0,<2.3-dev",
                 "symfony/yaml": ">=2.1.0,<2.3-dev"
             },
+            "time": "2013-04-05 12:38:16",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1518,8 +1515,7 @@
             "keywords": [
                 "log",
                 "logging"
-            ],
-            "time": "2013-04-05 12:38:16"
+            ]
         },
         {
             "name": "symfony/swiftmailer-bundle",
@@ -1547,6 +1543,7 @@
                 "symfony/http-kernel": ">=2.1.0,<2.3-dev",
                 "symfony/yaml": ">=2.1.0,<2.3-dev"
             },
+            "time": "2013-01-04 17:04:29",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1573,8 +1570,7 @@
                 }
             ],
             "description": "Symfony SwiftmailerBundle",
-            "homepage": "http://symfony.com",
-            "time": "2013-01-04 17:04:29"
+            "homepage": "http://symfony.com"
         },
         {
             "name": "symfony/symfony",
@@ -1582,12 +1578,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "e789a02d5afa58dea2b08ef4f7515ee5f352dbb5"
+                "reference": "d52d9aeba099852108d25d2c312a83dce016a02d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/e789a02d5afa58dea2b08ef4f7515ee5f352dbb5",
-                "reference": "e789a02d5afa58dea2b08ef4f7515ee5f352dbb5",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/d52d9aeba099852108d25d2c312a83dce016a02d",
+                "reference": "d52d9aeba099852108d25d2c312a83dce016a02d",
                 "shasum": ""
             },
             "require": {
@@ -1636,6 +1632,7 @@
                 "monolog/monolog": ">=1.0,<1.3-dev",
                 "propel/propel1": "dev-master"
             },
+            "time": "2013-05-27 06:45:55",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1661,8 +1658,7 @@
             "homepage": "http://symfony.com",
             "keywords": [
                 "framework"
-            ],
-            "time": "2013-05-23 02:09:04"
+            ]
         },
         {
             "name": "twig/extensions",
@@ -1681,6 +1677,7 @@
             "require": {
                 "twig/twig": "1.*"
             },
+            "time": "2013-02-28 14:21:30",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1708,8 +1705,7 @@
                 "debug",
                 "i18n",
                 "text"
-            ],
-            "time": "2013-02-28 14:21:30"
+            ]
         },
         {
             "name": "twig/twig",
@@ -1717,17 +1713,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Twig.git",
-                "reference": "693956586776108847a447e86b4e5e92ee0a20be"
+                "reference": "f6c00587f8b2d6e680d09fd6015fa521f9c72327"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig/zipball/693956586776108847a447e86b4e5e92ee0a20be",
-                "reference": "693956586776108847a447e86b4e5e92ee0a20be",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/f6c00587f8b2d6e680d09fd6015fa521f9c72327",
+                "reference": "f6c00587f8b2d6e680d09fd6015fa521f9c72327",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
+            "time": "2013-05-27 06:08:37",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1757,13 +1754,10 @@
             "homepage": "http://twig.sensiolabs.org",
             "keywords": [
                 "templating"
-            ],
-            "time": "2013-05-23 16:28:53"
+            ]
         }
     ],
-    "packages-dev": [
-
-    ],
+    "packages-dev": null,
     "aliases": [
 
     ],
@@ -1772,11 +1766,5 @@
         "friendsofsymfony/jsrouting-bundle": 20,
         "kriswallsmith/buzz": 20,
         "doctrine/doctrine-fixtures-bundle": 20
-    },
-    "platform": {
-        "php": ">=5.3.3"
-    },
-    "platform-dev": [
-
-    ]
+    }
 }
