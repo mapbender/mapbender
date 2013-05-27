@@ -603,13 +603,13 @@ class ApplicationController extends Controller
         }
 
         $this->get("logger")->debug('A new instance "'
-                . $sourceInstance->getId() . '"has been created.');
+                . $sourceInstance->getId() . '"has been created. Please edit it!');
         $this->get('session')->setFlash('notice',
-                                        'A new instance has been created.');
+                                        'A new instance has been created. Please edit it!');
         return $this->redirect(
                         $this->generateUrl(
-                                "mapbender_manager_application_edit",
-                                array("slug" => $slug)) . "#layersets"
+                                "mapbender_manager_repository_instance",
+                                array("slug" => $slug, "instanceId" => $sourceInstance->getId()))
         );
     }
 
