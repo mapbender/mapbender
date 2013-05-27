@@ -30,7 +30,7 @@
             <a class="iconView iconBig" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'View service metadata' | trans }}"></a>
             {% if is_granted('DELETE', source) %}
                <span class="iconRemove iconBig"
-                title="{{ source.title }}"
+                title="{{"Delete service"|trans}} {{ source.title }}"
                 data-url="{{ url("mapbender_manager_repository_delete",{"sourceId":source.id}) }}"
                 data-id="{{ source.id }}"></span>
             {% endif %}
@@ -41,7 +41,6 @@
   </ul>
 {% else %}
     <span class="description">{% trans %}No services available.{% endtrans %}</span>
-
 {% endif %}
 
 <div class="clearContainer"></div>
