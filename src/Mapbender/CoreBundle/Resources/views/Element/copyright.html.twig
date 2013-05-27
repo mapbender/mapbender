@@ -2,7 +2,11 @@
     <span class="span-copyright" title="">{{ configuration.copyrigh_text |trans |raw }}</span>
     {% if configuration.dialog_link is defined and configuration.dialog_link != ''%}
     <br/>
-    <span id="{{ id }}-link" class="mb-element-copyright-link">{{ configuration.dialog_link |trans |raw }}</span>
+    {% if configuration.link_type == 'dialog' %}
+    <span id="{{ id }}-link" class="mb-element-copyright-link">{{ configuration.copyright_link |trans |raw }}</span>
+    {% elseif configuration.link_type == 'url' %}
+    <a id="{{ id }}-link" class="mb-element-copyright-link" href="{{ configuration.link_url }}" target="_BLANK">{{ configuration.copyright_link |trans |raw }}</a>
+    {% endif %}
     <div id="{{ id }}-dialog" class="mb-element-copyright-dialog" title="{{ configuration.dialog_title |trans |raw }}">
         <p>{{ configuration.dialog_content |trans |raw }}</p>
     </div>

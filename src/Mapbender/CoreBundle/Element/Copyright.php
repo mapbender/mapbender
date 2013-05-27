@@ -69,7 +69,9 @@ class Copyright extends Element
         return array(
             'tooltip' => 'Copyright',
             "copyrigh_text" => "© XXX, 2012",
-            "dialog_link" => "Terms of use",
+            "copyright_link" => "Terms of use",
+            "link_type" => "dialog",
+            "link_url" => null,
             "dialog_content" => "Terms of use (Content)",
             "dialog_title" => "Terms of use",
             'width' => "200px",

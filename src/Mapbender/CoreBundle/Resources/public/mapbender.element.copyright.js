@@ -27,7 +27,7 @@ $.widget("mapbender.mbCopyright", {
             });
         }
         $(this.element).css({width: this.options.width});
-        $('#' + $(this.element).attr("id") + "-link").click($.proxy(this._showTermsOfUse, this));
+        $('#' + $(this.element).attr("id")).find('span.mb-element-copyright-link').click($.proxy(this._showTermsOfUse, this));
     },
 
     _showTermsOfUse: function(evt){
