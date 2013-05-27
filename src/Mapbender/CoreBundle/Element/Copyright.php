@@ -70,7 +70,7 @@ class Copyright extends Element
             'tooltip' => 'Copyright',
             "copyrigh_text" => "© XXX, 2012",
             "copyright_link" => "Terms of use",
-            "link_type" => "dialog",
+            "link_type" => "",
             "link_url" => null,
             "dialog_content" => "Terms of use (Content)",
             "dialog_title" => "Terms of use",
