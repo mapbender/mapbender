@@ -98,7 +98,7 @@ $.widget("mapbender.mbRuler", {
 
         this._reset();
 
-        if(!$('body').data('mbPopup')) {
+        if(!$('body').data('mapbenderMbPopup')) {
             $("body").mbPopup();
             $("body").mbPopup('addButton', "Close", "button right", function(){
                         $("body").mbPopup('close');
@@ -130,7 +130,7 @@ $.widget("mapbender.mbRuler", {
 
     _reset: function() {
         this.segments.empty();
-        if($('body').data('mbPopup')) {
+        if($('body').data('mapbenderMbPopup')) {
             $("body").mbPopup('setContent', '');
         }
     },
@@ -141,7 +141,7 @@ $.widget("mapbender.mbRuler", {
         }
 
         var measure = this._getMeasureFromEvent(event);
-        if($('body').data('mbPopup')) {
+        if($('body').data('mapbenderMbPopup')) {
             $("body").mbPopup('setContent', measure);
         }
     },

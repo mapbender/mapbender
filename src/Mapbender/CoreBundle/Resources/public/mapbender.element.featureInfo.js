@@ -99,7 +99,7 @@ $.widget("mapbender.mbFeatureInfo", {
 
         var content = (fi_exist) ? tabContainer : '<p class="description">No feature info layer exists.</p>';
 
-        if(!$('body').data('mbPopup')) {
+        if(!$('body').data('mapbenderMbPopup')) {
             $("body").mbPopup();
             $("body").mbPopup('addButton', "Close", "button right", function(){
                         $("body").mbPopup('close');
