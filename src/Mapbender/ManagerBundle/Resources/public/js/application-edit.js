@@ -132,6 +132,32 @@ $(function() {
 
     // Layout - Elements ---------------------------------------------------------------------------
 
+    var submitHandler = function(e){
+        $.ajax({
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            type: 'POST',
+            statusCode: {
+                200: function(response) {
+                    $("#popupSubContent").html(response);
+                    var subTitle = $("#popupSubContent").find("#form_title").val();
+                    $("#popupSubTitle").text(" - " + subTitle);
+                    $("#popup").find(".buttonYes, .buttonBack").show();
+                },
+                201: function() {
+                    $("body").mbPopup('close');
+                    window.location.reload();
+                },
+                205: function() {
+                    $("body").mbPopup('close');
+                    window.location.reload();
+                }
+            }
+
+        });
+        e.preventDefault();
+        return false;
+    };
 
     function loadElementFormular(){
         var url = $(this).attr("href");
@@ -147,32 +173,6 @@ $(function() {
                     $("#popupSubTitle").text(" - " + subTitle);
                     $("#popup").find(".buttonYes, .buttonBack").show();
 
-                    var submitHandler = function(e){
-                        $.ajax({
-                            url: $(this).attr('action'),
-                            data: $(this).serialize(),
-                            type: 'POST',
-                            statusCode: {
-                                200: function(response) {
-                                    $("#popupSubContent").html(response);
-                                    var subTitle = $("#popupSubContent").find("#form_title").val();
-                                    $("#popupSubTitle").text(" - " + subTitle);
-                                    $("#popup").find(".buttonYes, .buttonBack").show();
-                                },
-                                201: function() {
-                                    $("body").mbPopup('close');
-                                    window.location.reload();
-                                },
-                                205: function() {
-                                    $("body").mbPopup('close');
-                                    window.location.reload();
-                                }
-                            }
-
-                        });
-                        e.preventDefault();
-                        return false;
-                    };
                     $("#popupSubContent").on('submit', 'form', submitHandler);
                 }
             });
@@ -293,14 +293,15 @@ $(function() {
                     method: 'GET'
                 },
                 url,
-                function(){ //ok click
+                function(e){
                     $("#elementForm").submit();
-                    return false;
+                    e.preventDefault();
                 },
                 null,
                 function(){
                     $("#popupContent").removeClass("popupContent")
                                       .addClass("popupSubContent");
+                    $('#popupContent form').submit(submitHandler);
                 }
             );
         }
