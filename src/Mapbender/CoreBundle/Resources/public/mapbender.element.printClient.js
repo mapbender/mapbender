@@ -271,7 +271,7 @@
         },
     
         _getPrintScale: function() {
-            return $('select[name="scale_select"],input[name="scale_text"]').filter(':visible').val();
+            return $('select[name="scale_select"],input[name="scale_text"]').val();
         },
     
         _print: function() {
