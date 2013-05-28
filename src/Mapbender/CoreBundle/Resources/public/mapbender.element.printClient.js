@@ -67,9 +67,10 @@
                 });
                 me.show();
             }
-            
-            this._loadPrintFormats();           
-            this._updateElements();                
+
+            this._loadPrintFormats();
+            this.popup = true;
+            this._updateElements();
             this._updateGeometry(true);
         },
     
