@@ -27,7 +27,7 @@ $.widget("mapbender.mbRuler", {
         if(!Mapbender.checkTarget("mbRuler", this.options.target)){
             return;
         }
-        
+
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
     },
 
@@ -77,22 +77,21 @@ $.widget("mapbender.mbRuler", {
 
         this.map = $('#' + this.options.target);
 
-        this.segments = $('<ul/>').appendTo(this.element);
+        this.segments = $('<ul/>');
         if(this.options.type === 'area') {
             // We don't want to show partials for areas
             this.segments.hide();
         }
 
         this.total = $('<div/>').appendTo(this.element);
-
-        // this.element.bind('dialogclose', $.proxy(this.deactivate, this));
     },
 
     /**
      * This activates this button and will be called on click
      */
     activate: function() {
-        var olMap = this.map.data('mapQuery').olMap;
+        var self = this,
+            olMap = this.map.data('mapQuery').olMap;
         olMap.addControl(this.control);
         this.control.activate();
 
@@ -101,14 +100,15 @@ $.widget("mapbender.mbRuler", {
         if(!$('body').data('mbPopup')) {
             $("body").mbPopup();
             $("body").mbPopup('addButton', "Close", "button right", function(){
-                        $("body").mbPopup('close');
-                        if(self.options.deactivate) {
-                            $.proxy(self.deactivate, self);
-                        }
-                     }).mbPopup('showCustom', {title:this.options.title, 
-                                           content: "Nothing selected.", 
+                    self.deactivate();
+                    $("body").mbPopup('close');
+                    if(self.options.deactivate) {
+                        $.proxy(self.deactivate, self);
+                    }
+                }).mbPopup('showCustom', {title:this.options.title,
+                                           content: self.segments,
                                            showCloseButton: false,
-                                           modal:false, 
+                                           modal:false,
                                            width:300,
                                            draggable:true});
         }
@@ -119,20 +119,14 @@ $.widget("mapbender.mbRuler", {
      * this group is activated.
      */
     deactivate: function() {
+        this.segments.detach();
         var olMap = this.map.data('mapQuery').olMap;
         this.control.deactivate();
         olMap.removeControl(this.control);
-
-        if(this.element.dialog('isOpen')) {
-            this.element.dialog('close');
-        }
     },
 
     _reset: function() {
         this.segments.empty();
-        if($('body').data('mbPopup')) {
-            $("body").mbPopup('setContent', '');
-        }
     },
 
     _handleModify: function(event) {
