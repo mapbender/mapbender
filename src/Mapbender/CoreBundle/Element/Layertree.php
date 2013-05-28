@@ -66,7 +66,8 @@ class Layertree extends Element
      */
     public function getAssets()
     {
-        return array('js' => array('mapbender.element.layertree.js'),'css' => array()
+        return array('js' => array('mapbender.element.layertree.js',
+                                   '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),'css' => array()
         );
     }
 
