@@ -15,7 +15,7 @@
         },
 
         _onClick: function() {
-            if(!$('body').data('mapbenderMbPopup')) {
+            if(!$('body').data('mbPopup')) {
                 $.get(this.elementUrl + 'about', function(data) {
                     $("body").mbPopup();
                     $("body").mbPopup('showHint', {title:"About Mapbender", showHeader:true, content: data});
