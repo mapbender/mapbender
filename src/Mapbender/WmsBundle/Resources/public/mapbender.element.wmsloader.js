@@ -59,7 +59,10 @@
 
         loadWms: function(getCapabilitiesUrl) {
             var self = this;
-            if(getCapabilitiesUrl === null || getCapabilitiesUrl === '') return;
+            if(getCapabilitiesUrl === null || getCapabilitiesUrl === '' || getCapabilitiesUrl.toLowerCase().indexOf("http://") !== 0){
+                Mapbender.error("A WMS cannot be loaded!");
+                return;
+            }
             var params = OpenLayers.Util.getParameters(getCapabilitiesUrl);
             var version, request, service;
             for(param in params){
