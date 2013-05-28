@@ -55,6 +55,7 @@ class SrsSelector extends Element
         return array(
             'js' => array(
                 'mapbender.element.srsselector.js',
+                '@FOMCoreBundle/Resources/public/js/frontend/components.js',
                 'proj4js/proj4js-compressed.js'),
             'css' => array()
         );
@@ -99,4 +100,5 @@ class SrsSelector extends Element
     {
         return 'MapbenderManagerBundle:Element:srsselector.html.twig';
     }
+
 }

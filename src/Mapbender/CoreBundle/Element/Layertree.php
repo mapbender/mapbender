@@ -67,7 +67,9 @@ class Layertree extends Element
     public function getAssets()
     {
         return array('js' => array('mapbender.element.layertree.js',
-                                   '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),'css' => array()
+                '@FOMCoreBundle/Resources/public/js/frontend/components.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),
+            'css' => array()
         );
     }
 
@@ -112,5 +114,6 @@ class Layertree extends Element
     {
         return 'MapbenderManagerBundle:Element:layer_tree.html.twig';
     }
+
 }
 
