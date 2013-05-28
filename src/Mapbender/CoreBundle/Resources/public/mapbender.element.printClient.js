@@ -46,8 +46,8 @@
             var self = this;
             var me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            if(!$('body').data('mbPopup')) {             
-                $("body").mbPopup();         
+            if(!$('body').data('mapbenderMbPopup')) {
+                $("body").mbPopup();
                 $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
                     //close
                     $("body").mbPopup("close");
