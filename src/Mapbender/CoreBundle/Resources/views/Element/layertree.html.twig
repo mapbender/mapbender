@@ -1,33 +1,38 @@
 <div id="{{ id }}" class="mb-element mb-element-layertree">
-    <li data-sourceid="" data-id="" data-type="" class="hide-elm">
-        <div class="layer-properties">
-            <span class="layer-spinner"></span>
-            <span class="layer-state" title=""></span>
-            <input class="layer-selected" type="checkbox" title="{{ 'Visibility selector' | trans  }}" name="selected">
-            <input class="layer-info" type="checkbox" title="{{ 'FeatureInfo selector' | trans  }}" name="info">
-            <span class="layer-title" title=""></span>
-            <span class="layer-menu-btn">&#9776;
-                <div class="layer-menu hide-elm">
-                    <div class="layer-opacity">
-                        <div class="layer-opacity-slider"></div>
-                        <div class="layer-opacity-labels">
-                            <span class="layer-opacity-label-hundred">100 %</span>
-                            <span class="layer-opacity-label">{{ "Transparency"|trans }}</span>
-                            <span class="layer-opacity-label-zero">0 %</span>
-                        </div>
-                    </div>
-                    <span class="layer-zoom span-btn">{{'Zoom to layer'|trans }}</span>
-                    <span class="layer-metadata span-btn">{{'Metadata'|trans }}</span>
-                    <span class="layer-legend span-btn">{{'Legend'|trans }}</span>
-                    <span class="layer-kmlexport span-btn">{{'KML Export'|trans }}</span>
-                </div>
-            </span>
-            <span class="layer-remove-btn">&times;</span>
+  <li class="hide-elm leave showLeaves">
+    <div class="leaveContainer">
+      <span class="layer-spinner"></span>
+      <span class="layer-state"></span>
+      <span class="iconFolder left"></span>
+      <div class="checkWrapper left iconCheckbox">
+        <input class="layer-selected checkbox" type="checkbox" title="{{ 'Visibility selector' | trans  }}" name="selected">
+      </div>
+      <div class="checkWrapper left iconInfo featureInfoWrapper">
+        <input class="layer-info checkbox" type="checkbox" title="{{ 'FeatureInfo selector' | trans  }}" name="info"/>
+      </div>
+      <span class="layer-title labelCheck"></span>
+      <span class="layer-menu-btn">&#9776;
+        <div class="layer-menu hide-elm">
+          <div class="layer-opacity">
+            <div class="layer-opacity-slider"></div>
+            <div class="layer-opacity-labels">
+              <span class="layer-opacity-label-hundred">100 %</span>
+              <span class="layer-opacity-label">{{ "Transparency"|trans }}</span>
+              <span class="layer-opacity-label-zero">0 %</span>
+            </div>
+          </div>
+          <span class="layer-zoom span-btn">{{'Zoom to layer'|trans }}</span>
+          <span class="layer-metadata span-btn">{{'Metadata'|trans }}</span>
+          <span class="layer-legend span-btn">{{'Legend'|trans }}</span>
+          <span class="layer-kmlexport span-btn">{{'KML Export'|trans }}</span>
         </div>
-        <ul id="list-first" class="layers"></ul>
-    </li>
-    {% if configuration.showHeader %}
-        <h2>{{ 'Sources' | trans }} (<span id="counter">0</span>)<a href="#" id="delete-all" class="icononly" title="{{ 'Delete all Sources' |trans }}">&times;</a></h2>
-    {% endif %}
-        <ul id="list-root" class="layers" ></ul>
+      </span>
+      <span class="iconRemove"></span>
     </div>
+    <ul id="list-first" class="layers"></ul>
+  </li>
+  {% if configuration.showHeader %}
+  <h2>{{ 'Sources' | trans }} (<span id="counter">0</span>)<a href="#" id="delete-all" class="icononly" title="{{ 'Delete all Sources' |trans }}">&times;</a></h2>
+  {% endif %}
+  <ul id="list-root" class="layers" ></ul>
+</div>

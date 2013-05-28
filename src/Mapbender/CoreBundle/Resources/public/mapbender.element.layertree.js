@@ -9,7 +9,6 @@
         model: null,
         dlg: null,
         template: null,
-        //        elementUrl: null,
         layerconf : null,
         consts: {
             source: "source", 
@@ -57,7 +56,7 @@
 
             $(this.element).find('li input[name="selected"]').live("change", $.proxy(self._toggleSelected, self));
             $(this.element).find('li input[name="info"]').live("change", $.proxy(self._toggleInfo, self));
-            $(this.element).find('li span.toggleable').live("click", $.proxy(self._toggleContent, self));
+            $(this.element).find('.iconFolder').live("click", $.proxy(self._toggleContent, self));
             $(this.element).find('#delete-all').live("click", $.proxy(self._removeAllLayers, self));
             
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
@@ -67,7 +66,7 @@
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
             
-            $(this.element).find('.layer-remove-btn').live("click", $.proxy(self._removeSource, self));
+            $(this.element).find('.iconRemove').live("click", $.proxy(self._removeSource, self));
             $(this.element).find('.layer-menu-btn').live("click", $.proxy(self._toggleMenu, self));
             
             if(this.options.type === "dialog"){
@@ -201,7 +200,6 @@
         },
         
         _onSourceChanged: function(event, changed){
-            window.console && console.log("mbLayertree._onSourceChanged:", changed);
             if(this.options.displaytype === "tree"){
                 for(key in changed.children){
                     var changedEl = changed.children[key];
@@ -244,7 +242,6 @@
         },
         
         _onSourceLoadStart: function(event, option){ // sets "loading" for layers
-            window.console && console.log("mbLayertree._onSourceLoadStart:", event);
             if(!option.source)
                 return;
             var source = option.source;
@@ -272,7 +269,6 @@
         },
         
         _onSourceLoadEnd: function(event, option){ // removes "loading" from layers
-            //            window.console && console.log("mbLayertree._onSourceLoadEnd:", event);
             if(!option.source)
                 return;
             var source = option.source;
@@ -287,7 +283,6 @@
             }
         },
         _onSourceLoadError: function(event, option){ // sets "error" for layers
-            //            window.console && console.log("mbLayertree._onSourceLoadError:", event);
             if(!option.source)
                 return;
             if(this.options.displaytype === "tree"){
@@ -322,9 +317,17 @@
                 li.removeClass('hide-elm');
                 li.attr('data-id', sourceEl.options.id);
                 isroot ? li.attr('data-sourceid', source.id) : li.removeAttr('data-sourceid');
-                li.attr('data-type', this._getNodeType(sourceEl, isroot));
+                var nodeType = this._getNodeType(sourceEl, isroot);
+                li.attr('data-type', nodeType);
+
+                if(nodeType == this.consts.root){
+                    li.addClass("serviceContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
+                }else if(nodeType == this.consts.group){
+                    li.addClass("groupContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
+                }
+
                 li.addClass(config.reorder);
-                li.find('.layer-state').attr('title', config.visibility.tooltip);//.addClass('config.visibility.state');
+                li.find('.layer-state').attr('title', config.visibility.tooltip);
                 li.find('input.layer-selected').attr('checked', config.selected ? 'checked' : null);
                 if(!config.selectable) li.find('input.layer-selected').attr('disabled', 'disabled');
                 li.find('input.layer-info').attr('checked', config.info ? 'checked' : null);
@@ -349,7 +352,7 @@
                     menu.find('.layer-metadata').bind("click", function(e){ e.stopPropagation(); self._showMetadata(sourceEl); });
                     
                 }
-                if(!this.options.layerRemove) li.find('.layer-remove-btn').remove();
+                if(!this.options.layerRemove) li.find('.iconRemove').remove();
                 if(sourceEl.children){
                     li.find('ul:first').attr('id', 'list-'+sourceEl.options.id);
                     for(var j = sourceEl.children.length; j > 0; j--){
@@ -386,7 +389,7 @@
                     li.find('.layer-title').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if(config.toggleable) li.find('.layer-title').addClass('toggleable');
                     if(!this.options.layerMenu) li.find('.layer-menu-btn').remove();
-                    if(!this.options.layerRemove) li.find('.layer-remove-btn').remove();
+                    if(!this.options.layerRemove) li.find('.iconRemove').remove();
                     if(sourceEl.children){
                         li.find('ul:first').attr('id', 'list-'+sourceEl.options.id);
                         for(var j = 0; j < sourceEl.children.length; j++){
@@ -432,22 +435,6 @@
                     }
                 } else {
                     var config = this._getNodeProporties(sourceEl);
-//                    var li ='<li data-sourceid="'+source.id+'" data-id="'+sourceEl.options.id+'" data-type="'+this._getNodeType(sourceEl, isroot)+'" class="' + config.reorder + '" >'
-//                    +   '<span class="spinner"></span>'
-//                    +   '<span class="state '+config.visibility.state+'" title="'+config.visibility.tooltip+'"></span>'
-//                    +   '<input type="checkbox" title="selected" name="selected" '+ config.sel +' ' + config.selable + '/>'
-//                    +   '<input type="checkbox" title="query" name="info" '+ config.info +' ' + config.infoable + '/>'
-//                    +   '<span class="sourcetitle '+config.toggleable+'" title="'+sourceEl.options.title+'">' + this._subStringText(sourceEl.options.title) + '</span>';
-//                    if(this.options.layerMenu){
-//                        li += '<span class="menubutton">&#9776;</span>';
-//                    }
-//                    if(this.options.layerRemove){
-//                        li += '<span class="removebutton">&times;</span>';
-//                    }
-//                    //                li += this._createMenu();
-//
-//                    li += '</li>';
-                    
                     var li = this.template.clone();
                     li.removeClass('hide-elm');
                     li.attr('data-sourceid', sourceEl.options.id).attr('data-id', sourceEl.options.id).attr('data-type', this._getNodeType(sourceEl, isroot)).addClass(config.reorder);
@@ -494,11 +481,9 @@
                     }
                     li += '</li>';
                     if(sourceEl.children){
-                        //                        li +=     '<ul id="list-'+sourceEl.options.id+'" class="layers ' + config.toggle + '">';
                         for(var j = 0; j < sourceEl.children.length; j++){
                             li += this._createListNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found);
                         }
-                    //                        li +=     '</ul>';
                     }
                     found = false;
                     return li;
@@ -556,12 +541,6 @@
                 info: nodeConfig.options.treeOptions.info,
                 infoable: nodeConfig.options.treeOptions.allow.info,
                 reorderable: nodeConfig.options.treeOptions.allow.reorder
-//                ,
-//                sel: nodeConfig.options.treeOptions.selected ? 'checked="checked"' : '',
-//                selable: nodeConfig.options.treeOptions.allow.selected ? '' : 'disabled="disabled"',
-//                info: nodeConfig.options.treeOptions.info ? 'checked="checked"' : '',
-//                infoable: nodeConfig.options.treeOptions.allow.info ? '' : 'disabled="disabled"',
-//                reorder: nodeConfig.options.treeOptions.allow.reorder ? '' : 'notreorder'
             };
             if(nodeConfig.children){
                 conf["toggle"] = nodeConfig.options.treeOptions.toggle;
@@ -570,13 +549,7 @@
                 conf["toggle"] = null;
                 conf["toggleable"] = null;
             }
-//            if(nodeConfig.children){
-//                conf["toggle"] = nodeConfig.options.treeOptions.toggle ? '' : 'closed';
-//                conf["toggleable"] = nodeConfig.options.treeOptions.allow.toggle ? 'toggleable' : '';
-//            } else {
-//                conf["toggle"] = '';
-//                conf["toggleable"] = '';
-//            }
+
             if(nodeConfig.state.outOfScale){
                 conf["visibility"] = {
                     state: "invisible", 
@@ -602,10 +575,13 @@
         },
         
         _toggleContent: function(e){
-            if($(e.target).parents("li:first").find("ul.layers").hasClass("closed")){
-                $(e.target).parents("li:first").find("ul.layers").removeClass("closed");
-            } else {
-                $(e.target).parents("li:first").find("ul.layers").addClass("closed");
+            var me = $(e.target);
+            if(me.hasClass("iconFolderActive")){
+                me.removeClass("iconFolderActive");
+                me.parent().parent().removeClass("showLeaves");
+            }else{
+                me.addClass("iconFolderActive");
+                me.parent().parent().addClass("showLeaves");
             }
         },
     
@@ -673,20 +649,15 @@
         },
         
         _showLegend: function(elm){
-            
-            window.console && console.log("_showLegend", elm);
         },
     
         _exportKml: function(elm){
-            window.console && console.log("_exportKml", elm);
         },
         
         _zoomToLayer: function(elm){
-            window.console && console.log("_zoomToLayer", elm);
         },
         
         _showMetadata: function(elm){
-            window.console && console.log("_showMetadata", elm);
         },
         
         _setSourcesCount: function(){
@@ -721,14 +692,16 @@
         },
     
         open: function(){
-            if(this.options.type === 'dialog' && this.dlg !== null){
-                this.dlg.dialog('open');
+            console.log(this.options.type)
+            if(this.options.type === 'dialog' && (!$('body').data('mbPopup'))){
+                $("body").mbPopup();
+                $("body").mbPopup('showHint', {title:this.options.title, showHeader:true, content: this.element, width:350});
             }
         },
         
         close: function(){
-            if(this.options.type === 'dialog' && this.dlg !== null){
-                this.dlg.dialog('close');
+            if(this.options.type === 'dialog' && ($('body').data('mbPopup'))){
+                $("body").mbPopup("close");
             }
         },
     
@@ -745,17 +718,6 @@
                 });
                 self.dlg.html($(self.element));
             }
-        //            if(this.options.useAccordion){
-        ////                $(this.element).find('ul.layers > li').each(function(){
-        //var a = $(this.element).find('ul.layers li[data-type="root"]');
-        //                    $(this.element).find('ul.layers li[data-type="root"]').accordion({
-        //                        header: 'div.title',
-        //                        autoHeight: false, 
-        //                        collapsible: true, 
-        //                        active: false
-        //                    });
-        ////                });
-        //            }
         },
     
         _destroy: $.noop
