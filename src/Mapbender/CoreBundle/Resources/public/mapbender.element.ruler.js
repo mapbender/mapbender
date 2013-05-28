@@ -98,7 +98,7 @@ $.widget("mapbender.mbRuler", {
 
         this._reset();
 
-        if(!$('body').data('mapbenderMbPopup')) {
+        if(!$('body').data('mbPopup')) {
             $("body").mbPopup();
             $("body").mbPopup('addButton', "Close", "button right", function(){
                         $("body").mbPopup('close');
@@ -130,7 +130,7 @@ $.widget("mapbender.mbRuler", {
 
     _reset: function() {
         this.segments.empty();
-        if($('body').data('mapbenderMbPopup')) {
+        if($('body').data('mbPopup')) {
             $("body").mbPopup('setContent', '');
         }
     },
