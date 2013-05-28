@@ -4,7 +4,7 @@
         options: {},
 
         _create: function() {
-            $('#' + $(this.element).attr("id") + "-link").click($.proxy(this._onClick, this));
+            $('#' + $(this.element).attr("id")).find('.mb-element-copyright-link').click($.proxy(this._showTermsOfUse, this));
         },
 
         _onClick: function() {
