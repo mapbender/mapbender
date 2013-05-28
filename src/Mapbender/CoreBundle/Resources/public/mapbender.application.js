@@ -233,7 +233,7 @@ Mapbender.DefaultModel = {
             });
         } else {
             this.center({
-                box: start_extent.toArray()
+                box: start_extent.extent ? start_extent.extent.toArray() : start_extent.toArray()
             });
         }
         $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
