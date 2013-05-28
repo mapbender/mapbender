@@ -18,6 +18,7 @@ $.widget("mapbender.mbRuler", {
     map: null,
     segments: null,
     total: null,
+    container: null,
 
     _create: function() {
         var self = this;
@@ -77,13 +78,14 @@ $.widget("mapbender.mbRuler", {
 
         this.map = $('#' + this.options.target);
 
-        this.segments = $('<ul/>');
+        this.container = $('<div/>');
+        this.segments = $('<ul/>').appendTo(this.container);
         if(this.options.type === 'area') {
             // We don't want to show partials for areas
             this.segments.hide();
         }
 
-        this.total = $('<div/>').appendTo(this.element);
+        this.total = $('<div/>').appendTo(this.container);
     },
 
     /**
@@ -106,7 +108,7 @@ $.widget("mapbender.mbRuler", {
                         $.proxy(self.deactivate, self);
                     }
                 }).mbPopup('showCustom', {title:this.options.title,
-                                           content: self.segments,
+                                           content: self.container,
                                            showCloseButton: false,
                                            modal:false,
                                            width:300,
@@ -119,7 +121,7 @@ $.widget("mapbender.mbRuler", {
      * this group is activated.
      */
     deactivate: function() {
-        this.segments.detach();
+        this.container.detach();
         var olMap = this.map.data('mapQuery').olMap;
         this.control.deactivate();
         olMap.removeControl(this.control);
@@ -127,6 +129,7 @@ $.widget("mapbender.mbRuler", {
 
     _reset: function() {
         this.segments.empty();
+        this.total.empty();
     },
 
     _handleModify: function(event) {
