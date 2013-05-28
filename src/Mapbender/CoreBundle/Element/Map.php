@@ -103,45 +103,6 @@ class Map extends Element
         }
         
         $extra = array();
-        $srs_req = $this->container->get('request')->get('srs');
-        if($srs_req)
-        {
-            if(!isset($ressrses[$srs]))
-            {
-                throw new \RuntimeException('The srs: "' . $srs_req
-                        . '" does not supported.');
-            }
-            $configuration = array_merge($configuration,
-                                         array('targetsrs' => $srs_req));
-            $poi = $this->container->get('request')->get('poi');
-            if($poi)
-            {
-                $extra['type'] = 'poi';
-                $point = split(',', $poi['point']);
-                $extra['data'] = array(
-                    'x' => floatval($point[0]),
-                    'y' => floatval($point[1]),
-                    'label' => $poi['label'],
-                    'scale' => $poi['scale']
-                );
-            }
-
-            $bbox = $this->container->get('request')->get('bbox');
-            if(!$poi && $bbox)
-            {
-                $bbox = explode(',', $bbox);
-                if(count($bbox) === 4)
-                {
-                    $extra['type'] = 'bbox';
-                    $extra['data'] = array(
-                        floatval($bbox[0]),
-                        floatval($bbox[1]),
-                        floatval($bbox[2]),
-                        floatval($bbox[3])
-                    );
-                }
-            }
-        }
 
         // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
@@ -196,6 +157,47 @@ class Map extends Element
                 $configuration["srsDefs"][] = $ressrses[$key];
             }
         }
+        
+        $srs_req = $this->container->get('request')->get('srs');
+        if($srs_req)
+        {
+            if(!isset($ressrses[$srs]))
+            {
+                throw new \RuntimeException('The srs: "' . $srs_req
+                        . '" does not supported.');
+            }
+            $configuration = array_merge($configuration,
+                                         array('targetsrs' => $srs_req));
+            $poi = $this->container->get('request')->get('poi');
+            if($poi)
+            {
+                $extra['type'] = 'poi';
+                $point = split(',', $poi['point']);
+                $extra['data'] = array(
+                    'x' => floatval($point[0]),
+                    'y' => floatval($point[1]),
+                    'label' => $poi['label'],
+                    'scale' => $poi['scale']
+                );
+            }
+
+            $bbox = $this->container->get('request')->get('bbox');
+            if(!$poi && $bbox)
+            {
+                $bbox = explode(',', $bbox);
+                if(count($bbox) === 4)
+                {
+                    $extra['type'] = 'bbox';
+                    $extra['data'] = array(
+                        floatval($bbox[0]),
+                        floatval($bbox[1]),
+                        floatval($bbox[2]),
+                        floatval($bbox[3])
+                    );
+                }
+            }
+        }
+        
         if(!isset($configuration['scales']))
         {
             throw new \RuntimeException('The scales does not defined.');
