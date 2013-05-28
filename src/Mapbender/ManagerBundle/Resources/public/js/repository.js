@@ -9,54 +9,59 @@ $(function() {
     return false;
   }
 
-  var toggleInstanceTableStatus = function(e,target) {
-    if(typeof target === "undefined") {
-        var maxCount = $(this).closest('tr').siblings().length;
-        var myClass = $(this).closest('td').attr('data-cb');
-        var count = $(this).closest('tbody').find('td[data-cb="' + myClass + '"]').find('input:checked').length;
-        var disabled = $(this).closest('tbody').find('td[data-cb="' + myClass + '"]').find('.checkboxDisabled').length
-    } else {
-        var myClass = target;
-        var maxCount = $('td[data-cb="' + myClass + '"]').length;
-        var count = $('td[data-cb="' + myClass + '"]').closest('tbody').find('td[data-cb="' + myClass + '"]').find('input:checked').length;
-        var disabled = $('td[data-cb="' + myClass + '"]').closest('tbody').find('td[data-cb="' + myClass + '"]').find('.checkboxDisabled').length;
+  function setRootState(className){
+        var root         = $("#" + className);
+        var column       = $("#instanceTableCheckBody").find("[data-check-identifier=" + className + "]")
+        var rowCount     = column.find(".checkWrapper:not(.checkboxDisabled)").length;
+        var checkedCount = column.find(".iconCheckboxActive").length;
+
+        root.removeClass("iconCheckboxActive").removeClass("iconCheckboxHalf");
+
+        if(rowCount == checkedCount){
+            root.addClass("iconCheckboxActive");
+        }else if(checkedCount == 0){
+            // do nothing!
+        }else{
+            root.addClass("iconCheckboxHalf");
+        }
     }
+    // toggle all permissions
+    var toggleAllStates = function(){
+        var self          = $(this);
+        var className     = self.attr("id");
+        var checkElements = $(".checkboxColumn[data-check-identifier=" + className + "]");
+        var state         = !self.hasClass("iconCheckboxActive");
+        var me;
 
-    // none checked
-    if(count === 0) {
-        $('#' + myClass).removeClass().addClass('iconCheckbox');
-    // all checked
-    } else if((maxCount - disabled) === count) {
-        $('#' + myClass).removeClass().addClass('iconCheckboxActive');
-    // some checked
-    } else {
-        $('#' + myClass).removeClass().addClass('iconCheckboxHalf');
+        // change all tagboxes with the same permission type
+        checkElements.find(".checkbox:not(:disabled)").each(function(i,e){
+            me = $(e);
+            me.get(0).checked = state;
+
+            if(state){
+                me.parent().addClass("iconCheckboxActive");
+            }else{
+                me.parent().removeClass("iconCheckboxActive");
+            }
+        });
+
+        // change root permission state
+        setRootState(className);
     }
-  }
+    // init permission root state
+    var initRootState = function(){
+        $(this).find(".iconCheckbox").each(function(){
+            setRootState($(this).attr("id"));
+            $(this).bind("click", toggleAllStates);
+        });    
+    }
+    $("#instanceTableCheckHead").one("load", initRootState).load();
 
-  var toggleInstanceRowsStatus = function() {
-  	var myClass = $(this).attr('id');
-
-		$(this).closest('table')
-			.find('td[data-cb="' + myClass + '"]')
-      .find('div:not(.checkboxDisabled)')
-			.find('input').prop("checked", !$(this).hasClass("iconCheckboxActive"))
-			.change();
-
-  	toggleInstanceTableStatus(null, myClass);
-  }
+    // toggle permission Event
+    var toggleState = function(){
+        setRootState($(this).parent().attr("data-check-identifier"));
+    }
 
   $("#instanceTable").on("click", ".iconMore", showInfoBox); 
-  $('#instanceTable').on("click", ".checkbox", toggleInstanceTableStatus);
-  $('#instanceTable').on("click", "thead span", toggleInstanceRowsStatus);
-
-  toggleInstanceTableStatus(null, 'cb-active');
-  toggleInstanceTableStatus(null, 'cb-select-on');
-  toggleInstanceTableStatus(null, 'cb-select-allow');
-	toggleInstanceTableStatus(null, 'cb-info-on');
-	toggleInstanceTableStatus(null, 'cb-info-allow');
-	toggleInstanceTableStatus(null, 'cb-toggle-on');
-	toggleInstanceTableStatus(null, 'cb-toggle-allow');
-	toggleInstanceTableStatus(null, 'cb-recorder-allow');
-
+  $(document).on("click", "#instanceTable .checkWrapper", toggleState);
 });
