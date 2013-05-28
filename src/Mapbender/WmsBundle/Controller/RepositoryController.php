@@ -238,11 +238,12 @@ class RepositoryController extends Controller
      */
     public function instanceAction($slug, $instanceId)
     {
+        $wmsinstance = $this->getDoctrine()
+            ->getRepository("MapbenderWmsBundle:WmsInstance")
+            ->find($instanceId);
+
         if($this->getRequest()->getMethod() == 'POST')
         { //save
-            $wmsinstance = $this->getDoctrine()
-                    ->getRepository("MapbenderWmsBundle:WmsInstance")
-                    ->find($instanceId);
             $wmsinstance_req = new WmsInstance();
             $wmsinstance_req->setSource($wmsinstance->getSource());
             $form_req = $this->createForm(
@@ -305,9 +306,6 @@ class RepositoryController extends Controller
             }
         } else
         { // edit
-            $wmsinstance = $this->getDoctrine()
-                    ->getRepository("MapbenderWmsBundle:WmsInstance")
-                    ->find($instanceId);
             $form = $this->createForm(
                     new WmsInstanceInstanceLayersType(), $wmsinstance);
             $fv = $form->createView();

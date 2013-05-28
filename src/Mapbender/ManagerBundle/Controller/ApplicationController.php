@@ -531,15 +531,23 @@ class ApplicationController extends Controller
                 ->getRepository("MapbenderCoreBundle:Layerset")
                 ->find($layersetId);
 
+        $securityContext = $this->get('security.context');
         $em = $this->getDoctrine()->getEntityManager();
         $query = $em->createQuery(
                 "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
 
+        $allowed_sources = array();
+        foreach($sources as $source) {
+            if($securityContext->isGranted('EDIT', $source)) {
+                $allowed_sources[] = $source;
+            }
+        }
+
         return array(
             'application' => $application,
             'layerset' => $layerset,
-            'sources' => $sources);
+            'sources' => $allowed_sources);
     }
 
     /**

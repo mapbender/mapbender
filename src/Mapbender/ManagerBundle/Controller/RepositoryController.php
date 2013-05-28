@@ -17,6 +17,7 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Entity\Source;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * @ManagerRoute("/repository")
@@ -124,6 +125,16 @@ class RepositoryController extends Controller {
         $sourceInst = $this->getDoctrine()
                         ->getRepository("MapbenderCoreBundle:SourceInstance")
                         ->find($instanceId);
+
+        if(null === $sourceInst) {
+            throw $this->createNotFoundException('Instance does not exist');
+        }
+
+        $securityContext = $this->get('security.context');
+        if(!$securityContext->isGranted('EDIT', $sourceInst)) {
+            throw new AccessDeniedHttpException();
+        }
+
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
         return  $this->forward(
