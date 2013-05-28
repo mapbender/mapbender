@@ -14,28 +14,26 @@
             if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
                 return;
             }
-            $(document).one('mapbender.setupfinished', function() {
-                $('#' + self.options.target).mbMap('ready', $.proxy(self._setup, self));
-            });
             
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
 
         _setup: function(){
-            var self = this;
-            var me = $(this.element);
-            this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
+//            var self = this;
+//            var me = $(this.element);
+//            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id');
 
-            me.click(function() {
-                console.log("click")
-               self._onClick.call(self);
-            });
-
-            if(document.URL.indexOf('url=') !== -1) {
-                var url = document.URL.substr((document.URL.indexOf('url=') + 4));
-                url = decodeURIComponent((url + ''));
-                url = decodeURIComponent((url + ''));
-                this.loadWms(url.replace(/\+/g, '%20'));
-            }
+//            me.click(function() {
+//                console.log("click")
+//                self._onClick.call(self);
+//            });
+//
+//            if(document.URL.indexOf('url=') !== -1) {
+//                var url = document.URL.substr((document.URL.indexOf('url=') + 4));
+//                url = decodeURIComponent((url + ''));
+//                //                url = decodeURIComponent((url + ''));
+//                this.loadWms(url.replace(/\+/g, '%20'));
+//            }
         },
 
         open: function() {
@@ -46,12 +44,16 @@
                 var content = this.element.show();
 
                 $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
-                            $("body").mbPopup("close");
-                         }).mbPopup("addButton", "Load", "button right", function(){
-                            self.loadWms.call(self,$(this).find(".url").val());
-                            $("body").mbPopup("close");
-                         })
-                         .mbPopup('showCustom', {title:this.options.title, content: content});
+                    $("body").mbPopup("close");
+                }).mbPopup("addButton", "Load", "button right", function(){
+                    self.loadWms.call(self,$('#' + $(self.element).attr('id') + ' input[name="loadWmsUrl"]').val());//.url").val());
+                    $("body").mbPopup("close");
+                    
+                })
+                .mbPopup('showCustom', {
+                    title:this.options.title, 
+                    content: content
+                });
             }
         },
 
@@ -90,7 +92,7 @@
                     url: getCapabilitiesUrl
                 },
                 dataType: 'text',
-//                context: this,
+                //                context: this,
                 success: function(data, textStatus, jqXHR) {
                     self._getCapabilitiesUrlSuccess(data, getCapabilitiesUrl);
                 },
@@ -110,7 +112,7 @@
         },
         
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR) {
-            alert("oh npo"); //  ???
+            Mapbender.error("A WMS cannot be loaded!"); //  ???
         },
 
         _destroy: $.noop
