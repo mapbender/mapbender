@@ -46,7 +46,8 @@ $.widget("mapbender.mbOverview", {
                         layers_overview.push(new OpenLayers.Layer.WMS(
                             layerDef.title,
                             layerDef.configuration.options.url, {
-                                layers: ls.substring(1)
+                                layers: ls.substring(1),
+                                format: layerDef.configuration.options.format
                             }));
                         self._addOrigLayerExtent(layerDef);
                     }
