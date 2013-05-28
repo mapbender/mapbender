@@ -47,7 +47,11 @@ class CopyrightAdminType extends AbstractType
                         'right-top' => 'right-top',
                         'right-bottom' => 'right-bottom')))
                 ->add('copyright_text', 'text', array('required' => false))
-                ->add('dialog_link', 'text', array('required' => false))
+                ->add('copyright_link', 'text', array('required' => false))
+                ->add('link_type', 'choice', array(
+                    'choices' => array('' => ' ','dialog' => 'dialog', 'url' => 'url'),
+                    'required' => false))
+                ->add('link_url', 'text', array('required' => false))
                 ->add('dialog_content', 'textarea', array('required' => false))
                 ->add('dialog_title', 'text', array('required' => false));
     }
