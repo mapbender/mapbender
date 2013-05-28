@@ -4,11 +4,11 @@
         options: {},
 
         _create: function() {
-            $('#' + $(this.element).attr("id") + "-link").click($.proxy(this._onClick, this));
+            $('#' + $(this.element).attr("id")).find('.mb-element-copyright-link').click($.proxy(this._showTermsOfUse, this));
         },
 
         _onClick: function() {
-            if(!$('body').data('mapbenderMbPopup')) {
+            if(!$('body').data('mbPopup')) {
                 var source = $('#' + $(this.element).attr("id") + "-dialog");
                 var title = source.attr("title");
                 var content = source.find(".mb-element-copyright-content").text();

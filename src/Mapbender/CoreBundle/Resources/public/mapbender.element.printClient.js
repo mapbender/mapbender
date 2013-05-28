@@ -46,13 +46,12 @@
             var self = this;
             var me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            if(!$('body').data('mapbenderMbPopup')) {
+            if(!$('body').data('mbPopup')) {
                 $("body").mbPopup();
                 $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
                     //close
-                    $("body").mbPopup("close");
                     self._close();
-                    
+                    $("body").mbPopup("close");                    
                 }).mbPopup("addButton", "Print", "button right", function(){
                     //print
                     self._print();
@@ -75,6 +74,7 @@
         },
     
         _close: function() {
+            this.element.appendTo($('body'));
             this.popup = false;
             this._updateElements();
         },
@@ -271,7 +271,7 @@
         },
     
         _getPrintScale: function() {
-            return $('select[name="scale_select"],input[name="scale_text"]').filter(':visible').val();
+            return $('select[name="scale_select"],input[name="scale_text"]').val();
         },
     
         _print: function() {

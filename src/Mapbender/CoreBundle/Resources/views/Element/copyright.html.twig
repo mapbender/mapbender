@@ -1,7 +1,11 @@
 <span id="{{ id }}" class="mb-element mb-element-copyright {{configuration.anchor}}"  title="{{ configuration.tooltip|default(title)|trans }}">
     <span class="smallText span-copyright" title="">{{ configuration.copyright_text |trans |raw }}</span>
-    {% if configuration.dialog_link is defined and configuration.dialog_link != ''%}
-    <span id="{{ id }}-link" class="smallText mb-element-copyright-link">{{ configuration.dialog_link |trans |raw }}</span>
+    {% if configuration.link_type == 'url' %}
+    <br/>
+    <a id="{{ id }}-link" class="mb-element-copyright-link" href="{{ configuration.link_url }}" target="_BLANK">{{ configuration.copyright_link |trans |raw }}</a>
+    {% elseif configuration.link_type == 'dialog' %}
+    <br/>
+    <span id="{{ id }}-link" class="mb-element-copyright-link">{{ configuration.copyright_link |trans |raw }}</span>
     <div id="{{ id }}-dialog" class="mb-element-copyright-dialog" title="{{ configuration.dialog_title |trans |raw }}">
         <p class="mb-element-copyright-content">{{ configuration.dialog_content |trans |raw }}</p>
     </div>

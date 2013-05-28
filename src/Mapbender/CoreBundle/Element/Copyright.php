@@ -68,7 +68,9 @@ class Copyright extends Element
         return array(
             'tooltip' => 'Copyright',
             "copyright_text" => "© Mapbender3, " . date("Y"),
-            "dialog_link" => "Terms of use",
+            "copyright_link" => "Terms of use",
+            "link_type" => "",
+            "link_url" => null,
             "dialog_content" => "Terms of use (Content)",
             "dialog_title" => "Terms of use",
             'width' => "200px",

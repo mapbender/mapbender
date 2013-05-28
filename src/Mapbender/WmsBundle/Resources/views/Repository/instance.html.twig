@@ -71,20 +71,20 @@
           <th class="checkboxColumn smallText">{{"allow"|trans}}</th>
           <th></th>
         </tr>
-        <tr>
+        <tr id="instanceTableCheckHead">
           <th colspan="4"></th>
-          <th class="checkboxColumn"><span id="cb-active" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="cb-select-on" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="cb-select-allow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn"><span id="cb-info-on" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn"><span id="cb-info-allow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="cb-toggle-on" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn odd"><span id="cb-toggle-allow" class="iconCheckbox"></span></th>
-          <th class="checkboxColumn"><span id="cb-recorder-allow" class="iconCheckbox"></span></th>
+          <th class="checkboxColumn"><span id="checkActive" class="iconCheckbox"></span></th>
+          <th class="checkboxColumn odd"><span id="checkSelectOn" class="iconCheckbox"></span></th>
+          <th class="checkboxColumn odd"><span id="checkSelectAllow" class="iconCheckbox"></span></th>
+          <th class="checkboxColumn"><span id="checkInfoOn" class="iconCheckbox"></span></th>
+          <th class="checkboxColumn"><span id="checkInfoAllow" class="iconCheckbox"></span></th>
+          <th class="checkboxColumn odd"><span id="checkToggleOn" class="iconCheckbox"></span></th>
+          <th class="checkboxColumn odd"><span id="checkToggleAllow" class="iconCheckbox"></span></th>
+          <th class="checkboxColumn"><span id="checkRecorderAllow" class="iconCheckbox"></span></th>
           <th></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="instanceTableCheckBody">
         {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form.layers, 'layer': instance.getrootlayer }%}
         <tr class="dummy">
           <td colspan="20"></td>
