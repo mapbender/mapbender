@@ -59,4 +59,34 @@ $(function() {
 	toggleInstanceTableStatus(null, 'cb-toggle-allow');
 	toggleInstanceTableStatus(null, 'cb-recorder-allow');
 
+
+  $('.instanceTable tbody').each(function() {
+      $(this).sortable({
+          cursor: 'move',
+          items: 'tr:not(.root,.dummy,.header)',
+          distance: 20,
+          containment: 'parent',
+          stop: function(event, ui) {
+              var item = $(ui.item),
+                  index = item.index() - item.prevAll('.header').length;
+
+              $.ajax({
+                  url: $(ui.item).attr("data-href"),
+                  type: "POST",
+                  data: {
+                      number: index,
+                      id: $(ui.item).attr("data-id")
+                  },
+                  success: function(data, textStatus, jqXHR){
+                      if(data.error && data.error !== ''){
+                          document.location.href = document.location.href;
+                      }
+                  },
+                  error: function(jqXHR, textStatus, errorThrown ){
+                      document.location.href = document.location.href;
+                  }
+              });
+          }
+      });
+  });
 });
