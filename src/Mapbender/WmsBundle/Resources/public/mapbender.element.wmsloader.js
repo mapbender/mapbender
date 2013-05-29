@@ -46,6 +46,10 @@
                 var content = this.element.show();
 
                 $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
+                            self.element
+                                .hide()
+                                .detach()
+                                .appendTo($('body'));
                             $("body").mbPopup("close");
                          }).mbPopup("addButton", "Load", "button right", function(){
                             self.loadWms.call(self,$(this).find(".url").val());
