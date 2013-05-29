@@ -690,21 +690,20 @@
             }
             this._setSourcesCount();
         },
-    
+
         open: function(){
-            console.log(this.options.type)
             if(this.options.type === 'dialog' && (!$('body').data('mbPopup'))){
                 $("body").mbPopup();
                 $("body").mbPopup('showHint', {title:this.options.title, showHeader:true, content: this.element, width:350});
             }
         },
-        
+
         close: function(){
             if(this.options.type === 'dialog' && ($('body').data('mbPopup'))){
                 $("body").mbPopup("close");
             }
         },
-    
+
         _initDialog: function() {
             var self = this;
             if(this.dlg === null) {
