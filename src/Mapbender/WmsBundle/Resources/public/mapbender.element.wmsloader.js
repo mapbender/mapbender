@@ -14,7 +14,7 @@
             if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
                 return;
             }
-            
+
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
 
@@ -30,6 +30,10 @@
                 var content = this.element.show();
 
                 $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
+                    self.element
+                        .hide()
+                        .detach()
+                        .appendTo($('body'));
                     $("body").mbPopup("close");
                 }).mbPopup("addButton", "Load", "button right", function(){
                     var url = $('#' + $(self.element).attr('id') + ' input[name="loadWmsUrl"]').val();
@@ -39,10 +43,10 @@
                     }
                     self.loadWms.call(self, url);//.url").val());
                     $("body").mbPopup("close");
-                    
+
                 })
                 .mbPopup('showCustom', {
-                    title:this.options.title, 
+                    title:this.options.title,
                     content: content
                 });
             }
@@ -50,7 +54,7 @@
 
         loadWms: function(getCapabilitiesUrl) {
             var self = this;
-            if(getCapabilitiesUrl === null || getCapabilitiesUrl === '' || 
+            if(getCapabilitiesUrl === null || getCapabilitiesUrl === '' ||
                 (getCapabilitiesUrl.toLowerCase().indexOf("http://") !== 0 && getCapabilitiesUrl.toLowerCase().indexOf("https://") !== 0)){
                 Mapbender.error("WMSLoader: a WMS capabilities can't be loaded! The capabilities url is not valid.");
                 return;
@@ -109,13 +113,13 @@
                 mbMap.addSource(layerDef, null, null);
             });
         },
-        
+
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR) {
             Mapbender.error("WMSLoader: a wms capabilities can't be loaded!");
         },
 
         _destroy: $.noop
     });
-    
+
 })(jQuery);
 

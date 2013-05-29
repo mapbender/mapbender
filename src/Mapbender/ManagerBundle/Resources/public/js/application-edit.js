@@ -36,7 +36,7 @@ $(function() {
             url: $(this).attr("data-href"),
             type: "POST",
             data: {
-                enabled: $(this).is(":checked")
+                enabled: !$(this).is(":checked")
             },
             success: function(data, textStatus, jqXHR){
                 if(data.error && data.error !== ''){
