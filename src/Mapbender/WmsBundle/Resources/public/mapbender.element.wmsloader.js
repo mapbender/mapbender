@@ -37,9 +37,9 @@
                         $('#' + $(self.element).attr('id') + ' input[name="loadWmsUrl"]').focus();
                         return false;
                     }
-                    self.loadWms.call(self, url);//.url").val());
+                    self.loadWms.call(self, url);
+
                     $("body").mbPopup("close");
-                    
                 })
                 .mbPopup('showCustom', {
                     title:this.options.title, 
@@ -91,9 +91,11 @@
                     url: getCapabilitiesUrl
                 },
                 dataType: 'text',
-                //                context: this,
                 success: function(data, textStatus, jqXHR) {
                     self._getCapabilitiesUrlSuccess(data, getCapabilitiesUrl);
+
+                    // Maybe to much, need to be scoped! 
+                    $(".checkbox").trigger("change");
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
