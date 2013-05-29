@@ -159,7 +159,7 @@ class ApplicationYAMLMapper
                     ->setTitle('YAML - ' . $id)
                     ->setApplication($application);
 
-            $weight = 0;
+            $weight = 0;            
             foreach($layerDefinitions as $id => $layerDefinition)
             {
                 $class = $layerDefinition['class'];

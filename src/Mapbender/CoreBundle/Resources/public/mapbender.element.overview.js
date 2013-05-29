@@ -46,7 +46,8 @@ $.widget("mapbender.mbOverview", {
                         layers_overview.push(new OpenLayers.Layer.WMS(
                             layerDef.title,
                             layerDef.configuration.options.url, {
-                                layers: ls.substring(1)
+                                layers: ls.substring(1),
+                                format: layerDef.configuration.options.format
                             }));
                         self._addOrigLayerExtent(layerDef);
                     }
@@ -62,7 +63,6 @@ $.widget("mapbender.mbOverview", {
                 extent: max_ext
             }
         };
-
         this.overview = new OpenLayers.Control.OverviewMap({
             div: $(self.element).find('#mb-element-overview-map').get(0),
             size: new OpenLayers.Size(self.options.width, self.options.height),
