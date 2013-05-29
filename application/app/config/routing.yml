@@ -18,6 +18,11 @@ mapbender_wmsbundle:
 mapbender_wmtsbundle:
     resource: "@MapbenderWmtsBundle/Controller/"
     type: annotation
+    
+mapbender_printbundle:
+    resource: "@MapbenderPrintBundle/Controller/"
+    type: annotation
+    prefix: "/print" 
 
 fom_managerbundle:
     resource: "@FOMManagerBundle/Controller"

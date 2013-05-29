@@ -35,6 +35,7 @@ class AppKernel extends Kernel
             new Mapbender\WmsBundle\MapbenderWmsBundle(),
             new Mapbender\WmtsBundle\MapbenderWmtsBundle(),
             new Mapbender\ManagerBundle\MapbenderManagerBundle(),
+            new Mapbender\PrintBundle\MapbenderPrintBundle(),
 
             //new Mapbender\DrupalIntegrationBundle\MapbenderDrupalIntegrationBundle(),
 
