@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "803118ce0f72cc4ee1aecf9904ac7932",
+    "hash": "9b5b82cf705dda777c97fa0df57614a1",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -582,7 +582,7 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
-                    "name": "Johannes M. Schmitt",
+                    "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -1040,12 +1040,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kriswallsmith/assetic.git",
-                "reference": "c24f69222dc837625715a6fa902a3e2fa4fb5038"
+                "reference": "de188e471f59918b0b523b8fc346761c2e4ff1a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kriswallsmith/assetic/zipball/c24f69222dc837625715a6fa902a3e2fa4fb5038",
-                "reference": "c24f69222dc837625715a6fa902a3e2fa4fb5038",
+                "url": "https://api.github.com/repos/kriswallsmith/assetic/zipball/de188e471f59918b0b523b8fc346761c2e4ff1a4",
+                "reference": "de188e471f59918b0b523b8fc346761c2e4ff1a4",
                 "shasum": ""
             },
             "require": {
@@ -1103,7 +1103,7 @@
                 "compression",
                 "minification"
             ],
-            "time": "2013-05-22 17:17:41"
+            "time": "2013-05-29 08:54:41"
         },
         {
             "name": "kriswallsmith/buzz",
@@ -1665,6 +1665,43 @@
             "time": "2013-05-27 06:45:55"
         },
         {
+            "name": "toooni/fpdf",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/toooni/fpdf.git",
+                "reference": "8ea33273cc80fee229f0e267f3678eeb4faf7312"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/toooni/fpdf/zipball/8ea33273cc80fee229f0e267f3678eeb4faf7312",
+                "reference": "8ea33273cc80fee229f0e267f3678eeb4faf7312",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "FPDF_": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3"
+            ],
+            "authors": [
+                {
+                    "name": "Toni Rudolf",
+                    "email": "toni.rudolf@gmail.com"
+                }
+            ],
+            "description": "fpdf vendor for symfony2",
+            "homepage": "http://github.com/toooni",
+            "time": "2012-10-16 17:35:29"
+        },
+        {
             "name": "twig/extensions",
             "version": "dev-master",
             "source": {
@@ -1717,12 +1754,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Twig.git",
-                "reference": "f6c00587f8b2d6e680d09fd6015fa521f9c72327"
+                "reference": "e8be092e18501d7a721b0ad1220f7d74d5c2a863"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig/zipball/f6c00587f8b2d6e680d09fd6015fa521f9c72327",
-                "reference": "f6c00587f8b2d6e680d09fd6015fa521f9c72327",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/e8be092e18501d7a721b0ad1220f7d74d5c2a863",
+                "reference": "e8be092e18501d7a721b0ad1220f7d74d5c2a863",
                 "shasum": ""
             },
             "require": {
@@ -1758,7 +1795,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2013-05-27 06:08:37"
+            "time": "2013-05-29 07:19:45"
         }
     ],
     "packages-dev": [
@@ -1771,7 +1808,8 @@
     "stability-flags": {
         "friendsofsymfony/jsrouting-bundle": 20,
         "kriswallsmith/buzz": 20,
-        "doctrine/doctrine-fixtures-bundle": 20
+        "doctrine/doctrine-fixtures-bundle": 20,
+        "toooni/fpdf": 20
     },
     "platform": {
         "php": ">=5.3.3"
