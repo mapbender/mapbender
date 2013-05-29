@@ -70,7 +70,7 @@ fom_manager:
 
 # FOM User Configuration
 fom_user:
-    selfregister: true
+    selfregister: false
     reset_password: true
     max_registration_time: 1
     max_reset_time: 1

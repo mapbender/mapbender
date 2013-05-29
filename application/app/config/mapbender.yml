@@ -291,3 +291,6 @@ parameters:
                     copyright:
                         class: Mapbender\CoreBundle\Element\Copyright
                         copyright_text: '© OpenStreetMap contributors'
+                        copyright_link: '© OpenStreetMap contributors'
+                        link_type: url
+                        link_url: 'http://www.openstreetmap.org/copyright'
