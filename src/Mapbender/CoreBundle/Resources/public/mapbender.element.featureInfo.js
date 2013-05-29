@@ -82,7 +82,8 @@ $.widget("mapbender.mbFeatureInfo", {
             newTab       = $('<li id="tab' + layer.id + '" class="tab">' + layer.label + '</li>');
             newContainer = $('<div id="container' + layer.id + '" class="container"></div>');
 
-            if(idx == 1){
+            // activate the first container
+            if(idx == 0){
                 newTab.addClass("active");
                 newContainer.addClass("active");
             }
