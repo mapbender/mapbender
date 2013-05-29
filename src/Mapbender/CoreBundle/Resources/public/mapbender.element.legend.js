@@ -311,9 +311,11 @@
         _createLegend: function(html){
             var self = this;
             $(self.element).find("#imgtest").html("");
-            if(this.options.elementType === "dialog" && !$('body').data('mbPopup')) {
-                $("body").mbPopup();
-                $("body").mbPopup('showHint', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, btnOkLabel:"Close"});
+            if(this.options.elementType === "dialog") {
+                if(!$('body').data('mbPopup')) {
+                    $("body").mbPopup();
+                    $("body").mbPopup('showHint', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, btnOkLabel:"Close"});
+                }
             }else{
                 $(this.element).find('#legends:eq(0)').html('<ul>' + html + '</ul>');
             }
