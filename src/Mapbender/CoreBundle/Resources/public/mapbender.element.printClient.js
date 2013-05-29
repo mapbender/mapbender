@@ -75,7 +75,7 @@
         },
     
         _close: function() {
-            this.element.appendTo($('body'));
+            this.element.hide().appendTo($('body'));
             this.popup = false;
             this._updateElements();
         },
