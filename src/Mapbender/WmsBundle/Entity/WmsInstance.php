@@ -210,6 +210,7 @@ class WmsInstance extends SourceInstance
                         ->setParent($rootlayer)
                         ->setWmslayersource($layersource)
                         ->setWmsInstance($this);
+                $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo() ? true : false);
                 $rootlayer->addSublayer($layer);
                 $this->addLayer($layer);
             }
