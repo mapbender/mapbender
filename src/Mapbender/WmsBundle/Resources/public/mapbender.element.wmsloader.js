@@ -42,6 +42,10 @@
                         return false;
                     }
                     self.loadWms.call(self, url);//.url").val());
+                    self.element
+                        .hide()
+                        .detach()
+                        .appendTo($('body'));
                     $("body").mbPopup("close");
 
                 })
