@@ -169,6 +169,7 @@ class WmsInstance extends SourceInstance
                 ->setOpacity($this->opacity / 100)
                 ->setTiled($this->tiled);
         $wmsconf->setOptions($options);
+        
         if(!key_exists("children", $this->configuration))
         {
             $num = 0;

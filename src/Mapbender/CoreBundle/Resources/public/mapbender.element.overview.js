@@ -63,7 +63,6 @@ $.widget("mapbender.mbOverview", {
                 extent: max_ext
             }
         };
-
         this.overview = new OpenLayers.Control.OverviewMap({
             div: $(self.element).find('#mb-element-overview-map').get(0),
             size: new OpenLayers.Size(self.options.width, self.options.height),
