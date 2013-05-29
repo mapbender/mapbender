@@ -1,8 +1,8 @@
 <span id="{{ id }}" class="mb-element mb-element-copyright {{configuration.anchor}}"  title="{{ configuration.tooltip|default(title)|trans }}">
-    <span class="smallText span-copyright" title="">{{ configuration.copyright_text |trans |raw }}</span>
+    <!--span class="smallText span-copyright" title="">{#{ configuration.copyright_text |trans |raw }#}</span-->
     {% if configuration.link_type == 'url' %}
-    <br/>
-    <a id="{{ id }}-link" class="mb-element-copyright-link" href="{{ configuration.link_url }}" target="_BLANK">{{ configuration.copyright_link |trans |raw }}</a>
+    <!--br/-->
+    <span class="smallText span-copyright"><a id="{{ id }}-link" class="mb-element-copyright-link" href="{{ configuration.link_url }}" target="_BLANK">{{ configuration.copyright_text |trans |raw }}</a></span>
     {% elseif configuration.link_type == 'dialog' %}
     <br/>
     <span id="{{ id }}-link" class="mb-element-copyright-link">{{ configuration.copyright_link |trans |raw }}</span>
