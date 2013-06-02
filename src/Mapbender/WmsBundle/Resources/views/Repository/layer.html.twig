@@ -92,8 +92,10 @@
           <span class="metaText">{{ "Abstract" | trans }}: {{ style.abstract }}</span>
           <span class="metaText">
             {{ "LegendUrl" | trans }}: 
+            {% if style.legendUrl is not null %}
             {{ style.legendUrl.width }}X{{ style.legendUrl.height }}
             {{ style.legendUrl.onlineResource.format }} {{ style.legendUrl.onlineResource.href }}
+            {% endif %}
           </span>
           <span class="metaText">
             {{ "StyleSheetUrl" | trans }}:

@@ -383,15 +383,15 @@ class WmsCapabilitiesParser130
         {
             foreach($dimentionList as $dimensionEl)
             {
-                $dimention = new Dimension();
-                $dimention->setName($this->getValue("./@name", $dimensionEl)); //($this->getValue("./@CRS", $item));
-                $dimention->setUnits($this->getValue("./@units", $dimensionEl));
-                $dimention->setUnitSymbol($this->getValue("./@unitSymbol", $dimensionEl));
-                $dimention->setDefault($this->getValue("./@default", $dimensionEl));
-                $dimention->setMultipleValues($this->getValue("./@multipleValues", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
-                $dimention->setNearestValue($this->getValue("./@nearestValue", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
-                $dimention->setCurrent($this->getValue("./@current", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
-                $dimention->setExtentValue($this->getValue("./text()", $dimensionEl));
+                $dimension = new Dimension();
+                $dimension->setName($this->getValue("./@name", $dimensionEl)); //($this->getValue("./@CRS", $item));
+                $dimension->setUnits($this->getValue("./@units", $dimensionEl));
+                $dimension->setUnitSymbol($this->getValue("./@unitSymbol", $dimensionEl));
+                $dimension->setDefault($this->getValue("./@default", $dimensionEl));
+                $dimension->setMultipleValues($this->getValue("./@multipleValues", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
+                $dimension->setNearestValue($this->getValue("./@nearestValue", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
+                $dimension->setCurrent($this->getValue("./@current", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
+                $dimension->setExtentValue($this->getValue("./text()", $dimensionEl));
                 $wmslayer->addDimensionl($dimension);
             }
         }
