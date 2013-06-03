@@ -16,8 +16,8 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
 class MapbenderWmcBundle extends MapbenderBundle {
     public function getElements() {
         return array(
-            'Mapbender\WmcBundle\Element\WmcEditor',
-            'Mapbender\WmcBundle\Element\WmcHandler'
+//            'Mapbender\WmcBundle\Element\WmcEditor',
+//            'Mapbender\WmcBundle\Element\WmcHandler'
             );
     }
 }

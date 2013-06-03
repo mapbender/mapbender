@@ -104,7 +104,6 @@ class RepositoryController extends Controller {
         $sourceInst = $this->getDoctrine()
                         ->getRepository("MapbenderCoreBundle:SourceInstance")
                         ->find($instanceId);
-//        $sourceInst = $mblayer->getSourceInstance();
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
         return  $this->forward(

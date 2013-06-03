@@ -133,6 +133,20 @@ class ApplicationYAMLMapper
                             ->setRegion($region)
                             ->setWeight($weight++)
                             ->setApplication($application);
+
+                    if(array_key_exists('roles', $elementDefinition)) {
+                        $securityContext = $this->container->get('security.context');
+                        $passed = false;
+                        foreach($elementDefinition['roles'] as $role) {
+                            if($securityContext->isGranted($role)) {
+                                $passed = true;
+                                break;
+                            }
+                        }
+                        if(!$passed) {
+                            continue;
+                        }
+                    }
                     
                     //TODO: Roles
                     $application->addElements($element);

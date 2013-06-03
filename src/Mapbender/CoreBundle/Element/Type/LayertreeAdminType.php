@@ -42,11 +42,13 @@ class LayertreeAdminType extends AbstractType
                     'property_path' => '[target]',
                     'required' => false))
                 ->add('layerMenu', 'checkbox',
-                          array(
-                        'required' => false))
+                      array(
+                    'required' => false,
+                    'attr' => array(
+                        'disabled' => 'disabled')))
                 ->add('layerRemove', 'checkbox',
-                          array(
-                        'required' => false))
+                      array(
+                    'required' => false))
                 ->add('type', 'choice',
                       array(
                     'required' => true,
@@ -57,18 +59,20 @@ class LayertreeAdminType extends AbstractType
                 ->add('displaytype', 'choice',
                       array(
                     'required' => true,
-                    'choices' => array('tree' => 'Tree', 'list' => 'List')))
+                    'choices' => array(
+                        'tree' => 'Tree',
+//                        'list' => 'List'
+                        )))
                 ->add('useAccordion', 'checkbox',
                       array(
                     'required' => false))
-                ->add('titlemaxlength', 'integer',
-                      array('required' => true))
+                ->add('titlemaxlength', 'integer', array('required' => true))
                 ->add('showBaseSource', 'checkbox',
-                          array(
-                        'required' => false))
+                      array(
+                    'required' => false))
                 ->add('showHeader', 'checkbox',
-                          array(
-                        'required' => false));
+                      array(
+                    'required' => false));
     }
 
 }
