@@ -272,7 +272,7 @@ class WmsInstance extends SourceInstance
      * @param array $configuration
      * @return array 
      */
-    private function generateLayersConfiguration(WmsInstanceLayer $layer,
+    public function generateLayersConfiguration(WmsInstanceLayer $layer,
             $configuration = array())
     {
         if($layer->getActive() === true)

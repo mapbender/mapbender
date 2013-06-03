@@ -227,12 +227,12 @@
             var supported = map.getAllSrs();
             var found = false;
             for(var i = 0; i < supported.length; i++){
-                if(wmc.bbox.srs.toUpperCase() === supported[i].name.toUpperCase()){
+                if(wmc.extent.srs.toUpperCase() === supported[i].name.toUpperCase()){
                     found = true;
-                    var bbox = wmc.bbox;
+                    var bbox = wmc.extent;
                     var extent = OpenLayers.Bounds.fromArray([bbox.minx, bbox.miny, bbox.maxx, bbox.maxy]);
                     map.setExtent(extent);
-                    var bboxm = wmc.maxBbox;
+                    var bboxm = wmc.maxextent;
                     var extentm = OpenLayers.Bounds.fromArray([bboxm.minx, bboxm.miny, bboxm.maxx, bboxm.maxy]);
                     map.setMaxExtent(extentm, bbox.srs);
                     map.changeProjection(bbox.srs);
@@ -241,7 +241,7 @@
                 }
             }
             if(!found){
-                Mapbender.error('The projection:"'+wmc.bbox.srs+'" is not supported by this application.');
+                Mapbender.error('The projection:"'+wmc.extent.srs+'" is not supported by this application.');
                 return;
             }
             // remove all sources from model

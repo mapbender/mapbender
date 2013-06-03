@@ -65,8 +65,19 @@ class Wmc
      */
     private $screenshot;
     
-    
+    /**
+     * @var string $version The wmc version
+     * @ORM\Column(type="string", length=10, nullable=true)
+     */
     protected $version = "1.1.0";
+    
+    
+    /**
+     * @var Contact A contact.
+     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist","remove"})
+     */
+    protected $contact;
+    
     
     protected $wmcid;
 

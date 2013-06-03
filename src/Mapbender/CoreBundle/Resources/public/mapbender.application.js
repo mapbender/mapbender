@@ -285,14 +285,14 @@ Mapbender.DefaultModel = {
                 width: size.w,
                 height: size.h
                 },
-            bbox: {
+            extent: {
                 srs: proj.projCode,
                 minx: ext.left,
                 miny: ext.bottom,
                 maxx: ext.right,
                 maxy: ext.top
             },
-            maxBbox: {
+            maxextent: {
                 srs: proj.projCode,
                 minx: maxExt.left,
                 miny: maxExt.bottom,
