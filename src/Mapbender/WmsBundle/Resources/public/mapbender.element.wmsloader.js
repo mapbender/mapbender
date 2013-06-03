@@ -45,9 +45,13 @@
 
         loadWms: function(getCapabilitiesUrl) {
             var self = this;
-            if(getCapabilitiesUrl === null || getCapabilitiesUrl === '') return;
+            if(getCapabilitiesUrl === null || getCapabilitiesUrl === '' ||
+                (getCapabilitiesUrl.toLowerCase().indexOf("http://") !== 0 && getCapabilitiesUrl.toLowerCase().indexOf("https://") !== 0)){
+                Mapbender.error("WMSLoader: a WMS capabilities can't be loaded! The capabilities url is not valid.");
+                return;
+            }
             var params = OpenLayers.Util.getParameters(getCapabilitiesUrl);
-            var version, request, service;
+            var version = null, request = null, service = null;
             for(param in params){
                 if(param.toUpperCase() === "VERSION"){
                     version = params[param];
@@ -56,6 +60,10 @@
                 } else if(param.toUpperCase() === "SERVICE"){
                     service = params[param];
                 }
+            }
+            if(request === null || service === null){
+                Mapbender.error("WMSLoader: a WMS capabilities can't be loaded! The capabilities url is not valid.");
+                return;
             }
             if(typeof version === 'undefined'){
                 version = "1.3.0";
@@ -81,6 +89,9 @@
 //                context: this,
                 success: function(data, textStatus, jqXHR) {
                     self._getCapabilitiesUrlSuccess(data, getCapabilitiesUrl);
+
+                    // Maybe to much, need to be scoped! 
+                    $(".checkbox").trigger("change");
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
@@ -90,7 +101,7 @@
         _getCapabilitiesUrlSuccess: function(xml, getCapabilitiesUrl) {
             var self = this;
             var mbMap = $('#' + self.options.target).data('mbMap');
-            var id = $('#' + this.options.target).data('mbMap').genereateSourceId();
+            var id = mbMap.genereateSourceId();
             var layerDefs = Mapbender.source.wms.layersFromCapabilities(xml, id, this.options.splitLayers, mbMap.model, this.options.defaultFormat, this.options.defaultInfoFormat);
             $.each(layerDefs, function(idx, layerDef){
                 mbMap.addSource(layerDef, null, null);
@@ -98,7 +109,7 @@
         },
         
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR) {
-            alert("oh npo");
+            Mapbender.error("WMSLoader: a wms capabilities can't be loaded!");
         },
 
         _destroy: $.noop

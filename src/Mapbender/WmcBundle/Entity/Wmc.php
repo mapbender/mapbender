@@ -64,6 +64,11 @@ class Wmc
      * @Assert\File(maxSize="6000000")
      */
     private $screenshot;
+    
+    
+    protected $version = "1.1.0";
+    
+    protected $wmcid;
 
     /* @TODO ContactImformation */
 
@@ -194,6 +199,40 @@ class Wmc
      */
     public function setScreenshot($screenshot) {
         $this->screenshot = $screenshot;
+    }
+
+    /**
+     * Get version
+     *
+     * @return string
+     */
+    public function getVersion() {
+        return $this->version;
+    }
+    
+    /**
+     * @param string $version
+     */
+    public function setVersion($version) {
+        $this->version = $version;
+        return $this;
+    }
+
+    /**
+     * Get version
+     *
+     * @return string
+     */
+    public function getWmcid() {
+        return $this->wmcid;
+    }
+    
+    /**
+     * @param string $wmcid
+     */
+    public function setWmcid($wmcid) {
+        $this->wmcid = $wmcid;
+        return $this;
     }
 
     /**
