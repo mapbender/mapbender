@@ -86,7 +86,7 @@
          *
          */
         removeSource: function(toChangeObj){
-            if(toChangeObj && toChangeObj.source && toChangeObj.type){
+            if(typeof toChangeObj.source !== 'undefined'){
                 this.model.removeSource(toChangeObj);
             }
         },

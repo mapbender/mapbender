@@ -91,10 +91,11 @@
                             $(that).sortable('cancel');
                             return;
                         }
+                        var et = $(event.target);
                         var list = $(event.target).children("li");
                         for(var i = 0; i < list.length; i++){
                             var elm = list[i];
-//                            var a = $(elm).attr("data-id"), b = $(ui.item).attr("data-id");
+                            var a = $(elm).attr("data-id"), b = $(ui.item).attr("data-id");
                             if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
                                 var before = null, after = null, tomove;
                                 if(i > 0){
