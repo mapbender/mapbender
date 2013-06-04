@@ -174,7 +174,7 @@ class WmsInstance extends SourceInstance
             $num = 0;
             $rootlayer = new WmsInstanceLayer();
             $rootlayer->setTitle($this->title)
-                    ->setId($num)
+                    ->setId($this->getId()."_".$num)
                     ->setPriority($num)
                     ->setWmslayersource(new WmsLayerSource())
                     ->setWmsInstance($this);
@@ -203,7 +203,7 @@ class WmsInstance extends SourceInstance
                     $layersource->addStyle($style);
                 }
                 $layer->setTitle($layerDef["title"])
-                        ->setId($num)
+                        ->setId($this->getId()."_".$num)
                         ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
                         ->setInfo(!isset($layerDef["queryable"]) ? false : $layerDef["queryable"])
                         ->setParent($rootlayer)
