@@ -43,6 +43,11 @@ $.widget("mapbender.mbButton", {
     _onClick: function() {
         var me = $(this.element);
 
+        if(this.options.click) {
+            window.open(this.options.click, '_blank');
+            return;
+        }
+
         // If we're part of a group, deactivate all other actions in this group
         if(this.options.group) {
             var others = $('input[type="checkbox"]')
