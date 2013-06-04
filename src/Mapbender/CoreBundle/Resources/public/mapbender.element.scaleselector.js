@@ -43,7 +43,9 @@ $.widget("mapbender.mbScaleSelector", {
     _updateScale: function(){
         var map = $('#' + this.options.target).data('mbMap');
         var scale = Math.round(map.map.olMap.getScale());
-        $("#"+$(this.element).attr('id')+" select").val(Math.round(scale));
+        var val = Math.round(scale);
+        var select = $("#"+$(this.element).attr('id')+" select");
+        select.val(val).siblings(".dropdownValue").text(val);
     },
 
     _destroy: $.noop
