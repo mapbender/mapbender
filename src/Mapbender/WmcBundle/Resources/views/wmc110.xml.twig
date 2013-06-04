@@ -9,77 +9,78 @@
         <Window width="{{ wmc.general.window.width }}" height="{{ wmc.general.window.height }}" />
         <BoundingBox SRS="{{ wmc.general.bbox.srs }}" minx="{{ wmc.general.bbox.minx }}" miny="{{ wmc.general.bbox.miny }}" maxx="{{ wmc.general.bbox.maxx }}" maxy="{{ wmc.general.bbox.maxy }}"/>
         <Title>{{ wmc.general.title }}</Title>
-        {% if wmc.general.keywords is defined %}
+        {% if wmc.keywords is defined %}
         <KeywordList>
-            {% for keyword in wmc.general.keywords %}
+            {% for keyword in wmc.keywords %}
             <Keyword>{{ keyword }}</Keyword>
             {% endfor %}
         </KeywordList>
         {% endif %}
-        {% if wmc.general.abstract is defined %}
-        <Abstract>{{ wmc.general.abstract }}</Abstract>
+        {% if wmc.abstract is defined %}
+        <Abstract>{{ wmc.abstract }}</Abstract>
         {% endif %}
-        {% if wmc.general.logourl is defined %}
-        <LogoURL width="{{ wmc.general.logourl.width }}" height="{{ wmc.general.logourl.height }}" format="{{ wmc.general.logourl.format }}">
-            <OnlineResource xlink:type="simple" xlink:href="{{ wmc.general.logourl.url }}"/>
+        {% if wmc.logourl is defined %}
+        <LogoURL width="{{ wmc.logourl.width }}" height="{{ wmc.logourl.height }}" format="{{ wmc.logourl.onlineResource.format }}">
+            <OnlineResource xlink:type="simple" xlink:href="{{ wmc.logourl.onlineResource.url }}"/>
         </LogoURL>
         {% endif %}
-        {% if wmc.general.descriptionurl is defined %}
-        <DescriptionURL format="{{ wmc.general.descriptionurl.format }}">
-            <OnlineResource xlink:type="simple" xlink:href="{{ wmc.general.descriptionurl.url }}"/>
+        {% if wmc.descriptionurl is defined %}
+        <DescriptionURL format="{{ wmc.descriptionurl.onlineResource.format }}">
+            <OnlineResource xlink:type="simple" xlink:href="{{ wmc.descriptionurl.onlineResource.href }}"/>
         </DescriptionURL>
         {% endif %}
-        {% if wmc.general.contactinfo is defined %}
+        {% if wmc.contact is defined %}
         <ContactInformation>
-            {% if  wmc.general.contactinfo.person is defined or wmc.general.contactinfo.organization is defined%}
+            {% if  wmc.contact.person is defined or wmc.contact.organization is defined%}
             <ContactPersonPrimary>
-                <ContactPerson>{{ wmc.general.contactinfo.person }}</ContactPerson>
-                <ContactOrganization>{{ wmc.general.contactinfo.organization }}</ContactOrganization>
+                <ContactPerson>{{ wmc.contact.person }}</ContactPerson>
+                <ContactOrganization>{{ wmc.contact.organization }}</ContactOrganization>
             </ContactPersonPrimary>
             {% endif %}
-            {% if wmc.general.contact.position is defined %}
-            <ContactPosition>{{ wmc.general.contact.position }}</ContactPosition>
+            {% if wmc.contact.position is defined %}
+            <ContactPosition>{{ wmc.contact.position }}</ContactPosition>
             {% endif %}
-            {% if wmc.general.contact.address is defined %}
+            {% if wmc.contact.address is defined %}
             <ContactAddress>
-                <AddressType>{{ wmc.general.contact.address.type }}</AddressType>
-                <Address>{{ wmc.general.contact.address.address }}</Address>
-                <City>{{ wmc.general.contact.address.city }}</City>
-                <StateOrProvince>{{ wmc.general.contact.address.state }}</StateOrProvince>
-                <PostCode>{{ wmc.general.contact.address.postcode }}</PostCode>
-                <Country>{{ wmc.general.contact.address.country }}</Country>
+                <AddressType>{{ wmc.contact.addressType }}</AddressType>
+                <Address>{{ wmc.contact.address }}</Address>
+                <City>{{ wmc.contact.addressCity }}</City>
+                <StateOrProvince>{{ wmc.contact.addressStateOrProvince }}</StateOrProvince>
+                <PostCode>{{ wmc.contact.addressPostCode }}</PostCode>
+                <Country>{{ wmc.contact.addressCountry }}</Country>
             </ContactAddress>
             {% endif %}
-            {% if wmc.general.contact.phone is defined %}
-            <ContactVoiceTelephone>{{ wmc.general.contact.phone }}</ContactVoiceTelephone>
+            {% if wmc.contact.voiceTelephone is defined %}
+            <ContactVoiceTelephone>{{ wmc.contact.voiceTelephone }}</ContactVoiceTelephone>
             {% endif %}
-            {% if wmc.general.contact.fax is defined %}
-            <ContactFacsimileTelephone>{{ wmc.general.contact.fax }}</ContactFacsimileTelephone>
+            {% if wmc.contact.facsimileTelephone is defined %}
+            <ContactFacsimileTelephone>{{ wmc.contact.facsimileTelephone }}</ContactFacsimileTelephone>
             {% endif %}
-            {% if wmc.general.contact.email is defined %}
-            <ContactElectronicMailAddress>{{ wmc.general.contact.email }}</ContactElectronicMailAddress>
+            {% if wmc.contact.electronicMailAddress is defined %}
+            <ContactElectronicMailAddress>{{ wmc.contact.electronicMailAddress }}</ContactElectronicMailAddress>
             {% endif %}
         </ContactInformation>
         {% endif %}
+        <!--Extension>
+            <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="472956.000000000000" miny="5737560.00000000000" maxx="523825.000000000000" maxy="5782687.00000000000"/>
+        </Extension-->
     </General>
     <LayerList>
-        {% for layer in wmc.layerlist %}
-        <Layer queryable="{{ layer.queryable }}" hidden="{{ layer.hidden }}">
-            <Server service="{{ layer.server.service }}" version="{{ layer.server.version }}" title="{{ layer.server.title }}">
-                <OnlineResource xlink:type="simple" xlink:href="{{ layer.server.url }}"/>
+        {% for source in wmc.state.json.sources %}
+        <Layer queryable="{{ source.queryable }}" hidden="{{ source.hidden }}">
+            <Server service="OGC:WMS" version="{{ source.configuration.version }}" title="{{ source.configuration.title }}">
+                <OnlineResource xlink:type="simple" xlink:href="{{ source.configuration.options.url }}"/>
             </Server>
-            <Name>{{ layer.name }}</Name>
-            <Title>{{ layer.title }}</Title>
-            {% if layer.abstract is defined %}
-            <Abstract>{{ layer.abstract }}</Abstract>
+            <Name>{{ source.configuration.title }}</Name>???
+            <Title>{{ source.configuration.title }}</Title>
+            {% if source.configuration.abstract is defined %}
+            <Abstract>{{ source.configuration.abstract }}</Abstract>
             {% endif %}
-            {% if layer.srs is defined %}
-            <SRS>{{ layer.srs }}</SRS>
+            {% if source.srs is defined %}
+            <SRS>{{ source.srs }}</SRS>
             {% endif %}
             <FormatList>
-                {% for format in wmc.layerlist.formats %}
-                <Format current="{{ format.current }}">{{ format.format }}</Format>
-                {% endfor %}
+                <Format current="1">source.configuration.format</Format>
             </FormatList>
             <StyleList>
                 {% for style in wmc.layerlist.styles %}
@@ -94,6 +95,18 @@
                 </Style>
                 {% endfor %}
             </StyleList>
+            <!--Extension>
+                <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="472956.000000000000" miny="5737560.00000000000" maxx="523825.000000000000" maxy="5782687.00000000000"/>
+                <ol:transparent xmlns:ol="http://openlayers.org/context">true</ol:transparent>
+                <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">11</ol:numZoomLevels>
+                <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>
+                <ol:isBaseLayer xmlns:ol="http://openlayers.org/context">true</ol:isBaseLayer>
+                <ol:displayInLayerSwitcher xmlns:ol="http://openlayers.org/context">true</ol:displayInLayerSwitcher>
+                <ol:singleTile xmlns:ol="http://openlayers.org/context">true</ol:singleTile>
+                <mapbender:layers xmlns:mapbender="http://mapbender3.org/wmc">
+                    <mapbender:layer name="wms_startbild1" title="Kreis Lippe" visible="true" queryable="false"/>
+                </mapbender:layers>
+            </Extension-->
         </Layer>
         {% endfor %}
     </LayerList>

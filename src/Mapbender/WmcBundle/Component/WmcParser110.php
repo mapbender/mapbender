@@ -5,7 +5,6 @@ namespace Mapbender\WmcBundle\Component;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Size;
 use Mapbender\CoreBundle\Component\StateHandler;
-use Mapbender\CoreBundle\Entity\State;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\MinMax;
@@ -20,7 +19,7 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
- * Class that Parses WMS 1.3.0 GetCapabilies Document 
+ * Class that Parses WMC 1.1.0 WMC Document 
  * @package Mapbender
  * @author Paul Schmidt
  */
@@ -28,8 +27,7 @@ class WmcParser110 extends WmcParser
 {
 
     /**
-     * Creates an instance
-     * @param \DOMDocument $doc
+     * @inheritdoc
      */
     public function __construct(\DOMDocument $doc)
     {
@@ -37,15 +35,12 @@ class WmcParser110 extends WmcParser
         $this->xpath->registerNamespace("cntxt",
                                         "http://www.opengis.net/context");
         $this->xpath->registerNamespace("ol", "http://openlayers.org/context");
-//        $this->xpath->registerNamespace("mb3wmc", "http://mapbender3.org/wmc");
         $this->xpath->registerNamespace("mapbender", "http://mapbender3.org/wmc");
-        $this->xpath->registerNamespace("mb3", "http://mapbender3.org");
+        $this->xpath->registerNamespace("mb3wmc", "http://mapbender3.org/ogc/wmc");
     }
 
     /**
-     * Parses the GetCapabilities document
-     * 
-     * @return \Mapbender\WmsBundle\Entity\WmsSource
+     * @inheritdoc
      */
     public function parse()
     {
@@ -61,7 +56,7 @@ class WmcParser110 extends WmcParser
         $stateHandler->setExtent($this->getBoundingBox(array("./cntxt:BoundingBox"),
                                                        $genEl, null));
         $stateHandler->setMaxextent($this->getBoundingBox(
-                        array("./cntxt:Extension/mb3:maxExtent",
+                        array("./cntxt:Extension/mb3wmc:maxExtent",
                     "./cntxt:Extension/ol:maxExtent"), $genEl,
                         $stateHandler->getExtent()->srs));
 
@@ -104,24 +99,36 @@ class WmcParser110 extends WmcParser
         if($contactEl !== null)
         {
             $contact = new Contact();
-            $contact->setPerson($this->getValue("./cntxt:ContactPersonPrimary/cntxt:ContactPerson/text()", $contactEl));
-            $contact->setOrganization($this->getValue("./cntxt:ContactPersonPrimary/cntxt:ContactOrganization/text()", $contactEl));
-            $contact->setPosition($this->getValue("../cntxt:ContactPosition/text()", $contactEl));
-            
+            $contact->setPerson($this->getValue("./cntxt:ContactPersonPrimary/cntxt:ContactPerson/text()",
+                                                $contactEl));
+            $contact->setOrganization($this->getValue("./cntxt:ContactPersonPrimary/cntxt:ContactOrganization/text()",
+                                                      $contactEl));
+            $contact->setPosition($this->getValue("../cntxt:ContactPosition/text()",
+                                                  $contactEl));
+
             $addrEl = $this->getValue("./cntxt:ContactAddress", $contactEl);
             if($addrEl !== null)
             {
-                $contact->setAddressType($this->getValue("./cntxt:AddressType/text()", $addrEl));
-                $contact->setAddress($this->getValue("./cntxt:Address/text()", $addrEl));
-                $contact->setAddressCity($this->getValue("./cntxt:City/text()", $addrEl));
-                $contact->setAddressStateOrProvince($this->getValue("./cntxt:StateOrProvince/text()", $addrEl));
-                $contact->setAddressPostCode($this->getValue("./cntxt:PostCode/text()", $addrEl));
-                $contact->setAddressCountry($this->getValue("./cntxt:Country/text()", $addrEl));
+                $contact->setAddressType($this->getValue("./cntxt:AddressType/text()",
+                                                         $addrEl));
+                $contact->setAddress($this->getValue("./cntxt:Address/text()",
+                                                     $addrEl));
+                $contact->setAddressCity($this->getValue("./cntxt:City/text()",
+                                                         $addrEl));
+                $contact->setAddressStateOrProvince($this->getValue("./cntxt:StateOrProvince/text()",
+                                                                    $addrEl));
+                $contact->setAddressPostCode($this->getValue("./cntxt:PostCode/text()",
+                                                             $addrEl));
+                $contact->setAddressCountry($this->getValue("./cntxt:Country/text()",
+                                                            $addrEl));
             }
 
-            $contact->setVoiceTelephone($this->getValue("./cntxt:ContactVoiceTelephone/text()", $contactEl));
-            $contact->setFacsimileTelephone($this->getValue("./cntxt:ContactFacsimileTelephone/text()", $contactEl));
-            $contact->setElectronicMailAddress($this->getValue("./cntxt:ContactElectronicMailAddress/text()", $contactEl));
+            $contact->setVoiceTelephone($this->getValue("./cntxt:ContactVoiceTelephone/text()",
+                                                        $contactEl));
+            $contact->setFacsimileTelephone($this->getValue("./cntxt:ContactFacsimileTelephone/text()",
+                                                            $contactEl));
+            $contact->setElectronicMailAddress($this->getValue("./cntxt:ContactElectronicMailAddress/text()",
+                                                               $contactEl));
 
             $wmc->setContact($contact);
         }
@@ -136,11 +143,13 @@ class WmcParser110 extends WmcParser
     }
 
     /**
-     * Parses the Service section of the GetCapabilities document
+     * Parses a layer form a WMC document LayerList
      * 
-     * @param \Mapbender\WmsBundle\Entity\WmsSource $wmc the WmsSource
-     * @param \DOMElement $contextElm the element to use as context for
-     * the Service section
+     * @param \DOMElement $layerElm layer element
+     * (xpath: '/ViewContext/LayerList/Layer')
+     * @param string $srs wmc srs (srs from WMC document xpath:
+     * '/ViewContext/General/BoundingBox/@SRS')
+     * @return array layer configuration as array
      */
     private function parseLayer(\DOMElement $layerElm, $srs)
     {
@@ -221,21 +230,18 @@ class WmcParser110 extends WmcParser
         $layerconfig["maxExtent"] = $this->getBoundingBox(
                 array("./mb:maxExtent", "./ol:maxExtent"),
                 $this->getValue("./cntxt:Extension", $extensionEl), $srs);
-        $layerconfig["tiled"] = $this->findFirstValue(array("./mb3:tiled"),
+        $layerconfig["tiled"] = $this->findFirstValue(array("./mb3wmc:tiled"),
                                                       $extensionEl);
         $wms->setName($this->getValue("./cntxt:Name/text()", $layerElm));
         $wmsinst->setId(intval($id))
                 ->setTitle($this->getValue("./cntxt:Title/text()", $layerElm))
                 ->setTransparency((bool) $this->findFirstValue(
-                                array("./mb3:transparency/text()", "./ol:transparent/text()"),
+                                array("./mb3wmc:transparency/text()", "./ol:transparent/text()"),
                                 $extensionEl, true))
-                ->setOpacity($this->findFirstValue(array("./mb3:opacity", "./ol:opacity"),
+                ->setOpacity($this->findFirstValue(array("./mb3wmc:opacity", "./ol:opacity"),
                                                    $extensionEl, 1));
-        $wmsinst->setTiled((bool) $this->findFirstValue(array("./mb3:tiled"),
+        $wmsinst->setTiled((bool) $this->findFirstValue(array("./mb3wmc:tiled"),
                                                         $extensionEl, false));
-//                ->setConfiguration($layerDefinition);
-
-
 
         $wmsinst->setSource($wms);
         $wmsconf = new WmsInstanceConfiguration();
@@ -254,7 +260,7 @@ class WmcParser110 extends WmcParser
         $wmsconf->setOptions($options);
 
         $layerList = $this->findFirstList(
-                array("mb3:layers/mb3:layer", "mapbender:layers/mapbender:layer"),
+                array("mb3wmc:layers/mb3wmc:layer", "mapbender:layers/mapbender:layer"),
                 $extensionEl);
         if($layerList->length > 0)
         {
@@ -318,6 +324,14 @@ class WmcParser110 extends WmcParser
         }
     }
 
+    /**
+     * Returns the BoundingBox 
+     * 
+     * @param type $xpathStrArr
+     * @param type $contextElm
+     * @param type $defSrs
+     * @return \Mapbender\CoreBundle\Component\BoundingBox|null
+     */
     private function getBoundingBox($xpathStrArr, $contextElm, $defSrs)
     {
         if($contextElm !== null)
@@ -345,6 +359,14 @@ class WmcParser110 extends WmcParser
         }
     }
 
+    /**
+     * Returns the first found value with xpath from $xpathStrArr.
+     * 
+     * @param type $xpathStrArr array with xpathes
+     * @param type $contextElm context element
+     * @param type $defaultValue default value
+     * @return string|\DOMElement|$defaultValue
+     */
     private function findFirstValue($xpathStrArr, $contextElm,
             $defaultValue = null)
     {
@@ -371,6 +393,13 @@ class WmcParser110 extends WmcParser
         }
     }
 
+    /**
+     * Returns the first found DOMNodeList with xpath from $xpathStrArr.
+     * 
+     * @param type $xpathStrArr array with xpathes
+     * @param type $contextElm context element
+     * @return \DOMNodeList 
+     */
     private function findFirstList($xpathStrArr, $contextElm)
     {
         if($contextElm !== null)

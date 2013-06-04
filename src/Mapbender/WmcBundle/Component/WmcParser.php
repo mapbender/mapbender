@@ -7,17 +7,16 @@ use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\WmcBundle\Component\Exception\WmcException;
 
 /**
- * Class that Parses WMS GetCapabilies Document 
- * Parses WMS GetCapabilities documents
+ * Class that Parses WMC document 
+ * Parses WMC documents
  * 
- * @author Karim Malhas
  * @author Paul Schmidt
  */
 abstract class WmcParser
 {
 
     /**
-     * The XML representation of the Capabilites Document
+     * The XML representation of the WMC Document
      * @var DOMDocument
      */
     protected $doc;
@@ -41,6 +40,7 @@ abstract class WmcParser
 
     /**
      * Finds the value 
+     * 
      * @param string $xpath xpath expression
      * @param \DOMNode $contextElm the node to use as context for evaluating the
      * XPath expression.
@@ -75,7 +75,8 @@ abstract class WmcParser
     }
 
     /**
-     * Parses the capabilities document
+     * Parses the WMC document
+     * @return \Mapbender\WmcBundle\Entity\Wmc
      */
     abstract public function parse();
 
