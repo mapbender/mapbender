@@ -26,7 +26,6 @@ parameters:
                         transparent: true
                         tiled: false
                         opacity: 85
-                        #legendgraphic: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS                       
                     osm:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Mapbender OSM
@@ -63,7 +62,6 @@ parameters:
                         icon: iconLayertree
                         target: layertreedialog
                         action: open
-                        #deactivate: close
                     fi-button:
                         title: Feature Info
                         tooltip: Feature Info
@@ -71,7 +69,6 @@ parameters:
                         icon: iconInfoActive
                         label: true
                         target: featureinfo
-                        action: activate
                         deactivate: deactivate
                         group: featureinfo
                     print-button:
@@ -89,7 +86,6 @@ parameters:
                         target: legend
                         icon: iconLegend
                         action: open
-                        #deactivate: close
                     wmsloader-button:
                         title: WMS Loader
                         tooltip: WMS Loader
@@ -97,7 +93,6 @@ parameters:
                         target: wmsloader
                         icon: iconWms
                         action: open
-                        #deactivate: close
                     gps-button:
                         title: GPS
                         tooltip: show GPS Position
@@ -112,7 +107,6 @@ parameters:
                         icon: iconAreaRuler
                         label: true
                         target: lineruler
-                        action: activate
                         deactivate: deactivate
                         group: rulers
                     arearulerButton:
@@ -122,7 +116,6 @@ parameters:
                         icon: iconAreaRuler
                         label: true
                         target: arearuler
-                        action: activate
                         deactivate: deactivate
                         group: rulers
                     about:
@@ -135,7 +128,6 @@ parameters:
                         title: Main Map
                         class: Mapbender\CoreBundle\Element\Map
                         layerset: main
-                        #srs: EPSG:4326
                         srs: EPSG:25832
                         units: m
                         extents:
@@ -161,7 +153,6 @@ parameters:
                         elementType: dialog
                         autoOpen: false
                         displayType: list
-                        #checkGraphic: false
                         hideEmptyLayers: true
                         noLegend: "Keine Legende vorhanden"
                         generateLegendGraphic: false
@@ -254,7 +245,7 @@ parameters:
                         title: layertree
                         class: Mapbender\CoreBundle\Element\Layertree
                         target: map
-                        type: element # dialog/element
+                        type: element
                         displaytype: tree
                         useAccordion: false
                         autoOpen: false
@@ -294,6 +285,267 @@ parameters:
                     copyright:
                         class: Mapbender\CoreBundle\Element\Copyright
                         copyright_text: '© OpenStreetMap contributors'
-                        copyright_link: '© OpenStreetMap contributors'
-                        link_type: url
-                        link_url: 'http://www.openstreetmap.org/copyright'
+        mapbender_user_basic:
+            title: Mapbender Demo Map basic
+            description: "Fullscreen style, simple buttons, simple map showing WMS use."
+            published: true
+            template:  Mapbender\CoreBundle\Template\Fullscreen
+            layersets:
+                main:
+                    mapbender_users:
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
+                        title: Mapbender Users
+                        url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
+                        layers:
+                            10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
+                            22: { name: Mapbender_Names,   title : Name, visible: true, queryable: true}
+                        info_format: text/html
+                        baselayer: false
+                        visible: true
+                        format: image/png
+                        transparent: true
+                        tiled: false
+                        opacity: 85
+                    osm:
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
+                        title: Mapbender OSM
+                        url: http://osm-demo.wheregroup.com/service
+                        layers:
+                            30: { name: osm,    title : OSM-Demo WhereGroup,  visible: true }
+                        info_format: text/html
+                        baselayer: false
+                        visible: true
+                        format: image/png
+                        transparent: true
+                        tiled: false
+                        opacity: 85                                                
+                overview:
+                    osm_overview:
+                        class: Mapbender\WmsBundle\Entity\WmsInstance
+                        title: Mapbender OSM
+                        url: http://osm-demo.wheregroup.com/service
+                        layers:
+                            40: { name: osm,    title : OSM-Demo WhereGroup,  visible: true }
+                        tiled: false
+                        format: image/png
+                        transparent: true
+                        visible: true
+                        tiled: false
+                        baselayer: true
+            elements:
+                toolbar:
+                    layertree-button:
+                        title: Layertree
+                        tooltip: Layertree
+                        class: Mapbender\CoreBundle\Element\Button
+                        label: false
+                        icon: iconLayertree
+                        target: layertreedialog
+                        action: open
+                    fi-button:
+                        title: Feature Info
+                        tooltip: Feature Info
+                        class: Mapbender\CoreBundle\Element\Button
+                        icon: iconInfoActive
+                        label: false
+                        target: featureinfo
+                        deactivate: deactivate
+                        group: featureinfo
+                    print-button:
+                        title: Print
+                        tooltip: Print PDF
+                        class: Mapbender\CoreBundle\Element\Button
+                        label: false
+                        icon: iconPrint
+                        target: printclient
+                        action: open
+                    legend-button:
+                        title: Legend
+                        tooltip: Legend
+                        class: Mapbender\CoreBundle\Element\Button
+                        label: false 
+                        target: legend
+                        icon: iconLegend
+                        action: open
+                    wmsloader-button:
+                        title: WMS Loader
+                        tooltip: WMS Loader
+                        class: Mapbender\CoreBundle\Element\Button
+                        label: false
+                        target: wmsloader
+                        icon: iconWms
+                        action: open
+                    gps-button:
+                        title: GPS
+                        tooltip: show GPS Position
+                        class: Mapbender\CoreBundle\Element\GpsPosition
+                        label: false
+                        target: map
+                        action: open
+                    linerulerButton:
+                        title: Line Ruler
+                        tooltip: Line Ruler
+                        class: Mapbender\CoreBundle\Element\Button
+                        icon: iconAreaRuler
+                        label: false
+                        target: lineruler
+                    arearulerButton:
+                        title: Area Ruler
+                        tooltip: Area Ruler
+                        class: Mapbender\CoreBundle\Element\Button
+                        icon: iconAreaRuler
+                        label: false
+                        target: arearuler
+                    about:
+                        title: About
+                        tooltip: About
+                        label: false
+                        class: Mapbender\CoreBundle\Element\AboutDialog
+                content:                                        
+                    map:
+                        title: Main Map
+                        class: Mapbender\CoreBundle\Element\Map
+                        layerset: main
+                        srs: EPSG:25832
+                        units: m
+                        extents:
+                            start: [361000,5619270,371150,5625960]
+                            max: [331000,5319270,401150,5925960]
+                        scales: [25000000, 10000000,1000000,500000,250000,100000,50000,10000,5000,2500,1000,500]
+                        maxResolution: 'auto'
+                        otherSrs: ["EPSG:25832","EPSG:31466","EPSG:31467","EPSG:900913","EPSG:4326"]
+                    zoombar:
+                        class: Mapbender\CoreBundle\Element\ZoomBar
+                        target: map
+                        components: ["pan","history","zoom_box","zoom_max","zoom_slider"]
+                        position: [15em, 3em]
+                        stepsize: 50
+                        stepbypixel: true
+                        anchor: right-top
+                        position: [200,40]
+                        draggable: false                       
+                    legend:
+                        class: Mapbender\CoreBundle\Element\Legend
+                        target: map
+                        title: Legende
+                        elementType: dialog
+                        autoOpen: false
+                        displayType: list
+                        hideEmptyLayers: true
+                        noLegend: "Keine Legende vorhanden"
+                        generateLegendGraphic: false
+                        showWmsTitle: true
+                        showLayerTitle: true
+                        showGroupedLayerTitle: true                   
+                    featureinfo:
+                        class: Mapbender\CoreBundle\Element\FeatureInfo
+                        title: FeatureInfo
+                        target: map
+                        deactivateOnClose: true 
+                    wmsloader:
+                        title: Wms Laden
+                        class: Mapbender\WmsBundle\Element\WmsLoader
+                        target: map
+                        autoOpen: false
+                        defaultFormat: 'image/png'
+                        defaultInfoFormat: 'text/html'
+                        splitLayers: false
+                    printclient:
+                        class: Mapbender\CoreBundle\Element\PrintClient
+                        target: map
+                        autoOpen: false
+                        print_directly: true
+                        templates:
+                            a4portrait:
+                                label: A4 Portrait
+                                format: a4
+                            a4landscape:
+                                label: A4 Landscape
+                                format: a4
+                            a3portrait:
+                                label: A3 Portrait
+                                format: a3
+                            a3landscape:
+                                label: A3 Landscape
+                                format: a3
+                        scales: [500, 1000, 5000, 10000, 25000]
+                        quality_levels: 
+                            72: Draft (72dpi)
+                            288: Document (288dpi)
+                        rotatable: true
+                        optional_fields: ~
+                    lineruler:
+                        title: Distance
+                        tooltip: 'ruler'
+                        class: Mapbender\CoreBundle\Element\Ruler
+                        target: map
+                        type: line
+                    arearuler:
+                        title: Area
+                        tooltip: 'area'
+                        class: Mapbender\CoreBundle\Element\Ruler
+                        target: map
+                        type: area
+                    scalebar:
+                        class: Mapbender\CoreBundle\Element\ScaleBar
+                        target: map
+                        anchor: 'left-bottom'
+                        position: ['10px', '10px']
+                        maxWidth: 200
+                        units: ['km']
+                    layertreedialog:
+                        title: layertree
+                        class: Mapbender\CoreBundle\Element\Layertree
+                        target: map
+                        type: dialog
+                        displaytype: tree
+                        useAccordion: false
+                        autoOpen: false
+                        titleMaxLength: 20
+                        showBaseSource: true
+                        showHeader: false 
+                        layerMenu: false
+                        layerRemove: false
+                    overview:
+                        title: Overview
+                        class: Mapbender\CoreBundle\Element\Overview
+                        tooltip: 'Overview'
+                        target: map
+                        layerset: overview
+                        width: 200
+                        height: 100
+                        anchor: 'right-bottom'
+                        position: ['0px', '0px']
+                        maximized: true
+                        fixed: false
+                footer:
+                    activityindicator:
+                        class: Mapbender\CoreBundle\Element\ActivityIndicator
+                        title: activityindicator
+                        activityClass: mb-activity
+                        ajaxActivityClass: mb-activity-ajax
+                        tileActivityClass: mb-activity-tile
+                    coordinates:
+                        class: Mapbender\CoreBundle\Element\CoordinatesDisplay
+                        title: Coordinates Display
+                        tooltip: Coordinates Display
+                        target: map
+                        label: false
+                        empty:  "x: - y: -"
+                        prefix: "x: "
+                        separator:  " y: "
+                    srs:
+                        class: Mapbender\CoreBundle\Element\SrsSelector
+                        title: SRS Selector
+                        tooltip: SRS Selector
+                        label: false
+                        target: map
+                    scaleselector:
+                        class: Mapbender\CoreBundle\Element\ScaleSelector
+                        title: Scale Selector
+                        tooltip: Scale Selector
+                        label: false
+                        target: map
+                    copyright:
+                        class: Mapbender\CoreBundle\Element\Copyright
+                        copyright_text: '© OpenStreetMap contributors'
