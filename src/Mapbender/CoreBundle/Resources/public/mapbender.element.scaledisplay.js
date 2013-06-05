@@ -59,7 +59,7 @@
          */
         _changeSrs: function(event, srs){
             this.scaledisplay.geodesic = srs.projection.units = 'degrees' ? true : false;
-            this.scaledisplay.update();
+            this.scaledisplay.updateScale();
         }
         
     });
