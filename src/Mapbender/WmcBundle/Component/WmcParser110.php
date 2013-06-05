@@ -35,8 +35,10 @@ class WmcParser110 extends WmcParser
         $this->xpath->registerNamespace("cntxt",
                                         "http://www.opengis.net/context");
         $this->xpath->registerNamespace("ol", "http://openlayers.org/context");
+        $this->xpath->registerNamespace("sld", "http://www.opengis.net/sld");
         $this->xpath->registerNamespace("mapbender", "http://mapbender3.org/wmc");
-        $this->xpath->registerNamespace("mb3wmc", "http://mapbender3.org/ogc/wmc");
+        $this->xpath->registerNamespace("mb3wmc",
+                                        "http://mapbender3.org/ogc/wmc");
     }
 
     /**
@@ -260,9 +262,21 @@ class WmcParser110 extends WmcParser
         $wmsconf->setOptions($options);
 
         $layerList = $this->findFirstList(
-                array("mb3wmc:layers/mb3wmc:layer", "mapbender:layers/mapbender:layer"),
+                array(
+                    "./mb3wmc:layers/mb3wmc:layer",
+                    "./mapbender:layers/mapbender:layer",
+                    "./*[contains(local-name(),'layers')]/*[contains(local-name(),'layer')]"),
                 $extensionEl);
-        if($layerList->length > 0)
+//        print_r($layerList);
+//        $layerList = null;
+//        if($layerList === null)
+//        {
+//            echo("not find ./layers/layer at Extension ". "\n");
+//            $layerList = $this->xpath->query("./*[contains(local-name(),'layers')]/*[contains(local-name(),'layer')]", $extensionEl);///child::layer", $extensionEl);
+////            print_r($layerList);
+//            echo($layerList->length."\n");
+//        }
+        if($layerList !== null && $layerList->length > 0)
         {
             $num = 0;
             $rootInst = new WmsInstanceLayer();
@@ -280,7 +294,7 @@ class WmcParser110 extends WmcParser
                 $layersource = new WmsLayerSource();
                 $layersource->setName($this->findFirstValue(
                                 array("./@name"), $layerElm, $num));
-                $legendurl = $this->getBoundingBox(array("./@legendUrl", "./@legend"),
+                $legendurl = $this->findFirstValue(array("./@legendUrl", "./@legend"),
                                                    $layerElm, null);
                 if($legendurl !== null)
                 {
