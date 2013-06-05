@@ -40,14 +40,13 @@ $.widget("mapbender.mbFeatureInfo", {
             self._triggerFeatureInfo.call(self, e);
         };
         this.map.element.bind('click', self.mapClickHandler);
-        $("#fi-button").parent().addClass("toolBarItemActive");
     },
 
     deactivate: function() {
         if(this.map) {
             $('#' + this.options.target).removeClass('mb-feature-info-active');
             this.map.element.unbind('click', this.mapClickHandler);
-            $("#fi-button").parent().removeClass("toolBarItemActive");
+            $(".toolBarItemActive").removeClass("toolBarItemActive");
         }
     },
 

@@ -63,13 +63,20 @@ $.widget("mapbender.mbButton", {
 
     activate: function() {
         this.active = true;
-        if(this.options.target && this.options.action) {
+        if(this.options.target) {
             var target = $('#' + this.options.target);
             var widget = Mapbender.configuration.elements[this.options.target].init.split('.');
+            var action = this.options.action;
+
+            if(!this.options.action){
+                action = "activate";
+                $(this.button).parent().addClass("toolBarItemActive");
+            }
+
             if(widget.length == 1) {
-                target[widget[0]](this.options.action);
+                target[widget[0]](action);
             } else {
-                target[widget[1]](this.options.action);
+                target[widget[1]](action);
             }
         }
         if(!this.options.group) {

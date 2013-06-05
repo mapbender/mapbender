@@ -106,18 +106,13 @@ $.widget("mapbender.mbRuler", {
                     if(self.options.deactivate) {
                         $.proxy(self.deactivate, self);
                     }
-                })
-            .mbPopup('showCustom', {title:this.options.title,
+                }).mbPopup('showCustom', {title:this.options.title,
                                            content: self.container,
                                            showCloseButton: false,
                                            modal:false,
                                            width:300,
                                            draggable:true});
         }
-
-        (this.options.type == 'line') ? 
-          $("#linerulerButton").parent().addClass("toolBarItemActive") :
-          $("#arearulerButton").parent().addClass("toolBarItemActive");
     },
 
     /**
@@ -129,11 +124,10 @@ $.widget("mapbender.mbRuler", {
         var olMap = this.map.data('mapQuery').olMap;
         this.control.deactivate();
         olMap.removeControl(this.control);
-
-        $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
         if($('body').data('mbPopup')) {
             $("body").mbPopup('close');
         }
+        $(".toolBarItemActive").removeClass("toolBarItemActive");
     },
 
     _reset: function() {
