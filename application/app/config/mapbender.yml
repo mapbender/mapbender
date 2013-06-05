@@ -72,7 +72,8 @@ parameters:
                         label: true
                         target: featureinfo
                         action: activate
-                        #deactivate: deactivate
+                        deactivate: deactivate
+                        group: featureinfo
                     print-button:
                         title: Print
                         tooltip: Print PDF
