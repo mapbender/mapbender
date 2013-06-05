@@ -694,7 +694,7 @@
         open: function(){
             if(this.options.type === 'dialog' && (!$('body').data('mbPopup'))){
                 $("body").mbPopup();
-                $("body").mbPopup('showHint', {title:this.options.title, showHeader:true, content: this.element, width:350});
+                $("body").mbPopup('showHint', {title:this.options.title, showHeader:true, content: this.element, width:350, draggable:true});
             }
         },
 

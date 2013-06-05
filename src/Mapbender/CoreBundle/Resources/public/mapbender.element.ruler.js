@@ -114,6 +114,10 @@ $.widget("mapbender.mbRuler", {
                                            width:300,
                                            draggable:true});
         }
+
+        (this.options.type == 'line') ? 
+          $("#linerulerButton").parent().addClass("toolBarItemActive") :
+          $("#arearulerButton").parent().addClass("toolBarItemActive");
     },
 
     /**
@@ -125,6 +129,7 @@ $.widget("mapbender.mbRuler", {
         var olMap = this.map.data('mapQuery').olMap;
         this.control.deactivate();
         olMap.removeControl(this.control);
+        $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
     },
 
     _reset: function() {
