@@ -263,39 +263,59 @@ class WmcParser110 extends WmcParser
 
         $layerList = $this->findFirstList(
                 array(
-                    "./mb3wmc:layers/mb3wmc:layer",
-                    "./mapbender:layers/mapbender:layer",
-                    "./*[contains(local-name(),'layers')]/*[contains(local-name(),'layer')]"),
+            "./mb3wmc:layers/mb3wmc:layer",
+            "./mapbender:layers/mapbender:layer",
+            "./*[contains(local-name(),'layers')]/*[contains(local-name(),'layer')]"),
                 $extensionEl);
-//        print_r($layerList);
-//        $layerList = null;
-//        if($layerList === null)
-//        {
-//            echo("not find ./layers/layer at Extension ". "\n");
-//            $layerList = $this->xpath->query("./*[contains(local-name(),'layers')]/*[contains(local-name(),'layer')]", $extensionEl);///child::layer", $extensionEl);
-////            print_r($layerList);
-//            echo($layerList->length."\n");
-//        }
-        if($layerList !== null && $layerList->length > 0)
+
+        $num = 0;
+        $rootInst = new WmsInstanceLayer();
+        $rootInst->setTitle($wmsinst->getTitle())
+                ->setId($wmsinst->getId() . "_" . $num)
+                ->setPriority($num)
+                ->setWmslayersource(new WmsLayerSource())
+                ->setWmsInstance($wmsinst);
+        $rootInst->setToggle(false);
+        $rootInst->setAllowtoggle(true);
+
+        if($layerList === null)
         {
-            $num = 0;
-            $rootInst = new WmsInstanceLayer();
-            $rootInst->setTitle($wmsinst->getTitle())
-                    ->setId($wmsinst->getId() . "_" . $num)
-                    ->setPriority($num)
-                    ->setWmslayersource(new WmsLayerSource())
-                    ->setWmsInstance($wmsinst);
-            $rootInst->setToggle(false);
-            $rootInst->setAllowtoggle(true);
-            foreach($layerList as $layerElm)
+            $layerListStr = explode(",",
+                                    $this->getValue("./cntxt:Name/text()",
+                                                    $layerElm));
+            foreach($layerListStr as $layerStr)
+            {
+                $num++;
+                $layerInst = new WmsInstanceLayer();
+                $layersource = new WmsLayerSource();
+                $layersource->setName($layerStr);
+                $layerInst->setTitle($layerStr)
+                        ->setParent($rootInst)
+                        ->setId($wmsinst->getId() . "_" . $num)
+                        ->setPriority($num)
+                        ->setWmslayersource($layersource)
+                        ->setWmsInstance($wmsinst);
+                $rootInst->addSublayer($layerInst);
+                $wmsinst->addLayer($layerInst);
+            }
+            $children = array($wmsinst->generateLayersConfiguration($rootInst));
+            $wmsconf->setChildren($children);
+            return array(
+                'type' => $wmsinst->getType(),
+                'title' => $wmsinst->getTitle(),
+                'id' => $wmsinst->getId(),
+                'configuration' => $wmsconf->toArray());
+        } else if($layerList->length > 0)
+        {
+            foreach($layerList as $layerElmMb)
             {
                 $num++;
                 $layerInst = new WmsInstanceLayer();
                 $layersource = new WmsLayerSource();
                 $layersource->setName($this->findFirstValue(
-                                array("./@name"), $layerElm, $num));
+                                array("./@name"), $layerElmMb, $num));
                 $legendurl = $this->findFirstValue(array("./@legendUrl", "./@legend"),
-                                                   $layerElm, null);
+                                                   $layerElmMb, null);
                 if($legendurl !== null)
                 {
                     $style = new Style();
@@ -313,12 +333,12 @@ class WmcParser110 extends WmcParser
                     $layersource->addStyle($style);
                 }
                 $layerInst->setTitle($this->findFirstValue(
-                                        array("./@title"), $layerElm, $num))
+                                        array("./@title"), $layerElmMb, $num))
                         ->setParent($rootInst)
                         ->setId($wmsinst->getId() . "_" . $num)
                         ->setPriority($num)
                         ->setInfo($this->findFirstValue(
-                                        array("./@queryable"), $layerElm, false))
+                                        array("./@queryable"), $layerElmMb, false))
                         ->setWmslayersource($layersource)
                         ->setWmsInstance($wmsinst);
                 $rootInst->addSublayer($layerInst);
