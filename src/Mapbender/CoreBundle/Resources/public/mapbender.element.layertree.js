@@ -84,68 +84,52 @@
                 var that = this;
                 $(that).sortable({
                     axis: 'y',
-                    items: "li:not(.notreorder)",
+                    items: "> li:not(.notreorder)",
                     distance: 6,
-                    stop: function( event, ui) {
-                        if($(ui.item).parent().attr("id") !== $(event.target).attr("id")){
+                    cursor: "move",
+                    update: function(event, ui) {
+                        var elm = $(ui.item);
+                        var before = null, after = null, tomove = null;
+                        if(elm.prev().length !== 0){
+                            var beforeEl = $(elm.prev()[0]);
+                            before = {
+                                source: self.model.getSource({
+                                    id: $(beforeEl).attr('data-sourceid') ? $(beforeEl).attr('data-sourceid') : $(beforeEl).parents('li[data-sourceid]:first').attr('data-sourceid')
+                                }), 
+                                layerId: $(beforeEl).attr("data-id")
+                            };
+                        }
+                        if(elm.next().length !== 0){
+                            var afterEl = $(elm.next()[0]);
+                            after = {
+                                source:  self.model.getSource({
+                                    id: $(afterEl).attr('data-sourceid') ? $(afterEl).attr('data-sourceid') : $(afterEl).parents('li[data-sourceid]:first').attr('data-sourceid')
+                                }), 
+                                layerId: $(afterEl).attr("data-id")
+                            };
+                        }
+                        tomove = {
+                            source: self.model.getSource({
+                                id: $(elm).attr('data-sourceid') ? $(elm).attr('data-sourceid') : $(elm).parents('li[data-sourceid]:first').attr('data-sourceid')
+                            })
+                        };
+                        if($(ui.item).attr("data-type") !== self.consts.root){
+                            tomove['layerId'] = $(ui.item).attr("data-id");
+                        }
+                        var tochange = self.model.createToChangeObj(tomove.source);
+                        if(tochange !== null){
+                            tochange.type = {
+                                layerTree: "move"
+                            };
+                            tochange.children.before = after;
+                            tochange.children.after = before;
+                            tochange.children.tomove = tomove;
+                            self.model.changeSource(tochange);
+                        } else {
                             $(that).sortable('cancel');
                             return;
                         }
-                        var et = $(event.target);
-                        var list = $(event.target).children("li");
-                        for(var i = 0; i < list.length; i++){
-                            var elm = list[i];
-                            var a = $(elm).attr("data-id"), b = $(ui.item).attr("data-id");
-                            if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
-                                var before = null, after = null, tomove;
-                                if(i > 0){
-                                    var beforeEl = list[i-1];
-                                    var beforeId = $(beforeEl).attr("data-id");
-                                    var beforeSourceId = $(beforeEl).attr('data-sourceid') ? $(beforeEl).attr('data-sourceid') : $(beforeEl).parents('li[data-sourceid]:first').attr('data-sourceid');//self._findSourceId($(beforeEl));
-                                    before = {
-                                        source: self.model.getSource({
-                                            id: beforeSourceId
-                                        }), 
-                                        layerId: beforeId
-                                    };
-                                }
-                                if(i < list.length - 1){
-                                    var afterEl = list[i+1];
-                                    var afterId = $(afterEl).attr("data-id");
-                                    var afterSourceId = $(afterEl).attr('data-sourceid') ? $(afterEl).attr('data-sourceid') : $(afterEl).parents('li[data-sourceid]:first').attr('data-sourceid');//self._findSourceId($(afterEl));
-                                    after = {
-                                        source:  self.model.getSource({
-                                            id: afterSourceId
-                                        }), 
-                                        layerId: afterId
-                                    };
-                                }
-                                var tomoveId = $(ui.item).attr("data-id");
-                                var tomoveSourceId = $(elm).attr('data-sourceid') ? $(elm).attr('data-sourceid') : $(elm).parents('li[data-sourceid]:first').attr('data-sourceid');
-                                tomove = {
-                                    source: self.model.getSource({
-                                        id: tomoveSourceId
-                                    })
-                                };
-                                if($(ui.item).attr("data-type") !== self.consts.root){
-                                    tomove['layerId'] = tomoveId;
-                                }
-                                var tochange = self.model.createToChangeObj(tomove.source);
-                                if(tochange !== null){
-                                    tochange.type = {
-                                        layerTree: "move"
-                                    };
-                                    tochange.children.before = after;
-                                    tochange.children.after = before;
-                                    tochange.children.tomove = tomove;
-                                    self.model.changeSource(tochange);
-                                    break;
-                                } else {
-                                    $(that).sortable('cancel');
-                                    return;
-                                }
-                            }
-                        }
+                        
                     }
                 });
             });
