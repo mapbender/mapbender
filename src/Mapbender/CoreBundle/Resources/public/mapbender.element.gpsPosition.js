@@ -15,10 +15,13 @@ $.widget("mapbender.mbGpsPosition", {
         }
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         
-        me.click(function() { self._timerGeolocation.call(self); });
+        me.click(function() { 
+            me.parent().addClass("toolBarItemActive");
+            self._timerGeolocation.call(self); 
+        });
     },
     
-    _setup: function() {    
+    _setup: function() {
         this.map = $('#' + this.options.target).data('mbMap');       
         if (this.options.autoStart === true){
             this._getGeolocation();
@@ -86,6 +89,7 @@ $.widget("mapbender.mbGpsPosition", {
     },	
 
     _deactivateTimer: function (){	
+        $(this.element).parent().removeClass("toolBarItemActive");
         this.interval = clearInterval(this.interval);
     }
 });
