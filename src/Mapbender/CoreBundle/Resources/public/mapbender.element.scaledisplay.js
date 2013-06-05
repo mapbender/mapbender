@@ -44,24 +44,12 @@
             }
             
             var projection = mbMap.map.olMap.getProjectionObject();
-            var scaledisplayOptions = {
-                div: $(this.element).get(0),
-                maxWidth: this.options.maxWidth,
-                geodesic: projection.units = 'degrees' ? true : false,
-                topOutUnits: "km",
-                topInUnits: "m",
-                bottomOutUnits: "mi",
-                bottomInUnits: "ft"
+            var options = {
+                geodesic: projection.units === 'degrees' ? true : false
             };
-            this.scaledisplay = new OpenLayers.Control.Scale(scaledisplayOptions);
+            this.scaledisplay = new OpenLayers.Control.Scale($(this.element).get(0), options);
             
             mbMap.map.olMap.addControl(this.scaledisplay);
-            if($.inArray("km", this.options.units) === -1){
-                $(this.element).find('div.olControlScaleLineTop').css({display: 'none'});
-            }
-            if($.inArray("ml", this.options.units) === -1){
-                $(this.element).find('div.olControlScaleLineBottom').css({display: 'none'});
-            }
             $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
         },
         

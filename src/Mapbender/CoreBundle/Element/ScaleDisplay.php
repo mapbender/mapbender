@@ -45,9 +45,7 @@ class ScaleDisplay extends Element
             'title' => 'Scale Display',
             'tooltip' => 'Scale Display',
             'target' => null,
-            'maxWidth' => 100,
             'anchor' => 'right-bottom',
-            'units' => array("km"),
             'position' => array('20px', '20px'));
     }
 
@@ -73,9 +71,8 @@ class ScaleDisplay extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.scalebar.js'),
-            //TODO: Split up
-            'css' => array('mapbender.element.scalebar.css'));
+            'js' => array('mapbender.element.scaledisplay.js'),
+            'css' => array('mapbender.element.scaledisplay.css'));
     }
 
     /**

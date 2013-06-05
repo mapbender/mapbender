@@ -6,9 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Mapbender\CoreBundle\Form\Type\PositionType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Mapbender\CoreBundle\Form\Type\ExtentType;
-use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Element\DataTranformer\LayersetNameTranformer;
 
 /**
  * 
@@ -39,13 +36,6 @@ class ScaleBarAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $app = $options['application'];
-        $layersets = array();
-        foreach($app->getLayersets() as $layerset)
-        {
-            $layersets[$layerset->getId()] = $layerset->getTitle();
-        }
-
         $builder->add('tooltip', 'text', array('required' => false))
                 ->add('target', 'target_element',
                       array(
