@@ -76,7 +76,6 @@ $.widget("mapbender.mbButton", {
             this.deactivate();
         } else {
             this.button.checked = true;
-            $(this.button).button('refresh');
         }
     },
 
@@ -95,7 +94,6 @@ $.widget("mapbender.mbButton", {
         }
         if(this.options.group) {
             this.button.checked = false;
-            $(this.button).button('refresh');
         }
     }
 });
