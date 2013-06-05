@@ -103,11 +103,11 @@ $.widget("mapbender.mbRuler", {
             $("body").mbPopup();
             $("body").mbPopup('addButton', "Close", "button right", function(){
                     self.deactivate();
-                    $("body").mbPopup('close');
                     if(self.options.deactivate) {
                         $.proxy(self.deactivate, self);
                     }
-                }).mbPopup('showCustom', {title:this.options.title,
+                })
+            .mbPopup('showCustom', {title:this.options.title,
                                            content: self.container,
                                            showCloseButton: false,
                                            modal:false,
@@ -125,6 +125,9 @@ $.widget("mapbender.mbRuler", {
         var olMap = this.map.data('mapQuery').olMap;
         this.control.deactivate();
         olMap.removeControl(this.control);
+        if($('body').data('mbPopup')) {
+            $("body").mbPopup('close');
+        }
     },
 
     _reset: function() {
