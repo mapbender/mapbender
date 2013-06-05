@@ -112,7 +112,8 @@ parameters:
                         label: true
                         target: lineruler
                         action: activate
-                        #deactivate: deactivate
+                        deactivate: deactivate
+                        group: rulers
                     arearulerButton:
                         title: Area Ruler
                         tooltip: Area Ruler
@@ -121,7 +122,8 @@ parameters:
                         label: true
                         target: arearuler
                         action: activate
-                        #deactivate: deactivates
+                        deactivate: deactivate
+                        group: rulers
                     about:
                         title: About
                         tooltip: About

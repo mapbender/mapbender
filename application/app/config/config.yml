@@ -79,6 +79,9 @@ fom_user:
     profile_entity: FOM\UserBundle\Entity\BasicProfile
     profile_formtype: FOM\UserBundle\Form\Type\BasicProfileType
     profile_template: FOMUserBundle:User:basic_profile.html.twig
+    self_registration_groups:
+        - Self Registered
+        - Demo Group
 
 # OWSProxy Configuration
 ows_proxy3_core:
