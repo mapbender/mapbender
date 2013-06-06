@@ -45,6 +45,9 @@ class ApplicationController extends Controller
         {
             if($securityContext->isGranted('VIEW', $application))
             {
+                if(!$application->isPublished() && !$securityContext->isGranted('OWNER', $application)) {
+                    continue;
+                }
                 $allowed_applications[] = $application;
             }
         }
