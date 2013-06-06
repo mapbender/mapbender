@@ -38,7 +38,7 @@ parameters:
                         format: image/png
                         transparent: true
                         tiled: false
-                        opacity: 85                                                
+                        opacity: 85
                 overview:
                     osm_overview:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
@@ -123,7 +123,7 @@ parameters:
                         tooltip: About
                         label: true
                         class: Mapbender\CoreBundle\Element\AboutDialog
-                content:                                        
+                content:
                     map:
                         title: Main Map
                         class: Mapbender\CoreBundle\Element\Map
@@ -145,7 +145,7 @@ parameters:
                         stepbypixel: true
                         anchor: right-top
                         position: [200,40]
-                        draggable: false                       
+                        draggable: false
                     legend:
                         class: Mapbender\CoreBundle\Element\Legend
                         target: map
@@ -158,12 +158,12 @@ parameters:
                         generateLegendGraphic: false
                         showWmsTitle: true
                         showLayerTitle: true
-                        showGroupedLayerTitle: true                   
+                        showGroupedLayerTitle: true
                     featureinfo:
                         class: Mapbender\CoreBundle\Element\FeatureInfo
                         title: FeatureInfo
                         target: map
-                        deactivateOnClose: true 
+                        deactivateOnClose: true
                     wmsloader:
                         title: Wms Laden
                         class: Mapbender\WmsBundle\Element\WmsLoader
@@ -191,7 +191,7 @@ parameters:
                                 label: A3 Landscape
                                 format: a3
                         scales: [500, 1000, 5000, 10000, 25000]
-                        quality_levels: 
+                        quality_levels:
                             72: Draft (72dpi)
                             288: Document (288dpi)
                         rotatable: true
@@ -225,7 +225,7 @@ parameters:
                         autoOpen: false
                         titleMaxLength: 20
                         showBaseSource: true
-                        showHeader: false 
+                        showHeader: false
                         layerMenu: false
                         layerRemove: false
                     overview:
@@ -251,7 +251,7 @@ parameters:
                         autoOpen: false
                         titleMaxLength: 20
                         showBaseSource: true
-                        showHeader: false 
+                        showHeader: false
                         layerMenu: false
                         layerRemove: false
                 footer:
@@ -318,7 +318,7 @@ parameters:
                         format: image/png
                         transparent: true
                         tiled: false
-                        opacity: 85                                                
+                        opacity: 85
                 overview:
                     osm_overview:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
@@ -363,7 +363,7 @@ parameters:
                         title: Legend
                         tooltip: Legend
                         class: Mapbender\CoreBundle\Element\Button
-                        label: false 
+                        label: false
                         target: legend
                         icon: iconLegend
                         action: open
@@ -401,7 +401,7 @@ parameters:
                         tooltip: About
                         label: false
                         class: Mapbender\CoreBundle\Element\AboutDialog
-                content:                                        
+                content:
                     map:
                         title: Main Map
                         class: Mapbender\CoreBundle\Element\Map
@@ -423,7 +423,7 @@ parameters:
                         stepbypixel: true
                         anchor: right-top
                         position: [200,40]
-                        draggable: false                       
+                        draggable: false
                     legend:
                         class: Mapbender\CoreBundle\Element\Legend
                         target: map
@@ -436,12 +436,12 @@ parameters:
                         generateLegendGraphic: false
                         showWmsTitle: true
                         showLayerTitle: true
-                        showGroupedLayerTitle: true                   
+                        showGroupedLayerTitle: true
                     featureinfo:
                         class: Mapbender\CoreBundle\Element\FeatureInfo
                         title: FeatureInfo
                         target: map
-                        deactivateOnClose: true 
+                        deactivateOnClose: true
                     wmsloader:
                         title: Wms Laden
                         class: Mapbender\WmsBundle\Element\WmsLoader
@@ -469,7 +469,7 @@ parameters:
                                 label: A3 Landscape
                                 format: a3
                         scales: [500, 1000, 5000, 10000, 25000]
-                        quality_levels: 
+                        quality_levels:
                             72: Draft (72dpi)
                             288: Document (288dpi)
                         rotatable: true
@@ -503,7 +503,7 @@ parameters:
                         autoOpen: false
                         titleMaxLength: 20
                         showBaseSource: true
-                        showHeader: false 
+                        showHeader: false
                         layerMenu: false
                         layerRemove: false
                     overview:

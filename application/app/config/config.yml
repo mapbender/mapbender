@@ -25,7 +25,7 @@ twig:
         fom:    %fom%
     form:
         resources:
-            - 'FOMCoreBundle:Form:fields.html.twig' 
+            - 'FOMCoreBundle:Form:fields.html.twig'
 
 # Assetic Configuration
 assetic:
@@ -70,7 +70,7 @@ fom_manager:
 
 # FOM User Configuration
 fom_user:
-    selfregister: false
+    selfregister: true
     reset_password: true
     max_registration_time: 1
     max_reset_time: 1
@@ -96,7 +96,7 @@ ows_proxy3_core:
 #        password: password
 #        noproxy:
 #            - host_a
-#            - host_b 
+#            - host_b
 
 # Mapbender Configuration
 mapbender_core: ~
