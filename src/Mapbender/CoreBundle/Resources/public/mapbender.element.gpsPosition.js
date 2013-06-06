@@ -12,19 +12,16 @@ $.widget("mapbender.mbGpsPosition", {
         
         if(!Mapbender.checkTarget("mbGpsPosition", this.options.target)){
                 return;
-        }      
-//        if(this.options.target === null
-//                || this.options.target.replace(/^\s+|\s+$/g, '') === ""
-//                || !$('#' + this.options.target)){
-//                alert('The target element "map" is not defined for GPS-Postition.');
-//                return;
-//            }
+        }
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         
-        me.click(function() { self._timerGeolocation.call(self); });
+        me.click(function() { 
+            me.parent().addClass("toolBarItemActive");
+            self._timerGeolocation.call(self); 
+        });
     },
     
-    _setup: function() {    
+    _setup: function() {
         this.map = $('#' + this.options.target).data('mbMap');       
         if (this.options.autoStart === true){
             this._getGeolocation();
@@ -72,7 +69,6 @@ $.widget("mapbender.mbGpsPosition", {
         markers = new OpenLayers.Layer.Markers( "Markers" );
         olmap.addLayer(markers); 
         var size = new OpenLayers.Size(20,20);
-        //var icon = new OpenLayers.Icon('/mapbender-starter/application/mapbender/src/Mapbender/CoreBundle/Resources/public/image/marker_fett.gif', size);
         var icon = new OpenLayers.Icon(Mapbender.configuration.application.urls.asset + 'bundles/mapbendercore/image/marker_fett.gif', size);
         markers.addMarker(new OpenLayers.Marker(position,icon));
     },
@@ -93,8 +89,9 @@ $.widget("mapbender.mbGpsPosition", {
     },	
 
     _deactivateTimer: function (){	
+        $(this.element).parent().removeClass("toolBarItemActive");
         this.interval = clearInterval(this.interval);
-    } 
+    }
 });
 
 })(jQuery);
