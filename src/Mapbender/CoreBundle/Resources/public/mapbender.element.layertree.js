@@ -40,7 +40,6 @@
                 if(!sources[i].configuration.isBaseSource || (sources[i].configuration.isBaseSource && this.options.showBaseSource)){
                     if(this.options.displaytype === "tree"){
                         var li_s = this._createSourceTree(sources[i], sources[i], this.model.getScale());
-                        //                        me.find("ul.layers:first").append($(li_s));
                         me.find("ul.layers:first").append(li_s);
                     } else if(this.options.displaytype === "list"){
                         var li_s = self._createSourceList(sources[i], sources[i], this.model.getScale());
@@ -489,7 +488,6 @@
                     return li;
                 }
                 if(sourceEl.children){
-                    //                    parent = parent.find('li[data-id="'+sourceEl.options.id+'"]:first');
                     for(var j = 0; j < sourceEl.children.length; j++){
                         var li = this._createListNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found);
                         if(li !== null){
@@ -624,7 +622,6 @@
         },
         
         _toggleMenu: function(e){
-            console.log("TOGGLE MENU",e);
             var menu = $(e.target).parent().find('div.layer-menu:first');
             if(menu.hasClass("hide-elm")){
                 menu.removeClass("hide-elm");
@@ -693,13 +690,24 @@
 
         open: function(){
             if(this.options.type === 'dialog' && (!$('body').data('mbPopup'))){
+                var self = this;
+
                 $("body").mbPopup();
-                $("body").mbPopup('showHint', {title:this.options.title, showHeader:true, content: this.element, width:350, draggable:true});
+                $("body").mbPopup('addButton', "Close", "button critical right", function(){
+                            self.close();
+                         }).mbPopup('showCustom', 
+                                  {title:this.options.title, 
+                                   showHeader:true, 
+                                   content: $(this.element), 
+                                   width:350, 
+                                   showCloseButton: false,
+                                   draggable:true});
             }
         },
 
         close: function(){
             if(this.options.type === 'dialog' && ($('body').data('mbPopup'))){
+                $(this.element).appendTo("#mb-layertree-dialog");
                 $("body").mbPopup("close");
             }
         },
