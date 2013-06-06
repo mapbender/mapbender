@@ -8,11 +8,11 @@
       </trans-unit>
       <trans-unit id="2">
         <source>User</source>
-        <target>Benutzer</target>
+        <target>User</target>
       </trans-unit>
       <trans-unit id="3">
         <source>Services</source>
-        <target>Dienste</target>
+        <target>Services</target>
       </trans-unit>
     </body>
   </file>
