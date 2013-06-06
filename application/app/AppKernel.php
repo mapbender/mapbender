@@ -37,12 +37,10 @@ class AppKernel extends Kernel
             new Mapbender\ManagerBundle\MapbenderManagerBundle(),
             new Mapbender\PrintBundle\MapbenderPrintBundle(),
 
-            //new Mapbender\DrupalIntegrationBundle\MapbenderDrupalIntegrationBundle(),
-
             // OWSProxy3 bundles
             new OwsProxy3\CoreBundle\OwsProxy3CoreBundle(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
-
+            
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
