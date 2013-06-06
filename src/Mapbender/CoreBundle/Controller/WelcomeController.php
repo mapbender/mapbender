@@ -39,6 +39,9 @@ class WelcomeController extends Controller {
         {
             if($securityContext->isGranted('VIEW', $application))
             {
+                if(!$application->isPublished() && !$securityContext->isGranted('EDIT', $application)) {
+                    continue;
+                }
                 $allowed_applications[] = $application;
             }
         }
