@@ -46,6 +46,7 @@ $.widget("mapbender.mbFeatureInfo", {
         if(this.map) {
             $('#' + this.options.target).removeClass('mb-feature-info-active');
             this.map.element.unbind('click', this.mapClickHandler);
+            $(".toolBarItemActive").removeClass("toolBarItemActive");
         }
     },
 
