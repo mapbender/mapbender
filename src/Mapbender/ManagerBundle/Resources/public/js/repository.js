@@ -1,11 +1,14 @@
 $(function() {
   var showInfoBox = function(){
-    $(".infoMsgBox").addClass("hide");
-    $(this).find(".infoMsgBox").removeClass("hide");
+    var me      = $(this);
+    var infoBox = me.find(".infoMsgBox");
 
-    $(document).one("click", function(){
-      $(".infoMsgBox").addClass("hide");
-    });
+    if(infoBox.hasClass("hide")){
+        $(".infoMsgBox").addClass("hide");
+        infoBox.removeClass("hide");
+    }else{
+        infoBox.addClass("hide");
+    }
     return false;
   }
 
