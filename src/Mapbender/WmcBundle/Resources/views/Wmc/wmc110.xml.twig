@@ -6,9 +6,9 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://www.opengis.net/context http://schemas.opengis.net/context/1.0.0/context.xsd">
     <General>
-        <Window width="{{ wmc.general.window.width }}" height="{{ wmc.general.window.height }}" />
-        <BoundingBox SRS="{{ wmc.general.bbox.srs }}" minx="{{ wmc.general.bbox.minx }}" miny="{{ wmc.general.bbox.miny }}" maxx="{{ wmc.general.bbox.maxx }}" maxy="{{ wmc.general.bbox.maxy }}"/>
-        <Title>{{ wmc.general.title }}</Title>
+        <Window width="{{ wmc.json.window.width }}" height="{{ wmc.json.window.height }}" />
+        <BoundingBox SRS="{{ wmc.json.extent.srs }}" minx="{{ wmc.json.extent.minx }}" miny="{{ wmc.json.extent.miny }}" maxx="{{ wmc.json.extent.maxx }}" maxy="{{ wmc.json.extent.maxy }}"/>
+        <Title>{{ wmc.title }}</Title>
         {% if wmc.keywords is defined %}
         <KeywordList>
             {% for keyword in wmc.keywords %}
@@ -66,8 +66,8 @@
         </Extension-->
     </General>
     <LayerList>
-        {% for source in wmc.state.json.sources %}
-        <Layer queryable="{{ source.queryable }}" hidden="{{ source.hidden }}">
+        {% for source in wmc.json.sources %}
+        <Layer queryable="{{ source.configuration.children[0].children|length }}" hidden="{% if source.configuration.options.visible %}0{% else %}1{% endif %}">
             <Server service="OGC:WMS" version="{{ source.configuration.version }}" title="{{ source.configuration.title }}">
                 <OnlineResource xlink:type="simple" xlink:href="{{ source.configuration.options.url }}"/>
             </Server>
