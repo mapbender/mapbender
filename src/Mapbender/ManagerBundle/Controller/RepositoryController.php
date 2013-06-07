@@ -131,7 +131,7 @@ class RepositoryController extends Controller {
         }
 
         $securityContext = $this->get('security.context');
-        if(!$securityContext->isGranted('EDIT', $sourceInst)) {
+        if(!$securityContext->isGranted('EDIT', $sourceInst->getSource())) {
             throw new AccessDeniedHttpException();
         }
 

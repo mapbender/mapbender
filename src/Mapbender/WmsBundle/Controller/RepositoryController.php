@@ -23,7 +23,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 
 /**
  * @ManagerRoute("/repository/wms")
@@ -160,6 +163,19 @@ class RepositoryController extends Controller
                              $rootlayer);
             $this->getDoctrine()->getEntityManager()->persist($wmssource);
             $this->getDoctrine()->getEntityManager()->flush();
+
+            // ACL
+            $aclProvider = $this->get('security.acl.provider');
+            $objectIdentity = ObjectIdentity::fromDomainObject($wmssource);
+            $acl = $aclProvider->createAcl($objectIdentity);
+
+            $securityContext = $this->get('security.context');
+            $user = $securityContext->getToken()->getUser();
+            $securityIdentity = UserSecurityIdentity::fromAccount($user);
+
+            $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+            $aclProvider->updateAcl($acl);
+
 
             return $this->redirect($this->generateUrl(
                                     "mapbender_manager_repository_view",
