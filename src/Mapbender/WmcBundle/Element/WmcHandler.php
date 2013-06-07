@@ -128,10 +128,52 @@ class WmcHandler extends Element
 //            case 'index':
 //                return $this->index();
 //                break;
+//            case 'wmcasxml':
+//                return $this->getWmcAsXml();
+//                break;
+//            case 'wmcasjson':
+//                return $this->getWmcAsJson();
+//                break;
             default:
                 throw new NotFoundHttpException('No such action');
         }
     }
+    
+    
+//    
+//    private function getWmcAsJson(){
+//        $id = $this->container->get('request')->get('id');
+//        $wmc = $this->container->get('doctrine')->getRepository('LippeGeoportalBundle:Wmc')
+//                ->find($id);
+//        $doc = WmcParser::createDocument($wmc->getDocument());
+//        $wmcp = WmcParser::getParser($doc);
+//        $wmc_temp = $wmcp->parse();
+//        $result = array(
+//            "json" => $wmc_temp->getState()->getJson()
+//        );
+//        $response = new Response();
+//        $response->setContent(json_encode($result));
+//        $response->headers->set('Content-Type', 'application/json');
+//        return $response;
+//    }
+//    
+//    private function getWmcAsXml(){
+//        $id = $this->container->get('request')->get('id');
+//        $wmc = $this->container->get('doctrine')->getRepository('LippeGeoportalBundle:Wmc')
+//                ->find($id);
+//        
+//        $wmcxml = $this->container->get('templating')
+//                        ->render('MapbenderWmcBundle:Wmc:wmc110.xml.twig',
+//                                 array(
+//                            'wmc' => $wmc));
+//        $result = array(
+//            "xml" => $wmc->getId()
+//        );
+//        $response = new Response();
+//        $response->setContent(json_encode($result));
+//        $response->headers->set('Content-Type', 'application/json');
+//        return $response;
+//    }
 
     /**
      * Returns a json encoded wmc or error if wmc is not found.
