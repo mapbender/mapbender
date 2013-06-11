@@ -44,7 +44,7 @@ class WmcParser110 extends WmcParser
     /**
      * @inheritdoc
      */
-    public function parse()
+    public function parse($infoFormat = "text/html")
     {
         $wmc = new Wmc();
         $stateHandler = new StateHandler();
@@ -148,7 +148,7 @@ class WmcParser110 extends WmcParser
         foreach($layerList as $layerElm)
         {
             $sourcesTemp[] = $this->parseLayer($layerElm,
-                                               $stateHandler->getExtent()->srs);
+                                               $stateHandler->getExtent()->srs, $infoFormat);
         }
         $groupSources = false;
         if($groupSources)
@@ -176,13 +176,14 @@ class WmcParser110 extends WmcParser
      * '/ViewContext/General/BoundingBox/@SRS')
      * @return array layer configuration as array
      */
-    private function parseLayer(\DOMElement $layerElm, $srs)
+    private function parseLayer(\DOMElement $layerElm, $srs, $infoFormat)
     {
         $wmsinst = new WmsInstance();
         $wms = new WmsSource();
         $id = round(microtime(true) * 1000);
         $queryable = $this->getValue("./@queryable", $layerElm);
         $wmsinst->setVisible(!(bool) $this->getValue("./@hidden", $layerElm));
+        $wmsinst->setInfoformat($infoFormat);
         $formats = array();
         $formatList = $this->xpath->query("./cntxt:FormatList/cntxt:Format",
                                           $layerElm);
@@ -363,7 +364,7 @@ class WmcParser110 extends WmcParser
                         ->setParent($rootInst)
                         ->setId($wmsinst->getId() . "_" . $num)
                         ->setPriority($num)
-                        ->setInfo($this->findFirstValue(
+                        ->setInfo((bool) $this->findFirstValue(
                                         array("./@queryable"), $layerElmMb,
                                         false))
                         ->setWmslayersource($layersource)
