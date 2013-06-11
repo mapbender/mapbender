@@ -109,7 +109,7 @@ class WmcHandler extends Element
         {
             case 'loadfromid':
                 $wmcid = $this->container->get("request")->get("wmcid", null);
-                return $this->loadFromId($wmcid);
+                return $this->getWmc($wmcid);
                 break;
 //            case 'delete':
 //                $wmcid = $this->container->get("request")->get("wmcid", null);
@@ -128,12 +128,60 @@ class WmcHandler extends Element
 //            case 'index':
 //                return $this->index();
 //                break;
+//            case 'wmcasxml':
+//                return $this->getWmcAsXml();
+//                break;
+//            case 'wmcasjson':
+//                return $this->getWmcAsJson();
+//                break;
             default:
                 throw new NotFoundHttpException('No such action');
         }
     }
+    
+    
+//    
+//    private function getWmcAsJson(){
+//        $id = $this->container->get('request')->get('id');
+//        $wmc = $this->container->get('doctrine')->getRepository('LippeGeoportalBundle:Wmc')
+//                ->find($id);
+//        $doc = WmcParser::createDocument($wmc->getDocument());
+//        $wmcp = WmcParser::getParser($doc);
+//        $wmc_temp = $wmcp->parse();
+//        $result = array(
+//            "json" => $wmc_temp->getState()->getJson()
+//        );
+//        $response = new Response();
+//        $response->setContent(json_encode($result));
+//        $response->headers->set('Content-Type', 'application/json');
+//        return $response;
+//    }
+//    
+//    private function getWmcAsXml(){
+//        $id = $this->container->get('request')->get('id');
+//        $wmc = $this->container->get('doctrine')->getRepository('LippeGeoportalBundle:Wmc')
+//                ->find($id);
+//        
+//        $wmcxml = $this->container->get('templating')
+//                        ->render('MapbenderWmcBundle:Wmc:wmc110.xml.twig',
+//                                 array(
+//                            'wmc' => $wmc));
+//        $result = array(
+//            "xml" => $wmc->getId()
+//        );
+//        $response = new Response();
+//        $response->setContent(json_encode($result));
+//        $response->headers->set('Content-Type', 'application/json');
+//        return $response;
+//    }
 
-    private function loadFromId($id)
+    /**
+     * Returns a json encoded wmc or error if wmc is not found.
+     * 
+     * @param integer|string $id wmc id
+     * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
+     */
+    protected function getWmc($id)
     {
         if($id)
         {
@@ -150,44 +198,31 @@ class WmcHandler extends Element
                                 "error" => 'Error: wmc "' . $id . '" not found')), 200,
                             array('Content-Type' => 'application/json'));
         }
+    }
+
+    /**
+     * Returns a html encoded list of all wmc documents
+     * 
+     * @return \Symfony\Component\HttpFoundation\Response 
+     */
+    protected function getWmcList()
+    {
+        $response = new Response();
+        $entities = $this->container
+                ->get('doctrine')
+                ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
+                ->findAll();
+        $responseBody = $this->container
+                ->get('templating')
+                ->render('MapbenderWmcBundle:Wmc:index.html.twig',
+                         array("entities" => $entities)
+        );
+
+        $response->setContent($responseBody);
         return $response;
     }
 //
-//    protected function getWmc($id)
-//    {
-//        $wmc = $this->container->get('doctrine')
-//                ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
-//                ->find($id);
-//        $form = $this->getForm($wmc);
-//        $responseBody = $this->container
-//                ->get('templating')
-//                ->render("MapbenderWmcBundle:Wmc:edit.html.twig",
-//                         array(
-//            "edit_form" => $form->createView(),
-//            "entity" => $wmc));
-//        $response = new Response();
-//        $response->setContent($responseBody);
-//        return $response;
-//    }
-//
-//    protected function index()
-//    {
-//        $response = new Response();
-//        $entities = $this->container
-//                ->get('doctrine')
-//                ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
-//                ->findAll();
-//        $responseBody = $this->container
-//                ->get('templating')
-//                ->render('MapbenderWmcBundle:Wmc:index.html.twig',
-//                         array("entities" => $entities)
-//        );
-//
-//        $response->setContent($responseBody);
-//        return $response;
-//    }
-//
-//    private function save($id = null)
+//    protected function save($id = null)
 //    {
 //        $response = new Response();
 //        $request = $this->container->get('request');
@@ -267,25 +302,25 @@ class WmcHandler extends Element
 //        }
 //        return $response;
 //    }
-//
-//    private function delete($id)
-//    {
-//        $response = new Response();
-//        $wmc = $this->container->get('doctrine')
-//                ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
-//                ->find($id);
-//        if($wmc !== null)
-//        {
-//            $response->setContent($wmc->getId());
-//            $em = $this->container->get('doctrine')->getEntityManager();
-//            $em->remove($wmc);
-//            $em->flush();
-//        } else
-//        {
-//            $response->setContent('error');
-//        }
-//        return $response;
-//    }
+
+    private function delete($id)
+    {
+        $response = new Response();
+        $wmc = $this->container->get('doctrine')
+                ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
+                ->find($id);
+        if($wmc !== null)
+        {
+            $response->setContent($wmc->getId());
+            $em = $this->container->get('doctrine')->getEntityManager();
+            $em->remove($wmc);
+            $em->flush();
+        } else
+        {
+            $response->setContent('error');
+        }
+        return $response;
+    }
 //
 //    public function generateMetadata($themenkarte)
 //    {

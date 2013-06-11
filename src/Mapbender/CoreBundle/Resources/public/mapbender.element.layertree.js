@@ -2,7 +2,7 @@
 
     $.widget("mapbender.mbLayertree", {
         options: {
-            title: 'Table of Contents',
+            title: 'Layertree',
             autoOpen: false,
             target: null
         },
