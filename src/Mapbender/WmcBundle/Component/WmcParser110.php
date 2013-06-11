@@ -291,8 +291,8 @@ class WmcParser110 extends WmcParser
 
             $options->setTransparency($wmsinst->getTransparency())
                     ->setOpacity($wmsinst->getOpacity())
-                    ->setTiled($wmsinst->getTiled());
-//                    ->setInfoformat($wmsinst->getInfoformat())
+                    ->setTiled($wmsinst->getTiled())
+                    ->setInfoformat($wmsinst->getInfoformat());
         }
         $wmsconf->setOptions($options);
 
@@ -359,14 +359,16 @@ class WmcParser110 extends WmcParser
                     $style->setLegendUrl($legendUrl);
                     $layersource->addStyle($style);
                 }
+                $queryable = $this->findFirstValue(
+                                        array("./@queryable"), $layerElmMb,
+                                        false);
+                $queryable = $queryable !== null && strtolower($queryable) === 'true' ? true : false;
                 $layerInst->setTitle($this->findFirstValue(
                                         array("./@title"), $layerElmMb, $num))
                         ->setParent($rootInst)
                         ->setId($wmsinst->getId() . "_" . $num)
                         ->setPriority($num)
-                        ->setInfo((bool) $this->findFirstValue(
-                                        array("./@queryable"), $layerElmMb,
-                                        false))
+                        ->setInfo($queryable)
                         ->setWmslayersource($layersource)
                         ->setWmsInstance($wmsinst);
                 $rootInst->addSublayer($layerInst);
