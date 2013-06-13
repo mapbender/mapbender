@@ -42,6 +42,12 @@ class WmcHandlerAdminType extends AbstractType
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],
                     'property_path' => '[target]',
+                    'required' => false))
+                ->add('useEditor', 'checkbox',
+                      array(
+                    'required' => false))
+                ->add('autoOpen', 'checkbox',
+                      array(
                     'required' => false));
     }
 }

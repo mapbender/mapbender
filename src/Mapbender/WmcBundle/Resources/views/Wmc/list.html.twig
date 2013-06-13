@@ -11,10 +11,11 @@
     {% for entity in entities %}
         <tr>
             <td class="id">{{ entity.id }}</td>
-            <td><a class="edit" href="#" data-id="{{ entity.id }}">{{ entity.state.title }}</a></td>
+            <td>{{ entity.state.title }}</td>
             <td>{{ entity.abstract }}</td>
             <td>
-                <a class="delete" href="#" data-id="{{ entity.id }}">{{'Delete'|trans }}</a>
+                <span class="iconEdit iconSmall" data-id="{{ entity.id }}" title="{{ 'Edit' | trans }} {{ entity.state.title }} (ID:{{ entity.id }})"></span>
+                <span class="iconRemove iconSmall" data-id="{{ entity.id }}" title="{{'Delete'|trans }} {{ entity.state.title }} (ID:{{ entity.id }})"></span>
             </td>
         </tr>
     {% endfor %}
