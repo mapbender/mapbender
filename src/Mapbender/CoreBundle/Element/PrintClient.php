@@ -87,22 +87,22 @@ class PrintClient extends Element
     public function render()
     {
         $configuration = $this->getConfiguration();
-        $forms = array();
-        if(isset($configuration['optional_fields']) && null !== $configuration['optional_fields'])
-        {
-            $form_builder = $this->container->get('form.factory')->createNamedBuilder('extra',
-                                                                                      'form',
-                                                                                      null,
-                                                                                      array(
-                'csrf_protection' => false
-                    ));
-            foreach($configuration['optional_fields'] as $k => $c)
-            {
-                $options = array_key_exists('options', $c) ? $c['options'] : array();
-                $form_builder->add($k, $c['type'], $options);
-            }
-            $forms['extra'] = $form_builder->getForm()->createView();
-        }
+//        $forms = array();
+//        if(isset($configuration['optional_fields']) && null !== $configuration['optional_fields'])
+//        {
+//            $form_builder = $this->container->get('form.factory')->createNamedBuilder('extra',
+//                                                                                      'form',
+//                                                                                      null,
+//                                                                                      array(
+//                'csrf_protection' => true
+//                    ));
+//            foreach($configuration['optional_fields'] as $k => $c)
+//            {
+//                $options = array_key_exists('options', $c) ? $c['options'] : array();
+//                $form_builder->add($k, $c['type'], $options);
+//            }
+//            $forms['extra'] = $form_builder->getForm()->createView();
+//        }
 
         return $this->container->get('templating')
                         ->render('MapbenderCoreBundle:Element:printclient.html.twig',
@@ -110,7 +110,8 @@ class PrintClient extends Element
                             'id' => $this->getId(),
                             'title' => $this->getTitle(),
                             'configuration' => $this->getConfiguration(),
-                            'forms' => $forms));
+//                            'forms' => $forms
+                                     ));
     }
 
     /**

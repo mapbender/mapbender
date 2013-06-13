@@ -30,22 +30,22 @@
             </div>
             <label class="labelInput" for="rotation">{{ 'Rotation' | trans }}</label>
             <input class="input" type="text" name="rotation"/>
-            <div class="clearContainer"></div>
+            
 
             <div id="slider"></div>
 
-            <div id="extra_fields">
-            </div>
+            <div id="extra_fields"></div>
+            <div class="clearContainer"></div>
             <br>
             <div id="layers"></div>
         </form>
     </div>
         
     <div id="extra_forms" style="display:none">
-        {% for key, form in forms %}
+        {#% for key, form in forms %}
         <form name="{{ key }}">
             {{ form_widget(form) }}
         </form>
-        {% endfor %}
+        {% endfor %#}
     </div>
 </div>
