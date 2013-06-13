@@ -314,7 +314,10 @@
             if(this.options.elementType === "dialog") {
                 if(!$('body').data('mbPopup')) {
                     $("body").mbPopup();
-                    $("body").mbPopup('showHint', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, btnOkLabel:"Close"});
+                    $("body").mbPopup("addButton", "Close", "button buttonCancel critical right", function(){
+                    //close
+                    $("body").mbPopup("close");                    
+                }).mbPopup('showCustom', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, showCloseButton: false, overflow: false});
                 }
             }else{
                 $(this.element).find('#legends:eq(0)').html('<ul>' + html + '</ul>');
