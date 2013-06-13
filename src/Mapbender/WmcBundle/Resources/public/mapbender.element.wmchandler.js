@@ -1,14 +1,14 @@
 (function($) {
     
 
-    $.widget("mapbender.mbWmcEditor", {
+    $.widget("mapbender.mbWmcHandler", {
         options: {},
 
         elementUrl: null,
         //        dlg: null,
 
         _create: function() {
-            if(!Mapbender.checkTarget("mbViewerMenu", this.options.target)){
+            if(!Mapbender.checkTarget("mbWmcHandler", this.options.target)){
                 return;
             }
             var self = this;
@@ -16,7 +16,7 @@
         },
 
         /**
-         * Initializes the wmc editor
+         * Initializes the wmc handler
          */
         _setup: function() {
             var self = this;
@@ -24,29 +24,30 @@
             $(this.element).tabs();
             var me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            
-                $(self.element).find(".delete").live("click",function(){
-                    var url = self.elementUrl + 'delete?wmcid=' + $(this).attr("data-id");
-                    $.post(url, function(){
-                        $.proxy(self._reloadIndex,self)();
-                    });
-                    return false;
-                });
-            //            $(this.element).find('#wmceditor-save form#save-wmc').bind('submit', $.proxy(this._save, this));
-            //            var self = this;
-            //            var me = $(this.element);
-            //            this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
+        //            if(this.options.useEditor === true){
+        //                $(self.element).find(".delete").live("click",function(){
+        //                    var url = self.elementUrl + 'delete?wmcid=' + $(this).attr("data-id");
+        //                    $.post(url, function(){
+        //                        $.proxy(self._reloadIndex,self)();
+        //                    });
+        //                    return false;
+        //                });
+        //            }
+        //            $(this.element).find('#wmceditor-save form#save-wmc').bind('submit', $.proxy(this._save, this));
+        //            var self = this;
+        //            var me = $(this.element);
+        //            this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
 
-            //            this.dlg = me.find('div.dialog');
-            //
-//            $(this.element).find('#wmceditor-save form#save-wmc').ajaxForm({
-//                url: this.elementUrl + 'save',
-//                type: 'POST',
-//                beforeSerialize: $.proxy(this._beforeSave, this),
-//                context: this,
-//                success: this._createWmcSuccess,
-//                error: this._createWmcError
-//            });
+        //            this.dlg = me.find('div.dialog');
+        //
+        //            $(this.element).find('#wmceditor-save form#save-wmc').ajaxForm({
+        //                url: this.elementUrl + 'save',
+        //                type: 'POST',
+        //                beforeSerialize: $.proxy(this._beforeSave, this),
+        //                context: this,
+        //                success: this._createWmcSuccess,
+        //                error: this._createWmcError
+        //            });
         //            me.find('button')
         //            .button()
         //            .click($.proxy(this.open, this)).
@@ -63,14 +64,89 @@
         //                }
         //            }).tabs();
         },
+        
+        _loadList: function() {
+            if(this.options.useEditor === true){
+                var self = this;
+                $(this.element).find("#container-wmc-load").load(this.elementUrl + "list",function(){
+                    $(self.element).find("#container-wmc-load .iconEdit").bind("click",function(){
+//                        var $anchor = $(this);
+//                        var id = $.trim($anchor.parent().siblings(".id").text());
+                        $(self.element).find("#container-wmc-edit").load(self.elementUrl+"get",{
+                            wmcid: $(this).attr("data-id")
+                        },function(){
+                            
+                            // since there is no way to force a fileinpout to display
+                            // a preset, it can't be a required field
+//                            $("#form_screenshot")
+//                            .removeAttr("required");
+//                    
+//                            var id = $.trim($anchor.parent().siblings(".id").text());
+//                            $(self.element).find("form")
+//                            .append('<input name="tkid" type="hidden" value="'+ id +'" />');
+//                            $(self.element).find("form").ajaxForm({
+//                                url: self.elementUrl + 'update',
+//                                type: 'POST',
+//                                beforeSerialize: $.proxy(self._beforeSave, self),
+//                                context: self,
+//                                success: self._onSaveSuccess
+//                    
+//                            });
+//                            $(self.element).tabs('select',0);
+                        });
+                        return false;
+                    });
+                    $(self.element).find("#container-wmc-load .iconRemove").bind("click",function(e){
+                        var wmcid = $(this).attr("data-id");
+                        if(Mapbender.confirm("Remove WMC ID:" + wmcid) === true){
+                            var url = self.elementUrl + 'remove';
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                data: {
+                                    wmcid: wmcid
+                                },
+                                dataType: 'json',
+                                success: function(data){
+                                    if(data.error)
+                                        Mapbender.error(data.error);
+                                    else
+                                        Mapbender.info(data.success);
+                                },
+                                error:  function(data){
+                                    alert("error")
+                                }
+                            });
+                        }
+                        return false;
+                    });
 
+                });
+            }
+        },
+        
+        _removeWmc: function(id){
+            var self = this;
+            if(Mapbender.confirm("Remove WMC ID:"+id) === true){
+                alert("remove")
+                //                var url = this.elementUrl + 'delete?wmcid=' + $(this).attr("data-id");
+                //                $.post(url, function(){
+                //                    $.proxy(self._loadList, self);
+                //                });
+                return true;
+            } else
+                alert("not remove")
+            return false;
+        },
         _destroy: $.noop,
 
         open: function() {
-            //            this._super('open');
+            if(!this.options.useEditor){
+                Mapbender.error("A WMC Editor is not available. To use a WMC Editor configure your WMC Handler.")
+                return;
+            }
             var self = this;
             var me = $(this.element);
-            //            $(this.element).tabs();
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
             if(!$('body').data('mbPopup')) {
                 $("body").mbPopup();
@@ -91,26 +167,28 @@
                     showCloseButton: false,
                     overflow:true
                 });
+                
                 me.show();
+                self._loadList();
             }
-            //             var tabContainer = $('<div id="featureInfoTabContainer" class="tabContainer featureInfoTabContainer">' + 
-            //                               '<ul class="tabs"></ul>' + 
-            //                             '</div>');
-//            var header = me.find(".tabs");
-//            header.append(me.find("#wmc-edit"));
-//            var tab_edit = 
-//            newTab       = $('<li id="tab' + layer.id + '" class="tab">' + layer.label + '</li>');
-//            newContainer = $('<div id="container' + layer.id + '" class="container"></div>');
-//
-//            // activate the first container
-//            if(idx == 0){
-//                newTab.addClass("active");
-//                newContainer.addClass("active");
-//            }
-//
-//            header.append(tab_edit);
-//            tabContainer.append(newContainer);
-            this._reloadIndex();
+        //             var tabContainer = $('<div id="featureInfoTabContainer" class="tabContainer featureInfoTabContainer">' + 
+        //                               '<ul class="tabs"></ul>' + 
+        //                             '</div>');
+        //            var header = me.find(".tabs");
+        //            header.append(me.find("#wmc-edit"));
+        //            var tab_edit = 
+        //            newTab       = $('<li id="tab' + layer.id + '" class="tab">' + layer.label + '</li>');
+        //            newContainer = $('<div id="container' + layer.id + '" class="container"></div>');
+        //
+        //            // activate the first container
+        //            if(idx == 0){
+        //                newTab.addClass("active");
+        //                newContainer.addClass("active");
+        //            }
+        //
+        //            header.append(tab_edit);
+        //            tabContainer.append(newContainer);
+        //            this._reloadIndex();
 
         },
         
@@ -120,7 +198,7 @@
         //            this._updateElements();
         },
 
-        _reloadIndex: function(){
+        _reloadIndex_: function(){
             var self = this;
             //            self.dlg.dialog('open');
             $(this.element).find("#wmceditor-load").load(this.elementUrl + "index",function(){
@@ -201,9 +279,7 @@
         },
 
         _save: function(event) {
-            //            this.dlg.find('input,textarea').each(function() {
-            //                window.console && console.log(arguments);
-            //            });
+
             var map = $('#' + this.options.target).data('mbMap')
             var state = map.getMapState();
             $(event.target).find('input#wmc_state_json').val(JSON.stringify(state));
@@ -227,12 +303,12 @@
         _createWmcSuccess: function(response) {
             //            window.console && console.log(response);
             //            this._reset();
-            alert('Themenkarte gespeichert mit der id=' + response);
+            Mapbender.info('Themenkarte gespeichert mit der id=' + response);
         },
         _createWmcError: function(response) {
             //            window.console && console.log(response);
             //            this._reset();
-            alert('ERROR: Themenkarte gespeichert mit der id=' + response);
+            Mapbender.error('ERROR: Themenkarte gespeichert mit der id=' + response);
         }
     });
 

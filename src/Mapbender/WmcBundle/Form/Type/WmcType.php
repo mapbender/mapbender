@@ -35,7 +35,8 @@ class WmcType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('state', new StateType(),
+        $builder->add('id', 'hidden')
+                ->add('state', new StateType(),
                       array(
                     'data_class' => 'Mapbender\CoreBundle\Entity\State'))
                 ->add('keywords', 'text',
