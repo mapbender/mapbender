@@ -3,29 +3,29 @@
 * Software: PDF_ImageAlpha
 * Version:  1.4
 * Date:     2009-12-28
-* Author:   Valentin Schmidt 
+* Author:   Valentin Schmidt
 *
 * Requirements: FPDF 1.6
 *
-* This script allows to use images (PNGs or JPGs) with alpha-channels. 
-* The alpha-channel can be either supplied as separate 8-bit PNG ("mask"), 
-* or, for PNGs, also an internal alpha-channel can be used. 
+* This script allows to use images (PNGs or JPGs) with alpha-channels.
+* The alpha-channel can be either supplied as separate 8-bit PNG ("mask"),
+* or, for PNGs, also an internal alpha-channel can be used.
 * For the latter the GD 2.x extension is required.
-*******************************************************************************/ 
+*******************************************************************************/
 namespace Mapbender\PrintBundle\Component;
 use \FPDF_FPDI;
 
 class PDF_ImageAlpha extends FPDF_FPDI{
 
 //Private properties
-var $tmpFiles = array(); 
+var $tmpFiles = array();
 
 /*******************************************************************************
 *                                                                              *
 *                               Public methods                                 *
 *                                                                              *
 *******************************************************************************/
-function Image($file,$x,$y,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=0)
+function Image($file,$x=NULL,$y=NULL,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=0)
 {
 	//Put an image on the page
 	if(!isset($this->images[$file]))
@@ -56,7 +56,7 @@ function Image($file,$x,$y,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=
 			$info=$this->$mtd($file);
 		}
 		set_magic_quotes_runtime($mqr);
-		
+
 		if ($isMask){
       $info['cs']="DeviceGray"; // try to force grayscale (instead of indexed)
     }
@@ -77,18 +77,18 @@ function Image($file,$x,$y,$w=0,$h=0,$type='',$link='', $isMask=false, $maskImg=
 		$w=$h*$info['w']/$info['h'];
 	if($h==0)
 		$h=$w*$info['h']/$info['w'];
-	
+
 	// embed hidden, ouside the canvas
 	if ((float)FPDF_VERSION>=1.7){
 		if ($isMask) $x = ($this->CurOrientation=='P'?$this->CurPageSize[0]:$this->CurPageSize[1]) + 10;
 	}else{
 		if ($isMask) $x = ($this->CurOrientation=='P'?$this->CurPageFormat[0]:$this->CurPageFormat[1]) + 10;
 	}
-	
+
 	$this->_out(sprintf('q %.2f 0 0 %.2f %.2f %.2f cm /I%d Do Q',$w*$this->k,$h*$this->k,$x*$this->k,($this->h-($y+$h))*$this->k,$info['i']));
 	if($link)
 		$this->Link($x,$y,$w,$h,$link);
-		
+
 	return $info['i'];
 }
 
@@ -100,14 +100,14 @@ function ImagePngWithAlpha($file,$x,$y,$w=0,$h=0,$link='')
 	$this->tmpFiles[] = $tmp_alpha;
 	$tmp_plain = tempnam('.', 'mskp');
 	$this->tmpFiles[] = $tmp_plain;
-	
+
 	list($wpx, $hpx) = getimagesize($file);
 	$img = imagecreatefrompng($file);
 	$alpha_img = imagecreate( $wpx, $hpx );
-	
+
 	// generate gray scale pallete
 	for($c=0;$c<256;$c++) ImageColorAllocate($alpha_img, $c, $c, $c);
-	
+
 	// extract alpha channel
 	$xpx=0;
 	while ($xpx<$wpx){
@@ -123,16 +123,16 @@ function ImagePngWithAlpha($file,$x,$y,$w=0,$h=0,$link='')
 
 	imagepng($alpha_img, $tmp_alpha);
 	imagedestroy($alpha_img);
-	
+
 	// extract image without alpha channel
 	$plain_img = imagecreatetruecolor ( $wpx, $hpx );
 	imagecopy ($plain_img, $img, 0, 0, 0, 0, $wpx, $hpx );
 	imagepng($plain_img, $tmp_plain);
 	imagedestroy($plain_img);
-	
+
 	//first embed mask image (w, h, x, will be ignored)
-	$maskImg = $this->Image($tmp_alpha, 0,0,0,0, 'PNG', '', true); 
-	
+	$maskImg = $this->Image($tmp_alpha, 0,0,0,0, 'PNG', '', true);
+
 	//embed image, masked with previously embedded mask
 	$this->Image($tmp_plain,$x,$y,$w,$h,'PNG',$link, false, $maskImg);
 }
@@ -161,9 +161,9 @@ function _putimages()
 		$this->_out('/Subtype /Image');
 		$this->_out('/Width '.$info['w']);
 		$this->_out('/Height '.$info['h']);
-		
+
 		if (isset($info["masked"])) $this->_out('/SMask '.($this->n-1).' 0 R'); ###
-		
+
 		if($info['cs']=='Indexed')
 			$this->_out('/ColorSpace [/Indexed /DeviceRGB '.(strlen($info['pal'])/3-1).' '.($this->n+1).' 0 R]');
 		else
@@ -228,7 +228,7 @@ function _parsepng($file)
 	elseif($ct==3)
 		$colspace='Indexed';
 	else {
-		fclose($f);      // the only changes are 
+		fclose($f);      // the only changes are
 		return 'alpha';  // made in those 2 lines
 	}
 	if(ord(fread($f,1))!=0)
