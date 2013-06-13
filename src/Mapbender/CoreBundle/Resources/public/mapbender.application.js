@@ -70,6 +70,14 @@ Mapbender.error = function(message){
     alert(message);
 };
 
+Mapbender.info = function(message){
+    alert(message);
+};
+Mapbender.confirm = function(message){
+    var res = confirm(message);
+    return res;
+};
+
 Mapbender.checkTarget = function(widgetName, target, targetname){
     if(target === null || typeof(target) === 'undefined'
         || new String(target).replace(/^\s+|\s+$/g, '') === ""

@@ -1,0 +1,14 @@
+<div id="{{ id }}" class="mb-element mb-element-wmchandler" title="{{ configuration.tooltip|default(title)|trans }}" style="">
+    {% if configuration.useEditor == true %}
+    <div  id="wmcEditorTabContainer" class="tabContainer wmcEditorTabContainer">
+        <ul class="tabs">
+            <li id="tab-wmc-edit" class="tab">{{'Edit'|trans }}</li>
+            <li id="tab-wmc-load" class="tab active">{{'Load'|trans }}<li>
+        </ul>
+        <div id="container-wmc-edit" class="container">
+        </div>
+        <div id="container-wmc-load" class="container active">
+        </div>
+    </div>
+    {% endif %}
+</div>
