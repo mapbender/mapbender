@@ -48,6 +48,9 @@ class WmcHandlerAdminType extends AbstractType
                     'required' => false))
                 ->add('autoOpen', 'checkbox',
                       array(
+                    'required' => false))
+                ->add('keepBaseSources', 'checkbox',
+                      array(
                     'required' => false));
     }
 }

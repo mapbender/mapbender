@@ -30,6 +30,7 @@
             this.op_sel = "#"+$(this.element).attr('id')+" select option";
             $("#"+$(this.element).attr('id')+" select").val(mbMap.map.olMap.getProjection());
             $("#"+$(this.element).attr('id')+" select").change($.proxy(self._switchSrs, self));
+            $(document).bind('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
         },
 
         showHidde: function() {
@@ -53,14 +54,18 @@
             this._trigger('srsSwitched', null, { projection: dest });
             return true;
         },
+                
+        _onSrsChanged: function(event, srsObj){
+            this.selectSrs(srsObj.projection.projCode);
+        },
 
         selectSrs: function(crs) {
-            if(this.isSrsSupported(crs)){
+//            if(this.isSrsSupported(crs)){
                 $(this.op_sel + '[value="'+crs+'"]').attr('selected',true);
                 this._switchSrs();
                 return true;
-            }
-            return false;
+//            }
+//            return false;
         },
 
         getSelectedSrs: function() {

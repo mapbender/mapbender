@@ -1265,6 +1265,8 @@ Mapbender.DefaultModel = {
     changeProjection: function(srs){
         var self = this;
         var oldProj = this.map.olMap.getProjectionObject();
+        if(oldProj.projCode === srs.projection.projCode)
+            return;
         var center = this.map.olMap.getCenter().transform(oldProj, srs.projection);
         this.map.olMap.projection = srs.projection;
         this.map.olMap.displayProjection= srs.projection;
@@ -1286,8 +1288,14 @@ Mapbender.DefaultModel = {
             layer.initResolutions();
         });
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
-        this.mbMap._trigger('srsChanged', null, {
-            projection: srs.projection
+//        this.mbMap._trigger('srschanged', null, {
+//            projection: srs.projection
+//        });
+        this.mbMap.fireModelEvent({
+            name: 'srschanged', 
+            value: {
+                projection: srs.projection
+            }
         });
     },
 
