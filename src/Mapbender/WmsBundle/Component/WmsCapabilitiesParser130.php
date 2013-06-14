@@ -468,12 +468,12 @@ class WmsCapabilitiesParser130
 
         $minScaleEl = $this->getValue("./wms:MinScaleDenominator", $contextElm);
         $maxScaleEl = $this->getValue("./wms:MaxScaleDenominator", $contextElm);
-        if($minScaleEl !== null || $minScaleEl !== null)
+        if($minScaleEl !== null || $maxScaleEl !== null)
         {
             $scale = new MinMax();
-            $min = $this->getValue("./wms:MinScaleDenominator/text()", $contextElm);
+            $min = $this->getValue("./text()", $minScaleEl);
             $scale->setMin($min !== null ? floatval($min) : null);
-            $max = $this->getValue("./wms:MaxScaleDenominator/text()", $contextElm);
+            $max = $this->getValue("./text()", $maxScaleEl);
             $scale->setMax($max !== null ? floatval($max) : null);
             $wmslayer->setScale($scale);
             

@@ -57,9 +57,12 @@ class RequestInformation
         return null;
     }
 
-    public function __construct()
+    public function __construct($httpGet = null, $httpPost = null,
+            $formats = array())
     {
-        $this->formats = array();
+        $this->httpGet = $httpGet;
+        $this->httpPost = $httpPost;
+        $this->formats = $formats;
     }
 
     /**

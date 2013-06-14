@@ -175,7 +175,7 @@ class WmsInstance extends SourceInstance
             $num = 0;
             $rootlayer = new WmsInstanceLayer();
             $rootlayer->setTitle($this->title)
-                    ->setId($num)
+                    ->setId($this->getId()."_".$num)
                     ->setPriority($num)
                     ->setWmslayersource(new WmsLayerSource())
                     ->setWmsInstance($this);
@@ -274,7 +274,7 @@ class WmsInstance extends SourceInstance
      * @param array $configuration
      * @return array 
      */
-    private function generateLayersConfiguration(WmsInstanceLayer $layer,
+    public function generateLayersConfiguration(WmsInstanceLayer $layer,
             $configuration = array())
     {
         if($layer->getActive() === true)
