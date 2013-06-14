@@ -35,7 +35,7 @@ class Wmc
      * @ORM\Column(type="array",nullable=true)
      * */
     protected $keywords = array();
-
+    
     /**
      * @var string $abstract The wmc description
      * @ORM\Column(type="text", nullable=true)
@@ -67,6 +67,20 @@ class Wmc
 
     /* @TODO ContactImformation */
 
+    
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return State
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+    
     /**
      * Get id
      *
