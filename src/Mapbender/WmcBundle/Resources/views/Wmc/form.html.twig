@@ -1,13 +1,32 @@
-<form action="" method="post" novalidate="novalidate">
+<form id="save-wmc" action="{{ url('mapbender_core_application_element', {'slug': app.request.get('slug'), 'id': id, 'action': 'save'}) }}" method="post" novalidate="novalidate">
     <div class="elementFormToolbar elementForm">
         {{ form_widget(form.id) }}
         <div class="clearContainer"></div>
-        {{ form_label(form.state.title) }}{{ form_widget(form.state.title) }}
+        {{ form_widget(form.state) }}
         <div class="clearContainer"></div>
         {{ form_label(form.abstract) }}{{ form_widget(form.abstract) }}
         <div class="clearContainer"></div>
         {{ form_label(form.keywords) }}{{ form_widget(form.keywords) }}
         <div class="clearContainer"></div>
+        {{ form_label(form.descriptionurl) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.descriptionurl.format) }}{{ form_widget(form.descriptionurl.format) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.descriptionurl.href) }}{{ form_widget(form.descriptionurl.href) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.logourl) }} ({{ 'screenshot or width, height etc.'|trans }})
+        <div class="clearContainer"></div>
+        {{ form_label(form.logourl.width) }}{{ form_widget(form.logourl.width) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.logourl.height) }}{{ form_widget(form.logourl.height) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.logourl.onlineResource.format) }}{{ form_widget(form.logourl.onlineResource.format) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.logourl.onlineResource.href) }}{{ form_widget(form.logourl.onlineResource.href) }}
+        <div class="clearContainer"></div>
+        {{ form_label(form.screenshot) }}{{ form_widget(form.screenshot) }}
+        <div class="clearContainer"></div>
         {{ form_row(form._token) }}
+        <input type="submit" class="button right" name="{{ 'Save' | trans }}" />
     </div>
 </form>

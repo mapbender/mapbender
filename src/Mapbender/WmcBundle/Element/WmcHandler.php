@@ -10,38 +10,33 @@ use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmcBundle\Form\Type\WmcType;
 use Symfony\Component\HttpFoundation\Response;
 
-class WmcHandler extends Element
-{
+class WmcHandler extends Element {
 
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
-    {
+    static public function getClassTitle() {
         return "WmcHandler";
     }
 
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
-    {
+    static public function getClassDescription() {
         return "Wmc Handler";
     }
 
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
-    {
+    static public function getClassTags() {
         return array("wmc", "handler");
     }
 
     /**
      * @inheritdoc
      */
-    public static function getDefaultConfiguration()
-    {
+    public static function getDefaultConfiguration() {
         return array(
             "tooltip" => null,
             "target" => null,
@@ -53,24 +48,21 @@ class WmcHandler extends Element
     /**
      * @inheritdoc
      */
-    public static function getType()
-    {
+    public static function getType() {
         return 'Mapbender\WmcBundle\Element\Type\WmcHandlerAdminType';
     }
 
     /**
      * @inheritdoc
      */
-    public function getWidgetName()
-    {
+    public function getWidgetName() {
         return 'mapbender.mbWmcHandler';
     }
 
     /**
      * @inheritdoc
      */
-    public function getAssets()
-    {
+    public function getAssets() {
         return array(
             'js' => array('jquery.form.js', 'mapbender.element.wmchandler.js'),
             'css' => array()
@@ -80,50 +72,44 @@ class WmcHandler extends Element
     /**
      * @inheritdoc
      */
-    public function getConfiguration()
-    {
+    public function getConfiguration() {
         return parent::getConfiguration();
     }
 
     /**
      * @inheritdoc
      */
-    public function render()
-    {
+    public function render() {
         $html = $this->container->get('templating')
-                ->render('MapbenderWmcBundle:Element:wmchandler.html.twig',
-                         array(
+                ->render('MapbenderWmcBundle:Element:wmchandler.html.twig', array(
             'id' => $this->getId(),
             'configuration' => $this->getConfiguration(),
             'title' => $this->getTitle()));
         return $html;
     }
 
-    public function httpAction($action)
-    {
+    public function httpAction($action) {
         $session = $this->container->get("session");
 
-        if($session->get("proxyAllowed", false) !== true)
-        {
+        if ($session->get("proxyAllowed", false) !== true) {
             throw new AccessDeniedHttpException('You are not allowed to use this proxy without a session.');
         }
-        switch($action)
-        {
+        switch ($action) {
             case 'get':
                 return $this->getWmc();
                 break;
             case 'list':
-//                $wmcid = $this->container->get("request")->get("wmcid", null);
                 return $this->getWmcList();
                 break;
             case 'remove':
                 return $this->removeWmc();
                 break;
-//            case 'update':
-//                $tkid = $this->get("request")->get("tkid", null);
-//                $this->get("request")->attributes->remove("tkid");
-//                return $this->save($tkid);
-//                break;
+            case 'save':
+                return $this->saveWmc();
+                break;
+            case 'load':
+                return $this->loadWmc();
+                break;
 //            case 'get':
 //                $tkid = $this->get("request")->get("tkid", null);
 //                return $this->getWmc($tkid);
@@ -182,26 +168,49 @@ class WmcHandler extends Element
      * 
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
-    protected function getWmc()
-    {
+    protected function getWmc() {
         $wmcid = $this->container->get("request")->get("wmcid", null);
-        if($wmcid)
-        {
+        if ($wmcid) {
             $wmc = $this->container->get('doctrine')
                     ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
                     ->find($wmcid);
-            $form = $this->container->get("form.factory")->create(new WmcType(),
-                                                              $wmc);
+            $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
+            $view = $form->createView();
             $html = $this->container->get('templating')
-                        ->render('MapbenderWmcBundle:Wmc:form.html.twig',
-                                 array('form' => $form->createView()));
-                return new Response($html, 200,
-                                array('Content-Type' => 'text/html'));
-//            
-        } else
-        {
-                return new Response('WMC: "' . $id . '" is not found', 200,
-                                array('Content-Type' => 'text/html'));
+                    ->render('MapbenderWmcBundle:Wmc:form.html.twig', array(
+                'form' => $form->createView(),
+                'id' => $this->getEntity()->getId()));
+            return new Response($html, 200, array('Content-Type' => 'text/html'));
+        } else {
+            $wmc = new Wmc();
+            $wmc->setState(new State());
+            $state = $wmc->getState();
+            $state->setServerurl($this->getBaseUrl());
+            $state->setSlug($this->application->getSlug());
+            $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
+            $html = $this->container->get('templating')
+                    ->render('MapbenderWmcBundle:Wmc:form.html.twig', array(
+                'form' => $form->createView(),
+                'id' => $this->getEntity()->getId()));
+            return new Response($html, 200, array('Content-Type' => 'text/html'));
+        }
+    }
+
+    /**
+     * Returns a json encoded or html form wmc or error if wmc is not found.
+     * 
+     * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
+     */
+    protected function loadWmc() {
+        $wmcid = $this->container->get("request")->get("wmcid", null);
+        if ($wmcid) {
+            $wmc = $this->container->get('doctrine')
+                    ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
+                    ->find($wmcid);
+            $id = $wmc->getId();
+            return new Response(json_encode(array("data" => array($id => $wmc->getState()->getJson()))), 200, array('Content-Type' => 'application/json'));
+        } else {
+            return new Response(json_encode(array("error" => 'WMC: ' . $wmcid . ' is not found')), 200, array('Content-Type' => 'application/json'));
         }
     }
 
@@ -211,34 +220,26 @@ class WmcHandler extends Element
      * @param integer|string $id wmc id
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
-    protected function removeWmc($id)
-    {
+    protected function removeWmc() {
 
         $wmcid = $this->container->get("request")->get("wmcid", null);
         $this->container->get("request")->attributes->remove("wmcid");
-//        $format = $this->container->get("request")->get("format", "form");
-        if(!$id)
-        {
+        if (!$wmcid) {
             return new Response(json_encode(array(
-                                "error" => 'Error: wmc id is not found')), 200,
-                            array('Content-Type' => 'application/json'));
+                        "error" => 'Error: wmc id is not found')), 200, array('Content-Type' => 'application/json'));
         }
         $wmc = $this->container->get('doctrine')
                 ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
-                ->find($id);
-        if($wmc)
-        {
+                ->find($wmcid);
+        if ($wmc) {
             $em = $this->container->get('doctrine')->getEntityManager();
-//            $em->remove($wmc);
-//            $em->persist();
+            $em->remove($wmc);
+            $em->flush();
             return new Response(json_encode(array(
-                                "success" => 'WMC: "' . $id . '" is removed.')), 200,
-                            array('Content-Type' => 'application/json'));
-        } else
-        {
+                        "success" => "WMC: " . $wmcid . " is removed.")), 200, array('Content-Type' => 'application/json'));
+        } else {
             return new Response(json_encode(array(
-                                "error" => 'WMC: "' . $id . '" is not found')), 200,
-                            array('Content-Type' => 'application/json'));
+                        "error" => "WMC: " . $wmcid . " is not found")), 200, array('Content-Type' => 'application/json'));
         }
     }
 
@@ -247,34 +248,27 @@ class WmcHandler extends Element
      * 
      * @return \Symfony\Component\HttpFoundation\Response 
      */
-    protected function getWmcList()
-    {
+    protected function getWmcList() {
         $config = $this->getConfiguration();
         $response = new Response();
-        if($config["useEditor"] === true)
-        {
+        if ($config["useEditor"] === true) {
             $entities = $this->container->get('doctrine')
                     ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
                     ->findAll();
             $responseBody = $this->container->get('templating')
-                    ->render('MapbenderWmcBundle:Wmc:list.html.twig',
-                             array("entities" => $entities)
+                    ->render('MapbenderWmcBundle:Wmc:list.html.twig', array("entities" => $entities)
             );
 
             $response->setContent($responseBody);
             return $response;
-        } else
-        {
+        } else {
             
         }
     }
 
-//
-//    protected function save($id = null)
-//    {
-//        $response = new Response();
-//        $request = $this->container->get('request');
-//
+    protected function saveWmc() {
+        $request = $this->container->get('request');
+
 //        if($id)
 //        {
 //            $wmc = $this->container->get('doctrine')
@@ -282,89 +276,93 @@ class WmcHandler extends Element
 //                    ->find($id);
 //        } else
 //        {
-//            $wmc = Wmc::create();
+        $wmc = Wmc::create();
 //        }
-//        $form = $this->container->get("form.factory")->create(new WmcType(),
-//                                                              $wmc);
-//        if($request->getMethod() === 'POST')
-//        {
-//            $form->bindRequest($request);
-//            if($form->isValid())
-//            { //TODO: Is file an image (jpg/png/gif?)
-//                $em = $this->container->get('doctrine')->getEntityManager();
-//                $em->getConnection()->beginTransaction();
+        $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
+        if ($request->getMethod() === 'POST') {
+            $form->bindRequest($request);
+            if ($form->isValid()) { //TODO: Is file an image (jpg/png/gif?)
+                if ($wmc->getId() !== null) {
+                    $wmc = $this->container->get('doctrine')
+                            ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
+                            ->find($wmc->getId());
+                    $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
+                    $form->bindRequest($request);
+                    if (!$form->isValid()) {
+                        return new Response(json_encode(array(
+                                    "error" => "WMC: " . $wmc->getId() . " can not be found.")), 200, array('Content-Type' => 'application/json'));
+                    }
+                }
+                $em = $this->container->get('doctrine')->getEntityManager();
+                $em->getConnection()->beginTransaction();
+                $em->persist($wmc);
+                $em->flush();
+                if ($wmc->getScreenshotPath() === null) {
+                    if ($wmc->getScreenshot() !== null) {
+                        $upload_directory = $this->createWmcDirs();
+                        if ($upload_directory !== null) {
+                            $dirs = $this->container->getParameter("directories");
+                            $filename = sprintf('screenshot-%d.%s', $wmc->getId(), $wmc->getScreenshot()->guessExtension());
+                            $wmc->getScreenshot()->move($upload_directory, $filename);
+                            $wmc->setScreenshotPath($filename);
+                            $format = $wmc->getScreenshot()->getClientMimeType();
+                            $url_base = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
+                            $serverurl = $url_base . "/" . $dirs["wmc"];
+                            $logourl = $serverurl . "/" . $this->application->getSlug() . "/" . $filename;
+                            $logoUrl = LegendUrl::create(null, null, OnlineResource::create($format, $logourl));
+                            $state = $wmc->getState();
+                            $state->setServerurl($this->getBaseUrl());
+                            $state->setSlug($this->application->getSlug());
+                            $wmc->setLogourl($logoUrl);
+                        }
+                    } else {
+                        $wmc->setScreenshotPath(null);
+                    }
+                    $em->persist($wmc);
+                    $em->flush();
+                }
+
+//                $patern = array('/"?minScale"?:\s?null\s?,?/', '/"?maxScale"?:\s?null\s?,?/');
+//                $rplmt = array("", "");
+//                $services = preg_replace($patern, $rplmt,
+//                                         $wmc->getServices());
+//                $wmc->setServices($services);
+//
 //                $em->persist($wmc);
 //                $em->flush();
-//                if($wmc->getScreenshotPath() === null)
-//                {
-//                    if($wmc->getScreenshot() !== null)
-//                    {
-//                        $upload_directory = $this->createWmcDirs();
-//                        if($upload_directory !== null)
-//                        {
-//                            $dirs = $this->container->getParameter("directories");
-//                            $filename = sprintf('screenshot-%d.%s',
-//                                                $wmc->getId(),
-//                                                $wmc->getScreenshot()->guessExtension());
-//                            $wmc->getScreenshot()->move($upload_directory,
-//                                                        $filename);
-//                            $wmc->setScreenshotPath($filename);
-//                            $format = $wmc->getScreenshot()->getClientMimeType();
-//                            $url_base = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-//                            $serverurl = $url_base . "/" . $dirs["wmc"];
-//                            $logourl = $serverurl . "/" . $this->application->getSlug() . "/" . $filename;
-//                            $logoUrl = LegendUrl::create(null, null,
-//                                                         OnlineResource::create($format,
-//                                                                                $logourl));
-//                            $state = $wmc->getState();
-//                            $state->setServerurl($serverurl);
-//                            $state->setSlug($this->application->getSlug());
-//                            $wmc->setLogourl($logoUrl);
-//                        }
-//                    } else
-//                    {
-//                        $wmc->setScreenshotPath(null);
-//                    }
-//                    $em->persist($wmc);
-//                    $em->flush();
-//                }
 //
-////                $patern = array('/"?minScale"?:\s?null\s?,?/', '/"?maxScale"?:\s?null\s?,?/');
-////                $rplmt = array("", "");
-////                $services = preg_replace($patern, $rplmt,
-////                                         $wmc->getServices());
-////                $wmc->setServices($services);
-////
-////                $em->persist($wmc);
-////                $em->flush();
-////
-////                $path = $this->getParameter("themenkartenwmc_directory");
-////                $path .= "/themenkarte_" . $wmc->getId() . "wmc.xml";
-////                file_put_contents($path, $wmc->getWmc() ? : "");
-//                $em->getConnection()->commit();
+//                $path = $this->getParameter("themenkartenwmc_directory");
+//                $path .= "/themenkarte_" . $wmc->getId() . "wmc.xml";
+//                file_put_contents($path, $wmc->getWmc() ? : "");
+                $em->getConnection()->commit();
 //                $response->setContent($wmc->getId());
-//            } else
-//            {
-//                $response->setContent('error');
-//            }
-//        }
-//        return $response;
-//    }
+                return new Response(json_encode(array(
+                            "success" => "WMC: " . $wmc->getId() . " is saved.")), 200, array('Content-Type' => 'application/json'));
+            } else {
+                return new Response(json_encode(array(
+                            "error" => 'WMC: ' . $wmc->getId() . ' can not be saved.')), 200, array('Content-Type' => 'application/json'));
+            }
+        }
+    }
 
-    private function delete($id)
-    {
+    protected function getBaseUrl() {
+        $request = $this->container->get('request');
+        $dirs = $this->container->getParameter("directories");
+        $url_base = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
+        return $url_base;
+    }
+
+    private function delete($id) {
         $response = new Response();
         $wmc = $this->container->get('doctrine')
                 ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
                 ->find($id);
-        if($wmc !== null)
-        {
+        if ($wmc !== null) {
             $response->setContent($wmc->getId());
             $em = $this->container->get('doctrine')->getEntityManager();
             $em->remove($wmc);
             $em->flush();
-        } else
-        {
+        } else {
             $response->setContent('error');
         }
         return $response;
@@ -378,25 +376,21 @@ class WmcHandler extends Element
 //        );
 //    }
 //
-//    protected function createWmcDirs()
-//    {
-//        $basedir = $this->container->get('kernel')->getRootDir() . '/../web/';
-//        $dirs = $this->container->getParameter("directories");
-//        $dir = $basedir . $dirs["wmc"] . "/" . $this->application->getSlug();
-//        if(!is_dir($dir))
-//        {
-//            $a = mkdir($dir);
-//            if($a)
-//            {
-//                return $dir;
-//            } else
-//            {
-//                return null;
-//            }
-//        } else
-//        {
-//            return $dir;
-//        }
-//    }
+    protected function createWmcDirs() {
+        $basedir = $this->container->get('kernel')->getRootDir() . '/../web/';
+        $dirs = $this->container->getParameter("directories");
+        $dir = $basedir . $dirs["wmc"] . "/" . $this->application->getSlug();
+        if (!is_dir($dir)) {
+            $a = mkdir($dir);
+            if ($a) {
+                return $dir;
+            } else {
+                return null;
+            }
+        } else {
+            return $dir;
+        }
+    }
+
 }
 
