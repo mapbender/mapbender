@@ -6,15 +6,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class KmlExport extends Element {
-    public function getTitle() {
-        return "Please give me a title";
+
+    public static function getClassTitle() {
+        return "KML export element";
     }
 
-    public function getDescription() {
-        return "Please give me a description";
+    public static function getClassDescription() {
+        return "KML export element";
     }
 
-    public function getTags() {
+    public static function getClassTags() {
         return array();
     }
 
@@ -33,14 +34,14 @@ class KmlExport extends Element {
     }
 
     public function getConfiguration() {
-        $opts = $this->configuration;
-        $opts['text'] = $this->name;
-        // Resolve the run-time id of the target widget
-        if(array_key_exists('target', $this->configuration)) {
-            $elementId = $this->configuration['target'];
-            $finalId = $this->application->getFinalId($elementId);
-            $opts = array_merge($opts, array('target' => $finalId));
-        }
+        $opts = array();
+        $opts['text'] = $this->getClassTitle();
+        /* // Resolve the run-time id of the target widget */
+        /* if(array_key_exists('target', $this->configuration)) { */
+        /*     $elementId = $this->configuration['target']; */
+        /*     $finalId = $this->application->getFinalId($elementId); */
+        /*     $opts = array_merge($opts, array('target' => $finalId)); */
+        /* } */
         return array(
             'options' => $opts,
             'init' => 'mbKmlExport',
@@ -57,12 +58,12 @@ class KmlExport extends Element {
     private function map2Kml() {
         $response = new Response();
 
-        $layers = $this->get('request')->get('layers');
+        $layers = $this->container->get('request')->get('layers');
         foreach($layers as $title => &$layer) {
             parse_str($layer, $layer);
 
-            $layer['params']['LAYERS'] = implode(',',
-                $layer['options']['layers']);
+            /* $layer['params']['LAYERS'] = implode(',', */
+            /*     $layer['options']['layers']); */
 
             $layer['params']['WIDTH'] = 512;
             $layer['params']['HEIGHT'] = 512;
@@ -76,15 +77,15 @@ class KmlExport extends Element {
 
         // IMPORTANT: THIS DEPENDS ON THE php5-mapscript EXTENSION
         $extent = new \rectObj();
-        $extentIn = explode(',', $this->get('request')->get('extent'));
+        $extentIn = explode(',', $this->container->get('request')->get('extent'));
         $extent->setExtent($extentIn[0], $extentIn[1], $extentIn[2], $extentIn[3]);
 
-        $srs = $this->get('request')->get('srs');
+        $srs = $this->container->get('request')->get('srs');
         $srsFrom = new \projectionObj($srs);
         $srsTo = new \projectionObj('EPSG:4326');
         $extent->project($srsFrom, $srsTo);
 
-        $xml = $this->get('templating')
+        $xml = $this->container->get('templating')
             ->render('MapbenderKmlBundle:Element:kmlexport_map.kml.twig',
                 array('layers' => $layers, 'extent' => array(
                     'minx' => $extent->minx,
@@ -102,11 +103,11 @@ class KmlExport extends Element {
     }
 
     public function render() {
-        return $this->get('templating')
+        return $this->container->get('templating')
             ->render('MapbenderKmlBundle:Element:kmlexport.html.twig', array(
-            'id' => $this->id,
+            'id' => $this->getId(),
             'application' => $this->application->getSlug(),
-            'configuration' => $this->configuration,
-            'label' => $this->name));
+            'configuration' => $this->getConfiguration(),
+            'label' => $this->getClassTitle()));
     }
 }
