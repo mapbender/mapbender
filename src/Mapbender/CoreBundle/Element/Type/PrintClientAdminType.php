@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Mapbender\CoreBundle\Form\EventListener\MapFieldSubscriber;
 
 /**
  * 
@@ -35,8 +36,10 @@ class PrintClientAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $subscriber = new MapFieldSubscriber($builder->getFormFactory());
+        $builder->addEventSubscriber($subscriber);
         $builder->add('tooltip', 'text', array('required' => false))
-                ->add('target_map', 'target_element',
+                ->add('target', 'target_element',
                       array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],

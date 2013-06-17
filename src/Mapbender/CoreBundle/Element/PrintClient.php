@@ -25,7 +25,7 @@ class PrintClient extends Element
      */
     static public function getClassDescription()
     {
-        return "Render a Print dialog";
+        return "Renders a Print dialog";
     }
 
     /**
@@ -76,6 +76,22 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
+//    public static function getType()
+//    {
+//        return 'Mapbender\CoreBundle\Element\Type\PrintClientAdminType';
+//    }    
+//    
+//    /**
+//     * @inheritdoc
+//     */
+//    public static function getFormTemplate()
+//    {
+//        return 'MapbenderManagerBundle:Element:printclient.html.twig';
+//    }
+    
+    /**
+     * @inheritdoc
+     */
     public function getWidgetName()
     {
         return 'mapbender.mbPrintClient';
@@ -86,32 +102,13 @@ class PrintClient extends Element
      */
     public function render()
     {
-        $configuration = $this->getConfiguration();
-//        $forms = array();
-//        if(isset($configuration['optional_fields']) && null !== $configuration['optional_fields'])
-//        {
-//            $form_builder = $this->container->get('form.factory')->createNamedBuilder('extra',
-//                                                                                      'form',
-//                                                                                      null,
-//                                                                                      array(
-//                'csrf_protection' => true
-//                    ));
-//            foreach($configuration['optional_fields'] as $k => $c)
-//            {
-//                $options = array_key_exists('options', $c) ? $c['options'] : array();
-//                $form_builder->add($k, $c['type'], $options);
-//            }
-//            $forms['extra'] = $form_builder->getForm()->createView();
-//        }
-
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:printclient.html.twig',
-                                 array(
+                        ->render('MapbenderCoreBundle:Element:printclient.html.twig', 
+                        array(
                             'id' => $this->getId(),
                             'title' => $this->getTitle(),
-                            'configuration' => $this->getConfiguration(),
-//                            'forms' => $forms
-                                     ));
+                            'configuration' => $this->getConfiguration()
+                        ));
     }
 
     /**
@@ -145,22 +142,24 @@ class PrintClient extends Element
                 );
 
             case 'queued':
-                $content = $this->container->get('request')->getContent();
-                if (empty($content)) {
-                    throw new \RuntimeException('No Request Data received');
-                }
-
-                // Forward to Printer Service URL using OWSProxy
-                $configuration = $this->getConfiguration();
-                $url = (null !== $configuration['printer']['service'] ?
-                                $configuration['printer']['service'] :
-                                $this->container->get('router')->generate('mapbender_print_print_service', array(), true));
-                return $this->container->get('http_kernel')->forward(
-                                'OwsProxy3CoreBundle:OwsProxy:genericProxy', array(
-                            'url' => $url,
-                            'content' => $content
-                                )
-                );
+                // NYI
+                
+//                $content = $this->container->get('request')->getContent();
+//                if (empty($content)) {
+//                    throw new \RuntimeException('No Request Data received');
+//                }
+//
+//                // Forward to Printer Service URL using OWSProxy
+//                $configuration = $this->getConfiguration();
+//                $url = (null !== $configuration['printer']['service'] ?
+//                                $configuration['printer']['service'] :
+//                                $this->container->get('router')->generate('mapbender_print_print_service', array(), true));
+//                return $this->container->get('http_kernel')->forward(
+//                                'OwsProxy3CoreBundle:OwsProxy:genericProxy', array(
+//                            'url' => $url,
+//                            'content' => $content
+//                                )
+//                );
             case 'template':
                 $response = new Response();
                 $response->headers->set('Content-Type', 'application/json');
@@ -172,13 +171,5 @@ class PrintClient extends Element
                 $response->setContent($size->getContent());
                 return $response;
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getFormTemplate()
-    {
-        return 'MapbenderManagerBundle:Element:printclient.html.twig';
     }
 }
