@@ -1,6 +1,6 @@
 <?php
 
-namespace Mapbender\WmsBundle\Component;
+namespace Mapbender\CoreBundle\Component;
 
 /*
  * To change this template, choose Tools | Templates

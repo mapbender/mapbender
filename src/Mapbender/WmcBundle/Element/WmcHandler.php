@@ -42,6 +42,7 @@ class WmcHandler extends Element {
             "target" => null,
             "useEditor" => false,
             "autoOpen" => false,
+            "keepBaseSources" => false
         );
     }
 
@@ -50,6 +51,14 @@ class WmcHandler extends Element {
      */
     public static function getType() {
         return 'Mapbender\WmcBundle\Element\Type\WmcHandlerAdminType';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderWmcBundle:ElementAdmin:wmchandler.html.twig';
     }
 
     /**

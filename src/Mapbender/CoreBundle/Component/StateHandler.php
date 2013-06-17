@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Entity\State;
+
 /**
  * Description of State
  *
@@ -223,6 +225,15 @@ class StateHandler
         $sh->setMaxextent(BoundingBox::create($json["maxextent"]));
         $sh->setSources($json["sources"]);
         return $sh;
+    }
+    
+    public function generateState(){
+        $state = new State();
+        $state->setTitle($this->name)
+                ->setServerurl($this->serverurl)
+                ->setSlug($this->slug)
+                ->setJson($this->toArray());
+        return $state;
     }
     
     public function toArray()

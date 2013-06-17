@@ -35,14 +35,8 @@ class ScaleDisplayAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $app = $options['application'];
-        $layersets = array();
-        foreach($app->getLayersets() as $layerset)
-        {
-            $layersets[$layerset->getId()] = $layerset->getTitle();
-        }
-        
-        $builder->add('target', 'target_element',
+        $builder->add('tooltip', 'text', array('required' => false))
+                ->add('target', 'target_element',
                       array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],
@@ -52,10 +46,15 @@ class ScaleDisplayAdminType extends AbstractType
                       array(
                     'required' => true,
                     "choices" => array(
+                        'inline' => 'inline',
                         'left-top' => 'left-top',
                         'left-bottom' => 'left-bottom',
                         'right-top' => 'right-top',
-                        'right-bottom' => 'right-bottom')));
+                        'right-bottom' => 'right-bottom')))
+                ->add('position', new PositionType(),
+                      array(
+                    'label' => 'Position',
+                    'property_path' => '[position]'));
     }
 
 }

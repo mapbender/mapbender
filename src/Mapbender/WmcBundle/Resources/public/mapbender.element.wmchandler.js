@@ -183,20 +183,24 @@
                 widget = widget[1];
             }
             var model = target[widget]("getModel");
-            var wmcProj = model.getProj(state.bbox.srs),
+            var wmcProj = model.getProj(state.extent.srs),
             mapProj = model.map.olMap.getProjectionObject();
             if(wmcProj === null){
-                Mapbender.error('SRS "' + state.bbox.srs + '" is not supported by this application.');
+                Mapbender.error('SRS "' + state.extent.srs + '" is not supported by this application.');
             } else if(wmcProj.projCode === mapProj.projCode){
-                var boundsAr = [state.bbox.minx, state.bbox.miny, state.bbox.maxx, state.bbox.maxy];
+                var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
                 target[widget]("zoomToExtent", OpenLayers.Bounds.fromArray(boundsAr));
+                this.removeWmcFromMap();
+                target[widget]("removeAllSources", !this.options.keepBaseSources);
                 this._addWmcToMap(wmcid, state);
             } else {
                 model.changeProjection({
                     projection: wmcProj
                 });
-                var boundsAr = [state.bbox.minx, state.bbox.miny, state.bbox.maxx, state.bbox.maxy];
+                var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
                 target[widget]("zoomToExtent", OpenLayers.Bounds.fromArray(boundsAr));
+                this.removeWmcFromMap();
+                target[widget]("removeAllSources", !this.options.keepBaseSources);
                 this._addWmcToMap(wmcid, state);
             }
         },
@@ -230,10 +234,8 @@
                 for(wmcid in this.sources_wmc){
                     for(var i = 0; i < this.sources_wmc[wmcid].sources.length; i++){
                         var source = this.sources_wmc[wmcid].sources[i];
-//                        if(!source.configuration.isBaseSource){
                             var toremove = model.createToChangeObj(source);
                             model.removeSource(toremove);
-//                        }
                     }
                 }
             }
@@ -252,8 +254,9 @@
             this.sources_wmc[wmcid] = sources;
             for(var i = 0; i < this.sources_wmc[wmcid].sources.length; i++){
                 var source = this.sources_wmc[wmcid].sources[i];
-//                if(!source.configuration.isBaseSource)
+                if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && !this.options.keepBaseSources)){
                     target[widget]("addSource", source);
+                }
             }
         },
         
