@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<ViewContext version="1.1.0"
+             id="{{ wmc.id }}"
+             xmlns="http://www.opengis.net/context"
+             xmlns:xlink="http://www.w3.org/1999/xlink"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.opengis.net/context http://schemas.opengis.net/context/1.0.0/context.xsd">
+    <General>
+        <Window width="{{ wmc.json.window.width }}" height="{{ wmc.json.window.height }}" />
+        <BoundingBox SRS="{{ wmc.json.extent.srs }}" minx="{{ wmc.json.extent.minx }}" miny="{{ wmc.json.extent.miny }}" maxx="{{ wmc.json.extent.maxx }}" maxy="{{ wmc.json.extent.maxy }}"/>
+        <Title>{{ wmc.title }}</Title>
+        {% if wmc.keywords is defined %}
+        <KeywordList>
+            {% for keyword in wmc.keywords %}
+            <Keyword>{{ keyword }}</Keyword>
+            {% endfor %}
+        </KeywordList>
+        {% endif %}
+        {% if wmc.abstract is defined %}
+        <Abstract>{{ wmc.abstract }}</Abstract>
+        {% endif %}
+        {% if wmc.logourl is defined %}
+        <LogoURL width="{{ wmc.logourl.width }}" height="{{ wmc.logourl.height }}" format="{{ wmc.logourl.onlineResource.format }}">
+            <OnlineResource xlink:type="simple" xlink:href="{{ wmc.logourl.onlineResource.url }}"/>
+        </LogoURL>
+        {% endif %}
+        {% if wmc.descriptionurl is defined %}
+        <DescriptionURL format="{{ wmc.descriptionurl.onlineResource.format }}">
+            <OnlineResource xlink:type="simple" xlink:href="{{ wmc.descriptionurl.onlineResource.href }}"/>
+        </DescriptionURL>
+        {% endif %}
+        {% if wmc.contact is defined %}
+        <ContactInformation>
+            {% if  wmc.contact.person is defined or wmc.contact.organization is defined%}
+            <ContactPersonPrimary>
+                <ContactPerson>{{ wmc.contact.person }}</ContactPerson>
+                <ContactOrganization>{{ wmc.contact.organization }}</ContactOrganization>
+            </ContactPersonPrimary>
+            {% endif %}
+            {% if wmc.contact.position is defined %}
+            <ContactPosition>{{ wmc.contact.position }}</ContactPosition>
+            {% endif %}
+            {% if wmc.contact.address is defined %}
+            <ContactAddress>
+                <AddressType>{{ wmc.contact.addressType }}</AddressType>
+                <Address>{{ wmc.contact.address }}</Address>
+                <City>{{ wmc.contact.addressCity }}</City>
+                <StateOrProvince>{{ wmc.contact.addressStateOrProvince }}</StateOrProvince>
+                <PostCode>{{ wmc.contact.addressPostCode }}</PostCode>
+                <Country>{{ wmc.contact.addressCountry }}</Country>
+            </ContactAddress>
+            {% endif %}
+            {% if wmc.contact.voiceTelephone is defined %}
+            <ContactVoiceTelephone>{{ wmc.contact.voiceTelephone }}</ContactVoiceTelephone>
+            {% endif %}
+            {% if wmc.contact.facsimileTelephone is defined %}
+            <ContactFacsimileTelephone>{{ wmc.contact.facsimileTelephone }}</ContactFacsimileTelephone>
+            {% endif %}
+            {% if wmc.contact.electronicMailAddress is defined %}
+            <ContactElectronicMailAddress>{{ wmc.contact.electronicMailAddress }}</ContactElectronicMailAddress>
+            {% endif %}
+        </ContactInformation>
+        {% endif %}
+        <!--Extension>
+            <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="472956.000000000000" miny="5737560.00000000000" maxx="523825.000000000000" maxy="5782687.00000000000"/>
+        </Extension-->
+    </General>
+    <LayerList>
+        {% for source in wmc.json.sources %}
+        <Layer queryable="{{ source.configuration.children[0].children|length }}" hidden="{% if source.configuration.options.visible %}0{% else %}1{% endif %}">
+            <Server service="OGC:WMS" version="{{ source.configuration.version }}" title="{{ source.configuration.title }}">
+                <OnlineResource xlink:type="simple" xlink:href="{{ source.configuration.options.url }}"/>
+            </Server>
+            <Name>{{ source.configuration.title }}</Name>???
+            <Title>{{ source.configuration.title }}</Title>
+            {% if source.configuration.abstract is defined %}
+            <Abstract>{{ source.configuration.abstract }}</Abstract>
+            {% endif %}
+            {% if source.srs is defined %}
+            <SRS>{{ source.srs }}</SRS>
+            {% endif %}
+            <FormatList>
+                <Format current="1">source.configuration.format</Format>
+            </FormatList>
+            <StyleList>
+                {% for style in wmc.layerlist.styles %}
+                <Style current="{{ style.current }}">
+                    <Name>{{ style.name }}</Name>
+                    <Title>{{ style.title }}</Title>
+                    {% if style.legend is defined %}
+                    <LegendURL width="{{ style.legend.width }}" height="{{ style.legend.height }}" format="{{ style.legend.format }}">
+                        <OnlineResource xlink:type="simple" xlink:href="{{ style.legend.url }}"/>
+                    </LegendURL>
+                    {% endif %}
+                </Style>
+                {% endfor %}
+            </StyleList>
+            <!--Extension>
+                <ol:maxExtent xmlns:ol="http://openlayers.org/context" minx="472956.000000000000" miny="5737560.00000000000" maxx="523825.000000000000" maxy="5782687.00000000000"/>
+                <ol:transparent xmlns:ol="http://openlayers.org/context">true</ol:transparent>
+                <ol:numZoomLevels xmlns:ol="http://openlayers.org/context">11</ol:numZoomLevels>
+                <ol:units xmlns:ol="http://openlayers.org/context">m</ol:units>
+                <ol:isBaseLayer xmlns:ol="http://openlayers.org/context">true</ol:isBaseLayer>
+                <ol:displayInLayerSwitcher xmlns:ol="http://openlayers.org/context">true</ol:displayInLayerSwitcher>
+                <ol:singleTile xmlns:ol="http://openlayers.org/context">true</ol:singleTile>
+                <mapbender:layers xmlns:mapbender="http://mapbender3.org/wmc">
+                    <mapbender:layer name="wms_startbild1" title="Kreis Lippe" visible="true" queryable="false"/>
+                </mapbender:layers>
+            </Extension-->
+        </Layer>
+        {% endfor %}
+    </LayerList>
+</ViewContext>
