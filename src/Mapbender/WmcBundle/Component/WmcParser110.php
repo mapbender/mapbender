@@ -33,12 +33,10 @@ class WmcParser110 extends WmcParser
     {
         parent::__construct($doc);
         $this->xpath->registerNamespace("cntxt",
-                                        "http://www.opengis.net/context");
-        $this->xpath->registerNamespace("ol", "http://openlayers.org/context");
+                "http://www.opengis.net/context");
         $this->xpath->registerNamespace("sld", "http://www.opengis.net/sld");
-        $this->xpath->registerNamespace("mapbender", "http://mapbender3.org/wmc");
-        $this->xpath->registerNamespace("mb3wmc",
-                                        "http://mapbender3.org/ogc/wmc");
+        $this->xpath->registerNamespace("mb3",
+                "http://mapbender3.org/schema/wmc");
     }
 
     /**
@@ -46,56 +44,56 @@ class WmcParser110 extends WmcParser
      */
     public function parse($infoFormat = "text/html")
     {
-        $wmc = new Wmc();
+        $wmc          = new Wmc();
         $stateHandler = new StateHandler();
-        $root = $this->doc->documentElement;
-        $id = $this->getValue("./@id", $root);
+        $root         = $this->doc->documentElement;
+        $id           = $this->getValue("./@id", $root);
         $wmc->setWmcid($this->getValue("./@id", $root));
         $wmc->setVersion($this->getValue("./@version", $root));
-        $genEl = $this->getValue("./cntxt:General", $root);
+        $genEl        = $this->getValue("./cntxt:General", $root);
         $stateHandler->setWindow(new Size(
-                        intval($this->getValue("./cntxt:Window/@width", $genEl)),
-                        intval($this->getValue("./cntxt:Window/@height", $genEl))));
+                intval($this->getValue("./cntxt:Window/@width", $genEl)),
+                intval($this->getValue("./cntxt:Window/@height", $genEl))));
         $stateHandler->setExtent($this->getBoundingBox(array("./cntxt:BoundingBox"),
-                                                       $genEl, null));
+                        $genEl, null));
 
         $stateHandler->setName($this->getValue("./cntxt:Title/text()", $genEl));
         $keywordList = $this->xpath->query("./cntxt:KeywordList/cntxt:Keyword",
-                                           $genEl);
-        if($keywordList !== null && $keywordList->length > 0)
+                $genEl);
+        if ($keywordList !== null && $keywordList->length > 0)
         {
             $keywords = array();
-            foreach($keywordList as $keywordElt)
+            foreach ($keywordList as $keywordElt)
             {
                 $keywords[] = $this->getValue("./text()", $keywordElt);
             }
             $wmc->setKeywords($keywords);
         }
-        if($this->getValue("./cntxt:Abstract", $genEl) !== null)
+        if ($this->getValue("./cntxt:Abstract", $genEl) !== null)
         {
             $wmc->setAbstract($this->getValue("./cntxt:Abstract/text()", $genEl));
         }
         $logoEl = $this->getValue("./cntxt:LogoURL", $genEl);
-        if($logoEl !== null)
+        if ($logoEl !== null)
         {
             $wmc->setLogourl(new LegendUrl(
-                            new OnlineResource(
-                                    $this->getValue("./@format", $logoEl),
-                                    $this->getValue("./cntxt:OnlineResource/@xlink:href",
-                                                    $logoEl)),
-                            intval($this->getValue("./@width", $logoEl)),
-                            intval($this->getValue("./@height", $logoEl))));
+                    new OnlineResource(
+                    $this->getValue("./@format", $logoEl),
+                    $this->getValue("./cntxt:OnlineResource/@xlink:href",
+                            $logoEl)),
+                    intval($this->getValue("./@width", $logoEl)),
+                    intval($this->getValue("./@height", $logoEl))));
         }
         $descrEl = $this->getValue("./cntxt:DescriptionURL", $genEl);
-        if($descrEl !== null)
+        if ($descrEl !== null)
         {
             $wmc->setDescriptionurl(new OnlineResource(
-                            $this->getValue("./@format)", $descrEl),
-                            $this->getValue("./cntxt:OnlineResource/@xlink:href",
-                                            $descrEl)));
+                    $this->getValue("./@format)", $descrEl),
+                    $this->getValue("./cntxt:OnlineResource/@xlink:href",
+                            $descrEl)));
         }
         $contactEl = $this->getValue("./cntxt:ContactInformation", $genEl);
-        if($contactEl !== null)
+        if ($contactEl !== null)
         {
             $contact = new Contact();
             $contact->setPerson($this->getValue(
@@ -108,7 +106,7 @@ class WmcParser110 extends WmcParser
                             "../cntxt:ContactPosition/text()", $contactEl));
 
             $addrEl = $this->getValue("./cntxt:ContactAddress", $contactEl);
-            if($addrEl !== null)
+            if ($addrEl !== null)
             {
                 $contact->setAddressType($this->getValue(
                                 "./cntxt:AddressType/text()", $addrEl));
@@ -136,30 +134,32 @@ class WmcParser110 extends WmcParser
             $wmc->setContact($contact);
         }
         $extensionEl = $this->getValue("./cntxt:Extension", $genEl);
-        if($extensionEl !== null)
+        if ($extensionEl !== null)
         {
             $stateHandler->setMaxextent($this->getBoundingBox(
-                            array("./mb3wmc:maxExtent",
-                        "./ol:maxExtent"), $extensionEl,
+                            array("./mb3:maxExtent"), $extensionEl,
                             $stateHandler->getExtent()->srs));
             //@ TODO other elements
         }
-        $layerList = $this->xpath->query("./cntxt:LayerList/cntxt:Layer", $root);
+        $layerList   = $this->xpath->query("./cntxt:LayerList/cntxt:Layer",
+                $root);
         $sourcesTemp = array();
-        foreach($layerList as $layerElm)
+        foreach ($layerList as $layerElm)
         {
             $sourcesTemp[] = $this->parseLayer($layerElm,
-                                               $stateHandler->getExtent()->srs, $infoFormat);
+                    $stateHandler->getExtent()->srs, $infoFormat);
         }
         $groupSources = false;
-        if($groupSources)
+        if ($groupSources)
         {
-            foreach($sourcesTemp as $sourcetmp)
+            foreach ($sourcesTemp as $sourcetmp)
             {
                 $stateHandler->addSource($sourcetmp);
             }
-        } else {
-            foreach($sourcesTemp as $sourcetmp)
+        }
+        else
+        {
+            foreach ($sourcesTemp as $sourcetmp)
             {
                 $stateHandler->addSource($sourcetmp);
             }
@@ -179,63 +179,63 @@ class WmcParser110 extends WmcParser
      */
     private function parseLayer(\DOMElement $layerElm, $srs, $infoFormat)
     {
-        $wmsinst = new WmsInstance();
-        $wms = new WmsSource();
-        $id = round(microtime(true) * 1000);
-        $queryable = $this->getValue("./@queryable", $layerElm);
+        $wmsinst    = new WmsInstance();
+        $wms        = new WmsSource();
+        $id         = round(microtime(true) * 1000);
+        $queryable  = $this->getValue("./@queryable", $layerElm);
         $wmsinst->setVisible(!(bool) $this->getValue("./@hidden", $layerElm));
         $wmsinst->setInfoformat($infoFormat);
-        $formats = array();
+        $formats    = array();
         $formatList = $this->xpath->query("./cntxt:FormatList/cntxt:Format",
-                                          $layerElm);
-        foreach($formatList as $formatElm)
+                $layerElm);
+        foreach ($formatList as $formatElm)
         {
             $formats[] = $this->getValue("./text()", $formatElm);
-            $current = (bool) $this->getValue("./@current", $formatElm);
-            if($current)
+            $current   = (bool) $this->getValue("./@current", $formatElm);
+            if ($current)
                     $wmsinst->setFormat($this->getValue("./text()", $formatElm));
         }
         $wms->setVersion($this->getValue("./cntxt:Server/@version", $layerElm));
         $wms->setGetMap(new RequestInformation(
-                        $this->getValue("./cntxt:Server/cntxt:OnlineResource/@xlink:href",
-                                        $layerElm), null, $formats));
+                $this->getValue("./cntxt:Server/cntxt:OnlineResource/@xlink:href",
+                        $layerElm), null, $formats));
         $serverTitle = $this->getValue("./cntxt:Server/@xtitle", $layerElm);
         $serverTitle = $serverTitle === null ? $this->getValue("./cntxt:Title/text()",
-                                                               $layerElm) : $serverTitle;
+                        $layerElm) : $serverTitle;
         $wms->setTitle($serverTitle);
-        $srsList = $this->xpath->query("./cntxt:SRS", $layerElm);
-        $srses = array();
-        foreach($srsList as $srsElm)
+        $srsList     = $this->xpath->query("./cntxt:SRS", $layerElm);
+        $srses       = array();
+        foreach ($srsList as $srsElm)
         {
             $srses[] = $this->getValue("./text()", $srsElm);
         }
 
         $styleList = $this->xpath->query("./cntxt:StyleList/cntxt:Style",
-                                         $layerElm);
-        $styles = array();
-        foreach($styleList as $styleElm)
+                $layerElm);
+        $styles    = array();
+        foreach ($styleList as $styleElm)
         {
             $current = (bool) $this->getValue("./@current", $styleElm);
-            if($current)
+            if ($current)
             {
                 
             }
-            $style = new Style();
+            $style       = new Style();
             $style->setName($this->getValue("./cntxt:Name/text()", $styleElm));
             $style->setTitle($this->getValue("./cntxt:Title/text()", $styleElm));
             $style->setAbstract($this->getValue("./cntxt:Abstract/text()",
-                                                $styleElm));
+                            $styleElm));
             $legendUrlEl = $this->getValue("./cntxt:LegendURL", $styleElm);
-            if($legendUrlEl !== null)
+            if ($legendUrlEl !== null)
             {
-                $legendUrl = new LegendUrl();
+                $legendUrl      = new LegendUrl();
                 $legendUrl->setWidth($this->getValue("./@width", $legendUrlEl));
                 $legendUrl->setHeight($this->getValue("./@height", $legendUrlEl));
                 $onlineResource = new OnlineResource();
                 $onlineResource->setFormat($this->getValue("./format",
-                                                           $legendUrlEl));
+                                $legendUrlEl));
                 $onlineResource->setHref($this->getValue("./cntxt:OnlineResource/@xlink:href",
-                                                         $legendUrlEl));
+                                $legendUrlEl));
                 $legendUrl->setOnlineResource($onlineResource);
                 $style->setLegendUrl($legendUrl);
             }
@@ -246,13 +246,15 @@ class WmcParser110 extends WmcParser
 
         $minScaleEl = $this->getValue("./sld:MinScaleDenominator", $layerElm);
         $maxScaleEl = $this->getValue("./sld:MaxScaleDenominator", $layerElm);
-        $scale = null;
-        if($minScaleEl !== null || $maxScaleEl !== null)
+        $scale      = null;
+        if ($minScaleEl !== null || $maxScaleEl !== null)
         {
             $scale = new MinMax();
-            $min = $this->getValue("./sld:MinScaleDenominator/text()", $layerElm);
+            $min   = $this->getValue("./sld:MinScaleDenominator/text()",
+                    $layerElm);
             $scale->setMin($min !== null ? floatval($min) : null);
-            $max = $this->getValue("./sld:MaxScaleDenominator/text()", $layerElm);
+            $max   = $this->getValue("./sld:MaxScaleDenominator/text()",
+                    $layerElm);
             $scale->setMax($max !== null ? floatval($max) : null);
         }
         $wmsinst->setId(intval($id))
@@ -268,27 +270,25 @@ class WmcParser110 extends WmcParser
                 ->setFormat($wmsinst->getFormat());
 
         $extensionEl = $this->getValue("./cntxt:Extension", $layerElm);
-        $layerList = null;
+        $layerList   = null;
 
-        if($extensionEl !== null)
+        if ($extensionEl !== null)
         {
-            $layerconfig = array();
+            $layerconfig              = array();
             $layerconfig["maxExtent"] = $this->getBoundingBox(
-                    array("./mb:maxExtent", "./ol:maxExtent"),
+                    array("./mb3:maxExtent"),
                     $this->getValue("./cntxt:Extension", $extensionEl), $srs);
-            $layerconfig["tiled"] = $this->findFirstValue(array("./mb3wmc:tiled"),
-                                                          $extensionEl);
+            $layerconfig["tiled"]     = $this->findFirstValue(array("./mb3wmc:tiled"),
+                    $extensionEl);
             $wmsinst->setTransparency((bool) $this->findFirstValue(
-                                    array("./mb3wmc:transparency/text()", "./ol:transparent/text()"),
+                                    array("./mb3:transparent/text()"),
                                     $extensionEl, true))
-                    ->setOpacity($this->findFirstValue(array("./mb3wmc:opacity", "./ol:opacity"),
-                                                       $extensionEl, 1))
-                    ->setTiled((bool) $this->findFirstValue(array("./mb3wmc:tiled"),
-                                                            $extensionEl, false));
-            $layerList = $this->findFirstList(array("./mb3wmc:layers/mb3wmc:layer",
-                "./mapbender:layers/mapbender:layer",
+                    ->setOpacity($this->findFirstValue(array("./mb3:opacity"), $extensionEl, 1))
+                    ->setTiled((bool) $this->findFirstValue(array("./mb3:tiled"),
+                                    $extensionEl, false));
+            $layerList                = $this->findFirstList(array("./mb3:layers/mb3:layer",
                 "./*[contains(local-name(),'layers')]/*[contains(local-name(),'layer')]"),
-                                              $extensionEl);
+                    $extensionEl);
 
             $options->setTransparency($wmsinst->getTransparency())
                     ->setOpacity($wmsinst->getOpacity())
@@ -297,7 +297,7 @@ class WmcParser110 extends WmcParser
         }
         $wmsconf->setOptions($options);
 
-        $num = 0;
+        $num      = 0;
         $rootInst = new WmsInstanceLayer();
         $rootInst->setTitle($wmsinst->getTitle())
                 ->setId($wmsinst->getId() . "_" . $num)
@@ -306,15 +306,14 @@ class WmcParser110 extends WmcParser
                 ->setWmsInstance($wmsinst);
         $rootInst->setToggle(false);
         $rootInst->setAllowtoggle(true);
-        if($layerList === null)
+        if ($layerList === null)
         {
             $layerListStr = explode(",",
-                                    $this->getValue("./cntxt:Name/text()",
-                                                    $layerElm));
-            foreach($layerListStr as $layerStr)
+                    $this->getValue("./cntxt:Name/text()", $layerElm));
+            foreach ($layerListStr as $layerStr)
             {
                 $num++;
-                $layerInst = new WmsInstanceLayer();
+                $layerInst   = new WmsInstanceLayer();
                 $layersource = new WmsLayerSource();
                 $layersource->setName($layerStr);
                 $layerInst->setTitle($layerStr)
@@ -329,28 +328,29 @@ class WmcParser110 extends WmcParser
             $children = array($wmsinst->generateLayersConfiguration($rootInst));
             $wmsconf->setChildren($children);
             return array(
-                'type' => $wmsinst->getType(),
-                'title' => $wmsinst->getTitle(),
-                'id' => $wmsinst->getId(),
+                'type'          => $wmsinst->getType(),
+                'title'         => $wmsinst->getTitle(),
+                'id'            => $wmsinst->getId(),
                 'configuration' => $wmsconf->toArray());
-        } else if($layerList->length > 0)
+        }
+        else if ($layerList->length > 0)
         {
-            foreach($layerList as $layerElmMb)
+            foreach ($layerList as $layerElmMb)
             {
                 $num++;
-                $layerInst = new WmsInstanceLayer();
+                $layerInst   = new WmsInstanceLayer();
                 $layersource = new WmsLayerSource();
                 $layersource->setName($this->findFirstValue(
                                 array("./@name"), $layerElmMb, $num));
-                $legendurl = $this->findFirstValue(array("./@legendUrl", "./@legend"),
-                                                   $layerElmMb, null);
-                if($legendurl !== null)
+                $legendurl   = $this->findFirstValue(array("./@legendUrl", "./@legend"),
+                        $layerElmMb, null);
+                if ($legendurl !== null)
                 {
-                    $style = new Style();
+                    $style          = new Style();
                     $style->setName(null);
                     $style->setTitle(null);
                     $style->setAbstract(null);
-                    $legendUrl = new LegendUrl();
+                    $legendUrl      = new LegendUrl();
                     $legendUrl->setWidth(null);
                     $legendUrl->setHeight(null);
                     $onlineResource = new OnlineResource();
@@ -361,9 +361,9 @@ class WmcParser110 extends WmcParser
                     $layersource->addStyle($style);
                 }
                 $queryable = $this->findFirstValue(
-                                        array("./@queryable"), $layerElmMb,
-                                        false);
-                $queryable = $queryable !== null && strtolower($queryable) === 'true' ? true : false;
+                        array("./@queryable"), $layerElmMb, false);
+                $queryable = $queryable !== null && strtolower($queryable) === 'true'
+                            ? true : null;
                 $layerInst->setTitle($this->findFirstValue(
                                         array("./@title"), $layerElmMb, $num))
                         ->setParent($rootInst)
@@ -378,9 +378,9 @@ class WmcParser110 extends WmcParser
             $children = array($wmsinst->generateLayersConfiguration($rootInst));
             $wmsconf->setChildren($children);
             return array(
-                'type' => $wmsinst->getType(),
-                'title' => $wmsinst->getTitle(),
-                'id' => $wmsinst->getId(),
+                'type'          => $wmsinst->getType(),
+                'title'         => $wmsinst->getTitle(),
+                'id'            => $wmsinst->getId(),
                 'configuration' => $wmsconf->toArray());
         }
         return null;
@@ -396,21 +396,21 @@ class WmcParser110 extends WmcParser
      */
     private function getBoundingBox($xpathStrArr, $contextElm, $defSrs)
     {
-        if($contextElm !== null)
+        if ($contextElm !== null)
         {
             $extentEl = $this->findFirstValue($xpathStrArr, $contextElm);
-            if($extentEl !== null)
+            if ($extentEl !== null)
             {
-                if($this->getValue("./@SRS", $extentEl) !== null)
+                if ($this->getValue("./@SRS", $extentEl) !== null)
                         $srs = $this->getValue("./@SRS", $extentEl);
-                else if($this->getValue("./@srs", $extentEl) !== null)
+                else if ($this->getValue("./@srs", $extentEl) !== null)
                         $srs = $this->getValue("./@srs", $extentEl);
                 else $srs = $defSrs;
                 return new BoundingBox($srs,
-                                floatval($this->getValue("./@minx", $extentEl)),
-                                floatval($this->getValue("./@miny", $extentEl)),
-                                floatval($this->getValue("./@maxx", $extentEl)),
-                                floatval($this->getValue("./@maxy", $extentEl)));
+                        floatval($this->getValue("./@minx", $extentEl)),
+                        floatval($this->getValue("./@miny", $extentEl)),
+                        floatval($this->getValue("./@maxx", $extentEl)),
+                        floatval($this->getValue("./@maxy", $extentEl)));
             }
             return null;
         }
@@ -428,17 +428,17 @@ class WmcParser110 extends WmcParser
     private function findFirstValue($xpathStrArr, $contextElm,
             $defaultValue = null)
     {
-        if($contextElm !== null)
+        if ($contextElm !== null)
         {
-            foreach($xpathStrArr as $xpathStr)
+            foreach ($xpathStrArr as $xpathStr)
             {
                 $extentEl = $this->getValue($xpathStr, $contextElm);
-                if($extentEl !== null)
+                if ($extentEl !== null)
                 {
                     return $extentEl;
                 }
             }
-            if($defaultValue !== null)
+            if ($defaultValue !== null)
             {
                 return $defaultValue;
             }
@@ -456,12 +456,12 @@ class WmcParser110 extends WmcParser
      */
     private function findFirstList($xpathStrArr, $contextElm)
     {
-        if($contextElm !== null)
+        if ($contextElm !== null)
         {
-            foreach($xpathStrArr as $xpathStr)
+            foreach ($xpathStrArr as $xpathStr)
             {
                 $extentList = $this->xpath->query($xpathStr, $contextElm);
-                if($extentList !== null && $extentList->length > 0)
+                if ($extentList !== null && $extentList->length > 0)
                 {
                     return $extentList;
                 }

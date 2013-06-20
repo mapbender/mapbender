@@ -384,8 +384,20 @@ class WmcHandler extends Element
         if ($wmc)
         {
             $em = $this->container->get('doctrine')->getEntityManager();
+            $em->getConnection()->beginTransaction();
+            if ($wmc->getScreenshotPath() !== null)
+            {
+                $upload_directory = $this->createWmcDirs();
+                if ($upload_directory !== null)
+                {
+                    $filepath = $upload_directory . "/". $wmc->getScreenshotPath();
+                    if(file_exists($filepath))
+                        unlink ($filepath);
+                }
+            }
             $em->remove($wmc);
             $em->flush();
+            $em->getConnection()->commit();
             return new Response(json_encode(array(
                         "success" => "WMC: " . $wmcid . " is removed.")), 200,
                     array('Content-Type' => 'application/json'));
@@ -490,21 +502,7 @@ class WmcHandler extends Element
                     $em->persist($wmc);
                     $em->flush();
                 }
-
-//                $patern = array('/"?minScale"?:\s?null\s?,?/', '/"?maxScale"?:\s?null\s?,?/');
-//                $rplmt = array("", "");
-//                $services = preg_replace($patern, $rplmt,
-//                                         $wmc->getServices());
-//                $wmc->setServices($services);
-//
-//                $em->persist($wmc);
-//                $em->flush();
-//
-//                $path = $this->getParameter("themenkartenwmc_directory");
-//                $path .= "/themenkarte_" . $wmc->getId() . "wmc.xml";
-//                file_put_contents($path, $wmc->getWmc() ? : "");
                 $em->getConnection()->commit();
-//                $response->setContent($wmc->getId());
                 return new Response(json_encode(array(
                             "success" => "WMC: " . $wmc->getId() . " is saved.")),
                         200, array('Content-Type' => 'application/json'));
@@ -526,26 +524,25 @@ class WmcHandler extends Element
         return $url_base;
     }
 
-    private function delete($id)
-    {
-        $response = new Response();
-        $wmc      = $this->container->get('doctrine')
-                ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
-                ->find($id);
-        if ($wmc !== null)
-        {
-            $response->setContent($wmc->getId());
-            $em = $this->container->get('doctrine')->getEntityManager();
-            $em->remove($wmc);
-            $em->flush();
-        }
-        else
-        {
-            $response->setContent('error');
-        }
-        return $response;
-    }
-
+//    private function delete($id)
+//    {
+//        $response = new Response();
+//        $wmc      = $this->container->get('doctrine')
+//                ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
+//                ->find($id);
+//        if ($wmc !== null)
+//        {
+//            $response->setContent($wmc->getId());
+//            $em = $this->container->get('doctrine')->getEntityManager();
+//            $em->remove($wmc);
+//            $em->flush();
+//        }
+//        else
+//        {
+//            $response->setContent('error');
+//        }
+//        return $response;
+//    }
 //
 //    public function generateMetadata($themenkarte)
 //    {
