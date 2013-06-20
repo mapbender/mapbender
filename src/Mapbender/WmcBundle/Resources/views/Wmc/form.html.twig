@@ -1,4 +1,4 @@
-<form id="save-wmc" action="{{ url('mapbender_core_application_element', {'slug': app.request.get('slug'), 'id': id, 'action': 'save'}) }}" method="post" novalidate="novalidate">
+<form id="save-wmc" action="{{ url('mapbender_core_application_element', {'slug': app.request.get('slug'), 'id': id, 'action': 'save'}) }}" method="post">
     <div class="elementFormToolbar elementForm">
         {{ form_widget(form.id) }}
         <div class="clearContainer"></div>

@@ -13,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class WmcHandlerAdminType extends AbstractType
 {
+
     /**
      * @inheritdoc
      */
@@ -38,21 +39,35 @@ class WmcHandlerAdminType extends AbstractType
     {
         $builder->add('tooltip', 'text', array('required' => false))
                 ->add('target', 'target_element',
-                      array(
+                        array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                    'application' => $options['application'],
+                    'application'   => $options['application'],
                     'property_path' => '[target]',
+                    'required'      => false))
+                ->add('keepBaseSources', 'checkbox',
+                        array(
                     'required' => false))
                 ->add('useEditor', 'checkbox',
-                      array(
+                        array(
                     'required' => false))
-                ->add('autoOpen', 'checkbox',
-                      array(
+               
+                ->add('useSuggestMap', 'checkbox',
+                        array(
                     'required' => false))
-                ->add('keepBaseSources', 'checkbox',
-                      array(
-                    'required' => false));
+                ->add('receiver', 'choice',
+                        array(
+                    'multiple' => true,
+                    'required' => false,
+                    'choices'  => array(
+                        'email'    => 'e-mail',
+                        'facebook' => 'facebook',
+                        'twitter'  => 'twitter')))
+                ->add('useLoader', 'checkbox',
+                        array(
+                    'required' => false))
+        ;
     }
+
 }
 
 ?>

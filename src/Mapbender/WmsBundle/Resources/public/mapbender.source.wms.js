@@ -552,7 +552,7 @@ $.extend(true, Mapbender, {
                     if(typeof layer.options.treeOptions.info === 'undefined'){
                          layer.options.treeOptions.info = false;
                     }
-                    if(tochange.children[layer.options.id] && layer.options.name.length > 0){
+                    if(tochange.children[layer.options.id] && layer.options.name && layer.options.name.length > 0){
                         layerChanged = tochange.children[layer.options.id];
                         if(layerChanged.options.treeOptions.info !== layer.options.treeOptions.info){
                             layer.options.treeOptions.info = layerChanged.options.treeOptions.info;

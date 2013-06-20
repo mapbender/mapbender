@@ -82,68 +82,52 @@
                 var that = this;
                 $(that).sortable({
                     axis: 'y',
-                    items: "li:not(.notreorder)",
+                    items: "> li:not(.notreorder)",
                     distance: 6,
-                    stop: function( event, ui) {
-                        if($(ui.item).parent().attr("id") !== $(event.target).attr("id")){
+                    cursor: "move",
+                    update: function(event, ui) {
+                        var elm = $(ui.item);
+                        var before = null, after = null, tomove = null;
+                        if(elm.prev().length !== 0){
+                            var beforeEl = $(elm.prev()[0]);
+                            before = {
+                                source: self.model.getSource({
+                                    id: $(beforeEl).attr('data-sourceid') ? $(beforeEl).attr('data-sourceid') : $(beforeEl).parents('li[data-sourceid]:first').attr('data-sourceid')
+                                }), 
+                                layerId: $(beforeEl).attr("data-id")
+                            };
+                        }
+                        if(elm.next().length !== 0){
+                            var afterEl = $(elm.next()[0]);
+                            after = {
+                                source:  self.model.getSource({
+                                    id: $(afterEl).attr('data-sourceid') ? $(afterEl).attr('data-sourceid') : $(afterEl).parents('li[data-sourceid]:first').attr('data-sourceid')
+                                }), 
+                                layerId: $(afterEl).attr("data-id")
+                            };
+                        }
+                        tomove = {
+                            source: self.model.getSource({
+                                id: $(elm).attr('data-sourceid') ? $(elm).attr('data-sourceid') : $(elm).parents('li[data-sourceid]:first').attr('data-sourceid')
+                            })
+                        };
+                        if($(ui.item).attr("data-type") !== self.consts.root){
+                            tomove['layerId'] = $(ui.item).attr("data-id");
+                        }
+                        var tochange = self.model.createToChangeObj(tomove.source);
+                        if(tochange !== null){
+                            tochange.type = {
+                                layerTree: "move"
+                            };
+                            tochange.children.before = after;
+                            tochange.children.after = before;
+                            tochange.children.tomove = tomove;
+                            self.model.changeSource(tochange);
+                        } else {
                             $(that).sortable('cancel');
                             return;
                         }
-                        var et = $(event.target);
-                        var list = $(event.target).children("li");
-                        for(var i = 0; i < list.length; i++){
-                            var elm = list[i];
-                            var a = $(elm).attr("data-id"), b = $(ui.item).attr("data-id");
-                            if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
-                                var before = null, after = null, tomove;
-                                if(i > 0){
-                                    var beforeEl = list[i-1];
-                                    var beforeId = $(beforeEl).attr("data-id");
-                                    var beforeSourceId = $(beforeEl).attr('data-sourceid') ? $(beforeEl).attr('data-sourceid') : $(beforeEl).parents('li[data-sourceid]:first').attr('data-sourceid');//self._findSourceId($(beforeEl));
-                                    before = {
-                                        source: self.model.getSource({
-                                            id: beforeSourceId
-                                        }), 
-                                        layerId: beforeId
-                                    };
-                                }
-                                if(i < list.length - 1){
-                                    var afterEl = list[i+1];
-                                    var afterId = $(afterEl).attr("data-id");
-                                    var afterSourceId = $(afterEl).attr('data-sourceid') ? $(afterEl).attr('data-sourceid') : $(afterEl).parents('li[data-sourceid]:first').attr('data-sourceid');//self._findSourceId($(afterEl));
-                                    after = {
-                                        source:  self.model.getSource({
-                                            id: afterSourceId
-                                        }), 
-                                        layerId: afterId
-                                    };
-                                }
-                                var tomoveId = $(ui.item).attr("data-id");
-                                var tomoveSourceId = $(elm).attr('data-sourceid') ? $(elm).attr('data-sourceid') : $(elm).parents('li[data-sourceid]:first').attr('data-sourceid');
-                                tomove = {
-                                    source: self.model.getSource({
-                                        id: tomoveSourceId
-                                    })
-                                };
-                                if($(ui.item).attr("data-type") !== self.consts.root){
-                                    tomove['layerId'] = tomoveId;
-                                }
-                                var tochange = self.model.createToChangeObj(tomove.source);
-                                if(tochange !== null){
-                                    tochange.type = {
-                                        layerTree: "move"
-                                    };
-                                    tochange.children.before = after;
-                                    tochange.children.after = before;
-                                    tochange.children.tomove = tomove;
-                                    self.model.changeSource(tochange);
-                                    break;
-                                } else {
-                                    $(that).sortable('cancel');
-                                    return;
-                                }
-                            }
-                        }
+                        
                     }
                 });
             });
@@ -354,6 +338,9 @@
                 if(!this.options.layerRemove) li.find('.iconRemove').remove();
                 if(sourceEl.children){
                     li.find('ul:first').attr('id', 'list-'+sourceEl.options.id);
+                    if(config.toggle){
+                        li.find('ul:first').addClass("closed");
+                    }
                     for(var j = sourceEl.children.length; j > 0; j--){
                         li.find('ul:first').append(this._createSourceTree(source, sourceEl.children[j-1], scale, type, false));
                     }
@@ -378,19 +365,45 @@
                     li.removeClass('hide-elm');
                     li.attr('data-id', sourceEl.options.id);
                     isroot ? li.attr('data-sourceid', source.id) : li.removeAttr('data-sourceid');
-                    li.attr('data-type', this._getNodeType(sourceEl, isroot));
+                    var nodeType = this._getNodeType(sourceEl, isroot);
+                    li.attr('data-type', nodeType);
+
+                    if(nodeType == this.consts.root){
+                        li.addClass("serviceContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
+                    }else if(nodeType == this.consts.group){
+                        li.addClass("groupContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
+                    }
                     li.addClass(config.reorder);
-                    li.find('.layer-state').attr('title', config.visibility.tooltip);//.addClass(config.visibility.state);
+                    li.find('.layer-state').attr('title', config.visibility.tooltip);
                     li.find('input.layer-selected').attr('checked', config.selected ? 'checked' : null);
-                    if(!config.selectable) li.find('input[name="selected"]').attr('disabled', 'disabled');
+                    if(!config.selectable) li.find('input.layer-selected').attr('disabled', 'disabled');
                     li.find('input.layer-info').attr('checked', config.info ? 'checked' : null);
-                    if(!config.infoable) li.find('input[name="info"]').attr('disabled', 'disabled');
+                    if(!config.infoable) li.find('input.layer-info').attr('disabled', 'disabled');
                     li.find('.layer-title').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if(config.toggleable) li.find('.layer-title').addClass('toggleable');
-                    if(!this.options.layerMenu) li.find('.layer-menu-btn').remove();
+                    if(!this.options.layerMenu){
+                        li.find('.layer-menu-btn').remove();
+                    } else {
+                        var menu = li.find('.layer-menu:first');
+                        if(!sourceEl.options.legend){
+                            menu.find('.layer-legend').addClass('btn-disabled');
+                        } else {
+                            menu.find('.layer-legend').bind("click", function(e){ e.stopPropagation(); self._showLegend(sourceEl); });
+                        }
+                        menu.find('.layer-kmlexport').bind("click", function(e){ e.stopPropagation(); self._exportKml(sourceEl); });
+                        if(sourceEl.options.maxScale !== null){
+                            menu.find('.layer-zoom').addClass('btn-disabled');
+                        }else {
+                            menu.find('.layer-zoom').bind("click", function(e){ e.stopPropagation(); self._zoomToLayer(sourceEl); });
+                        }
+                        menu.find('.layer-metadata').bind("click", function(e){ e.stopPropagation(); self._showMetadata(sourceEl); });
+                    }
                     if(!this.options.layerRemove) li.find('.iconRemove').remove();
                     if(sourceEl.children){
                         li.find('ul:first').attr('id', 'list-'+sourceEl.options.id);
+                        if(config.toggle){
+                            li.find('ul:first').addClass("closed");
+                        }
                         for(var j = 0; j < sourceEl.children.length; j++){
                             li.find('ul:first').append(this._createTreeNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found));
                         }
@@ -418,92 +431,92 @@
             }
             return null;
         },
-        
-        _createSourceList: function(source, sourceEl, scale, type, isroot){
-            if(sourceEl.type){ // source
-                var liarr = [];
-                sourceEl.layers = [];
-                for(var i = 0; i < sourceEl.configuration.children.length; i++){
-                    liarr.concat(this._createSourceList(source, sourceEl.configuration.children[i], scale, sourceEl.type, true));
-                }
-            } else {
-                var liarr = [];
-                if(sourceEl.children){
-                    for(var j = sourceEl.children.length; j > 0; j--){
-                        liarr.concat(this._createSourceList(source, sourceEl.children[j-1], scale, type, false));
-                    }
-                } else {
-                    var config = this._getNodeProporties(sourceEl);
-                    var li = this.template.clone();
-                    li.removeClass('hide-elm');
-                    li.attr('data-sourceid', sourceEl.options.id).attr('data-id', sourceEl.options.id).attr('data-type', this._getNodeType(sourceEl, isroot)).addClass(config.reorder);
-                    li.find('.state').attr('title', config.visibility.tooltip).addClass('config.visibility.state');
-                    li.find('input[name="selected"]').attr('checked', config.selected ? 'checked' : null);
-                    if(!config.selectable) li.find('input[name="selected"]').attr('disabled', 'disabled');
-                    li.find('input[name="info"]').attr('checked', config.info ? 'checked' : null);
-                    if(!config.infoable) li.find('input[name="info"]').attr('disabled', 'disabled');
-                    li.find('.sourcetitle').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
-                    if(config.toggleable) li.find('.layer-title').addClass('toggleable');
-                    if(!this.options.layerMenu) li.find('.menubutton').remove();
-                    if(!this.options.layerRemove) li.find('.removebutton').remove();
-                    liarr.push(li);
-                }
-            }
-            return liarr;
-        },
-        
-        _createListNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found){
-            alert("not defined");
-            return;
-            if(sourceEl.type){ // source
-                var liarr = [];
-                for(var i = 0; i < sourceEl.configuration.children.length; i++){
-                    liarr.concat(this._createListNode(source, sourceEl.configuration.children[i], scale, layerToAdd, parent, sourceEl.type, true, false));
-                }
-            } else {
-                if(layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found){
-                    found = true;
-                    var liarr = [];
-                    var config = this._getNodeProporties(sourceEl);
-                    var s_id = isroot ? '' : "";
-                    var li ='<li data-sourceid="'+source.id+'" data-id="'+sourceEl.options.id+'" data-type="'+this._getNodeType(sourceEl, isroot)+'" class="' + config.reorder + '" >'
-                    +   '<span class="spinner"></span>'
-                    +   '<span class="state '+config.visibility.state+'" title="'+config.visibility.tooltip+'"></span>'
-                    +   '<input type="checkbox" title="selected" name="selected" '+ config.sel +' ' + config.selable + '/>'
-                    +   '<input type="checkbox" title="query" name="info" '+ config.info +' ' + config.infoable + '/>'
-                    +   '<span class="sourcetitle '+config.toggleable+'" title="'+sourceEl.options.title+'">' + this._subStringText(sourceEl.options.title) + '</span>';
-                    if(true){ //TODO check if menu available
-                        li += '<span class="menubutton">&#9776;</span>';
-                    }
-                    if(true){ //TODO check if close claseable
-                        li += '<span class="removebutton">&times;</span>';
-                    }
-                    li += '</li>';
-                    if(sourceEl.children){
-                        for(var j = 0; j < sourceEl.children.length; j++){
-                            li += this._createListNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found);
-                        }
-                    }
-                    found = false;
-                    return li;
-                }
-                if(sourceEl.children){
-                    for(var j = 0; j < sourceEl.children.length; j++){
-                        var li = this._createListNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found);
-                        if(li !== null){
-                            if(sourceEl.children.length === 1){
-                                parent.add(li);
-                            } else if(j === 0){
-                                parent.find('li[data-id="'+sourceEl.children[j+1].options.id+'"]:first').after(li);
-                            } else {
-                                parent.find('li[data-id="'+sourceEl.children[j-1].options.id+'"]:first').before(li);
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
-        },
+//        
+//        _createSourceList: function(source, sourceEl, scale, type, isroot){
+//            if(sourceEl.type){ // source
+//                var liarr = [];
+//                sourceEl.layers = [];
+//                for(var i = 0; i < sourceEl.configuration.children.length; i++){
+//                    liarr.concat(this._createSourceList(source, sourceEl.configuration.children[i], scale, sourceEl.type, true));
+//                }
+//            } else {
+//                var liarr = [];
+//                if(sourceEl.children){
+//                    for(var j = sourceEl.children.length; j > 0; j--){
+//                        liarr.concat(this._createSourceList(source, sourceEl.children[j-1], scale, type, false));
+//                    }
+//                } else {
+//                    var config = this._getNodeProporties(sourceEl);
+//                    var li = this.template.clone();
+//                    li.removeClass('hide-elm');
+//                    li.attr('data-sourceid', sourceEl.options.id).attr('data-id', sourceEl.options.id).attr('data-type', this._getNodeType(sourceEl, isroot)).addClass(config.reorder);
+//                    li.find('.state').attr('title', config.visibility.tooltip).addClass('config.visibility.state');
+//                    li.find('input[name="selected"]').attr('checked', config.selected ? 'checked' : null);
+//                    if(!config.selectable) li.find('input[name="selected"]').attr('disabled', 'disabled');
+//                    li.find('input[name="info"]').attr('checked', config.info ? 'checked' : null);
+//                    if(!config.infoable) li.find('input[name="info"]').attr('disabled', 'disabled');
+//                    li.find('.sourcetitle').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
+//                    if(config.toggleable) li.find('.layer-title').addClass('toggleable');
+//                    if(!this.options.layerMenu) li.find('.menubutton').remove();
+//                    if(!this.options.layerRemove) li.find('.removebutton').remove();
+//                    liarr.push(li);
+//                }
+//            }
+//            return liarr;
+//        },
+//        
+//        _createListNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found){
+//            alert("not defined");
+//            return;
+//            if(sourceEl.type){ // source
+//                var liarr = [];
+//                for(var i = 0; i < sourceEl.configuration.children.length; i++){
+//                    liarr.concat(this._createListNode(source, sourceEl.configuration.children[i], scale, layerToAdd, parent, sourceEl.type, true, false));
+//                }
+//            } else {
+//                if(layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found){
+//                    found = true;
+//                    var liarr = [];
+//                    var config = this._getNodeProporties(sourceEl);
+//                    var s_id = isroot ? '' : "";
+//                    var li ='<li data-sourceid="'+source.id+'" data-id="'+sourceEl.options.id+'" data-type="'+this._getNodeType(sourceEl, isroot)+'" class="' + config.reorder + '" >'
+//                    +   '<span class="spinner"></span>'
+//                    +   '<span class="state '+config.visibility.state+'" title="'+config.visibility.tooltip+'"></span>'
+//                    +   '<input type="checkbox" title="selected" name="selected" '+ config.sel +' ' + config.selable + '/>'
+//                    +   '<input type="checkbox" title="query" name="info" '+ config.info +' ' + config.infoable + '/>'
+//                    +   '<span class="sourcetitle '+config.toggleable+'" title="'+sourceEl.options.title+'">' + this._subStringText(sourceEl.options.title) + '</span>';
+//                    if(true){ //TODO check if menu available
+//                        li += '<span class="menubutton">&#9776;</span>';
+//                    }
+//                    if(true){ //TODO check if close claseable
+//                        li += '<span class="removebutton">&times;</span>';
+//                    }
+//                    li += '</li>';
+//                    if(sourceEl.children){
+//                        for(var j = 0; j < sourceEl.children.length; j++){
+//                            li += this._createListNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found);
+//                        }
+//                    }
+//                    found = false;
+//                    return li;
+//                }
+//                if(sourceEl.children){
+//                    for(var j = 0; j < sourceEl.children.length; j++){
+//                        var li = this._createListNode(source, sourceEl.children[j], scale, layerToAdd, parent, type, false, found);
+//                        if(li !== null){
+//                            if(sourceEl.children.length === 1){
+//                                parent.add(li);
+//                            } else if(j === 0){
+//                                parent.find('li[data-id="'+sourceEl.children[j+1].options.id+'"]:first').after(li);
+//                            } else {
+//                                parent.find('li[data-id="'+sourceEl.children[j-1].options.id+'"]:first').before(li);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            return null;
+//        },
 
         _subStringText: function(text){
             if(text.length <= this.options.titlemaxlength){

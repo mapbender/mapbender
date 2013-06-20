@@ -17,7 +17,6 @@ class MapbenderWmcBundle extends MapbenderBundle {
     public function getElements() {
         return array(
             'Mapbender\WmcBundle\Element\WmcHandler',
-            'Mapbender\WmcBundle\Element\SuggestMap'
             );
     }
 }

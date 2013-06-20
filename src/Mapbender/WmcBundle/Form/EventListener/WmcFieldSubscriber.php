@@ -1,7 +1,8 @@
 <?php
 
-namespace Mapbender\CoreBundle\Form\EventListener;
+namespace Mapbender\WmcBundle\Form\EventListener;
 
+use Mapbender\CoreBundle\Entity\State;
 use Symfony\Component\Form\Event\DataEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -10,7 +11,7 @@ use Symfony\Component\Form\FormEvents;
 /**
  * 
  */
-class MapFieldSubscriber implements EventSubscriberInterface
+class WmcFieldSubscriber implements EventSubscriberInterface
 {
 
     /**
@@ -44,14 +45,11 @@ class MapFieldSubscriber implements EventSubscriberInterface
         {
             return;
         }
-        if(key_exists("otherSrs", $data) && is_string($data["otherSrs"]))
+        if(key_exists("state", $data) && strlen($data["state"]) > 0)
         {
-            $data["otherSrs"] = preg_split("/\s?,\s?/", $data["otherSrs"]);
-            $event->setData($data);
-        }
-        if(key_exists("scales", $data) && is_string($data["scales"]))
-        {
-            $data["scales"] = preg_split("/\s?,\s?/", $data["scales"]);
+            $state = new State();
+            $state->setJson(json_decode($data["state"]));
+            $data["state"] = $state;
             $event->setData($data);
         }
     }
@@ -67,17 +65,6 @@ class MapFieldSubscriber implements EventSubscriberInterface
         if(null === $data)
         {
             return;
-        }
-
-        if(key_exists("otherSrs", $data) && is_array($data["otherSrs"]))
-        {
-            $data["otherSrs"] = implode(",", $data["otherSrs"]);
-            $event->setData($data);
-        }
-        if(key_exists("scales", $data) && is_array($data["scales"]))
-        {
-            $data["scales"] = implode(",", $data["scales"]);
-            $event->setData($data);
         }
     }
 
