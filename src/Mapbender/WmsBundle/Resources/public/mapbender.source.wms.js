@@ -38,12 +38,12 @@ $.extend(true, Mapbender, {
                 };
                 return mqLayerDef;
             },
-        
+
             _readLayerDef: function(layersDefs, layers, queryLayers, layer, isroot){
                 //            $.each(layerDef.configuration.layers, function(idx, layer) {
                 var layerDef = $.extend({},
                 {
-                    visible: true, 
+                    visible: true,
                     queryable: false
                 }, layer.options );
                 delete(layerDef.treeOptions);
@@ -63,11 +63,11 @@ $.extend(true, Mapbender, {
                 }
             //            });
             },
-        
+
             _addProxy: function(url) {
                 return OpenLayers.ProxyHost + url;
             },
-        
+
             _removeProxy: function(url) {
                 if(url.indexOf(OpenLayers.ProxyHost) === 0) {
                     return url.substring(OpenLayers.ProxyHost.length);
@@ -86,6 +86,7 @@ $.extend(true, Mapbender, {
                     EXCEPTIONS: "application/vnd.ogc.se_xml",
                     FORMAT: layer.olLayer.params.FORMAT,
                     INFO_FORMAT: layer.source.configuration.options.info_format || "text/plain",
+                    FEATURE_COUNT: layer.source.configuration.options.feature_count || 100,
                     SRS: layer.olLayer.params.SRS,
                     BBOX: layer.map.center().box.join(','),
                     WIDTH: $(layer.map.element).width(),
@@ -103,11 +104,6 @@ $.extend(true, Mapbender, {
                 //                contentType_ +=
                 //                    layer.options.configuration.configuration.info_format;
                 }
-                if(typeof(layer.source.configuration.options.feature_count)
-                    !== 'undefined'){
-                    param_tmp["FEATURE_COUNT"] =
-                    layer.source.configuration.options.feature_count;
-                }
                 if(typeof(layer.source.configuration.options.info_charset)
                     !== 'undefined'){
                     contentType_ += contentType_.length > 0 ? ";" : "" +
@@ -118,9 +114,9 @@ $.extend(true, Mapbender, {
 
                 // this clever shit was taken from $.ajax
                 var requestUrl = this._removeProxy(layer.options.url);
-            
+
                 requestUrl += (/\?/.test(layer.options.url) ? '&' : '?') + params;
-            
+
                 $.ajax({
                     url: Mapbender.configuration.application.urls.proxy,
                     contentType: contentType_,
@@ -222,7 +218,7 @@ $.extend(true, Mapbender, {
                             layers: []
                         }
                     };
-                    
+
                     function readCapabilities(layer, parent, id, num){
                         // @ TODO getLegendGraphic ?
                         var legend = {};
@@ -272,7 +268,7 @@ $.extend(true, Mapbender, {
                         return def;
                     }
                     function getSplitted(service, rootLayer, layer, result, num){
-                        
+
                         if(num !== 0){
                             var service_new = $.extend(true, {}, service);
                             service_new.id = service_new.id + "_" + num;
@@ -304,19 +300,19 @@ $.extend(true, Mapbender, {
                         def.configuration.children = [layers];
                         return [def];
                     }
-                    
+
                 } else {
                     return null;
                 }
             },
-        
+
             getPrintConfig: function(layer, bounds) {
                 return {
                     type: 'wms',
                     url: layer.getURL(bounds)
                 };
             },
-            
+
             onLoadError: function(imgEl, sourceId, projection){
                 var loadError = {sourceid: sourceId, details: ''};
                 $.ajax({
@@ -385,7 +381,7 @@ $.extend(true, Mapbender, {
                 });
                 return loadError;
             },
-            
+
             hasLayers: function(source, withoutGrouped){
                 var options = this.layerCount(source);
                 if(withoutGrouped){
@@ -394,7 +390,7 @@ $.extend(true, Mapbender, {
                     return options.simpleCount + options.groupedCount - 1 > 0;
                 }
             },
-            
+
             layerCount: function(source){
                 if(source.configuration.children.length === 0){
                     return {simpleCount: 0, grouppedCount: 0};
@@ -413,7 +409,7 @@ $.extend(true, Mapbender, {
                     return options;
                 }
             },
-            
+
             getLayersList: function(source, offsetLayer, includeOffset){
                 var rootLayer, _source;
                 _source = $.extend(true, {}, source);//.configuration.children[0];
@@ -424,7 +420,7 @@ $.extend(true, Mapbender, {
                 }
                 options = _findLayers(rootLayer, offsetLayer, options);
                 return {source: _source, layers: options.layers};
-                
+
                 function _findLayers(layer, offsetLayer, options){
                     if(layer.children){
                         var i = 0;
@@ -453,7 +449,7 @@ $.extend(true, Mapbender, {
                 var options = {layer: null};
                 options = _addLayer(rootLayer, layerToAdd, parentLayerToAdd, position, options);
                 return options.layer;
-                
+
                 function _addLayer(layer, layerToAdd, parentLayerToAdd, position, options){
                     if(layer.options.id.toString() === parentLayerToAdd.options.id.toString()){
                         if(layer.children){
@@ -475,7 +471,7 @@ $.extend(true, Mapbender, {
                     return options;
                 }
             },
-        
+
             removeLayer: function(source, layerToRemove){
                 var rootLayer = source.configuration.children[0];
                 if(layerToRemove.options.id.toString() === rootLayer.options.id.toString()){
@@ -485,7 +481,7 @@ $.extend(true, Mapbender, {
                 var options = {layer: null, layerToRemove: null};//, listToRemove: {}, addToList: false }
                 options = _removeLayer(rootLayer, layerToRemove, options);
                 return { layer: options.layerToRemove};
-                
+
                 function _removeLayer(layer, layerToRemove, options){
                     if(layer.children){
                         for (var i = 0; i < layer.children.length; i++){
@@ -510,7 +506,7 @@ $.extend(true, Mapbender, {
                     }
                 }
             },
-            
+
             findLayer: function(source, idToFind){
                 var rootLayer = source.configuration.children[0];
                 var options = {level: 0, idx: 0, layer: null, parent: null};
@@ -541,12 +537,12 @@ $.extend(true, Mapbender, {
                     }
                 }
             },
-            
+
             checkInfoLayers: function(source, scale, tochange, result){
                 var rootLayer = source.configuration.children[0];
                 _checkInfoLayers(rootLayer, scale, {state:{visibility: true}}, tochange, result);
                 return result;
-                
+
                 function _checkInfoLayers(layer, scale, parent, tochange, result){
                     var layerChanged;
                     if(typeof layer.options.treeOptions.info === 'undefined'){
@@ -569,7 +565,7 @@ $.extend(true, Mapbender, {
                     }
                 }
             },
-            
+
             checkLayers: function(source, scale, tochange, result){
                 var rootLayer = source.configuration.children[0];
                 _checkLayers(rootLayer, scale, { state:{ visibility: true } }, tochange, result);
@@ -681,7 +677,7 @@ $.extend(true, Mapbender, {
                     return layer;
                 }
             },
-            
+
             changeOptions: function(tochange){
                 if(typeof tochange.options !== 'undefined'
                     && typeof tochange.options.visibility !== 'undefined'){
