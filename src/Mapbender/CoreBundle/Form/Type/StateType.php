@@ -24,8 +24,7 @@ class StateType extends AbstractType
                 ->add("serverurl", "hidden", array("required" => true))
                 ->add("slug", "hidden", array("required" => true))
                 ->add("json", "hidden", array("required" => true))
-                ->add("title", "text", array("required" => true))
-            ;
+                ->add("title", "text", array("required" => true));
     }
 }
 

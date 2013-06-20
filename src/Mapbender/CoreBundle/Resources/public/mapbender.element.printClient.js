@@ -61,9 +61,9 @@
                     content: this.element, 
                     draggable: true,
                     width: 300,
-                    height: 180,
+                    height: 250,
                     showCloseButton: false,
-                    overflow:true
+                    overflow: true
                 });
                 me.show();
             }
@@ -87,7 +87,7 @@
             var quality = $('select[name="quality"]', this.element);
             var list = quality.siblings(".dropdownList");
             var valueContainer = quality.siblings(".dropdownValue");
-
+            list.empty();
             quality.empty();  
             if (null === quality_levels){
                 quality.parent().hide();
@@ -119,6 +119,7 @@
             var scale_text = $('input[name="scale_text"]', this.element),
             scale_select = $('select[name="scale_select"]', this.element);
             list = scale_select.siblings(".dropdownList");
+            list.empty();
             var valueContainer = scale_select.siblings(".dropdownValue");
             count = 0;
             if(null === this.options.scales) {
@@ -176,11 +177,27 @@
                 break;
             }
             if(hasAttr) {
-                var extra_fields = $('#extra_fields', this.element).empty(),
-                extra_form = $('#extra_forms form[name="extra"]');
-                if(extra_form.length > 0) {
-                    extra_fields.html(extra_form.html());
+                var extra_fields = $('#extra_fields', this.element).empty();
+                
+                for(var field in opt_fields){
+                    extra_fields.append($('<label></label>', {
+                        'html': opt_fields[field].label,
+                        'class': 'labelInput'
+                    }));
+                    extra_fields.append($('<input></input>', {
+                        'type': 'text',
+                        'class': 'input',
+                        'name': 'extra['+field+']',
+                        'style': 'margin-left: 3px'
+                    }));
                 }
+                
+        
+                
+//                extra_form = $('#extra_forms form[name="extra"]');
+//                if(extra_form.length > 0) {
+//                    extra_fields.html(extra_form.html());
+//                }
             }else{
                 $('#extra_fields').hide();
             }

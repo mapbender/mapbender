@@ -10,7 +10,7 @@
             elementType: "dialog",
             displayType: "list",
             checkGraphic: false,
-            
+
             hideEmptyLayers: true,
             generateLegendGraphicUrl: false,
             showSourceTitle: true,
@@ -18,7 +18,7 @@
             showGrouppedTitle: true,
 
             maxImgWidth: 0,
-            maxImgHeight: 0            
+            maxImgHeight: 0
         },
         model: null,
         layerTitle: "",
@@ -37,14 +37,14 @@
         _setup: function() {
             var self = this;
             var me = $(this.element);
-            
+
             this.model = $("#" + self.options.target).data("mbMap").getModel();
-            
+
             this.layerTitle = this.options.showLayerTitle ? "" : "notshow";
             this.sourceTitle = this.options.showLayerTitle ? "" : "notshow";
             this.grouppedTitle = this.options.showGrouppedTitle ? "" : "notshow";
             this.hiddeEmpty = this.options.hideEmptyLayers ? "notshow" : "";
-            
+
             if(this.options.autoOpen){
                 this.open();
             }
@@ -56,7 +56,7 @@
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
             $(document).bind('mbmapsourcemoved', $.proxy(self._onSourceMoved, self));
         },
-    
+
         _onSourceAdded: function(event, added){
             var self = this;
             var hasChildren = false;
@@ -73,7 +73,7 @@
                 }
             }
         },
-        
+
         _addSource: function(html, added){
             var hasChildren = false;
             for(layer in added.children){
@@ -90,7 +90,7 @@
                 }
             }
         },
-        
+
         _onSourceMoved: function(event, moved){
             if(moved.layerId){
                 if(moved.before){
@@ -106,7 +106,7 @@
                 }
             }
         },
-        
+
         _onSourceChanged: function(event, changed){
             for(key in changed.children){
                 var changedEl = changed.children[key];
@@ -117,7 +117,7 @@
                 }
             }
         },
-        
+
         _onSourceRemoved: function(event, removed){
             var hasLayers = false;
             for(layerid in removed.children){
@@ -128,10 +128,10 @@
                 $(this.element).find('[data-sourceid="'+removed.source.id+'"]').remove();
             }
         },
-        
+
         _onSourceLoadStart: function(event, option){
         },
-        
+
         _onSourceLoadEnd: function(event, option){
         },
         _onSourceLoadError: function(event, option){
@@ -147,7 +147,7 @@
             if(this.options.maxImgHeight < val)
                 this.options.maxImgHeight = val;
         },
-    
+
         _getSources: function() {
             var allLayers = [];
             var sources = this.model.getSources();
@@ -162,7 +162,7 @@
                 sourceId: source.id,
                 id: layer.options.id,
                 visible: layer.state.visibility ? '' : 'notvisible',
-                title: layer.options.title, 
+                title: layer.options.title,
                 level: level,
                 children: this._getSublayers(source, layer, level + 1, [])
             };
@@ -192,7 +192,7 @@
                 if(!sublayerLeg.legend.url && this.options.generateLegendGraphicUrl && sublayerLeg.legend.graphic){
                     sublayerLeg.legend.url = sublayerLeg.legend.graphic;
                 }
-                
+
             }
             if(!sublayerLeg.isNode)
                 children.push(sublayerLeg);
@@ -203,27 +203,27 @@
             }
             return children;
         },
-        
+
         _createSourceTitleLine: function(layer){
             return '<li class="ebene'+layer.level+' '+this.sourceTitle+' title" data-sourceid="'+layer.sourceId+'" data-id="'+layer.id+'">'+layer.title+'</li>';
         },
-        
+
         _createNodeTitleLine: function(layer){
             return '<li class="ebene'+layer.level+' '+layer.visible+' '+this.grouppedTitle+' subTitle" data-id="'+layer.id+'">'+layer.title+'</li>';
         },
-        
+
         _createTitleLine: function(layer, hide){
             return '<li class="ebene'+layer.level+' '+layer.visible+' '+(hide?this.hiddeEmpty:'')+' subTitle" data-id="'+layer.id+'">'+layer.title+'</li>';
         },
-        
+
         _createImageLine: function(layer){
             return '<li class="ebene'+layer.level+' '+layer.visible+' image" data-id="'+layer.id+'"><img src="' + layer.legend.url + '"></img></li>';
         },
-        
+
         _createTextLine: function(layer, hide){
             return '<li class="ebene'+layer.level+' '+layer.visible+' '+(hide?this.hiddeEmpty:'')+' text" data-id="'+layer.id+'">' + this.options.noLegend + '</li>';
         },
-        
+
         _createLegendHtml: function(sources){
             var html = "";
             for(var i = 0; i < sources.length; i++){
@@ -231,7 +231,7 @@
             }
             return html;
         },
-        
+
         _createLayerHtml: function(layer, html){
             if(layer.children){
                 html += this._createSourceTitleLine(layer);
@@ -314,7 +314,10 @@
             if(this.options.elementType === "dialog") {
                 if(!$('body').data('mbPopup')) {
                     $("body").mbPopup();
-                    $("body").mbPopup('showHint', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, btnOkLabel:"Close"});
+                    $("body").mbPopup("addButton", "Close", "button buttonCancel critical right", function(){
+                    //close
+                    $("body").mbPopup("close");                    
+                }).mbPopup('showCustom', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, showCloseButton: false, overflow: false});
                 }
             }else{
                 $(this.element).find('#legends:eq(0)').html('<ul>' + html + '</ul>');
@@ -327,15 +330,15 @@
             //     $(this.element).find('ul.ebene1').each(function(){
             //         $(this).accordion({
             //             header: "li.title",
-            //             autoHeight: false, 
-            //             collapsible: true, 
+            //             autoHeight: false,
+            //             collapsible: true,
             //             active: false
             //         });
             //     });
             //     $(this.element).find('.layerlegends').each(function(){
             //         $(this).accordion({
-            //             autoHeight: false, 
-            //             collapsible: true, 
+            //             autoHeight: false,
+            //             collapsible: true,
             //             active: false
             //         });
             //     });
@@ -361,4 +364,3 @@
     });
 
 })(jQuery);
-

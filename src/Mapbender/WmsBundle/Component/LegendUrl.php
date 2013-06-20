@@ -26,6 +26,19 @@ class LegendUrl
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $height;
+    
+    /**
+     * 
+     * @param OnlineResource $onlineResource onl
+     * @param int $width
+     * @param int $height
+     */
+    public function __construct($onlineResource = null, $width = null, $height = null)
+    {
+        $this->onlineResource = $onlineResource;
+        $this->width = $width;
+        $this->height = $height;
+    }
 
     /**
      * Set onlineResource

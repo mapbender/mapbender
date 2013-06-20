@@ -1,24 +1,23 @@
 <?php
 
-namespace Mapbender\WmcBundle\Element\Type;
+namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Mapbender\CoreBundle\Form\Type\PositionType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Description of WmcEditorAdminType
- *
- * @author Paul Schmidt
+ * 
  */
-class WmcEditorAdminType extends AbstractType
+class ScaleDisplayAdminType extends AbstractType
 {
     /**
      * @inheritdoc
      */
     public function getName()
     {
-        return 'wmceditor';
+        return 'scaledisplay';
     }
 
     /**
@@ -43,10 +42,19 @@ class WmcEditorAdminType extends AbstractType
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
-                ->add('autoOpen', 'checkbox',
+                ->add('anchor', "choice",
                       array(
-                    'required' => false));
+                    'required' => true,
+                    "choices" => array(
+                        'inline' => 'inline',
+                        'left-top' => 'left-top',
+                        'left-bottom' => 'left-bottom',
+                        'right-top' => 'right-top',
+                        'right-bottom' => 'right-bottom')))
+                ->add('position', new PositionType(),
+                      array(
+                    'label' => 'Position',
+                    'property_path' => '[position]'));
     }
-}
 
-?>
+}

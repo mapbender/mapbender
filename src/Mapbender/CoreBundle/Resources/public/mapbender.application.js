@@ -70,6 +70,14 @@ Mapbender.error = function(message){
     alert(message);
 };
 
+Mapbender.info = function(message){
+    alert(message);
+};
+Mapbender.confirm = function(message){
+    var res = confirm(message);
+    return res;
+};
+
 Mapbender.checkTarget = function(widgetName, target, targetname){
     if(target === null || typeof(target) === 'undefined'
         || new String(target).replace(/^\s+|\s+$/g, '') === ""
@@ -285,14 +293,14 @@ Mapbender.DefaultModel = {
                 width: size.w,
                 height: size.h
                 },
-            bbox: {
+            extent: {
                 srs: proj.projCode,
                 minx: ext.left,
                 miny: ext.bottom,
                 maxx: ext.right,
                 maxy: ext.top
             },
-            maxBbox: {
+            maxextent: {
                 srs: proj.projCode,
                 minx: maxExt.left,
                 miny: maxExt.bottom,
@@ -410,9 +418,9 @@ Mapbender.DefaultModel = {
         result = Mapbender.source[source.type].checkLayers(source,
             this.map.olMap.getScale(), tochange, result);
 
-        mqLayer.layers = result.layers;
-        mqLayer.olLayer.layers = mqLayer.layers;
-        mqLayer.olLayer.params.LAYERS = mqLayer.layers;
+//        mqLayer.layers = result.layers;
+//        mqLayer.olLayer.layers = result.layers;
+        mqLayer.olLayer.params.LAYERS = result.layers;
         mqLayer.olLayer.queryLayers = result.infolayers;
         return result.changed;
     },
@@ -421,7 +429,7 @@ Mapbender.DefaultModel = {
      *  Redraws the source at the map
      */
     _redrawSource: function(mqLayer){
-        if(mqLayer.olLayer.layers.length === 0){
+        if(mqLayer.olLayer.params.LAYERS.length === 0){
             mqLayer.visible(false);
         } else {
             mqLayer.visible(true);
@@ -445,7 +453,7 @@ Mapbender.DefaultModel = {
     _checkOutOfScale: function(e){
         var self = this;
         //        window.console && console.log("DefaultModel._checkOutOfScale:", e);
-        $.each(this.sourceTree, function(idx, source) {
+        $.each(self.sourceTree, function(idx, source) {
             var mqLayer = self.map.layersList[source.mqlid];
             var tochange = self.createToChangeObj(source);
             var changed = self._checkAndRedrawSource(source, mqLayer, tochange);
@@ -483,8 +491,8 @@ Mapbender.DefaultModel = {
         };
         result = Mapbender.source[source.type].checkLayers(source,
             this.map.olMap.getScale(), this.createToChangeObj(source),result);
-        mqSource.layers = result.layers;
-        if(mqSource.layers.length === 0){
+//        mqSource.layers = result.layers;
+        if(result.layers === 0){
             mqSource.visibility = false;
         }
         var toadd = this.createChangedObj(source);
@@ -1257,6 +1265,8 @@ Mapbender.DefaultModel = {
     changeProjection: function(srs){
         var self = this;
         var oldProj = this.map.olMap.getProjectionObject();
+        if(oldProj.projCode === srs.projection.projCode)
+            return;
         var center = this.map.olMap.getCenter().transform(oldProj, srs.projection);
         this.map.olMap.projection = srs.projection;
         this.map.olMap.displayProjection= srs.projection;
@@ -1278,8 +1288,14 @@ Mapbender.DefaultModel = {
             layer.initResolutions();
         });
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
-        this.mbMap._trigger('srsChanged', null, {
-            projection: srs.projection
+//        this.mbMap._trigger('srschanged', null, {
+//            projection: srs.projection
+//        });
+        this.mbMap.fireModelEvent({
+            name: 'srschanged', 
+            value: {
+                projection: srs.projection
+            }
         });
     },
 

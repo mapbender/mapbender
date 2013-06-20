@@ -23,6 +23,18 @@ class Wmc
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+    
+    /**
+     * @var string $version The wmc version
+     * @ORM\Column(type="string", length=10, nullable=true)
+     */
+    protected $version = "1.1.0";
+    
+    /**
+     * @var string $wmcid a wmc id
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $wmcid;
 
     /**
      * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\State", cascade={"persist","remove"})
@@ -64,9 +76,31 @@ class Wmc
      * @Assert\File(maxSize="6000000")
      */
     private $screenshot;
+    
+    /**
+     * @var Contact A contact.
+     * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist","remove"})
+     */
+    protected $contact;
+    
+    /**
+     * @Assert\File(maxSize="6000000")
+     */
+    private $xml;
 
-    /* @TODO ContactImformation */
 
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return State
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+    
     /**
      * Get id
      *
@@ -187,13 +221,85 @@ class Wmc
         return $this->screenshotPath;
     }
 
-    
-
     /**
      * @param string $screenshot
      */
     public function setScreenshot($screenshot) {
         $this->screenshot = $screenshot;
+    }
+
+    /**
+     * Get version
+     *
+     * @return string
+     */
+    public function getVersion() {
+        return $this->version;
+    }
+    
+    /**
+     * @param string $version
+     */
+    public function setVersion($version) {
+        $this->version = $version;
+        return $this;
+    }
+
+    /**
+     * Get version
+     *
+     * @return string
+     */
+    public function getWmcid() {
+        return $this->wmcid;
+    }
+    
+    /**
+     * @param string $wmcid
+     */
+    public function setWmcid($wmcid) {
+        $this->wmcid = $wmcid;
+        return $this;
+    }
+    
+    
+
+    /**
+     * Set contact
+     *
+     * @param string $contact
+     * @return WmsSource
+     */
+    public function setContact($contact)
+    {
+        $this->contact = $contact;
+        return $this;
+    }
+
+    /**
+     * Get contact
+     *
+     * @return string 
+     */
+    public function getContact()
+    {
+        return $this->contact;
+    }
+    
+    /**
+     * @param string $xml
+     */
+    public function setXml($xml) {
+        $this->xml = $xml;
+    }
+
+    /**
+     * Get xml
+     *
+     * @return string
+     */
+    public function getXml() {
+        return $this->xml;
     }
 
     /**

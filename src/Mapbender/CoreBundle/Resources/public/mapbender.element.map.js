@@ -59,6 +59,16 @@
         getMapState: function(){
             return this.model.getMapState();
         },
+        
+        sourceById: function(idObject){
+            return this.model.getSource(idObject);
+        },
+        
+        mqLayerBySourceId: function(idObject){
+            var source = this.sourceById(idObject);
+            return this.map.layersList[source.mqlid];
+        },
+        
         /**
          *
          */
@@ -71,6 +81,27 @@
         removeSource: function(toChangeObj){
             if(toChangeObj && toChangeObj.source && toChangeObj.type){
                 this.model.removeSource(toChangeObj);
+            }
+        },
+                
+                
+        /**
+         *
+         */
+        removeAllSources: function(withBaseSource){
+            if(typeof withBaseSource === 'undefined'){
+                withBaseSource = true;
+            }
+            var toRemoveArr = [];
+            for(var i = 0; i < this.model.sourceTree.length; i++){
+                var source = this.model.sourceTree[i];
+                if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && withBaseSource)){
+                    var toremove = this.model.createToChangeObj(source);
+                    toRemoveArr.push(toremove);
+                }
+            }
+            for(var i = 0; i < toRemoveArr.length; i++){
+                this.removeSource(toRemoveArr[i]);
             }
         },
         

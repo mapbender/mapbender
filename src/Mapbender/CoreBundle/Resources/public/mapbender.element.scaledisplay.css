@@ -1,0 +1,11 @@
+.mb-element-scaledisplay {
+    position: absolute;
+    font-size: 12px;
+    z-index: 1009;
+    width: auto;
+    height: auto;
+}
+
+.mb-element-scaledisplay.inline {
+    position: static;
+}

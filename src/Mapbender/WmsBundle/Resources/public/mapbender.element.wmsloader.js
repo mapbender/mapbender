@@ -83,10 +83,10 @@
             if(service.toUpperCase() !== "WMS"){
                 Mapbender.error('WMSLoader: the service "'+service+'" is not supported!');
                 return false;
-            } else if(request.toUpperCase() !== "GETCAPABILITIES"){
+            } else if(request.toUpperCase() !== "GETCAPABILITIES" && request.toUpperCase() !== 'CAPABILITIES'){
                 Mapbender.error('WMSLoader: the WMS Operation "'+request+'" is not supported!');
                 return false;
-            } else if(!(version.toUpperCase() === "1.1.0" || version.toUpperCase() === "1.1.1" || version.toUpperCase() === "1.3.0")){
+            } else if(version && !(version.toUpperCase() === "1.1.0" || version.toUpperCase() === "1.1.1" || version.toUpperCase() === "1.3.0")){
                 Mapbender.error('WMSLoader: the WMS version "'+version+'" is not supported!');
                 return false;
             }
@@ -127,4 +127,3 @@
     });
 
 })(jQuery);
-

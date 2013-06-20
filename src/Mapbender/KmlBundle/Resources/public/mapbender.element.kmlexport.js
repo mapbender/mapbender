@@ -81,4 +81,3 @@ $.widget("mapbender.mbKmlExport", {
 });
 
 })(jQuery);
-

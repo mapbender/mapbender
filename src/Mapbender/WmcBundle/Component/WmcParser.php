@@ -95,7 +95,20 @@ abstract class WmcParser
         {
             throw new XmlParseException("Could not parse Wmc Document.");
         }
-
+        return WmcParser::checkWmcDocument($doc, $validate);
+    }
+    
+    /**
+     * Checks the wmc xml
+     * 
+     * @param \DOMDocument $doc the wmc xml to check
+     * @param boolean $validate to validate of xml
+     * @return \DOMDocument checked wmc document
+     * @throws WmcException if a xml is not a wmc document.
+     * @throws NotSupportedVersionException if a wmc version is not supported
+     */
+    private static function checkWmcDocument(\DOMDocument $doc, $validate = false)
+    {
         if($doc->documentElement->tagName !== "ViewContext")
         {
             throw new WmcException("Not supported Wmc Document");
@@ -113,6 +126,24 @@ abstract class WmcParser
                     . $version . '" is not supported.');
         }
         return $doc;
+    }
+    
+    /**
+     * Loads a wmc document from a file
+     * 
+     * @param string $file path to wmc document
+     * @param boolean $validate to validate of xml
+     * @return \DOMDocument a WMC document
+     * @throws XmlParseException if a file is not a wmc document.
+     */
+    public static function loadDocument($file, $validate = false)
+    {
+        $doc = new \DOMDocument();
+        if(!@$doc->load($file))
+        {
+            throw new XmlParseException("Could not parse Wmc Document.");
+        }
+        return WmcParser::checkWmcDocument($doc, $validate);
     }
 
     /**
