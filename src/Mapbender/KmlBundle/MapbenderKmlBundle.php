@@ -9,13 +9,23 @@
 
 namespace Mapbender\KmlBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Mapbender\CoreBundle\Component\MapbenderBundle;
 
 /**
  * KmlBundle.
  *
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  */
-class MapbenderKmlBundle extends Bundle {
-}
+class MapbenderKmlBundle extends MapbenderBundle {
 
+    /**
+     * @inheritdoc
+     */
+    public function getElements()
+    {
+        return array(
+            'Mapbender\KmlBundle\Element\KmlExport'
+            );
+    }
+
+}
