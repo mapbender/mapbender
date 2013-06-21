@@ -187,8 +187,8 @@ class Application
         }
         if($type === 'css')
         {
-            $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.css';
-            $this->addAsset($assets, $type, $file);
+            //$file = '@MapbenderCoreBundle/Resources/public/mapbender.application.css';
+            //$this->addAsset($assets, $type, $file);
         }
 
         // Load all elements assets
