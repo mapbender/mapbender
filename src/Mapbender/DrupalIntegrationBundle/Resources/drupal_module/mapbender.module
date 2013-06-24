@@ -1,0 +1,104 @@
+<?php
+
+global $conf;
+
+require_once $conf['mapbender']['path'] . '/bootstrap.php.cache';
+require_once $conf['mapbender']['path'] . '/AppKernel.php';
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeSessionHandler;
+use Mapbender\DrupalIntegrationBundle\Session\DrupalSessionStorage;
+use Mapbender\DrupalIntegrationBundle\Session\DrupalSessionHandler;
+
+function mapbender_menu()
+{
+    return array(
+        'mapbender' => array(
+            'title' => 'Mapbender3 Sandbox',
+            'page callback' => 'mapbender_show_view',
+            'access arguments' => array('access content'),
+            'type' => MENU_CALLBACK,
+        ),
+    );
+}
+
+function mapbender_replace_uri($uri)
+{
+    $destination = drupal_get_destination();
+    $destination = preg_replace('/\?.*/', '', $destination['destination']);
+
+    return preg_replace_callback(
+        '#/\?q=('.$destination.')/?(?:&?(.*))$#',
+        function ($matches) {
+            $result = '/'.$matches[1];
+            if ('symfony' === $matches[1]) {
+                $result .= '/';
+            }
+            return $result . ((isset($matches[2])) ? '?'.$matches[2] : '');
+        },
+        $uri);
+}
+
+function mapbender_show_view()
+{
+    global $base_url, $conf;
+
+    $server = $_SERVER;
+
+    if (isset($_REQUEST['q'])) {
+        $server['REQUEST_URI'] = mapbender_replace_uri($server['REQUEST_URI']);
+    }
+
+    $server['SCRIPT_FILENAME'] = str_replace('/index.php/', '/', $server['SCRIPT_FILENAME'].'/mapbender');
+    $server['SCRIPT_NAME'] = $server['PHP_SELF'] = $GLOBALS['base_path'].'mapbender';
+
+    $_SESSION['is_mb3'] = true;
+    $request = new Request($_GET, $_POST, array(), $_COOKIE, $_FILES, $server);
+
+    $kernel = new AppKernel($conf['mapbender']['env'], true);
+    $kernel->boot();
+
+    $kernel->getContainer()->set('session.storage.native', new DrupalSessionStorage());
+    $kernel->getContainer()->set('session.handler', new NativeSessionHandler());
+
+    $response = $kernel->handle($request);
+
+    if(strpos($response->headers->get('Content-Type'), 'text/html') !== False) {
+        $DOM = new DOMDocument;
+        libxml_use_internal_errors(true);
+        $DOM->loadHTML($response->getContent());
+        libxml_clear_errors();
+
+        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        $server = $_SERVER['HTTP_HOST'];
+
+        foreach($DOM->getElementsByTagName('link') as $link) {
+            switch($link->getAttribute('rel')) {
+                case '':
+                case 'stylesheet':
+                    $stylesheet = $protocol . $server . $link->getAttribute('href');
+                    drupal_add_css($stylesheet, array('type' => 'external'));
+            }
+        }
+
+        $body = $DOM->getElementsByTagName('body');
+
+        $innerHTML= '';
+        $children = $body->item(0)->childNodes;
+
+        foreach ($children as $child) {
+            $innerHTML .= $child->ownerDocument->saveXML( $child );
+        }
+
+        return array(
+            '#markup' => $innerHTML
+        );
+
+    } else {
+        $response->sendHeaders();
+        $response->sendContent();
+        return;
+    }
+
+}
