@@ -45,6 +45,16 @@ function startsWith($haystack, $needle)
     return !strncmp($haystack, $needle, strlen($needle));
 }
 
+function endsWith($haystack, $needle)
+{
+    $length = strlen($needle);
+    if ($length == 0) {
+        return true;
+    }
+    error_log(substr($haystack, -$length));
+    return (substr($haystack, -$length) === $needle);
+}
+
 function mapbender_mburi_to_drupal($uri)
 {
     $dp = str_replace('index.php', '', $_SERVER['PHP_SELF']);
@@ -91,8 +101,13 @@ function mapbender_show_view()
             switch($link->getAttribute('rel')) {
                 case '':
                 case 'stylesheet':
-                    $stylesheet = $protocol . $server . $link->getAttribute('href');
-                    drupal_add_css($stylesheet, array('type' => 'external'));
+                    if($link->getAttribute('href')) {
+                        $stylesheet = $protocol . $server . $link->getAttribute('href');
+                        drupal_add_css($stylesheet, array('type' => 'external'));
+                    } else {
+                        drupal_add_css($link->textContent, 'inline');
+                    }
+                    //                    $link->parentNode->removeChild($link);
             }
         }
 
@@ -107,8 +122,18 @@ function mapbender_show_view()
             $href = $script->getAttribute('src');
             if($href) {
                 $href = mapbender_mburi_to_drupal($href);
-                drupal_add_js($href, array('type' => 'external'));
+                if(endsWith($href, 'jquery-ui.min.js')) {
+                    error_log($href . ' ends with');
+                    drupal_add_js($href, array('type' => 'external', 'weight'=>-19, 'group'=>JS_LIBRARY));
+                } else {
+                    drupal_add_js($href, array('type' => 'external'));
+                }
+            } else {
+                if(strpos($script->textContent, 'Sfjs') === false) {
+                    drupal_add_js($script->textContent, array('type'=>'inline', 'group'=>JS_LIBRARY));
+                }
             }
+            $script->parentNode->removeChild($script);
         }
 
         $body = $DOM->getElementsByTagName('body');
@@ -118,7 +143,7 @@ function mapbender_show_view()
         $children = $body->item(0)->childNodes;
 
         foreach ($children as $child) {
-            $innerHTML .= $child->ownerDocument->saveXML( $child );
+            $innerHTML .= $child->ownerDocument->saveXML( $child, LIBXML_NOEMPTYTAG );
         }
 
         return array(
