@@ -40,6 +40,20 @@ function mapbender_replace_uri($uri)
         $uri);
 }
 
+function startsWith($haystack, $needle)
+{
+    return !strncmp($haystack, $needle, strlen($needle));
+}
+
+function mapbender_mburi_to_drupal($uri)
+{
+    $dp = str_replace('index.php', '', $_SERVER['PHP_SELF']);
+    if(startsWith($uri, $dp . 'mapbender')) {
+        $uri = str_replace($dp . 'mapbender', $dp . '?q=mapbender', $uri);
+    }
+    return $uri;
+}
+
 function mapbender_show_view()
 {
     global $base_url, $conf;
@@ -82,9 +96,25 @@ function mapbender_show_view()
             }
         }
 
+        foreach($DOM->getElementsByTagName('a') as $link) {
+            if($link->getAttribute('href')) {
+                $href = mapbender_mburi_to_drupal($link->getAttribute('href'));
+                $link->setAttribute('href', $href);
+            }
+        }
+
+        foreach($DOM->getElementsByTagName('script') as $script) {
+            $href = $script->getAttribute('src');
+            if($href) {
+                $href = mapbender_mburi_to_drupal($href);
+                drupal_add_js($href, array('type' => 'external'));
+            }
+        }
+
         $body = $DOM->getElementsByTagName('body');
 
         $innerHTML= '';
+
         $children = $body->item(0)->childNodes;
 
         foreach ($children as $child) {
