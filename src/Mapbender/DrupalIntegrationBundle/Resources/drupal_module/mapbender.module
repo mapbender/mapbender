@@ -87,6 +87,18 @@ function mapbender_show_view()
 
     $response = $kernel->handle($request);
 
+    // owsproxy sometimes sends redirects, so fix the location header here
+    if($response->getStatusCode() === 301) {
+        $loc = $response->headers->get('Location');
+        if(strpos($loc,'mapbender/owsproxy/')) {
+            $loc = str_replace('mapbender/owsproxy/', '?q=mapbender/owsproxy/', $loc);
+            $response->headers->set('Location', $loc);
+        }
+        $response->sendHeaders();
+        $response->sendContent();
+        return;
+    }
+
     if(strpos($response->headers->get('Content-Type'), 'text/html') !== False) {
         $DOM = new DOMDocument;
         libxml_use_internal_errors(true);
@@ -117,23 +129,32 @@ function mapbender_show_view()
             }
         }
 
+        // script loading/evaluation order is tricky
+        // seems a few of the scripts already get loaded using the old address, we're kind of almost too late here
+        $added_scripts = array();
+
         foreach($DOM->getElementsByTagName('script') as $script) {
             $href = $script->getAttribute('src');
             if($href) {
                 $href = mapbender_mburi_to_drupal($href);
                 if(endsWith($href, 'jquery-ui.min.js')) {
                     drupal_add_js($href, array('type' => 'external', 'weight'=>-19, 'group'=>JS_LIBRARY));
+                    // unknown why this breaks things
+                    //$added_scripts[] = $script;
                 } else if(endsWith($href, 'jquery-1.4.4.js')) {
                     // already loaded by drupal
                 } else if(endsWith($href, 'jquery-1.9.1.min.js')) {
                     // already loaded by drupal
                 } else {
                     drupal_add_js($href, array('type' => 'external', 'defer'=>true));
+                    // unknown why this breaks things
+                    //$added_scripts[] = $script;
                 }
             } else {
                 // symfony stuff does not work within drupal
                 if(strpos($script->textContent, 'Sfjs') === false) {
                     drupal_add_js($script->textContent, array('type'=>'inline', 'group'=>JS_LIBRARY));
+                    $added_scripts[] = $script;
                 }
             }
         }
@@ -156,10 +177,9 @@ function mapbender_show_view()
         /*     $node->setAttribute("data-url", $url); */
         /* } */
 
-        // unknown why this breaks things
-        /* foreach($DOM->getElementsByTagName('script') as $script) { */
-        /*     $script->parentNode->removeChild($script); */
-        /* } */
+        foreach($added_scripts as $script) {
+            $script->parentNode->removeChild($script);
+        }
 
         $body = $DOM->getElementsByTagName('body');
 
