@@ -49,6 +49,7 @@ class WmcHandler extends Element
         return array(
             "tooltip"         => null,
             "target"          => null,
+            "accessRoles"           => array(),
             "keepBaseSources" => false,
             "useEditor"       => false,
             "useSuggestMap"   => false,
@@ -222,7 +223,7 @@ class WmcHandler extends Element
                 $wmc);
         $form->bindRequest($request);
         if ($form->isValid())
-        { //TODO: Is file an image (jpg/png/gif?)
+        {
             if ($wmc->getXml() !== null)
             {
                 $file   = $wmc->getXml();
@@ -305,6 +306,7 @@ class WmcHandler extends Element
      */
     protected function getWmc()
     {
+        //@TODO access for loader ???
         $wmcid = $this->container->get("request")->get("wmcid", null);
         if ($wmcid)
         {
@@ -345,6 +347,7 @@ class WmcHandler extends Element
      */
     protected function loadWmc($wmcid)
     {
+        //@TODO access for loader ???
         if ($wmcid)
         {
             $wmc = $this->container->get('doctrine')
@@ -369,7 +372,7 @@ class WmcHandler extends Element
      */
     protected function removeWmc()
     {
-
+        //@TODO access for editor ???
         $wmcid = $this->container->get("request")->get("wmcid", null);
         $this->container->get("request")->attributes->remove("wmcid");
         if (!$wmcid)
@@ -417,10 +420,12 @@ class WmcHandler extends Element
      */
     protected function getWmcList()
     {
+        //@TODO access for editor ???
         $config   = $this->getConfiguration();
-        $response = new Response();
-        if ($config["useEditor"] === true)
+        $access = true;
+        if ($access && $config["useEditor"] === true)
         {
+            $response = new Response();
             $entities     = $this->container->get('doctrine')
                     ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
                     ->findAll();
@@ -434,12 +439,13 @@ class WmcHandler extends Element
         }
         else
         {
-            
+            throw new AccessDeniedHttpException('You are not allowed to use this proxy without a session.');
         }
     }
 
     protected function saveWmc()
     {
+        //@TODO access for editor ???
         $request = $this->container->get('request');
         $wmc     = Wmc::create();
         $form    = $this->container->get("form.factory")->create(new WmcType(),
@@ -523,34 +529,7 @@ class WmcHandler extends Element
         $url_base = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
         return $url_base;
     }
-
-//    private function delete($id)
-//    {
-//        $response = new Response();
-//        $wmc      = $this->container->get('doctrine')
-//                ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
-//                ->find($id);
-//        if ($wmc !== null)
-//        {
-//            $response->setContent($wmc->getId());
-//            $em = $this->container->get('doctrine')->getEntityManager();
-//            $em->remove($wmc);
-//            $em->flush();
-//        }
-//        else
-//        {
-//            $response->setContent('error');
-//        }
-//        return $response;
-//    }
-//
-//    public function generateMetadata($themenkarte)
-//    {
-//        return $this->get('templating')->render('BkgGeoportalBundle:Element:themenkarteneditor_wmcmetadata.html.twig',
-//                                                array("themenkarte" => $themenkarte)
-//        );
-//    }
-//
+    
     protected function createWmcDirs()
     {
         $basedir = $this->container->get('kernel')->getRootDir() . '/../web/';

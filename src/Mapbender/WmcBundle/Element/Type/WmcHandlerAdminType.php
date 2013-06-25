@@ -44,13 +44,16 @@ class WmcHandlerAdminType extends AbstractType
                     'application'   => $options['application'],
                     'property_path' => '[target]',
                     'required'      => false))
+                ->add('accessRoles', 'choice',
+                        array(
+                    'choices'  => array(),
+                    'required' => false))
                 ->add('keepBaseSources', 'checkbox',
                         array(
                     'required' => false))
                 ->add('useEditor', 'checkbox',
                         array(
                     'required' => false))
-               
                 ->add('useSuggestMap', 'checkbox',
                         array(
                     'required' => false))
