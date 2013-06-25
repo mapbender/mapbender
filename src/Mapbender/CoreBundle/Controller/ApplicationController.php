@@ -28,18 +28,30 @@ class ApplicationController extends Controller {
      * @return array
      */
     private function getUrls($slug) {
+        $base_url = $this->get('request')->getBaseUrl();
+        $element_url = $this->get('router')
+            ->generate('mapbender_core_application_element',
+                       array('slug' => $slug));
+        $translation_url = $this->get('router')
+            ->generate('mapbender_core_translation_trans');
+        $proxy_url = $this->get('router')
+            ->generate('owsproxy3_core_owsproxy_entrypoint');
+
+        // hack to get proper urls when embedded in drupal
+        $drupal_mark = function_exists('mapbender_menu') ? '?q=mapbender' : 'mapbender';
+        $base_url = str_replace('mapbender', $drupal_mark, $base_url);
+        $element_url = str_replace('mapbender', $drupal_mark, $element_url);
+        $translation_url = str_replace('mapbender', $drupal_mark, $translation_url);
+        $proxy_url = str_replace('mapbender', $drupal_mark, $proxy_url);
+
         return array(
-            'base' => $this->get('request')->getBaseUrl(),
+            'base' => $base_url,
             // @TODO: Can this be done less hack-ish?
             'asset' => rtrim($this->get('templating.helper.assets')
                 ->getUrl('.'), '.'),
-            'element' => $this->get('router')
-                ->generate('mapbender_core_application_element', array(
-                    'slug' => $slug)),
-            'trans' => $this->get('router')
-                ->generate('mapbender_core_translation_trans'),
-            'proxy' => $this->get('router')
-            ->generate('owsproxy3_core_owsproxy_entrypoint'));
+            'element' => $element_url,
+            'trans' => $translation_url,
+            'proxy' => $proxy_url);
     }
 
     /**
@@ -181,7 +193,7 @@ class ApplicationController extends Controller {
             foreach($application_entity->yaml_roles as $role) {
                 if($securityContext->isGranted($role)) {
                     $passed = true;
-                    break; 
+                    break;
                 }
             }
             if(!$passed) {
@@ -199,4 +211,3 @@ class ApplicationController extends Controller {
         }
     }
 }
-

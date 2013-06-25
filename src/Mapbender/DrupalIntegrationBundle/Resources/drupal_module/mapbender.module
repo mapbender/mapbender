@@ -57,7 +57,7 @@ function endsWith($haystack, $needle)
 function mapbender_mburi_to_drupal($uri)
 {
     $dp = str_replace('index.php', '', $_SERVER['PHP_SELF']);
-    if(startsWith($uri, $dp . 'mapbender')) {
+    if(stripos($uri, $dp . 'mapbender') !== false) {
         $uri = str_replace($dp . 'mapbender', $dp . '?q=mapbender', $uri);
     }
     return $uri;
@@ -135,6 +135,14 @@ function mapbender_show_view()
                 if(strpos($script->textContent, 'Sfjs') === false) {
                     drupal_add_js($script->textContent, array('type'=>'inline', 'group'=>JS_LIBRARY));
                 }
+            }
+        }
+
+        foreach($DOM->getElementsByTagName('form') as $form) {
+            $action = $form->getAttribute('action');
+            if($action) {
+                $action = mapbender_mburi_to_drupal($action);
+                $form->setAttribute('action', $action);
             }
         }
 
