@@ -50,11 +50,7 @@ class ScaleDisplayAdminType extends AbstractType
                         'left-top' => 'left-top',
                         'left-bottom' => 'left-bottom',
                         'right-top' => 'right-top',
-                        'right-bottom' => 'right-bottom')))
-                ->add('position', new PositionType(),
-                      array(
-                    'label' => 'Position',
-                    'property_path' => '[position]'));
+                        'right-bottom' => 'right-bottom')));
     }
 
 }
