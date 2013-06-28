@@ -176,6 +176,9 @@ class WmsInstance extends SourceInstance
             $rootlayer = new WmsInstanceLayer();
             $rootlayer->setTitle($this->title)
                     ->setId($this->getId()."_".$num)
+                    ->setMinScale(!isset($this->configuration["minScale"]) ? null : $this->configuration["minScale"])
+                    ->setMaxScale(!isset($this->configuration["maxScale"]) ? null : $this->configuration["maxScale"])
+                    ->setSelected(!isset($this->configuration["visible"]) ? false : $this->configuration["visible"])
                     ->setPriority($num)
                     ->setWmslayersource(new WmsLayerSource())
                     ->setWmsInstance($this);
@@ -205,6 +208,8 @@ class WmsInstance extends SourceInstance
                 }
                 $layer->setTitle($layerDef["title"])
                         ->setId($this->getId() . '-' . $num)
+                        ->setMinScale(!isset($layerDef["minScale"]) ? null : $layerDef["minScale"])
+                        ->setMaxScale(!isset($layerDef["maxScale"]) ? null : $layerDef["maxScale"])
                         ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
                         ->setInfo(!isset($layerDef["queryable"]) ? false : $layerDef["queryable"])
                         ->setParent($rootlayer)
