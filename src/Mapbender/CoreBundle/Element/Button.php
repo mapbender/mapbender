@@ -25,7 +25,7 @@ class Button extends Element
      */
     static public function getClassDescription()
     {
-        return "Renders a button";
+        return "";
     }
 
     /**

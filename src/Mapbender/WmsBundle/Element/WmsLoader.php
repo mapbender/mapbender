@@ -26,7 +26,7 @@ class WmsLoader extends Element
      */
     static public function getClassDescription()
     {
-        return "WMS Loader";
+        return "";
     }
 
     /**

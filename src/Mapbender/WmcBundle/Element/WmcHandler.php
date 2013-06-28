@@ -30,7 +30,7 @@ class WmcHandler extends Element
      */
     static public function getClassDescription()
     {
-        return "Wmc Handler";
+        return "";
     }
 
     /**

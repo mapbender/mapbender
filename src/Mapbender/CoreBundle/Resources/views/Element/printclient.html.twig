@@ -1,4 +1,4 @@
-<div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title|trans }}">
+<div id="{{ id }}" class="mb-element mb-element-printclient">
     <div class="format-form">
         <form id="formats" action="">
             <label class="labelInput">{{ 'Template' | trans }}</label>
@@ -30,7 +30,6 @@
             </div>
             <label class="labelInput" for="rotation">{{ 'Rotation' | trans }}</label>
             <input class="input" type="text" name="rotation"/>
-            
 
             <div id="slider"></div>
 
@@ -39,13 +38,5 @@
             <br>
             <div id="layers"></div>
         </form>
-    </div>
-        
-    <div id="extra_forms" style="display:none">
-        {#% for key, form in forms %}
-        <form name="{{ key }}">
-            {{ form_widget(form) }}
-        </form>
-        {% endfor %#}
     </div>
 </div>
