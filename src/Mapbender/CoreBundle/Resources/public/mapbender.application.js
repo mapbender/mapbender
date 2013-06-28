@@ -362,7 +362,7 @@ Mapbender.DefaultModel = {
      */
     getSourceLayerById: function(source, layerId){
         if(source && layerId){
-            return Mapbender.source[source.type].findLayer(source,layerId);
+            return Mapbender.source[source.type].findLayer(source,{id: layerId});
         } else {
             return null;
         }
@@ -378,7 +378,8 @@ Mapbender.DefaultModel = {
         return {
             source: source,
             type: "",
-            children: {}
+            children: {},
+            options: {}
         };
     },
 
@@ -435,6 +436,15 @@ Mapbender.DefaultModel = {
             mqLayer.visible(true);
             mqLayer.olLayer.redraw();
         }
+    },
+            
+    checkAndRedrawSource: function(source, tochange){
+        var mqLayer = this.map.layersList[source.mqlid];
+        if(mqLayer){
+            var changed = this._checkAndRedrawSource(source, mqLayer, tochange);
+            this._redrawSource(mqLayer);
+            return changed;
+        } return null;
     },
 
     /**
@@ -845,17 +855,17 @@ Mapbender.DefaultModel = {
             if(before && after
                 && before.source.id.toString() === after.source.id.toString()
                 && before.source.id.toString() === tomove.source.id.toString()){
-                var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, before.layerId);
-                var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, after.layerId);
-                layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, tomove.layerId);
+                var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source,{id: before.layerId});
+                var afterLayer = Mapbender.source[after.source.type].findLayer(after.source,{id: after.layerId});
+                layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
                 this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, beforeLayer.idx, before, after);
             } else if(before && before.source.id.toString() === tomove.source.id.toString()){
-                var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, before.layerId);
-                layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, tomove.layerId);
+                var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {id: before.layerId});
+                layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
                 this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, beforeLayer.idx, before, after);
             } else if(after && after.source.id.toString() === tomove.source.id.toString()){
-                var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, after.layerId);
-                layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, tomove.layerId);
+                var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {id: after.layerId});
+                layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
                 this._reorderLayers(tomove.source, layerToMove.layer, afterLayer.parent, afterLayer.idx, before, after);
             //            } else if(before && before.source.configuration.options.url === tomove.source.configuration.options.url){
             } else if(before && before.source.origId === tomove.source.origId){
@@ -863,7 +873,7 @@ Mapbender.DefaultModel = {
                 if(count.simpleCount === 1){ // remove source
                     this._insertLayer(tomove, before, after);
                 } else if(count.simpleCount > 1){
-                    var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, tomove.layerId);
+                    var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
                     var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
                     this.addSource(source_new, before, after);
                 }
@@ -878,7 +888,7 @@ Mapbender.DefaultModel = {
                     if(count.simpleCount === 1){ // remove source
                         this._moveSource(tomove.source, before, after);
                     } else if(count.simpleCount > 1){
-                        var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, tomove.layerId);
+                        var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
                         var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
                         this.addSource(source_new, before, after);
                     }
@@ -891,7 +901,7 @@ Mapbender.DefaultModel = {
                     if(count.simpleCount === 1){ // remove source
                         this._moveSource(tomove.source, before, after);
                     } else if(count.simpleCount > 1){
-                        var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, tomove.layerId);
+                        var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
                         var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
                         this.addSource(source_new, before, after);
                     }
@@ -901,7 +911,7 @@ Mapbender.DefaultModel = {
                     this._moveSource(tomove.source, before, after);
                 } else {
                     if(after.source.id === before.source.id){
-                        var layerToSplit = Mapbender.source[after.source.type].findLayer(after.source, after.layerId);
+                        var layerToSplit = Mapbender.source[after.source.type].findLayer(after.source, {id: after.layerId});
                         var new_splitted = this._getNewFromList(after.source, layerToSplit.layer);
                         this.addSource(new_splitted, before, null);
                         var count = Mapbender.source[tomove.source.type].layerCount(tomove.source);
@@ -911,7 +921,7 @@ Mapbender.DefaultModel = {
                                 layerId: after.layerId
                             });
                         } else if(count.simpleCount > 1){
-                            var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, tomove.layerId);
+                            var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
                             var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
                             this.addSource(source_new, before, {
                                 source: new_splitted,
@@ -931,7 +941,7 @@ Mapbender.DefaultModel = {
                                 this._concatSources(before_cur, after_cur);
                             }
                         } else if(count.simpleCount > 1){
-                            var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, tomove.layerId);
+                            var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
                             var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
                             this.addSource(source_new, before, {
                                 source: new_splitted,
@@ -1009,7 +1019,7 @@ Mapbender.DefaultModel = {
                         //                            value: toadd
                         //                        });
 
-                        //                        var afterLayer = Mapbender.source[first.type].findLayer(first, lastid);
+                        //                        var afterLayer = Mapbender.source[first.type].findLayer(first, {id: lastid});
                         //                        var added = Mapbender.source[first.type].addLayer(first, layers[i], afterLayer.parent, afterLayer.idx);
                         var addedobj = this.createChangedObj(first);
                         addedobj.children[layers[i].options.id] = layers[i];
@@ -1122,7 +1132,7 @@ Mapbender.DefaultModel = {
      *
      */
     _insertLayer: function(tomove, before, after){
-        var layerToRemove = Mapbender.source[tomove.source.type].findLayer(tomove.source, tomove.layerId);
+        var layerToRemove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
         var count = Mapbender.source[tomove.source.type].layerCount(tomove.source);
         var addedobj, tochange, toremove, removed;
         if(count.simpleCount === 1 && layerToRemove){
@@ -1142,7 +1152,7 @@ Mapbender.DefaultModel = {
                 name: 'beforeSourceAdded',
                 value: tochange
             });
-            var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, before.layerId);
+            var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {id: before.layerId});
             var added = Mapbender.source[before.source.type].addLayer(before.source, removed.layer, beforeLayer.parent, beforeLayer.idx + 1);
             addedobj = this.createChangedObj(before.source);
             //            addedobj = this.createChangedObj(after.source); ??????
@@ -1160,7 +1170,7 @@ Mapbender.DefaultModel = {
                 name: 'beforeSourceAdded',
                 value: tochange
             });
-            var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, after.layerId);
+            var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {id: after.layerId});
             var added = Mapbender.source[after.source.type].addLayer(after.source, removed.layer, afterLayer.parent, afterLayer.idx);
             addedobj = this.createChangedObj(after.source);
             addedobj.children[added.options.id] = added;
