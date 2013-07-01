@@ -41,7 +41,7 @@ $(function(){
                 {
                     title:"Confirm delete",
                     subTitle: " - user",
-                    content: "Delete " + title + "?"
+                    content: title + "?"
                 },
                 function(){
                     $.ajax({
