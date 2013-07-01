@@ -61,7 +61,7 @@
                     content: this.element, 
                     draggable: true,
                     width: 300,
-                    height: 250,
+                    height: 200,
                     showCloseButton: false,
                     overflow: true
                 });

@@ -50,7 +50,9 @@
                 })
                 .mbPopup('showCustom', {
                     title:this.options.title,
-                    content: content
+                    content: content,
+                    width: 380,
+                    draggable: true
                 });
             }
         },
