@@ -34,7 +34,9 @@ $.widget("mapbender.mbZoomBar", {
         if(this.options.draggable === true) {
             this.element.addClass("iconMove").draggable({
                 containment: this.element.closest('.region'),
-                start: function() { $(this).add('dragging'); }
+                start: function() { 
+                    $(this).css("right", "inherit").add('dragging'); 
+                }
             });
         }
         $(this.element).find('.iconZoomMin').bind("click" ,$.proxy(this._worldZoom, this));
