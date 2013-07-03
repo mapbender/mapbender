@@ -25,7 +25,7 @@ class ScaleDisplay extends Element
      */
     static public function getClassDescription()
     {
-        return "ScaleDisplay";
+        return "";
     }
 
     /**
@@ -45,6 +45,7 @@ class ScaleDisplay extends Element
             'title' => 'Scale Display',
             'tooltip' => 'Scale Display',
             'target' => null,
+            'unitPrefix' => false,
             'anchor' => 'right-bottom');
     }
 

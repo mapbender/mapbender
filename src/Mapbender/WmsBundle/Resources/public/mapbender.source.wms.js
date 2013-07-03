@@ -2,55 +2,54 @@ var Mapbender = Mapbender || {};
 $.extend(true, Mapbender, {
     source: {
         'wms': {
-            create: function(layerDef) {
+            create: function(layerDef){
                 var layers = [];
                 var queryLayers = [];
                 var layersDefs = [];
-                layerDef.origId =  layerDef.id;
+                layerDef.origId = layerDef.id;
                 var rootLayer = layerDef.configuration.children[0];
                 this._readLayerDef(layersDefs, layers, queryLayers, rootLayer, true);
 
                 layersDefs.reverse();
                 var finalUrl = layerDef.configuration.options.url;
 
-                if(layerDef.configuration.options.proxy === true) {
+                if(layerDef.configuration.options.proxy === true){
                     finalUrl = this._addProxy(finalUrl);
                 }
 
                 var mqLayerDef = {
-                    type:        'wms',
-                    label:       layerDef.title,
-                    url:         finalUrl,
+                    type: 'wms',
+                    label: layerDef.title,
+                    url: finalUrl,
                     noMagic: true,
-
                     transparent: layerDef.configuration.options.transparent,
-                    format:      layerDef.configuration.options.format,
-
+                    format: layerDef.configuration.options.format,
                     isBaseLayer: layerDef.configuration.options.baselayer,
-                    opacity:     layerDef.configuration.options.opacity,
-                    visibility:  layerDef.configuration.options.visible &&
-                    (layers.length > 0),
-                    singleTile:  !layerDef.configuration.options.tiled,
+                    opacity: layerDef.configuration.options.opacity,
+                    visibility: layerDef.configuration.options.visible &&
+                            (layers.length > 0),
+                    singleTile: !layerDef.configuration.options.tiled,
                     attribution: layerDef.configuration.options.attribution, // attribution add !!!
 
-                    minScale:    rootLayer.minScale,
-                    maxScale:    rootLayer.maxScale
+                    minScale: rootLayer.minScale,
+                    maxScale: rootLayer.maxScale,
+                    layers: layers
                 };
+
                 return mqLayerDef;
             },
-
             _readLayerDef: function(layersDefs, layers, queryLayers, layer, isroot){
                 //            $.each(layerDef.configuration.layers, function(idx, layer) {
                 var layerDef = $.extend({},
-                {
-                    visible: true,
-                    queryable: false
-                }, layer.options );
+                        {
+                            visible: true,
+                            queryable: false
+                        }, layer.options);
                 delete(layerDef.treeOptions);
-                if(!isroot && layerDef.visible && typeof layerDef.name === 'string' && layerDef.name.length > 0) {
+                if(!isroot && layerDef.visible && typeof layerDef.name === 'string' && layerDef.name.length > 0){
                     layers.push(layerDef.name);
                 }
-                if(!isroot && layerDef.queryable) {
+                if(!isroot && layerDef.queryable){
                     queryLayers.push(layerDef.name);
                 }
                 if(!isroot){
@@ -61,22 +60,19 @@ $.extend(true, Mapbender, {
                         this._readLayerDef(layersDefs, layers, queryLayers, layer.children[i], false);
                     }
                 }
-            //            });
+                //            });
             },
-
-            _addProxy: function(url) {
+            _addProxy: function(url){
                 return OpenLayers.ProxyHost + url;
             },
-
-            _removeProxy: function(url) {
-                if(url.indexOf(OpenLayers.ProxyHost) === 0) {
+            _removeProxy: function(url){
+                if(url.indexOf(OpenLayers.ProxyHost) === 0){
                     return url.substring(OpenLayers.ProxyHost.length);
                 }
                 return url;
             },
-
-            featureInfo: function(layer, x, y, callback) {
-                if(layer.olLayer.queryLayers.length === 0) {
+            featureInfo: function(layer, x, y, callback){
+                if(layer.olLayer.queryLayers.length === 0){
                     return;
                 }
                 var param_tmp = {
@@ -98,16 +94,16 @@ $.extend(true, Mapbender, {
                 };
                 var contentType_ = "";
                 if(typeof(layer.source.configuration.options.info_format)
-                    !== 'undefined'){
+                        !== 'undefined'){
                     param_tmp["INFO_FORMAT"] =
-                    layer.source.configuration.options.info_format;
-                //                contentType_ +=
-                //                    layer.options.configuration.configuration.info_format;
+                            layer.source.configuration.options.info_format;
+                    //                contentType_ +=
+                    //                    layer.options.configuration.configuration.info_format;
                 }
                 if(typeof(layer.source.configuration.options.info_charset)
-                    !== 'undefined'){
+                        !== 'undefined'){
                     contentType_ += contentType_.length > 0 ? ";" : "" +
-                    layer.source.configuration.options.info_charset;
+                            layer.source.configuration.options.info_charset;
                 }
                 var params = $.param(param_tmp);
 
@@ -123,13 +119,13 @@ $.extend(true, Mapbender, {
                     data: {
                         url: encodeURIComponent(requestUrl)
                     },
-                    success: function(data) {
+                    success: function(data){
                         callback({
                             layerId: layer.id,
                             response: data
                         });
                     },
-                    error: function(error) {
+                    error: function(error){
                         callback({
                             layerId: layer.id,
                             response: 'ERROR'
@@ -137,21 +133,19 @@ $.extend(true, Mapbender, {
                     }
                 });
             },
-
-            loadFromUrl: function(url) {
+            loadFromUrl: function(url){
                 var dlg = $('<div></div>').attr('id', 'loadfromurl-wms'),
-                spinner = $('<img />')
-                .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/images/spinner.gif')
-                .appendTo(dlg);
+                        spinner = $('<img />')
+                        .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/images/spinner.gif')
+                        .appendTo(dlg);
                 dlg.appendTo($('body'));
 
                 $('<script></type')
-                .attr('type', 'text/javascript')
-                .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/mapbender.source.wms.loadfromurl.js')
-                .appendTo($('body'));
+                        .attr('type', 'text/javascript')
+                        .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/mapbender.source.wms.loadfromurl.js')
+                        .appendTo($('body'));
             },
-
-            layersFromCapabilities: function(xml, id, splitLayers, model, defFormat, defInfoformat) {
+            layersFromCapabilities: function(xml, id, splitLayers, model, defFormat, defInfoformat){
                 if(!defFormat){
                     defFormat = "image/png";
                 }
@@ -159,9 +153,9 @@ $.extend(true, Mapbender, {
                     defInfoformat = "text/html";
                 }
                 var parser = new OpenLayers.Format.WMSCapabilities(),
-                capabilities = parser.read(xml);
+                        capabilities = parser.read(xml);
 
-                if(typeof(capabilities.capability) !== 'undefined') {
+                if(typeof(capabilities.capability) !== 'undefined'){
                     var rootlayer = capabilities.capability.nestedLayers[0];
                     var bboxOb = {}, bboxSrs = null, bboxBounds = null;
                     for(bbox in rootlayer.bbox){
@@ -180,7 +174,7 @@ $.extend(true, Mapbender, {
                     var format;
                     var formats = capabilities.capability.request.getmap.formats;
                     for(var i = 0; i < formats.length; i++){
-                        if(formats[i].toLowerCase().indexOf(defFormat)!== -1)
+                        if(formats[i].toLowerCase().indexOf(defFormat) !== -1)
                             format = formats[i];
                     }
                     if(!format)
@@ -188,7 +182,7 @@ $.extend(true, Mapbender, {
                     var infoformat;
                     var infoformats = capabilities.capability.request.getfeatureinfo.formats;
                     for(var i = 0; i < infoformats.length; i++){
-                        if(infoformats[i].toLowerCase().indexOf(defInfoformat)!== -1)
+                        if(infoformats[i].toLowerCase().indexOf(defInfoformat) !== -1)
                             infoformat = infoformats[i];
                     }
                     if(!infoformat)
@@ -229,7 +223,7 @@ $.extend(true, Mapbender, {
                         }
                         var def = {
                             options: {
-                                id: id+"_"+num,
+                                id: id + "_" + num,
                                 legend: legend, // inheritance from style
                                 bbox: null, // inheritance replace
                                 srslist: null,
@@ -241,12 +235,12 @@ $.extend(true, Mapbender, {
                                 title: layer.title,
                                 treeOptions: {
                                     allow: {
-                                        info: layer.queryable ? true: false,
+                                        info: layer.queryable ? true : false,
                                         reorder: true,
                                         selected: true,
                                         toggle: true
                                     },
-                                    info: layer.queryable ? true: null,
+                                    info: layer.queryable ? true : null,
                                     selected: true,
                                     toggle: true
                                 }
@@ -261,7 +255,7 @@ $.extend(true, Mapbender, {
                         if(layer.nestedLayers.length > 0){
                             def.children = [];
                             for(var i = 0; i < layer.nestedLayers.length; i++){
-                                num ++;
+                                num++;
                                 def.children.push(readCapabilities(layer.nestedLayers[i], def, id, num));
                             }
                         }
@@ -296,40 +290,38 @@ $.extend(true, Mapbender, {
                         var result = [];
                         var defs = getSplitted(def, layers, layers, result, 0);
                         return result;
-                    } else {
+                    }else{
                         def.configuration.children = [layers];
                         return [def];
                     }
 
-                } else {
+                }else{
                     return null;
                 }
             },
-
-            getPrintConfig: function(layer, bounds) {
+            getPrintConfig: function(layer, bounds){
                 return {
                     type: 'wms',
                     url: layer.getURL(bounds)
                 };
             },
-
             onLoadError: function(imgEl, sourceId, projection){
                 var loadError = {sourceid: sourceId, details: ''};
                 $.ajax({
                     type: "GET",
                     async: false,
-                    url: Mapbender.configuration.application.urls.proxy+"?url="+encodeURIComponent(imgEl.attr('src')),
+                    url: Mapbender.configuration.application.urls.proxy + "?url=" + encodeURIComponent(imgEl.attr('src')),
                     success: function(message, text, response){
                         if(typeof(response.responseText) === "string"){
                             var details = "The map cannot be displayed.";
                             var layerTree;
-                            try {
+                            try{
                                 layerTree = new OpenLayers.Format.WMSCapabilities().read(response.responseText);
-                            } catch(e) {
+                            }catch(e){
                                 layerTree = null;
                                 details += ".\n" + "Exception" + ": " + e.toString();
                             }
-                            if(layerTree && layerTree.error) {
+                            if(layerTree && layerTree.error){
                                 if(layerTree.error.exceptionReport && layerTree.error.exceptionReport.exceptions){
                                     var excs = layerTree.error.exceptionReport.exceptions;
                                     details += ":";
@@ -345,17 +337,17 @@ $.extend(true, Mapbender, {
                         }
                         loadError.details = details;
                     },
-                    error: function(err) {
+                    error: function(err){
                         var details = "The map cannot be displayed.";
                         if(err.status == 200){
                             var capabilities;
-                            try {
+                            try{
                                 capabilities = new OpenLayers.Format.WMSCapabilities().read(err.responseText);
-                            } catch(e) {
+                            }catch(e){
                                 capabilities = null;
                                 details += ".\n" + "Exception" + ": " + e.toString();
                             }
-                            if(capabilities && capabilities.error) {
+                            if(capabilities && capabilities.error){
                                 if(capabilities.error.exceptionReport && capabilities.error.exceptionReport.exceptions){
                                     var excs = capabilities.error.exceptionReport.exceptions;
                                     details += ":";
@@ -367,13 +359,13 @@ $.extend(true, Mapbender, {
                                         }
                                         if(exc != excs[m].code){
 
-                                        } else if(excs[m].text){
+                                        }else if(excs[m].text){
                                             details += "\n" + excs[m].text;
                                         }
                                     }
                                 }
                             }
-                        } else {
+                        }else{
                             details += ".\n" + "HTTP status code" + ": " + err.status + " - " + err.statusText;
                         }
                         loadError.details = details;
@@ -381,16 +373,14 @@ $.extend(true, Mapbender, {
                 });
                 return loadError;
             },
-
             hasLayers: function(source, withoutGrouped){
                 var options = this.layerCount(source);
                 if(withoutGrouped){
                     return options.simpleCount > 0;
-                } else { // without root layer
+                }else{ // without root layer
                     return options.simpleCount + options.groupedCount - 1 > 0;
                 }
             },
-
             layerCount: function(source){
                 if(source.configuration.children.length === 0){
                     return {simpleCount: 0, grouppedCount: 0};
@@ -400,21 +390,20 @@ $.extend(true, Mapbender, {
                 function _layerCount(layer, options){
                     if(layer.children){
                         options.grouppedCount++;
-                        for (var i = 0; i < layer.children.length; i++){
+                        for(var i = 0; i < layer.children.length; i++){
                             options = _layerCount(layer.children[i], options);
                         }
-                    } else {
+                    }else{
                         options.simpleCount++;
                     }
                     return options;
                 }
             },
-
             getLayersList: function(source, offsetLayer, includeOffset){
                 var rootLayer, _source;
                 _source = $.extend(true, {}, source);//.configuration.children[0];
                 rootLayer = _source.configuration.children[0];
-                var options ={layers: [], found: false, cut_with: includeOffset};
+                var options = {layers: [], found: false, cut_with: includeOffset};
                 if(rootLayer.options.id.toString() === offsetLayer.options.id.toString()){
                     options.found = true;
                 }
@@ -424,7 +413,7 @@ $.extend(true, Mapbender, {
                 function _findLayers(layer, offsetLayer, options){
                     if(layer.children){
                         var i = 0;
-                        for (; i < layer.children.length; i++){
+                        for(; i < layer.children.length; i++){
                             if(layer.children[i].options.id.toString() === offsetLayer.options.id.toString()){
                                 options.found = true;
                                 if(options.cut_with){
@@ -432,7 +421,7 @@ $.extend(true, Mapbender, {
                                     options.layers = options.layers.concat(lays);
                                     break;
                                 }
-                            } else if(options.found){
+                            }else if(options.found){
                                 var lays = layer.children.splice(i, layer.children.length - i);
                                 options.layers = options.layers.concat(lays);
                                 break;
@@ -443,7 +432,6 @@ $.extend(true, Mapbender, {
                     return options;
                 }
             },
-
             addLayer: function(source, layerToAdd, parentLayerToAdd, position){
                 var rootLayer = source.configuration.children[0];
                 var options = {layer: null};
@@ -455,23 +443,22 @@ $.extend(true, Mapbender, {
                         if(layer.children){
                             layer.children.splice(position, 0, layerToAdd);
                             options.layer = layer.children[position];
-                        } else {
+                        }else{
                             // ignore position
                             layer.children = [];
-                            layer.children.push($.extend(true,layerToAdd));
+                            layer.children.push($.extend(true, layerToAdd));
                             options.layer = layer.children[0];
                         }
                         return options;
                     }
                     if(layer.children){
-                        for (var i = 0; i < layer.children.length; i++){
+                        for(var i = 0; i < layer.children.length; i++){
                             options = _addLayer(layer.children[i], layerToAdd, parentLayerToAdd, position, options);
                         }
                     }
                     return options;
                 }
             },
-
             removeLayer: function(source, layerToRemove){
                 var rootLayer = source.configuration.children[0];
                 if(layerToRemove.options.id.toString() === rootLayer.options.id.toString()){
@@ -480,17 +467,17 @@ $.extend(true, Mapbender, {
                 }
                 var options = {layer: null, layerToRemove: null};//, listToRemove: {}, addToList: false }
                 options = _removeLayer(rootLayer, layerToRemove, options);
-                return { layer: options.layerToRemove};
+                return {layer: options.layerToRemove};
 
                 function _removeLayer(layer, layerToRemove, options){
                     if(layer.children){
-                        for (var i = 0; i < layer.children.length; i++){
+                        for(var i = 0; i < layer.children.length; i++){
                             options = _removeLayer(layer.children[i], layerToRemove, options);
                             if(options.layer){
                                 if(options.layer.options.id.toString() === layerToRemove.options.id.toString()){
                                     var layerToRemArr = layer.children.splice(i, 1);
                                     if(layerToRemArr[0]){
-                                        options.layerToRemove = $.extend({},layerToRemArr[0]);
+                                        options.layerToRemove = $.extend({}, layerToRemArr[0]);
                                     }
                                 }
                             }
@@ -500,53 +487,53 @@ $.extend(true, Mapbender, {
                         options.layer = layer;
                         options.layerToRemove = layer;
                         return options;
-                    }  else {
+                    }else{
                         options.layer = null;
                         return options;
                     }
                 }
             },
-
-            findLayer: function(source, idToFind){
+            findLayer: function(source, optionToFind){
                 var rootLayer = source.configuration.children[0];
                 var options = {level: 0, idx: 0, layer: null, parent: null};
-                options = _findLayer(rootLayer, idToFind, options, 0);
+                options = _findLayer(rootLayer, optionToFind, options, 0);
                 return options;
-                function _findLayer(layer, idToFind, options, levelTmp){
+                function _findLayer(layer, optionToFind, options, levelTmp){
                     if(layer.children){
                         levelTmp++;
-                        for (var i = 0; i < layer.children.length; i++){
-                            if(layer.children[i].options.id.toString() === idToFind.toString()){
-                                options.idx = i;
-                                options.parent = layer;
-                                options.level = levelTmp;
-                                options.layer = layer.children[i];
-                                return options;
-                            } else {
-                                options = _findLayer(layer.children[i], idToFind, options, levelTmp);
+                        for(var i = 0; i < layer.children.length; i++){
+                            for(var key in optionToFind){
+                                if(layer.children[i].options[key].toString() === optionToFind[key].toString()){
+                                    options.idx = i;
+                                    options.parent = layer;
+                                    options.level = levelTmp;
+                                    options.layer = layer.children[i];
+                                    return options;
+                                }
                             }
+                            options = _findLayer(layer.children[i], optionToFind, options, levelTmp);
                         }
                         levelTmp--;
                     }
-                    if(layer.options.id.toString() === idToFind.toString()){
-                        options.level = levelTmp;
-                        options.layer = layer;
-                        return options;
-                    }  else {
-                        return options;
+                    for(var key in optionToFind){
+                        if(layer.options[key].toString() === optionToFind[key].toString()){
+                            options.level = levelTmp;
+                            options.layer = layer;
+                            return options;
+                        }
                     }
+                    return options;
                 }
             },
-
             checkInfoLayers: function(source, scale, tochange, result){
                 var rootLayer = source.configuration.children[0];
-                _checkInfoLayers(rootLayer, scale, {state:{visibility: true}}, tochange, result);
+                _checkInfoLayers(rootLayer, scale, {state: {visibility: true}}, tochange, result);
                 return result;
 
                 function _checkInfoLayers(layer, scale, parent, tochange, result){
                     var layerChanged;
                     if(typeof layer.options.treeOptions.info === 'undefined'){
-                         layer.options.treeOptions.info = false;
+                        layer.options.treeOptions.info = false;
                     }
                     if(tochange.children[layer.options.id] && layer.options.name && layer.options.name.length > 0){
                         layerChanged = tochange.children[layer.options.id];
@@ -565,10 +552,9 @@ $.extend(true, Mapbender, {
                     }
                 }
             },
-
             checkLayers: function(source, scale, tochange, result){
                 var rootLayer = source.configuration.children[0];
-                _checkLayers(rootLayer, scale, { state:{ visibility: true } }, tochange, result);
+                _checkLayers(rootLayer, scale, {state: {visibility: true}}, tochange, result);
                 return result;
                 function _checkLayers(layer, scale, parent, tochange, result){
                     var layerChanged;
@@ -576,17 +562,17 @@ $.extend(true, Mapbender, {
                         layerChanged = tochange.children[layer.options.id];
                         layerChanged.state = {
                             outOfScale: layer.state.outOfScale,
-                            outOfBounds:layer.state.outOfBounds,
+                            outOfBounds: layer.state.outOfBounds,
                             visibility: layer.state.visibility
                         };
                         if(typeof layerChanged.options.treeOptions.selected !== 'undefined'){
                             layer.options.treeOptions.selected = layerChanged.options.treeOptions.selected;
                         }
-                    } else {
+                    }else{
                         layerChanged = {
                             state: {
                                 outOfScale: layer.state.outOfScale,
-                                outOfBounds:layer.state.outOfBounds,
+                                outOfBounds: layer.state.outOfBounds,
                                 visibility: layer.state.visibility
                             }
                         };
@@ -594,20 +580,20 @@ $.extend(true, Mapbender, {
                     if(layer.options.minScale){
                         if(layer.options.minScale <= scale){
                             layer.state.outOfScale = false;
-                        } else {
+                        }else{
                             layer.state.outOfScale = true;
                         }
-                    } else {
+                    }else{
                         layer.state.outOfScale = false;
                     }
                     if(!layer.state.outOfScale){
                         if(layer.options.maxScale){
                             if(layer.options.maxScale >= scale){
                                 layer.state.outOfScale = false;
-                            } else {
+                            }else{
                                 layer.state.outOfScale = true;
                             }
-                        } else {
+                        }else{
                             layer.state.outOfScale = false;
                         }
                     }
@@ -617,11 +603,11 @@ $.extend(true, Mapbender, {
                     if(layer.children){
                         //                var this_vsbl = false;
                         if(parent.state.visibility
-                            && layer.options.treeOptions.selected
-                            && !layer.state.outOfScale
-                            && !layer.state.outOfBounds){
+                                && layer.options.treeOptions.selected
+                                && !layer.state.outOfScale
+                                && !layer.state.outOfBounds){
                             layer.state.visibility = true;
-                        } else {
+                        }else{
                             layer.state.visibility = false;
                         }
                         var child_visible = false;
@@ -633,21 +619,21 @@ $.extend(true, Mapbender, {
                         }
                         if(child_visible){
                             layer.state.visibility = true;
-                        } else {
+                        }else{
                             layer.state.visibility = false;
                         }
-                    } else {
+                    }else{
                         if(parent.state.visibility
-                            && layer.options.treeOptions.selected
-                            && !layer.state.outOfScale
-                            && !layer.state.outOfBounds
-                            && layer.options.name.length > 0){
+                                && layer.options.treeOptions.selected
+                                && !layer.state.outOfScale
+                                && !layer.state.outOfBounds
+                                && layer.options.name.length > 0){
                             layer.state.visibility = true;
                             result.layers.push(layer.options.name);
                             if(layer.options.treeOptions.info === true){
                                 result.infolayers.push(layer.options.name);
                             }
-                        } else {
+                        }else{
                             layer.state.visibility = false;
                         }
                     }
@@ -655,40 +641,56 @@ $.extend(true, Mapbender, {
                     if(layerChanged.state.outOfScale !== layer.state.outOfScale){
                         layerChanged.state.outOfScale = layer.state.outOfScale;
                         elchanged = true;
-                    } else {
+                    }else{
                         delete(layerChanged.state.outOfScale);
                     }
                     if(layerChanged.state.outOfBounds !== layer.state.outOfBounds){
                         layerChanged.state.outOfBounds = layer.state.outOfBounds;
                         elchanged = true;
-                    } else {
+                    }else{
                         delete(layerChanged.state.outOfBounds);
                     }
                     if(layerChanged.state.visibility !== layer.state.visibility){
                         layerChanged.state.visibility = layer.state.visibility;
                         elchanged = true;
-                    } else {
+                    }else{
                         delete(layerChanged.state.visibility);
                     }
-                    if(elchanged) {
+                    if(elchanged){
                         layerChanged.treeElm = layer;
                         result.changed.children[layer.options.id] = layerChanged;
                     }
                     return layer;
                 }
             },
-
             changeOptions: function(tochange){
-                if(typeof tochange.options !== 'undefined'
-                    && typeof tochange.options.visibility !== 'undefined'){
-                    tochange.children[tochange.source.configuration.children[0].options.id] = {options: {treeOptions: {selected: tochange.options.visibility}}};
-                    return tochange;
-                } else {
-                    // @TODO
-                    return null;
+                if(tochange.children && Object.keys(tochange.children).length > 0){/* change layers */
+                    for(var layerId in tochange.children){
+                        var layer = this.findLayer(tochange.source, {id: layerId});
+                        $.extend(true, layer.layer, tochange.children[layerId]);
+                    }
                 }
+                if(tochange.options && Object.keys(tochange.options).length > 0){/* change layers */
+                    if(tochange.options.configuration){
+                        var configuration = tochange.options.configuration;
+                        if(typeof configuration.options !== 'undefined'){
+                            var options = configuration.options;
+                            if(typeof options.visibility !== 'undefined'){
+                                tochange.source.configuration.children[0].options.treeOptions.selected = options.visibility;
+                            }
+                        }
+                    }
+                    $.extend(true, tochange.source, tochange.options);
+                }
+//                if(typeof tochange.options !== 'undefined'
+//                        && typeof tochange.options.visibility !== 'undefined'){
+//                    tochange.children[tochange.source.configuration.children[0].options.id] = {options: {treeOptions: {selected: tochange.options.visibility}}};
+//                    return tochange;
+//                }else{
+//                    // @TODO
+//                    return null;
+//                }
             }
         }
     }
 });
-

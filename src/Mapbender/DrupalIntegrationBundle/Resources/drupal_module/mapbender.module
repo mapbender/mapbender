@@ -51,14 +51,13 @@ function endsWith($haystack, $needle)
     if ($length == 0) {
         return true;
     }
-    error_log(substr($haystack, -$length));
     return (substr($haystack, -$length) === $needle);
 }
 
 function mapbender_mburi_to_drupal($uri)
 {
     $dp = str_replace('index.php', '', $_SERVER['PHP_SELF']);
-    if(startsWith($uri, $dp . 'mapbender')) {
+    if(stripos($uri, $dp . 'mapbender') !== false) {
         $uri = str_replace($dp . 'mapbender', $dp . '?q=mapbender', $uri);
     }
     return $uri;
@@ -87,6 +86,18 @@ function mapbender_show_view()
     $kernel->getContainer()->set('session.handler', new NativeSessionHandler());
 
     $response = $kernel->handle($request);
+
+    // owsproxy sometimes sends redirects, so fix the location header here
+    if($response->getStatusCode() === 301) {
+        $loc = $response->headers->get('Location');
+        if(strpos($loc,'mapbender/owsproxy/')) {
+            $loc = str_replace('mapbender/owsproxy/', '?q=mapbender/owsproxy/', $loc);
+            $response->headers->set('Location', $loc);
+        }
+        $response->sendHeaders();
+        $response->sendContent();
+        return;
+    }
 
     if(strpos($response->headers->get('Content-Type'), 'text/html') !== False) {
         $DOM = new DOMDocument;
@@ -118,21 +129,55 @@ function mapbender_show_view()
             }
         }
 
+        // script loading/evaluation order is tricky
+        // seems a few of the scripts already get loaded using the old address, we're kind of almost too late here
+        $added_scripts = array();
+
         foreach($DOM->getElementsByTagName('script') as $script) {
             $href = $script->getAttribute('src');
             if($href) {
                 $href = mapbender_mburi_to_drupal($href);
                 if(endsWith($href, 'jquery-ui.min.js')) {
-                    error_log($href . ' ends with');
                     drupal_add_js($href, array('type' => 'external', 'weight'=>-19, 'group'=>JS_LIBRARY));
+                    // unknown why this breaks things
+                    //$added_scripts[] = $script;
+                } else if(endsWith($href, 'jquery-1.4.4.js')) {
+                    // already loaded by drupal
+                } else if(endsWith($href, 'jquery-1.9.1.min.js')) {
+                    // already loaded by drupal
                 } else {
-                    drupal_add_js($href, array('type' => 'external'));
+                    drupal_add_js($href, array('type' => 'external', 'defer'=>true));
+                    // unknown why this breaks things
+                    //$added_scripts[] = $script;
                 }
             } else {
+                // symfony stuff does not work within drupal
                 if(strpos($script->textContent, 'Sfjs') === false) {
                     drupal_add_js($script->textContent, array('type'=>'inline', 'group'=>JS_LIBRARY));
+                    $added_scripts[] = $script;
                 }
             }
+        }
+
+        foreach($DOM->getElementsByTagName('form') as $form) {
+            $action = $form->getAttribute('action');
+            if($action) {
+                $action = mapbender_mburi_to_drupal($action);
+                $form->setAttribute('action', $action);
+            }
+        }
+
+        // unknown yet whether this is needed
+        /* $xpath = new DOMXpath($DOM); */
+        /* $nl = $xpath->query('//\*[@data-url]'); */
+        /* for($i = 0; $i < $nl->length; ++$i) { */
+        /*     $node = $nl->item($i); */
+        /*     $url = $node->getAttribute("data-url"); */
+        /*     $url = mapbender_mburi_to_drupal($url); */
+        /*     $node->setAttribute("data-url", $url); */
+        /* } */
+
+        foreach($added_scripts as $script) {
             $script->parentNode->removeChild($script);
         }
 

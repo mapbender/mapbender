@@ -42,19 +42,15 @@ class ScaleDisplayAdminType extends AbstractType
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
+                ->add('unitPrefix', 'checkbox', array('required' => false))
                 ->add('anchor', "choice",
                       array(
                     'required' => true,
                     "choices" => array(
-                        'inline' => 'inline',
                         'left-top' => 'left-top',
                         'left-bottom' => 'left-bottom',
                         'right-top' => 'right-top',
-                        'right-bottom' => 'right-bottom')))
-                ->add('position', new PositionType(),
-                      array(
-                    'label' => 'Position',
-                    'property_path' => '[position]'));
+                        'right-bottom' => 'right-bottom')));
     }
 
 }
