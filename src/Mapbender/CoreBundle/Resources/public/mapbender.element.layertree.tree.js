@@ -182,10 +182,43 @@
         },
         
         _onSourceChanged: function(event, changed){
-    window.console && console.log("Layertree._onSourceChanged", changed);
-            if(this.options.displaytype === "tree"){
-                for(key in changed.children){
-                    var changedEl = changed.children[key];
+            window.console && console.log("Layertree._onSourceChanged", changed);
+            if(changed.option){
+                this._optionsChanged(changed);
+            }
+//            if(this.options.displaytype === "tree"){
+//                for(key in changed.children){
+//                    var changedEl = changed.children[key];
+//                    var lif = $(this.element).find('li[data-id="'+key+'"]:first');
+//                    if(changedEl.treeElm.state.visibility){
+//                        lif.removeClass("invisible").find('span.layer-state:first').attr("title","");
+//                    } else {
+//                        if(lif.find('input[name="selected"]:first').is(':checked')){
+//                            lif.addClass("invisible").find('span.layer-state:first').attr("title",changedEl.state.outOfScale ? "outOfScale" : "parent invisible");
+//                        } else {
+//                            lif.removeClass("invisible").find('span.layer-state:first').attr("title","");
+//                        }
+//                    }
+//                }
+//            } else if(this.options.displaytype === "list"){
+//                for(key in changed.children){
+//                    var changedEl = changed.children[key];
+//                    if(changedEl.treeElm.state.visibility){
+//                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"]').removeClass("invisible");
+//                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.layer-state:first').attr("title", "");
+//                    } else {
+//                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"]').addClass("invisible");
+//                        var tooltip = changedEl.state.outOfBounds ? "outOfBounds" : changedEl.state.outOfScale ? "outOfScale" : "parent invisible or not defined?";
+//                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.layer-state:first').attr("title", tooltip);
+//                    }
+//                }
+//            }
+        },
+                
+        _optionsChanged: function(changed){
+            if(changed.options.children){
+                for(var layerId in changed.options.children){
+                    var changedEl = changed.options.children[layerId];
                     var lif = $(this.element).find('li[data-id="'+key+'"]:first');
                     if(changedEl.treeElm.state.visibility){
                         lif.removeClass("invisible").find('span.layer-state:first').attr("title","");
@@ -195,18 +228,6 @@
                         } else {
                             lif.removeClass("invisible").find('span.layer-state:first').attr("title","");
                         }
-                    }
-                }
-            } else if(this.options.displaytype === "list"){
-                for(key in changed.children){
-                    var changedEl = changed.children[key];
-                    if(changedEl.treeElm.state.visibility){
-                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"]').removeClass("invisible");
-                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.layer-state:first').attr("title", "");
-                    } else {
-                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"]').addClass("invisible");
-                        var tooltip = changedEl.state.outOfBounds ? "outOfBounds" : changedEl.state.outOfScale ? "outOfScale" : "parent invisible or not defined?";
-                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.layer-state:first').attr("title", tooltip);
                     }
                 }
             }
