@@ -1,5 +1,6 @@
 # Changelog
 * **v3.0.0.2**
+  - Parameter unitPrefix added to ScaleDisplay
   - normalize.css compressed
   - Popup decrease `max-height`
   - Forgot, Register success and error messages designed
