@@ -682,14 +682,7 @@ $.extend(true, Mapbender, {
                     }
                     $.extend(true, tochange.source, tochange.options);
                 }
-//                if(typeof tochange.options !== 'undefined'
-//                        && typeof tochange.options.visibility !== 'undefined'){
-//                    tochange.children[tochange.source.configuration.children[0].options.id] = {options: {treeOptions: {selected: tochange.options.visibility}}};
-//                    return tochange;
-//                }else{
-//                    // @TODO
-//                    return null;
-//                }
+                return tochange;
             }
         }
     }
