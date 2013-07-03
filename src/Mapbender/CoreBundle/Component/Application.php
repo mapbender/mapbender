@@ -175,6 +175,8 @@ class Application
             // Mapbender API
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.js';
             $this->addAsset($assets, $type, $file);
+            $file = '@MapbenderCoreBundle/Resources/public/mapbender.model.js';
+            $this->addAsset($assets, $type, $file);
             // Translation API
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.trans.js';
             $this->addAsset($assets, $type, $file);

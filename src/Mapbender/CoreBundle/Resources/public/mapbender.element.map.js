@@ -22,7 +22,7 @@
             }
             var self = this,
             me = $(this.element);
-            this.model = Mapbender.DefaultModel;
+            this.model = Mapbender.Model;
             this.model.init(this);
             this.options = {
                 layerDefs: []
@@ -125,6 +125,7 @@
          * (see model.createChangedObj(id)).
          */
         fireModelEvent: function(options){
+            window.console && console.log(options.name, options.value);
             this._trigger(options.name, null, options.value);
         },
         /**
