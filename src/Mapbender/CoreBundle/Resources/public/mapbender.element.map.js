@@ -2,12 +2,19 @@
     OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
     $.widget("mapbender.mbMap", {
         options: {
+            poiIcon: {
+                image: 'bundles/mapbendercore/image/marker_fett.gif',
+                width: 60,
+                height: 60,
+                xoffset: -32,
+                yoffset: -32
+            }
         },
         model: null,
         map: null,
         readyState: false,
         readyCallbacks: [],
-    
+
         /**
          * Creates the map widget
          */
@@ -24,6 +31,7 @@
             me = $(this.element);
             this.model = Mapbender.DefaultModel;
             this.model.init(this);
+
             this.options = {
                 layerDefs: []
             }; // romove all options
@@ -37,7 +45,7 @@
         "goto": function(options) {
             this.map.center(options);
         },
-        
+
         setExtent: function(extent){
             this.model.extent = extent;
         },
@@ -59,16 +67,16 @@
         getMapState: function(){
             return this.model.getMapState();
         },
-        
+
         sourceById: function(idObject){
             return this.model.getSource(idObject);
         },
-        
+
         mqLayerBySourceId: function(idObject){
             var source = this.sourceById(idObject);
             return this.map.layersList[source.mqlid];
         },
-        
+
         /**
          *
          */
@@ -83,8 +91,7 @@
                 this.model.removeSource(toChangeObj);
             }
         },
-                
-                
+
         /**
          *
          */
@@ -104,7 +111,7 @@
                 this.removeSource(toRemoveArr[i]);
             }
         },
-        
+
         /**
          *
          */
@@ -151,11 +158,11 @@
         getModel: function(){
             return this.model;
         },
-        
+
         getCenterOptions: function(){
             return {center: this.map.olMap.getCenter(), zoom: this.map.olMap.getZoom()};
         },
-        
+
         setCenter: function(options){
             if(typeof options.box !== 'undefined' && typeof options.position !== 'undefined' && typeof options.zoom !== 'undefined')
                 this.map.center(options);
@@ -164,7 +171,7 @@
                 this.map.olMap.setCenter(options.center, options.zoom);
             }
         },
-        
+
         /*
          * Changes the map's projection.
          */
@@ -212,7 +219,7 @@
             this.map.olMap.zoomToScale(scale, true);
         },
         /**
-         * 
+         *
          */
         panMode: function() {
             this.map.mode('pan');
@@ -243,7 +250,7 @@
             return scales;
         },
         /**
-         * 
+         *
          */
         ready: function(callback) {
             if(this.readyState === true) {
@@ -253,7 +260,7 @@
             }
         },
         /**
-         * 
+         *
          */
         _ready: function() {
             for(callback in this.readyCallbacks) {
