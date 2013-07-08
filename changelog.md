@@ -1,5 +1,7 @@
 # Changelog
-* **v3.0.0.2**
+* **v3.0.0.2** - 2013-07-12
+  - Instance view - order of `on` and `allow` changed
+  - Disable WMCBundle - Available in the next versions
   - Parameter unitPrefix added to ScaleDisplay
   - normalize.css compressed
   - Popup decrease `max-height`
