@@ -14,6 +14,8 @@
   - Fixed Firefox font bug
   - Fixed printclient tooltip bug
   - Fixed ScaleDisplay position bug
+  - Added POI (0...n) and BBOX URL parameter handling
+  - Fixed ACL creation during user creation
 
 ## Release History
 
