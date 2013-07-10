@@ -526,6 +526,8 @@ $.extend(true, Mapbender, {
                 }
             },
             checkInfoLayers: function(source, scale, tochange, result){
+                if(!result)
+                    result = {infolayers: [], changed: { sourceIdx: {id: source.id}, children: {}}};
                 var rootLayer = source.configuration.children[0];
                 _checkInfoLayers(rootLayer, scale, {state: {visibility: true}}, tochange, result);
                 return result;
@@ -535,15 +537,15 @@ $.extend(true, Mapbender, {
                     if(typeof layer.options.treeOptions.info === 'undefined'){
                         layer.options.treeOptions.info = false;
                     }
-                    if(tochange.children[layer.options.id] && layer.options.name && layer.options.name.length > 0){
-                        layerChanged = tochange.children[layer.options.id];
+                    if(tochange.options.children[layer.options.id] && layer.options.name && layer.options.name.length > 0){
+                        layerChanged = tochange.options.children[layer.options.id];
                         if(layerChanged.options.treeOptions.info !== layer.options.treeOptions.info){
                             layer.options.treeOptions.info = layerChanged.options.treeOptions.info;
                             result.changed.children[layer.options.id] = layerChanged;
                         }
                     }
                     if(layer.options.treeOptions.info === true && layer.state.visibility){
-                        result.info.push(layer.options.name);
+                        result.infolayers.push(layer.options.name);
                     }
                     if(layer.children){
                         for(var j = 0; j < layer.children.length; j++){
@@ -552,21 +554,194 @@ $.extend(true, Mapbender, {
                     }
                 }
             },
-            checkLayers: function(source, scale, tochange, result){
+//            checkLayers: function(source, scale, tochange, result){
+//                var rootLayer = source.configuration.children[0];
+//                _checkLayers(rootLayer, scale, {state: {visibility: true}}, tochange, result);
+//                return result;
+//                function _checkLayers(layer, scale, parent, tochange, result){
+//                    var layerChanged;
+//                    if(tochange.children[layer.options.id]){
+//                        layerChanged = tochange.children[layer.options.id];
+//                        layerChanged.state = {
+//                            outOfScale: layer.state.outOfScale,
+//                            outOfBounds: layer.state.outOfBounds,
+//                            visibility: layer.state.visibility
+//                        };
+//                        if(typeof layerChanged.options.treeOptions.selected !== 'undefined'){
+//                            layer.options.treeOptions.selected = layerChanged.options.treeOptions.selected;
+//                        }
+//                    }else{
+//                        layerChanged = {
+//                            state: {
+//                                outOfScale: layer.state.outOfScale,
+//                                outOfBounds: layer.state.outOfBounds,
+//                                visibility: layer.state.visibility
+//                            }
+//                        };
+//                    }
+//                    if(layer.options.minScale){
+//                        if(layer.options.minScale <= scale){
+//                            layer.state.outOfScale = false;
+//                        }else{
+//                            layer.state.outOfScale = true;
+//                        }
+//                    }else{
+//                        layer.state.outOfScale = false;
+//                    }
+//                    if(!layer.state.outOfScale){
+//                        if(layer.options.maxScale){
+//                            if(layer.options.maxScale >= scale){
+//                                layer.state.outOfScale = false;
+//                            }else{
+//                                layer.state.outOfScale = true;
+//                            }
+//                        }else{
+//                            layer.state.outOfScale = false;
+//                        }
+//                    }
+//                    /* @TODO outOfBound for layers */
+//                    layer.options.outOfBounds = false;
+//
+//                    if(layer.children){
+//                        //                var this_vsbl = false;
+//                        if(parent.state.visibility
+//                                && layer.options.treeOptions.selected
+//                                && !layer.state.outOfScale
+//                                && !layer.state.outOfBounds){
+//                            layer.state.visibility = true;
+//                        }else{
+//                            layer.state.visibility = false;
+//                        }
+//                        var child_visible = false;
+//                        for(var j = 0; j < layer.children.length; j++){
+//                            var child = _checkLayers(layer.children[j], scale, layer, tochange, result);
+//                            if(child.state.visibility){
+//                                child_visible = true;
+//                            }
+//                        }
+//                        if(child_visible){
+//                            layer.state.visibility = true;
+//                        }else{
+//                            layer.state.visibility = false;
+//                        }
+//                    }else{
+//                        if(parent.state.visibility
+//                                && layer.options.treeOptions.selected
+//                                && !layer.state.outOfScale
+//                                && !layer.state.outOfBounds
+//                                && layer.options.name.length > 0){
+//                            layer.state.visibility = true;
+//                            result.layers.push(layer.options.name);
+//                            if(layer.options.treeOptions.info === true){
+//                                result.infolayers.push(layer.options.name);
+//                            }
+//                        }else{
+//                            layer.state.visibility = false;
+//                        }
+//                    }
+//                    var elchanged = false;
+//                    if(layerChanged.state.outOfScale !== layer.state.outOfScale){
+//                        layerChanged.state.outOfScale = layer.state.outOfScale;
+//                        elchanged = true;
+//                    }else{
+//                        delete(layerChanged.state.outOfScale);
+//                    }
+//                    if(layerChanged.state.outOfBounds !== layer.state.outOfBounds){
+//                        layerChanged.state.outOfBounds = layer.state.outOfBounds;
+//                        elchanged = true;
+//                    }else{
+//                        delete(layerChanged.state.outOfBounds);
+//                    }
+//                    if(layerChanged.state.visibility !== layer.state.visibility){
+//                        layerChanged.state.visibility = layer.state.visibility;
+//                        elchanged = true;
+//                    }else{
+//                        delete(layerChanged.state.visibility);
+//                    }
+//                    if(elchanged){
+//                        layerChanged.treeElm = layer;
+//                        result.changed.children[layer.options.id] = layerChanged;
+//                    }
+//                    return layer;
+//                }
+//            },
+//            changeOptions: function(tochange){
+//                if(tochange.children && Object.keys(tochange.children).length > 0){/* change layers */
+//                    for(var layerId in tochange.children){
+//                        var layer = this.findLayer(tochange.source, {id: layerId});
+//                        $.extend(true, layer.layer, tochange.children[layerId]);
+//                    }
+//                }
+//                if(tochange.options && Object.keys(tochange.options).length > 0){/* change layers */
+//                    if(tochange.options.configuration){
+//                        var configuration = tochange.options.configuration;
+//                        if(typeof configuration.options !== 'undefined'){
+//                            var options = configuration.options;
+//                            if(typeof options.visibility !== 'undefined'){
+//                                tochange.source.configuration.children[0].options.treeOptions.selected = options.visibility;
+//                            }
+//                        }
+//                    }
+//                    $.extend(true, tochange.source, tochange.options);
+//                }
+//                return tochange;
+//            },
+            /**
+             * Returns object's changes : { layers: [], infolayers: [], changed: changed };
+             */
+            changeOptions: function(source, scale, toChangeOpts, result){
+                if(toChangeOpts.options && Object.keys(toChangeOpts.options).length > 0){/* change source options -> set */
+                    if(toChangeOpts.options.configuration){
+                        var configuration = toChangeOpts.options.configuration;
+                        if(configuration.options){
+                            var rootId = source.configuration.children[0].options.id;
+                            if(!toChangeOpts.options.children)
+                                toChangeOpts.options['children'] = {};
+                            if(!toChangeOpts.options.children[rootId])
+                                toChangeOpts.options.children[rootId] = {options:{}};
+                            if(typeof configuration.options.visibility !== 'undefined')
+                                $.extend(true, toChangeOpts.options.children[rootId], {options:{treeOptions:{selected: configuration.options.visibility}}});
+                            if(typeof configuration.options.info !== 'undefined')
+                                $.extend(true, toChangeOpts.options.children[rootId], {options:{treeOptions:{info: configuration.options.info}}});
+                            if(typeof configuration.options.toggle !== 'undefined')
+                                $.extend(true, toChangeOpts.options.children[rootId], {options:{treeOptions:{toggle: configuration.options.toggle}}});
+                        }
+                    }
+                }
+                if(!result)
+                    result = {layers: [], infolayers: [], changed: { sourceIdx: {id: source.id}, children: {}}};
                 var rootLayer = source.configuration.children[0];
-                _checkLayers(rootLayer, scale, {state: {visibility: true}}, tochange, result);
+                _changeOptions(rootLayer, scale, {state: {visibility: true}}, toChangeOpts, result);
                 return result;
-                function _checkLayers(layer, scale, parent, tochange, result){
+                function _changeOptions(layer, scale, parentState, toChangeOpts, result){
                     var layerChanged;
-                    if(tochange.children[layer.options.id]){
-                        layerChanged = tochange.children[layer.options.id];
+                    if(toChangeOpts.options.children[layer.options.id]){
+                        layerChanged = toChangeOpts.options.children[layer.options.id];
                         layerChanged.state = {
                             outOfScale: layer.state.outOfScale,
                             outOfBounds: layer.state.outOfBounds,
                             visibility: layer.state.visibility
                         };
-                        if(typeof layerChanged.options.treeOptions.selected !== 'undefined'){
-                            layer.options.treeOptions.selected = layerChanged.options.treeOptions.selected;
+                        if(typeof layerChanged.options.treeOptions !== 'undefined'){
+                            var treeOptions = layerChanged.options.treeOptions;
+                            if(typeof treeOptions.selected !== 'undefined'){
+                                if(layer.options.treeOptions.selected === treeOptions.selected)
+                                    delete(treeOptions.selected);
+                                else
+                                    layer.options.treeOptions.selected = treeOptions.selected;
+                            }
+                            if(typeof treeOptions.info !== 'undefined'){
+                                if(layer.options.treeOptions.info === treeOptions.info)
+                                    delete(treeOptions.info);
+                                else
+                                    layer.options.treeOptions.info = treeOptions.info;
+                            }
+                            if(typeof treeOptions.toggle !== 'undefined'){
+                                if(layer.options.treeOptions.toggle === treeOptions.toggle)
+                                    delete(treeOptions.toggle);
+                                else
+                                    layer.options.treeOptions.toggle = treeOptions.toggle;
+                            }
                         }
                     }else{
                         layerChanged = {
@@ -602,7 +777,7 @@ $.extend(true, Mapbender, {
 
                     if(layer.children){
                         //                var this_vsbl = false;
-                        if(parent.state.visibility
+                        if(parentState.state.visibility
                                 && layer.options.treeOptions.selected
                                 && !layer.state.outOfScale
                                 && !layer.state.outOfBounds){
@@ -612,7 +787,7 @@ $.extend(true, Mapbender, {
                         }
                         var child_visible = false;
                         for(var j = 0; j < layer.children.length; j++){
-                            var child = _checkLayers(layer.children[j], scale, layer, tochange, result);
+                            var child = _changeOptions(layer.children[j], scale, layer, toChangeOpts, result);
                             if(child.state.visibility){
                                 child_visible = true;
                             }
@@ -623,7 +798,7 @@ $.extend(true, Mapbender, {
                             layer.state.visibility = false;
                         }
                     }else{
-                        if(parent.state.visibility
+                        if(parentState.state.visibility
                                 && layer.options.treeOptions.selected
                                 && !layer.state.outOfScale
                                 && !layer.state.outOfBounds
@@ -657,32 +832,12 @@ $.extend(true, Mapbender, {
                         delete(layerChanged.state.visibility);
                     }
                     if(elchanged){
-                        layerChanged.treeElm = layer;
+//                        layerChanged.treeElm = layer;
+                        layerChanged.state = layer.state;
                         result.changed.children[layer.options.id] = layerChanged;
                     }
                     return layer;
                 }
-            },
-            changeOptions: function(tochange){
-                if(tochange.children && Object.keys(tochange.children).length > 0){/* change layers */
-                    for(var layerId in tochange.children){
-                        var layer = this.findLayer(tochange.source, {id: layerId});
-                        $.extend(true, layer.layer, tochange.children[layerId]);
-                    }
-                }
-                if(tochange.options && Object.keys(tochange.options).length > 0){/* change layers */
-                    if(tochange.options.configuration){
-                        var configuration = tochange.options.configuration;
-                        if(typeof configuration.options !== 'undefined'){
-                            var options = configuration.options;
-                            if(typeof options.visibility !== 'undefined'){
-                                tochange.source.configuration.children[0].options.treeOptions.selected = options.visibility;
-                            }
-                        }
-                    }
-                    $.extend(true, tochange.source, tochange.options);
-                }
-                return tochange;
             }
         }
     }

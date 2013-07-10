@@ -38,16 +38,7 @@ class ElementIdTransformer implements DataTransformerInterface
 
         $element = $this->om
             ->getRepository('MapbenderCoreBundle:Element')
-            ->findOneBy(array('id' => $id))
-        ;
-
-        if (null === $element) {
-            throw new TransformationFailedException(sprintf(
-                'An element with id "%s" does not exist!',
-                $id
-            ));
-        }
-
+            ->findOneBy(array('id' => $id));
         return $element;
     }
 

@@ -2,9 +2,12 @@
 
 namespace Mapbender\WmcBundle\Element\Type;
 
+use FOM\UserBundle\Form\DataTransformer\GroupIdTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Description of WmcEditorAdminType
@@ -44,14 +47,7 @@ class WmcHandlerAdminType extends AbstractType
                     'application'   => $options['application'],
                     'property_path' => '[target]',
                     'required'      => false))
-                ->add('accessRoles', 'choice',
-                        array(
-                    'choices'  => array(),
-                    'required' => false))
                 ->add('keepBaseSources', 'checkbox',
-                        array(
-                    'required' => false))
-                ->add('useEditor', 'checkbox',
                         array(
                     'required' => false))
                 ->add('useSuggestMap', 'checkbox',
@@ -68,6 +64,33 @@ class WmcHandlerAdminType extends AbstractType
                 ->add('useLoader', 'checkbox',
                         array(
                     'required' => false))
+                ->add('accessLoaderAnonymous', 'checkbox',
+                        array(
+                    'required' => false))
+                ->add('accessGroupsLoader', 'fom_groups',
+                        array(
+                    'return_entity' => false,
+                    'user_groups'   => false,
+                    'property_path' => '[accessGroupsLoader]',
+                    'required'      => false,
+                    'multiple'      => true,
+                    'empty_value' => 'Choose an option',
+                            ))
+                ->add('useEditor', 'checkbox',
+                        array(
+                    'required' => false))
+                ->add('accessEditorAnonymous', 'checkbox',
+                        array(
+                    'required' => false))
+                ->add('accessGroupsEditor', 'fom_groups',
+                        array(
+                    'return_entity' => false,
+                    'user_groups'   => false,
+                    'property_path' => '[accessGroupsEditor]',
+                    'required'      => false,
+                    'multiple'      => true,
+                    'empty_value' => 'Choose an option',
+                            ))
         ;
     }
 

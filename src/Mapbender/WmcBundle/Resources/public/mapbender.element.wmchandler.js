@@ -240,8 +240,10 @@
                     for (var i = 0; i < this.sources_wmc[stateid].sources.length; i++) {
                         var source = this.sources_wmc[stateid].sources[i];
                         if (!source.configuration.isBaseSource || (source.configuration.isBaseSource && !this.options.keepBaseSources)) {
-                            var toremove = model.createToChangeObj(source);
-                            model.removeSource(toremove);
+//                            {remove: {sourceIdx: {id: source.id}}};
+//                            var toremove = model.createToChangeObj(source);
+//                            model.removeSource(toremove);
+                            model.removeSource({remove: {sourceIdx: {id: source.id}}});
                         }
                     }
                 }

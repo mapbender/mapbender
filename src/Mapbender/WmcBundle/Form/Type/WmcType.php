@@ -21,15 +21,6 @@ class WmcType extends AbstractType
         return 'wmc';
     }
 
-//
-//    /**
-//     * @inheritdoc
-//     */
-//    public function setDefaultOptions(OptionsResolverInterface $resolver)
-//    {
-//        $resolver->setDefaults(array());
-//    }
-
     /**
      * @inheritdoc
      */
