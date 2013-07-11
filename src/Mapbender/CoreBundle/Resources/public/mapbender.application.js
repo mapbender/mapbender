@@ -480,9 +480,10 @@ Mapbender.DefaultModel = {
         result = Mapbender.source[source.type].checkLayers(source,
             this.map.olMap.getScale(), tochange, result);
 
-//        mqLayer.layers = result.layers;
-//        mqLayer.olLayer.layers = result.layers;
         mqLayer.olLayer.params.LAYERS = result.layers;
+        if(mqLayer.olLayer.params.LAYERS.length === 0) {
+            mqLayer.visible(false);
+        }
         mqLayer.olLayer.queryLayers = result.infolayers;
         return result.changed;
     },
@@ -562,10 +563,12 @@ Mapbender.DefaultModel = {
         };
         result = Mapbender.source[source.type].checkLayers(source,
             this.map.olMap.getScale(), this.createToChangeObj(source),result);
-//        mqSource.layers = result.layers;
-        if(result.layers === 0){
+
+
+        if(result.layers.length === 0){
             mqSource.visibility = false;
         }
+
         var toadd = this.createChangedObj(source);
         this.mbMap.fireModelEvent({
             name: 'beforesourceadded',
