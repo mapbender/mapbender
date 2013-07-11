@@ -369,7 +369,7 @@ Mapbender.Model = {
         this.mbMap.fireModelEvent({name: 'beforesourceadded', value: source});
         var result = Mapbender.source[source.type].changeOptions(source,
                 this.map.olMap.getScale(), {options: {children: {}}});
-        if(result.layers === 0)
+        if(result.layers.length === 0)
             mqSource.visibility = false;
         var toadd = this.createChangedObj(source);
         var addedMq = this.map.layers(mqSource);
