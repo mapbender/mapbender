@@ -57,7 +57,9 @@
             $(document).bind('mbmapsourcemoved', $.proxy(self._onSourceMoved, self));
         },
 
-        _onSourceAdded: function(event, added){
+        _onSourceAdded: function(event, options){
+            if(!options.added) return;
+            var added = options.added;
             var self = this;
             var hasChildren = false;
             for(layer in added.children){
@@ -107,10 +109,12 @@
             }
         },
 
-        _onSourceChanged: function(event, changed){
-            for(key in changed.children){
-                var changedEl = changed.children[key];
-                if(changedEl.treeElm.state.visibility){
+        _onSourceChanged: function(event, options){
+            if(!options.changed) return;
+            var changed = options.changed;
+            for(key in changed.options.children){
+                var changedEl = changed.options.children[key];
+                if(changedEl.state.visibility){
                     $(this.element).find('li[data-id="'+key+'"]').removeClass("notvisible");
                 } else {
                     $(this.element).find('li[data-id="'+key+'"]').addClass("notvisible");
@@ -170,7 +174,7 @@
 
         _getSublayers: function(source, layer, level, children){
             var self = this;
-
+            if(layer.children)
             for(var i = (layer.children.length - 1); i > -1; i--){
                 children = children.concat(self._getSublayer(source, layer.children[i], "wms", level, []));
             }

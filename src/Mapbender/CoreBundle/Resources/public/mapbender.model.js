@@ -389,7 +389,7 @@ Mapbender.Model = {
                     self._sourceLoadeEnd(e);
                 }
             });
-            this.mbMap.fireModelEvent({name: 'sourceAdded', value: {mapquerylayer: toadd}});
+            this.mbMap.fireModelEvent({name: 'sourceAdded', value: {added: {mapquerylayer: toadd}}});
         }
     },
     /**
@@ -495,7 +495,7 @@ Mapbender.Model = {
                 source.ollid = mapQueryLayer.olLayer.id;
                 mapQueryLayer.source = source;
                 this._addLayerMaxExtent(mapQueryLayer);
-                this.mbMap.fireModelEvent({name: 'sourceAdded', value: {source: source, before: before, after: after}});
+                this.mbMap.fireModelEvent({name: 'sourceAdded', value: {added: {source: source, before: before, after: after}}});
                 if(after)
                     this._moveSource(source, before, after);
                 this._checkAndRedrawSource({sourceIdx: {id: source.id}, options: {children: {}}});
@@ -546,14 +546,14 @@ Mapbender.Model = {
                 this.mbMap.fireModelEvent({name: 'beforeSourceChanged', value: {source: sourceToChange, changeOptions: changeOpts}});
                 if(changeOpts.options.type === 'selected'){
                     var result = this._checkSource(changeOpts);
-                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: {options: result}});
+                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: {changed: {options: result}}});
                     this._redrawSource(changeOpts);
                 }else if(changeOpts.options.type === 'info'){
                     var result = {infolayers: [], changed: {sourceIdx: {id: sourceToChange.id}, children: {}}};
                     result = Mapbender.source[sourceToChange.type].checkInfoLayers(sourceToChange,
                             this.map.olMap.getScale(), changeOpts, result);
                     this.map.layersList[sourceToChange.mqlid].olLayer.queryLayers = result.infolayers;
-                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: {options: result}});
+                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: {changed: {options: result}}});
                 }else if(changeOpts.options.type === 'toggle'){
 
                 }
@@ -748,10 +748,7 @@ Mapbender.Model = {
                     for(var i = 0; i < layers.length; i++){
                         var addedobj = this.createChangedObj(first);
                         addedobj.children[layers[i].options.id] = layers[i];
-                        this.mbMap.fireModelEvent({
-                            name: 'sourceAdded',
-                            value: addedobj
-                        });
+                        this.mbMap.fireModelEvent({ name: 'sourceAdded',value: addedobj});
                     }
                     this._checkAndRedrawSource(first, this.map.layersList[first.mqlid], this.createToChangeObj(first));
                 }
@@ -804,10 +801,7 @@ Mapbender.Model = {
             addedobj.children[added.options.id] = added;
             addedobj.before = before;
             addedobj.after = after;
-            this.mbMap.fireModelEvent({
-                name: 'sourceAdded',
-                value: addedobj
-            });
+            this.mbMap.fireModelEvent({ name: 'sourceAdded', value: addedobj });
             this._checkAndRedrawSource(before.source, this.map.layersList[before.source.mqlid], this.createToChangeObj(before.source));
         }else if(after){
             tochange = this.createToChangeObj(after.source);
@@ -821,10 +815,7 @@ Mapbender.Model = {
             addedobj.children[added.options.id] = added;
             addedobj.before = before;
             addedobj.after = after;
-            this.mbMap.fireModelEvent({
-                name: 'sourceAdded',
-                value: addedobj
-            });
+            this.mbMap.fireModelEvent({ name: 'sourceAdded', value: addedobj });
             this._checkAndRedrawSource(after.source, this.map.layersList[after.source.mqlid], this.createToChangeObj(after.source));
         }
 
