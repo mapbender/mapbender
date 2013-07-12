@@ -178,22 +178,14 @@ parameters:
                         autoOpen: false
                         print_directly: true
                         templates:
-                            a4portrait:
-                                label: A4 Portrait
-                                format: a4
-                            a4landscape:
-                                label: A4 Landscape
-                                format: a4
-                            a3portrait:
-                                label: A3 Portrait
-                                format: a3
-                            a3landscape:
-                                label: A3 Landscape
-                                format: a3
+                            - { template: a4portrait, label: A4 Portrait, format: a4}
+                            - { template: a4landscape, label: A4 Landscape, format: a4}
+                            - { template: a3portrait, label: A3 Portrait, format: a3}
+                            - { template: a3landscape, label: A3 Landscape, format: a3}
                         scales: [500, 1000, 5000, 10000, 25000]
                         quality_levels:
-                            72: Draft (72dpi)
-                            288: Document (288dpi)
+                            - { dpi: 72 , label: Draft (72dpi)}
+                            - { dpi: 288,  label: Document (288dpi)}
                         rotatable: true
                         optional_fields: ~
                     lineruler:

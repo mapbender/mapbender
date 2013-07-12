@@ -1,5 +1,7 @@
 # Changelog
 * **v3.0.0.2** - 2013-07-12
+  - PrintClient Admintype added
+  - PrintClient Configuration Parameter changed
   - Instance view - order of `on` and `allow` changed
   - Disable WMCBundle - Available in the next versions
   - Parameter unitPrefix added to ScaleDisplay

@@ -40,7 +40,7 @@ class AppKernel extends Kernel
             // OWSProxy3 bundles
             new OwsProxy3\CoreBundle\OwsProxy3CoreBundle(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
-            new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle()
+            //new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle()
             
         );
 
