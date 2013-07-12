@@ -192,12 +192,6 @@
                     }));
                 }
                 
-        
-                
-//                extra_form = $('#extra_forms form[name="extra"]');
-//                if(extra_form.length > 0) {
-//                    extra_fields.html(extra_form.html());
-//                }
             }else{
                 $('#extra_fields').hide();
             }
