@@ -84,7 +84,7 @@ class Map extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        
+
         if(isset($configuration["scales"]))
         {
             $scales = array();
@@ -101,7 +101,7 @@ class Map extends Element
             arsort($scales, SORT_NUMERIC);
             $configuration["scales"] = $scales;
         }
-        
+
         $extra = array();
 
         // @TODO: Move into DataTransformer of MapAdminType
@@ -114,7 +114,7 @@ class Map extends Element
         } else {
             $allsrs[$configuration["srs"]] = "";
         }
-        
+
         if(isset($configuration["otherSrs"]))
         {
             if(is_array($configuration["otherSrs"]))
@@ -141,7 +141,7 @@ class Map extends Element
                         . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
                 ->setParameter('name', array_keys($allsrs));
         $srses = $query->getResult();
-        
+
         $ressrses = array();
         foreach($srses as $srsTemp)
         {
@@ -157,7 +157,7 @@ class Map extends Element
                 $configuration["srsDefs"][] = $ressrses[$key];
             }
         }
-        
+
         $srs_req = $this->container->get('request')->get('srs');
         if($srs_req)
         {
@@ -168,36 +168,41 @@ class Map extends Element
             }
             $configuration = array_merge($configuration,
                                          array('targetsrs' => $srs_req));
-            $poi = $this->container->get('request')->get('poi');
-            if($poi)
-            {
-                $extra['type'] = 'poi';
-                $point = split(',', $poi['point']);
-                $extra['data'] = array(
+        }
+
+        $pois = $this->container->get('request')->get('poi');
+        if($pois) {
+            $extra['pois'] = array();
+            if(array_key_exists('point', $pois)) {
+                $pois = array($pois);
+            }
+            foreach($pois as $poi) {
+                $point = explode(',', $poi['point']);
+                $extra['pois'][] = array(
                     'x' => floatval($point[0]),
                     'y' => floatval($point[1]),
-                    'label' => $poi['label'],
-                    'scale' => $poi['scale']
+                    'label' => isset($poi['label']) ? $poi['label'] : null,
+                    'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
             }
+        }
 
-            $bbox = $this->container->get('request')->get('bbox');
-            if(!$poi && $bbox)
+        $bbox = $this->container->get('request')->get('bbox');
+        if($bbox) {
+            $bbox = explode(',', $bbox);
+            if(count($bbox) === 4)
             {
-                $bbox = explode(',', $bbox);
-                if(count($bbox) === 4)
-                {
-                    $extra['type'] = 'bbox';
-                    $extra['data'] = array(
-                        floatval($bbox[0]),
-                        floatval($bbox[1]),
-                        floatval($bbox[2]),
-                        floatval($bbox[3])
-                    );
-                }
+                $extra['bbox'] = array(
+                    floatval($bbox[0]),
+                    floatval($bbox[1]),
+                    floatval($bbox[2]),
+                    floatval($bbox[3])
+                );
             }
         }
-        
+
+        $configuration['extra'] = $extra;
+
         if(!isset($configuration['scales']))
         {
             throw new \RuntimeException('The scales does not defined.');
