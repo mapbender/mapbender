@@ -289,7 +289,9 @@
             }
             return null;
         },
-        _onSourceAdded: function(event, added){
+        _onSourceAdded: function(event, options){
+            if(!options.added) return;
+            var added = options.added;
             //window.console && console.log("layertree _onSourceAdded");
             var before = added.after, after = added.before;
             if(added.source.configuration.baseSource && !this.options.showBaseSource){
@@ -338,12 +340,12 @@
 
             this._setSourcesCount();
         },
-        _onSourceChanged: function(event, changed){
+        _onSourceChanged: function(event, options){
             //window.console && console.log("Layertree._onSourceChanged", changed);
-            if(changed.options){
-                this._optionsChanged(changed);
-            }else if(changed.layerRemove){
-                this._removeLayer(changed);
+            if(options.changed && options.changed.options){
+                this._optionsChanged(options.changed);
+            }else if(options.changed && options.changed.layerRemove){
+                this._removeLayer(options.changed);
             }
 //            if(this.options.displaytype === "tree"){
 //                for(key in changed.children){
