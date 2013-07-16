@@ -46,6 +46,7 @@ class ScaleDisplay extends Element
             'tooltip' => 'Scale Display',
             'target' => null,
             'unitPrefix' => false,
+            'displayPrefix' => 'Scale = ',
             'anchor' => 'right-bottom');
     }
 

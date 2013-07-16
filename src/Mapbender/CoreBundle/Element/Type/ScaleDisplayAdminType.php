@@ -42,6 +42,7 @@ class ScaleDisplayAdminType extends AbstractType
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
+                ->add('displayPrefix', 'text', array('required' => false))
                 ->add('unitPrefix', 'checkbox', array('required' => false))
                 ->add('anchor', "choice",
                       array(

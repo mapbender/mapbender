@@ -32,7 +32,7 @@
             if(!this.options.unitPrefix){
                 options["updateScale"] =  $.proxy(this._updateScale, this);
             }
-            this.scaledisplay = new OpenLayers.Control.Scale($(this.element).get(0), options);
+            this.scaledisplay = new OpenLayers.Control.Scale($(this.element).find("span").get(0), options);
             
             mbMap.map.olMap.addControl(this.scaledisplay);
             $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
@@ -54,7 +54,7 @@
             if (!scale) {
                 return;
             }
-            this.scaledisplay.element.innerHTML = OpenLayers.i18n("Scale = 1 : ${scaleDenom}", {'scaleDenom':scale = Math.round(scale)});
+            this.scaledisplay.element.innerHTML = OpenLayers.i18n("1 : ${scaleDenom}", {'scaleDenom':scale = Math.round(scale)});
         },
         
         /**
