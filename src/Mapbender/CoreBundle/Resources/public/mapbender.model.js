@@ -84,9 +84,9 @@ Mapbender.Model = {
         this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
         this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
         this._addLayerMaxExtent(this.map.layersList.mapquery0);
-        $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(idx, defArr){
+        $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr){
             $.each(defArr, function(idx, layerDef){
-                layerDef.id = self.generateSourceId();
+                layerDef.id = idx;
                 self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
             });
         });
