@@ -46,7 +46,7 @@ class ScaleDisplay extends Element
             'tooltip' => 'Scale Display',
             'target' => null,
             'unitPrefix' => false,
-            'displayPrefix' => 'Scale = ',
+            'scalePrefix' => 'Scale = ',
             'anchor' => 'right-bottom');
     }
 
@@ -71,7 +71,7 @@ class ScaleDisplay extends Element
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:scaledisplay.html.twig';
+        return 'MapbenderCoreBundle:ElementAdmin:scaledisplay.html.twig';
     }
     
     /**
