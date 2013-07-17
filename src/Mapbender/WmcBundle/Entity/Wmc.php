@@ -73,6 +73,7 @@ class Wmc
     private $screenshotPath;
 
     /**
+     * @var screenshot
      * @Assert\File(maxSize="6000000")
      */
     private $screenshot;
@@ -84,6 +85,7 @@ class Wmc
     protected $contact;
     
     /**
+     * @var wmc document
      * @Assert\File(maxSize="6000000")
      */
     private $xml;
