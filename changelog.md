@@ -13,6 +13,7 @@
   - Elements overview is sorted by asc
   - Wmsloader popup - set fix `width`
   - Design added to ScaleDisplay
+  - Fixed manager logo positioning
   - Fixed design of print client and map forms
   - Fixed double *delete* label at layers and elements
   - Fixed html and body `height`
