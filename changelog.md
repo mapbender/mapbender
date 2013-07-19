@@ -1,5 +1,6 @@
 # Changelog
-* **v3.0.0.2** - 2013-07-12
+* **v3.0.0.2** - 2013-07-19
+  - Set overlay `position` to `fixed`
   - PrintClient Admintype added
   - PrintClient Configuration Parameter changed
   - Instance view - order of `on` and `allow` changed
@@ -12,6 +13,9 @@
   - Elements overview is sorted by asc
   - Wmsloader popup - set fix `width`
   - Design added to ScaleDisplay
+  - Fixed manager logo positioning
+  - Fixed design of print client and map forms
+  - Fixed double *delete* label at layers and elements
   - Fixed html and body `height`
   - Fixed Firefox font bug
   - Fixed printclient tooltip bug
