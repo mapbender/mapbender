@@ -3,6 +3,7 @@
     $.widget("mapbender.mbMap", {
         options: {
         },
+        elementUrl: null,
         model: null,
         map: null,
         readyState: false,
@@ -22,11 +23,10 @@
             }
             var self = this,
             me = $(this.element);
+            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
-            this.options = {
-                layerDefs: []
-            }; // romove all options
+            this.options = { layerDefs: [] };
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();
@@ -79,35 +79,16 @@
          *
          */
         removeSource: function(toChangeObj){
-//            if(toChangeObj && toChangeObj.source && toChangeObj.type){
-//                this.model.removeSource(toChangeObj);
-//            }
-//            {remove: {sourceIdx: {id: source.id}}}
             if(toChangeObj && toChangeObj.remove && toChangeObj.remove.sourceIdx){
                 this.model.removeSource(toChangeObj);
             }
         },
                 
-                
         /**
          *
          */
         removeAllSources: function(withBaseSource){
-            if(typeof withBaseSource === 'undefined'){
-                withBaseSource = true;
-            }
-            var toRemoveArr = [];
-            for(var i = 0; i < this.model.sourceTree.length; i++){
-                var source = this.model.sourceTree[i];
-                if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && withBaseSource)){
-//                    var toremove = this.model.createToChangeObj(source);
-//                    toRemoveArr.push(toremove);
-                    toRemoveArr.push({remove: {sourceIdx: {id: source.id}}});
-                }
-            }
-            for(var i = 0; i < toRemoveArr.length; i++){
-                this.removeSource(toRemoveArr[i]);
-            }
+            this.model.removeAllSources(withBaseSource);
         },
         
         /**
@@ -279,6 +260,45 @@
          */
         highlightOff: function() {
             this.model.highlightOff();
+        },
+        /**
+         * Loads the srs definitions from server
+         */
+        loadSrs: function(srslist){
+            var self = this;
+            $.ajax({
+                url: self.elementUrl + 'loadsrs',
+                type: 'POST',
+                data: {
+                    srs: srslist
+                },
+                dataType: 'json',
+                contetnType: 'json',
+                context: this,
+                success: this._loadSrsSuccess,
+                error: this._loadSrsError
+            });
+            return false;
+        },
+        /**
+         * Loads the srs definitions from server
+         */
+        _loadSrsSuccess: function(response, textStatus, jqXHR){
+            if (response.data) {
+                for(var i = 0; i < response.data.length; i++){
+                    Proj4js.defs[response.data[i].name] = response.data[i].definition;
+                    this.model.srsDefs.push(response.data[i]);
+                    this.fireModelEvent({name: 'srsadded', value: response.data[i]});
+                }
+            } else if(response.error){
+                Mapbender.error(response.error);
+            }
+        },
+        /**
+         * Loads the srs definitions from server
+         */
+        _loadSrsError: function(response){
+            Mapbender.error(response);
         }
     });
 

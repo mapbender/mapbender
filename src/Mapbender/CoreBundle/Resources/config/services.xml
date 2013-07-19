@@ -23,6 +23,11 @@
             <argument type="service" id="service_container" />
             <tag name="form.type" alias="target_element"/>
         </service>
+        
+        <service id="app_layerset" class="Mapbender\CoreBundle\Element\Type\LayersetType">
+            <argument type="service" id="service_container" />
+            <tag name="form.type" alias="app_layerset"/>
+        </service>
     </services>
 </container>
 

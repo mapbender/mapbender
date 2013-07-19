@@ -452,6 +452,24 @@ Mapbender.Model = {
     /**
      *
      */
+    removeAllSources: function(withBaseSource){
+        if(typeof withBaseSource === 'undefined'){
+            withBaseSource = true;
+        }
+        var toRemoveArr = [];
+        for(var i = 0; i < this.sourceTree.length; i++){
+            var source = this.sourceTree[i];
+            if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && withBaseSource)){
+                toRemoveArr.push({remove: {sourceIdx: {id: source.id}}});
+            }
+        }
+        for(var i = 0; i < toRemoveArr.length; i++){
+            this.removeSource(toRemoveArr[i]);
+        }
+    },
+    /**
+     *
+     */
     changeSource: function(options){
         if(options.change){
             var changeOpts = options.change;

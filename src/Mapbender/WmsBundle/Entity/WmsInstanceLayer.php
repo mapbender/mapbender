@@ -4,6 +4,7 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\InstanceLayerIn;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -602,6 +603,29 @@ class WmsInstanceLayer implements InstanceLayerIn
             )
         );
         return $configuration;
+    }
+    
+    /**
+     * 
+     * @param 
+     */
+    public function copy(EntityManager $em)
+    {
+        $inlay = new WmsInstanceLayer();
+        $inlay->title = $this->title;
+        $inlay->active = $this->active;
+        $inlay->allowselected = $this->allowselected;
+        $inlay->selected = $this->selected;
+        $inlay->info = $this->info;
+        $inlay->allowinfo = $this->allowinfo;
+        $inlay->toggle = $this->toggle;
+        $inlay->allowtoggle = $this->allowtoggle;
+        $inlay->allowreorder = $this->allowreorder;
+        $inlay->minScale = $this->minScale;
+        $inlay->maxScale = $this->maxScale;
+        $inlay->style = $this->style;
+        $inlay->priority = $this->priority;
+        return $inlay;
     }
 
 }

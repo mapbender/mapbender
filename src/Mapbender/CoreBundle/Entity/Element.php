@@ -7,6 +7,7 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -249,6 +250,19 @@ class Element
     public function __toString()
     {
         return (string) $this->id;
+    }
+    
+    public function copy(EntityManager $em)
+    {
+        $elm = new Element();
+        $elm->title = $this->title;
+        $elm->class = $this->class;
+        $elm->configuration = $this->configuration;
+//        $elm->application = $this->;
+        $elm->region = $this->region;
+        $elm->enabled = $this->enabled;
+        $elm->weight = $this->weight;
+        return $elm;
     }
 
 }

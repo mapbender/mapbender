@@ -10,6 +10,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Element as Entity;
+use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -369,6 +370,83 @@ abstract class Element
     {
         
     }
+    
+    /**
+     * Create form for given element
+     *
+     * @param string $class
+     * @return dsd
+     */
+    public static function getElementForm($container, $application, Entity $element)
+    {
+        $class = $element->getClass();
+
+        // Create base form shared by all elements
+        $formType = $container->get('form.factory')->createBuilder('form', $element, array())
+                ->add('title', 'text')
+                ->add('class', 'hidden')
+                ->add('region', 'hidden');
+        // Get configuration form, either basic YAML one or special form
+        $configurationFormType = $class::getType();
+        if($configurationFormType === null)
+        {
+            $formType->add('configuration', new YAMLConfigurationType(),
+                           array(
+                'required' => false,
+                'attr' => array(
+                    'class' => 'code-yaml')));
+            $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
+            $formAssets = array(
+                'js' => array(
+                    'bundles/mapbendermanager/codemirror2/lib/codemirror.js',
+                    'bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js',
+                    'bundles/mapbendermanager/js/form-yaml.js'),
+                'css' => array(
+                    'bundles/mapbendermanager/codemirror2/lib/codemirror.css'));
+        } else
+        {
+            $type = $class::getType();
+
+            $formType->add('configuration', new $type(),
+                           array(
+                'application' => $application
+            ));
+            $formTheme = $class::getFormTemplate();
+            $formAssets = $class::getFormAssets();
+        }
+
+        return array(
+            'form' => $formType->getForm(),
+            'theme' => $formTheme,
+            'assets' => $formAssets);
+    }
+    
+    /**
+     * Create default element
+     *
+     * @param string $class
+     * @param string $region
+     * @return \Mapbender\CoreBundle\Entity\Element
+     */
+    public static function getDefaultElement($class, $region)
+    {
+        $element = new Entity();
+        $configuration = $class::getDefaultConfiguration();
+        $element
+                ->setClass($class)
+                ->setRegion($region)
+                ->setWeight(0)
+                ->setTitle($class::getClassTitle())
+                ->setConfiguration($configuration);
+
+        return $element;
+    }
+    
+    
+//    public static function getTargets($container, $application, $element) {
+//        $form = $this->getElementForm($container, $application, $element);
+//        return null;
+//    }
 
 }
 

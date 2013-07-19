@@ -48,7 +48,7 @@ class ZoomBarAdminType extends AbstractType
                         "zoom_box" => "zoom box",
                         "zoom_max" => "zoom to max extent",
                         "zoom_slider" => "zoom slider")))
-                ->add('target_map', 'target_element',
+                ->add('target', 'target_element',
                       array(
                     'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                     'application' => $options['application'],

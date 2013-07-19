@@ -73,8 +73,8 @@ class ElementController extends Controller
         $regions = $template::getRegions();
         $region = $this->get('request')->get('region');
 
-        $element = $this->getDefaultElement($class, $region);
-        $form = $this->getElementForm($application, $element);
+        $element = ComponentElement::getDefaultElement($class, $region);
+        $form = ComponentElement::getElementForm($this->container, $application, $element);
 
         return array(
             'form' => $form['form']->createView(),
@@ -94,9 +94,9 @@ class ElementController extends Controller
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
         $data = $this->get('request')->get('form');
-        $element = $this->getDefaultElement($data['class'], $data['region']);
+        $element = ComponentElement::getDefaultElement($data['class'], $data['region']);
         $element->setApplication($application);
-        $form = $this->getElementForm($application, $element);
+        $form = ComponentElement::getElementForm($this->container, $application, $element);
         $form['form']->bindRequest($this->get('request'));
 
         if($form['form']->isValid())
@@ -149,8 +149,7 @@ class ElementController extends Controller
             throw $this->createNotFoundException('The element with the id "'
                     . $id . '" does not exist.');
         }
-
-        $form = $this->getElementForm($application, $element);
+        $form = ComponentElement::getElementForm($this->container, $application, $element);
 
         return array(
             'form' => $form['form']->createView(),
@@ -178,8 +177,8 @@ class ElementController extends Controller
             throw $this->createNotFoundException('The element with the id "'
                     . $id . '" does not exist.');
         }
-
-        $form = $this->getElementForm($application, $element);
+        $form = ComponentElement::getElementForm($this->container, $application, $element);
+//        $form = $this->getElementForm($application, $element);
         $form['form']->bindRequest($this->get('request'));
 
         if($form['form']->isValid())
@@ -465,77 +464,6 @@ class ElementController extends Controller
                         ->add('id', 'hidden')
                         ->getForm();
     }
-
-    /**
-     * Create form for given element
-     *
-     * @param string $class
-     * @return dsd
-     */
-    private function getElementForm($application, $element)
-    {
-        $class = $element->getClass();
-
-        // Create base form shared by all elements
-        $formType = $this->createFormBuilder($element)
-                ->add('title', 'text')
-                ->add('class', 'hidden')
-                ->add('region', 'hidden');
-        // Get configuration form, either basic YAML one or special form
-        $configurationFormType = $class::getType();
-        if($configurationFormType === null)
-        {
-            $formType->add('configuration', new YAMLConfigurationType(),
-                           array(
-                'required' => false,
-                'attr' => array(
-                    'class' => 'code-yaml')));
-            $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
-            $formAssets = array(
-                'js' => array(
-                    'bundles/mapbendermanager/codemirror2/lib/codemirror.js',
-                    'bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js',
-                    'bundles/mapbendermanager/js/form-yaml.js'),
-                'css' => array(
-                    'bundles/mapbendermanager/codemirror2/lib/codemirror.css'));
-        } else
-        {
-            $type = $class::getType();
-
-            $formType->add('configuration', new $type(),
-                           array(
-                'application' => $application
-            ));
-            $formTheme = $class::getFormTemplate();
-            $formAssets = $class::getFormAssets();
-        }
-
-        return array(
-            'form' => $formType->getForm(),
-            'theme' => $formTheme,
-            'assets' => $formAssets);
-    }
-
-    /**
-     * Create default element
-     *
-     * @param string $class
-     * @param string $region
-     * @return Element
-     */
-    public function getDefaultElement($class, $region)
-    {
-        $element = new Element();
-        $configuration = $class::getDefaultConfiguration();
-        $element
-                ->setClass($class)
-                ->setRegion($region)
-                ->setWeight(0)
-                ->setTitle($class::getClassTitle())
-                ->setConfiguration($configuration);
-
-        return $element;
-    }
-
+    
 }
 

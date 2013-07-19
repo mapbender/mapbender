@@ -31,6 +31,7 @@
             $("#"+$(this.element).attr('id')+" select").val(mbMap.map.olMap.getProjection());
             $("#"+$(this.element).attr('id')+" select").change($.proxy(self._switchSrs, self));
             $(document).bind('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
+            $(document).bind('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
         },
 
         showHidde: function() {
@@ -57,15 +58,21 @@
                 
         _onSrsChanged: function(event, srsObj){
             this.selectSrs(srsObj.projection.projCode);
+//            var allSrs = this.mapWidget.data('mbMap').loadSrs("EPSG:31469"); // this is a test
+        },
+                
+        _onSrsAdded: function(event, srsObj){
+            $("#"+$(this.element).attr('id')+" select").append($('<option></option>').val(srsObj.name).html(srsObj.title));
+            window.console && console.log("TODO add option into select",srsObj);
         },
 
         selectSrs: function(crs) {
-//            if(this.isSrsSupported(crs)){
+            if(this.isSrsSupported(crs)){
                 $(this.op_sel + '[value="'+crs+'"]').attr('selected',true);
                 this._switchSrs();
                 return true;
-//            }
-//            return false;
+            }
+            return false;
         },
 
         getSelectedSrs: function() {

@@ -3,7 +3,10 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Component\Element As ComponentElement;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -18,10 +21,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="mb_core_application")
  * @ORM\HasLifecycleCallbacks
  */
-class Application {
+class Application
+{
 
     const SOURCE_YAML = 1;
-    const SOURCE_DB = 2;
+    const SOURCE_DB   = 2;
 
     private $preparedElements;
     private $screenshotPath;
@@ -105,8 +109,9 @@ class Application {
      */
     protected $updated;
 
-    public function __construct() {
-        $this->elements = new ArrayCollection();
+    public function __construct()
+    {
+        $this->elements  = new ArrayCollection();
         $this->layersets = new ArrayCollection();
     }
 
@@ -115,7 +120,8 @@ class Application {
      *
      * @param int $source
      */
-    public function setSource($source) {
+    public function setSource($source)
+    {
         $this->source = $source;
         return $this;
     }
@@ -125,7 +131,8 @@ class Application {
      *
      * @return type
      */
-    public function getSource() {
+    public function getSource()
+    {
         return $this->source;
     }
 
@@ -134,7 +141,8 @@ class Application {
      *
      * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
@@ -143,7 +151,8 @@ class Application {
      *
      * @param string $title
      */
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         $this->title = $title;
         return $this;
     }
@@ -153,7 +162,8 @@ class Application {
      *
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
 
@@ -162,7 +172,8 @@ class Application {
      *
      * @param string $slug
      */
-    public function setSlug($slug) {
+    public function setSlug($slug)
+    {
         $this->slug = $slug;
         return $this;
     }
@@ -172,7 +183,8 @@ class Application {
      *
      * @return string
      */
-    public function getSlug() {
+    public function getSlug()
+    {
         return $this->slug;
     }
 
@@ -181,8 +193,8 @@ class Application {
      *
      * @param text $description
      */
-
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
         return $this;
     }
@@ -192,7 +204,8 @@ class Application {
      *
      * @return text
      */
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
@@ -222,7 +235,8 @@ class Application {
      *
      * @param Mapbender\CoreBundle\Entity\Element $elements
      */
-    public function addElements(\Mapbender\CoreBundle\Entity\Element $elements) {
+    public function addElements(Element $elements)
+    {
         $this->elements[] = $elements;
     }
 
@@ -231,7 +245,8 @@ class Application {
      *
      * @return Doctrine\Common\Collections\Collection
      */
-    public function getElements() {
+    public function getElements()
+    {
         return $this->elements;
     }
 
@@ -240,7 +255,8 @@ class Application {
      *
      * @param Layerset $layerset
      */
-    public function addLayerset(Layerset $layerset) {
+    public function addLayerset(Layerset $layerset)
+    {
         $this->layersets[] = $layerset;
     }
 
@@ -249,7 +265,8 @@ class Application {
      *
      * @return Doctrine\Common\Collections\Collection
      */
-    public function getLayersets() {
+    public function getLayersets()
+    {
         return $this->layersets;
     }
 
@@ -258,7 +275,8 @@ class Application {
      *
      * @param string $screenshot
      */
-    public function setScreenshot($screenshot) {
+    public function setScreenshot($screenshot)
+    {
         $this->screenshot = $screenshot;
     }
 
@@ -267,7 +285,8 @@ class Application {
      *
      * @return string
      */
-    public function getScreenshot() {
+    public function getScreenshot()
+    {
         return $this->screenshot;
     }
 
@@ -276,7 +295,8 @@ class Application {
      *
      * @param User $owner
      */
-    public function setOwner($owner) {
+    public function setOwner($owner)
+    {
         $this->owner = $owner;
         return $this;
     }
@@ -286,7 +306,8 @@ class Application {
      *
      * @return User
      */
-    public function getOwner() {
+    public function getOwner()
+    {
         return $this->owner;
     }
 
@@ -353,38 +374,189 @@ class Application {
         return $this->updated;
     }
 
-    public function getElementsByRegion($region = null) {
-        if($this->preparedElements === null) {
+    public function getElementsByRegion($region = null)
+    {
+        if($this->preparedElements === null)
+        {
             $this->preparedElements = array();
 
-            foreach($this->getElements() as $element) {
+            foreach($this->getElements() as $element)
+            {
                 $elementRegion = $element->getRegion();
-                if(!array_key_exists($elementRegion, $this->preparedElements)) {
+                if(!array_key_exists($elementRegion, $this->preparedElements))
+                {
                     $this->preparedElements[$elementRegion] = array();
                 }
                 $this->preparedElements[$elementRegion][] = $element;
             }
 
-            foreach($this->preparedElements as $elementRegion => $elements) {
-                usort($elements, function($a, $b) {
-                    return $a->getWeight() - $b->getWeight();
-                });
+            foreach($this->preparedElements as $elementRegion => $elements)
+            {
+                usort($elements,
+                      function($a, $b)
+                    {
+                        return $a->getWeight() - $b->getWeight();
+                    });
             }
         }
 
-        if($this->preparedElements !== null) {
-            if(array_key_exists($region, $this->preparedElements)) {
+        if($this->preparedElements !== null)
+        {
+            if(array_key_exists($region, $this->preparedElements))
+            {
                 return $this->preparedElements[$region];
-            } else {
+            }
+            else
+            {
                 return null;
             }
-        } else {
+        }
+        else
+        {
             return $this->preparedElements;
         }
     }
-    
-    public function __toString(){
+
+    public function __toString()
+    {
         return (string) $this->getId();
     }
+
+    public function copy($container, EntityManager $em)
+    {
+//        $em->detach($this);
+        $app                   = new Application();
+        $app->slug             = $this->slug;
+        $app->title            = $this->title;
+        $app->description      = $this->description;
+        $app->setUpdated(new \DateTime('now'));
+        $app->setPublished(false);
+        $app->preparedElements = $this->preparedElements;
+        $app->screenshotPath   = $this->screenshotPath;
+        $app->source           = $this->source;
+        $app->template         = $this->template;
+        $app->owner            = $this->owner;
+        $app->screenshot       = $this->screenshot;
+        $app->extra_assets     = $this->extra_assets;
+        $app->screenshotFile   = $this->screenshotFile;
+
+        $layersetMap = array();
+        foreach($this->layersets as $layerset)
+        {
+            $layerset_cloned                         = $layerset->copy($em);
+            $em->persist($layerset_cloned);
+            $layersetMap[strval($layerset->getId())] = $layerset_cloned;
+            $app->addLayerset($layerset_cloned->setApplication($app));
+        }
+        if(isset($layerset)) unset($layerset);
+        $clonedElmts = array();
+        
+        $this->copyElements($container, $em, $app, $clonedElmts, $layersetMap);
+        return $app;
+    }
+
+    private function copyElements($container, EntityManager $em,
+        Application $clonedApp, $clonedElmts, $layersetMap)
+    {
+        foreach($this->elements as $element)
+        {
+            $options   = array();
+            $origElmId = strval($element->getId());
+            if(key_exists($origElmId, $clonedElmts))
+            {
+                continue;
+            }
+            $targets = array();
+            $form    = ComponentElement::getElementForm($container, $this,
+                                                        $element);
+            foreach($form['form']['configuration']->getChildren() as $fieldName =>
+                    $fieldValue)
+            {
+                $norm = $fieldValue->getNormData();
+                $data = $fieldValue->getData();
+                $view = $fieldValue->getViewData();
+                $extra = $fieldValue->getExtraData();
+                if($norm instanceof Element)
+                { // target Element
+                    $targets[$fieldName] = $norm->getId();
+                    
+                $fv = $form['form']->createView();
+                }
+                else if($norm instanceof Layerset)
+                { // Map
+                    if(key_exists(strval($norm->getId()), $layersetMap))
+                    {
+                        $options[$fieldName] = $layersetMap[strval($norm->getId())]->getId();
+                    }
+                    else
+                    {
+                        $options[$fieldName] = null;
+                    }
+                }
+            }
+            if(count($targets) === 0)
+            {
+                $clonedElm = $element->copy($em);
+                $em->persist($clonedElm);
+                $clonedElm->setApplication($clonedApp);
+                foreach($options as $key => $value)
+                {
+                    $configuration       = $clonedElm->getConfiguration();
+                    $configuration[$key] = $value;
+                    $clonedElm->setConfiguration($configuration);
+                }
+                $em->persist($clonedElm);
+                $clonedApp->addElements($clonedElm);
+                $clonedElmts[$origElmId] = $clonedElm;
+            }
+            else 
+            {
+                $allTargetsCreated = true;
+                foreach($targets as $name => $value)
+                {
+                    if($value !== null && !key_exists(strval($value), $clonedElmts))
+                    {
+                       $allTargetsCreated = false;
+                    }
+                }
+                if(!$allTargetsCreated)
+                {
+                    continue;
+                }
+                $clonedElm = $element->copy($em);
+                $em->persist($clonedElm);
+                $clonedElm->setApplication($clonedApp);
+                foreach($options as $key => $value)
+                {
+                    $configuration       = $clonedElm->getConfiguration();
+                    $configuration[$key] = $value;
+                    $clonedElm->setConfiguration($configuration);
+                }
+                
+                foreach($targets as $name => $value)
+                {
+                    if(key_exists(strval($value), $clonedElmts))
+                    {
+                        $configuration       = $clonedElm->getConfiguration();
+                        $target               = $clonedElmts[strval($value)];
+                        $configuration[$name] = $target->getId();
+                        $clonedElm->setConfiguration($configuration);
+                    }
+                }
+                $em->persist($clonedElm);
+                $clonedApp->addElements($clonedElm);
+                $clonedElmts[$origElmId] = $clonedElm;
+            }
+        }
+        if(count($clonedElmts) === count($this->elements))
+        {
+            return;
+        }
+        else
+        {
+            $this->copyElements($container, $em, $clonedApp, $clonedElmts, $layersetMap);
+        }
+    }
+
 }
 

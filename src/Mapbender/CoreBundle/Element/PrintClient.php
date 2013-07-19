@@ -44,6 +44,35 @@ class PrintClient extends Element
         return array('js' => array('mapbender.element.printClient.js'),'css' => array());
     }
 
+//    /**
+//     * @inheritdoc
+//     */
+//    public static function getDefaultConfiguration()
+//    {
+//        return array(
+//            "target" => null,
+//            "autoOpen" => false,
+//            "print_directly" => true,
+//            "templates" => array(
+//                "a4portrait" => array(
+//                    "label" => "A4 Portrait",
+//                    "format" => "a4"),
+//                "a4landscape" => array(
+//                    "label" => "A4 Landscape",
+//                    "format" => "a4"),
+//                "a3portrait" => array(
+//                    "label" => "A3 Portrait",
+//                    "format" => "a3"),
+//                "a3landscape" => array(
+//                    "label" => "A3 Landscape",
+//                    "format" => "a3")),
+//            "scales" => array(500, 1000, 5000, 10000, 25000),
+//            "quality_levels" => array("72" => "Entwurf", "288" => "Document"),
+//            "rotatable" => true,
+//            "optional_fields" => null
+//        );
+//    }
+
     /**
      * @inheritdoc
      */
@@ -54,40 +83,72 @@ class PrintClient extends Element
             "autoOpen" => false,
             "print_directly" => true,
             "templates" => array(
-                "a4portrait" => array(
+                array(
+                    'template' => "a4portrait",
                     "label" => "A4 Portrait",
-                    "format" => "a4"),
-                "a4landscape" => array(
+                    "format" => "a4")
+                ,
+                array(
+                    'template' => "a4landscape",
                     "label" => "A4 Landscape",
-                    "format" => "a4"),
-                "a3portrait" => array(
+                    "format" => "a4")
+                ,
+                array(
+                    'template' => "a3portrait",
                     "label" => "A3 Portrait",
-                    "format" => "a3"),
-                "a3landscape" => array(
+                    "format" => "a3")
+                ,
+                array(
+                    'template' => "a3landscape",
                     "label" => "A3 Landscape",
-                    "format" => "a3")),
+                    "format" => "a3")
+            ),
             "scales" => array(500, 1000, 5000, 10000, 25000),
-            "quality_levels" => array("72" => "Entwurf", "288" => "Document"),
+            "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
+                array('dpi' => "288", 'label' => "Draft (288dpi)")),
             "rotatable" => true,
             "optional_fields" => null
         );
     }
-
+    
     /**
      * @inheritdoc
      */
-//    public static function getType()
-//    {
-//        return 'Mapbender\CoreBundle\Element\Type\PrintClientAdminType';
-//    }    
-//    
-//    /**
-//     * @inheritdoc
-//     */
-//    public static function getFormTemplate()
-//    {
-//        return 'MapbenderManagerBundle:Element:printclient.html.twig';
-//    }
+    public function getConfiguration()
+    {
+        $config = parent::getConfiguration();
+        if(isset($config["templates"])){
+            $templates = array();
+            foreach ($config["templates"] as $template) {
+                $templates[$template['template']] = $template;
+            }
+            $config["templates"] = $templates;
+        }
+        if(isset($config["quality_levels"])){
+            $levels = array();
+            foreach ($config["quality_levels"] as $level) {
+                $levels[$level['dpi']] = $level['label'];
+            }
+            $config["quality_levels"] = $levels;
+        }
+        return $config;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\PrintClientAdminType';
+    }    
+    
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderCoreBundle:ElementAdmin:printclient.html.twig';
+    }
     
     /**
      * @inheritdoc

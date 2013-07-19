@@ -7,6 +7,7 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -161,6 +162,18 @@ class Layerset
     public function __toString()
     {
         return (string) $this->getId();
+    }
+    
+    public function copy(EntityManager $em)
+    {
+        $ls = new Layerset();
+        $ls->title = $this->title;
+        foreach($this->instances as $instance)
+        {
+            $cloned = $instance->copy($em);
+            $ls->addInstance($cloned->setLayerset($ls));
+        }
+        return $ls;
     }
 
 }

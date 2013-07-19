@@ -57,7 +57,7 @@ use when custom styling is needed.";
     {
         return array(
             'tooltip' => null,
-            'target_map' => null,
+            'target' => null,
             'components' => array(
                 "pan" => "pan",
                 "history" => "history",

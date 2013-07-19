@@ -325,7 +325,7 @@
                 Mapbender.error(response.error);
             }
         },
-        _suggestStateError: function() {
+        _suggestStateError: function(response) {
             Mapbender.error(response);
         },
         openLoader: function() {

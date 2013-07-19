@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Map element.
@@ -110,14 +111,19 @@ class Map extends Element
         $allsrs        = array();
         if(is_int(stripos($configuration["srs"], "|")))
         {
-            $srsHlp               = preg_split("/\s?|\s?/",
+            $srsHlp               = preg_split("/\s?\|{1}\s?/",
                                                $configuration["srs"]);
-            $configuration["srs"] = $srsHlp[0];
-            $allsrs[$srsHlp[0]]   = $srsHlp[1];
+            $configuration["srs"] = trim($srsHlp[0]);
+            $allsrs[]             = array(
+                "name"  => trim($srsHlp[0]),
+                "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
         }
         else
         {
-            $allsrs[$configuration["srs"]] = "";
+            $configuration["srs"] = trim($configuration["srs"]);
+            $allsrs[]             = array(
+                "name"  => $configuration["srs"],
+                "title" => '');
         }
 
         if(isset($configuration["otherSrs"]))
@@ -135,41 +141,21 @@ class Map extends Element
             {
                 if(is_int(stripos($srs, "|")))
                 {
-                    $srsHlp                   = explode("|",
-                                                        $configuration["srs"]);
-                    $allsrs[trim($srsHlp[0])] = trim($srsHlp[1]);
+                    $srsHlp   = preg_split("/\s?\|{1}\s?/", $srs);
+                    $allsrs[] = array(
+                        "name"  => trim($srsHlp[0]),
+                        "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1])
+                                : '');
                 }
                 else
                 {
-                    $allsrs[trim($srs)] = "";
+                    $allsrs[] = array(
+                        "name"  => $srs,
+                        "title" => '');
                 }
             }
         }
-        unset($configuration['otherSrs']);
-        $em    = $this->container->get("doctrine")->getEntityManager();
-        $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
-                . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
-            ->setParameter('name', array_keys($allsrs));
-        $srses = $query->getResult();
-
-        $ressrses = array();
-        foreach($srses as $srsTemp)
-        {
-            $ressrses[$srsTemp->getName()] = array(
-                "name"       => $srsTemp->getName(),
-                "title"      => $allsrs[$srsTemp->getName()] !== "" ? $allsrs[$srsTemp->getName()]
-                        : $srsTemp->getTitle(),
-                "definition" => $srsTemp->getDefinition());
-        }
-        /* sort the ressrses */
-        foreach($allsrs as $key => $value)
-        {
-            if(isset($ressrses[$key]))
-            {
-                $configuration["srsDefs"][] = $ressrses[$key];
-            }
-        }
-
+        $configuration["srsDefs"] = $this->getSrsDefinitions($allsrs);
         $srs_req = $this->container->get('request')->get('srs');
         if($srs_req)
         {
@@ -261,43 +247,80 @@ class Map extends Element
         {
             case 'loadsrs':
                 $srsList = $this->container->get('request')->get("srs", null);
-                if($type === "wmc") return $this->loadWmc($id);
-                else if($type === "state") return $this->loadState($id);
+                return $this->loadSrsDefinitions($srsList);
                 break;
             default:
                 throw new NotFoundHttpException('No such action');
         }
     }
 
-    private function getSrsDefinitions($srsNames)
+    protected function loadSrsDefinitions($srsList)
     {
-        if(is_string($srsNames))
+        $srses  = preg_split("/\s?,\s?/", $srsList);
+        $allsrs = array();
+        foreach($srses as $srs)
         {
-            $srsNames = explode(",", $srsNames);
-        }
-        if(is_array($srsNames) && count($srsNames) > 0)
-        {
-            $em    = $this->container->get("doctrine")->getEntityManager();
-            $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
-                    . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
-                ->setParameter('name', array_keys($allsrs));
-            $srses = $query->getResult();
-
-            $ressrses = array();
-            foreach($srses as $srsTemp)
+            if(is_int(stripos($srs, "|")))
             {
-                $ressrses[$srsTemp->getName()] = array(
-                    "name"       => $srsTemp->getName(),
-                    "title"      => $allsrs[$srsTemp->getName()] !== "" ? $allsrs[$srsTemp->getName()]
-                            : $srsTemp->getTitle(),
-                    "definition" => $srsTemp->getDefinition());
+                $srsHlp   = preg_split("/\s?\|{1}\s?/", $srs);
+                $allsrs[] = array(
+                    "name"  => trim($srsHlp[0]),
+                    "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
             }
-            return $ressrses;
+            else
+            {
+                $allsrs[] = array(
+                    "name"  => trim($srs),
+                    "title" => '');
+            }
+        }
+        $result = $this->getSrsDefinitions($allsrs);
+        if(count($result) > 0)
+        {
+            return new Response(json_encode(
+                    array("data" => $result)), 200,
+                    array('Content-Type' => 'application/json'));
         }
         else
         {
-            return null;
+            return new Response(json_encode(
+                    array("error" => 'SRSes: ' . $srsList . ' are not found')),
+                    200, array('Content-Type' => 'application/json'));
         }
+    }
+
+    protected function getSrsDefinitions(array $srsNames)
+    {
+        $result = array();
+        if(is_array($srsNames) && count($srsNames) > 0)
+        {
+            $names = array();
+            foreach($srsNames as $srsName)
+            {
+                $names[] = $srsName['name'];
+            }
+            $em    = $this->container->get("doctrine")->getEntityManager();
+            $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
+                    . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
+                ->setParameter('name', $names);
+            $srses = $query->getResult();
+            foreach($srsNames as $srsName)
+            {
+                foreach($srses as $srs)
+                {
+                    if($srsName['name'] === $srs->getName())
+                    {
+                        $result[] = array(
+                            "name"       => $srs->getName(),
+                            "title"      => strlen($srsName["title"]) > 0 ? $srsName["title"]
+                                    : $srs->getTitle(),
+                            "definition" => $srs->getDefinition());
+                        break;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
 }

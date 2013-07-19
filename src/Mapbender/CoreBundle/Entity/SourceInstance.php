@@ -215,5 +215,10 @@ abstract class SourceInstance
      * @param EntityManager $em
      */
     public abstract function remove(EntityManager $em);
-
+    
+    /**
+     * Copies a source instance
+     * @param EntityManager $em
+     */
+    public abstract function copy(EntityManager $em);
 }
