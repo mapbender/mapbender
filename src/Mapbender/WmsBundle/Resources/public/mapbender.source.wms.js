@@ -690,7 +690,12 @@ $.extend(true, Mapbender, {
              * Returns object's changes : { layers: [], infolayers: [], changed: changed };
              */
             changeOptions: function(source, scale, toChangeOpts, result){
-                if(toChangeOpts.options && Object.keys(toChangeOpts.options).length > 0){/* change source options -> set */
+                var optLength = 0;
+                if(toChangeOpts.options){
+                    for(attr in toChangeOpts.options)
+                        optLength++;
+                }
+                if(optLength > 0){/* change source options -> set */
                     if(toChangeOpts.options.configuration){
                         var configuration = toChangeOpts.options.configuration;
                         if(configuration.options){
