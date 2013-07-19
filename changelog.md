@@ -17,7 +17,10 @@
   - Fixed printclient tooltip bug
   - Fixed ScaleDisplay position bug
   - Added POI (0...n) and BBOX URL parameter handling
-  - Fixed ACL creation during user creation
+  - Fixed ACL creation during user creation (#52)
+  - Fixed ACL creation during group creation (#53)
+  - Enhanced ACL creation during service creation (#54)
+  - Honor published attribute on YAML-defined applications (#42)
 
 ## Release History
 
