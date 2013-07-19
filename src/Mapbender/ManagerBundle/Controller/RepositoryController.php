@@ -39,9 +39,17 @@ class RepositoryController extends Controller {
                 "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
 
+        $allowed_sources = array();
+        foreach($sources as $source) {
+            if(!$securityContext->isGranted('VIEW', $source)) {
+                continue;
+            }
+            $allowed_sources[] = $source;
+        }
+
         return array(
             'title' => 'Repository',
-            'sources' => $sources,
+            'sources' => $allowed_sources,
             'create_permission' => $securityContext->isGranted('CREATE', $oid)
         );
     }
