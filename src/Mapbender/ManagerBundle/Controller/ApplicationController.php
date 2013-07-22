@@ -308,12 +308,12 @@ class ApplicationController extends Controller
         if($form->isValid())
         {
             $tocopy  = $this->get('mapbender')->getApplicationEntity($slug);
-            $tocopy->setSlug($test->getSlug());
-            $tocopy->setTitle($test->getTitle());
-            $tocopy->setDescription($test->getDescription());
             $em     = $this->getDoctrine()->getEntityManager();
             $em->getConnection()->beginTransaction();
             $cloned = $tocopy->copy($this->container, $em);
+            $cloned->setSlug($test->getSlug());
+            $cloned->setTitle($test->getTitle());
+            $cloned->setDescription($test->getDescription());
             $em->persist($cloned);
             $em->flush();
             $em->getConnection()->commit();
@@ -324,6 +324,32 @@ class ApplicationController extends Controller
         {
             return array('form' => $form->createView());
         }
+    }
+    
+    /**
+     * Copies an application
+     *
+     * @ManagerRoute("/application/{slug}/copydirectly", requirements = { "slug" = "[\w-]+" })
+     * @Method("GET")
+     * @Template("MapbenderManagerBundle:Application:form-basic.html.twig")
+     */
+    public function copydirectlyAction($slug)
+    {
+        $tocopy  = $this->get('mapbender')->getApplicationEntity($slug);
+        // ACL access check
+        $this->checkGranted('CREATE', $tocopy);
+        $newslug = $this->generateSlug($slug);
+        $em     = $this->getDoctrine()->getEntityManager();
+        $em->getConnection()->beginTransaction();
+        $cloned = $tocopy->copy($this->container, $em);
+        $cloned->setSlug($newslug);
+        $cloned->setTitle(strtoupper($newslug).":".$tocopy->getTitle());
+        $cloned->setDescription(strtoupper($newslug).":".$tocopy->getDescription());
+        $em->persist($cloned);
+        $em->flush();
+        $em->getConnection()->commit();
+        return $this->redirect(
+                $this->generateUrl('mapbender_manager_application_index'));
     }
 
     /**
@@ -781,6 +807,15 @@ class ApplicationController extends Controller
         {
             throw new AccessDeniedException();
         }
+    }
+    
+    private function generateSlug($slug)
+    {
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        if($application === null)
+            return $slug;
+        else
+            return $this->generateSlug($slug."_copy");
     }
 
 }
