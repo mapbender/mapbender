@@ -32,7 +32,7 @@
             }
             var me = this.element;
             this.template = $(me).find('li').remove();
-            this.model = $("#" + self.options.target).data("mbMap").getModel();
+            this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
             var sources = this.model.getSources();
             for(var i = (sources.length - 1); i > -1; i--){
                 if(!sources[i].configuration.isBaseSource || (sources[i].configuration.isBaseSource && this.options.showBaseSource)){
@@ -51,10 +51,10 @@
 
             this._createSortable();
 
-            $(this.element).find('li input[name="selected"]').live("change", $.proxy(self._toggleSelected, self));
-            $(this.element).find('li input[name="info"]').live("change", $.proxy(self._toggleInfo, self));
-            $(this.element).find('.iconFolder').live("click", $.proxy(self._toggleContent, self));
-            $(this.element).find('#delete-all').live("click", $.proxy(self._removeAllLayers, self));
+            this.element.on('change', 'li input[name="selected"]', $.proxy(self._toggleSelected, self));
+            this.element.on('change', 'li input[name="info"]', $.proxy(self._toggleInfo, self));
+            this.element.on('click', '.iconFolder', $.proxy(self._toggleContent, self));
+            this.element.on('click', '#delete-all', $.proxy(self._removeAllLayers, self));
 
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
@@ -63,8 +63,8 @@
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
 
-            $(this.element).find('.iconRemove').live("click", $.proxy(self._removeSource, self));
-            $(this.element).find('.layer-menu-btn').live("click", $.proxy(self._toggleMenu, self));
+            this.element.on('click', '.iconRemove', $.proxy(self._removeSource, self));
+            this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
 
             if(this.options.type === "dialog"){
                 this._initDialog();
@@ -629,7 +629,7 @@
             this._setSourcesCount();
         },
         open: function(){
-            if(this.options.type === 'dialog' && (!$('body').data('mbPopup'))){
+            if(this.options.type === 'dialog' && (!$('body').data('mapbenderMbPopup'))){
                 var self = this;
 
                 $("body").mbPopup();
@@ -645,7 +645,7 @@
             }
         },
         close: function(){
-            if(this.options.type === 'dialog' && ($('body').data('mbPopup'))){
+            if(this.options.type === 'dialog' && ($('body').data('mapbenderMbPopup'))){
                 $(this.element).appendTo("#mb-layertree-dialog");
                 $("body").mbPopup("close");
             }

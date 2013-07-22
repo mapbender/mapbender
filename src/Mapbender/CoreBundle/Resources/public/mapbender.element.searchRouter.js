@@ -340,7 +340,7 @@ $.widget('mapbender.mbSearchRouter', {
         }
 
         if(this.highlightLayer.map === null) {
-            var map = $('#' + this.options.target).data('mbMap').map.olMap;
+            var map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
             map.addLayer(this.highlightLayer);
         }
 

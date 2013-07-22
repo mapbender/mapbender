@@ -14,13 +14,13 @@ $.widget("mapbender.mbScaleSelector", {
         var self = this;
         var me = $(this.element);
         this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
-        
+
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
-            
+
     },
-    
+
     _setup: function(){
-        var mbMap = $('#' + this.options.target).data('mbMap');
+        var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
         var scale = mbMap.map.olMap.getScale();
         var scales = mbMap.scales();
         var html = '';
@@ -33,15 +33,15 @@ $.widget("mapbender.mbScaleSelector", {
         $("#"+$(this.element).attr('id')+" select").val(scale);
         mbMap.map.olMap.events.register('zoomend', this, $.proxy(this._updateScale, this));
     },
-    
+
     _zoomToScale: function(){
         var scale = $("#"+$(this.element).attr('id')+" select").val();
-        var map = $('#' + this.options.target).data('mbMap');
+        var map = $('#' + this.options.target).data('mapbenderMbMap');
         map.zoomToScale(scale);
     },
-    
+
     _updateScale: function(){
-        var map = $('#' + this.options.target).data('mbMap');
+        var map = $('#' + this.options.target).data('mapbenderMbMap');
         var scale = Math.round(map.map.olMap.getScale());
         var val = Math.round(scale);
         var select = $("#"+$(this.element).attr('id')+" select");

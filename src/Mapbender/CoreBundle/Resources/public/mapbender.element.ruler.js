@@ -99,7 +99,7 @@ $.widget("mapbender.mbRuler", {
 
         this._reset();
 
-        if(!$('body').data('mbPopup')) {
+        if(!$('body').data('mapbenderMbPopup')) {
             $("body").mbPopup();
             $("body").mbPopup('addButton', "Close", "button right", function(){
                     self.deactivate();
@@ -113,6 +113,9 @@ $.widget("mapbender.mbRuler", {
                                            width:300,
                                            draggable:true});
         }
+        (this.options.type == 'line') ?
+          $("#linerulerButton").parent().addClass("toolBarItemActive") :
+          $("#arearulerButton").parent().addClass("toolBarItemActive");
     },
 
     /**
@@ -124,10 +127,10 @@ $.widget("mapbender.mbRuler", {
         var olMap = this.map.data('mapQuery').olMap;
         this.control.deactivate();
         olMap.removeControl(this.control);
-        if($('body').data('mbPopup')) {
+        $("#linerulerButton, #arearulerButton").parent().removeClass("toolBarItemActive");
+        if($('body').data('mapbenderMbPopup')) {
             $("body").mbPopup('close');
         }
-        $(".toolBarItemActive").removeClass("toolBarItemActive");
     },
 
     _reset: function() {

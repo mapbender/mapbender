@@ -25,7 +25,7 @@
         open: function() {
             var self = this;
 
-            if(!$('body').data('mbPopup')) {
+            if(!$('body').data('mapbenderMbPopup')) {
                 $("body").mbPopup();
                 var content = this.element.show();
 
@@ -79,9 +79,7 @@
                 Mapbender.error("WMSLoader: a WMS capabilities can't be loaded! The capabilities url is not valid.");
                 return;
             }
-            if(typeof version === 'undefined'){
-                version = "1.3.0";
-            }
+
             if(service.toUpperCase() !== "WMS"){
                 Mapbender.error('WMSLoader: the service "'+service+'" is not supported!');
                 return false;
@@ -113,8 +111,8 @@
         },
         _getCapabilitiesUrlSuccess: function(xml, getCapabilitiesUrl) {
             var self = this;
-            var mbMap = $('#' + self.options.target).data('mbMap');
-            var id = $('#' + this.options.target).data('mbMap').genereateSourceId();
+            var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
+            var id = $('#' + this.options.target).data('mapbenderMbMap').genereateSourceId();
             var layerDefs = Mapbender.source.wms.layersFromCapabilities(xml, id, this.options.splitLayers, mbMap.model, this.options.defaultFormat, this.options.defaultInfoFormat);
             $.each(layerDefs, function(idx, layerDef){
                 mbMap.addSource(layerDef, null, null);

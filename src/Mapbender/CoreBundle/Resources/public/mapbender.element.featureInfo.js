@@ -18,10 +18,6 @@ $.widget("mapbender.mbFeatureInfo", {
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
     },
 
-    _setup: function(){
-        this._super('_create');
-    },
-
     _setOption: function(key, value) {
         switch(key) {
             case "layers":
@@ -62,8 +58,8 @@ $.widget("mapbender.mbFeatureInfo", {
 
         $(this.element).empty();
 
-        var tabContainer = $('<div id="featureInfoTabContainer" class="tabContainer featureInfoTabContainer">' + 
-                               '<ul class="tabs"></ul>' + 
+        var tabContainer = $('<div id="featureInfoTabContainer" class="tabContainer featureInfoTabContainer">' +
+                               '<ul class="tabs"></ul>' +
                              '</div>');
         var header       = tabContainer.find(".tabs");
         var layers       = this.map.layers();
@@ -101,18 +97,18 @@ $.widget("mapbender.mbFeatureInfo", {
 
         var content = (fi_exist) ? tabContainer : '<p class="description">No feature info layer exists.</p>';
 
-        if(!$('body').data('mbPopup')) {
+        if(!$('body').data('mapbenderMbPopup')) {
             $("body").mbPopup();
             $("body").mbPopup('addButton', "Close", "button right", function(){
                         $("body").mbPopup('close');
                         if(self.options.deactivateOnClose) {
                             $.proxy(self.deactivate, self);
                         }
-                     }).mbPopup('showCustom', {title:"Detail information", 
-                                           content: content, 
+                     }).mbPopup('showCustom', {title:"Detail information",
+                                           content: content,
                                            showCloseButton: false,
-                                           modal:false, 
-                                           width:500, 
+                                           modal:false,
+                                           width:500,
                                            draggable:true});
 
         }else{

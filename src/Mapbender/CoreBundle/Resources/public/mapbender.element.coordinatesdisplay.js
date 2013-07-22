@@ -19,7 +19,7 @@ $.widget("mapbender.mbCoordinatesDisplay", {
 
     _setup: function(){
         var self = this;
-        var mbMap = $('#' + this.options.target).data('mbMap');
+        var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
         var layers = mbMap.map.layers();
         for(var i = 0; i < layers.length; ++i) {
             var layer = layers[i];
@@ -35,7 +35,7 @@ $.widget("mapbender.mbCoordinatesDisplay", {
 
     _reset: function(event, srs){
         var self = this;
-        var mbMap = $('#' + this.options.target).data('mbMap');
+        var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
 //        if(!srs){
             srs = { projection: mbMap.map.olMap.getProjectionObject()};
 //        }
@@ -74,7 +74,7 @@ $.widget("mapbender.mbCoordinatesDisplay", {
 
     showHidde: function() {
         var self = this;
-        var mbMap = $('#' + this.options.target).data('mbMap');
+        var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
         var list = mbMap.map.olMap.getControlsByClass('OpenLayers.Control.MousePosition');
         $.each(list, function(idx, val) {
             var div_id = '#'+$(self.element).attr('id')+'-div';

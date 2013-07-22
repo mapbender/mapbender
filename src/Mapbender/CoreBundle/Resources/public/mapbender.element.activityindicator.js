@@ -19,7 +19,7 @@ $.widget("mapbender.mbActivityIndicator", {
         this.element.bind('ajaxStop', $.proxy(this._onAjaxStop, this));
 
         $('.mb-element-map').each(function() {
-            var mqMap = $(this).data('mbMap').map;
+            var mqMap = $(this).data('mapbenderMbMap').map;
             $.each(mqMap.layers(), function(idx, mqLayer) {
                 self._bindToLayer(mqLayer);
                 // Is it already loading tiles?

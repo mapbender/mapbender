@@ -8,7 +8,7 @@
         },
 
         _onClick: function() {
-            if(!$('body').data('mbPopup')) {
+            if(!$('body').data('mapbenderMbPopup')) {
                 var source = $('#' + $(this.element).attr("id") + "-dialog");
                 var title = source.attr("title");
                 var content = source.find(".mb-element-copyright-content").text();
