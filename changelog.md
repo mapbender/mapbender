@@ -1,5 +1,7 @@
 # Changelog
 * **v3.0.1.0** - Yet to be released
+  - Element position moved from `mapbender_theme.scss` to `fullscreen.scss`
+  - Add new frontend template - Fullscreen alternative
   - Frontend jQuery upgrade to 1.9.1/1.10.2 (jQuery UI)
 
 ## Release History
