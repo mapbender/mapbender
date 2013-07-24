@@ -187,13 +187,15 @@ class PrintService
         imagepng($finalImage , $finalimagename);
         foreach ($this->layer_urls as $k => $url)
         {
-            if(is_file($tempdir.'/tempimage'.$k) && mime_content_type($tempdir.'/tempimage'.$k) == 'image/png') {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if(is_file($tempdir.'/tempimage'.$k) && finfo_file($finfo, $tempdir.'/tempimage'.$k) == 'image/png') {
                 $dest = imagecreatefrompng($finalimagename);
                 $src = imagecreatefrompng($tempdir.'/tempimage'.$k);
                 imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width , $this->image_height);
                 imagepng($dest , $finalimagename);
             }
             unlink($tempdir.'/tempimage'.$k);
+            finfo_close($finfo);
         }
     }
 
