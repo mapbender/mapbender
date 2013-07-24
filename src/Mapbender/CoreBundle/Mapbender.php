@@ -126,6 +126,9 @@ class Mapbender {
         $yamlMapper = new ApplicationYAMLMapper($this->container);
         $yamlEntities = $yamlMapper->getApplications();
         foreach($yamlEntities as $entity) {
+            if(!$entity->isPublished()) {
+                continue;
+            }
             $entities[$entity->getSlug()] = $entity;
         }
 
@@ -155,7 +158,11 @@ class Mapbender {
         }
 
         $yamlMapper = new ApplicationYAMLMapper($this->container);
-        return $yamlMapper->getApplication($slug);
+        $entity = $yamlMapper->getApplication($slug);
+        if(!$entity->isPublished()) {
+            return;
+        }
+        return $entity;
     }
 
     /**

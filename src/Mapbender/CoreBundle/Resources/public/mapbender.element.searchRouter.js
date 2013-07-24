@@ -16,6 +16,7 @@ $.widget('mapbender.mbSearchRouter', {
     resultCallbackProxy: null,
     searchModel: null,
     autocompleteModel: null,
+    popup: true,
 
     /**
      * Widget creator
@@ -104,7 +105,29 @@ $.widget('mapbender.mbSearchRouter', {
      */
     open: function() {
         if(true === this.options.asDialog) {
-            this.element.dialog('open');
+            var self = this;
+            var me = $(this.element);
+
+            if(!$('body').data('mbPopup')) {
+                $("body").mbPopup();
+                $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
+                    //close
+                    self._close();
+                    $("body").mbPopup("close");                    
+                }).mbPopup('showCustom', {
+                    title:"Search Router", 
+                    showHeader:true, 
+                    content: this.element, 
+                    draggable: true,
+                    width: 300,
+                    height: 200,
+                    showCloseButton: false,
+                    overflow: true
+                });
+                me.show();
+            }
+
+            this.popup = true;
         }
     },
 
@@ -114,7 +137,11 @@ $.widget('mapbender.mbSearchRouter', {
      */
     close: function() {
         if(true === this.options.asDialog) {
-            this.element.dialog('close');
+            var popup = $('body').data('mbPopup');
+
+            if(!$('body').data('mbPopup')) {
+                popup.close();
+            }
         }
     },
 
