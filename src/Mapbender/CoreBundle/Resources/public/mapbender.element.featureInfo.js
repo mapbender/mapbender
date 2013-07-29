@@ -10,14 +10,6 @@ $.widget("mapbender.mbFeatureInfo", {
     map: null,
     mapClickHandler: null,
 
-    _create: function() {
-        if(!Mapbender.checkTarget("mbFeatureInfo", this.options.target)){
-            return;
-        }
-        var self = this;
-        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
-    },
-
     _setOption: function(key, value) {
         switch(key) {
             case "layers":
