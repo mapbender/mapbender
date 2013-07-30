@@ -227,7 +227,9 @@
         _createLegendHtml: function(sources){
             var html = "";
             for(var i = 0; i < sources.length; i++){
-                html += this._createLayerHtml(sources[i], "");
+                if(sources[i].visible !== 'notvisible') {
+                    html += this._createLayerHtml(sources[i], "");
+                }
             }
             return html;
         },
@@ -237,7 +239,9 @@
                 html += this._createSourceTitleLine(layer);
                 html += '<ul class="ebene' + layer.level + '" data-sourceid="'+layer.sourceId+'" data-id="'+layer.id+'">';
                 for(var i = 0; i < layer.children.length; i++){
-                    html += this._createLayerHtml(layer.children[i], "");
+                    if(layer.children[i].visible !== 'notvisible') {
+                        html += this._createLayerHtml(layer.children[i], "");
+                    }
                 }
                 html += '</ul>';
             } else {
@@ -315,9 +319,9 @@
                 if(!$('body').data('mbPopup')) {
                     $("body").mbPopup();
                     $("body").mbPopup("addButton", "Close", "button buttonCancel critical right", function(){
-                    //close
-                    $("body").mbPopup("close");                    
-                }).mbPopup('showCustom', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, showCloseButton: false, overflow: false});
+                        //close
+                        $("body").mbPopup("close");
+                    }).mbPopup('showCustom', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, showCloseButton: false, overflow: false});
                 }
             }else{
                 $(this.element).find('#legends:eq(0)').html('<ul>' + html + '</ul>');
@@ -357,7 +361,7 @@
 
         close: function() {
             if(this.options.elementType === "dialog" && !$('body').data('mbPopup')) {
-               $("body").mbPopup("close");
+                $("body").mbPopup("close");
             }
         }
 
