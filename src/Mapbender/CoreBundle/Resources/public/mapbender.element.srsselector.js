@@ -58,7 +58,7 @@
                 
         _onSrsChanged: function(event, srsObj){
             this.selectSrs(srsObj.projection.projCode);
-//            var allSrs = this.mapWidget.data('mbMap').loadSrs("EPSG:31469"); // this is a test
+//            var allSrs = this.mapWidget.data('mapbenderMbMap').loadSrs("EPSG:31469"); // this is a test
         },
                 
         _onSrsAdded: function(event, srsObj){

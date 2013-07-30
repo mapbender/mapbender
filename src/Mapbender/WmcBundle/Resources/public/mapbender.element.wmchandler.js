@@ -152,7 +152,7 @@
             }
         },
         _editorBeforeSave: function(e) {
-            var map = $('#' + this.options.target).data('mbMap')
+            var map = $('#' + this.options.target).data('mapbenderMbMap')
             var state = map.getMapState();
             this.editorElm.find('form#save-wmc').find('input#wmc_state_json').val(JSON.stringify(state));
         },
@@ -294,7 +294,7 @@
         },
         _suggestState: function(e) {
             var self = this;
-            var map = $('#' + this.options.target).data('mbMap')
+            var map = $('#' + this.options.target).data('mapbenderMbMap')
             var state = map.getMapState();
             var stateSer = JSON.stringify(state);
             $.ajax({
@@ -388,7 +388,7 @@
         },
         loaderCreateWmc: function() {
             var self = this;
-            var map = $('#' + self.options.target).data('mbMap');
+            var map = $('#' + self.options.target).data('mapbenderMbMap');
             var state = map.getMapState();
             this.loaderElm.find('form input#wmcload_state').val(JSON.stringify(state));
             this.loaderElm.find('form').submit();
