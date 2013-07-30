@@ -314,7 +314,8 @@ class PrintService
         require('PDF_ImageAlpha.php');
         $tempdir = $this->tempdir;
         $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-        $format = substr($this->data['template'],0,2);
+        $format = $this->data['format'];
+  
         $this->pdf = new PDF_ImageAlpha($this->orientation,'mm',$format);
         //$this->pdf = new FPDF_FPDI($this->orientation,'mm',$format);
         $pdf = $this->pdf;
@@ -322,7 +323,8 @@ class PrintService
         $pdffile = $resource_dir.'/templates/'.$template.'.pdf';
         $pagecount = $pdf->setSourceFile($pdffile);
         $tplidx = $pdf->importPage(1);
-
+        
+        $pdf->SetAutoPageBreak(false);
         $pdf->addPage();
         $pdf->useTemplate($tplidx);
 
@@ -355,15 +357,6 @@ class PrintService
         {
             $tempdir = sys_get_temp_dir();
             foreach ($this->layer_urls as $k => $url)
-//            {
-//                $pdf->Image($tempdir.'/tempimage'.$k,
-//                            $this->x_ul,
-//                            $this->y_ul,
-//                            $this->width,
-//                            $this->height,
-//                            'png','',false,0,5,-1*0);
-//                //unlink($tempdir.'/tempimage'.$k);
-//            }
             $pdf->Image($tempdir.'/mergedimage.png',
                             $this->x_ul,
                             $this->y_ul,
@@ -372,23 +365,19 @@ class PrintService
                             'png','',false,0,5,-1*0);
 
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
-            $pdf->Image($resource_dir.'/images/northarrow.png',
-                        $this->conf['northarrow']['x']*10,
-                        $this->conf['northarrow']['y']*10,
-                        $this->conf['northarrow']['width']*10,
-                        $this->conf['northarrow']['height']*10);
-
+            if (isset($this->conf['northarrow']))
+            {    
+                $pdf->Image($resource_dir.'/images/northarrow.png',
+                            $this->conf['northarrow']['x']*10,
+                            $this->conf['northarrow']['y']*10,
+                            $this->conf['northarrow']['width']*10,
+                            $this->conf['northarrow']['height']*10);
+            }
         }else{
-            $this->rotateNorthArrow();
-//            foreach ($this->layer_urls as $k => $url)
-//            {
-//                $pdf->Image($tempdir.'/rotated_image'.$k.'.png',
-//                            $this->x_ul,
-//                            $this->y_ul,
-//                            $this->width,
-//                            $this->height,
-//                            'png','',false,0,5,-1*0);
-//            }
+            if (isset($this->conf['northarrow']))
+            { 
+                $this->rotateNorthArrow();
+            }
             $pdf->Image($tempdir.'/mergedimage.png',
                             $this->x_ul,
                             $this->y_ul,
@@ -398,7 +387,7 @@ class PrintService
 
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
         }
-
+        unlink($tempdir.'/mergedimage.png');
         //$pdf->Output('newpdf.pdf', 'D'); //file output
         $pdf->Output();
     }
