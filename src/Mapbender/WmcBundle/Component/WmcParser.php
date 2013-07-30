@@ -7,8 +7,8 @@ use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\WmcBundle\Component\Exception\WmcException;
 
 /**
- * Class that Parses WMS GetCapabilies Document 
- * Parses WMS GetCapabilities documents
+ * Class that Parses WMC Document 
+ * Parses WMC documents
  * 
  * @author Karim Malhas
  * @author Paul Schmidt
