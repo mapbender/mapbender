@@ -24,7 +24,7 @@ $.widget("mapbender.mbZoomBar", {
 
     _setup: function() {
         this.mapDiv = $('#' + this.options.target);
-        this.map = this.mapDiv.data('mbMap').map.olMap;
+        this.map = this.mapDiv.data('mapbenderMbMap').map.olMap;
         this._setupSlider();
         this._setupZoomButtons();
         this._setupPanButtons();
@@ -45,7 +45,7 @@ $.widget("mapbender.mbZoomBar", {
     },
 
     _destroy: $.noop,
-    
+
     _worldZoom: function(e) {
         this.map.zoomToMaxExtent();
     },

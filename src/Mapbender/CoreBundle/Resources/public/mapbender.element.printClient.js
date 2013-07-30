@@ -19,7 +19,7 @@
         width: null,
         height: null,
         popup: true,
-    
+
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
                 return;
@@ -29,10 +29,10 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
-    
-        _setup: function(){     
-            this.map = $('#' + this.options.target).data('mbMap');
-     
+
+        _setup: function(){
+            this.map = $('#' + this.options.target).data('mapbenderMbMap');
+
             $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
             .bind('change', $.proxy(this._updateGeometry, this));
             $('input[name="scale_text"], input[name="rotation"]', this.element)
@@ -41,24 +41,24 @@
             .bind('change', $.proxy(this._getPrintSize, this))
             .trigger('change');
         },
-    
-        open: function() {  
+
+        open: function() {
             var self = this;
             var me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            if(!$('body').data('mbPopup')) {
+            if(!$('body').data('mapbenderMbPopup')) {
                 $("body").mbPopup();
                 $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
                     //close
                     self._close();
-                    $("body").mbPopup("close");                    
+                    $("body").mbPopup("close");
                 }).mbPopup("addButton", "Print", "button right", function(){
                     //print
                     self._print();
                 }).mbPopup('showCustom', {
-                    title:"Print Client", 
-                    showHeader:true, 
-                    content: this.element, 
+                    title:"Print Client",
+                    showHeader:true,
+                    content: this.element,
                     draggable: true,
                     width: 300,
                     height: 200,
@@ -73,22 +73,22 @@
             this._updateElements();
             this._updateGeometry(true);
         },
-    
+
         _close: function() {
             this.element.hide().appendTo($('body'));
             this.popup = false;
             this._updateElements();
         },
-    
+
         _loadPrintFormats: function() {
-            var self = this;     
+            var self = this;
             var count = 0;
             var quality_levels = this.options.quality_levels;
             var quality = $('select[name="quality"]', this.element);
             var list = quality.siblings(".dropdownList");
             var valueContainer = quality.siblings(".dropdownValue");
             list.empty();
-            quality.empty();  
+            quality.empty();
             if (null === quality_levels){
                 quality.parent().hide();
             } else {
@@ -115,7 +115,7 @@
                     quality.parent().show();
                 }
             }
-        
+
             var scale_text = $('input[name="scale_text"]', this.element),
             scale_select = $('select[name="scale_select"]', this.element);
             list = scale_select.siblings(".dropdownList");
@@ -131,7 +131,7 @@
                 scale_select.empty();
                 for(key in this.options.scales) {
                     var scale = this.options.scales[key];
-                    scale_select.append($('<option></option>', {                    
+                    scale_select.append($('<option></option>', {
                         'value': scale,
                         'html': '1:' + scale,
                         'class': "item-" + count
@@ -147,8 +147,8 @@
                 }
                 scale_select.parent().show();
             }
-        
-            var rotation = $('input[name="rotation"]', this.element); 
+
+            var rotation = $('input[name="rotation"]', this.element);
             var sliderDiv = $('#slider', this.element);
             if(true === this.options.rotatable){
                 rotation.val(0).parent().show();
@@ -165,7 +165,7 @@
                 });
                 $(rotation).keyup(function() {
                     slider.slider( "value", this.value );
-                }); 
+                });
             } else {
                 rotation.parent().hide();
             }
@@ -178,7 +178,7 @@
             }
             if(hasAttr) {
                 var extra_fields = $('#extra_fields', this.element).empty();
-                
+
                 for(var field in opt_fields){
                     extra_fields.append($('<label></label>', {
                         'html': opt_fields[field].label,
@@ -191,51 +191,51 @@
                         'style': 'margin-left: 3px'
                     }));
                 }
-                
+
             }else{
                 $('#extra_fields').hide();
             }
         },
-    
+
         _updateGeometry: function(reset) {
             var template = this.element.find('select[name="template"]').val();
             var width = this.width;
             var height = this.height;
             var scale = this._getPrintScale();
             var rotation = $('input[name="rotation"]').val();
-        
+
             if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
                 if(null !== this.lastScale) {
-                //$('input[name="scale_text"]').val(this.lastScale).change();                
+                //$('input[name="scale_text"]').val(this.lastScale).change();
                 }
                 return;
-            }        
+            }
             scale = parseInt(scale);
-        
+
             if(!(!isNaN(parseFloat(rotation)) && isFinite(rotation))) {
                 if(null !== this.lastRotation) {
-                    $('input[name="rotation"]').val(this.lastRotation).change();                
+                    $('input[name="rotation"]').val(this.lastRotation).change();
                 }
                 return;
-            }        
+            }
             rotation= parseInt(-rotation);
-        
+
             this.lastScale = scale;
-        
+
             var world_size = {
                 x: width * scale / 100,
                 y: height * scale / 100
             };
-        
+
             var center = (reset === true || !this.feature) ?
             this.map.map.olMap.getCenter() :
             this.feature.geometry.getBounds().getCenterLonLat();
-        
+
             if(this.feature) {
                 this.layer.removeAllFeatures();
                 this.feature = null;
             }
-        
+
             this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
                 center.lon - 0.5 * world_size.x,
                 center.lat - 0.5 * world_size.y,
@@ -246,13 +246,13 @@
             this.layer.addFeatures(this.feature);
             this.layer.redraw();
         },
-    
+
         _updateElements: function() {
             var self = this;
 
             if(true == this.popup){
                 if(null === this.layer) {
-                
+
                     this.layer = new OpenLayers.Layer.Vector("Print", {
                         styleMap: new OpenLayers.StyleMap({
                             'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
@@ -269,7 +269,7 @@
                 this.map.map.olMap.addLayer(this.layer);
                 this.map.map.olMap.addControl(this.control);
                 this.control.activate();
-            
+
                 this._updateGeometry(true);
             } else {
                 if(null !== this.control) {
@@ -281,11 +281,11 @@
                 }
             }
         },
-    
+
         _getPrintScale: function() {
             return $('select[name="scale_select"],input[name="scale_text"]').val();
         },
-    
+
         _print: function() {
             if (this.options.print_directly) {
                 this._printDirectly()
@@ -294,78 +294,78 @@
                 this._printQueued();
             }
         },
-    
+
         _getPrintExtent: function() {
             var data = {
                 extent: {},
                 center: {}
             };
-            
+
             data.extent.width = this.feature.world_size.x;
             data.extent.height = this.feature.world_size.y;
             data.center.x = this.feature.geometry.getBounds().getCenterLonLat().lon;
-            data.center.y = this.feature.geometry.getBounds().getCenterLonLat().lat;     
-        
+            data.center.y = this.feature.geometry.getBounds().getCenterLonLat().lat;
+
             return data;
         },
-    
+
         _printDirectly: function() {
             var form = $('form#formats', this.element),
             extent = this._getPrintExtent();
             form.find('div.layers').html('');
             var template_key = this.element.find('select[name="template"]').val(),
             format = this.options.templates[template_key].format;
-        
+
             // Felder für extent, center und layer dynamisch einbauen
             var fields = $();
-        
+
             $.merge(fields, $('<input />', {
                 type: 'hidden',
                 name: 'format',
                 value: format
             }));
-        
+
             $.merge(fields, $('<input />', {
                 type: 'hidden',
                 name: 'extent[width]',
                 value: extent.extent.width
             }));
-        
+
             $.merge(fields, $('<input />', {
                 type: 'hidden',
                 name: 'extent[height]',
                 value: extent.extent.height
             }));
-        
+
             $.merge(fields, $('<input />', {
                 type: 'hidden',
                 name: 'center[x]',
                 value: extent.center.x
             }));
-        
+
             $.merge(fields, $('<input />', {
                 type: 'hidden',
                 name: 'center[y]',
                 value: extent.center.y
             }));
-        
+
             var sources = this.map.getSourceTree(), num = 0;
-        
+
             for(var i = 0; i < sources.length; i++) {
                 var layer = this.map.map.layersList[sources[i].mqlid],
                 type = layer.olLayer.CLASS_NAME;
                 if(layer.olLayer.params.LAYERS.length === 0){
                     continue;
-                }    
+                }
                 if(!(0 === type.indexOf('OpenLayers.Layer.'))) {
                     window.console && console.log('Layer is of unknown type for print.', layer);
                     continue;
                 }
-            
+
                 if(layer.olLayer.type === 'vector') {
                 // Vector layers are all the same:
                 //   * Get all features as GeoJSON
-                //   * TODO: Get Styles...  
+                //   * TODO: Get Styles...
                 // TODO: Implement this thing
                 } else if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
                     $.merge(fields, $('<input />', {
@@ -376,18 +376,18 @@
                     num++;
                 }
             }
-        
+
             fields.appendTo(form.find('div#layers'));
             // Post in neuen Tab (action bei form anpassen)
-        
-            var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';   
-        
+
+            var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
+
             form.get(0).setAttribute('action', url);
             form.attr('target', '_blank');
             form.attr('method', 'post');
             form.submit();
         },
-       
+
         _getPrintSize: function() {
             var self = this;
             var template = $('select[name="template"]', this.element).val();

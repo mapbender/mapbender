@@ -20,7 +20,7 @@
 
         _setup: function(){
             var self = this;
-            var mbMap = this.mapWidget.data('mbMap');
+            var mbMap = this.mapWidget.data('mapbenderMbMap');
             var options = "";
             var allSrs = mbMap.getAllSrs();
             for(var i = 0; i < allSrs.length; i++){
@@ -182,7 +182,7 @@
             if($.type(crs) === "string"){
                 if(this.isSrsSupported(crs)){
                     return [{
-                        name: crs, 
+                        name: crs,
                         title: $(this.op_sel + '[value="'+crs+'"]').text()
                     }];
                 }
@@ -197,7 +197,7 @@
                         }
                         if($(option).val()==crsName){
                             result.push({
-                                name: $(option).val(), 
+                                name: $(option).val(),
                                 title: $(option).text()
                             });
                         }

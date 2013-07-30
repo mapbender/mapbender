@@ -38,7 +38,7 @@
             var self = this;
             var me = $(this.element);
 
-            this.model = $("#" + self.options.target).data("mbMap").getModel();
+            this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
 
             this.layerTitle = this.options.showLayerTitle ? "" : "notshow";
             this.sourceTitle = this.options.showLayerTitle ? "" : "notshow";
@@ -316,11 +316,11 @@
             var self = this;
             $(self.element).find("#imgtest").html("");
             if(this.options.elementType === "dialog") {
-                if(!$('body').data('mbPopup')) {
+                if(!$('body').data('mapbenderMbPopup')) {
                     $("body").mbPopup();
                     $("body").mbPopup("addButton", "Close", "button buttonCancel critical right", function(){
                     //close
-                    $("body").mbPopup("close");                    
+                    $("body").mbPopup("close");
                 }).mbPopup('showCustom', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, showCloseButton: false, overflow: false});
                 }
             }else{
@@ -360,7 +360,7 @@
         },
 
         close: function() {
-            if(this.options.elementType === "dialog" && !$('body').data('mbPopup')) {
+            if(this.options.elementType === "dialog" && !$('body').data('mapbenderMbPopup')) {
                $("body").mbPopup("close");
             }
         }

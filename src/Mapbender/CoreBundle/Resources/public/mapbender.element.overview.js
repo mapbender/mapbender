@@ -25,7 +25,7 @@ $.widget("mapbender.mbOverview", {
      */
     _setup: function() {
         var self = this;
-        var mbMap = $('#' + this.options.target).data('mbMap');
+        var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
         $(this.element).addClass(this.options.anchor);
         if(!this.options.maximized) {
             $(this.element).addClass("closed");

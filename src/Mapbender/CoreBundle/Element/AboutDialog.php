@@ -6,7 +6,7 @@ use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * 
+ *
  */
 class AboutDialog extends Element
 {
@@ -45,7 +45,8 @@ class AboutDialog extends Element
                 'mapbender.element.button.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 'mapbender.element.aboutDialog.js'),
-            'css' => array());
+            'css' => array(
+                'mapbender.element.aboutDialog.css'));
     }
 
     /**

@@ -11,9 +11,9 @@
 //        template: null,
 //        layerconf : null,
 //        consts: {
-//            source: "source", 
-//            root: "root", 
-//            group: "group", 
+//            source: "source",
+//            root: "root",
+//            group: "group",
 //            simple: "simple"
 //        },
 //
@@ -26,7 +26,7 @@
 //            this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
 //            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
 //        },
-//    
+//
 //        _setup: function(){
 //            var self = this;
 //            if(self.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true){
@@ -48,26 +48,26 @@
 //                }
 //            }
 //            this._setSourcesCount();
-//            
+//
 //            me.find(".layer-opacity-slider").slider();
-//            
+//
 //            this._createSortable();
 //
 //            $(this.element).find('li input[name="selected"]').live("change", $.proxy(self._toggleSelected, self));
 //            $(this.element).find('li input[name="info"]').live("change", $.proxy(self._toggleInfo, self));
 //            $(this.element).find('.iconFolder').live("click", $.proxy(self._toggleContent, self));
 //            $(this.element).find('#delete-all').live("click", $.proxy(self._removeAllLayers, self));
-//            
+//
 //            $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
 //            $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
 //            $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
 //            $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
 //            $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
 //            $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
-//            
+//
 //            $(this.element).find('.iconRemove').live("click", $.proxy(self._removeSource, self));
 //            $(this.element).find('.layer-menu-btn').live("click", $.proxy(self._toggleMenu, self));
-//            
+//
 //            if(this.options.type === "dialog"){
 //                this._initDialog();
 //                if(this.options.autoOpen){
@@ -75,7 +75,7 @@
 //                }
 //            }
 //        },
-//        
+//
 //        _createSortable: function(){
 //            var self = this;
 //            $("ul.layers").each(function(){
@@ -93,7 +93,7 @@
 //                            before = {
 //                                source: self.model.getSource({
 //                                    id: $(beforeEl).attr('data-sourceid') ? $(beforeEl).attr('data-sourceid') : $(beforeEl).parents('li[data-sourceid]:first').attr('data-sourceid')
-//                                }), 
+//                                }),
 //                                layerId: $(beforeEl).attr("data-id")
 //                            };
 //                        }
@@ -102,7 +102,7 @@
 //                            after = {
 //                                source:  self.model.getSource({
 //                                    id: $(afterEl).attr('data-sourceid') ? $(afterEl).attr('data-sourceid') : $(afterEl).parents('li[data-sourceid]:first').attr('data-sourceid')
-//                                }), 
+//                                }),
 //                                layerId: $(afterEl).attr("data-id")
 //                            };
 //                        }
@@ -127,12 +127,12 @@
 //                            $(that).sortable('cancel');
 //                            return;
 //                        }
-//                        
+//
 //                    }
 //                });
 //            });
 //        },
-//        
+//
 //        _onSourceAdded: function(event, added){
 //            var before = added.after, after = added.before;
 //            if(added.source.configuration.baseSource && !this.options.showBaseSource){
@@ -178,10 +178,10 @@
 //                    this._createSortable();
 //                }
 //            }
-//            
+//
 //            this._setSourcesCount();
 //        },
-//        
+//
 //        _onSourceChanged: function(event, changed){
 //            if(this.options.displaytype === "tree"){
 //                for(key in changed.children){
@@ -211,7 +211,7 @@
 //                }
 //            }
 //        },
-//        
+//
 //        _onSourceRemoved: function(event, removed){
 //            var hasLayers = false;
 //            for(layerid in removed.children){
@@ -223,7 +223,7 @@
 //            }
 //            this._setSourcesCount();
 //        },
-//        
+//
 //        _onSourceLoadStart: function(event, option){ // sets "loading" for layers
 //            if(!option.source)
 //                return;
@@ -250,7 +250,7 @@
 //                });
 //            }
 //        },
-//        
+//
 //        _onSourceLoadEnd: function(event, option){ // removes "loading" from layers
 //            if(!option.source)
 //                return;
@@ -285,7 +285,7 @@
 //                });
 //            }
 //        },
-//    
+//
 //        _createSourceTree: function(source, sourceEl, scale, type, isroot){
 //            var self = this;
 //            if(sourceEl.type){ // source
@@ -333,7 +333,7 @@
 //                        menu.find('.layer-zoom').bind("click", function(e){ e.stopPropagation(); self._zoomToLayer(sourceEl); });
 //                    }
 //                    menu.find('.layer-metadata').bind("click", function(e){ e.stopPropagation(); self._showMetadata(sourceEl); });
-//                    
+//
 //                }
 //                if(!this.options.layerRemove) li.find('.iconRemove').remove();
 //                if(sourceEl.children){
@@ -350,7 +350,7 @@
 //            }
 //            return li;
 //        },
-//        
+//
 //        _createTreeNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found){
 //            if(sourceEl.type){ // source
 //                var li = "";
@@ -431,7 +431,7 @@
 //            }
 //            return null;
 //        },
-////        
+////
 ////        _createSourceList: function(source, sourceEl, scale, type, isroot){
 ////            if(sourceEl.type){ // source
 ////                var liarr = [];
@@ -464,7 +464,7 @@
 ////            }
 ////            return liarr;
 ////        },
-////        
+////
 ////        _createListNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found){
 ////            alert("not defined");
 ////            return;
@@ -534,7 +534,7 @@
 //                    return text;
 //            }
 //        },
-//    
+//
 //        _getNodeType: function(node, isroot){
 //            if(node.children && isroot){
 //                return this.consts.root;
@@ -542,9 +542,9 @@
 //                return this.consts.group;
 //            } else {
 //                return this.consts.simple;
-//            }  
+//            }
 //        },
-//    
+//
 //        _getNodeProporties: function(nodeConfig) {
 //            var conf =  {
 //                selected: nodeConfig.options.treeOptions.selected,
@@ -563,28 +563,28 @@
 //
 //            if(nodeConfig.state.outOfScale){
 //                conf["visibility"] = {
-//                    state: "invisible", 
+//                    state: "invisible",
 //                    tooltip : "outOfScale"
 //                };
 //            } else if(nodeConfig.state.outOfBounds){
 //                conf["visibility"] = {
-//                    state: "invisible", 
+//                    state: "invisible",
 //                    tooltip : "outOfBounds"
 //                };
 //            } else if(!nodeConfig.state.visibility){
 //                conf["visibility"] = {
-//                    state: "invisible", 
+//                    state: "invisible",
 //                    tooltip : "parent invisible"
 //                };
 //            } else {
 //                conf["visibility"] = {
-//                    state: "", 
+//                    state: "",
 //                    tooltip : ""
 //                };
 //            }
 //            return conf;
 //        },
-//        
+//
 //        _toggleContent: function(e){
 //            var me = $(e.target);
 //            if(me.hasClass("iconFolderActive")){
@@ -595,7 +595,7 @@
 //                me.parent().parent().addClass("showLeaves");
 //            }
 //        },
-//    
+//
 //        _toggleSelected: function(e){
 //            var id = $(e.target).parents('li:first').attr('data-id');
 //            var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
@@ -614,7 +614,7 @@
 //            };
 //            this.model.changeSource(tochange);
 //        },
-//    
+//
 //        _toggleInfo: function(e){
 //            var id = $(e.target).parents('li:first').attr('data-id');
 //            var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
@@ -633,7 +633,7 @@
 //            };
 //            this.model.changeSource(tochange);
 //        },
-//        
+//
 //        _toggleMenu: function(e){
 //            var menu = $(e.target).parent().find('div.layer-menu:first');
 //            if(menu.hasClass("hide-elm")){
@@ -642,7 +642,7 @@
 //                menu.addClass("hide-elm");
 //            }
 //        },
-//        
+//
 //        _removeSource: function(e){
 //            var layer_id = $(e.target).parents("li:first").attr("data-id");
 //            var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
@@ -657,19 +657,19 @@
 //            this.model.removeSource(toremove);
 //            this._setSourcesCount();
 //        },
-//        
+//
 //        _showLegend: function(elm){
 //        },
-//    
+//
 //        _exportKml: function(elm){
 //        },
-//        
+//
 //        _zoomToLayer: function(elm){
 //        },
-//        
+//
 //        _showMetadata: function(elm){
 //        },
-//        
+//
 //        _setSourcesCount: function(){
 //            var countObj = {};
 //            $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm){
@@ -680,7 +680,7 @@
 //                num ++;
 //            $(this.element).find('#counter').text(num);
 //        },
-//        
+//
 //        _removeAllLayers: function(e){
 //            var self = this;
 //            if(confirm("Really all sources delete?")){
@@ -708,11 +708,11 @@
 //                $("body").mbPopup();
 //                $("body").mbPopup('addButton', "Close", "button critical right", function(){
 //                            self.close();
-//                         }).mbPopup('showCustom', 
-//                                  {title:this.options.title, 
-//                                   showHeader:true, 
-//                                   content: $(this.element), 
-//                                   width:350, 
+//                         }).mbPopup('showCustom',
+//                                  {title:this.options.title,
+//                                   showHeader:true,
+//                                   content: $(this.element),
+//                                   width:350,
 //                                   showCloseButton: false,
 //                                   draggable:true});
 //            }
@@ -739,7 +739,7 @@
 //                self.dlg.html($(self.element));
 //            }
 //        },
-//    
+//
 //        _destroy: $.noop
 //    });
 //

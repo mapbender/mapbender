@@ -15,12 +15,12 @@
             var self = this;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
-        
+
         /**
          * Initializes the scale bar
          */
         _setup: function() {
-            var mbMap = $('#' + this.options.target).data('mbMap');
+            var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
             var projection = mbMap.map.olMap.getProjectionObject();
 
             $(this.element).addClass(this.options.anchor);
@@ -34,7 +34,7 @@
                 bottomInUnits: "ft"
             };
             this.scalebar = new OpenLayers.Control.ScaleLine(scalebarOptions);
-            
+
             mbMap.map.olMap.addControl(this.scalebar);
             if($.inArray("km", this.options.units) === -1){
                 $(this.element).find('div.olControlScaleLineTop').css({display: 'none'});
@@ -44,8 +44,8 @@
             }
             $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
         },
-        
-        
+
+
         /**
          * Cahnges the scale bar srs
          */
@@ -53,7 +53,7 @@
             this.scalebar.geodesic = srs.projection.units = 'degrees' ? true : false;
             this.scalebar.update();
         }
-        
+
     });
 
 })(jQuery);

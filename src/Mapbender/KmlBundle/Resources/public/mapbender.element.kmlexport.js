@@ -36,7 +36,7 @@ $.widget("mapbender.mbKmlExport", {
     },
 
     _map2form: function(targetId) {
-        var map = $('#' + targetId).data('mbMap').map;
+        var map = $('#' + targetId).data('mapbenderMbMap').map;
 
         var extent = map.olMap.getExtent();
         $('<input></input>')
@@ -53,7 +53,7 @@ $.widget("mapbender.mbKmlExport", {
     },
 
     exportMap: function(targetId) {
-        var map = $('#' + targetId).data('mbMap').map,
+        var map = $('#' + targetId).data('mapbenderMbMap').map,
             mbLayers = map.layers(),
             self = this;
 
