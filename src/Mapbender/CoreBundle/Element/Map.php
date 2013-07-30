@@ -155,7 +155,30 @@ class Map extends Element
                 }
             }
         }
-        $configuration["srsDefs"] = $this->getSrsDefinitions($allsrs);
+
+        unset($configuration['otherSrs']);
+        $em = $this->container->get("doctrine")->getEntityManager();
+        $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
+                        . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
+                ->setParameter('name', array_keys($allsrs));
+        $srses = $query->getResult();
+
+        $ressrses = array();
+        foreach($srses as $srsTemp)
+        {
+            $ressrses[$srsTemp->getName()] = array(
+                "name" => $srsTemp->getName(),
+                "title" => $allsrs[$srsTemp->getName()] !== "" ? $allsrs[$srsTemp->getName()] : $srsTemp->getTitle(),
+                "definition" => $srsTemp->getDefinition());
+        }
+        /* sort the ressrses */
+        foreach($allsrs as $key => $value)
+        {
+            if(isset($ressrses[$key])){
+                $configuration["srsDefs"][] = $ressrses[$key];
+            }
+        }
+
         $srs_req = $this->container->get('request')->get('srs');
         if($srs_req)
         {
@@ -166,35 +189,40 @@ class Map extends Element
             }
             $configuration = array_merge($configuration,
                                          array('targetsrs' => $srs_req));
-            $poi           = $this->container->get('request')->get('poi');
-            if($poi)
-            {
-                $extra['type'] = 'poi';
-                $point         = split(',', $poi['point']);
-                $extra['data'] = array(
-                    'x'     => floatval($point[0]),
-                    'y'     => floatval($point[1]),
-                    'label' => $poi['label'],
-                    'scale' => $poi['scale']
+        }
+
+        $pois = $this->container->get('request')->get('poi');
+        if($pois) {
+            $extra['pois'] = array();
+            if(array_key_exists('point', $pois)) {
+                $pois = array($pois);
+            }
+            foreach($pois as $poi) {
+                $point = explode(',', $poi['point']);
+                $extra['pois'][] = array(
+                    'x' => floatval($point[0]),
+                    'y' => floatval($point[1]),
+                    'label' => isset($poi['label']) ? $poi['label'] : null,
+                    'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
             }
+        }
 
-            $bbox = $this->container->get('request')->get('bbox');
-            if(!$poi && $bbox)
+        $bbox = $this->container->get('request')->get('bbox');
+        if($bbox) {
+            $bbox = explode(',', $bbox);
+            if(count($bbox) === 4)
             {
-                $bbox = explode(',', $bbox);
-                if(count($bbox) === 4)
-                {
-                    $extra['type'] = 'bbox';
-                    $extra['data'] = array(
-                        floatval($bbox[0]),
-                        floatval($bbox[1]),
-                        floatval($bbox[2]),
-                        floatval($bbox[3])
-                    );
-                }
+                $extra['bbox'] = array(
+                    floatval($bbox[0]),
+                    floatval($bbox[1]),
+                    floatval($bbox[2]),
+                    floatval($bbox[3])
+                );
             }
         }
+
+        $configuration['extra'] = $extra;
 
         if(!isset($configuration['scales']))
         {

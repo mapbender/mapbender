@@ -34,7 +34,7 @@ $.widget("mapbender.mbOverview", {
         var max_ext = mbMap.model.mapMaxExtent.extent;
         this.startproj = proj;
         var layers_overview = [];
-        $.each(Mapbender.configuration.layersets[self.options.layerset],
+        $.each(Mapbender.configuration.layersets[self.options.layerset].reverse(),
             function(idx, item) {
                 $.each(item, function(idx2, layerDef) {
                     if(layerDef.type === "wms"){
@@ -45,10 +45,18 @@ $.widget("mapbender.mbOverview", {
                         }
                         layers_overview.push(new OpenLayers.Layer.WMS(
                             layerDef.title,
-                            layerDef.configuration.options.url, {
+                            layerDef.configuration.options.url,
+                            {
                                 layers: ls.substring(1),
-                                format: layerDef.configuration.options.format
-                            }));
+                                format: layerDef.configuration.options.format,
+                                transparent: layerDef.configuration.options.transparent
+                            },
+                            {
+                                isBaseLayer: idx === 0 ? true : false,
+                                opacity: layerDef.configuration.options.opacity,
+                                singleTile: true
+                            }
+                        ));
                         self._addOrigLayerExtent(layerDef);
                     }
                 });

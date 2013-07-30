@@ -89,6 +89,8 @@ Mapbender.checkTarget = function(widgetName, target, targetname){
     }
 };
 
+<<<<<<< HEAD
+=======
 Mapbender.DefaultModel = {
     mbMap: null,
     domElement: null,
@@ -1434,6 +1436,7 @@ Mapbender.DefaultModel = {
 
 };
 
+>>>>>>> 3.0-design
 // This calls on document.ready and won't be called when inserted dynamically
 // into a existing page. In such case, Mapbender.setup has to be called
 // explicitely, see mapbender.application.json.js

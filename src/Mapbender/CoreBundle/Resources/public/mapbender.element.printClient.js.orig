@@ -191,6 +191,11 @@
                         'style': 'margin-left: 3px'
                     }));
                 }
+<<<<<<< HEAD
+
+=======
+                
+>>>>>>> 3.0-design
             }else{
                 $('#extra_fields').hide();
             }

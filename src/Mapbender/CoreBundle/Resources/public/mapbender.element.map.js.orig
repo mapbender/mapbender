@@ -33,9 +33,14 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
+<<<<<<< HEAD
+            this.options = { layerDefs: [] };
+=======
+
             this.options = {
                 layerDefs: []
             }; // romove all options
+>>>>>>> 3.0-design
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();
@@ -92,7 +97,11 @@
                 this.model.removeSource(toChangeObj);
             }
         },
+<<<<<<< HEAD
+                
+=======
 
+>>>>>>> 3.0-design
         /**
          *
          */

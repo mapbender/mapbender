@@ -118,8 +118,9 @@
     <li>
       <span class="labelText left">{{ "Scale" | trans }}:</span>
       <span class="metaText">
-        {{ "Min" | trans }}:{{ layer.scale.min }}<br/>
-        {{ "Max" | trans }}:{{ layer.scale.max }}</span>
+        {{ "Min" | trans }}:{{ '%d'|format(layer.scale.min) }}<br/>
+        {{ "Max" | trans }}:{{ '%d'|format(layer.scale.max) }}</span>
+
     </li>
   {% endif %}
   {% if layer.scaleHint is defined and layer.scaleHint != '' %}

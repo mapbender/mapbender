@@ -71,6 +71,9 @@ class RepositoryController extends Controller
      */
     public function viewAction(WmsSource $wms)
     {
+        if(!$this->get('security.context')->isGranted('OWNER', $wms)) {
+            throw new AccessDeniedException();
+        }
         return array("wms" => $wms);
     }
 
