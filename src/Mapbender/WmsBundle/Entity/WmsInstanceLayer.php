@@ -122,7 +122,7 @@ class WmsInstanceLayer implements InstanceLayerIn
         $this->sublayer = new ArrayCollection();
         $this->style = "";
     }
-    
+
     /**
      * Set id
      * @param integer $id
@@ -137,7 +137,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -160,7 +160,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -196,7 +196,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get sublayer
      *
-     * @return array 
+     * @return array
      */
     public function getSublayer()
     {
@@ -219,7 +219,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get parent
      *
-     * @return WmsInstanceLayer 
+     * @return WmsInstanceLayer
      */
     public function getParent()
     {
@@ -242,7 +242,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get active
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getActive()
     {
@@ -265,7 +265,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get allowselected
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getAllowselected()
     {
@@ -288,7 +288,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get selected
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getSelected()
     {
@@ -311,7 +311,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get info
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getInfo()
     {
@@ -355,7 +355,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get allowinfo
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getAllowinfo()
     {
@@ -420,7 +420,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get minScale
      *
-     * @return float 
+     * @return float
      */
     public function getMinScale()
     {
@@ -443,7 +443,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get maxScale
      *
-     * @return float 
+     * @return float
      */
     public function getMaxScale()
     {
@@ -466,7 +466,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get style
      *
-     * @return string 
+     * @return string
      */
     public function getStyle()
     {
@@ -489,7 +489,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get priority
      *
-     * @return integer 
+     * @return integer
      */
     public function getPriority()
     {
@@ -512,7 +512,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get wmsinstance
      *
-     * @return WmsInstance 
+     * @return WmsInstance
      */
     public function getWmsinstance()
     {
@@ -535,7 +535,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     /**
      * Get wmslayersource
      *
-     * @return WmsLayerSource 
+     * @return WmsLayerSource
      */
     public function getWmslayersource()
     {

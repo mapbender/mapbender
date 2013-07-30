@@ -130,7 +130,7 @@ class WmsInstance extends SourceInstance
 
     /**
      * Get an Instance Configuration.
-     * 
+     *
      * @return array $configuration
      */
     public function getConfiguration()
@@ -158,7 +158,7 @@ class WmsInstance extends SourceInstance
         $wmsconf->setType(strtolower($this->getType()));
         $wmsconf->setTitle($this->title);
         $wmsconf->setIsBaseSource(true);
-        
+
         $options = new WmsInstanceConfigurationOptions();
         $options->setUrl($this->configuration["url"])
                 ->setProxy($this->proxy)
@@ -168,8 +168,13 @@ class WmsInstance extends SourceInstance
                 ->setTransparency($this->transparency)
                 ->setOpacity($this->opacity / 100)
                 ->setTiled($this->tiled);
+
+        if(isset($this->configuration["vendor"])) {
+            $options->setVendor($this->configuration["vendor"]);
+        }
+
         $wmsconf->setOptions($options);
-        
+
         if(!key_exists("children", $this->configuration))
         {
             $num = 0;
@@ -256,7 +261,7 @@ class WmsInstance extends SourceInstance
         $wmsconf->setType(strtolower($this->getType()));
         $wmsconf->setTitle($this->title);
         $wmsconf->setIsBaseSource(true);
-        
+
         $options = new WmsInstanceConfigurationOptions();
         $options->setUrl($this->source->getGetMap()->getHttpGet())
                 ->setProxy($this->getProxy())
@@ -274,10 +279,10 @@ class WmsInstance extends SourceInstance
 
     /**
      * Generates a configuration for layers
-     * 
+     *
      * @param WmsInstanceLayer $layer
      * @param array $configuration
-     * @return array 
+     * @return array
      */
     public function generateLayersConfiguration(WmsInstanceLayer $layer,
             $configuration = array())
@@ -334,7 +339,7 @@ class WmsInstance extends SourceInstance
     /**
      * Get root layer
      *
-     * @return WmsInstanceLayer 
+     * @return WmsInstanceLayer
      */
     public function getRootlayer()
     {
