@@ -324,7 +324,7 @@ $(function() {
                 {
                     title:"Confirm delete",
                     subTitle: " - element",
-                    content:"Delete " + title + "?"
+                    content:title + "?"
                 },
                 function(){
                     $.ajax({
@@ -351,7 +351,7 @@ $(function() {
                 {
                     title:"Confirm delete",
                     subTitle: " - layerset",
-                    content:"Delete " + title + "?"
+                    content:title + "?"
                 },
                 function(){
                     $.ajax({

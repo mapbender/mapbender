@@ -127,7 +127,10 @@
     {% endif %}
   </div>
   <div id="containerLayers" class="container serviceContainer serviceLayersContainer">
-    {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': wms.rootlayer, 'itemLevel': 1 }%}
+    {% if wms.version == '1.1.1' %}
+        <div class="messageBox hint">{{ 'Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!'|trans }}</div>
+    {% endif %}
+      {% include "MapbenderWmsBundle:Repository:layer.html.twig"  with {'layer': wms.rootlayer, 'itemLevel': 1 }%}
   </div>
 </div>
 <div class="clearContainer"></div>

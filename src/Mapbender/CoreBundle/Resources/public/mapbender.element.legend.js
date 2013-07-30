@@ -231,7 +231,9 @@
         _createLegendHtml: function(sources){
             var html = "";
             for(var i = 0; i < sources.length; i++){
-                html += this._createLayerHtml(sources[i], "");
+                if(sources[i].visible !== 'notvisible') {
+                    html += this._createLayerHtml(sources[i], "");
+                }
             }
             return html;
         },
@@ -241,7 +243,9 @@
                 html += this._createSourceTitleLine(layer);
                 html += '<ul class="ebene' + layer.level + '" data-sourceid="'+layer.sourceId+'" data-id="'+layer.id+'">';
                 for(var i = 0; i < layer.children.length; i++){
-                    html += this._createLayerHtml(layer.children[i], "");
+                    if(layer.children[i].visible !== 'notvisible') {
+                        html += this._createLayerHtml(layer.children[i], "");
+                    }
                 }
                 html += '</ul>';
             } else {

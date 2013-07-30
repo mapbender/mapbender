@@ -30,10 +30,10 @@ class PrintService
     {
         $this->data = json_decode($content, true);
         $template = $this->data['template'];
-       /* print "<pre>"; */
-       /* print_r($this->data); */
-       /* print "</pre>"; */
-       /* die(); */
+//        print "<pre>";
+//        print_r($this->data);
+//        print "</pre>";
+//        die();
         $this->getTemplateConf($template);
         $this->createUrlArray();
         $this->setMapParameter();
@@ -173,8 +173,10 @@ class PrintService
                     //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
 
-            imagesavealpha($im, true);
-            imagepng($im , $imagename);
+            if(isset($im)) {
+                imagesavealpha($im, true);
+                imagepng($im , $imagename);
+            }
 
         }
         // create final merged image
@@ -185,11 +187,15 @@ class PrintService
         imagepng($finalImage , $finalimagename);
         foreach ($this->layer_urls as $k => $url)
         {
-            $dest = imagecreatefrompng($finalimagename);
-            $src = imagecreatefrompng($tempdir.'/tempimage'.$k);
-            imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width , $this->image_height);
-            imagepng($dest , $finalimagename);
-	    unlink($tempdir.'/tempimage'.$k);
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if(is_file($tempdir.'/tempimage'.$k) && finfo_file($finfo, $tempdir.'/tempimage'.$k) == 'image/png') {
+                $dest = imagecreatefrompng($finalimagename);
+                $src = imagecreatefrompng($tempdir.'/tempimage'.$k);
+                imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width , $this->image_height);
+                imagepng($dest , $finalimagename);
+            }
+            unlink($tempdir.'/tempimage'.$k);
+            finfo_close($finfo);
         }
     }
 
@@ -308,7 +314,8 @@ class PrintService
         require('PDF_ImageAlpha.php');
         $tempdir = $this->tempdir;
         $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-        $format = substr($this->data['template'],0,2);
+        $format = $this->data['format'];
+  
         $this->pdf = new PDF_ImageAlpha($this->orientation,'mm',$format);
         //$this->pdf = new FPDF_FPDI($this->orientation,'mm',$format);
         $pdf = $this->pdf;
@@ -316,7 +323,8 @@ class PrintService
         $pdffile = $resource_dir.'/templates/'.$template.'.pdf';
         $pagecount = $pdf->setSourceFile($pdffile);
         $tplidx = $pdf->importPage(1);
-
+        
+        $pdf->SetAutoPageBreak(false);
         $pdf->addPage();
         $pdf->useTemplate($tplidx);
 
@@ -339,7 +347,7 @@ class PrintService
                 default:
                     if (isset($this->data['extra'][$k]))
                     {
-                        $pdf->Cell($this->conf['fields'][$k]['width']*10,$this->conf['fields'][$k]['height']*10,$this->data['extra'][$k]);
+                        $pdf->Cell($this->conf['fields'][$k]['width']*10,$this->conf['fields'][$k]['height']*10,utf8_decode($this->data['extra'][$k]));
                     }
                     break;
             }
@@ -349,15 +357,6 @@ class PrintService
         {
             $tempdir = sys_get_temp_dir();
             foreach ($this->layer_urls as $k => $url)
-//            {
-//                $pdf->Image($tempdir.'/tempimage'.$k,
-//                            $this->x_ul,
-//                            $this->y_ul,
-//                            $this->width,
-//                            $this->height,
-//                            'png','',false,0,5,-1*0);
-//                //unlink($tempdir.'/tempimage'.$k);
-//            }
             $pdf->Image($tempdir.'/mergedimage.png',
                             $this->x_ul,
                             $this->y_ul,
@@ -366,23 +365,19 @@ class PrintService
                             'png','',false,0,5,-1*0);
 
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
-            $pdf->Image($resource_dir.'/images/northarrow.png',
-                        $this->conf['northarrow']['x']*10,
-                        $this->conf['northarrow']['y']*10,
-                        $this->conf['northarrow']['width']*10,
-                        $this->conf['northarrow']['height']*10);
-
+            if (isset($this->conf['northarrow']))
+            {    
+                $pdf->Image($resource_dir.'/images/northarrow.png',
+                            $this->conf['northarrow']['x']*10,
+                            $this->conf['northarrow']['y']*10,
+                            $this->conf['northarrow']['width']*10,
+                            $this->conf['northarrow']['height']*10);
+            }
         }else{
-            $this->rotateNorthArrow();
-//            foreach ($this->layer_urls as $k => $url)
-//            {
-//                $pdf->Image($tempdir.'/rotated_image'.$k.'.png',
-//                            $this->x_ul,
-//                            $this->y_ul,
-//                            $this->width,
-//                            $this->height,
-//                            'png','',false,0,5,-1*0);
-//            }
+            if (isset($this->conf['northarrow']))
+            { 
+                $this->rotateNorthArrow();
+            }
             $pdf->Image($tempdir.'/mergedimage.png',
                             $this->x_ul,
                             $this->y_ul,
@@ -392,7 +387,7 @@ class PrintService
 
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
         }
-
+        unlink($tempdir.'/mergedimage.png');
         //$pdf->Output('newpdf.pdf', 'D'); //file output
         $pdf->Output();
     }
@@ -433,4 +428,5 @@ class PrintService
                     $this->conf['northarrow']['height']*10);
         unlink($tempdir.'/rotatednorth.png');
     }
+
 }

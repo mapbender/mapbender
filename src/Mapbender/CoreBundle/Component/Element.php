@@ -441,12 +441,6 @@ abstract class Element
 
         return $element;
     }
-    
-    
-//    public static function getTargets($container, $application, $element) {
-//        $form = $this->getElementForm($container, $application, $element);
-//        return null;
-//    }
 
 }
 

@@ -178,6 +178,7 @@ class Map extends Element
                     'scale' => $poi['scale']
                 );
             }
+        }
 
             $bbox = $this->container->get('request')->get('bbox');
             if(!$poi && $bbox)
@@ -195,6 +196,8 @@ class Map extends Element
                 }
             }
         }
+
+        $configuration['extra'] = $extra;
 
         if(!isset($configuration['scales']))
         {

@@ -2,13 +2,20 @@
     OpenLayers.ProxyHost = Mapbender.configuration.application.urls.proxy + '?url=';
     $.widget("mapbender.mbMap", {
         options: {
+            poiIcon: {
+                image: 'bundles/mapbendercore/image/marker_fett.gif',
+                width: 60,
+                height: 60,
+                xoffset: -32,
+                yoffset: -32
+            }
         },
         elementUrl: null,
         model: null,
         map: null,
         readyState: false,
         readyCallbacks: [],
-    
+
         /**
          * Creates the map widget
          */
@@ -37,7 +44,7 @@
         "goto": function(options) {
             this.map.center(options);
         },
-        
+
         setExtent: function(extent){
             this.model.extent = extent;
         },
@@ -59,16 +66,16 @@
         getMapState: function(){
             return this.model.getMapState();
         },
-        
+
         sourceById: function(idObject){
             return this.model.getSource(idObject);
         },
-        
+
         mqLayerBySourceId: function(idObject){
             var source = this.sourceById(idObject);
             return this.map.layersList[source.mqlid];
         },
-        
+
         /**
          *
          */

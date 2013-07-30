@@ -16,7 +16,11 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
 class MapbenderWmcBundle extends MapbenderBundle {
     public function getElements() {
         return array(
-            'Mapbender\WmcBundle\Element\WmcHandler',
+
+            // 
+            // WATCHOUT: Available in the next versions
+            // Current version: 3.0.0.2
+            // 'Mapbender\WmcBundle\Element\WmcHandler',
             );
     }
 }
