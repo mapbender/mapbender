@@ -22,7 +22,7 @@ Mapbender.transCallBack = function(objToCallBack, termsToTranslate, saveAtAll) {
     }
     var mb = this;
     $.ajax({
-        url: mb.configuration.transPath,
+        url: mb.configuration.application.urls.trans,
         type: "post",
         data: termsToTranslate,
         dataType: "json",
