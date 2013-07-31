@@ -16,22 +16,27 @@ use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
  */
 class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 {
-    
+
+    /**
+     * ORM\Column(type="string", nullable=true)
+     */
+    protected $vendor;
+
     /**
      * ORM\Column(type="string", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $tiled;
-    
+
     /**
      * ORM\Column(type="array", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $bbox;
-    
+
     /**
      * Sets a tiled
-     * 
+     *
      * @param boolean $tiled source tiled
      * @return WmsInstanceConfiguration
      */
@@ -39,19 +44,19 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         $this->tiled = $tiled;
         return $this;
     }
-    
+
     /**
      * Returns a tiled
-     * 
+     *
      * @return boolean tiled
      */
     public function getTiled(){
         return $this->tiled;
     }
-    
+
     /**
      * Sets a bbox
-     * 
+     *
      * @param array $bbox source bbox
      * @return WmsInstanceConfiguration
      */
@@ -59,18 +64,26 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         $this->bbox = $bbox;
         return $this;
     }
-    
+
     /**
      * Returns a bbox
-     * 
+     *
      * @return array bbox
      */
     public function getBbox(){
         return $this->bbox;
     }
-    
+
+    public function setVendor($val) {
+        $this->vendor = $val;
+    }
+
+    public function getVendor() {
+        return $this->vendor;
+    }
+
     /**
-     * 
+     *
      * @return array
      */
     public function toArray()
@@ -84,7 +97,8 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "transparent" => $this->transparency,
             "opacity" => $this->opacity,
             "tiled" => $this->tiled,
-            "bbox" => $this->bbox
+            "bbox" => $this->bbox,
+            "vendor" => $this->vendor
         );
     }
 }
