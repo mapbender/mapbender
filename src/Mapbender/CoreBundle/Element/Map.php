@@ -156,30 +156,8 @@ class Map extends Element
             }
         }
 
-        unset($configuration['otherSrs']);
-        $em = $this->container->get("doctrine")->getEntityManager();
-        $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
-                        . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
-                ->setParameter('name', array_keys($allsrs));
-        $srses = $query->getResult();
-
-        $ressrses = array();
-        foreach($srses as $srsTemp)
-        {
-            $ressrses[$srsTemp->getName()] = array(
-                "name" => $srsTemp->getName(),
-                "title" => $allsrs[$srsTemp->getName()] !== "" ? $allsrs[$srsTemp->getName()] : $srsTemp->getTitle(),
-                "definition" => $srsTemp->getDefinition());
-        }
-        /* sort the ressrses */
-        foreach($allsrs as $key => $value)
-        {
-            if(isset($ressrses[$key])){
-                $configuration["srsDefs"][] = $ressrses[$key];
-            }
-        }
-
-        $srs_req = $this->container->get('request')->get('srs');
+        $configuration["srsDefs"] = $this->getSrsDefinitions($allsrs);
+        $srs_req                  = $this->container->get('request')->get('srs');
         if($srs_req)
         {
             if(!isset($ressrses[$srs]))
