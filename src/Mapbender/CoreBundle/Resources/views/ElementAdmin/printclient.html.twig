@@ -26,7 +26,6 @@
         <div class="clearContainer"></div>
         <span class="labelInput"></span>
     {% endfor %}
-
     <div class="clearContainer"></div>
     {% for template in form.configuration.templates %}
         {{form_label(template.template)}}   {{ form_widget(template.template) }}

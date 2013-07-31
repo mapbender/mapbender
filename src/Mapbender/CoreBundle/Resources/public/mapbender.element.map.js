@@ -33,9 +33,7 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
-            this.options = {
-                layerDefs: []
-            }; // romove all options
+            this.options = { layerDefs: [] };
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();

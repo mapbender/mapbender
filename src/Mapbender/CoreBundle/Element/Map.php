@@ -112,7 +112,7 @@ class Map extends Element
         if(is_int(stripos($configuration["srs"], "|")))
         {
             $srsHlp               = preg_split("/\s?\|{1}\s?/",
-                                               $configuration["srs"]);
+                $configuration["srs"]);
             $configuration["srs"] = trim($srsHlp[0]);
             $allsrs[]             = array(
                 "name"  => trim($srsHlp[0]),
@@ -160,7 +160,7 @@ class Map extends Element
         $srs_req                  = $this->container->get('request')->get('srs');
         if($srs_req)
         {
-            if(!isset($ressrses[$srs]))
+            if(!isset($allsrs[$srs]))
             {
                 throw new \RuntimeException('The srs: "' . $srs_req
                 . '" does not supported.');
@@ -184,19 +184,22 @@ class Map extends Element
                     'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
             }
-        }
+//        }
 
-        $bbox = $this->container->get('request')->get('bbox');
-        if($bbox) {
-            $bbox = explode(',', $bbox);
-            if(count($bbox) === 4)
+            $bbox = $this->container->get('request')->get('bbox');
+            if(!$poi && $bbox)
             {
-                $extra['bbox'] = array(
-                    floatval($bbox[0]),
-                    floatval($bbox[1]),
-                    floatval($bbox[2]),
-                    floatval($bbox[3])
-                );
+                $bbox = explode(',', $bbox);
+                if(count($bbox) === 4)
+                {
+                    $extra['type'] = 'bbox';
+                    $extra['data'] = array(
+                        floatval($bbox[0]),
+                        floatval($bbox[1]),
+                        floatval($bbox[2]),
+                        floatval($bbox[3])
+                    );
+                }
             }
         }
 
@@ -221,7 +224,7 @@ class Map extends Element
     {
         return $this->container->get('templating')
                 ->render('MapbenderCoreBundle:Element:map.html.twig',
-                         array(
+                    array(
                     'id' => $this->getId()));
     }
 
@@ -285,13 +288,13 @@ class Map extends Element
         {
             return new Response(json_encode(
                     array("data" => $result)), 200,
-                    array('Content-Type' => 'application/json'));
+                array('Content-Type' => 'application/json'));
         }
         else
         {
             return new Response(json_encode(
                     array("error" => 'SRSes: ' . $srsList . ' are not found')),
-                    200, array('Content-Type' => 'application/json'));
+                200, array('Content-Type' => 'application/json'));
         }
     }
 

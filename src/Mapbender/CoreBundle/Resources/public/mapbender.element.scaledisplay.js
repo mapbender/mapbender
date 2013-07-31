@@ -23,7 +23,7 @@
         _setup: function() {
             if(typeof this.options.unitPrefix === 'undefined')
                 this.options.unitPrefix = false;
-            var mbMap = $('#' + this.options.target).data('mbMap');
+            var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
             
             var projection = mbMap.map.olMap.getProjectionObject();
             var options = {
