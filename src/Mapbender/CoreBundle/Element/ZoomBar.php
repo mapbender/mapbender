@@ -59,11 +59,7 @@ use when custom styling is needed.";
             'tooltip' => null,
             'target' => null,
             'components' => array(
-                "pan" => "pan",
-                "history" => "history",
-                "zoom_box" => "zoom box",
-                "zoom_max" => "zoom to max extent",
-                "zoom_slider" => "zoom slider"),
+                "pan","history","zoom_box","zoom_max","zoom_slider"),
             'anchor' => 'left-top',
             'stepSize' => 50,
             'stepByPixel' => false,
