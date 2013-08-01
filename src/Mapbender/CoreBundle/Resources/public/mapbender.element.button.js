@@ -67,10 +67,11 @@ $.widget("mapbender.mbButton", {
             var target = $('#' + this.options.target);
             var widget = Mapbender.configuration.elements[this.options.target].init.split('.');
             var action = this.options.action;
-
+            
+            $(this.button).parent().addClass("toolBarItemActive");
+            
             if(!this.options.action){
-                action = "activate";
-                $(this.button).parent().addClass("toolBarItemActive");
+                action = "activate";                
             }
 
             if(widget.length == 1) {
@@ -87,6 +88,8 @@ $.widget("mapbender.mbButton", {
     },
 
     deactivate: function() {
+        $(this.button).parent().removeClass("toolBarItemActive");
+        
         if(this.options.target && this.options.deactivate) {
             var target = $('#' + this.options.target);
             var widget = Mapbender.configuration.elements[this.options.target].init.split('.');
