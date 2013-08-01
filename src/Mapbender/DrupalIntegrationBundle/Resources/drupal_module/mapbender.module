@@ -148,7 +148,7 @@ function mapbender_show_view()
                 } else {
                     drupal_add_js($href, array('type' => 'external', 'defer'=>true));
                     // unknown why this breaks things
-                    //$added_scripts[] = $script;
+                    $added_scripts[] = $script;
                 }
             } else {
                 // symfony stuff does not work within drupal
