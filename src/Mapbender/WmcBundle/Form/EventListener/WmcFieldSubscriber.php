@@ -53,39 +53,5 @@ class WmcFieldSubscriber implements EventSubscriberInterface
             $data["state"] = $state;
             $event->setData($data);
         }
-        if(!key_exists("accessGroupsLoader", $data))
-        {
-            $form->remove('accessGroupsLoader');
-            $data_ = $form->getData();
-            $data_['accessGroupsLoader'] = new ArrayCollection();
-            $form->setData($data_);
-            $form->add($this->factory->createNamed(
-                            'accessGroupsLoader', 'fom_groups', null,
-                            array(
-                    'return_entity' => false,
-                    'user_groups'   => false,
-                    'property_path' => '[accessGroupsLoader]',
-                    'required'      => false,
-                    'multiple'      => true,
-                    'empty_value' => 'Choose an option',
-                            )));
-        }
-        if(!key_exists("accessGroupsEditor", $data))
-        {
-            $form->remove('accessGroupsEditor');
-            $data_ = $form->getData();
-            $data_['accessGroupsEditor'] = new ArrayCollection();
-            $form->setData($data_);
-            $form->add($this->factory->createNamed(
-                            'accessGroupsEditor', 'fom_groups', null,
-                            array(
-                    'return_entity' => false,
-                    'user_groups'   => false,
-                    'property_path' => '[accessGroupsEditor]',
-                    'required'      => false,
-                    'multiple'      => true,
-                    'empty_value' => 'Choose an option',
-                            )));
-        }
     }
 }

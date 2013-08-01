@@ -409,7 +409,7 @@ Mapbender.Model = {
                         self._sourceLoadeEnd(e);
                     }
                 });
-                this.mbMap.fireModelEvent({name: 'sourceAdded', value: {source: source, before: before, after: after}});
+                this.mbMap.fireModelEvent({name: 'sourceAdded', value: {added: {source: source, before: before, after: after}}});
                 if(after)
                     this._moveSource(source, before, after);
                 this._checkAndRedrawSource({sourceIdx: {id: source.id}, options: {children: {}}});

@@ -180,14 +180,19 @@ $.extend(true, Mapbender, {
                     }
                     if(!format)
                         format = formats[0];
+                    
                     var infoformat;
-                    var infoformats = capabilities.capability.request.getfeatureinfo.formats;
-                    for(var i = 0; i < infoformats.length; i++){
-                        if(infoformats[i].toLowerCase().indexOf(defInfoformat) !== -1)
-                            infoformat = infoformats[i];
+                    var gfi = capabilities.capability.request.getfeatureinfo;
+                    if(gfi && gfi.formats && gfi.formats.length > 0){
+                        for(var i = 0; i < gfi.formats.length; i++){
+                            if(gfi.formats[i].toLowerCase().indexOf(defInfoformat) !== -1)
+                                infoformat = gfi.formats[i];
+                        }
+                        if(!infoformat)
+                            infoformat = gfi.formats[0];
+                    } else {
+                        infoformat = defInfoformat;
                     }
-                    if(!infoformat)
-                        infoformat = infoformats[0];
                     //@TODO srs list, srs by layer -> parent layer srs + layer srs
                     var def = {
                         type: 'wms',
@@ -243,7 +248,7 @@ $.extend(true, Mapbender, {
                                     },
                                     info: layer.queryable ? true : null,
                                     selected: true,
-                                    toggle: true
+                                    toggle: false
                                 }
                             },
                             state: {

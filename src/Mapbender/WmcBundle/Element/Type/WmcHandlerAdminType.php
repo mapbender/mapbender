@@ -3,7 +3,7 @@
 namespace Mapbender\WmcBundle\Element\Type;
 
 use FOM\UserBundle\Form\DataTransformer\GroupIdTransformer;
-use Mapbender\WmcBundle\Form\EventListener\WmcFieldSubscriber;
+use Mapbender\WmcBundle\Form\EventListener\WmcHandlerFieldSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -93,7 +93,7 @@ class WmcHandlerAdminType extends AbstractType
                     'empty_value' => 'Choose an option',
                             ))
         ;
-        $subscriber = new WmcFieldSubscriber($builder->getFormFactory());
+        $subscriber = new WmcHandlerFieldSubscriber($builder->getFormFactory());
         $builder->addEventSubscriber($subscriber);
     }
 

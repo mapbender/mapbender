@@ -129,13 +129,19 @@
                 li.attr('data-sourceid', source.id)
                 var nodeType = this._getNodeType(sourceEl, isroot);
                 li.attr('data-type', nodeType);
-
-                if(nodeType == this.consts.root){
-                    li.addClass("serviceContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
-                }else if(nodeType == this.consts.group){
-                    li.addClass("groupContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
+                if(nodeType === this.consts.root || nodeType === this.consts.group){
+                    if(nodeType === this.consts.root){
+                        li.addClass("serviceContainer");
+                    }else if(nodeType === this.consts.group){
+                        li.addClass("groupContainer");
+                    }
+                    li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
+                    /** @TODO add check config.toggleable if config.toggleable !== true -> '.iconFolder' has no folder and no event, sublayers are unvisible */
+                    if(config.toggle === true)
+                        li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
+                    else
+                        li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");// todo
                 }
-
                 li.addClass(config.reorder);
                 li.find('.layer-state').attr('title', config.visibility.tooltip);
                 li.find('input.layer-selected').attr('checked', config.selected ? 'checked' : null);
