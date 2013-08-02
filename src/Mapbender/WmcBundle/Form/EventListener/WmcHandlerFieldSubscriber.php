@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * 
  */
-class WmcFieldSubscriber implements EventSubscriberInterface
+class WmcHandlerFieldSubscriber implements EventSubscriberInterface
 {
 
     protected $factory;
