@@ -3,6 +3,7 @@
   - Frontend jQuery upgrade to 1.9.1/1.10.2 (jQuery UI)
 
 * **v3.0.0.2** - 2013-07-19
+  - Removed incorrect feature info function `create`
   - Set overlay `position` to `fixed`
   - PrintClient Admintype added
   - PrintClient Configuration Parameter changed
