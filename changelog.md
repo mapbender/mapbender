@@ -1,6 +1,10 @@
 # Changelog
 * **v3.0.1.0** - Yet to be released
+  - Element position moved from `mapbender_theme.scss` to `fullscreen.scss`
+  - Add new frontend template - Fullscreen alternative
   - Frontend jQuery upgrade to 1.9.1/1.10.2 (jQuery UI)
+
+## Release History
 
 * **v3.0.0.2** - 2013-07-19
   - Removed incorrect feature info function `create`
@@ -29,8 +33,6 @@
   - Fixed ACL creation during group creation (#53)
   - Enhanced ACL creation during service creation (#54)
   - Honor published attribute on YAML-defined applications (#42)
-
-## Release History
 
 * **v3.0.0.1** - 2013-06-07
 
