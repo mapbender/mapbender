@@ -41,37 +41,10 @@ class PrintClient extends Element
      */
     public function getAssets()
     {
-        return array('js' => array('mapbender.element.printClient.js'),'css' => array());
+        return array('js' => array('mapbender.element.printClient.js', 
+                                   '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
+                     'css' => array());
     }
-
-//    /**
-//     * @inheritdoc
-//     */
-//    public static function getDefaultConfiguration()
-//    {
-//        return array(
-//            "target" => null,
-//            "autoOpen" => false,
-//            "print_directly" => true,
-//            "templates" => array(
-//                "a4portrait" => array(
-//                    "label" => "A4 Portrait",
-//                    "format" => "a4"),
-//                "a4landscape" => array(
-//                    "label" => "A4 Landscape",
-//                    "format" => "a4"),
-//                "a3portrait" => array(
-//                    "label" => "A3 Portrait",
-//                    "format" => "a3"),
-//                "a3landscape" => array(
-//                    "label" => "A3 Landscape",
-//                    "format" => "a3")),
-//            "scales" => array(500, 1000, 5000, 10000, 25000),
-//            "quality_levels" => array("72" => "Entwurf", "288" => "Document"),
-//            "rotatable" => true,
-//            "optional_fields" => null
-//        );
-//    }
 
     /**
      * @inheritdoc
@@ -203,24 +176,7 @@ class PrintClient extends Element
                 );
 
             case 'queued':
-                // NYI
-                
-//                $content = $this->container->get('request')->getContent();
-//                if (empty($content)) {
-//                    throw new \RuntimeException('No Request Data received');
-//                }
-//
-//                // Forward to Printer Service URL using OWSProxy
-//                $configuration = $this->getConfiguration();
-//                $url = (null !== $configuration['printer']['service'] ?
-//                                $configuration['printer']['service'] :
-//                                $this->container->get('router')->generate('mapbender_print_print_service', array(), true));
-//                return $this->container->get('http_kernel')->forward(
-//                                'OwsProxy3CoreBundle:OwsProxy:genericProxy', array(
-//                            'url' => $url,
-//                            'content' => $content
-//                                )
-//                );
+
             case 'template':
                 $response = new Response();
                 $response->headers->set('Content-Type', 'application/json');
