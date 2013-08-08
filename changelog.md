@@ -1,5 +1,11 @@
 # Changelog
 * **v3.0.1.0** - Yet to be released
+  - Dropdown script is in `dropdown.js`
+  - Merge dropdown frontend and backend script
+  - Fix some dropdown bugs
+  - Remove unused jQuery-UI CSS
+  - Add more translation wraps
+  - Add `widget_attribute_class` macro for forms
   - Element position moved from `mapbender_theme.scss` to `fullscreen.scss`
   - Add new frontend template - Fullscreen alternative
   - Frontend jQuery upgrade to 1.9.1/1.10.2 (jQuery UI)
@@ -7,6 +13,7 @@
 ## Release History
 
 * **v3.0.0.2** - 2013-07-19
+  - Removed incorrect feature info function `create`
   - Set overlay `position` to `fixed`
   - PrintClient Admintype added
   - PrintClient Configuration Parameter changed
