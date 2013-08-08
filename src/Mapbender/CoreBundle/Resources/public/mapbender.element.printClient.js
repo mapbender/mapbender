@@ -134,7 +134,7 @@
                     scale_select.append($('<option></option>', {
                         'value': scale,
                         'html': '1:' + scale,
-                        'class': "item-" + count
+                        'class': "opt-" + count
                     }));
                     list.append($('<li></li>', {
                         'html': '1:' + scale,
