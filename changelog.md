@@ -1,8 +1,11 @@
 # Changelog
 * **v3.0.1.0** - Yet to be released
-  - Dropdown script is in `dropdown.js`
+  - Move checkbox script into `checkbox.js`
+  - Merge checkbox frontend and backend script
+  - Move dropdown script into `dropdown.js`
   - Merge dropdown frontend and backend script
   - Fix some dropdown bugs
+  - Micro design fixes
   - Remove unused jQuery-UI CSS
   - Add more translation wraps
   - Add `widget_attribute_class` macro for forms
