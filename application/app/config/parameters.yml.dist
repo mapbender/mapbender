@@ -20,3 +20,7 @@ parameters:
         server_version: 3.0.0.2
         server_logo:   bundles/mapbendercore/image/logo_mb3.png
 
+    fom.selfregister: false
+    fom.reset_password: true
+
+    framework.session.cookie_httponly: true
