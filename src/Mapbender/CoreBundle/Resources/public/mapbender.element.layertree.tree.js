@@ -25,7 +25,6 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
-            //window.console && console.log("layertree setup start");
             var self = this;
             if(self.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true){
                 self.open();
@@ -72,7 +71,6 @@
                     this.open();
                 }
             }
-            //window.console && console.log("layertree setup end");
         },
         _createSortable: function(){
             var self = this;
@@ -125,7 +123,6 @@
                 var li = this.template.clone();
                 li.removeClass('hide-elm');
                 li.attr('data-id', sourceEl.options.id);
-//                isroot ? li.attr('data-sourceid', source.id) : li.removeAttr('data-sourceid');
                 li.attr('data-sourceid', source.id)
                 var nodeType = this._getNodeType(sourceEl, isroot);
                 li.attr('data-type', nodeType);
@@ -347,39 +344,11 @@
             this._setSourcesCount();
         },
         _onSourceChanged: function(event, options){
-            //window.console && console.log("Layertree._onSourceChanged", changed);
             if(options.changed && options.changed.options){
                 this._optionsChanged(options.changed);
             }else if(options.changed && options.changed.layerRemove){
                 this._removeLayer(options.changed);
             }
-//            if(this.options.displaytype === "tree"){
-//                for(key in changed.children){
-//                    var changedEl = changed.children[key];
-//                    var lif = $(this.element).find('li[data-id="'+key+'"]:first');
-//                    if(changedEl.treeElm.state.visibility){
-//                        lif.removeClass("invisible").find('span.layer-state:first').attr("title","");
-//                    } else {
-//                        if(lif.find('input[name="selected"]:first').is(':checked')){
-//                            lif.addClass("invisible").find('span.layer-state:first').attr("title",changedEl.state.outOfScale ? "outOfScale" : "parent invisible");
-//                        } else {
-//                            lif.removeClass("invisible").find('span.layer-state:first').attr("title","");
-//                        }
-//                    }
-//                }
-//            } else if(this.options.displaytype === "list"){
-//                for(key in changed.children){
-//                    var changedEl = changed.children[key];
-//                    if(changedEl.treeElm.state.visibility){
-//                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"]').removeClass("invisible");
-//                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.layer-state:first').attr("title", "");
-//                    } else {
-//                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"]').addClass("invisible");
-//                        var tooltip = changedEl.state.outOfBounds ? "outOfBounds" : changedEl.state.outOfScale ? "outOfScale" : "parent invisible or not defined?";
-//                        $(this.element).find('li[data-sourceid="'+changed.source.id+'"][data-id="'+key+'"] span.layer-state:first').attr("title", tooltip);
-//                    }
-//                }
-//            }
         },
         _optionsChanged: function(changed){
             var source = this.model.getSource(changed.options.sourceIdx);
@@ -575,14 +544,7 @@
             tochange.options.children[li.attr('data-id')] = {options: {treeOptions: {info: $(e.target).is(':checked')}}};
             this.model.changeSource({ change: tochange});
         },
-        _toggleMenu: function(e){
-//            var menu = $(e.target).parent().find('div.layer-menu:first');
-//            if(menu.hasClass("hide-elm")){
-//                menu.removeClass("hide-elm");
-//            } else {
-//                menu.addClass("hide-elm");
-//            }
-        },
+        _toggleMenu: function(e){},
         _removeSource: function(e){
             var layer_id = $(e.target).parents("li:first").attr("data-id");
             var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');

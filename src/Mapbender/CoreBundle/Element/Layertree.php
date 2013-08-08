@@ -67,8 +67,8 @@ class Layertree extends Element
     public function getAssets()
     { 
         $assets =  array('js' => array(
-                '@FOMCoreBundle/Resources/public/js/frontend/components.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js'),
             'css' => array()
         );
         $config = parent::getConfiguration();

@@ -1,10 +1,10 @@
 $(function(){
-    $(".checkbox").bind("click", function(e){
+    $(".checkbox").on("change", function(e){
       $("#selectedUsersGroups").text(($(".tableUserGroups").find(".iconCheckboxActive").length))
     });
 
     // Delete group via Ajax
-    $('#listFilterGroups').find(".iconRemove").bind("click", function(){
+    $('#listFilterGroups').on("click", ".iconRemove", function(){
         var me  = $(this);
         var title = me.attr('title');
 
@@ -31,7 +31,7 @@ $(function(){
     });
 
     // Delete user via Ajax
-    $('#listFilterUsers').find(".iconRemove").bind("click", function(){
+    $('#listFilterUsers').on("click", ".iconRemove", function(){
         var me  = $(this);
         var title = me.attr('title');
 
