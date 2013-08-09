@@ -5,6 +5,8 @@
   - Move dropdown script into `dropdown.js`
   - Merge dropdown frontend and backend script
   - Fix some dropdown bugs
+  - Fix some layertree css bugs
+  - Fix some popup css bugs
   - Micro design fixes
   - Remove unused jQuery-UI CSS
   - Add more translation wraps
