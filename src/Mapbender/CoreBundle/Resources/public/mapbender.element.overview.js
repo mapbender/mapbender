@@ -25,12 +25,11 @@ $.widget("mapbender.mbOverview", {
      */
     _setup: function() {
         var self = this;
-        var mbMap = $('#' + this.options.target).data('mbMap');
+        var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
         $(this.element).addClass(this.options.anchor);
         if(!this.options.maximized) {
             $(this.element).addClass("closed");
-            $(this.element).find('#mb-element-overview-map').css("display", "none");
-        };
+        }
         var proj = mbMap.model.mapMaxExtent.projection;
         var max_ext = mbMap.model.mapMaxExtent.extent;
         this.startproj = proj;
@@ -50,7 +49,9 @@ $.widget("mapbender.mbOverview", {
                             {
                                 layers: ls.substring(1),
                                 format: layerDef.configuration.options.format,
-                                transparent: layerDef.configuration.options.transparent,
+                                transparent: layerDef.configuration.options.transparent
+                            },
+                            {
                                 isBaseLayer: idx === 0 ? true : false,
                                 opacity: layerDef.configuration.options.opacity,
                                 singleTile: true
@@ -87,7 +88,7 @@ $.widget("mapbender.mbOverview", {
                 maxRatio: 1000000000,
                 autoPan: false
             });
-        };        
+        }
         mbMap.map.olMap.addControl(this.overview);
         $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
         $(self.element).find('.toggleOverview').bind('click', $.proxy(this._openClose, this));
@@ -99,10 +100,8 @@ $.widget("mapbender.mbOverview", {
     _openClose: function(event){
         if($(this.element).hasClass('closed')){
             $(this.element).removeClass('closed');
-            $(this.element).find('#mb-element-overview-map').css("display", "block");
         } else {
             $(this.element).addClass('closed');
-            $(this.element).find('#mb-element-overview-map').css("display", "none");
         }
     },
 
@@ -124,7 +123,7 @@ $.widget("mapbender.mbOverview", {
     },
 
     /**
-     * Changes the overview srs
+     * Cahnges the overview srs
      */
     _changeSrs: function(event, srs){
         var self = this;
