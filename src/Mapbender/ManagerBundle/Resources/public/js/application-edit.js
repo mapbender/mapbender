@@ -291,8 +291,10 @@ $(function() {
     $(".editElement").bind("click", function() {
         var url = $(this).attr("data-url");
 
-        if(!$('body').data('mbPopup')) {
+        if(!$('body').data('mbPopup') && !this.editing) {
+            this.editing = true; // workaround for really fast clickers
             $("body").mbPopup();
+            delete this.editing;
             $("body").mbPopup('showAjaxModal', {
                     title:"Edit element",
                     method: 'GET'
