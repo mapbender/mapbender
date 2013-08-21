@@ -315,7 +315,19 @@ class PrintService
         $tempdir = $this->tempdir;
         $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $format = $this->data['format'];
-  
+        
+        if($format == 'a2'){
+            $format = array(420,594);
+        }
+
+        if($format == 'a1'){
+            $format = array(594,841);
+        }
+
+        if($format == 'a0'){
+            $format = array(841,1189);
+        } 
+        
         $this->pdf = new PDF_ImageAlpha($this->orientation,'mm',$format);
         //$this->pdf = new FPDF_FPDI($this->orientation,'mm',$format);
         $pdf = $this->pdf;

@@ -60,7 +60,7 @@
                     showHeader:true,
                     content: this.element,
                     draggable: true,
-                    width: 300,
+                    width: 320,
                     height: 200,
                     showCloseButton: false,
                     overflow: true
