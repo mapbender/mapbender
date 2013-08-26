@@ -94,8 +94,8 @@
         /**
          *
          */
-        removeAllSources: function(withBaseSource){
-            this.model.removeAllSources(withBaseSource);
+        removeSources: function(keepSources){
+            this.model.removeSources(keepSources);
         },
 
         /**

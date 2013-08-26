@@ -452,14 +452,11 @@ Mapbender.Model = {
     /**
      *
      */
-    removeAllSources: function(withBaseSource){
-        if(typeof withBaseSource === 'undefined'){
-            withBaseSource = true;
-        }
+    removeSources: function(keepSources){
         var toRemoveArr = [];
         for(var i = 0; i < this.sourceTree.length; i++){
             var source = this.sourceTree[i];
-            if(!source.configuration.isBaseSource || (source.configuration.isBaseSource && withBaseSource)){
+            if(!keepSources[source.id]){
                 toRemoveArr.push({remove: {sourceIdx: {id: source.id}}});
             }
         }

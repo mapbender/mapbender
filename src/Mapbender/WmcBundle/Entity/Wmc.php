@@ -89,6 +89,12 @@ class Wmc
      * @Assert\File(maxSize="6000000")
      */
     private $xml;
+    
+    /**
+     * @var document public
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $public;
 
 
     /**
@@ -311,6 +317,31 @@ class Wmc
      */
     public function getScreenshot() {
         return $this->screenshot;
+    }
+    
+    
+
+    /**
+     * Set public
+     *
+     * @param boolean $public
+     */
+    public function setPublic($public)
+    {
+        $this->public = $public;
+        return $this;
+    }
+    
+    
+
+    /**
+     * Get public
+     *
+     * @param boolean
+     */
+    public function getPublic()
+    {
+        return $this->public;
     }
     
     

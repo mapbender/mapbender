@@ -1,0 +1,18 @@
+<div id="{{ id }}" class="mb-element mb-element-suggestmap" title="{{ "Suggest Map"|trans }}">
+    <ul>
+    {% for receiver in configuration.receiver %}
+        {% if receiver == 'email' %}
+        <li><img src="/viewer/bundles/bkggeoportal/images/icons/emaillink.png" width="24"> <span class="span-link" id="suggestmap-email">{{ 'As e-mail'|trans }}</span></li>
+        {% endif %}
+        {% if receiver == 'facebook' %}
+        <li><img src="/viewer/bundles/bkggeoportal/images/icons/twitterlink.png" width="24"/> <span class="span-link" id="suggestmap-twitter">{{ 'At Twitter'|trans }}</span></li>
+                {% endif %}
+        {% if receiver == 'twitter' %}
+        <li><img src="/viewer/bundles/bkggeoportal/images/icons/facebooklink.png" width="24"/> <span class="span-link" id="suggestmap-facebook">{{ 'At Facebook'|trans }}</span></li>
+        {% endif %}
+        {% if receiver == 'google+' %}
+        <li><img src="/viewer/bundles/bkggeoportal/images/icons/google+link.png" width="24"/> <span class="span-link" id="suggestmap-googleplus">{{ 'At Google+'|trans }}</span></li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+</div>

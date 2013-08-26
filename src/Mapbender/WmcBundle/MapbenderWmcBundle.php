@@ -13,15 +13,18 @@ namespace Mapbender\WmcBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 
-class MapbenderWmcBundle extends MapbenderBundle {
-    public function getElements() {
-        return array(
+class MapbenderWmcBundle extends MapbenderBundle
+{
 
-            // 
-            // WATCHOUT: Available in the next versions
-            // Current version: 3.0.0.2
-            // 'Mapbender\WmcBundle\Element\WmcHandler',
-            );
+    public function getElements()
+    {
+	return array(
+	    // WATCHOUT: Available in the next versions
+	    // Current version: 3.0.0.2
+	    'Mapbender\WmcBundle\Element\WmcLoader',
+	    'Mapbender\WmcBundle\Element\SuggestMap',
+	);
     }
+
 }
 
