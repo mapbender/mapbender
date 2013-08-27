@@ -18,9 +18,13 @@ class Configuration implements ConfigurationInterface {
         $rootNode = $treeBuilder->root('mapbender_core');
 
         $defaultScreenshotPath = 'app_screenshots';
+	$defaultWmcDir = "uploads/wmc"; # from application/web
 
         $rootNode
             ->children()
+	        ->scalarNode('wmc_dir')
+                    ->defaultValue($defaultWmcDir)
+                ->end()
                 ->scalarNode('selfregister')
                     ->defaultFalse()
                 ->end()
@@ -32,27 +36,6 @@ class Configuration implements ConfigurationInterface {
                 ->end()
                 ->scalarNode('screenshot_path')
                     ->defaultValue($defaultScreenshotPath)
-                ->end()
-                ->arrayNode('proxy')
-                    ->canBeUnset()
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('host')
-                            ->defaultNull()
-                            ->end()
-                        ->scalarNode('port')
-                            ->defaultNull()
-                            ->end()
-                        ->scalarNode('user')
-                            ->defaultNull()
-                            ->end()
-                        ->scalarNode('password')
-                            ->defaultNull()
-                            ->end()
-                        ->arrayNode('noproxy')
-                            ->prototype('scalar')
-                        ->end()
-                    ->end()
                 ->end()
             ->end();
 
