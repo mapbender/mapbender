@@ -325,7 +325,7 @@ class ApplicationController extends Controller
             return array('form' => $form->createView());
         }
     }
-    
+
     /**
      * Copies an application
      *
@@ -808,14 +808,19 @@ class ApplicationController extends Controller
             throw new AccessDeniedException();
         }
     }
-    
+
     private function generateSlug($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         if($application === null)
             return $slug;
         else
-            return $this->generateSlug($slug."_copy");
+            $count = 0;
+            do {
+                $copySlug = $slug . '_copy' . ($count > 0 ? '_' . $count : '');
+                $count++;
+            } while($this->get('mapbender')->getApplicationEntity($copySlug));
+            return $copySlug;
     }
 
 }
