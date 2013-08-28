@@ -217,18 +217,40 @@ $(function() {
 
     // Layers --------------------------------------------------------------------------------------
     // Add layerset action
+    var popup;
+
     $(".addLayerset").bind("click", function(){
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showAjaxModal',
-                              {title:"Add layerset",
-                               btnOkLabel: "Add"},
-                              $(this).attr("href"),
-                              function(){ //ok click
-                                $("#layersetForm").submit();
-                              },
-                              null);
+        var self = $(this);
+        if(popup){
+            popup = popup.destroy();
         }
+
+        popup = new Mapbender.Popup2({
+            title:"Add layerset",
+            width:"400px",
+            modal: false,
+            closeOnOutsideClick: true,
+            content: [
+                $.ajax({url: self.attr("href")})
+            ],
+            autoOpen: true,
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'OK',
+                    cssClass: 'button buttonOk right',
+                    callback: function() {
+                        $("#layersetForm").submit();
+                    }
+                }
+            }
+        });
         return false;
     });
     // Edit layerset action
