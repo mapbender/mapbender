@@ -11,10 +11,6 @@
             <argument type="service" id="service_container" />
         </service>
 
-        <service id="mapbender.proxy" class="Mapbender\CoreBundle\Component\ProxyService">
-            <argument>%mapbender.proxy%</argument>
-        </service>
-
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
         </service>
