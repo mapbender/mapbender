@@ -25,12 +25,13 @@
           <div class="description">{{ application.description }}</div>
           <div class="buttonGroup">
             <a class="iconView iconBig" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View' | trans }} {{ application.title }}"></a>
-            {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-              <a class="iconEdit iconBig" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'Edit' | trans }} {{ application.title }}"></a>
-            {% endif %}
 
             {% if is_granted('CREATE', application) %}
-              <a class="iconCopy iconBig" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'Copy'|trans }}">C</a>
+              <a class="iconCopy iconBig" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'Dublicate'|trans }} {{ application.title }}"></a>
+            {% endif %}
+
+            {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
+              <a class="iconEdit iconBig" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'Edit' | trans }} {{ application.title }}"></a>
             {% endif %}
 
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
