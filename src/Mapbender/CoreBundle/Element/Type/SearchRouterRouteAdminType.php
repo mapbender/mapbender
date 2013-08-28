@@ -6,10 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-/**
- *
- */
-class SearchRouterFormType extends AbstractType
+
+class SearchRouterRouteAdminType extends AbstractType
 {
 
     /**
@@ -17,7 +15,7 @@ class SearchRouterFormType extends AbstractType
      */
     public function getName()
     {
-        return 'search_form';
+        return 'search_form_route';
     }
 
     /**
@@ -25,23 +23,14 @@ class SearchRouterFormType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'fields' => array()));
+        $resolver->setDefaults(array());
     }
 
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        foreach($options['fields']['form'] as $name => $conf)
-        {
-            $conf = array_merge_recursive(array(
-                'options' => array(
-                    'required' => false)), $conf);
-
-            $builder->add($name, $conf['type'], $conf['options']);
-        }
+        $builder->add('title', 'text', array(
+            'label' => 'Title'));
+        $builder->add('configuration', 'textarea', array(
+            'label' => 'Configuration'));
     }
-
 }
