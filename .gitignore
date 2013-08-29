@@ -4,6 +4,7 @@
 */doc/*.html
 */web/bundles
 */web/doc
+*/web/uploads
 extra/
 */app/config/parameters.yml
 */app/bootstrap.php.cache
