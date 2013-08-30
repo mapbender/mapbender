@@ -3,6 +3,7 @@
         options: {},
         elementUrl: null,
         _create: function(){
+            this.element.hide().appendTo($('body'));
             if(!Mapbender.checkTarget("mbSuggestMap", this.options.target)){
                 return;
             }
@@ -99,8 +100,7 @@
             }
         },
         close: function(){
-            if (this.element)
-                this.element.hide().appendTo($('body'));
+            this.element.hide().appendTo($('body'));
             $("body").mbPopup("close");
         },
         open: function(){

@@ -3,16 +3,7 @@
 namespace Mapbender\WmcBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-//use Mapbender\CoreBundle\Component\StateHandler;
-//use Mapbender\CoreBundle\Entity\State;
-//use Mapbender\CoreBundle\Form\Type\StateType;
-//use Mapbender\WmsBundle\Component\LegendUrl;
-//use Mapbender\WmsBundle\Component\OnlineResource;
-//use Mapbender\WmcBundle\Component\WmcParser;
 use Mapbender\WmcBundle\Component\WmcHandler;
-//use Mapbender\WmcBundle\Entity\Wmc;
-//use Mapbender\WmcBundle\Form\Type\WmcLoadType;
-//use Mapbender\WmcBundle\Form\Type\WmcType;
 use Symfony\Component\HttpFoundation\Response;
 
 class SuggestMap extends Element
@@ -84,7 +75,6 @@ class SuggestMap extends Element
     public function getAssets()
     {
 	$js = array(
-	    'jquery.form.js',
 	    'mapbender.element.suggestmap.js'
 	);
 	return array(
@@ -190,6 +180,5 @@ class SuggestMap extends Element
 		array('Content-Type' => 'application/json'));
 	}
     }
-
 }
 

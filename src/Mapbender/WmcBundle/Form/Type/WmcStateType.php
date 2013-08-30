@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 //use Symfony\Component\Form\FormBuilder;
 
-class WmcLoadType extends AbstractType
+class WmcStateType extends AbstractType
 {
 
     /**
@@ -16,7 +16,7 @@ class WmcLoadType extends AbstractType
      */
     public function getName()
     {
-        return 'wmcload';
+        return 'wmcstate';
     }
 
     /**
@@ -24,8 +24,12 @@ class WmcLoadType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('xml', 'file',
-                      array('required' => true));
+//        $subscriber = new WmcFieldSubscriber($builder->getFormFactory());
+//        $builder->addEventSubscriber($subscriber);
+        $builder->add('state', 'hidden',
+                      array(
+                          'required' => false,
+                          'data_class' => 'Mapbender\CoreBundle\Entity\State'));
     }
 
 }

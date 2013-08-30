@@ -395,7 +395,7 @@ class WmcStorage #extends Element
             $em->getConnection()->beginTransaction();
             if($wmc->getScreenshotPath() !== null)
             {
-                $upload_directory = $this->createWmcDirs();
+                $upload_directory = $this->getWmcDir();
                 if($upload_directory !== null)
                 {
                     $filepath = $upload_directory . "/" . $wmc->getScreenshotPath();
@@ -486,7 +486,7 @@ class WmcStorage #extends Element
                 {
                     if($wmc->getScreenshot() !== null)
                     {
-                        $upload_directory = $this->createWmcDirs();
+                        $upload_directory = $this->getWmcDir();
                         if($upload_directory !== null)
                         {
                             $dirs      = $this->container->getParameter("directories");
@@ -540,7 +540,7 @@ class WmcStorage #extends Element
         return $url_base;
     }
 
-    protected function createWmcDirs()
+    protected function getWmcDir()
     {
         $basedir = $this->container->get('kernel')->getRootDir() . '/../web/';
         $dirs    = $this->container->getParameter("directories");

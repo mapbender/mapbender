@@ -2,13 +2,15 @@
 
 namespace Mapbender\WmcBundle\Form\Type;
 
-use Mapbender\WmcBundle\Form\EventListener\WmcFieldSubscriber;
+use Mapbender\CoreBundle\Form\Type\StateType;
+use Mapbender\WmsBundle\Form\Type\LegendUrlType;
+use Mapbender\WmsBundle\Form\Type\OnlineResourceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 //use Symfony\Component\Form\FormBuilder;
 
-class WmcLoadType extends AbstractType
+class WmcDeleteType extends AbstractType
 {
 
     /**
@@ -16,7 +18,7 @@ class WmcLoadType extends AbstractType
      */
     public function getName()
     {
-        return 'wmcload';
+        return 'wmc';
     }
 
     /**
@@ -24,8 +26,7 @@ class WmcLoadType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('xml', 'file',
-                      array('required' => true));
+        $builder->add('id', 'hidden');
     }
 
 }

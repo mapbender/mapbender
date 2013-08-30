@@ -94,7 +94,7 @@ class Wmc
      * @var document public
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $public;
+    private $public = false;
 
 
     /**

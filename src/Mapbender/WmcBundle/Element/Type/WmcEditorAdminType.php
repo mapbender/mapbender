@@ -2,7 +2,7 @@
 
 namespace Mapbender\WmcBundle\Element\Type;
 
-//use FOM\UserBundle\Form\DataTransformer\GroupIdTransformer;
+use FOM\UserBundle\Form\DataTransformer\GroupIdTransformer;
 //use Mapbender\WmcBundle\Form\EventListener\WmcHandlerFieldSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @author Paul Schmidt
  */
-class SuggestMapAdminType extends AbstractType
+class WmcEditorAdminType extends AbstractType
 {
 
     /**
@@ -23,7 +23,7 @@ class SuggestMapAdminType extends AbstractType
      */
     public function getName()
     {
-        return 'suggestmap';
+        return 'wmceditor';
     }
 
     /**
@@ -42,21 +42,20 @@ class SuggestMapAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element',
-                array(
-                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application'   => $options['application'],
-                'property_path' => '[target]',
-                'required'      => false))
-            ->add('receiver', 'choice',
+                ->add('target', 'target_element',
                         array(
-                    'multiple' => true,
-                    'required' => true,
-                    'choices'  => array(
-                        'email'    => 'E-Mail',
-                        'facebook' => 'Facebook',
-                        'twitter'  => 'Twitter',
-                        'google+'  => 'Google+')));
+                    'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+                    'application'   => $options['application'],
+                    'property_path' => '[target]',
+                    'required'      => false))
+                ->add('accessGroups', 'fom_groups',
+                        array(
+                    'return_entity' => false,
+                    'user_groups'   => false,
+                    'property_path' => '[accessGroups]',
+                    'required'      => false,
+                    'multiple'      => true,
+                    'empty_value' => 'Choose an option',));
     }
 
 }

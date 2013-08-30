@@ -1,10 +1,1 @@
-<div id="wmcloader" title="{{ "Wmc Loader"|trans }}">
-    <form id="load-wmc" action="{{ url('mapbender_core_application_element', {'slug': app.request.get('slug'), 'id': id, 'action': 'wmcasxml'}) }}" method="post" target="_blank">
-        <div class="elementFormToolbar elementForm">
-            {{ form_widget(form.xml) }}
-            <div class="clearContainer"></div>
-            {{ form_widget(form.state) }}
-            {{ form_row(form._token) }}
-        </div>
-    </form>
-</div>
+<div id="{{ id }}" class="mb-element mb-element-wmcloader" title="{{ "Wmc Loader"|trans }}"></div>

@@ -27,6 +27,9 @@ class WmcType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('id', 'hidden')
+		->add('public', 'checkbox',
+                      array(
+                    'required' => false))
                 ->add('state', new StateType(),
                       array(
                     'data_class' => 'Mapbender\CoreBundle\Entity\State'))
@@ -41,7 +44,7 @@ class WmcType extends AbstractType
                     'data_class' => 'Mapbender\WmsBundle\Component\LegendUrl'))
                 ->add('screenshot', 'file',
                       array(
-                    'required' => true))
+                    'required' => false))
                 ->add('descriptionurl', new OnlineResourceType(),
                       array(
                     'data_class' => 'Mapbender\WmsBundle\Component\OnlineResource'));
