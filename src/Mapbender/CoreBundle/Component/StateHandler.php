@@ -238,11 +238,15 @@ class StateHandler
     
     public function toArray()
     {
+	$windowArr = $this->window->toArray();
+	$extentArr = $this->extent->ToArray();
+        $maxExtentArr = $this->maxextent->ToArray();
+        $sourcesArr = $this->sources;
         return array(
-            "window" => $this->window->toArray(),
-            "extent" => $this->extent->ToArray(),
-            "maxextent" => $this->maxextent->ToArray(),
-            "sources" => $this->sources);
+            "window" => $windowArr,
+            "extent" => $extentArr,
+            "maxextent" => $maxExtentArr,
+            "sources" => $sourcesArr);
     }
     
 //    

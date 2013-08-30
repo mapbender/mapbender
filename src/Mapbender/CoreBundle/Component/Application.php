@@ -448,46 +448,6 @@ class Application
         }
     }
 
-//    /**
-//     * @TODO: Needs documentation
-//     */
-//    public function reloadLayers($layersetId, $layeridToRemove, $layersToLoad)
-//    {
-//        // remove old layer configuration
-//        if(isset($this->configuration['layersets'][$layersetId][$layeridToRemove]))
-//        {
-//            unset($this->configuration['layersets'][$layersetId][$layeridToRemove]);
-//        }
-//        // create a new layer configuration
-//        $newLayers = array();
-//        foreach($this->layersets[$layersetId] as $layersAtLs)
-//        {
-//            if($layersAtLs->getLayerId() == $layeridToRemove)
-//            {
-//                foreach($layersToLoad as $layer_ToLoad)
-//                {
-//                    $class = $layer_ToLoad['loaderClass'];
-//                    $layerL = new $class(
-//                                    $layersetId,
-//                                    $layer_ToLoad['layerId'],
-//                                    array("class" => $layer_ToLoad['loaderClass']),
-//                                    $this);
-//                    $layerL->loadLayer();
-//                    $this->configuration['layersets'][$layersetId][$layer_ToLoad['layerId']] = $layerL->getConfiguration();
-//                    $newLayers[] = $layerL;
-//                }
-//            } else
-//            {
-//                $newLayers[] = $layersAtLs;
-//            }
-//        }
-//        if(isset($this->layersets[$layersetId]))
-//        {
-//            unset($this->layersets[$layersetId]);
-//        }
-//        $this->layersets[$layersetId] = $newLayers;
-//    }
-
     /**
      * Returns all layersets
      * 
@@ -507,15 +467,10 @@ class Application
                 {
                     if($this->getEntity()->getSource() === Entity::SOURCE_YAML)
                     {
-//                        $class = $entity->getClass();
-//                        $layer = new $class($this->container, $entity);
-//                        $layerset->layerObjects[] = $layer;
-
                         $layerset->layerObjects[] = $instance;
                     } else
                     {
                         if($instance->getEnabled()){
-//                            $layerset->layerObjects[] = $instance->getSourceInstance();
                             $layerset->layerObjects[] = $instance;
                         }
                     }

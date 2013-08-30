@@ -78,5 +78,19 @@ class Utils
         }
         return null;
     }
+    
+    /**
+     * Removes a file or directory (recursive)
+     * 
+     * @param string $path tha path of file/directory
+     * @return boolean true if the file/directory is removed.
+     */
+    public static function deleteFileAndDir($path)
+    {
+        $class_func = array(__CLASS__, __FUNCTION__);
+        return is_file($path) ?
+                @unlink($path) :
+                array_map($class_func, glob($path.'/*')) == @rmdir($path);
+    }
 
 }

@@ -14,7 +14,7 @@ class MapbenderCoreExtension extends Extension {
 
         $screenshot_path = $container->getParameter('kernel.root_dir')
             . '/../web/' . $config['screenshot_path'];
-        $container->setParameter('mapbender.wmc_dir', $config['wmc_dir']);
+        $container->setParameter('mapbender.uploads_dir', $config['uploads_dir']);
         $container->setParameter('mapbender.screenshot_path', $screenshot_path);
 
         $container->setParameter("mapbender.selfregister", $config["selfregister"]);

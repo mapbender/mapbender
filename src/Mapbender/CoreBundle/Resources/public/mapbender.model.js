@@ -96,7 +96,7 @@ Mapbender.Model = {
                 position: poi.position
             });
             if(poi.scale){
-                self.mbMap.zoomToScale(poi.scale);
+                self.mbMap.zoomToScale(poi.scale, true);
             }
             if(poi.label){
                 var popup = new OpenLayers.Popup.FramedCloud('chicken',
