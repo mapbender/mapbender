@@ -50,13 +50,7 @@ class WmcListAdminType extends AbstractType
 		'required' => false))
 	    ->add('label', 'checkbox',
 		array(
-		'required' => false))
-	    ->add('type', 'choice',
-		array(
-		'required' => false,
-		'choices' => array(
-		    "selectbox" => "Selectbox",
-		    "list" => "list")));
+		'required' => false));
     }
 
 }

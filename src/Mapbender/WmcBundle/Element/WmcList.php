@@ -42,8 +42,7 @@ class WmcList extends Element
 	return array(
 	    "tooltip" => null,
 	    "target" => null,
-	    'label' => false,
-	    "type" => "selectbox");
+	    'label' => false,);
     }
 
     /**
