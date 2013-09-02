@@ -704,6 +704,28 @@ class ApplicationController extends Controller
     }
 
     /**
+     * A confirmation page for a instance
+     *
+     * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/confirmdelete")
+     * @Method("GET")
+     * @Template("MapbenderManagerBundle:Application:deleteInstance.html.twig")
+     */
+    public function confirmDeleteInstanceAction($slug, $layersetId, $instanceId)
+    {
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $this->checkGranted('EDIT', $application);
+        $layerset    = $this->getDoctrine()
+            ->getRepository("MapbenderCoreBundle:SourceInstance")
+            ->find($instanceId);
+        return array(
+            'application' => $application,
+            'layerset'    => $layerset,
+            "instanceId" => $instanceId,
+            'form'        => $this->createDeleteForm($layerset->getId())->createView()
+        );
+    }
+
+    /**
      * Delete a source instance from a layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/instance/{instanceId}/delete")
      * @Method("POST")
