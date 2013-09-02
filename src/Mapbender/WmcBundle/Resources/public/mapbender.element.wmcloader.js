@@ -21,7 +21,8 @@
                 var wmcHandlier = new Mapbender.WmcHandler(map);
                 wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
             }
-
+            this._trigger('ready');
+            this._ready();
         },
         /**
          * closes a dialog
@@ -142,12 +143,36 @@
          */
         _loadFromId: function(e){
             var wmc_id = $(e.target).parents('tr:first').attr('data-id');
+            this.loadFromId(wmc_id);
+            
+//            this.close(); 
+        },
+        loadFromId: function(wmc_id){
             var map = $('#' + this.options.target).data('mapbenderMbMap');
             var wmcHandlier = new Mapbender.WmcHandler(map, {
                 keepExtent: this.options.keepExtent,
                 keepSources: this.options.keepSources});
             wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
-//            this.close(); 
+        },
+        /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
+            }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
         },
         _destroy: $.noop
     });

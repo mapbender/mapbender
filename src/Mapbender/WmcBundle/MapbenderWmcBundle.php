@@ -20,6 +20,7 @@ class MapbenderWmcBundle extends MapbenderBundle
     {
 	return array(
 	    'Mapbender\WmcBundle\Element\WmcLoader',
+	    'Mapbender\WmcBundle\Element\WmcList',
 	    'Mapbender\WmcBundle\Element\WmcEditor',
 	    'Mapbender\WmcBundle\Element\SuggestMap',
 	);

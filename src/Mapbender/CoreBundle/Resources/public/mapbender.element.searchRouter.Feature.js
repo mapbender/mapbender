@@ -12,7 +12,7 @@ var Mapbender = Mapbender || {};
         feature: null,
 
         parse: function(response) {
-            console.log("Feature", response);
+            window.console && console.log("Feature", response);
         },
 
         getFeature: function() {

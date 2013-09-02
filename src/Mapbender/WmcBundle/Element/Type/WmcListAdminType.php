@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @author Paul Schmidt
  */
-class WmcLoaderAdminType extends AbstractType
+class WmcListAdminType extends AbstractType
 {
 
     /**
@@ -23,7 +23,7 @@ class WmcLoaderAdminType extends AbstractType
      */
     public function getName()
     {
-	return 'wmcloader';
+	return 'wmclist';
     }
 
     /**
@@ -44,31 +44,19 @@ class WmcLoaderAdminType extends AbstractType
 	$builder->add('tooltip', 'text', array('required' => false))
 	    ->add('target', 'target_element',
 		array(
-		'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+		'element_class' => 'Mapbender\\WmcBundle\\Element\\WmcLoader',
 		'application' => $options['application'],
 		'property_path' => '[target]',
 		'required' => false))
-	    ->add('keepSources', 'choice',
+	    ->add('label', 'checkbox',
+		array(
+		'required' => false))
+	    ->add('type', 'choice',
 		array(
 		'required' => false,
 		'choices' => array(
-		    "no" => " no ",
-		    "basesources" => "BaseSources",
-		    "allsources" => "AllSources")))
-	    ->add('components', 'choice',
-		array(
-		'multiple' => true,
-		'required' => true,
-		'preferred_choices' => array("loader"),
-		'choices' => array(
-		    "idloader" => "Id Loader",
-		    "listloader" => "From List Loader",
-		    "wmcloader" => "Wmc Xml Loader",
-		    /* TODO at client
-		    "wmccreater" => "Wmc Xml creater"
-		    */)))
-	    ->add('keepExtent', 'checkbox', array(
-		'required' => false));
+		    "selectbox" => "Selectbox",
+		    "list" => "list")));
     }
 
 }

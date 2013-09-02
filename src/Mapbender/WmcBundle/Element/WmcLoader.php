@@ -96,8 +96,11 @@ class WmcLoader extends Element
     public function getConfiguration()
     {
 	$configuration = parent::getConfiguration();
-	$wmcid = $this->container->get('request')->get('wmc');
-	if($wmcid) $configuration["load"] = array('wmc' => $wmcid);
+	if(isset($configuration['components']) && in_array("idloader", $configuration['components']))
+	{
+	    $wmcid = $this->container->get('request')->get('wmc');
+	    if($wmcid) $configuration["load"] = array('wmc' => $wmcid);
+	}
 	return $configuration;
     }
 
@@ -139,7 +142,7 @@ class WmcLoader extends Element
 		throw new NotFoundHttpException('No such action');
 	}
     }
-    
+
     /**
      * Returns a json encoded or html form wmc or error if wmc is not found.
      * 
@@ -167,19 +170,20 @@ class WmcLoader extends Element
 		200, array('Content-Type' => 'application/json'));
 	}
     }
-    
+
     public function loadForm()
     {
-	    $wmc = new Wmc();
-	    $form = $this->container->get("form.factory")->create(new WmcLoadType(), $wmc);
-	    $html = $this->container->get('templating')
-		->render('MapbenderWmcBundle:Wmc:wmcloader-form.html.twig',
-		array(
-		'form' => $form->createView(),
-		'id' => $this->getEntity()->getId()));
-	    return new Response($html, 200, array('Content-Type' => 'text/html'));
+	$wmc = new Wmc();
+	$form = $this->container->get("form.factory")->create(new WmcLoadType(), $wmc);
+	$html = $this->container->get('templating')
+	    ->render('MapbenderWmcBundle:Wmc:wmcloader-form.html.twig',
+	    array(
+	    'form' => $form->createView(),
+	    'id' => $this->getEntity()->getId()));
+	return new Response($html, 200, array('Content-Type' => 'text/html'));
 //	}
     }
+
     /**
      * Returns a html encoded list of all wmc documents
      * 
@@ -205,6 +209,7 @@ class WmcLoader extends Element
 	$response->setContent($responseBody);
 	return $response;
     }
+
     /**
      * 
      * @return \Symfony\Component\HttpFoundation\Response
@@ -259,10 +264,12 @@ class WmcLoader extends Element
 		{
 		    unlink($file->getPathname());
 		}
-		return new Response(json_encode(array("success" => array(round((microtime(true) * 1000)) => $wmc->getState()->getJson()))),
-		    200, array(
+		return new Response(json_encode(array("success" => array(round((microtime(true)
+				* 1000)) => $wmc->getState()->getJson()))), 200,
+		    array(
 		    'Content-Type' => 'application/json'));
-	    } else
+	    }
+	    else
 	    {
 		return new Response(json_encode(array(
 			"error" => 'WMC:  can not be loaded.')), 200,
@@ -276,4 +283,5 @@ class WmcLoader extends Element
 		array('Content-Type' => 'application/json'));
 	}
     }
+
 }
