@@ -123,6 +123,43 @@ parameters:
                         tooltip: About
                         label: true
                         class: Mapbender\CoreBundle\Element\AboutDialog
+                    wmclist:
+                        title: Wmc List
+                        tooltip: Wmc List
+                        class: Mapbender\WmcBundle\Element\WmcList
+                        target: wmcloader
+                        label: true
+                    loadwmc:
+                        title: Load Wmc
+                        tooltip: Load Wmc
+                        class: Mapbender\WmcBundle\Element\WmcLoader
+                        target: wmcloader
+                        icon: iconAreaRuler
+                        label: true
+                        target: wmcloader
+                        deactivate: close
+                        action: open
+                        group: rulers
+                    editwmc:
+                        title: Edit Wmc
+                        tooltip: Edit Wmc
+                        class: Mapbender\WmcBundle\Element\WmcEditor
+                        icon: iconAreaRuler
+                        label: true
+                        target: wmceditor
+                        action: open
+                        deactivate: close
+                        group: rulers
+                    suggestmap_btn:
+                        title: Suggest Map
+                        tooltip: Suggest Map
+                        class: Mapbender\WmcBundle\Element\SuggestMap
+                        icon: iconAreaRuler
+                        label: true
+                        target: wmceditor
+                        action: open
+                        deactivate: close
+                        group: rulers
                 content:
                     map:
                         title: Main Map
@@ -232,6 +269,26 @@ parameters:
                         position: ['0px', '0px']
                         maximized: true
                         fixed: false
+                    wmcloader:
+                        title: Wmc Loader
+                        class: Mapbender\WmcBundle\Element\WmcLoader
+                        tooltip: 'Wmc Loader'
+                        target: map
+                        components: ['idloader', 'listloader', 'wmcloader']
+                        keepSources: false
+                        keepExtent: false
+                    suggestmap:
+                        title: Suggest Map
+                        class: Mapbender\WmcBundle\Element\SuggestMap
+                        tooltip: Suggest Map
+                        target: map
+                        receiver: ['email', 'facebook', 'twitter', 'google+']
+                    wmceditor:
+                        title: Wmc Editor
+                        class: Mapbender\WmcBundle\Element\WmcEditor
+                        tooltip: Wmc Editor
+                        target: map
+                        accessGroups: [0,1]
                 sidepane:
                     layertree:
                         title: layertree

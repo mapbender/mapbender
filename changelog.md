@@ -1,5 +1,9 @@
 # Changelog
 * **v3.0.1.0** - Yet to be released
+  - Parameter/Service 'mapbender.proxy' removed
+  - WmcBundle (Elements SuggestMap,WmcEditor,WmcLoader,WmcList) added
+  - Parameter 'mapbender.uploads_dir' added
+  - Application's directory added
   - Map scale bugs fixes
   - Move checkbox script into `checkbox.js`
   - Merge checkbox frontend and backend script
