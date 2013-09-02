@@ -354,6 +354,9 @@
         },
 
         open: function() {
+            self.defaultAction();
+        },
+        defaultAction: function() {
             var self = this;
             var sources = this._getSources();
             if(this.options.checkGraphic){
@@ -362,7 +365,6 @@
                 this._createLegend(this._createLegendHtml(sources));
             }
         },
-
         close: function() {
             if(this.options.elementType === "dialog" && !$('body').data('mapbenderMbPopup')) {
                $("body").mbPopup("close");
