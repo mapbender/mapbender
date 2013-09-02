@@ -93,17 +93,6 @@ class RepositoryController extends Controller {
     }
 
     /**
-    * @ManagerRoute("/source/{sourceId}/confirmdelete")
-    * @Method({"GET"})
-    * @Template
-    public function confirmdeleteAction($sourceId){
-        $source = $this->getDoctrine()
-                ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-        return array("source" => $source);
-    }
-    */
-
-    /**
      * deletes a Source
      * @ManagerRoute("/source/{sourceId}/delete")
      * @Method({"POST"})
