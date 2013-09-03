@@ -320,12 +320,33 @@
             var self = this;
             $(self.element).find("#imgtest").html("");
             if(this.options.elementType === "dialog") {
-                if(!$('body').data('mapbenderMbPopup')) {
-                    $("body").mbPopup();
-                    $("body").mbPopup("addButton", "Close", "button buttonCancel critical right", function(){
-                    //close
-                    $("body").mbPopup("close");
-                }).mbPopup('showCustom', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, showCloseButton: false, overflow: false});
+//                if(!$('body').data('mapbenderMbPopup')) {
+//                    $("body").mbPopup();
+//                    $("body").mbPopup("addButton", "Close", "button buttonCancel critical right", function(){
+//                    //close
+//                    $("body").mbPopup("close");
+//                }).mbPopup('showCustom', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, showCloseButton: false, overflow: false});
+//                }
+                if(!this.popup || !this.popup.$element){
+                    this.popup = new Mapbender.Popup2({
+                        title: self.element.attr('title'),
+                        draggable: true,
+                        modal: false,
+                        closeButton: true,
+                        content: ('<ul>' + html + '</ul>'),
+                        width: 350,
+                        buttons: {
+                            'ok': {
+                                label: 'Close',
+                                cssClass: 'button right',
+                                callback: function(){
+                                    this.close();
+                                }
+                            }
+                        }
+                    });
+                }else{
+                    this.popup.open(('<ul>' + html + '</ul>'));
                 }
             }else{
                 $(this.element).find('#legends:eq(0)').html('<ul>' + html + '</ul>');
@@ -365,7 +386,10 @@
 
         close: function() {
             if(this.options.elementType === "dialog" && !$('body').data('mapbenderMbPopup')) {
-               $("body").mbPopup("close");
+               if(this.popup){
+                    this.popup.destroy();
+                    this.pupup = null;
+                }
             }
         }
 
