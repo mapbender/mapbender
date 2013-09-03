@@ -32,8 +32,10 @@
                 $('#' + this.options.target).removeClass('mb-feature-info-active');
                 this.map.element.unbind('click', this.mapClickHandler);
                 $(".toolBarItemActive").removeClass("toolBarItemActive");
-                this.popup.destroy();
-                this.pupup = null;
+                if(this.popup){
+                    this.popup.destroy();
+                    this.pupup = null;
+                }
             }
         },
         /**
