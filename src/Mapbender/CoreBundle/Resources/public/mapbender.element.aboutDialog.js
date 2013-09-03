@@ -19,7 +19,7 @@
         open: function(){
             var self = this;
             if(!this.popup || !this.popup.$element){
-                popup = new Mapbender.Popup2({
+                this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
                     modal: true,
                     closeButton: true,
