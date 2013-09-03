@@ -5,12 +5,10 @@ namespace Mapbender\CoreBundle\Element\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Mapbender\CoreBundle\Form\Type\PositionType;
+use Mapbender\CoreBundle\Element\Type\SearchRouterRouteAdminType;
 
-/**
- * 
- */
-class CopyrightAdminType extends AbstractType
+
+class SearchRouterAdminType extends AbstractType
 {
 
     /**
@@ -18,7 +16,7 @@ class CopyrightAdminType extends AbstractType
      */
     public function getName()
     {
-        return 'copyright';
+        return 'search_form';
     }
 
     /**
@@ -28,17 +26,15 @@ class CopyrightAdminType extends AbstractType
     {
         $resolver->setDefaults(array(
             'application' => null,
-        ));
+            'routes' => array()));
     }
 
-    /**
-     * @inheritdoc
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('tooltip', 'text', array('required' => false))
-                ->add('autoOpen', 'checkbox', array('required' => false))
-                ->add('content', 'textarea', array('required' => true));
+        $builder->add('routes', 'collection', array(
+            'type' => new SearchRouterRouteAdminType(),
+            'allow_add' => true,
+            'allow_delete' => true
+        ));
     }
-
 }

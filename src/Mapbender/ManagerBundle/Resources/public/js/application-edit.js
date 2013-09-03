@@ -144,14 +144,14 @@ $(function() {
                     $("#popup").find(".buttonYes, .buttonBack").show();
                 },
                 201: function() {
-                    $("body").mbPopup('close');
+                    popup.close();
                     window.setTimeout(function() {
                         window.location.reload();
                     }, 10);
 
                 },
                 205: function() {
-                    $("body").mbPopup('close');
+                    popup.close();
                     window.setTimeout(function() {
                         window.location.reload();
                     }, 10);
@@ -169,15 +169,16 @@ $(function() {
             $.ajax({
                 url: url,
                 type: "GET",
-                success: function(data){
-                    $("#popupContent").wrap('<div id="contentWrapper"></div>').hide();
-                    $("#contentWrapper").append('<div id="popupSubContent" class="popupSubContent"></div>');
-                    $("#popupSubContent").append(data);
-                    var subTitle = $("#popupSubContent").find("#form_title").val();
-                    $("#popupSubTitle").text(" - " + subTitle);
-                    $("#popup").find(".buttonYes, .buttonBack").show();
-
-                    $("#popupSubContent").on('submit', 'form', submitHandler);
+                complete: function(data){
+                    if(data != undefined){
+                        $(".popupContent").wrap('<div class="contentWrapper"></div>').hide();
+                        $(".contentWrapper").append('<div class="popupSubContent"></div>');
+                        $(".popupSubContent").html(data.responseText);
+                        var subTitle = $(".popupSubContent").find("#form_title").val();
+                        $(".popupSubTitle").text(" - " + subTitle);
+                        $(".popup").find(".buttonYes, .buttonBack").show();
+                        $(".popupSubContent").on('submit', 'form', submitHandler);
+                    }
                 }
             });
         }
@@ -186,31 +187,55 @@ $(function() {
     }
 
     $(".addElement").bind("click", function(){
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('addButton', "Back", "button buttonBack left", function(){
+        var self = $(this);
+        if(popup){
+            popup = popup.destroy();
+        }
+        popup = new Mapbender.Popup2({
+            title:"Add element",
+            subtitle: " - " + self.parent().siblings(".subTitle").text(),
+            closeOnOutsideClick: true,
+            cssClass:"elementPopup",
+            content: [
+                $.ajax({
+                    url: self.attr("href"),
+                    complete: function(){
+                       var curPopup = $(".popup");
 
-                $("#popupSubContent").remove();
-                $("#popupSubTitle").text("");
-                $("#popup").find(".buttonYes, .buttonBack").hide();
-                $("#popupContent").show();
-
-            })
-            .mbPopup('showAjaxModal',
-                     {title:"Add element"},
-                     $(this).attr("href"),
-                     function(){ //ok click
+                       curPopup.find(".buttonYes, .buttonBack").hide();
+                       curPopup.find(".chooseElement").on("click", loadElementFormular);
+                    }
+                })
+            ],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        popup.close();
+                    }
+                },
+                'ok': {
+                    label: 'Ok',
+                    cssClass: 'button buttonYes right',
+                    callback: function() {
                        $("#elementForm").submit();
                        return false;
-                     },
-                     null,
-                     function(){  //afterLoad
-                       var popup = $("#popup");
+                    }
+                },
+                'back': {
+                    label: 'Back',
+                    cssClass: 'button left buttonBack',
+                    callback: function() {
+                        $(".popupSubContent").remove();
+                        $(".popupSubTitle").text("");
+                        $(".popup").find(".buttonYes, .buttonBack").hide();
+                        $(".popupContent").show();
+                    }
+                }
+            }
+        });
 
-                       popup.find(".buttonYes, .buttonBack").hide();
-                       popup.find(".chooseElement").on("click", loadElementFormular);
-                     });
-        }
         return false;
     });
 
@@ -274,6 +299,7 @@ $(function() {
 
     function addOrEditLayerset(edit){
         var self = $(this);
+
         if(popup){
             popup = popup.destroy();
         }
@@ -367,17 +393,19 @@ $(function() {
     });
     // Delete instance
     $('.removeInstance').bind("click", function(){
-        var self = $(this);
+        var self  = $(this);
+        var content = self.attr('title');
+
+
         if(popup){
             popup = popup.destroy();
         }
+
         popup = new Mapbender.Popup2({
             title:"Confirm delete",
-            subTitle: " - layerset",
+            subtitle: " - layerset",
             closeOnOutsideClick: true,
-            content: [
-                $.ajax({url: self.attr("href")})
-            ],
+            content: [content + "?"],
             buttons: {
                 'cancel': {
                     label: 'Cancel',
@@ -390,38 +418,21 @@ $(function() {
                     label: 'Delete',
                     cssClass: 'button right',
                     callback: function() {
-                        $("#instance-delete").submit();
+                        $.ajax({
+                            url: self.attr('data-url'),
+                            data : {
+                                'slug': self.attr('data-slug'),
+                                'id': self.attr('data-id')
+                            },
+                            type: 'POST',
+                            success: function(data) {
+                                window.location.reload();
+                            }
+                        });
                     }
                 }
             }
         });
-        return false;
-
-        var me  = $(this);
-        var title = me.attr('title');
-
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showModal',
-                {
-                    title:"Confirm delete",
-                    subTitle: " - layerset",
-                    content:title + "?"
-                },
-                function(){
-                    $.ajax({
-                        url: me.attr('data-url'),
-                        data : {
-                            'slug': me.attr('data-slug'),
-                            'id': me.attr('data-id')
-                        },
-                        type: 'POST',
-                        success: function(data) {
-                            window.location.reload();
-                        }
-                    });
-                });
-        }
         return false;
     });
 });

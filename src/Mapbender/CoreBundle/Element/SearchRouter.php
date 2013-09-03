@@ -18,7 +18,7 @@ class SearchRouter extends Element
 
     /**
      *
-     * @var type 
+     * @var type
      */
     protected $forms;
 
@@ -211,4 +211,11 @@ class SearchRouter extends Element
         return $form;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\SearchRouterAdminType';
+    }
 }
