@@ -274,6 +274,7 @@ $(function() {
 
     function addOrEditLayerset(edit){
         var self = $(this);
+
         if(popup){
             popup = popup.destroy();
         }
@@ -367,17 +368,19 @@ $(function() {
     });
     // Delete instance
     $('.removeInstance').bind("click", function(){
-        var self = $(this);
+        var self  = $(this);
+        var content = self.attr('title');
+
+
         if(popup){
             popup = popup.destroy();
         }
+
         popup = new Mapbender.Popup2({
             title:"Confirm delete",
-            subTitle: " - layerset",
+            subtitle: " - layerset",
             closeOnOutsideClick: true,
-            content: [
-                $.ajax({url: self.attr("href")})
-            ],
+            content: [content + "?"],
             buttons: {
                 'cancel': {
                     label: 'Cancel',
@@ -390,38 +393,21 @@ $(function() {
                     label: 'Delete',
                     cssClass: 'button right',
                     callback: function() {
-                        $("#instance-delete").submit();
+                        $.ajax({
+                            url: self.attr('data-url'),
+                            data : {
+                                'slug': self.attr('data-slug'),
+                                'id': self.attr('data-id')
+                            },
+                            type: 'POST',
+                            success: function(data) {
+                                window.location.reload();
+                            }
+                        });
                     }
                 }
             }
         });
-        return false;
-
-        var me  = $(this);
-        var title = me.attr('title');
-
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showModal',
-                {
-                    title:"Confirm delete",
-                    subTitle: " - layerset",
-                    content:title + "?"
-                },
-                function(){
-                    $.ajax({
-                        url: me.attr('data-url'),
-                        data : {
-                            'slug': me.attr('data-slug'),
-                            'id': me.attr('data-id')
-                        },
-                        type: 'POST',
-                        success: function(data) {
-                            window.location.reload();
-                        }
-                    });
-                });
-        }
         return false;
     });
 });
