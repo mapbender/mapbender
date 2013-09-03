@@ -129,6 +129,7 @@ $(function() {
     });
 
 
+    var popup;
 
     // Layout - Elements ---------------------------------------------------------------------------
     var submitHandler = function(e){
@@ -241,7 +242,44 @@ $(function() {
 
     // Edit element
     $(".editElement").bind("click", function() {
-        var url = $(this).attr("data-url");
+        var self = $(this);
+
+        if(popup){
+            popup = popup.destroy();
+        }
+        popup = new Mapbender.Popup2({
+            title:"Edit element",
+            closeOnOutsideClick: true,
+            content: [
+                $.ajax({
+                    url: self.attr("data-url"),
+                    complete: function(){
+                        $(".popupContent").removeClass("popupContent")
+                                          .addClass("popupSubContent");
+                        $('.popupContent form').submit(submitHandler);
+                    }
+                })
+            ],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'Update',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $("#elementForm").submit();
+                        window.location.reload();
+                    }
+                }
+            }
+        });
+        return false;
+
 
         if(!$('body').data('mbPopup') && !this.editing) {
             this.editing = true; // workaround for really fast clickers
@@ -269,34 +307,45 @@ $(function() {
 
     // Delete element
     $('.removeElement').bind("click", function(){
-        var me  = $(this);
-        var title = me.attr('title');
+        var self = $(this);
+        var content = self.attr('title');
 
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showModal',
-                {
-                    title:"Confirm delete",
-                    subTitle: " - element",
-                    content:title + "?"
-                },
-                function(){
-                    $.ajax({
-                        url: me.attr('data-url'),
-                        data : {'id': me.attr('data-id')},
-                        type: 'POST',
-                        success: function(data) {
-                            window.location.reload();
-                        }
-                    });
-                });
+        if(popup){
+            popup = popup.destroy();
         }
+        popup = new Mapbender.Popup2({
+            title:"Confirm delete",
+            subTitle: " - element",
+            closeOnOutsideClick: true,
+            content: [content + "?"],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'Delete',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $.ajax({
+                            url: self.attr('data-url'),
+                            data : {'id': self.attr('data-id')},
+                            type: 'POST',
+                            success: function(data) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                }
+            }
+        });
         return false;
     });
 
     // Layers --------------------------------------------------------------------------------------
-    var popup;
-
     function addOrEditLayerset(edit){
         var self = $(this);
 
