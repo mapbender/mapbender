@@ -91,7 +91,7 @@ class Map extends Element
             $scales = array();
             if(is_string($configuration["scales"]))
             { // from database
-                $scales = preg_split("/\s?,\s?/", $configuration["scales"]);
+                $scales = preg_split("/\s?[\,\;]\s?/", $configuration["scales"]);
             }
             else if(is_array($configuration["scales"]))
             { // from twig

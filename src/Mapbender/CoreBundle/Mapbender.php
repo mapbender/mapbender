@@ -159,7 +159,7 @@ class Mapbender {
 
         $yamlMapper = new ApplicationYAMLMapper($this->container);
         $entity = $yamlMapper->getApplication($slug);
-        if(!$entity->isPublished()) {
+        if(!$entity || !$entity->isPublished()) {
             return;
         }
         return $entity;

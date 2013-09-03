@@ -28,7 +28,7 @@ class MapFieldSubscriber implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::PRE_BIND => 'preBind');
+            FormEvents::PRE_BIND     => 'preBind');
     }
 
     /**
@@ -51,7 +51,11 @@ class MapFieldSubscriber implements EventSubscriberInterface
         }
         if(key_exists("scales", $data) && is_string($data["scales"]))
         {
-            $data["scales"] = preg_split("/\s?,\s?/", $data["scales"]);
+            $scales         = preg_split("/\s?[\,\;]+\s?/", $data["scales"]);
+            $scales         = array_map(create_function('$value',
+                    'return (int)$value;'), $scales);
+            arsort($scales, SORT_NUMERIC);
+            $data["scales"] = $scales;
             $event->setData($data);
         }
     }

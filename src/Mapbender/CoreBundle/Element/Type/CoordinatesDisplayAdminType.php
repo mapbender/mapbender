@@ -52,9 +52,9 @@ class CoordinatesDisplayAdminType extends AbstractType
                     'application' => $options['application'],
                     'property_path' => '[target]',
                     'required' => false))
-                ->add('empty', 'text', array('required' => false))
-                ->add('prefix', 'text', array('required' => false))
-                ->add('separator', 'text', array('required' => false))
+                ->add('empty', 'text', array('required' => false, "trim" => false))
+                ->add('prefix', 'text', array('required' => false, "trim" => false))
+                ->add('separator', 'text', array('required' => false, "trim" => false))
         ;
     }
 

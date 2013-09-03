@@ -325,7 +325,7 @@ class ApplicationController extends Controller
             return array('form' => $form->createView());
         }
     }
-    
+
     /**
      * Copies an application
      *
@@ -464,7 +464,7 @@ class ApplicationController extends Controller
      * Create a form for a new layerset
      *
      * @ManagerRoute("/application/{slug}/layerset/new")
-     * @Method("POST")
+     * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:form-layerset.html.twig")
      */
     public function newLayersetAction($slug)
@@ -487,7 +487,7 @@ class ApplicationController extends Controller
      * Create a new layerset from POSTed data
      *
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/edit")
-     * @Method("POST")
+     * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:form-layerset.html.twig")
      */
     public function editLayersetAction($slug, $layersetId)
@@ -556,7 +556,7 @@ class ApplicationController extends Controller
      * A confirmation page for a layerset
      *
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/confirmdelete")
-     * @Method("POST")
+     * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:deleteLayerset.html.twig")
      */
     public function confirmDeleteLayersetAction($slug, $layersetId)
@@ -617,7 +617,7 @@ class ApplicationController extends Controller
     /**
      * Add a new SourceInstance to the Layerset
      * @ManagerRoute("/application/{slug}/layerset/{layersetId}/list")
-     * @Method("POST")
+     * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:list-source.html.twig")
      */
     public function listInstanceAction($slug, $layersetId, Request $request)
@@ -808,14 +808,19 @@ class ApplicationController extends Controller
             throw new AccessDeniedException();
         }
     }
-    
+
     private function generateSlug($slug)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         if($application === null)
             return $slug;
         else
-            return $this->generateSlug($slug."_copy");
+            $count = 0;
+            do {
+                $copySlug = $slug . '_copy' . ($count > 0 ? '_' . $count : '');
+                $count++;
+            } while($this->get('mapbender')->getApplicationEntity($copySlug));
+            return $copySlug;
     }
 
 }
