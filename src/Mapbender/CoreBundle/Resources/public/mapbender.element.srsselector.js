@@ -32,6 +32,8 @@
             $("#"+$(this.element).attr('id')+" select").change($.proxy(self._switchSrs, self));
             $(document).bind('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
             $(document).bind('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
+            this._trigger('ready');
+            this._ready();
         },
 
         showHidde: function() {
@@ -244,6 +246,26 @@
                 }
             }
             return result;
+        },
+        /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
+            }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
         },
         _destroy: $.noop
     });

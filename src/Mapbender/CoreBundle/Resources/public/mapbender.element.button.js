@@ -13,6 +13,19 @@ $.widget("mapbender.mbButton", {
     button : null,
 
     _create: function() {
+        if(this.options.target && !Mapbender.checkTarget("mbButton:"+this.options.title, this.options.target)){
+            wondow.console && console.log("mbButton:"+this.options.title +" abort");
+            return;
+        }
+        if(this.options.target){
+            var self = this;
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+        } else {
+            this._setup();
+        }
+    },
+
+    _setup: function(){
         var self = this;
         var me = $(this.element);
 
@@ -35,6 +48,8 @@ $.widget("mapbender.mbButton", {
         $(this.button)
             .bind('click', $.proxy(self._onClick, self))
             .bind('mbButtonDeactivate', $.proxy(self.deactivate, self));
+        this._trigger('ready');
+        this._ready();
     },
 
     _setOption: function(key, value) {
@@ -105,7 +120,27 @@ $.widget("mapbender.mbButton", {
         if(this.options.group) {
             this.button.checked = false;
         }
-    }
+    },
+    /**
+     *
+     */
+    ready: function(callback) {
+        if(this.readyState === true) {
+            callback();
+        } else {
+            this.readyCallbacks.push(callback);
+        }
+    },
+    /**
+     *
+     */
+    _ready: function() {
+        for(callback in this.readyCallbacks) {
+            callback();
+            delete(this.readyCallbacks[callback]);
+        }
+        this.readyState = true;
+    },
 });
 
 })(jQuery);

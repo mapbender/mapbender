@@ -22,13 +22,14 @@ $.widget('mapbender.mbSearchRouter', {
      * Widget creator
      */
     _create: function() {
-        if(this.options.target === null ||
-            new String(this.options.target).replace(/^\s+|\s+$/g, '') === "" ||
-            !$('#' + this.options.target)) {
-            Mapbender.error('The target element "map" is not defined for a SearchRouter.');
-            return;
-        }
+        if(!Mapbender.checkTarget("mbSearchRouter", this.options.target)){
+                return;
+            }
+            var self = this;
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+        },
 
+    _setup: function(){
         var self = this;
         if(true === this.options.asDialog) {
             this.element.dialog(this.options);
@@ -91,6 +92,8 @@ $.widget('mapbender.mbSearchRouter', {
             $('#search_routes_route_control_group').hide()
                 .next('hr').hide();
         }
+        this._trigger('ready');
+        this._ready();
     },
 
     destroy: function() {
@@ -448,6 +451,26 @@ $.widget('mapbender.mbSearchRouter', {
 
         // finally, zoom
         map.setCenter(featureExtent.getCenterLonLat(), zoom);
+    },
+    /**
+     *
+     */
+    ready: function(callback) {
+        if(this.readyState === true) {
+            callback();
+        } else {
+            this.readyCallbacks.push(callback);
+        }
+    },
+    /**
+     *
+     */
+    _ready: function() {
+        for(callback in this.readyCallbacks) {
+            callback();
+            delete(this.readyCallbacks[callback]);
+        }
+        this.readyState = true;
     }
 });
 

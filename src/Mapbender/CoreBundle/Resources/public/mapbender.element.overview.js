@@ -93,6 +93,8 @@ $.widget("mapbender.mbOverview", {
         mbMap.map.olMap.addControl(this.overview);
         $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
         $(self.element).find('.toggleOverview').bind('click', $.proxy(this._openClose, this));
+        this._trigger('ready');
+        this._ready();
     },
 
     /**
@@ -169,7 +171,27 @@ $.widget("mapbender.mbOverview", {
                 }
             };
         }
-    }
+    },
+    /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
+            }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
+        },
 });
 
 })(jQuery);
