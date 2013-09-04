@@ -6,6 +6,8 @@
         popup: null,
         _create: function() {
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            this._trigger('ready');
+            this._ready();
         },
 
         open: function() {
@@ -38,7 +40,26 @@
                 this.popup.close();
             }
         },
-
+        /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
+            }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
+        },
         _destroy: $.noop
     });
 

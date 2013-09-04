@@ -40,6 +40,8 @@
             $('select[name="template"]', this.element)
             .bind('change', $.proxy(this._getPrintSize, this))
             .trigger('change');
+            this._trigger('ready');
+            this._ready();
         },
 
         open: function() {
@@ -406,6 +408,26 @@
                     self._updateGeometry();
                 }
             })
+        },
+        /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
+            }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
         }
     });
 

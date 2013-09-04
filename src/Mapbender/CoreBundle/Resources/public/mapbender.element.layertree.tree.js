@@ -9,6 +9,8 @@
         dlg: null,
         template: null,
         layerconf: null,
+        popup: null,
+        created: false,
         consts: {
             source: "source",
             root: "root",
@@ -20,33 +22,38 @@
                 return;
             }
             var self = this;
-            var me = this.element;
-            this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
             var self = this;
-            if(self.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true){
-                self.open();
-            }
-            var me = this.element;
-            this.template = $(me).find('li').remove();
+            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            this.template = $('li', this.element).remove();
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
+            if(this.options.type === 'element'){
+                this._createTree();
+            } else if(this.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true){
+                this.open();
+            }
+            this._trigger('ready');
+            this._ready();
+        },
+        _createTree: function(){
+            var self = this;
             var sources = this.model.getSources();
             for(var i = (sources.length - 1); i > -1; i--){
                 if(!sources[i].configuration.isBaseSource || (sources[i].configuration.isBaseSource && this.options.showBaseSource)){
                     if(this.options.displaytype === "tree"){
                         var li_s = this._createSourceTree(sources[i], sources[i], this.model.getScale());
-                        me.find("ul.layers:first").append(li_s);
+                        $("ul.layers:first", this.element).append(li_s);
                     }else if(this.options.displaytype === "list"){
                         var li_s = self._createSourceList(sources[i], sources[i], this.model.getScale());
-                        me.find("ul.layers:first").append($(li_s));
+                        $("ul.layers:first", this.element).append($(li_s));
                     }
                 }
             }
             this._setSourcesCount();
 
-            me.find(".layer-opacity-slider").slider();
+            this.element.find(".layer-opacity-slider").slider();
 
             this._createSortable();
 
@@ -64,13 +71,7 @@
 
             this.element.on('click', '.iconRemove', $.proxy(self._removeSource, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
-
-            if(this.options.type === "dialog"){
-                this._initDialog();
-                if(this.options.autoOpen){
-                    this.open();
-                }
-            }
+            this.created = true;
         },
         _createSortable: function(){
             var self = this;
@@ -293,7 +294,7 @@
             return null;
         },
         _onSourceAdded: function(event, options){
-            if(!options.added) return;
+            if(!this.created || !options.added) return;
             var added = options.added;
             //window.console && console.log("layertree _onSourceAdded");
             var before = added.after, after = added.before;
@@ -344,6 +345,7 @@
             this._setSourcesCount();
         },
         _onSourceChanged: function(event, options){
+            if(!this.created) return;
             if(options.changed && options.changed.options){
                 this._optionsChanged(options.changed);
             }else if(options.changed && options.changed.layerRemove){
@@ -388,12 +390,13 @@
             }
         },
         _onSourceRemoved: function(event, removed){
+            if(!this.created) return;
             $(this.element).find('ul.layers:first li[data-sourceid="' + removed.source.id + '"]').remove();
             this._setSourcesCount();
         },
         _onSourceLoadStart: function(event, option){ // sets "loading" for layers
             //window.console && console.log("layertree _onSourceLoadStart");
-            if(!option.source)
+            if(!this.created || !option.source)
                 return;
             var source = option.source;
             if(this.options.displaytype === "tree"){
@@ -419,7 +422,7 @@
             }
         },
         _onSourceLoadEnd: function(event, option){ // removes "loading" from layers
-            if(!option.source)
+          if(!this.created || !option.source)
                 return;
             var source = option.source;
             if(this.options.displaytype === "tree"){
@@ -433,7 +436,7 @@
             }
         },
         _onSourceLoadError: function(event, option){ // sets "error" for layers
-            if(!option.source)
+            if(!this.created || !option.source)
                 return;
             if(this.options.displaytype === "tree"){
                 var source_li = $(this.element).find('li[data-sourceid="' + option.source.id + '"]');
@@ -597,40 +600,77 @@
             this._setSourcesCount();
         },
         open: function(){
-            if(this.options.type === 'dialog' && (!$('body').data('mapbenderMbPopup'))){
-                var self = this;
-
-                $("body").mbPopup();
-                $("body").mbPopup('addButton', "Close", "button critical right", function(){
-                    self.close();
-                }).mbPopup('showCustom',
-                        {title: this.options.title,
-                            showHeader: true,
-                            content: $(this.element),
-                            width: 350,
-                            showCloseButton: false,
-                            draggable: true});
+//            if(this.options.type === 'dialog' && (!$('body').data('mapbenderMbPopup'))){
+//                var self = this;
+//
+//                $("body").mbPopup();
+//                $("body").mbPopup('addButton', "Close", "button critical right", function(){
+//                    self.close();
+//                }).mbPopup('showCustom',
+//                        {title: this.options.title,
+//                            showHeader: true,
+//                            content: $(this.element),
+//                            width: 350,
+//                            showCloseButton: false,
+//                            draggable: true});
+//            }
+            var self = this;
+            if(!this.popup || !this.popup.$element){
+                this._createTree();
+                this.popup = new Mapbender.Popup2({
+                    title: self.element.attr('title'),
+                    modal: false,
+                    closeButton: true,
+                    content: self.element,
+                    destroyOnClose: true,
+                    width: 350,
+                    buttons: {
+                        'ok': {
+                            label: 'Close',
+                            cssClass: 'button right',
+                            callback: function(){
+                                self.close();
+                            }
+                        }
+                    }
+                });
+            } else {
+                this._createTree();
+                this.popup.open(this.element);
             }
         },
         close: function(){
-            if(this.options.type === 'dialog' && ($('body').data('mapbenderMbPopup'))){
-                $(this.element).appendTo("#mb-layertree-dialog");
-                $("body").mbPopup("close");
+            if(this.options.type === 'dialog'){
+                if(this.popup){
+                    $("ul.layers:first", this.element).empty();
+                    $(this.element).appendTo("body");
+                    this.created = false;
+                    if(this.popup.$element){
+                        this.popup.destroy();
+                    }
+                    this.popup = null;
+                }
             }
         },
-        _initDialog: function(){
-            var self = this;
-            if(this.dlg === null){
-                this.dlg = $('<div></div>')
-                        .attr('id', 'mb-layertree-dialog')
-                        .appendTo($('body'))
-                        .dialog({
-                    title: 'Layer Tree',
-                    autoOpen: false,
-                    modal: false
-                });
-                self.dlg.html($(self.element));
+        /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
             }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
         },
         _destroy: $.noop
     });

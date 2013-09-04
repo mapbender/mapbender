@@ -55,6 +55,8 @@
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
             $(document).bind('mbmapsourcemoved', $.proxy(self._onSourceMoved, self));
+            this._trigger('ready');
+            this._ready();
         },
 
         _onSourceAdded: function(event, options){
@@ -391,6 +393,26 @@
                     this.pupup = null;
                 }
             }
+        },
+        /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
+            }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
         }
 
     });
