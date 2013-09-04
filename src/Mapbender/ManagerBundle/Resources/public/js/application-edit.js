@@ -172,13 +172,27 @@ $(function() {
                 type: "GET",
                 complete: function(data){
                     if(data != undefined){
-                        $(".popupContent").wrap('<div class="contentWrapper"></div>').hide();
-                        $(".contentWrapper").append('<div class="popupSubContent"></div>');
-                        $(".popupSubContent").html(data.responseText);
-                        var subTitle = $(".popupSubContent").find("#form_title").val();
+                        var pop = $(".popup");
+                        var popupContent   = $(".popupContent");
+                        var contentWrapper = pop.find(".contentWrapper");
+
+                        if(contentWrapper.get(0) == undefined){
+                            popupContent.wrap('<div class="contentWrapper"></div>');
+                            contentWrapper = pop.find(".contentWrapper");
+                        }
+                        popupContent.hide();
+                        var subContent = contentWrapper.find(".popupSubContent");
+
+                        if(subContent.get(0) == undefined){
+                            contentWrapper.append('<div class="popupSubContent"></div>');
+                            subContent = contentWrapper.find('.popupSubContent');
+                        }
+                        subContent.html(data.responseText);
+
+                        var subTitle = subContent.find("#form_title").val();
                         $(".popupSubTitle").text(" - " + subTitle);
                         $(".popup").find(".buttonYes, .buttonBack").show();
-                        $(".popupSubContent").on('submit', 'form', submitHandler);
+                        subContent.on('submit', 'form', submitHandler);
                     }
                 }
             });
@@ -278,30 +292,6 @@ $(function() {
                 }
             }
         });
-        return false;
-
-
-        if(!$('body').data('mbPopup') && !this.editing) {
-            this.editing = true; // workaround for really fast clickers
-            $("body").mbPopup();
-            delete this.editing;
-            $("body").mbPopup('showAjaxModal', {
-                    title:"Edit element",
-                    method: 'GET'
-                },
-                url,
-                function(e){
-                    $("#elementForm").submit();
-                    e.preventDefault();
-                },
-                null,
-                function(){
-                    $("#popupContent").removeClass("popupContent")
-                                      .addClass("popupSubContent");
-                    $('#popupContent form').submit(submitHandler);
-                }
-            );
-        }
         return false;
     });
 
