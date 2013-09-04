@@ -43,6 +43,10 @@
         },
 
         open: function() {
+            self.defaultAction();
+        },
+        
+        defaultAction: function() {
             var self = this;
             var me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
