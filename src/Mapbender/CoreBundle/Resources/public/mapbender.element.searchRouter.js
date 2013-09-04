@@ -107,6 +107,10 @@ $.widget('mapbender.mbSearchRouter', {
      * an dialog (asDialog: true), otherwise just goes on and does nothing.
      */
     open: function() {
+        self.defaultAction();
+    },
+
+    defaultAction: function() {
         if(true === this.options.asDialog) {
             var self = this;
             var me = $(this.element);

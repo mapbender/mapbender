@@ -83,6 +83,12 @@
             this._ready();
         },
         /**
+         * Default action for mapbender element
+         */
+        defaultAction: function(){
+            this.activate();
+        },
+        /**
          * This activates this button and will be called on click
          */
         activate: function(){

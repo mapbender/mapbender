@@ -345,7 +345,6 @@
             this._setSourcesCount();
         },
         _onSourceChanged: function(event, options){
-            if(!this.created) return;
             if(options.changed && options.changed.options){
                 this._optionsChanged(options.changed);
             }else if(options.changed && options.changed.layerRemove){
@@ -390,13 +389,12 @@
             }
         },
         _onSourceRemoved: function(event, removed){
-            if(!this.created) return;
             $(this.element).find('ul.layers:first li[data-sourceid="' + removed.source.id + '"]').remove();
             this._setSourcesCount();
         },
         _onSourceLoadStart: function(event, option){ // sets "loading" for layers
             //window.console && console.log("layertree _onSourceLoadStart");
-            if(!this.created || !option.source)
+            if(!option.source)
                 return;
             var source = option.source;
             if(this.options.displaytype === "tree"){
@@ -422,7 +420,7 @@
             }
         },
         _onSourceLoadEnd: function(event, option){ // removes "loading" from layers
-          if(!this.created || !option.source)
+            if(!option.source)
                 return;
             var source = option.source;
             if(this.options.displaytype === "tree"){
@@ -436,7 +434,7 @@
             }
         },
         _onSourceLoadError: function(event, option){ // sets "error" for layers
-            if(!this.created || !option.source)
+            if(!option.source)
                 return;
             if(this.options.displaytype === "tree"){
                 var source_li = $(this.element).find('li[data-sourceid="' + option.source.id + '"]');
@@ -599,46 +597,46 @@
             }
             this._setSourcesCount();
         },
+        /**
+         * Default action for mapbender element
+         */
+        defaultAction: function(){
+            this.open();
+        },
+        /**
+         * Opens a dialog with a layertree (if options.type == 'dialog')
+         */
         open: function(){
-//            if(this.options.type === 'dialog' && (!$('body').data('mapbenderMbPopup'))){
-//                var self = this;
-//
-//                $("body").mbPopup();
-//                $("body").mbPopup('addButton', "Close", "button critical right", function(){
-//                    self.close();
-//                }).mbPopup('showCustom',
-//                        {title: this.options.title,
-//                            showHeader: true,
-//                            content: $(this.element),
-//                            width: 350,
-//                            showCloseButton: false,
-//                            draggable: true});
-//            }
-            var self = this;
-            if(!this.popup || !this.popup.$element){
-                this._createTree();
-                this.popup = new Mapbender.Popup2({
-                    title: self.element.attr('title'),
-                    modal: false,
-                    closeButton: true,
-                    content: self.element,
-                    destroyOnClose: true,
-                    width: 350,
-                    buttons: {
-                        'ok': {
-                            label: 'Close',
-                            cssClass: 'button right',
-                            callback: function(){
-                                self.close();
+            if(this.options.type === 'dialog'){
+                var self = this;
+                if(!this.popup || !this.popup.$element){
+                    this._createTree();
+                    this.popup = new Mapbender.Popup2({
+                        title: self.element.attr('title'),
+                        modal: false,
+                        closeButton: true,
+                        content: self.element,
+                        destroyOnClose: true,
+                        width: 350,
+                        buttons: {
+                            'ok': {
+                                label: 'Close',
+                                cssClass: 'button right',
+                                callback: function(){
+                                    self.close();
+                                }
                             }
                         }
-                    }
-                });
-            } else {
-                this._createTree();
-                this.popup.open(this.element);
+                    });
+                } else {
+                    this._createTree();
+                    this.popup.open(this.element);
+                }
             }
         },
+        /**
+         * closes a dialog with a layertree (if options.type == 'dialog')
+         */
         close: function(){
             if(this.options.type === 'dialog'){
                 if(this.popup){

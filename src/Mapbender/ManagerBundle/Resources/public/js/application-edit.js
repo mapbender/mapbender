@@ -129,6 +129,7 @@ $(function() {
     });
 
 
+    var popup;
 
     // Layout - Elements ---------------------------------------------------------------------------
     var submitHandler = function(e){
@@ -171,13 +172,27 @@ $(function() {
                 type: "GET",
                 complete: function(data){
                     if(data != undefined){
-                        $(".popupContent").wrap('<div class="contentWrapper"></div>').hide();
-                        $(".contentWrapper").append('<div class="popupSubContent"></div>');
-                        $(".popupSubContent").html(data.responseText);
-                        var subTitle = $(".popupSubContent").find("#form_title").val();
+                        var pop = $(".popup");
+                        var popupContent   = $(".popupContent");
+                        var contentWrapper = pop.find(".contentWrapper");
+
+                        if(contentWrapper.get(0) == undefined){
+                            popupContent.wrap('<div class="contentWrapper"></div>');
+                            contentWrapper = pop.find(".contentWrapper");
+                        }
+                        popupContent.hide();
+                        var subContent = contentWrapper.find(".popupSubContent");
+
+                        if(subContent.get(0) == undefined){
+                            contentWrapper.append('<div class="popupSubContent"></div>');
+                            subContent = contentWrapper.find('.popupSubContent');
+                        }
+                        subContent.html(data.responseText);
+
+                        var subTitle = subContent.find("#form_title").val();
                         $(".popupSubTitle").text(" - " + subTitle);
                         $(".popup").find(".buttonYes, .buttonBack").show();
-                        $(".popupSubContent").on('submit', 'form', submitHandler);
+                        subContent.on('submit', 'form', submitHandler);
                     }
                 }
             });
@@ -241,62 +256,86 @@ $(function() {
 
     // Edit element
     $(".editElement").bind("click", function() {
-        var url = $(this).attr("data-url");
+        var self = $(this);
 
-        if(!$('body').data('mbPopup') && !this.editing) {
-            this.editing = true; // workaround for really fast clickers
-            $("body").mbPopup();
-            delete this.editing;
-            $("body").mbPopup('showAjaxModal', {
-                    title:"Edit element",
-                    method: 'GET'
-                },
-                url,
-                function(e){
-                    $("#elementForm").submit();
-                    e.preventDefault();
-                },
-                null,
-                function(){
-                    $("#popupContent").removeClass("popupContent")
-                                      .addClass("popupSubContent");
-                    $('#popupContent form').submit(submitHandler);
-                }
-            );
+        if(popup){
+            popup = popup.destroy();
         }
+        popup = new Mapbender.Popup2({
+            title:"Edit element",
+            closeOnOutsideClick: true,
+            content: [
+                $.ajax({
+                    url: self.attr("data-url"),
+                    complete: function(){
+                        $(".popupContent").removeClass("popupContent")
+                                          .addClass("popupSubContent");
+                        $('.popupContent form').submit(submitHandler);
+                    }
+                })
+            ],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'Update',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $("#elementForm").submit();
+                        window.location.reload();
+                    }
+                }
+            }
+        });
         return false;
     });
 
     // Delete element
     $('.removeElement').bind("click", function(){
-        var me  = $(this);
-        var title = me.attr('title');
+        var self = $(this);
+        var content = self.attr('title');
 
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showModal',
-                {
-                    title:"Confirm delete",
-                    subTitle: " - element",
-                    content:title + "?"
-                },
-                function(){
-                    $.ajax({
-                        url: me.attr('data-url'),
-                        data : {'id': me.attr('data-id')},
-                        type: 'POST',
-                        success: function(data) {
-                            window.location.reload();
-                        }
-                    });
-                });
+        if(popup){
+            popup = popup.destroy();
         }
+        popup = new Mapbender.Popup2({
+            title:"Confirm delete",
+            subTitle: " - element",
+            closeOnOutsideClick: true,
+            content: [content + "?"],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'Delete',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $.ajax({
+                            url: self.attr('data-url'),
+                            data : {'id': self.attr('data-id')},
+                            type: 'POST',
+                            success: function(data) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                }
+            }
+        });
         return false;
     });
 
     // Layers --------------------------------------------------------------------------------------
-    var popup;
-
     function addOrEditLayerset(edit){
         var self = $(this);
 
