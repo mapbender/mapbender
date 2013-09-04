@@ -18,7 +18,7 @@
         lastRotation: null,
         width: null,
         height: null,
-        popup: true,
+        popupIsOpen: true,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
@@ -46,37 +46,48 @@
             var self = this;
             var me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            if(!$('body').data('mapbenderMbPopup')) {
-                $("body").mbPopup();
-                $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
-                    //close
-                    self._close();
-                    $("body").mbPopup("close");
-                }).mbPopup("addButton", "Print", "button right", function(){
-                    //print
-                    self._print();
-                }).mbPopup('showCustom', {
-                    title:"Print Client",
-                    showHeader:true,
-                    content: this.element,
-                    draggable: true,
-                    width: 320,
-                    height: 200,
-                    showCloseButton: false,
-                    overflow: true
-                });
-                me.show();
+            if(!this.popup || !this.popup.$element){
+                this.popup = new Mapbender.Popup2({
+                        title: self.element.attr('title'),
+                        draggable: true,
+                        modal: false,
+                        closeButton: false,
+                        content: self.element,
+                        width: 320,
+                        buttons: {
+                                'cancel': {
+                                    label: 'Cancel',
+                                    cssClass: 'button buttonCancel critical right',
+                                    callback: function(){
+                                        self.element.hide().appendTo($('body'));
+                                        self.popupIsOpen = false;
+                                        self._updateElements();
+                                        this.close();
+                                    }
+                                },
+                                'ok': {
+                                    label: 'Print',
+                                    cssClass: 'button right',
+                                    callback: function(){
+                                        self._print();
+                                    }
+                                }
+                        }
+                    });
+             } else {
+                this.popup.open(self.element);
             }
+            me.show();
 
+            this.popupIsOpen = true;
             this._loadPrintFormats();
-            this.popup = true;
             this._updateElements();
             this._updateGeometry(true);
         },
 
         _close: function() {
             this.element.hide().appendTo($('body'));
-            this.popup = false;
+            this.popupIsOpen = false;
             this._updateElements();
         },
 
@@ -249,7 +260,7 @@
         _updateElements: function() {
             var self = this;
 
-            if(true == this.popup){
+            if(true == this.popupIsOpen){
                 if(null === this.layer) {
 
                     this.layer = new OpenLayers.Layer.Vector("Print", {
@@ -287,10 +298,10 @@
 
         _print: function() {
             if (this.options.print_directly) {
-                this._printDirectly()
+                this._printDirectly();
             } else {
                 //@TODO
-                this._printQueued();
+                //this._printQueued();
             }
         },
 

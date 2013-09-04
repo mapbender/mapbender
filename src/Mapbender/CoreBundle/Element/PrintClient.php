@@ -42,7 +42,7 @@ class PrintClient extends Element
     public function getAssets()
     {
         return array('js' => array('mapbender.element.printClient.js', 
-                                    '@FOMCoreBundle/Resources/public/js/widgets/popup2.js',
+                                   '@FOMCoreBundle/Resources/public/js/widgets/popup-zwei.js',
                                    '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
                      'css' => array());
     }
@@ -188,6 +188,14 @@ class PrintClient extends Element
                 $size = $odgParser->getMapSize($data['template']);
                 $response->setContent($size->getContent());
                 return $response;
+                
+            case 'content':
+                $response = new Response();
+		$about = $this->container->get('templating')
+		    ->render('MapbenderCoreBundle:Element:printclient-content.html.twig',
+		    array("configuration" => $this->getConfiguration()));
+		$response->setContent($about);
+		return $response;
         }
     }
 }
