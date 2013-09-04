@@ -43,7 +43,7 @@
         },
 
         open: function() {
-            self.defaultAction();
+            this.defaultAction();
         },
         
         defaultAction: function() {
@@ -55,7 +55,9 @@
                         title: self.element.attr('title'),
                         draggable: true,
                         modal: false,
-                        closeButton: false,
+                        closeButton: true,
+                        closeOnPopupCloseClick: true,
+                        closeOnESC: true,
                         content: self.element,
                         width: 320,
                         buttons: {
@@ -63,9 +65,6 @@
                                     label: 'Cancel',
                                     cssClass: 'button buttonCancel critical right',
                                     callback: function(){
-                                        self.element.hide().appendTo($('body'));
-                                        self.popupIsOpen = false;
-                                        self._updateElements();
                                         this.close();
                                     }
                                 },
@@ -81,8 +80,10 @@
              } else {
                 this.popup.open(self.element);
             }
-            me.show();
-
+            me.show();        
+            
+            this.popup.$element.on('closed', function() {self._close();});
+            
             this.popupIsOpen = true;
             this._loadPrintFormats();
             this._updateElements();
