@@ -40,7 +40,7 @@ class Ruler extends Element
     {
         return array(
             'js' => array('@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),
+                '@FOMCoreBundle/Resources/public/js/widgets/popup2.js'),
             'css' => array());
     }
 
