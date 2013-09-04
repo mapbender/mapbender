@@ -55,7 +55,7 @@ class Copyright extends Element
 	return array(
 	    'js' => array(
 		'mapbender.element.copyright.js',
-		'@FOMCoreBundle/Resources/public/js/widgets/popup2.js',
+		'@FOMCoreBundle/Resources/public/js/widgets/popup-zwei.js',
 	    ),
 	    'css' => array()
 	);
