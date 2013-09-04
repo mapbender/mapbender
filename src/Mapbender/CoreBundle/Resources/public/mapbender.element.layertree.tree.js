@@ -597,6 +597,9 @@
             this._setSourcesCount();
         },
         open: function(){
+            self.defaultAction();
+        },
+        defaultAction: function() {
             if(this.options.type === 'dialog' && (!$('body').data('mapbenderMbPopup'))){
                 var self = this;
 

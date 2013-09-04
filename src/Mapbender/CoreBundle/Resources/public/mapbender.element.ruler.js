@@ -92,6 +92,10 @@ $.widget("mapbender.mbRuler", {
      * This activates this button and will be called on click
      */
     activate: function() {
+        self.defaultAction();
+    },
+
+    defaultAction: function() {
         var self = this,
             olMap = this.map.data('mapQuery').olMap;
         olMap.addControl(this.control);
