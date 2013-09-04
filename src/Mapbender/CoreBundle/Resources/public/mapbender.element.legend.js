@@ -322,13 +322,6 @@
             var self = this;
             $(self.element).find("#imgtest").html("");
             if(this.options.elementType === "dialog") {
-//                if(!$('body').data('mapbenderMbPopup')) {
-//                    $("body").mbPopup();
-//                    $("body").mbPopup("addButton", "Close", "button buttonCancel critical right", function(){
-//                    //close
-//                    $("body").mbPopup("close");
-//                }).mbPopup('showCustom', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, showCloseButton: false, overflow: false});
-//                }
                 if(!this.popup || !this.popup.$element){
                     this.popup = new Mapbender.Popup2({
                         title: self.element.attr('title'),
@@ -377,9 +370,6 @@
         },
 
         open: function() {
-            self.defaultAction();
-        },
-        defaultAction: function() {
             var self = this;
             var sources = this._getSources();
             if(this.options.checkGraphic){
@@ -388,12 +378,16 @@
                 this._createLegend(this._createLegendHtml(sources));
             }
         },
+        defaultAction: function() {
+            this.open();
+        },
         close: function() {
-            if(this.options.elementType === "dialog" && !$('body').data('mapbenderMbPopup')) {
+            if(this.options.elementType === "dialog") {
                if(this.popup){
-                    this.popup.destroy();
-                    this.pupup = null;
-                }
+                   if(this.popup.$element)
+                       this.popup.destroy();
+                   this.pupup = null;
+               }
             }
         },
         /**
