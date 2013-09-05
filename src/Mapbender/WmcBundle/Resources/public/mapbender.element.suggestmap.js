@@ -121,7 +121,11 @@
                     title: self.element.attr('title'),
                     modal: false,
                     closeButton: true,
-                    content: [ $.ajax({url: self.elementUrl + 'content'})],
+                    content: [$.ajax({
+                            url: self.elementUrl + 'content',
+                            complete: function(data){
+                                $('ul li', self.popup.$element).bind("click", $.proxy(self._suggestMap, self));
+                            }})],
                     destroyOnClose: true,
                     width: 350,
                     buttons: {
@@ -134,28 +138,9 @@
                         }
                     }
                 });
-            } else {
-                this._createTree();
-                this.popup.open(this.element);
+            }else{
+                this.popup.open($.ajax({url: self.elementUrl + 'content'}));
             }
-//            var self = this;
-//            if(!$('body').data('mbPopup')){
-//                $("body").mbPopup();
-//                $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
-//                    self.close();
-//                });
-//                $("body").mbPopup('showCustom', {
-//                    title: self.element.attr("title"),
-//                    showHeader: true,
-//                    content: self.element,
-//                    draggable: true,
-//                    width: 300,
-//                    height: 180,
-//                    showCloseButton: false,
-//                    overflow: true
-//                });
-//                this.element.show();
-//            }
         },
         _suggestState: function(callback){
             var self = this;
@@ -190,23 +175,23 @@
             var type = $(e.target).attr('id');
             if(type === 'suggestmap-email'){
                 this._suggestState($.proxy(self._suggestEmail, self));
-            } else if(type === 'suggestmap-facebook'){
+            }else if(type === 'suggestmap-facebook'){
                 this._suggestState($.proxy(self._suggestFacebook, self));
-            } else if(type === 'suggestmap-twitter'){
+            }else if(type === 'suggestmap-twitter'){
                 this._suggestState($.proxy(self._suggestTwitter, self));
-            } else if(type === 'suggestmap-googleplus'){
+            }else if(type === 'suggestmap-googleplus'){
                 this._suggestState($.proxy(self._suggestGooglePlus, self));
             }
         },
         _suggestEmail: function(url){
-             if(url){
+            if(url){
                 var mail_cmd = "mailto:?subject=" + this.element.attr("title") + "&body=" + encodeURIComponent(url);
                 document.location.href = mail_cmd;
             }
         },
         _suggestTwitter: function(url){
             if(url){
-                var cmd = $('<a href="http://www.twitter.com/home?status=' + this.element.attr('title')+': '+encodeURIComponent(url)+'" target="_BLANK">Twitter</a>');
+                var cmd = $('<a href="http://www.twitter.com/home?status=' + this.element.attr('title') + ': ' + encodeURIComponent(url) + '" target="_BLANK">Twitter</a>');
                 cmd[0].click();
                 cmd.remove();
                 cmd = null;
@@ -214,7 +199,7 @@
         },
         _suggestFacebook: function(url){
             if(url){
-                var cmd = $('<a href="http://www.facebook.com/sharer.php?u='+encodeURIComponent(url)+'&t=' + this.element.attr('title')+'" target="_BLANK">Facebook</a>');
+                var cmd = $('<a href="http://www.facebook.com/sharer.php?u=' + encodeURIComponent(url) + '&t=' + this.element.attr('title') + '" target="_BLANK">Facebook</a>');
                 cmd[0].click();
                 cmd.remove();
                 cmd = null;
@@ -222,7 +207,7 @@
         },
         _suggestGooglePlus: function(url){
             if(url){
-                var cmd = '<a href="plus.google.com/share?url='+encodeURIComponent(url)+'" target="_BLANK">Google+</a>';
+                var cmd = '<a href="plus.google.com/share?url=' + encodeURIComponent(url) + '" target="_BLANK">Google+</a>';
                 cmd[0].click();
                 cmd.remove();
                 cmd = null;
