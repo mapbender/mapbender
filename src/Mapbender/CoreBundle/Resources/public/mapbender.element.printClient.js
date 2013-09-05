@@ -18,7 +18,7 @@
         lastRotation: null,
         width: null,
         height: null,
-        popup: true,
+        popupIsOpen: true,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
@@ -40,47 +40,61 @@
             $('select[name="template"]', this.element)
             .bind('change', $.proxy(this._getPrintSize, this))
             .trigger('change');
+            this._trigger('ready');
+            this._ready();
         },
 
         open: function() {
-            self.defaultAction();
+            this.defaultAction();
         },
         
         defaultAction: function() {
             var self = this;
             var me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            if(!$('body').data('mapbenderMbPopup')) {
-                $("body").mbPopup();
-                $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
-                    //close
-                    self._close();
-                    $("body").mbPopup("close");
-                }).mbPopup("addButton", "Print", "button right", function(){
-                    //print
-                    self._print();
-                }).mbPopup('showCustom', {
-                    title:"Print Client",
-                    showHeader:true,
-                    content: this.element,
-                    draggable: true,
-                    width: 320,
-                    height: 200,
-                    showCloseButton: false,
-                    overflow: true
-                });
-                me.show();
+            if(!this.popup || !this.popup.$element){
+                this.popup = new Mapbender.Popup2({
+                        title: self.element.attr('title'),
+                        draggable: true,
+                        modal: false,
+                        closeButton: true,
+                        closeOnPopupCloseClick: true,
+                        closeOnESC: true,
+                        content: self.element,
+                        width: 320,
+                        buttons: {
+                                'cancel': {
+                                    label: 'Cancel',
+                                    cssClass: 'button buttonCancel critical right',
+                                    callback: function(){
+                                        this.close();
+                                    }
+                                },
+                                'ok': {
+                                    label: 'Print',
+                                    cssClass: 'button right',
+                                    callback: function(){
+                                        self._print();
+                                    }
+                                }
+                        }
+                    });
+             } else {
+                this.popup.open(self.element);
             }
-
+            me.show();        
+            
+            this.popup.$element.on('closed', function() {self._close();});
+            
+            this.popupIsOpen = true;
             this._loadPrintFormats();
-            this.popup = true;
             this._updateElements();
             this._updateGeometry(true);
         },
 
         _close: function() {
             this.element.hide().appendTo($('body'));
-            this.popup = false;
+            this.popupIsOpen = false;
             this._updateElements();
         },
 
@@ -245,6 +259,36 @@
                 center.lon + 0.5 * world_size.x,
                 center.lat + 0.5 * world_size.y).toGeometry(), {});
             this.feature.world_size = world_size;
+            
+            var centroid = this.feature.geometry.getCentroid();
+            var centroid_lonlat = new OpenLayers.LonLat(centroid.x,centroid.y);
+            var centroid_pixel = this.map.map.olMap.getViewPortPxFromLonLat(centroid_lonlat);
+            var centroid_geodesSize = this.map.map.olMap.getGeodesicPixelSize(centroid_pixel);
+
+            var geodes_diag = Math.sqrt(centroid_geodesSize.w*centroid_geodesSize.w + centroid_geodesSize.h*centroid_geodesSize.h) / Math.sqrt(2) * 100000;
+
+            var geodes_width = width * scale / (geodes_diag);
+            var geodes_height = height * scale / (geodes_diag);
+
+            var ll_pixel_x = centroid_pixel.x - (geodes_width) / 2;
+            var ll_pixel_y = centroid_pixel.y + (geodes_height) / 2;
+            var ur_pixel_x = centroid_pixel.x + (geodes_width) / 2;
+            var ur_pixel_y = centroid_pixel.y - (geodes_height) /2 ;
+            var ll_pixel = new OpenLayers.Pixel(ll_pixel_x, ll_pixel_y);
+            var ur_pixel = new OpenLayers.Pixel(ur_pixel_x, ur_pixel_y);
+            var ll_lonlat = this.map.map.olMap.getLonLatFromPixel(ll_pixel);
+            var ur_lonlat = this.map.map.olMap.getLonLatFromPixel(ur_pixel);
+
+            this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
+                ll_lonlat.lon,
+                ur_lonlat.lat,
+                ur_lonlat.lon,
+                ll_lonlat.lat).toGeometry(), {});
+            this.feature.world_size = {
+                x: ur_lonlat.lon - ll_lonlat.lon,
+                y: ur_lonlat.lat - ll_lonlat.lat
+            };
+            
             this.feature.geometry.rotate(rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
             this.layer.addFeatures(this.feature);
             this.layer.redraw();
@@ -253,7 +297,7 @@
         _updateElements: function() {
             var self = this;
 
-            if(true == this.popup){
+            if(true == this.popupIsOpen){
                 if(null === this.layer) {
 
                     this.layer = new OpenLayers.Layer.Vector("Print", {
@@ -291,10 +335,10 @@
 
         _print: function() {
             if (this.options.print_directly) {
-                this._printDirectly()
+                this._printDirectly();
             } else {
                 //@TODO
-                this._printQueued();
+                //this._printQueued();
             }
         },
 
@@ -410,6 +454,26 @@
                     self._updateGeometry();
                 }
             })
+        },
+        /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
+            }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
         }
     });
 

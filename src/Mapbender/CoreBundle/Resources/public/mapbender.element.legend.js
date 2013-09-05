@@ -55,6 +55,8 @@
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
             $(document).bind('mbmapsourcemoved', $.proxy(self._onSourceMoved, self));
+            this._trigger('ready');
+            this._ready();
         },
 
         _onSourceAdded: function(event, options){
@@ -320,12 +322,26 @@
             var self = this;
             $(self.element).find("#imgtest").html("");
             if(this.options.elementType === "dialog") {
-                if(!$('body').data('mapbenderMbPopup')) {
-                    $("body").mbPopup();
-                    $("body").mbPopup("addButton", "Close", "button buttonCancel critical right", function(){
-                    //close
-                    $("body").mbPopup("close");
-                }).mbPopup('showCustom', {title:this.options.title, showHeader:true, content: ('<ul>' + html + '</ul>'), draggable:true, width:350, height:250, showCloseButton: false, overflow: false});
+                if(!this.popup || !this.popup.$element){
+                    this.popup = new Mapbender.Popup2({
+                        title: self.element.attr('title'),
+                        draggable: true,
+                        modal: false,
+                        closeButton: true,
+                        content: ('<ul>' + html + '</ul>'),
+                        width: 350,
+                        buttons: {
+                            'ok': {
+                                label: 'Close',
+                                cssClass: 'button right',
+                                callback: function(){
+                                    this.close();
+                                }
+                            }
+                        }
+                    });
+                }else{
+                    this.popup.open(('<ul>' + html + '</ul>'));
                 }
             }else{
                 $(this.element).find('#legends:eq(0)').html('<ul>' + html + '</ul>');
@@ -354,9 +370,6 @@
         },
 
         open: function() {
-            self.defaultAction();
-        },
-        defaultAction: function() {
             var self = this;
             var sources = this._getSources();
             if(this.options.checkGraphic){
@@ -365,10 +378,37 @@
                 this._createLegend(this._createLegendHtml(sources));
             }
         },
+        defaultAction: function() {
+            this.open();
+        },
         close: function() {
-            if(this.options.elementType === "dialog" && !$('body').data('mapbenderMbPopup')) {
-               $("body").mbPopup("close");
+            if(this.options.elementType === "dialog") {
+               if(this.popup){
+                   if(this.popup.$element)
+                       this.popup.destroy();
+                   this.pupup = null;
+               }
             }
+        },
+        /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
+            }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
         }
 
     });

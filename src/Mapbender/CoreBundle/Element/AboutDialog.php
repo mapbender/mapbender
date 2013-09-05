@@ -43,7 +43,7 @@ class AboutDialog extends Element
         return array(
             'js' => array(
                 'mapbender.element.button.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/popup-zwei.js',
                 'mapbender.element.aboutDialog.js'),
             'css' => array(
                 'mapbender.element.aboutDialog.css'));
@@ -104,7 +104,7 @@ class AboutDialog extends Element
         $response = new Response();
         switch($action)
         {
-            case 'about':
+            case 'content':
                 $about = $this->container->get('templating')
                         ->render('MapbenderCoreBundle:Element:about_dialog_content.html.twig');
                 $response->setContent($about);

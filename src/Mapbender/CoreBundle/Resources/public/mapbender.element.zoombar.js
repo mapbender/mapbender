@@ -42,6 +42,7 @@ $.widget("mapbender.mbZoomBar", {
         $(this.element).find('.iconZoomMin').bind("click" ,$.proxy(this._worldZoom, this));
 
         this._trigger('ready');
+        this._ready();
     },
 
     _destroy: $.noop,
@@ -203,7 +204,27 @@ $.widget("mapbender.mbZoomBar", {
         this.zoomslider.find('li').eq(position)
             .addClass('iconZoomLevelSelected')
             .append($('<div></div>'));
-    }
+    },
+    /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
+            }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
+        }
 });
 
 })(jQuery);

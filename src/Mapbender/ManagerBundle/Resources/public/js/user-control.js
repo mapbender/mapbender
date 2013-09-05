@@ -1,62 +1,93 @@
 $(function(){
+    var popup;
+
     $(".checkbox").on("change", function(e){
       $("#selectedUsersGroups").text(($(".tableUserGroups").find(".iconCheckboxActive").length))
     });
 
     // Delete group via Ajax
     $('#listFilterGroups').on("click", ".iconRemove", function(){
-        var me  = $(this);
-        var title = me.attr('title');
+        var self  = $(this);
+        var content = self.attr('title');
 
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showModal',
-                {
-                    title:"Confirm delete",
-                    subTitle: " - group",
-                    content: "Delete " + title + "?"
+
+        if(popup){
+            popup = popup.destroy();
+        }
+
+        popup = new Mapbender.Popup2({
+            title:"Confirm delete",
+            subtitle: " - group",
+            closeOnOutsideClick: true,
+            content: [content + "?"],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
                 },
-                function(){
-                    $.ajax({
-                        url: me.attr('data-url'),
-                        data : {'id': me.attr('data-id')},
+                'delete': {
+                    label: 'Delete',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $.ajax({
+                        url: self.attr('data-url'),
+                        data : {'id': self.attr('data-id')},
                         type: 'POST',
                         success: function(data) {
-                            window.location.reload();
-                        }
-                    });
-                });
-        }
+                                window.location.reload();
+                            }
+                        });
+                    }
+                }
+            }
+        });
         return false;
     });
 
     // Delete user via Ajax
     $('#listFilterUsers').on("click", ".iconRemove", function(){
-        var me  = $(this);
-        var title = me.attr('title');
+        var self  = $(this);
+        var content = self.attr('title');
 
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showModal',
-                {
-                    title:"Confirm delete",
-                    subTitle: " - user",
-                    content: title + "?"
-                },
-                function(){
-                    $.ajax({
-                        url: me.attr('data-url'),
-                        data : {
-                            'slug': me.attr('data-slug'),
-                            'id': me.attr('data-id')
-                        },
-                        type: 'POST',
-                        success: function(data) {
-                            window.location.reload();
-                        }
-                    });
-                });
+
+        if(popup){
+            popup = popup.destroy();
         }
-        return false;
+
+        popup = new Mapbender.Popup2({
+            title:"Confirm delete",
+            subtitle: " - user",
+            closeOnOutsideClick: true,
+            content: [content + "?"],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'delete': {
+                    label: 'Delete',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $.ajax({
+                            url: self.attr('data-url'),
+                            data : {
+                                'slug': self.attr('data-slug'),
+                                'id': self.attr('data-id')
+                            },
+                            type: 'POST',
+                            success: function(data) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                }
+            }
+        });
     });
 });

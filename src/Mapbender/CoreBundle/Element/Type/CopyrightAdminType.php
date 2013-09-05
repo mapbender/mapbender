@@ -37,23 +37,8 @@ class CopyrightAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
-                ->add('width', 'text', array('required' => true))
-                ->add('anchor', "choice",
-                      array(
-                    'required' => true,
-                    "choices" => array(
-                        'left-top' => 'left-top',
-                        'left-bottom' => 'left-bottom',
-                        'right-top' => 'right-top',
-                        'right-bottom' => 'right-bottom')))
-                ->add('copyright_text', 'text', array('required' => false))
-                ->add('copyright_link', 'text', array('required' => false))
-                ->add('link_type', 'choice', array(
-                    'choices' => array('' => ' ','dialog' => 'dialog', 'url' => 'url'),
-                    'required' => false))
-                ->add('link_url', 'text', array('required' => false))
-                ->add('dialog_content', 'textarea', array('required' => false))
-                ->add('dialog_title', 'text', array('required' => false));
+                ->add('autoOpen', 'checkbox', array('required' => false))
+                ->add('content', 'textarea', array('required' => true));
     }
 
 }

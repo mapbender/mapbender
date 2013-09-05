@@ -44,7 +44,7 @@ class Legend extends Element
         return array(
             'js' => array(
                 'mapbender.element.legend.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js'
+                '@FOMCoreBundle/Resources/public/js/widgets/popup-zwei.js',
             ), 'css' => array()
         );
     }
@@ -102,7 +102,7 @@ class Legend extends Element
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:legend.html.twig';
+        return 'MapbenderCoreBundle:ElementAdmin:legend.html.twig';
     }
 }
 
