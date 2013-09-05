@@ -22,7 +22,7 @@
                 type: "POST",
                 success: function(data){
                     if(data.success){
-                        var html = '<option value="">&nbsp;</option>';
+                        var html = '<option value="">Pleace select ...</option>';
                         for(wmc_id in data.success){
                             html += '<option value="' + wmc_id + '">' + data.success[wmc_id] + '</option>';
                         }

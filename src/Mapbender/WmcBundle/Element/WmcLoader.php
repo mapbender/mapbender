@@ -8,6 +8,7 @@ use Mapbender\WmcBundle\Component\WmcParser;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmcBundle\Form\Type\WmcLoadType;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WmcLoader extends Element
 {
