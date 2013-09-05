@@ -76,7 +76,7 @@ class SuggestMap extends Element
     {
 	$js = array(
 	    'mapbender.element.suggestmap.js',
-	    '@FOMCoreBundle/Resources/public/js/widgets/popup-zwei.js',
+	    '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
 	);
 	return array(
 	    'js' => $js,
