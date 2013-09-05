@@ -334,12 +334,7 @@
         },
 
         _print: function() {
-            if (this.options.print_directly) {
-                this._printDirectly();
-            } else {
-                //@TODO
-                //this._printQueued();
-            }
+            this._printDirectly();
         },
 
         _getPrintExtent: function() {
@@ -361,8 +356,9 @@
             extent = this._getPrintExtent();
             form.find('div.layers').html('');
             var template_key = this.element.find('select[name="template"]').val(),
-            format = this.options.templates[template_key].format;
-
+            format = this.options.templates[template_key].format,
+            file_prefix = this.options.file_prefix;
+            
             // Felder für extent, center und layer dynamisch einbauen
             var fields = $();
 
@@ -394,6 +390,12 @@
                 type: 'hidden',
                 name: 'center[y]',
                 value: extent.center.y
+            }));
+            
+            $.merge(fields, $('<input />', {
+                type: 'hidden',
+                name: 'file_prefix',
+                value: file_prefix
             }));
 
             var sources = this.map.getSourceTree(), num = 0;

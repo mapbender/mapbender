@@ -400,8 +400,12 @@ class PrintService
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
         }
         unlink($tempdir.'/mergedimage.png');
-        //$pdf->Output('newpdf.pdf', 'D'); //file output
-        $pdf->Output();
+        
+        if (null != $this->data['file_prefix']){
+            $pdf->Output($this->data['file_prefix'].'.pdf', 'D'); //file output
+        }else{
+            $pdf->Output();
+        }
     }
 
     /**
