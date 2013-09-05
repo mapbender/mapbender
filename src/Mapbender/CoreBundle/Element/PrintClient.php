@@ -91,7 +91,7 @@ class PrintClient extends Element
                 array('dpi' => "288", 'label' => "Draft (288dpi)")),
             "rotatable" => true,
             "optional_fields" => null,
-            "file_prefix" => null
+            "file_prefix" => 'mapbender3'
         );
     }
     
