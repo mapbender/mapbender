@@ -3,6 +3,7 @@
         options: {},
         elementUrl: null,
         _create: function(){
+            this.a = this.alert;
             this.element.hide().appendTo($('body'));
             if(!Mapbender.checkTarget("mbSuggestMap", this.options.target)){
                 return;
@@ -21,7 +22,6 @@
                 this._getState(this.options.load.state, "state");
             }
             this.element.find('ul li').bind("click", $.proxy(self._suggestMap, self));
-
         },
         _getState: function(id){
             $.ajax({
@@ -99,29 +99,63 @@
                 }
             }
         },
+        /**
+         * Default action for mapbender element
+         */
+        defaultAction: function(){
+            this.open();
+        },
         close: function(){
-            this.element.hide().appendTo($('body'));
-            $("body").mbPopup("close");
+            if(this.popup){
+                this.element.hide().appendTo($('body'));
+                if(this.popup.$element){
+                    this.popup.destroy();
+                }
+                this.popup = null;
+            }
         },
         open: function(){
             var self = this;
-            if(!$('body').data('mbPopup')){
-                $("body").mbPopup();
-                $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
-                    self.close();
+            if(!this.popup || !this.popup.$element){
+                this.popup = new Mapbender.Popup2({
+                    title: self.element.attr('title'),
+                    modal: false,
+                    closeButton: true,
+                    content: [ $.ajax({url: self.elementUrl + 'content'})],
+                    destroyOnClose: true,
+                    width: 350,
+                    buttons: {
+                        'ok': {
+                            label: 'Close',
+                            cssClass: 'button right',
+                            callback: function(){
+                                self.close();
+                            }
+                        }
+                    }
                 });
-                $("body").mbPopup('showCustom', {
-                    title: self.element.attr("title"),
-                    showHeader: true,
-                    content: self.element,
-                    draggable: true,
-                    width: 300,
-                    height: 180,
-                    showCloseButton: false,
-                    overflow: true
-                });
-                this.element.show();
+            } else {
+                this._createTree();
+                this.popup.open(this.element);
             }
+//            var self = this;
+//            if(!$('body').data('mbPopup')){
+//                $("body").mbPopup();
+//                $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
+//                    self.close();
+//                });
+//                $("body").mbPopup('showCustom', {
+//                    title: self.element.attr("title"),
+//                    showHeader: true,
+//                    content: self.element,
+//                    draggable: true,
+//                    width: 300,
+//                    height: 180,
+//                    showCloseButton: false,
+//                    overflow: true
+//                });
+//                this.element.show();
+//            }
         },
         _suggestState: function(callback){
             var self = this;

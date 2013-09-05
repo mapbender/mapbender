@@ -75,7 +75,8 @@ class SuggestMap extends Element
     public function getAssets()
     {
 	$js = array(
-	    'mapbender.element.suggestmap.js'
+	    'mapbender.element.suggestmap.js',
+	    '@FOMCoreBundle/Resources/public/js/widgets/popup-zwei.js',
 	);
 	return array(
 	    'js' => $js,
@@ -106,7 +107,7 @@ class SuggestMap extends Element
 	    'id' => $this->getId(),
 	    'configuration' => $config,
 	    'title' => $this->getTitle(),
-	    ));
+	));
 	return $html;
     }
 
@@ -130,9 +131,24 @@ class SuggestMap extends Element
 	    case 'state':
 		return $this->saveState();
 		break;
+	    case 'content':
+		return $this->getContent();
+		break;
 	    default:
 		throw new NotFoundHttpException('No such action');
 	}
+    }
+    
+    protected function getContent(){
+	$config = $this->getConfiguration();
+	$html = $this->container->get('templating')
+	    ->render('MapbenderWmcBundle:Element:suggestmap-content.html.twig',
+	    array(
+	    'id' => $this->getId(),
+	    'configuration' => $config,
+	    'title' => $this->getTitle(),
+	));
+	return new Response($html, 200, array('Content-Type' => 'text/html'));
     }
 
     /**
@@ -180,5 +196,6 @@ class SuggestMap extends Element
 		array('Content-Type' => 'application/json'));
 	}
     }
+
 }
 
