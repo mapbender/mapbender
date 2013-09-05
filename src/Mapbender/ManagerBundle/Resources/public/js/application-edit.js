@@ -287,7 +287,9 @@ $(function() {
                     cssClass: 'button right',
                     callback: function() {
                         $("#elementForm").submit();
-                        window.location.reload();
+                        window.setTimeout(function() {
+                            window.location.reload();
+                        }, 50);
                     }
                 }
             }

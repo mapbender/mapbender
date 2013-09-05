@@ -13,19 +13,7 @@ $.widget("mapbender.mbButton", {
     button : null,
 
     _create: function() {
-        if(this.options.target && !Mapbender.checkTarget("mbButton:"+this.options.title, this.options.target)){
-            wondow.console && console.log("mbButton:"+this.options.title +" abort");
-            return;
-        }
-        if(this.options.target){
-            var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
-        } else {
-            this._setup();
-        }
-    },
-
-    _setup: function(){
+        
         var self = this;
         var me = $(this.element);
 
