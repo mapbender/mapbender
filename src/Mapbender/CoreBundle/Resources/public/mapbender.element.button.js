@@ -13,6 +13,7 @@ $.widget("mapbender.mbButton", {
     button : null,
 
     _create: function() {
+        
         var self = this;
         var me = $(this.element);
 
@@ -127,7 +128,7 @@ $.widget("mapbender.mbButton", {
             delete(this.readyCallbacks[callback]);
         }
         this.readyState = true;
-    }
+    },
 });
 
 })(jQuery);
