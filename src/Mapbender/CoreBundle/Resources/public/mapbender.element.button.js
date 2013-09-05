@@ -71,7 +71,7 @@ $.widget("mapbender.mbButton", {
             $(this.button).parent().addClass("toolBarItemActive");
             
             if(!this.options.action){
-                action = "activate";                
+                action = "defaultAction";                
             }
 
             if(widget.length == 1) {
