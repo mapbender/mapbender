@@ -42,7 +42,7 @@ class PrintClient extends Element
     public function getAssets()
     {
         return array('js' => array('mapbender.element.printClient.js', 
-                                   '@FOMCoreBundle/Resources/public/js/widgets/popup-zwei.js',
+                                   '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                                    '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
                      'css' => array());
     }
