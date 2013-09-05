@@ -129,9 +129,9 @@ class PrintService
             $width = '&WIDTH='.$this->image_width;
             $height = '&HEIGHT='.$this->image_height;
             $url .= $width.$height;
-            if ($this->data['quality'] == '288')
+            if ($this->data['quality'] != '72')
             {
-               $url .= '&map_resolution=288';
+               $url .= '&map_resolution='.$this->data['quality'];
             }
             $this->layer_urls[$k] = $url;
         }
