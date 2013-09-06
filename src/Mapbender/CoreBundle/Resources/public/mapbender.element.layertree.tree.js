@@ -614,7 +614,9 @@
                     this.popup = new Mapbender.Popup2({
                         title: self.element.attr('title'),
                         modal: false,
-                        closeButton: true,
+                        closeButton: false,
+                        closeOnPopupCloseClick: false,
+                        closeOnESC: false,
                         content: self.element,
                         destroyOnClose: true,
                         width: 350,
@@ -629,7 +631,7 @@
                         }
                     });
                 } else {
-                    this._createTree();
+                    //this._createTree();
                     this.popup.open(this.element);
                 }
             }
