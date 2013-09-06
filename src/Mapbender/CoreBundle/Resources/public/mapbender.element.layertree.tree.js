@@ -631,6 +631,9 @@
                             }
                         }
                     });
+                    $('.checkbox', this.popup.$element).each(function() {
+                        initCheckbox.call(this);
+                    });
                 } else {
                     //this._createTree();
                     this.popup.open(this.element);
