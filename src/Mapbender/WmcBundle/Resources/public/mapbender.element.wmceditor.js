@@ -16,6 +16,12 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
         },
         /**
+         * Default action for mapbender element
+         */
+        defaultAction: function(){
+            this.open();
+        },
+        /**
          * closes a dialog
          */
         close: function(){
@@ -27,28 +33,53 @@
          */
         open: function(){
             var self = this;
-            if(!$('body').data('mbPopup')){
-                $("body").mbPopup();
-                $("body").mbPopup('addButton', "Back", "button buttonBack left", function(){
-                    $("#popupSubContent").remove();
-                    $("#popupSubTitle").text("");
-                    $("#popup").find(".buttonYes, .buttonBack").hide();
-                    $("#popupContent").show();
-                }).mbPopup(
-                        'showAjaxModal',
-                        {title: self.element.attr('title'), subTitle: ""},
-                self.elementUrl + "list",
-                        null,
-                        null,
-                        function(){  //afterLoad
-                            var popup = $("#popup");
-                            popup.find(".buttonYes, .buttonBack").hide();
-                            popup.find(".checkWrapper").on("click", $.proxy(self._changePublic, self));
-                            popup.find(".editWmc").on("click", $.proxy(self._loadForm, self));
-                            popup.find(".addWmc").on("click", $.proxy(self._loadNewForm, self));
-                            popup.find(".removeWmc").on("click", $.proxy(self._loadRemoveForm, self));
+            if(!this.popup || !this.popup.$element){
+                this.popup = new Mapbender.Popup2({
+                    title: self.element.attr('title'),
+                    modal: false,
+                    closeButton: true,
+                    content: [$.ajax({
+                            url: self.elementUrl + 'list',
+                            complete: function(data){
+                                $(".checkWrapper", self.popup.$element).on("click", $.proxy(self._changePublic, self));
+                                $(".editWmc", self.popup.$element).on("click", $.proxy(self._loadForm, self));
+                                $(".addWmc", self.popup.$element).on("click", $.proxy(self._loadNewForm, self));
+                                $(".removeWmc", self.popup.$element).on("click", $.proxy(self._loadRemoveForm, self));
+                            }})],
+                    destroyOnClose: true,
+                    width: 400,
+                    buttons: {
+                        'cancel': {
+                            label: 'Cancel',
+                            cssClass: 'button buttonCancel critical right',
+                            callback: function(){
+                                self.popup.close();
+                            }
+                        },
+                        'ok': {
+                            label: 'Submit',
+                            cssClass: 'button buttonYes right',
+                            callback: function(){
+                                $("form", self.popup.$element).submit();
+                                return false;
+                            }
+                        },
+                        'back': {
+                            label: 'Back',
+                            cssClass: 'button left buttonBack',
+                            callback: function(){
+                                $(".popupSubContent", self.popup.$element).remove();
+                                $(".popupSubTitle", self.popup.$element).text("");
+                                $(".buttonYes, .buttonBack", self.popup.$element).hide();
+                                $(".popupContent", self.popup.$element).show();
+                            }
                         }
-                );
+                    }
+                });
+                $(".popup").find(".buttonYes, .buttonBack").hide();
+            }else{
+                $(".popupContent", self.popup.$element).empty();
+                this.popup.open($.ajax({url: self.elementUrl + 'list'}));
             }
             return false;
         },
@@ -57,39 +88,46 @@
          */
         _loadList: function(){
             var self = this;
-            $.ajax({
-                url: self.elementUrl + "list",
-                type: "POST",
-                success: function(data){
-                    $("#popupContent").html(data);
-                    var popup = $("#popup");
-                    popup.find(".checkWrapper").on("click", $.proxy(self._changePublic, self));
-                    popup.find(".editWmc").on("click", $.proxy(self._loadForm, self));
-                    popup.find(".addWmc").on("click", $.proxy(self._loadNewForm, self));
-                    popup.find(".removeWmc").on("click", $.proxy(self._loadRemoveForm, self));
-                }
-            });
+            if(this.popup && this.popup.$element){
+                $.ajax({
+                    url: self.elementUrl + "list",
+                    type: "POST",
+                    success: function(data){
+//                        $(".popupContent", self.popup.$element).empty();
+                        $(".popupContent", self.popup.$element).html(data);
+                        $(".checkWrapper", self.popup.$element).on("click", $.proxy(self._changePublic, self));
+                        $(".editWmc", self.popup.$element).on("click", $.proxy(self._loadForm, self));
+                        $(".addWmc", self.popup.$element).on("click", $.proxy(self._loadNewForm, self));
+                        $(".removeWmc", self.popup.$element).on("click", $.proxy(self._loadRemoveForm, self));
+                    }
+                });
+            }
         },
         /**
          * Loads a form to create a new wmc
          */
         _loadNewForm: function(e){
             var self = this;
-            var url = $(e.target).attr("href");
-            if(url){
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    success: function(data){
-                        $("#popupContent").wrap('<div id="contentWrapper"></div>').hide();
-                        $("#contentWrapper").append('<div id="popupSubContent" class="popupSubContent"></div>');
-                        $("#popupSubContent").html(data);
-                        var subTitle = $("#popupSubContent").find("form").attr("title");
-                        $("#popupSubTitle").text(" - " + subTitle);
-                        $("#popup").find(".buttonBack").show();
-                        self._ajaxForm();
-                    }
-                });
+            if(this.popup && this.popup.$element){
+                var url = $(e.target).attr("href");
+                if(url){
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        success: function(data){
+                            if($('.contentWrapper', self.popup.$element).length === 0)
+                                $(".popupContent", self.popup.$element).wrap('<div class="contentWrapper"></div>');
+                            $(".popupContent").hide();
+                            if($('.popupSubContent', self.popup.$element).length === 0)
+                                $(".contentWrapper", self.popup.$element).append('<div class="popupSubContent"></div>');
+                            $(".popupSubContent", self.popup.$element).html(data);
+                            var subTitle = $("form#wmc-save", self.popup.$element).attr("title");
+                            $(".popupSubTitle", self.popup.$element).text(" - " + subTitle);
+                            $(".buttonBack, .buttonYes", self.popup.$element).show();
+                            self._ajaxForm();
+                        }
+                    });
+                }
             }
             return false;
         },
@@ -98,26 +136,31 @@
          */
         _loadForm: function(e){
             var self = this;
-            var url = $(e.target).attr("data-url");
-            if(url){
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    success: function(data){
-                        $("#popupContent").wrap('<div id="contentWrapper"></div>').hide();
-                        $("#contentWrapper").append('<div id="popupSubContent" class="popupSubContent"></div>');
-                        $("#popupSubContent").html(data);
-                        var subTitle = $("#popupSubContent").find("form").attr("title");
-                        $("#popupSubTitle").text(" - " + subTitle);
-                        $("#popup").find(".buttonBack").show();
-                        self._ajaxForm();
-                    }
-                });
+            if(this.popup && this.popup.$element){
+                var url = $(e.target).attr("data-url");
+                if(url){
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        success: function(data){
+                            if($('.contentWrapper', self.popup.$element).length === 0)
+                                $(".popupContent", self.popup.$element).wrap('<div class="contentWrapper"></div>');
+                            $(".popupContent").hide();
+                            if($('.popupSubContent', self.popup.$element).length === 0)
+                                $(".contentWrapper", self.popup.$element).append('<div class="popupSubContent"></div>');
+                            $(".popupSubContent").html(data);
+                            var subTitle = $("form#wmc-save", self.popup.$element).attr("title");
+                            $(".popupSubTitle", self.popup.$element).text(" - " + subTitle);
+                            $(".buttonBack, .buttonYes", self.popup.$element).show();
+                            self._ajaxForm();
+                        }
+                    });
+                }
+                var wmc_id = $(e.target).parents('tr:first').attr('data-id');
+                var map = $('#' + this.options.target).data('mapbenderMbMap');
+                var wmcHandlier = new Mapbender.WmcHandler(map, {});
+                wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
             }
-            var wmc_id = $(e.target).parents('tr:first').attr('data-id');
-            var map = $('#' + this.options.target).data('mapbenderMbMap');
-            var wmcHandlier = new Mapbender.WmcHandler(map, {});
-            wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
             return false;
         },
         /**
@@ -125,49 +168,58 @@
          */
         _ajaxForm: function(){
             var self = this;
-            $("#popup").find('form#wmc-save').ajaxForm({
-                url: self.elementUrl + 'save',
-                type: 'POST',
-                beforeSerialize: function(e){
-                    var map = $('#' + self.options.target).data('mapbenderMbMap')
-                    var state = map.getMapState();
-                    $("#popup").find('input#wmc_state_json').val(JSON.stringify(state));
-                },
-                contentType: 'json',
-                context: self,
-                success: function(response){
-                    this._loadList();
-                    response = $.parseJSON(response.replace(/<[^><]*>/gi, ''));
-                    $("#popupSubContent").html(response.success);
-                    $("#popupSubTitle").text(" ");
-                },
-                error: function(response){
-                    this._loadList();
-                    $("#popupSubContent").html(response.error);
-                    $("#popupSubTitle").text("ERROR");
-                }
-            });
+            if(this.popup && this.popup.$element){
+                $('form#wmc-save', this.popup.$element).ajaxForm({
+                    url: self.elementUrl + 'save',
+                    type: 'POST',
+                    beforeSerialize: function(e){
+                        var map = $('#' + self.options.target).data('mapbenderMbMap')
+                        var state = map.getMapState();
+                        $('input#wmc_state_json', self.popup.$element).val(JSON.stringify(state));
+                    },
+                    contentType: 'json',
+                    context: self,
+                    success: function(response){
+                        this._loadList();
+                        response = $.parseJSON(response.replace(/<[^><]*>/gi, ''));
+                        $(".popupSubContent", self.popup.$element).html(response.success);
+                        $(".popupSubTitle", self.popup.$element).text(" ");
+                        $(".buttonYes", self.popup.$element).hide();
+                    },
+                    error: function(response){
+                        this._loadList();
+                        $(".popupSubContent", self.popup.$element).html(response.error);
+                        $(".popupSubTitle", self.popup.$element).text("ERROR");
+                        $(".buttonYes", self.popup.$element).hide();
+                    }
+                });
+            }
         },
         /**
          * Loads a form to create a new wmc
          */
         _loadRemoveForm: function(e){
             var self = this;
-            var url = $(e.target).attr("data-url");
-            if(url){
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    success: function(data){
-                        $("#popupContent").wrap('<div id="contentWrapper"></div>').hide();
-                        $("#contentWrapper").append('<div id="popupSubContent" class="popupSubContent"></div>');
-                        $("#popupSubContent").html(data);
-                        var subTitle = $("#popupSubContent").find("form").attr("title");
-                        $("#popupSubTitle").text(" - " + subTitle);
-                        $("#popup").find(".buttonBack").show();
-                        $("#popup").find('form#wmc-delete').on("submit", $.proxy(self._removeWmc, self));
-                    }
-                });
+            if(this.popup || this.popup.$element){
+                var url = $(e.target).attr("data-url");
+                if(url){
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        success: function(data){
+                            if($('.contentWrapper', self.popup.$element).length === 0)
+                                $(".popupContent", self.popup.$element).wrap('<div class="contentWrapper"></div>');
+                            $(".popupContent").hide();
+                            if($('.popupSubContent', self.popup.$element).length === 0)
+                                $(".contentWrapper", self.popup.$element).append('<div class="popupSubContent"></div>');
+                            $(".popupSubContent").html(data);
+                            var subTitle = $(".popupSubContent form", self.popup.$element).attr("title");
+                            $(".popupSubTitle", self.popup.$element).text(" - " + subTitle);
+                            $(".buttonBack, .buttonYes", self.popup.$element).show();
+                            $('form#wmc-delete', self.popup.$element).on("submit", $.proxy(self._removeWmc, self));
+                        }
+                    });
+                }
             }
             return false;
         },
@@ -177,25 +229,27 @@
         _removeWmc: function(e){
             e.preventDefault();
             var self = this;
-            $.ajax({
-                url: self.elementUrl + 'delete',
-                type: "POST",
-                data: $("#popup").find('form#wmc-delete').serialize(),
-                success: function(response){
-                    self._loadList();
-                    if(response.success){
-                        $("#popupSubContent").html(response.success);
-                        $("#popupSubTitle").text(" ");
-                    }else{
+            if(this.popup || this.popup.$element){
+                $.ajax({
+                    url: self.elementUrl + 'delete',
+                    type: "POST",
+                    data: $('form#wmc-delete', self.popup.$element).serialize(),
+                    success: function(response){
                         self._loadList();
-                        $("#popupSubContent").html(response.error);
-                        $("#popupSubTitle").text(" ");
+                        if(response.success){
+                            $(".popupSubContent", self.popup.$element).html(response.success);
+                            $(".popupSubTitle", self.popup.$element).text(" ");
+                        }else{
+                            self._loadList();
+                            $(".popupSubContent", self.popup.$element).html(response.error);
+                            $(".popupSubTitle", self.popup.$element).text(" ");
+                        }
+                    },
+                    error: function(response){
+                        Mapbender.error(response);
                     }
-                },
-                error: function(response){
-                    Mapbender.error(response);
-                }
-            });
+                });
+            }
             return false;
         },
         /**
