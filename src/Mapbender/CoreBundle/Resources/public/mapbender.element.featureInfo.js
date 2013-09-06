@@ -30,6 +30,12 @@
                     throw "Unknown or unhandled option " + key + " for " + this.namespace + "." + this.widgetName;
             }
         },
+        /**
+         * Default action for mapbender element
+         */
+        defaultAction: function(){
+            this.activate();
+        },
         activate: function(){
             var self = this;
             this.map = $('#' + this.options.target).data('mapQuery');
