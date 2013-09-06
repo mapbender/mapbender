@@ -31,11 +31,20 @@
                     title: self.element.attr('title'),
                     draggable: true,
                     modal: false,
-                    closeButton: true,
+                    closeButton: false,
+                    closeOnESC: false,
+                    closeOnPopupCloseClick: false,
                     content: self.element,
                     destroyOnClose: true,
                     width: 500,
                     buttons: {
+                        'cancel': {
+                            label: 'Cancel',
+                            cssClass: 'button buttonCancel critical right',
+                            callback: function(){
+                                self.close();
+                            }
+                        },
                         'ok': {
                             label: 'Load',
                             cssClass: 'button right',
