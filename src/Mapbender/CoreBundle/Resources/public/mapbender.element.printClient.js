@@ -56,6 +56,7 @@
                 this.popup = new Mapbender.Popup2({
                         title: self.element.attr('title'),
                         draggable: true,
+                        header: true,
                         modal: false,
                         closeButton: true,
                         closeOnPopupCloseClick: true,
