@@ -327,7 +327,9 @@
                         title: self.element.attr('title'),
                         draggable: true,
                         modal: false,
-                        closeButton: true,
+                        closeButton: false,
+                        closeOnPopupCloseClick: false,
+                        closeOnESC: false,
                         content: ('<ul>' + html + '</ul>'),
                         width: 350,
                         buttons: {

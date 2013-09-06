@@ -58,9 +58,9 @@
                         draggable: true,
                         header: true,
                         modal: false,
-                        closeButton: true,
-                        closeOnPopupCloseClick: true,
-                        closeOnESC: true,
+                        closeButton: false,
+                        closeOnPopupCloseClick: false,
+                        closeOnESC: false,
                         content: self.element,
                         width: 320,
                         buttons: {
