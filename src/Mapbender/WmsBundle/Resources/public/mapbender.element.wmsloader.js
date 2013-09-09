@@ -62,7 +62,7 @@
                     }
                 });
             }else{
-                this.popup.open(this.element.show());
+                this.popup.open();
             }
         },
         close: function(){
@@ -70,7 +70,7 @@
                 this.element.hide().appendTo($('body'));
                 if(this.popup.$element)
                     this.popup.destroy();
-                this.pupup = null;
+                this.popup = null;
             }
         },
         loadWms: function(getCapabilitiesUrl){

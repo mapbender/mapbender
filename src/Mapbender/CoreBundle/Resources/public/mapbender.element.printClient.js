@@ -68,7 +68,7 @@
                                     label: 'Cancel',
                                     cssClass: 'button buttonCancel critical right',
                                     callback: function(){
-                                        this.close();
+                                        self.close();
                                     }
                                 },
                                 'ok': {
@@ -81,11 +81,13 @@
                         }
                     });
              } else {
-                this.popup.open(self.element);
+                 if (this.popupIsOpen === false){
+                    this.popup.open(self.element);
+                 }
             }
             me.show();        
             
-            this.popup.$element.on('closed', function() {self._close();});
+            //this.popup.$element.on('closed', function() {self.close();});
             
             this.popupIsOpen = true;
             this._loadPrintFormats();
@@ -93,10 +95,11 @@
             this._updateGeometry(true);
         },
 
-        _close: function() {
+        close: function() {
             this.element.hide().appendTo($('body'));
             this.popupIsOpen = false;
             this._updateElements();
+            this.popup.close();
         },
 
         _loadPrintFormats: function() {

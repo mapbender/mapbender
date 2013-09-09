@@ -387,7 +387,7 @@
                 if(this.popup){
                     if(this.popup.$element)
                         this.popup.destroy();
-                    this.pupup = null;
+                    this.popup = null;
                 }
                 
             }

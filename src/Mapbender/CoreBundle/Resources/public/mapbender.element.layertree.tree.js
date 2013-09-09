@@ -634,7 +634,7 @@
                     });
                 } else {
                     //this._createTree();
-                    this.popup.open(this.element);
+                    this.popup.open();//this.element);
                 }
             }
         },
