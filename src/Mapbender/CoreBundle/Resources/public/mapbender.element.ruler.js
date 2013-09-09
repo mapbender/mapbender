@@ -85,13 +85,17 @@
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(){
-            this.activate();
+        defaultAction: function(callback){
+            this.activate(callback);
         },
         /**
          * This activates this button and will be called on click
          */
-        activate: function(){
+        activate: function(callback){
+            if(callback)
+                this.callback = callback;
+            else
+                this.callback = null;
             var self = this,
                     olMap = this.map.data('mapQuery').olMap;
             olMap.addControl(this.control);
@@ -140,6 +144,10 @@
                 this.popup.destroy();
             }
             this.popup = null;
+            if(this.callback){
+                this.callback.call();
+                this.callback = null;
+            }
         },
         _reset: function(){
             this.segments.empty();

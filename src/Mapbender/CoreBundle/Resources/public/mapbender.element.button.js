@@ -78,9 +78,9 @@ $.widget("mapbender.mbButton", {
             }
 
             if(widget.length == 1) {
-                target[widget[0]](action);
+                target[widget[0]](action, $.proxy(this.reset, this));
             } else {
-                target[widget[1]](action);
+                target[widget[1]](action, $.proxy(this.reset, this));
             }
         }
         if(!this.options.group) {
@@ -102,6 +102,15 @@ $.widget("mapbender.mbButton", {
                 target[widget[1]](this.options.deactivate);
             }
         }
+        if(this.active) {
+            this.active = false;
+        }
+        if(this.options.group) {
+            this.button.checked = false;
+        }
+    },
+    reset: function() {
+        $(this.button).parent().removeClass("toolBarItemActive");
         if(this.active) {
             this.active = false;
         }
