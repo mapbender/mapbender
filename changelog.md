@@ -1,5 +1,8 @@
 # Changelog
 * **v3.0.1.0** - Yet to be released
+  - Parameter/Service 'mapbender.proxy' removed
+  - Parameter 'mapbender.uploads_dir' added
+  - Application's directory added
   - Added wgs84 print
   - Added printclient parameter file_prefix
   - Added default action for elements
