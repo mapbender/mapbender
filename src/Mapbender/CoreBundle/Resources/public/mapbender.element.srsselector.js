@@ -68,7 +68,7 @@
             $('.dropdown', this.element).each(function() {
                 initDropdown.call(this);
             });
-            window.console && console.log("TODO add option into select",srsObj);
+//            window.console && console.log("TODO add option into select",srsObj);
         },
 
         selectSrs: function(crs) {
