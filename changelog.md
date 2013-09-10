@@ -1,5 +1,14 @@
 # Changelog
 * **v3.0.1.0** - Yet to be released
+  - Added wgs84 print
+  - Added printclient parameter file_prefix
+  - Added default action for elements
+  - Splited `frontend/components.js` into `sidepane.js` and `tabcontainer.js`
+  - Remove unused images references
+  - New popup architecture
+  - Add application dublication
+  - Prepare `collection.js` for dynamic element properties (full support in next versions)
+  - Fix some micro css bugs
   - Map scale bugs fixes
   - Move checkbox script into `checkbox.js`
   - Merge checkbox frontend and backend script

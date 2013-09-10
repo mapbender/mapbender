@@ -145,7 +145,7 @@ parameters:
                         stepbypixel: true
                         anchor: right-top
                         position: [200,40]
-                        draggable: true
+                        draggable: false
                     legend:
                         class: Mapbender\CoreBundle\Element\Legend
                         target: map
@@ -176,7 +176,7 @@ parameters:
                         class: Mapbender\CoreBundle\Element\PrintClient
                         target: map
                         autoOpen: false
-                        print_directly: true
+                        file_prefix: mapbender3
                         templates:
                             - { template: a4portrait, label: A4 Portrait, format: a4}
                             - { template: a4landscape, label: A4 Landscape, format: a4}
@@ -274,9 +274,12 @@ parameters:
                         tooltip: Scale Selector
                         label: false
                         target: map
-                    copyright:
-                        class: Mapbender\CoreBundle\Element\Copyright
-                        copyright_text: '© OpenStreetMap contributors'
+                    copyrightButton:
+                        title: © OpenStreetMap contributors
+                        tooltip: Line Ruler
+                        class: Mapbender\CoreBundle\Element\Button
+                        label: true
+                        click: http://www.openstreetmap.org/copyright
         mapbender_user_basic:
             title: Mapbender Demo Map basic
             description: "Fullscreen style, simple buttons, simple map showing WMS use."
