@@ -16,7 +16,7 @@ framework:
     templating:      { engines: ['twig'] } #assets_version: SomeVersionScheme
     default_locale:  %locale%
     session:
-        cookie_httponly: %framework.session.cookie_httponly%
+        cookie_httponly: true
 
 # Twig Configuration
 twig:
@@ -71,8 +71,8 @@ fom_manager:
 
 # FOM User Configuration
 fom_user:
-    selfregister: %fom.selfregister%
-    reset_password: %fom.reset_password%
+    selfregister: false
+    reset_password: true
     max_registration_time: 1
     max_reset_time: 1
     mail_from_address: wizard@oz.net
