@@ -145,7 +145,7 @@ parameters:
                         stepbypixel: true
                         anchor: right-top
                         position: [200,40]
-                        draggable: true
+                        draggable: false
                     legend:
                         class: Mapbender\CoreBundle\Element\Legend
                         target: map
