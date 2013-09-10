@@ -15,10 +15,6 @@ mapbender_wmsbundle:
     resource: "@MapbenderWmsBundle/Controller/"
     type: annotation
     
-mapbender_wmtsbundle:
-    resource: "@MapbenderWmtsBundle/Controller/"
-    type: annotation
-    
 mapbender_printbundle:
     resource: "@MapbenderPrintBundle/Controller/"
     type: annotation
