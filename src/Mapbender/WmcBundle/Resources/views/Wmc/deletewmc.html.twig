@@ -1,0 +1,8 @@
+{% set wmc_title = wmc.state.title %}
+{% set wmc_id = wmc.id %} 
+<form id="wmc-delete" action="{{ path('mapbender_core_application_element', { 'slug': application.slug, 'id': id, 'action': 'delete' }) }}" method="post" {{ form_enctype(form)}}>
+    <header>
+    {% trans %}Do you really want to remove the wmc with the title <em>%wmc_title%</em> and the id <em>%wmc_id%</em>?{% endtrans %}
+    </header>
+    {{ form_widget(form) }}
+</form>

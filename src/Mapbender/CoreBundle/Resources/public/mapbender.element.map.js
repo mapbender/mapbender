@@ -94,8 +94,8 @@
         /**
          *
          */
-        removeAllSources: function(withBaseSource){
-            this.model.removeAllSources(withBaseSource);
+        removeSources: function(keepSources){
+            this.model.removeSources(keepSources);
         },
 
         /**
@@ -192,18 +192,18 @@
         /**
          * Zooms the map to extent
          */
-        zoomToExtent: function(extent, scale) {
-            //TODO: MapQuery?
-            this.map.olMap.zoomToExtent(extent);
-            if(scale) {
-                this.map.olMap.zoomToScale(scale, true);
-            }
+        zoomToExtent: function(extent, closest) {
+            if(typeof closest === 'undefined')
+                closest = false;
+            this.map.olMap.zoomToExtent(extent, closest);
         },
         /**
          * Zooms the map to scale
          */
-        zoomToScale: function(scale) {
-            this.map.olMap.zoomToScale(scale, true);
+        zoomToScale: function(scale, closest) {
+            if(typeof closest === 'undefined')
+                closest = false;
+            this.map.olMap.zoomToScale(scale, closest);
         },
         /**
          *

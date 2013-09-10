@@ -14,135 +14,128 @@ use Mapbender\WmcBundle\Form\Type\WmcLoadType;
 use Mapbender\WmcBundle\Form\Type\WmcType;
 use Symfony\Component\HttpFoundation\Response;
 
-class WmcHandler extends Element
+class WmcStorage #extends Element
 {
 
-    /**
-     * @inheritdoc
-     */
-    static public function getClassTitle()
-    {
-        return "WmcHandler";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    static public function getClassDescription()
-    {
-        return "";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    static public function getClassTags()
-    {
-        return array("wmc", "handler");
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getDefaultConfiguration()
-    {
-        return array(
-            "tooltip"               => null,
-            "target"                => null,
-            "keepBaseSources"       => false,
-            "useSuggestMap"         => false,
-            'receiver'              => array("email"),
-            "useEditor"             => false,
-            "accessEditorAnonymous" => false,
-            "accessGroupsEditor"    => array(),
-            "useLoader"             => false,
-            "accessLoaderAnonymous" => false,
-            "accessGroupsLoader"    => array(),
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getType()
-    {
-        return 'Mapbender\WmcBundle\Element\Type\WmcHandlerAdminType';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getFormTemplate()
-    {
-        return 'MapbenderWmcBundle:ElementAdmin:wmchandler.html.twig';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getWidgetName()
-    {
-        return 'mapbender.mbWmcHandler';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getAssets()
-    {
-        $configuration = $this->getConfiguration();
-        $js            = array('jquery.form.js', 'mapbender.element.wmchandler.js');
-//        if($configuration["useSuggestMap"]) {
-//            $js[] = 'mapbender.element.wmchandler_suggestmap.js';
-//        }
-//        if($configuration["useEditor"]) {
-//            $js[] = 'mapbender.element.wmchandler_editor.js';
-//        }
-//        if($configuration["useLoader"]) {
-//            $js[] = 'mapbender.element.wmchandler_loader.js';
-//        }
-        return array(
-            'js'  => $js,
-            'css' => array()
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getConfiguration()
-    {
-        $configuration         = parent::getConfiguration();
-        $toload                = array();
-        $wmcid                 = $this->container->get('request')->get('wmc');
-        if($wmcid) $toload["wmc"]         = $wmcid;
-        $stateid               = $this->container->get('request')->get('state');
-        if($stateid) $toload["state"]       = $stateid;
-        if(count($toload) > 0) $configuration["load"] = $toload;
-        return $configuration;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function render()
-    {
-        $wmc          = new Wmc();
-        $config       = $this->getConfiguration();
-        $accessEditor = $this->accessAnonymous("accessEditorAnonymous") || $this->accessGroups("accessGroupsEditor");
-
-        $form = $this->container->get("form.factory")->create(new WmcLoadType(),
-                                                              $wmc);
-        $html = $this->container->get('templating')
-            ->render('MapbenderWmcBundle:Element:wmchandler.html.twig',
-                     array(
-            'id'            => $this->getId(),
-            'configuration' => $config,
-            'title'         => $this->getTitle(),
-            'form'          => $form->createView(),
-            'accessEditor'  => $accessEditor));
-        return $html;
-    }
+//    /**
+//     * @inheritdoc
+//     */
+//    static public function getClassTitle()
+//    {
+//        return "WmcStorage";
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    static public function getClassDescription()
+//    {
+//        return "";
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    static public function getClassTags()
+//    {
+//        return array("wmc", "handler");
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    public static function getDefaultConfiguration()
+//    {
+//        return array(
+//            "tooltip"               => null,
+//            "target"                => null,
+//            "keepBaseSources"       => false,
+//            "useSuggestMap"         => false,
+//            'receiver'              => array("email"),
+//            "useEditor"             => false,
+//            "accessEditorAnonymous" => false,
+//            "accessGroupsEditor"    => array(),
+//            "useLoader"             => false,
+//            "accessLoaderAnonymous" => false,
+//            "accessGroupsLoader"    => array(),
+//        );
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    public static function getType()
+//    {
+//        return 'Mapbender\WmcBundle\Element\Type\WmcHandlerAdminType';
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    public static function getFormTemplate()
+//    {
+//        return 'MapbenderWmcBundle:ElementAdmin:wmchandler.html.twig';
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    public function getWidgetName()
+//    {
+//        return 'mapbender.mbWmcHandler';
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    public function getAssets()
+//    {
+//        $configuration = $this->getConfiguration();
+//        $js            = array('jquery.form.js', 'mapbender.element.wmchandler.js');
+////        if($configuration["useSuggestMap"]) {
+////            $js[] = 'mapbender.element.wmchandler_suggestmap.js';
+////        }
+////        if($configuration["useEditor"]) {
+////            $js[] = 'mapbender.element.wmchandler_editor.js';
+////        }
+////        if($configuration["useLoader"]) {
+////            $js[] = 'mapbender.element.wmchandler_loader.js';
+////        }
+//        return array(
+//            'js'  => $js,
+//            'css' => array()
+//        );
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    public function getConfiguration()
+//    {
+//        return parent::getConfiguration();
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    public function render()
+//    {
+//        $wmc          = new Wmc();
+//        $config       = $this->getConfiguration();
+//        $accessEditor = $this->accessAnonymous("accessEditorAnonymous") || $this->accessGroups("accessGroupsEditor");
+//
+//        $form = $this->container->get("form.factory")->create(new WmcLoadType(),
+//                                                              $wmc);
+//        $html = $this->container->get('templating')
+//            ->render('MapbenderWmcBundle:Element:wmchandler.html.twig',
+//                     array(
+//            'id'            => $this->getId(),
+//            'configuration' => $config,
+//            'title'         => $this->getTitle(),
+//            'form'          => $form->createView(),
+//            'accessEditor'  => $accessEditor));
+//        return $html;
+//    }
 
     public function httpAction($action)
     {
@@ -402,7 +395,7 @@ class WmcHandler extends Element
             $em->getConnection()->beginTransaction();
             if($wmc->getScreenshotPath() !== null)
             {
-                $upload_directory = $this->createWmcDirs();
+                $upload_directory = $this->getWmcDir();
                 if($upload_directory !== null)
                 {
                     $filepath = $upload_directory . "/" . $wmc->getScreenshotPath();
@@ -493,7 +486,7 @@ class WmcHandler extends Element
                 {
                     if($wmc->getScreenshot() !== null)
                     {
-                        $upload_directory = $this->createWmcDirs();
+                        $upload_directory = $this->getWmcDir();
                         if($upload_directory !== null)
                         {
                             $dirs      = $this->container->getParameter("directories");
@@ -547,7 +540,7 @@ class WmcHandler extends Element
         return $url_base;
     }
 
-    protected function createWmcDirs()
+    protected function getWmcDir()
     {
         $basedir = $this->container->get('kernel')->getRootDir() . '/../web/';
         $dirs    = $this->container->getParameter("directories");
@@ -612,8 +605,6 @@ class WmcHandler extends Element
                                             array('Content-Type' => 'application/json'));
         }
     }
-    
-    
 
     protected function checkAccessLoader()
     {

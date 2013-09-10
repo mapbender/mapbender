@@ -1,0 +1,8 @@
+<form id="wmc-load" action="{{ url('mapbender_core_application_element', {'slug': app.request.get('slug'), 'id': id, 'action': 'loadxml'}) }}" method="post" target="_blank" title="Load WMC">
+    <div class="elementFormToolbar elementForm">
+        {{ form_widget(form.xml) }}
+        <div class="clearContainer"></div>
+        {{ form_row(form._token) }}
+        <div class="clearContainer"></div>
+    </div>
+</form>

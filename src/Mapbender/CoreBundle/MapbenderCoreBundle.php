@@ -51,7 +51,7 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\ScaleSelector',
             'Mapbender\CoreBundle\Element\SearchRouter',
             'Mapbender\CoreBundle\Element\SrsSelector',
-            'Mapbender\CoreBundle\Element\ZoomBar'
+            'Mapbender\CoreBundle\Element\ZoomBar',
             );
     }
 

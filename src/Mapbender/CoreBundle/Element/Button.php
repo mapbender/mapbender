@@ -75,7 +75,7 @@ class Button extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.button.js'),
+            'js' => array('mapbender.element.button.js','@FOMCoreBundle/Resources/public/js/widgets/checkbox.js'),
             'css' => array());
     }
 

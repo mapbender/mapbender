@@ -1,4 +1,4 @@
-<?php
+<?php //
 
 namespace Mapbender\WmcBundle\Component;
 
@@ -49,5 +49,3 @@ class MapbenderWMC
 //        );
 //    }
 }
-
-?>

@@ -1,0 +1,36 @@
+<table class="elementsTable tableCore">
+    <thead>
+        <tr>
+            <th>{{ 'Id' | trans }}</th>
+            <th class="type">{{ 'Title' | trans }}</th>
+            <th class="type">{{ 'Description' | trans }}</th>
+            <th class="iconColumn">
+                <a href="{{ url('mapbender_core_application_element', { 'slug': application.slug, 'id': id, 'action': 'loadform' }) }}" class="iconAdd iconSmall loadXmlWmc" title="{{'Load XML WMC'|trans}}"></a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% if wmclist|length > 0 %}
+      {% for wmc in wmclist %}
+        {% if wmc.public %}
+        <tr class="element" data-id="{{wmc.id}}">
+            <td class="titleColumn description">{{ wmc.id }}</td>
+            <td class="typeColumn description">{{ wmc.state.title }}</td>
+            <td class="typeColumn description">{{ wmc.abstract }}</td>
+            <td class="iconColumn">
+                <span class="iconView iconSmall loadWmc" title="{{"View Wmc"|trans}}  {{wmc.state.title}}" data-id="{{ wmc.id }}"></span>
+            </td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+        <tr class="placeholderRow"></tr>
+    {% else %}
+        <tr>
+            <td class="description">{{"No wmc."|trans}}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
