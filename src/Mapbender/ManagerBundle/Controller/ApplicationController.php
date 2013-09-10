@@ -898,7 +898,15 @@ class ApplicationController extends Controller
 	    }
 	    else
 	    {
-		$b = false;
+		if(mkdir($old_slug_dir))
+		{
+		    $slug_dir = $uploads_dir . "/" . $slug;
+		    $b = rename($old_slug_dir, $slug_dir);
+		}
+		else
+		{
+		    $b = false;
+		}
 	    }
 	}
 	return $a && $b;
