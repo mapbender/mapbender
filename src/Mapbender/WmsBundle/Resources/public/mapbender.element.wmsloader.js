@@ -31,11 +31,20 @@
                     title: self.element.attr('title'),
                     draggable: true,
                     modal: false,
-                    closeButton: true,
+                    closeButton: false,
+                    closeOnESC: false,
+                    closeOnPopupCloseClick: false,
                     content: self.element,
                     destroyOnClose: true,
                     width: 500,
                     buttons: {
+                        'cancel': {
+                            label: 'Cancel',
+                            cssClass: 'button buttonCancel critical right',
+                            callback: function(){
+                                self.close();
+                            }
+                        },
                         'ok': {
                             label: 'Load',
                             cssClass: 'button right',
@@ -53,7 +62,7 @@
                     }
                 });
             }else{
-                this.popup.open(this.element.show());
+                this.popup.open();
             }
         },
         close: function(){
@@ -61,7 +70,7 @@
                 this.element.hide().appendTo($('body'));
                 if(this.popup.$element)
                     this.popup.destroy();
-                this.pupup = null;
+                this.popup = null;
             }
         },
         loadWms: function(getCapabilitiesUrl){

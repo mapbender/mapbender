@@ -77,7 +77,7 @@ class FeatureInfo extends Element
 	    'js' => array(
 		'mapbender.element.featureInfo.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-		'@FOMCoreBundle/Resources/public/js/frontend/components.js'
+		'@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'
 	    ), 'css' => array()
 	);
     }

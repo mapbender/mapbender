@@ -1,28 +1,43 @@
 $(function() {
+    var popup;
+
     // Delete element
     $('.iconRemove').bind("click", function(){
-        var me  = $(this);
-        var title = me.attr('title');
+        var self    = $(this);
+        var content = self.attr('title');
 
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showModal',
-                {
-                    title:"Confirm delete",
-                    subTitle: " - service",
-                    content:"Delete " + title + "?"
-                },
-                function(){
-                    $.ajax({
-                        url: me.attr('data-url'),
-                        data : {'id': me.attr('data-id')},
-                        type: 'POST',
-                        success: function(data) {
-                            window.location.reload();
-                        }
-                    });
-                });
+        if(popup){
+            popup = popup.destroy();
         }
+        popup = new Mapbender.Popup2({
+            title:"Confirm delete",
+            subTitle: " - service",
+            closeOnOutsideClick: true,
+            content: [content + "?"],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'Delete',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $.ajax({
+                            url: self.attr('data-url'),
+                            data : {'id': self.attr('data-id')},
+                            type: 'POST',
+                            success: function(data) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                }
+            }
+        });
         return false;
     });
 });

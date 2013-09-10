@@ -9,7 +9,13 @@
             this._trigger('ready');
             this._ready();
         },
-
+        
+        /**
+         * Default action for mapbender element
+         */
+        defaultAction: function(){
+            this.open();
+        },
         open: function() {
             var self = this;
             if(!this.popup || !this.popup.$element){

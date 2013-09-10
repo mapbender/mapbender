@@ -129,9 +129,9 @@ class PrintService
             $width = '&WIDTH='.$this->image_width;
             $height = '&HEIGHT='.$this->image_height;
             $url .= $width.$height;
-            if ($this->data['quality'] == '288')
+            if ($this->data['quality'] != '72')
             {
-               $url .= '&map_resolution=288';
+               $url .= '&map_resolution='.$this->data['quality'];
             }
             $this->layer_urls[$k] = $url;
         }
@@ -400,8 +400,12 @@ class PrintService
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
         }
         unlink($tempdir.'/mergedimage.png');
-        //$pdf->Output('newpdf.pdf', 'D'); //file output
-        $pdf->Output();
+        
+        if (null != $this->data['file_prefix']){
+            $pdf->Output($this->data['file_prefix'].'.pdf', 'D'); //file output
+        }else{
+            $pdf->Output();
+        }
     }
 
     /**

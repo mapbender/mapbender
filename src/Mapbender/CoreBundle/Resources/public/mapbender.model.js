@@ -475,14 +475,14 @@ Mapbender.Model = {
                 this.mbMap.fireModelEvent({name: 'beforeSourceChanged', value: {source: sourceToChange, changeOptions: changeOpts}});
                 if(changeOpts.options.type === 'selected'){
                     var result = this._checkSource(changeOpts);
-                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: {options: result}});
+                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: result});//{options: result}});
                     this._redrawSource(changeOpts);
                 }else if(changeOpts.options.type === 'info'){
                     var result = {infolayers: [], changed: {sourceIdx: {id: sourceToChange.id}, children: {}}};
                     result = Mapbender.source[sourceToChange.type].checkInfoLayers(sourceToChange,
                             this.map.olMap.getScale(), changeOpts, result);
                     this.map.layersList[sourceToChange.mqlid].olLayer.queryLayers = result.infolayers;
-                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: {options: result}});
+                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: result});//{options: result}});
                 }else if(changeOpts.options.type === 'toggle'){
 
                 }
@@ -501,7 +501,12 @@ Mapbender.Model = {
                 this._moveSourceOrLayer(tomove, before, after);
             }
             if(changeOpts.layerRemove){
-
+                var sourceToChange = this.getSource(changeOpts.layerRemove.sourceIdx);
+                var layerToRemove = Mapbender.source[sourceToChange.type].findLayer(sourceToChange, changeOpts.layerRemove.layer.options);
+                var removedLayer = Mapbender.source[sourceToChange.type].removeLayer(sourceToChange, layerToRemove.layer);
+                var changed = {changed: {layerRemoved: removedLayer, sourceIdx: changeOpts.layerRemove.sourceIdx }};
+                this._checkAndRedrawSource({sourceIdx: changeOpts.layerRemove.sourceIdx, options: {children: {}}});
+                this.mbMap.fireModelEvent({name: 'sourceChanged', value: changed});
             }
         }else{
             window.console && console.error("CHECK options at model.changeSource");

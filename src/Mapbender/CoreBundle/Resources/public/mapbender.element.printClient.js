@@ -56,10 +56,11 @@
                 this.popup = new Mapbender.Popup2({
                         title: self.element.attr('title'),
                         draggable: true,
+                        header: true,
                         modal: false,
-                        closeButton: true,
-                        closeOnPopupCloseClick: true,
-                        closeOnESC: true,
+                        closeButton: false,
+                        closeOnPopupCloseClick: false,
+                        closeOnESC: false,
                         content: self.element,
                         width: 320,
                         buttons: {
@@ -67,7 +68,7 @@
                                     label: 'Cancel',
                                     cssClass: 'button buttonCancel critical right',
                                     callback: function(){
-                                        this.close();
+                                        self.close();
                                     }
                                 },
                                 'ok': {
@@ -80,11 +81,13 @@
                         }
                     });
              } else {
-                this.popup.open(self.element);
+                 if (this.popupIsOpen === false){
+                    this.popup.open(self.element);
+                 }
             }
             me.show();        
             
-            this.popup.$element.on('closed', function() {self._close();});
+            //this.popup.$element.on('closed', function() {self.close();});
             
             this.popupIsOpen = true;
             this._loadPrintFormats();
@@ -92,10 +95,11 @@
             this._updateGeometry(true);
         },
 
-        _close: function() {
+        close: function() {
             this.element.hide().appendTo($('body'));
             this.popupIsOpen = false;
             this._updateElements();
+            this.popup.close();
         },
 
         _loadPrintFormats: function() {
@@ -334,12 +338,7 @@
         },
 
         _print: function() {
-            if (this.options.print_directly) {
-                this._printDirectly();
-            } else {
-                //@TODO
-                //this._printQueued();
-            }
+            this._printDirectly();
         },
 
         _getPrintExtent: function() {
@@ -361,8 +360,9 @@
             extent = this._getPrintExtent();
             form.find('div.layers').html('');
             var template_key = this.element.find('select[name="template"]').val(),
-            format = this.options.templates[template_key].format;
-
+            format = this.options.templates[template_key].format,
+            file_prefix = this.options.file_prefix;
+            
             // Felder für extent, center und layer dynamisch einbauen
             var fields = $();
 
@@ -394,6 +394,12 @@
                 type: 'hidden',
                 name: 'center[y]',
                 value: extent.center.y
+            }));
+            
+            $.merge(fields, $('<input />', {
+                type: 'hidden',
+                name: 'file_prefix',
+                value: file_prefix
             }));
 
             var sources = this.map.getSourceTree(), num = 0;

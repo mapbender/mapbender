@@ -560,37 +560,38 @@ class ApplicationController extends Controller
      */
     public function saveLayersetAction($slug, $layersetId = null)
     {
-	$application = $this->get('mapbender')->getApplicationEntity($slug);
-	$this->checkGranted('EDIT', $application);
-	if($layersetId === null)
-	{ // new object
-	    $layerset = new Layerset();
-	    $form = $this->createForm(new LayersetType(), $layerset);
-	    $layerset->setApplication($application);
-	}
-	else
-	{
-	    $layerset = $this->getDoctrine()
-		->getRepository("MapbenderCoreBundle:Layerset")
-		->find($layersetId);
-	    $form = $this->createForm(new LayersetType(), $layerset);
-	}
-	$form->bindRequest($this->get('request'));
-	if($form->isValid())
-	{
-	    $this->getDoctrine()->getEntityManager()->persist($layerset);
-	    $this->getDoctrine()->getEntityManager()->flush();
-	    $this->get("logger")->debug("Layerset saved");
-	    $this->get('session')->setFlash('success', "Your layerset has been  saved");
-	    return $this->redirect($this->generateUrl(
-			'mapbender_manager_application_edit', array('slug' => $slug)));
-	}
-	$this->get('session')->setFlash('error',
-	    'Your form has errors, please review them below.');
-	return array(
-	    "isnew" => $layerset->getId() === null ? true : false,
-	    "application" => $application,
-	    'form' => $form->createView());
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $this->checkGranted('EDIT', $application);
+        if($layersetId === null)
+        { // new object
+            $layerset = new Layerset();
+            $form     = $this->createForm(new LayersetType(), $layerset);
+            $layerset->setApplication($application);
+        }
+        else
+        {
+            $layerset = $this->getDoctrine()
+                ->getRepository("MapbenderCoreBundle:Layerset")
+                ->find($layersetId);
+            $form     = $this->createForm(new LayersetType(), $layerset);
+        }
+        $form->bindRequest($this->get('request'));
+        if($form->isValid())
+        {
+            $this->getDoctrine()->getEntityManager()->persist($layerset);
+            $this->getDoctrine()->getEntityManager()->flush();
+            $this->get("logger")->debug("Layerset saved");
+            $this->get('session')->setFlash('success',
+                                            "Your layerset has been saved");
+            return $this->redirect($this->generateUrl(
+                        'mapbender_manager_application_edit',
+                        array('slug' => $slug)));
+        }
+        $this->get('session')->setFlash('error',
+                                        'Layerset title is already used.');
+        return $this->redirect($this->generateUrl(
+                        'mapbender_manager_application_edit',
+                        array('slug' => $slug)));
     }
 
     /**

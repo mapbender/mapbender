@@ -28,7 +28,8 @@ class Fullscreen extends Template
         parent::getAssets($type);
         $assets = array(
             'css' => array('@FOMCoreBundle/Resources/public/css/frontend/fullscreen.css'),
-            'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js'),
+            'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                          '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js'),
         );
 
         return $assets[$type];

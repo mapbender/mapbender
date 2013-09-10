@@ -27,7 +27,8 @@
             });
             $("#" + $(this.element).attr('id') + " select").html(html);
             $("#" + $(this.element).attr('id') + " select").change($.proxy(this._zoomToScale, this));
-            $("#" + $(this.element).attr('id') + " select").val(scale);
+            $("#" + $(this.element).attr('id') + ' select option[value="'+Math.round(scale)+'"]').attr('selected', true);
+            this._updateScale();
             mbMap.map.olMap.events.register('zoomend', this, $.proxy(this._updateScale, this));
             this._trigger('ready');
             this._ready();

@@ -24,8 +24,10 @@
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
                     modal: true,
-                    closeButton: true,
+                    draggable: true,
                     closeOnOutsideClick: true,
+                    closeButton: false,
+                    closeOnPopupCloseClick: false,
                     content: [ $.ajax({url: self.elementUrl + 'content'})],
                     width: 350,
                     height: 170,

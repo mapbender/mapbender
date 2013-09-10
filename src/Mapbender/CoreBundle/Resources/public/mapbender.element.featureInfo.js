@@ -30,6 +30,12 @@
                     throw "Unknown or unhandled option " + key + " for " + this.namespace + "." + this.widgetName;
             }
         },
+        /**
+         * Default action for mapbender element
+         */
+        defaultAction: function(){
+            this.activate();
+        },
         activate: function(){
             var self = this;
             this.map = $('#' + this.options.target).data('mapQuery');
@@ -46,12 +52,12 @@
                 $(".toolBarItemActive").removeClass("toolBarItemActive");
                 if(this.popup){
                     this.popup.destroy();
-                    this.pupup = null;
+                    this.popup = null;
                 }
             }
         },
         /**
-         * Trigger the Feature Info call for each layer.
+         * Trigger the Feature Info call for each layer. 
          * Also set up feature info dialog if needed.
          */
         _triggerFeatureInfo: function(e){
@@ -106,7 +112,9 @@
                     title: self.element.attr('title'),
                     draggable: true,
                     modal: false,
-                    closeButton: true,
+                    closeButton: false,
+                    closeOnPopupCloseClick: false,
+                    closeOnESC: false,
                     content: content,
                     width: 500,
                     buttons: {
@@ -114,7 +122,11 @@
                             label: 'Close',
                             cssClass: 'button right',
                             callback: function(){
-                                this.close();
+                                if(self.options.deactivateOnClose) {
+                                    self.deactivate();
+                                }else{
+                                    this.close();
+                                }
                             }
                         }
                     }

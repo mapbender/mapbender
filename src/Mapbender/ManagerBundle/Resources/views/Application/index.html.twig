@@ -26,7 +26,7 @@
           <div class="buttonGroup">
             <a class="iconView iconBig" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View' | trans }} {{ application.title }}"></a>
 
-            {% if is_granted('CREATE', application) %}
+            {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('CREATE', application) %}
               <a class="iconCopy iconBig" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'Dublicate'|trans }} {{ application.title }}"></a>
             {% endif %}
 

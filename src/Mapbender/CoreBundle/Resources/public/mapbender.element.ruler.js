@@ -85,13 +85,17 @@
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(){
-            this.activate();
+        defaultAction: function(callback){
+            this.activate(callback);
         },
         /**
          * This activates this button and will be called on click
          */
-        activate: function(){
+        activate: function(callback){
+            if(callback)
+                this.callback = callback;
+            else
+                this.callback = null;
             var self = this,
                     olMap = this.map.data('mapQuery').olMap;
             olMap.addControl(this.control);
@@ -102,8 +106,11 @@
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
                     modal: false,
-                    closeButton: true,
+                    draggable: true,
+                    closeButton: false,
+                    closeOnESC: false,
                     destroyOnClose: true,
+                    closeOnPopupCloseClick: false,
                     content: self.container,
                     width: 300,
                     buttons: {
@@ -137,6 +144,10 @@
                 this.popup.destroy();
             }
             this.popup = null;
+            if(this.callback){
+                this.callback.call();
+                this.callback = null;
+            }
         },
         _reset: function(){
             this.segments.empty();

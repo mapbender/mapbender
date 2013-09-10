@@ -16,4 +16,11 @@
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.titlemaxlength) }}{{ form_widget(form.configuration.titlemaxlength) }}
     <div class="clearContainer"></div>
+    <div class="left">
+        {{ form_widget(form.configuration.showHeader) }}<label for="{{form.configuration.showHeader.vars.id}}" class="labelCheck">{{"Show Header"|trans}}</label>
+    </div>
+    <div class="left">
+        {{ form_widget(form.configuration.layerRemove) }}<label for="{{form.configuration.layerRemove.vars.id}}" class="labelCheck">{{"Show Layer Remove"|trans}}</label>
+    </div>
+    <div class="clearContainer"></div>
 </div>
