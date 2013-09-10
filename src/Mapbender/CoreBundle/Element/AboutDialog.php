@@ -104,7 +104,7 @@ class AboutDialog extends Element
         $response = new Response();
         switch($action)
         {
-            case 'about':
+            case 'content':
                 $about = $this->container->get('templating')
                         ->render('MapbenderCoreBundle:Element:about_dialog_content.html.twig');
                 $response->setContent($about);

@@ -32,6 +32,8 @@
             $("#"+$(this.element).attr('id')+" select").change($.proxy(self._switchSrs, self));
             $(document).bind('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
             $(document).bind('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
+            this._trigger('ready');
+            this._ready();
         },
 
         showHidde: function() {
@@ -63,7 +65,10 @@
                 
         _onSrsAdded: function(event, srsObj){
             $("#"+$(this.element).attr('id')+" select").append($('<option></option>').val(srsObj.name).html(srsObj.title));
-            window.console && console.log("TODO add option into select",srsObj);
+            $('.dropdown', this.element).each(function() {
+                initDropdown.call(this);
+            });
+//            window.console && console.log("TODO add option into select",srsObj);
         },
 
         selectSrs: function(crs) {
@@ -244,6 +249,26 @@
                 }
             }
             return result;
+        },
+        /**
+         *
+         */
+        ready: function(callback) {
+            if(this.readyState === true) {
+                callback();
+            } else {
+                this.readyCallbacks.push(callback);
+            }
+        },
+        /**
+         *
+         */
+        _ready: function() {
+            for(callback in this.readyCallbacks) {
+                callback();
+                delete(this.readyCallbacks[callback]);
+            }
+            this.readyState = true;
         },
         _destroy: $.noop
     });

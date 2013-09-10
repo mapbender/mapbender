@@ -42,6 +42,7 @@ class PrintClient extends Element
     public function getAssets()
     {
         return array('js' => array('mapbender.element.printClient.js', 
+                                   '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                                    '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
                      'css' => array());
     }
@@ -54,7 +55,6 @@ class PrintClient extends Element
         return array(
             "target" => null,
             "autoOpen" => false,
-            "print_directly" => true,
             "templates" => array(
                 array(
                     'template' => "a4portrait",
@@ -75,12 +75,23 @@ class PrintClient extends Element
                     'template' => "a3landscape",
                     "label" => "A3 Landscape",
                     "format" => "a3")
+                ,
+                array(
+                    'template' => "a2_landscape_offical",
+                    "label" => "A2 Landscape offical",
+                    "format" => "a2")
+                ,
+                array(
+                    'template' => "a4_landscape_offical",
+                    "label" => "A4 Landscape offical",
+                    "format" => "a4")
             ),
             "scales" => array(500, 1000, 5000, 10000, 25000),
             "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
                 array('dpi' => "288", 'label' => "Draft (288dpi)")),
             "rotatable" => true,
-            "optional_fields" => null
+            "optional_fields" => null,
+            "file_prefix" => 'mapbender3'
         );
     }
     
@@ -187,6 +198,14 @@ class PrintClient extends Element
                 $size = $odgParser->getMapSize($data['template']);
                 $response->setContent($size->getContent());
                 return $response;
+                
+            case 'content':
+                $response = new Response();
+		$about = $this->container->get('templating')
+		    ->render('MapbenderCoreBundle:Element:printclient-content.html.twig',
+		    array("configuration" => $this->getConfiguration()));
+		$response->setContent($about);
+		return $response;
         }
     }
 }

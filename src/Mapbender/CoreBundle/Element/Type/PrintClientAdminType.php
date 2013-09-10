@@ -47,10 +47,8 @@ class PrintClientAdminType extends AbstractType
                 ->add('autoOpen', 'checkbox',
                       array(
                     'required' => false))
-                ->add('print_directly', 'checkbox',
-                      array(
-                    'required' => false))
                 ->add('scales', 'text', array('required' => false))
+                ->add('file_prefix', 'text', array('required' => false))
                 ->add('rotatable', 'checkbox',
                       array(
                     'required' => false))

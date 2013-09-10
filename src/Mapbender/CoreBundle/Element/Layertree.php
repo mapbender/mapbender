@@ -120,8 +120,7 @@ class Layertree extends Element
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderManagerBundle:Element:layer_tree.html.twig';
+        return 'MapbenderCoreBundle:ElementAdmin:layertree.html.twig';
     }
-
 }
 

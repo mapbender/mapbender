@@ -66,8 +66,7 @@ class SearchRouter extends Element
                 'vendor/backbone.js',
                 'mapbender.element.searchRouter.Feature.js',
                 'mapbender.element.searchRouter.Search.js',
-                'mapbender.element.searchRouter.js'),
-            'css' => array('mapbender.element.searchRouter.css'));
+                'mapbender.element.searchRouter.js'));
     }
 
     /**
@@ -217,5 +216,13 @@ class SearchRouter extends Element
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\SearchRouterAdminType';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderCoreBundle:ElementAdmin:search_router.html.twig';
     }
 }

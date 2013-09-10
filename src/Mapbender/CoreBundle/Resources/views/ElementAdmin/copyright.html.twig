@@ -1,0 +1,10 @@
+<div class="elementFormCopyright elementForm">
+    {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{"Autoopen"|trans}}</label>
+    <div class="clearContainer"></div>
+    {{ form_label(form.title) }}{{ form_widget(form.title) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.content) }}{{ form_widget(form.configuration.content) }}
+    <div class="clearContainer"></div>
+</div>

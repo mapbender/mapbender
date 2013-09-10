@@ -13,6 +13,7 @@ $.widget("mapbender.mbButton", {
     button : null,
 
     _create: function() {
+        
         var self = this;
         var me = $(this.element);
 
@@ -35,6 +36,8 @@ $.widget("mapbender.mbButton", {
         $(this.button)
             .bind('click', $.proxy(self._onClick, self))
             .bind('mbButtonDeactivate', $.proxy(self.deactivate, self));
+        this._trigger('ready');
+        this._ready();
     },
 
     _setOption: function(key, value) {
@@ -75,9 +78,9 @@ $.widget("mapbender.mbButton", {
             }
 
             if(widget.length == 1) {
-                target[widget[0]](action);
+                target[widget[0]](action, $.proxy(this.reset, this));
             } else {
-                target[widget[1]](action);
+                target[widget[1]](action, $.proxy(this.reset, this));
             }
         }
         if(!this.options.group) {
@@ -105,7 +108,36 @@ $.widget("mapbender.mbButton", {
         if(this.options.group) {
             this.button.checked = false;
         }
-    }
+    },
+    reset: function() {
+        $(this.button).parent().removeClass("toolBarItemActive");
+        if(this.active) {
+            this.active = false;
+        }
+        if(this.options.group) {
+            this.button.checked = false;
+        }
+    },
+    /**
+     *
+     */
+    ready: function(callback) {
+        if(this.readyState === true) {
+            callback();
+        } else {
+            this.readyCallbacks.push(callback);
+        }
+    },
+    /**
+     *
+     */
+    _ready: function() {
+        for(callback in this.readyCallbacks) {
+            callback();
+            delete(this.readyCallbacks[callback]);
+        }
+        this.readyState = true;
+    },
 });
 
 })(jQuery);

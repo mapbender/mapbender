@@ -216,6 +216,11 @@ class RepositoryController extends Controller
                 ->findBySource($sourceId);
         $em = $this->getDoctrine()->getEntityManager();
         $em->getConnection()->beginTransaction();
+        
+        $aclProvider = $this->get('security.acl.provider');
+        $oid = ObjectIdentity::fromDomainObject($wmssource);
+        $aclProvider->deleteAcl($oid);
+        
         foreach($wmsinstances as $wmsinstance)
         {
             $wmsinstance->remove($em);

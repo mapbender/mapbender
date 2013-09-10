@@ -539,17 +539,16 @@ class ApplicationController extends Controller
             $this->getDoctrine()->getEntityManager()->flush();
             $this->get("logger")->debug("Layerset saved");
             $this->get('session')->setFlash('success',
-                                            "Your layerset has been  saved");
+                                            "Your layerset has been saved");
             return $this->redirect($this->generateUrl(
                         'mapbender_manager_application_edit',
                         array('slug' => $slug)));
         }
         $this->get('session')->setFlash('error',
-                                        'Your form has errors, please review them below.');
-        return array(
-            "isnew"       => $layerset->getId() === null ? true : false,
-            "application" => $application,
-            'form'        => $form->createView());
+                                        'Layerset title is already used.');
+        return $this->redirect($this->generateUrl(
+                        'mapbender_manager_application_edit',
+                        array('slug' => $slug)));
     }
 
     /**

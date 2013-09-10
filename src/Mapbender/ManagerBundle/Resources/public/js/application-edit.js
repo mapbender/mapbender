@@ -129,9 +129,9 @@ $(function() {
     });
 
 
+    var popup;
 
     // Layout - Elements ---------------------------------------------------------------------------
-
     var submitHandler = function(e){
         $.ajax({
             url: $(this).attr('action'),
@@ -145,14 +145,14 @@ $(function() {
                     $("#popup").find(".buttonYes, .buttonBack").show();
                 },
                 201: function() {
-                    $("body").mbPopup('close');
+                    popup.close();
                     window.setTimeout(function() {
                         window.location.reload();
                     }, 10);
 
                 },
                 205: function() {
-                    $("body").mbPopup('close');
+                    popup.close();
                     window.setTimeout(function() {
                         window.location.reload();
                     }, 10);
@@ -170,15 +170,30 @@ $(function() {
             $.ajax({
                 url: url,
                 type: "GET",
-                success: function(data){
-                    $("#popupContent").wrap('<div id="contentWrapper"></div>').hide();
-                    $("#contentWrapper").append('<div id="popupSubContent" class="popupSubContent"></div>');
-                    $("#popupSubContent").append(data);
-                    var subTitle = $("#popupSubContent").find("#form_title").val();
-                    $("#popupSubTitle").text(" - " + subTitle);
-                    $("#popup").find(".buttonYes, .buttonBack").show();
+                complete: function(data){
+                    if(data != undefined){
+                        var pop = $(".popup");
+                        var popupContent   = $(".popupContent");
+                        var contentWrapper = pop.find(".contentWrapper");
 
-                    $("#popupSubContent").on('submit', 'form', submitHandler);
+                        if(contentWrapper.get(0) == undefined){
+                            popupContent.wrap('<div class="contentWrapper"></div>');
+                            contentWrapper = pop.find(".contentWrapper");
+                        }
+                        popupContent.hide();
+                        var subContent = contentWrapper.find(".popupSubContent");
+
+                        if(subContent.get(0) == undefined){
+                            contentWrapper.append('<div class="popupSubContent"></div>');
+                            subContent = contentWrapper.find('.popupSubContent');
+                        }
+                        subContent.html(data.responseText);
+
+                        var subTitle = subContent.find("#form_title").val();
+                        $(".popupSubTitle").text(" - " + subTitle);
+                        $(".popup").find(".buttonYes, .buttonBack").show();
+                        subContent.on('submit', 'form', submitHandler);
+                    }
                 }
             });
         }
@@ -187,188 +202,278 @@ $(function() {
     }
 
     $(".addElement").bind("click", function(){
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('addButton', "Back", "button buttonBack left", function(){
+        var self = $(this);
+        if(popup){
+            popup = popup.destroy();
+        }
+        popup = new Mapbender.Popup2({
+            title:"Add element",
+            subtitle: " - " + self.parent().siblings(".subTitle").text(),
+            closeOnOutsideClick: true,
+            cssClass:"elementPopup",
+            content: [
+                $.ajax({
+                    url: self.attr("href"),
+                    complete: function(){
+                       var curPopup = $(".popup");
 
-                $("#popupSubContent").remove();
-                $("#popupSubTitle").text("");
-                $("#popup").find(".buttonYes, .buttonBack").hide();
-                $("#popupContent").show();
-
-            })
-            .mbPopup('showAjaxModal',
-                     {title:"Add element"},
-                     $(this).attr("href"),
-                     function(){ //ok click
+                       curPopup.find(".buttonYes, .buttonBack").hide();
+                       curPopup.find(".chooseElement").on("click", loadElementFormular);
+                    }
+                })
+            ],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        popup.close();
+                    }
+                },
+                'ok': {
+                    label: 'Ok',
+                    cssClass: 'button buttonYes right',
+                    callback: function() {
                        $("#elementForm").submit();
                        return false;
-                     },
-                     null,
-                     function(){  //afterLoad
-                       var popup = $("#popup");
-
-                       popup.find(".buttonYes, .buttonBack").hide();
-                       popup.find(".chooseElement").on("click", loadElementFormular);
-                     });
-        }
-        return false;
-    });
-
-    // Layers --------------------------------------------------------------------------------------
-    // Add layerset action
-    $(".addLayerset").bind("click", function(){
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showAjaxModal',
-                              {title:"Add layerset",
-                               btnOkLabel: "Add"},
-                              $(this).attr("href"),
-                              function(){ //ok click
-                                $("#layersetForm").submit();
-                              },
-                              null);
-        }
-        return false;
-    });
-    // Edit layerset action
-    $(".editLayerset").bind("click", function(){
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showAjaxModal',
-                              {title:"Edit layerset",
-                               subTitle: " - " + $(this).siblings("legend").text(),
-                               btnOkLabel: "Save"},
-                              $(this).attr("href"),
-                              function(){ //ok click
-                                $("#layersetForm").submit();
-
-                                return false;
-                              },
-                              null);
-        }
-        return false;
-    });
-    // Add Instance Action
-    $(".addInstance").bind("click", function(event){
-        event.preventDefault();
-
-        if(!$('body').data('mapbenderMbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showAjaxModal', {
-                    title:"Select source",
-                    subTitle: " - " + $(this).parent().siblings(".subTitle").text()
+                    }
                 },
-                $(this).attr("href"),
-                null,
-                null,
-                function(){
-                    $("#popup").find(".buttonYes").hide();
-                });
-        }
-    });
+                'back': {
+                    label: 'Back',
+                    cssClass: 'button left buttonBack',
+                    callback: function() {
+                        $(".popupSubContent").remove();
+                        $(".popupSubTitle").text("");
+                        $(".popup").find(".buttonYes, .buttonBack").hide();
+                        $(".popupContent").show();
+                    }
+                }
+            }
+        });
 
-    // Delete layerset Action
-    $(".removeLayerset").bind("click", function(){
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showAjaxModal', {
-                title:"Delete layerset",
-                subTitle: " - " + $(this).siblings("legend").text(),
-                btnOkLabel: "Delete"
-            },
-            $(this).attr("href"),
-            function(){ //ok click
-                $("#deleteLaysersetForm").submit();
-                return false;
-            },
-            null);
-        }
         return false;
     });
 
     // Edit element
     $(".editElement").bind("click", function() {
-        var url = $(this).attr("data-url");
+        var self = $(this);
 
-        if(!$('body').data('mbPopup') && !this.editing) {
-            this.editing = true; // workaround for really fast clickers
-            $("body").mbPopup();
-            delete this.editing;
-            $("body").mbPopup('showAjaxModal', {
-                    title:"Edit element",
-                    method: 'GET'
-                },
-                url,
-                function(e){
-                    $("#elementForm").submit();
-                    e.preventDefault();
-                },
-                null,
-                function(){
-                    $("#popupContent").removeClass("popupContent")
-                                      .addClass("popupSubContent");
-                    $('#popupContent form').submit(submitHandler);
-                }
-            );
+        if(popup){
+            popup = popup.destroy();
         }
+        popup = new Mapbender.Popup2({
+            title:"Edit element",
+            closeOnOutsideClick: true,
+            content: [
+                $.ajax({
+                    url: self.attr("data-url"),
+                    complete: function(){
+                        $(".popupContent").removeClass("popupContent")
+                                          .addClass("popupSubContent");
+                        $('.popupContent form').submit(submitHandler);
+                    }
+                })
+            ],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'Update',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $("#elementForm").submit();
+                        window.setTimeout(function() {
+                            window.location.reload();
+                        }, 50);
+                    }
+                }
+            }
+        });
         return false;
     });
 
     // Delete element
     $('.removeElement').bind("click", function(){
-        var me  = $(this);
-        var title = me.attr('title');
+        var self = $(this);
+        var content = self.attr('title');
 
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showModal',
-                {
-                    title:"Confirm delete",
-                    subTitle: " - element",
-                    content:title + "?"
-                },
-                function(){
-                    $.ajax({
-                        url: me.attr('data-url'),
-                        data : {'id': me.attr('data-id')},
-                        type: 'POST',
-                        success: function(data) {
-                            window.location.reload();
-                        }
-                    });
-                });
+        if(popup){
+            popup = popup.destroy();
         }
+        popup = new Mapbender.Popup2({
+            title:"Confirm delete",
+            subTitle: " - element",
+            closeOnOutsideClick: true,
+            content: [content + "?"],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'Delete',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $.ajax({
+                            url: self.attr('data-url'),
+                            data : {'id': self.attr('data-id')},
+                            type: 'POST',
+                            success: function(data) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                }
+            }
+        });
         return false;
     });
 
+    // Layers --------------------------------------------------------------------------------------
+    function addOrEditLayerset(edit){
+        var self = $(this);
+
+        if(popup){
+            popup = popup.destroy();
+        }
+        popup = new Mapbender.Popup2({
+            title: ((self.hasClass("editLayerset")) ? "Edit layerset"  
+                                                    : "Add layerset"),
+            closeOnOutsideClick: true,
+            content: [
+                $.ajax({url: self.attr("href")})
+            ],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'OK',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $("#layersetForm").submit();
+                    }
+                }
+            }
+        });
+        return false;
+    }
+
+    // Add layerset action
+    $(".addLayerset").bind("click", addOrEditLayerset);
+    // Edit layerset action
+    $(".editLayerset").bind("click", addOrEditLayerset);
+    // Delete layerset Action
+    $(".removeLayerset").bind("click", function(){
+        var self = $(this);
+        if(popup){
+            popup = popup.destroy();
+        }
+        popup = new Mapbender.Popup2({
+            title:"Delete layerset",
+            subTitle: " - " + $(this).siblings("legend").text(),
+            closeOnOutsideClick: true,
+            content: [
+                $.ajax({url: self.attr("href")})
+            ],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'Delete',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $("#deleteLaysersetForm").submit();
+                    }
+                }
+            }
+        });
+        return false;
+    });
+    // Add Instance Action
+    $(".addInstance").bind("click", function(event){
+        var self = $(this);
+        if(popup){
+            popup = popup.destroy();
+        }
+        popup = new Mapbender.Popup2({
+            title:"Select source",
+            subTitle: " - " + self.parent().siblings(".subTitle").text(),
+            closeOnOutsideClick: true,
+            content: [
+                $.ajax({url: self.attr("href")})
+            ],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                }
+            }
+        });
+        return false;
+    });
     // Delete instance
     $('.removeInstance').bind("click", function(){
-        var me  = $(this);
-        var title = me.attr('title');
+        var self  = $(this);
+        var content = self.attr('title');
 
-        if(!$('body').data('mbPopup')) {
-            $("body").mbPopup();
-            $("body").mbPopup('showModal',
-                {
-                    title:"Confirm delete",
-                    subTitle: " - layerset",
-                    content:title + "?"
-                },
-                function(){
-                    $.ajax({
-                        url: me.attr('data-url'),
-                        data : {
-                            'slug': me.attr('data-slug'),
-                            'id': me.attr('data-id')
-                        },
-                        type: 'POST',
-                        success: function(data) {
-                            window.location.reload();
-                        }
-                    });
-                });
+
+        if(popup){
+            popup = popup.destroy();
         }
+
+        popup = new Mapbender.Popup2({
+            title:"Confirm delete",
+            subtitle: " - layerset",
+            closeOnOutsideClick: true,
+            content: [content + "?"],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'delete': {
+                    label: 'Delete',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $.ajax({
+                            url: self.attr('data-url'),
+                            data : {
+                                'slug': self.attr('data-slug'),
+                                'id': self.attr('data-id')
+                            },
+                            type: 'POST',
+                            success: function(data) {
+                                window.location.reload();
+                            }
+                        });
+                    }
+                }
+            }
+        });
         return false;
     });
 });
