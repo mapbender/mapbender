@@ -341,7 +341,7 @@
                     this._createSortable();
                 }
             }
-            $('.checkbox', this.popup.$element).each(function() {
+            $('.checkbox', this.element).each(function() {
                 initCheckbox.call(this);
             });
             this._setSourcesCount();
