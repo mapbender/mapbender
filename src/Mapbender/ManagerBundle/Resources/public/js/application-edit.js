@@ -101,14 +101,15 @@ $(function() {
         })
     });
 
-    $('ul.layercollection li.node span.colactive:first input[type="checkbox"]').bind("change", function(e){
-        if($(this).attr("checked") === "checked"){
-            $(this).parent().parent().parent().parent().find('span.colactive input[type="checkbox"]').attr("checked", true).attr("disabled", false);
-        }else{
-            $(this).parent().parent().parent().parent().find('span.colactive input[type="checkbox"]').attr("checked", false).attr("disabled", true);
-            $(this).attr("disabled", false);
-        }
-    })
+    
+//    $('ul.layercollection li.node span.colactive:first input[type="checkbox"]').bind("change", function(e){
+//        if($(this).attr("checked") === "checked"){
+//            $(this).parent().parent().parent().parent().find('span.colactive input[type="checkbox"]').attr("checked", true).attr("disabled", false);
+//        }else{
+//            $(this).parent().parent().parent().parent().find('span.colactive input[type="checkbox"]').attr("checked", false).attr("disabled", true);
+//            $(this).attr("disabled", false);
+//        }
+//    })
     $('ul.layercollection div.group button.groupon').bind("click", function(e){
         var className = $(this).parent().attr('class');
         $('ul.layercollection li span.'+className+' input[type="checkbox"]').each(function(index) {
@@ -476,4 +477,30 @@ $(function() {
         });
         return false;
     });
+    $( document ).ready(function() {
+        $('#listFilterLayersets .checkWrapper input.checkbox, #containerLayout .checkWrapper input.checkbox').each(function() {
+            var self = this;
+            initCheckbox.call(this);
+            $(self).on("change", function(e){
+                console.log($(self), $(self).attr('data-url'));
+                $.ajax({
+                    url: $(self).attr('data-url'),
+                    type: 'POST',
+                    data : {
+                        'id': $(self).attr('data-id'),
+                        'enabled': $(self).is(":checked")
+                    },
+                    success: function(data) {
+                        if(data.success){
+                            if(data.success.enabled.after !== $(self).is(":checked"))
+                                alert("Cannot be changed!");
+                        } else if(data.error){
+                                alert(data.error);
+                        }
+                    }
+                });
+            });
+        });
+    });
+    
 });

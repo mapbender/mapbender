@@ -34,18 +34,18 @@ class ElementController extends Controller
      */
     public function selectAction($slug)
     {
-        $elements = array();
-        foreach($this->get('mapbender')->getElements() as $elementClassName)
-        {
-            $elements[$elementClassName] = array(
-                'title' => $elementClassName::getClassTitle(),
-                'description' => $elementClassName::getClassDescription(),
-                'tags' => $elementClassName::getClassTags());
-        }
+	$elements = array();
+	foreach($this->get('mapbender')->getElements() as $elementClassName)
+	{
+	    $elements[$elementClassName] = array(
+		'title' => $elementClassName::getClassTitle(),
+		'description' => $elementClassName::getClassDescription(),
+		'tags' => $elementClassName::getClassTags());
+	}
 
-        return array(
-            'elements' => $elements,
-            'region' => $this->get('request')->get('region'));
+	return array(
+	    'elements' => $elements,
+	    'region' => $this->get('request')->get('region'));
     }
 
     /**
@@ -57,29 +57,30 @@ class ElementController extends Controller
      */
     public function newAction($slug)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+	$application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        // Get class for element
-        $class = $this->getRequest()->get('class');
+	// Get class for element
+	$class = $this->getRequest()->get('class');
 
-        if(!class_exists($class))
-        {
-            throw new \RuntimeException('An Element class "' . $class
-                    . '" does not exist.');
-        }
+	if(!class_exists($class))
+	{
+	    throw new \RuntimeException('An Element class "' . $class
+	    . '" does not exist.');
+	}
 
-        // Get first region (by default)
-        $template = $application->getTemplate();
-        $regions = $template::getRegions();
-        $region = $this->get('request')->get('region');
+	// Get first region (by default)
+	$template = $application->getTemplate();
+	$regions = $template::getRegions();
+	$region = $this->get('request')->get('region');
 
-        $element = ComponentElement::getDefaultElement($class, $region);
-        $form = ComponentElement::getElementForm($this->container, $application, $element);
+	$element = ComponentElement::getDefaultElement($class, $region);
+	$form = ComponentElement::getElementForm($this->container, $application,
+		$element);
 
-        return array(
-            'form' => $form['form']->createView(),
-            'theme' => $form['theme'],
-            'assets' => $form['assets']);
+	return array(
+	    'form' => $form['form']->createView(),
+	    'theme' => $form['theme'],
+	    'assets' => $form['assets']);
     }
 
     /**
@@ -91,44 +92,46 @@ class ElementController extends Controller
      */
     public function createAction($slug)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+	$application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        $data = $this->get('request')->get('form');
-        $element = ComponentElement::getDefaultElement($data['class'], $data['region']);
-        $element->setApplication($application);
-        $form = ComponentElement::getElementForm($this->container, $application, $element);
-        $form['form']->bindRequest($this->get('request'));
+	$data = $this->get('request')->get('form');
+	$element = ComponentElement::getDefaultElement($data['class'], $data['region']);
+	$element->setApplication($application);
+	$form = ComponentElement::getElementForm($this->container, $application,
+		$element);
+	$form['form']->bindRequest($this->get('request'));
 
-        if($form['form']->isValid())
-        {
-            $em = $this->getDoctrine()->getEntityManager();
-            $query = $em->createQuery(
-                    "SELECT e FROM MapbenderCoreBundle:Element e"
-                    . " WHERE e.region=:reg AND e.application=:app");
-            $query->setParameters(array(
-                "reg" => $element->getRegion(),
-                "app" => $element->getApplication()->getId()));
-            $elements = $query->getResult();
-            $element->setWeight(count($elements) + 1);
-            $application = $element->getApplication();
-            $application->setUpdated(new \DateTime());
-            $em->persist($element);
-            $em->flush();
-            $entity_class = $element->getClass();
-            $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
-            $elComp = new $entity_class($appl, $this->container, $element);
-            $elComp->postSave();
-            $this->get('session')->setFlash('success',
-                                            'Your element has been saved.');
+	if($form['form']->isValid())
+	{
+	    $em = $this->getDoctrine()->getEntityManager();
+	    $query = $em->createQuery(
+		"SELECT e FROM MapbenderCoreBundle:Element e"
+		. " WHERE e.region=:reg AND e.application=:app");
+	    $query->setParameters(array(
+		"reg" => $element->getRegion(),
+		"app" => $element->getApplication()->getId()));
+	    $elements = $query->getResult();
+	    $element->setWeight(count($elements) + 1);
+	    $application = $element->getApplication();
+	    $application->setUpdated(new \DateTime());
+	    $em->persist($element);
+	    $em->flush();
+	    $entity_class = $element->getClass();
+	    $appl = new \Mapbender\CoreBundle\Component\Application($this->container,
+		$application, array());
+	    $elComp = new $entity_class($appl, $this->container, $element);
+	    $elComp->postSave();
+	    $this->get('session')->setFlash('success', 'Your element has been saved.');
 
-            return new Response('', 201);
-        } else
-        {
-            return array(
-                'form' => $form['form']->createView(),
-                'theme' => $form['theme'],
-                'assets' => $form['assets']);
-        }
+	    return new Response('', 201);
+	}
+	else
+	{
+	    return array(
+		'form' => $form['form']->createView(),
+		'theme' => $form['theme'],
+		'assets' => $form['assets']);
+	}
     }
 
     /**
@@ -138,23 +141,24 @@ class ElementController extends Controller
      */
     public function editAction($slug, $id)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+	$application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        $element = $this->getDoctrine()
-                ->getRepository('MapbenderCoreBundle:Element')
-                ->findOneById($id);
+	$element = $this->getDoctrine()
+	    ->getRepository('MapbenderCoreBundle:Element')
+	    ->findOneById($id);
 
-        if(!$element)
-        {
-            throw $this->createNotFoundException('The element with the id "'
-                    . $id . '" does not exist.');
-        }
-        $form = ComponentElement::getElementForm($this->container, $application, $element);
+	if(!$element)
+	{
+	    throw $this->createNotFoundException('The element with the id "'
+		. $id . '" does not exist.');
+	}
+	$form = ComponentElement::getElementForm($this->container, $application,
+		$element);
 
-        return array(
-            'form' => $form['form']->createView(),
-            'theme' => $form['theme'],
-            'assets' => $form['assets']);
+	return array(
+	    'form' => $form['form']->createView(),
+	    'theme' => $form['theme'],
+	    'assets' => $form['assets']);
     }
 
     /**
@@ -166,44 +170,46 @@ class ElementController extends Controller
      */
     public function updateAction($slug, $id)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+	$application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        $element = $this->getDoctrine()
-                ->getRepository('MapbenderCoreBundle:Element')
-                ->findOneById($id);
+	$element = $this->getDoctrine()
+	    ->getRepository('MapbenderCoreBundle:Element')
+	    ->findOneById($id);
 
-        if(!$element)
-        {
-            throw $this->createNotFoundException('The element with the id "'
-                    . $id . '" does not exist.');
-        }
-        $form = ComponentElement::getElementForm($this->container, $application, $element);
+	if(!$element)
+	{
+	    throw $this->createNotFoundException('The element with the id "'
+		. $id . '" does not exist.');
+	}
+	$form = ComponentElement::getElementForm($this->container, $application,
+		$element);
 //        $form = $this->getElementForm($application, $element);
-        $form['form']->bindRequest($this->get('request'));
+	$form['form']->bindRequest($this->get('request'));
 
-        if($form['form']->isValid())
-        {
-            $em = $this->getDoctrine()->getEntityManager();
-            $application = $element->getApplication();
-            $application->setUpdated(new \DateTime());
-            $em->persist($element);
-            $em->flush();
+	if($form['form']->isValid())
+	{
+	    $em = $this->getDoctrine()->getEntityManager();
+	    $application = $element->getApplication();
+	    $application->setUpdated(new \DateTime());
+	    $em->persist($element);
+	    $em->flush();
 
-            $entity_class = $element->getClass();
-            $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
-            $elComp = new $entity_class($appl, $this->container, $element);
-            $elComp->postSave();
-            $this->get('session')->setFlash('success',
-                                            'Your element has been saved.');
+	    $entity_class = $element->getClass();
+	    $appl = new \Mapbender\CoreBundle\Component\Application($this->container,
+		$application, array());
+	    $elComp = new $entity_class($appl, $this->container, $element);
+	    $elComp->postSave();
+	    $this->get('session')->setFlash('success', 'Your element has been saved.');
 
-            return new Response('', 205);
-        } else
-        {
-            return array(
-                'form' => $form['type']->getForm()->createView(),
-                'theme' => $form['theme'],
-                'assets' => $form['assets']);
-        }
+	    return new Response('', 205);
+	}
+	else
+	{
+	    return array(
+		'form' => $form['type']->getForm()->createView(),
+		'theme' => $form['theme'],
+		'assets' => $form['assets']);
+	}
     }
 
     /**
@@ -216,21 +222,21 @@ class ElementController extends Controller
      */
     public function confirmDeleteAction($slug, $id)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+	$application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        $element = $this->getDoctrine()
-                ->getRepository('MapbenderCoreBundle:Element')
-                ->findOneById($id);
+	$element = $this->getDoctrine()
+	    ->getRepository('MapbenderCoreBundle:Element')
+	    ->findOneById($id);
 
-        if(!$element)
-        {
-            throw $this->createNotFoundException('The element with the id "'
-                    . $id . '" does not exist.');
-        }
+	if(!$element)
+	{
+	    throw $this->createNotFoundException('The element with the id "'
+		. $id . '" does not exist.');
+	}
 
-        return array(
-            'element' => $element,
-            'form' => $this->createDeleteForm($id)->createView());
+	return array(
+	    'element' => $element,
+	    'form' => $this->createDeleteForm($id)->createView());
     }
 
     /**
@@ -241,46 +247,45 @@ class ElementController extends Controller
      */
     public function deleteAction($slug, $id)
     {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
+	$application = $this->get('mapbender')->getApplicationEntity($slug);
 
-        $element = $this->getDoctrine()
-                ->getRepository('MapbenderCoreBundle:Element')
-                ->findOneById($id);
+	$element = $this->getDoctrine()
+	    ->getRepository('MapbenderCoreBundle:Element')
+	    ->findOneById($id);
 
-        if(!$element)
-        {
-            throw $this->createNotFoundException('The element with the id "'
-                    . $id . '" does not exist.');
-        }
+	if(!$element)
+	{
+	    throw $this->createNotFoundException('The element with the id "'
+		. $id . '" does not exist.');
+	}
 
-        $em = $this->getDoctrine()->getEntityManager();
-        $query = $em->createQuery(
-                "SELECT e FROM MapbenderCoreBundle:Element e"
-                . " WHERE e.region=:reg AND e.application=:app"
-                . " AND e.weight>=:min ORDER BY e.weight ASC");
-        $query->setParameters(array(
-            "reg" => $element->getRegion(),
-            "app" => $element->getApplication()->getId(),
-            "min" => $element->getWeight()));
-        $elements = $query->getResult();
-        foreach($elements as $elm)
-        {
-            if($elm->getId() !== $element->getId())
-            {
-                $elm->setWeight($elm->getWeight() - 1);
-            }
-        }
-        foreach($elements as $elm)
-        {
-            $em->persist($elm);
-        }
-        $em->remove($element);
-        $em->flush();
+	$em = $this->getDoctrine()->getEntityManager();
+	$query = $em->createQuery(
+	    "SELECT e FROM MapbenderCoreBundle:Element e"
+	    . " WHERE e.region=:reg AND e.application=:app"
+	    . " AND e.weight>=:min ORDER BY e.weight ASC");
+	$query->setParameters(array(
+	    "reg" => $element->getRegion(),
+	    "app" => $element->getApplication()->getId(),
+	    "min" => $element->getWeight()));
+	$elements = $query->getResult();
+	foreach($elements as $elm)
+	{
+	    if($elm->getId() !== $element->getId())
+	    {
+		$elm->setWeight($elm->getWeight() - 1);
+	    }
+	}
+	foreach($elements as $elm)
+	{
+	    $em->persist($elm);
+	}
+	$em->remove($element);
+	$em->flush();
 
-        $this->get('session')->setFlash('success',
-                                        'Your element has been removed.');
+	$this->get('session')->setFlash('success', 'Your element has been removed.');
 
-        return new Response();
+	return new Response();
     }
 
     /**
@@ -291,131 +296,131 @@ class ElementController extends Controller
      */
     public function weightAction($id)
     {
-        $element = $this->getDoctrine()
-                ->getRepository('MapbenderCoreBundle:Element')
-                ->findOneById($id);
+	$element = $this->getDoctrine()
+	    ->getRepository('MapbenderCoreBundle:Element')
+	    ->findOneById($id);
 
-        if(!$element)
-        {
-            throw $this->createNotFoundException('The element with the id "'
-                    . $id . '" does not exist.');
-        }
-        $number = $this->get("request")->get("number");
-        $newregion = $this->get("request")->get("region");
-        if(intval($number) === $element->getWeight()
-                && $element->getRegion() === $newregion)
-        {
-            return new Response(json_encode(array(
-                                'error' => '',
-                                'result' => 'ok')),
-                            200,
-                            array('Content-Type' => 'application/json'));
-        }
-        if($element->getRegion() === $newregion)
-        {
-            $em = $this->getDoctrine()->getEntityManager();
-            $element->setWeight($number);
-            $em->persist($element);
-            $em->flush();
-            $query = $em->createQuery(
-                    "SELECT e FROM MapbenderCoreBundle:Element e"
-                    . " WHERE e.region=:reg AND e.application=:app"
-                    . " ORDER BY e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $newregion,
-                "app" => $element->getApplication()->getId()));
-            $elements = $query->getResult();
+	if(!$element)
+	{
+	    throw $this->createNotFoundException('The element with the id "'
+		. $id . '" does not exist.');
+	}
+	$number = $this->get("request")->get("number");
+	$newregion = $this->get("request")->get("region");
+	if(intval($number) === $element->getWeight() && $element->getRegion() === $newregion)
+	{
+	    return new Response(json_encode(array(
+		    'error' => '',
+		    'result' => 'ok')), 200, array('Content-Type' => 'application/json'));
+	}
+	if($element->getRegion() === $newregion)
+	{
+	    $em = $this->getDoctrine()->getEntityManager();
+	    $element->setWeight($number);
+	    $em->persist($element);
+	    $em->flush();
+	    $query = $em->createQuery(
+		"SELECT e FROM MapbenderCoreBundle:Element e"
+		. " WHERE e.region=:reg AND e.application=:app"
+		. " ORDER BY e.weight ASC");
+	    $query->setParameters(array(
+		"reg" => $newregion,
+		"app" => $element->getApplication()->getId()));
+	    $elements = $query->getResult();
 
-            $num = 0;
-            foreach($elements as $elm)
-            {
-                if($num === intval($element->getWeight()))
-                {
-                    if($element->getId() === $elm->getId())
-                    {
-                        $num++;
-                    } else
-                    {
-                        $num++;
-                        $elm->setWeight($num);
-                        $num++;
-                    }
-                } else
-                {
-                    if($element->getId() !== $elm->getId())
-                    {
-                        $elm->setWeight($num);
-                        $num++;
-                    }
-                }
-            }
-            foreach($elements as $elm)
-            {
-                $em->persist($elm);
-            }
-            $application = $element->getApplication();
-            $application->setUpdated(new \DateTime());
-            $em->persist($application);
-            $em->flush();
-        } else
-        {
-            // handle old region
-            $em = $this->getDoctrine()->getEntityManager();
-            $query = $em->createQuery(
-                    "SELECT e FROM MapbenderCoreBundle:Element e"
-                    . " WHERE e.region=:reg AND e.application=:app"
-                    . " AND e.weight>=:min ORDER BY e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $element->getRegion(),
-                "app" => $element->getApplication()->getId(),
-                "min" => $element->getWeight()));
-            $elements = $query->getResult();
-            foreach($elements as $elm)
-            {
-                if($elm->getId() !== $element->getId())
-                {
-                    $elm->setWeight($elm->getWeight() - 1);
-                }
-            }
-            foreach($elements as $elm)
-            {
-                $em->persist($elm);
-            }
-            $em->flush();
-            // handle new region
-            $query = $em->createQuery(
-                    "SELECT e FROM MapbenderCoreBundle:Element e"
-                    . " WHERE e.region=:reg AND e.application=:app"
-                    . " AND e.weight>=:min ORDER BY e.weight ASC");
-            $query->setParameters(array(
-                "reg" => $newregion,
-                "app" => $element->getApplication()->getId(),
-                "min" => $number));
-            $elements = $query->getResult();
-            foreach($elements as $elm)
-            {
-                if($elm->getId() !== $element->getId())
-                {
-                    $elm->setWeight($elm->getWeight() + 1);
-                }
-            }
-            foreach($elements as $elm)
-            {
-                $em->persist($elm);
-            }
-            $em->flush();
-            $element->setWeight($number);
-            $element->setRegion($newregion);
-            $em->persist($element);
-            $application = $element->getApplication();
-            $application->setUpdated(new \DateTime());
-            $em->persist($application);
-            $em->flush();
-        }
-        return new Response(json_encode(array(
-                            'error' => '',
-                            'result' => 'ok')), 200, array(
-                    'Content-Type' => 'application/json'));
+	    $num = 0;
+	    foreach($elements as $elm)
+	    {
+		if($num === intval($element->getWeight()))
+		{
+		    if($element->getId() === $elm->getId())
+		    {
+			$num++;
+		    }
+		    else
+		    {
+			$num++;
+			$elm->setWeight($num);
+			$num++;
+		    }
+		}
+		else
+		{
+		    if($element->getId() !== $elm->getId())
+		    {
+			$elm->setWeight($num);
+			$num++;
+		    }
+		}
+	    }
+	    foreach($elements as $elm)
+	    {
+		$em->persist($elm);
+	    }
+	    $application = $element->getApplication();
+	    $application->setUpdated(new \DateTime());
+	    $em->persist($application);
+	    $em->flush();
+	}
+	else
+	{
+	    // handle old region
+	    $em = $this->getDoctrine()->getEntityManager();
+	    $query = $em->createQuery(
+		"SELECT e FROM MapbenderCoreBundle:Element e"
+		. " WHERE e.region=:reg AND e.application=:app"
+		. " AND e.weight>=:min ORDER BY e.weight ASC");
+	    $query->setParameters(array(
+		"reg" => $element->getRegion(),
+		"app" => $element->getApplication()->getId(),
+		"min" => $element->getWeight()));
+	    $elements = $query->getResult();
+	    foreach($elements as $elm)
+	    {
+		if($elm->getId() !== $element->getId())
+		{
+		    $elm->setWeight($elm->getWeight() - 1);
+		}
+	    }
+	    foreach($elements as $elm)
+	    {
+		$em->persist($elm);
+	    }
+	    $em->flush();
+	    // handle new region
+	    $query = $em->createQuery(
+		"SELECT e FROM MapbenderCoreBundle:Element e"
+		. " WHERE e.region=:reg AND e.application=:app"
+		. " AND e.weight>=:min ORDER BY e.weight ASC");
+	    $query->setParameters(array(
+		"reg" => $newregion,
+		"app" => $element->getApplication()->getId(),
+		"min" => $number));
+	    $elements = $query->getResult();
+	    foreach($elements as $elm)
+	    {
+		if($elm->getId() !== $element->getId())
+		{
+		    $elm->setWeight($elm->getWeight() + 1);
+		}
+	    }
+	    foreach($elements as $elm)
+	    {
+		$em->persist($elm);
+	    }
+	    $em->flush();
+	    $element->setWeight($number);
+	    $element->setRegion($newregion);
+	    $em->persist($element);
+	    $application = $element->getApplication();
+	    $application->setUpdated(new \DateTime());
+	    $em->persist($application);
+	    $em->flush();
+	}
+	return new Response(json_encode(array(
+		'error' => '',
+		'result' => 'ok')), 200, array(
+	    'Content-Type' => 'application/json'));
     }
 
     /**
@@ -426,33 +431,33 @@ class ElementController extends Controller
      */
     public function enableAction($id)
     {
-        $element = $this->getDoctrine()
-                ->getRepository('MapbenderCoreBundle:Element')
-                ->findOneById($id);
+	$element = $this->getDoctrine()
+	    ->getRepository('MapbenderCoreBundle:Element')
+	    ->findOneById($id);
 
-        $enabled = $this->get("request")->get("enabled");
-        if(!$element)
-        {
-            return new Response(
-                            json_encode(array(
-                                'error' => 'An element with the id "' . $id . '" does not exist.',
-                                'result' => 'ok')),
-                            200,
-                            array('Content-Type' => 'application/json'));
-        } else
-        {
-            $enabled = $enabled === "true"  ? true : false;
-            $element->setEnabled($enabled);
-            $em = $this->getDoctrine()->getEntityManager();
-            $em->persist($element);
-            $em->flush();
-            return new Response(
-                            json_encode(array(
-                                'error' => '',
-                                'result' => 'ok')),
-                            200,
-                            array('Content-Type' => 'application/json'));
-        }
+	$enabled = $this->get("request")->get("enabled");
+	if(!$element)
+	{
+	    return new Response(json_encode(array(
+		    'error' => 'An element with the id "' . $id . '" does not exist.')), 200,
+		array('Content-Type' => 'application/json'));
+	}
+	else
+	{
+	    $enabled_before = $element->getEnabled();
+	    $enabled = $enabled === "true" ? true : false;
+	    $element->setEnabled($enabled);
+	    $em = $this->getDoctrine()->getEntityManager();
+	    $em->persist($element);
+	    $em->flush();
+	    return new Response(json_encode(array(
+		    'success' => array(
+			"id" => $element->getId(),
+			"type" => "element",
+			"enabled" => array(
+			    'before' => $enabled_before,
+			    'after' => $enabled)))), 200, array('Content-Type' => 'application/json'));
+	}
     }
 
     /**
@@ -460,10 +465,10 @@ class ElementController extends Controller
      */
     private function createDeleteForm($id)
     {
-        return $this->createFormBuilder(array('id' => $id))
-                        ->add('id', 'hidden')
-                        ->getForm();
+	return $this->createFormBuilder(array('id' => $id))
+		->add('id', 'hidden')
+		->getForm();
     }
-    
+
 }
 
