@@ -42,7 +42,7 @@ parameters:
                 overview:
                     osm_overview:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
-                        title: Mapbender OSM
+                        title: OSM Demo
                         url: http://osm-demo.wheregroup.com/service
                         layers:
                             40: { name: osm,    title : OSM-Demo WhereGroup,  visible: true }
@@ -95,7 +95,7 @@ parameters:
                         action: open
                     gps-button:
                         title: GPS
-                        tooltip: show GPS Position
+                        tooltip: Show GPS Position
                         class: Mapbender\CoreBundle\Element\GpsPosition
                         label: true
                         target: map
@@ -123,43 +123,43 @@ parameters:
                         tooltip: About
                         label: true
                         class: Mapbender\CoreBundle\Element\AboutDialog
-                    wmclist:
-                        title: Wmc List
-                        tooltip: Wmc List
-                        class: Mapbender\WmcBundle\Element\WmcList
-                        target: wmcloader
-                        label: true
-                    loadwmc:
-                        title: Load Wmc
-                        tooltip: Load Wmc
-                        class: Mapbender\WmcBundle\Element\WmcLoader
-                        target: wmcloader
-                        icon: iconAreaRuler
-                        label: true
-                        target: wmcloader
-                        deactivate: close
-                        action: open
-                        group: rulers
-                    editwmc:
-                        title: Edit Wmc
-                        tooltip: Edit Wmc
-                        class: Mapbender\WmcBundle\Element\WmcEditor
-                        icon: iconAreaRuler
-                        label: true
-                        target: wmceditor
-                        action: open
-                        deactivate: close
-                        group: rulers
-                    suggestmap_btn:
-                        title: Suggest Map
-                        tooltip: Suggest Map
-                        class: Mapbender\WmcBundle\Element\SuggestMap
-                        icon: iconAreaRuler
-                        label: true
-                        target: wmceditor
-                        action: open
-                        deactivate: close
-                        group: rulers
+#                    wmclist:
+#                        title: WMC List
+#                        tooltip: WMC List
+#                        class: Mapbender\WmcBundle\Element\WmcList
+#                        target: wmcloader
+#                        label: true
+#                    loadwmc:
+#                        title: Load WMC
+#                        tooltip: Load WMC
+#                        class: Mapbender\WmcBundle\Element\WmcLoader
+#                        target: wmcloader
+#                        icon: iconAreaRuler
+#                        label: true
+#                        target: wmcloader
+#                        deactivate: close
+#                        action: open
+#                        group: rulers
+#                    editwmc:
+#                        title: Edit WMC
+#                        tooltip: Edit WMC
+#                        class: Mapbender\WmcBundle\Element\WmcEditor
+#                        icon: iconAreaRuler
+#                        label: true
+#                        target: wmceditor
+#                        action: open
+#                        deactivate: close
+#                        group: rulers
+#                    suggestmap_btn:
+#                        title: Suggest Map
+#                        tooltip: Suggest Map
+#                        class: Mapbender\WmcBundle\Element\SuggestMap
+#                        icon: iconAreaRuler
+#                        label: true
+#                        target: wmceditor
+#                        action: open
+#                        deactivate: close
+#                        group: rulers
                 content:
                     map:
                         title: Main Map
@@ -186,12 +186,12 @@ parameters:
                     legend:
                         class: Mapbender\CoreBundle\Element\Legend
                         target: map
-                        title: Legende
+                        title: Legend
                         elementType: dialog
                         autoOpen: false
                         displayType: list
                         hideEmptyLayers: true
-                        noLegend: "Keine Legende vorhanden"
+                        noLegend: "No legend available"
                         generateLegendGraphic: false
                         showWmsTitle: true
                         showLayerTitle: true
@@ -202,7 +202,7 @@ parameters:
                         target: map
                         deactivateOnClose: true
                     wmsloader:
-                        title: Wms Laden
+                        title: WMS Loader
                         class: Mapbender\WmsBundle\Element\WmsLoader
                         target: map
                         autoOpen: false
@@ -224,7 +224,12 @@ parameters:
                             - { dpi: 72 , label: Draft (72dpi)}
                             - { dpi: 288,  label: Document (288dpi)}
                         rotatable: true
-                        optional_fields: ~
+                        optional_fields:
+                            title:                                  
+                                label: Title                        # label of the optional field
+                                type: text                          # type of the optional field
+                                options:                            #
+                                    required: true                  # true or false
                     lineruler:
                         title: Distance
                         tooltip: 'ruler'
@@ -256,7 +261,7 @@ parameters:
                         showBaseSource: true
                         showHeader: false
                         layerMenu: false
-                        layerRemove: false
+                        layerRemove: true
                     overview:
                         title: Overview
                         class: Mapbender\CoreBundle\Element\Overview
@@ -269,26 +274,34 @@ parameters:
                         position: ['0px', '0px']
                         maximized: true
                         fixed: false
-                    wmcloader:
-                        title: Wmc Loader
-                        class: Mapbender\WmcBundle\Element\WmcLoader
-                        tooltip: 'Wmc Loader'
+#                    wmcloader:
+#                        title: WMC Loader
+#                        class: Mapbender\WmcBundle\Element\WmcLoader
+#                        tooltip: 'WMC Loader'
+#                        target: map
+#                        components: ['idloader', 'listloader', 'wmcloader']
+#                        keepSources: false
+#                        keepExtent: false
+#                    suggestmap:
+#                        title: Suggest Map
+#                        class: Mapbender\WmcBundle\Element\SuggestMap
+#                        tooltip: Suggest Map
+#                        target: map
+#                        receiver: ['email', 'facebook', 'twitter', 'google+']
+#                    wmceditor:
+#                        title: WMC Editor
+#                        class: Mapbender\WmcBundle\Element\WmcEditor
+#                        tooltip: WMC Editor
+#                        target: map
+#                        accessGroups: [0,1]
+                    scaledisplay:
+                        title: Scale Display
+                        class: Mapbender\CoreBundle\Element\ScaleDisplay  
+                        tooltip: Scale
                         target: map
-                        components: ['idloader', 'listloader', 'wmcloader']
-                        keepSources: false
-                        keepExtent: false
-                    suggestmap:
-                        title: Suggest Map
-                        class: Mapbender\WmcBundle\Element\SuggestMap
-                        tooltip: Suggest Map
-                        target: map
-                        receiver: ['email', 'facebook', 'twitter', 'google+']
-                    wmceditor:
-                        title: Wmc Editor
-                        class: Mapbender\WmcBundle\Element\WmcEditor
-                        tooltip: Wmc Editor
-                        target: map
-                        accessGroups: [0,1]
+                        anchor: left-top
+                        scalePrefix: Scale
+                        unitPrefix: true
                 sidepane:
                     layertree:
                         title: layertree
@@ -306,7 +319,7 @@ parameters:
                 footer:
                     activityindicator:
                         class: Mapbender\CoreBundle\Element\ActivityIndicator
-                        title: activityindicator
+                        title: Activity Indicator
                         activityClass: mb-activity
                         ajaxActivityClass: mb-activity-ajax
                         tileActivityClass: mb-activity-tile
@@ -360,7 +373,7 @@ parameters:
                         opacity: 85
                     osm:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
-                        title: Mapbender OSM
+                        title: OSM Demo
                         url: http://osm-demo.wheregroup.com/service
                         layers:
                             30: { name: osm,    title : OSM-Demo WhereGroup,  visible: true }
@@ -479,12 +492,12 @@ parameters:
                     legend:
                         class: Mapbender\CoreBundle\Element\Legend
                         target: map
-                        title: Legende
+                        title: Legend
                         elementType: dialog
                         autoOpen: false
                         displayType: list
                         hideEmptyLayers: true
-                        noLegend: "Keine Legende vorhanden"
+                        noLegend: "No legend available"
                         generateLegendGraphic: false
                         showWmsTitle: true
                         showLayerTitle: true
@@ -495,7 +508,7 @@ parameters:
                         target: map
                         deactivateOnClose: true
                     wmsloader:
-                        title: Wms Laden
+                        title: WMS Loader
                         class: Mapbender\WmsBundle\Element\WmsLoader
                         target: map
                         autoOpen: false
@@ -590,6 +603,9 @@ parameters:
                         tooltip: Scale Selector
                         label: false
                         target: map
-                    copyright:
-                        class: Mapbender\CoreBundle\Element\Copyright
-                        copyright_text: '© OpenStreetMap contributors'
+                    copyrightButton:
+                        title: © OpenStreetMap contributors
+                        tooltip: Line Ruler
+                        class: Mapbender\CoreBundle\Element\Button
+                        label: true
+                        click: http://www.openstreetmap.org/copyright
