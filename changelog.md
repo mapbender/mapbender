@@ -1,5 +1,7 @@
 # Changelog
 * **v3.0.1.0** - Yet to be released
+  - Fixed visibility toggle for elements and layers
+  - Hide sidepane if empty
   - Parameter/Service 'mapbender.proxy' removed
   - Parameter 'mapbender.uploads_dir' added
   - Application's directory added
