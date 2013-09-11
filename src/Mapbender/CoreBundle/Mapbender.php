@@ -131,10 +131,9 @@ class Mapbender {
             }
             $entities[$entity->getSlug()] = $entity;
         }
-
-        $dbEntities = $this->container->get('doctrine')
-            ->getRepository('MapbenderCoreBundle:Application')
-            ->findAll();
+	$dbEntities = $this->container->get('doctrine')->getEntityManager()
+	    ->createQuery("SELECT a From MapbenderCoreBundle:Application a  ORDER BY a.title ASC")
+	    ->getResult();
         foreach($dbEntities as $entity) {
             $entity->setSource(Entity::SOURCE_DB);
             $entities[$entity->getSlug()] = $entity;
