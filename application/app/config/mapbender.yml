@@ -20,7 +20,6 @@ parameters:
                             10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
                             22: { name: Mapbender_Names,   title : Name, visible: true, queryable: true}
                         info_format: text/html
-                        baselayer: false
                         visible: true
                         format: image/png
                         transparent: true
@@ -33,12 +32,11 @@ parameters:
                         layers:
                             30: { name: osm,    title : OSM-Demo WhereGroup,  visible: true }
                         info_format: text/html
-                        baselayer: false
                         visible: true
                         format: image/png
                         transparent: true
                         tiled: false
-                        opacity: 85
+                        opacity: 100
                 overview:
                     osm_overview:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
@@ -50,8 +48,7 @@ parameters:
                         format: image/png
                         transparent: true
                         visible: true
-                        tiled: false
-                        baselayer: true
+                        opacity: 100
             elements:
                 toolbar:
                     layertree-button:
@@ -123,43 +120,6 @@ parameters:
                         tooltip: About
                         label: true
                         class: Mapbender\CoreBundle\Element\AboutDialog
-#                    wmclist:
-#                        title: WMC List
-#                        tooltip: WMC List
-#                        class: Mapbender\WmcBundle\Element\WmcList
-#                        target: wmcloader
-#                        label: true
-#                    loadwmc:
-#                        title: Load WMC
-#                        tooltip: Load WMC
-#                        class: Mapbender\WmcBundle\Element\WmcLoader
-#                        target: wmcloader
-#                        icon: iconAreaRuler
-#                        label: true
-#                        target: wmcloader
-#                        deactivate: close
-#                        action: open
-#                        group: rulers
-#                    editwmc:
-#                        title: Edit WMC
-#                        tooltip: Edit WMC
-#                        class: Mapbender\WmcBundle\Element\WmcEditor
-#                        icon: iconAreaRuler
-#                        label: true
-#                        target: wmceditor
-#                        action: open
-#                        deactivate: close
-#                        group: rulers
-#                    suggestmap_btn:
-#                        title: Suggest Map
-#                        tooltip: Suggest Map
-#                        class: Mapbender\WmcBundle\Element\SuggestMap
-#                        icon: iconAreaRuler
-#                        label: true
-#                        target: wmceditor
-#                        action: open
-#                        deactivate: close
-#                        group: rulers
                 content:
                     map:
                         title: Main Map
@@ -168,11 +128,11 @@ parameters:
                         srs: EPSG:25832
                         units: m
                         extents:
-                            start: [361000,5619270,371150,5625960]
-                            max: [201000,3519270,1251150,6325960]
-                        scales: [7500000,5000000,100000,50000,25000,10000,7500,5000,2500,1000,500]
+                            start: [361000,5619000,371150,5625000]
+                            max: [-500000,4350000,1600000,6850000]
+                        scales: [5000000,1000000,500000,100000,50000,25000,10000,7500,5000,2500,1000,500]
                         maxResolution: 'auto'
-                        otherSrs: ["EPSG:25832","EPSG:31466","EPSG:31467","EPSG:900913","EPSG:4326"]
+                        otherSrs: ["EPSG:25833","EPSG:31466","EPSG:31467","EPSG:900913","EPSG:4326"]
                     zoombar:
                         class: Mapbender\CoreBundle\Element\ZoomBar
                         target: map
@@ -226,10 +186,10 @@ parameters:
                         rotatable: true
                         optional_fields:
                             title:                                  
-                                label: Title                        # label of the optional field
-                                type: text                          # type of the optional field
-                                options:                            #
-                                    required: true                  # true or false
+                                label: Title              # label of the optional field          
+                                type: text                # type of the optional field          
+                                options:                  # 
+                                    required: true        # true or false          
                     lineruler:
                         title: Distance
                         tooltip: 'ruler'
@@ -259,8 +219,6 @@ parameters:
                         autoOpen: false
                         titleMaxLength: 20
                         showBaseSource: true
-                        showHeader: false
-                        layerMenu: false
                         layerRemove: true
                     overview:
                         title: Overview
@@ -274,26 +232,6 @@ parameters:
                         position: ['0px', '0px']
                         maximized: true
                         fixed: false
-#                    wmcloader:
-#                        title: WMC Loader
-#                        class: Mapbender\WmcBundle\Element\WmcLoader
-#                        tooltip: 'WMC Loader'
-#                        target: map
-#                        components: ['idloader', 'listloader', 'wmcloader']
-#                        keepSources: false
-#                        keepExtent: false
-#                    suggestmap:
-#                        title: Suggest Map
-#                        class: Mapbender\WmcBundle\Element\SuggestMap
-#                        tooltip: Suggest Map
-#                        target: map
-#                        receiver: ['email', 'facebook', 'twitter', 'google+']
-#                    wmceditor:
-#                        title: WMC Editor
-#                        class: Mapbender\WmcBundle\Element\WmcEditor
-#                        tooltip: WMC Editor
-#                        target: map
-#                        accessGroups: [0,1]
                     scaledisplay:
                         title: Scale Display
                         class: Mapbender\CoreBundle\Element\ScaleDisplay  
@@ -313,9 +251,7 @@ parameters:
                         autoOpen: false
                         titleMaxLength: 20
                         showBaseSource: true
-                        showHeader: false
-                        layerMenu: false
-                        layerRemove: false
+                        layerRemove: true
                 footer:
                     activityindicator:
                         class: Mapbender\CoreBundle\Element\ActivityIndicator
@@ -365,7 +301,6 @@ parameters:
                             10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
                             22: { name: Mapbender_Names,   title : Name, visible: true, queryable: true}
                         info_format: text/html
-                        baselayer: false
                         visible: true
                         format: image/png
                         transparent: true
@@ -378,12 +313,11 @@ parameters:
                         layers:
                             30: { name: osm,    title : OSM-Demo WhereGroup,  visible: true }
                         info_format: text/html
-                        baselayer: false
                         visible: true
                         format: image/png
                         transparent: true
                         tiled: false
-                        opacity: 85
+                        opacity: 100
                 overview:
                     osm_overview:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
@@ -395,8 +329,6 @@ parameters:
                         format: image/png
                         transparent: true
                         visible: true
-                        tiled: false
-                        baselayer: true
             elements:
                 toolbar:
                     layertree-button:
@@ -474,11 +406,11 @@ parameters:
                         srs: EPSG:25832
                         units: m
                         extents:
-                            start: [361000,5619270,371150,5625960]
-                            max: [331000,5319270,401150,5925960]
+                            start: [361000,5619000,371150,5625000]
+                            max: [251000,5400000,475000,5850000]
                         scales: [500000,250000,125000,75000,50000,25000,10000,7500,5000,2500,1000,500]
                         maxResolution: 'auto'
-                        otherSrs: ["EPSG:25832","EPSG:31466","EPSG:31467","EPSG:900913","EPSG:4326"]
+                        otherSrs: ["EPSG:25833","EPSG:31466","EPSG:31467","EPSG:900913","EPSG:4326"]
                     zoombar:
                         class: Mapbender\CoreBundle\Element\ZoomBar
                         target: map
