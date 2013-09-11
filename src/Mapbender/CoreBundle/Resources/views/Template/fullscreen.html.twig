@@ -24,20 +24,19 @@
       {% endfor %}
     {% endif %}
   </ul>
-
+{% if application.elements.sidepane is defined %}
   <div id="sidepane" class="clear sidePane left">
     <ul class="sidePaneTabs">
       <li class="sidePaneTabItem toggleSideBar"></li>
     </ul>
     <div class="sideContent">
-      {% if application.elements.sidepane is defined %}
         {% for element in application.elements.sidepane %}
           {{ element.render() | raw }}
         {% endfor %}
-      {% endif %}
+      
     </div>
   </div>
-
+{% endif %}
   <div id="content" class="contentPane">
     {% if application.elements.content is defined %}
       {% for element in application.elements.content %}
