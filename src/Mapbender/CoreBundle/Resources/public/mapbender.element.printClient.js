@@ -87,9 +87,7 @@
                  }
             }
             me.show();        
-            
-            //this.popup.$element.on('closed', function() {self.close();});
-            
+
             this.popupIsOpen = true;
             this._loadPrintFormats();
             this._updateElements();
@@ -97,10 +95,15 @@
         },
 
         close: function() {
-            this.element.hide().appendTo($('body'));
-            this.popupIsOpen = false;
-            this._updateElements();
-            this.popup.close();
+            if(this.popup){
+                this.element.hide().appendTo($('body'));
+                this.popupIsOpen = false;
+                this._updateElements();
+                if(this.popup.$element){
+                    this.popup.destroy();
+                }
+                this.popup = null;
+            }
             this.callback ? this.callback.call() : this.callback = null;
         },
 
