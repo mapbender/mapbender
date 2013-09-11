@@ -28,8 +28,8 @@
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(){
-            this.open();
+        defaultAction: function(callback){
+            this.open(callback);
         },
         /**
          * closes a dialog
@@ -42,11 +42,13 @@
                 }
                 this.popup = null;
             }
+            this.callback ? this.callback.call() : this.callback = null;
         },
         /**
          * opens a dialog
          */
-        open: function(){
+        open: function(callback){
+            this.callback = callback ? callback : null;
             var self = this;
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
@@ -66,7 +68,7 @@
                             label: 'Cancel',
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
-                                self.popup.close();
+                                self.close();
                             }
                         },
                         'ok': {

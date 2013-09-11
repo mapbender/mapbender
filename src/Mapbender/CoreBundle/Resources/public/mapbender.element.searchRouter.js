@@ -106,11 +106,12 @@ $.widget('mapbender.mbSearchRouter', {
      * Open method stub. Calls dialog's open method if widget is configured as
      * an dialog (asDialog: true), otherwise just goes on and does nothing.
      */
-    open: function() {
-        self.defaultAction();
+    defaultAction: function(callback) {
+        this.open(callback);
     },
 
-    defaultAction: function() {
+    open: function(callback){
+        this.callback = callback ? callback : null;
         if(true === this.options.asDialog) {
             var self = this;
             var me = $(this.element);
@@ -150,6 +151,7 @@ $.widget('mapbender.mbSearchRouter', {
                 popup.close();
             }
         }
+        this.callback ? this.callback.call() : this.callback = null;
     },
 
     /**

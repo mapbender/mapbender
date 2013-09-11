@@ -20,10 +20,11 @@
             this._trigger('ready');
             this._ready();
         },
-        defaultAction: function(){
-            this.open();
+        defaultAction: function(callback){
+            this.open(callback);
         },
-        open: function(){
+        open: function(callback){
+            this.callback = callback ? callback : null;
             var self = this;
             if(!this.popup || !this.popup.$element){
                 this.element.show();
@@ -56,7 +57,7 @@
                                 }
                                 self.loadWms.call(self, url);
                                 self.element.hide().appendTo($('body'));
-                                this.close();
+                                self.close();
                             }
                         }
                     }
@@ -72,6 +73,7 @@
                     this.popup.destroy();
                 this.popup = null;
             }
+            this.callback ? this.callback.call() : this.callback = null;
         },
         loadWms: function(getCapabilitiesUrl){
             var self = this;

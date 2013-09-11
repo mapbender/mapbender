@@ -44,11 +44,12 @@
             this._ready();
         },
 
-        open: function() {
-            this.defaultAction();
+        defaultAction: function(callback) {
+            this.open(callback);
         },
         
-        defaultAction: function() {
+        open: function(callback){
+            this.callback = callback ? callback : null;
             var self = this;
             var me = $(this.element);
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
@@ -100,6 +101,7 @@
             this.popupIsOpen = false;
             this._updateElements();
             this.popup.close();
+            this.callback ? this.callback.call() : this.callback = null;
         },
 
         _loadPrintFormats: function() {

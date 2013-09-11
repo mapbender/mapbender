@@ -13,10 +13,11 @@
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(){
-            this.open();
+        defaultAction: function(callback){
+            this.open(callback);
         },
-        open: function() {
+        open: function(callback){
+            this.callback = callback ? callback : null;
             var self = this;
             if(!this.popup || !this.popup.$element){
                this.popup = new Mapbender.Popup2({
@@ -45,6 +46,7 @@
             if(this.popup){
                 this.popup.close();
             }
+            this.callback ? this.callback.call() : this.callback = null;
         },
         /**
          *

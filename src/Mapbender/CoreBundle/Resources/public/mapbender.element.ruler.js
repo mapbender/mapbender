@@ -92,10 +92,7 @@
          * This activates this button and will be called on click
          */
         activate: function(callback){
-            if(callback)
-                this.callback = callback;
-            else
-                this.callback = null;
+            this.callback = callback ? callback : null;
             var self = this,
                     olMap = this.map.data('mapQuery').olMap;
             olMap.addControl(this.control);
@@ -118,7 +115,7 @@
                             label: 'Close',
                             cssClass: 'button right',
                             callback: function(){
-                                self.deactivate();//.close();
+                                self.deactivate();
                             }
                         }
                     }
@@ -144,10 +141,7 @@
                 this.popup.destroy();
             }
             this.popup = null;
-            if(this.callback){
-                this.callback.call();
-                this.callback = null;
-            }
+            this.callback ? this.callback.call() : this.callback = null;
         },
         _reset: function(){
             this.segments.empty();

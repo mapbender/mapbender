@@ -37,7 +37,6 @@
             this._trigger('ready');
             this._ready();
         },
-                
         _updateScale: function(){
             var scale;
             if(this.scaledisplay.geodesic === true) {
@@ -67,38 +66,6 @@
             }
             this.scaledisplay.element.innerHTML = OpenLayers.i18n("1 : ${scaleDenom}", {'scaleDenom':scale});
         },
-                /**
-     * Method: updateScale
-     */
-    __updateScale: function() {
-        var scale;
-        if(this.geodesic === true) {
-            var units = this.map.getUnits();
-            if(!units) {
-                return;
-            }
-            var inches = OpenLayers.INCHES_PER_UNIT;
-            scale = (this.map.getGeodesicPixelSize().w || 0.000001) *
-                    inches["km"] * OpenLayers.DOTS_PER_INCH;
-        } else {
-            scale = this.map.getScale();
-        }
-            
-        if (!scale) {
-            return;
-        }
-
-        if (scale >= 9500 && scale <= 950000) {
-            scale = Math.round(scale / 1000) + "K";
-        } else if (scale >= 950000) {
-            scale = Math.round(scale / 1000000) + "M";
-        } else {
-            scale = Math.round(scale);
-        }    
-        
-        this.element.innerHTML = OpenLayers.i18n("Scale = 1 : ${scaleDenom}", {'scaleDenom':scale});
-    }, 
-        
         /**
          * Cahnges the scale bar srs
          */

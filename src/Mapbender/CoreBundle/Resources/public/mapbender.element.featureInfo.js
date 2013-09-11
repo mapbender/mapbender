@@ -33,10 +33,11 @@
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(){
-            this.activate();
+        defaultAction: function(callback){
+            this.activate(callback);
         },
-        activate: function(){
+        activate: function(callback){
+            this.callback = callback ? callback : null;
             var self = this;
             this.map = $('#' + this.options.target).data('mapQuery');
             $('#' + this.options.target).addClass('mb-feature-info-active');
@@ -51,10 +52,13 @@
                 this.map.element.unbind('click', this.mapClickHandler);
                 $(".toolBarItemActive").removeClass("toolBarItemActive");
                 if(this.popup){
-                    this.popup.destroy();
+                    if(this.popup.$element){
+                        this.popup.destroy();
+                    }
                     this.popup = null;
                 }
             }
+            this.callback ? this.callback.call() : this.callback = null;
         },
         /**
          * Trigger the Feature Info call for each layer. 

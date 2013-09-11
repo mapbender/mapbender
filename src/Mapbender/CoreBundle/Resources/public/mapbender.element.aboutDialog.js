@@ -36,7 +36,7 @@
                             label: 'OK',
                             cssClass: 'button right',
                             callback: function(){
-                                this.close();
+                                self.close();
                             }
                         }
                     }
@@ -46,9 +46,10 @@
             }
         },
         close: function(){
-            if(this.popup){
-                this.popup.close();
+            if(this.popup && this.popup.$element){
+                this.popup.destroy();
             }
+            this.popup = null;
         },
         /**
          *
