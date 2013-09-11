@@ -64,7 +64,7 @@
             } else{
                 scale = Math.round(scale);
             }
-            this.scaledisplay.element.innerHTML = OpenLayers.i18n("1 : ${scaleDenom}", {'scaleDenom':scale});
+            this.scaledisplay.element.innerHTML = OpenLayers.i18n(" 1 : ${scaleDenom}", {'scaleDenom':scale});
         },
         /**
          * Cahnges the scale bar srs
