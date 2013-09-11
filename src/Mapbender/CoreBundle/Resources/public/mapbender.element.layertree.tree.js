@@ -341,7 +341,9 @@
                     this._createSortable();
                 }
             }
-
+            $('.checkbox', this.popup.$element).each(function() {
+                initCheckbox.call(this);
+            });
             this._setSourcesCount();
         },
         _onSourceChanged: function(event, options){
@@ -601,10 +603,7 @@
          * Opens a dialog with a layertree (if options.type == 'dialog')
          */
         open: function(callback){
-            if(callback)
-                this.callback = callback;
-            else
-                this.callback = null;
+            this.callback = callback ? callback : null;
             if(this.options.type === 'dialog'){
                 var self = this;
                 if(!this.popup || !this.popup.$element){
@@ -653,10 +652,7 @@
                     this.popup = null;
                 }
             }
-            if(this.callback){
-                this.callback.call();
-                this.callback = null;
-            }
+            this.callback ? this.callback.call() : this.callback = null;
         },
         /**
          *
