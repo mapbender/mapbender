@@ -210,7 +210,7 @@ parameters:
                         maxWidth: 200
                         units: ['km']
                     layertreedialog:
-                        title: layertree
+                        title: Layertree
                         class: Mapbender\CoreBundle\Element\Layertree
                         target: map
                         type: dialog
@@ -242,7 +242,7 @@ parameters:
                         unitPrefix: true
                 sidepane:
                     layertree:
-                        title: layertree
+                        title: Layertree
                         class: Mapbender\CoreBundle\Element\Layertree
                         target: map
                         type: element
@@ -483,7 +483,7 @@ parameters:
                         maxWidth: 200
                         units: ['km']
                     layertreedialog:
-                        title: layertree
+                        title: Layertree
                         class: Mapbender\CoreBundle\Element\Layertree
                         target: map
                         type: dialog
