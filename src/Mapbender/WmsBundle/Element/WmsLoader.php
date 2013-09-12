@@ -26,7 +26,7 @@ class WmsLoader extends Element
      */
     static public function getClassDescription()
     {
-        return "";
+        return "Opens a dialog in which a WMS can be loaded via the getCapabilities-Request";
     }
 
     /**

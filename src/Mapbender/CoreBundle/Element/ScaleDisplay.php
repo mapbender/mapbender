@@ -25,7 +25,7 @@ class ScaleDisplay extends Element
      */
     static public function getClassDescription()
     {
-        return "";
+        return "Displays the current map scale";
     }
 
     /**

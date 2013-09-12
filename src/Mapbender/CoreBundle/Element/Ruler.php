@@ -22,7 +22,7 @@ class Ruler extends Element
      */
     static public function getClassDescription()
     {
-        return "";
+        return "Ruler to draw a line/area and display length/area in a dialog";
     }
 
     /**
