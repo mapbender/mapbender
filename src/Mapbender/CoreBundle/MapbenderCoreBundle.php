@@ -52,9 +52,6 @@ class MapbenderCoreBundle extends MapbenderBundle
 //            'Mapbender\CoreBundle\Element\SearchRouter',
             'Mapbender\CoreBundle\Element\SrsSelector',
             'Mapbender\CoreBundle\Element\ZoomBar',
-        //  'Mapbender\WmcBundle\Element\WmcEditor',
-        //  'Mapbender\WmcBundle\Element\WmcLoader',
-        //  'Mapbender\WmcBundle\Element\WmcList',
             );
     }
 
