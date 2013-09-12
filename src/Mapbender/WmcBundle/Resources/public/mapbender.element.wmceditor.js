@@ -25,10 +25,11 @@
          * closes a dialog
          */
         close: function(){
-            if(this.popup && this.popup.$element){
+            if(this.popup){
                 this.element.hide().appendTo($('body'));
-                $("body").mbPopup("close");
-                this.popup.destroy();
+                if(this.popup.$element){
+                    this.popup.destroy();
+                }
                 this.popup = null;
             }
             this.callback ? this.callback.call() : this.callback = null;
@@ -42,18 +43,24 @@
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
+                    draggable: true,
                     modal: false,
-                    closeButton: true,
+                    closeButton: false,
+                    closeOnESC: false,
+                    closeOnPopupCloseClick: false,
                     content: [$.ajax({
                             url: self.elementUrl + 'list',
                             complete: function(data){
-                                $(".checkWrapper", self.popup.$element).on("click", $.proxy(self._changePublic, self));
+                                $(".checkWrapper input.checkbox", self.popup.$element).each(function(){
+                                    initCheckbox.call(this);
+                                    $(this).on("change", $.proxy(self._changePublic, self));
+                                });
                                 $(".editWmc", self.popup.$element).on("click", $.proxy(self._loadForm, self));
                                 $(".addWmc", self.popup.$element).on("click", $.proxy(self._loadNewForm, self));
                                 $(".removeWmc", self.popup.$element).on("click", $.proxy(self._loadRemoveForm, self));
                             }})],
                     destroyOnClose: true,
-                    width: 400,
+                    width: 480,
                     buttons: {
                         'cancel': {
                             label: 'Cancel',
@@ -101,7 +108,10 @@
                     success: function(data){
 //                        $(".popupContent", self.popup.$element).empty();
                         $(".popupContent", self.popup.$element).html(data);
-                        $(".checkWrapper", self.popup.$element).on("click", $.proxy(self._changePublic, self));
+                        $(".checkWrapper input.checkbox", self.popup.$element).each(function(){
+                            initCheckbox.call(this);
+                            $(this).on("change", $.proxy(self._changePublic, self));
+                        });
                         $(".editWmc", self.popup.$element).on("click", $.proxy(self._loadForm, self));
                         $(".addWmc", self.popup.$element).on("click", $.proxy(self._loadNewForm, self));
                         $(".removeWmc", self.popup.$element).on("click", $.proxy(self._loadRemoveForm, self));
@@ -263,8 +273,9 @@
          */
         _changePublic: function(e){
             var self = this;
-            var wmcid = $(e.target).find('input[type="checkbox"]').attr("data-id"),
-                    publ = $(e.target).hasClass('iconCheckboxActive') ? "disabled" : "enabled";
+            var input = $(e.target);
+            var wmcid = input.attr("data-id"),
+                    publ = input.is(":checked") ? "enabled" : "disabled";
             e.preventDefault();
             $.ajax({
                 url: self.elementUrl + 'public',

@@ -4,9 +4,6 @@ namespace Mapbender\WmcBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Entity\State;
-//use Mapbender\CoreBundle\Component\StateHandler;
-//use Mapbender\CoreBundle\Form\Type\StateType;
-//use Mapbender\WmcBundle\Component\WmcParser;
 use Mapbender\WmcBundle\Component\WmcHandler;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmcBundle\Form\Type\WmcDeleteType;
@@ -34,7 +31,7 @@ class WmcEditor extends Element
      */
     static public function getClassDescription()
     {
-	return "";
+	return "Save and edit configurations with the WMC Editor";
     }
 
     /**

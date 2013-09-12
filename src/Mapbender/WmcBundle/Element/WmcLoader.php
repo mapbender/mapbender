@@ -26,7 +26,7 @@ class WmcLoader extends Element
      */
     static public function getClassDescription()
     {
-	return "WmcLoader";
+	return "Load configurations with the element WMC Loader";
     }
 
     /**

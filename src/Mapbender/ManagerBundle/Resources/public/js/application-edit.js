@@ -482,7 +482,6 @@ $(function() {
             var self = this;
             initCheckbox.call(this);
             $(self).on("change", function(e){
-                console.log($(self), $(self).attr('data-url'));
                 $.ajax({
                     url: $(self).attr('data-url'),
                     type: 'POST',

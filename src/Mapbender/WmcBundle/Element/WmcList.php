@@ -23,7 +23,7 @@ class WmcList extends Element
      */
     static public function getClassDescription()
     {
-	return "WmcList";
+	return "Generates a selectbox with configurations that can be loaded";
     }
 
     /**

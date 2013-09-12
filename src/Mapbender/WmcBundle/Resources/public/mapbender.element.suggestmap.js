@@ -121,8 +121,11 @@
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
+                    draggable: true,
                     modal: false,
-                    closeButton: true,
+                    closeButton: false,
+                    closeOnESC: false,
+                    closeOnPopupCloseClick: false,
                     content: [$.ajax({
                             url: self.elementUrl + 'content',
                             complete: function(data){
