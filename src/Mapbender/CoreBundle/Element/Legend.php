@@ -25,7 +25,7 @@ class Legend extends Element
      */
     public static function getClassDescription()
     {
-        return "The legend object shows the legend of the map's layers.";
+        return "The legend object shows the legend of the map's layers";
     }
 
     /**
