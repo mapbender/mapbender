@@ -101,15 +101,6 @@ $(function() {
         })
     });
 
-    
-//    $('ul.layercollection li.node span.colactive:first input[type="checkbox"]').bind("change", function(e){
-//        if($(this).attr("checked") === "checked"){
-//            $(this).parent().parent().parent().parent().find('span.colactive input[type="checkbox"]').attr("checked", true).attr("disabled", false);
-//        }else{
-//            $(this).parent().parent().parent().parent().find('span.colactive input[type="checkbox"]').attr("checked", false).attr("disabled", true);
-//            $(this).attr("disabled", false);
-//        }
-//    })
     $('ul.layercollection div.group button.groupon').bind("click", function(e){
         var className = $(this).parent().attr('class');
         $('ul.layercollection li span.'+className+' input[type="checkbox"]').each(function(index) {

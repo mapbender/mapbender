@@ -97,6 +97,27 @@ class RepositoryController extends Controller
 		$manager['bundle'] . ":" . "Repository:view", array("id" => $source->getId())
 	);
     }
+    
+    /**
+     * deletes a Source
+     * @ManagerRoute("/source/{sourceId}/confirmdelete")
+     * @Method({"GET"})
+     * @Template("MapbenderManagerBundle:Repository:confirmdelete.html.twig")
+     */
+    public function confirmdeleteAction($sourceId)
+    {
+	$source = $this->getDoctrine()
+		->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+
+	$securityContext = $this->get('security.context');
+	if(false === $securityContext->isGranted('DELETE', $source))
+	{
+	    throw new AccessDeniedException();
+	}
+	return array(
+	    'source' => $source
+	);
+    }
 
     /**
      * deletes a Source

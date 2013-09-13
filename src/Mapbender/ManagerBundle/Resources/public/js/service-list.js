@@ -13,7 +13,7 @@ $(function() {
             title:"Confirm delete",
             subTitle: " - service",
             closeOnOutsideClick: true,
-            content: [content + "?"],
+            content: [content + "?", $.ajax({ url: self.attr('data-url')})],
             buttons: {
                 'cancel': {
                     label: 'Cancel',
@@ -26,14 +26,7 @@ $(function() {
                     label: 'Delete',
                     cssClass: 'button right',
                     callback: function() {
-                        $.ajax({
-                            url: self.attr('data-url'),
-                            data : {'id': self.attr('data-id')},
-                            type: 'POST',
-                            success: function(data) {
-                                window.location.reload();
-                            }
-                        });
+                        $('form', popup.$element).submit();
                     }
                 }
             }

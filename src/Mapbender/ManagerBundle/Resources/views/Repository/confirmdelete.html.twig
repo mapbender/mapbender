@@ -1,18 +1,3 @@
-{% extends "FOMManagerBundle::manager.html.twig" %}
-
-{% block title %}{{ 'Delete Service' | trans }}{% endblock %}
-
-{% block manager_content %}
-<p>{{ "Really delete? "}}</p>
-
 <form method="POST" action="{{ url( "mapbender_manager_repository_delete",{"sourceId": source.id}) }}" >
-    <div class="btn-group repository-actions">
-        <input type="submit" class="btn btn-primary" value="OK"  />
-        {% if app.request.get('return') == "view" %}
-            <a class="btn btn-secondary" href="{{ url("mapbender_manager_repository_view",{"sourceId": source.id}) }}" title="{{ 'Cancel' | trans }}">{{ 'Cancel' | trans }}</a>
-        {% else  %}
-            <a class="btn btn-secondary" href="{{ url("mapbender_manager_repository_index" ) }}" title="{{ 'Cancel' | trans }}">{{ 'Cancel' | trans }}</a>
-        {% endif %}
-    </div>
+    <input type="hidden" name="sourceId" value="{{source.id}}"  />
 </form>
-{% endblock %}

@@ -177,7 +177,7 @@ class RepositoryController extends Controller
 	    $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
 	    $aclProvider->updateAcl($acl);
 
-
+	    $this->get('session')->setFlash('success', "Your WMS has been created");
 	    return $this->redirect($this->generateUrl(
 			"mapbender_manager_repository_view",
 			array(
@@ -227,7 +227,7 @@ class RepositoryController extends Controller
 	$wmssource->remove($em);
 	$em->flush();
 	$em->getConnection()->commit();
-	$this->get('session')->setFlash('success', "Your service has been deleted");
+	$this->get('session')->setFlash('success', "Your WMS has been deleted");
 	return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
     }
 
