@@ -40,7 +40,7 @@ class FullscreenAlternative extends Template
      */
     public static function getRegions()
     {
-        return array('toppane', 'toolbar', 'sidepane', 'content', 'footer');
+        return array('toolbar', 'sidepane', 'content', 'footer');
     }
 
     /**

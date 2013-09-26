@@ -23,7 +23,6 @@ class MapbenderCoreBundle extends MapbenderBundle
      */
     public function getTemplates()
     {
-        // I'am the one and only XD
         return array('Mapbender\CoreBundle\Template\Fullscreen',
                      'Mapbender\CoreBundle\Template\FullscreenAlternative');
     }
