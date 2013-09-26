@@ -13,6 +13,7 @@
   <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
 {% endblock %}
 {% block frontend_content %}
+
   <div class="logoContainer">
     <img class="logo" height="80" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
   </div>
@@ -33,7 +34,6 @@
         {% for element in application.elements.sidepane %}
           {{ element.render() | raw }}
         {% endfor %}
-      
     </div>
   </div>
 {% endif %}

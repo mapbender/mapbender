@@ -17,7 +17,7 @@ class FullscreenAlternative extends Template
      */
     public static function getTitle()
     {
-        return 'Fullscreen alternative template';
+        return 'Fullscreen alternative';
     }
 
     /**
@@ -28,7 +28,8 @@ class FullscreenAlternative extends Template
         parent::getAssets($type);
         $assets = array(
             'css' => array('@FOMCoreBundle/Resources/public/css/frontend/fullscreen_alternative.css'),
-            'js' => array(),
+            'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                          '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js'),
         );
 
         return $assets[$type];

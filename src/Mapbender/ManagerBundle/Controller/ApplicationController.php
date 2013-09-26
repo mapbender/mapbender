@@ -105,7 +105,6 @@ class ApplicationController extends Controller
 	if($form->isValid())
 	{
 	    $application->setUpdated(new \DateTime('now'));
-	    $application->setTemplate("Mapbender\CoreBundle\Template\Fullscreen");
 	    $em = $this->getDoctrine()->getEntityManager();
 
 	    $em->getConnection()->beginTransaction();
@@ -153,6 +152,7 @@ class ApplicationController extends Controller
 	$form = $this->createApplicationForm($application);
 
 	$templateClass = $application->getTemplate();
+
 	$em = $this->getDoctrine()->getEntityManager();
 	$query = $em->createQuery(
 	    "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
@@ -165,7 +165,8 @@ class ApplicationController extends Controller
 	    'available_elements' => $this->getElementList(),
 	    'sources' => $sources,
 	    'form' => $form->createView(),
-	    'form_name' => $form->getName());
+	    'form_name' => $form->getName(),
+        'template_name' => $templateClass::getTitle());
     }
 
     /**
