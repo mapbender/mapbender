@@ -1,5 +1,25 @@
 # Changelog
-* **v3.0.1.0** - Yet to be released
+
+* **v3.0.1.1** - 2013-09-26
+  - The development controller app_dev.php is limited to localhost again
+
+## Release History
+
+* **v3.0.1.0** - 2013-09-12
+  - Fixed visibility toggle for elements and layers
+  - Hide sidepane if empty
+  - Parameter/Service 'mapbender.proxy' removed
+  - Parameter 'mapbender.uploads_dir' added
+  - Application's directory added
+  - Added wgs84 print
+  - Added printclient parameter file_prefix
+  - Added default action for elements
+  - Splited `frontend/components.js` into `sidepane.js` and `tabcontainer.js`
+  - Remove unused images references
+  - New popup architecture
+  - Add application dublication
+  - Prepare `collection.js` for dynamic element properties (full support in next versions)
+  - Fix some micro css bugs
   - Map scale bugs fixes
   - Move checkbox script into `checkbox.js`
   - Merge checkbox frontend and backend script
@@ -15,8 +35,6 @@
   - Element position moved from `mapbender_theme.scss` to `fullscreen.scss`
   - Add new frontend template - Fullscreen alternative
   - Frontend jQuery upgrade to 1.9.1/1.10.2 (jQuery UI)
-
-## Release History
 
 * **v3.0.0.2** - 2013-07-19
   - Removed incorrect feature info function `create`
