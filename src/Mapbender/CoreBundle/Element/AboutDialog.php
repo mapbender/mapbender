@@ -45,8 +45,7 @@ class AboutDialog extends Element
                 'mapbender.element.button.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 'mapbender.element.aboutDialog.js'),
-            'css' => array(
-                'mapbender.element.aboutDialog.css'));
+            'css' => array());
     }
 
     /**
@@ -112,4 +111,3 @@ class AboutDialog extends Element
         }
     }
 }
-
