@@ -14,6 +14,294 @@
         <source>Services</source>
         <target>Dienste</target>
       </trans-unit>
-    </body>
-  </file>
+	  <trans-unit id="4">
+        <source>Confirm delete</source>
+        <target>Löschen bestätigen</target>
+      </trans-unit>
+      <trans-unit id="5">
+        <source>Application</source>
+        <target>Anwendung</target>
+      </trans-unit>  
+      <trans-unit id="6">
+        <source>Applications</source>
+        <target>Anwendungen</target>
+      </trans-unit>
+      <trans-unit id="7">
+        <source>New Application</source>
+        <target>Neue Anwendung</target>
+      </trans-unit>
+      <trans-unit id="8">
+        <source>Logged in as</source>
+        <target>Angemeldet als</target>
+      </trans-unit>
+      <trans-unit id="9">
+        <source>Security</source>
+        <target>Sicherheit</target>
+      </trans-unit>
+      <trans-unit id="10">
+        <source>URL title</source>
+        <target>URL Titel</target>
+      </trans-unit>		  
+      <trans-unit id="11">
+        <source>Description</source>
+        <target>Beschreibung</target>
+      </trans-unit>
+      <trans-unit id="12">
+        <source>Type</source>
+        <target>Typ</target>
+      </trans-unit>
+      <trans-unit id="13">
+        <source>Add new element to</source>
+        <target>Neues Element hinzufügen zu</target>
+      </trans-unit>
+      <trans-unit id="14">
+        <source>Delete element</source>
+        <target>Löschen des Elements</target>
+      </trans-unit>  
+      <trans-unit id="15">
+        <source>Edit element</source>
+        <target>Bearbeitung des Elements</target>
+      </trans-unit>
+	  <trans-unit id="16">
+        <source>Toggle show/hide element</source>
+        <target>Anzeigen/Ausblenden des Elements</target>
+      </trans-unit>
+	  <trans-unit id="17">
+        <source>Base data</source>
+        <target>Basiseinstellungen</target>
+      </trans-unit>
+	  <trans-unit id="18">
+        <source>View application</source>
+        <target>Anwendung anzeigen</target>
+      </trans-unit>
+	  <trans-unit id="19">
+        <source>Add Service</source>
+        <target>Dienst hinzufügen</target>
+      </trans-unit>
+	  <trans-unit id="20">
+        <source>View application</source>
+        <target>Anwendung anzeigen</target>
+      </trans-unit>
+	  <trans-unit id="21">
+        <source>User Control</source>
+        <target>Benutzerverwaltung</target>
+      </trans-unit>	  
+	  <trans-unit id="22">
+        <source>Users</source>
+        <target>Benutzer</target>
+      </trans-unit>	
+      <trans-unit id="23">
+        <source>New User</source>
+        <target>Neuer Benutzer</target>
+      </trans-unit>
+      <trans-unit id="24">
+        <source>Groups</source>
+        <target>Gruppen</target>
+      </trans-unit>	
+      <trans-unit id="25">
+        <source>New Group</source>
+        <target>Neue Gruppe</target>
+      </trans-unit>	
+	  <trans-unit id="26">
+        <source>ACLs</source>
+        <target>Zugriffssteuerung</target>
+      </trans-unit>
+	  <trans-unit id="27">
+        <source>Profile</source>
+        <target>Profil</target>
+      </trans-unit>
+	  <trans-unit id="28">
+        <source>Username</source>
+        <target>Benutzername</target>
+      </trans-unit>
+      <trans-unit id="29">
+        <source>Password</source>
+        <target>Passwort</target>
+      </trans-unit>
+	  <trans-unit id="30">
+        <source>Choose password</source>
+        <target>Passwort</target>
+      </trans-unit>	
+      <trans-unit id="31">
+        <source>Confirm Password</source>
+        <target>Passwort bestätigen</target>
+      </trans-unit>
+      <trans-unit id="32">
+        <source>Publish</source>
+        <target>Veröffentlichen</target>
+      </trans-unit>
+      <trans-unit id="33">
+        <source>Create</source>
+        <target>Anlegen</target>
+      </trans-unit>
+      <trans-unit id="34">
+        <source>Add Instance</source>
+        <target>Dienst hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="35">
+        <source>Add Layerset</source>
+        <target>Layerzusammenstellung anlegen</target>
+      </trans-unit>
+      <trans-unit id="36">
+        <source>Layerset</source>
+        <target>Layerzusammenstellung</target>
+      </trans-unit>
+      <trans-unit id="37">
+        <source>Add Layerset</source>
+        <target>Layerzusammenstellung hinufügen</target>
+      </trans-unit>
+      <trans-unit id="38">
+        <source>Cancel</source>
+        <target>Abbrechen</target>
+      </trans-unit>
+	  <trans-unit id="39">
+        <source>Add layerset</source>
+        <target>Layerset anlegen</target>
+      </trans-unit>
+	  <trans-unit id="40">
+        <source>Loading</source>
+        <target>Anwendung lädt</target>
+      </trans-unit>
+      <trans-unit id="41">
+        <source>Filter layersets</source>
+        <target>Filter nach Diensten</target>
+      </trans-unit>	
+      <trans-unit id="42">
+        <source>Active</source>
+        <target>Aktiv</target>
+      </trans-unit>
+      <trans-unit id="43">
+        <source>Select</source>
+        <target>SelectDE</target>
+      </trans-unit>
+      <trans-unit id="44">
+        <source>Info</source>
+        <target>Info</target>
+      </trans-unit>
+	  <trans-unit id="45">
+        <source>Toggle</source>
+        <target>ToggleDE</target>
+      </trans-unit>
+      <trans-unit id="46">
+        <source>Reorder</source>
+        <target>ReorderDE</target>
+      </trans-unit>	
+      <trans-unit id="47">
+        <source>WMS Instance</source>
+        <target>WMS Instanz</target>
+      </trans-unit>	
+      <trans-unit id="48">
+        <source>allow</source>
+        <target>erlauben</target>
+      </trans-unit>
+      <trans-unit id="49">
+        <source>on</source>
+        <target>an</target>
+      </trans-unit>	
+	  <trans-unit id="50">
+        <source>WMS Instance</source>
+        <target>WMS Instanz</target>
+      </trans-unit>	
+      <trans-unit id="51">
+        <source>More informations</source>
+        <target>Weitere Informationen</target>
+      </trans-unit>
+      <trans-unit id="52">
+        <source>Allow Select in TOC</source>
+        <target>Weitere Informationen</target>
+      </trans-unit>
+      <trans-unit id="53">
+        <source>More informations</source>
+        <target>Weitere Informationen</target>
+      </trans-unit>
+      <trans-unit id="54">
+        <source>Allow select at TOC</source>
+        <target>Allow select at TOC - DE</target>
+      </trans-unit>
+      <trans-unit id="55">
+        <source>Selected at TOC</source>
+        <target>Selected at TOC - DE</target>
+      </trans-unit>
+	  <trans-unit id="56">
+        <source>Allow FeatureInfo at TOC</source>
+        <target>Allow FeatureInfo at TOC - DE</target>
+      </trans-unit>
+      <trans-unit id="57">
+        <source>FeatureInfo at TOC</source>
+        <target>FeatureInfo at TOC - DE</target>
+      </trans-unit>	
+      <trans-unit id="58">
+        <source>Allow Toggle at TOC</source>
+        <target>Allow Toggle at TOC - DE</target>
+      </trans-unit>
+      <trans-unit id="59">
+        <source>Toggle at TOC</source>
+        <target>Toggle at TOC - DE</target>
+      </trans-unit>
+      <trans-unit id="60">
+        <source>Allow Reorder at TOC</source>
+        <target>Allow Reorder at TOC - DE</target>
+      </trans-unit>
+      <trans-unit id="61">
+        <source>Layer's Title</source>
+        <target>Layers' Title - DE</target>
+      </trans-unit>
+	  <trans-unit id="62">
+        <source>Origin URL</source>
+        <target>Origin URL</target>
+      </trans-unit>	  
+      <trans-unit id="63">
+        <source>Opacity</source>
+        <target>Opazität</target>
+      </trans-unit>
+      <trans-unit id="64">
+        <source>Register</source> 
+        <target>Registrierung</target> 
+      </trans-unit>
+      <trans-unit id="65">
+        <source>Forgot password</source> 
+        <target>Passwort vergessen</target> 
+      </trans-unit>
+      <trans-unit id="66">
+        <source>Your Account</source> 
+	<target>Ihr Benutzerkonto</target> 
+      </trans-unit>
+      <trans-unit id="67">
+        <source>Login</source> 
+	<target>Anmelden</target> 
+      </trans-unit>	  
+      <trans-unit id="68">
+        <source>Your Account</source> 
+	<target>Ihr Benutzerkonto</target> 
+      </trans-unit>
+      <trans-unit id="69">
+        <source>Logout</source> 
+	<target>Abmelden</target> 
+      </trans-unit>	
+      <trans-unit id="70">
+        <source>Login</source> 
+	<target>Anmelden</target> 
+      </trans-unit>
+      <trans-unit id="71">
+        <source>View</source> 
+	<target>Anzeigen der Anwendung</target> 
+      </trans-unit>
+      <trans-unit id="72">
+        <source>View this application</source> 
+	<target>Anwendung anzeigen</target> 
+      </trans-unit>
+      <trans-unit id="73">
+        <source>Duplicate</source> 
+	<target>Kopieren</target> 
+      </trans-unit>
+      <trans-unit id="74">
+        <source>Publish / Unpublish application</source> 
+	<target>Veröffentlichen / Sperren der Anwendung</target> 
+      </trans-unit>
+      <trans-unit id="75">
+        <source>Delete application</source> 
+	<target>Löschen der Anwendung</target> 
+      </trans-unit>	  
+   </body>
+ </file>
 </xliff>
