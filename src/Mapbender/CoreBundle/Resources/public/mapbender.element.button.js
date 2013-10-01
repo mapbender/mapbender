@@ -77,13 +77,14 @@ $.widget("mapbender.mbButton", {
                 action = "defaultAction";
             }
 
-            if(typeof target.data(Mapbender.configuration.elements[this.options.target])[action] == 'function') {
                 if(widget.length == 1) {
                     target[widget[0]](action, $.proxy(this.reset, this));
                 } else {
-                    target[widget[1]](action, $.proxy(this.reset, this));
+                    var dataKey = widget[0] + widget[1].charAt(0).toUpperCase() + widget[1].slice(1);
+                    if(typeof target.data(dataKey)[action] == 'function') {
+                            target[widget[1]](action, $.proxy(this.reset, this));
+                    }
                 }
-            }
 
         }
         if(!this.options.group) {
