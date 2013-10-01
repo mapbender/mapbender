@@ -13,7 +13,7 @@ $.widget("mapbender.mbButton", {
     button : null,
 
     _create: function() {
-        
+
         var self = this;
         var me = $(this.element);
 
@@ -70,18 +70,21 @@ $.widget("mapbender.mbButton", {
             var target = $('#' + this.options.target);
             var widget = Mapbender.configuration.elements[this.options.target].init.split('.');
             var action = this.options.action;
-            
+
             $(this.button).parent().addClass("toolBarItemActive");
-            
+
             if(!this.options.action){
-                action = "defaultAction";                
+                action = "defaultAction";
             }
 
-            if(widget.length == 1) {
-                target[widget[0]](action, $.proxy(this.reset, this));
-            } else {
-                target[widget[1]](action, $.proxy(this.reset, this));
+            if(typeof target.data(Mapbender.configuration.elements[this.options.target])[action] == 'function') {
+                if(widget.length == 1) {
+                    target[widget[0]](action, $.proxy(this.reset, this));
+                } else {
+                    target[widget[1]](action, $.proxy(this.reset, this));
+                }
             }
+
         }
         if(!this.options.group) {
             this.deactivate();
@@ -92,7 +95,7 @@ $.widget("mapbender.mbButton", {
 
     deactivate: function() {
         $(this.button).parent().removeClass("toolBarItemActive");
-        
+
         if(this.options.target && this.options.deactivate) {
             var target = $('#' + this.options.target);
             var widget = Mapbender.configuration.elements[this.options.target].init.split('.');
