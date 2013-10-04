@@ -2,13 +2,9 @@
 
 namespace Mapbender\WmcBundle\Element\Type;
 
-use FOM\UserBundle\Form\DataTransformer\GroupIdTransformer;
-use Mapbender\WmcBundle\Form\EventListener\WmcHandlerFieldSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Description of WmcEditorAdminType
@@ -63,10 +59,7 @@ class WmcLoaderAdminType extends AbstractType
 		'choices' => array(
 		    "wmcidloader" => "Id Loader",
 		    "wmclistloader" => "From List Loader",
-		    "wmcxmlloader" => "Wmc Xml Loader",
-		    /* TODO at client
-		    "wmccreater" => "Wmc Xml creater"
-		    */)))
+		    "wmcxmlloader" => "Wmc Xml Loader")))
 	    ->add('keepExtent', 'checkbox', array(
 		'required' => false));
     }

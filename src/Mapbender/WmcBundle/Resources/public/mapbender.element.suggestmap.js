@@ -18,8 +18,8 @@
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             if(typeof this.options.load !== 'undefined'
-                    && typeof this.options.load.state !== 'undefined'){
-                this._getState(this.options.load.state, "state");
+                    && typeof this.options.load.stateid !== 'undefined'){
+                this._getState(this.options.load.stateid, "state");
             }
             this.element.find('ul li').bind("click", $.proxy(self._suggestMap, self));
         },
@@ -212,7 +212,7 @@
         },
         _suggestGooglePlus: function(url){
             if(url){
-                var cmd = '<a href="plus.google.com/share?url=' + encodeURIComponent(url) + '" target="_BLANK">Google+</a>';
+                var cmd = $('<a href="plus.google.com/share?url=' + encodeURIComponent(url) + '" target="_BLANK">Google+</a>');
                 cmd[0].click();
                 cmd.remove();
                 cmd = null;

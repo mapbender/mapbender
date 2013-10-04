@@ -2,7 +2,6 @@
 
 namespace Mapbender\WmcBundle\Form\Type;
 
-use Mapbender\WmcBundle\Form\EventListener\WmcFieldSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 

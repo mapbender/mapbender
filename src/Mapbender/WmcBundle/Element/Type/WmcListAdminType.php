@@ -2,13 +2,9 @@
 
 namespace Mapbender\WmcBundle\Element\Type;
 
-use FOM\UserBundle\Form\DataTransformer\GroupIdTransformer;
-use Mapbender\WmcBundle\Form\EventListener\WmcHandlerFieldSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Description of WmcEditorAdminType
