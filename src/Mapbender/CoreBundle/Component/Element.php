@@ -386,6 +386,12 @@ abstract class Element
                 ->add('title', 'text')
                 ->add('class', 'hidden')
                 ->add('region', 'hidden');
+	
+	$formType->add('acl', 'acl', array(
+	    'property_path' => false,
+	    'data' => $element,//$options['data'],
+	    'permissions' => 'standard::object'));
+	    
         // Get configuration form, either basic YAML one or special form
         $configurationFormType = $class::getType();
         if($configurationFormType === null)

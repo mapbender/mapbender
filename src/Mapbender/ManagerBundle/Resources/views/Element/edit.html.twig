@@ -5,16 +5,21 @@
   {% else %}
   <form id="elementForm" action="{{ path('mapbender_manager_element_create', { 'slug': app.request.get('slug') }) }}" method="post" {{ form_enctype(form)}} novalidate="novalidate">
   {% endif %}
-
-    {{ form_row(form._token) }}
-    {{ form_row(form.class) }}
-    {{ form_row(form.region) }}
-
-    {% if theme is defined and theme != '' %}
-      {% include(theme) %}
-    {% else %}
-      {{ form_rest(form) }}
-    {% endif %}
-
+    <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
+          <ul class="tabs">
+            <li id="tabBaseData" class="tab active">{{"Base data" | trans }}</li>
+            <li id="tabSecurity" class="tab">{{"Security" | trans }}</li>
+          </ul>
+          <div id="containerBaseData" class="container active containerBaseData">
+            {% include 'MapbenderManagerBundle:Element:form-basic.html.twig' %}
+            <!--div class="messageBox hint">
+              {#% trans %}Create a new application by providing basic information and then
+              use the edit mode to choose template, add elements and layers.{% endtrans %#}
+            </div-->
+          </div>
+          <div id="containerSecurity" class="container">
+            {% include 'MapbenderManagerBundle:Element:form-security.html.twig' %}
+          </div>
+    </div>
   </form>
 {% endblock %}

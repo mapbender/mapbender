@@ -104,6 +104,8 @@ class ElementController extends Controller
 	if($form['form']->isValid())
 	{
 	    $em = $this->getDoctrine()->getEntityManager();
+	    $em->getConnection()->beginTransaction();
+	    
 	    $query = $em->createQuery(
 		"SELECT e FROM MapbenderCoreBundle:Element e"
 		. " WHERE e.region=:reg AND e.application=:app");
@@ -121,6 +123,10 @@ class ElementController extends Controller
 		$application, array());
 	    $elComp = new $entity_class($appl, $this->container, $element);
 	    $elComp->postSave();
+	    
+	    $aclManager = $this->get('fom.acl.manager');
+	    $aclManager->setObjectACLFromForm($element, $form->get('acl'), 'object');
+	    $em->getConnection()->commit();
 	    $this->get('session')->setFlash('success', 'Your element has been saved.');
 
 	    return new Response('', 201);
@@ -189,6 +195,8 @@ class ElementController extends Controller
 	if($form['form']->isValid())
 	{
 	    $em = $this->getDoctrine()->getEntityManager();
+	    $em->getConnection()->beginTransaction();
+	    
 	    $application = $element->getApplication();
 	    $application->setUpdated(new \DateTime());
 	    $em->persist($element);
@@ -199,6 +207,11 @@ class ElementController extends Controller
 		$application, array());
 	    $elComp = new $entity_class($appl, $this->container, $element);
 	    $elComp->postSave();
+	    
+	    $aclManager = $this->get('fom.acl.manager');
+	    $aclManager->setObjectACLFromForm($element, $form->get('acl'), 'object');
+	    
+	    $em->getConnection()->commit();
 	    $this->get('session')->setFlash('success', 'Your element has been saved.');
 
 	    return new Response('', 205);
