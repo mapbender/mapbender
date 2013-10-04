@@ -16,8 +16,8 @@
         _setup: function(){
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             if(typeof this.options.load !== 'undefined'
-                    && typeof this.options.load.wmc !== 'undefined'){
-                var wmc_id = this.options.load.wmc;
+                    && typeof this.options.load.wmcid !== 'undefined'){
+                var wmc_id = this.options.load.wmcid;
                 var map = $('#' + this.options.target).data('mapbenderMbMap');
                 var wmcHandlier = new Mapbender.WmcHandler(map);
                 wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
@@ -61,8 +61,8 @@
                     content: [$.ajax({
                             url: self.elementUrl + 'list',
                             complete: function(data){
-                                $('.loadWmc', self.popup.$element).on("click", $.proxy(self._loadFromId, self));
-                                $('.loadXmlWmc', self.popup.$element).on("click", $.proxy(self._loadForm, self));
+                                $('.loadWmcId', self.popup.$element).on("click", $.proxy(self._loadFromId, self));
+                                $('.loadWmcXml', self.popup.$element).on("click", $.proxy(self._loadForm, self));
                             }})],
                     destroyOnClose: true,
                     width: 400,
@@ -109,9 +109,9 @@
                 type: "POST",
                 success: function(data){
                     $("#popupContent").html(data);
-                    var popup = $("#popup");
-                    $(".loadWmc").on("click", $.proxy(self._loadFromId, self));
-                    $(".loadXmlWmc").on("click", $.proxy(self._loadForm, self));
+//                    var popup = $("#popup");
+                    $(".loadWmcId").on("click", $.proxy(self._loadFromId, self));
+                    $(".loadWmcXml").on("click", $.proxy(self._loadForm, self));
                 }
             });
         },

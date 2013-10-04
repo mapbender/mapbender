@@ -1,12 +1,14 @@
+{% if 'listloader' in configuration.components %}
+<a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'Add new wmc to'|trans}} {{region}}"></a>
+{% endif %}
+{% if 'listloader' in configuration.components %}
 <table class="elementsTable tableCore">
     <thead>
         <tr>
             <th>{{ 'Id' | trans }}</th>
             <th class="type">{{ 'Title' | trans }}</th>
             <th class="type">{{ 'Description' | trans }}</th>
-            <th class="iconColumn">
-                <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'Add new wmc to'|trans}} {{region}}"></a>
-            </th>
+            <th class="iconColumn"></th>
         </tr>
     </thead>
     <tbody>
@@ -36,3 +38,4 @@
     {% endif %}
     </tbody>
 </table>
+{% endif %}

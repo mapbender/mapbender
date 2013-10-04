@@ -61,9 +61,9 @@ class WmcLoaderAdminType extends AbstractType
 		'required' => true,
 		'preferred_choices' => array("loader"),
 		'choices' => array(
-		    "idloader" => "Id Loader",
-		    "listloader" => "From List Loader",
-		    "wmcloader" => "Wmc Xml Loader",
+		    "wmcidloader" => "Id Loader",
+		    "wmclistloader" => "From List Loader",
+		    "wmcxmlloader" => "Wmc Xml Loader",
 		    /* TODO at client
 		    "wmccreater" => "Wmc Xml creater"
 		    */)))
