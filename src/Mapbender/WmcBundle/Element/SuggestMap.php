@@ -91,7 +91,10 @@ class SuggestMap extends Element
     {
 	$configuration = parent::getConfiguration();
 	$stateid = $this->container->get('request')->get('state');
-	if($stateid) $configuration["load"] = array('state' => $stateid);
+	if($stateid)
+	{
+	    $configuration["load"] = array('stateid' => $stateid);
+	}
 	return $configuration;
     }
 
