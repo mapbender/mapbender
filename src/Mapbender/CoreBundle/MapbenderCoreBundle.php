@@ -24,7 +24,8 @@ class MapbenderCoreBundle extends MapbenderBundle
     public function getTemplates()
     {
         return array('Mapbender\CoreBundle\Template\Fullscreen',
-                     'Mapbender\CoreBundle\Template\FullscreenAlternative');
+                     'Mapbender\CoreBundle\Template\FullscreenAlternative',
+                     'Mapbender\CoreBundle\Template\Classic');
     }
 
     /**
