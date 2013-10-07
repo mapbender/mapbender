@@ -55,9 +55,7 @@
                 }
             }
             
-            this._resetEvents();
-            this._resetSortable();
-            this._setSourcesCount();
+            this._reset();
             
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
@@ -104,9 +102,11 @@
             this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
-            $('.checkbox', self.element).each(function() {
-                initCheckbox.call(this);
-            });
+            if(initCheckbox){
+                $('.checkbox', self.element).each(function() {
+                    initCheckbox.call(this);
+                });
+            }
         },
         _resetSortable: function(){
 //            this._unSortable();
