@@ -671,7 +671,7 @@
                             }
                         }
                     });
-                    this._reset();console.log("TREE DIALOG");
+                    this._reset();
                 } else {
                     this._reset();
                     this.popup.open();
