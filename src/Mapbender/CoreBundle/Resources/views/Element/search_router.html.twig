@@ -1,9 +1,3 @@
-<style type="text/css">
-.mb-element-searchrouter{
-display: none;
-
-}
-</style>
 <div class="mb-element mb-element-searchrouter" id="{{ element.id }}" title="{{ element.title }}">
     {{ form_label(element.getRouteSelectForm.route) }}{{ form_widget(element.getRouteSelectForm.route) }}
 
@@ -14,6 +8,6 @@ display: none;
             </form>
         {% endfor %}
     </div>
+    <div class="clear"></div>
     <div class="search-results"></div>
-
 </div>
