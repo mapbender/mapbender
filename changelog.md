@@ -1,9 +1,12 @@
 # Changelog
 
-* **v3.0.1.1** - 2013-09-26
-  - The development controller app_dev.php is limited to localhost again
+* **v3.0.2.0** - 
+  - Search router design added
 
 ## Release History
+
+* **v3.0.1.1** - 2013-09-26
+  - The development controller app_dev.php is limited to localhost again
 
 * **v3.0.1.0** - 2013-09-12
   - Fixed visibility toggle for elements and layers
