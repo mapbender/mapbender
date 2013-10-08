@@ -45,7 +45,7 @@ class WmcLoader extends Element
 	return array(
 	    "tooltip" => null,
 	    "target" => null,
-	    "components" => null,
+	    "components" => array(),
 	    "keepSources" => 'no',
 	    "keepExtent" => false,
 	);
@@ -97,10 +97,10 @@ class WmcLoader extends Element
     public function getConfiguration()
     {
 	$configuration = parent::getConfiguration();
-	if(isset($configuration['components']) && in_array("idloader", $configuration['components']))
+	if(in_array("wmcidloader", $configuration['components']))
 	{
-	    $wmcid = $this->container->get('request')->get('wmc');
-	    if($wmcid) $configuration["load"] = array('wmc' => $wmcid);
+	    $wmcid = $this->container->get('request')->get('wmcid');
+	    if($wmcid) $configuration["load"] = array('wmcid' => $wmcid);
 	}
 	return $configuration;
     }
@@ -151,38 +151,53 @@ class WmcLoader extends Element
      */
     protected function loadWmc()
     {
-//	if(!$this->accessGroups())
-//	{
-//	    return new Response(json_encode(array("error" => 'Access denied.')), 200,
-//		array('Content-Type' => 'application/json'));
-//	}
-	$wmcid = $this->container->get('request')->get("_id", null);
-	if($wmcid)
+	$config = $this->getConfiguration();
+	if(in_array("wmcidloader", $config['components']) || in_array("wmclistloader",
+		$config['components']))
 	{
-	    $wmchandler = new WmcHandler($this, $this->application, $this->container);
-	    $wmc = $wmchandler->getWmc($wmcid, true);
-	    $id = $wmc->getId();
-	    return new Response(json_encode(array("data" => array($id => $wmc->getState()->getJson()))),
-		200, array('Content-Type' => 'application/json'));
+	    $wmcid = $this->container->get('request')->get("_id", null);
+	    if($wmcid)
+	    {
+		$wmchandler = new WmcHandler($this, $this->application, $this->container);
+		$wmc = $wmchandler->getWmc($wmcid, true);
+		$id = $wmc->getId();
+		return new Response(json_encode(array("data" => array($id => $wmc->getState()->getJson()))),
+		    200, array('Content-Type' => 'application/json'));
+	    }
+	    else
+	    {
+		return new Response(json_encode(array("error" => 'WMC: ' . $wmcid . ' is not found')),
+		    200, array('Content-Type' => 'application/json'));
+	    }
 	}
 	else
 	{
-	    return new Response(json_encode(array("error" => 'WMC: ' . $wmcid . ' is not found')),
+	    return new Response(json_encode(array("error" => 'WMC: ' . $wmcid . ' can not be loaded- IdLoader is not allowed.')),
 		200, array('Content-Type' => 'application/json'));
 	}
     }
 
     public function loadForm()
     {
-	$wmc = new Wmc();
-	$form = $this->container->get("form.factory")->create(new WmcLoadType(), $wmc);
-	$html = $this->container->get('templating')
-	    ->render('MapbenderWmcBundle:Wmc:wmcloader-form.html.twig',
-	    array(
-	    'form' => $form->createView(),
-	    'id' => $this->getEntity()->getId()));
-	return new Response($html, 200, array('Content-Type' => 'text/html'));
-//	}
+	$config = $this->getConfiguration();
+	if(in_array("wmcxmlloader", $config['components']))
+	{
+	    $wmc = new Wmc();
+	    $form = $this->container->get("form.factory")->create(new WmcLoadType(),
+		$wmc);
+	    $html = $this->container->get('templating')
+		->render('MapbenderWmcBundle:Wmc:wmcloader-form.html.twig',
+		array(
+		'form' => $form->createView(),
+		'id' => $this->getEntity()->getId()));
+	    return new Response($html, 200, array('Content-Type' => 'text/html'));
+	}
+	else
+	{
+	    return new Response(json_encode(array(
+		    "error" => 'WMC:  can not be loaded- WmcXmlLoader is not allowed.')), 200,
+		array('Content-Type' => 'application/json'));
+	}
     }
 
     /**
@@ -192,23 +207,29 @@ class WmcLoader extends Element
      */
     protected function getWmcList()
     {
-//	if(!$this->accessGroups())
-//	{
-//	    return new Response(json_encode(array("error" => 'Access denied.')), 200,
-//		array('Content-Type' => 'application/json'));
-//	}
-	$wmchandler = new WmcHandler($this, $this->application, $this->container);
-	$wmclist = $wmchandler->getWmcList(true);
-	$responseBody = $this->container->get('templating')
-	    ->render('MapbenderWmcBundle:Wmc:wmcloader-list.html.twig',
-	    array(
-	    'application' => $this->application,
-	    'id' => $this->getId(),
-	    'wmclist' => $wmclist)
-	);
 	$response = new Response();
-	$response->setContent($responseBody);
-	return $response;
+	$config = $this->getConfiguration();
+	if(in_array("wmcidloader", $config['components']) || in_array("wmclistloader",
+		$config['components']))
+	{
+	    $wmchandler = new WmcHandler($this, $this->application, $this->container);
+	    $wmclist = $wmchandler->getWmcList(true);
+	    $responseBody = $this->container->get('templating')
+		->render('MapbenderWmcBundle:Wmc:wmcloader-list.html.twig',
+		array(
+		'application' => $this->application,
+		'configuration' => $config,
+		'id' => $this->getId(),
+		'wmclist' => $wmclist)
+	    );
+	    $response->setContent($responseBody);
+	    return $response;
+	}
+	else
+	{
+	    $response->setContent('WMC List can not be loaded- WmcListLoader is not allowed.');
+	    return $response;
+	}
     }
 
     /**
@@ -217,58 +238,80 @@ class WmcLoader extends Element
      */
     private function getWmcAsXml()
     {
-	$request = $this->container->get('request');
-	$wmc = Wmc::create();
-	$form = $this->container->get("form.factory")->create(new WmcLoadType(), $wmc);
-	$form->bindRequest($request);
-	if($form->isValid())
+	$config = $this->getConfiguration();
+	if(in_array("wmcxmlloader", $config['components']))
 	{
-	    $state = $wmc->getState();
-	    if($state !== null && $state->getJson() !== null)
+	    $request = $this->container->get('request');
+	    $wmc = Wmc::create();
+	    $form = $this->container->get("form.factory")->create(new WmcLoadType(),
+		$wmc);
+	    $form->bindRequest($request);
+	    if($form->isValid())
 	    {
-		$state->setServerurl($this->getBaseUrl());
-		$state->setSlug($this->application->getSlug());
-		$state->setTitle("Mapbender State");
-		$wmc->setWmcid(round((microtime(true) * 1000)));
-		$xml = $this->container->get('templating')
-		    ->render('MapbenderWmcBundle:Wmc:wmc110_simple.xml.twig',
-		    array(
-		    'wmc' => $wmc));
-		$response = new Response();
-		$response->setContent($xml);
-		$response->headers->set('Content-Type', 'application/xml');
-		$response->headers->set('Content-Disposition', 'attachment; filename=wmc.xml');
-		return $response;
+		$state = $wmc->getState();
+		if($state !== null && $state->getJson() !== null)
+		{
+		    $state->setServerurl($this->getBaseUrl());
+		    $state->setSlug($this->application->getSlug());
+		    $state->setTitle("Mapbender State");
+		    $wmc->setWmcid(round((microtime(true) * 1000)));
+		    $xml = $this->container->get('templating')
+			->render('MapbenderWmcBundle:Wmc:wmc110_simple.xml.twig',
+			array(
+			'wmc' => $wmc));
+		    $response = new Response();
+		    $response->setContent($xml);
+		    $response->headers->set('Content-Type', 'application/xml');
+		    $response->headers->set('Content-Disposition',
+			'attachment; filename=wmc.xml');
+		    return $response;
+		}
 	    }
+	    return new Response(json_encode(array(
+		    "error" => 'WMC:  can not be loaded.')), 200,
+		array('Content-Type' => 'application/json'));
 	}
-	return new Response(json_encode(array(
-		"error" => 'WMC:  can not be loaded.')), 200,
-	    array('Content-Type' => 'application/json'));
+	else
+	{
+	    return new Response(json_encode(array(
+		    "error" => 'WMC:  can not be loaded- WmcXmlLoader is not allowed.')), 200,
+		array('Content-Type' => 'application/json'));
+	}
     }
 
     protected function loadXml()
     {
-	$request = $this->container->get('request');
-	$wmc = Wmc::create();
-	$form = $this->container->get("form.factory")->create(new WmcLoadType(), $wmc);
-	$form->bindRequest($request);
-	if($form->isValid())
+	$config = $this->getConfiguration();
+	if(in_array("wmcxmlloader", $config['components']))
 	{
-	    if($wmc->getXml() !== null)
+	    $request = $this->container->get('request');
+	    $wmc = Wmc::create();
+	    $form = $this->container->get("form.factory")->create(new WmcLoadType(),
+		$wmc);
+	    $form->bindRequest($request);
+	    if($form->isValid())
 	    {
-		$file = $wmc->getXml();
-		$path = $file->getPathname();
-		$doc = WmcParser::loadDocument($path);
-		$parser = WmcParser::getParser($doc);
-		$wmc = $parser->parse();
-		if(file_exists($file->getPathname()))
+		if($wmc->getXml() !== null)
 		{
-		    unlink($file->getPathname());
+		    $file = $wmc->getXml();
+		    $path = $file->getPathname();
+		    $doc = WmcParser::loadDocument($path);
+		    $parser = WmcParser::getParser($doc);
+		    $wmc = $parser->parse();
+		    if(file_exists($file->getPathname()))
+		    {
+			unlink($file->getPathname());
+		    }
+		    return new Response(json_encode(array("success" => array(round((microtime(true)
+				    * 1000)) => $wmc->getState()->getJson()))), 200,
+			array('Content-Type' => 'application/json'));
 		}
-		return new Response(json_encode(array("success" => array(round((microtime(true)
-				* 1000)) => $wmc->getState()->getJson()))), 200,
-		    array(
-		    'Content-Type' => 'application/json'));
+		else
+		{
+		    return new Response(json_encode(array(
+			    "error" => 'WMC:  can not be loaded.')), 200,
+			array('Content-Type' => 'application/json'));
+		}
 	    }
 	    else
 	    {
@@ -280,7 +323,7 @@ class WmcLoader extends Element
 	else
 	{
 	    return new Response(json_encode(array(
-		    "error" => 'WMC:  can not be loaded.')), 200,
+		    "error" => 'WMC:  can not be loaded- WmcXmlLoader is not allowed.')), 200,
 		array('Content-Type' => 'application/json'));
 	}
     }

@@ -16,7 +16,7 @@ $.widget('mapbender.mbSearchRouter', {
     resultCallbackProxy: null,
     searchModel: null,
     autocompleteModel: null,
-    popup: true,
+    popup: null,
 
     /**
      * Widget creator
@@ -31,9 +31,6 @@ $.widget('mapbender.mbSearchRouter', {
 
     _setup: function(){
         var self = this;
-        if(true === this.options.asDialog) {
-            this.element.dialog(this.options);
-        }
 
         // Prepare callback URL and Search Model
         this.callbackUrl = Mapbender.configuration.application.urls.element +
@@ -96,12 +93,6 @@ $.widget('mapbender.mbSearchRouter', {
         this._ready();
     },
 
-    destroy: function() {
-        if(true === this.options.dialog) {
-            this._super('destroy');
-        }
-    },
-
     /**
      * Open method stub. Calls dialog's open method if widget is configured as
      * an dialog (asDialog: true), otherwise just goes on and does nothing.
@@ -116,26 +107,37 @@ $.widget('mapbender.mbSearchRouter', {
             var self = this;
             var me = $(this.element);
 
-            if(!$('body').data('mbPopup')) {
-                $("body").mbPopup();
-                $("body").mbPopup("addButton", "Cancel", "button buttonCancel critical right", function(){
-                    //close
-                    self._close();
-                    $("body").mbPopup("close");                    
-                }).mbPopup('showCustom', {
-                    title:"Search Router", 
-                    showHeader:true, 
-                    content: this.element, 
+            if(!this.popup || !this.popup.$element){
+                this.popup = new Mapbender.Popup2({
+                    title: self.element.attr('title'),
                     draggable: true,
-                    width: 300,
-                    height: 200,
-                    showCloseButton: false,
-                    overflow: true
+                    modal: false,
+                    closeButton: false,
+                    closeOnPopupCloseClick: false,
+                    closeOnESC: false,
+                    content: self.element,
+                    width: 450,
+                    buttons: {
+                        'cancel': {
+                            label: 'Close',
+                            cssClass: 'button buttonCancel critical right',
+                                callback: function(){
+                                    self.close();
+                                }
+                            },
+                            'ok': {
+                                label: 'Search',
+                                cssClass: 'button right',
+                                callback: function(){
+                                    $('form[name="' + self.selected + '"]', self.element).submit();
+                                }
+                            }
+                    }
                 });
-                me.show();
-            }
+            }else{
 
-            this.popup = true;
+            }
+            me.show();
         }
     },
 
@@ -145,10 +147,12 @@ $.widget('mapbender.mbSearchRouter', {
      */
     close: function() {
         if(true === this.options.asDialog) {
-            var popup = $('body').data('mbPopup');
-
-            if(!$('body').data('mbPopup')) {
-                popup.close();
+            if(this.popup){
+                if(this.popup.$element){
+                    this.element.hide().appendTo($('body'));
+                    this.popup.destroy();
+                }
+                this.popup = null;
             }
         }
         this.callback ? this.callback.call() : this.callback = null;
@@ -161,12 +165,6 @@ $.widget('mapbender.mbSearchRouter', {
      */
     _selectSearch: function(event) {
         var selected = this.selected = $(event.target).val();
-
-        if(this.options.routes[this.selected].hideSearchButton === true) {
-            $('a[role="search_router_search"]').hide();
-        } else {
-            $('a[role="search_router_search"]').show();
-        }
 
         $('form', this.element).each(function() {
             var form = $(this);

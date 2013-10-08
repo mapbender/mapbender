@@ -41,6 +41,8 @@
         _createTree: function(){
             var self = this;
             var sources = this.model.getSources();
+            if(this.created)
+                this._unSortable();
             for(var i = (sources.length - 1); i > -1; i--){
                 if(!sources[i].configuration.isBaseSource || (sources[i].configuration.isBaseSource && this.options.showBaseSource)){
                     if(this.options.displaytype === "tree"){
@@ -52,31 +54,74 @@
                     }
                 }
             }
-            this._setSourcesCount();
-
-            this.element.find(".layer-opacity-slider").slider();
-
-            this._createSortable();
-
-            this.element.on('change', 'li input[name="selected"]', $.proxy(self._toggleSelected, self));
-            this.element.on('change', 'li input[name="info"]', $.proxy(self._toggleInfo, self));
-            this.element.on('click', '.iconFolder', $.proxy(self._toggleContent, self));
-            this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
-
+            
+            this._reset();
+            
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
             $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
             $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
-
-            this.element.on('click', '.iconRemove', $.proxy(self._removeSource, self));
-            this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
+            
             this.created = true;
+        },
+        _reset: function(){
+            this._resetEvents();
+            this._resetSortable();
+            this._resetCheckboxes();
+            this._setSourcesCount();
+        },
+        _createEvents: function(){
+            var self = this;
+            this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
+            this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
+            this.element.on('click',  '.iconFolder', $.proxy(self._toggleContent, self));
+            this.element.on('click',  '#delete-all', $.proxy(self._removeAllSources, self));
+            this.element.on('click',  '.iconRemove', $.proxy(self._removeSource, self));
+            this.element.on('click',  '.layer-menu-btn', $.proxy(self._toggleMenu, self));
+        },
+        _removeEvents: function(){
+            var self = this;
+            this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
+            this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
+            this.element.off('click',  '.iconFolder', $.proxy(self._toggleContent, self));
+            this.element.off('click',  '#delete-all', $.proxy(self._removeAllSources, self));
+            this.element.off('click',  '.iconRemove', $.proxy(self._removeSource, self));
+            this.element.off('click',  '.layer-menu-btn', $.proxy(self._toggleMenu, self));
+    
+        },
+        _resetEvents: function(){
+            this._removeEvents();
+            this._createEvents();
+        },
+                
+        _resetCheckboxes: function(){
+            var self = this;
+            this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
+            this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
+            this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
+            this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
+            if(initCheckbox){
+                $('.checkbox', self.element).each(function() {
+                    initCheckbox.call(this);
+                });
+            }
+        },
+        _resetSortable: function(){
+//            this._unSortable();
+            this._createSortable();
+        },
+        _unSortable: function(){
+//            $("ul.layers", this.element).each(function(){
+//                var that = this;
+//                if($(that).sortable())
+//                    $(that).sortable('destroy');
+//            });
         },
         _createSortable: function(){
             var self = this;
-            $("ul.layers").each(function(){
+            $("ul.layers", this.element).each(function(){
                 var that = this;
                 $(that).sortable({
                     axis: 'y',
@@ -339,13 +384,9 @@
                     }else if(!after.source.configuration.isBaseSource){
                         $(this.element).find('ul.layers:first').append(li_s);
                     }
-                    this._createSortable();
                 }
             }
-            $('.checkbox', this.element).each(function() {
-                initCheckbox.call(this);
-            });
-            this._setSourcesCount();
+            this._reset();
         },
         _onSourceChanged: function(event, options){
             if(options.changed && options.changed.options){
@@ -527,11 +568,12 @@
             var me = $(e.target);
             if(me.hasClass("iconFolderActive")){
                 me.removeClass("iconFolderActive");
-                me.parent().parent().removeClass("showLeaves");
+                me.parents('li:first').removeClass("showLeaves");
             }else{
                 me.addClass("iconFolderActive");
-                me.parent().parent().addClass("showLeaves");
+                me.parents('li:first').addClass("showLeaves");
             }
+            return false;
         },
         _toggleSelected: function(e){
             var li = $(e.target).parents('li:first');
@@ -629,12 +671,10 @@
                             }
                         }
                     });
-                    $('.checkbox', this.popup.$element).each(function() {
-                        initCheckbox.call(this);
-                    });
+                    this._reset();
                 } else {
-                    //this._createTree();
-                    this.popup.open();//this.element);
+                    this._reset();
+                    this.popup.open();
                 }
             }
         },
@@ -646,6 +686,7 @@
                 if(this.popup){
                     $("ul.layers:first", this.element).empty();
                     $(this.element).hide().appendTo("body");
+                    this._unSortable();
                     this.created = false;
                     if(this.popup.$element){
                         this.popup.destroy();

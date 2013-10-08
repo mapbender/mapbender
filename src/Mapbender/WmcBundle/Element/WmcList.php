@@ -75,8 +75,6 @@ class WmcList extends Element
     public function getAssets()
     {
 	$js = array(
-//	    'jquery.form.js',
-//	    'mapbender.wmchandler.js',
 	    'mapbender.element.wmclist.js'
 	);
 	return array(
@@ -84,14 +82,6 @@ class WmcList extends Element
 	    'css' => array()
 	);
     }
-
-    /**
-     * @inheritdoc
-     */
-//    public function getConfiguration()
-//    {
-//	return $parent::getConfiguration();
-//    }
 
     /**
      * @inheritdoc

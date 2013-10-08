@@ -41,15 +41,18 @@ class ButtonAdminType extends AbstractType
                     'required' => false,
                     "choices" => array(
                         "" => "None",
-                        "iconAbout" => "About",
-                        "iconAreaRuler" => "Area ruler",
+                        "iconAbout"      => "About",
+                        "iconAreaRuler"  => "Area ruler",
                         "iconInfoActive" => "Feature info",
-                        "iconGps" => "GPS",
-                        "iconLegend" => "Legend",
-                        "iconPrint" => "Print",
-                        "iconSearch" => "Search",
-                        "iconLayertree" => "Layer tree",
-                        "iconWms" => "WMS"
+                        "iconGps"        => "GPS",
+                        "iconLegend"     => "Legend",
+                        "iconPrint"      => "Print",
+                        "iconSearch"     => "Search",
+                        "iconLayertree"  => "Layer tree",
+                        "iconWms"        => "WMS",
+                        "iconHelp"       => "Help",
+                        "iconWmcEditor"  => "WMC Editor",
+                        "iconWmcLoader"  => "WMC Loader"
                         )))
                 ->add('label', 'checkbox', array('required' => false))
                 ->add('target', 'target_element',
