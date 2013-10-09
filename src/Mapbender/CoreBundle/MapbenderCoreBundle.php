@@ -10,6 +10,9 @@
 namespace Mapbender\CoreBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
+
 
 /**
  * CoreBundle.
@@ -18,6 +21,13 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
  */
 class MapbenderCoreBundle extends MapbenderBundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new MapbenderYamlCompilerPass());
+    }
+
     /**
      * @inheritdoc
      */
