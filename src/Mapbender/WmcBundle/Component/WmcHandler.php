@@ -85,11 +85,12 @@ class WmcHandler
     {
 	$query = $this->container->get('doctrine')->getEntityManager()
 	    ->createQuery("SELECT wmc FROM MapbenderWmcBundle:Wmc wmc"
-		. " JOIN wmc.state s Where s.slug IN (:slug)"
-		. " AND wmc.id=:wmcid"
+		. " JOIN wmc.state s Where"
+//		. " s.slug IN (:slug) AND"
+		. " wmc.id=:wmcid"
 		. ($onlyPublic === TRUE ? " AND wmc.public = 'true'" : "")
 		. " ORDER BY wmc.id ASC")
-	    ->setParameter('slug', array($this->application->getSlug()))
+//	    ->setParameter('slug', array($this->application->getSlug()))
 	    ->setParameter('wmcid', $wmcid);
 	$wmc = $query->getResult();
 	if($wmc && count($wmc) === 1) return $wmc[0];
