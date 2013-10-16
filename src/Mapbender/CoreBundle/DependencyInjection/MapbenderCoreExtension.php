@@ -33,4 +33,3 @@ class MapbenderCoreExtension extends Extension {
         return 'mapbender_core';
     }
 }
-

@@ -34,12 +34,12 @@ class MapbenderYamlCompilerPass implements CompilerPassInterface
         }
 
         if(is_dir($configDir . '/applications')) {
-            $container->addResource(new DirectoryResource($configDir . '/applications'));
             $finder = new Finder();
             $finder
                 ->in($configDir . '/applications')
                 ->files()->name('*.yml');
             foreach($finder as $file) {
+                $container->addResource(new FileResource($file->getRealPath()));
                 $this->loadYaml($container, $file);
             }
         }
