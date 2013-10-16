@@ -276,7 +276,7 @@ class WmcParser110 extends WmcParser
 	    $layerconfig["maxExtent"] = $this->getBoundingBox(
 		array("./mb3:maxExtent"), $this->getValue("./cntxt:Extension", $extensionEl),
 		$srs);
-	    $layerconfig["tiled"] = $this->findFirstValue(array("./mb3wmc:tiled"),
+	    $layerconfig["tiled"] = $this->findFirstValue(array("./mb3:tiled"),
 		$extensionEl);
 	    $wmsinst->setTransparency((bool) $this->findFirstValue(
 			array("./mb3:transparent/text()"), $extensionEl, true))
