@@ -54,6 +54,7 @@
                     }
                 }
             }
+            
             this._reset();
             
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
@@ -101,9 +102,11 @@
             this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
-            $('.checkbox', this.element).each(function() {
-                initCheckbox.call(this);
-            });
+            if(initCheckbox){
+                $('.checkbox', self.element).each(function() {
+                    initCheckbox.call(this);
+                });
+            }
         },
         _resetSortable: function(){
 //            this._unSortable();
@@ -185,7 +188,7 @@
                 }
                 li.addClass(config.reorder);
                 li.find('.layer-state').attr('title', config.visibility.tooltip);
-                li.find('input.layer-selected').attr('checked', config.selected ? 'checked' : null);
+                li.find('input.layer-selected').attr('checked', config.selected ? true : false);
                 if(!config.selectable)
                     li.find('input.layer-selected').attr('disabled', 'disabled');
                 li.find('input.layer-info').attr('checked', config.info ? 'checked' : null);
@@ -655,7 +658,7 @@
                         closeButton: false,
                         closeOnPopupCloseClick: false,
                         closeOnESC: false,
-                        content: self.element.show(),
+                        content: [self.element.show()],
                         destroyOnClose: true,
                         width: 350,
                         buttons: {

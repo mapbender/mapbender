@@ -156,10 +156,11 @@ class WmcLoader extends Element
 		$config['components']))
 	{
 	    $wmcid = $this->container->get('request')->get("_id", null);
-	    if($wmcid)
+	    $wmchandler = new WmcHandler($this, $this->application, $this->container);
+	    $wmc = $wmchandler->getWmc($wmcid, true);
+	    if($wmc)
 	    {
-		$wmchandler = new WmcHandler($this, $this->application, $this->container);
-		$wmc = $wmchandler->getWmc($wmcid, true);
+		
 		$id = $wmc->getId();
 		return new Response(json_encode(array("data" => array($id => $wmc->getState()->getJson()))),
 		    200, array('Content-Type' => 'application/json'));
@@ -241,23 +242,21 @@ class WmcLoader extends Element
 	$config = $this->getConfiguration();
 	if(in_array("wmcxmlloader", $config['components']))
 	{
-	    $request = $this->container->get('request');
-	    $wmc = Wmc::create();
-	    $form = $this->container->get("form.factory")->create(new WmcLoadType(),
-		$wmc);
-	    $form->bindRequest($request);
-	    if($form->isValid())
+	    $json = $this->container->get('request')->get("state", null);
+	    if($json)
 	    {
+		$wmc = Wmc::create();
 		$state = $wmc->getState();
+		$state->setJson(json_decode($json));
 		if($state !== null && $state->getJson() !== null)
 		{
-		    $state->setServerurl($this->getBaseUrl());
+		    $wmchandler = new WmcHandler($this, $this->application, $this->container);
+		    $state->setServerurl($wmchandler->getBaseUrl());
 		    $state->setSlug($this->application->getSlug());
 		    $state->setTitle("Mapbender State");
 		    $wmc->setWmcid(round((microtime(true) * 1000)));
-		    $xml = $this->container->get('templating')
-			->render('MapbenderWmcBundle:Wmc:wmc110_simple.xml.twig',
-			array(
+		    $xml = $this->container->get('templating')->render(
+			'MapbenderWmcBundle:Wmc:wmc110_simple.xml.twig', array(
 			'wmc' => $wmc));
 		    $response = new Response();
 		    $response->setContent($xml);
@@ -267,9 +266,6 @@ class WmcLoader extends Element
 		    return $response;
 		}
 	    }
-	    return new Response(json_encode(array(
-		    "error" => 'WMC:  can not be loaded.')), 200,
-		array('Content-Type' => 'application/json'));
 	}
 	else
 	{
