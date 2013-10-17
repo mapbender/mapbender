@@ -188,7 +188,7 @@
                 }
                 li.addClass(config.reorder);
                 li.find('.layer-state').attr('title', config.visibility.tooltip);
-                li.find('input.layer-selected').attr('checked', config.selected ? 'checked' : null);
+                li.find('input.layer-selected').attr('checked', config.selected ? true : false);
                 if(!config.selectable)
                     li.find('input.layer-selected').attr('disabled', 'disabled');
                 li.find('input.layer-info').attr('checked', config.info ? 'checked' : null);
@@ -658,7 +658,7 @@
                         closeButton: false,
                         closeOnPopupCloseClick: false,
                         closeOnESC: false,
-                        content: self.element.show(),
+                        content: [self.element.show()],
                         destroyOnClose: true,
                         width: 350,
                         buttons: {

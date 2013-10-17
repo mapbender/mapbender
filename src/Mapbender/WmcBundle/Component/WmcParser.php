@@ -54,7 +54,10 @@ abstract class WmcParser
         }
         try
         {
-            $elm = $this->xpath->query($xpath, $contextElm)->item(0);
+            $elm = $this->xpath->query($xpath, $contextElm);
+	    if($elm === null)
+		return null;
+	    $elm = $elm->item(0);
             if($elm->nodeType == XML_ATTRIBUTE_NODE)
             {
                 return $elm->value;
