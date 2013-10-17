@@ -1,4 +1,3 @@
-
 Mapbender.Model = {
     mbMap: null,
     map: null,
@@ -11,7 +10,7 @@ Mapbender.Model = {
     mapMaxExtent: null,
     layersMaxExtent: {},
     highlightLayer: null,
-    
+
     init: function(mbMap){
         this.mbMap = mbMap;
         var self = this;
@@ -429,6 +428,9 @@ Mapbender.Model = {
                 this.mbMap.fireModelEvent({name: 'beforeSourceRemoved', value: {source: sourceToRemove}});
                 var mqLayer = this.map.layersList[sourceToRemove.mqlid];
                 if(mqLayer){
+                    if(mqLayer.olLayer instanceof OpenLayers.Layer.Grid) {
+                        mqLayer.olLayer.clearGrid();
+                    }
                     var removedMq = mqLayer.remove();
                     if(removedMq){
                         this._removeLayerMaxExtent(mqLayer);
