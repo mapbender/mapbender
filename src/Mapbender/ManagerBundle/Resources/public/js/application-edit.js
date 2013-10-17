@@ -289,6 +289,50 @@ $(function() {
         return false;
     });
 
+    // Element security
+    $(".secureElement").bind("click", function() {
+        var self = $(this);
+
+        if(popup){
+            popup = popup.destroy();
+        }
+        popup = new Mapbender.Popup2({
+            title:"Secure element",
+            closeOnOutsideClick: true,
+            content: [
+                $.ajax({
+                    url: self.attr("data-url"), // TODO: Hier security element url
+                    complete: function(){
+                        $(".popupContent").removeClass("popupContent")
+                                          .addClass("popupSubContent");
+                        // TODO: Hier den Submithandler anbinden
+                        // $('.popupContent form').submit();
+                    }
+                })
+            ],
+            buttons: {
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
+                    callback: function() {
+                        this.close();
+                    }
+                },
+                'ok': {
+                    label: 'Update',
+                    cssClass: 'button right',
+                    callback: function() {
+                        $("#elementForm").submit();
+                        window.setTimeout(function() {
+                            window.location.reload();
+                        }, 50);
+                    }
+                }
+            }
+        });
+        return false;
+    });
+
     // Delete element
     $('.removeElement').bind("click", function(){
         var self = $(this);
