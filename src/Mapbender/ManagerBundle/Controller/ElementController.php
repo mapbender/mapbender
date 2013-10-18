@@ -104,8 +104,6 @@ class ElementController extends Controller
 	if($form['form']->isValid())
 	{
 	    $em = $this->getDoctrine()->getEntityManager();
-	    $em->getConnection()->beginTransaction();
-	    
 	    $query = $em->createQuery(
 		"SELECT e FROM MapbenderCoreBundle:Element e"
 		. " WHERE e.region=:reg AND e.application=:app");
@@ -123,10 +121,6 @@ class ElementController extends Controller
 		$application, array());
 	    $elComp = new $entity_class($appl, $this->container, $element);
 	    $elComp->postSave();
-	    
-	    $aclManager = $this->get('fom.acl.manager');
-	    $aclManager->setObjectACLFromForm($element, $form->get('acl'), 'object');
-	    $em->getConnection()->commit();
 	    $this->get('session')->setFlash('success', 'Your element has been saved.');
 
 	    return new Response('', 201);
@@ -195,8 +189,6 @@ class ElementController extends Controller
 	if($form['form']->isValid())
 	{
 	    $em = $this->getDoctrine()->getEntityManager();
-	    $em->getConnection()->beginTransaction();
-	    
 	    $application = $element->getApplication();
 	    $application->setUpdated(new \DateTime());
 	    $em->persist($element);
@@ -207,11 +199,6 @@ class ElementController extends Controller
 		$application, array());
 	    $elComp = new $entity_class($appl, $this->container, $element);
 	    $elComp->postSave();
-	    
-	    $aclManager = $this->get('fom.acl.manager');
-	    $aclManager->setObjectACLFromForm($element, $form->get('acl'), 'object');
-	    
-	    $em->getConnection()->commit();
 	    $this->get('session')->setFlash('success', 'Your element has been saved.');
 
 	    return new Response('', 205);
@@ -223,6 +210,41 @@ class ElementController extends Controller
 		'theme' => $form['theme'],
 		'assets' => $form['assets']);
 	}
+    }
+    
+    /**
+     * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"})
+     * @Template("MapbenderManagerBundle:Element:security.html.twig")
+     */
+    public function securityAction($slug, $id)
+    {
+	$application = $this->get('mapbender')->getApplicationEntity($slug);
+
+	$element = $this->getDoctrine()
+	    ->getRepository('MapbenderCoreBundle:Element')
+	    ->findOneById($id);
+
+	if(!$element)
+	{
+	    throw $this->createNotFoundException('The element with the id "'
+		. $id . '" does not exist.');
+	}
+	if($this->getRequest()->getMethod() === 'POST')
+	{
+	    
+	}
+	else
+	{
+	    
+	    $form = ComponentElement::getElementForm($this->container, $application,
+		$element);
+	    return array(
+		'form' => $form['form']->createView(),
+		'theme' => $form['theme'],
+		'assets' => $form['assets']);
+	}
+	
+	
     }
 
     /**
