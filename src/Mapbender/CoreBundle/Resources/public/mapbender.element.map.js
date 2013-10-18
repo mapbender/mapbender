@@ -194,7 +194,7 @@
          */
         zoomToExtent: function(extent, closest) {
             if(typeof closest === 'undefined')
-                closest = false;
+                closest = true;
             this.map.olMap.zoomToExtent(extent, closest);
         },
         /**
