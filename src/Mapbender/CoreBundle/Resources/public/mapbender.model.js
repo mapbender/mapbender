@@ -332,10 +332,10 @@ Mapbender.Model = {
             var selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer.olLayer, {
                 hover: true,
                 onSelect: function(feature){
-                    self._trigger('highlighthoverin', null, {feature: feature});
+                    self.mbMap._trigger('highlighthoverin', null, {feature: feature});
                 },
                 onUnselect: function(feature){
-                    self._trigger('highlighthoverout', null, {feature: feature});
+                    self.mbMap._trigger('highlighthoverout', null, {feature: feature});
                 }
             });
             this.map.olMap.addControl(selectControl);
@@ -354,10 +354,10 @@ Mapbender.Model = {
             this.map.center({box: bounds.toArray()});
         }
         this.highlightLayer.bind('featureselected', function(){
-            self._trigger('highlightselected', arguments);
+            self.mbMap._trigger('highlightselected', arguments);
         });
         this.highlightLayer.bind('featureunselected', function(){
-            self._trigger('highlightunselected', arguments);
+            self.mbMap._trigger('highlightunselected', arguments);
         });
     },
     /**
