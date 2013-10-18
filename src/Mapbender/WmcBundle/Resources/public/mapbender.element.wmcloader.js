@@ -198,20 +198,42 @@
             }
         },
         /**
-         * Loads a wmc from id
+         * Loads a wmc from id (event handler)
          */
         _loadFromId: function(e){
             var wmc_id = $(e.target).parents('tr:first').attr('data-id');
             this.loadFromId(wmc_id);
-
-//            this.close(); 
         },
+        /**
+         * Loads a wmc from id
+         */
         loadFromId: function(wmc_id){
             var map = $('#' + this.options.target).data('mapbenderMbMap');
             var wmcHandlier = new Mapbender.WmcHandler(map, {
                 keepExtent: this.options.keepExtent,
                 keepSources: this.options.keepSources});
             wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
+        },
+        /**
+         * Loads a wmc from id
+         */
+        removeFromMap: function(){
+            var map = $('#' + this.options.target).data('mapbenderMbMap');
+            var wmcHandlier = new Mapbender.WmcHandler(map, {
+                keepExtent: this.options.keepExtent,
+                keepSources: this.options.keepSources});
+            wmcHandlier.removeFromMap();
+        },
+        /**
+         * Loads a wmc from id
+         */
+        wmcAsXml: function(){
+            var self = this;
+            var map = $('#' + this.options.target).data('mapbenderMbMap');
+            var st = JSON.stringify(map.getMapState());
+            var form = $('<form method="POST" action="'+(self.elementUrl+'wmcasxml')+'" target="_BLANK" />');
+            $('<input></input>').attr('type', 'hidden').attr('name', 'state').val(st).appendTo(form);
+            form.submit();
         },
         /**
          *
