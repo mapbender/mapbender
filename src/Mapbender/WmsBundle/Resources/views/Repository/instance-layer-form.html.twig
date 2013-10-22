@@ -8,7 +8,7 @@
 
 {% for form_layer in form_layers %}
     {% if form_layer.vars.value.id == layer.id %}
-        <tr id="{{ type }}{{ layer.id }}" class="{% if layer.parent == null %}root {% else %} sublayer{% endif %}" data-id="{{ form_layer.vars.value.id }}" data-type="{{ type }}"
+        <tr id="{{ type }}{{ layer.id }}" class="{% if layer.parent == null %}root {% else %} sublayer{% endif %}" data-id="{{ form_layer.vars.value.id }}"{% if layer.parent != null %} data-parent="{{layer.parent.id}}"{% endif %} data-type="{{ type }}"
             data-href="{{url("mapbender_manager_repository_instancelayerweight", {"slug": slug, "instanceId": instance.id, "instLayerId": form_layer.vars.value.id})}}">
 
             {% if layer.parent != null %}
