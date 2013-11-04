@@ -24,6 +24,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 abstract class Element
 {
+    /**
+     * Extended API. The ext_api defins, if an element can be used as a target
+     * element.
+     * @var boolean extended api 
+     */
+    public static $ext_api = true;
 
     /**
      * Application
