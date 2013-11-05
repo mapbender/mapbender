@@ -1,8 +1,9 @@
 # Changelog
 
-* **v3.0.2.0** - 
+* **v3.0.2.0** -
   - Search router design added
   - New button icons for wmc editor and loader added
+  - console.* stubs
 
 ## Release History
 
