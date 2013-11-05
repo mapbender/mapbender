@@ -406,10 +406,25 @@ class Application
     {
         if($this->elements === null)
         {
+            $securityContext = $this->container->get('security.context');
             // Set up all elements (by region)
             $this->elements = array();
             foreach($this->entity->getElements() as $entity)
             {
+                $application_entity = $this->getEntity();
+                if($application_entity::SOURCE_YAML === $application_entity->getSource()
+                        && count($entity->yaml_roles)) {
+                    $passed = false;
+                    foreach($entity->yaml_roles as $role) {
+                        if($securityContext->isGranted($role)) {
+                            $passed = true;
+                            break;
+                        }
+                    }
+                    if(!$passed) {
+                        continue;
+                    }
+                }
                 $class = $entity->getClass();
                 if(!$entity->getEnabled()) {
                     continue;
