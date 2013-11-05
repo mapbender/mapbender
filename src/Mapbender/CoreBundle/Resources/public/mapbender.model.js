@@ -1,4 +1,3 @@
-
 Mapbender.Model = {
     mbMap: null,
     map: null,
@@ -11,7 +10,7 @@ Mapbender.Model = {
     mapMaxExtent: null,
     layersMaxExtent: {},
     highlightLayer: null,
-    
+
     init: function(mbMap){
         this.mbMap = mbMap;
         var self = this;
@@ -333,10 +332,10 @@ Mapbender.Model = {
             var selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer.olLayer, {
                 hover: true,
                 onSelect: function(feature){
-                    self._trigger('highlighthoverin', null, {feature: feature});
+                    self.mbMap._trigger('highlighthoverin', null, {feature: feature});
                 },
                 onUnselect: function(feature){
-                    self._trigger('highlighthoverout', null, {feature: feature});
+                    self.mbMap._trigger('highlighthoverout', null, {feature: feature});
                 }
             });
             this.map.olMap.addControl(selectControl);
@@ -355,10 +354,10 @@ Mapbender.Model = {
             this.map.center({box: bounds.toArray()});
         }
         this.highlightLayer.bind('featureselected', function(){
-            self._trigger('highlightselected', arguments);
+            self.mbMap._trigger('highlightselected', arguments);
         });
         this.highlightLayer.bind('featureunselected', function(){
-            self._trigger('highlightunselected', arguments);
+            self.mbMap._trigger('highlightunselected', arguments);
         });
     },
     /**
@@ -429,6 +428,9 @@ Mapbender.Model = {
                 this.mbMap.fireModelEvent({name: 'beforeSourceRemoved', value: {source: sourceToRemove}});
                 var mqLayer = this.map.layersList[sourceToRemove.mqlid];
                 if(mqLayer){
+                    if(mqLayer.olLayer instanceof OpenLayers.Layer.Grid) {
+                        mqLayer.olLayer.clearGrid();
+                    }
                     var removedMq = mqLayer.remove();
                     if(removedMq){
                         this._removeLayerMaxExtent(mqLayer);

@@ -133,7 +133,11 @@ class ApplicationYAMLMapper
                             ->setWeight($weight++)
                             ->setApplication($application);
                     
-                    //TODO: Roles
+                    // set Roles
+                    $element->yaml_roles = array();
+                    if(array_key_exists('roles', $elementDefinition)) {
+                        $element->yaml_roles = $elementDefinition['roles'];
+                    }
                     $application->addElements($element);
                 }
             }
