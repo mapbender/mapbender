@@ -173,6 +173,8 @@ class Application
         if($type === 'js')
         {
             // Mapbender API
+            $file = '@MapbenderCoreBundle/Resources/public/stubs.js';
+            $this->addAsset($assets, $type, $file);
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.js';
             $this->addAsset($assets, $type, $file);
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.model.js';
