@@ -25,6 +25,7 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
+            this.options.titlemaxlength = parseInt(this.options.titlemaxlength);
             this.options.layerMenu= false;
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
@@ -194,9 +195,9 @@
                 li.find('input.layer-info').attr('checked', config.info ? 'checked' : null);
                 if(!config.infoable)
                     li.find('input.layer-info').attr('disabled', 'disabled');
-                li.find('.layer-title').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
+                li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                 if(config.toggleable)
-                    li.find('.layer-title').addClass('toggleable');
+                    li.find('.layer-title:first').addClass('toggleable');
                 if(!this.options.layerMenu){
                     li.find('.layer-menu-btn').remove();
                 }else{
@@ -273,9 +274,9 @@
                     li.find('input.layer-info').attr('checked', config.info ? 'checked' : null);
                     if(!config.infoable)
                         li.find('input.layer-info').attr('disabled', 'disabled');
-                    li.find('.layer-title').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
+                    li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if(config.toggleable)
-                        li.find('.layer-title').addClass('toggleable');
+                        li.find('.layer-title:first').addClass('toggleable');
                     if(!this.options.layerMenu){
                         li.find('.layer-menu-btn').remove();
                     }else{

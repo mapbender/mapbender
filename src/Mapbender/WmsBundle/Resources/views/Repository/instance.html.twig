@@ -84,7 +84,7 @@
         </tr>
       </thead>
       <tbody id="instanceTableCheckBody">
-        {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form.layers, 'layer': instance.getrootlayer }%}
+        {% include "MapbenderWmsBundle:Repository:instance-layer-form.html.twig"  with {'form_layers': form.layers, 'layer': instance.getrootlayer, 'level': 0 }%}
         <tr class="dummy">
           <td colspan="20"></td>
         </tr>

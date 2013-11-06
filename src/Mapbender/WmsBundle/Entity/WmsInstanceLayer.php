@@ -557,7 +557,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     public function getConfiguration()
     {
         $configuration = array(
-            "id" => $this->id,
+            "id" => strval($this->id),
             "name" => $this->wmslayersource->getName() !== null ? $this->wmslayersource->getName() : "",
             "title" => $this->title,
             "queryable" => $this->getInfo(),
