@@ -189,21 +189,15 @@ class ApplicationController extends Controller
 	if($form->isValid())
 	{
 	    $em = $this->getDoctrine()->getEntityManager();
-
 	    $em->getConnection()->beginTransaction();
-	    $templateClassNew = $application->getTemplate();
-	    $regions = $templateClassNew::getRegions();
-	    if($templateClassOld !== $templateClassNew && count($regions) > 0)
-	    {
-		foreach($application->getElements() as $element)
-		{
-		    if(!in_array($element->getRegion(), $regions))
-		    {
-			$element->setRegion($regions[0]);
-		    }
-		}
-	    }
-	    $application->setUpdated(new \DateTime('now'));
+        $application->setUpdated(new \DateTime('now'));
+
+        //
+        // Avoid a null template.
+        // It's a bad solution. The best way to handle it, is
+        // to put the application forms and formtypes into seperate files.
+        //
+	    $application->setTemplate($templateClassOld);
 
 	    try
 	    {
