@@ -10,6 +10,7 @@ Mapbender.Model = {
     mapMaxExtent: null,
     layersMaxExtent: {},
     highlightLayer: null,
+    baseId: 0,
 
     init: function(mbMap){
         this.mbMap = mbMap;
@@ -85,7 +86,6 @@ Mapbender.Model = {
         this._addLayerMaxExtent(this.map.layersList.mapquery0);
         $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr){
             $.each(defArr, function(idx, layerDef){
-                layerDef.id = idx;
                 self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
             });
         });
@@ -145,7 +145,8 @@ Mapbender.Model = {
         return l;
     },
     generateSourceId: function(){
-        return new Date().getTime();
+        this.baseId ++;
+        return this.baseId.toString();
     },
     getMapState: function(){
         var proj = this.map.olMap.getProjectionObject();
@@ -374,6 +375,7 @@ Mapbender.Model = {
         var self = this;
         if(addOptions.add){
             var sourceDef = addOptions.add.sourceDef, before = addOptions.add.before, after = addOptions.add.after;
+            sourceDef.id = this.generateSourceId();
             this.mbMap.fireModelEvent({
                 name: 'beforeSourceAdded',
                 value: {source: sourceDef, before: before, after: after}
