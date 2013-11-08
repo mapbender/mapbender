@@ -123,12 +123,12 @@ $.extend(true, Mapbender, {
                     .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/mapbender.source.wms.loadfromurl.js')
                     .appendTo($('body'));
             },
-            layersFromCapabilities: function(xml, splitLayers, model, defFormat, defInfoformat){
-                if(!defFormat){
-                    defFormat = "image/png";
+            createSourceDefinitions: function(xml, options){
+                if(!options.global.defFormat){
+                    options.global.defFormat = "image/png";
                 }
-                if(!defInfoformat){
-                    defInfoformat = "text/html";
+                if(!options.global.defInfoformat){
+                    options.global.defInfoformat = "text/html";
                 }
                 var parser = new OpenLayers.Format.WMSCapabilities(),
                     capabilities = parser.read(xml);
@@ -137,22 +137,22 @@ $.extend(true, Mapbender, {
                     var rootlayer = capabilities.capability.nestedLayers[0];
                     var bboxOb = {}, bboxSrs = null, bboxBounds = null;
                     for(bbox in rootlayer.bbox){
-                        if(model.getProj(bbox) !== null){
+                        if(options.model.getProj(bbox) !== null){
                             bboxOb[bbox] = rootlayer.bbox[bbox].bbox;
                             bboxSrs = bbox;
                             bboxBounds = OpenLayers.Bounds.fromArray(bboxOb[bbox]);
                         }
                     }
                     for(srs in rootlayer.srs){
-                        if(rootlayer.srs[srs] === true && typeof bboxOb[srs] === 'undefined' && model.getProj(srs) !== null && bboxBounds !== null){
-                            var oldProj = model.getProj(bboxSrs);
-                            bboxOb[srs] = bboxBounds.transform(oldProj, model.getProj(srs)).toArray();
+                        if(rootlayer.srs[srs] === true && typeof bboxOb[srs] === 'undefined' && options.model.getProj(srs) !== null && bboxBounds !== null){
+                            var oldProj = options.model.getProj(bboxSrs);
+                            bboxOb[srs] = bboxBounds.transform(oldProj, options.model.getProj(srs)).toArray();
                         }
                     }
                     var format;
                     var formats = capabilities.capability.request.getmap.formats;
                     for(var i = 0; i < formats.length; i++){
-                        if(formats[i].toLowerCase().indexOf(defFormat) !== -1)
+                        if(formats[i].toLowerCase().indexOf(options.global.defFormat) !== -1)
                             format = formats[i];
                     }
                     if(!format)
@@ -162,13 +162,13 @@ $.extend(true, Mapbender, {
                     var gfi = capabilities.capability.request.getfeatureinfo;
                     if(gfi && gfi.formats && gfi.formats.length > 0){
                         for(var i = 0; i < gfi.formats.length; i++){
-                            if(gfi.formats[i].toLowerCase().indexOf(defInfoformat) !== -1)
+                            if(gfi.formats[i].toLowerCase().indexOf(options.global.defInfoformat) !== -1)
                                 infoformat = gfi.formats[i];
                         }
                         if(!infoformat)
                             infoformat = gfi.formats[0];
                     }else{
-                        infoformat = defInfoformat;
+                        infoformat = options.global.defInfoformat;
                     }
                     //@TODO srs list, srs by layer -> parent layer srs + layer srs
                     var def = {
@@ -186,12 +186,11 @@ $.extend(true, Mapbender, {
                                 transparent: true,
                                 url: capabilities.capability.request.getmap.get.href,
                                 visible: true
-                            },
-                            children: []
+                            }
                         }
                     };
 
-                    function readCapabilities(layer, parent){
+                    function readCapabilities(layer, parent, options){
                         // @ TODO getLegendGraphic ?
                         var legend = null,minScale_=null,maxScale_=null;
                         if(layer.styles.length !== 0 && layer.styles[0].legend){
@@ -230,10 +229,16 @@ $.extend(true, Mapbender, {
                                 visibility: true
                             }
                         };
+                        $.extend( true, def.options, options.global.options);
+                        if(options.layers[def.options.name])
+                            $.extend( true, def.options, options.layers[def.options.name].options);
                         if(layer.nestedLayers.length > 0){
                             def.children = [];
                             for(var i = 0; i < layer.nestedLayers.length; i++){
-                                def.children.push(readCapabilities(layer.nestedLayers[i], def));
+                                var child = readCapabilities(layer.nestedLayers[i], def, options);
+                                if(child.options.treeOptions.selected)
+                                    def.options.treeOptions.selected = child.options.treeOptions.selected;
+                                def.children.push(child);
                             }
                         }
                         return def;
@@ -258,8 +263,8 @@ $.extend(true, Mapbender, {
                             }
                         }
                     }
-                    var layers = readCapabilities(capabilities.capability.nestedLayers[0], null);
-                    if(splitLayers){
+                    var layers = readCapabilities(capabilities.capability.nestedLayers[0], null, options);
+                    if(options.global.splitLayers){
                         var result = [];
                         getSplitted(def, layers, layers, result, 0);
                         return result;

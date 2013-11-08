@@ -190,6 +190,33 @@ Mapbender.Model = {
         }
         return null;
     },
+    findSource: function(options){
+        var sources = [];
+        function findSource(object, options){
+            var found = null;
+            for(key in options){
+                if(object[key]){
+                    if(typeof object[key] === 'object'){
+                        var res = findSource(object[key], options[key]);
+                        if(found === null)
+                            found = res;
+                        else
+                            found = found && res;
+                        
+                    } else {
+                        return object[key] === options[key]
+                    }
+                }
+            }
+            return found;
+        };
+        for(var i = 0; i < this.sourceTree.length; i++){
+            var source = this.sourceTree[i];
+            if(findSource(source, options))
+                sources.push(source);
+        }
+        return sources;
+    },
     /**
      * Returns the source's position
      */
@@ -375,7 +402,7 @@ Mapbender.Model = {
         var self = this;
         if(addOptions.add){
             var sourceDef = addOptions.add.sourceDef, before = addOptions.add.before, after = addOptions.add.after;
-            sourceDef.id = this.generateSourceId();
+            sourceDef.origId = sourceDef.id = this.generateSourceId();
             this.mbMap.fireModelEvent({
                 name: 'beforeSourceAdded',
                 value: {source: sourceDef, before: before, after: after}
@@ -479,7 +506,8 @@ Mapbender.Model = {
                 this.mbMap.fireModelEvent({name: 'beforeSourceChanged', value: {source: sourceToChange, changeOptions: changeOpts}});
                 if(changeOpts.options.type === 'selected'){
                     var result = this._checkSource(changeOpts);
-                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: result});//{options: result}});
+                    var changed = {changed: {children: result.children, sourceIdx: result.sourceIdx }};
+                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: changed});//{options: result}});
                     this._redrawSource(changeOpts);
                 }else if(changeOpts.options.type === 'info'){
                     var result = {infolayers: [], changed: {sourceIdx: {id: sourceToChange.id}, children: {}}};
@@ -508,7 +536,7 @@ Mapbender.Model = {
                 var sourceToChange = this.getSource(changeOpts.layerRemove.sourceIdx);
                 var layerToRemove = Mapbender.source[sourceToChange.type].findLayer(sourceToChange, changeOpts.layerRemove.layer.options);
                 var removedLayer = Mapbender.source[sourceToChange.type].removeLayer(sourceToChange, layerToRemove.layer);
-                var changed = {changed: {layerRemoved: removedLayer, sourceIdx: changeOpts.layerRemove.sourceIdx }};
+                var changed = {changed: {childRemoved: removedLayer, sourceIdx: changeOpts.layerRemove.sourceIdx }};
                 this._checkAndRedrawSource({sourceIdx: changeOpts.layerRemove.sourceIdx, options: {children: {}}});
                 this.mbMap.fireModelEvent({name: 'sourceChanged', value: changed});
             }

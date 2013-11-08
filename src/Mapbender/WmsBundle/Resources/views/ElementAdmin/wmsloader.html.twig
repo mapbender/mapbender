@@ -2,7 +2,12 @@
     <div class="left">
         {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{"Auto open"|trans}}</label>
     </div>
+    <div class="left">
         {{ form_widget(form.configuration.splitLayers) }}<label for="{{form.configuration.splitLayers.vars.id}}" class="labelCheck">{{"Split layers"|trans}}</label>
+    </div>
+    <div class="left">
+        {{ form_widget(form.configuration.useDeclarative) }}<label for="{{form.configuration.useDeclarative.vars.id}}" class="labelCheck">{{"Use declarative"|trans}}</label>
+    </div>
     <div class="clearContainer"></div>
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
