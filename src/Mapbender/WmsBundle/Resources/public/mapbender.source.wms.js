@@ -7,13 +7,13 @@ $.extend(true, Mapbender, {
 
                 function _setId(layer, parent, id, num){
                     /* set unic id for a layer */
-                    layer.options.id = parent ? parent.options.id + "_"  + num : id + "_"  + num;
+                    layer.options.id = parent ? parent.options.id + "_" + num : id + "_" + num;
                     if(layer.children){
                         for(var i = 0; i < layer.children.length; i++){
                             _setId(layer.children[i], layer, id, i);
                         }
                     }
-                };
+                }
                 _setId(rootLayer, null, layerDef.id, 0);
 
                 var finalUrl = layerDef.configuration.options.url;
@@ -192,7 +192,7 @@ $.extend(true, Mapbender, {
 
                     function readCapabilities(layer, parent, options){
                         // @ TODO getLegendGraphic ?
-                        var legend = null,minScale_=null,maxScale_=null;
+                        var legend = null, minScale_ = null, maxScale_ = null;
                         if(layer.styles.length !== 0 && layer.styles[0].legend){
                             legend = {};
                             legend.url = layer.styles[0].legend.href
@@ -229,9 +229,9 @@ $.extend(true, Mapbender, {
                                 visibility: true
                             }
                         };
-                        $.extend( true, def.options, options.global.options);
+                        $.extend(true, def.options, options.global.options);
                         if(options.layers[def.options.name])
-                            $.extend( true, def.options, options.layers[def.options.name].options);
+                            $.extend(true, def.options, options.layers[def.options.name].options);
                         if(layer.nestedLayers.length > 0){
                             def.children = [];
                             for(var i = 0; i < layer.nestedLayers.length; i++){
@@ -624,7 +624,6 @@ $.extend(true, Mapbender, {
                     }
                     /* @TODO outOfBounds for layers ?  */
                     if(layer.children){
-                        //                var this_vsbl = false;
                         if(parentState.state.visibility
                             && layer.options.treeOptions.selected
                             && !layer.state.outOfScale
@@ -680,7 +679,6 @@ $.extend(true, Mapbender, {
                         delete(layerChanged.state.visibility);
                     }
                     if(elchanged){
-//                        layerChanged.treeElm = layer;
                         layerChanged.state = layer.state;
                         result.changed.children[layer.options.id] = layerChanged;
                     }

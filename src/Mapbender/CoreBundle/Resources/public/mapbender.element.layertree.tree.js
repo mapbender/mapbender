@@ -110,15 +110,10 @@
             }
         },
         _resetSortable: function(){
-//            this._unSortable();
+            this._unSortable();
             this._createSortable();
         },
         _unSortable: function(){
-//            $("ul.layers", this.element).each(function(){
-//                var that = this;
-//                if($(that).sortable())
-//                    $(that).sortable('destroy');
-//            });
         },
         _createSortable: function(){
             var self = this;

@@ -116,8 +116,6 @@
                         var childToSelect = false;
                         for(var i = 0; i < layer.children.length; i++){
                             var child = layer.children[i];
-//                            if(options.layers[layer.options.name]) // add child
-//                                options.layers[child.options.name] = {options: {treeOptions: {selected: true}}};
                             setSelected(child, layer, optionsToChange, toChange);
                             if((!toChange[child.options.id] && child.options.treeOptions.selected)
                                 || (toChange[child.options.id] && toChange[child.options.id].options.treeOptions.selected)){
@@ -144,7 +142,6 @@
                         var tochange = {sourceIdx: {id: source.id}, options: {children: {}, type: 'selected'}};
                         var result = tochange.options.children;
                         setSelected(source.configuration.children[0], null, options, result);
-//                        tochange.options = {children: {}};
                         mbMap.model.changeSource({ change: tochange});
                         return false;
                     }

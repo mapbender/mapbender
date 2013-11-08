@@ -120,7 +120,6 @@
                             layerlist(layer_, layers);
                         })
                 }
-                var source = this.model.getSource(options.changed.sourceIdx);
                 var layers = [];
                 layerlist(options.changed.childRemoved.layer, layers);
                 $.each(layers, function(idx, layerid){
