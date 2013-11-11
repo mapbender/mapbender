@@ -6,7 +6,6 @@
  *       constructor and throw an exception. The application then should catch
  *       the exception and handle it.
  */
-
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Element as Entity;
@@ -24,7 +23,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 abstract class Element
 {
-
     /**
      * Application
      * @var Application An application object
@@ -51,7 +49,7 @@ abstract class Element
      * @param ContainerInterface $container The container object
      */
     public function __construct(Application $application,
-            ContainerInterface $container, Entity $entity)
+        ContainerInterface $container, Entity $entity)
     {
         $this->application = $application;
         $this->container = $container;
@@ -100,7 +98,7 @@ abstract class Element
      */
     static public function getClassTags()
     {
-        return array();
+        return array ();
     }
 
     /**
@@ -112,7 +110,7 @@ abstract class Element
      */
     static public function getDefaultConfiguration()
     {
-        return array();
+        return array ();
     }
 
     /*     * ***********************************************************************
@@ -226,7 +224,7 @@ abstract class Element
      */
     public function getAssets()
     {
-        return array();
+        return array ();
     }
 
     /**
@@ -312,9 +310,9 @@ abstract class Element
      */
     public static function getFormAssets()
     {
-        return array(
-            'js' => array(),
-            'css' => array());
+        return array (
+            'js' => array (),
+            'css' => array ());
     }
 
     /**
@@ -327,42 +325,31 @@ abstract class Element
      */
     public static function mergeArrays($default, $main, $result)
     {
-        foreach($main as $key => $value)
-        {
-            if($value === null)
-            {
+        foreach ($main as $key => $value) {
+            if ($value === null) {
                 $result[$key] = null;
-            } else if(is_array($value))
-            {
-                if(isset($default[$key]))
-                {
+            } else if (is_array($value)) {
+                if (isset($default[$key])) {
                     $result[$key] = Element::mergeArrays($default[$key],
-                                                         $main[$key], array());
-                } else
-                {
+                            $main[$key], array ());
+                } else {
                     $result[$key] = $main[$key];
                 }
-            } else
-            {
+            } else {
                 $result[$key] = $value;
             }
         }
-        if($default !== null && is_array($default))
-        {
-            foreach($default as $key => $value)
-            {
-                if(!isset($result[$key])
-                        || (isset($result[$key])
-                            && $result[$key] === null
-                            && $value !== null))
-                {
+        if ($default !== null && is_array($default)) {
+            foreach ($default as $key => $value) {
+                if (!isset($result[$key]) || (isset($result[$key]) && $result[$key]
+                    === null && $value !== null)) {
                     $result[$key] = $value;
                 }
             }
         }
         return $result;
     }
-    
+
     /**
      * Post save
      */
@@ -370,63 +357,64 @@ abstract class Element
     {
         
     }
-    
+
     /**
      * Create form for given element
      *
      * @param string $class
      * @return dsd
      */
-    public static function getElementForm($container, $application, Entity $element)
+    public static function getElementForm($container, $application,
+        Entity $element)
     {
         $class = $element->getClass();
 
         // Create base form shared by all elements
-        $formType = $container->get('form.factory')->createBuilder('form', $element, array())
-                ->add('title', 'text')
-                ->add('class', 'hidden')
-                ->add('region', 'hidden');
-	
-	$formType->add('acl', 'acl', array(
-	    'property_path' => false,
-	    'data' => $element,//$options['data'],
-	    'permissions' => 'standard::object'));
-	    
+        $formType = $container->get('form.factory')->createBuilder('form',
+                $element, array ())
+            ->add('title', 'text')
+            ->add('class', 'hidden')
+            ->add('region', 'hidden');
+
+        $formType->add('acl', 'acl',
+            array (
+            'property_path' => false,
+            'data' => $element, //$options['data'],
+            'permissions' => array (1 => 'view')));
+
         // Get configuration form, either basic YAML one or special form
         $configurationFormType = $class::getType();
-        if($configurationFormType === null)
-        {
+        if ($configurationFormType === null) {
             $formType->add('configuration', new YAMLConfigurationType(),
-                           array(
+                array (
                 'required' => false,
-                'attr' => array(
+                'attr' => array (
                     'class' => 'code-yaml')));
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
-            $formAssets = array(
-                'js' => array(
+            $formAssets = array (
+                'js' => array (
                     'bundles/mapbendermanager/codemirror2/lib/codemirror.js',
                     'bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js',
                     'bundles/mapbendermanager/js/form-yaml.js'),
-                'css' => array(
+                'css' => array (
                     'bundles/mapbendermanager/codemirror2/lib/codemirror.css'));
-        } else
-        {
+        } else {
             $type = $class::getType();
 
             $formType->add('configuration', new $type(),
-                           array(
+                array (
                 'application' => $application
             ));
             $formTheme = $class::getFormTemplate();
             $formAssets = $class::getFormAssets();
         }
 
-        return array(
+        return array (
             'form' => $formType->getForm(),
             'theme' => $formTheme,
             'assets' => $formAssets);
     }
-    
+
     /**
      * Create default element
      *
@@ -439,14 +427,13 @@ abstract class Element
         $element = new Entity();
         $configuration = $class::getDefaultConfiguration();
         $element
-                ->setClass($class)
-                ->setRegion($region)
-                ->setWeight(0)
-                ->setTitle($class::getClassTitle())
-                ->setConfiguration($configuration);
+            ->setClass($class)
+            ->setRegion($region)
+            ->setWeight(0)
+            ->setTitle($class::getClassTitle())
+            ->setConfiguration($configuration);
 
         return $element;
     }
 
 }
-
