@@ -78,7 +78,7 @@
                             label: 'Load',
                             cssClass: 'button buttonYes right',
                             callback: function(){
-                                $("#wmc-load", self.popup.$element).submit();
+                                $('#wmc-load input[type="submit"]', self.popup.$element).click();
                                 return false;
                             }
                         },
