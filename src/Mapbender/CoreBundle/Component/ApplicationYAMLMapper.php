@@ -115,8 +115,13 @@ class ApplicationYAMLMapper
                     $entity_class = $elementDefinition['class'];
                     $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
                     $elComp = new $entity_class($appl, $this->container, new \Mapbender\CoreBundle\Entity\Element());
-                    $defConfig = $elComp->getDefaultConfiguration();
-                    $configuration = ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_, array());
+                    
+                    $elm_class = get_class($elComp);
+                    if($elm_class::$merge_configurations){
+                        $configuration = ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_, array());
+                    }else{
+                        $configuration = $configuration_;
+                    }            
 
                     $class = $elementDefinition['class'];
                     $title = array_key_exists('title', $elementDefinition) ?

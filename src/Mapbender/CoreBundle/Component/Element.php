@@ -30,6 +30,13 @@ abstract class Element
      * @var boolean extended api 
      */
     public static $ext_api = true;
+    
+    /**
+     * Merge Configurations. The merge_configurations defines, if the default 
+     * configuration array and the configuration array should be merged
+     * @var boolean merge configurations
+     */
+    public static $merge_configurations = true;
 
     /**
      * Application
