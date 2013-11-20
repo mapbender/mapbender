@@ -104,7 +104,6 @@
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             if(initCheckbox){
                 $('.checkbox', self.element).each(function(){
-                    console.log(this);
                     initCheckbox.call(this);
                 });
             }
@@ -411,7 +410,7 @@
                 $li.addClass("invisible").find('span.layer-state').attr("title", "out of scale");
             }
         },
-            
+
         _resetSource: function(source){
             var self = this;
             function _resetSource(layer, parent){
