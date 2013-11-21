@@ -2,7 +2,8 @@
 
 $.widget('mapbender.mbPOI', {
     options: {
-        target: undefined
+        target: undefined,
+        useMailto: false
     },
 
     map: null,
@@ -37,7 +38,7 @@ $.widget('mapbender.mbPOI', {
     activate: function() {
         if(this.map.length !== 0) {
             this._createDialog();
-            this.map.bind('click', this.mapClickProxy);
+            this.map.on('click', this.mapClickProxy);
         }
     },
 
@@ -92,7 +93,7 @@ $.widget('mapbender.mbPOI', {
             destroyOnClose: true,
             modal: false,
             title: this.element.attr('title'),
-            content: this.element.html(),
+            content: $('.input', this.element).html(),
             buttons: {
                 'ok': {
                     label: 'Ok',
@@ -110,32 +111,47 @@ $.widget('mapbender.mbPOI', {
             }
         });
         this.popup.$element.on('close', function() {
-            self.poiMarkerLayer.clearMarkers();
-            self.mbMap.map.olMap.removeLayer(self.poiMarkerLayer);
-            self.poiMarkerLayer.destroy();
-            self.poiMarkerLayer = null;
+            if(self.poiMarkerLayer) {
+                self.poiMarkerLayer.clearMarkers();
+                self.mbMap.map.olMap.removeLayer(self.poiMarkerLayer);
+                self.poiMarkerLayer.destroy();
+                self.poiMarkerLayer = null;
+            }
+            self.map.off('click', self.mapClickProxy);
         });
-	},
+    },
 
-	_sendPoi: function(content) {
+    _sendPoi: function(content) {
         var form = $('form', content);
-		var email = '';
-		var subject = $('#subject', form).val();
-		var body = $('#mailBody', form).val();
-		var coordx = $('#coordx', form).val();
-		var coordy = $('#coordy', form).val();
+        var body = $('#body', form).val();
+        var coordx = $('#coordx', form).val();
+        var coordy = $('#coordy', form).val();
 
         var poi = $.extend({}, this.poi, {
             label: body.replace(/\n|\r/g, '<br />')
         });
-		var params = $.param({ poi: poi });
-		var poiURL = 'http://' + window.location.host + window.location.pathname + '?' + params;
-		body += '\n\n' + poiURL;
+        var params = $.param({ poi: poi });
+        var poiURL = 'http://' + window.location.host + window.location.pathname + '?' + params;
+        body += '\n\n' + poiURL;
 
-		var mailto_link = 'mailto:' + email + '?subject=' + subject + '&body=' + escape(body);
-		win = window.open(mailto_link,'emailWindow');
-		if (win && win.open &&!win.closed) win.close();
-	}
+        if(this.options.useMailto) {
+            var mailto_link = 'mailto:?body=' + escape(body);
+            win = window.open(mailto_link,'emailWindow');
+            if (win && win.open &&!win.closed) win.close();
+        } else {
+            var ta = $('<div/>', {
+                html: $('.output', this.element).html()
+            });
+            $('textarea', ta).val(body);
+            new Mapbender.Popup2({
+                destroyOnClose: true,
+                modal: true,
+                title: this.element.attr('title'),
+                content: ta,
+                buttons: {}
+            });
+        }
+    }
 });
 
 })(jQuery);

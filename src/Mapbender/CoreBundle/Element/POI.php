@@ -22,7 +22,7 @@ class POI extends Element
      */
     static public function getClassDescription()
     {
-        return 'Send a POI using E-Mail';
+        return 'Create a POI for sharing';
     }
 
     /**
@@ -39,8 +39,7 @@ class POI extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'mail_subject' => 'Please see this POI',
-            'mail_body' => 'Please take a look at this POI',
+            'body' => 'Please take a look at this POI',
         );
     }
 
