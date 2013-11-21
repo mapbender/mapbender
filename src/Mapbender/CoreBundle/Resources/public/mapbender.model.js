@@ -41,24 +41,21 @@ Mapbender.Model = {
                     OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start) :
                     OpenLayers.Bounds.fromArray(this.mbMap.options.extents.max)
         };
-        var poi = null, bbox = null;
-        if(this.mbMap.options.targetsrs && window.Proj4js){
-            var targetProj = this.getProj(this.mbMap.options.targetsrs);
-            if(targetProj){
-                this.proj = targetProj;
-                start_extent = this._transformExtent(start_extent, targetProj);
-                if(this.mbMap.options.extra && this.mbMap.options.extra.type === 'bbox'){
-                    bbox = this.mbMap.options.extra.data ?
-                            OpenLayers.Bounds.fromArray(this.mbMap.options.extra.data) :
-                            start_extent;
-                }else if(this.mbMap.options.extra && this.mbMap.options.extra.type === 'poi'){
-                    poi = {
-                        position: new OpenLayers.LonLat(this.mbMap.options.extra.data.x, this.mbMap.options.extra.data.y),
-                        label: this.mbMap.options.extra.data.label,
-                        scale: this.mbMap.options.extra.data.scale
-                    };
-                }
-            }
+        var pois = [],
+            bbox = null;
+        if(this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
+            bbox = this.mbMap.options.extra['bbox'] ?
+            OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']) :
+            start_extent;
+        }
+        if(this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
+            $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
+                pois.push({
+                    position: new OpenLayers.LonLat(poi.x , poi.y),
+                    label: poi.label,
+                    scale: poi.scale
+                });
+            });
         }
         var mapOptions = {
             maxExtent: this._transformExtent(this.mapMaxExtent, this.proj).toArray(),
@@ -90,31 +87,77 @@ Mapbender.Model = {
             });
         });
 
-        if(poi){
-            this.center({
-                position: poi.position
-            });
-            if(poi.scale){
-                self.mbMap.zoomToScale(poi.scale, true);
-            }
-            if(poi.label){
-                var popup = new OpenLayers.Popup.FramedCloud('chicken',
-                        poi.position,
-                        null,
-                        poi.label,
-                        null,
-                        true,
-                        function(){
-                            self.mbMap.removePopup(this);
-                            this.destroy();
-                        });
-                self.mbMap.addPopup(popup);
-            }
-        }else if(bbox){
-            this.center({box: bbox.extent.toArray()});
-        }else{
-            this.center({box: start_extent.extent ? start_extent.extent.toArray() : start_extent.toArray()});
+        var poiBox = null,
+            poiMarkerLayer = null,
+            poiIcon = null,
+            poiPopups = [];
+        if(pois.length) {
+            poiMarkerLayer = new OpenLayers.Layer.Markers();
+            poiIcon = new OpenLayers.Icon(
+                Mapbender.configuration.application.urls.asset +
+                    this.mbMap.options.poiIcon.image, {
+                        w: this.mbMap.options.poiIcon.width,
+                        h: this.mbMap.options.poiIcon.height
+                    }, {
+                        x: this.mbMap.options.poiIcon.xoffset,
+                        y: this.mbMap.options.poiIcon.yoffset
+                    });
         }
+        $.each(pois, function(idx, poi) {
+            if(!bbox) {
+                if(!poiBox) poiBox = new OpenLayers.Bounds();
+                poiBox.extend(poi.position);
+            }
+
+            // Marker
+            poiMarkerLayer.addMarker(new OpenLayers.Marker(
+                poi.position,
+                poiIcon.clone()));
+
+            if(poi.label) {
+                poiPopups.push(new OpenLayers.Popup.FramedCloud('chicken',
+                    poi.position,
+                    null,
+                    poi.label,
+                    null,
+                    true,
+                    function() {
+                        self.mbMap.removePopup(this);
+                        this.destroy();
+                    }));
+            }
+        });
+        if(poiMarkerLayer) {
+            this.map.olMap.addLayer(poiMarkerLayer);
+        }
+        var centered = false;
+        if(poiBox) {
+            if(pois.length == 1 && pois[0].scale) {
+                this.map.olMap.setCenter(pois[0].position);
+                this.map.olMap.zoomToScale(pois[0].scale, true);
+            } else {
+                this.map.olMap.zoomToExtent(poiBox.scale(1.5));
+            }
+            centered = true;
+        }
+
+        if(bbox){
+             this.center({
+                box: bbox.toArray()
+             });
+         } else {
+            if(!centered) {
+                this.center({
+                    box: start_extent.extent ? start_extent.extent.toArray() : start_extent.toArray()
+                });
+            }
+         }
+
+        // Popups have to be set after map extent initialization
+        $.each(poiPopups, function(idx, popup) {
+            self.map.olMap.addPopup(popup);
+        });
+
         $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
         this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
         this.map.olMap.events.register('movestart', this, $.proxy(this._checkOutOfBounds, this));
@@ -202,7 +245,7 @@ Mapbender.Model = {
                             found = res;
                         else
                             found = found && res;
-                        
+
                     } else {
                         return object[key] === options[key]
                     }
