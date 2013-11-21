@@ -1,0 +1,9 @@
+<div class="mb-element mb-element-poi" id="{{ id }}" title="{{ 'Send POI'|trans }}">
+    <form id="poiForm">
+        <label for="subject">{{ 'Betreff'|trans }}</label><br/>
+        <input id="subject" value="{{ configuration.mail_subject }}" />
+
+        <label for="mailBody">{{ 'E-Mail Text'|trans }}</label><br />
+        <textarea id="mailBody">{{ configuration.mail_body }}</textarea>
+    </form>
+</div>
