@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
@@ -16,7 +15,6 @@ use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
  */
 class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 {
-
     /**
      * ORM\Column(type="string", nullable=true)
      */
@@ -40,7 +38,8 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * @param boolean $tiled source tiled
      * @return WmsInstanceConfiguration
      */
-    public function setTiled($tiled){
+    public function setTiled($tiled)
+    {
         $this->tiled = $tiled;
         return $this;
     }
@@ -50,7 +49,8 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      *
      * @return boolean tiled
      */
-    public function getTiled(){
+    public function getTiled()
+    {
         return $this->tiled;
     }
 
@@ -60,7 +60,8 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      * @param array $bbox source bbox
      * @return WmsInstanceConfiguration
      */
-    public function setBbox($bbox){
+    public function setBbox($bbox)
+    {
         $this->bbox = $bbox;
         return $this;
     }
@@ -70,15 +71,18 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      *
      * @return array bbox
      */
-    public function getBbox(){
+    public function getBbox()
+    {
         return $this->bbox;
     }
 
-    public function setVendor($val) {
+    public function setVendor($val)
+    {
         $this->vendor = $val;
     }
 
-    public function getVendor() {
+    public function getVendor()
+    {
         return $this->vendor;
     }
 
@@ -101,6 +105,6 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "vendor" => $this->vendor
         );
     }
-}
 
+}
 ?>

@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
@@ -12,8 +11,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  *
  * @author Christian Wygoda
  */
-class MapbenderWmsExtension
-        extends Extension
+class MapbenderWmsExtension extends Extension
 {
 
     /**
@@ -23,7 +21,8 @@ class MapbenderWmsExtension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new XmlFileLoader($container,
+            new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
     }
 
@@ -36,4 +35,3 @@ class MapbenderWmsExtension
     }
 
 }
-

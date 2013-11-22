@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -71,7 +70,7 @@ class WmsLoader extends Element
                 'mapbender.element.wmsloader.js'
             ), 'css' => array());
         $config = $this->getConfiguration();
-        if($config['useDeclarative']){
+        if ($config['useDeclarative']) {
             $files['js'][] = "@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js";
         }
         return $files;
@@ -107,4 +106,3 @@ class WmsLoader extends Element
     }
 
 }
-
