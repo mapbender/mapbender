@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmcBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -19,7 +18,7 @@ class WmcListAdminType extends AbstractType
      */
     public function getName()
     {
-	return 'wmclist';
+        return 'wmclist';
     }
 
     /**
@@ -27,9 +26,9 @@ class WmcListAdminType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-	$resolver->setDefaults(array(
-	    'application' => null
-	));
+        $resolver->setDefaults(array(
+            'application' => null
+        ));
     }
 
     /**
@@ -37,16 +36,15 @@ class WmcListAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-	$builder->add('tooltip', 'text', array('required' => false))
-	    ->add('target', 'target_element',
-		array(
-		'element_class' => 'Mapbender\\WmcBundle\\Element\\WmcLoader',
-		'application' => $options['application'],
-		'property_path' => '[target]',
-		'required' => false))
-	    ->add('label', 'checkbox',
-		array(
-		'required' => false));
+        $builder->add('tooltip', 'text', array('required' => false))
+            ->add('target', 'target_element',
+                array(
+                'element_class' => 'Mapbender\\WmcBundle\\Element\\WmcLoader',
+                'application' => $options['application'],
+                'property_path' => '[target]',
+                'required' => false))
+            ->add('label', 'checkbox', array(
+                'required' => false));
     }
 
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmcBundle\Form\Type;
 
 use Mapbender\CoreBundle\Form\Type\StateType;
