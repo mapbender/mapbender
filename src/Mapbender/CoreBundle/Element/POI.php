@@ -39,7 +39,7 @@ class POI extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'body' => 'Please take a look at this POI',
+            'body' => 'Please take a look at this POI:',
         );
     }
 
