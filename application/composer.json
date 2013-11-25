@@ -4,6 +4,9 @@
     "autoload": {
         "psr-0": { "": "src/" }
     },
+    "repositories": [
+        {"type": "git","url": "https://github.com/arsgeografica/signing.git"}
+     ],
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": "2.1.*",
@@ -23,7 +26,9 @@
         "kriswallsmith/buzz": "dev-master",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "toooni/fpdf": "dev-master",
-        "doctrine/doctrine-migrations-bundle": "dev-master"
+        "doctrine/doctrine-migrations-bundle": "dev-master",
+
+        "arsgeografica/signing": "1.0.*"
     },
     "scripts": {
         "post-install-cmd": [

@@ -6,6 +6,7 @@
   - Search router design added
   - New button icons for wmc editor and loader added
   - console.* stubs
+  - Proxy security: Only pass correctly signed URLs
 
 ## Release History
 
