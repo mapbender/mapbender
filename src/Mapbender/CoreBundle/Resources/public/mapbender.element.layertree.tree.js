@@ -11,6 +11,7 @@
         layerconf: null,
         popup: null,
         created: false,
+        loadStarted: {},
         consts: {
             source: "source",
             root: "root",
@@ -386,6 +387,7 @@
             this._reset();
         },
         _onSourceChanged: function(event, options){
+//            window.console && console.log("layertree _onSourceChanged", options);
             if(options.changed && options.changed.children){
                 this._changeChildren(options.changed);
 //                this.resetSource(this.model.getSource(options.changed.sourceIdx));
@@ -395,12 +397,12 @@
         },
         _resetNodeSelected: function($li, layerOptions){
             var chk_selected = $('input[name="selected"]:first', $li);
-            chk_selected.attr('checked', layerOptions.treeOptions.selected);
-            initCheckbox.call(chk_selected.get(0));
+            chk_selected.prop('checked', layerOptions.treeOptions.selected);
+            initCheckbox.call(chk_selected);
         },
         _resetNodeInfo: function($li, layerOptions){
             var chk_info = $('input[name="info"]:first', $li);
-            chk_info.attr('checked', layerOptions.treeOptions.info);
+            chk_info.prop('checked', layerOptions.treeOptions.info);
             initCheckbox.call(chk_info.get(0));
         },
         _resetNodeVisible: function($li, layerDef){
@@ -411,20 +413,20 @@
             }
         },
 
-        _resetSource: function(source){
+        _resetSourceAtTree: function(source){
             var self = this;
-            function _resetSource(layer, parent){
+            function _resetSourceAtTree(layer, parent){
                 var $li = $('li[data-id="' + layer.options.id + '"]', this.element);
                 self._resetNodeSelected($li, layer.options);
                 self._resetNodeInfo($li, layer.options);
                 self._resetNodeVisible($li, layer);
                 if(layer.children){
                     for(var i = 0; i < layer.children.length; i++){
-                        _resetSource(layer.children[i], layer);
+                        _resetSourceAtTree(layer.children[i], layer);
                     }
                 }
             };
-            _resetSource(source.configuration.children[0], null);
+            _resetSourceAtTree(source.configuration.children[0], null);
         },
         _changeChildren: function(changed){
             if(changed.children){
@@ -448,43 +450,52 @@
             }
         },
         _onSourceRemoved: function(event, removed){
+//            window.console && console.log("layertree _onSourceRemoved");
             if(removed && removed.source && removed.source.id){
                 $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element).remove();
                 this._setSourcesCount();
             }
         },
         _onSourceLoadStart: function(event, option){ // sets "loading" for layers
-            //window.console && console.log("layertree _onSourceLoadStart");
+//            window.console && console.log("layertree _onSourceLoadStart");
             if(option.source){
+                this.loadStarted[option.source.id ] = true;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"]', this.element);
                 if($('input.layer-selected:first', source_li).is(':checked') && !source_li.hasClass('invisible')){
-                    source_li.addClass('loading');
-                    source_li.find('li').each(function(idx, el){
-                        var li_el = $(el);
-                        if(li_el.find('input.layer-selected:first').is(':checked') && !li_el.hasClass('invisible')){
-                            li_el.addClass('loading');
-                        }
-                    });
+                    /* removes class 'error', adds class 'loading' and title=''  for li[data-sourceid] s. _onSourceLoadEnd */
+                    source_li.removeClass('error').addClass('loading').find('span.layer-state:first').attr("title", "");
+//                    source_li.find('li').each(function(idx, el){
+//                        var li_el = $(el);
+//                        if(li_el.find('input.layer-selected:first').is(':checked') && !li_el.hasClass('invisible')){
+//                            li_el.addClass('loading');
+//                        }
+//                    });
                 }
             }
         },
         _onSourceLoadEnd: function(event, option){ // removes "loading" from layers
-            if(option.source){
+//            window.console && console.log("layertree _onSourceLoadEnd");
+            if(option.source && this.loadStarted[option.source.id]){
+                this.loadStarted[option.source.id] = false;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"]', this.element);
-                source_li.removeClass('loading').removeClass('error').find('span.layer-state:first').attr("title", "");
-                source_li.find('li').each(function(idx, el){
-                    $(el).removeClass('loading').removeClass('error').find('span.layer-state:first').attr("title", "");
-                });
-                this._resetSource(option.source);
+                source_li.removeClass('loading');//.removeClass('error').find('span.layer-state:first').attr("title", "");
+//                source_li.find('li').each(function(idx, el){
+//                    $(el).removeClass('loading').removeClass('error').find('span.layer-state:first').attr("title", "");
+//                });
+//                this._resetSource(option.source);
             }
         },
-        _onSourceLoadError: function(event, option){ // sets "error" for layers
-            if(!option.source){
+        _onSourceLoadError: function(event, option){
+//            window.console && console.log("layertree _onSourceLoadError");
+            if(option.source && this.loadStarted[option.source.id]){
+                this.loadStarted[option.source.id] = false;
+                /* removes class 'loading', adds class 'error' and title for li[data-sourceid] s. _onSourceLoadStart */
                 var source_li = $('li[data-sourceid="' + option.source.id + '"]', this.element);
-                source_li.removeClass('loading').removeClass('invisible').addClass('error').find('span.layer-state:first').attr("title", option.error.details);
-                source_li.find('li').each(function(idx, el){
-                    $(el).removeClass('loading').removeClass('invisible').addClass('error').find('span.layer-state:first').attr("title", option.error.details);
-                });
+                source_li.removeClass('loading').addClass('error').find('span.layer-state:first').attr("title", option.error.details);
+                //@TODO sublayers ?
+//                source_li.find('li').each(function(idx, el){
+//                    $(el).removeClass('loading').removeClass('invisible').addClass('error').find('span.layer-state:first').attr("title", option.error.details);
+//                });
             }
         },
         _subStringText: function(text){
@@ -559,6 +570,10 @@
             }else{
                 me.addClass("iconFolderActive");
                 me.parents('li:first').addClass("showLeaves");
+            }
+            var li = me.parents('li:first[data-sourceid]');
+            if(li.length > 0){
+                this._resetSourceAtTree(this.model.getSource({id: li.attr('data-sourceid')}));
             }
             return false;
         },
