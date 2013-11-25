@@ -325,7 +325,7 @@ class Application
                     $layer->getId() => array(
                         'type' => $layer->getType(),
                         'title' => $layer->getTitle(),
-                        'configuration' => $layer->getConfiguration()));
+                        'configuration' => $layer->getConfiguration($this->container->get('signer'))));
                 $configuration['layersets'][$layerset->getId()][$num] = $layerconf;
                 $num++;
             }

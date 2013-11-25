@@ -12,6 +12,8 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Component\Style;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\LegendUrl;
+use ArsGeografica\Signing\Signer;
+
 
 /**
  * WmsInstance class
@@ -131,7 +133,7 @@ class WmsInstance extends SourceInstance
      *
      * @return array $configuration
      */
-    public function getConfiguration()
+    public function getConfiguration(Signer $signer=null)
     {
         if ($this->getSource() === null) { // from yaml
             $this->generateYmlConfiguration();
@@ -140,6 +142,14 @@ class WmsInstance extends SourceInstance
                 $this->generateConfiguration();
             }
         }
+
+        if($signer) {
+            $url = $this->configuration['options']['url'];
+            $signature = strlen($url) . substr($signer->sign($url), strlen($url));
+            $sep = (false === strstr($url, '?') ? '?' : '&');
+            $this->configuration['options']['url'] .= $sep . '_signature=' . $signature;
+        }
+
         return $this->configuration;
     }
 
