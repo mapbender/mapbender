@@ -22,8 +22,7 @@
         "friendsofsymfony/jsrouting-bundle": "dev-master",
         "kriswallsmith/buzz": "dev-master",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
-        "toooni/fpdf": "dev-master",
-        "doctrine/doctrine-migrations-bundle": "dev-master"
+        "toooni/fpdf": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [
