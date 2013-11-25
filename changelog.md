@@ -1,6 +1,10 @@
 # Changelog
 
 * **v3.0.2.0** -
+  - Update layertree changed
+  - Funktion Model.changeLayerState added
+  - LoadWms load declarative WMS added
+  - Dispatcher for declarative Sources added
   - Dropdown lists are now scrollable
   - Micro designfixes
   - Search router design added
