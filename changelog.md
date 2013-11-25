@@ -1,6 +1,8 @@
 # Changelog
 
 * **v3.0.2.0** -
+  - Dropdown lists are now scrollable
+  - Micro designfixes
   - Search router design added
   - New button icons for wmc editor and loader added
   - console.* stubs
