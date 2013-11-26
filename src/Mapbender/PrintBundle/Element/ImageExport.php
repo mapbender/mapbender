@@ -60,9 +60,7 @@ class ImageExport extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            "target" => null,
-            "autoOpen" => false
-            
+            "target" => null
         );
     }
     
@@ -80,7 +78,7 @@ class ImageExport extends Element
      */
     public static function getType()
     {
-        //return 'Mapbender\CoreBundle\Element\Type\PrintClientAdminType';
+      return 'Mapbender\PrintBundle\Element\Type\ImageExportAdminType';
     }    
     
     /**
@@ -88,7 +86,7 @@ class ImageExport extends Element
      */
     public static function getFormTemplate()
     {
-       // return 'MapbenderCoreBundle:ElementAdmin:printclient.html.twig';
+      return 'MapbenderPrintBundle:ElementAdmin:imageexport.html.twig';
     }
 
     /**
