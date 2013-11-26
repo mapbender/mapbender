@@ -103,6 +103,7 @@
         },
                 
         _exportImage: function() {
+            var self = this;
             var sources = this.map.getSourceTree(), num = 0;
             var layers = new Array();
             
@@ -121,21 +122,21 @@
             }
             if (num === 0){
                 Mapbender.info('No active layer!');
-            }else{
-                console.log(layers);
-                var self = this;
-                
+            }else{              
                 var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/export';
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    contentType: "application/json",
-                    dataType: "json",
-                    data: JSON.stringify(layers),
-                    success: function(data) {
-                        
-                    }
-                });
+                var format = $("input[name='imageformat']:checked").val();
+                
+                var data = {
+                    requests: layers,
+                    format: format
+                };
+                
+                var form = $('<form method="POST" action="'+url+'"  />');
+                $('<input></input>').attr('type', 'hidden').attr('name', 'data').val(JSON.stringify(data)).appendTo(form);
+                form.appendTo($('body'));
+                form.submit();
+                form.remove();
+
             }
         }        
         

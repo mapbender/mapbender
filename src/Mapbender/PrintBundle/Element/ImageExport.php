@@ -112,11 +112,8 @@ class ImageExport extends Element
         switch ($action) {
 
             case 'export':
-                $response = new Response();
-                $response->headers->set('Content-Type', 'application/json');
-                $request = $this->container->get('request');
-                
-                $data = $request->getContent();
+                $request = $this->container->get('request');               
+                $data = $request->get('data');
                 
                 // Forward to Printer Service URL using OWSProxy
                 $url = $this->container->get('router')->generate('mapbender_print_print_export', array(), true);

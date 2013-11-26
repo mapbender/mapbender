@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Mapbender\PrintBundle\Component\PrintService;
+use Mapbender\PrintBundle\Component\ImageExportService;
 
 
 class PrintController extends Controller
@@ -32,12 +33,11 @@ class PrintController extends Controller
     public function exportAction() 
     {      
         $content = $this->get('request')->getContent(); 
+        $container = $this->container;   
+        $exportservice = new ImageExportService($container);
+        $exportservice->export($content);
         
-        $data = json_decode($content, true);
-
-        var_dump($data[0]);die;
-        
-        return new Response(''); 
+        return; 
     }
     
 }
