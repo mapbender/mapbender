@@ -73,7 +73,7 @@
                             label: 'Submit',
                             cssClass: 'button buttonYes right',
                             callback: function(){
-                                $("form", self.popup.$element).submit();
+                                $('form input[type="submit"]', self.popup.$element).click();
                                 return false;
                             }
                         },

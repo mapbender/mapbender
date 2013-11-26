@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmcBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -24,9 +23,9 @@ class WmcStateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('state', 'hidden',
-                      array(
-                          'required' => false,
-                          'data_class' => 'Mapbender\CoreBundle\Entity\State'));
+            array(
+            'required' => false,
+            'data_class' => 'Mapbender\CoreBundle\Entity\State'));
     }
 
 }

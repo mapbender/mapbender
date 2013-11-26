@@ -11,6 +11,7 @@ use Mapbender\PrintBundle\Component\OdgParser;
  */
 class PrintClient extends Element
 {
+    public static $merge_configurations = false;
 
     /**
      * @inheritdoc
@@ -176,7 +177,6 @@ class PrintClient extends Element
                 $content = json_encode($data);
 
                 // Forward to Printer Service URL using OWSProxy
-                $configuration = $this->getConfiguration();
                 $url = $this->container->get('router')->generate('mapbender_print_print_service', array(), true);
 
                 return $this->container->get('http_kernel')->forward(
@@ -197,15 +197,7 @@ class PrintClient extends Element
                 $odgParser = new OdgParser($container);
                 $size = $odgParser->getMapSize($data['template']);
                 $response->setContent($size->getContent());
-                return $response;
-                
-            case 'content':
-                $response = new Response();
-		$about = $this->container->get('templating')
-		    ->render('MapbenderCoreBundle:Element:printclient-content.html.twig',
-		    array("configuration" => $this->getConfiguration()));
-		$response->setContent($about);
-		return $response;
+                return $response;    
         }
     }
 }

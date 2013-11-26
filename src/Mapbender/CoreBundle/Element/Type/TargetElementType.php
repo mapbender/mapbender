@@ -64,7 +64,6 @@ class TargetElementType extends AbstractType
         $resolver->setDefaults(array(
             'application' => null,
             'element_class' => null,
-            'not_element_class' => null,
             'class' => 'MapbenderCoreBundle:Element',
             'property' => 'title',
             'query_builder' => function(Options $options) use ($type)
@@ -72,28 +71,58 @@ class TargetElementType extends AbstractType
                 $builderName = preg_replace("/[^\w]/", "",
                     $options['property_path']);
                 $repository = $type->getContainer()->get('doctrine')->getRepository($options['class']);
-                //find all elements at application;
-                $elm_ids = array();
-                foreach($options['application']->getElements() as
-                        $element_entity)
+                $a = $options['element_class'];
+                if(isset($options['element_class']) && $options['element_class']
+                    !== null)
                 {
-                    $class = $element_entity->getClass();
-                    $appl = new Application($type->getContainer(),
-                        $options['application'], array());
-                    $element = new $class($appl, $type->getContainer(),
-                        $element_entity);
-                    $elm_class = get_class($element);
-                    if($elm_class::$ext_api)
+                    $qb = $repository->createQueryBuilder($builderName);
+                    if(is_integer(strpos($options['element_class'], "%")))
                     {
-                        $elm_ids[] = $element->getId();
+                        $filter = $qb->expr()->andX(
+                            $qb->expr()->eq($builderName . '.application',
+                                $options['application']->getId()),
+                            $qb->expr()->like($builderName . '.class', ':class')
+                        );
+                        $qb->where($filter);
+                        $qb->setParameter('class', $options['element_class']);
                     }
+                    else
+                    {
+                        $filter = $qb->expr()->andX(
+                            $qb->expr()->eq($builderName . '.application',
+                                $options['application']->getId()),
+                            $qb->expr()->eq($builderName . '.class', ':class')
+                        );
+                        $qb->where($filter);
+                        $qb->setParameter('class', $options['element_class']);
+                    }
+                    return $qb;
                 }
-                $qb = $repository->createQueryBuilder($builderName);
-                $filter = $qb->expr()->andX();
-                $filter->add($qb->expr()->in($builderName . '.id', ':elm_ids'));
-                $qb->where($filter);
-                $qb->setParameter('elm_ids', $elm_ids);
-                return $qb;
+                else
+                {
+                    $elm_ids = array();
+                    foreach($options['application']->getElements() as
+                            $element_entity)
+                    {
+                        $class = $element_entity->getClass();
+                        $appl = new Application($type->getContainer(),
+                            $options['application'], array());
+                        $element = new $class($appl, $type->getContainer(),
+                            $element_entity);
+                        $elm_class = get_class($element);
+                        if($elm_class::$ext_api)
+                        {
+                            $elm_ids[] = $element->getId();
+                        }
+                    }
+                    $qb = $repository->createQueryBuilder($builderName);
+                    $filter = $qb->expr()->andX();
+                    $filter->add($qb->expr()->in($builderName . '.id',
+                            ':elm_ids'));
+                    $qb->where($filter);
+                    $qb->setParameter('elm_ids', $elm_ids);
+                    return $qb;
+                }
             }
         ));
     }

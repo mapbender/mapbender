@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmcBundle\Form\Type;
 
 use Mapbender\CoreBundle\Form\Type\StateType;
@@ -27,27 +26,27 @@ class WmcType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('id', 'hidden')
-		->add('public', 'checkbox',
-                      array(
-                    'required' => false))
-                ->add('state', new StateType(),
-                      array(
-                    'data_class' => 'Mapbender\CoreBundle\Entity\State'))
-                ->add('keywords', 'text',
-                      array(
-                    'required' => false))
-                ->add('abstract', 'textarea',
-                      array(
-                    'required' => false))
-                ->add('logourl', new LegendUrlType(),
-                      array(
-                    'data_class' => 'Mapbender\WmsBundle\Component\LegendUrl'))
-                ->add('screenshot', 'file',
-                      array(
-                    'required' => false))
-                ->add('descriptionurl', new OnlineResourceType(),
-                      array(
-                    'data_class' => 'Mapbender\WmsBundle\Component\OnlineResource'));
+            ->add('public', 'checkbox',
+                array(
+                'required' => false))
+            ->add('state', new StateType(),
+                array(
+                'data_class' => 'Mapbender\CoreBundle\Entity\State'))
+            ->add('keywords', 'text',
+                array(
+                'required' => false))
+            ->add('abstract', 'textarea',
+                array(
+                'required' => false))
+            ->add('logourl', new LegendUrlType(),
+                array(
+                'data_class' => 'Mapbender\WmsBundle\Component\LegendUrl'))
+            ->add('screenshot', 'file',
+                array(
+                'required' => false))
+            ->add('descriptionurl', new OnlineResourceType(),
+                array(
+                'data_class' => 'Mapbender\WmsBundle\Component\OnlineResource'));
     }
 
 }

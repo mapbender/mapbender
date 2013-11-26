@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmcBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -16,20 +15,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Wmc
 {
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
+
     /**
      * @var string $version The wmc version
      * @ORM\Column(type="string", length=10, nullable=true)
      */
     protected $version = "1.1.0";
-    
+
     /**
      * @var string $wmcid a wmc id
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -65,7 +63,7 @@ class Wmc
      * @ORM\Column(type="object", nullable=true)
      */
     public $descriptionurl;
-    
+
     /**
      * @var string $screenshotPath The wmc description
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -77,25 +75,24 @@ class Wmc
      * @Assert\File(maxSize="6000000")
      */
     private $screenshot;
-    
+
     /**
      * @var Contact A contact.
      * @ORM\OneToOne(targetEntity="Mapbender\CoreBundle\Entity\Contact", cascade={"persist","remove"})
      */
     protected $contact;
-    
+
     /**
      * @var wmc document
      * @Assert\File(maxSize="6000000")
      */
     private $xml;
-    
+
     /**
      * @var document public
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $public = false;
-
 
     /**
      * Set id
@@ -108,7 +105,7 @@ class Wmc
         $this->id = $id;
         return $this;
     }
-    
+
     /**
      * Get id
      *
@@ -206,7 +203,7 @@ class Wmc
     {
         return $this->descriptionurl;
     }
-    
+
     /**
      * Set screenshotPath
      *
@@ -232,7 +229,8 @@ class Wmc
     /**
      * @param string $screenshot
      */
-    public function setScreenshot($screenshot) {
+    public function setScreenshot($screenshot)
+    {
         $this->screenshot = $screenshot;
     }
 
@@ -241,14 +239,16 @@ class Wmc
      *
      * @return string
      */
-    public function getVersion() {
+    public function getVersion()
+    {
         return $this->version;
     }
-    
+
     /**
      * @param string $version
      */
-    public function setVersion($version) {
+    public function setVersion($version)
+    {
         $this->version = $version;
         return $this;
     }
@@ -258,19 +258,19 @@ class Wmc
      *
      * @return string
      */
-    public function getWmcid() {
+    public function getWmcid()
+    {
         return $this->wmcid;
     }
-    
+
     /**
      * @param string $wmcid
      */
-    public function setWmcid($wmcid) {
+    public function setWmcid($wmcid)
+    {
         $this->wmcid = $wmcid;
         return $this;
     }
-    
-    
 
     /**
      * Set contact
@@ -293,11 +293,12 @@ class Wmc
     {
         return $this->contact;
     }
-    
+
     /**
      * @param string $xml
      */
-    public function setXml($xml) {
+    public function setXml($xml)
+    {
         $this->xml = $xml;
     }
 
@@ -306,7 +307,8 @@ class Wmc
      *
      * @return string
      */
-    public function getXml() {
+    public function getXml()
+    {
         return $this->xml;
     }
 
@@ -315,11 +317,10 @@ class Wmc
      *
      * @return string
      */
-    public function getScreenshot() {
+    public function getScreenshot()
+    {
         return $this->screenshot;
     }
-    
-    
 
     /**
      * Set public
@@ -331,8 +332,6 @@ class Wmc
         $this->public = $public;
         return $this;
     }
-    
-    
 
     /**
      * Get public
@@ -343,26 +342,22 @@ class Wmc
     {
         return $this->public;
     }
-    
-    
+
     public static function create($state = null, $logoUrl = null,
-            $descriptionUrl = null)
+        $descriptionUrl = null)
     {
         $state = $state === null ? new State() : $state;
         $wmc = new Wmc();
         $wmc->setState($state);
         $logoUrl = $logoUrl === null ? LegendUrl::create() : logoUrl;
-        if($logoUrl !== null)
-        {
+        if ($logoUrl !== null) {
             $wmc->setLogourl($logoUrl);
         }
         $descriptionUrl = $descriptionUrl === null ? OnlineResource::create() : $descriptionUrl;
-        if($descriptionUrl !== null)
-        {
+        if ($descriptionUrl !== null) {
             $wmc->setDescriptionurl($descriptionUrl);
         }
         return $wmc;
     }
 
 }
-

@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -48,7 +47,8 @@ class WmsLoader extends Element
             "autoOpen" => false,
             "defaultFormat" => "image/png",
             "defaultInfoFormat" => "text/html",
-            "splitLayers" => false
+            "splitLayers" => false,
+            "useDeclarative" => false
         );
     }
 
@@ -65,10 +65,15 @@ class WmsLoader extends Element
      */
     public function getAssets()
     {
-        return array('js' => array(
-            '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-            'mapbender.element.wmsloader.js'
-            ),'css' => array());
+        $files = array('js' => array(
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                'mapbender.element.wmsloader.js'
+            ), 'css' => array());
+        $config = $this->getConfiguration();
+        if ($config['useDeclarative']) {
+            $files['js'][] = "@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js";
+        }
+        return $files;
     }
 
     /**
@@ -93,12 +98,11 @@ class WmsLoader extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderWmsBundle:Element:wmsloader.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            "title" => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderWmsBundle:Element:wmsloader.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    "title" => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
 }
-

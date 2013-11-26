@@ -112,7 +112,7 @@
             }
             if(options.changed && options.changed.options){
 
-            } else if(context && options.changed && options.changed.layerRemoved){
+            } else if(context && options.changed && options.changed.childRemoved){
                 function layerlist(layer, layers){
                     layers.push(layer.options.id);
                     if(layer.children)
@@ -120,9 +120,8 @@
                             layerlist(layer_, layers);
                         })
                 }
-                var source = this.model.getSource(options.changed.sourceIdx);
                 var layers = [];
-                layerlist(options.changed.layerRemoved.layer, layers);
+                layerlist(options.changed.childRemoved.layer, layers);
                 $.each(layers, function(idx, layerid){
                     $('li[data-id="' + layerid + '"]', context).remove();
                 });

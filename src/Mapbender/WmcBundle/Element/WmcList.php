@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmcBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -15,7 +14,7 @@ class WmcList extends Element
      */
     static public function getClassTitle()
     {
-	return "WmcList";
+        return "WmcList";
     }
 
     /**
@@ -23,7 +22,7 @@ class WmcList extends Element
      */
     static public function getClassDescription()
     {
-	return "Generates a selectbox with configurations that can be loaded";
+        return "Generates a selectbox with configurations that can be loaded";
     }
 
     /**
@@ -31,7 +30,7 @@ class WmcList extends Element
      */
     static public function getClassTags()
     {
-	return array("wmc", "list");
+        return array("wmc", "list");
     }
 
     /**
@@ -39,10 +38,10 @@ class WmcList extends Element
      */
     public static function getDefaultConfiguration()
     {
-	return array(
-	    "tooltip" => null,
-	    "target" => null,
-	    'label' => false,);
+        return array(
+            "tooltip" => null,
+            "target" => null,
+            'label' => false,);
     }
 
     /**
@@ -50,7 +49,7 @@ class WmcList extends Element
      */
     public static function getType()
     {
-	return 'Mapbender\WmcBundle\Element\Type\WmcListAdminType';
+        return 'Mapbender\WmcBundle\Element\Type\WmcListAdminType';
     }
 
     /**
@@ -58,7 +57,7 @@ class WmcList extends Element
      */
     public static function getFormTemplate()
     {
-	return 'MapbenderWmcBundle:ElementAdmin:wmclist.html.twig';
+        return 'MapbenderWmcBundle:ElementAdmin:wmclist.html.twig';
     }
 
     /**
@@ -66,7 +65,7 @@ class WmcList extends Element
      */
     public function getWidgetName()
     {
-	return 'mapbender.mbWmcList';
+        return 'mapbender.mbWmcList';
     }
 
     /**
@@ -74,13 +73,13 @@ class WmcList extends Element
      */
     public function getAssets()
     {
-	$js = array(
-	    'mapbender.element.wmclist.js'
-	);
-	return array(
-	    'js' => $js,
-	    'css' => array()
-	);
+        $js = array(
+            'mapbender.element.wmclist.js'
+        );
+        return array(
+            'js' => $js,
+            'css' => array()
+        );
     }
 
     /**
@@ -88,26 +87,25 @@ class WmcList extends Element
      */
     public function render()
     {
-	$config = $this->getConfiguration();
-	$html = $this->container->get('templating')
-	    ->render('MapbenderWmcBundle:Element:wmclist.html.twig',
-	    array(
-	    'id' => $this->getId(),
-	    'configuration' => $config,
-	    'title' => $this->getTitle()));
-	return $html;
+        $config = $this->getConfiguration();
+        $html = $this->container->get('templating')
+            ->render('MapbenderWmcBundle:Element:wmclist.html.twig',
+            array(
+            'id' => $this->getId(),
+            'configuration' => $config,
+            'title' => $this->getTitle()));
+        return $html;
     }
 
     public function httpAction($action)
     {
-	switch($action)
-	{
-	    case 'list':
-		return $this->getWmcList();
-		break;
-	}
+        switch ($action) {
+            case 'list':
+                return $this->getWmcList();
+                break;
+        }
     }
-    
+
     /**
      * Returns a html encoded list of all wmc documents
      * 
@@ -116,13 +114,14 @@ class WmcList extends Element
     protected function getWmcList()
     {
 
-	$wmchandler = new WmcHandler($this, $this->application, $this->container);
-	$wmclist = $wmchandler->getWmcList(true);
-	$wmces = array();
-	foreach($wmclist as $wmc){
-	    $wmces[$wmc->getId()] = $wmc->getState()->getTitle();
-	}
-	return new Response(json_encode(array("success" => $wmces)), 200,
-		    array('Content-Type' => 'application/json'));
+        $wmchandler = new WmcHandler($this, $this->application, $this->container);
+        $wmclist = $wmchandler->getWmcList(true);
+        $wmces = array();
+        foreach ($wmclist as $wmc) {
+            $wmces[$wmc->getId()] = $wmc->getState()->getTitle();
+        }
+        return new Response(json_encode(array("success" => $wmces)), 200,
+            array('Content-Type' => 'application/json'));
     }
+
 }
