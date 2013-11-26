@@ -27,7 +27,7 @@ class ImageExportService
     public function export($content)
     {
         $this->data = json_decode($content, true);
-        
+
         $this->format = $this->data['format'];
         $this->requests = $this->data['requests'];
         $this->getImages();
@@ -73,14 +73,14 @@ class ImageExportService
             if($im !== null) {
                 imagesavealpha($im, true);
                 imagepng($im , $imagename);
+                
+                $this->image_width = imagesx($im);
+                $this->image_height = imagesy($im);
             }
 
         }
         
-        $this->image_width = imagesx($im);
-        $this->image_height = imagesy($im);
-        
-        
+         
         // create final merged image
         $finalimagename = $tempdir.'/mergedimage.png';
         $finalImage = imagecreatetruecolor($this->image_width, $this->image_height);

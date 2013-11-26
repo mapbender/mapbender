@@ -30,10 +30,6 @@ class PrintService
     {
         $this->data = json_decode($content, true);
         $template = $this->data['template'];
-        print "<pre>";
-        print_r($this->data);
-        print "</pre>";
-        die();
         $this->getTemplateConf($template);
         $this->createUrlArray();
         $this->setMapParameter();
