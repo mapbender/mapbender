@@ -11,14 +11,24 @@ $.widget("mapbender.mbActivityIndicator", {
     ajaxActivity: false,
     tileActivity: false,
     loadingLayers: {},
+    targets: {},
 
     _create: function() {
+       for(id in Mapbender.configuration.elements){
+           var element = Mapbender.configuration.elements[id];
+            if(element.init === 'mapbender.mbMap'){
+                this.targets[id] = false;
+                if(!Mapbender.checkTarget("mbActivityIndicator", id)){ // check if target defined
+                    return;
+                }
+                var self = this;
+                Mapbender.elementRegistry.onElementReady(id, $.proxy(self._setup, self, id)); // call _setup if target ready
+            }
+        }
+    },
+    _setup: function(id) {
         var self = this;
-
-        this.element.bind('ajaxStart', $.proxy(this._onAjaxStart, this));
-        this.element.bind('ajaxStop', $.proxy(this._onAjaxStop, this));
-
-        $('.mb-element-map').each(function() {
+        $('#'+id).each(function() {
             var mqMap = $(this).data('mapbenderMbMap').map;
             $.each(mqMap.layers(), function(idx, mqLayer) {
                 self._bindToLayer(mqLayer);
@@ -33,6 +43,16 @@ $.widget("mapbender.mbActivityIndicator", {
                 self._bindToLayer(mqLayer);
             });
         });
+        this.targets[id] = true;
+        var allInited = true;
+        for(id in this.targets){
+            if(!this.targets[id])
+                allInited = false;
+        }
+        if(allInited){
+            this.element.bind('ajaxStart', $.proxy(this._onAjaxStart, this));
+            this.element.bind('ajaxStop', $.proxy(this._onAjaxStop, this));
+        }
     },
 
     destroy: function() {},

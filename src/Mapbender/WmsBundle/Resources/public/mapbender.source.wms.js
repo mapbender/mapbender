@@ -564,7 +564,8 @@ $.extend(true, Mapbender, {
                 _changeOptions(rootLayer, scale, {state: {visibility: true}}, toChangeOpts, result);
                 return result;
                 function _changeOptions(layer, scale, parentState, toChangeOpts, result){
-                    var layerChanged;
+                    var layerChanged, 
+                        elchanged = false;
                     if(toChangeOpts.options.children[layer.options.id]){
                         layerChanged = toChangeOpts.options.children[layer.options.id];
                         layerChanged.state = {
@@ -577,14 +578,18 @@ $.extend(true, Mapbender, {
                             if(typeof treeOptions.selected !== 'undefined'){
                                 if(layer.options.treeOptions.selected === treeOptions.selected)
                                     delete(treeOptions.selected);
-                                else
+                                else{
                                     layer.options.treeOptions.selected = treeOptions.selected;
+                                    elchanged = true;
+                                }
                             }
                             if(typeof treeOptions.info !== 'undefined'){
                                 if(layer.options.treeOptions.info === treeOptions.info)
                                     delete(treeOptions.info);
-                                else
+                                else{
                                     layer.options.treeOptions.info = treeOptions.info;
+                                    elchanged = true;
+                                }
                             }
                             if(typeof treeOptions.toggle !== 'undefined'){
                                 if(layer.options.treeOptions.toggle === treeOptions.toggle)
@@ -659,7 +664,6 @@ $.extend(true, Mapbender, {
                             layer.state.visibility = false;
                         }
                     }
-                    var elchanged = false;
                     if(layerChanged.state.outOfScale !== layer.state.outOfScale){
                         layerChanged.state.outOfScale = layer.state.outOfScale;
                         elchanged = true;
@@ -684,6 +688,63 @@ $.extend(true, Mapbender, {
                     }
                     return layer;
                 }
+            },
+            /**
+             * @param {object} source source
+             * @param {object} changeOptions options in form of:
+             * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
+             * @param {boolean} merge 
+             * @returns {object} changes
+             */
+            createOptionsLayerState: function(source, changeOptions, selectedOther, merge){
+                function setSelected(layer, parent, optionsToChange, toChange, selectedOther, merge){
+                    if(layer.children){
+                        var childAsSelected = false;
+                        for(var i = 0; i < layer.children.length; i++){
+                            var child = layer.children[i];
+                            setSelected(child, layer, optionsToChange, toChange, selectedOther, merge);
+                            if((!toChange[child.options.id] && child.options.treeOptions.selected)
+                                || (toChange[child.options.id] && toChange[child.options.id].options.treeOptions.selected)){
+                                childAsSelected = true;
+                            }
+                        }
+                        if(childAsSelected && !layer.options.treeOptions.selected){
+                            toChange[layer.options.id] = {options: {treeOptions: {selected: true}}};
+                            if(layer.options.treeOptions.allow.info)
+                                toChange[layer.options.id].options.treeOptions['info'] = true;
+                        }else if(!childAsSelected && layer.options.treeOptions.selected){
+                            toChange[layer.options.id] = {options: {treeOptions: {selected: false}}};
+                            if(layer.options.treeOptions.allow.info)
+                                toChange[layer.options.id].options.treeOptions['info'] = false;
+                        }
+                    }else{
+                        var sel = false;
+                        if(!merge){
+                            var sel = optionsToChange.layers[layer.options.name] ? optionsToChange.layers[layer.options.name].options.treeOptions.selected : selectedOther;
+                            if(sel !== layer.options.treeOptions.selected){
+                                toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
+                            }
+                        } else{
+                            var help = optionsToChange.layers[layer.options.name] ? optionsToChange.layers[layer.options.name].options.treeOptions.selected : selectedOther;
+                            var sel = help || layer.options.treeOptions.selected;
+                            if(sel !== layer.options.treeOptions.selected){
+                                toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
+                            }
+                        }
+                        
+                        if(sel && layer.options.treeOptions.allow.info){
+                            if(toChange[layer.options.id]){
+                                toChange[layer.options.id].options.treeOptions['info'] = true;
+                            }else{
+                                toChange[layer.options.id] = {options: {treeOptions: {info: true}}};
+                            }
+                        }
+                    }
+                }
+                ;
+                var tochange = {sourceIdx: {id: source.id}, options: {children: {}, type: 'selected'}};
+                setSelected(source.configuration.children[0], null, changeOptions, tochange.options.children, selectedOther, merge);
+                return {change: tochange};
             }
         }
     }

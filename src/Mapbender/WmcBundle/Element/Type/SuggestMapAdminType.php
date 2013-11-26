@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmcBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -41,20 +40,19 @@ class SuggestMapAdminType extends AbstractType
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application'   => $options['application'],
+                'application' => $options['application'],
                 'property_path' => '[target]',
-                'required'      => false))
+                'required' => false))
             ->add('receiver', 'choice',
-                        array(
-                    'multiple' => true,
-                    'required' => true,
-                    'choices'  => array(
-                        'email'    => 'E-Mail',
-                        'facebook' => 'Facebook',
-                        'twitter'  => 'Twitter',
-                        'google+'  => 'Google+')));
+                array(
+                'multiple' => true,
+                'required' => true,
+                'choices' => array(
+                    'email' => 'E-Mail',
+                    'facebook' => 'Facebook',
+                    'twitter' => 'Twitter',
+                    'google+' => 'Google+')));
     }
 
 }
-
 ?>

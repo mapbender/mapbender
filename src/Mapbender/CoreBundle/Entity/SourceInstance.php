@@ -5,6 +5,7 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
+use ArsGeografica\Signing\Signer;
 
 /**
  * @author Karim Malhas
@@ -207,9 +208,11 @@ abstract class SourceInstance
 
     /**
      *  Returns a configuration of a source instance
+     *
+     *  @param   Signer  $signer  String signer for URL protection
      */
-    public abstract function getConfiguration();
-    
+    public abstract function getConfiguration(Signer $signer=null);
+
     /**
      * Remove a source instance from a database
      * @param EntityManager $em

@@ -6,7 +6,7 @@ namespace Mapbender\WmcBundle\Component\Exception;
  * @package Mapbender
  * @author Paul Schmidt
  */
-class WmcException extends \Exception {
-
+class WmcException extends \Exception
+{
+    
 }
-

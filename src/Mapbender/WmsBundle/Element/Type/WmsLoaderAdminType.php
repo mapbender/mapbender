@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -38,27 +37,28 @@ class WmsLoaderAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
-                ->add('target', 'target_element',
-                      array(
-                    'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                    'application' => $options['application'],
-                    'property_path' => '[target]',
-                    'required' => false))
-                ->add('defaultFormat', 'choice',array(
-                    "choices" => array(
-                        "image/png" => "image/png",
-                        "image/gif" => "image/gif",
-                        "image/jpeg" => "image/jpeg")))
-                ->add('defaultInfoFormat', 'choice',array(
-                    "choices" => array(
-                        "text/html" => "text/html",
-                        "text/xml" => "text/xml",
-                        "text/plain" => "text/plain")))
-                ->add('autoOpen', 'checkbox', array('required' => false))
-                ->add('splitLayers', 'checkbox', array('required' => false))
-                ->add('useDeclarative', 'checkbox', array('required' => false));
+            ->add('target', 'target_element',
+                array(
+                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+                'application' => $options['application'],
+                'property_path' => '[target]',
+                'required' => false))
+            ->add('defaultFormat', 'choice',
+                array(
+                "choices" => array(
+                    "image/png" => "image/png",
+                    "image/gif" => "image/gif",
+                    "image/jpeg" => "image/jpeg")))
+            ->add('defaultInfoFormat', 'choice',
+                array(
+                "choices" => array(
+                    "text/html" => "text/html",
+                    "text/xml" => "text/xml",
+                    "text/plain" => "text/plain")))
+            ->add('autoOpen', 'checkbox', array('required' => false))
+            ->add('splitLayers', 'checkbox', array('required' => false))
+            ->add('useDeclarative', 'checkbox', array('required' => false));
     }
 
 }
-
 ?>
