@@ -24,4 +24,20 @@ class PrintController extends Controller
         return new Response(''); 
     }
     
+    /**
+     *
+     * @Route("/export")
+     * 
+     */
+    public function exportAction() 
+    {      
+        $content = $this->get('request')->getContent(); 
+        
+        $data = json_decode($content, true);
+
+        var_dump($data[0]);die;
+        
+        return new Response(''); 
+    }
+    
 }
