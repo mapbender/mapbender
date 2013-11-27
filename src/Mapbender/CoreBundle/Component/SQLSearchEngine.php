@@ -132,6 +132,18 @@ class SQLSearchEngine
         // Build WHERE condition
         $cond = $qb->expr()->andx();
         $params = array();
+
+        // This function switches by value type (int, char...)
+        $createExpr = function($key, $value) use ($cond, $qb, $params) {
+            if(is_numeric($value)) {
+                $cond->add($qb->expr()->eq('t.'. $key, '?'));
+                $params[] = $value;
+            } else {
+                $cond->add($qb->expr()->like('LOWER(t.' . $key . ')::varchar', '?'));
+                $params[] = '%' . $value . '%';
+            }
+        };
+
         foreach($data['form'] as $key => $value)
         {
             if(array_key_exists($key, $data['autocomplete_keys']))
@@ -146,14 +158,11 @@ class SQLSearchEngine
                 $values = explode(' ', $value);
                 for($i = 0; $i < count($keys); $i++)
                 {
-                    // @todo: Platform independency (::varchar, lower)
-                    $cond->add($qb->expr()->like('LOWER(t.' . $keys[$i] . '::varchar)', '?'));
-                    $params[] = '%' . (count($values) > $i ? strtolower($values[$i]) : '') . '%';
+                    $createExpr($keys[$i], $value);
                 }
             } else
             {
-                $cond->add($qb->expr()->like('t.' . $key, '?'));
-                $params[] = '%' . $value . '%';
+                $createExpr($key, $value);
             }
         }
         $qb->where($cond);
