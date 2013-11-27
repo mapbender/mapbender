@@ -91,6 +91,10 @@ $.widget('mapbender.mbSearchRouter', {
         }
         this._trigger('ready');
         this._ready();
+
+        if(this.options.autoOpen) {
+            this.open();
+        }
     },
 
     /**
