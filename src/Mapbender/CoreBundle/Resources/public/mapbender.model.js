@@ -87,6 +87,8 @@ Mapbender.Model = {
             });
         });
 
+        this.parseURL();
+
         var poiBox = null,
             poiMarkerLayer = null,
             poiIcon = null,
@@ -603,7 +605,7 @@ Mapbender.Model = {
         }
     },
     /**
-     * 
+     *
      * @param {Object} sourceIdObject in form of:
      * - source id -> {id: MYSOURCEID}
      * - mapqyery id -> {mqlid: MYSOURCEMAPQUERYID}
@@ -622,7 +624,7 @@ Mapbender.Model = {
             var tochange = Mapbender.source[source.type].createOptionsLayerState(source, options, selectedOther, merge);
             this.changeSource(tochange);
         }
-        
+
     },
     _moveSourceOrLayer: function(tomove, before, after){
         var layerToMove;
@@ -994,6 +996,28 @@ Mapbender.Model = {
         if(this.layersMaxExtent[layer.id]){
             delete(this.layersMaxExtent[layer.id]);
         }
-    }
+    },
 
+    parseURL: function() {
+        var self = this;
+        var ids = Mapbender.urlParam('visiblelayers');
+        ids = ids ? ids.split(',') : [];
+        if(ids.length) {
+            $.each(ids, function(idx, id) {
+                var id = id.split('/');
+                var options = {};
+                if(1 < id.length) {
+                    options.layers = {};
+                    options.layers[id[1]] = {
+                        options: {
+                            treeOptions: {
+                                selected: true
+                            }
+                        }
+                    };
+                    self.changeLayerState({origId: id[0]}, options, false, true);
+                }
+            });
+        }
+    }
 };
