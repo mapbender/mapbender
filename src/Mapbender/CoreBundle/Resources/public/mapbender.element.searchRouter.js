@@ -180,10 +180,7 @@ $.widget('mapbender.mbSearchRouter', {
             form.get(0).reset();
         });
 
-        var container = $('.search-results', this.element).empty();
-        if('table' === this.options.routes[this.selected].results.view) {
-            this._prepareResultTable(container);
-        }
+        $('.search-results', this.element).empty();
     },
 
     /**
@@ -310,6 +307,10 @@ $.widget('mapbender.mbSearchRouter', {
      */
     _searchResults: function(model, results, options) {
         if('table' === this.options.routes[this.selected].results.view) {
+            var container = $('.search-results', this.element);
+            if($('table', container).length === 0) {
+                this._prepareResultTable(container);
+            }
             this._searchResultsTable(model, results, options);
         }
     },
