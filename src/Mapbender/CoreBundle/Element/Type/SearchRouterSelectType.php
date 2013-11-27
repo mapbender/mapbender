@@ -40,8 +40,7 @@ class SearchRouterSelectType extends AbstractType
             $routes[$name] = $conf['title'];
         }
 
-        $builder->add('route', 'choice',
-                      array(
+        $builder->add('route', 'choice', array(
             'choices' => $routes,
             'mapped' => false,
             'property_path' => false,
