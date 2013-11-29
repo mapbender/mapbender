@@ -5,7 +5,7 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
-use ArsGeografica\Signing\Signer;
+use Mapbender\CoreBundle\Component\Signer;
 
 /**
  * @author Karim Malhas
@@ -55,12 +55,12 @@ abstract class SourceInstance
      */
     public function __construct()
     {
-        
+
     }
 
     /**
      * Returns an id
-     * 
+     *
      * @return integer id
      */
     public function getId()
@@ -70,7 +70,7 @@ abstract class SourceInstance
 
     /**
      * Returns a title
-     * 
+     *
      * @param String title
      */
     public function getTitle()
@@ -80,7 +80,7 @@ abstract class SourceInstance
 
     /**
      * Sets a title
-     * 
+     *
      * @param String $title
      */
     public function setTitle($title)
@@ -96,7 +96,7 @@ abstract class SourceInstance
     public abstract function getType();
 
     /**
-     * Returns a manager type 
+     * Returns a manager type
      *
      * @return String a manager type
      */
@@ -145,7 +145,7 @@ abstract class SourceInstance
 
     /**
      * Sets the layerset
-     * 
+     *
      * @param Layerset $layerset Layerset
      * @return Sourceinstance
      */
@@ -187,8 +187,8 @@ abstract class SourceInstance
     }
 
     /**
-     * Returns instance source 
-     * 
+     * Returns instance source
+     *
      * @return Source
      */
     public abstract function getSource();
@@ -201,7 +201,7 @@ abstract class SourceInstance
 
     /**
      * Sets a configuration of a source instance
-     * 
+     *
      * @param array $configuration configuration of a source instance
      */
     public abstract function setConfiguration($configuration);
@@ -218,7 +218,7 @@ abstract class SourceInstance
      * @param EntityManager $em
      */
     public abstract function remove(EntityManager $em);
-    
+
     /**
      * Copies a source instance
      * @param EntityManager $em
