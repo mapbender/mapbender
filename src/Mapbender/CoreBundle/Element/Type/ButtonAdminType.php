@@ -52,7 +52,9 @@ class ButtonAdminType extends AbstractType
                     "iconWms" => "WMS",
                     "iconHelp" => "Help",
                     "iconWmcEditor" => "WMC Editor",
-                    "iconWmcLoader" => "WMC Loader"
+                    "iconWmcLoader" => "WMC Loader",
+                    "iconPoi" => "POI",
+                    "iconImageExport" => "Image Export"
             )))
             ->add('label', 'checkbox', array('required' => false))
             ->add('target', 'target_element',
