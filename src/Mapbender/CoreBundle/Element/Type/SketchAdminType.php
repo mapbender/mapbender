@@ -35,11 +35,7 @@ class SketchAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $types = array(
-            "point" => "point",
-            "line" => "line",
             "circle" => "circle",
-            "box" => "box",
-            "polygon" => "polygon"
         );
         $builder->add('tooltip', 'text', array('required' => false))
             ->add('target', 'target_element',

@@ -16,20 +16,8 @@
         },
         _createLayer: function(type){
             switch(type){
-                case 'point':
-                    return new OpenLayers.Layer.Vector("mbSketch.point");
-                    break;
                 case 'circle':
                     return new OpenLayers.Layer.Vector("mbSketch.circle");
-                    break;
-                case 'line':
-                    return new OpenLayers.Layer.Vector("mbSketch.line");
-                    break;
-                case 'box':
-                    return new OpenLayers.Layer.Vector("mbSketch.box");
-                    break;
-                case 'polygon':
-                    return new OpenLayers.Layer.Vector("mbSketch.polygon");
                     break;
                 default:
                     return new OpenLayers.Layer.Vector("mbSketch");
@@ -38,9 +26,6 @@
         _createControl: function(type, layer){
             var control = null;
             switch(type){
-                case 'point':
-                    control = new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Point);
-                    break;
                 case 'circle':
                     control = new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.RegularPolygon,
                         {
@@ -51,21 +36,6 @@
                                 ,persist: true
                             }
                         });
-                    break;
-                case 'line':
-                    control = new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Path);
-                    break;
-                case 'box':
-                    control = new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.RegularPolygon,
-                        {
-                            handlerOptions: {
-                                sides: 4,
-                                irregular: true
-                            }
-                        });
-                    break;
-                case 'polygon':
-                    control = new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Polygon);
                     break;
                 default:
                     control = null;
@@ -161,6 +131,8 @@
          */
         _open: function(e){
             var self = this;
+            var content = '<label for="inputCircleRadius" class="labelInput left">Radius:</label>';//'mb.core.sketch.circle.radius.label'
+            content += '<input id="inputCircleRadius" type="text" class="input listFilterInput" />'
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
@@ -169,32 +141,28 @@
                     closeButton: false,
                     closeOnESC: false,
                     closeOnPopupCloseClick: false,
-                    content: [
-                        '<span>Bitte geben Sie den Radius ein:</span>'+
-                        '<input type="text" value="" id="radius"/>'
-                    ],
+                    content: [ content ],
                     destroyOnClose: true,
                     width: 400,
                     buttons: {
                         'cancel': {
-                            label: 'Cancel',
+                            label: 'Abbrechen',//mb.core.sketch.circle.form.button.cancel
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self._close();
                             }
                         },
                         'ok': {
-                            label: 'Save',
+                            label: 'Übernehmen',//mb.core.sketch.circle.form.button.yes
                             cssClass: 'button buttonYes right',
                             callback: function(){
-                                var radius = parseInt($('#radius', self.popup.$element).val());
+                                var radius = parseInt($('#inputCircleRadius', self.popup.$element).val());
                                 if(isNaN(radius)){
-                                    Mapbender.error('mb.core.sketch.circle.form.radius.error');
+                                    Mapbender.error(); //'mb.core.sketch.circle.radius.error');
                                 } else {
                                     var bounds = e.feature.geometry.bounds,
                                         center = new OpenLayers.Geometry.Point((bounds.left + bounds.right)/2.0, (bounds.bottom + bounds.top)/2.0),
                                         geom = OpenLayers.Geometry.Polygon.createRegularPolygon(center,radius,32,0);
-                    
                                     e.feature.geometry = geom;
                                     e.object.layer.drawFeature(e.feature);
                                     self._close();
