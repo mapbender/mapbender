@@ -184,22 +184,20 @@ class Map extends Element
                     'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
                 );
             }
-//        }
+        }
 
-            $bbox = $this->container->get('request')->get('bbox');
-            if(!$poi && $bbox)
+        $bbox = $this->container->get('request')->get('bbox');
+        if(!isset($extra['pois']) && $bbox)
+        {
+            $bbox = explode(',', $bbox);
+            if(count($bbox) === 4)
             {
-                $bbox = explode(',', $bbox);
-                if(count($bbox) === 4)
-                {
-                    $extra['type'] = 'bbox';
-                    $extra['data'] = array(
-                        floatval($bbox[0]),
-                        floatval($bbox[1]),
-                        floatval($bbox[2]),
-                        floatval($bbox[3])
-                    );
-                }
+                $extra['bbox'] = array(
+                    floatval($bbox[0]),
+                    floatval($bbox[1]),
+                    floatval($bbox[2]),
+                    floatval($bbox[3])
+                );
             }
         }
 
