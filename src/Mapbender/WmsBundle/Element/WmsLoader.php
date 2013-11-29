@@ -70,7 +70,7 @@ class WmsLoader extends Element
                 'mapbender.element.wmsloader.js'
             ), 'css' => array());
         $config = $this->getConfiguration();
-        if ($config['useDeclarative']) {
+        if (isset($config['useDeclarative']) && $config['useDeclarative'] === true) {
             $files['js'][] = "@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js";
         }
         return $files;
