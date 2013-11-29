@@ -1,6 +1,7 @@
 # Changelog
 
 * **v3.0.2.0** -
+  - Sketch feature (circle) added
   - Update layertree changed
   - Funktion Model.changeLayerState added
   - LoadWms load declarative WMS added
