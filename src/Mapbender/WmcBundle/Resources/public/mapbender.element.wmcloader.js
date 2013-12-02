@@ -233,7 +233,9 @@
             var st = JSON.stringify(map.getMapState());
             var form = $('<form method="POST" action="'+(self.elementUrl+'wmcasxml')+'" target="_BLANK" />');
             $('<input></input>').attr('type', 'hidden').attr('name', 'state').val(st).appendTo(form);
+            form.appendTo($('body'));
             form.submit();
+            form.remove();
         },
         /**
          *
