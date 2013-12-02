@@ -7,6 +7,7 @@
         },
         control: {},
         activeType: null,
+        activated: false,
         _create: function(){
             if(!Mapbender.checkTarget("mbSketch", this.options.target)){ // check if target defined
                 return;
@@ -33,7 +34,7 @@
                                 sides: 32,
                                 radius: 0.0001,
                                 irregular: false
-                                ,persist: true
+                                    , persist: true
                             }
                         });
                     break;
@@ -47,7 +48,6 @@
             return control;
         },
         _featureAdded: function(e){
-            window.console && console.log(e, e.object.layer.name);
             switch(e.object.layer.name){
                 case 'mbSketch.circle':
                     this._open(e);
@@ -82,7 +82,6 @@
         },
         activate: function(callback){
             var self = this;
-            window.console && console.log(this);
             this.callback = callback ? callback : null;
 
             var mq = this.map.data('mapQuery');
@@ -99,21 +98,26 @@
                 mq.olMap.addControl(self.controls[type]);
             });
             this._activateType(this.options.defaultType);
+            this.activated = true;
         },
         deactivate: function(){
-            var self = this;
-            this._activateType(null);
-            var mq = this.map.data('mapQuery');
-            $.each(this.options.types, function(idx, type){
-                mq.olMap.removeControl(self.controls[type]);
-                mq.olMap.removeLayer(self.layers[type]);
-            });
-            $.each(this.baseControls, function(idx, cntrl){
-                cntrl.deactivate();
-                mq.olMap.removeControl(cntrl);
-            });
-            this._close();
-            this.callback ? this.callback.call() : this.callback = null;
+            if(this.activated){
+                var self = this;
+                this._activateType(null);
+                var mq = this.map.data('mapQuery');
+                $.each(this.options.types, function(idx, type){
+                    mq.olMap.removeControl(self.controls[type]);
+                    mq.olMap.removeLayer(self.layers[type]);
+                });
+                $.each(this.baseControls, function(idx, cntrl){
+                    cntrl.deactivate();
+                    mq.olMap.removeControl(cntrl);
+                });
+                this._close();
+                this.callback ? this.callback.call() : this.callback = null;
+
+                this.activated = false;
+            }
         },
         /**
          * closes a dialog
@@ -141,28 +145,28 @@
                     closeButton: false,
                     closeOnESC: false,
                     closeOnPopupCloseClick: false,
-                    content: [ content ],
+                    content: [content],
                     destroyOnClose: true,
                     width: 400,
                     buttons: {
                         'cancel': {
-                            label: 'Abbrechen',//mb.core.sketch.circle.form.button.cancel
+                            label: 'Cancel', //mb.core.sketch.circle.form.button.cancel
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self._close();
                             }
                         },
                         'ok': {
-                            label: 'Übernehmen',//mb.core.sketch.circle.form.button.yes
+                            label: 'OK', //mb.core.sketch.circle.form.button.yes
                             cssClass: 'button buttonYes right',
                             callback: function(){
                                 var radius = parseInt($('#inputCircleRadius', self.popup.$element).val());
                                 if(isNaN(radius)){
                                     Mapbender.error(); //'mb.core.sketch.circle.radius.error');
-                                } else {
+                                }else{
                                     var bounds = e.feature.geometry.bounds,
-                                        center = new OpenLayers.Geometry.Point((bounds.left + bounds.right)/2.0, (bounds.bottom + bounds.top)/2.0),
-                                        geom = OpenLayers.Geometry.Polygon.createRegularPolygon(center,radius,32,0);
+                                        center = new OpenLayers.Geometry.Point((bounds.left + bounds.right) / 2.0, (bounds.bottom + bounds.top) / 2.0),
+                                        geom = OpenLayers.Geometry.Polygon.createRegularPolygon(center, radius, 32, 0);
                                     e.feature.geometry = geom;
                                     e.object.layer.drawFeature(e.feature);
                                     self._close();

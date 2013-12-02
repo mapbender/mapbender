@@ -20,6 +20,7 @@ class Signer extends BaseSigner
     {
         $signature = sprintf('%d%s%s', strlen($url), $this->sep, $this->signature($url));
         $sep = (false === strstr($url, '?') ? '?' : '&');
+        $sep = ($sep === substr($url, -1) ? '' : $sep);
         return $url . $sep . '_signature=' . $signature;
     }
 
