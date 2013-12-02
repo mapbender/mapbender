@@ -5,11 +5,9 @@ namespace Mapbender\CoreBundle\Template;
 use Mapbender\CoreBundle\Component\Template;
 
 /**
- * Template FullscreenAlternative
- * 
- * @author Christian Wygoda
+ * Template Classic
  */
-class FullscreenAlternative extends Template
+class Classic extends Template
 {
 
     /**
@@ -17,7 +15,7 @@ class FullscreenAlternative extends Template
      */
     public static function getTitle()
     {
-        return 'Fullscreen alternative';
+        return 'Classic template';
     }
 
     /**
@@ -27,7 +25,7 @@ class FullscreenAlternative extends Template
     {
         parent::getAssets($type);
         $assets = array(
-            'css' => array('@FOMCoreBundle/Resources/public/css/frontend/fullscreen_alternative.css'),
+            'css' => array('@FOMCoreBundle/Resources/public/css/frontend/classic.css'),
             'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                           '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js'),
         );
@@ -51,7 +49,7 @@ class FullscreenAlternative extends Template
     {
         $templating = $this->container->get('templating');
         return $templating
-                        ->render('MapbenderCoreBundle:Template:fullscreen_alternative.html.twig',
+                        ->render('MapbenderCoreBundle:Template:classic.html.twig',
                                  array(
                             'html' => $html,
                             'css' => $css,

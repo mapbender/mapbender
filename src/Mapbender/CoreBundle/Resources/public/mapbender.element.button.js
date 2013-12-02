@@ -145,4 +145,3 @@ $.widget("mapbender.mbButton", {
 });
 
 })(jQuery);
-

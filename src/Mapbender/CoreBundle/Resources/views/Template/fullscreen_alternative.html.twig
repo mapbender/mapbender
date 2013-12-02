@@ -14,68 +14,50 @@
 {% endblock %}
 {% block frontend_content %}
 
-  <div id="content" class="contentPane">
-    <div class="logoContainer">
-      <img class="logo" height="80" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
-    </div>
-    <ul id="toolbar" class="toolBar itemsLeft top">
-      {% if application.elements.toolbar is defined %}
-        {% for element in application.elements.toolbar %}
-          <li class="toolBarItem">{{ element.render() | raw }}</li>
-        {% endfor %}
-      {% endif %}
-    </ul>
-
-    {% if application.elements.content is defined %}
-      {% for element in application.elements.content %}
-        {{ element.render() | raw }}
-      {% endfor %}
-    {% endif %}
-
-    <div id="sidepane" class="clear sidePane right">
-      <ul class="sidePaneTabs">
-        <li class="sidePaneTabItem toggleSideBar"></li>
-      </ul>
-      <div class="sideContent">
-        {% if application.elements.sidepane is defined %}
-          {% for element in application.elements.sidepane %}
-            {{ element.render() | raw }}
+  <div id="templateWrapper" class="templateWrapper sidePaneOpened">
+    <div id="content" class="contentPane">
+      <div class="logoContainer">
+        <img class="logo" height="80" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
+      </div>
+      <ul id="toolbar" class="toolBar itemsLeft top">
+        {% if application.elements.toolbar is defined %}
+          {% for element in application.elements.toolbar %}
+            <li class="toolBarItem">{{ element.render() | raw }}</li>
           {% endfor %}
         {% endif %}
-      </div>
-    </div>
+      </ul>
 
-    <ul id="footer" class="toolBar itemsLeft bottom">
-      {% if application.elements.footer is defined %}
-        {% for element in application.elements.footer %}
-          <li class="toolBarItem">{{ element.render() | raw }}</li>
+      {% if application.elements.content is defined %}
+        {% for element in application.elements.content %}
+          {{ element.render() | raw }}
         {% endfor %}
       {% endif %}
-    </ul>
-  </div>
 
+      <div id="sidepane" class="clear sidePane right">
+        <ul class="sidePaneTabs">
+          <li class="sidePaneTabItem toggleSideBar"></li>
+        </ul>
+        <div class="sideContent">
+          {% if application.elements.sidepane is defined %}
+            {% for element in application.elements.sidepane %}
+              {{ element.render() | raw }}
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      <ul id="footer" class="toolBar itemsLeft bottom">
+        {% if application.elements.footer is defined %}
+          {% for element in application.elements.footer %}
+            <li class="toolBarItem">{{ element.render() | raw }}</li>
+          {% endfor %}
+        {% endif %}
+      </ul>
+    </div>
+  </div>
 
   <script type="text/javascript">
     var Mapbender = Mapbender || {};
     Mapbender.configuration = {{ application.configuration | raw }};
   </script>
-  <!-- Dev Tools START -->
-    {% javascripts '@FOMCoreBundle/*.js' %}
-      <script type="text/javascript" src="{{ asset_url }}"></script>
-    {% endjavascripts %}
-    <script>
-      f5less.connect({
-        triggersCSSReload: function(filename) {
-          return f5less.strEndsWith(filename,
-            ".css", ".png", ".jpg"
-          );
-        },
-        triggersPageReload: function(filename) {
-          return f5less.strEndsWith(filename, 
-            ".js", ".html", ".htm", ".twig"
-          );
-        }
-      });
-    </script>
-    <!-- Dev Tools END -->
 {% endblock %}

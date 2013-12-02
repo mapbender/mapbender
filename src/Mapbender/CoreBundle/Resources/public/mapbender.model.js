@@ -11,6 +11,7 @@ Mapbender.Model = {
     layersMaxExtent: {},
     highlightLayer: null,
     baseId: 0,
+
     init: function(mbMap){
         this.mbMap = mbMap;
         var self = this;
@@ -459,6 +460,7 @@ Mapbender.Model = {
         if(addOptions.add){
             var sourceDef = addOptions.add.sourceDef, before = addOptions.add.before, after = addOptions.add.after;
             sourceDef.id = this.generateSourceId();
+
             if(typeof sourceDef.origId === 'undefined')
                 sourceDef.origId = sourceDef.id;
             this.mbMap.fireModelEvent({
