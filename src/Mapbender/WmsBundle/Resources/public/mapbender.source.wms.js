@@ -49,6 +49,21 @@ $.extend(true, Mapbender, {
                 }
                 return url;
             },
+            removeSignature: function(url){
+                var pos = -1;
+                pos = url.indexOf("_signature");
+                if(pos !== -1){
+                    var url_new = url.substring(0, pos);
+                    if(url_new.lastIndexOf('&') === url_new.length - 1){
+                        url_new = url_new.substring(0, url_new.lastIndexOf('&'));
+                    }
+                    if(url_new.lastIndexOf('?') === url_new.length - 1){
+                        url_new = url_new.substring(0, url_new.lastIndexOf('?'));
+                    }
+                    return url_new;
+                }
+                return url;
+            },
             featureInfo: function(layer, x, y, callback){
                 if(layer.olLayer.queryLayers.length === 0){
                     return;
@@ -565,7 +580,7 @@ $.extend(true, Mapbender, {
                 _changeOptions(rootLayer, scale, {state: {visibility: true}}, toChangeOpts, result);
                 return result;
                 function _changeOptions(layer, scale, parentState, toChangeOpts, result){
-                    var layerChanged, 
+                    var layerChanged,
                         elchanged = false;
                     if(toChangeOpts.options.children[layer.options.id]){
                         layerChanged = toChangeOpts.options.children[layer.options.id];
@@ -725,14 +740,14 @@ $.extend(true, Mapbender, {
                             if(sel !== layer.options.treeOptions.selected){
                                 toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
                             }
-                        } else{
+                        }else{
                             var help = optionsToChange.layers[layer.options.name] ? optionsToChange.layers[layer.options.name].options.treeOptions.selected : selectedOther;
                             var sel = help || layer.options.treeOptions.selected;
                             if(sel !== layer.options.treeOptions.selected){
                                 toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
                             }
                         }
-                        
+
                         if(sel && layer.options.treeOptions.allow.info){
                             if(toChange[layer.options.id]){
                                 toChange[layer.options.id].options.treeOptions['info'] = true;
