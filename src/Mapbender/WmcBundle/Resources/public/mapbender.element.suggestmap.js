@@ -165,7 +165,7 @@
                     if(response.id){
                         var help = document.location.href.split("?");
                         var url = help[0];
-                        url = url.replace(/#/gi, '') + "?state=" + response.id;
+                        url = url.replace(/#/gi, '') + "?stateid=" + response.id;
                         callback(url);
                     }else if(response.error){
                         Mapbender.error(response.error);

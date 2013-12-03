@@ -16,7 +16,7 @@
         _setup: function(){
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             if(typeof this.options.load !== 'undefined'
-                    && typeof this.options.load.wmcid !== 'undefined'){
+                && typeof this.options.load.wmcid !== 'undefined'){
                 var wmc_id = this.options.load.wmcid;
                 var map = $('#' + this.options.target).data('mapbenderMbMap');
                 var wmcHandlier = new Mapbender.WmcHandler(map);
@@ -127,7 +127,7 @@
                         url: url,
                         type: "GET",
                         complete: function(data){
-                            if(data != undefined){
+                            if(typeof data !== 'undefined'){
                                 var pop = $(".popup", self.popup.$element);
                                 var popupContent = $(".popupContent", self.popup.$element);
                                 var contentWrapper = pop.find(".contentWrapper");
@@ -168,7 +168,7 @@
                     beforeSerialize: function(e){
                         var map = $('#' + self.options.target).data('mapbenderMbMap')
                         var state = map.getMapState();
-                        $('input#wmc_state_json',self.popup.$element).val(JSON.stringify(state));
+                        $('input#wmc_state_json', self.popup.$element).val(JSON.stringify(state));
                     },
                     contentType: 'json',
                     context: self,
@@ -231,7 +231,7 @@
             var self = this;
             var map = $('#' + this.options.target).data('mapbenderMbMap');
             var st = JSON.stringify(map.getMapState());
-            var form = $('<form method="POST" action="'+(self.elementUrl+'wmcasxml')+'" target="_BLANK" />');
+            var form = $('<form method="POST" action="' + (self.elementUrl + 'wmcasxml') + '" target="_BLANK" />');
             $('<input></input>').attr('type', 'hidden').attr('name', 'state').val(st).appendTo(form);
             form.appendTo($('body'));
             form.submit();

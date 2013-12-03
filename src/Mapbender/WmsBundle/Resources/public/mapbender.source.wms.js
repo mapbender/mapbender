@@ -41,7 +41,7 @@ $.extend(true, Mapbender, {
                 return mqLayerDef;
             },
             _addProxy: function(url){
-                return OpenLayers.ProxyHost + url;
+                return OpenLayers.ProxyHost + encodeURIComponent(url);
             },
             _removeProxy: function(url){
                 if(url.indexOf(OpenLayers.ProxyHost) === 0){
@@ -283,11 +283,12 @@ $.extend(true, Mapbender, {
                 };
             },
             onLoadError: function(imgEl, sourceId, projection){
+                var self = this;
                 var loadError = {sourceid: sourceId, details: ''};
                 $.ajax({
                     type: "GET",
                     async: false,
-                    url: Mapbender.configuration.application.urls.proxy + "?url=" + encodeURIComponent(imgEl.attr('src')),
+                    url: Mapbender.configuration.application.urls.proxy + "?url=" + encodeURIComponent(self._removeProxy(imgEl.attr('src'))),
                     success: function(message, text, response){
                         if(typeof(response.responseText) === "string"){
                             var details = "The map cannot be displayed.";

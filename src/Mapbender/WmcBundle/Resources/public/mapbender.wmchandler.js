@@ -87,6 +87,10 @@ Mapbender.WmcHandler = function(mapWidget, options){
         }
         this.mapWidget.removeSources(toKeepSources);
     };
+    
+    this._addWmcToMap = function(sources){
+        
+    };
 
     this._addWmcToMap = function(sources){
         for(var i = 0; i < sources.length; i++){
