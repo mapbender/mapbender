@@ -1,4 +1,4 @@
-<span class="description right">{{ 'Template' | trans }}: {{template_name}}</span>
+<span class="description right">{{ 'Template' | trans }}: {{template_name|default('Unknown')}}</span> 
 
 {# XXXVH Awesome templating engine plzzz! #}
 {% for region in regions %}
