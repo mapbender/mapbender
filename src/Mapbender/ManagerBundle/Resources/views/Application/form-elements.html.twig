@@ -12,6 +12,11 @@
             <th>{{ 'Title' | trans }}</th>
             <th class="type">{{ 'Type' | trans }}</th>
             <th class="iconColumn">
+            {% for form_regionProperties in form.regionProperties %}
+              {% if form_regionProperties.vars.value.name == region %}
+                {{ form_widget(form_regionProperties) }}
+              {% endif %}
+            {% endfor %}
               <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'Add new element to'|trans}} {{region}}"></a>
             </th>
           </tr>
