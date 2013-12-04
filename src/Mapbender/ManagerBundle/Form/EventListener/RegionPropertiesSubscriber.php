@@ -5,10 +5,7 @@ use Symfony\Component\Form\Event\DataEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
-use Mapbender\ManagerBundle\Form\Type\RegionType;
-use Mapbender\ManagerBundle\Form\Type\PropertiesType;
 
-//use Mapbender\CoreBundle\Element\Type\PrintClientQualityAdminType;
 
 /**
  * 
@@ -25,7 +22,7 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
     /**
      * The application
      * 
-     * @var application
+     * @var options
      */
     private $options;
 
@@ -51,7 +48,7 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Checkt form fields by PRE_BIND DataEvent
+     * Checks the form fields by PRE_BIND DataEvent
      * 
      * @param DataEvent $event
      */
@@ -76,51 +73,10 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
                     'choices' => $choices
             )));
         }
-//        $appl = $this->options['data'];
-//        $templateDefaultProperties = array();
-//        if(key_exists("name", $data))
-//        {
-//            $templateClass = $data['template'];//();
-//            $templateDefaultProperties = $templateClass::getDefaultProperties();
-////        $template = new $templateClass($this->container,
-////            $this->get('mapbender')->getApplication($slug, array()));
-////            $a = 0;
-////            $data["scales"] = preg_split("/\s?,\s?/", $data["scales"]);
-////            $event->setData($data);
-//        }
-//        if(!key_exists("templateProperties", $data))
-//        {
-//        }
-//            $form->add($this->factory->createNamed(
-//                                'templateProperties', "collection", null,
-//                                array(
-//                            'property_path' => 'templateProperties',
-//                            'type' => new RegionType(),
-//                            'options' => $templateDefaultProperties)));
-//        if(key_exists("templates", $data) )
-//        {
-//            $form->add($this->factory->createNamed(
-//                                'templates', "collection", null,
-//                                array(
-//                            'property_path' => '[templates]',
-//                            'type' => new PrintClientTemplateAdminType(),
-//                            'options' => array(
-//                                ))));
-//        }
-//        if(key_exists("quality_levels", $data) )
-//        {
-//            $form->add($this->factory->createNamed(
-//                                'quality_levels', "collection", null,
-//                                array(
-//                            'property_path' => '[quality_levels]',
-//                            'type' => new PrintClientQualityAdminType(),
-//                            'options' => array(
-//                                ))));
-//        }
     }
 
     /**
-     * Checkt form fields by PRE_SET_DATA DataEvent
+     * Checks the form fields by PRE_SET_DATA DataEvent
      * 
      * @param DataEvent $event
      */
@@ -145,49 +101,6 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
                     'choices' => $choices
             )));
         }
-//        $appl = $this->options['data'];
-//        if($appl->getTemplate() !== null)// && is_array($data["templateProperties"]))
-//        {
-//            $templClass = $appl->getTemplate();
-//            $templateDefaultProperties = $templClass::getRegionsProperties();
-////            $a = 0;
-////            ->add('templateProperties', 'collection',
-////                array(
-////                'type' => new RegionType(),
-//////                'property_path' => '[templateProperties]',
-////                'options' => $options['available_region_properties']))
-////            $form->add($this->factory->createNamed(
-////                                'templateProperties', "collection", null,
-////                                array(
-////                            'property_path' => '[templateProperties]',
-////                            'type' => new PropertiesType(),
-////                            'options' => $templateDefaultProperties['sidepane']//$this->application['available_region_properties']
-////                )));
-////            $a = 0;
-////            $data["scales"] = implode(",", $data["scales"]);
-////            $event->setData($data);
-//        }
-//        if(key_exists("templates", $data) )
-//        {
-//            $form->add($this->factory->createNamed(
-//                                'templates', "collection", null,
-//                                array(
-//                            'property_path' => '[templates]',
-//                            'type' => new PrintClientTemplateAdminType(),
-//                            'options' => array(
-//                                ))));
-//        }
-//        
-//        if(key_exists("quality_levels", $data) )
-//        {
-//            $form->add($this->factory->createNamed(
-//                                'quality_levels', "collection", null,
-//                                array(
-//                            'property_path' => '[quality_levels]',
-//                            'type' => new PrintClientQualityAdminType(),
-//                            'options' => array(
-//                                ))));
-//        }
     }
 
 }
