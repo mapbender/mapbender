@@ -117,7 +117,8 @@
                 var sources = mbMap.model.getSources();
                 for(var i = 0; i < sources.length; i++){
                     var source = sources[i];
-                    if(decodeURIComponent(options.gcurl.toLowerCase()).indexOf(decodeURIComponent(source.configuration.options.url.toLowerCase())) === 0){
+                    var url_source = Mapbender.source.wms.removeSignature(source.configuration.options.url.toLowerCase());
+                    if(decodeURIComponent(options.gcurl.toLowerCase()).indexOf(decodeURIComponent(url_source)) === 0){
                         // source exists
                         mbMap.model.changeLayerState({id: source.id}, options, options.global.options.treeOptions.selected, options.global.mergeLayers);
                         return false;
