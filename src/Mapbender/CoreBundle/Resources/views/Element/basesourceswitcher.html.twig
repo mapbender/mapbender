@@ -1,9 +1,7 @@
 <ul id="{{ id }}" class="mb-element mb-element-basesourceswitcher"  title="{{ configuration.tooltip|default(title)|trans }}">
 {% if configuration.sourcesets is defined %}
   {% for sourceset in configuration.sourcesets %}
-    {% if sourceset.show %}
     <li class="basesourcesetswitch" data-state="{% if loop.first %}active{% endif %}" data-sourceset="{% for source in sourceset.sources %}{% if not loop.first %},{% endif %}{% spaceless %}{{- source -}}{% endspaceless %}{% endfor %}" >{{ sourceset.title | trans }}</li>
-    {% endif %}
   {% endfor %}
 {% endif %}
 </ul>

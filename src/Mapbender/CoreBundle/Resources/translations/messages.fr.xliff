@@ -134,6 +134,22 @@
         <source>No Users</source>
         <target>Aucun utilisateur</target>
       </trans-unit>
+      <trans-unit id="34">
+        <source>Share POI</source>
+        <target>Share POI</target>
+      </trans-unit>
+      <trans-unit id="35">
+        <source>Text</source>
+        <target>Text</target>
+      </trans-unit>
+      <trans-unit id="36">
+        <source>You can use the following snippet in an email to send the POI.</source>
+        <target>You can use the following snippet in an email to send the POI.</target>
+      </trans-unit>
+      <trans-unit id="37">
+        <source>mb.core.basesourceswitcher.form.mesage</source>
+        <target>Save first the element, then edit it</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

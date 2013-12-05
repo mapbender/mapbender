@@ -43,15 +43,7 @@ class BaseSourceSwitcher extends Element
         return array(
             'tooltip' => "BaseSourceSwitcher",
             'target' => null,
-//            'anchor' => 'right-top',
-//            'position' => array('0px', '0px'),
-            'sourcesets' => array(
-                array("title" => 'Hintergrund', "sources" => array(), "show" => true),
-                array("title" => 'Hintergrund S/W', "sources" => array(), "show" => true),
-                array("title" => 'Luftbilder', "sources" => array(), "show" => true),
-                array("title" => 'Kein Hintergrund', "sources" => array(), "show" => true)
-            ),
-//            'fullscreen' => false
+            'sourcesets' => array()
         );
     }
 
@@ -86,7 +78,6 @@ class BaseSourceSwitcher extends Element
     {
         return array(
             'js' => array('mapbender.element.basesourceswitcher.js')
-//            'css' => array('mapbender.element.basesourceswitcher.css')
         );
     }
 
