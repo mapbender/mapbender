@@ -5,6 +5,13 @@
   <div class="clearContainer"></div>
   <div class="{{region}} region">
     <h3 class="left subTitle">{{ region | capitalize }}</h3>
+    <div class="right regionProperties">
+      {% for form_regionProperties in form.regionProperties %}
+        {% if form_regionProperties.vars.value.name == region %}
+          {{ form_widget(form_regionProperties) }}
+        {% endif %}
+      {% endfor %}
+    </div>
     <div class="clearContainer"></div>
       <table class="elementsTable tableCore" data-region="{{ region }}">
         <thead>
@@ -12,11 +19,6 @@
             <th>{{ 'Title' | trans }}</th>
             <th class="type">{{ 'Type' | trans }}</th>
             <th class="iconColumn">
-            {% for form_regionProperties in form.regionProperties %}
-              {% if form_regionProperties.vars.value.name == region %}
-                {{ form_widget(form_regionProperties) }}
-              {% endif %}
-            {% endfor %}
               <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'Add new element to'|trans}} {{region}}"></a>
             </th>
           </tr>
