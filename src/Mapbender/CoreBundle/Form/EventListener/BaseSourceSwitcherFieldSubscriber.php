@@ -1,8 +1,7 @@
 <?php
+namespace Mapbender\CoreBundle\Form\EventListener;
 
-namespace Mappbender\CoreBundle\Form\EventListener;
-
-use Mappbender\CoreBundle\Element\Type\SourceSetAdminType;
+use Mapbender\CoreBundle\Element\Type\SourceSetAdminType;
 use Symfony\Component\Form\Event\DataEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -63,16 +62,16 @@ class BaseSourceSwitcherFieldSubscriber implements EventSubscriberInterface
     {
         $data = $event->getData();
         $form = $event->getForm();
-//
-//        if(null === $data)
-//        {
-            return;
-//        }
-        if(isset($data["fullscreen"]) && $data["fullscreen"])
+
+        if(null === $data)
         {
-            $form->add($this->factory->createNamed('fullscreenclass', 'text', null,
-                                                   array('data' => 'fullscreen')));
+            return;
         }
+//        if(isset($data["fullscreen"]) && $data["fullscreen"])
+//        {
+//            $form->add($this->factory->createNamed('fullscreenclass', 'text', null,
+//                                                   array('data' => 'fullscreen')));
+//        }
 
         if($data["target"] && $this->application)
         {
@@ -98,21 +97,21 @@ class BaseSourceSwitcherFieldSubscriber implements EventSubscriberInterface
                     break;
                 }
             }
-            if(count($instList) > 0 && isset($data['mapsets']))
+            if(count($instList) > 0 && isset($data['sourcesets']))
             {
-                $form->remove('mapsets');
+                $form->remove('sourceset');
                 $form->add($this->factory->createNamed(
-                                'mapsets', "collection", null,
+                                'sourcesets', "collection", null,
                                 array(
-                            'property_path' => '[mapsets]',    
-                            'type' => new MapsetAdminType(),
+                            'property_path' => '[sourcesets]',    
+                            'type' => new SourceSetAdminType(),
                             'options' => array(
                                 'sources' => $instList
                                 ))));
             }
         } else
         {
-            $form->remove('mapsets');
+            $form->remove('sourceset');
         }
     }
 
@@ -127,15 +126,15 @@ class BaseSourceSwitcherFieldSubscriber implements EventSubscriberInterface
         $data = $event->getData();
         $form = $event->getForm();
 
-//        if(null === $data)
-//        {
-            return;
-//        }
-        if(isset($data["fullscreen"]) && $data["fullscreen"])
+        if(null === $data)
         {
-            $form->add($this->factory->createNamed('fullscreenclass', 'text', null,
-                                                   array('data' => 'fullscreen')));
+            return;
         }
+//        if(isset($data["fullscreen"]) && $data["fullscreen"])
+//        {
+//            $form->add($this->factory->createNamed('fullscreenclass', 'text', null,
+//                                                   array('data' => 'fullscreen')));
+//        }
 
         if($data["target"] && $this->application)
         {
@@ -165,17 +164,17 @@ class BaseSourceSwitcherFieldSubscriber implements EventSubscriberInterface
             if(count($instList) > 0)
             {
                 $form->add($this->factory->createNamed(
-                                'mapsets', "collection", null,
+                                'sourcesets', "collection", null,
                                 array(
-                            'property_path' => '[mapsets]',
-                            'type' => new MapsetAdminType(),
+                            'property_path' => '[sourcesets]',
+                            'type' => new SourceSetAdminType(),
                             'options' => array(
                                 'sources' => $instList
                                 ))));
             }
         } else
         {
-            $form->remove('mapsets');
+            $form->remove('sourceset');
         }
     }
 

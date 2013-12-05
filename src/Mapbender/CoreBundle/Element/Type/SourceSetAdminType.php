@@ -1,6 +1,6 @@
 <?php
 
-namespace Ostprignitz\GeoportalBundle\Element\Type;
+namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,7 +17,7 @@ class SourceSetAdminType extends AbstractType
      */
     public function getName()
     {
-        return 'sourceset';
+        return 'sourcesset';
     }
 
     /**

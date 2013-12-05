@@ -76,7 +76,7 @@ class BaseSourceSwitcher extends Element
      */
     public static function getFormTemplate()
     {
-        return 'MapbenderCorBundle:ElementAdmin:basesourceswitcher.html.twig';
+        return 'MapbenderCoreBundle:ElementAdmin:basesourceswitcher.html.twig';
     }
 
     /**
@@ -96,7 +96,7 @@ class BaseSourceSwitcher extends Element
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCorBundle:Element:basesourceswitcher.html.twig',
+                ->render('MapbenderCoreBundle:Element:basesourceswitcher.html.twig',
                     array(
                     'id' => $this->getId(),
                     "title" => $this->getTitle(),

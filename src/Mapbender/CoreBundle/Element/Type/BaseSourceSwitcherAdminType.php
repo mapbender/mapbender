@@ -2,7 +2,6 @@
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Mapbender\CoreBundle\Form\EventListener\BaseSourceSwitcherFieldSubscriber;
-use Mapbender\CoreBundle\Form\Type\PositionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
