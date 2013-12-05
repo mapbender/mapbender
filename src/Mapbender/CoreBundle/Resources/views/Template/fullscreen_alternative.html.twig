@@ -27,32 +27,20 @@
         {% endif %}
       </ul>
 
-      {% if application.elements.content is defined %}
-        {% for element in application.elements.content %}
-          {{ element.render() | raw }}
-        {% endfor %}
-      {% endif %}
+      {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'content' }%}
 
       <div id="sidepane" class="clear sidePane right">
         <ul class="sidePaneTabs">
           <li class="sidePaneTabItem toggleSideBar"></li>
         </ul>
         <div class="sideContent">
-          {% if application.elements.sidepane is defined %}
-            {% for element in application.elements.sidepane %}
-              {{ element.render() | raw }}
-            {% endfor %}
-          {% endif %}
+          {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'sidepane' }%}
         </div>
       </div>
 
       <ul id="footer" class="toolBar itemsLeft bottom">
-        {% if application.elements.footer is defined %}
-          {% for element in application.elements.footer %}
-            <li class="toolBarItem">{{ element.render() | raw }}</li>
-          {% endfor %}
-        {% endif %}
-      </ul>
+          {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'footer' }%}
+        </ul>
     </div>
   </div>
 
