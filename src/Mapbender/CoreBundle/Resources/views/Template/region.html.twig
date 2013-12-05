@@ -1,25 +1,25 @@
 {% if application.elements[region] is defined %}
-{% if region_props[region] is defined and region_props[region].name == region %}
-  {% for property in region_props[region].properties %}
-    {% if property == 'tabs' %}
-      <div class="tabContainerAlt">
-        <ul class="tabs">
-          {%  for element in application.elements[region] %}
-            <li id="tab{{loop.index}}" class="tab{% if loop.first %} active{% endif %}">{{ element.title | trans }}</li>
-          {% endfor %}
-        </ul>
-          {%  for element in application.elements[region] %}
-            <div id="container{{loop.index}}" class="container{% if loop.first %} active{% endif %}">
-              {{ element.render() | raw }}
-            </div>
-          {% endfor %}
-      </div>
-    {% endif %}
-  {% endfor %}
-{% else %}
-  {% for element in application.elements[region] %}
-    {{ element.render() | raw }}
-  {% endfor %}
-{% endif %}
+  {% if region_props[region] is defined and region_props[region].name == region and region_props[region].properties | length > 0 %}
+    {% for property in region_props[region].properties %}
+      {% if property == 'tabs' %}
+        <div class="tabContainerAlt">
+          <ul class="tabs">
+            {%  for element in application.elements[region] %}
+              <li id="tab{{loop.index}}" class="tab{% if loop.first %} active{% endif %}">{{ element.title | trans }}</li>
+            {% endfor %}
+          </ul>
+            {%  for element in application.elements[region] %}
+              <div id="container{{loop.index}}" class="container{% if loop.first %} active{% endif %}">
+                {{ element.render() | raw }}
+              </div>
+            {% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    {% for element in application.elements[region] %}
+      {{ element.render() | raw }}
+    {% endfor %}
+  {% endif %}
 {% endif %}
   

@@ -1,0 +1,27 @@
+<div class="elementFormWmsLoader elementForm">
+    <div class="left">
+        {{ form_widget(form.configuration.fullscreen) }}<label for="{{form.configuration.fullscreen.vars.id}}" class="labelCheck">{{"Fullscreen Button"|trans}}</label>
+    </div>
+    <div class="clearContainer"></div>
+    {{ form_label(form.title) }}{{ form_widget(form.title) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
+    <div class="clearContainer"></div>
+    {% if form.configuration.sourcesets is defined %}
+    {{ form_label(form.configuration.sourcesets) }}
+    <div class="clearContainer"></div>
+    {% for sourceset in form.configuration.sourcesets %}
+        <div class="left">
+            {{ form_widget(sourceset.show) }}<label for="{{ sourceset.show.vars.id}}" class="labelCheck">{{"Show sourceset"|trans}}</label>
+        </div>
+        <div class="clearContainer"></div>
+        {{ form_label(sourceset.title) }}{{ form_widget(sourceset.title) }}
+        <div class="clearContainer"></div>
+        {{ form_label(sourceset.sources) }}{{ form_widget(sourceset.sources) }}
+        <div class="clearContainer"></div>
+    {% endfor %}
+    {#{ form_widget(form.configuration.mapsets[0]) }#}
+    {% endif %}
+</div>

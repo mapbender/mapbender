@@ -1,0 +1,12 @@
+<div id="{{ id }}" class="mb-element mb-element-basesourceswitcher"  title="{{ configuration.tooltip|default(title)|trans }}">
+{#% if configuration.mapsets is defined %}
+    {% for mapset in configuration.mapsets %}
+    {% if mapset.show %}
+    <a class="mapsetswitch{% if loop.first %} active{% endif %}" data-mapset="{% for source in mapset.sources %}{% if not loop.first %},{% endif %}{% spaceless %}{{- source -}}{% endspaceless %}{% endfor %}" href="#">{{ mapset.title | trans }}</a>
+    {% endif %}
+    {% endfor %}
+{% endif %}
+{% if configuration.fullscreen %}
+    <a id="fullscreenswitch" href="#"><span>{{ 'Vollbild'|trans }}</span></a>
+{% endif %#}
+</div>
