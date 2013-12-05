@@ -106,7 +106,6 @@ class ApplicationController extends Controller
         if($form->isValid())
         {
             $application->setUpdated(new \DateTime('now'));
-            $application->setTemplate("Mapbender\CoreBundle\Template\Fullscreen");
             $em = $this->getDoctrine()->getEntityManager();
 
             $em->getConnection()->beginTransaction();
@@ -168,7 +167,8 @@ class ApplicationController extends Controller
             'available_elements' => $this->getElementList(),
             'sources' => $sources,
             'form' => $form->createView(),
-            'form_name' => $form->getName());
+            'form_name' => $form->getName(),
+            'template_name' => $templateClass::getTitle());
     }
 
     /**
@@ -194,6 +194,13 @@ class ApplicationController extends Controller
 
             $em->getConnection()->beginTransaction();
             $application->setUpdated(new \DateTime('now'));
+
+            //
+            // Avoid a null template.
+            // It's a bad solution. The best way to handle it, is
+            // to put the application forms and formtypes into seperate files.
+            //
+            $application->setTemplate($templateClassOld);
 
             try
             {
@@ -274,7 +281,8 @@ class ApplicationController extends Controller
                     'available_elements' => $this->getElementList(),
                     'sources' => $sources,
                     'form' => $form->createView(),
-                    'form_name' => $form->getName())));
+                    'form_name' => $form->getName(),
+                    'template_name' => $templateClass::getTitle())));
     }
 
     /**
