@@ -5,6 +5,13 @@
   <div class="clearContainer"></div>
   <div class="{{region}} region">
     <h3 class="left subTitle">{{ region | capitalize }}</h3>
+    <div class="right regionProperties">
+      {% for form_regionProperties in form.regionProperties %}
+        {% if form_regionProperties.vars.value.name == region %}
+          {{ form_widget(form_regionProperties) }}
+        {% endif %}
+      {% endfor %}
+    </div>
     <div class="clearContainer"></div>
       <table class="elementsTable tableCore" data-region="{{ region }}">
         <thead>

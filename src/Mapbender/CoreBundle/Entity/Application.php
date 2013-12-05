@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -23,9 +22,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Application
 {
-
     const SOURCE_YAML = 1;
-    const SOURCE_DB   = 2;
+    const SOURCE_DB = 2;
 
     private $preparedElements;
     private $screenshotPath;
@@ -67,6 +65,12 @@ class Application
      * @ORM\Column(length=1024)
      */
     protected $template;
+
+    /**
+     * @ORM\OneToMany(targetEntity="RegionProperties", mappedBy="application", cascade={"persist", "remove"})
+     * @ORM\OrderBy({"id" = "asc"})
+     */
+    public $regionProperties;
 
     /**
      * @ORM\OneToMany(targetEntity="Element", mappedBy="application", cascade={"persist", "remove"})
@@ -111,8 +115,9 @@ class Application
 
     public function __construct()
     {
-        $this->elements  = new ArrayCollection();
+        $this->elements = new ArrayCollection();
         $this->layersets = new ArrayCollection();
+        $this->regionProperties = new ArrayCollection();
     }
 
     /**
@@ -228,6 +233,37 @@ class Application
     public function getTemplate()
     {
         return $this->template;
+    }
+
+    /**
+     * Set region properties
+     *
+     * @param array $template
+     */
+    public function setRegionProperties($regionProperties)
+    {
+        $this->regionProperties = $regionProperties;
+        return $this;
+    }
+
+    /**
+     * Get region properties
+     *
+     * @return array
+     */
+    public function getRegionProperties()
+    {
+        return $this->regionProperties;
+    }
+
+    /**
+     * Get region properties
+     *
+     * @return array
+     */
+    public function addRegionProperties(RegionProperties $regionProperties)
+    {
+        $this->regionProperties[] = $regionProperties;
     }
 
     /**
@@ -376,43 +412,32 @@ class Application
 
     public function getElementsByRegion($region = null)
     {
-        if($this->preparedElements === null)
-        {
+        if ($this->preparedElements === null) {
             $this->preparedElements = array();
 
-            foreach($this->getElements() as $element)
-            {
+            foreach ($this->getElements() as $element) {
                 $elementRegion = $element->getRegion();
-                if(!array_key_exists($elementRegion, $this->preparedElements))
-                {
+                if (!array_key_exists($elementRegion, $this->preparedElements)) {
                     $this->preparedElements[$elementRegion] = array();
                 }
                 $this->preparedElements[$elementRegion][] = $element;
             }
 
-            foreach($this->preparedElements as $elementRegion => $elements)
-            {
+            foreach ($this->preparedElements as $elementRegion => $elements) {
                 usort($elements,
-                      function($a, $b)
-                    {
+                    function($a, $b) {
                         return $a->getWeight() - $b->getWeight();
                     });
             }
         }
 
-        if($this->preparedElements !== null)
-        {
-            if(array_key_exists($region, $this->preparedElements))
-            {
+        if ($this->preparedElements !== null) {
+            if (array_key_exists($region, $this->preparedElements)) {
                 return $this->preparedElements[$region];
-            }
-            else
-            {
+            } else {
                 return null;
             }
-        }
-        else
-        {
+        } else {
             return $this->preparedElements;
         }
     }
@@ -421,36 +446,53 @@ class Application
     {
         return (string) $this->getId();
     }
+    
+    public function getNamedRegionProperties()
+    {
+        $result = array();
+        foreach ($this->getRegionProperties() as $regionProperties) {
+            $result[$regionProperties->getName()] = $regionProperties;
+        }
+        return $result;
+    }
+    
+    public function getPropertiesFromRegion($regionName)
+    {
+        foreach ($this->getRegionProperties() as $regionProperties) {
+            if($regionProperties->getName() === $regionName)
+                return $regionProperties;
+        }
+        return null;
+    }
 
     public function copy($container, EntityManager $em)
     {
 //        $em->detach($this);
-        $app                   = new Application();
-        $app->slug             = $this->slug;
-        $app->title            = $this->title;
-        $app->description      = $this->description;
+        $app = new Application();
+        $app->slug = $this->slug;
+        $app->title = $this->title;
+        $app->description = $this->description;
         $app->setUpdated(new \DateTime('now'));
         $app->setPublished(false);
         $app->preparedElements = $this->preparedElements;
-        $app->screenshotPath   = $this->screenshotPath;
-        $app->source           = $this->source;
-        $app->template         = $this->template;
-        $app->owner            = $this->owner;
-        $app->screenshot       = $this->screenshot;
-        $app->extra_assets     = $this->extra_assets;
-        $app->screenshotFile   = $this->screenshotFile;
+        $app->screenshotPath = $this->screenshotPath;
+        $app->source = $this->source;
+        $app->template = $this->template;
+        $app->owner = $this->owner;
+        $app->screenshot = $this->screenshot;
+        $app->extra_assets = $this->extra_assets;
+        $app->screenshotFile = $this->screenshotFile;
 
         $layersetMap = array();
-        foreach($this->layersets as $layerset)
-        {
-            $layerset_cloned                         = $layerset->copy($em);
+        foreach ($this->layersets as $layerset) {
+            $layerset_cloned = $layerset->copy($em);
             $em->persist($layerset_cloned);
             $layersetMap[strval($layerset->getId())] = $layerset_cloned;
             $app->addLayerset($layerset_cloned->setApplication($app));
         }
-        if(isset($layerset)) unset($layerset);
+        if (isset($layerset)) unset($layerset);
         $clonedElmts = array();
-        
+
         $this->copyElements($container, $em, $app, $clonedElmts, $layersetMap);
         return $app;
     }
@@ -458,87 +500,68 @@ class Application
     private function copyElements($container, EntityManager $em,
         Application $clonedApp, $clonedElmts, $layersetMap)
     {
-        foreach($this->elements as $element)
-        {
-            $options   = array();
+        foreach ($this->elements as $element) {
+            $options = array();
             $origElmId = strval($element->getId());
-            if(key_exists($origElmId, $clonedElmts))
-            {
+            if (key_exists($origElmId, $clonedElmts)) {
                 continue;
             }
             $targets = array();
-            $form    = ComponentElement::getElementForm($container, $this,
-                                                        $element);
-            foreach($form['form']['configuration']->getChildren() as $fieldName =>
-                    $fieldValue)
-            {
+            $form = ComponentElement::getElementForm($container, $this, $element);
+            foreach ($form['form']['configuration']->getChildren() as $fieldName =>
+                    $fieldValue) {
                 $norm = $fieldValue->getNormData();
                 $data = $fieldValue->getData();
                 $view = $fieldValue->getViewData();
                 $extra = $fieldValue->getExtraData();
-                if($norm instanceof Element)
-                { // target Element
+                if ($norm instanceof Element) { // target Element
                     $targets[$fieldName] = $norm->getId();
-                    
-                $fv = $form['form']->createView();
-                }
-                else if($norm instanceof Layerset)
-                { // Map
-                    if(key_exists(strval($norm->getId()), $layersetMap))
-                    {
+
+                    $fv = $form['form']->createView();
+                } else if ($norm instanceof Layerset) { // Map
+                    if (key_exists(strval($norm->getId()), $layersetMap)) {
                         $options[$fieldName] = $layersetMap[strval($norm->getId())]->getId();
-                    }
-                    else
-                    {
+                    } else {
                         $options[$fieldName] = null;
                     }
                 }
             }
-            if(count($targets) === 0)
-            {
+            if (count($targets) === 0) {
                 $clonedElm = $element->copy($em);
                 $em->persist($clonedElm);
                 $clonedElm->setApplication($clonedApp);
-                foreach($options as $key => $value)
-                {
-                    $configuration       = $clonedElm->getConfiguration();
+                foreach ($options as $key => $value) {
+                    $configuration = $clonedElm->getConfiguration();
                     $configuration[$key] = $value;
                     $clonedElm->setConfiguration($configuration);
                 }
                 $em->persist($clonedElm);
                 $clonedApp->addElements($clonedElm);
                 $clonedElmts[$origElmId] = $clonedElm;
-            }
-            else 
-            {
+            } else {
                 $allTargetsCreated = true;
-                foreach($targets as $name => $value)
-                {
-                    if($value !== null && !key_exists(strval($value), $clonedElmts))
-                    {
-                       $allTargetsCreated = false;
+                foreach ($targets as $name => $value) {
+                    if ($value !== null && !key_exists(strval($value),
+                            $clonedElmts)) {
+                        $allTargetsCreated = false;
                     }
                 }
-                if(!$allTargetsCreated)
-                {
+                if (!$allTargetsCreated) {
                     continue;
                 }
                 $clonedElm = $element->copy($em);
                 $em->persist($clonedElm);
                 $clonedElm->setApplication($clonedApp);
-                foreach($options as $key => $value)
-                {
-                    $configuration       = $clonedElm->getConfiguration();
+                foreach ($options as $key => $value) {
+                    $configuration = $clonedElm->getConfiguration();
                     $configuration[$key] = $value;
                     $clonedElm->setConfiguration($configuration);
                 }
-                
-                foreach($targets as $name => $value)
-                {
-                    if(key_exists(strval($value), $clonedElmts))
-                    {
-                        $configuration       = $clonedElm->getConfiguration();
-                        $target               = $clonedElmts[strval($value)];
+
+                foreach ($targets as $name => $value) {
+                    if (key_exists(strval($value), $clonedElmts)) {
+                        $configuration = $clonedElm->getConfiguration();
+                        $target = $clonedElmts[strval($value)];
                         $configuration[$name] = $target->getId();
                         $clonedElm->setConfiguration($configuration);
                     }
@@ -548,15 +571,12 @@ class Application
                 $clonedElmts[$origElmId] = $clonedElm;
             }
         }
-        if(count($clonedElmts) === count($this->elements))
-        {
+        if (count($clonedElmts) === count($this->elements)) {
             return;
-        }
-        else
-        {
-            $this->copyElements($container, $em, $clonedApp, $clonedElmts, $layersetMap);
+        } else {
+            $this->copyElements($container, $em, $clonedApp, $clonedElmts,
+                $layersetMap);
         }
     }
 
 }
-

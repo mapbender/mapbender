@@ -80,5 +80,16 @@ abstract class Template
      * @return string $html The rendered HTML
      */
     abstract public function render($format = 'html', $html = true, $css = true, $js = true);
+    
+    /**
+     * Get the available regions properties.
+     *
+     * @return array
+     */
+    public static function getRegionsProperties()
+    {
+        return array();
+    }
+    
 }
 
