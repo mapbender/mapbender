@@ -4,7 +4,6 @@
         options: {
         },
         scalebar: null,
-        /* Creates the map tool bar */
         _create: function(){
             if(!Mapbender.checkTarget("mbBaseSourceSwitcher", this.options.target)){
                 return;
@@ -12,7 +11,6 @@
             var self = this;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
-        /* Initializes the map tool bar */
         _setup: function(){
             var self = this;
             $('.basesourcesetswitch', this.element).click($.proxy(self._toggleMapset, self));
