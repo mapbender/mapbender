@@ -194,6 +194,12 @@ class Application
             //$file = '@MapbenderCoreBundle/Resources/public/mapbender.application.css';
             //$this->addAsset($assets, $type, $file);
         }
+        
+        if($type === 'trans')
+        {
+            //$file = '@MapbenderCoreBundle/Resources/public/mapbender.application.css';
+            //$this->addAsset($assets, $type, $file);
+        }
 
         // Load all elements assets
         foreach($this->getElements() as $region => $elements)
