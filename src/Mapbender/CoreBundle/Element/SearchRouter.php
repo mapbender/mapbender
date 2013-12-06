@@ -213,10 +213,12 @@ class SearchRouter extends Element
     /**
      * @inheritdoc
      */
+    /* @todo: This one does not work yet
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\SearchRouterAdminType';
     }
+    */
 
     /**
      * @inheritdoc

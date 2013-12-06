@@ -83,9 +83,7 @@ class ApplicationController extends Controller {
         if(!$path) {
             $path = $this->get('request')->server->get('REQUEST_URI');
         }
-
-        $target = str_replace('\\', '/', $this->get('request')->server->get('SCRIPT_FILENAME')
-            . $path);
+        $target = str_replace('\\', '/', realpath($this->get('request')->server->get('SCRIPT_FILENAME')) . $path);
 
         $mimetypes = array(
             'css' => 'text/css',

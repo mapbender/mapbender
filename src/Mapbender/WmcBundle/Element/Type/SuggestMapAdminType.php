@@ -1,14 +1,9 @@
 <?php
-
 namespace Mapbender\WmcBundle\Element\Type;
 
-//use FOM\UserBundle\Form\DataTransformer\GroupIdTransformer;
-//use Mapbender\WmcBundle\Form\EventListener\WmcHandlerFieldSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Description of WmcEditorAdminType
@@ -45,20 +40,19 @@ class SuggestMapAdminType extends AbstractType
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application'   => $options['application'],
+                'application' => $options['application'],
                 'property_path' => '[target]',
-                'required'      => false))
+                'required' => false))
             ->add('receiver', 'choice',
-                        array(
-                    'multiple' => true,
-                    'required' => true,
-                    'choices'  => array(
-                        'email'    => 'E-Mail',
-                        'facebook' => 'Facebook',
-                        'twitter'  => 'Twitter',
-                        'google+'  => 'Google+')));
+                array(
+                'multiple' => true,
+                'required' => true,
+                'choices' => array(
+                    'email' => 'E-Mail',
+                    'facebook' => 'Facebook',
+                    'twitter' => 'Twitter',
+                    'google+' => 'Google+')));
     }
 
 }
-
 ?>

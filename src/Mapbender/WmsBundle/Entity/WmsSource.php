@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,7 +20,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class WmsSource extends Source
 {
-
     /**
      * @var string An origin WMS URL
      * @ORM\Column(type="string", nullable=true)
@@ -851,10 +849,8 @@ class WmsSource extends Source
      */
     public function getRootlayer()
     {
-        foreach($this->layers as $layer)
-        {
-            if($layer->getParent() === null)
-            {
+        foreach ($this->layers as $layer) {
+            if ($layer->getParent() === null) {
                 return $layer;
             }
         }
@@ -936,7 +932,7 @@ class WmsSource extends Source
         $formats = $this->getGetMap()->getFormats();
         $instance->setFormat(count($formats) > 0 ? $formats[0] : null);
         $infoformats = $this->getGetFeatureInfo() !== null ?
-                $this->getGetFeatureInfo()->getFormats() : array();
+            $this->getGetFeatureInfo()->getFormats() : array();
         $instance->setInfoformat(count($infoformats) > 0 ? $infoformats[0] : null);
         $excformats = $this->getExceptionFormats();
         $instance->setExceptionformat(count($excformats) > 0 ? $excformats[0] : null);
@@ -949,18 +945,18 @@ class WmsSource extends Source
         $instLayer_root->setTitle($wmslayer_root->getTitle());
         // @TODO min max from scaleHint
         $instLayer_root->setMinScale(
-                $wmslayer_root->getScaleRecursive() !== null ?
-                        $wmslayer_root->getScaleRecursive()->getMin() : null);
+            $wmslayer_root->getScaleRecursive() !== null ?
+                $wmslayer_root->getScaleRecursive()->getMin() : null);
         $instLayer_root->setMaxScale(
-                $wmslayer_root->getScaleRecursive() !== null ?
-                        $wmslayer_root->getScaleRecursive()->getMax() : null);
+            $wmslayer_root->getScaleRecursive() !== null ?
+                $wmslayer_root->getScaleRecursive()->getMax() : null);
         $queryable = $wmslayer_root->getQueryable();
         $instLayer_root->setInfo(Utils::getBool($queryable));
         $instLayer_root->setAllowinfo(Utils::getBool($queryable));
 
         $instLayer_root->setToggle(true);
         $instLayer_root->setAllowtoggle(true);
-        
+
         $instLayer_root->setPriority($num);
         $instance->addLayer($instLayer_root);
         $this->addSublayer($instLayer_root, $wmslayer_root, $num, $instance);
@@ -977,8 +973,7 @@ class WmsSource extends Source
      */
     private function addSublayer($instlayer, $wmslayer, $num, $instance)
     {
-        foreach($wmslayer->getSublayer() as $wmssublayer)
-        {
+        foreach ($wmslayer->getSublayer() as $wmssublayer) {
             $num++;
             $instsublayer = new WmsInstanceLayer();
             $instsublayer->setWmsinstance($instance);
@@ -986,11 +981,11 @@ class WmsSource extends Source
             $instsublayer->setTitle($wmssublayer->getTitle());
             // @TODO min max from scaleHint
             $instsublayer->setMinScale(
-                    $wmssublayer->getScaleRecursive() !== null ?
-                            $wmssublayer->getScaleRecursive()->getMin() : null);
+                $wmssublayer->getScaleRecursive() !== null ?
+                    $wmssublayer->getScaleRecursive()->getMin() : null);
             $instsublayer->setMaxScale(
-                    $wmssublayer->getScaleRecursive() !== null ?
-                            $wmssublayer->getScaleRecursive()->getMax() : null);
+                $wmssublayer->getScaleRecursive() !== null ?
+                    $wmssublayer->getScaleRecursive()->getMax() : null);
             $queryable = $wmssublayer->getQueryable();
             $instsublayer->setInfo(Utils::getBool($queryable));
             $instsublayer->setAllowinfo(Utils::getBool($queryable));
@@ -998,14 +993,14 @@ class WmsSource extends Source
             $instsublayer->setPriority($num);
             $instsublayer->setParent($instlayer);
             $instance->addLayer($instsublayer);
-            if($wmssublayer->getSublayer()->count() > 0){
+            if ($wmssublayer->getSublayer()->count() > 0) {
                 $instsublayer->setToggle(true);
                 $instsublayer->setAllowtoggle(true);
             }
             $this->addSublayer($instsublayer, $wmssublayer, $num, $instance);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -1014,16 +1009,16 @@ class WmsSource extends Source
         $this->removeSourceRecursive($em, $this->getRootlayer());
         $em->remove($this);
     }
-    
+
     /**
      * Recursively remove a nested Layerstructure
      * @param WmsLayerSource
      * @param EntityManager
      */
-    private function removeSourceRecursive(EntityManager $em, WmsLayerSource $wmslayer)
+    private function removeSourceRecursive(EntityManager $em,
+        WmsLayerSource $wmslayer)
     {
-        foreach($wmslayer->getSublayer() as $sublayer)
-        {
+        foreach ($wmslayer->getSublayer() as $sublayer) {
             $this->removeSourceRecursive($em, $sublayer);
         }
         $em->remove($wmslayer);

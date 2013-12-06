@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfiguration;
@@ -16,7 +15,7 @@ use Mapbender\CoreBundle\Component\InstanceConfiguration;
  */
 class WmsInstanceConfiguration extends InstanceConfiguration
 {
-    
+
     /**
      * Sets options
      * 
@@ -75,6 +74,6 @@ class WmsInstanceConfiguration extends InstanceConfiguration
             "children" => $this->children
         );
     }
-}
 
+}
 ?>

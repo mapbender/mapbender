@@ -10,6 +10,9 @@
 namespace Mapbender\CoreBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
+
 
 /**
  * CoreBundle.
@@ -18,13 +21,21 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
  */
 class MapbenderCoreBundle extends MapbenderBundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new MapbenderYamlCompilerPass());
+    }
+
     /**
      * @inheritdoc
      */
     public function getTemplates()
     {
-        // I'am the one and only XD
-        return array('Mapbender\CoreBundle\Template\Fullscreen');
+        return array('Mapbender\CoreBundle\Template\Fullscreen',
+                     'Mapbender\CoreBundle\Template\FullscreenAlternative',
+                     'Mapbender\CoreBundle\Template\Classic');
     }
 
     /**
@@ -49,9 +60,10 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\ScaleBar',
             'Mapbender\CoreBundle\Element\ScaleDisplay',
             'Mapbender\CoreBundle\Element\ScaleSelector',
-//            'Mapbender\CoreBundle\Element\SearchRouter',
+            'Mapbender\CoreBundle\Element\SearchRouter',
+            'Mapbender\CoreBundle\Element\Sketch',
             'Mapbender\CoreBundle\Element\SrsSelector',
-            'Mapbender\CoreBundle\Element\ZoomBar',
+            'Mapbender\CoreBundle\Element\ZoomBar'
             );
     }
 

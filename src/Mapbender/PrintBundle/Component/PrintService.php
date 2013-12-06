@@ -30,10 +30,6 @@ class PrintService
     {
         $this->data = json_decode($content, true);
         $template = $this->data['template'];
-//        print "<pre>";
-//        print_r($this->data);
-//        print "</pre>";
-//        die();
         $this->getTemplateConf($template);
         $this->createUrlArray();
         $this->setMapParameter();
@@ -46,7 +42,6 @@ class PrintService
         }else{
             $this->rotate();
         }
-        //$this->test();
         $this->buildPdf();
     }
 
@@ -58,10 +53,6 @@ class PrintService
     {
         $odgParser = new OdgParser($this->container);
         $this->conf = $odgParser->getConf($template);
-//        print "<pre>";
-//        print_r($this->conf);
-//        print "</pre>";
-//        die();
     }
 
     /**
@@ -145,6 +136,7 @@ class PrintService
     {
         foreach ($this->layer_urls as $k => $url)
         {
+            $this->container->get("logger")->debug("Print Request Nr.: " . $k .' '. $url);
             $attributes = array();
             $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
             $subRequest = new Request(array(
@@ -154,9 +146,9 @@ class PrintService
 
             $tempdir = $this->tempdir;
             $imagename = $tempdir.'/tempimage'.$k;
-
+            
             file_put_contents($imagename, $response->getContent());
-
+            $im = null;
             switch(trim($response->headers->get('content-type'))) {
                 case 'image/png' :
                     $im = imagecreatefrompng($imagename);
@@ -173,7 +165,7 @@ class PrintService
                     //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
 
-            if(isset($im)) {
+            if($im !== null) {
                 imagesavealpha($im, true);
                 imagepng($im , $imagename);
             }

@@ -207,20 +207,29 @@
                 var extra_fields = $('#extra_fields', this.element).empty();
 
                 for(var field in opt_fields){
+                    var span = '';
+                    if(opt_fields[field].options.required === true){
+                       span = '<span class="required">*</span>'
+                    }
+                    
                     extra_fields.append($('<label></label>', {
-                        'html': opt_fields[field].label,
+                        'html': opt_fields[field].label+span,
                         'class': 'labelInput'
                     }));
                     extra_fields.append($('<input></input>', {
                         'type': 'text',
-                        'class': 'input',
+                        'class': 'input validationInput',
                         'name': 'extra['+field+']',
                         'style': 'margin-left: 3px'
                     }));
+                    if(opt_fields[field].options.required === true){
+                        $('input[name="extra['+field+']"]').attr("required", "required");
+                    }
                 }
             }else{
                 $('#extra_fields').hide();
             }
+
         },
 
         _updateGeometry: function(reset) {
@@ -408,14 +417,14 @@
             }));
 
             var sources = this.map.getSourceTree(), num = 0;
-
+            
             for(var i = 0; i < sources.length; i++) {
                 var layer = this.map.map.layersList[sources[i].mqlid],
                 type = layer.olLayer.CLASS_NAME;
                 if(layer.olLayer.params.LAYERS.length === 0){
                     continue;
                 }
-                if(!(0 === type.indexOf('OpenLayers.Layer.'))) {
+                if(0 !== type.indexOf('OpenLayers.Layer.')) {
                     window.console && console.log('Layer is of unknown type for print.', layer);
                     continue;
                 }
@@ -434,7 +443,7 @@
                     num++;
                 }
             }
-
+            $('div#layers').empty();
             fields.appendTo(form.find('div#layers'));
             // Post in neuen Tab (action bei form anpassen)
 
@@ -443,7 +452,14 @@
             form.get(0).setAttribute('action', url);
             form.attr('target', '_blank');
             form.attr('method', 'post');
-            form.submit();
+            
+            if (num === 0){
+                Mapbender.info('No active layer!');
+            }else{
+                //click hidden submit button to check requierd fields
+                form.find('input[type="submit"]').click();
+                //form.submit();
+            }
         },
 
         _getPrintSize: function() {

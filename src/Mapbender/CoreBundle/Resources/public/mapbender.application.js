@@ -89,6 +89,11 @@ Mapbender.checkTarget = function(widgetName, target, targetname){
     }
 };
 
+Mapbender.urlParam = function(key) {
+    var results = new RegExp('[\\?&]' + key + '=([^&#]*)').exec(window.location.href) || [];
+    return results[1] || undefined;
+};
+
 // This calls on document.ready and won't be called when inserted dynamically
 // into a existing page. In such case, Mapbender.setup has to be called
 // explicitely, see mapbender.application.json.js

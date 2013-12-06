@@ -34,8 +34,8 @@ $.widget("mapbender.mbZoomBar", {
         if(this.options.draggable === true) {
             this.element.addClass("iconMove").draggable({
                 containment: this.element.closest('.region'),
-                start: function() { 
-                    $(this).css("right", "inherit").add('dragging'); 
+                start: function() {
+                    $(this).css("right", "inherit").add('dragging');
                 }
             });
         }
@@ -57,8 +57,11 @@ $.widget("mapbender.mbZoomBar", {
             .empty();
 
         for(var i = 0; i < this.map.getNumZoomLevels(); i++) {
-            this.zoomslider.append($('<li class="iconZoomLevel"></li>'));
+            var resolution = this.map.getResolutionForZoom(i);
+            var scale = Math.round(OpenLayers.Util.getScaleFromResolution(resolution, this.map.units));
+            this.zoomslider.append($('<li class="iconZoomLevel" title="1:' + scale + '"></li>'));
         }
+
         this.zoomslider.find('li').last()
             .addClass('iconZoomLevelSelected')
             .append($('<div></div>'));

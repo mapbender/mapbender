@@ -13,48 +13,64 @@
   <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
 {% endblock %}
 {% block frontend_content %}
-  <div class="logoContainer">
-    <img class="logo" height="80" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
-  </div>
 
-  <ul id="toolbar" class="toolBar itemsRight top">
-    {% if application.elements.toolbar is defined %}
-      {% for element in application.elements.toolbar %}
-        <li class="toolBarItem">{{ element.render() | raw }}</li>
-      {% endfor %}
-    {% endif %}
-  </ul>
-{% if application.elements.sidepane is defined %}
-  <div id="sidepane" class="clear sidePane left">
-    <ul class="sidePaneTabs">
-      <li class="sidePaneTabItem toggleSideBar"></li>
+  <div id="templateWrapper" class="templateWrapper sidePaneOpened">
+    <div class="logoContainer">
+      <img class="logo" height="80" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
+    </div>
+
+    <ul id="toolbar" class="toolBar itemsRight top">
+      {% if application.elements.toolbar is defined %}
+        {% for element in application.elements.toolbar %}
+          <li class="toolBarItem">{{ element.render() | raw }}</li>
+        {% endfor %}
+      {% endif %}
     </ul>
-    <div class="sideContent">
-        {% for element in application.elements.sidepane %}
+  {% if application.elements.sidepane is defined %}
+    <div id="sidepane" class="clear sidePane left">
+      <ul class="sidePaneTabs">
+        <li class="sidePaneTabItem toggleSideBar"></li>
+      </ul>
+      <div class="sideContent">
+          {% for element in application.elements.sidepane %}
+            {{ element.render() | raw }}
+          {% endfor %}
+
+          <div class="tabContainerAlt">
+            <ul class="tabs">
+              <li id="tab1" class="tab active">{{"Button1" | trans }}</li>
+              <li id="tab2" class="tab">{{"Button2" | trans }}</li>
+            </ul>
+            <div id="container1" class="container active">
+              Container1
+            </div>
+            <div id="container2" class="container">
+              Container2
+            </div>
+          </div>
+
+      </div>
+    </div>
+  {% endif %}
+    <div id="content" class="contentPane">
+      {% if application.elements.content is defined %}
+        {% for element in application.elements.content %}
           {{ element.render() | raw }}
         {% endfor %}
-      
+      {% endif %}
     </div>
-  </div>
-{% endif %}
-  <div id="content" class="contentPane">
-    {% if application.elements.content is defined %}
-      {% for element in application.elements.content %}
-        {{ element.render() | raw }}
-      {% endfor %}
-    {% endif %}
-  </div>
 
-  <ul id="footer" class="toolBar itemsRight bottom">
-    {% if application.elements.footer is defined %}
-      {% for element in application.elements.footer %}
-        <li class="toolBarItem">{{ element.render() | raw }}</li>
-      {% endfor %}
-    {% endif %}
-  </ul>
+    <ul id="footer" class="toolBar itemsRight bottom">
+      {% if application.elements.footer is defined %}
+        {% for element in application.elements.footer %}
+          <li class="toolBarItem">{{ element.render() | raw }}</li>
+        {% endfor %}
+      {% endif %}
+    </ul>
+  </div>
 
   <script type="text/javascript">
     var Mapbender = Mapbender || {};
-    Mapbender.configuration = {{ application.configuration | raw }}
+    Mapbender.configuration = {{ application.configuration | raw }};
   </script>
 {% endblock %}

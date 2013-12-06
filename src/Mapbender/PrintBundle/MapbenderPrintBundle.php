@@ -18,7 +18,15 @@ use Mapbender\CoreBundle\Component\MapbenderBundle;
  */
 class MapbenderPrintBundle extends MapbenderBundle
 {
-
+    /**
+     * @inheritdoc
+     */
+    public function getElements()
+    {
+        return array(
+            'Mapbender\PrintBundle\Element\ImageExport'
+            );
+    }
 
 }
 
