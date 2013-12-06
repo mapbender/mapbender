@@ -1,10 +1,17 @@
-{{ form_label(form.template) }}{{ form_widget(form.template) }}
+<span class="description right">{{ 'Template' | trans }}: {{template_name|default('Unknown')}}</span> 
 
 {# XXXVH Awesome templating engine plzzz! #}
 {% for region in regions %}
   <div class="clearContainer"></div>
   <div class="{{region}} region">
     <h3 class="left subTitle">{{ region | capitalize }}</h3>
+    <div class="right regionProperties">
+      {% for form_regionProperties in form.regionProperties %}
+        {% if form_regionProperties.vars.value.name == region %}
+          {{ form_widget(form_regionProperties) }}
+        {% endif %}
+      {% endfor %}
+    </div>
     <div class="clearContainer"></div>
       <table class="elementsTable tableCore" data-region="{{ region }}">
         <thead>
@@ -33,7 +40,7 @@
             {% endfor %}
               <tr class="placeholderRow"></tr>
           {% else %}
-            <tr>
+            <tr class="dummy">
               <td class="description">{{"No elements added."|trans}}</td>
               <td></td>
               <td></td>

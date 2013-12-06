@@ -11,6 +11,10 @@ use Mapbender\CoreBundle\Component\Element;
  */
 class Button extends Element
 {
+    /**
+     * @inheritdoc
+     */
+    public static $ext_api = false;
 
     /**
      * @inheritdoc

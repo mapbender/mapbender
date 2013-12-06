@@ -23,7 +23,8 @@ class LayersetType extends AbstractType
     {
 
         $builder->add("id", "hidden", array("required" => false))
-                ->add("title", "text");
+                ->add("title", "text", array(
+                    'max_length' => 128));
     }
 
 }

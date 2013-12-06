@@ -3,7 +3,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter id="version">3.0.0-PR0</parameter>
+        <parameter id="version">3.0.2</parameter>
+        <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
     </parameters>
 
     <services>
@@ -14,15 +15,19 @@
         <service id="mapbender.twig.element_class" class="Mapbender\CoreBundle\Extension\ElementExtension">
             <tag name="twig.extension"/>
         </service>
-        
+
         <service id="target_element" class="Mapbender\CoreBundle\Element\Type\TargetElementType">
             <argument type="service" id="service_container" />
             <tag name="form.type" alias="target_element"/>
         </service>
-        
+
         <service id="app_layerset" class="Mapbender\CoreBundle\Element\Type\LayersetType">
             <argument type="service" id="service_container" />
             <tag name="form.type" alias="app_layerset"/>
+        </service>
+
+        <service id="signer" class="%signer.class%">
+            <argument>%secret%</argument>
         </service>
     </services>
 </container>

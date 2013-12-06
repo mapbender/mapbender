@@ -3,14 +3,19 @@ $.extend(true, Mapbender, {
     source: {
         'wms': {
             create: function(layerDef){
-                var layers = [];
-                var queryLayers = [];
-                var layersDefs = [];
-                layerDef.origId = layerDef.id;
                 var rootLayer = layerDef.configuration.children[0];
-                this._readLayerDef(layersDefs, layers, queryLayers, rootLayer, true);
 
-                layersDefs.reverse();
+                function _setId(layer, parent, id, num){
+                    /* set unic id for a layer */
+                    layer.options.id = parent ? parent.options.id + "_" + num : id + "_" + num;
+                    if(layer.children){
+                        for(var i = 0; i < layer.children.length; i++){
+                            _setId(layer.children[i], layer, id, i);
+                        }
+                    }
+                }
+                _setId(rootLayer, null, layerDef.id, 0);
+
                 var finalUrl = layerDef.configuration.options.url;
 
                 if(layerDef.configuration.options.proxy === true){
@@ -26,49 +31,36 @@ $.extend(true, Mapbender, {
                     format: layerDef.configuration.options.format,
                     isBaseLayer: layerDef.configuration.options.baselayer,
                     opacity: layerDef.configuration.options.opacity,
-                    visibility: layerDef.configuration.options.visible &&
-                            (layers.length > 0),
+                    visibility: layerDef.configuration.options.visible,
                     singleTile: !layerDef.configuration.options.tiled,
                     attribution: layerDef.configuration.options.attribution, // attribution add !!!
-
                     minScale: rootLayer.minScale,
-                    maxScale: rootLayer.maxScale,
-                    layers: layers
+                    maxScale: rootLayer.maxScale
                 };
 
                 return mqLayerDef;
             },
-            _readLayerDef: function(layersDefs, layers, queryLayers, layer, isroot){
-                //            $.each(layerDef.configuration.layers, function(idx, layer) {
-                var layerDef = $.extend({},
-                        {
-                            visible: true,
-                            queryable: false
-                        }, layer.options);
-
-                delete(layerDef.treeOptions);
-                if(!isroot && layerDef.visible && typeof layerDef.name === 'string' && layerDef.name.length > 0){
-                    layers.push(layerDef.name);
-                }
-                if(!isroot && layerDef.queryable){
-                    queryLayers.push(layerDef.name);
-                }
-                if(!isroot){
-                    layersDefs.push(layerDef);
-                }
-                if(layer.children){
-                    for(var i = 0; i < layer.children.length; i++){
-                        this._readLayerDef(layersDefs, layers, queryLayers, layer.children[i], false);
-                    }
-                }
-                //            });
-            },
             _addProxy: function(url){
-                return OpenLayers.ProxyHost + url;
+                return OpenLayers.ProxyHost + encodeURIComponent(url);
             },
             _removeProxy: function(url){
                 if(url.indexOf(OpenLayers.ProxyHost) === 0){
                     return url.substring(OpenLayers.ProxyHost.length);
+                }
+                return url;
+            },
+            removeSignature: function(url){
+                var pos = -1;
+                pos = url.indexOf("_signature");
+                if(pos !== -1){
+                    var url_new = url.substring(0, pos);
+                    if(url_new.lastIndexOf('&') === url_new.length - 1){
+                        url_new = url_new.substring(0, url_new.lastIndexOf('&'));
+                    }
+                    if(url_new.lastIndexOf('?') === url_new.length - 1){
+                        url_new = url_new.substring(0, url_new.lastIndexOf('?'));
+                    }
+                    return url_new;
                 }
                 return url;
             },
@@ -95,16 +87,16 @@ $.extend(true, Mapbender, {
                 };
                 var contentType_ = "";
                 if(typeof(layer.source.configuration.options.info_format)
-                        !== 'undefined'){
+                    !== 'undefined'){
                     param_tmp["INFO_FORMAT"] =
-                            layer.source.configuration.options.info_format;
+                        layer.source.configuration.options.info_format;
                     //                contentType_ +=
                     //                    layer.options.configuration.configuration.info_format;
                 }
                 if(typeof(layer.source.configuration.options.info_charset)
-                        !== 'undefined'){
+                    !== 'undefined'){
                     contentType_ += contentType_.length > 0 ? ";" : "" +
-                            layer.source.configuration.options.info_charset;
+                        layer.source.configuration.options.info_charset;
                 }
                 var params = $.param(param_tmp);
 
@@ -136,75 +128,71 @@ $.extend(true, Mapbender, {
             },
             loadFromUrl: function(url){
                 var dlg = $('<div></div>').attr('id', 'loadfromurl-wms'),
-                        spinner = $('<img />')
-                        .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/images/spinner.gif')
-                        .appendTo(dlg);
+                    spinner = $('<img />')
+                    .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/images/spinner.gif')
+                    .appendTo(dlg);
                 dlg.appendTo($('body'));
 
                 $('<script></type')
-                        .attr('type', 'text/javascript')
-                        .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/mapbender.source.wms.loadfromurl.js')
-                        .appendTo($('body'));
+                    .attr('type', 'text/javascript')
+                    .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/mapbender.source.wms.loadfromurl.js')
+                    .appendTo($('body'));
             },
-            layersFromCapabilities: function(xml, id, splitLayers, model, defFormat, defInfoformat){
-                if(!defFormat){
-                    defFormat = "image/png";
+            createSourceDefinitions: function(xml, options){
+                if(!options.global.defFormat){
+                    options.global.defFormat = "image/png";
                 }
-                if(!defInfoformat){
-                    defInfoformat = "text/html";
+                if(!options.global.defInfoformat){
+                    options.global.defInfoformat = "text/html";
                 }
                 var parser = new OpenLayers.Format.WMSCapabilities(),
-                        capabilities = parser.read(xml);
+                    capabilities = parser.read(xml);
 
                 if(typeof(capabilities.capability) !== 'undefined'){
                     var rootlayer = capabilities.capability.nestedLayers[0];
                     var bboxOb = {}, bboxSrs = null, bboxBounds = null;
                     for(bbox in rootlayer.bbox){
-                        if(model.getProj(bbox) !== null){
+                        if(options.model.getProj(bbox) !== null){
                             bboxOb[bbox] = rootlayer.bbox[bbox].bbox;
                             bboxSrs = bbox;
                             bboxBounds = OpenLayers.Bounds.fromArray(bboxOb[bbox]);
                         }
                     }
                     for(srs in rootlayer.srs){
-                        if(rootlayer.srs[srs] === true && typeof bboxOb[srs] === 'undefined' && model.getProj(srs) !== null && bboxBounds !== null){
-                            var oldProj = model.getProj(bboxSrs);
-                            bboxOb[srs] = bboxBounds.transform(oldProj, model.getProj(srs)).toArray();
+                        if(rootlayer.srs[srs] === true && typeof bboxOb[srs] === 'undefined' && options.model.getProj(srs) !== null && bboxBounds !== null){
+                            var oldProj = options.model.getProj(bboxSrs);
+                            bboxOb[srs] = bboxBounds.transform(oldProj, options.model.getProj(srs)).toArray();
                         }
                     }
                     var format;
                     var formats = capabilities.capability.request.getmap.formats;
                     for(var i = 0; i < formats.length; i++){
-                        if(formats[i].toLowerCase().indexOf(defFormat) !== -1)
+                        if(formats[i].toLowerCase().indexOf(options.global.defFormat) !== -1)
                             format = formats[i];
                     }
                     if(!format)
                         format = formats[0];
-                    
+
                     var infoformat;
                     var gfi = capabilities.capability.request.getfeatureinfo;
                     if(gfi && gfi.formats && gfi.formats.length > 0){
                         for(var i = 0; i < gfi.formats.length; i++){
-                            if(gfi.formats[i].toLowerCase().indexOf(defInfoformat) !== -1)
+                            if(gfi.formats[i].toLowerCase().indexOf(options.global.defInfoformat) !== -1)
                                 infoformat = gfi.formats[i];
                         }
                         if(!infoformat)
                             infoformat = gfi.formats[0];
-                    } else {
-                        infoformat = defInfoformat;
+                    }else{
+                        infoformat = options.global.defInfoformat;
                     }
                     //@TODO srs list, srs by layer -> parent layer srs + layer srs
                     var def = {
                         type: 'wms',
-                        id: id,
-                        origId: id,
                         title: capabilities.service.title,
                         configuration: {
                             isBaseSource: false,
                             options: {
-                                baselayer: false,
-//                                bbox: bboxOb,
-                                srslist: bboxOb,
+                                bbox: bboxOb,
                                 format: format,
                                 info_format: infoformat,
                                 opacity: 1,
@@ -213,28 +201,26 @@ $.extend(true, Mapbender, {
                                 transparent: true,
                                 url: capabilities.capability.request.getmap.get.href,
                                 visible: true
-                            },
-                            children: [],
-                            layers: []
+                            }
                         }
                     };
 
-                    function readCapabilities(layer, parent, id, num){
+                    function readCapabilities(layer, parent, options){
                         // @ TODO getLegendGraphic ?
-                        var legend = {};
+                        var legend = null, minScale_ = null, maxScale_ = null;
                         if(layer.styles.length !== 0 && layer.styles[0].legend){
+                            legend = {};
                             legend.url = layer.styles[0].legend.href
                             legend.width = layer.styles[0].legend.width;
                             legend.height = layer.styles[0].legend.height;
                         }
+                        minScale_ = layer.minScale ? Math.round(layer.minScale) : parent && parent.options.minScale ? parent.options.minScale : null;
+                        maxScale_ = layer.maxScale ? Math.round(layer.maxScale) : parent && parent.options.maxScale ? parent.options.maxScale : null;
                         var def = {
                             options: {
-                                id: id + "_" + num,
-                                legend: legend, // inheritance from style
-                                bbox: null, // inheritance replace
-                                srslist: null,
-                                maxScale: layer.minScale ? layer.minScale : parent && parent.options.maxScale ? parent.options.maxScale : null, // inheritance replace
-                                minScale: layer.maxScale ? layer.maxScale : parent && parent.options.minScale ? parent.options.minScale : null, // inheritance replace
+                                legend: legend,
+                                maxScale: minScale_, // inheritance replace
+                                minScale: maxScale_, // inheritance replace
                                 name: layer.name, // inheritance
                                 queryable: layer.queryable,
                                 style: layer.styles.length === 0 ? null : layer.styles[0].name, // inheritance add
@@ -244,25 +230,30 @@ $.extend(true, Mapbender, {
                                         info: layer.queryable ? true : false,
                                         reorder: true,
                                         selected: true,
-                                        toggle: true
+                                        toggle: layer.nestedLayers.length === 0 ? null : true
                                     },
                                     info: layer.queryable ? true : null,
                                     selected: true,
-                                    toggle: false
+                                    toggle: layer.nestedLayers.length === 0 ? null : false
                                 }
                             },
                             state: {
                                 info: null,
-                                outOfBounds: false,
+                                outOfBounds: null,
                                 outOfScale: false,
                                 visibility: true
                             }
                         };
+                        $.extend(true, def.options, options.global.options);
+                        if(options.layers[def.options.name])
+                            $.extend(true, def.options, options.layers[def.options.name].options);
                         if(layer.nestedLayers.length > 0){
                             def.children = [];
                             for(var i = 0; i < layer.nestedLayers.length; i++){
-                                num++;
-                                def.children.push(readCapabilities(layer.nestedLayers[i], def, id, num));
+                                var child = readCapabilities(layer.nestedLayers[i], def, options);
+                                if(child.options.treeOptions.selected)
+                                    def.options.treeOptions.selected = child.options.treeOptions.selected;
+                                def.children.push(child);
                             }
                         }
                         return def;
@@ -271,12 +262,9 @@ $.extend(true, Mapbender, {
 
                         if(num !== 0){
                             var service_new = $.extend(true, {}, service);
-                            service_new.id = service_new.id + "_" + num;
-                            service_new.origId = service_new.id;
                             var root_new = $.extend(true, {}, rootLayer);
-                            root_new.options.id = service_new.id + "_0";
                             var layer_new = $.extend(true, {}, layer);
-                            layer_new.options.id = service_new.id + "_1";
+                            root_new.options.title = layer_new.options.title + " (" + root_new.options.title + ")";
                             if(layer_new.children)
                                 delete(layer_new.children);
                             root_new.children = [layer_new];
@@ -290,11 +278,10 @@ $.extend(true, Mapbender, {
                             }
                         }
                     }
-                    var layers = readCapabilities(capabilities.capability.nestedLayers[0], null, id, 0);
-                    if(splitLayers){
-                        var service = $.extend(true, {}, def);
+                    var layers = readCapabilities(capabilities.capability.nestedLayers[0], null, options);
+                    if(options.global.splitLayers){
                         var result = [];
-                        var defs = getSplitted(def, layers, layers, result, 0);
+                        getSplitted(def, layers, layers, result, 0);
                         return result;
                     }else{
                         def.configuration.children = [layers];
@@ -311,11 +298,12 @@ $.extend(true, Mapbender, {
                 };
             },
             onLoadError: function(imgEl, sourceId, projection){
+                var self = this;
                 var loadError = {sourceid: sourceId, details: ''};
                 $.ajax({
                     type: "GET",
                     async: false,
-                    url: Mapbender.configuration.application.urls.proxy + "?url=" + encodeURIComponent(imgEl.attr('src')),
+                    url: Mapbender.configuration.application.urls.proxy + "?url=" + encodeURIComponent(self._removeProxy(imgEl.attr('src'))),
                     success: function(message, text, response){
                         if(typeof(response.responseText) === "string"){
                             var details = "The map cannot be displayed.";
@@ -532,7 +520,7 @@ $.extend(true, Mapbender, {
             },
             checkInfoLayers: function(source, scale, tochange, result){
                 if(!result)
-                    result = {infolayers: [], changed: { sourceIdx: {id: source.id}, children: {}}};
+                    result = {infolayers: [], changed: {sourceIdx: {id: source.id}, children: {}}};
                 var rootLayer = source.configuration.children[0];
                 _checkInfoLayers(rootLayer, scale, {state: {visibility: true}}, tochange, result);
                 return result;
@@ -576,23 +564,24 @@ $.extend(true, Mapbender, {
                             if(!toChangeOpts.options.children)
                                 toChangeOpts.options['children'] = {};
                             if(!toChangeOpts.options.children[rootId])
-                                toChangeOpts.options.children[rootId] = {options:{}};
+                                toChangeOpts.options.children[rootId] = {options: {}};
                             if(typeof configuration.options.visibility !== 'undefined')
-                                $.extend(true, toChangeOpts.options.children[rootId], {options:{treeOptions:{selected: configuration.options.visibility}}});
+                                $.extend(true, toChangeOpts.options.children[rootId], {options: {treeOptions: {selected: configuration.options.visibility}}});
                             if(typeof configuration.options.info !== 'undefined')
-                                $.extend(true, toChangeOpts.options.children[rootId], {options:{treeOptions:{info: configuration.options.info}}});
+                                $.extend(true, toChangeOpts.options.children[rootId], {options: {treeOptions: {info: configuration.options.info}}});
                             if(typeof configuration.options.toggle !== 'undefined')
-                                $.extend(true, toChangeOpts.options.children[rootId], {options:{treeOptions:{toggle: configuration.options.toggle}}});
+                                $.extend(true, toChangeOpts.options.children[rootId], {options: {treeOptions: {toggle: configuration.options.toggle}}});
                         }
                     }
                 }
                 if(!result)
-                    result = {layers: [], infolayers: [], changed: { sourceIdx: {id: source.id}, children: {}}};
+                    result = {layers: [], infolayers: [], changed: {sourceIdx: {id: source.id}, children: {}}};
                 var rootLayer = source.configuration.children[0];
                 _changeOptions(rootLayer, scale, {state: {visibility: true}}, toChangeOpts, result);
                 return result;
                 function _changeOptions(layer, scale, parentState, toChangeOpts, result){
-                    var layerChanged;
+                    var layerChanged,
+                        elchanged = false;
                     if(toChangeOpts.options.children[layer.options.id]){
                         layerChanged = toChangeOpts.options.children[layer.options.id];
                         layerChanged.state = {
@@ -605,14 +594,18 @@ $.extend(true, Mapbender, {
                             if(typeof treeOptions.selected !== 'undefined'){
                                 if(layer.options.treeOptions.selected === treeOptions.selected)
                                     delete(treeOptions.selected);
-                                else
+                                else{
                                     layer.options.treeOptions.selected = treeOptions.selected;
+                                    elchanged = true;
+                                }
                             }
                             if(typeof treeOptions.info !== 'undefined'){
                                 if(layer.options.treeOptions.info === treeOptions.info)
                                     delete(treeOptions.info);
-                                else
+                                else{
                                     layer.options.treeOptions.info = treeOptions.info;
+                                    elchanged = true;
+                                }
                             }
                             if(typeof treeOptions.toggle !== 'undefined'){
                                 if(layer.options.treeOptions.toggle === treeOptions.toggle)
@@ -650,15 +643,12 @@ $.extend(true, Mapbender, {
                             layer.state.outOfScale = false;
                         }
                     }
-                    /* @TODO outOfBound for layers */
-                    layer.options.outOfBounds = false;
-
+                    /* @TODO outOfBounds for layers ?  */
                     if(layer.children){
-                        //                var this_vsbl = false;
                         if(parentState.state.visibility
-                                && layer.options.treeOptions.selected
-                                && !layer.state.outOfScale
-                                && !layer.state.outOfBounds){
+                            && layer.options.treeOptions.selected
+                            && !layer.state.outOfScale
+                            && !layer.state.outOfBounds){
                             layer.state.visibility = true;
                         }else{
                             layer.state.visibility = false;
@@ -677,10 +667,10 @@ $.extend(true, Mapbender, {
                         }
                     }else{
                         if(parentState.state.visibility
-                                && layer.options.treeOptions.selected
-                                && !layer.state.outOfScale
-                                && !layer.state.outOfBounds
-                                && layer.options.name.length > 0){
+                            && layer.options.treeOptions.selected
+                            && !layer.state.outOfScale
+                            && !layer.state.outOfBounds
+                            && layer.options.name.length > 0){
                             layer.state.visibility = true;
                             result.layers.push(layer.options.name);
                             if(layer.options.treeOptions.info === true){
@@ -690,7 +680,6 @@ $.extend(true, Mapbender, {
                             layer.state.visibility = false;
                         }
                     }
-                    var elchanged = false;
                     if(layerChanged.state.outOfScale !== layer.state.outOfScale){
                         layerChanged.state.outOfScale = layer.state.outOfScale;
                         elchanged = true;
@@ -710,12 +699,68 @@ $.extend(true, Mapbender, {
                         delete(layerChanged.state.visibility);
                     }
                     if(elchanged){
-//                        layerChanged.treeElm = layer;
                         layerChanged.state = layer.state;
                         result.changed.children[layer.options.id] = layerChanged;
                     }
                     return layer;
                 }
+            },
+            /**
+             * @param {object} source source
+             * @param {object} changeOptions options in form of:
+             * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
+             * @param {boolean} merge 
+             * @returns {object} changes
+             */
+            createOptionsLayerState: function(source, changeOptions, selectedOther, merge){
+                function setSelected(layer, parent, optionsToChange, toChange, selectedOther, merge){
+                    if(layer.children){
+                        var childAsSelected = false;
+                        for(var i = 0; i < layer.children.length; i++){
+                            var child = layer.children[i];
+                            setSelected(child, layer, optionsToChange, toChange, selectedOther, merge);
+                            if((!toChange[child.options.id] && child.options.treeOptions.selected)
+                                || (toChange[child.options.id] && toChange[child.options.id].options.treeOptions.selected)){
+                                childAsSelected = true;
+                            }
+                        }
+                        if(childAsSelected && !layer.options.treeOptions.selected){
+                            toChange[layer.options.id] = {options: {treeOptions: {selected: true}}};
+                            if(layer.options.treeOptions.allow.info)
+                                toChange[layer.options.id].options.treeOptions['info'] = true;
+                        }else if(!childAsSelected && layer.options.treeOptions.selected){
+                            toChange[layer.options.id] = {options: {treeOptions: {selected: false}}};
+                            if(layer.options.treeOptions.allow.info)
+                                toChange[layer.options.id].options.treeOptions['info'] = false;
+                        }
+                    }else{
+                        var sel = false;
+                        if(!merge){
+                            var sel = optionsToChange.layers[layer.options.name] ? optionsToChange.layers[layer.options.name].options.treeOptions.selected : selectedOther;
+                            if(sel !== layer.options.treeOptions.selected){
+                                toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
+                            }
+                        }else{
+                            var help = optionsToChange.layers[layer.options.name] ? optionsToChange.layers[layer.options.name].options.treeOptions.selected : selectedOther;
+                            var sel = help || layer.options.treeOptions.selected;
+                            if(sel !== layer.options.treeOptions.selected){
+                                toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
+                            }
+                        }
+
+                        if(sel && layer.options.treeOptions.allow.info){
+                            if(toChange[layer.options.id]){
+                                toChange[layer.options.id].options.treeOptions['info'] = true;
+                            }else{
+                                toChange[layer.options.id] = {options: {treeOptions: {info: true}}};
+                            }
+                        }
+                    }
+                }
+                ;
+                var tochange = {sourceIdx: {id: source.id}, options: {children: {}, type: 'selected'}};
+                setSelected(source.configuration.children[0], null, changeOptions, tochange.options.children, selectedOther, merge);
+                return {change: tochange};
             }
         }
     }

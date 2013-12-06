@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmcBundle\Component;
 
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
@@ -15,7 +14,6 @@ use Mapbender\WmcBundle\Component\Exception\WmcException;
  */
 abstract class WmcParser
 {
-
     /**
      * The XML representation of the Capabilites Document
      * @var DOMDocument
@@ -48,28 +46,23 @@ abstract class WmcParser
      */
     protected function getValue($xpath, $contextElm = null)
     {
-        if(!$contextElm)
-        {
+        if (!$contextElm) {
             $contextElm = $this->doc;
         }
-        try
-        {
-            $elm = $this->xpath->query($xpath, $contextElm)->item(0);
-            if($elm->nodeType == XML_ATTRIBUTE_NODE)
-            {
+        try {
+            $elm = $this->xpath->query($xpath, $contextElm);
+            if ($elm === null) return null;
+            $elm = $elm->item(0);
+            if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
                 return $elm->value;
-            } else if($elm->nodeType == XML_TEXT_NODE)
-            {
+            } else if ($elm->nodeType == XML_TEXT_NODE) {
                 return $elm->wholeText;
-            } else if($elm->nodeType == XML_ELEMENT_NODE)
-            {
+            } else if ($elm->nodeType == XML_ELEMENT_NODE) {
                 return $elm;
-            } else
-            {
+            } else {
                 return null;
             }
-        } catch(\Exception $E)
-        {
+        } catch (\Exception $E) {
             return null;
         }
     }
@@ -91,13 +84,12 @@ abstract class WmcParser
     public static function createDocument($data, $validate = false)
     {
         $doc = new \DOMDocument();
-        if(!@$doc->loadXML($data))
-        {
+        if (!@$doc->loadXML($data)) {
             throw new XmlParseException("Could not parse Wmc Document.");
         }
         return WmcParser::checkWmcDocument($doc, $validate);
     }
-    
+
     /**
      * Checks the wmc xml
      * 
@@ -107,27 +99,25 @@ abstract class WmcParser
      * @throws WmcException if a xml is not a wmc document.
      * @throws NotSupportedVersionException if a wmc version is not supported
      */
-    private static function checkWmcDocument(\DOMDocument $doc, $validate = false)
+    private static function checkWmcDocument(\DOMDocument $doc,
+        $validate = false)
     {
-        if($doc->documentElement->tagName !== "ViewContext")
-        {
+        if ($doc->documentElement->tagName !== "ViewContext") {
             throw new WmcException("Not supported Wmc Document");
         }
 
-        if($validate && !@$this->doc->validate())
-        {
+        if ($validate && !@$this->doc->validate()) {
             // TODO logging
         }
 
         $version = $doc->documentElement->getAttribute("version");
-        if($version !== "1.1.0")
-        {
+        if ($version !== "1.1.0") {
             throw new NotSupportedVersionException('The WMC version "'
-                    . $version . '" is not supported.');
+            . $version . '" is not supported.');
         }
         return $doc;
     }
-    
+
     /**
      * Loads a wmc document from a file
      * 
@@ -139,8 +129,7 @@ abstract class WmcParser
     public static function loadDocument($file, $validate = false)
     {
         $doc = new \DOMDocument();
-        if(!@$doc->load($file))
-        {
+        if (!@$doc->load($file)) {
             throw new XmlParseException("Could not parse Wmc Document.");
         }
         return WmcParser::checkWmcDocument($doc, $validate);
@@ -156,8 +145,7 @@ abstract class WmcParser
     public static function getParser(\DOMDocument $doc)
     {
         $version = $doc->documentElement->getAttribute("version");
-        switch($version)
-        {
+        switch ($version) {
             case "1.1.0":
                 return new WmcParser110($doc);
             default:

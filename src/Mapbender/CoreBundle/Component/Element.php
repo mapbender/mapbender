@@ -24,6 +24,19 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 abstract class Element
 {
+    /**
+     * Extended API. The ext_api defins, if an element can be used as a target
+     * element.
+     * @var boolean extended api 
+     */
+    public static $ext_api = true;
+    
+    /**
+     * Merge Configurations. The merge_configurations defines, if the default 
+     * configuration array and the configuration array should be merged
+     * @var boolean merge configurations
+     */
+    public static $merge_configurations = true;
 
     /**
      * Application

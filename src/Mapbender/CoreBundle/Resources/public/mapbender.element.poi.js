@@ -1,0 +1,157 @@
+﻿(function($) {
+
+$.widget('mapbender.mbPOI', {
+    options: {
+        target: undefined,
+        useMailto: false
+    },
+
+    map: null,
+    mbMap: null,
+    mapClickProxy: null,
+    popup: null,
+    point: null,
+    poiMarkerLayer: null,
+
+    _create: function() {
+        if(!Mapbender.checkTarget("mbFeatureInfo", this.options.target)){
+            return;
+        }
+        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+    },
+
+    _setup: function() {
+        this.map = $('#' + this.options.target);
+        this.mbMap = this.map.data('mapbenderMbMap');
+        this.mapClickProxy = $.proxy(this._mapClickHandler, this);
+    },
+
+    defaultAction: function() {
+        return this.activate();
+    },
+
+    /**
+     * On activation, bind the onClick function to handle map click events.
+     * For the call to be made in the right context, the onClickProxy must
+     * be used.
+     */
+    activate: function() {
+        if(this.map.length !== 0) {
+            this._createDialog();
+            this.map.on('click', this.mapClickProxy);
+        }
+    },
+
+    /**
+     * The actual click event handler. Here Pixel and World coordinates
+     * are extracted and then send to the mapClickWorker
+     */
+    _mapClickHandler: function(event) {
+        var x = event.pageX - this.map.offset().left,
+            y = event.pageY - this.map.offset().top,
+            olMap = this.map.data('mapbenderMbMap').map.olMap,
+            ll = olMap.getLonLatFromPixel(new OpenLayers.Pixel(x, y)),
+            coordinates = {
+                pixel: {
+                    x: x,
+                    y: y
+                },
+                world: {
+                    x: ll.lon,
+                    y: ll.lat
+                }
+            };
+
+        if(!this.poiMarkerLayer) {
+            this.poiMarkerLayer = new OpenLayers.Layer.Markers();
+            this.mbMap.map.olMap.addLayer(this.poiMarkerLayer);
+        }
+        this.poiMarkerLayer.clearMarkers();
+        var poiMarker = new OpenLayers.Marker(ll, new OpenLayers.Icon(
+            Mapbender.configuration.application.urls.asset +
+                this.mbMap.options.poiIcon.image, {
+                    w: this.mbMap.options.poiIcon.width,
+                    h: this.mbMap.options.poiIcon.height
+                }, {
+                    x: this.mbMap.options.poiIcon.xoffset,
+                    y: this.mbMap.options.poiIcon.yoffset
+                }));
+        this.poiMarkerLayer.addMarker(poiMarker);
+
+        this.popup.subtitle(
+            '<b>' + Math.round(coordinates.world.x,0) + ',' +Math.round(coordinates.world.y,0) + ' @ 1:' + olMap.getScale() + '</b>');
+        this.poi = {
+            point: Math.round(coordinates.world.x,0) + ',' + Math.round(coordinates.world.y,0),
+            scale: olMap.getScale()
+        };
+    },
+
+    _createDialog: function(){
+        var self = this;
+        this.popup = new Mapbender.Popup2({
+            draggable: true,
+            destroyOnClose: true,
+            modal: false,
+            title: this.element.attr('title'),
+            content: $('.input', this.element).html(),
+            buttons: {
+                'ok': {
+                    label: 'Ok',
+                    callback: function() {
+                        self._sendPoi(this.$element);
+                        this.close();
+                    }
+                },
+                'cancel': {
+                    label: 'Cancel',
+                    callback: function() {
+                        this.close();
+                    }
+                }
+            }
+        });
+        this.popup.$element.on('close', function() {
+            if(self.poiMarkerLayer) {
+                self.poiMarkerLayer.clearMarkers();
+                self.mbMap.map.olMap.removeLayer(self.poiMarkerLayer);
+                self.poiMarkerLayer.destroy();
+                self.poiMarkerLayer = null;
+            }
+            self.map.off('click', self.mapClickProxy);
+        });
+    },
+
+    _sendPoi: function(content) {
+        var form = $('form', content);
+        var body = $('#body', form).val();
+        var coordx = $('#coordx', form).val();
+        var coordy = $('#coordy', form).val();
+
+        var poi = $.extend({}, this.poi, {
+            label: body.replace(/\n|\r/g, '<br />')
+        });
+        var params = $.param({ poi: poi });
+        var poiURL = 'http://' + window.location.host + window.location.pathname + '?' + params;
+        body += '\n\n' + poiURL;
+
+        if(this.options.useMailto) {
+            var mailto_link = 'mailto:?body=' + escape(body);
+            win = window.open(mailto_link,'emailWindow');
+            if (win && win.open &&!win.closed) win.close();
+        } else {
+            var ta = $('<div/>', {
+                html: $('.output', this.element).html()
+            });
+            $('textarea', ta).val(body);
+            new Mapbender.Popup2({
+                destroyOnClose: true,
+                modal: true,
+                title: this.element.attr('title'),
+                content: ta,
+                buttons: {}
+            });
+        }
+    }
+});
+
+})(jQuery);

@@ -173,6 +173,8 @@ class Application
         if($type === 'js')
         {
             // Mapbender API
+            $file = '@MapbenderCoreBundle/Resources/public/stubs.js';
+            $this->addAsset($assets, $type, $file);
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.js';
             $this->addAsset($assets, $type, $file);
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.model.js';
@@ -323,7 +325,7 @@ class Application
                     $layer->getId() => array(
                         'type' => $layer->getType(),
                         'title' => $layer->getTitle(),
-                        'configuration' => $layer->getConfiguration()));
+                        'configuration' => $layer->getConfiguration($this->container->get('signer'))));
                 $configuration['layersets'][$layerset->getId()][$num] = $layerconf;
                 $num++;
             }
@@ -404,10 +406,25 @@ class Application
     {
         if($this->elements === null)
         {
+            $securityContext = $this->container->get('security.context');
             // Set up all elements (by region)
             $this->elements = array();
             foreach($this->entity->getElements() as $entity)
             {
+                $application_entity = $this->getEntity();
+                if($application_entity::SOURCE_YAML === $application_entity->getSource()
+                        && count($entity->yaml_roles)) {
+                    $passed = false;
+                    foreach($entity->yaml_roles as $role) {
+                        if($securityContext->isGranted($role)) {
+                            $passed = true;
+                            break;
+                        }
+                    }
+                    if(!$passed) {
+                        continue;
+                    }
+                }
                 $class = $entity->getClass();
                 if(!$entity->getEnabled()) {
                     continue;

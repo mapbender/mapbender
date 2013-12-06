@@ -16,8 +16,8 @@
         _setup: function(){
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             if(typeof this.options.load !== 'undefined'
-                    && typeof this.options.load.wmc !== 'undefined'){
-                var wmc_id = this.options.load.wmc;
+                && typeof this.options.load.wmcid !== 'undefined'){
+                var wmc_id = this.options.load.wmcid;
                 var map = $('#' + this.options.target).data('mapbenderMbMap');
                 var wmcHandlier = new Mapbender.WmcHandler(map);
                 wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
@@ -61,8 +61,8 @@
                     content: [$.ajax({
                             url: self.elementUrl + 'list',
                             complete: function(data){
-                                $('.loadWmc', self.popup.$element).on("click", $.proxy(self._loadFromId, self));
-                                $('.loadXmlWmc', self.popup.$element).on("click", $.proxy(self._loadForm, self));
+                                $('.loadWmcId', self.popup.$element).on("click", $.proxy(self._loadFromId, self));
+                                $('.loadWmcXml', self.popup.$element).on("click", $.proxy(self._loadForm, self));
                             }})],
                     destroyOnClose: true,
                     width: 400,
@@ -78,7 +78,7 @@
                             label: 'Load',
                             cssClass: 'button buttonYes right',
                             callback: function(){
-                                $("#wmc-load", self.popup.$element).submit();
+                                $('#wmc-load input[type="submit"]', self.popup.$element).click();
                                 return false;
                             }
                         },
@@ -109,9 +109,9 @@
                 type: "POST",
                 success: function(data){
                     $("#popupContent").html(data);
-                    var popup = $("#popup");
-                    $(".loadWmc").on("click", $.proxy(self._loadFromId, self));
-                    $(".loadXmlWmc").on("click", $.proxy(self._loadForm, self));
+//                    var popup = $("#popup");
+                    $(".loadWmcId").on("click", $.proxy(self._loadFromId, self));
+                    $(".loadWmcXml").on("click", $.proxy(self._loadForm, self));
                 }
             });
         },
@@ -127,7 +127,7 @@
                         url: url,
                         type: "GET",
                         complete: function(data){
-                            if(data != undefined){
+                            if(typeof data !== 'undefined'){
                                 var pop = $(".popup", self.popup.$element);
                                 var popupContent = $(".popupContent", self.popup.$element);
                                 var contentWrapper = pop.find(".contentWrapper");
@@ -168,7 +168,7 @@
                     beforeSerialize: function(e){
                         var map = $('#' + self.options.target).data('mapbenderMbMap')
                         var state = map.getMapState();
-                        $('input#wmc_state_json',self.popup.$element).val(JSON.stringify(state));
+                        $('input#wmc_state_json', self.popup.$element).val(JSON.stringify(state));
                     },
                     contentType: 'json',
                     context: self,
@@ -198,20 +198,44 @@
             }
         },
         /**
-         * Loads a wmc from id
+         * Loads a wmc from id (event handler)
          */
         _loadFromId: function(e){
             var wmc_id = $(e.target).parents('tr:first').attr('data-id');
             this.loadFromId(wmc_id);
-
-//            this.close(); 
         },
+        /**
+         * Loads a wmc from id
+         */
         loadFromId: function(wmc_id){
             var map = $('#' + this.options.target).data('mapbenderMbMap');
             var wmcHandlier = new Mapbender.WmcHandler(map, {
                 keepExtent: this.options.keepExtent,
                 keepSources: this.options.keepSources});
             wmcHandlier.loadFromId(this.elementUrl + 'load', wmc_id);
+        },
+        /**
+         * Loads a wmc from id
+         */
+        removeFromMap: function(){
+            var map = $('#' + this.options.target).data('mapbenderMbMap');
+            var wmcHandlier = new Mapbender.WmcHandler(map, {
+                keepExtent: this.options.keepExtent,
+                keepSources: this.options.keepSources});
+            wmcHandlier.removeFromMap();
+        },
+        /**
+         * Loads a wmc from id
+         */
+        wmcAsXml: function(){
+            var self = this;
+            var map = $('#' + this.options.target).data('mapbenderMbMap');
+            var st = JSON.stringify(map.getMapState());
+            var form = $('<form method="POST" action="' + (self.elementUrl + 'wmcasxml') + '" target="_BLANK" />');
+            $('<input></input>').attr('type', 'hidden').attr('name', 'state').val(st).appendTo(form);
+            form.appendTo($('body'));
+            form.submit();
+            form.remove();
         },
         /**
          *

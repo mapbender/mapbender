@@ -33,7 +33,10 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
-            this.options = { layerDefs: [] };
+            this.options = {
+                layerDefs: [],
+                poiIcon: this.options.poiIcon
+            };
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();
@@ -194,7 +197,7 @@
          */
         zoomToExtent: function(extent, closest) {
             if(typeof closest === 'undefined')
-                closest = false;
+                closest = true;
             this.map.olMap.zoomToExtent(extent, closest);
         },
         /**

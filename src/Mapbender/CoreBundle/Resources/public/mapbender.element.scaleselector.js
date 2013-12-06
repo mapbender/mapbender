@@ -36,7 +36,7 @@
         _zoomToScale: function(){
             var scale = $("#" + $(this.element).attr('id') + " select").val();
             var map = $('#' + this.options.target).data('mapbenderMbMap');
-            map.zoomToScale(scale);
+            map.zoomToScale(scale, true);
         },
         _updateScale: function(){
             var map = $('#' + this.options.target).data('mapbenderMbMap');

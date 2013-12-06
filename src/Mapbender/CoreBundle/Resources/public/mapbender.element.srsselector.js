@@ -60,15 +60,13 @@
                 
         _onSrsChanged: function(event, srsObj){
             this.selectSrs(srsObj.projection.projCode);
-//            var allSrs = this.mapWidget.data('mapbenderMbMap').loadSrs("EPSG:31469"); // this is a test
         },
                 
         _onSrsAdded: function(event, srsObj){
             $("#"+$(this.element).attr('id')+" select").append($('<option></option>').val(srsObj.name).html(srsObj.title));
-            $('.dropdown', this.element).each(function() {
-                initDropdown.call(this);
-            });
-//            window.console && console.log("TODO add option into select",srsObj);
+            if(initDropdown) {
+                initDropdown.call(this.element.get(0));
+            }
         },
 
         selectSrs: function(crs) {

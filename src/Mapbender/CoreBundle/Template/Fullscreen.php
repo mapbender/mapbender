@@ -17,7 +17,7 @@ class Fullscreen extends Template
      */
     public static function getTitle()
     {
-        return 'Fullscreen template';
+        return 'Fullscreen';
     }
 
     /**
