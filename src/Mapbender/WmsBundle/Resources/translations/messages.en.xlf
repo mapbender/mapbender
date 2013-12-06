@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="27c45a8d7df44b7de7adf685e204e80c" resname="mb.wms.wmsloader.error.url">
+        <source>mb.wms.wmsloader.error.url</source>
+        <target>__mb.wms.wmsloader.error.url</target>
+      </trans-unit>
+      <trans-unit id="6ff51d3832f0575b54225dea941a97ff" resname="mb.wms.wmsloader.error.service">
+        <source>mb.wms.wmsloader.error.service</source>
+        <target>__mb.wms.wmsloader.error.service</target>
+      </trans-unit>
+      <trans-unit id="8e29e6784e7fce8440c02cff8f93042b" resname="mb.wms.wmsloader.error.operation">
+        <source>mb.wms.wmsloader.error.operation</source>
+        <target>__mb.wms.wmsloader.error.operation</target>
+      </trans-unit>
+      <trans-unit id="906389f11054233d8999e2308e1698d1" resname="mb.wms.wmsloader.error.version">
+        <source>mb.wms.wmsloader.error.version</source>
+        <target>__mb.wms.wmsloader.error.version</target>
+      </trans-unit>
+      <trans-unit id="52f4d4c9483df6e72fdff9a1e9bea863" resname="mb.wms.wmsloader.title">
+        <source>mb.wms.wmsloader.title</source>
+        <target>Load WMS</target>
+      </trans-unit>
+      <trans-unit id="e0fad091f39559379dc4574bb9d41485" resname="mb.wms.wmsloader.dialog.btn.cancel">
+        <source>mb.wms.wmsloader.dialog.btn.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="d7a639d77a5fce79dbfc22bb7fb57807" resname="mb.wms.wmsloader.dialog.btn.load">
+        <source>mb.wms.wmsloader.dialog.btn.load</source>
+        <target>Load</target>
+      </trans-unit>
+      <trans-unit id="0a52730597fb4ffa01fc117d9e71e3a9" resname="Example">
+        <source>Example</source>
+        <target>__Example</target>
+      </trans-unit>
+      <trans-unit id="b1a51800f6fddc018203a102f87a1953" resname="Service url">
+        <source>Service url</source>
+        <target>__Service url</target>
+      </trans-unit>
+      <trans-unit id="be1fc247f6b1768447501ac7c1268c8f" resname="Auto open">
+        <source>Auto open</source>
+        <target>__Auto open</target>
+      </trans-unit>
+      <trans-unit id="3afd41144f7935adfb20b460f4762236" resname="Split layers">
+        <source>Split layers</source>
+        <target>__Split layers</target>
+      </trans-unit>
+      <trans-unit id="c888aa0d3cc4c373232c8d0280b6cd14" resname="Use declarative">
+        <source>Use declarative</source>
+        <target>__Use declarative</target>
+      </trans-unit>
+      <trans-unit id="007f57eb93ce5816f4a5f294f7d24f5e" resname="WMS">
+        <source>WMS</source>
+        <target>__WMS</target>
+      </trans-unit>
+      <trans-unit id="6cdac590150fa341975f2fb48fe26192" resname="Back to service list">
+        <source>Back to service list</source>
+        <target>__Back to service list</target>
+      </trans-unit>
+      <trans-unit id="ce21470ab49d1d1976bc3dc72438c183" resname="Metadata">
+        <source>Metadata</source>
+        <target>__Metadata</target>
+      </trans-unit>
+      <trans-unit id="bbaff12800505b22a853e8b7f4eb6a22" resname="Contact">
+        <source>Contact</source>
+        <target>__Contact</target>
+      </trans-unit>
+      <trans-unit id="3ec365dd533ddb7ef3d1c111186ce872" resname="Details">
+        <source>Details</source>
+        <target>__Details</target>
+      </trans-unit>
+      <trans-unit id="87bfda183c4f851a101e97bbb1bbace7" resname="Layers">
+        <source>Layers</source>
+        <target>__Layers</target>
+      </trans-unit>
+      <trans-unit id="b78a3223503896721cca1303f776159b" resname="Title">
+        <source>Title</source>
+        <target>__Title</target>
+      </trans-unit>
+      <trans-unit id="49ee3087348e8d44e1feda1917443987" resname="Name">
+        <source>Name</source>
+        <target>__Name</target>
+      </trans-unit>
+      <trans-unit id="34b6cd75171affba6957e308dcbd92be" resname="Version">
+        <source>Version</source>
+        <target>__Version</target>
+      </trans-unit>
+      <trans-unit id="c1e705c58fa4805c035f8d11a796a323" resname="Origin URL">
+        <source>Origin URL</source>
+        <target>__Origin URL</target>
+      </trans-unit>
+      <trans-unit id="e353dbe42c8654f33588d4da0b517469" resname="Abstract">
+        <source>Abstract</source>
+        <target>__Abstract</target>
+      </trans-unit>
+      <trans-unit id="926ed165ada6d96831a79b9105393b01" resname="Online Resource">
+        <source>Online Resource</source>
+        <target>__Online Resource</target>
+      </trans-unit>
+      <trans-unit id="7a72ce95b89b61f0fb4494b0494a281e" resname="Exception Formats">
+        <source>Exception Formats</source>
+        <target>__Exception Formats</target>
+      </trans-unit>
+      <trans-unit id="006300efaf063e1705dd614ea0ae9e8b" resname="Fees">
+        <source>Fees</source>
+        <target>__Fees</target>
+      </trans-unit>
+      <trans-unit id="da9e6a560e7dc8bc786cc602b15c2803" resname="Access constraints">
+        <source>Access constraints</source>
+        <target>__Access constraints</target>
+      </trans-unit>
+      <trans-unit id="40bed7cf9b3d4bb3a3d7a7e3eb18c5eb" resname="Person">
+        <source>Person</source>
+        <target>__Person</target>
+      </trans-unit>
+      <trans-unit id="d6b258792ff06f82933c74eeb8aef591" resname="Organization">
+        <source>Organization</source>
+        <target>__Organization</target>
+      </trans-unit>
+      <trans-unit id="52f5e0bc3859bc5f5e25130b6c7e8881" resname="Position">
+        <source>Position</source>
+        <target>__Position</target>
+      </trans-unit>
+      <trans-unit id="b2a1e8c4e743228e0a3719e3abc4cc1e" resname="Telephone">
+        <source>Telephone</source>
+        <target>__Telephone</target>
+      </trans-unit>
+      <trans-unit id="8e999e04eb1b4674ff2421efa61bb050" resname="Facsimile">
+        <source>Facsimile</source>
+        <target>__Facsimile</target>
+      </trans-unit>
+      <trans-unit id="ce8ae9da5b7cd6c3df2929543a9af92d" resname="Email">
+        <source>Email</source>
+        <target>__Email</target>
+      </trans-unit>
+      <trans-unit id="dd7bf230fde8d4836917806aff6a6b27" resname="Address">
+        <source>Address</source>
+        <target>__Address</target>
+      </trans-unit>
+      <trans-unit id="e74b00cf6c0d534077c4d85cc658140f" resname="Addresstype">
+        <source>Addresstype</source>
+        <target>__Addresstype</target>
+      </trans-unit>
+      <trans-unit id="57d056ed0984166336b7879c2af3657f" resname="City">
+        <source>City</source>
+        <target>__City</target>
+      </trans-unit>
+      <trans-unit id="46a2a41cc6e552044816a2d04634545d" resname="State">
+        <source>State</source>
+        <target>__State</target>
+      </trans-unit>
+      <trans-unit id="8bcdc441379cbf584638b0589a3f9adb" resname="Postcode">
+        <source>Postcode</source>
+        <target>__Postcode</target>
+      </trans-unit>
+      <trans-unit id="59716c97497eb9694541f7c3d37b1a4d" resname="Country">
+        <source>Country</source>
+        <target>__Country</target>
+      </trans-unit>
+      <trans-unit id="f855457b09b4f7cc83732303834300ec" resname="Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!">
+        <source>Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!</source>
+        <target>__Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!</target>
+      </trans-unit>
+      <trans-unit id="4e59ad08a03d56020a7d46b95d8dc68a" resname="Layer's Title">
+        <source>Layer's Title</source>
+        <target>__Layer's Title</target>
+      </trans-unit>
+      <trans-unit id="08879991b6c95d5430731fb7413fbd65" resname="MinScale">
+        <source>MinScale</source>
+        <target>__MinScale</target>
+      </trans-unit>
+      <trans-unit id="1eaed172825c0d13abee7576d5555569" resname="MaxSclase">
+        <source>MaxSclase</source>
+        <target>__MaxSclase</target>
+      </trans-unit>
+      <trans-unit id="4d3d769b812b6faa6b76e1a8abaece2d" resname="Active">
+        <source>Active</source>
+        <target>__Active</target>
+      </trans-unit>
+      <trans-unit id="3a68a5286808bcf06b00640ed56c47bc" resname="Allow Select at TOC">
+        <source>Allow Select at TOC</source>
+        <target>__Allow Select at TOC</target>
+      </trans-unit>
+      <trans-unit id="2704e75fdddff58d21ced982ef4debf6" resname="Selected  at TOC">
+        <source>Selected  at TOC</source>
+        <target>__Selected  at TOC</target>
+      </trans-unit>
+      <trans-unit id="fd4c26c8e7427629f96385a584069518" resname="Allow FeatureInfo at TOC">
+        <source>Allow FeatureInfo at TOC</source>
+        <target>__Allow FeatureInfo at TOC</target>
+      </trans-unit>
+      <trans-unit id="374255b6ceaa723f2b9478f597ae10cd" resname="FeatureInfo at TOC">
+        <source>FeatureInfo at TOC</source>
+        <target>__FeatureInfo at TOC</target>
+      </trans-unit>
+      <trans-unit id="81090bc5aee86e52d43472ec70a1a04e" resname="Allow Toggle at TOC">
+        <source>Allow Toggle at TOC</source>
+        <target>__Allow Toggle at TOC</target>
+      </trans-unit>
+      <trans-unit id="fda6623c5013509b9efe5fe4774b8cc1" resname="Toggle at TOC">
+        <source>Toggle at TOC</source>
+        <target>__Toggle at TOC</target>
+      </trans-unit>
+      <trans-unit id="739636c4e7102334d46a564a54d1f2e6" resname="Allow Reorder at TOC">
+        <source>Allow Reorder at TOC</source>
+        <target>__Allow Reorder at TOC</target>
+      </trans-unit>
+      <trans-unit id="7d5a27f1b53dc519eac7bb288f664892" resname="More informations">
+        <source>More informations</source>
+        <target>__More informations</target>
+      </trans-unit>
+      <trans-unit id="490aa6e856ccf208a054389e47ce0d06" resname="Id">
+        <source>Id</source>
+        <target>__Id</target>
+      </trans-unit>
+      <trans-unit id="9a827e9d37b13be5e7f601fe4ab77cea" resname="Layer's Name">
+        <source>Layer's Name</source>
+        <target>__Layer's Name</target>
+      </trans-unit>
+      <trans-unit id="ae284f900f9d6e21ba69144cfc91e41b" resname="Style">
+        <source>Style</source>
+        <target>__Style</target>
+      </trans-unit>
+      <trans-unit id="5ef1764055a535f1546b833929fa8503" resname="Wms Instance">
+        <source>Wms Instance</source>
+        <target>__Wms Instance</target>
+      </trans-unit>
+      <trans-unit id="c9cc8cce247e49bae79f15173ce97354" resname="Save">
+        <source>Save</source>
+        <target>__Save</target>
+      </trans-unit>
+      <trans-unit id="ea4788705e6873b424c65e91c2846b19" resname="Cancel">
+        <source>Cancel</source>
+        <target>__Cancel</target>
+      </trans-unit>
+      <trans-unit id="ec24d78ce33048dc73a2b6b1a0690192" resname="Visible">
+        <source>Visible</source>
+        <target>__Visible</target>
+      </trans-unit>
+      <trans-unit id="f56ec2ab97d604832d90f6394e3f341f" resname="Proxy">
+        <source>Proxy</source>
+        <target>__Proxy</target>
+      </trans-unit>
+      <trans-unit id="6f7956741d5d673ff0c8eacc8d8c961c" resname="Transparency">
+        <source>Transparency</source>
+        <target>__Transparency</target>
+      </trans-unit>
+      <trans-unit id="320af35370596a9ea75686c6624a9f07" resname="Tiled">
+        <source>Tiled</source>
+        <target>__Tiled</target>
+      </trans-unit>
+      <trans-unit id="5fb3baac70ed6efb22c79f8a413ddc9e" resname="Minsc">
+        <source>Minsc</source>
+        <target>__Minsc</target>
+      </trans-unit>
+      <trans-unit id="0ab75c137735c064fbbd214c55d60636" resname="Maxsc">
+        <source>Maxsc</source>
+        <target>__Maxsc</target>
+      </trans-unit>
+      <trans-unit id="e0626222614bdee31951d84c64e5e9ff" resname="Select">
+        <source>Select</source>
+        <target>__Select</target>
+      </trans-unit>
+      <trans-unit id="4059b0251f66a18cb56f544728796875" resname="Info">
+        <source>Info</source>
+        <target>__Info</target>
+      </trans-unit>
+      <trans-unit id="a8875bbe4272c0bdd786cfaaedf77921" resname="Toggle">
+        <source>Toggle</source>
+        <target>__Toggle</target>
+      </trans-unit>
+      <trans-unit id="332c80b1838dc515f5031e09da3b7f3f" resname="Reorder">
+        <source>Reorder</source>
+        <target>__Reorder</target>
+      </trans-unit>
+      <trans-unit id="b394126a0e52e75f1e3d535d0fb0d33c" resname="allow">
+        <source>allow</source>
+        <target>__allow</target>
+      </trans-unit>
+      <trans-unit id="ed2b5c0139cec8ad2873829dc1117d50" resname="on">
+        <source>on</source>
+        <target>__on</target>
+      </trans-unit>
+      <trans-unit id="bb81d9b66c65e9a86b87bce5c089dabc" resname="OGC WMS">
+        <source>OGC WMS</source>
+        <target>__OGC WMS</target>
+      </trans-unit>
+      <trans-unit id="ba51698ee793d329668c5f0208df9c62" resname="Serviceurl:">
+        <source>Serviceurl:</source>
+        <target>__Serviceurl:</target>
+      </trans-unit>
+      <trans-unit id="cac81c648846c9b8c3e6085a45782c7e" resname="Username:">
+        <source>Username:</source>
+        <target>__Username:</target>
+      </trans-unit>
+      <trans-unit id="b341a59d5636ed3d6a819137495b08a0" resname="Password:">
+        <source>Password:</source>
+        <target>__Password:</target>
+      </trans-unit>
+      <trans-unit id="f19dbf2edb3a0bd74b0524d960ff21eb" resname="Load">
+        <source>Load</source>
+        <target>__Load</target>
+      </trans-unit>
+      <trans-unit id="3deee2078d7dd1672b690c7d17ddb89f" resname="Queryable">
+        <source>Queryable</source>
+        <target>__Queryable</target>
+      </trans-unit>
+      <trans-unit id="039f320eda77d8ee230b359d3519ac15" resname="Cascaded">
+        <source>Cascaded</source>
+        <target>__Cascaded</target>
+      </trans-unit>
+      <trans-unit id="faa90538de35640e4b1e31ccf35b6eb5" resname="Opaque">
+        <source>Opaque</source>
+        <target>__Opaque</target>
+      </trans-unit>
+      <trans-unit id="d774f5d630389c3a0d58445dfa8709c9" resname="NoSubset">
+        <source>NoSubset</source>
+        <target>__NoSubset</target>
+      </trans-unit>
+      <trans-unit id="e9cb5b14536dcce4a0c02d83301febf2" resname="FixedWidth">
+        <source>FixedWidth</source>
+        <target>__FixedWidth</target>
+      </trans-unit>
+      <trans-unit id="44dd18fa87020af91fd891952463932c" resname="FixedHeight">
+        <source>FixedHeight</source>
+        <target>__FixedHeight</target>
+      </trans-unit>
+      <trans-unit id="4973b420b9a06a0f6791f9e47a6473f1" resname="LatlonBounds">
+        <source>LatlonBounds</source>
+        <target>__LatlonBounds</target>
+      </trans-unit>
+      <trans-unit id="b96da744287618055e5d086d53f42660" resname="BoundingBox">
+        <source>BoundingBox</source>
+        <target>__BoundingBox</target>
+      </trans-unit>
+      <trans-unit id="f1bd458154643eecd3803f4772a7b237" resname="Srs">
+        <source>Srs</source>
+        <target>__Srs</target>
+      </trans-unit>
+      <trans-unit id="4c1c7d945fcd04d68bd3b3f1d99a55a1" resname="Styles">
+        <source>Styles</source>
+        <target>__Styles</target>
+      </trans-unit>
+      <trans-unit id="498823bbe23af4d36760a1830332a0e4" resname="LegendUrl">
+        <source>LegendUrl</source>
+        <target>__LegendUrl</target>
+      </trans-unit>
+      <trans-unit id="1b96e681c81a1ee22acf5231e9602379" resname="StyleSheetUrl">
+        <source>StyleSheetUrl</source>
+        <target>__StyleSheetUrl</target>
+      </trans-unit>
+      <trans-unit id="8146cc107258f260f8a3be8a1fde7ffe" resname="StyleUrl">
+        <source>StyleUrl</source>
+        <target>__StyleUrl</target>
+      </trans-unit>
+      <trans-unit id="85a7cd587d6142dbfc1a4de05af7b75d" resname="Scale">
+        <source>Scale</source>
+        <target>__Scale</target>
+      </trans-unit>
+      <trans-unit id="78d811e98514cd165dda532286610fd2" resname="Min">
+        <source>Min</source>
+        <target>__Min</target>
+      </trans-unit>
+      <trans-unit id="6a061313d22e51e0f25b7cd4dc065233" resname="Max">
+        <source>Max</source>
+        <target>__Max</target>
+      </trans-unit>
+      <trans-unit id="3c65c176b87c66f888444a5108be7598" resname="ScaleHint">
+        <source>ScaleHint</source>
+        <target>__ScaleHint</target>
+      </trans-unit>
+      <trans-unit id="2855b85f4f341561038a216142c10afb" resname="Attribution">
+        <source>Attribution</source>
+        <target>__Attribution</target>
+      </trans-unit>
+      <trans-unit id="1d15019579a3ba420ad7fa10b698fb6b" resname="OnlineResource">
+        <source>OnlineResource</source>
+        <target>__OnlineResource</target>
+      </trans-unit>
+      <trans-unit id="5d2dd2bbb4799caad3b359673780b4a7" resname="LogoUrl">
+        <source>LogoUrl</source>
+        <target>__LogoUrl</target>
+      </trans-unit>
+      <trans-unit id="29ee5d1ebcc033234938a5234f1f2075" resname="Identifier">
+        <source>Identifier</source>
+        <target>__Identifier</target>
+      </trans-unit>
+      <trans-unit id="60f1a22c0e577712dfd7ff055183e4ad" resname="Authority">
+        <source>Authority</source>
+        <target>__Authority</target>
+      </trans-unit>
+      <trans-unit id="02a3a357710cc2a5dfdfb74ed012fb59" resname="Url">
+        <source>Url</source>
+        <target>__Url</target>
+      </trans-unit>
+      <trans-unit id="689202409e48743b914713f96d93947c" resname="Value">
+        <source>Value</source>
+        <target>__Value</target>
+      </trans-unit>
+      <trans-unit id="e28d146ab920234eb4efe1503cdd3b95" resname="MetadataUrl">
+        <source>MetadataUrl</source>
+        <target>__MetadataUrl</target>
+      </trans-unit>
+      <trans-unit id="9e0e31246b7b078403969b265870b3f4" resname="Dimension">
+        <source>Dimension</source>
+        <target>__Dimension</target>
+      </trans-unit>
+      <trans-unit id="c18ebf437835d7477c14744e56a9d6a1" resname="Extent">
+        <source>Extent</source>
+        <target>__Extent</target>
+      </trans-unit>
+      <trans-unit id="3211268b68b0a14068844dc8aa8675ed" resname="DataUrl">
+        <source>DataUrl</source>
+        <target>__DataUrl</target>
+      </trans-unit>
+      <trans-unit id="379ee19d5de7da7dcebd1f71b26089d0" resname="FeatureListUrl">
+        <source>FeatureListUrl</source>
+        <target>__FeatureListUrl</target>
+      </trans-unit>
+      <trans-unit id="0615a38067b62382dc1667010669b238" resname="Formats">
+        <source>Formats</source>
+        <target>__Formats</target>
+      </trans-unit>
+      <trans-unit id="61021277e8cc19b87d14c0487f3b3004" resname="Add Service">
+        <source>Add Service</source>
+        <target>__Add Service</target>
+      </trans-unit>
+      <trans-unit id="b0ca605e3ec3947352dd02189875715e" resname="Service Repository">
+        <source>Service Repository</source>
+        <target>__Service Repository</target>
+      </trans-unit>
+      <trans-unit id="7e63085cbdfc1d9533f819c3cb45d144" resname="Wms Instance Layers">
+        <source>Wms Instance Layers</source>
+        <target>__Wms Instance Layers</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -3,7 +3,7 @@
     $.widget("mapbender.mbWmsloader", {
         options: {
             autoOpen: false,
-            title: "Load WMS"// mb.wms.loader.title
+            title: Mapbender.trans('mb.wms.loader.title')
         },
         elementUrl: null,
         _create: function(){
@@ -45,14 +45,14 @@
                     width: 500,
                     buttons: {
                         'cancel': {
-                            label: 'Cancel', //mb.wms.loader.dialog.btn.cancel
+                            label: Mapbender.trans('mb.wms.loader.dialog.btn.cancel'),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self.close();
                             }
                         },
                         'ok': {
-                            label: 'Load', //mb.wms.loader.dialog.btn.load
+                            label: Mapbender.trans('mb.wms.loader.dialog.btn.load'),
                             cssClass: 'button right',
                             callback: function(){
                                 var url = $('#' + $(self.element).attr('id') + ' input[name="loadWmsUrl"]').val();
