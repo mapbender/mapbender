@@ -43,6 +43,7 @@ class FullscreenAlternative extends Template
             'css' => array('@FOMCoreBundle/Resources/public/css/frontend/fullscreen_alternative.css'),
             'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js'),
+            'trans' => array()
         );
 
         return $assets[$type];
