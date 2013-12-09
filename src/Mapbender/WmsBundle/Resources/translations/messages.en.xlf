@@ -34,25 +34,25 @@
         <source>mb.wms.wmsloader.dialog.btn.load</source>
         <target>Load</target>
       </trans-unit>
-      <trans-unit id="0a52730597fb4ffa01fc117d9e71e3a9" resname="Example">
-        <source>Example</source>
-        <target>__Example</target>
+      <trans-unit id="a8f182e76ae5c79f43cc7a7ad3ca5cb8" resname="mb.wms.wmsloader.dialog.label.example">
+        <source>mb.wms.wmsloader.dialog.label.example</source>
+        <target>Example</target>
       </trans-unit>
-      <trans-unit id="b1a51800f6fddc018203a102f87a1953" resname="Service url">
-        <source>Service url</source>
-        <target>__Service url</target>
+      <trans-unit id="f57f5abcae9b2db5284f703f270bfbe4" resname="mb.wms.wmsloader.dialog.label.wmsurl">
+        <source>mb.wms.wmsloader.dialog.label.wmsurl</source>
+        <target>Service URL</target>
       </trans-unit>
-      <trans-unit id="be1fc247f6b1768447501ac7c1268c8f" resname="Auto open">
-        <source>Auto open</source>
-        <target>__Auto open</target>
+      <trans-unit id="a3c1e614645662978d87b127212a82e1" resname="mb.wms.wmsloader.admin.label.autoopen">
+        <source>mb.wms.wmsloader.admin.label.autoopen</source>
+        <target>Auto open</target>
       </trans-unit>
-      <trans-unit id="3afd41144f7935adfb20b460f4762236" resname="Split layers">
-        <source>Split layers</source>
-        <target>__Split layers</target>
+      <trans-unit id="b52292e296196443736339f392fa4ee2" resname="mb.wms.wmsloader.admin.label.splitlayers">
+        <source>mb.wms.wmsloader.admin.label.splitlayers</source>
+        <target>Split layers</target>
       </trans-unit>
-      <trans-unit id="c888aa0d3cc4c373232c8d0280b6cd14" resname="Use declarative">
-        <source>Use declarative</source>
-        <target>__Use declarative</target>
+      <trans-unit id="83f8e03b200eabe5ef5297192f50f595" resname="mb.wms.wmsloader.admin.label.declarative">
+        <source>mb.wms.wmsloader.admin.label.declarative</source>
+        <target>Use declarative</target>
       </trans-unit>
       <trans-unit id="007f57eb93ce5816f4a5f294f7d24f5e" resname="WMS">
         <source>WMS</source>
@@ -166,141 +166,325 @@
         <source>Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!</source>
         <target>__Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!</target>
       </trans-unit>
-      <trans-unit id="4e59ad08a03d56020a7d46b95d8dc68a" resname="Layer's Title">
-        <source>Layer's Title</source>
-        <target>__Layer's Title</target>
+      <trans-unit id="acde5eaaee2b87b40d3f2e1368938700" resname="mb.wms.wmsloader.repo.instancelayerform.label.layerstitle">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.layerstitle</source>
+        <target>Layer's Title</target>
       </trans-unit>
-      <trans-unit id="08879991b6c95d5430731fb7413fbd65" resname="MinScale">
-        <source>MinScale</source>
-        <target>__MinScale</target>
+      <trans-unit id="9a9ca2c1f25fa76c9966680eed92e1cf" resname="mb.wms.wmsloader.repo.instancelayerform.label.minscale">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.minscale</source>
+        <target>Minscale</target>
       </trans-unit>
-      <trans-unit id="1eaed172825c0d13abee7576d5555569" resname="MaxSclase">
-        <source>MaxSclase</source>
-        <target>__MaxSclase</target>
+      <trans-unit id="d35660e5c612dffbd7cf2836e4e49321" resname="mb.wms.wmsloader.repo.instancelayerform.label.maxsclase">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.maxsclase</source>
+        <target>Maxsclase</target>
       </trans-unit>
-      <trans-unit id="4d3d769b812b6faa6b76e1a8abaece2d" resname="Active">
-        <source>Active</source>
-        <target>__Active</target>
+      <trans-unit id="2317f59b6bb880c4c03064f46d598226" resname="mb.wms.wmsloader.repo.instancelayerform.label.active">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.active</source>
+        <target>active</target>
       </trans-unit>
-      <trans-unit id="3a68a5286808bcf06b00640ed56c47bc" resname="Allow Select at TOC">
-        <source>Allow Select at TOC</source>
-        <target>__Allow Select at TOC</target>
+      <trans-unit id="8f48e1c6c2953629edc8fbbf69dc5191" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc</source>
+        <target>Allow Select at TOC</target>
       </trans-unit>
-      <trans-unit id="2704e75fdddff58d21ced982ef4debf6" resname="Selected  at TOC">
-        <source>Selected  at TOC</source>
-        <target>__Selected  at TOC</target>
+      <trans-unit id="44498ccefb53822c054eb4b1814e8b03" resname="mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc</source>
+        <target>Selected  at TOC</target>
       </trans-unit>
-      <trans-unit id="fd4c26c8e7427629f96385a584069518" resname="Allow FeatureInfo at TOC">
-        <source>Allow FeatureInfo at TOC</source>
-        <target>__Allow FeatureInfo at TOC</target>
+      <trans-unit id="b3d597ef2d3847f8ceb714daec5ec3a8" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc</source>
+        <target>Allow FeatureInfo at TOC</target>
       </trans-unit>
-      <trans-unit id="374255b6ceaa723f2b9478f597ae10cd" resname="FeatureInfo at TOC">
-        <source>FeatureInfo at TOC</source>
-        <target>__FeatureInfo at TOC</target>
+      <trans-unit id="2a21eb0a2bd3134a5bdd8f1e1d88b3fc" resname="mb.wms.wmsloader.repo.instancelayerform.label.infotoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.infotoc</source>
+        <target>FeatureInfo at TOC</target>
       </trans-unit>
-      <trans-unit id="81090bc5aee86e52d43472ec70a1a04e" resname="Allow Toggle at TOC">
-        <source>Allow Toggle at TOC</source>
-        <target>__Allow Toggle at TOC</target>
+      <trans-unit id="0be27caa38f5c86e7eb93800e9c8bee7" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc</source>
+        <target>Allow Toggle at TOC</target>
       </trans-unit>
-      <trans-unit id="fda6623c5013509b9efe5fe4774b8cc1" resname="Toggle at TOC">
-        <source>Toggle at TOC</source>
-        <target>__Toggle at TOC</target>
+      <trans-unit id="bf52e15cb3ed6f91042fcce68661d575" resname="mb.wms.wmsloader.repo.instancelayerform.label.toggletoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.toggletoc</source>
+        <target>Toggle at TOC</target>
       </trans-unit>
-      <trans-unit id="739636c4e7102334d46a564a54d1f2e6" resname="Allow Reorder at TOC">
-        <source>Allow Reorder at TOC</source>
-        <target>__Allow Reorder at TOC</target>
+      <trans-unit id="30c9893ce7fe6e42be698ec20bd90728" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc</source>
+        <target>Allow Reorder at TOC</target>
       </trans-unit>
-      <trans-unit id="7d5a27f1b53dc519eac7bb288f664892" resname="More informations">
-        <source>More informations</source>
-        <target>__More informations</target>
+      <trans-unit id="ae591fa9f76a9aeb07c6fc1f19e9737a" resname="mb.wms.wmsloader.repo.instancelayerform.label.moreinfo">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.moreinfo</source>
+        <target>More informations</target>
       </trans-unit>
-      <trans-unit id="490aa6e856ccf208a054389e47ce0d06" resname="Id">
-        <source>Id</source>
-        <target>__Id</target>
+      <trans-unit id="be533b34066247ffa2d204541497b135" resname="mb.wms.wmsloader.repo.instancelayerform.label.id">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.id</source>
+        <target>ID</target>
       </trans-unit>
-      <trans-unit id="9a827e9d37b13be5e7f601fe4ab77cea" resname="Layer's Name">
-        <source>Layer's Name</source>
-        <target>__Layer's Name</target>
+      <trans-unit id="7cf9fa73dfd8554ef01eca5993d37de8" resname="mb.wms.wmsloader.repo.instancelayerform.label.layersname">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.layersname</source>
+        <target>Layer's Name</target>
       </trans-unit>
-      <trans-unit id="ae284f900f9d6e21ba69144cfc91e41b" resname="Style">
-        <source>Style</source>
-        <target>__Style</target>
+      <trans-unit id="76215f732815d520a74a29ebd44c9f5d" resname="mb.wms.wmsloader.repo.instancelayerform.label.style">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.style</source>
+        <target>Style</target>
       </trans-unit>
-      <trans-unit id="5ef1764055a535f1546b833929fa8503" resname="Wms Instance">
-        <source>Wms Instance</source>
-        <target>__Wms Instance</target>
+      <trans-unit id="27bde47d9d0751a8a54d0ed9f2d851e8" resname="mb.wms.wmsloader.repo.instancelayer.title.servicerepository">
+        <source>mb.wms.wmsloader.repo.instancelayer.title.servicerepository</source>
+        <target>Service Repository</target>
       </trans-unit>
-      <trans-unit id="c9cc8cce247e49bae79f15173ce97354" resname="Save">
-        <source>Save</source>
-        <target>__Save</target>
+      <trans-unit id="0b684c0973edd616c55a07df3a3b5346" resname="mb.wms.wmsloader.repo.instancelayer.label.wmsinstancelayers">
+        <source>mb.wms.wmsloader.repo.instancelayer.label.wmsinstancelayers</source>
+        <target>WMS Instance Layers</target>
       </trans-unit>
-      <trans-unit id="ea4788705e6873b424c65e91c2846b19" resname="Cancel">
-        <source>Cancel</source>
-        <target>__Cancel</target>
+      <trans-unit id="44d89f42c777927c76abd7fddaabea40" resname="mb.wms.wmsloader.repo.instancelayer.btn.save">
+        <source>mb.wms.wmsloader.repo.instancelayer.btn.save</source>
+        <target>Save</target>
       </trans-unit>
-      <trans-unit id="ec24d78ce33048dc73a2b6b1a0690192" resname="Visible">
-        <source>Visible</source>
-        <target>__Visible</target>
+      <trans-unit id="39b515eba273d1d0c178c167063bbd58" resname="mb.wms.wmsloader.repo.instance.title.wmsinstance">
+        <source>mb.wms.wmsloader.repo.instance.title.wmsinstance</source>
+        <target>WMS instance</target>
       </trans-unit>
-      <trans-unit id="f56ec2ab97d604832d90f6394e3f341f" resname="Proxy">
-        <source>Proxy</source>
-        <target>__Proxy</target>
+      <trans-unit id="52c53691aeb1cc17021e536017b52de4" resname="mb.wms.wmsloader.repo.instance.btn.save">
+        <source>mb.wms.wmsloader.repo.instance.btn.save</source>
+        <target>Save</target>
       </trans-unit>
-      <trans-unit id="6f7956741d5d673ff0c8eacc8d8c961c" resname="Transparency">
-        <source>Transparency</source>
-        <target>__Transparency</target>
+      <trans-unit id="2e991827fb9ea20a66d288451e9f0a06" resname="mb.wms.wmsloader.repo.instance.btn.cancel">
+        <source>mb.wms.wmsloader.repo.instance.btn.cancel</source>
+        <target>Cancel</target>
       </trans-unit>
-      <trans-unit id="320af35370596a9ea75686c6624a9f07" resname="Tiled">
-        <source>Tiled</source>
-        <target>__Tiled</target>
+      <trans-unit id="31b7c024632bfd41e7c3c13c64134b72" resname="mb.wms.wmsloader.repo.instance.label.originurl">
+        <source>mb.wms.wmsloader.repo.instance.label.originurl</source>
+        <target>Origin URL</target>
       </trans-unit>
-      <trans-unit id="5fb3baac70ed6efb22c79f8a413ddc9e" resname="Minsc">
-        <source>Minsc</source>
-        <target>__Minsc</target>
+      <trans-unit id="7f3d22d115d31bfcb6843d471a221a9e" resname="mb.wms.wmsloader.repo.instance.label.visible">
+        <source>mb.wms.wmsloader.repo.instance.label.visible</source>
+        <target>Visible</target>
       </trans-unit>
-      <trans-unit id="0ab75c137735c064fbbd214c55d60636" resname="Maxsc">
-        <source>Maxsc</source>
-        <target>__Maxsc</target>
+      <trans-unit id="80da76418871853e63f9b3874790595e" resname="mb.wms.wmsloader.repo.instance.label.proxy">
+        <source>mb.wms.wmsloader.repo.instance.label.proxy</source>
+        <target>Proxy</target>
       </trans-unit>
-      <trans-unit id="e0626222614bdee31951d84c64e5e9ff" resname="Select">
-        <source>Select</source>
-        <target>__Select</target>
+      <trans-unit id="ee35d3646f1db2d8ae8415d616adf2d5" resname="mb.wms.wmsloader.repo.instance.label.transparency">
+        <source>mb.wms.wmsloader.repo.instance.label.transparency</source>
+        <target>Transparency</target>
       </trans-unit>
-      <trans-unit id="4059b0251f66a18cb56f544728796875" resname="Info">
-        <source>Info</source>
-        <target>__Info</target>
+      <trans-unit id="676067f87a03a9cba1ef908bec5cce78" resname="mb.wms.wmsloader.repo.instance.label.tiled">
+        <source>mb.wms.wmsloader.repo.instance.label.tiled</source>
+        <target>Tiled</target>
       </trans-unit>
-      <trans-unit id="a8875bbe4272c0bdd786cfaaedf77921" resname="Toggle">
-        <source>Toggle</source>
-        <target>__Toggle</target>
+      <trans-unit id="c7c86b187cf4cca5a88baa4dec7b99a3" resname="mb.wms.wmsloader.repo.instance.label.title">
+        <source>mb.wms.wmsloader.repo.instance.label.title</source>
+        <target>Title</target>
       </trans-unit>
-      <trans-unit id="332c80b1838dc515f5031e09da3b7f3f" resname="Reorder">
-        <source>Reorder</source>
-        <target>__Reorder</target>
+      <trans-unit id="8288d36ad03e9beb47f9bab2184bb790" resname="mb.wms.wmsloader.repo.instance.label.minsc">
+        <source>mb.wms.wmsloader.repo.instance.label.minsc</source>
+        <target>Minsc</target>
       </trans-unit>
-      <trans-unit id="b394126a0e52e75f1e3d535d0fb0d33c" resname="allow">
-        <source>allow</source>
-        <target>__allow</target>
+      <trans-unit id="474df0057bdcc9d98cb06e557bd46174" resname="mb.wms.wmsloader.repo.instance.label.maxsc">
+        <source>mb.wms.wmsloader.repo.instance.label.maxsc</source>
+        <target>Maxsc</target>
       </trans-unit>
-      <trans-unit id="ed2b5c0139cec8ad2873829dc1117d50" resname="on">
-        <source>on</source>
-        <target>__on</target>
+      <trans-unit id="491064a31905b50378d88b3fec73f36c" resname="mb.wms.wmsloader.repo.instance.label.active">
+        <source>mb.wms.wmsloader.repo.instance.label.active</source>
+        <target>active</target>
       </trans-unit>
-      <trans-unit id="bb81d9b66c65e9a86b87bce5c089dabc" resname="OGC WMS">
-        <source>OGC WMS</source>
-        <target>__OGC WMS</target>
+      <trans-unit id="2de39e91b53fcf1dc4a044eb7a8b7a27" resname="mb.wms.wmsloader.repo.instance.label.select">
+        <source>mb.wms.wmsloader.repo.instance.label.select</source>
+        <target>select</target>
       </trans-unit>
-      <trans-unit id="ba51698ee793d329668c5f0208df9c62" resname="Serviceurl:">
-        <source>Serviceurl:</source>
-        <target>__Serviceurl:</target>
+      <trans-unit id="41a4e75e51ad623178997fcf84a73a05" resname="mb.wms.wmsloader.repo.instance.label.info">
+        <source>mb.wms.wmsloader.repo.instance.label.info</source>
+        <target>info</target>
       </trans-unit>
-      <trans-unit id="cac81c648846c9b8c3e6085a45782c7e" resname="Username:">
-        <source>Username:</source>
-        <target>__Username:</target>
+      <trans-unit id="b117b1f45a600d80fb7bb9861e2f86b5" resname="mb.wms.wmsloader.repo.instance.label.toggle">
+        <source>mb.wms.wmsloader.repo.instance.label.toggle</source>
+        <target>toggle</target>
       </trans-unit>
-      <trans-unit id="b341a59d5636ed3d6a819137495b08a0" resname="Password:">
-        <source>Password:</source>
-        <target>__Password:</target>
+      <trans-unit id="99c32582fc37600097bc585b40948c0e" resname="mb.wms.wmsloader.repo.instance.label.reorder">
+        <source>mb.wms.wmsloader.repo.instance.label.reorder</source>
+        <target>reorder</target>
+      </trans-unit>
+      <trans-unit id="656f4508f8c6424fc620c7332b157a5e" resname="mb.wms.wmsloader.repo.instance.label.allow">
+        <source>mb.wms.wmsloader.repo.instance.label.allow</source>
+        <target>allow</target>
+      </trans-unit>
+      <trans-unit id="f5911cf8f40070a7350557c83b71b1fe" resname="mb.wms.wmsloader.repo.instance.label.on">
+        <source>mb.wms.wmsloader.repo.instance.label.on</source>
+        <target>on</target>
+      </trans-unit>
+      <trans-unit id="2e3e9ac0f38dbc1681936d8f5dbe543e" resname="mb.wms.wmsloader.repo.instance.label.save2">
+        <source>mb.wms.wmsloader.repo.instance.label.save2</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="7ae46884e28f8810086262bdb6b0a47c" resname="mb.wms.wmsloader.repo.instance.label.cancel2">
+        <source>mb.wms.wmsloader.repo.instance.label.cancel2</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="d41d8cd98f00b204e9800998ecf8427e" resname="">
+        <source></source>
+        <target>__</target>
+      </trans-unit>
+      <trans-unit id="2bb115a388faa855eca747ef5c0c54ae" resname="mb.wms.wmsloader.repo.label.ogcwms">
+        <source>mb.wms.wmsloader.repo.label.ogcwms</source>
+        <target>OGC WMS</target>
+      </trans-unit>
+      <trans-unit id="735be1de464a887a9feba327cd19fce8" resname="mb.wms.wmsloader.repo.label.serviceurl">
+        <source>mb.wms.wmsloader.repo.label.serviceurl</source>
+        <target>Service URL</target>
+      </trans-unit>
+      <trans-unit id="17a5d2e48ab081b08245199acdd0e127" resname="mb.wms.wmsloader.repo.label.username">
+        <source>mb.wms.wmsloader.repo.label.username</source>
+        <target>Username</target>
+      </trans-unit>
+      <trans-unit id="6735b21d82a85eb63791ec13715529bf" resname="mb.wms.wmsloader.repo.label.password">
+        <source>mb.wms.wmsloader.repo.label.password</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="267baf5e99cc378ef2ca6074cc55722a" resname="mb.wms.wmsloader.repo.label.load">
+        <source>mb.wms.wmsloader.repo.label.load</source>
+        <target>Load</target>
+      </trans-unit>
+      <trans-unit id="1422dd7df55132422ef23fd48f47d60d" resname="mb.wms.wmsloader.repo.label.cancel">
+        <source>mb.wms.wmsloader.repo.label.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="daa4bbeacc74fb05ba3963f24a4e1789" resname="mb.wms.wmsloader.repo.layer.label.name">
+        <source>mb.wms.wmsloader.repo.layer.label.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="43814aa548884758c1f1fb137bf1e91c" resname="mb.wms.wmsloader.repo.layer.label.title">
+        <source>mb.wms.wmsloader.repo.layer.label.title</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="c1911bf51c11b84dd12e4d83bb4a7dad" resname="mb.wms.wmsloader.repo.layer.label.abstract">
+        <source>mb.wms.wmsloader.repo.layer.label.abstract</source>
+        <target>Abstract</target>
+      </trans-unit>
+      <trans-unit id="73d19f9b6f10a0e810c1030dce879863" resname="mb.wms.wmsloader.repo.layer.label.queryable">
+        <source>mb.wms.wmsloader.repo.layer.label.queryable</source>
+        <target>Queryable</target>
+      </trans-unit>
+      <trans-unit id="182bcd30f0c9b44a30142698b03de859" resname="mb.wms.wmsloader.repo.layer.label.cascaded">
+        <source>mb.wms.wmsloader.repo.layer.label.cascaded</source>
+        <target>Cascaded</target>
+      </trans-unit>
+      <trans-unit id="e130acbc785caf0b88da4a0f663140e5" resname="mb.wms.wmsloader.repo.layer.label.opaque">
+        <source>mb.wms.wmsloader.repo.layer.label.opaque</source>
+        <target>Opaque</target>
+      </trans-unit>
+      <trans-unit id="c6d10c5c5e220622c1ab6133d6a4fc6b" resname="mb.wms.wmsloader.repo.layer.label.nosubset">
+        <source>mb.wms.wmsloader.repo.layer.label.nosubset</source>
+        <target>NoSubset</target>
+      </trans-unit>
+      <trans-unit id="9cc0a9fe2c14d6e6fd6c7d7c6bfbb347" resname="mb.wms.wmsloader.repo.layer.label.fixedwidth">
+        <source>mb.wms.wmsloader.repo.layer.label.fixedwidth</source>
+        <target>FixedWidth</target>
+      </trans-unit>
+      <trans-unit id="b8ddd3c5f13429e159d723c05ccae235" resname="mb.wms.wmsloader.repo.layer.label.fixedheight">
+        <source>mb.wms.wmsloader.repo.layer.label.fixedheight</source>
+        <target>FixedHeight</target>
+      </trans-unit>
+      <trans-unit id="5d6138358bdc16cddcdfceb57934bf37" resname="mb.wms.wmsloader.repo.layer.label.latlonbounds">
+        <source>mb.wms.wmsloader.repo.layer.label.latlonbounds</source>
+        <target>LatLonBounds</target>
+      </trans-unit>
+      <trans-unit id="989a3a65eb616518f625010004b88d4a" resname="mb.wms.wmsloader.repo.layer.label.boundingbox">
+        <source>mb.wms.wmsloader.repo.layer.label.boundingbox</source>
+        <target>BoundingBox</target>
+      </trans-unit>
+      <trans-unit id="21d04fb01c7d0a058e1998f49dfaa17b" resname="mb.wms.wmsloader.repo.layer.label.srs">
+        <source>mb.wms.wmsloader.repo.layer.label.srs</source>
+        <target>Srs</target>
+      </trans-unit>
+      <trans-unit id="101c62ff39e18a2fe3f6135a041db2d0" resname="mb.wms.wmsloader.repo.layer.label.styles">
+        <source>mb.wms.wmsloader.repo.layer.label.styles</source>
+        <target>Styles</target>
+      </trans-unit>
+      <trans-unit id="6cc4f1a0c14869ceb689809890dc668b" resname="mb.wms.wmsloader.repo.layer.label.legendurl">
+        <source>mb.wms.wmsloader.repo.layer.label.legendurl</source>
+        <target>Legend URL</target>
+      </trans-unit>
+      <trans-unit id="526b387cf13cca77c62df96f7f1dbea1" resname="mb.wms.wmsloader.repo.layer.label.stylesheeturl">
+        <source>mb.wms.wmsloader.repo.layer.label.stylesheeturl</source>
+        <target>Stylesheet URL</target>
+      </trans-unit>
+      <trans-unit id="79e49fe7d24e8fcba46ba569b369aab4" resname="mb.wms.wmsloader.repo.layer.label.styleurl">
+        <source>mb.wms.wmsloader.repo.layer.label.styleurl</source>
+        <target>Style URL</target>
+      </trans-unit>
+      <trans-unit id="560ad4d5ae32bb3c6bbccb6aff37f505" resname="mb.wms.wmsloader.repo.layer.label.scale">
+        <source>mb.wms.wmsloader.repo.layer.label.scale</source>
+        <target>Scale</target>
+      </trans-unit>
+      <trans-unit id="78d811e98514cd165dda532286610fd2" resname="Min">
+        <source>Min</source>
+        <target>__Min</target>
+      </trans-unit>
+      <trans-unit id="6a061313d22e51e0f25b7cd4dc065233" resname="Max">
+        <source>Max</source>
+        <target>__Max</target>
+      </trans-unit>
+      <trans-unit id="5557f2525cd7af95afe86b461248e853" resname="mb.wms.wmsloader.repo.layer.label.scalehint">
+        <source>mb.wms.wmsloader.repo.layer.label.scalehint</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.scalehint</target>
+      </trans-unit>
+      <trans-unit id="d4f7bf28710b1dfd95c0f9f2dcb4a826" resname="mb.wms.wmsloader.repo.layer.label.attribution">
+        <source>mb.wms.wmsloader.repo.layer.label.attribution</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.attribution</target>
+      </trans-unit>
+      <trans-unit id="5e00e128c905fa8be6698b589c4e5501" resname="mb.wms.wmsloader.repo.layer.label.onlineresource">
+        <source>mb.wms.wmsloader.repo.layer.label.onlineresource</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.onlineresource</target>
+      </trans-unit>
+      <trans-unit id="5d2dd2bbb4799caad3b359673780b4a7" resname="LogoUrl">
+        <source>LogoUrl</source>
+        <target>__LogoUrl</target>
+      </trans-unit>
+      <trans-unit id="0d08a620d465199a9e4a45996059fe69" resname="mb.wms.wmsloader.repo.layer.label.identifier">
+        <source>mb.wms.wmsloader.repo.layer.label.identifier</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.identifier</target>
+      </trans-unit>
+      <trans-unit id="f9bcc3660349f6c1f2a33925801162ea" resname="mb.wms.wmsloader.repo.layer.label.authority">
+        <source>mb.wms.wmsloader.repo.layer.label.authority</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.authority</target>
+      </trans-unit>
+      <trans-unit id="e692d2cc9c9f3d9cce031322f0870e28" resname="mb.wms.wmsloader.repo.layer.label.url">
+        <source>mb.wms.wmsloader.repo.layer.label.url</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.url</target>
+      </trans-unit>
+      <trans-unit id="aa589c10074d782bb5e06fa0b2e254f1" resname="mb.wms.wmsloader.repo.layer.label.value">
+        <source>mb.wms.wmsloader.repo.layer.label.value</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.value</target>
+      </trans-unit>
+      <trans-unit id="b46d7bd014bd7b783448592117f8ce01" resname="mb.wms.wmsloader.repo.layer.label.metadataurl">
+        <source>mb.wms.wmsloader.repo.layer.label.metadataurl</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.metadataurl</target>
+      </trans-unit>
+      <trans-unit id="a1e3a4655323cae517b9619d9d7c34a3" resname="mb.wms.wmsloader.repo.layer.label.dimension">
+        <source>mb.wms.wmsloader.repo.layer.label.dimension</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.dimension</target>
+      </trans-unit>
+      <trans-unit id="437ab10dfeb81b6bd9fda8b4b4e27fc3" resname="mb.wms.wmsloader.repo.layer.label.extent">
+        <source>mb.wms.wmsloader.repo.layer.label.extent</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.extent</target>
+      </trans-unit>
+      <trans-unit id="efcdb5ff152555e8be092599094cd31c" resname="mb.wms.wmsloader.repo.layer.label.dataurl">
+        <source>mb.wms.wmsloader.repo.layer.label.dataurl</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.dataurl</target>
+      </trans-unit>
+      <trans-unit id="1d775eaea7e89b0a3da08ae949b1656f" resname="mb.wms.wmsloader.repo.layer.label.featurelisturl">
+        <source>mb.wms.wmsloader.repo.layer.label.featurelisturl</source>
+        <target>__mb.wms.wmsloader.repo.layer.label.featurelisturl</target>
+      </trans-unit>
+      <trans-unit id="0615a38067b62382dc1667010669b238" resname="Formats">
+        <source>Formats</source>
+        <target>__Formats</target>
+      </trans-unit>
+      <trans-unit id="61021277e8cc19b87d14c0487f3b3004" resname="Add Service">
+        <source>Add Service</source>
+        <target>__Add Service</target>
+      </trans-unit>
+      <trans-unit id="b0ca605e3ec3947352dd02189875715e" resname="Service Repository">
+        <source>Service Repository</source>
+        <target>__Service Repository</target>
       </trans-unit>
       <trans-unit id="f19dbf2edb3a0bd74b0524d960ff21eb" resname="Load">
         <source>Load</source>
@@ -362,14 +546,6 @@
         <source>Scale</source>
         <target>__Scale</target>
       </trans-unit>
-      <trans-unit id="78d811e98514cd165dda532286610fd2" resname="Min">
-        <source>Min</source>
-        <target>__Min</target>
-      </trans-unit>
-      <trans-unit id="6a061313d22e51e0f25b7cd4dc065233" resname="Max">
-        <source>Max</source>
-        <target>__Max</target>
-      </trans-unit>
       <trans-unit id="3c65c176b87c66f888444a5108be7598" resname="ScaleHint">
         <source>ScaleHint</source>
         <target>__ScaleHint</target>
@@ -381,10 +557,6 @@
       <trans-unit id="1d15019579a3ba420ad7fa10b698fb6b" resname="OnlineResource">
         <source>OnlineResource</source>
         <target>__OnlineResource</target>
-      </trans-unit>
-      <trans-unit id="5d2dd2bbb4799caad3b359673780b4a7" resname="LogoUrl">
-        <source>LogoUrl</source>
-        <target>__LogoUrl</target>
       </trans-unit>
       <trans-unit id="29ee5d1ebcc033234938a5234f1f2075" resname="Identifier">
         <source>Identifier</source>
@@ -422,21 +594,169 @@
         <source>FeatureListUrl</source>
         <target>__FeatureListUrl</target>
       </trans-unit>
-      <trans-unit id="0615a38067b62382dc1667010669b238" resname="Formats">
-        <source>Formats</source>
-        <target>__Formats</target>
+      <trans-unit id="4e59ad08a03d56020a7d46b95d8dc68a" resname="Layer's Title">
+        <source>Layer's Title</source>
+        <target>__Layer's Title</target>
       </trans-unit>
-      <trans-unit id="61021277e8cc19b87d14c0487f3b3004" resname="Add Service">
-        <source>Add Service</source>
-        <target>__Add Service</target>
+      <trans-unit id="08879991b6c95d5430731fb7413fbd65" resname="MinScale">
+        <source>MinScale</source>
+        <target>__MinScale</target>
       </trans-unit>
-      <trans-unit id="b0ca605e3ec3947352dd02189875715e" resname="Service Repository">
-        <source>Service Repository</source>
-        <target>__Service Repository</target>
+      <trans-unit id="1eaed172825c0d13abee7576d5555569" resname="MaxSclase">
+        <source>MaxSclase</source>
+        <target>__MaxSclase</target>
+      </trans-unit>
+      <trans-unit id="4d3d769b812b6faa6b76e1a8abaece2d" resname="Active">
+        <source>Active</source>
+        <target>__Active</target>
+      </trans-unit>
+      <trans-unit id="3a68a5286808bcf06b00640ed56c47bc" resname="Allow Select at TOC">
+        <source>Allow Select at TOC</source>
+        <target>__Allow Select at TOC</target>
+      </trans-unit>
+      <trans-unit id="2704e75fdddff58d21ced982ef4debf6" resname="Selected  at TOC">
+        <source>Selected  at TOC</source>
+        <target>__Selected  at TOC</target>
+      </trans-unit>
+      <trans-unit id="fd4c26c8e7427629f96385a584069518" resname="Allow FeatureInfo at TOC">
+        <source>Allow FeatureInfo at TOC</source>
+        <target>__Allow FeatureInfo at TOC</target>
+      </trans-unit>
+      <trans-unit id="374255b6ceaa723f2b9478f597ae10cd" resname="FeatureInfo at TOC">
+        <source>FeatureInfo at TOC</source>
+        <target>__FeatureInfo at TOC</target>
+      </trans-unit>
+      <trans-unit id="81090bc5aee86e52d43472ec70a1a04e" resname="Allow Toggle at TOC">
+        <source>Allow Toggle at TOC</source>
+        <target>__Allow Toggle at TOC</target>
+      </trans-unit>
+      <trans-unit id="fda6623c5013509b9efe5fe4774b8cc1" resname="Toggle at TOC">
+        <source>Toggle at TOC</source>
+        <target>__Toggle at TOC</target>
+      </trans-unit>
+      <trans-unit id="739636c4e7102334d46a564a54d1f2e6" resname="Allow Reorder at TOC">
+        <source>Allow Reorder at TOC</source>
+        <target>__Allow Reorder at TOC</target>
+      </trans-unit>
+      <trans-unit id="7d5a27f1b53dc519eac7bb288f664892" resname="More informations">
+        <source>More informations</source>
+        <target>__More informations</target>
+      </trans-unit>
+      <trans-unit id="490aa6e856ccf208a054389e47ce0d06" resname="Id">
+        <source>Id</source>
+        <target>__Id</target>
+      </trans-unit>
+      <trans-unit id="9a827e9d37b13be5e7f601fe4ab77cea" resname="Layer's Name">
+        <source>Layer's Name</source>
+        <target>__Layer's Name</target>
+      </trans-unit>
+      <trans-unit id="ae284f900f9d6e21ba69144cfc91e41b" resname="Style">
+        <source>Style</source>
+        <target>__Style</target>
       </trans-unit>
       <trans-unit id="7e63085cbdfc1d9533f819c3cb45d144" resname="Wms Instance Layers">
         <source>Wms Instance Layers</source>
         <target>__Wms Instance Layers</target>
+      </trans-unit>
+      <trans-unit id="c9cc8cce247e49bae79f15173ce97354" resname="Save">
+        <source>Save</source>
+        <target>__Save</target>
+      </trans-unit>
+      <trans-unit id="5ef1764055a535f1546b833929fa8503" resname="Wms Instance">
+        <source>Wms Instance</source>
+        <target>__Wms Instance</target>
+      </trans-unit>
+      <trans-unit id="ea4788705e6873b424c65e91c2846b19" resname="Cancel">
+        <source>Cancel</source>
+        <target>__Cancel</target>
+      </trans-unit>
+      <trans-unit id="ec24d78ce33048dc73a2b6b1a0690192" resname="Visible">
+        <source>Visible</source>
+        <target>__Visible</target>
+      </trans-unit>
+      <trans-unit id="f56ec2ab97d604832d90f6394e3f341f" resname="Proxy">
+        <source>Proxy</source>
+        <target>__Proxy</target>
+      </trans-unit>
+      <trans-unit id="6f7956741d5d673ff0c8eacc8d8c961c" resname="Transparency">
+        <source>Transparency</source>
+        <target>__Transparency</target>
+      </trans-unit>
+      <trans-unit id="320af35370596a9ea75686c6624a9f07" resname="Tiled">
+        <source>Tiled</source>
+        <target>__Tiled</target>
+      </trans-unit>
+      <trans-unit id="5fb3baac70ed6efb22c79f8a413ddc9e" resname="Minsc">
+        <source>Minsc</source>
+        <target>__Minsc</target>
+      </trans-unit>
+      <trans-unit id="0ab75c137735c064fbbd214c55d60636" resname="Maxsc">
+        <source>Maxsc</source>
+        <target>__Maxsc</target>
+      </trans-unit>
+      <trans-unit id="e0626222614bdee31951d84c64e5e9ff" resname="Select">
+        <source>Select</source>
+        <target>__Select</target>
+      </trans-unit>
+      <trans-unit id="4059b0251f66a18cb56f544728796875" resname="Info">
+        <source>Info</source>
+        <target>__Info</target>
+      </trans-unit>
+      <trans-unit id="a8875bbe4272c0bdd786cfaaedf77921" resname="Toggle">
+        <source>Toggle</source>
+        <target>__Toggle</target>
+      </trans-unit>
+      <trans-unit id="332c80b1838dc515f5031e09da3b7f3f" resname="Reorder">
+        <source>Reorder</source>
+        <target>__Reorder</target>
+      </trans-unit>
+      <trans-unit id="b394126a0e52e75f1e3d535d0fb0d33c" resname="allow">
+        <source>allow</source>
+        <target>__allow</target>
+      </trans-unit>
+      <trans-unit id="ed2b5c0139cec8ad2873829dc1117d50" resname="on">
+        <source>on</source>
+        <target>__on</target>
+      </trans-unit>
+      <trans-unit id="c9e15887e2ed6548d571b473f9b91a22" resname="mb.wms.wmsloader.label.autoopen">
+        <source>mb.wms.wmsloader.label.autoopen</source>
+        <target>Auto open</target>
+      </trans-unit>
+      <trans-unit id="cbecf337052195e4d0572acf96c90f0a" resname="mb.wms.wmsloader.label.splitlayers">
+        <source>mb.wms.wmsloader.label.splitlayers</source>
+        <target>Split layers</target>
+      </trans-unit>
+      <trans-unit id="afdc1dabaa4713cf3b5c2547dfcf8247" resname="mb.wms.wmsloader.label.declarative">
+        <source>mb.wms.wmsloader.label.declarative</source>
+        <target>Use declarative</target>
+      </trans-unit>
+      <trans-unit id="bb81d9b66c65e9a86b87bce5c089dabc" resname="OGC WMS">
+        <source>OGC WMS</source>
+        <target>__OGC WMS</target>
+      </trans-unit>
+      <trans-unit id="ba51698ee793d329668c5f0208df9c62" resname="Serviceurl:">
+        <source>Serviceurl:</source>
+        <target>__Serviceurl:</target>
+      </trans-unit>
+      <trans-unit id="cac81c648846c9b8c3e6085a45782c7e" resname="Username:">
+        <source>Username:</source>
+        <target>__Username:</target>
+      </trans-unit>
+      <trans-unit id="b341a59d5636ed3d6a819137495b08a0" resname="Password:">
+        <source>Password:</source>
+        <target>__Password:</target>
+      </trans-unit>
+      <trans-unit id="be1fc247f6b1768447501ac7c1268c8f" resname="Auto open">
+        <source>Auto open</source>
+        <target>__Auto open</target>
+      </trans-unit>
+      <trans-unit id="3afd41144f7935adfb20b460f4762236" resname="Split layers">
+        <source>Split layers</source>
+        <target>__Split layers</target>
+      </trans-unit>
+      <trans-unit id="c888aa0d3cc4c373232c8d0280b6cd14" resname="Use declarative">
+        <source>Use declarative</source>
+        <target>__Use declarative</target>
       </trans-unit>
     </body>
   </file>
