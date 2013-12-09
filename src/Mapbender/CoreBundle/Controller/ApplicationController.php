@@ -75,7 +75,8 @@ class ApplicationController extends Controller {
         //      http://www.thecssninja.com/javascript/source-mapping
         $filters = array(
             'js' => array(),
-            'css' => array($this->container->get('assetic.filter.cssrewrite')));
+            'css' => array($this->container->get('assetic.filter.cssrewrite')),
+            'trans' => array());
 
         // Set target path for CSS rewrite to work
         // Replace backward slashes (Windows paths) with forward slashes...
@@ -87,7 +88,8 @@ class ApplicationController extends Controller {
 
         $mimetypes = array(
             'css' => 'text/css',
-            'js' => 'application/javascript');
+            'js' => 'application/javascript',
+            'trans' => 'application/javascript');
 
         $application_update_time = new \DateTime();
         $application_entity = $this->getApplication($slug)->getEntity();

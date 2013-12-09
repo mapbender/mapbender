@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" datatype="plaintext" original="file.ext">
+  <file source-language="de" datatype="plaintext" original="file.ext">
     <body>
       <trans-unit id="0a52730597fb4ffa01fc117d9e71e3a9" resname="Example">
         <source>Example</source>
@@ -16,7 +16,7 @@
       </trans-unit>
       <trans-unit id="6ff51d3832f0575b54225dea941a97ff" resname="mb.wms.wmsloader.error.service">
         <source>mb.wms.wmsloader.error.service</source>
-        <target>bla bla bla %service% bla bla bla</target>
+        <target>__mb.wms.wmsloader.error.service</target>
       </trans-unit>
       <trans-unit id="8e29e6784e7fce8440c02cff8f93042b" resname="mb.wms.wmsloader.error.operation">
         <source>mb.wms.wmsloader.error.operation</source>
@@ -28,15 +28,15 @@
       </trans-unit>
       <trans-unit id="52f4d4c9483df6e72fdff9a1e9bea863" resname="mb.wms.wmsloader.title">
         <source>mb.wms.wmsloader.title</source>
-        <target>Load WMS</target>
+        <target>__mb.wms.wmsloader.title</target>
       </trans-unit>
       <trans-unit id="e0fad091f39559379dc4574bb9d41485" resname="mb.wms.wmsloader.dialog.btn.cancel">
         <source>mb.wms.wmsloader.dialog.btn.cancel</source>
-        <target>Cancel</target>
+        <target>__mb.wms.wmsloader.dialog.btn.cancel</target>
       </trans-unit>
       <trans-unit id="d7a639d77a5fce79dbfc22bb7fb57807" resname="mb.wms.wmsloader.dialog.btn.load">
         <source>mb.wms.wmsloader.dialog.btn.load</source>
-        <target>Load</target>
+        <target>__mb.wms.wmsloader.dialog.btn.load</target>
       </trans-unit>
       <trans-unit id="0615a38067b62382dc1667010669b238" resname="Formats">
         <source>Formats</source>
@@ -52,11 +52,11 @@
       </trans-unit>
       <trans-unit id="ce21470ab49d1d1976bc3dc72438c183" resname="Metadata">
         <source>Metadata</source>
-        <target>__Metadata</target>
+        <target>Metadaten</target>
       </trans-unit>
       <trans-unit id="bbaff12800505b22a853e8b7f4eb6a22" resname="Contact">
         <source>Contact</source>
-        <target>__Contact</target>
+        <target>Kontakt</target>
       </trans-unit>
       <trans-unit id="3ec365dd533ddb7ef3d1c111186ce872" resname="Details">
         <source>Details</source>
@@ -64,11 +64,11 @@
       </trans-unit>
       <trans-unit id="87bfda183c4f851a101e97bbb1bbace7" resname="Layers">
         <source>Layers</source>
-        <target>__Layers</target>
+        <target>Ebenen</target>
       </trans-unit>
       <trans-unit id="b78a3223503896721cca1303f776159b" resname="Title">
         <source>Title</source>
-        <target>__Title</target>
+        <target>Titel</target>
       </trans-unit>
       <trans-unit id="49ee3087348e8d44e1feda1917443987" resname="Name">
         <source>Name</source>
@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="e353dbe42c8654f33588d4da0b517469" resname="Abstract">
         <source>Abstract</source>
-        <target>__Abstract</target>
+        <target>Zusammenfassung</target>
       </trans-unit>
       <trans-unit id="926ed165ada6d96831a79b9105393b01" resname="Online Resource">
         <source>Online Resource</source>
@@ -96,7 +96,7 @@
       </trans-unit>
       <trans-unit id="006300efaf063e1705dd614ea0ae9e8b" resname="Fees">
         <source>Fees</source>
-        <target>__Fees</target>
+        <target>Gebühren</target>
       </trans-unit>
       <trans-unit id="da9e6a560e7dc8bc786cc602b15c2803" resname="Access constraints">
         <source>Access constraints</source>
@@ -104,19 +104,19 @@
       </trans-unit>
       <trans-unit id="40bed7cf9b3d4bb3a3d7a7e3eb18c5eb" resname="Person">
         <source>Person</source>
-        <target>__Person</target>
+        <target>Person</target>
       </trans-unit>
       <trans-unit id="d6b258792ff06f82933c74eeb8aef591" resname="Organization">
         <source>Organization</source>
-        <target>__Organization</target>
+        <target>Organisation</target>
       </trans-unit>
       <trans-unit id="52f5e0bc3859bc5f5e25130b6c7e8881" resname="Position">
         <source>Position</source>
-        <target>__Position</target>
+        <target>Position</target>
       </trans-unit>
       <trans-unit id="b2a1e8c4e743228e0a3719e3abc4cc1e" resname="Telephone">
         <source>Telephone</source>
-        <target>__Telephone</target>
+        <target>Telefon</target>
       </trans-unit>
       <trans-unit id="8e999e04eb1b4674ff2421efa61bb050" resname="Facsimile">
         <source>Facsimile</source>
@@ -124,19 +124,19 @@
       </trans-unit>
       <trans-unit id="ce8ae9da5b7cd6c3df2929543a9af92d" resname="Email">
         <source>Email</source>
-        <target>__Email</target>
+        <target>Email</target>
       </trans-unit>
       <trans-unit id="dd7bf230fde8d4836917806aff6a6b27" resname="Address">
         <source>Address</source>
-        <target>__Address</target>
+        <target>Addresse</target>
       </trans-unit>
       <trans-unit id="e74b00cf6c0d534077c4d85cc658140f" resname="Addresstype">
         <source>Addresstype</source>
-        <target>__Addresstype</target>
+        <target>Addresstyp</target>
       </trans-unit>
       <trans-unit id="57d056ed0984166336b7879c2af3657f" resname="City">
         <source>City</source>
-        <target>__City</target>
+        <target>Stadt</target>
       </trans-unit>
       <trans-unit id="46a2a41cc6e552044816a2d04634545d" resname="State">
         <source>State</source>
@@ -144,11 +144,11 @@
       </trans-unit>
       <trans-unit id="8bcdc441379cbf584638b0589a3f9adb" resname="Postcode">
         <source>Postcode</source>
-        <target>__Postcode</target>
+        <target>Postleitzahl</target>
       </trans-unit>
       <trans-unit id="59716c97497eb9694541f7c3d37b1a4d" resname="Country">
         <source>Country</source>
-        <target>__Country</target>
+        <target>Land</target>
       </trans-unit>
       <trans-unit id="f855457b09b4f7cc83732303834300ec" resname="Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!">
         <source>Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!</source>
@@ -160,11 +160,11 @@
       </trans-unit>
       <trans-unit id="c9cc8cce247e49bae79f15173ce97354" resname="Save">
         <source>Save</source>
-        <target>__Save</target>
+        <target>Speichern</target>
       </trans-unit>
       <trans-unit id="ea4788705e6873b424c65e91c2846b19" resname="Cancel">
         <source>Cancel</source>
-        <target>__Cancel</target>
+        <target>Abbrechen</target>
       </trans-unit>
       <trans-unit id="ec24d78ce33048dc73a2b6b1a0690192" resname="Visible">
         <source>Visible</source>
@@ -224,7 +224,7 @@
       </trans-unit>
       <trans-unit id="f19dbf2edb3a0bd74b0524d960ff21eb" resname="Load">
         <source>Load</source>
-        <target>__Load</target>
+        <target>Laden</target>
       </trans-unit>
       <trans-unit id="3deee2078d7dd1672b690c7d17ddb89f" resname="Queryable">
         <source>Queryable</source>
@@ -433,6 +433,198 @@
       <trans-unit id="c888aa0d3cc4c373232c8d0280b6cd14" resname="Use declarative">
         <source>Use declarative</source>
         <target>__Use declarative</target>
+      </trans-unit>
+      <trans-unit id="c2ba7e785c49050f48da9aacc45c2b85" resname="Service">
+        <source>Service</source>
+        <target>Dienst</target>
+      </trans-unit>
+      <trans-unit id="359b71e88f40029251366609358a302f" resname="Layer">
+        <source>Layer</source>
+        <target>Ebenen</target>
+      </trans-unit>
+      <trans-unit id="31fde7b05ac8952dacf4af8a704074ec" resname="Preview">
+        <source>Preview</source>
+        <target>Vorschau</target>
+      </trans-unit>
+      <trans-unit id="c3bf447eabe632720a3aa1a7ce401274" resname="Open">
+        <source>Open</source>
+        <target>Öffnen</target>
+      </trans-unit>
+      <trans-unit id="18d0c2c60515fc57268163cadd5d80d5" resname="Supports SLD">
+        <source>Supports SLD</source>
+        <target>Unterstützt SLD</target>
+      </trans-unit>
+      <trans-unit id="93cba07454f06a4a960172bbd6e2a435" resname="Yes">
+        <source>Yes</source>
+        <target>Ja</target>
+      </trans-unit>
+      <trans-unit id="bafd7322c6e97d25b6299b5d6fe8920b" resname="No">
+        <source>No</source>
+        <target>Nein</target>
+      </trans-unit>
+      <trans-unit id="1886f7a50e3bc6958b2dd7f9743aa74b" resname="Supports Userlayer">
+        <source>Supports Userlayer</source>
+        <target>Unterstützt 'Userlayer'</target>
+      </trans-unit>
+      <trans-unit id="fdbfcfe6443c70aba6471ca22e2a4aba" resname="Supports User Style">
+        <source>Supports User Style</source>
+        <target>Unterstützt 'User Style'</target>
+      </trans-unit>
+      <trans-unit id="b81a2f2c0b20567010be1e36621458e9" resname="Supports remote WFS">
+        <source>Supports remote WFS</source>
+        <target>Unterstützt 'Remote WFS'</target>
+      </trans-unit>
+      <trans-unit id="e7961247095350dbb0aa40227e30ea49" resname="No Layers">
+        <source>No Layers</source>
+        <target>Keine Ebenen</target>
+      </trans-unit>
+      <trans-unit id="f2a6c498fb90ee345d997f888fce3b18" resname="Delete">
+        <source>Delete</source>
+        <target>Löschen</target>
+      </trans-unit>
+      <trans-unit id="7dce122004969d56ae2e0245cb754d35" resname="Edit">
+        <source>Edit</source>
+        <target>Bearbeiten</target>
+      </trans-unit>
+      <trans-unit id="06933067aafd48425d67bcb01bba5cb6" resname="Update">
+        <source>Update</source>
+        <target>Aktualisieren</target>
+      </trans-unit>
+      <trans-unit id="5db96fb321dd5d8af527391b6fbe0df6" resname="register WMS">
+        <source>register WMS</source>
+        <target>WMS registrieren</target>
+      </trans-unit>
+      <trans-unit id="a8c6a521bf3f6b31545f74fa2d8fa492" resname="Onlineresource">
+        <source>Onlineresource</source>
+        <target>Onlineresource</target>
+      </trans-unit>
+      <trans-unit id="c139176d9579b852db9bf70bf1d33f58" resname="Accessconstraints">
+        <source>Accessconstraints</source>
+        <target>Zugangsbeschränkungen</target>
+      </trans-unit>
+      <trans-unit id="c246be165186c2ec97bfd5569a31182d" resname="OpenLayers Preview">
+        <source>OpenLayers Preview</source>
+        <target>Vorschau</target>
+      </trans-unit>
+      <trans-unit id="9810aa2b9f44401be4bf73188ef2b67d" resname="Fax">
+        <source>Fax</source>
+        <target>Fax</target>
+      </trans-unit>
+      <trans-unit id="26288e07730265f12e15c1a2e9d62462" resname="State or Province">
+        <source>State or Province</source>
+        <target>Bundestaat</target>
+      </trans-unit>
+      <trans-unit id="456d0deba6a86c9585590550c797502d" resname="Operations">
+        <source>Operations</source>
+        <target>Operationen</target>
+      </trans-unit>
+      <trans-unit id="4f9dd14e1101391c65d74868e71699ef" resname="Really Delete">
+        <source>Really Delete</source>
+        <target>Wirklich Löschen</target>
+      </trans-unit>
+      <trans-unit id="b15538dab7a83a252b55d98a4554c71e" resname="WMS index">
+        <source>WMS index</source>
+        <target>WMS liste</target>
+      </trans-unit>
+      <trans-unit id="a6122a65eaa676f700ae68d393054a37" resname="Start">
+        <source>Start</source>
+        <target>Start</target>
+      </trans-unit>
+      <trans-unit id="dd1f775e443ff3b9a89270713580a51b" resname="Previous">
+        <source>Previous</source>
+        <target>Zurück</target>
+      </trans-unit>
+      <trans-unit id="bb8f5b159e687f5ff3ab9193342b97d6" resname="Showing %start% to %end% of %total%">
+        <source>Showing %start% to %end% of %total%</source>
+        <target>zeige %start% bis %ende% von %total%</target>
+      </trans-unit>
+      <trans-unit id="10ac3d04253ef7e1ddc73e6091c0cd55" resname="Next">
+        <source>Next</source>
+        <target>Weiter</target>
+      </trans-unit>
+      <trans-unit id="87557f11575c0ad78e4e28abedc13b6e" resname="End">
+        <source>End</source>
+        <target>Ende</target>
+      </trans-unit>
+      <trans-unit id="b4c57ee7ddb682dff30b630a32452d04" resname="Available WMS">
+        <source>Available WMS</source>
+        <target>Verfügbare WMS</target>
+      </trans-unit>
+      <trans-unit id="effdb9ce6c5d44df31b89d7069c8e0fb" resname="Alias">
+        <source>Alias</source>
+        <target>Alias</target>
+      </trans-unit>
+      <trans-unit id="e3ce3a23a348f6a1d72e42426588950d" resname="No WMS Available">
+        <source>No WMS Available</source>
+        <target>Keine WMS verfügbar</target>
+      </trans-unit>
+      <trans-unit id="25049f54af1d4f856e09f237306712e4" resname="Add WMS">
+        <source>Add WMS</source>
+        <target>WMS hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="1f2a02d6eae8295645a1d42311742b7a" resname="Capabilities URL">
+        <source>Capabilities URL</source>
+        <target>Capabilities URL</target>
+      </trans-unit>
+      <trans-unit id="11980a3ef2c827ef23de43bb234255c7" resname="HTTP User">
+        <source>HTTP User</source>
+        <target>HTTP Benutzer</target>
+      </trans-unit>
+      <trans-unit id="d30bf89ae9e84d610358235f9dc8a01e" resname="HTTP Password">
+        <source>HTTP Password</source>
+        <target>HTTP Passwort</target>
+      </trans-unit>
+      <trans-unit id="ee3b8082f93b01ffd67d2aae1e6948f8" resname="Loading WMS">
+        <source>Loading WMS</source>
+        <target>Lade WMS</target>
+      </trans-unit>
+      <trans-unit id="03bcc068f75121ccc56e595ea937b9e4" resname="Anfang">
+        <source>Anfang</source>
+        <target>__Anfang</target>
+      </trans-unit>
+      <trans-unit id="37958de49a6922465be7cb2a71a8ee13" resname="Ende">
+        <source>Ende</source>
+        <target>__Ende</target>
+      </trans-unit>
+      <trans-unit id="06a943c59f33a34bb5924aaf72cd2995" resname="search">
+        <source>search</source>
+        <target>Suchen</target>
+      </trans-unit>
+      <trans-unit id="703a72d8667daa276bcc20cbc36a6498" resname="WMS Preview">
+        <source>WMS Preview</source>
+        <target>WMS Vorschau</target>
+      </trans-unit>
+      <trans-unit id="3137a445600c328284a3c118cf91b2d8" resname="Service Information">
+        <source>Service Information</source>
+        <target>Dienstinformationen</target>
+      </trans-unit>
+      <trans-unit id="0354fffa46847b055c316257895b985c" resname="Capability Information">
+        <source>Capability Information</source>
+        <target>Capability-Information</target>
+      </trans-unit>
+      <trans-unit id="83b8c359c192708647382c10c719626a" resname="Symbolization">
+        <source>Symbolization</source>
+        <target>Symbolization</target>
+      </trans-unit>
+      <trans-unit id="b0d4998a26f5b5742ad38c4af8817e32" resname="Exception">
+        <source>Exception</source>
+        <target>Exception</target>
+      </trans-unit>
+      <trans-unit id="9b469a74855be44edcae1e0f9a7a749a" resname="Capabilities File">
+        <source>Capabilities File</source>
+        <target>Capabilities Datei</target>
+      </trans-unit>
+      <trans-unit id="4e4bd8031dd00d444145cb2792fe2efb" resname="Find WMS">
+        <source>Find WMS</source>
+        <target>WMS finden</target>
+      </trans-unit>
+      <trans-unit id="4f30ade758f78a39d5feeb6aeceb5dd8" resname="WMS deleted">
+        <source>WMS deleted</source>
+        <target>WMS gelöscht</target>
+      </trans-unit>
+      <trans-unit id="13348442cc6a27032d2b4aa28b75a5d3" resname="Search">
+        <source>Search</source>
+        <target>Suchen</target>
       </trans-unit>
     </body>
   </file>

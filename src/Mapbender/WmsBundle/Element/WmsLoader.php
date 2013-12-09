@@ -66,10 +66,12 @@ class WmsLoader extends Element
      */
     public function getAssets()
     {
-        $files = array('js' => array(
+        $files = array(
+            'js' => array(
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                'mapbender.element.wmsloader.js'
-            ), 'css' => array());
+                'mapbender.element.wmsloader.js'),
+            'css' => array(),
+            'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));//@MapbenderCoreBundle/Resources/view/Element/wmsloader.json.twig'));
         $config = $this->getConfiguration();
         if (isset($config['useDeclarative']) && $config['useDeclarative'] === true) {
             $files['js'][] = "@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js";
