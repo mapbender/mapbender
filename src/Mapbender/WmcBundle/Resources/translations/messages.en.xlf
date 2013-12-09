@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="229c0bd55bb7718d055db5b9e843d697" resname="As e-mail">
+        <source>As e-mail</source>
+        <target>__As e-mail</target>
+      </trans-unit>
+      <trans-unit id="703a3daced23c8ed73b40c4fe08b1589" resname="At Twitter">
+        <source>At Twitter</source>
+        <target>__At Twitter</target>
+      </trans-unit>
+      <trans-unit id="2a0f49aa9250ffd79df553ac883f6431" resname="At Facebook">
+        <source>At Facebook</source>
+        <target>__At Facebook</target>
+      </trans-unit>
+      <trans-unit id="5d4039a58ccd9059fc2ae06097cefa8d" resname="At Google+">
+        <source>At Google+</source>
+        <target>__At Google+</target>
+      </trans-unit>
+      <trans-unit id="67c939e3afc97eccc0b9d6b1bfe21a7c" resname="Wmc Editor">
+        <source>Wmc Editor</source>
+        <target>__Wmc Editor</target>
+      </trans-unit>
+      <trans-unit id="acd14652444742e2401963a15299d2ce" resname="Suggest Map">
+        <source>Suggest Map</source>
+        <target>__Suggest Map</target>
+      </trans-unit>
+      <trans-unit id="c0ce6f014681deb1dec7dac4752f6813" resname="Wmc Loader">
+        <source>Wmc Loader</source>
+        <target>__Wmc Loader</target>
+      </trans-unit>
+      <trans-unit id="ba4581e8033d906695e614b95aeea539" resname="Add new wmc to">
+        <source>Add new wmc to</source>
+        <target>__Add new wmc to</target>
+      </trans-unit>
+      <trans-unit id="490aa6e856ccf208a054389e47ce0d06" resname="Id">
+        <source>Id</source>
+        <target>__Id</target>
+      </trans-unit>
+      <trans-unit id="b78a3223503896721cca1303f776159b" resname="Title">
+        <source>Title</source>
+        <target>__Title</target>
+      </trans-unit>
+      <trans-unit id="b5a7adde1af5c87d7fd797b6245c2a39" resname="Description">
+        <source>Description</source>
+        <target>__Description</target>
+      </trans-unit>
+      <trans-unit id="8893ca515e771cf0a0b8de957f57dbda" resname="Toggle public/private wmc">
+        <source>Toggle public/private wmc</source>
+        <target>__Toggle public/private wmc</target>
+      </trans-unit>
+      <trans-unit id="040e186fb8917f7bca35ff0da0945a7a" resname="Wmc element">
+        <source>Wmc element</source>
+        <target>__Wmc element</target>
+      </trans-unit>
+      <trans-unit id="4ce122da579fbefa1371d883ece72efa" resname="Delete Wmc">
+        <source>Delete Wmc</source>
+        <target>__Delete Wmc</target>
+      </trans-unit>
+      <trans-unit id="47ea766e6bc6cb4015e33ae3f6f93a4d" resname="No wmc added.">
+        <source>No wmc added.</source>
+        <target>__No wmc added.</target>
+      </trans-unit>
+      <trans-unit id="8b68bae861047e1044efbdbefc4bd494" resname="Add new wmc">
+        <source>Add new wmc</source>
+        <target>__Add new wmc</target>
+      </trans-unit>
+      <trans-unit id="e19d36f01ce7695cabe74839c877c617" resname="Edit Wmc">
+        <source>Edit Wmc</source>
+        <target>__Edit Wmc</target>
+      </trans-unit>
+      <trans-unit id="ccf3161276dce05a682732094a68845a" resname="Do you really want to remove the wmc with the title &lt;em&gt;%wmc_title%&lt;/em&gt; and the id &lt;em&gt;%wmc_id%&lt;/em&gt;?">
+        <source>Do you really want to remove the wmc with the title &lt;em&gt;%wmc_title%&lt;/em&gt; and the id &lt;em&gt;%wmc_id%&lt;/em&gt;?</source>
+        <target>__Do you really want to remove the wmc with the title &lt;em&gt;%wmc_title%&lt;/em&gt; and the id &lt;em&gt;%wmc_id%&lt;/em&gt;?</target>
+      </trans-unit>
+      <trans-unit id="f19dbf2edb3a0bd74b0524d960ff21eb" resname="Load">
+        <source>Load</source>
+        <target>__Load</target>
+      </trans-unit>
+      <trans-unit id="12b654984981a639e5d22988d96af25f" resname="Load XML WMC">
+        <source>Load XML WMC</source>
+        <target>__Load XML WMC</target>
+      </trans-unit>
+      <trans-unit id="a964b4e58b85c446b718ebcae4c7a227" resname="View Wmc">
+        <source>View Wmc</source>
+        <target>__View Wmc</target>
+      </trans-unit>
+      <trans-unit id="5196fd35ccf376a43c0de4af2ce1239c" resname="No wmc.">
+        <source>No wmc.</source>
+        <target>__No wmc.</target>
+      </trans-unit>
+      <trans-unit id="b7fd629f72ec555ae4cee738c1ef38ea" resname="wmc.create">
+        <source>wmc.create</source>
+        <target>__wmc.create</target>
+      </trans-unit>
+      <trans-unit id="1f5c9969cb92883e69356b5978a280fe" resname="wmc.edit">
+        <source>wmc.edit</source>
+        <target>__wmc.edit</target>
+      </trans-unit>
+      <trans-unit id="3d067bedfe2f4677470dd6ccf64d05ed" resname="Public">
+        <source>Public</source>
+        <target>__Public</target>
+      </trans-unit>
+      <trans-unit id="d046bf4ef5bb9ceb1403156ea0a236b8" resname="screenshot or width, height etc.">
+        <source>screenshot or width, height etc.</source>
+        <target>__screenshot or width, height etc.</target>
+      </trans-unit>
+      <trans-unit id="b021df6aac4654c454f46c77646e745f" resname="Label">
+        <source>Label</source>
+        <target>__Label</target>
+      </trans-unit>
+      <trans-unit id="effc666181ec73d623012d7e7cc10026" resname="Keep Extent">
+        <source>Keep Extent</source>
+        <target>__Keep Extent</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

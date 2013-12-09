@@ -2,29 +2,25 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="file.ext">
     <body>
-      <trans-unit id="0a52730597fb4ffa01fc117d9e71e3a9" resname="Example">
-        <source>Example</source>
-        <target>__Example</target>
-      </trans-unit>
-      <trans-unit id="b1a51800f6fddc018203a102f87a1953" resname="Service url">
-        <source>Service url</source>
-        <target>__Service url</target>
-      </trans-unit>
       <trans-unit id="27c45a8d7df44b7de7adf685e204e80c" resname="mb.wms.wmsloader.error.url">
         <source>mb.wms.wmsloader.error.url</source>
-        <target>__mb.wms.wmsloader.error.url</target>
+        <target>WMSLoader: a WMS capabilities can't be loaded! The capabilities url is not valid.</target>
       </trans-unit>
       <trans-unit id="6ff51d3832f0575b54225dea941a97ff" resname="mb.wms.wmsloader.error.service">
         <source>mb.wms.wmsloader.error.service</source>
-        <target>bla bla bla %service% bla bla bla</target>
+        <target>WMSLoader: the service %service% is not supported!</target>
       </trans-unit>
       <trans-unit id="8e29e6784e7fce8440c02cff8f93042b" resname="mb.wms.wmsloader.error.operation">
         <source>mb.wms.wmsloader.error.operation</source>
-        <target>__mb.wms.wmsloader.error.operation</target>
+        <target>WMSLoader: the WMS Operation %request% is not supported!</target>
       </trans-unit>
       <trans-unit id="906389f11054233d8999e2308e1698d1" resname="mb.wms.wmsloader.error.version">
         <source>mb.wms.wmsloader.error.version</source>
-        <target>__mb.wms.wmsloader.error.version</target>
+        <target>WMSLoader: the WMS version %version% is not supported!</target>
+      </trans-unit>
+      <trans-unit id="b21a812df167d5a76cf155957642f5ca" resname="mb.wms.wmsloader.error.load">
+        <source>mb.wms.wmsloader.error.load</source>
+        <target>WMSLoader: a wms capabilities can't be loaded!</target>
       </trans-unit>
       <trans-unit id="52f4d4c9483df6e72fdff9a1e9bea863" resname="mb.wms.wmsloader.title">
         <source>mb.wms.wmsloader.title</source>
@@ -38,9 +34,25 @@
         <source>mb.wms.wmsloader.dialog.btn.load</source>
         <target>Load</target>
       </trans-unit>
-      <trans-unit id="0615a38067b62382dc1667010669b238" resname="Formats">
-        <source>Formats</source>
-        <target>__Formats</target>
+      <trans-unit id="0a52730597fb4ffa01fc117d9e71e3a9" resname="Example">
+        <source>Example</source>
+        <target>__Example</target>
+      </trans-unit>
+      <trans-unit id="b1a51800f6fddc018203a102f87a1953" resname="Service url">
+        <source>Service url</source>
+        <target>__Service url</target>
+      </trans-unit>
+      <trans-unit id="be1fc247f6b1768447501ac7c1268c8f" resname="Auto open">
+        <source>Auto open</source>
+        <target>__Auto open</target>
+      </trans-unit>
+      <trans-unit id="3afd41144f7935adfb20b460f4762236" resname="Split layers">
+        <source>Split layers</source>
+        <target>__Split layers</target>
+      </trans-unit>
+      <trans-unit id="c888aa0d3cc4c373232c8d0280b6cd14" resname="Use declarative">
+        <source>Use declarative</source>
+        <target>__Use declarative</target>
       </trans-unit>
       <trans-unit id="007f57eb93ce5816f4a5f294f7d24f5e" resname="WMS">
         <source>WMS</source>
@@ -154,6 +166,66 @@
         <source>Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!</source>
         <target>__Caution: Scale calculations are subject to limited ScaleHint resolution in WMS 1.1.1!</target>
       </trans-unit>
+      <trans-unit id="4e59ad08a03d56020a7d46b95d8dc68a" resname="Layer's Title">
+        <source>Layer's Title</source>
+        <target>__Layer's Title</target>
+      </trans-unit>
+      <trans-unit id="08879991b6c95d5430731fb7413fbd65" resname="MinScale">
+        <source>MinScale</source>
+        <target>__MinScale</target>
+      </trans-unit>
+      <trans-unit id="1eaed172825c0d13abee7576d5555569" resname="MaxSclase">
+        <source>MaxSclase</source>
+        <target>__MaxSclase</target>
+      </trans-unit>
+      <trans-unit id="4d3d769b812b6faa6b76e1a8abaece2d" resname="Active">
+        <source>Active</source>
+        <target>__Active</target>
+      </trans-unit>
+      <trans-unit id="3a68a5286808bcf06b00640ed56c47bc" resname="Allow Select at TOC">
+        <source>Allow Select at TOC</source>
+        <target>__Allow Select at TOC</target>
+      </trans-unit>
+      <trans-unit id="2704e75fdddff58d21ced982ef4debf6" resname="Selected  at TOC">
+        <source>Selected  at TOC</source>
+        <target>__Selected  at TOC</target>
+      </trans-unit>
+      <trans-unit id="fd4c26c8e7427629f96385a584069518" resname="Allow FeatureInfo at TOC">
+        <source>Allow FeatureInfo at TOC</source>
+        <target>__Allow FeatureInfo at TOC</target>
+      </trans-unit>
+      <trans-unit id="374255b6ceaa723f2b9478f597ae10cd" resname="FeatureInfo at TOC">
+        <source>FeatureInfo at TOC</source>
+        <target>__FeatureInfo at TOC</target>
+      </trans-unit>
+      <trans-unit id="81090bc5aee86e52d43472ec70a1a04e" resname="Allow Toggle at TOC">
+        <source>Allow Toggle at TOC</source>
+        <target>__Allow Toggle at TOC</target>
+      </trans-unit>
+      <trans-unit id="fda6623c5013509b9efe5fe4774b8cc1" resname="Toggle at TOC">
+        <source>Toggle at TOC</source>
+        <target>__Toggle at TOC</target>
+      </trans-unit>
+      <trans-unit id="739636c4e7102334d46a564a54d1f2e6" resname="Allow Reorder at TOC">
+        <source>Allow Reorder at TOC</source>
+        <target>__Allow Reorder at TOC</target>
+      </trans-unit>
+      <trans-unit id="7d5a27f1b53dc519eac7bb288f664892" resname="More informations">
+        <source>More informations</source>
+        <target>__More informations</target>
+      </trans-unit>
+      <trans-unit id="490aa6e856ccf208a054389e47ce0d06" resname="Id">
+        <source>Id</source>
+        <target>__Id</target>
+      </trans-unit>
+      <trans-unit id="9a827e9d37b13be5e7f601fe4ab77cea" resname="Layer's Name">
+        <source>Layer's Name</source>
+        <target>__Layer's Name</target>
+      </trans-unit>
+      <trans-unit id="ae284f900f9d6e21ba69144cfc91e41b" resname="Style">
+        <source>Style</source>
+        <target>__Style</target>
+      </trans-unit>
       <trans-unit id="5ef1764055a535f1546b833929fa8503" resname="Wms Instance">
         <source>Wms Instance</source>
         <target>__Wms Instance</target>
@@ -190,10 +262,6 @@
         <source>Maxsc</source>
         <target>__Maxsc</target>
       </trans-unit>
-      <trans-unit id="4d3d769b812b6faa6b76e1a8abaece2d" resname="Active">
-        <source>Active</source>
-        <target>__Active</target>
-      </trans-unit>
       <trans-unit id="e0626222614bdee31951d84c64e5e9ff" resname="Select">
         <source>Select</source>
         <target>__Select</target>
@@ -218,9 +286,21 @@
         <source>on</source>
         <target>__on</target>
       </trans-unit>
-      <trans-unit id="b0ca605e3ec3947352dd02189875715e" resname="Service Repository">
-        <source>Service Repository</source>
-        <target>__Service Repository</target>
+      <trans-unit id="bb81d9b66c65e9a86b87bce5c089dabc" resname="OGC WMS">
+        <source>OGC WMS</source>
+        <target>__OGC WMS</target>
+      </trans-unit>
+      <trans-unit id="ba51698ee793d329668c5f0208df9c62" resname="Serviceurl:">
+        <source>Serviceurl:</source>
+        <target>__Serviceurl:</target>
+      </trans-unit>
+      <trans-unit id="cac81c648846c9b8c3e6085a45782c7e" resname="Username:">
+        <source>Username:</source>
+        <target>__Username:</target>
+      </trans-unit>
+      <trans-unit id="b341a59d5636ed3d6a819137495b08a0" resname="Password:">
+        <source>Password:</source>
+        <target>__Password:</target>
       </trans-unit>
       <trans-unit id="f19dbf2edb3a0bd74b0524d960ff21eb" resname="Load">
         <source>Load</source>
@@ -342,97 +422,21 @@
         <source>FeatureListUrl</source>
         <target>__FeatureListUrl</target>
       </trans-unit>
-      <trans-unit id="4e59ad08a03d56020a7d46b95d8dc68a" resname="Layer's Title">
-        <source>Layer's Title</source>
-        <target>__Layer's Title</target>
-      </trans-unit>
-      <trans-unit id="08879991b6c95d5430731fb7413fbd65" resname="MinScale">
-        <source>MinScale</source>
-        <target>__MinScale</target>
-      </trans-unit>
-      <trans-unit id="1eaed172825c0d13abee7576d5555569" resname="MaxSclase">
-        <source>MaxSclase</source>
-        <target>__MaxSclase</target>
-      </trans-unit>
-      <trans-unit id="3a68a5286808bcf06b00640ed56c47bc" resname="Allow Select at TOC">
-        <source>Allow Select at TOC</source>
-        <target>__Allow Select at TOC</target>
-      </trans-unit>
-      <trans-unit id="2704e75fdddff58d21ced982ef4debf6" resname="Selected  at TOC">
-        <source>Selected  at TOC</source>
-        <target>__Selected  at TOC</target>
-      </trans-unit>
-      <trans-unit id="fd4c26c8e7427629f96385a584069518" resname="Allow FeatureInfo at TOC">
-        <source>Allow FeatureInfo at TOC</source>
-        <target>__Allow FeatureInfo at TOC</target>
-      </trans-unit>
-      <trans-unit id="374255b6ceaa723f2b9478f597ae10cd" resname="FeatureInfo at TOC">
-        <source>FeatureInfo at TOC</source>
-        <target>__FeatureInfo at TOC</target>
-      </trans-unit>
-      <trans-unit id="81090bc5aee86e52d43472ec70a1a04e" resname="Allow Toggle at TOC">
-        <source>Allow Toggle at TOC</source>
-        <target>__Allow Toggle at TOC</target>
-      </trans-unit>
-      <trans-unit id="fda6623c5013509b9efe5fe4774b8cc1" resname="Toggle at TOC">
-        <source>Toggle at TOC</source>
-        <target>__Toggle at TOC</target>
-      </trans-unit>
-      <trans-unit id="739636c4e7102334d46a564a54d1f2e6" resname="Allow Reorder at TOC">
-        <source>Allow Reorder at TOC</source>
-        <target>__Allow Reorder at TOC</target>
-      </trans-unit>
-      <trans-unit id="7d5a27f1b53dc519eac7bb288f664892" resname="More informations">
-        <source>More informations</source>
-        <target>__More informations</target>
-      </trans-unit>
-      <trans-unit id="490aa6e856ccf208a054389e47ce0d06" resname="Id">
-        <source>Id</source>
-        <target>__Id</target>
-      </trans-unit>
-      <trans-unit id="9a827e9d37b13be5e7f601fe4ab77cea" resname="Layer's Name">
-        <source>Layer's Name</source>
-        <target>__Layer's Name</target>
-      </trans-unit>
-      <trans-unit id="ae284f900f9d6e21ba69144cfc91e41b" resname="Style">
-        <source>Style</source>
-        <target>__Style</target>
+      <trans-unit id="0615a38067b62382dc1667010669b238" resname="Formats">
+        <source>Formats</source>
+        <target>__Formats</target>
       </trans-unit>
       <trans-unit id="61021277e8cc19b87d14c0487f3b3004" resname="Add Service">
         <source>Add Service</source>
         <target>__Add Service</target>
       </trans-unit>
+      <trans-unit id="b0ca605e3ec3947352dd02189875715e" resname="Service Repository">
+        <source>Service Repository</source>
+        <target>__Service Repository</target>
+      </trans-unit>
       <trans-unit id="7e63085cbdfc1d9533f819c3cb45d144" resname="Wms Instance Layers">
         <source>Wms Instance Layers</source>
         <target>__Wms Instance Layers</target>
-      </trans-unit>
-      <trans-unit id="bb81d9b66c65e9a86b87bce5c089dabc" resname="OGC WMS">
-        <source>OGC WMS</source>
-        <target>__OGC WMS</target>
-      </trans-unit>
-      <trans-unit id="ba51698ee793d329668c5f0208df9c62" resname="Serviceurl:">
-        <source>Serviceurl:</source>
-        <target>__Serviceurl:</target>
-      </trans-unit>
-      <trans-unit id="cac81c648846c9b8c3e6085a45782c7e" resname="Username:">
-        <source>Username:</source>
-        <target>__Username:</target>
-      </trans-unit>
-      <trans-unit id="b341a59d5636ed3d6a819137495b08a0" resname="Password:">
-        <source>Password:</source>
-        <target>__Password:</target>
-      </trans-unit>
-      <trans-unit id="be1fc247f6b1768447501ac7c1268c8f" resname="Auto open">
-        <source>Auto open</source>
-        <target>__Auto open</target>
-      </trans-unit>
-      <trans-unit id="3afd41144f7935adfb20b460f4762236" resname="Split layers">
-        <source>Split layers</source>
-        <target>__Split layers</target>
-      </trans-unit>
-      <trans-unit id="c888aa0d3cc4c373232c8d0280b6cd14" resname="Use declarative">
-        <source>Use declarative</source>
-        <target>__Use declarative</target>
       </trans-unit>
     </body>
   </file>
