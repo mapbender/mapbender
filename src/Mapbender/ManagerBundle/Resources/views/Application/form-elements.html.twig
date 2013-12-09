@@ -1,4 +1,4 @@
-<span class="description right">{{ 'Template' | trans }}: {{template_name|default('Unknown')}}</span> 
+<span class="description right">{{ 'mb.manager.admin.template' | trans }}: {{template_name|default('Unknown')}}</span> 
 
 {# XXXVH Awesome templating engine plzzz! #}
 {% for region in regions %}
@@ -16,10 +16,10 @@
       <table class="elementsTable tableCore" data-region="{{ region }}">
         <thead>
           <tr>
-            <th>{{ 'Title' | trans }}</th>
-            <th class="type">{{ 'Type' | trans }}</th>
+            <th>{{ 'mb.manager.admin.element.title' | trans }}</th>
+            <th class="type">{{ 'mb.manager.admin.element.type' | trans }}</th>
             <th class="iconColumn">
-              <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'Add new element to'|trans}} {{region}}"></a>
+              <a href="{{ url('mapbender_manager_element_select', { 'slug': application.slug, 'region': region }) }}" class="iconAdd iconSmall addElement" title="{{'mb.manager.admin.element.add'|trans}} {{region}}"></a>
             </th>
           </tr>
         </thead>
@@ -33,8 +33,8 @@
                   <div class="checkWrapper left iconCheckbox iconSmall {% if element.enabled %}iconCheckboxActive{% endif %}" title="{{"Toggle show/hide element"|trans}} {{element.title}}">
                     <input class="checkbox" data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}" data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %}>
                   </div>
-                  <span class="iconEdit editElement iconSmall" title="{{"Edit element"|trans}}  {{element.title}}" data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}"></span>
-                  <span class="iconRemove removeElement iconSmall" title="{{"Delete element"|trans}} {{element.title}}" data-id="{{ element.id }}" data-slug="{{ application.slug }}" data-url="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}"></span>
+                  <span class="iconEdit editElement iconSmall" title="{{"mb.manager.admin.element.edit"|trans}}  {{element.title}}" data-url="{{ path('mapbender_manager_element_edit', {'slug': application.slug, 'id': element.id})}}"></span>
+                  <span class="iconRemove removeElement iconSmall" title="{{"mb.manager.be.element.delete"|trans}} {{element.title}}" data-id="{{ element.id }}" data-slug="{{ application.slug }}" data-url="{{ path('mapbender_manager_element_confirmdelete', {'slug': application.slug, 'id': element.id}) }}"></span>
                 </td>
               </tr>
             {% endfor %}

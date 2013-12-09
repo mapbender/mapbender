@@ -1,6 +1,6 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ "Delete Element" | trans}}{% endblock %}
+{% block title %}{{ "mb.manager.admin.element.delete" | trans}}{% endblock %}
 
 {% set form_errors = form_errors(form) %}
 
@@ -13,7 +13,7 @@
     </div>
     {% endif %}
 
-    <p>{{ 'Do you really want to delete the element?' | trans }}</p>
+    <p>{{ 'mb.manager.admin.element.delete.confirm' | trans }}</p>
     {{ form_widget(form) }}
 
     <footer>
