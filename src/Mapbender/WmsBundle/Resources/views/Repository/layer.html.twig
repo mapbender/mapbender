@@ -118,8 +118,8 @@
     <li>
       <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.scale" | trans }}:</span>
       <span class="metaText">
-        {{ "Min" | trans }}:{{ '%d'|format(layer.scale.min) }}<br/>
-        {{ "Max" | trans }}:{{ '%d'|format(layer.scale.max) }}</span>
+        {{ "mb.wms.wmsloader.repo.layer.label.min" | trans }}:{{ '%d'|format(layer.scale.min) }}<br/>
+        {{ "mb.wms.wmsloader.repo.layer.label.max" | trans }}:{{ '%d'|format(layer.scale.max) }}</span>
 
     </li>
   {% endif %}
@@ -127,8 +127,8 @@
   <li>
     <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.scalehint" | trans }}:</span>
     <span class="metaText">
-      {{ "Min" | trans }}:{{ layer.scaleHint.min }}<br/>
-      {{ "Max" | trans }}:{{ layer.scaleHint.max }}
+      {{ "mb.wms.wmsloader.repo.layer.label.min" | trans }}:{{ layer.scaleHint.min }}<br/>
+      {{ "mb.wms.wmsloader.repo.layer.label.max" | trans }}:{{ layer.scaleHint.max }}
     </span>
   </li>
   {% endif %}
@@ -144,7 +144,7 @@
           </li>
           <li>
             <span class="metaText">
-              {{ "LogoUrl" | trans }}:
+              {{ "mb.wms.wmsloader.repo.layer.label.logourl" | trans }}:
               {{ layer.attribution.logoUrl.width }}X{{layer.attribution.logoUrl.height }}
               {{ layer.attribution.logoUrl.onlineResource.format }} {{ layer.attribution.logoUrl.onlineResource.href }}
             </span>
