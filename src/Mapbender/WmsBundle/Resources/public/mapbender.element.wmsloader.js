@@ -3,7 +3,7 @@
     $.widget("mapbender.mbWmsloader", {
         options: {
             autoOpen: false,
-            title: Mapbender.trans('mb.wms.loader.title')
+            title: Mapbender.trans('mb.wms.wmsloader.title')
         },
         elementUrl: null,
         _create: function(){
@@ -45,14 +45,14 @@
                     width: 500,
                     buttons: {
                         'cancel': {
-                            label: Mapbender.trans('mb.wms.loader.dialog.btn.cancel'),
+                            label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.cancel'),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self.close();
                             }
                         },
                         'ok': {
-                            label: Mapbender.trans('mb.wms.loader.dialog.btn.load'),
+                            label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.load'),
                             cssClass: 'button right',
                             callback: function(){
                                 var url = $('#' + $(self.element).attr('id') + ' input[name="loadWmsUrl"]').val();
@@ -134,7 +134,7 @@
             var self = this;
             if(!options.gcurl || options.gcurl === '' ||
                 (options.gcurl.toLowerCase().indexOf("http://") !== 0 && options.gcurl.toLowerCase().indexOf("https://") !== 0)){
-                Mapbender.error(Mapbender.trans('mb.wms.loader.error.url'));
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.url'));
                 return;
             }
             var params = OpenLayers.Util.getParameters(options.gcurl);
@@ -149,18 +149,18 @@
                 }
             }
             if(request === null || service === null){
-                Mapbender.error(Mapbender.trans('mb.wms.loader.error.url'));
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.url'));
                 return;
             }
 
             if(service.toUpperCase() !== "WMS"){
-                Mapbender.error(Mapbender.trans('mb.wms.loader.error.service'));
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.service', {"service": service}));
                 return false;
             }else if(request.toUpperCase() !== "GETCAPABILITIES" && request.toUpperCase() !== 'CAPABILITIES'){
-                Mapbender.error(Mapbender.trans('mb.wms.loader.error.operation'));
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.operation', {"operation": request }));
                 return false;
             }else if(version && !(version.toUpperCase() === "1.1.0" || version.toUpperCase() === "1.1.1" || version.toUpperCase() === "1.3.0")){
-                Mapbender.error(Mapbender.trans('mb.wms.loader.error.version'));
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.version', {"version": version}));
                 return false;
             }
             $.ajax({

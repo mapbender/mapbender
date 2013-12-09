@@ -12,7 +12,7 @@
       </trans-unit>
       <trans-unit id="8e29e6784e7fce8440c02cff8f93042b" resname="mb.wms.wmsloader.error.operation">
         <source>mb.wms.wmsloader.error.operation</source>
-        <target>WMSLoader: the WMS Operation %request% is not supported!</target>
+        <target>WMSLoader: the WMS Operation %operation% is not supported!</target>
       </trans-unit>
       <trans-unit id="906389f11054233d8999e2308e1698d1" resname="mb.wms.wmsloader.error.version">
         <source>mb.wms.wmsloader.error.version</source>
