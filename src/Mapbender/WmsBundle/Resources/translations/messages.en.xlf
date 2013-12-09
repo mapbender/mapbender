@@ -4,19 +4,23 @@
     <body>
       <trans-unit id="27c45a8d7df44b7de7adf685e204e80c" resname="mb.wms.wmsloader.error.url">
         <source>mb.wms.wmsloader.error.url</source>
-        <target>__mb.wms.wmsloader.error.url</target>
+        <target>WMSLoader: a WMS capabilities can't be loaded! The capabilities url is not valid.</target>
       </trans-unit>
       <trans-unit id="6ff51d3832f0575b54225dea941a97ff" resname="mb.wms.wmsloader.error.service">
         <source>mb.wms.wmsloader.error.service</source>
-        <target>__mb.wms.wmsloader.error.service</target>
+        <target>WMSLoader: the service %service% is not supported!</target>
       </trans-unit>
       <trans-unit id="8e29e6784e7fce8440c02cff8f93042b" resname="mb.wms.wmsloader.error.operation">
         <source>mb.wms.wmsloader.error.operation</source>
-        <target>__mb.wms.wmsloader.error.operation</target>
+        <target>WMSLoader: the WMS Operation %request% is not supported!</target>
       </trans-unit>
       <trans-unit id="906389f11054233d8999e2308e1698d1" resname="mb.wms.wmsloader.error.version">
         <source>mb.wms.wmsloader.error.version</source>
-        <target>__mb.wms.wmsloader.error.version</target>
+        <target>WMSLoader: the WMS version %version% is not supported!</target>
+      </trans-unit>
+      <trans-unit id="b21a812df167d5a76cf155957642f5ca" resname="mb.wms.wmsloader.error.load">
+        <source>mb.wms.wmsloader.error.load</source>
+        <target>WMSLoader: a wms capabilities can't be loaded!</target>
       </trans-unit>
       <trans-unit id="52f4d4c9483df6e72fdff9a1e9bea863" resname="mb.wms.wmsloader.title">
         <source>mb.wms.wmsloader.title</source>
