@@ -23,7 +23,7 @@
         "kriswallsmith/buzz": "dev-master",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "toooni/fpdf": "dev-master",
-        "arsgeografica/signing": "1.0.*"
+        "arsgeografica/signing": "1.1.*"
     },
     "scripts": {
         "post-install-cmd": [
