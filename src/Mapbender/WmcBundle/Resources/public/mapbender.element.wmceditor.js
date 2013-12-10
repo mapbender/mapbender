@@ -48,6 +48,7 @@
                     closeButton: false,
                     closeOnESC: false,
                     closeOnPopupCloseClick: false,
+                    cssClass: 'mb-wmcEditor',
                     content: [$.ajax({
                             url: self.elementUrl + 'list',
                             complete: function(data){
