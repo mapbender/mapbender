@@ -22,9 +22,9 @@
         <source>mb.wms.wmsloader.error.load</source>
         <target>WMSLoader: a wms capabilities can't be loaded!</target>
       </trans-unit>
-      <trans-unit id="52f4d4c9483df6e72fdff9a1e9bea863" resname="mb.wms.wmsloader.title">
-        <source>mb.wms.wmsloader.title</source>
-        <target>Load WMS</target>
+      <trans-unit id="49d1d8cb561adb5e72a3bc42b920be3e" resname="mb.wms.wmsloader.dialog.label.title">
+        <source>mb.wms.wmsloader.dialog.label.title</source>
+        <target>WMS Load</target>
       </trans-unit>
       <trans-unit id="e0fad091f39559379dc4574bb9d41485" resname="mb.wms.wmsloader.dialog.btn.cancel">
         <source>mb.wms.wmsloader.dialog.btn.cancel</source>
@@ -485,42 +485,6 @@
       <trans-unit id="1d775eaea7e89b0a3da08ae949b1656f" resname="mb.wms.wmsloader.repo.layer.label.featurelisturl">
         <source>mb.wms.wmsloader.repo.layer.label.featurelisturl</source>
         <target>Featurelist URL</target>
-      </trans-unit>
-      <trans-unit id="2bb115a388faa855eca747ef5c0c54ae" resname="mb.wms.wmsloader.repo.label.ogcwms">
-        <source>mb.wms.wmsloader.repo.label.ogcwms</source>
-        <target>OGC WMS</target>
-      </trans-unit>
-      <trans-unit id="735be1de464a887a9feba327cd19fce8" resname="mb.wms.wmsloader.repo.label.serviceurl">
-        <source>mb.wms.wmsloader.repo.label.serviceurl</source>
-        <target>Service URL</target>
-      </trans-unit>
-      <trans-unit id="17a5d2e48ab081b08245199acdd0e127" resname="mb.wms.wmsloader.repo.label.username">
-        <source>mb.wms.wmsloader.repo.label.username</source>
-        <target>Username</target>
-      </trans-unit>
-      <trans-unit id="6735b21d82a85eb63791ec13715529bf" resname="mb.wms.wmsloader.repo.label.password">
-        <source>mb.wms.wmsloader.repo.label.password</source>
-        <target>Password</target>
-      </trans-unit>
-      <trans-unit id="267baf5e99cc378ef2ca6074cc55722a" resname="mb.wms.wmsloader.repo.label.load">
-        <source>mb.wms.wmsloader.repo.label.load</source>
-        <target>Load</target>
-      </trans-unit>
-      <trans-unit id="1422dd7df55132422ef23fd48f47d60d" resname="mb.wms.wmsloader.repo.label.cancel">
-        <source>mb.wms.wmsloader.repo.label.cancel</source>
-        <target>Cancel</target>
-      </trans-unit>
-      <trans-unit id="c9e15887e2ed6548d571b473f9b91a22" resname="mb.wms.wmsloader.label.autoopen">
-        <source>mb.wms.wmsloader.label.autoopen</source>
-        <target>Auto open</target>
-      </trans-unit>
-      <trans-unit id="cbecf337052195e4d0572acf96c90f0a" resname="mb.wms.wmsloader.label.splitlayers">
-        <source>mb.wms.wmsloader.label.splitlayers</source>
-        <target>Split layers</target>
-      </trans-unit>
-      <trans-unit id="afdc1dabaa4713cf3b5c2547dfcf8247" resname="mb.wms.wmsloader.label.declarative">
-        <source>mb.wms.wmsloader.label.declarative</source>
-        <target>Use declarative</target>
       </trans-unit>
     </body>
   </file>
