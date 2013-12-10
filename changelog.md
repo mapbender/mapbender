@@ -1,6 +1,8 @@
 # Changelog
 
 * **v3.0.2.0** -
+  - Signer for OwsProxy added
+  - Properties for regions added
   - Sketch feature (circle) added
   - Update layertree changed
   - Funktion Model.changeLayerState added
