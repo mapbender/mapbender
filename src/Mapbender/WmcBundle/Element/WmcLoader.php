@@ -240,6 +240,7 @@ class WmcLoader extends Element
                     $state->setSlug($this->application->getSlug());
                     $state->setTitle("Mapbender State");
                     $wmc->setWmcid(round((microtime(true) * 1000)));
+                    $wmc->setState($wmchandler->unSignUrls($state));
                     $xml = $this->container->get('templating')->render(
                         'MapbenderWmcBundle:Wmc:wmc110_simple.xml.twig',
                         array(

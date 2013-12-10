@@ -40,9 +40,12 @@
         },
         _getStateSuccess: function(response, textStatus, jqXHR){
             if(response.data){
-                //                var wmcstate = $.parseJSON(response.data);
                 for(stateid in response.data){
-                    var state = $.parseJSON(response.data[stateid]);
+                    var state;
+                    if(response.data[stateid])
+                        state = response.data[stateid]
+                    else
+                        state = $.parseJSON(response.data[stateid]);
                     if(!state.window)
                         state = $.parseJSON(state);
                     this._addToMap(stateid, state);

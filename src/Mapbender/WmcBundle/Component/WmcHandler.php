@@ -3,6 +3,7 @@ namespace Mapbender\WmcBundle\Component;
 
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\StateHandler;
+use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\State;
 use Mapbender\CoreBundle\Form\Type\StateType;
 use Mapbender\WmsBundle\Component\LegendUrl;
@@ -46,7 +47,7 @@ class WmcHandler
                 ->getRepository('Mapbender\CoreBundle\Entity\State')
                 ->find($stateid);
         }
-        return $state;
+        return $this->signUrls($state);
     }
 
     /**
@@ -64,6 +65,7 @@ class WmcHandler
             $state->setSlug($this->application->getSlug());
             $state->setTitle("SuggestMap");
             $state->setJson($jsonState);
+            $state = $this->unSignUrls($state);
             $em = $this->container->get('doctrine')->getEntityManager();
             $em->persist($state);
             $em->flush();
@@ -89,8 +91,13 @@ class WmcHandler
 //	    ->setParameter('slug', array($this->application->getSlug()))
             ->setParameter('wmcid', $wmcid);
         $wmc = $query->getResult();
-        if ($wmc && count($wmc) === 1) return $wmc[0];
-        else return null;
+        if ($wmc && count($wmc) === 1) {
+            $wmc_signed = $wmc[0];
+            $wmc_signed->setState($this->signUrls($wmc_signed->getState()));
+            return $wmc_signed;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -159,6 +166,33 @@ class WmcHandler
         } else {
             return $wmc_dir;
         }
+    }
+    
+    public function unSignUrls(State $state){
+        $json = json_decode($state->getJson(), true);
+        if ($json && isset($json['sources']) && is_array($json['sources'])) {
+            foreach ($json['sources'] as &$source) {
+                $url = Utils::validateUrl($source['configuration']['options']['url'],
+                        array(strtolower('_signature')));
+                $source['configuration']['options']['url'] = $url;
+            }
+        }
+        $state->setJson(json_encode($json));
+        return $state;
+    }
+    
+    public function signUrls(State $state){
+        $state->getId();
+        $json = json_decode($state->getJson(), true);
+        if($json && isset($json['sources']) && is_array($json['sources'])){
+            $signer = $this->container->get('signer');
+            foreach($json['sources'] as &$source){
+                $url = Utils::validateUrl($source['configuration']['options']['url'], array(strtolower('_signature')));
+                $source['configuration']['options']['url'] = $signer->signUrl($url);
+            }
+        }
+        $state->setJson(json_encode($json));
+        return $state;
     }
 
 }

@@ -35,20 +35,6 @@
           {% for element in application.elements.sidepane %}
             {{ element.render() | raw }}
           {% endfor %}
-
-          <div class="tabContainerAlt">
-            <ul class="tabs">
-              <li id="tab1" class="tab active">{{"Button1" | trans }}</li>
-              <li id="tab2" class="tab">{{"Button2" | trans }}</li>
-            </ul>
-            <div id="container1" class="container active">
-              Container1
-            </div>
-            <div id="container2" class="container">
-              Container2
-            </div>
-          </div>
-
       </div>
     </div>
   {% endif %}

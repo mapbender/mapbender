@@ -21,11 +21,10 @@ class Signer extends BaseSigner
     {
         $psp = substr($url, 0, strpos($url, '?'));
         $signature = sprintf('%d%s%s', strlen($psp), $this->sep, $this->signature($psp));
-
         $sep = (false === strstr($url, '?') ? '?' : '&');
-        $sep = ($sep === substr($url, -1) ? '' : $sep);
+        $sep = ('?' === substr($url, -1) || '&' === substr($url, -1) ? '' : $sep);
 
-        return $url . $sep . '_signature=' . $signature;
+        return $url . $sep . '_signature=' . urlencode($signature);
     }
 
     public function checkSignedUrl($url)
