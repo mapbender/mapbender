@@ -6,255 +6,294 @@
         <source>mb.manager.element.yaml.message</source>
         <target>Use the &lt;a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&amp;language=%locale%"&gt;YAML&lt;/a&gt; format to describe the element's configuration.</target>
       </trans-unit>
-      <trans-unit id="4c0bb6398fbe2aeb8e962a53f83e2b05" resname="mb.core.admin.corrdsdisplay.label">
+      <trans-unit id="7249e0628d1a1e31cb2d44305a1c91ab" resname="mb.core.admin.corrdsdisplay.label">
         <source>mb.core.admin.corrdsdisplay.label</source>
         <target>Show title label</target>
       </trans-unit>
-      <trans-unit id="ca3350b9cedf782b1f2e33125fb85c12" resname="mb.core.admin.about_dialog.show_label">
-        <source>mb.core.admin.about_dialog.show_label</source>
-        <target>Show button label</target>
+      <trans-unit id="d8c03fb43b22cb05cba971c8ae2e7981" resname="mb.core.admin.srsselector.show_label">
+        <source>mb.core.admin.srsselector.show_label</source>
+        <target>Show label</target>
       </trans-unit>
-      <trans-unit id="45474cfe8f68736056ddddf1394c0940" resname="mb.manager.admin.element.delete">
+      <trans-unit id="7cb565a35d95af70959282faf4989642" resname="mb.manager.admin.element.delete">
         <source>mb.manager.admin.element.delete</source>
         <target>Delete Element</target>
       </trans-unit>
-      <trans-unit id="b69168f7c324a4dbfb6ed55e14254d6a" resname="mb.manager.admin.element.delete.confirm">
+      <trans-unit id="04cd08843fed089f29b6aa525b3380cf" resname="mb.manager.admin.element.delete.confirm">
         <source>mb.manager.admin.element.delete.confirm</source>
         <target>Do you really want to delete the element?</target>
       </trans-unit>
-      <trans-unit id="f2a6c498fb90ee345d997f888fce3b18" resname="Delete">
-        <source>Delete</source>
-        <target>__Delete</target>
+      <trans-unit id="8f31981eb7f9c7b4331f1550f0e68b6c" resname="mb.manager.admin.element.btn.delete">
+        <source>mb.manager.admin.element.btn.delete</source>
+        <target>Delete</target>
       </trans-unit>
-      <trans-unit id="ea4788705e6873b424c65e91c2846b19" resname="Cancel">
-        <source>Cancel</source>
-        <target>__Cancel</target>
+      <trans-unit id="f01c488e23ff4fa4ccde1eb1f46051e9" resname="mb.manager.admin.element.btn.cancel">
+        <source>mb.manager.admin.element.btn.cancel</source>
+        <target>Cancel</target>
       </trans-unit>
-      <trans-unit id="7622062899372d17e7ffddd4598527b7" resname="Max. extent">
-        <source>Max. extent</source>
-        <target>__Max. extent</target>
+      <trans-unit id="6fcdb0613955e001b3bdf56504f57270" resname="mb.manager.admin.map.max_extent">
+        <source>mb.manager.admin.map.max_extent</source>
+        <target>Max. extent</target>
       </trans-unit>
-      <trans-unit id="e8ae9976890e523e9b30df6c6de12f1d" resname="Start. extent">
-        <source>Start. extent</source>
-        <target>__Start. extent</target>
+      <trans-unit id="b1e5013a3b0d19ed28d955b11429bb06" resname="mb.manager.admin.map.start_extent">
+        <source>mb.manager.admin.map.start_extent</source>
+        <target>Start extent</target>
       </trans-unit>
-      <trans-unit id="b425a69149f3aba8b914580ab2e2aa33" resname="mb.core.admin.element.autostart">
+      <trans-unit id="ee6e84f0bff0142763d8b62f43962df4" resname="mb.core.admin.gpsposition.show_label">
+        <source>mb.core.admin.gpsposition.show_label</source>
+        <target>Show label</target>
+      </trans-unit>
+      <trans-unit id="f610e1c65d079aaf950b5f63236d9440" resname="mb.core.admin.element.autostart">
         <source>mb.core.admin.element.autostart</source>
         <target>Autostart</target>
       </trans-unit>
-      <trans-unit id="9369ba148ee259473fc1fb4939b6c2e8" resname="Maximize">
-        <source>Maximize</source>
-        <target>__Maximize</target>
+      <trans-unit id="79cb83f673b2d8f5be94ec2d05986614" resname="mb.manager.admin.overview.maximize">
+        <source>mb.manager.admin.overview.maximize</source>
+        <target>Maximize</target>
       </trans-unit>
-      <trans-unit id="2de1239f236684c5bee75bd524a38a51" resname="Fix">
-        <source>Fix</source>
-        <target>__Fix</target>
+      <trans-unit id="0f6f1d1a537470400fa66d0d6c10f5da" resname="mb.manager.admin.overview.fix">
+        <source>mb.manager.admin.overview.fix</source>
+        <target>Fix</target>
       </trans-unit>
-      <trans-unit id="c073fb2c2c4e56e796001408c233084e" resname="Required fields are marked with dark labels, while optional fields have lighter labels.">
-        <source>Required fields are marked with dark labels, while optional fields have lighter labels.</source>
-        <target>__Required fields are marked with dark labels, while optional fields have lighter labels.</target>
+      <trans-unit id="26ab0135cca57c1162255f9cbbaecf6e" resname="mb.core.admin.scaleselector.show_label">
+        <source>mb.core.admin.scaleselector.show_label</source>
+        <target>Show label</target>
       </trans-unit>
-      <trans-unit id="d6476ace005d9b925865c1404a0095e8" resname="Base data">
-        <source>Base data</source>
-        <target>__Base data</target>
+      <trans-unit id="20bbe30e6fcefd2ab10c780590b458af" resname="mb.core.admin.button.show_label">
+        <source>mb.core.admin.button.show_label</source>
+        <target>Show label</target>
       </trans-unit>
-      <trans-unit id="254f642527b45bc260048e30704edb39" resname="Configuration">
-        <source>Configuration</source>
-        <target>__Configuration</target>
+      <trans-unit id="49ead166f1617a1c075be9feb88ef264" resname="mb.core.element.be.button.show_label">
+        <source>mb.core.element.be.button.show_label</source>
+        <target>Show label</target>
       </trans-unit>
-      <trans-unit id="235a2f24c89c28b3e94afab97d5d1d1d" resname="Draggable">
-        <source>Draggable</source>
-        <target>__Draggable</target>
+      <trans-unit id="a4a9f946292d7a63d77cb8ccee87878f" resname="mb.manager.admin.element.requirements">
+        <source>mb.manager.admin.element.requirements</source>
+        <target>Required fields are marked with dark labels, while optional fields have lighter labels.</target>
       </trans-unit>
-      <trans-unit id="d7778d0c64b6ba21494c97f77a66885a" resname="Filter">
-        <source>Filter</source>
-        <target>__Filter</target>
+      <trans-unit id="ad2306a37f4b7183ae0f35becc37a64b" resname="mb.manager.admin.element.base_data">
+        <source>mb.manager.admin.element.base_data</source>
+        <target>Base data</target>
       </trans-unit>
-      <trans-unit id="56d364800e367d40e7698514428d4679" resname="No Sources defined">
-        <source>No Sources defined</source>
-        <target>__No Sources defined</target>
+      <trans-unit id="ab317d7397ed850c252a97befd3764a9" resname="mb.manager.admin.element.configuration">
+        <source>mb.manager.admin.element.configuration</source>
+        <target>Configuration</target>
       </trans-unit>
-      <trans-unit id="c2c9d02e99770d246e9a9e40b88f29fd" resname="Add users and groups">
-        <source>Add users and groups</source>
-        <target>__Add users and groups</target>
+      <trans-unit id="a896f1255096f3296f5c69259b4c96df" resname="mb.manager.admin.zoombar.draggable">
+        <source>mb.manager.admin.zoombar.draggable</source>
+        <target>Draggable</target>
       </trans-unit>
-      <trans-unit id="110a4b01beabd53b661a47d4b44bd7a8" resname="Publish">
-        <source>Publish</source>
-        <target>__Publish</target>
+      <trans-unit id="7d61128cc95ad7927ef6f836feb88197" resname="mb.manager.admin.filter.source">
+        <source>mb.manager.admin.filter.source</source>
+        <target>Filter source</target>
       </trans-unit>
-      <trans-unit id="8a8de9e9e0eb34168408e6b0fdc921cf" resname="Add Layerset">
-        <source>Add Layerset</source>
-        <target>__Add Layerset</target>
+      <trans-unit id="9d74c4df1bed8b409f8b88b02eebc115" resname="mb.manager.admin.source.no_source">
+        <source>mb.manager.admin.source.no_source</source>
+        <target>No source available</target>
       </trans-unit>
-      <trans-unit id="b00e9db2dd695fede83019dc9d44450f" resname="Filter layersets">
-        <source>Filter layersets</source>
-        <target>__Filter layersets</target>
+      <trans-unit id="49a08961b0e5b8b4fb076d6082f67b55" resname="mb.manager.admin.application.security.add_users_groups">
+        <source>mb.manager.admin.application.security.add_users_groups</source>
+        <target>Add users and groups</target>
       </trans-unit>
-      <trans-unit id="490aa6e856ccf208a054389e47ce0d06" resname="Id">
-        <source>Id</source>
-        <target>__Id</target>
+      <trans-unit id="55e18fb3b32d459c43c4108aa49ed8a2" resname="mb.manager.admin.application.security.public">
+        <source>mb.manager.admin.application.security.public</source>
+        <target>publish</target>
       </trans-unit>
-      <trans-unit id="b78a3223503896721cca1303f776159b" resname="mb.manager.admin.element.title">
-        <source>mb.manager.admin.element.title</source>
+      <trans-unit id="27cef7d0a0eeb318a4e438d61725648d" resname="mb.manager.admin.layerset.add">
+        <source>mb.manager.admin.layerset.add</source>
+        <target>Add layerset</target>
+      </trans-unit>
+      <trans-unit id="daab308c00bb50bbe8dc44a79ccc8060" resname="mb.manager.admin.filter.layerset">
+        <source>mb.manager.admin.filter.layerset</source>
+        <target>Filter layerset</target>
+      </trans-unit>
+      <trans-unit id="03c37885863a75b058bceeae4e0d1c4c" resname="mb.manager.admin.layerset.id">
+        <source>mb.manager.admin.layerset.id</source>
+        <target>Id</target>
+      </trans-unit>
+      <trans-unit id="912129d1d1dd160436f31fd4aed3f1df" resname="mb.manager.admin.layerset.title">
+        <source>mb.manager.admin.layerset.title</source>
         <target>Title</target>
       </trans-unit>
-      <trans-unit id="a1fa27779242b4902f7ae3bdd5c6d508" resname="mb.manager.admin.element.type">
-        <source>mb.manager.admin.element.type</source>
+      <trans-unit id="c6701d05a55f58786fc0f881b585e1f9" resname="mb.manager.admin.layerset.type">
+        <source>mb.manager.admin.layerset.type</source>
         <target>Type</target>
       </trans-unit>
-      <trans-unit id="fe5cbe1ad9d28533f8d2e2c37f6b31a0" resname="Add Instance">
-        <source>Add Instance</source>
-        <target>__Add Instance</target>
+      <trans-unit id="aa78e761b99d501ca9989772053e3787" resname="mb.manager.admin.instance.add">
+        <source>mb.manager.admin.instance.add</source>
+        <target>Add instance</target>
       </trans-unit>
-      <trans-unit id="7dce122004969d56ae2e0245cb754d35" resname="Edit">
-        <source>Edit</source>
-        <target>__Edit</target>
+      <trans-unit id="b407f3fb8e29fe4ba09addade70fd8b2" resname="mb.manager.admin.layerset.edit">
+        <source>mb.manager.admin.layerset.edit</source>
+        <target>Edit layerset</target>
       </trans-unit>
-      <trans-unit id="748c6534cc1e15b917fb3082f14b34a9" resname="Toggle show/hide instance">
-        <source>Toggle show/hide instance</source>
-        <target>__Toggle show/hide instance</target>
+      <trans-unit id="98b1dd94bdbdb7ac4d70d26103e23ea2" resname="mb.manager.admin.layerset.delete">
+        <source>mb.manager.admin.layerset.delete</source>
+        <target>Delete layerset</target>
       </trans-unit>
-      <trans-unit id="82f4b9ab2330b1a7b1f4cf9549bf7a00" resname="Edit instance">
-        <source>Edit instance</source>
-        <target>__Edit instance</target>
+      <trans-unit id="03c53b3342906e565c05aa932f7bf5f6" resname="mb.manager.admin.instance.show_hide">
+        <source>mb.manager.admin.instance.show_hide</source>
+        <target>Toggle show/hide instance</target>
       </trans-unit>
-      <trans-unit id="2938613cbca882c2c78ba79591ed553e" resname="Delete instance">
-        <source>Delete instance</source>
-        <target>__Delete instance</target>
+      <trans-unit id="ca921f2e9160cc3844966d959d41c162" resname="mb.manager.admin.instance.edit">
+        <source>mb.manager.admin.instance.edit</source>
+        <target>Edit instance</target>
       </trans-unit>
-      <trans-unit id="1287d46679a3717647a1ee7ab76de7d6" resname="No instances added">
-        <source>No instances added</source>
-        <target>__No instances added</target>
+      <trans-unit id="7741119ee75b435238402736a3c1f271" resname="mb.manager.admin.instance.delete">
+        <source>mb.manager.admin.instance.delete</source>
+        <target>delete instance</target>
       </trans-unit>
-      <trans-unit id="7b9a0647fdbb5e62bacdf0a48d44735e" resname="No Layers added">
-        <source>No Layers added</source>
-        <target>__No Layers added</target>
+      <trans-unit id="8ae43937492cbc973c8ef1f7fe034343" resname="mb.manager.admin.instance.no_instance_added">
+        <source>mb.manager.admin.instance.no_instance_added</source>
+        <target>No instance added</target>
       </trans-unit>
-      <trans-unit id="1ddf333c6654f7f89c739dddfb4cc429" resname="Applications">
-        <source>Applications</source>
-        <target>__Applications</target>
+      <trans-unit id="1e8a29d2a317f436725eaa1f260a6f55" resname="mb.manager.admin.instance.no_layer_added">
+        <source>mb.manager.admin.instance.no_layer_added</source>
+        <target>No layer added</target>
       </trans-unit>
-      <trans-unit id="2a2780dafb203bbca823c697eef0bd9f" resname="View this application">
-        <source>View this application</source>
-        <target>__View this application</target>
+      <trans-unit id="714e556d4c409f479889bfee8e32854b" resname="mb.manager.admin.applications">
+        <source>mb.manager.admin.applications</source>
+        <target>Applications</target>
       </trans-unit>
-      <trans-unit id="4351cfebe4b61d8aa5efa1d020710005" resname="View">
-        <source>View</source>
-        <target>__View</target>
+      <trans-unit id="61e1a73c5a6ce8d413195569ec0cf8db" resname="mb.manager.admin.filter.application">
+        <source>mb.manager.admin.filter.application</source>
+        <target>Filter application</target>
       </trans-unit>
-      <trans-unit id="5ef0ea57cf8479f37b176759683d1896" resname="Dublicate">
-        <source>Dublicate</source>
-        <target>__Dublicate</target>
+      <trans-unit id="88522cb91444f891b78bbd45319509a7" resname="mb.manager.admin.application.view_this">
+        <source>mb.manager.admin.application.view_this</source>
+        <target>View this application</target>
       </trans-unit>
-      <trans-unit id="83904affa8c6be69ef2fcbc918a765d3" resname="Publish / Unpublish">
-        <source>Publish / Unpublish</source>
-        <target>__Publish / Unpublish</target>
+      <trans-unit id="669651088ad7fc7c1cc4602f45204e07" resname="mb.manager.admin.application.view">
+        <source>mb.manager.admin.application.view</source>
+        <target>View</target>
       </trans-unit>
-      <trans-unit id="fe507a75e3a759f48b180e87ce0915a2" resname="Delete application">
-        <source>Delete application</source>
-        <target>__Delete application</target>
+      <trans-unit id="381e126cc6d88ce3540a9c018064dc98" resname="mb.manager.admin.application.duplicate">
+        <source>mb.manager.admin.application.duplicate</source>
+        <target>Duplicate application</target>
       </trans-unit>
-      <trans-unit id="50bf33b0b47b43464115dfb9edb7417e" resname="No applications available.">
-        <source>No applications available.</source>
-        <target>__No applications available.</target>
+      <trans-unit id="d9e913f63cdcb10b3d9133dd7b12fa41" resname="mb.manager.admin.application.edit">
+        <source>mb.manager.admin.application.edit</source>
+        <target>Edit application</target>
       </trans-unit>
-      <trans-unit id="c3b02fb3058e845fc09d937b0fa2d7dd" resname="New Application">
-        <source>New Application</source>
-        <target>__New Application</target>
+      <trans-unit id="7dcd24ad4908e215e8a68a36a8a8d6c1" resname="mb.manager.admin.application.public.on_off">
+        <source>mb.manager.admin.application.public.on_off</source>
+        <target>Toggle publish/unpublish application</target>
       </trans-unit>
-      <trans-unit id="2fae32629d4ef4fc6341f1751b405e45" resname="Security">
-        <source>Security</source>
-        <target>__Security</target>
+      <trans-unit id="abecec6eeb7bcd272c906e9bfb6de23b" resname="mb.manager.admin.application.delete">
+        <source>mb.manager.admin.application.delete</source>
+        <target>Delete application</target>
       </trans-unit>
-      <trans-unit id="d3e780bb674c0da4bfa7d974b74f710f" resname="Create a new application by providing basic information and then&#10;          use the edit mode to add elements and layers.">
-        <source>Create a new application by providing basic information and then
-          use the edit mode to add elements and layers.</source>
-        <target>__Create a new application by providing basic information and then
+      <trans-unit id="8f2204fb67afdf131097f7037c87dfd3" resname="mb.manager.admin.application.no_application">
+        <source>mb.manager.admin.application.no_application</source>
+        <target>No application available</target>
+      </trans-unit>
+      <trans-unit id="2f6c5cb78939cee2618a0d784dd42d54" resname="mb.manager.admin.application.new">
+        <source>mb.manager.admin.application.new</source>
+        <target>New Application</target>
+      </trans-unit>
+      <trans-unit id="d108615e336f4aef52e96af2f6df69a4" resname="mb.manager.admin.application.new.base_data">
+        <source>mb.manager.admin.application.new.base_data</source>
+        <target>Base data</target>
+      </trans-unit>
+      <trans-unit id="7996c7e820e6b0e5fa6b09b62aaa3332" resname="mb.manager.admin.application.security">
+        <source>mb.manager.admin.application.security</source>
+        <target>Security</target>
+      </trans-unit>
+      <trans-unit id="1ff8d550246f91947a85478752fcfed0" resname="mb.manager.admin.application.create_use">
+        <source>mb.manager.admin.application.create_use</source>
+        <target>Create a new application by providing basic information and then
           use the edit mode to add elements and layers.</target>
       </trans-unit>
-      <trans-unit id="686e697538050e4664636337cc3b834f" resname="Create">
-        <source>Create</source>
-        <target>__Create</target>
+      <trans-unit id="5fcfe9aa6c70d504a8f444cb334920a6" resname="mb.manager.admin.application.btn.create">
+        <source>mb.manager.admin.application.btn.create</source>
+        <target>Create</target>
       </trans-unit>
-      <trans-unit id="ff11d2c8d98e31753f3583724fae7ced" resname="View application">
-        <source>View application</source>
-        <target>__View application</target>
+      <trans-unit id="ea96c1775d32e350a7c01aecb21c543d" resname="mb.manager.admin.application.btn.cancel">
+        <source>mb.manager.admin.application.btn.cancel</source>
+        <target>Cancel</target>
       </trans-unit>
-      <trans-unit id="ebd9bec4d70abc789d439c1f136b0538" resname="Layout">
-        <source>Layout</source>
-        <target>__Layout</target>
+      <trans-unit id="145f827163e181550e253937f8c48270" resname="mb.manager.admin.application.edit.base_data">
+        <source>mb.manager.admin.application.edit.base_data</source>
+        <target>Base data</target>
       </trans-unit>
-      <trans-unit id="87bfda183c4f851a101e97bbb1bbace7" resname="Layers">
-        <source>Layers</source>
-        <target>__Layers</target>
+      <trans-unit id="8fb52a0f54dd2e74422f53a4df60444c" resname="mb.manager.admin.application.layouts">
+        <source>mb.manager.admin.application.layouts</source>
+        <target>Layouts</target>
       </trans-unit>
-      <trans-unit id="c9cc8cce247e49bae79f15173ce97354" resname="Save">
-        <source>Save</source>
-        <target>__Save</target>
+      <trans-unit id="30fc1d2c4ec7fc35b97556d846390b77" resname="mb.manager.admin.application.layersets">
+        <source>mb.manager.admin.application.layersets</source>
+        <target>Layersets</target>
       </trans-unit>
-      <trans-unit id="278c491bdd8a53618c149c4ac790da34" resname="mb.manager.admin.template">
+      <trans-unit id="93c75b5c0f9cb555ea9e8ffe87f58a20" resname="mb.manager.admin.application.save">
+        <source>mb.manager.admin.application.save</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="3045a57dd047274c5d6062d6b844f047" resname="mb.manager.admin.application.cancel">
+        <source>mb.manager.admin.application.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="65b1b8ec796958dee755f045045ec4c5" resname="mb.manager.admin.template">
         <source>mb.manager.admin.template</source>
         <target>Template</target>
       </trans-unit>
-      <trans-unit id="b0b97de4fc0701ae82b9e4f213e6eab8" resname="mb.manager.admin.element.add">
+      <trans-unit id="e4f28b83d54309a77cb59795e1216b1d" resname="mb.manager.admin.element.title">
+        <source>mb.manager.admin.element.title</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="dfb1334cf42cfe1a0b4d7994eaa3b758" resname="mb.manager.admin.element.type">
+        <source>mb.manager.admin.element.type</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="8f5e69245265de7563aaf39fd689bb58" resname="mb.manager.admin.element.add">
         <source>mb.manager.admin.element.add</source>
         <target>Add a new element to</target>
       </trans-unit>
-      <trans-unit id="0c891bcb051e566f809620abb383f050" resname="Toggle show/hide element">
-        <source>Toggle show/hide element</source>
-        <target>__Toggle show/hide element</target>
+      <trans-unit id="1abc6b6b6adf29b611a5ff28b75fec56" resname="mb.manager.admin.element.show_hide">
+        <source>mb.manager.admin.element.show_hide</source>
+        <target>Toggle show/hide element</target>
       </trans-unit>
-      <trans-unit id="1e6080c4821c7448ed52c93ee9e4ee63" resname="mb.manager.admin.element.edit">
+      <trans-unit id="59e6a75c4ff6f194dbf0a63f6b40d970" resname="mb.manager.admin.element.edit">
         <source>mb.manager.admin.element.edit</source>
         <target>Edit element</target>
       </trans-unit>
-      <trans-unit id="2f76fab71405b40cf521f64eab0d350f" resname="Delete element">
-        <source>Delete element</source>
-        <target>__Delete element</target>
+      <trans-unit id="f5cbce523ee9eabac86ea8316bf8e38d" resname="mb.manager.be.element.delete">
+        <source>mb.manager.be.element.delete</source>
+        <target>Delete</target>
       </trans-unit>
-      <trans-unit id="5a7e0e63b885fdabe4a836423350c912" resname="No elements added.">
-        <source>No elements added.</source>
-        <target>__No elements added.</target>
+      <trans-unit id="f421912e27fc54853a6a714460b371b8" resname="mb.manager.admin.element.no_element_added.">
+        <source>mb.manager.admin.element.no_element_added.</source>
+        <target>No element added</target>
       </trans-unit>
-      <trans-unit id="09f9bb50a2f9a99a5bd3b36a0472d10d" resname="Do you really want to remove the layerset with the title &lt;span class=&quot;italic&quot;&gt;%layerset_title%&lt;/span&gt;?">
-        <source>Do you really want to remove the layerset with the title &lt;span class="italic"&gt;%layerset_title%&lt;/span&gt;?</source>
-        <target>__Do you really want to remove the layerset with the title &lt;span class="italic"&gt;%layerset_title%&lt;/span&gt;?</target>
+      <trans-unit id="1e8cb174046a6e4cf13d68d18c70d8f9" resname="mb.manager.admin.layerset.delete.confirm">
+        <source>mb.manager.admin.layerset.delete.confirm</source>
+        <target>Do you really want to remove the layerset with the title &lt;span class="italic"&gt;%layerset_title%&lt;/span&gt;?</target>
       </trans-unit>
-      <trans-unit id="b7e6fb77ca4f40f7a6dd7343629309ca" resname="Do you really want to remove the instance with the title &lt;span class=&quot;italic&quot;&gt;%instance_title%&lt;/span&gt;?">
-        <source>Do you really want to remove the instance with the title &lt;span class="italic"&gt;%instance_title%&lt;/span&gt;?</source>
-        <target>__Do you really want to remove the instance with the title &lt;span class="italic"&gt;%instance_title%&lt;/span&gt;?</target>
+      <trans-unit id="154a2657aaa83a07817e8912d27526d1" resname="mb.manager.admin.instance.delete.confirm">
+        <source>mb.manager.admin.instance.delete.confirm</source>
+        <target>Do you really want to remove the instance with the title &lt;span class="italic"&gt;%instance_title%&lt;/span&gt;?</target>
       </trans-unit>
-      <trans-unit id="992a0f0542384f1ee5ef51b7cf4ae6c4" resname="Services">
-        <source>Services</source>
-        <target>Services</target>
+      <trans-unit id="250f49cd91268cd451c0416f0289ca5c" resname="mb.manager.admin.sources">
+        <source>mb.manager.admin.sources</source>
+        <target>Sources</target>
       </trans-unit>
-      <trans-unit id="6d24e4f215ffae99d29ac621707346d6" resname="Add new service">
-        <source>Add new service</source>
-        <target>__Add new service</target>
+      <trans-unit id="4d9038dea8aa2a9f5ba61be91f17f5b8" resname="mb.manager.admin.source.add">
+        <source>mb.manager.admin.source.add</source>
+        <target>Add source</target>
       </trans-unit>
-      <trans-unit id="2533c13547a8c6f4369e24df9a64d94c" resname="View service metadata">
-        <source>View service metadata</source>
-        <target>__View service metadata</target>
+      <trans-unit id="5aec7858f3dcf72aa2c22d0331a7605c" resname="mb.manager.admin.source.show_metadata">
+        <source>mb.manager.admin.source.show_metadata</source>
+        <target>Show metadata</target>
       </trans-unit>
-      <trans-unit id="39fcadd0a617761872838084056f45cd" resname="Delete service">
-        <source>Delete service</source>
-        <target>__Delete service</target>
+      <trans-unit id="962aeb9a173b50c1f5d791131c1c1566" resname="mb.manager.admin.source.delete">
+        <source>mb.manager.admin.source.delete</source>
+        <target>Delete source</target>
       </trans-unit>
-      <trans-unit id="2d4f13b1eb05227baea17c39edb26910" resname="No services available.">
-        <source>No services available.</source>
-        <target>__No services available.</target>
+      <trans-unit id="21eadf44846179e855227d3480ad702e" resname="mb.manager.admin.source.new.add">
+        <source>mb.manager.admin.source.new.add</source>
+        <target>Add source</target>
       </trans-unit>
-      <trans-unit id="61021277e8cc19b87d14c0487f3b3004" resname="Add Service">
-        <source>Add Service</source>
-        <target>__Add Service</target>
-      </trans-unit>
-      <trans-unit id="7258e7251413465e0a3eb58094430bde" resname="Administration">
-        <source>Administration</source>
-        <target>Administration</target>
-      </trans-unit>
-      <trans-unit id="8f9bfe9d1345237cb3b2b205864da075" resname="User">
-        <source>User</source>
-        <target>User</target>
+      <trans-unit id="8bf0ac9ea9e7843388def8c0416156c8" resname="mb.core.admin.about_dialog.show_label">
+        <source>mb.core.admin.about_dialog.show_label</source>
+        <target>Show button label</target>
       </trans-unit>
     </body>
   </file>

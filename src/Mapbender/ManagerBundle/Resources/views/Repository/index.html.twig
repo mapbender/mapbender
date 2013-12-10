@@ -1,6 +1,6 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'Services' | trans }}{% endblock %}
+{% block title %}{{ 'mb.manager.admin.sources' | trans }}{% endblock %}
 
 {% block js %}
   {{parent()}}
@@ -9,10 +9,10 @@
 
 {% block manager_content %}
 {% if create_permission %}
-<a class="iconAdd iconBig right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'Add new service' | trans }}"></a>
+<a class="iconAdd iconBig right" href="{{ url("mapbender_manager_repository_new") }}" title="{{ 'mb.manager.admin.source.add' | trans }}"></a>
 {% endif %}
 {% if sources|length > 0 %}
-  <label for="inputFilterServices" class="labelInput left">{{"Filter"|trans}}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
+  <label for="inputFilterServices" class="labelInput left">{{"mb.manager.admin.filter.source"|trans}}</label><input id="inputFilterServices" type="text" class="input listFilterInput">
 
   <ul id="listFilterServices" class="listFilterContainer clear listFilterBoxes listFilterServiceBoxes">
     {% for source in sources %}
@@ -27,10 +27,10 @@
             <div class="description">{{ source.description }}</div>
           {% endif %}
           <div class="buttonGroup">
-            <a class="iconView iconBig" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'View service metadata' | trans }}"></a>
+            <a class="iconView iconBig" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
             {% if is_granted('DELETE', source) %}
                <span class="iconRemove iconBig"
-                title="{{"Delete service"|trans}} {{ source.title }}"
+                title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
                 data-url="{{ url("mapbender_manager_repository_confirmdelete",{"sourceId":source.id}) }}"
                 data-id="{{ source.id }}"></span>
             {% endif %}
@@ -40,7 +40,7 @@
     {% endfor %}
   </ul>
 {% else %}
-    <span class="description">{% trans %}No services available.{% endtrans %}</span>
+    <span class="description">{{ 'mb.manager.admin.source.no_source' | trans }}</span>
 {% endif %}
 
 <div class="clearContainer"></div>

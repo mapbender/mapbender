@@ -1,6 +1,6 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ "Applications" | trans }}{% endblock %}
+{% block title %}{{ "mb.manager.admin.applications" | trans }}{% endblock %}
 
 {% block js %}
   {{parent()}}
@@ -10,7 +10,7 @@
 {% block manager_content %}
 
 {% if applications | length > 0 %}
-  <label for="inputFilterApplications" class="labelInput left">{{"Filter"|trans}}:</label><input id="inputFilterApplications" type="text" class="input listFilterInput">
+  <label for="inputFilterApplications" class="labelInput left">{{"mb.manager.admin.filter.application"|trans}}:</label><input id="inputFilterApplications" type="text" class="input listFilterInput">
   {% include "MapbenderManagerBundle:Application:actions.html.twig" %}
 
   <ul id="listFilterApplications" class="listFilterContainer clear listFilterBoxes listFilterApplicationBoxes">
@@ -18,29 +18,29 @@
       <li class="filterItem">
         <div class="col1 iconAppDefault"></div>
         <div class="col2 box">
-          <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'View this application' | trans }}">
+          <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'mb.manager.admin.application.view_this' | trans }}">
             {{ application.title }}
           </a>
           <span class="smallerText">{{ application.slug }}</span>
           <div class="description">{{ application.description }}</div>
           <div class="buttonGroup">
-            <a class="iconView iconBig" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View' | trans }} {{ application.title }}"></a>
+            <a class="iconView iconBig" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}"></a>
 
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('CREATE', application) %}
-              <a class="iconCopy iconBig" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'Dublicate'|trans }} {{ application.title }}"></a>
+              <a class="iconCopy iconBig" href="{{ path('mapbender_manager_application_copydirectly', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.duplicate'|trans }} {{ application.title }}"></a>
             {% endif %}
 
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-              <a class="iconEdit iconBig" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'Edit' | trans }} {{ application.title }}"></a>
+              <a class="iconEdit iconBig" href="{{ path('mapbender_manager_application_edit',  {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.edit' | trans }} {{ application.title }}"></a>
             {% endif %}
 
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('EDIT', application) %}
-              <a href="#" class="iconPublish iconBig {% if application.published %}enabled iconPublishActive{% else %}disabled{% endif %}" title="{{ 'Publish / Unpublish' | trans }} {{ application.title }}" data-application-slug="{{ application.slug }}"></a>
+              <a href="#" class="iconPublish iconBig {% if application.published %}enabled iconPublishActive{% else %}disabled{% endif %}" title="{{ 'mb.manager.admin.application.public.on_off' | trans }} {{ application.title }}" data-application-slug="{{ application.slug }}"></a>
             {% endif %}
 
             {% if application.source is constant('Mapbender\\CoreBundle\\Entity\\Application::SOURCE_DB') and is_granted('DELETE', application) %}
               <span class="iconRemove iconBig"
-                title="{{'Delete application'|trans}} {{ application.title }}"
+                title="{{'mb.manager.admin.application.delete'|trans}} {{ application.title }}"
                 data-url="{{ path('mapbender_manager_application_delete', { 'slug': application.slug}) }}"
                 data-slug="{{ application.slug }}"
               ></span>
@@ -52,7 +52,7 @@
   </ul>
   <div class="clearContainer"></div>
 {% else %}
-    <span class="description">{% trans %}No applications available.{% endtrans %}</span>
+    <span class="description">{{ 'mb.manager.admin.application.no_application' | trans }}</span>
 {% endif %}
 <div class="clearContainer"></div>
 

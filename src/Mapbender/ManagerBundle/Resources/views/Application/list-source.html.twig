@@ -1,4 +1,4 @@
-<label for="inputFilterSources" class="labelInput left">{{"Filter"|trans}}</label><input id="inputFilterSources" type="text" class="input listFilterInput">
+<label for="inputFilterSources" class="labelInput left">{{"mb.manager.admin.filter.source"|trans}}</label><input id="inputFilterSources" type="text" class="input listFilterInput">
 
 <ul id="listFilterSources" class="listFilterContainer clear">
 {% for source in sources %}
@@ -13,6 +13,6 @@
     </a>
   </li>
 {% else %}
-  <li class="description">{{ 'No Sources defined' | trans }}</li>
+  <li class="description">{{ 'mb.manager.admin.source.no_source' | trans }}</li>
 {% endfor %}
 </ul>
