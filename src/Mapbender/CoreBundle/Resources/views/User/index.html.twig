@@ -1,6 +1,6 @@
 {% extends "MapbenderCoreBundle:User:base.html.twig" %}
 
-{% block heading %}{{ "User Index"|trans }}{% endblock %}
+{% block heading %}{{ "mb.core.user.index.userindex"|trans }}{% endblock %}
 
 {% block subnavigation %}
 <nav class="action">
@@ -17,7 +17,7 @@
     <caption>{% trans %}Available Users{% endtrans %}</caption>
     <thead>
       <tr>
-        <th>{{ "Name"|trans}}</th>
+        <th>{{ "mb.core.user.index.name"|trans}}</th>
         <th></th>
       </tr>
     </thead>
@@ -26,8 +26,8 @@
       <tr>
         <td>{{ user.displayName }}</td>
         <td>
-          <a title="{{"Edit"|trans}} '{{user.displayName}}'"   href="{{path("mapbender_core_user_edit",{"userId":user.id})}}">{{ "Edit"|trans }}</a>
-          <a title="{{"Delete"|trans}} '{{user.displayName}}'" href="{{path("mapbender_core_user_confirmdelete",{"userId":user.id})}}">{{ "Delete"|trans }}</a>
+          <a title="{{"mb.core.user.index.edit"|trans}} '{{user.displayName}}'"   href="{{path("mapbender_core_user_edit",{"userId":user.id})}}">{{ "mb.core.user.index.edit"|trans }}</a>
+          <a title="{{"mb.core.user.index.delete"|trans}} '{{user.displayName}}'" href="{{path("mapbender_core_user_confirmdelete",{"userId":user.id})}}">{{ "mb.core.user.index.delete"|trans }}</a>
         </td>
       </tr>
       {% endfor %}

@@ -4,9 +4,9 @@
 {% block content %}
   <form action="{{path("mapbender_core_group_add")}}" method="post">
     {{form_widget(form)}}
-    <input type="submit" name="create" value="{{"Save"|trans}}" />
+    <input type="submit" name="create" value="{{"mb.core.group.create.btn.save"|trans}}" />
   </form>
   <form action="{{path("mapbender_core_group_index")}}" method="get">
-    <input type="submit" name="create" value="{{"Cancel"|trans}}" />
+    <input type="submit" name="create" value="{{"mb.core.group.create.btn.cancel"|trans}}" />
   </form>
 {% endblock %}

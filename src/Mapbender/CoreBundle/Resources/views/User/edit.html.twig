@@ -3,9 +3,9 @@
 {% block body %}
 	<form action="{{path("mapbender_core_user_save",{"userId":user.id})}}" method="post">
 		{{form_widget(form)}}
-		<input type="submit" name="create" value="{{"save"|trans}}" />
+		<input type="submit" name="create" value="{{"mb.core.user.edit.save"|trans}}" />
 	</form>
 	<form action="{{path("mapbender_core_user_index")}}" method="get">
-		<input type="submit" name="create" value="{{"Cancel"|trans}}" />
+		<input type="submit" name="create" value="{{"mb.core.user.edit.cancel"|trans}}" />
 	</form>
 {% endblock %}

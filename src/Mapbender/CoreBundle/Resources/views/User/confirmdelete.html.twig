@@ -1,12 +1,12 @@
 {% extends "MapbenderCoreBundle:User:base.html.twig" %}
 
 {% block body %}
-{{"Realy delete?"|trans}}
+{{"mb.core.user.confirmdelete.check"|trans}}
 	<form action="{{path("mapbender_core_user_delete",{"userId":user.id})}}" method="post">
-		<input type="submit" name="create" value="{{"Yes"|trans}}" />
+		<input type="submit" name="create" value="{{"mb.core.user.confirmdelete.yes"|trans}}" />
 	</form>
 	<form action="{{path("mapbender_core_user_index")}}" method="get">
-		<input type="submit" name="create" value="{{"No"|trans}}" />
+		<input type="submit" name="create" value="{{"mb.core.user.confirmdelete.no"|trans}}" />
 	</form>
 {% endblock %}
 

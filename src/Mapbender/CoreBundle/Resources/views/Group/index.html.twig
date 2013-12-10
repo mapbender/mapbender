@@ -1,6 +1,6 @@
 {% extends "MapbenderCoreBundle:Group:base.html.twig" %}
 
-{% block heading %}{{ "Group Index"|trans }}{% endblock %}
+{% block heading %}{{ "mb.core.group.index.groupindex"|trans }}{% endblock %}
 
 {% block content %}
 
@@ -9,7 +9,7 @@
     <caption>{% trans %}Available Groups{% endtrans %}</caption>
     <thead>
       <tr>
-        <th>{{ "Name"|trans}}</th>
+        <th>{{ "mb.core.group.index.name"|trans}}</th>
         <th></th>
       </tr>
     </thead>
@@ -18,8 +18,8 @@
       <tr>
         <td>{{ group.name }}</td>
         <td>
-          <a title="{{"Edit"|trans}} '{{group.name}}'"   href="{{path("mapbender_core_group_edit",{"groupId":group.id})}}">{{ "Edit"|trans }}</a>
-          <a title="{{"Delete"|trans}} '{{group.name}}'" href="{{path("mapbender_core_group_confirmdelete",{"groupId":group.id})}}">{{ "Delete"|trans }}</a>
+          <a title="{{"mb.core.group.index.edit"|trans}} '{{group.name}}'"   href="{{path("mapbender_core_group_edit",{"groupId":group.id})}}">{{ "mb.core.group.index.edit"|trans }}</a>
+          <a title="{{"mb.core.group.index.delete"|trans}} '{{group.name}}'" href="{{path("mapbender_core_group_confirmdelete",{"groupId":group.id})}}">{{ "mb.core.group.index.delete"|trans }}</a>
         </td>
       </tr>
       {% endfor %}

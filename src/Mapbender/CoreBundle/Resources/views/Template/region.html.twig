@@ -5,7 +5,7 @@
         <div class="tabContainerAlt">
           <ul class="tabs">
             {%  for element in application.elements[region] %}
-              <li id="tab{{loop.index}}" class="tab{% if loop.first %} active{% endif %}">{{ element.title | trans }}</li>
+              <li id="tab{{loop.index}}" class="tab{% if loop.first %} active{% endif %}">{{ "mb.core.template.region.title" | trans }}</li>
             {% endfor %}
           </ul>
             {%  for element in application.elements[region] %}
