@@ -120,6 +120,12 @@ parameters:
                         tooltip: About
                         label: true
                         class: Mapbender\CoreBundle\Element\AboutDialog
+                    poiButton:
+                        title: POI
+                        tooltip: Send POI
+                        label: true
+                        class: Mapbender\CoreBundle\Element\Button
+                        target: poi
                 content:
                     map:
                         title: Main Map
@@ -239,6 +245,9 @@ parameters:
                         anchor: left-top
                         scalePrefix: Scale
                         unitPrefix: true
+                    poi:
+                        class: Mapbender\CoreBundle\Element\POI
+                        target: map
                 sidepane:
                     layertree:
                         title: Layertree
