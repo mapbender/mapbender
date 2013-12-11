@@ -71,7 +71,7 @@ class WmsLoader extends Element
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 'mapbender.element.wmsloader.js'),
             'css' => array(),
-            'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));//@MapbenderCoreBundle/Resources/view/Element/wmsloader.json.twig'));
+            'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));
         $config = $this->getConfiguration();
         if (isset($config['useDeclarative']) && $config['useDeclarative'] === true) {
             $files['js'][] = "@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js";
