@@ -66,7 +66,7 @@
             var wmcProj = model.getProj(state.extent.srs),
                     mapProj = model.map.olMap.getProjectionObject();
             if(wmcProj === null){
-                Mapbender.error('SRS "' + state.extent.srs + '" is not supported by this application.');
+                Mapbender.error(Mapbender.trans("mb.wmc.element.suggestmap.error_srs", {"srs": state.extent.srs}));
             }else if(wmcProj.projCode === mapProj.projCode){
                 var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
                 target[widget]("zoomToExtent", OpenLayers.Bounds.fromArray(boundsAr));
@@ -135,7 +135,7 @@
                     width: 350,
                     buttons: {
                         'ok': {
-                            label: 'Close',
+                            label: Mapbender.trans("mb.wmc.element.suggestmap.popup.btn.ok"),
                             cssClass: 'button right',
                             callback: function(){
                                 self.close();
@@ -168,7 +168,7 @@
                         url = url.replace(/#/gi, '') + "?stateid=" + response.id;
                         callback(url);
                     }else if(response.error){
-                        Mapbender.error(response.error);
+                        Mapbender.error(Mapbender.trans(response.error));
                     }
                 },
                 error: self._suggestStateError
@@ -219,7 +219,7 @@
             }
         },
         _suggestStateError: function(response){
-            Mapbender.error(response);
+            Mapbender.error(Mapbender.trans(response));
         },
         _destroy: $.noop
     });

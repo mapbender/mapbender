@@ -22,10 +22,10 @@
         <source>mb.wms.wmsloader.error.load</source>
         <target>WMSLoader: a wms capabilities can't be loaded!</target>
       </trans-unit>
-      <trans-unit id="49d1d8cb561adb5e72a3bc42b920be3e" resname="mb.wms.wmsloader.dialog.label.title">
+      <!--trans-unit id="49d1d8cb561adb5e72a3bc42b920be3e" resname="mb.wms.wmsloader.dialog.label.title">
         <source>mb.wms.wmsloader.dialog.label.title</source>
         <target>WMS Load</target>
-      </trans-unit>
+      </trans-unit-->
       <trans-unit id="e0fad091f39559379dc4574bb9d41485" resname="mb.wms.wmsloader.dialog.btn.cancel">
         <source>mb.wms.wmsloader.dialog.btn.cancel</source>
         <target>Cancel</target>

@@ -2,145 +2,178 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="de" datatype="plaintext" original="file.ext">
     <body>
-      <trans-unit id="229c0bd55bb7718d055db5b9e843d697" resname="As e-mail">
-        <source>As e-mail</source>
-        <target>__As e-mail</target>
+      <trans-unit id="f462936e18a6c720b36b31e3a1c98e47" resname="mb.wmc.element.suggestmap.content.email">
+        <source>mb.wmc.element.suggestmap.content.email</source>
+        <target>As e-mail</target>
       </trans-unit>
-      <trans-unit id="703a3daced23c8ed73b40c4fe08b1589" resname="At Twitter">
-        <source>At Twitter</source>
-        <target>__At Twitter</target>
+      <trans-unit id="68f62ac83564cd1967a78fe973897354" resname="mb.wmc.element.suggestmap.content.twitter">
+        <source>mb.wmc.element.suggestmap.content.twitter</source>
+        <target>At Twitter</target>
       </trans-unit>
-      <trans-unit id="2a0f49aa9250ffd79df553ac883f6431" resname="At Facebook">
-        <source>At Facebook</source>
-        <target>__At Facebook</target>
+      <trans-unit id="309eead6bbe7a4c6f074aa016138668b" resname="mb.wmc.element.suggestmap.content.facebook">
+        <source>mb.wmc.element.suggestmap.content.facebook</source>
+        <target>At Facebook</target>
       </trans-unit>
-      <trans-unit id="5d4039a58ccd9059fc2ae06097cefa8d" resname="At Google+">
-        <source>At Google+</source>
-        <target>__At Google+</target>
+      <trans-unit id="74e09603df6a629ced4493817f01b7aa" resname="mb.wmc.element.suggestmap.content.google+">
+        <source>mb.wmc.element.suggestmap.content.google+</source>
+        <target>At Google+</target>
       </trans-unit>
-      <trans-unit id="67c939e3afc97eccc0b9d6b1bfe21a7c" resname="Wmc Editor">
-        <source>Wmc Editor</source>
-        <target>__Wmc Editor</target>
+      <trans-unit id="ebf155ed57c2b787bf8b9c560fbfab04" resname="mb.wmc.list.add_wmc">
+        <source>mb.wmc.list.add_wmc</source>
+        <target>Add new wmc to</target>
       </trans-unit>
-      <trans-unit id="acd14652444742e2401963a15299d2ce" resname="Suggest Map">
-        <source>Suggest Map</source>
-        <target>__Suggest Map</target>
+      <trans-unit id="e74c2fba29ebe644dd429341c4c5e47c" resname="mb.wmc.list.id">
+        <source>mb.wmc.list.id</source>
+        <target>Id</target>
       </trans-unit>
-      <trans-unit id="c0ce6f014681deb1dec7dac4752f6813" resname="Wmc Loader">
-        <source>Wmc Loader</source>
-        <target>__Wmc Loader</target>
+      <trans-unit id="64ac0425cbeb81e75690764ce96670ff" resname="mb.wmc.list.title">
+        <source>mb.wmc.list.title</source>
+        <target>Title</target>
       </trans-unit>
-      <trans-unit id="ba4581e8033d906695e614b95aeea539" resname="Add new wmc to">
-        <source>Add new wmc to</source>
-        <target>__Add new wmc to</target>
+      <trans-unit id="6853f27563c23ed2b4e1be8e42b788aa" resname="mb.wmc.list.description">
+        <source>mb.wmc.list.description</source>
+        <target>Description</target>
       </trans-unit>
-      <trans-unit id="490aa6e856ccf208a054389e47ce0d06" resname="Id">
-        <source>Id</source>
-        <target>__Id</target>
+      <trans-unit id="1cbc6d988a8f10a8908c92bf0ba0d882" resname="mb.wmc.list.toggle">
+        <source>mb.wmc.list.toggle</source>
+        <target>Toggle public/private wmc</target>
       </trans-unit>
-      <trans-unit id="b78a3223503896721cca1303f776159b" resname="Title">
-        <source>Title</source>
-        <target>Titel</target>
+      <trans-unit id="3f37ac88e8a7ad09bb6494c20f6c7132" resname="mb.wmc.list.wmc_element">
+        <source>mb.wmc.list.wmc_element</source>
+        <target>Wmc element</target>
       </trans-unit>
-      <trans-unit id="b5a7adde1af5c87d7fd797b6245c2a39" resname="Description">
-        <source>Description</source>
-        <target>__Description</target>
+      <trans-unit id="f73abb52294a0a73c218dc300c88f667" resname="mb.wmc.list.delete_wmc">
+        <source>mb.wmc.list.delete_wmc</source>
+        <target>Delete Wmc</target>
       </trans-unit>
-      <trans-unit id="8893ca515e771cf0a0b8de957f57dbda" resname="Toggle public/private wmc">
-        <source>Toggle public/private wmc</source>
-        <target>__Toggle public/private wmc</target>
+      <trans-unit id="ebb1d279c88c7e6246c1fee8375c1544" resname="mb.wmc.list.no_wmc">
+        <source>mb.wmc.list.no_wmc</source>
+        <target>No wmc added.</target>
       </trans-unit>
-      <trans-unit id="040e186fb8917f7bca35ff0da0945a7a" resname="Wmc element">
-        <source>Wmc element</source>
-        <target>__Wmc element</target>
+      <trans-unit id="c54d49cd842e05e1585f0b77b3418e8c" resname="mb.wmc.element.suggestmap.error_srs">
+        <source>mb.wmc.element.suggestmap.error_srs</source>
+        <target>SRS "%state.extent.srs%" is not supported by this application.</target>
       </trans-unit>
-      <trans-unit id="4ce122da579fbefa1371d883ece72efa" resname="Delete Wmc">
-        <source>Delete Wmc</source>
-        <target>__Delete Wmc</target>
+      <trans-unit id="4217741b226e6828bb07718c2f8c777f" resname="mb.wmc.element.suggestmap.popup.btn.ok">
+        <source>mb.wmc.element.suggestmap.popup.btn.ok</source>
+        <target>Close</target>
       </trans-unit>
-      <trans-unit id="47ea766e6bc6cb4015e33ae3f6f93a4d" resname="No wmc added.">
-        <source>No wmc added.</source>
-        <target>__No wmc added.</target>
+      <trans-unit id="b3e21adffaf3ec89f78b9fb121257661" resname="mb.wmc.element.wmceditor.popup.btn.ok">
+        <source>mb.wmc.element.wmceditor.popup.btn.ok</source>
+        <target>Submit</target>
       </trans-unit>
-      <trans-unit id="8b68bae861047e1044efbdbefc4bd494" resname="Add new wmc">
-        <source>Add new wmc</source>
-        <target>__Add new wmc</target>
+      <trans-unit id="f958484a8286d7e99e0b3bae50f20464" resname="mb.wmc.element.wmceditor.popup.btn.cancel">
+        <source>mb.wmc.element.wmceditor.popup.btn.cancel</source>
+        <target>Cancel</target>
       </trans-unit>
-      <trans-unit id="e19d36f01ce7695cabe74839c877c617" resname="Edit Wmc">
-        <source>Edit Wmc</source>
-        <target>__Edit Wmc</target>
+      <trans-unit id="6afc1f4ee64d70fafe47273f61f5f814" resname="mb.wmc.element.wmceditor.popup.btn.back">
+        <source>mb.wmc.element.wmceditor.popup.btn.back</source>
+        <target>Back</target>
       </trans-unit>
-      <trans-unit id="ccf3161276dce05a682732094a68845a" resname="Do you really want to remove the wmc with the title &lt;em&gt;%wmc_title%&lt;/em&gt; and the id &lt;em&gt;%wmc_id%&lt;/em&gt;?">
-        <source>Do you really want to remove the wmc with the title &lt;em&gt;%wmc_title%&lt;/em&gt; and the id &lt;em&gt;%wmc_id%&lt;/em&gt;?</source>
-        <target>__Do you really want to remove the wmc with the title &lt;em&gt;%wmc_title%&lt;/em&gt; and the id &lt;em&gt;%wmc_id%&lt;/em&gt;?</target>
+      <trans-unit id="1398f72f7ae5323c2e64e964ec226eec" resname="mb.wmc.element.wmcloader.popup.btn.ok">
+        <source>mb.wmc.element.wmcloader.popup.btn.ok</source>
+        <target>Load</target>
       </trans-unit>
-      <trans-unit id="f19dbf2edb3a0bd74b0524d960ff21eb" resname="Load">
-        <source>Load</source>
-        <target>Laden</target>
+      <trans-unit id="aee0a932465b0249ec33aaa2be7e93de" resname="mb.wmc.element.wmcloader.popup.btn.cancel">
+        <source>mb.wmc.element.wmcloader.popup.btn.cancel</source>
+        <target>Cancel</target>
       </trans-unit>
-      <trans-unit id="12b654984981a639e5d22988d96af25f" resname="Load XML WMC">
-        <source>Load XML WMC</source>
-        <target>__Load XML WMC</target>
+      <trans-unit id="e54528dfe84ed39f66b65d8e39b96393" resname="mb.wmc.element.wmcloader.popup.btn.back">
+        <source>mb.wmc.element.wmcloader.popup.btn.back</source>
+        <target>Back</target>
       </trans-unit>
-      <trans-unit id="a964b4e58b85c446b718ebcae4c7a227" resname="View Wmc">
-        <source>View Wmc</source>
-        <target>__View Wmc</target>
+      <trans-unit id="c77b9c6d41d8bd287d8ef83b42af7c73" resname="mb.wmc.element.wmchandler.error_srs">
+        <source>mb.wmc.element.wmchandler.error_srs</source>
+        <target>SRS "%state.extent.srs%" is not supported by this application.</target>
       </trans-unit>
-      <trans-unit id="5196fd35ccf376a43c0de4af2ce1239c" resname="No wmc.">
-        <source>No wmc.</source>
-        <target>__No wmc.</target>
+      <trans-unit id="cd08999d47cf93c1e3e552de4fdb5aec" resname="mb.wmc.wmceditor.list.id">
+        <source>mb.wmc.wmceditor.list.id</source>
+        <target>Id</target>
       </trans-unit>
-      <trans-unit id="b7fd629f72ec555ae4cee738c1ef38ea" resname="wmc.create">
-        <source>wmc.create</source>
-        <target>__wmc.create</target>
+      <trans-unit id="933c6fc439cdab3b3a02f1db39e3897b" resname="mb.wmc.wmceditor.list.title">
+        <source>mb.wmc.wmceditor.list.title</source>
+        <target>Title</target>
       </trans-unit>
-      <trans-unit id="1f5c9969cb92883e69356b5978a280fe" resname="wmc.edit">
-        <source>wmc.edit</source>
-        <target>__wmc.edit</target>
+      <trans-unit id="329a1abceb8068b5dcdb4d63b46d2bd4" resname="mb.wmc.wmceditor.list.description">
+        <source>mb.wmc.wmceditor.list.description</source>
+        <target>Description</target>
       </trans-unit>
-      <trans-unit id="3d067bedfe2f4677470dd6ccf64d05ed" resname="Public">
-        <source>Public</source>
-        <target>__Public</target>
+      <trans-unit id="82be49e5b51462edf1afdec84259533c" resname="mb.wmc.wmceditor.list.add_wmc">
+        <source>mb.wmc.wmceditor.list.add_wmc</source>
+        <target>Add new wmc</target>
       </trans-unit>
-      <trans-unit id="d046bf4ef5bb9ceb1403156ea0a236b8" resname="screenshot or width, height etc.">
-        <source>screenshot or width, height etc.</source>
-        <target>__screenshot or width, height etc.</target>
+      <trans-unit id="515cb5901176080db2ddd27c1a6d98ef" resname="mb.wmc.wmceditor.list.toggle">
+        <source>mb.wmc.wmceditor.list.toggle</source>
+        <target>Toggle public/private wmc</target>
       </trans-unit>
-      <trans-unit id="b021df6aac4654c454f46c77646e745f" resname="Label">
-        <source>Label</source>
-        <target>__Label</target>
+      <trans-unit id="946f46ce5b9c2b8aef78bd102fe7e8f0" resname="mb.wmc.wmceditor.list.edit_wmc">
+        <source>mb.wmc.wmceditor.list.edit_wmc</source>
+        <target>Edit Wmc</target>
       </trans-unit>
-      <trans-unit id="effc666181ec73d623012d7e7cc10026" resname="Keep Extent">
-        <source>Keep Extent</source>
-        <target>__Keep Extent</target>
+      <trans-unit id="76a4bbc43038154b49bcc6bb0d6dbdcf" resname="mb.wmc.wmceditor.list.delete_wmc">
+        <source>mb.wmc.wmceditor.list.delete_wmc</source>
+        <target>Delete wmc</target>
       </trans-unit>
-      <trans-unit id="0c813a11b8a0174daffabfcb9263efa6" resname="WMC Storage">
-        <source>WMC Storage</source>
-        <target>Web Map Context</target>
+      <trans-unit id="9e9268c8f77f5287dc3c69b830ce3ef1" resname="mb.wmc.wmceditor.list.no_wmc">
+        <source>mb.wmc.wmceditor.list.no_wmc</source>
+        <target>No wmc added.</target>
       </trans-unit>
-      <trans-unit id="c9cc8cce247e49bae79f15173ce97354" resname="Save">
-        <source>Save</source>
-        <target>Speichern</target>
+      <trans-unit id="b516d036d029316adb16f384d744ee3e" resname="mb.wmc.wmc.delete_confirm">
+        <source>mb.wmc.wmc.delete_confirm</source>
+        <target>Do you really want to remove the wmc with the title &lt;em&gt;%wmc_title%&lt;/em&gt;
+            and the id &lt;em&gt;%wmc_id%&lt;/em&gt;?</target>
       </trans-unit>
-      <trans-unit id="3225e8060c87fbb96e1f32aefee3b680" resname="Please wait, saving WMC...">
-        <source>Please wait, saving WMC...</source>
-        <target>Bitte warten, das WMC wird gespeichert...</target>
+      <trans-unit id="f9e25e70a7d907096e58ee21775675d3" resname="mb.wmc.wmcloader.state.load">
+        <source>mb.wmc.wmcloader.state.load</source>
+        <target>Load</target>
       </trans-unit>
-      <trans-unit id="47d75a0810a6404d8de7dc1ddf78909b" resname="There was an error saving your WMC.">
-        <source>There was an error saving your WMC.</source>
-        <target>Beim speichern des WMCs trat ein Fehler auf.</target>
+      <trans-unit id="1ac4a7a92d378d05f8b846a3f28a71b8" resname="mb.wmc.wmcloader.load_xml_wmc">
+        <source>mb.wmc.wmcloader.load_xml_wmc</source>
+        <target>Load XML WMC</target>
       </trans-unit>
-      <trans-unit id="48bbba04348718f8d242f97e915ca51f" resname="Please wait, loading WMC list...">
-        <source>Please wait, loading WMC list...</source>
-        <target>Bitte warten, die WMC-Liste wird geladen...</target>
+      <trans-unit id="a47ee751707389dcacac6b86f1f552a9" resname="mb.wmc.wmcloader.id">
+        <source>mb.wmc.wmcloader.id</source>
+        <target>Id</target>
       </trans-unit>
-      <trans-unit id="f00a93feac3738782f211275adadd570" resname="There was an error retrieving your WMC list.">
-        <source>There was an error retrieving your WMC list.</source>
-        <target>Es trat ein Fehler beim Laden der WMC-Liste auf.</target>
+      <trans-unit id="0d974be11a7c230bf72a09e874417fca" resname="mb.wmc.wmcloader.title">
+        <source>mb.wmc.wmcloader.title</source>
+        <target>Title</target>
       </trans-unit>
-      <trans-unit id="b25a3746239709bd597d1e3542fdd759" resname="Please wait, loading WMC...">
-        <source>Please wait, loading WMC...</source>
-        <target>Bitte warten, das WMC wird geladen.</target>
+      <trans-unit id="1744637607776d06471ee642aac7a900" resname="mb.wmc.wmcloader.description">
+        <source>mb.wmc.wmcloader.description</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="50a0a43d7734636fdca90ac4e93c124b" resname="mb.wmc.wmcloader.view_wmc">
+        <source>mb.wmc.wmcloader.view_wmc</source>
+        <target>View wmc</target>
+      </trans-unit>
+      <trans-unit id="fa9bcb4301135e8b5a2ea4a460d01971" resname="mb.wmc.wmcloader.no_wmc">
+        <source>mb.wmc.wmcloader.no_wmc</source>
+        <target>No wmc.</target>
+      </trans-unit>
+      <trans-unit id="ba7143e6ca93dfdd032e4b4a65a647e8" resname="mb.wmc.wmceditor.create">
+        <source>mb.wmc.wmceditor.create</source>
+        <target>Create</target>
+      </trans-unit>
+      <trans-unit id="a14e74dc580b8058218ea80aa5609dd8" resname="mb.wmc.wmceditor.edit">
+        <source>mb.wmc.wmceditor.edit</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="58508213964a86022ff74c5f1cca0d40" resname="mb.wmc.wmceditor.publish">
+        <source>mb.wmc.wmceditor.publish</source>
+        <target>Publish</target>
+      </trans-unit>
+      <trans-unit id="372aa8e265bdcf107dca482983d1058d" resname="mb.wmc.wmceditor.screenshot">
+        <source>mb.wmc.wmceditor.screenshot</source>
+        <target>screenshot or width, height etc.</target>
+      </trans-unit>
+      <trans-unit id="8878f357789b5b60da961e080ea2ee58" resname="mb.wmc.admin.wmclist.label">
+        <source>mb.wmc.admin.wmclist.label</source>
+        <target>Label</target>
+      </trans-unit>
+      <trans-unit id="edb605486778167c357ed0b6823e8ee3" resname="mb.wmc.admin.wmcloader.keep_extent">
+        <source>mb.wmc.admin.wmcloader.keep_extent</source>
+        <target>Keep Extent</target>
       </trans-unit>
     </body>
   </file>

@@ -1,4 +1,4 @@
-<div id="{{ id }}" class="mb-element mb-element-wmsloader" title="{{ "mb.wms.wmsloader.dialog.label.title"|trans }}">
+<div id="{{ id }}" class="mb-element mb-element-wmsloader" title="{{ configuration.tooltip|default(title)|trans }}">
     <p class="description">{{ "mb.wms.wmsloader.dialog.label.example"|trans }}: http://wms.wheregroup.com/cgi-bin/germany.xml?VERSION=1.1.1&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS</p>
     <br>
     <label class="labelInput" for="loadWmsUrl">{{ "mb.wms.wmsloader.dialog.label.wmsurl"|trans}}:</label>

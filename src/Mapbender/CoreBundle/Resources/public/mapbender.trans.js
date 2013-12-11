@@ -1,4 +1,5 @@
 var Mapbender = Mapbender || {};
+Mapbender.i18n = Mapbender.i18n || {};
 Mapbender.trans = function(key, replacements) {
     if(!Mapbender.i18n[key]){
         return key;
