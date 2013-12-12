@@ -2,6 +2,9 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Component\InstanceConfiguration;
+use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -22,7 +25,7 @@ abstract class InstanceConfiguration
     public $type;
 
     /**
-     * ORM\Column(type="integer", nullable=ture)
+     * ORM\Column(type="string", nullable=ture)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $title;
@@ -121,10 +124,10 @@ abstract class InstanceConfiguration
     /**
      * Sets options
      * 
-     * @param ServiceConfigurationOptions $options ServiceConfigurationOptions
+     * @param InstanceConfigurationOptions $options ServiceConfigurationOptions
      * @return InstanceConfiguration 
      */
-    public abstract function setOptions($options);
+    public abstract function setOptions(InstanceConfigurationOptions $options);
 
     /**
      * Returns options
@@ -148,7 +151,29 @@ abstract class InstanceConfiguration
      */
     public abstract function getChildren();
     
+    /**
+     * Returns InstanceConfiguration as array
+     * 
+     * @return array
+     */
     public abstract function toArray();
+    
+    /**
+     * Creates an InstanceConfiguration from options
+     * 
+     * @param array $options array with options
+     * @return InstanceConfiguration
+     */
+    public static function fromArray($options)
+    {
+        if($options && is_array($options))
+        {
+            if(isset($options['type']) && $options['type'] === 'wms'){
+                return WmsInstanceConfiguration::fromArray($options);
+            }
+        }
+        return null;
+    }
 
 }
 

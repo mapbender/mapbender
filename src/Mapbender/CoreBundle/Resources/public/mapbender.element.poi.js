@@ -95,16 +95,18 @@ $.widget('mapbender.mbPOI', {
             title: this.element.attr('title'),
             content: $('.input', this.element).html(),
             buttons: {
-                'ok': {
-                    label: 'Ok',
+                'cancel': {
+                    label: 'Cancel',
+                    cssClass: 'button buttonCancel critical right',
                     callback: function() {
-                        self._sendPoi(this.$element);
                         this.close();
                     }
                 },
-                'cancel': {
-                    label: 'Cancel',
+                'ok': {
+                    label: 'Ok',
+                    cssClass: 'button right',
                     callback: function() {
+                        self._sendPoi(this.$element);
                         this.close();
                     }
                 }

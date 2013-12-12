@@ -168,7 +168,7 @@
                 li.attr('data-id', sourceEl.options.id);
                 li.attr('data-sourceid', source.id)
                 var nodeType = this._getNodeType(sourceEl, isroot);
-                li.attr('data-type', nodeType);
+                li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
                 if(nodeType === this.consts.root || nodeType === this.consts.group){
                     if(nodeType === this.consts.root){
                         li.addClass("serviceContainer");
@@ -255,7 +255,7 @@
                     li.attr('data-id', sourceEl.options.id);
                     isroot ? li.attr('data-sourceid', source.id) : li.removeAttr('data-sourceid');
                     var nodeType = this._getNodeType(sourceEl, isroot);
-                    li.attr('data-type', nodeType);
+                    li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
 
                     if(nodeType == this.consts.root){
                         li.addClass("serviceContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
@@ -460,16 +460,9 @@
 //            window.console && console.log("layertree _onSourceLoadStart");
             if(option.source){
                 this.loadStarted[option.source.id ] = true;
-                var source_li = $('li[data-sourceid="' + option.source.id + '"]', this.element);
+                var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
                 if($('input.layer-selected:first', source_li).is(':checked') && !source_li.hasClass('invisible')){
-                    /* removes class 'error', adds class 'loading' and title=''  for li[data-sourceid] s. _onSourceLoadEnd */
-                    source_li.removeClass('error').addClass('loading').find('span.layer-state:first').attr("title", "");
-//                    source_li.find('li').each(function(idx, el){
-//                        var li_el = $(el);
-//                        if(li_el.find('input.layer-selected:first').is(':checked') && !li_el.hasClass('invisible')){
-//                            li_el.addClass('loading');
-//                        }
-//                    });
+                    source_li.attr('data-state', 'loading').find('span.layer-state:first').attr("title",source_li.attr('data-title'));
                 }
             }
         },
@@ -477,25 +470,16 @@
 //            window.console && console.log("layertree _onSourceLoadEnd");
             if(option.source && this.loadStarted[option.source.id]){
                 this.loadStarted[option.source.id] = false;
-                var source_li = $('li[data-sourceid="' + option.source.id + '"]', this.element);
-                source_li.removeClass('loading');//.removeClass('error').find('span.layer-state:first').attr("title", "");
-//                source_li.find('li').each(function(idx, el){
-//                    $(el).removeClass('loading').removeClass('error').find('span.layer-state:first').attr("title", "");
-//                });
-//                this._resetSource(option.source);
+                var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
+                source_li.attr('data-state', '');
             }
         },
         _onSourceLoadError: function(event, option){
 //            window.console && console.log("layertree _onSourceLoadError");
             if(option.source && this.loadStarted[option.source.id]){
                 this.loadStarted[option.source.id] = false;
-                /* removes class 'loading', adds class 'error' and title for li[data-sourceid] s. _onSourceLoadStart */
-                var source_li = $('li[data-sourceid="' + option.source.id + '"]', this.element);
-                source_li.removeClass('loading').addClass('error').find('span.layer-state:first').attr("title", option.error.details);
-                //@TODO sublayers ?
-//                source_li.find('li').each(function(idx, el){
-//                    $(el).removeClass('loading').removeClass('invisible').addClass('error').find('span.layer-state:first').attr("title", option.error.details);
-//                });
+                var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
+                source_li.attr('data-state', 'error').find('span.layer-title:first').attr("title",option.error.details);
             }
         },
         _subStringText: function(text){

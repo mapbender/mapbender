@@ -204,6 +204,7 @@ class WmcEditor extends Element
             $state = $wmc->getState();
             $state->setServerurl($wmchandler->getBaseUrl());
             $state->setSlug($this->application->getSlug());
+            $state = $wmchandler->signUrls($state);
             $form = $this->container->get("form.factory")->create(new WmcType(),
                 $wmc);
             $html = $this->container->get('templating')
@@ -300,6 +301,7 @@ class WmcEditor extends Element
                             array('Content-Type' => 'application/json'));
                     }
                 }
+                $wmc->setState($wmchandler->unSignUrls($wmc->getState()));
                 $em = $this->container->get('doctrine')->getEntityManager();
                 $em->getConnection()->beginTransaction();
                 $em->persist($wmc);

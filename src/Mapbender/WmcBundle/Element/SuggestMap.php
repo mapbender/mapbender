@@ -166,7 +166,7 @@ class SuggestMap extends Element
         $state = $wmchandler->findState($stateid);
         if ($state) {
             $id = $state->getId();
-            return new Response(json_encode(array("data" => array($id => $state->getJson()))),
+            return new Response(json_encode(array("data" => array($id => json_decode($state->getJson())))),
                 200, array('Content-Type' => 'application/json'));
         } else {
             return new Response(json_encode(array("error" => $trans->trans("mb.wmc.error.statenotfound",
