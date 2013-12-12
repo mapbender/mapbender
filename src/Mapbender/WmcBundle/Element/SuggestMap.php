@@ -161,6 +161,7 @@ class SuggestMap extends Element
      */
     protected function loadState($stateid)
     {
+        $trans = $this->container->get('translator');
         $wmchandler = new WmcHandler($this, $this->application, $this->container);
         $state = $wmchandler->findState($stateid);
         if ($state) {
@@ -168,8 +169,9 @@ class SuggestMap extends Element
             return new Response(json_encode(array("data" => array($id => $state->getJson()))),
                 200, array('Content-Type' => 'application/json'));
         } else {
-            return new Response(json_encode(array("error" => 'State: ' . $stateid . ' is not found')),
-                200, array('Content-Type' => 'application/json'));
+            return new Response(json_encode(array("error" => $trans->trans("mb.wmc.error.statenotfound",
+                        array('%stateid%' => $stateid)))), 200,
+                array('Content-Type' => 'application/json'));
         }
     }
 
@@ -180,6 +182,7 @@ class SuggestMap extends Element
      */
     protected function saveState()
     {
+        $trans = $this->container->get('translator');
         $wmchandler = new WmcHandler($this, $this->application, $this->container);
         $json = $this->container->get('request')->get("state", null);
         $state = $wmchandler->saveState($json);
@@ -189,8 +192,8 @@ class SuggestMap extends Element
                 array('Content-Type' => 'application/json'));
         } else {
             return new Response(json_encode(array(
-                    "error" => 'State can not be saved.')), 200,
-                array('Content-Type' => 'application/json'));
+                    "error" => $trans->trans("mb.wmc.error.statecannotbesaved"))),
+                200, array('Content-Type' => 'application/json'));
         }
     }
 

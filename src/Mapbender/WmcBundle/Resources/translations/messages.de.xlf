@@ -203,6 +203,14 @@
         <source>mb.wmc.error.wmcsaved</source>
         <target>WMC $wmcid% is saved.</target>
       </trans-unit>
+      <trans-unit id="777a392870477be18bcbb4d9a3a7f675" resname="mb.wmc.error.statecannotbesaved">
+        <source>mb.wmc.error.statecannotbesaved</source>
+        <target>State can not be saved.</target>
+      </trans-unit>
+      <trans-unit id="a5531428c051e5c086db2800e7fb5383" resname="mb.wmc.error.statenotfound">
+        <source>mb.wmc.error.statenotfound</source>
+        <target>State %stateid% is not found.</target>
+      </trans-unit>
       <trans-unit id="8878f357789b5b60da961e080ea2ee58" resname="mb.wmc.admin.wmclist.label">
         <source>mb.wmc.admin.wmclist.label</source>
         <target>Label</target>

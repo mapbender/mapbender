@@ -297,7 +297,7 @@ $.extend(true, Mapbender, {
                     url: layer.getURL(bounds)
                 };
             },
-            onLoadError: function(imgEl, sourceId, projection){
+            onLoadError: function(imgEl, sourceId, projection, callback){
                 var self = this;
                 var loadError = {sourceid: sourceId, details: ''};
                 $.ajax({
@@ -329,6 +329,7 @@ $.extend(true, Mapbender, {
                             }
                         }
                         loadError.details = details;
+                        callback.call(loadError);
                     },
                     error: function(err){
                         var details = Mapbender.trans("mb.wms.source.image_error.datails");
@@ -362,9 +363,10 @@ $.extend(true, Mapbender, {
                             details += ".\n" + Mapbender.trans("mb.wms.source.image_error.statuscode") + ": " + err.status + " - " + err.statusText;
                         }
                         loadError.details = details;
+                        callback.call(loadError);
                     }
                 });
-                return loadError;
+//                return loadError;
             },
             hasLayers: function(source, withoutGrouped){
                 var options = this.layerCount(source);
