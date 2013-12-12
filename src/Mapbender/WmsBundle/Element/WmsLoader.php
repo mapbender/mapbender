@@ -18,7 +18,7 @@ class WmsLoader extends Element
      */
     static public function getClassTitle()
     {
-        return "WmsLoader";
+        return $this->trans("mb.wmc.wmsloader.class.title");
     }
 
     /**
@@ -26,7 +26,7 @@ class WmsLoader extends Element
      */
     static public function getClassDescription()
     {
-        return "Opens a dialog in which a WMS can be loaded via the getCapabilities-Request";
+        return $this->trans("mb.wmc.wmsloader.class.description");
     }
 
     /**
@@ -34,7 +34,9 @@ class WmsLoader extends Element
      */
     static public function getClassTags()
     {
-        return array("wms", "loader");
+        return array(
+            $this->trans("mb.wmc.wmsloader.wms"),
+            $this->trans("mb.wmc.wmsloader.loader"));
     }
 
     /**

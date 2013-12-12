@@ -12,7 +12,7 @@
       </trans-unit>
       <trans-unit id="27c45a8d7df44b7de7adf685e204e80c" resname="mb.wms.wmsloader.error.url">
         <source>mb.wms.wmsloader.error.url</source>
-        <target>WMSLoader: a WMS capabilities can't be loaded! The capabilities url is not valid.</target>
+        <target>WMSLoader: WMS capabilities can't be loaded! The capabilities url is not valid.</target>
       </trans-unit>
       <trans-unit id="6ff51d3832f0575b54225dea941a97ff" resname="mb.wms.wmsloader.error.service">
         <source>mb.wms.wmsloader.error.service</source>
@@ -28,7 +28,7 @@
       </trans-unit>
       <trans-unit id="b21a812df167d5a76cf155957642f5ca" resname="mb.wms.wmsloader.error.load">
         <source>mb.wms.wmsloader.error.load</source>
-        <target>WMSLoader: a wms capabilities can't be loaded!</target>
+        <target>WMSLoader: wms capabilities can't be loaded!</target>
       </trans-unit>
       <trans-unit id="e0fad091f39559379dc4574bb9d41485" resname="mb.wms.wmsloader.dialog.btn.cancel">
         <source>mb.wms.wmsloader.dialog.btn.cancel</source>
@@ -360,7 +360,7 @@
       </trans-unit>
       <trans-unit id="21d04fb01c7d0a058e1998f49dfaa17b" resname="mb.wms.wmsloader.repo.layer.label.srs">
         <source>mb.wms.wmsloader.repo.layer.label.srs</source>
-        <target>Srs</target>
+        <target>SRS</target>
       </trans-unit>
       <trans-unit id="101c62ff39e18a2fe3f6135a041db2d0" resname="mb.wms.wmsloader.repo.layer.label.styles">
         <source>mb.wms.wmsloader.repo.layer.label.styles</source>
@@ -481,6 +481,22 @@
       <trans-unit id="44d89f42c777927c76abd7fddaabea40" resname="mb.wms.wmsloader.repo.instancelayer.btn.save">
         <source>mb.wms.wmsloader.repo.instancelayer.btn.save</source>
         <target>Save</target>
+      </trans-unit>
+      <trans-unit id="b729aa4bd78553ddc93e54a88f74f565" resname="mb.wmc.wmsloader.class.title">
+        <source>mb.wmc.wmsloader.class.title</source>
+        <target>Wms Loader</target>
+      </trans-unit>
+      <trans-unit id="f966d7bcd920984fe571e980e772be94" resname="mb.wmc.wmsloader.class.description">
+        <source>mb.wmc.wmsloader.class.description</source>
+        <target>Opens a dialog in which a WMS can be loaded via the getCapabilities-Request</target>
+      </trans-unit>
+      <trans-unit id="cc81f11b41a14a682147a157cc21e5c2" resname="mb.wmc.wmsloader.tag.wms">
+        <source>mb.wmc.wmsloader.tag.wms</source>
+        <target>wms</target>
+      </trans-unit>
+      <trans-unit id="508990e1bc263600c38cac2a878e5403" resname="mb.wmc.wmsloader.tag.loader">
+        <source>mb.wmc.wmsloader.tag.loader</source>
+        <target>loader</target>
       </trans-unit>
       <trans-unit id="a3c1e614645662978d87b127212a82e1" resname="mb.wms.wmsloader.admin.label.autoopen">
         <source>mb.wms.wmsloader.admin.label.autoopen</source>
