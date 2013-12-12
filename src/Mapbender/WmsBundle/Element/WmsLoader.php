@@ -18,7 +18,7 @@ class WmsLoader extends Element
      */
     static public function getClassTitle()
     {
-        return $this->trans("mb.wmc.wmsloader.class.title");
+        return "mb.wms.wmsloader.class.title";
     }
 
     /**
@@ -26,7 +26,7 @@ class WmsLoader extends Element
      */
     static public function getClassDescription()
     {
-        return $this->trans("mb.wmc.wmsloader.class.description");
+        return "mb.wms.wmsloader.class.description";
     }
 
     /**
@@ -34,9 +34,7 @@ class WmsLoader extends Element
      */
     static public function getClassTags()
     {
-        return array(
-            $this->trans("mb.wmc.wmsloader.wms"),
-            $this->trans("mb.wmc.wmsloader.loader"));
+        return array("mb.wms.wmsloader.wms", "mb.wms.wmsloader.loader");
     }
 
     /**

@@ -482,6 +482,22 @@
         <source>mb.wms.wmsloader.repo.instancelayer.btn.save</source>
         <target>Speichern</target>
       </trans-unit>
+      <trans-unit id="c6135b9db60a93807e1ce11155d4856a" resname="mb.wms.wmsloader.class.title">
+        <source>mb.wms.wmsloader.class.title</source>
+        <target>WMS Loader</target>
+      </trans-unit>
+      <trans-unit id="10a9e19b4afe3b0e70d32737e00b9bb1" resname="mb.wms.wmsloader.class.description">
+        <source>mb.wms.wmsloader.class.description</source>
+        <target>Loads a WMS via the getCapabilities-Request</target>
+      </trans-unit>
+      <trans-unit id="aa2a35216121de6e6cd0ac492ab73f84" resname="mb.wms.wmsloader.tag.wms">
+        <source>mb.wms.wmsloader.tag.wms</source>
+        <target>wms</target>
+      </trans-unit>
+      <trans-unit id="251b3fbc58d81e13d4f5e3d8d79868a1" resname="mb.wms.wmsloader.tag.loader">
+        <source>mb.wms.wmsloader.tag.loader</source>
+        <target>loader</target>
+      </trans-unit>
       <trans-unit id="a3c1e614645662978d87b127212a82e1" resname="mb.wms.wmsloader.admin.label.autoopen">
         <source>mb.wms.wmsloader.admin.label.autoopen</source>
         <target>Automatisch öffnen</target>

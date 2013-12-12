@@ -51,7 +51,8 @@ class Sketch extends Element
         return array(
             'js' => array(
                 'mapbender.element.sketch.js'),
-            'css' => array()
+            'css' => array(),
+            'trans' => array('MapbenderCoreBundle:Element:sketch.json.twig')
         );
     }
 

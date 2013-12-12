@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -21,7 +20,7 @@ class FeatureInfo extends Element
      */
     static public function getClassTitle()
     {
-	return "Feature Info Dialog";
+        return "Feature Info Dialog";
     }
 
     /**
@@ -29,7 +28,7 @@ class FeatureInfo extends Element
      */
     static public function getClassDescription()
     {
-	return "Feature info tool for most layer types";
+        return "Feature info tool for most layer types";
     }
 
     /**
@@ -37,7 +36,7 @@ class FeatureInfo extends Element
      */
     static public function getClassTags()
     {
-	return array('dialog', 'featureinfo');
+        return array('dialog', 'featureinfo');
     }
 
     /**
@@ -45,11 +44,11 @@ class FeatureInfo extends Element
      */
     public static function getDefaultConfiguration()
     {
-	return array(
-	    'tooltip' => 'Feature Info Dialog',
-	    "autoOpen" => false,
-	    "deactivateOnClose" => true,
-	    "target" => null);
+        return array(
+            'tooltip' => 'Feature Info Dialog',
+            "autoOpen" => false,
+            "deactivateOnClose" => true,
+            "target" => null);
     }
 
     /**
@@ -57,7 +56,7 @@ class FeatureInfo extends Element
      */
     public function getWidgetName()
     {
-	return 'mapbender.mbFeatureInfo';
+        return 'mapbender.mbFeatureInfo';
     }
 
     /**
@@ -65,7 +64,7 @@ class FeatureInfo extends Element
      */
     public static function getType()
     {
-	return 'Mapbender\CoreBundle\Element\Type\FeatureInfoAdminType';
+        return 'Mapbender\CoreBundle\Element\Type\FeatureInfoAdminType';
     }
 
     /**
@@ -73,13 +72,14 @@ class FeatureInfo extends Element
      */
     public function getAssets()
     {
-	return array(
-	    'js' => array(
-		'mapbender.element.featureInfo.js',
+        return array(
+            'js' => array(
+                'mapbender.element.featureInfo.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-		'@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'
-	    ), 'css' => array()
-	);
+                '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
+            'css' => array(),
+            'trans' => array('MapbenderCoreBundle:Element:featureinfo.json.twig')
+        );
     }
 
     /**
@@ -87,13 +87,13 @@ class FeatureInfo extends Element
      */
     public function render()
     {
-	$configuration = parent::getConfiguration();
-	return $this->container->get('templating')
-		->render('MapbenderCoreBundle:Element:featureinfo.html.twig',
-		    array(
-		    'id' => $this->getId(),
-		    'configuration' => $configuration,
-		    'title' => $this->getTitle()));
+        $configuration = parent::getConfiguration();
+        return $this->container->get('templating')
+                ->render('MapbenderCoreBundle:Element:featureinfo.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    'configuration' => $configuration,
+                    'title' => $this->getTitle()));
     }
 
     /**
@@ -101,8 +101,7 @@ class FeatureInfo extends Element
      */
     public static function getFormTemplate()
     {
-	return 'MapbenderCoreBundle:ElementAdmin:featureinfo.html.twig';
+        return 'MapbenderCoreBundle:ElementAdmin:featureinfo.html.twig';
     }
 
 }
-

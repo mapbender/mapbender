@@ -22,7 +22,7 @@ class WmcEditor extends Element
      */
     static public function getClassTitle()
     {
-        return "WmcEditor";
+        return "mb.wmc.wmceditor.class.title";
     }
 
     /**
@@ -30,7 +30,7 @@ class WmcEditor extends Element
      */
     static public function getClassDescription()
     {
-        return "Save and edit configurations with the WMC Editor";
+        return "mb.wmc.wmceditor.class.description";
     }
 
     /**
@@ -38,7 +38,7 @@ class WmcEditor extends Element
      */
     static public function getClassTags()
     {
-        return array("wmc", "editor");
+        return array("mb.wmc.suggestmap.wmc","mb.wmc.suggestmap.editor");
     }
 
     /**
@@ -223,7 +223,6 @@ class WmcEditor extends Element
      */
     protected function loadWmc()
     {
-        $trans = $this->container->get('translator');
         if (!$this->accessGroups()) {
             return new Response(json_encode(array("error" => 'Access denied.')),
                 200, array('Content-Type' => 'application/json'));
@@ -237,7 +236,7 @@ class WmcEditor extends Element
             return new Response(json_encode(array("data" => array($id => $wmc->getState()->getJson()))),
                 200, array('Content-Type' => 'application/json'));
         } else {
-            return new Response(json_encode(array("error" => $trans->trans("mb.wmc.error.wmcnotfound",
+            return new Response(json_encode(array("error" => $this->trans("mb.wmc.error.wmcnotfound",
                         array('%wmcid%' => $wmcid)))), 200,
                 array('Content-Type' => 'application/json'));
         }
@@ -274,7 +273,6 @@ class WmcEditor extends Element
      */
     protected function saveWmc()
     {
-        $trans = $this->container->get('translator');
         if (!$this->accessGroups()) {
             return new Response(json_encode(array("error" => 'Access denied.')),
                 200, array('Content-Type' => 'application/json'));
@@ -296,7 +294,7 @@ class WmcEditor extends Element
                     $form->bindRequest($request);
                     if (!$form->isValid()) {
                         return new Response(json_encode(array(
-                                "error" => $trans->trans("mb.wmc.error.wmcnotfound",
+                                "error" => $this->trans("mb.wmc.error.wmcnotfound",
                                     array('%wmcid%' => $wmc->getId())))), 200,
                             array('Content-Type' => 'application/json'));
                     }
@@ -333,12 +331,12 @@ class WmcEditor extends Element
                 }
                 $em->getConnection()->commit();
                 return new Response(json_encode(array(
-                        "success" => $trans->trans("mb.wmc.error.wmcsaved",
+                        "success" => $this->trans("mb.wmc.error.wmcsaved",
                             array('%wmcid%' => $wmc->getId())))), 200,
                     array('Content-Type' => 'application/json'));
             } else {
                 return new Response(json_encode(array(
-                        "error" => $trans->trans("mb.wmc.error.wmccannotbesaved",
+                        "error" => $this->trans("mb.wmc.error.wmccannotbesaved",
                             array('%wmcid%' => $wmc->getId())))), 200,
                     array('Content-Type' => 'application/json'));
             }
@@ -352,7 +350,6 @@ class WmcEditor extends Element
      */
     protected function confirmDeleteWmc()
     {
-        $trans = $this->container->get('translator');
         if (!$this->accessGroups()) {
             return new Response("Access denied.", 200,
                 array('Content-Type' => 'text/html'));
@@ -373,7 +370,7 @@ class WmcEditor extends Element
                 'wmc' => $wmc));
             return new Response($html, 200, array('Content-Type' => 'text/html'));
         } else {
-            return new Response($trans->trans("mb.wmc.error.wmcnotfound",
+            return new Response($this->trans("mb.wmc.error.wmcnotfound",
                     array('%wmcid%' => '')), 200,
                 array('Content-Type' => 'text/html'));
         }
@@ -387,7 +384,6 @@ class WmcEditor extends Element
      */
     protected function deleteWmc()
     {
-        $trans = $this->container->get('translator');
         if (!$this->accessGroups()) {
             return new Response(json_encode(array("error" => 'Access denied.')),
                 200, array('Content-Type' => 'application/json'));
@@ -416,18 +412,18 @@ class WmcEditor extends Element
                 $em->flush();
                 $em->getConnection()->commit();
                 return new Response(json_encode(array(
-                        "success" => $trans->trans("mb.wmc.error.wmcremoved",
+                        "success" => $this->trans("mb.wmc.error.wmcremoved",
                             array('%wmcid%' => $wmcid)))), 200,
                     array('Content-Type' => 'application/json'));
             } else {
                 return new Response(json_encode(array(
-                        "error" => $trans->trans("mb.wmc.error.wmcnotfound",
+                        "error" => $this->trans("mb.wmc.error.wmcnotfound",
                             array('%wmcid%' => '')))), 200,
                     array('Content-Type' => 'application/json'));
             }
         }
         return new Response(json_encode(array(
-                "error" => $trans->trans("mb.wmc.error.wmccannotberemoved"))),
+                "error" => $this->trans("mb.wmc.error.wmccannotberemoved"))),
             200, array('Content-Type' => 'application/json'));
     }
 

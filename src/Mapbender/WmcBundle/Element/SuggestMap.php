@@ -13,7 +13,7 @@ class SuggestMap extends Element
      */
     static public function getClassTitle()
     {
-        return "SuggestMap";
+        return "mb.wmc.suggestmap.class.title";
     }
 
     /**
@@ -21,7 +21,7 @@ class SuggestMap extends Element
      */
     static public function getClassDescription()
     {
-        return "SuggestMap";
+        return "mb.wmc.suggestmap.class.description";
     }
 
     /**
@@ -29,7 +29,7 @@ class SuggestMap extends Element
      */
     static public function getClassTags()
     {
-        return array("suggest", "map");
+        return array("mb.wmc.suggestmap.suggest", "mb.wmc.suggestmap.map");
     }
 
     /**
@@ -161,7 +161,6 @@ class SuggestMap extends Element
      */
     protected function loadState($stateid)
     {
-        $trans = $this->container->get('translator');
         $wmchandler = new WmcHandler($this, $this->application, $this->container);
         $state = $wmchandler->findState($stateid);
         if ($state) {
@@ -169,7 +168,7 @@ class SuggestMap extends Element
             return new Response(json_encode(array("data" => array($id => json_decode($state->getJson())))),
                 200, array('Content-Type' => 'application/json'));
         } else {
-            return new Response(json_encode(array("error" => $trans->trans("mb.wmc.error.statenotfound",
+            return new Response(json_encode(array("error" => $this->trans("mb.wmc.error.statenotfound",
                         array('%stateid%' => $stateid)))), 200,
                 array('Content-Type' => 'application/json'));
         }
@@ -182,7 +181,6 @@ class SuggestMap extends Element
      */
     protected function saveState()
     {
-        $trans = $this->container->get('translator');
         $wmchandler = new WmcHandler($this, $this->application, $this->container);
         $json = $this->container->get('request')->get("state", null);
         $state = $wmchandler->saveState($json);
@@ -192,7 +190,7 @@ class SuggestMap extends Element
                 array('Content-Type' => 'application/json'));
         } else {
             return new Response(json_encode(array(
-                    "error" => $trans->trans("mb.wmc.error.statecannotbesaved"))),
+                    "error" => $this->trans("mb.wmc.error.statecannotbesaved"))),
                 200, array('Content-Type' => 'application/json'));
         }
     }

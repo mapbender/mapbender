@@ -2,137 +2,101 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="de" datatype="plaintext" original="file.ext">
     <body>
-      <trans-unit id="f6478d1db43a4115b7b7e86db6e23119" resname="mb.core.copyrightcontent.content">
-        <source>mb.core.copyrightcontent.content</source>
-        <target>__mb.core.copyrightcontent.content</target>
-      </trans-unit>
-      <trans-unit id="52d4bcd8fe93d4673d79ef21dcaa9261" resname="mb.core.copyright.title">
-        <source>mb.core.copyright.title</source>
-        <target>__mb.core.copyright.title</target>
-      </trans-unit>
-      <trans-unit id="6304c11eda36d6a95a482c790d638bfa" resname="mb.core.featureinfo.title">
-        <source>mb.core.featureinfo.title</source>
-        <target>__mb.core.featureinfo.title</target>
-      </trans-unit>
-      <trans-unit id="cbdb71abfd125571c12b4d14bd96b0c7" resname="mb.core.aboutdialogcontent.versionprefix">
-        <source>mb.core.aboutdialogcontent.versionprefix</source>
+      <trans-unit id="3f141d25282496cf3791bd532359e433" resname="mb.core.aboutdialog.content.versionprefix">
+        <source>mb.core.aboutdialog.content.versionprefix</source>
         <target>v.</target>
       </trans-unit>
-      <trans-unit id="04c4759498abcbe8d7444612a9000ea7" resname="mb.core.aboutdialogcontent.learnmore">
-        <source>mb.core.aboutdialogcontent.learnmore</source>
+      <trans-unit id="1d84c5293abecb3624fa6828185b3493" resname="mb.core.aboutdialog.content.learnmore">
+        <source>mb.core.aboutdialog.content.learnmore</source>
         <target>Lernen Sie Mapbender3 kennen auf unserer</target>
       </trans-unit>
-      <trans-unit id="a733dbdd9a16dcc3f3fc095b1ddd59fe" resname="mb.core.aboutdialogcontent.linktitle">
-        <source>mb.core.aboutdialogcontent.linktitle</source>
+      <trans-unit id="a8b14434dc098a6e7b028915b631cd24" resname="mb.core.aboutdialog.content.linktitle">
+        <source>mb.core.aboutdialog.content.linktitle</source>
         <target>Besuchen Sie die offizielle Mapbender3 Webseite.</target>
       </trans-unit>
-      <trans-unit id="401e3ea36f87f316f0b96a91d3154bea" resname="mb.core.aboutdialogcontent.website">
-        <source>mb.core.aboutdialogcontent.website</source>
+      <trans-unit id="97ab0befb054f94d9b438e6f8b18aa62" resname="mb.core.aboutdialog.content.website">
+        <source>mb.core.aboutdialog.content.website</source>
         <target>Webseite</target>
       </trans-unit>
-      <trans-unit id="1ccca7e22c016a56d261d54fa8d6ac50" resname="mb.core.sketch.title">
-        <source>mb.core.sketch.title</source>
-        <target>__mb.core.sketch.title</target>
+      <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
+        <source>mb.core.poi.sharepoi</source>
+        <target>POI teilen</target>
       </trans-unit>
-      <trans-unit id="77ce2272dfd875de65ef0362606bbf4c" resname="mb.core.coordinatesdisplay.title">
-        <source>mb.core.coordinatesdisplay.title</source>
-        <target>__mb.core.coordinatesdisplay.title</target>
+      <trans-unit id="46b75948336bd4019bbaee9324151ecc" resname="mb.core.poi.label.text">
+        <source>mb.core.poi.label.text</source>
+        <target>Text</target>
       </trans-unit>
-      <trans-unit id="be54b83880e2f8dbde51b229b471ae33" resname="mb.core.scaleselector.title">
-        <source>mb.core.scaleselector.title</source>
-        <target>__mb.core.scaleselector.title</target>
-      </trans-unit>
-      <trans-unit id="fdead8b32897f88aa05fd77d903ebb35" resname="mb.core.srsselector.title">
-        <source>mb.core.srsselector.title</source>
-        <target>__mb.core.srsselector.title</target>
-      </trans-unit>
-      <trans-unit id="78431e56e8d4fcc20900f16d28ccb4e3" resname="mb.core.scaledisplay.scalePrefix">
-        <source>mb.core.scaledisplay.scalePrefix</source>
-        <target>Maßstab</target>
-      </trans-unit>
-      <trans-unit id="52f2119c302dee02a460f03b9ef78cf2" resname="mb.core.sketch.circle.radius.label">
-        <source>mb.core.sketch.circle.radius.label</source>
-        <target>__mb.core.sketch.circle.radius.label</target>
-      </trans-unit>
-      <trans-unit id="6329edbadca4ae33674d3ba4beb0095a" resname="mb.core.sketch.circle.radius.error">
-        <source>mb.core.sketch.circle.radius.error</source>
-        <target>__mb.core.sketch.circle.radius.error</target>
-      </trans-unit>
-      <trans-unit id="45477889021de187cea8384dc6ee4d05" resname="mb.core.sketch.circle.form.button.yes">
-        <source>mb.core.sketch.circle.form.button.yes</source>
-        <target>__mb.core.sketch.circle.form.button.yes</target>
-      </trans-unit>
-      <trans-unit id="94226bb9060eba51287384df96529632" resname="mb.core.sketch.circle.form.button.cancel">
-        <source>mb.core.sketch.circle.form.button.cancel</source>
-        <target>__mb.core.sketch.circle.form.button.cancel</target>
-      </trans-unit>
-      <trans-unit id="15d468f39d2c7f6f4456ab38335d945b" resname="mb.core.measuredialog.title">
-        <source>mb.core.measuredialog.title</source>
-        <target>__mb.core.measuredialog.title</target>
-      </trans-unit>
-      <trans-unit id="c3fdbc0bda987fe1a3be6d1c6d6cae4a" resname="mb.core.printclient.title">
-        <source>mb.core.printclient.title</source>
-        <target>__mb.core.printclient.title</target>
+      <trans-unit id="43279759bfe1cf656538dd558e3748a6" resname="mb.core.poi.text.snippet">
+        <source>mb.core.poi.text.snippet</source>
+        <target>Sie können den folgenden Textbaustein in einer E-Mail nutzen, um den POI zu teilen.</target>
       </trans-unit>
       <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
         <source>mb.core.printclient.label.template</source>
-        <target>__mb.core.printclient.label.template</target>
+        <target>Template</target>
       </trans-unit>
       <trans-unit id="5aeaf1ae0a1e67e0e392f563be749204" resname="mb.core.printclient.label.quality">
         <source>mb.core.printclient.label.quality</source>
-        <target>__mb.core.printclient.label.quality</target>
+        <target>Quality</target>
       </trans-unit>
       <trans-unit id="421aa7382e001de0b0960d411265998a" resname="mb.core.printclient.label.scale">
         <source>mb.core.printclient.label.scale</source>
-        <target>__mb.core.printclient.label.scale</target>
+        <target>Scale</target>
       </trans-unit>
       <trans-unit id="1d6b0cb565c46ffb069608c564861358" resname="mb.core.printclient.label.rotation">
         <source>mb.core.printclient.label.rotation</source>
-        <target>__mb.core.printclient.label.rotation</target>
+        <target>Rotation</target>
       </trans-unit>
-      <trans-unit id="0f2ea89406ade79f9bc7a2886209e3d7" resname="mb.core.legend.title">
-        <source>mb.core.legend.title</source>
-        <target>Legende</target>
+      <trans-unit id="52f2119c302dee02a460f03b9ef78cf2" resname="mb.core.sketch.circle.radius.label">
+        <source>mb.core.sketch.circle.radius.label</source>
+        <target>Radius</target>
       </trans-unit>
-      <trans-unit id="2a3fec60720652cc81cf346f3a8b5b83" resname="mb.core.layertree.title">
-        <source>mb.core.layertree.title</source>
-        <target>__mb.core.layertree.title</target>
+      <trans-unit id="6329edbadca4ae33674d3ba4beb0095a" resname="mb.core.sketch.circle.radius.error">
+        <source>mb.core.sketch.circle.radius.error</source>
+        <target>Radius ist nicht valid.</target>
       </trans-unit>
-      <trans-unit id="c8c0ae8496fe993445c8e88a75085ace" resname="mb.core.layertree.label.visibilityselector">
-        <source>mb.core.layertree.label.visibilityselector</source>
-        <target>__mb.core.layertree.label.visibilityselector</target>
+      <trans-unit id="45477889021de187cea8384dc6ee4d05" resname="mb.core.sketch.circle.form.button.yes">
+        <source>mb.core.sketch.circle.form.button.yes</source>
+        <target>Übernehmen</target>
       </trans-unit>
-      <trans-unit id="f5a9fbf43dc6e3932b12294f0ae9f63e" resname="mb.core.layertree.label.featureinfoselector">
-        <source>mb.core.layertree.label.featureinfoselector</source>
-        <target>__mb.core.layertree.label.featureinfoselector</target>
+      <trans-unit id="94226bb9060eba51287384df96529632" resname="mb.core.sketch.circle.form.button.cancel">
+        <source>mb.core.sketch.circle.form.button.cancel</source>
+        <target>Abbrechen</target>
       </trans-unit>
-      <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
-        <source>mb.core.layertree.label.transparency</source>
-        <target>__mb.core.layertree.label.transparency</target>
+      <trans-unit id="f741a4a709f26fdf399f7b805ff27125" resname="mb.core.featureinfo.error.nolayer">
+        <source>mb.core.featureinfo.error.nolayer</source>
+        <target>No feature info layer exists.</target>
       </trans-unit>
-      <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
-        <source>mb.core.layertree.label.zoomtolayer</source>
-        <target>__mb.core.layertree.label.zoomtolayer</target>
+      <trans-unit id="4000aaa3f1fd6921b40ae958ee5d0c2b" resname="mb.core.featureinfo.error.unknownoption">
+        <source>mb.core.featureinfo.error.unknownoption</source>
+        <target>Unknown or unhandled option %key% for %namespace%.%widgetname%.</target>
       </trans-unit>
-      <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
-        <source>mb.core.layertree.label.metadata</source>
-        <target>__mb.core.layertree.label.metadata</target>
+      <trans-unit id="68f99e9993f8179311b9f5aaa0b43ffd" resname="mb.core.featureinfo.popuo.btn.ok">
+        <source>mb.core.featureinfo.popuo.btn.ok</source>
+        <target>Close</target>
       </trans-unit>
-      <trans-unit id="6c94e9d72f4b9fe8f3d778bbd0f3a0c4" resname="mb.core.layertree.label.legend">
-        <source>mb.core.layertree.label.legend</source>
-        <target>__mb.core.layertree.label.legend</target>
+      <trans-unit id="d2279b60abd41fd9e228763532d10b02" resname="mb.core.gpsposition.error.notsupported">
+        <source>mb.core.gpsposition.error.notsupported</source>
+        <target>I'm sorry, but geolocation services are not supported by your browser.</target>
       </trans-unit>
-      <trans-unit id="8c1f66fa95ed2baff3594f48febee178" resname="mb.core.layertree.label.kmlexport">
-        <source>mb.core.layertree.label.kmlexport</source>
-        <target>__mb.core.layertree.label.kmlexport</target>
+      <trans-unit id="73baa3dd55f5169a84b49015e5cbbc6f" resname="mb.core.layertree.confirm.allremove">
+        <source>mb.core.layertree.confirm.allremove</source>
+        <target>Really all sources delete?</target>
       </trans-unit>
-      <trans-unit id="263857036bd43f2fed5421b06430c19a" resname="mb.core.layertree.label.sources">
-        <source>mb.core.layertree.label.sources</source>
-        <target>__mb.core.layertree.label.sources</target>
+      <trans-unit id="261c3c35cd7b5f9737f2c3ab03c1ba76" resname="mb.core.layertree.popup.btn.ok">
+        <source>mb.core.layertree.popup.btn.ok</source>
+        <target>Close</target>
       </trans-unit>
-      <trans-unit id="937de90c8cbe2cbfca37e4df0c18b6aa" resname="mb.core.layertree.label.deleteallsources">
-        <source>mb.core.layertree.label.deleteallsources</source>
-        <target>__mb.core.layertree.label.deleteallsources</target>
+      <trans-unit id="179f487db6ae9a2cc2f6bc20a3973928" resname="mb.core.layertree.const.outofscale">
+        <source>mb.core.layertree.const.outofscale</source>
+        <target>Layer out of scale</target>
+      </trans-unit>
+      <trans-unit id="ed37a9ab842a774969e361c70f45fd81" resname="mb.core.layertree.const.outofbounds">
+        <source>mb.core.layertree.const.outofbounds</source>
+        <target>Layer out of bounds</target>
+      </trans-unit>
+      <trans-unit id="f2c092bf66ee0b1608a750ef1646fcfe" resname="mb.core.layertree.const.parentinvisible">
+        <source>mb.core.layertree.const.parentinvisible</source>
+        <target>Parent layer unvisible</target>
       </trans-unit>
       <trans-unit id="9274af4427ddd97ba8b314fb87847f55" resname="mb.core.zoombar.panup">
         <source>mb.core.zoombar.panup</source>
@@ -166,213 +130,109 @@
         <source>mb.core.zoombar.zoombyworld</source>
         <target>Zoom auf gesamte Abdeckung</target>
       </trans-unit>
-      <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
-        <source>mb.core.poi.sharepoi</source>
-        <target>POI teilen</target>
+      <trans-unit id="868e554ea585dc5b1d394eb2b66e972c" resname="mb.core.layertree.tooltip.sublayers_openclose">
+        <source>mb.core.layertree.tooltip.sublayers_openclose</source>
+        <target>Sublayer auf/zu</target>
       </trans-unit>
-      <trans-unit id="46b75948336bd4019bbaee9324151ecc" resname="mb.core.poi.label.text">
-        <source>mb.core.poi.label.text</source>
-        <target>__mb.core.poi.label.text</target>
+      <trans-unit id="e48917a6335f8fa17b6b68aabc94390b" resname="mb.core.layertree.label.visibility_onoff">
+        <source>mb.core.layertree.label.visibility_onoff</source>
+        <target>Visibility on/off</target>
       </trans-unit>
-      <trans-unit id="43279759bfe1cf656538dd558e3748a6" resname="mb.core.poi.text.snippet">
-        <source>mb.core.poi.text.snippet</source>
-        <target>Sie können den folgenden Textbaustein in einer E-Mail nutzen, um den POI zu teilen.</target>
+      <trans-unit id="9f816610733911918c9413a1b5af826a" resname="mb.core.layertree.label.featureinfo_onoff">
+        <source>mb.core.layertree.label.featureinfo_onoff</source>
+        <target>FeatureInfo on/off</target>
       </trans-unit>
-      <trans-unit id="a3c010840797deb6b1026c5f3945f714" resname="mb.core.gps.title">
-        <source>mb.core.gps.title</source>
-        <target>GPS</target>
+      <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
+        <source>mb.core.layertree.label.transparency</source>
+        <target>Transparenz</target>
       </trans-unit>
-      <trans-unit id="f272861ccb0d1529ee8ab7f298c0b030" resname="mb.core.aboutdialog.title">
-        <source>mb.core.aboutdialog.title</source>
-        <target>Über diese Anwendung</target>
+      <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
+        <source>mb.core.layertree.label.zoomtolayer</source>
+        <target>Zoom to layer</target>
       </trans-unit>
-      <trans-unit id="b68c5f847f084c4de7b92811fdb70a99" resname="mb.core.aboutdialog.menu.title">
-        <source>mb.core.aboutdialog.menu.title</source>
-        <target>Über</target>
+      <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
+        <source>mb.core.layertree.label.metadata</source>
+        <target>Metadaten</target>
       </trans-unit>
-      <trans-unit id="40d8f0269fa0dcc7859e3dbe4aa96d2f" resname="mb.core.user.create.save">
-        <source>mb.core.user.create.save</source>
-        <target>__mb.core.user.create.save</target>
+      <trans-unit id="6c94e9d72f4b9fe8f3d778bbd0f3a0c4" resname="mb.core.layertree.label.legend">
+        <source>mb.core.layertree.label.legend</source>
+        <target>Legende</target>
       </trans-unit>
-      <trans-unit id="83f63cda9650f8aaa27bfafeaee40ef2" resname="mb.core.user.create.cancel">
-        <source>mb.core.user.create.cancel</source>
-        <target>__mb.core.user.create.cancel</target>
+      <trans-unit id="8c1f66fa95ed2baff3594f48febee178" resname="mb.core.layertree.label.kmlexport">
+        <source>mb.core.layertree.label.kmlexport</source>
+        <target>KML Export</target>
       </trans-unit>
-      <trans-unit id="c2208ccd0104d97d8925713036d5cb57" resname="Add User">
-        <source>Add User</source>
-        <target>__Add User</target>
+      <trans-unit id="c1e88d23834e42294c5c46903293bbb3" resname="mb.core.layertree.tooltip.removelayer">
+        <source>mb.core.layertree.tooltip.removelayer</source>
+        <target>Layer entfernen</target>
       </trans-unit>
-      <trans-unit id="e2cb9ed8acac7fab4341b6b113135bbc" resname="mb.core.user.index.userindex">
-        <source>mb.core.user.index.userindex</source>
-        <target>__mb.core.user.index.userindex</target>
+      <trans-unit id="263857036bd43f2fed5421b06430c19a" resname="mb.core.layertree.label.sources">
+        <source>mb.core.layertree.label.sources</source>
+        <target>Quellen</target>
       </trans-unit>
-      <trans-unit id="f3d5c3126fc548a441b1dfb7504e2ff6" resname="Available Users">
-        <source>Available Users</source>
-        <target>__Available Users</target>
-      </trans-unit>
-      <trans-unit id="b3949799f9589502212bc8b8cb86a78b" resname="mb.core.user.index.name">
-        <source>mb.core.user.index.name</source>
-        <target>__mb.core.user.index.name</target>
-      </trans-unit>
-      <trans-unit id="276816c3e5c125283087502b8608fa46" resname="mb.core.user.index.edit">
-        <source>mb.core.user.index.edit</source>
-        <target>__mb.core.user.index.edit</target>
-      </trans-unit>
-      <trans-unit id="6383cd056d0b3cb6a17e07b13eafc941" resname="mb.core.user.index.delete">
-        <source>mb.core.user.index.delete</source>
-        <target>__mb.core.user.index.delete</target>
-      </trans-unit>
-      <trans-unit id="6fe17b14a818a73ecb886e7a9be44ef8" resname="No Users">
-        <source>No Users</source>
-        <target>__No Users</target>
-      </trans-unit>
-      <trans-unit id="17c3b893acd7c715f3c079368f96e724" resname="mb.core.user.edit.save">
-        <source>mb.core.user.edit.save</source>
-        <target>__mb.core.user.edit.save</target>
-      </trans-unit>
-      <trans-unit id="38f454e7eab44a4ad95ba2e4844ee660" resname="mb.core.user.edit.cancel">
-        <source>mb.core.user.edit.cancel</source>
-        <target>__mb.core.user.edit.cancel</target>
-      </trans-unit>
-      <trans-unit id="1638fe99af68b8e68f79caa0568c90d9" resname="mb.core.user.confirmdelete.check">
-        <source>mb.core.user.confirmdelete.check</source>
-        <target>__mb.core.user.confirmdelete.check</target>
-      </trans-unit>
-      <trans-unit id="b8712d9a5a67426b0d47bfd799ae51fe" resname="mb.core.user.confirmdelete.yes">
-        <source>mb.core.user.confirmdelete.yes</source>
-        <target>__mb.core.user.confirmdelete.yes</target>
-      </trans-unit>
-      <trans-unit id="14fb442c7098e153afc7720661858fac" resname="mb.core.user.confirmdelete.no">
-        <source>mb.core.user.confirmdelete.no</source>
-        <target>__mb.core.user.confirmdelete.no</target>
-      </trans-unit>
-      <trans-unit id="18de8162e371da730a52c3d6d452e5ad" resname="mb.core.admin.copyright.label.autoopen">
-        <source>mb.core.admin.copyright.label.autoopen</source>
-        <target>__mb.core.admin.copyright.label.autoopen</target>
-      </trans-unit>
-      <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
-        <source>mb.core.admin.featureinfo.label.autoopen</source>
-        <target>__mb.core.admin.featureinfo.label.autoopen</target>
-      </trans-unit>
-      <trans-unit id="656d615fc3d3f6ea34a34e5a19bcf36c" resname="mb.core.admin.featureinfo.label.deactivateonclose">
-        <source>mb.core.admin.featureinfo.label.deactivateonclose</source>
-        <target>__mb.core.admin.featureinfo.label.deactivateonclose</target>
-      </trans-unit>
-      <trans-unit id="f2fca95e4366a0e4a5aad0b95efb5744" resname="mb.core.admin.printclient.label.autoopen">
-        <source>mb.core.admin.printclient.label.autoopen</source>
-        <target>__mb.core.admin.printclient.label.autoopen</target>
-      </trans-unit>
-      <trans-unit id="b163e7bd1f8de3ae1a5abf00b6342cee" resname="mb.core.admin.printclient.label.rotatable">
-        <source>mb.core.admin.printclient.label.rotatable</source>
-        <target>__mb.core.admin.printclient.label.rotatable</target>
+      <trans-unit id="937de90c8cbe2cbfca37e4df0c18b6aa" resname="mb.core.layertree.label.deleteallsources">
+        <source>mb.core.layertree.label.deleteallsources</source>
+        <target>Alle Quellen entfernen</target>
       </trans-unit>
       <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
         <source>mb.core.admin.legend.label.autoopen</source>
-        <target>__mb.core.admin.legend.label.autoopen</target>
+        <target>Autoopen</target>
       </trans-unit>
       <trans-unit id="a68b07cd84e92c05aa0182899bccc4c0" resname="mb.core.admin.legend.label.hideemptylayers">
         <source>mb.core.admin.legend.label.hideemptylayers</source>
-        <target>__mb.core.admin.legend.label.hideemptylayers</target>
+        <target>Layer ohne Legende ausblenden</target>
       </trans-unit>
       <trans-unit id="cd587ed8a374f42b8c2e5575dcb02ad0" resname="mb.core.admin.legend.label.generatelegendurl">
         <source>mb.core.admin.legend.label.generatelegendurl</source>
-        <target>__mb.core.admin.legend.label.generatelegendurl</target>
+        <target>Legende URL generieren</target>
       </trans-unit>
-      <trans-unit id="25823fe94cc994cb7a6d84fbbb191589" resname="mb.core.admin.legend.label.showwmsitle">
-        <source>mb.core.admin.legend.label.showwmsitle</source>
-        <target>__mb.core.admin.legend.label.showwmsitle</target>
+      <trans-unit id="90675349c781bc0f026bca337fce8218" resname="mb.core.admin.legend.label.showsourcetitle">
+        <source>mb.core.admin.legend.label.showsourcetitle</source>
+        <target>Titel der Quelle anzeigen</target>
       </trans-unit>
       <trans-unit id="0ca2080280477b91ee0130c78044e3e6" resname="mb.core.admin.legend.label.showlayertitle">
         <source>mb.core.admin.legend.label.showlayertitle</source>
-        <target>__mb.core.admin.legend.label.showlayertitle</target>
+        <target>Titel des Layers anzeigen</target>
       </trans-unit>
       <trans-unit id="7dc9941d3994c6bcf1410b0b4ae5400d" resname="mb.core.admin.legend.label.showgroupedlayertitle">
         <source>mb.core.admin.legend.label.showgroupedlayertitle</source>
-        <target>__mb.core.admin.legend.label.showgroupedlayertitle</target>
+        <target>Titel des Layers anzeigen</target>
+      </trans-unit>
+      <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
+        <source>mb.core.admin.featureinfo.label.autoopen</source>
+        <target>Autoopen</target>
+      </trans-unit>
+      <trans-unit id="656d615fc3d3f6ea34a34e5a19bcf36c" resname="mb.core.admin.featureinfo.label.deactivateonclose">
+        <source>mb.core.admin.featureinfo.label.deactivateonclose</source>
+        <target>Deactivate on close</target>
+      </trans-unit>
+      <trans-unit id="f2fca95e4366a0e4a5aad0b95efb5744" resname="mb.core.admin.printclient.label.autoopen">
+        <source>mb.core.admin.printclient.label.autoopen</source>
+        <target>Autoopen</target>
+      </trans-unit>
+      <trans-unit id="b163e7bd1f8de3ae1a5abf00b6342cee" resname="mb.core.admin.printclient.label.rotatable">
+        <source>mb.core.admin.printclient.label.rotatable</source>
+        <target>Rotatable</target>
+      </trans-unit>
+      <trans-unit id="18de8162e371da730a52c3d6d452e5ad" resname="mb.core.admin.copyright.label.autoopen">
+        <source>mb.core.admin.copyright.label.autoopen</source>
+        <target>Autoopen</target>
       </trans-unit>
       <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
         <source>mb.core.admin.layertree.label.showbasesources</source>
-        <target>__mb.core.admin.layertree.label.showbasesources</target>
+        <target>Hintergurndquellen anzeigen</target>
       </trans-unit>
       <trans-unit id="71b752f5f8f9465c2dd33581a4d5e797" resname="mb.core.admin.layertree.label.autoopen">
         <source>mb.core.admin.layertree.label.autoopen</source>
-        <target>__mb.core.admin.layertree.label.autoopen</target>
+        <target>Autoopen</target>
       </trans-unit>
       <trans-unit id="855cb022f4ce41f697c2d2a4674b8509" resname="mb.core.admin.layertree.label.showheader">
         <source>mb.core.admin.layertree.label.showheader</source>
-        <target>__mb.core.admin.layertree.label.showheader</target>
+        <target>Header anzeigen</target>
       </trans-unit>
       <trans-unit id="b9e1e1bd4fe12c68c958110c5a3f24aa" resname="mb.core.admin.layertree.label.showlayerremove">
         <source>mb.core.admin.layertree.label.showlayerremove</source>
-        <target>__mb.core.admin.layertree.label.showlayerremove</target>
-      </trans-unit>
-      <trans-unit id="d790c15ddf46a26e48371b7ea25874c7" resname="mb.core.group.create.btn.save">
-        <source>mb.core.group.create.btn.save</source>
-        <target>__mb.core.group.create.btn.save</target>
-      </trans-unit>
-      <trans-unit id="6b7435a571cdd608c946079a14389927" resname="mb.core.group.create.btn.cancel">
-        <source>mb.core.group.create.btn.cancel</source>
-        <target>__mb.core.group.create.btn.cancel</target>
-      </trans-unit>
-      <trans-unit id="b112803ab9deb7deba2a6b24ef3bb91a" resname="Add Group">
-        <source>Add Group</source>
-        <target>__Add Group</target>
-      </trans-unit>
-      <trans-unit id="9ac2ae1a61605153506353010f964b38" resname="mb.core.group.index.groupindex">
-        <source>mb.core.group.index.groupindex</source>
-        <target>__mb.core.group.index.groupindex</target>
-      </trans-unit>
-      <trans-unit id="08f1f32cbd6bf7422568c1c55edf0933" resname="Available Groups">
-        <source>Available Groups</source>
-        <target>__Available Groups</target>
-      </trans-unit>
-      <trans-unit id="267c6cd259d771b0fbfb6876da7d64aa" resname="mb.core.group.index.name">
-        <source>mb.core.group.index.name</source>
-        <target>__mb.core.group.index.name</target>
-      </trans-unit>
-      <trans-unit id="3caf8e49918dd03faf351affc0e36d85" resname="mb.core.group.index.edit">
-        <source>mb.core.group.index.edit</source>
-        <target>__mb.core.group.index.edit</target>
-      </trans-unit>
-      <trans-unit id="5ecef298720e3c2477d761b004f0eee5" resname="mb.core.group.index.delete">
-        <source>mb.core.group.index.delete</source>
-        <target>__mb.core.group.index.delete</target>
-      </trans-unit>
-      <trans-unit id="f6612e39f1899f6bdc3bbc73ecd14fbc" resname="No Groups">
-        <source>No Groups</source>
-        <target>__No Groups</target>
-      </trans-unit>
-      <trans-unit id="d784ac1ec510102d5594f6b5802b77ed" resname="mb.core.group.edit.btn.save">
-        <source>mb.core.group.edit.btn.save</source>
-        <target>__mb.core.group.edit.btn.save</target>
-      </trans-unit>
-      <trans-unit id="7bd57421a24c077de01c828b2b3df5e6" resname="mb.core.group.edit.btn.cancel">
-        <source>mb.core.group.edit.btn.cancel</source>
-        <target>__mb.core.group.edit.btn.cancel</target>
-      </trans-unit>
-      <trans-unit id="f2a6c498fb90ee345d997f888fce3b18" resname="Delete">
-        <source>Delete</source>
-        <target>__Delete</target>
-      </trans-unit>
-      <trans-unit id="4f9dd14e1101391c65d74868e71699ef" resname="Really Delete">
-        <source>Really Delete</source>
-        <target>__Really Delete</target>
-      </trans-unit>
-      <trans-unit id="ea4788705e6873b424c65e91c2846b19" resname="Cancel">
-        <source>Cancel</source>
-        <target>__Cancel</target>
-      </trans-unit>
-      <trans-unit id="0f12b8661ea48b5dc0e707689b70e4ad" resname="mb.core.template.fullscreen.btn1">
-        <source>mb.core.template.fullscreen.btn1</source>
-        <target>__mb.core.template.fullscreen.btn1</target>
-      </trans-unit>
-      <trans-unit id="d7a6799216945a3451d4385ed8b191f1" resname="mb.core.template.fullscreen.btn2">
-        <source>mb.core.template.fullscreen.btn2</source>
-        <target>__mb.core.template.fullscreen.btn2</target>
-      </trans-unit>
-      <trans-unit id="79296375ceb324c571c063095c4f9ef5" resname="mb.core.template.region.title">
-        <source>mb.core.template.region.title</source>
-        <target>__mb.core.template.region.title</target>
+        <target>"Layer entfernen" anzeigen</target>
       </trans-unit>
     </body>
   </file>

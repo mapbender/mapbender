@@ -48,7 +48,7 @@
       </trans-unit>
       <trans-unit id="ebf155ed57c2b787bf8b9c560fbfab04" resname="mb.wmc.list.add_wmc">
         <source>mb.wmc.list.add_wmc</source>
-        <target>Add new wmc to</target>
+        <target>Add new WMC to</target>
       </trans-unit>
       <trans-unit id="e74c2fba29ebe644dd429341c4c5e47c" resname="mb.wmc.list.id">
         <source>mb.wmc.list.id</source>
@@ -64,19 +64,19 @@
       </trans-unit>
       <trans-unit id="1cbc6d988a8f10a8908c92bf0ba0d882" resname="mb.wmc.list.toggle">
         <source>mb.wmc.list.toggle</source>
-        <target>Toggle public/private wmc</target>
+        <target>Toggle public/private WMC</target>
       </trans-unit>
       <trans-unit id="3f37ac88e8a7ad09bb6494c20f6c7132" resname="mb.wmc.list.wmc_element">
         <source>mb.wmc.list.wmc_element</source>
-        <target>Wmc element</target>
+        <target>WMC element</target>
       </trans-unit>
       <trans-unit id="f73abb52294a0a73c218dc300c88f667" resname="mb.wmc.list.delete_wmc">
         <source>mb.wmc.list.delete_wmc</source>
-        <target>Delete Wmc</target>
+        <target>Delete WMC</target>
       </trans-unit>
       <trans-unit id="ebb1d279c88c7e6246c1fee8375c1544" resname="mb.wmc.list.no_wmc">
         <source>mb.wmc.list.no_wmc</source>
-        <target>No wmc added.</target>
+        <target>No WMC added.</target>
       </trans-unit>
       <trans-unit id="c54d49cd842e05e1585f0b77b3418e8c" resname="mb.wmc.element.suggestmap.error_srs">
         <source>mb.wmc.element.suggestmap.error_srs</source>
@@ -100,28 +100,27 @@
       </trans-unit>
       <trans-unit id="82be49e5b51462edf1afdec84259533c" resname="mb.wmc.wmceditor.list.add_wmc">
         <source>mb.wmc.wmceditor.list.add_wmc</source>
-        <target>Add new wmc</target>
-      </trans-unit>
-      <trans-unit id="515cb5901176080db2ddd27c1a6d98ef" resname="mb.wmc.wmceditor.list.toggle">
-        <source>mb.wmc.wmceditor.list.toggle</source>
-        <target>Toggle public/private wmc</target>
-      </trans-unit>
-      <trans-unit id="946f46ce5b9c2b8aef78bd102fe7e8f0" resname="mb.wmc.wmceditor.list.edit_wmc">
-        <source>mb.wmc.wmceditor.list.edit_wmc</source>
-        <target>Edit Wmc</target>
+        <target>Add new WMC</target>
       </trans-unit>
       <trans-unit id="76a4bbc43038154b49bcc6bb0d6dbdcf" resname="mb.wmc.wmceditor.list.delete_wmc">
         <source>mb.wmc.wmceditor.list.delete_wmc</source>
-        <target>Delete wmc</target>
+        <target>Delete WMC</target>
+      </trans-unit>
+      <trans-unit id="946f46ce5b9c2b8aef78bd102fe7e8f0" resname="mb.wmc.wmceditor.list.edit_wmc">
+        <source>mb.wmc.wmceditor.list.edit_wmc</source>
+        <target>Edit WMC</target>
+      </trans-unit>
+      <trans-unit id="515cb5901176080db2ddd27c1a6d98ef" resname="mb.wmc.wmceditor.list.toggle">
+        <source>mb.wmc.wmceditor.list.toggle</source>
+        <target>Toggle public/private WMC</target>
       </trans-unit>
       <trans-unit id="9e9268c8f77f5287dc3c69b830ce3ef1" resname="mb.wmc.wmceditor.list.no_wmc">
         <source>mb.wmc.wmceditor.list.no_wmc</source>
-        <target>No wmc added.</target>
+        <target>No WMC added.</target>
       </trans-unit>
       <trans-unit id="b516d036d029316adb16f384d744ee3e" resname="mb.wmc.wmc.delete_confirm">
         <source>mb.wmc.wmc.delete_confirm</source>
-        <target>Do you really want to remove the wmc with the title &lt;em&gt;%wmc_title%&lt;/em&gt;
-            and the id &lt;em&gt;%wmc_id%&lt;/em&gt;?</target>
+        <target>Do you really want to remove the WMC with the title &lt;em&gt;%wmc_title%&lt;/em&gt; and the id &lt;em&gt;%wmc_id%&lt;/em&gt;?</target>
       </trans-unit>
       <trans-unit id="f9e25e70a7d907096e58ee21775675d3" resname="mb.wmc.wmcloader.state.load">
         <source>mb.wmc.wmcloader.state.load</source>
@@ -145,11 +144,11 @@
       </trans-unit>
       <trans-unit id="50a0a43d7734636fdca90ac4e93c124b" resname="mb.wmc.wmcloader.view_wmc">
         <source>mb.wmc.wmcloader.view_wmc</source>
-        <target>View wmc</target>
+        <target>View WMC</target>
       </trans-unit>
       <trans-unit id="fa9bcb4301135e8b5a2ea4a460d01971" resname="mb.wmc.wmcloader.no_wmc">
         <source>mb.wmc.wmcloader.no_wmc</source>
-        <target>No wmc.</target>
+        <target>No WMC.</target>
       </trans-unit>
       <trans-unit id="ba7143e6ca93dfdd032e4b4a65a647e8" resname="mb.wmc.wmceditor.create">
         <source>mb.wmc.wmceditor.create</source>
@@ -167,17 +166,81 @@
         <source>mb.wmc.wmceditor.screenshot</source>
         <target>screenshot or width, height etc.</target>
       </trans-unit>
+      <trans-unit id="c6daaae020364a8d68cf735705392539" resname="mb.wmc.suggestmap.class.title">
+        <source>mb.wmc.suggestmap.class.title</source>
+        <target>Suggest map</target>
+      </trans-unit>
+      <trans-unit id="e14da0b27acc227abcb5e66ba639f6d3" resname="mb.wmc.suggestmap.class.description">
+        <source>mb.wmc.suggestmap.class.description</source>
+        <target>Suggest a map</target>
+      </trans-unit>
+      <trans-unit id="4c52975ab8325a81dbaf6f445fb2e4b4" resname="mb.wmc.suggestmap.tag.suggest">
+        <source>mb.wmc.suggestmap.tag.suggest</source>
+        <target>suggest</target>
+      </trans-unit>
+      <trans-unit id="bafb6d388b664a85037bf6ecc7f6ac88" resname="mb.wmc.suggestmap.tag.map">
+        <source>mb.wmc.suggestmap.tag.map</source>
+        <target>map</target>
+      </trans-unit>
+      <trans-unit id="4e0e50e3930c88c9fece9eb150c7feab" resname="mb.wmc.wmceditor.class.title">
+        <source>mb.wmc.wmceditor.class.title</source>
+        <target>WMC editor</target>
+      </trans-unit>
+      <trans-unit id="b6d9a92724be41fbb79a84f42708290e" resname="mb.wmc.wmceditor.class.description">
+        <source>mb.wmc.wmceditor.class.description</source>
+        <target>Creates and edits WMC documents</target>
+      </trans-unit>
+      <trans-unit id="351cc8f67e3cb73c27792fba58ef9dd6" resname="mb.wmc.wmceditor.tag.wmc">
+        <source>mb.wmc.wmceditor.tag.wmc</source>
+        <target>wmc</target>
+      </trans-unit>
+      <trans-unit id="fca0f4d9d0975e11d80a6525d89b88ff" resname="mb.wmc.wmceditor.tag.editor">
+        <source>mb.wmc.wmceditor.tag.editor</source>
+        <target>editor</target>
+      </trans-unit>
+      <trans-unit id="c0fb789744235d2345389b651e413a51" resname="mb.wmc.wmclist.class.title">
+        <source>mb.wmc.wmclist.class.title</source>
+        <target>WMC list</target>
+      </trans-unit>
+      <trans-unit id="a466182b91e7c90e8e89e0a7017322ef" resname="mb.wmc.wmclist.class.description">
+        <source>mb.wmc.wmclist.class.description</source>
+        <target>Shows available WMC documents at list</target>
+      </trans-unit>
+      <trans-unit id="3f95f9b38e9577764a01c2a600045872" resname="mb.wmc.wmclist.tag.wmc">
+        <source>mb.wmc.wmclist.tag.wmc</source>
+        <target>wmc</target>
+      </trans-unit>
+      <trans-unit id="f522491b90f4a0868c31ec17e597d0d9" resname="mb.wmc.wmclist.tag.list">
+        <source>mb.wmc.wmclist.tag.list</source>
+        <target>list</target>
+      </trans-unit>
+      <trans-unit id="042eee8054aa3baa9397244d38ad8228" resname="mb.wmc.wmcloader.class.title">
+        <source>mb.wmc.wmcloader.class.title</source>
+        <target>WMC loader</target>
+      </trans-unit>
+      <trans-unit id="eb6f1e211f0c4fce0cb4e847844a7ca0" resname="mb.wmc.wmcloader.class.description">
+        <source>mb.wmc.wmcloader.class.description</source>
+        <target>__mb.wmc.wmcloader.class.description</target>
+      </trans-unit>
+      <trans-unit id="fa367490fe08a5c455c902eb5714abe4" resname="mb.wmc.wmcloader.tag.wmc">
+        <source>mb.wmc.wmcloader.tag.wmc</source>
+        <target>wmc</target>
+      </trans-unit>
+      <trans-unit id="a6b4b9511073b04b86ad123c593cd81b" resname="mb.wmc.wmcloader.tag.loader">
+        <source>loader</source>
+        <target>loader</target>
+      </trans-unit>
       <trans-unit id="84a803ca295fd79315c77052d5a0e120" resname="mb.wmc.error.wmcxmlloader_notallowed">
         <source>mb.wmc.error.wmcxmlloader_notallowed</source>
-        <target>Wmc XML loader is not allowed.</target>
+        <target>WMC XML loader is not allowed.</target>
       </trans-unit>
       <trans-unit id="68ab6d8f3b2dc2a0020d23f40b639e97" resname="mb.wmc.error.wmclistloader_notallowed">
         <source>mb.wmc.error.wmclistloader_notallowed</source>
-        <target>Wmc list loader is not allowed.</target>
+        <target>WMC list loader is not allowed.</target>
       </trans-unit>
       <trans-unit id="f48f2d39314f2615bdabbdd425a3aa44" resname="mb.wmc.error.wmcidloader_notallowed">
         <source>mb.wmc.error.wmcidloader_notallowed</source>
-        <target>Wmc id loader is not allowed.</target>
+        <target>WMC id loader is not allowed.</target>
       </trans-unit>
       <trans-unit id="923c9f1ba7ebaa2623687b575533fd9e" resname="mb.wmc.error.wmcnotfound">
         <source>mb.wmc.error.wmcnotfound</source>
@@ -197,11 +260,11 @@
       </trans-unit>
       <trans-unit id="48438f15e13a526eb0ce2f28f4dab55d" resname="mb.wmc.error.wmccannotbesaved">
         <source>mb.wmc.error.wmccannotbesaved</source>
-        <target>WMC $wmcid% can not be saved.</target>
+        <target>WMC %wmcid% can not be saved.</target>
       </trans-unit>
       <trans-unit id="c6970155c4ab171311dd3b7ae03b109f" resname="mb.wmc.error.wmcsaved">
         <source>mb.wmc.error.wmcsaved</source>
-        <target>WMC $wmcid% is saved.</target>
+        <target>WMC %wmcid% is saved.</target>
       </trans-unit>
       <trans-unit id="777a392870477be18bcbb4d9a3a7f675" resname="mb.wmc.error.statecannotbesaved">
         <source>mb.wmc.error.statecannotbesaved</source>
