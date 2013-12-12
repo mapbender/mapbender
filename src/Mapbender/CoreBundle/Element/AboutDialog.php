@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -16,7 +15,7 @@ class AboutDialog extends Element
      */
     static public function getClassTitle()
     {
-        return "About Dialog";
+        return "mb.core.aboutdialog.class.title";
     }
 
     /**
@@ -24,7 +23,7 @@ class AboutDialog extends Element
      */
     static public function getClassDescription()
     {
-        return "Renders a button to show a about dialog";
+        return "mb.core.aboutdialog.class.description";
     }
 
     /**
@@ -32,7 +31,10 @@ class AboutDialog extends Element
      */
     static public function getClassTags()
     {
-        return array('Help', 'Info', 'About');
+        return array(
+            "mb.core.aboutdialog.tag.help",
+            "mb.core.aboutdialog.tag.info",
+            "mb.core.aboutdialog.tag.about");
     }
 
     /**
@@ -88,11 +90,11 @@ class AboutDialog extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:about_dialog.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            'title' => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:about_dialog.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    'title' => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
     /**
@@ -101,13 +103,13 @@ class AboutDialog extends Element
     public function httpAction($action)
     {
         $response = new Response();
-        switch($action)
-        {
+        switch ($action) {
             case 'content':
                 $about = $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:about_dialog_content.html.twig');
+                    ->render('MapbenderCoreBundle:Element:about_dialog_content.html.twig');
                 $response->setContent($about);
                 return $response;
         }
     }
+
 }

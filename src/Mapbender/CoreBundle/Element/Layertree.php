@@ -17,7 +17,7 @@ class Layertree extends Element
      */
     static public function getClassTitle()
     {
-        return "Layertree";
+        return "mb.core.layertree.class.title";
     }
 
     /**
@@ -25,15 +25,7 @@ class Layertree extends Element
      */
     static public function getClassDescription()
     {
-        return "Tree of map's layers";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getDescription()
-    {
-        return "Shows a treeview of the layers on the map";
+        return "mb.core.layertree.class.description";
     }
 
     /**
@@ -41,7 +33,10 @@ class Layertree extends Element
      */
     public function getTags()
     {
-        return array('Layertree', 'Layer');
+        return array(
+            "mb.core.layertree.tag.layertree",
+            "mb.core.layertree.tag.layer",
+            "mb.core.layertree.tag.tree");
     }
 
     /**

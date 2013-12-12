@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -17,7 +16,7 @@ class Legend extends Element
      */
     public static function getClassTitle()
     {
-        return "Legend Object";
+        return "mb.core.legend.class.title";
     }
 
     /**
@@ -25,7 +24,7 @@ class Legend extends Element
      */
     public static function getClassDescription()
     {
-        return "The legend object shows the legend of the map's layers";
+        return "mb.core.legend.class.description";
     }
 
     /**
@@ -33,7 +32,9 @@ class Legend extends Element
      */
     public static function getClassTags()
     {
-        return array('legend', "dialog");
+        return array(
+            "mb.core.legend.tag.layer",
+            "mb.core.legend.tag.legend");
     }
 
     /**
@@ -58,7 +59,6 @@ class Legend extends Element
             "target" => null,
             "elementType" => null,
             "displayType" => null,
-            "noLegend" => "No legend available",
             "autoOpen" => true,
             "tooltip" => "Legend",
             "checkGraphic" => false,
@@ -91,10 +91,10 @@ class Legend extends Element
     public function render()
     {
         return $this->container->get('templating')->render(
-                        'MapbenderCoreBundle:Element:legend.html.twig',
-                        array('id' => $this->getId(),
-                            "title" => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                'MapbenderCoreBundle:Element:legend.html.twig',
+                array('id' => $this->getId(),
+                "title" => $this->getTitle(),
+                'configuration' => $this->getConfiguration()));
     }
 
     /**
@@ -104,5 +104,5 @@ class Legend extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:legend.html.twig';
     }
-}
 
+}

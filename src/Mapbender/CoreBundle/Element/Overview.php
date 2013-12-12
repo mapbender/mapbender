@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -17,7 +16,7 @@ class Overview extends Element
      */
     static public function getClassTitle()
     {
-        return "Overview";
+        return "mb.core.overview.class.title";
     }
 
     /**
@@ -25,7 +24,7 @@ class Overview extends Element
      */
     static public function getClassDescription()
     {
-        return "Renders a small overview map";
+        return "mb.core.overview.class.description";
     }
 
     /**
@@ -33,7 +32,9 @@ class Overview extends Element
      */
     static public function getClassTags()
     {
-        return array('Overview', "Map's overview");
+        return array(
+            "mb.core.overview.tag.overview",
+            "mb.core.overview.tag.map");
     }
 
     /**
@@ -87,11 +88,11 @@ class Overview extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:overview.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            "title" => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:overview.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    "title" => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
     /**
@@ -101,5 +102,5 @@ class Overview extends Element
     {
         return 'MapbenderManagerBundle:Element:overview.html.twig';
     }
-}
 
+}

@@ -20,7 +20,7 @@ class FeatureInfo extends Element
      */
     static public function getClassTitle()
     {
-        return "Feature Info Dialog";
+        return "mb.core.featureinfo.class.title";
     }
 
     /**
@@ -28,7 +28,7 @@ class FeatureInfo extends Element
      */
     static public function getClassDescription()
     {
-        return "Feature info tool for most layer types";
+        return "mb.core.featureinfo.class.description";
     }
 
     /**
@@ -36,7 +36,11 @@ class FeatureInfo extends Element
      */
     static public function getClassTags()
     {
-        return array('dialog', 'featureinfo');
+        return array(
+            "mb.core.featureinfo.tag.feature",
+            "mb.core.featureinfo.tag.featureinfo",
+            "mb.core.featureinfo.tag.info",
+            "mb.core.featureinfo.tag.dialog");
     }
 
     /**
