@@ -1,6 +1,11 @@
 # Changelog
 
-* **v3.0.2.0** -
+* **v3.0.X.X** -
+  - Closed XSS vulnerability which required admin permissions
+
+## Release History
+
+* **v3.0.2.0** - 2013-11-26
   - Signer for OwsProxy added
   - Properties for regions added
   - Sketch feature (circle) added
@@ -15,8 +20,6 @@
   - console.* stubs
   - Proxy security: Only pass correctly signed URLs
   - Allow for multiple application YAML files
-
-## Release History
 
 * **v3.0.1.1** - 2013-09-26
   - The development controller app_dev.php is limited to localhost again
