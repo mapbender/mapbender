@@ -1,6 +1,9 @@
 # Changelog
 
 * **v3.0.2.0** -
+  
+  - Translation for en,de added
+  - ZoomBar option component 'zoom_in_out' added
   - Signer for OwsProxy added
   - Properties for regions added
   - Sketch feature (circle) added
