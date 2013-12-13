@@ -131,8 +131,9 @@ parameters:
                     poiButton:
                         title: POI
                         tooltip: Send POI
-                        label: true
                         class: Mapbender\CoreBundle\Element\Button
+                        icon: iconPoi
+                        label: true
                         target: poi
                 content:
                     map:
