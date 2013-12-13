@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="6bca6f7f34f01cc242ed9e94b644926c" resname="mb.print.imageexport.class.title">
         <source>mb.print.imageexport.class.title</source>
-        <target>Image esport</target>
+        <target>Image export</target>
       </trans-unit>
       <trans-unit id="b503c1ddd7589ad46c6a0bfd6283f7ac" resname="mb.print.imageexport.class.description">
         <source>mb.print.imageexport.class.description</source>
