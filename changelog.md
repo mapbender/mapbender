@@ -4,6 +4,8 @@
   - Closed XSS vulnerability which required admin permissions
 
 ## Release History
+* **v3.0.3.0** - 2013-xx-xx
+  - added cookie_secure: false and cookie_lifetime: 3600 to parameters.yml http://symfony.com/doc/2.1/reference/configuration/framework.html#cookie-lifetime
 
 * **v3.0.2.0** - 2013-11-26
   - Signer for OwsProxy added

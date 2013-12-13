@@ -20,5 +20,6 @@ parameters:
         server_version: 3.0.2.0
         server_logo:   bundles/mapbendercore/image/logo_mb3.png
 
+    # framework : http://symfony.com/doc/2.1/reference/configuration/framework.html#cookie-lifetime
     cookie_secure: false
     cookie_lifetime: 3600
