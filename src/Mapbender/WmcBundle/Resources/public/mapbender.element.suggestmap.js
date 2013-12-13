@@ -193,32 +193,22 @@
         },
         _suggestEmail: function(url){
             if(url){
-                var mail_cmd = "mailto:?subject=" + this.element.attr("title") + "&body=" + encodeURIComponent(url);
-                document.location.href = mail_cmd;
+                Mapbender.SMC.callEmail(this.element.attr("title"), url);
             }
         },
         _suggestTwitter: function(url){
             if(url){
-                var cmd = $('<a href="http://www.twitter.com/home?status=' + this.element.attr('title') + ': ' + encodeURIComponent(url) + '" target="_BLANK">Twitter</a>');
-                cmd[0].click();
-                cmd.remove();
-                cmd = null;
+                Mapbender.SMC.callTwitter(this.element.attr("title"), url);
             }
         },
         _suggestFacebook: function(url){
             if(url){
-                var cmd = $('<a href="http://www.facebook.com/sharer.php?u=' + encodeURIComponent(url) + '&t=' + this.element.attr('title') + '" target="_BLANK">Facebook</a>');
-                cmd[0].click();
-                cmd.remove();
-                cmd = null;
+                Mapbender.SMC.callFacebook(this.element.attr("title"), url);
             }
         },
         _suggestGooglePlus: function(url){
             if(url){
-                var cmd = $('<a href="plus.google.com/share?url=' + encodeURIComponent(url) + '" target="_BLANK">Google+</a>');
-                cmd[0].click();
-                cmd.remove();
-                cmd = null;
+                Mapbender.SMC.callGooglePlus(this.element.attr("title"), url);
             }
         },
         _suggestStateError: function(response){

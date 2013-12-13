@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -21,7 +20,7 @@ class ZoomBar extends Element
      */
     public static function getClassTitle()
     {
-        return "Navigation Toolbar";
+        return "mb.core.zoombar.class.title";
     }
 
     /**
@@ -29,9 +28,7 @@ class ZoomBar extends Element
      */
     public static function getClassDescription()
     {
-        return "The Navigation Toolbar element provides a floating control to pan and zoom,
-similar to the OpenLayers PanZoomBar control. This element though is easier to
-use when custom styling is needed.";
+        return "mb.core.zoombar.class.description";
     }
 
     /**
@@ -39,7 +36,12 @@ use when custom styling is needed.";
      */
     public static function getClassTags()
     {
-        return array('zoom', 'pan', 'control', 'navigation', 'panel');
+        return array(
+            "mb.core.zoombar.tag.zoom",
+            "mb.core.zoombar.tag.pan",
+            "mb.core.zoombar.tag.control",
+            "mb.core.zoombar.tag.navigation",
+            "mb.core.zoombar.tag.panel");
     }
 
     /**
@@ -47,7 +49,8 @@ use when custom styling is needed.";
      */
     public function getAssets()
     {
-        return array('js' => array('mapbender.element.zoombar.js'),'css' => array());
+        return array('js' => array('mapbender.element.zoombar.js'), 'css' => array(
+));
     }
 
     /**
@@ -59,7 +62,7 @@ use when custom styling is needed.";
             'tooltip' => null,
             'target' => null,
             'components' => array(
-                "pan","history","zoom_box","zoom_max","zoom_slider"),
+                "pan", "history", "zoom_box", "zoom_max", "zoom_in_out", "zoom_slider"),
             'anchor' => 'left-top',
             'stepSize' => 50,
             'stepByPixel' => false,
@@ -79,12 +82,16 @@ use when custom styling is needed.";
      */
     public function render()
     {
+        $configuration = $this->getConfiguration();
+        if(in_array("zoom_slider", $configuration['components'])
+            && !in_array("zoom_in_out", $configuration['components']))
+            $configuration['components'][] = "zoom_in_out";
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:zoombar.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            "title" => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:zoombar.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    "title" => $this->getTitle(),
+                    'configuration' => $configuration));
     }
 
     /**
@@ -102,5 +109,5 @@ use when custom styling is needed.";
     {
         return 'MapbenderManagerBundle:Element:zoombar.html.twig';
     }
-}
 
+}

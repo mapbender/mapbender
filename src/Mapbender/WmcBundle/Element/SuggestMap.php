@@ -76,6 +76,7 @@ class SuggestMap extends Element
         $js = array(
             'mapbender.element.suggestmap.js',
             '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+            '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js'
         );
         return array(
             'js' => $js,

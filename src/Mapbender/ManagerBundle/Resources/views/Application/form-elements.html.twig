@@ -27,8 +27,8 @@
           {% if application.getElementsByRegion(region)|length > 0 %}
             {% for element in application.getElementsByRegion(region) %}
               <tr class="element" data-id="{{element.id}}" data-href="{{ path('mapbender_manager_element_weight', {'id': element.id})}}">
-                <td class="titleColumn description">{{ element.title }}</td>
-                <td class="typeColumn description">{{ element_class_title(element) }}</td>
+                <td class="titleColumn description">{{ element.title | trans }}</td>
+                <td class="typeColumn description">{{ element_class_title(element) | trans }}</td>
                 <td class="iconColumn">
                   <div class="checkWrapper left iconCheckbox iconSmall {% if element.enabled %}iconCheckboxActive{% endif %}" title="{{"mb.manager.admin.element.show_hide"|trans}} {{element.title}}">
                     <input class="checkbox" data-url="{{ path('mapbender_manager_element_enable', { 'id': element.id })}}" data-id="{{ element.id }}" type="checkbox" {% if element.enabled %} checked="checked" {% endif %}>

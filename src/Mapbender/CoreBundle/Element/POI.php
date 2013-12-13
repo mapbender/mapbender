@@ -1,20 +1,17 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-//use Symfony\Component\DependencyInjection\ContainerInterface;
-//use Symfony\Component\HttpFoundation\Response;
-//use PDO;
 
 class POI extends Element
 {
+
     /**
      * @inheritdoc
      */
     static public function getClassTitle()
     {
-        return 'POI';
+        return "mb.core.poi.class.title";
     }
 
     /**
@@ -22,7 +19,7 @@ class POI extends Element
      */
     static public function getClassDescription()
     {
-        return 'Create a POI for sharing';
+        return "mb.core.poi.class.description";
     }
 
     /**
@@ -30,7 +27,10 @@ class POI extends Element
      */
     static public function getClassTags()
     {
-        return array('POI');
+        return array(
+            "mb.core.poi.tag.poi",
+            "mb.core.poi.tag.point",
+            "mb.core.poi.tag.interest");
     }
 
     /**
@@ -39,7 +39,7 @@ class POI extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'body' => 'Please take a look at this POI:',
+            'body' => 'Please take a look at this POI',
         );
     }
 
@@ -51,8 +51,11 @@ class POI extends Element
         return array(
             'js' => array(
                 'mapbender.element.poi.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),
-            'css' => array());
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+// to call social networks '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js'
+            ),
+            'css' => array(),
+            'trans' => array('MapbenderCoreBundle:Element:poi.json.twig'));
     }
 
     /**
@@ -68,10 +71,12 @@ class POI extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')->render('MapbenderCoreBundle:Element:poi.html.twig', array(
-            'id' => $this->getId(),
-            'title' => $this->getTitle(),
-            'configuration' => $this->getConfiguration())
+        return $this->container->get('templating')->render('MapbenderCoreBundle:Element:poi.html.twig',
+                array(
+                'id' => $this->getId(),
+                'title' => $this->getTitle(),
+                'configuration' => $this->getConfiguration())
         );
     }
+
 }

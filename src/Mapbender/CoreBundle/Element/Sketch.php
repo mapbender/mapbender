@@ -4,7 +4,7 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 
 /**
- * My Element
+ * Sketch Element
  * 
  * @author Paul Schmidt
  */
@@ -16,7 +16,7 @@ class Sketch extends Element
      */
     public static function getClassTitle()
     {
-        return 'Sketch';
+        return "mb.core.sketch.class.title";
     }
 
     /**
@@ -24,7 +24,7 @@ class Sketch extends Element
      */
     public static function getClassDescription()
     {
-        return "Sketch.";
+        return "mb.core.sketch.class.description";
     }
 
     /**
@@ -32,7 +32,9 @@ class Sketch extends Element
      */
     public static function getClassTags()
     {
-        return array('Sketch');
+        return array(
+            "mb.core.sketch.tag.sketch",
+            "mb.core.sketch.tag.circle");
     }
 
     /**
@@ -49,8 +51,7 @@ class Sketch extends Element
     public function getAssets()
     {
         return array(
-            'js' => array(
-                'mapbender.element.sketch.js'),
+            'js' => array('mapbender.element.sketch.js'),
             'css' => array(),
             'trans' => array('MapbenderCoreBundle:Element:sketch.json.twig')
         );
@@ -113,7 +114,7 @@ class Sketch extends Element
 
     protected function getForm()
     {
-        $config = $this->getConfiguration();
+        
         $html = $this->container->get('templating')
             ->render('MapbenderCoreBundle:Form:sketch-form.html.twig',
             array(
@@ -133,7 +134,7 @@ class Sketch extends Element
             array('Content-Type' => 'application/json'));
         // otherwise
         return new Response(json_encode(array(
-                "error" => MyError)), 200,
+                "error" => DefineErrorAtTransTwig)), 200,
             array('Content-Type' => 'application/json'));
     }
 

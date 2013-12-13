@@ -45,8 +45,9 @@ class Legend extends Element
         return array(
             'js' => array(
                 'mapbender.element.legend.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-            ), 'css' => array()
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js' ),
+            'css' => array(),
+            'trans' => array('MapbenderCoreBundle:Element:legend.json.twig')
         );
     }
 

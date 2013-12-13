@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -17,7 +16,7 @@ class ScaleDisplay extends Element
      */
     static public function getClassTitle()
     {
-        return "ScaleDisplay";
+        return "mb.core.scaledesplay.class.title";
     }
 
     /**
@@ -25,7 +24,7 @@ class ScaleDisplay extends Element
      */
     static public function getClassDescription()
     {
-        return "Displays the current map scale";
+        return "mb.core.scaledesplay.class.description";
     }
 
     /**
@@ -33,7 +32,9 @@ class ScaleDisplay extends Element
      */
     static public function getClassTags()
     {
-        return array('ScaleDisplay', "Map's scale display");
+        return array(
+            "mb.core.scaledesplay.tag.scale",
+            "mb.core.scaledesplay.tag.display");
     }
 
     /**
@@ -65,7 +66,7 @@ class ScaleDisplay extends Element
     {
         return 'Mapbender\CoreBundle\Element\Type\ScaleDisplayAdminType';
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -73,7 +74,7 @@ class ScaleDisplay extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:scaledisplay.html.twig';
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -90,12 +91,11 @@ class ScaleDisplay extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:scaledisplay.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            "title" => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:scaledisplay.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    "title" => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
 }
-

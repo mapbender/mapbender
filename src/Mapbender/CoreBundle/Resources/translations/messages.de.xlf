@@ -18,6 +18,14 @@
         <source>mb.core.aboutdialog.content.website</source>
         <target>Webseite</target>
       </trans-unit>
+      <trans-unit id="d34e7ce2889c54092fc147356c3faa14" resname="mb.core.searchrouter.popup.btn.ok">
+        <source>mb.core.searchrouter.popup.btn.ok</source>
+        <target>Search</target>
+      </trans-unit>
+      <trans-unit id="23529c02cd41313d7461246d3b172252" resname="mb.core.searchrouter.popup.btn.cancel">
+        <source>mb.core.searchrouter.popup.btn.cancel</source>
+        <target>Close</target>
+      </trans-unit>
       <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
         <source>mb.core.poi.sharepoi</source>
         <target>POI teilen</target>
@@ -34,6 +42,14 @@
         <source>mb.core.legend.nolegend</source>
         <target>No legend available</target>
       </trans-unit>
+      <trans-unit id="869cda28f81afcf6b2488ba2f4117e91" resname="mb.core.ruler.popup.btn.ok">
+        <source>mb.core.ruler.popup.btn.ok</source>
+        <target>Close</target>
+      </trans-unit>
+      <trans-unit id="255dfe21ded353929e03b1f48f3d8603" resname="mb.core.ruler.create_error">
+        <source>mb.core.ruler.create_error</source>
+        <target>Ruler: Type must be line or area.</target>
+      </trans-unit>
       <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
         <source>mb.core.printclient.label.template</source>
         <target>Template</target>
@@ -49,6 +65,18 @@
       <trans-unit id="1d6b0cb565c46ffb069608c564861358" resname="mb.core.printclient.label.rotation">
         <source>mb.core.printclient.label.rotation</source>
         <target>Rotation</target>
+      </trans-unit>
+      <trans-unit id="6e4242b56cb4757b456f1308ed822a9f" resname="mb.core.printclient.popup.btn.ok">
+        <source>mb.core.printclient.popup.btn.ok</source>
+        <target>Print</target>
+      </trans-unit>
+      <trans-unit id="0a5f51d624f13c3e7238d5ab610ca6df" resname="mb.core.printclient.popup.btn.cancel">
+        <source>mb.core.printclient.popup.btn.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="8d91b0195b98dba3e9c4cfdff582505d" resname="mb.core.printclient.info.noactivelayer">
+        <source>mb.core.printclient.info.noactivelayer</source>
+        <target>No active layer!</target>
       </trans-unit>
       <trans-unit id="c6c2daa6191922b3b1d289aae1ec8f31" resname="mb.core.overview.nolayer">
         <source>mb.core.overview.nolayer</source>
@@ -137,6 +165,14 @@
       <trans-unit id="9e35239edca01f34b1092c1bb8539150" resname="mb.core.zoombar.zoombyworld">
         <source>mb.core.zoombar.zoombyworld</source>
         <target>Zoom auf gesamte Abdeckung</target>
+      </trans-unit>
+      <trans-unit id="960c243a1919783483eb30395e158174" resname="mb.core.poi.popup.btn.ok">
+        <source>mb.core.poi.popup.btn.ok</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="9388cfe7d4bb57b87dcdd53957723380" resname="mb.core.poi.popup.btn.cancel">
+        <source>mb.core.poi.popup.btn.cancel</source>
+        <target>Cancel</target>
       </trans-unit>
       <trans-unit id="868e554ea585dc5b1d394eb2b66e972c" resname="mb.core.layertree.tooltip.sublayers_openclose">
         <source>mb.core.layertree.tooltip.sublayers_openclose</source>
@@ -393,6 +429,205 @@
       <trans-unit id="bb3d9d93dcc6f6dabc4d558e5a9f4222" resname="mb.core.overview.tag.map">
         <source>mb.core.overview.tag.map</source>
         <target>map</target>
+      </trans-unit>
+      <trans-unit id="7de6b6e60dc29467aa72968a60ec2781" resname="mb.core.poi.class.title">
+        <source>mb.core.poi.class.title</source>
+        <target>POI</target>
+      </trans-unit>
+      <trans-unit id="fcb05118e63af0be8eb3f9d50d2b8383" resname="mb.core.poi.class.description">
+        <source>mb.core.poi.class.description</source>
+        <target>Create a POI for sharing</target>
+      </trans-unit>
+      <trans-unit id="718b2faa45e981d61773328503144051" resname="mb.core.poi.tag.poi">
+        <source>mb.core.poi.tag.poi</source>
+        <target>poi</target>
+      </trans-unit>
+      <trans-unit id="2af3ff9534bd82ecac0c9f50041b4c7a" resname="mb.core.poi.tag.point">
+        <source>mb.core.poi.tag.point</source>
+        <target>point</target>
+      </trans-unit>
+      <trans-unit id="f1ceefdd74e75aa8d53bbdcc65de9972" resname="mb.core.poi.tag.interest">
+        <source>mb.core.poi.tag.interest</source>
+        <target>interest</target>
+      </trans-unit>
+      <trans-unit id="b180ccb1c56081666f1a56362200e5e1" resname="mb.core.printclient.class.title">
+        <source>mb.core.printclient.class.title</source>
+        <target>Print client</target>
+      </trans-unit>
+      <trans-unit id="269640fdb1e7654374bffe68abf67d3b" resname="mb.core.printclient.class.description">
+        <source>mb.core.printclient.class.description</source>
+        <target>Renders a Print dialog</target>
+      </trans-unit>
+      <trans-unit id="02faddbd2151e0d55dfb3084ad20682b" resname="mb.core.printclient.tag.print">
+        <source>mb.core.printclient.tag.print</source>
+        <target>print</target>
+      </trans-unit>
+      <trans-unit id="c5617befbd65f424d0919d2a64132eab" resname="mb.core.printclient.tag.pdf">
+        <source>mb.core.printclient.tag.pdf</source>
+        <target>pdf</target>
+      </trans-unit>
+      <trans-unit id="f750d15bfba2ae4304ecab260cdc2605" resname="mb.core.printclient.tag.png">
+        <source>mb.core.printclient.tag.png</source>
+        <target>png</target>
+      </trans-unit>
+      <trans-unit id="5029f5e2943a7d47e3f3aacf6dccdd29" resname="mb.core.printclient.tag.gif">
+        <source>mb.core.printclient.tag.gif</source>
+        <target>gif</target>
+      </trans-unit>
+      <trans-unit id="372f9e7a3c20b23e10ceb76afde7e5ef" resname="mb.core.printclient.tag.jpg">
+        <source>mb.core.printclient.tag.jpg</source>
+        <target>jpg</target>
+      </trans-unit>
+      <trans-unit id="0d294c2ab4049fb7a76de6c3314fcfb6" resname="mb.core.printclient.tag.jpeg">
+        <source>mb.core.printclient.tag.jpeg</source>
+        <target>jpeg</target>
+      </trans-unit>
+      <trans-unit id="89eb0c4bbc2dbf36dfaa030e4424cde7" resname="mb.core.ruler.class.title">
+        <source>mb.core.ruler.class.title</source>
+        <target>Line/Area Ruler</target>
+      </trans-unit>
+      <trans-unit id="df474f4781cc43d563e67a4bcbde1bbb" resname="mb.core.ruler.class.description">
+        <source>mb.core.ruler.class.description</source>
+        <target>Ruler to draw a line/area and display length/area in a dialog</target>
+      </trans-unit>
+      <trans-unit id="930ae199f6f8a21841e441cb64842229" resname="mb.core.ruler.tag.line">
+        <source>mb.core.ruler.tag.line</source>
+        <target>line</target>
+      </trans-unit>
+      <trans-unit id="f570199e41fc3a71fcad197332f1c315" resname="mb.core.ruler.tag.area">
+        <source>mb.core.ruler.tag.area</source>
+        <target>area</target>
+      </trans-unit>
+      <trans-unit id="271f9c8a039e12ec95a13cc6b14fcca2" resname="mb.core.ruler.tag.measure">
+        <source>mb.core.ruler.tag.measure</source>
+        <target>measure</target>
+      </trans-unit>
+      <trans-unit id="c0cca69e14f668acf1f83440eda1074a" resname="mb.core.scalebar.class.title">
+        <source>mb.core.scalebar.class.title</source>
+        <target>Scale bar</target>
+      </trans-unit>
+      <trans-unit id="df03ffea85a38b9b604f4253377fe61c" resname="mb.core.scalebar.class.description">
+        <source>mb.core.scalebar.class.description</source>
+        <target>Scale bar description</target>
+      </trans-unit>
+      <trans-unit id="f00869751975198840c745c4d58b1360" resname="mb.core.scalebar.tag.scale">
+        <source>mb.core.scalebar.tag.scale</source>
+        <target>scale</target>
+      </trans-unit>
+      <trans-unit id="cca56645382cac33ff73d2252c54600c" resname="mb.core.scalebar.tag.bar">
+        <source>mb.core.scalebar.tag.bar</source>
+        <target>bar</target>
+      </trans-unit>
+      <trans-unit id="812e48d5463949ff4ec75821c08e21fa" resname="mb.core.scaledesplay.class.title">
+        <source>mb.core.scaledesplay.class.title</source>
+        <target>Scale display</target>
+      </trans-unit>
+      <trans-unit id="d87c8436f686b8d9ee50940e48c72d5c" resname="mb.core.scaledesplay.class.description">
+        <source>mb.core.scaledesplay.class.description</source>
+        <target>Displays the current map scale</target>
+      </trans-unit>
+      <trans-unit id="60fb48c3f1fa6eb6d978563437098a07" resname="mb.core.scaledesplay.tag.scale">
+        <source>mb.core.scaledesplay.tag.scale</source>
+        <target>scale</target>
+      </trans-unit>
+      <trans-unit id="73ac4fbf3a468502c350a0d980399b5b" resname="mb.core.scaledesplay.tag.display">
+        <source>mb.core.scaledesplay.tag.display</source>
+        <target>display</target>
+      </trans-unit>
+      <trans-unit id="b85e01d963b6106bb2d2de44e241f97d" resname="mb.core.scaleselector.class.title">
+        <source>mb.core.scaleselector.class.title</source>
+        <target>Scale selector</target>
+      </trans-unit>
+      <trans-unit id="d9751023269ee3f4f3d84ad0b6355f8b" resname="mb.core.scaleselector.class.description">
+        <source>mb.core.scaleselector.class.description</source>
+        <target>Displays and changes a map scale</target>
+      </trans-unit>
+      <trans-unit id="ea46156a86949b1bfd58cad9bef049c0" resname="mb.core.scaleselector.tag.scale">
+        <source>mb.core.scaleselector.tag.scale</source>
+        <target>scale</target>
+      </trans-unit>
+      <trans-unit id="e3e2d4bbdab626252c2d0d480f7209a7" resname="mb.core.scaleselector.tag.selector">
+        <source>mb.core.scaleselector.tag.selector</source>
+        <target>selector</target>
+      </trans-unit>
+      <trans-unit id="26ffa92883d7c4140fe66b4d76176b5f" resname="mb.core.searchrouter.class.title">
+        <source>mb.core.searchrouter.class.title</source>
+        <target>Search router</target>
+      </trans-unit>
+      <trans-unit id="6ab2689e7fbc56d76055949a730142b4" resname="mb.core.searchrouter.class.description">
+        <source>mb.core.searchrouter.class.description</source>
+        <target>Configurable search routing element</target>
+      </trans-unit>
+      <trans-unit id="503c12f9039ad418c497da90113359cb" resname="mb.core.searchrouter.tag.search">
+        <source>mb.core.searchrouter.tag.search</source>
+        <target>search</target>
+      </trans-unit>
+      <trans-unit id="e397392a6736e4c692690852147ee845" resname="mb.core.searchrouter.tag.router">
+        <source>mb.core.searchrouter.tag.router</source>
+        <target>router</target>
+      </trans-unit>
+      <trans-unit id="2d82734a91ac66cd751875530abdd2dd" resname="mb.core.sketch.class.title">
+        <source>mb.core.sketch.class.title</source>
+        <target>Sketch</target>
+      </trans-unit>
+      <trans-unit id="fc172c08f41ce1029d79190eecdb2446" resname="mb.core.sketch.class.description">
+        <source>mb.core.sketch.class.description</source>
+        <target>Sketch description</target>
+      </trans-unit>
+      <trans-unit id="7ae33b15957a16081ce3bff4098cec7a" resname="mb.core.sketch.tag.sketch">
+        <source>mb.core.sketch.tag.sketch</source>
+        <target>sketch</target>
+      </trans-unit>
+      <trans-unit id="1b7a2f9aa3b7ee2e3d7989fd4b6f3caa" resname="mb.core.sketch.tag.circle">
+        <source>mb.core.sketch.tag.circle</source>
+        <target>circle</target>
+      </trans-unit>
+      <trans-unit id="d79bf5328be657237d7d5c90ef421742" resname="mb.core.srsselector.class.title">
+        <source>mb.core.srsselector.class.title</source>
+        <target>SRS selector</target>
+      </trans-unit>
+      <trans-unit id="508503c89e4e2a834b66b6ce4a17d51c" resname="mb.core.srsselector.class.description">
+        <source>mb.core.srsselector.class.description</source>
+        <target>The spatial reference system selector changes the map's
+            spatial reference system</target>
+      </trans-unit>
+      <trans-unit id="ab4fd7ac0477504180eaaa27b0e42464" resname="mb.core.srsselector.tag.srs">
+        <source>mb.core.srsselector.tag.srs</source>
+        <target>srs</target>
+      </trans-unit>
+      <trans-unit id="35d70c6b173b8c1dafdf0bc3f9773321" resname="mb.core.srsselector.tag.selector">
+        <source>mb.core.srsselector.tag.selector</source>
+        <target>selector</target>
+      </trans-unit>
+      <trans-unit id="f60b842a67fc8eb5030a1d8dc06d8cd8" resname="mb.core.zoombar.class.title">
+        <source>mb.core.zoombar.class.title</source>
+        <target>Navigation toolbar</target>
+      </trans-unit>
+      <trans-unit id="7f5f1a808b7d6958c515f4cf6bc0dc58" resname="mb.core.zoombar.class.description">
+        <source>mb.core.zoombar.class.description</source>
+        <target>The Navigation Toolbar element provides a floating control to pan and zoom,
+similar to the OpenLayers PanZoomBar control. This element though is easier to
+use when custom styling is needed</target>
+      </trans-unit>
+      <trans-unit id="dd8da2c48bb9ba297c6c85c5760c63b8" resname="mb.core.zoombar.tag.zoom">
+        <source>mb.core.zoombar.tag.zoom</source>
+        <target>zoom</target>
+      </trans-unit>
+      <trans-unit id="95ba880851677b631f8bb98a6d2d6383" resname="mb.core.zoombar.tag.pan">
+        <source>mb.core.zoombar.tag.pan</source>
+        <target>pan</target>
+      </trans-unit>
+      <trans-unit id="5125087b8bc99226bc9852bd732d46ea" resname="mb.core.zoombar.tag.control">
+        <source>mb.core.zoombar.tag.control</source>
+        <target>control</target>
+      </trans-unit>
+      <trans-unit id="e3fb9d6f29c3fc95ffffab704493bc02" resname="mb.core.zoombar.tag.navigation">
+        <source>mb.core.zoombar.tag.navigation</source>
+        <target>navigation</target>
+      </trans-unit>
+      <trans-unit id="26f98160a1059c3bb9ba4ca8079d70ca" resname="mb.core.zoombar.tag.panel">
+        <source>mb.core.zoombar.tag.panel</source>
+        <target>panel</target>
       </trans-unit>
       <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
         <source>mb.core.admin.legend.label.autoopen</source>

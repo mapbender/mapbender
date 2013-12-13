@@ -25,11 +25,17 @@
         <span class="iconZoomMin iconBig" title="{{ "mb.core.zoombar.zoombyworld" | trans }}"></span>
       </li>
     {% endif %}
-    {% if 'zoom_slider' in configuration.components %}
+    {% if 'zoom_in_out' in configuration.components or 'zoom_slider' in configuration.components %}
       <li class="zoomSlider">
+        {% if 'zoom_in_out' in configuration.components %}
         <span class="iconZoomIn iconBig"></span>
+        {% endif %}
+        {% if 'zoom_slider' in configuration.components %}
         <ul class="zoomSliderLevels"></ul>
+        {% endif %}
+        {% if 'zoom_in_out' in configuration.components %}
         <span class="iconZoomOut iconBig"></span>
+        {% endif %}
       </li>
     {% endif %}
   </ul>

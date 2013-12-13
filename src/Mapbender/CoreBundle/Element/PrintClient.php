@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -18,7 +17,7 @@ class PrintClient extends Element
      */
     static public function getClassTitle()
     {
-        return "Print Client";
+        return "mb.core.printclient.class.title";
     }
 
     /**
@@ -26,7 +25,7 @@ class PrintClient extends Element
      */
     static public function getClassDescription()
     {
-        return "Renders a Print dialog";
+        return "mb.core.printclient.class.description";
     }
 
     /**
@@ -34,7 +33,13 @@ class PrintClient extends Element
      */
     static public function getClassTags()
     {
-        return array('Print');
+        return array(
+            "mb.core.printclient.tag.print",
+            "mb.core.printclient.tag.pdf",
+            "mb.core.printclient.tag.png",
+            "mb.core.printclient.tag.gif",
+            "mb.core.printclient.tag.jpg",
+            "mb.core.printclient.tag.jpeg");
     }
 
     /**
@@ -42,10 +47,11 @@ class PrintClient extends Element
      */
     public function getAssets()
     {
-        return array('js' => array('mapbender.element.printClient.js', 
-                                   '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                                   '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
-                     'css' => array());
+        return array('js' => array('mapbender.element.printClient.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
+            'css' => array(),
+            'trans' => array('MapbenderCoreBundle:Element:printclient.json.twig'));
     }
 
     /**
@@ -95,21 +101,21 @@ class PrintClient extends Element
             "file_prefix" => 'mapbender3'
         );
     }
-    
+
     /**
      * @inheritdoc
      */
     public function getConfiguration()
     {
         $config = parent::getConfiguration();
-        if(isset($config["templates"])){
+        if (isset($config["templates"])) {
             $templates = array();
             foreach ($config["templates"] as $template) {
                 $templates[$template['template']] = $template;
             }
             $config["templates"] = $templates;
         }
-        if(isset($config["quality_levels"])){
+        if (isset($config["quality_levels"])) {
             $levels = array();
             foreach ($config["quality_levels"] as $level) {
                 $levels[$level['dpi']] = $level['label'];
@@ -118,15 +124,15 @@ class PrintClient extends Element
         }
         return $config;
     }
-    
+
     /**
      * @inheritdoc
      */
     public static function getType()
     {
         return 'Mapbender\CoreBundle\Element\Type\PrintClientAdminType';
-    }    
-    
+    }
+
     /**
      * @inheritdoc
      */
@@ -134,7 +140,7 @@ class PrintClient extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:printclient.html.twig';
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -149,18 +155,19 @@ class PrintClient extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:printclient.html.twig', 
-                        array(
-                            'id' => $this->getId(),
-                            'title' => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()
-                        ));
+                ->render('MapbenderCoreBundle:Element:printclient.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    'title' => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()
+        ));
     }
 
     /**
      * @inheritdoc
      */
-    public function httpAction($action) {
+    public function httpAction($action)
+    {
         switch ($action) {
             case 'direct':
 
@@ -177,13 +184,15 @@ class PrintClient extends Element
                 $content = json_encode($data);
 
                 // Forward to Printer Service URL using OWSProxy
-                $url = $this->container->get('router')->generate('mapbender_print_print_service', array(), true);
+                $url = $this->container->get('router')->generate('mapbender_print_print_service',
+                    array(), true);
 
                 return $this->container->get('http_kernel')->forward(
-                                'OwsProxy3CoreBundle:OwsProxy:genericProxy', array(
-                            'url' => $url,
-                            'content' => $content
-                                )
+                        'OwsProxy3CoreBundle:OwsProxy:genericProxy',
+                        array(
+                        'url' => $url,
+                        'content' => $content
+                        )
                 );
 
             case 'queued':
@@ -197,7 +206,8 @@ class PrintClient extends Element
                 $odgParser = new OdgParser($container);
                 $size = $odgParser->getMapSize($data['template']);
                 $response->setContent($size->getContent());
-                return $response;    
+                return $response;
         }
     }
+
 }

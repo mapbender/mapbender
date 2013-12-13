@@ -73,9 +73,13 @@ class ElementController extends Controller
 	$regions = $template::getRegions();
 	$region = $this->get('request')->get('region');
 
-	$element = ComponentElement::getDefaultElement($class, $region);
+    $appl = new \Mapbender\CoreBundle\Component\Application($this->container,
+		$application, array());
+
+    $elmComp = new $class($appl, $this->container, ComponentElement::getDefaultElement($class, $region));
+    $elmComp->getEntity()->setTitle($elmComp->trans($elmComp->getClassTitle()));
 	$form = ComponentElement::getElementForm($this->container, $application,
-		$element);
+		$elmComp->getEntity());
 
 	return array(
 	    'form' => $form['form']->createView(),

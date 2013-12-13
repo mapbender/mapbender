@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -15,7 +14,6 @@ use Mapbender\CoreBundle\Form\DataTransformer\ElementIdTransformer;
  */
 class TargetElementType extends AbstractType
 {
-
     /**
      * ContainerInterface
      * @var ContainerInterface Container
@@ -66,18 +64,15 @@ class TargetElementType extends AbstractType
             'element_class' => null,
             'class' => 'MapbenderCoreBundle:Element',
             'property' => 'title',
-            'query_builder' => function(Options $options) use ($type)
-            {
+            'query_builder' => function(Options $options) use ($type) {
                 $builderName = preg_replace("/[^\w]/", "",
                     $options['property_path']);
                 $repository = $type->getContainer()->get('doctrine')->getRepository($options['class']);
                 $a = $options['element_class'];
-                if(isset($options['element_class']) && $options['element_class']
-                    !== null)
-                {
+                if (isset($options['element_class']) && $options['element_class']
+                    !== null) {
                     $qb = $repository->createQueryBuilder($builderName);
-                    if(is_integer(strpos($options['element_class'], "%")))
-                    {
+                    if (is_integer(strpos($options['element_class'], "%"))) {
                         $filter = $qb->expr()->andX(
                             $qb->expr()->eq($builderName . '.application',
                                 $options['application']->getId()),
@@ -85,9 +80,7 @@ class TargetElementType extends AbstractType
                         );
                         $qb->where($filter);
                         $qb->setParameter('class', $options['element_class']);
-                    }
-                    else
-                    {
+                    } else {
                         $filter = $qb->expr()->andX(
                             $qb->expr()->eq($builderName . '.application',
                                 $options['application']->getId()),
@@ -97,21 +90,17 @@ class TargetElementType extends AbstractType
                         $qb->setParameter('class', $options['element_class']);
                     }
                     return $qb;
-                }
-                else
-                {
+                } else {
                     $elm_ids = array();
-                    foreach($options['application']->getElements() as
-                            $element_entity)
-                    {
+                    foreach ($options['application']->getElements() as
+                            $element_entity) {
                         $class = $element_entity->getClass();
                         $appl = new Application($type->getContainer(),
                             $options['application'], array());
                         $element = new $class($appl, $type->getContainer(),
                             $element_entity);
                         $elm_class = get_class($element);
-                        if($elm_class::$ext_api)
-                        {
+                        if ($elm_class::$ext_api) {
                             $elm_ids[] = $element->getId();
                         }
                     }
