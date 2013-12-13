@@ -19,3 +19,6 @@ parameters:
         server_name:   Mapbender3
         server_version: 3.0.2.0
         server_logo:   bundles/mapbendercore/image/logo_mb3.png
+
+    cookie_secure: false
+    cookie_lifetime: 3600
