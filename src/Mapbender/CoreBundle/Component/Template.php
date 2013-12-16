@@ -51,7 +51,7 @@ abstract class Template
      */
     public function getAssets($type)
     {
-        if($type !== 'css' && $type !== 'js')
+        if($type !== 'css' && $type !== 'js' && $type !== 'trans')
         {
             throw new \RuntimeException('The asset type \'' . $type .
                     '\' is not supported.');

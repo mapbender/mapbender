@@ -1,21 +1,21 @@
 <fieldset class="serviceAddBox left box">
-  <legend>{{"OGC WMS"|trans}}</legend>
+  <legend>{{"mb.wms.wmsloader.repo.form.label.ogcwms"|trans}}</legend>
   <form action="{{path('mapbender_wms_repository_create')}}" method="post" novalidate="novalidate">
-      <label class="left labelInput" for="{{ form.originUrl.get('id') }}">{{"Serviceurl:" | trans}}</label>
+      <label class="left labelInput" for="{{ form.originUrl.get('id') }}">{{"mb.wms.wmsloader.repo.form.label.serviceurl" | trans}}</label>
       {{ form_widget(form.originUrl) }}
       <div class="clearContainer"></div>
 
-      <label class="left labelInput" for="{{ form.username.get('id') }}">{{"Username:" | trans}}</label>
+      <label class="left labelInput" for="{{ form.username.get('id') }}">{{"mb.wms.wmsloader.repo.form.label.username" | trans}}</label>
       {{ form_widget(form.username) }}
       <div class="clearContainer"></div>
 
-      <label class="left labelInput" for="{{ form.password.get('id') }}">{{"Password:" | trans}}</label>
+      <label class="left labelInput" for="{{ form.password.get('id') }}">{{"mb.wms.wmsloader.repo.form.label.password" | trans}}</label>
       {{ form_widget(form.password) }}
       <div class="clearContainer"></div>
 
       <div class="right">
-        <input class="button" type="submit" name="load" value="{{"Load"|trans}}" />
-        <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">{{"Cancel"|trans}}</a>
+        <input class="button" type="submit" name="load" value="{{"mb.wms.wmsloader.repo.form.label.load"|trans}}" />
+        <a href="{{path('mapbender_manager_repository_index')}}" class="button critical">{{"mb.wms.wmsloader.repo.form.label.cancel"|trans}}</a>
       </div>
       {{ form_row(form._token) }}
   </form>

@@ -13,7 +13,7 @@ class SuggestMap extends Element
      */
     static public function getClassTitle()
     {
-        return "SuggestMap";
+        return "mb.wmc.suggestmap.class.title";
     }
 
     /**
@@ -21,7 +21,7 @@ class SuggestMap extends Element
      */
     static public function getClassDescription()
     {
-        return "SuggestMap";
+        return "mb.wmc.suggestmap.class.description";
     }
 
     /**
@@ -29,7 +29,7 @@ class SuggestMap extends Element
      */
     static public function getClassTags()
     {
-        return array("suggest", "map");
+        return array("mb.wmc.suggestmap.suggest", "mb.wmc.suggestmap.map");
     }
 
     /**
@@ -76,10 +76,14 @@ class SuggestMap extends Element
         $js = array(
             'mapbender.element.suggestmap.js',
             '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+            '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js'
         );
         return array(
             'js' => $js,
-            'css' => array()
+            'css' => array(),
+            'trans' => array(
+                'MapbenderWmcBundle:Element:suggestmap.json.twig',
+                'MapbenderWmcBundle:Element:wmchandler.json.twig')
         );
     }
 
@@ -162,11 +166,12 @@ class SuggestMap extends Element
         $state = $wmchandler->findState($stateid);
         if ($state) {
             $id = $state->getId();
-            return new Response(json_encode(array("data" => array($id => $state->getJson()))),
+            return new Response(json_encode(array("data" => array($id => json_decode($state->getJson())))),
                 200, array('Content-Type' => 'application/json'));
         } else {
-            return new Response(json_encode(array("error" => 'State: ' . $stateid . ' is not found')),
-                200, array('Content-Type' => 'application/json'));
+            return new Response(json_encode(array("error" => $this->trans("mb.wmc.error.statenotfound",
+                        array('%stateid%' => $stateid)))), 200,
+                array('Content-Type' => 'application/json'));
         }
     }
 
@@ -186,8 +191,8 @@ class SuggestMap extends Element
                 array('Content-Type' => 'application/json'));
         } else {
             return new Response(json_encode(array(
-                    "error" => 'State can not be saved.')), 200,
-                array('Content-Type' => 'application/json'));
+                    "error" => $this->trans("mb.wmc.error.statecannotbesaved"))),
+                200, array('Content-Type' => 'application/json'));
         }
     }
 

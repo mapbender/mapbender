@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -19,7 +18,7 @@ class SrsSelector extends Element
      */
     public static function getClassTitle()
     {
-        return 'Spatial Reference System Selector';
+        return "mb.core.srsselector.class.title";
     }
 
     /**
@@ -27,8 +26,7 @@ class SrsSelector extends Element
      */
     public static function getClassDescription()
     {
-        return "The spatial reference system selector changes the map's
-            spatial reference system.";
+        return "mb.core.srsselector.class.description";
     }
 
     /**
@@ -36,7 +34,9 @@ class SrsSelector extends Element
      */
     public static function getClassTags()
     {
-        return array('spatial', 'reference', 'system', 'selector');
+        return array(
+            "mb.core.srsselector.tag.srs",
+            "mb.core.srsselector.tag.selector");
     }
 
     /**
@@ -86,11 +86,11 @@ class SrsSelector extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:srsselector.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            "title" => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:srsselector.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    "title" => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
     /**

@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -40,32 +39,33 @@ class ZoomBarAdminType extends AbstractType
         $builder->add('tooltip', 'text', array('required' => false))
             ->add('components', 'choice',
                 array(
-                'required'          => true,
-                'multiple'          => true,
-                'choices'           => array(
-                    "pan"         => "pan",
-                    "history"     => "history",
-                    "zoom_box"    => "zoom box",
-                    "zoom_max"    => "zoom to max extent",
-                    "zoom_slider" => "zoom slider")))
+                'required' => true,
+                'multiple' => true,
+                'choices' => array(
+                    "pan" => "Pan",
+                    "history" => "History",
+                    "zoom_box" => "Zoom box",
+                    "zoom_max" => "zoom to max extent",
+                    "zoom_in_out" => "Zoom in/out",
+                    "zoom_slider" => "Zoom slider")))
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                'application'   => $options['application'],
+                'application' => $options['application'],
                 'property_path' => '[target]',
-                'required'      => false))
+                'required' => false))
             ->add('stepSize', 'text', array('required' => false))
             ->add('stepByPixel', 'choice',
                 array(
-                'choices' => array('true'  => 'true', 'false' => 'false')))
+                'choices' => array('true' => 'true', 'false' => 'false')))
             ->add('anchor', "choice",
                 array(
                 'required' => true,
-                "choices"  => array(
-                    'inline'       => 'inline',
-                    'left-top'     => 'left-top',
-                    'left-bottom'  => 'left-bottom',
-                    'right-top'    => 'right-top',
+                "choices" => array(
+                    'inline' => 'inline',
+                    'left-top' => 'left-top',
+                    'left-bottom' => 'left-bottom',
+                    'right-top' => 'right-top',
                     'right-bottom' => 'right-bottom')))
             ->add('draggable', 'checkbox', array('required' => false));
     }

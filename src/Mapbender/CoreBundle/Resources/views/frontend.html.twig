@@ -5,7 +5,10 @@
 {% block content %}
     {% block frontend_content %}{% endblock %}
 {% endblock %}
-
+{% block trans %}
+  {{parent()}}
+{% endblock %}
 {% block js %}
   {{parent()}}
 {% endblock %}
+

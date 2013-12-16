@@ -68,14 +68,14 @@
                     width: 400,
                     buttons: {
                         'cancel': {
-                            label: 'Cancel',
+                            label: Mapbender.trans("mb.wmc.element.wmcloader.popup.btn.cancel"),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self.close();
                             }
                         },
                         'ok': {
-                            label: 'Load',
+                            label: Mapbender.trans("mb.wmc.element.wmcloader.popup.btn.ok"),
                             cssClass: 'button buttonYes right',
                             callback: function(){
                                 $('#wmc-load input[type="submit"]', self.popup.$element).click();
@@ -83,7 +83,7 @@
                             }
                         },
                         'back': {
-                            label: 'Back',
+                            label: Mapbender.trans("mb.wmc.element.wmcloader.popup.btn.back"),
                             cssClass: 'button left buttonBack',
                             callback: function(){
                                 $(".popupSubContent").remove();
@@ -109,7 +109,6 @@
                 type: "POST",
                 success: function(data){
                     $("#popupContent").html(data);
-//                    var popup = $("#popup");
                     $(".loadWmcId").on("click", $.proxy(self._loadFromId, self));
                     $(".loadWmcXml").on("click", $.proxy(self._loadForm, self));
                 }
@@ -187,7 +186,7 @@
                                 wmcHandlier.addToMap(wmc_id, response.success[wmc_id]);
                             }
                         }else if(response.error){
-                            $(".popupSubContent", self.popup.$element).html(response.error);
+                            $(".popupSubContent", self.popup.$element).html(Mapbender.trans(response.error));
                             $(".popupSubTitle", self.popup.$element).text("ERROR");
                         }
                     },

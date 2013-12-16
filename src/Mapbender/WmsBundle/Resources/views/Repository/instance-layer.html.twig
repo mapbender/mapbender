@@ -1,6 +1,6 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'Service Repository' | trans }}{% endblock %}
+{% block title %}{{ 'mb.wms.wmsloader.repo.instancelayer.title.servicerepository' | trans }}{% endblock %}
 
 {% block manager_css %}
 {% endblock %}
@@ -12,11 +12,11 @@
 
 {% block manager_content %}
 <div class="well">
-<p>{{ 'Wms Instance Layers' | trans }}</p>
+<p>{{ 'mb.wms.wmsloader.repo.instancelayer.label.wmsinstancelayers' | trans }}</p>
 {{ form_errors(form) }}
     <form action="{{path('mapbender_wms_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post">
         {{form_rest(form)}}
-        <input type="submit" name="save" value="{{"Save"|trans}}" />
+        <input type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instancelayer.btn.save"|trans}}" />
     </form>
 </div>
 {% endblock %}

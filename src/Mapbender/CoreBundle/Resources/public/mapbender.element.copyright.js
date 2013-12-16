@@ -6,6 +6,9 @@
         popup: null,
         _create: function() {
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            if(this.options.autoOpen){
+                this.open();
+            }
             this._trigger('ready');
             this._ready();
         },

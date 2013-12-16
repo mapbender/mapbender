@@ -66,14 +66,14 @@
                         width: 320,
                         buttons: {
                                 'cancel': {
-                                    label: 'Cancel',
+                                    label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
                                     cssClass: 'button buttonCancel critical right',
                                     callback: function(){
                                         self.close();
                                     }
                                 },
                                 'ok': {
-                                    label: 'Print',
+                                    label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
                                     cssClass: 'button right',
                                     callback: function(){
                                         self._print();
@@ -425,7 +425,7 @@
                     continue;
                 }
                 if(0 !== type.indexOf('OpenLayers.Layer.')) {
-                    window.console && console.log('Layer is of unknown type for print.', layer);
+//                    window.console && console.log('Layer is of unknown type for print.', layer);
                     continue;
                 }
 
@@ -454,7 +454,7 @@
             form.attr('method', 'post');
             
             if (num === 0){
-                Mapbender.info('No active layer!');
+                Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
             }else{
                 //click hidden submit button to check requierd fields
                 form.find('input[type="submit"]').click();

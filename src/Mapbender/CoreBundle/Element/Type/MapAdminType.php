@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -84,4 +83,3 @@ class MapAdminType extends AbstractType
     }
 
 }
-

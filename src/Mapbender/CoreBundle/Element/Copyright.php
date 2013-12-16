@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -20,7 +19,7 @@ class Copyright extends Element
      */
     public static function getClassTitle()
     {
-	return "Copyright";
+        return "mb.core.copyright.class.title";
     }
 
     /**
@@ -28,7 +27,7 @@ class Copyright extends Element
      */
     public static function getClassDescription()
     {
-	return "The copyright shows a copyright label and terms of use as a dialog.";
+        return "mb.core.copyright.class.description";
     }
 
     /**
@@ -36,7 +35,9 @@ class Copyright extends Element
      */
     public static function getClassTags()
     {
-	return array('copyright', 'terms of use');
+        return array(
+            'mb.core.copyright.tag.copyright',
+            "mb.core.copyright.tag.dialog");
     }
 
     /**
@@ -44,7 +45,7 @@ class Copyright extends Element
      */
     public static function getType()
     {
-	return 'Mapbender\CoreBundle\Element\Type\CopyrightAdminType';
+        return 'Mapbender\CoreBundle\Element\Type\CopyrightAdminType';
     }
 
     /**
@@ -52,13 +53,13 @@ class Copyright extends Element
      */
     public function getAssets()
     {
-	return array(
-	    'js' => array(
-		'mapbender.element.copyright.js',
-		'@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-	    ),
-	    'css' => array()
-	);
+        return array(
+            'js' => array(
+                'mapbender.element.copyright.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+            ),
+            'css' => array()
+        );
     }
 
     /**
@@ -67,11 +68,11 @@ class Copyright extends Element
     public static function getDefaultConfiguration()
     {
 
-	return array(
-	    'titel' => 'Copyright',
-	    'autoOpen' => false,
-	    'content' => null,
-	);
+        return array(
+            'titel' => 'Copyright',
+            'autoOpen' => false,
+            'content' => null,
+        );
     }
 
     /**
@@ -79,7 +80,7 @@ class Copyright extends Element
      */
     public function getWidgetName()
     {
-	return 'mapbender.mbCopyright';
+        return 'mapbender.mbCopyright';
     }
 
     /**
@@ -87,12 +88,12 @@ class Copyright extends Element
      */
     public function render()
     {
-	return $this->container->get('templating')
-		->render('MapbenderCoreBundle:Element:copyright.html.twig',
-		    array(
-		    'id' => $this->getId(),
-		    'title' => $this->getTitle(),
-		    'configuration' => $this->getConfiguration()));
+        return $this->container->get('templating')
+                ->render('MapbenderCoreBundle:Element:copyright.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    'title' => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
     /**
@@ -100,7 +101,7 @@ class Copyright extends Element
      */
     public static function getFormTemplate()
     {
-	return 'MapbenderCoreBundle:ElementAdmin:copyright.html.twig';
+        return 'MapbenderCoreBundle:ElementAdmin:copyright.html.twig';
     }
 
     /**
@@ -108,17 +109,15 @@ class Copyright extends Element
      */
     public function httpAction($action)
     {
-	$response = new Response();
-	switch($action)
-	{
-	    case 'content':
-		$about = $this->container->get('templating')
-		    ->render('MapbenderCoreBundle:Element:copyright-content.html.twig',
-		    array("configuration" => $this->getConfiguration()));
-		$response->setContent($about);
-		return $response;
-	}
+        $response = new Response();
+        switch ($action) {
+            case 'content':
+                $about = $this->container->get('templating')
+                    ->render('MapbenderCoreBundle:Element:copyright-content.html.twig',
+                    array("configuration" => $this->getConfiguration()));
+                $response->setContent($about);
+                return $response;
+        }
     }
 
 }
-
