@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\PrintBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -16,7 +15,7 @@ class ImageExport extends Element
      */
     static public function getClassTitle()
     {
-        return "Image Export";
+        return "mb.print.imageexport.class.title";
     }
 
     /**
@@ -24,7 +23,7 @@ class ImageExport extends Element
      */
     static public function getClassDescription()
     {
-        return "Image Export";
+        return "mb.print.imageexport.class.description";
     }
 
     /**
@@ -32,9 +31,13 @@ class ImageExport extends Element
      */
     static public function getTags()
     {
-        return array('');
+        return array(
+            "mb.print.imageexport.tag.image",
+            "mb.print.imageexport.tag.export",
+            "mb.print.imageexport.tag.jpeg",
+            "mb.print.imageexport.tag.png");
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -48,10 +51,11 @@ class ImageExport extends Element
      */
     public function getAssets()
     {
-        return array('js' => array('mapbender.element.imageExport.js', 
-                                   '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                                   '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
-                     'css' => array());
+        return array('js' => array('mapbender.element.imageExport.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
+            'css' => array(),
+            'trans' => array('MapbenderPrintBundle:Element:imageexport.json.twig'));
     }
 
     /**
@@ -63,7 +67,7 @@ class ImageExport extends Element
             "target" => null
         );
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -72,21 +76,21 @@ class ImageExport extends Element
         $config = parent::getConfiguration();
         return $config;
     }
-    
+
     /**
      * @inheritdoc
      */
     public static function getType()
     {
-      return 'Mapbender\PrintBundle\Element\Type\ImageExportAdminType';
-    }    
-    
+        return 'Mapbender\PrintBundle\Element\Type\ImageExportAdminType';
+    }
+
     /**
      * @inheritdoc
      */
     public static function getFormTemplate()
     {
-      return 'MapbenderPrintBundle:ElementAdmin:imageexport.html.twig';
+        return 'MapbenderPrintBundle:ElementAdmin:imageexport.html.twig';
     }
 
     /**
@@ -95,33 +99,37 @@ class ImageExport extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderPrintBundle:Element:imageexport.html.twig', 
-                        array(
-                            'id' => $this->getId(),
-                            'title' => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()
-                        ));
+                ->render('MapbenderPrintBundle:Element:imageexport.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    'title' => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()
+        ));
     }
 
     /**
      * @inheritdoc
      */
-    public function httpAction($action) {
+    public function httpAction($action)
+    {
         switch ($action) {
 
             case 'export':
-                $request = $this->container->get('request');               
+                $request = $this->container->get('request');
                 $data = $request->get('data');
-                
+
                 // Forward to Printer Service URL using OWSProxy
-                $url = $this->container->get('router')->generate('mapbender_print_print_export', array(), true);
+                $url = $this->container->get('router')->generate('mapbender_print_print_export',
+                    array(), true);
 
                 return $this->container->get('http_kernel')->forward(
-                                'OwsProxy3CoreBundle:OwsProxy:genericProxy', array(
-                                        'url' => $url,
-                                        'content' => $data
-                                    )
-                ); 
+                        'OwsProxy3CoreBundle:OwsProxy:genericProxy',
+                        array(
+                        'url' => $url,
+                        'content' => $data
+                        )
+                );
         }
     }
+
 }

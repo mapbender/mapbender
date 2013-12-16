@@ -287,6 +287,12 @@ abstract class Element
     {
         throw new NotFoundHttpException('This element has no Ajax handler.');
     }
+    
+    public function trans($key, array $parameters = array(), $domain = null, $locale = null)
+    {
+        return $this->container->get('translator')->trans($key);
+//        return $this->container->get('translator')->trans($key, $parameters, $domain, $locale);
+    }
 
     /*     * ***********************************************************************
      *                                                                       *
@@ -412,8 +418,7 @@ abstract class Element
 
             $formType->add('configuration', new $type(),
                 array(
-                'application' => $application,
-                'element' => $element
+                'application' => $application
             ));
             $formTheme = $class::getFormTemplate();
             $formAssets = $class::getFormAssets();

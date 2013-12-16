@@ -18,7 +18,7 @@ class WmsLoader extends Element
      */
     static public function getClassTitle()
     {
-        return "WmsLoader";
+        return "mb.wms.wmsloader.class.title";
     }
 
     /**
@@ -26,7 +26,7 @@ class WmsLoader extends Element
      */
     static public function getClassDescription()
     {
-        return "Opens a dialog in which a WMS can be loaded via the getCapabilities-Request";
+        return "mb.wms.wmsloader.class.description";
     }
 
     /**
@@ -34,7 +34,7 @@ class WmsLoader extends Element
      */
     static public function getClassTags()
     {
-        return array("wms", "loader");
+        return array("mb.wms.wmsloader.wms", "mb.wms.wmsloader.loader");
     }
 
     /**
@@ -66,10 +66,12 @@ class WmsLoader extends Element
      */
     public function getAssets()
     {
-        $files = array('js' => array(
+        $files = array(
+            'js' => array(
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                'mapbender.element.wmsloader.js'
-            ), 'css' => array());
+                'mapbender.element.wmsloader.js'),
+            'css' => array(),
+            'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));
         $config = $this->getConfiguration();
         if (isset($config['useDeclarative']) && $config['useDeclarative'] === true) {
             $files['js'][] = "@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js";

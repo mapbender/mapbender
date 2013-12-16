@@ -2,67 +2,67 @@
   <li class="openCloseTitle iconSmall {% if itemLevel > 1 %} iconExpandClosed {% else %} iconExpand {% endif %}">{{ layer.title }}</li>
   {% if layer.name|length > 0 %}
     <li>
-      <span class="labelText">{{"Name" | trans }}:</span>
+      <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.name" | trans }}:</span>
       <span class="metaText">{{ layer.name }}</span>
     </li>
   {% endif %}
   {% if layer.title|length > 0 %}
   <li>
-    <span class="labelText">{{"Title" | trans }}:</span>
+    <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.title" | trans }}:</span>
     <span class="metaText">{{ layer.title }}</span>
   </li>
   {% endif %}
   {% if layer.abstract|length > 0 %}
   <li>
-    <span class="labelText">{{"Abstract" | trans }}:</span>
+    <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.abstract" | trans }}:</span>
     <span class="metaText">{{ layer.abstract }}</span>
   </li>
   {% endif %}
   {% if layer.queryable|length > 0 %}
   <li>
-    <span class="labelText">{{"Queryable" | trans }}:</span>
+    <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.queryable" | trans }}:</span>
     <span class="metaText">{{ layer.queryable }}</span>
   </li>
   {% endif %}
   {% if layer.cascaded|length > 0 %}
   <li>
-    <span class="labelText">{{"Cascaded" | trans }}:</span>
+    <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.cascaded" | trans }}:</span>
     <span class="metaText">{{ layer.cascaded }}</span>
   </li>
   {% endif %}
   {% if layer.opaque|length > 0 %}
   <li>
-    <span class="labelText">{{"Opaque" | trans }}:</span>
+    <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.opaque" | trans }}:</span>
     <span class="metaText">{{ layer.opaque }}</span>
   </li>
   {% endif %}
   {% if layer.noSubset|length > 0 %}
   <li>
-    <span class="labelText">{{"NoSubset" | trans }}:</span>
+    <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.nosubset" | trans }}:</span>
     <span class="metaText">{{ layer.noSubset }}</span>
   </li>
   {% endif %}
   {% if layer.fixedWidth|length > 0 %}
   <li>
-    <span class="labelText">{{"FixedWidth" | trans }}:</span>
+    <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.fixedwidth" | trans }}:</span>
     <span class="metaText">{{ layer.fixedWidth }}</span>
   </li>
   {% endif %}
   {% if layer.fixedHeight|length > 0 %}
   <li>
-    <span class="labelText">{{"FixedHeight" | trans }}:</span>
+    <span class="labelText">{{"mb.wms.wmsloader.repo.layer.label.fixedheight" | trans }}:</span>
     <span class="metaText">{{ layer.fixedHeight }}</span>
   </li>
   {% endif %}
   {% if layer.latlonBounds != null %}
     <li>
-      <span class="labelText left">{{ "LatlonBounds" | trans }}:</span>
+      <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.latlonbounds" | trans }}:</span>
       <span class="metaText">{{ layer.latlonBounds.srs }} {{ layer.latlonBounds.minx }}, {{ layer.latlonBounds.miny }}, {{ layer.latlonBounds.maxx }}, {{ layer.latlonBounds.maxy }}</span>
     </li>
   {% endif %}
   {% if layer.boundingBoxes|length > 0 %}
     <li>
-      <span class="labelText left">{{ "BoundingBox" | trans }}:</span>
+      <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.boundingbox" | trans }}:</span>
       <ul class="left">
         {% for bbox in layer.boundingBoxes %}
           <li>
@@ -74,7 +74,7 @@
   {% endif %}
   {% if layer.srs|length > 0 %}
   <li>
-    <span class="labelText left">{{ "Srs" | trans }}:</span>
+    <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.srs" | trans }}:</span>
     <span class="metaText">
       {% for srs in layer.srs %}
         {% if not loop.first %}, {% endif %}{{ srs }}
@@ -84,21 +84,21 @@
   {% endif %}
   {% if layer.styles|length > 0 %}
     <li>
-      <span class="labelText left">{{ "Styles" | trans }}:</span>
+      <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.styles" | trans }}:</span>
         {% for style in layer.styles %}
           {% if not loop.first %}<br/>{% endif %}
-          <span class="metaText">{{ "Name" | trans }}: {{ style.name }}</span>
-          <span class="metaText">{{ "Title" | trans }}</dt>: {{ style.title }}</span>
-          <span class="metaText">{{ "Abstract" | trans }}: {{ style.abstract }}</span>
+          <span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.name" | trans }}: {{ style.name }}</span>
+          <span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.title" | trans }}</dt>: {{ style.title }}</span>
+          <span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.abstract" | trans }}: {{ style.abstract }}</span>
           <span class="metaText">
-            {{ "LegendUrl" | trans }}: 
+            {{ "mb.wms.wmsloader.repo.layer.label.legendurl" | trans }}: 
             {% if style.legendUrl is not null %}
             {{ style.legendUrl.width }}X{{ style.legendUrl.height }}
             {{ style.legendUrl.onlineResource.format }} {{ style.legendUrl.onlineResource.href }}
             {% endif %}
           </span>
           <span class="metaText">
-            {{ "StyleSheetUrl" | trans }}:
+            {{ "mb.wms.wmsloader.repo.layer.label.stylesheeturl" | trans }}:
 
             {% if layer.styleSheetUrl is defined %}
               {{ style.styleSheetUrl.format }} {{ style.styleSheetUrl.href }}
@@ -106,7 +106,7 @@
           </span>
 
           <span class="metaText">
-            {{ "StyleUrl" | trans }}:
+            {{ "mb.wms.wmsloader.repo.layer.label.styleurl" | trans }}:
             {% if layer.styleUrl is defined %}
               {{ style.styleUrl.format }} {{ style.styleUrl.href }}
             {% endif %}
@@ -116,35 +116,35 @@
   {% endif %}
   {% if layer.scale is defined and layer.scale != '' %}
     <li>
-      <span class="labelText left">{{ "Scale" | trans }}:</span>
+      <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.scale" | trans }}:</span>
       <span class="metaText">
-        {{ "Min" | trans }}:{{ '%d'|format(layer.scale.min) }}<br/>
-        {{ "Max" | trans }}:{{ '%d'|format(layer.scale.max) }}</span>
+        {{ "mb.wms.wmsloader.repo.layer.label.min" | trans }}:{{ '%d'|format(layer.scale.min) }}<br/>
+        {{ "mb.wms.wmsloader.repo.layer.label.max" | trans }}:{{ '%d'|format(layer.scale.max) }}</span>
 
     </li>
   {% endif %}
   {% if layer.scaleHint is defined and layer.scaleHint != '' %}
   <li>
-    <span class="labelText left">{{ "ScaleHint" | trans }}:</span>
+    <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.scalehint" | trans }}:</span>
     <span class="metaText">
-      {{ "Min" | trans }}:{{ layer.scaleHint.min }}<br/>
-      {{ "Max" | trans }}:{{ layer.scaleHint.max }}
+      {{ "mb.wms.wmsloader.repo.layer.label.min" | trans }}:{{ layer.scaleHint.min }}<br/>
+      {{ "mb.wms.wmsloader.repo.layer.label.max" | trans }}:{{ layer.scaleHint.max }}
     </span>
   </li>
   {% endif %}
   {% if layer.attribution is defined and layer.attribution != '' and layer.attribution|length > 0 %}
     <li>
-      <span class="labelText left">{{ "Attribution" | trans }}:</span>
+      <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.attribution" | trans }}:</span>
         <ul class="left">
           <li>
-            <span class="metaText">{{ "Title" | trans }}:{{ layer.attribution.title }}</span>
+            <span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.title" | trans }}:{{ layer.attribution.title }}</span>
           </li>
           <li>
-            <span class="metaText">{{ "OnlineResource" | trans }}:{{ layer.attribution.onlineResource }}</span>
+            <span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.onlineresource" | trans }}:{{ layer.attribution.onlineResource }}</span>
           </li>
           <li>
             <span class="metaText">
-              {{ "LogoUrl" | trans }}:
+              {{ "mb.wms.wmsloader.repo.layer.label.logourl" | trans }}:
               {{ layer.attribution.logoUrl.width }}X{{layer.attribution.logoUrl.height }}
               {{ layer.attribution.logoUrl.onlineResource.format }} {{ layer.attribution.logoUrl.onlineResource.href }}
             </span>
@@ -154,20 +154,20 @@
   {% endif %}
   {% if layer.identifier is defined and layer.identifier|length > 0 %}
     <li>
-      <span class="labelText">{{ "Identifier" | trans }}:</span>
+      <span class="labelText">{{ "mb.wms.wmsloader.repo.layer.label.identifier" | trans }}:</span>
       <ul>
         {% for identifier in layer.identifier %}
           {% if identifier.authority is defined and identifier.authority != '' %}
             <li>
               <span class="metaText">
-                {{ "Authority" | trans }}: 
-                {{ "Url" | trans }} {{ identifier.authority.url }}
-                {{ "Name" | trans }} {{ identifier.authority.name }}
+                {{ "mb.wms.wmsloader.repo.layer.label.authority" | trans }}: 
+                {{ "mb.wms.wmsloader.repo.layer.label.url" | trans }} {{ identifier.authority.url }}
+                {{ "mb.wms.wmsloader.repo.layer.label.name" | trans }} {{ identifier.authority.name }}
               </span>
             </li>
           {% endif %}
           {% if identifier.value is defined %}
-            <li><span class="metaText">{{ "Value" | trans }}: {{ identifier.value }}</span></li>
+            <li><span class="metaText">{{ "mb.wms.wmsloader.repo.layer.label.value" | trans }}: {{ identifier.value }}</span></li>
           {% endif %}
         {% endfor %}
       </ul>
@@ -175,14 +175,14 @@
   {% endif %}
   {% if layer.authority is defined and layer.authority|length > 0 %}
     <li>
-      <span class="labelText">{{ "Authority" | trans }}:</span>
+      <span class="labelText">{{ "mb.wms.wmsloader.repo.layer.label.authority" | trans }}:</span>
       <ul>
         {% for authority in layer.authority %}
           <li>
             <span class="metaText">
-            {{ "Url" | trans }} {{ authority.url }}
+            {{ "mb.wms.wmsloader.repo.layer.label.url" | trans }} {{ authority.url }}
             {% if authority.name is defined %}
-              {{ "Name" | trans }} {{ authority.name }}<br/>
+              {{ "mb.wms.wmsloader.repo.layer.label.name" | trans }} {{ authority.name }}<br/>
             {% endif%}
           </li>
         {% endfor %}
@@ -191,7 +191,7 @@
   {% endif %}
   {% if layer.metadataUrl is defined and layer.metadataUrl|length > 0 %}
     <li>
-      <span class="labelText">{{ "MetadataUrl" | trans }}:</span>
+      <span class="labelText">{{ "mb.wms.wmsloader.repo.layer.label.metadataurl" | trans }}:</span>
         <ul>
         {% for metadataUrl in layer.metadataUrl %}
           <li>
@@ -205,7 +205,7 @@
   {% endif %}
   {% if layer.dimension is defined and layer.dimension|length > 0 %}
   <li>
-    <span class="labelText">{{ "Dimension" | trans }}:</span>
+    <span class="labelText">{{ "mb.wms.wmsloader.repo.layer.label.dimension" | trans }}:</span>
     <ul>
     {% for dimension in layer.dimension %}
       <li>
@@ -221,7 +221,7 @@
   {% endif %}
   {% if layer.extent is defined and layer.extent|length > 0 %}
   <li>
-    <span class="labelText">{{ "Extent" | trans }}:</span>
+    <span class="labelText">{{ "mb.wms.wmsloader.repo.layer.label.extent" | trans }}:</span>
       <ul>
       {% for extent in layer.extent %}
         <li>
@@ -236,7 +236,7 @@
   {% endif %}
   {% if layer.dataUrl is defined and layer.dataUrl|length > 0 %}
     <li>
-      <span class="labelText">{{ "DataUrl" | trans }}:</span>
+      <span class="labelText">{{ "mb.wms.wmsloader.repo.layer.label.dataurl" | trans }}:</span>
       <ul>
       {% for dataUrl in layer.dataUrl %}
         <li>
@@ -250,7 +250,7 @@
   {% endif %}
   {% if layer.featureListUrl is defined and layer.featureListUrl|length > 0 %}
     <li>
-      <span class="labelText">{{ "FeatureListUrl" | trans }}:</span>
+      <span class="labelText">{{ "mb.wms.wmsloader.repo.layer.label.featurelisturl" | trans }}:</span>
         <ul>
         {% for featureUrl in layer.featureListUrl %}
           <li>

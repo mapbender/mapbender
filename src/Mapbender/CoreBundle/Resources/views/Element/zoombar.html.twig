@@ -2,34 +2,40 @@
 <div id="{{ id }}" class="mb-element mb-element-zoombar {{configuration.anchor}}">
   {% if 'pan' in configuration.components %}
   <div class="pan">
-    <span class="panUp iconTop" title="{{ "Pan up" | trans }}"></span>
-    <span class="panRight iconRight" title="{{ "Pan right" | trans }}"></span>
-    <span class="panDown iconDown" title="{{ "Pan down" | trans }}"></span>
-    <span class="panLeft iconLeft" title="{{ "Pan left" | trans }}"></span>
+    <span class="panUp iconTop" title="{{ "mb.core.zoombar.panup" | trans }}"></span>
+    <span class="panRight iconRight" title="{{ "mb.core.zoombar.panright" | trans }}"></span>
+    <span class="panDown iconDown" title="{{ "mb.core.zoombar.pandown" | trans }}"></span>
+    <span class="panLeft iconLeft" title="{{ "mb.core.zoombar.panleft" | trans }}"></span>
   </div>
   {% endif %}
   <ul class="toolPane">
     {% if 'history' in configuration.components %}
       <li class="history">
-        <span class="historyPrev iconPrev" title="{{ "Go back" | trans }}"></span>
-        <span class="historyNext iconNext" title="{{ "Go forward" | trans }}"></span>
+        <span class="historyPrev iconPrev" title="{{ "mb.core.zoombar.goback" | trans }}"></span>
+        <span class="historyNext iconNext" title="{{ "mb.core.zoombar.goforward" | trans }}"></span>
       </li>
     {% endif %}
     {% if 'zoom_box' in configuration.components %}
       <li class="zoomBox">
-        <span class="iconZoomSelect iconBig" title="{{ "Zoom by box" | trans }}"></span>
+        <span class="iconZoomSelect iconBig" title="{{ "mb.core.zoombar.zoombybox" | trans }}"></span>
       </li>
     {% endif %}
     {% if 'zoom_max' in configuration.components %}
       <li class="zoomWorld">
-        <span class="iconZoomMin iconBig" title="{{ "Zoom by world" | trans }}"></span>
+        <span class="iconZoomMin iconBig" title="{{ "mb.core.zoombar.zoombyworld" | trans }}"></span>
       </li>
     {% endif %}
-    {% if 'zoom_slider' in configuration.components %}
+    {% if 'zoom_in_out' in configuration.components or 'zoom_slider' in configuration.components %}
       <li class="zoomSlider">
+        {% if 'zoom_in_out' in configuration.components %}
         <span class="iconZoomIn iconBig"></span>
+        {% endif %}
+        {% if 'zoom_slider' in configuration.components %}
         <ul class="zoomSliderLevels"></ul>
+        {% endif %}
+        {% if 'zoom_in_out' in configuration.components %}
         <span class="iconZoomOut iconBig"></span>
+        {% endif %}
       </li>
     {% endif %}
   </ul>

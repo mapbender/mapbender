@@ -29,6 +29,8 @@
                         if(source){
                             var tochange = {change: {sourceIdx: {id: source.id}, options: {configuration: {options: {visibility: false}}, type: 'selected'}}};
                             model.changeSource(tochange);
+                        }else{
+                            Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));
                         }
 //                        else{ // add translation
 //                            Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));

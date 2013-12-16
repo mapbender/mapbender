@@ -62,7 +62,7 @@ $.widget("mapbender.mbOverview", {
                 });
             });
         if(layers_overview.length === 0){
-            Mapbender.error('The overview element has no layer.');
+            Mapbender.error(Mapbender.trans("mb.core.overview.nolayer"));
             return;
         }
         this.mapOrigExtents = {

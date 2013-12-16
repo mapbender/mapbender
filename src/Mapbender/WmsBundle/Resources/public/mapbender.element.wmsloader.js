@@ -3,7 +3,7 @@
     $.widget("mapbender.mbWmsloader", {
         options: {
             autoOpen: false,
-            title: "Load WMS"// mb.wms.loader.title
+            title: Mapbender.trans('mb.wms.wmsloader.title')
         },
         elementUrl: null,
         _create: function(){
@@ -45,14 +45,14 @@
                     width: 500,
                     buttons: {
                         'cancel': {
-                            label: 'Cancel', //mb.wms.loader.dialog.btn.cancel
+                            label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.cancel'),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self.close();
                             }
                         },
                         'ok': {
-                            label: 'Load', //mb.wms.loader.dialog.btn.load
+                            label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.load'),
                             cssClass: 'button right',
                             callback: function(){
                                 var url = $('#' + $(self.element).attr('id') + ' input[name="loadWmsUrl"]').val();
@@ -134,7 +134,7 @@
             var self = this;
             if(!options.gcurl || options.gcurl === '' ||
                 (options.gcurl.toLowerCase().indexOf("http://") !== 0 && options.gcurl.toLowerCase().indexOf("https://") !== 0)){
-                Mapbender.error("WMSLoader: a WMS capabilities can't be loaded! The capabilities url is not valid."); // mb.wms.loader.error.url
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.url'));
                 return;
             }
             var params = OpenLayers.Util.getParameters(options.gcurl);
@@ -149,18 +149,18 @@
                 }
             }
             if(request === null || service === null){
-                Mapbender.error("WMSLoader: a WMS capabilities can't be loaded! The capabilities url is not valid.");//mb.wms.loader.error.url
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.url'));
                 return;
             }
 
             if(service.toUpperCase() !== "WMS"){
-                Mapbender.error('WMSLoader: the service "' + service + '" is not supported!');// mb.wms.loader.error.service
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.service', {"service": service}));
                 return false;
             }else if(request.toUpperCase() !== "GETCAPABILITIES" && request.toUpperCase() !== 'CAPABILITIES'){
-                Mapbender.error('WMSLoader: the WMS Operation "' + request + '" is not supported!');// mb.wms.loader.error.operation
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.operation', {"operation": request }));
                 return false;
             }else if(version && !(version.toUpperCase() === "1.1.0" || version.toUpperCase() === "1.1.1" || version.toUpperCase() === "1.3.0")){
-                Mapbender.error('WMSLoader: the WMS version "' + version + '" is not supported!');// mb.wms.loader.error.version
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.version', {"version": version}));
                 return false;
             }
             $.ajax({
@@ -221,7 +221,7 @@
             });
         },
         _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
-            Mapbender.error("WMSLoader: a wms capabilities can't be loaded!");// mb.wms.loader.error.load
+            Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
         },
         ready: function(callback){
             if(this.readyState === true){

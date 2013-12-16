@@ -297,7 +297,7 @@ $.extend(true, Mapbender, {
                     url: layer.getURL(bounds)
                 };
             },
-            onLoadError: function(imgEl, sourceId, projection){
+            onLoadError: function(imgEl, sourceId, projection, callback){
                 var self = this;
                 var loadError = {sourceid: sourceId, details: ''};
                 $.ajax({
@@ -306,13 +306,13 @@ $.extend(true, Mapbender, {
                     url: Mapbender.configuration.application.urls.proxy + "?url=" + encodeURIComponent(self._removeProxy(imgEl.attr('src'))),
                     success: function(message, text, response){
                         if(typeof(response.responseText) === "string"){
-                            var details = "The map cannot be displayed.";
+                            var details = Mapbender.trans("mb.wms.source.image_error.datails");
                             var layerTree;
                             try{
                                 layerTree = new OpenLayers.Format.WMSCapabilities().read(response.responseText);
                             }catch(e){
                                 layerTree = null;
-                                details += ".\n" + "Exception" + ": " + e.toString();
+                                details += ".\n" + Mapbender.trans("mb.wms.source.image_error.exception",{'exception': e.toString()});
                             }
                             if(layerTree && layerTree.error){
                                 if(layerTree.error.exceptionReport && layerTree.error.exceptionReport.exceptions){
@@ -329,16 +329,17 @@ $.extend(true, Mapbender, {
                             }
                         }
                         loadError.details = details;
+                        callback.call(loadError);
                     },
                     error: function(err){
-                        var details = "The map cannot be displayed.";
+                        var details = Mapbender.trans("mb.wms.source.image_error.datails");
                         if(err.status == 200){
                             var capabilities;
                             try{
                                 capabilities = new OpenLayers.Format.WMSCapabilities().read(err.responseText);
                             }catch(e){
                                 capabilities = null;
-                                details += ".\n" + "Exception" + ": " + e.toString();
+                                details += ".\n" + Mapbender.trans("mb.wms.source.image_error.exception",{'exception': e.toString()});
                             }
                             if(capabilities && capabilities.error){
                                 if(capabilities.error.exceptionReport && capabilities.error.exceptionReport.exceptions){
@@ -359,12 +360,13 @@ $.extend(true, Mapbender, {
                                 }
                             }
                         }else{
-                            details += ".\n" + "HTTP status code" + ": " + err.status + " - " + err.statusText;
+                            details += ".\n" + Mapbender.trans("mb.wms.source.image_error.statuscode") + ": " + err.status + " - " + err.statusText;
                         }
                         loadError.details = details;
+                        callback.call(loadError);
                     }
                 });
-                return loadError;
+//                return loadError;
             },
             hasLayers: function(source, withoutGrouped){
                 var options = this.layerCount(source);

@@ -50,7 +50,7 @@ class SketchAdminType extends AbstractType
             ->add('types', 'choice',
                 array("required" => true,
                 "choices" => $types,
-                    "multiple" => true));
+                "multiple" => true));
     }
 
 }

@@ -3,6 +3,7 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
 
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -87,8 +88,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     }
 
     /**
-     *
-     * @return array
+     * @inheritdoc
      */
     public function toArray()
     {
@@ -104,6 +104,49 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "bbox" => $this->bbox,
             "vendor" => $this->vendor
         );
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public static function fromArray($options)
+    {
+        $ico = null;
+        if($options && is_array($options))
+        {
+            $ico = new WmsInstanceConfigurationOptions();
+            if(isset($options["url"])){
+                $ico->url = $options["url"];
+            }
+            if(isset($options["proxy"])){
+                $ico->proxy = $options["proxy"];
+            }
+            if(isset($options["visible"])){
+                $ico->visible = $options["visible"];
+            }
+            if(isset($options["format"])){
+                $ico->format = $options["format"];
+            }
+            if(isset($options["info_format"])){
+                $ico->infoformat = $options["info_format"];
+            }
+            if(isset($options["transparent"])){
+                $ico->transparency = $options["transparent"];
+            }
+            if(isset($options["opacity"])){
+                $ico->opacity = $options["opacity"];
+            }
+            if(isset($options["tiled"])){
+                $ico->tiled = $options["tiled"];
+            }
+            if(isset($options["bbox"])){
+                $ico->bbox = $options["bbox"];
+            }
+            if(isset($options["vendor"])){
+                $ico->vendor = $options["vendor"];
+            }
+        }
+        return $ico;
     }
 
 }

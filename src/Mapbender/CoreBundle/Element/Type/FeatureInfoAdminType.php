@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -36,14 +35,14 @@ class FeatureInfoAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
-                ->add('autoOpen', 'checkbox', array('required' => false))
-                ->add('deactivateOnClose', 'checkbox', array('required' => false))
-                ->add('target', 'target_element',
-                      array(
-                    'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                    'application' => $options['application'],
-                    'property_path' => '[target]',
-                    'required' => false));
+            ->add('autoOpen', 'checkbox', array('required' => false))
+            ->add('deactivateOnClose', 'checkbox', array('required' => false))
+            ->add('target', 'target_element',
+                array(
+                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+                'application' => $options['application'],
+                'property_path' => '[target]',
+                'required' => false));
     }
 
 }

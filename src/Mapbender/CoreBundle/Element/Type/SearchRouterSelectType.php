@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -35,13 +34,12 @@ class SearchRouterSelectType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $routes = array();
-        foreach($options['routes'] as $name => $conf)
-        {
+        foreach ($options['routes'] as $name => $conf) {
             $routes[$name] = $conf['title'];
         }
 
         $builder->add('route', 'choice',
-                      array(
+            array(
             'choices' => $routes,
             'mapped' => false,
             'property_path' => false,

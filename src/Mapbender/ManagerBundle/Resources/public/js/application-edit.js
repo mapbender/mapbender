@@ -292,7 +292,7 @@ $(function() {
     // Delete element
     $('.removeElement').bind("click", function(){
         var self = $(this);
-        var content = self.attr('title');
+        var content = $('<div/>').text(self.attr('title')).html();
 
         if(popup){
             popup = popup.destroy();
@@ -337,7 +337,7 @@ $(function() {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
-            title: ((self.hasClass("editLayerset")) ? "Edit layerset"  
+            title: ((self.hasClass("editLayerset")) ? "Edit layerset"
                                                     : "Add layerset"),
             closeOnOutsideClick: true,
             content: [
@@ -492,5 +492,5 @@ $(function() {
             });
         });
     });
-    
+
 });

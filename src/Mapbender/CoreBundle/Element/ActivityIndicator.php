@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -17,7 +16,7 @@ class ActivityIndicator extends Element
      */
     static function getClassTitle()
     {
-        return "Activity Indicator";
+        return "mb.core.activityindicator.class.title";
     }
 
     /**
@@ -25,7 +24,7 @@ class ActivityIndicator extends Element
      */
     static function getClassDescription()
     {
-        return "Shows HTTP activity";
+        return "mb.core.activityindicator.class.description";
     }
 
     /**
@@ -33,7 +32,9 @@ class ActivityIndicator extends Element
      */
     static function getClassTags()
     {
-        return array("Activity", "Indicator");
+        return array(
+            "mb.core.activityindicator.tag.activity",
+            "mb.core.activityindicator.tag.indicator");
     }
 
     /**
@@ -80,10 +81,10 @@ class ActivityIndicator extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:activityindicator.html.twig',
-                                 array('id' => $this->getId(),
-                            'title' => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:activityindicator.html.twig',
+                    array('id' => $this->getId(),
+                    'title' => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
     /**
@@ -93,5 +94,5 @@ class ActivityIndicator extends Element
     {
         return 'MapbenderManagerBundle:Element:activityindicator.html.twig';
     }
-}
 
+}

@@ -3,6 +3,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\State;
+use Mapbender\CoreBundle\Component\BoundingBox;
 
 /**
  * Description of State
@@ -239,14 +240,14 @@ class StateHandler
     public function toArray()
     {
 	$windowArr = $this->window->toArray();
-	$extentArr = $this->extent->ToArray();
-        $maxExtentArr = $this->maxextent->ToArray();
-        $sourcesArr = $this->sources;
-        return array(
-            "window" => $windowArr,
-            "extent" => $extentArr,
-            "maxextent" => $maxExtentArr,
-            "sources" => $sourcesArr);
+	$extentArr = $this->extent->toArray();
+    $maxExtentArr = $this->maxextent === null ? $this->extent->toArray() : $this->maxextent->toArray();
+    $sourcesArr = $this->sources;
+    return array(
+        "window" => $windowArr,
+        "extent" => $extentArr,
+        "maxextent" => $maxExtentArr,
+        "sources" => $sourcesArr);
     }
     
 //    

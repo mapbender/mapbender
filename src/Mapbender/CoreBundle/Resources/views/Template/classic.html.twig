@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="{{ asset('bundles/fomcore/css/frontend/mapbender3_theme.css') }}">
   <link rel="stylesheet" href="{{ asset('bundles/fomcore/css/frontend/classic.css') }}">
 {% endblock %}
+    
+{% block trans %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'trans'}) }}"></script>
+{% endblock %}
 
 {% block js %}
   {{parent()}}

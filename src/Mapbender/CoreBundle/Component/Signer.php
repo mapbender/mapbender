@@ -9,7 +9,8 @@ use ArsGeografica\Signing\BadSignatureException;
 class Signer extends BaseSigner
 {
     /**
-     * Sign a URL by signing the given part and returning a signature including the URL length.
+     * Sign a URL by signing the protocol, server and path part and returning a signature including the signed
+     * parts length.
      *
      * This gives a hint for checking the URL that only the left-most n chars are required to match the signature.
      *
@@ -18,10 +19,12 @@ class Signer extends BaseSigner
      */
     public function signUrl($url)
     {
-        $signature = sprintf('%d%s%s', strlen($url), $this->sep, $this->signature($url));
+        $psp = substr($url, 0, strpos($url, '?'));
+        $signature = sprintf('%d%s%s', strlen($psp), $this->sep, $this->signature($psp));
         $sep = (false === strstr($url, '?') ? '?' : '&');
-        $sep = ($sep === substr($url, -1) ? '' : $sep);
-        return $url . $sep . '_signature=' . $signature;
+        $sep = ('?' === substr($url, -1) || '&' === substr($url, -1) ? '' : $sep);
+
+        return $url . $sep . '_signature=' . urlencode($signature);
     }
 
     public function checkSignedUrl($url)

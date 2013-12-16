@@ -1,6 +1,6 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'Wms Instance' | trans }} - {{ form.vars.value.title }}{% endblock %}
+{% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} - {{ form.vars.value.title }}{% endblock %}
 
 {% block js %}
   {{parent()}}
@@ -12,11 +12,11 @@
   <form action="{{path('mapbender_wms_repository_instance',{"slug": slug,"instanceId": instance.id})}}" method="post" novalidate="novalidate" class="clear">
 
     <div class="right">
-      <input class="button" type="submit" name="save" value="{{"Save"|trans}}" />
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"Cancel"|trans}}</a>
+      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.btn.save"|trans}}" />
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.btn.cancel"|trans}}</a>
     </div>
 
-    <span class="labelInput">{{ 'Origin URL' | trans }}</span>
+    <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
     <a class="linkButton" href="{{ instance.source.originUrl }}" target="_BLANK">{{ instance.source.originUrl }}</a>
     <div class="clear"></div>
 
@@ -33,13 +33,13 @@
       </div>
 
       <div class="left rightContainer">
-        {{ form_widget(form.visible) }}<label for="{{form.visible.vars.id}}" class="labelCheck">{{"Visible"|trans}}</label>
+        {{ form_widget(form.visible) }}<label for="{{form.visible.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.visible"|trans}}</label>
         <div class="clear"></div>
-        {{ form_widget(form.proxy) }}<label for="{{form.proxy.vars.id}}" class="labelCheck">{{"Proxy"|trans}}</label>
+        {{ form_widget(form.proxy) }}<label for="{{form.proxy.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.proxy"|trans}}</label>
         <div class="clear"></div>
-        {{ form_widget(form.transparency) }}<label for="{{form.transparency.vars.id}}" class="labelCheck">{{"Transparency"|trans}}</label>
+        {{ form_widget(form.transparency) }}<label for="{{form.transparency.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.transparency"|trans}}</label>
         <div class="clear"></div>
-        {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"Tiled"|trans}}</label>
+        {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.tiled"|trans}}</label>
         <div class="clear"></div>
       </div>
     </div>
@@ -49,25 +49,25 @@
       <thead>
         <tr>
           <th></th>
-          <th>{{"Title"|trans}}</th>
-          <th>{{"Minsc"|trans}}</th>
-          <th>{{"Maxsc"|trans}}</th>
-          <th class="checkboxColumn">{{"Active"|trans}}</th>
-          <th class="checkboxColumn odd" colspan="2">{{"Select"|trans}}</th>
-          <th class="checkboxColumn" colspan="2">{{"Info"|trans}}</th>
-          <th class="checkboxColumn odd" colspan="2">{{"Toggle"|trans}}</th>
-          <th class="checkboxColumn">{{"Reorder"|trans}}</th>
+          <th>{{"mb.wms.wmsloader.repo.instance.label.title"|trans}}</th>
+          <th>{{"mb.wms.wmsloader.repo.instance.label.minsc"|trans}}</th>
+          <th>{{"mb.wms.wmsloader.repo.instance.label.maxsc"|trans}}</th>
+          <th class="checkboxColumn">{{"mb.wms.wmsloader.repo.instance.label.active"|trans}}</th>
+          <th class="checkboxColumn odd" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.select"|trans}}</th>
+          <th class="checkboxColumn" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.info"|trans}}</th>
+          <th class="checkboxColumn odd" colspan="2">{{"mb.wms.wmsloader.repo.instance.label.toggle"|trans}}</th>
+          <th class="checkboxColumn">{{"mb.wms.wmsloader.repo.instance.label.reorder"|trans}}</th>
           <th></th>
         </tr>
         <tr>
           <th colspan="5"></th>
-          <th class="checkboxColumn smallText odd">{{"allow"|trans}}</th>
-          <th class="checkboxColumn smallText odd">{{"on"|trans}}</th>
-          <th class="checkboxColumn smallText">{{"allow"|trans}}</th>
-          <th class="checkboxColumn smallText">{{"on"|trans}}</th>
-          <th class="checkboxColumn smallText odd">{{"allow"|trans}}</th>
-          <th class="checkboxColumn smallText odd">{{"on"|trans}}</th>
-          <th class="checkboxColumn smallText">{{"allow"|trans}}</th>
+          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
+          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
+          <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
+          <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
+          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
+          <th class="checkboxColumn smallText odd">{{"mb.wms.wmsloader.repo.instance.label.on"|trans}}</th>
+          <th class="checkboxColumn smallText">{{"mb.wms.wmsloader.repo.instance.label.allow"|trans}}</th>
           <th></th>
         </tr>
         <tr id="instanceTableCheckHead">
@@ -94,8 +94,8 @@
     <div class="clearContainer"></div>
 
     <div class="right">
-      <input class="button" type="submit" name="save" value="{{"Save"|trans}}" />
-      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"Cancel"|trans}}</a>
+      <input class="button" type="submit" name="save" value="{{"mb.wms.wmsloader.repo.instance.label.save2"|trans}}" />
+      <a href="{{ path('mapbender_manager_application_edit', {'slug': app.request.attributes.get('slug')}) }}" class="button critical">{{"mb.wms.wmsloader.repo.instance.label.cancel2"|trans}}</a>
     </div>
 
     <div class="clearContainer"></div>

@@ -9,14 +9,14 @@
 {% endblock %}
 
 {% block manager_content %}
-  <a class="iconView iconBig right" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'View application' | trans }}"></a>
+  <a class="iconView iconBig right" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}"></a>
   <form action="{{ path('mapbender_manager_application_update', { 'slug': application.slug }) }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}}  novalidate="novalidate">
     <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
       <ul class="tabs">
-        <li id="tabBaseData" class="tab active">{{"Base data" | trans }}</li>
-        <li id="tabLayout" class="tab">{{"Layout" | trans }}</li>
-        <li id="tabLayers" class="tab">{{"Layers" | trans }}</li>
-        <li id="tabSecurity" class="tab">{{"Security" | trans }}</li>
+        <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.edit.base_data" | trans }}</li>
+        <li id="tabLayout" class="tab">{{"mb.manager.admin.application.layouts" | trans }}</li>
+        <li id="tabLayers" class="tab">{{"mb.manager.admin.application.layersets" | trans }}</li>
+        <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData">
         {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
@@ -34,8 +34,8 @@
 
     <div class="clearContainer"></div>
     <div class="right">
-      <input type="submit" value="{{ 'Save' | trans }}" class="button"/>
-      <a href="{{ url('mapbender_manager_application_index') }}" class="button critical">{{ 'Cancel' | trans}}</a>
+      <input type="submit" value="{{ 'mb.manager.admin.application.save' | trans }}" class="button"/>
+      <a href="{{ url('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.cancel' | trans}}</a>
     </div>
     <div class="clearContainer"></div>
     {{ form_row(form._token) }}
