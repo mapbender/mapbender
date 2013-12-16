@@ -42,6 +42,7 @@ class ElementController extends Controller
                 $tags[] = $trans->trans($tag);
             }
             $elements[$title] = array(
+                'class' => $elementClassName,
                 'title' => $title,
                 'description' => $trans->trans($elementClassName::getClassDescription()),
                 'tags' => $tags);

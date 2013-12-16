@@ -168,7 +168,7 @@
       </trans-unit>
       <trans-unit id="960c243a1919783483eb30395e158174" resname="mb.core.poi.popup.btn.ok">
         <source>mb.core.poi.popup.btn.ok</source>
-        <target>Cancel</target>
+        <target>Ok</target>
       </trans-unit>
       <trans-unit id="9388cfe7d4bb57b87dcdd53957723380" resname="mb.core.poi.popup.btn.cancel">
         <source>mb.core.poi.popup.btn.cancel</source>
@@ -628,6 +628,10 @@ use when custom styling is needed</target>
       <trans-unit id="26f98160a1059c3bb9ba4ca8079d70ca" resname="mb.core.zoombar.tag.panel">
         <source>mb.core.zoombar.tag.panel</source>
         <target>panel</target>
+      </trans-unit>
+      <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
+        <source>mb.core.admin.poi.label.usemailto</source>
+        <target>Use Mailto</target>
       </trans-unit>
       <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
         <source>mb.core.admin.legend.label.autoopen</source>

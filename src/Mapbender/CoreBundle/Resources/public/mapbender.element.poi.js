@@ -14,7 +14,7 @@ $.widget('mapbender.mbPOI', {
     poiMarkerLayer: null,
 
     _create: function() {
-        if(!Mapbender.checkTarget("mbFeatureInfo", this.options.target)){
+        if(!Mapbender.checkTarget("mbPOI", this.options.target)){
             return;
         }
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
@@ -96,14 +96,14 @@ $.widget('mapbender.mbPOI', {
             content: $('.input', this.element).html(),
             buttons: {
                 'cancel': {
-                    label: Mapbender.trans('mb.core.poi.btn.cancel'),
+                    label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
                         this.close();
                     }
                 },
                 'ok': {
-                    label: Mapbender.trans('mb.core.poi.btn.ok'),
+                    label: Mapbender.trans('mb.core.poi.popup.btn.ok'),
                     cssClass: 'button right',
                     callback: function() {
                         self._sendPoi(this.$element);

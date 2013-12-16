@@ -36,11 +36,31 @@ class POI extends Element
     /**
      * @inheritdoc
      */
+    public static function getType()
+    {
+        return 'Mapbender\CoreBundle\Element\Type\POIAdminType';
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function getDefaultConfiguration()
     {
         return array(
+            'useMailto' => true,
             'body' => 'Please take a look at this POI',
+            'target' => null
         );
+    }
+    
+    
+
+    /**
+     * @inheritdoc
+     */
+    public static function getFormTemplate()
+    {
+        return 'MapbenderCoreBundle:ElementAdmin:poi.html.twig';
     }
 
     /**
