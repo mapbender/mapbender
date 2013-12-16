@@ -26,8 +26,10 @@
                 for(var i = 0; i < sourcesIds.length; i++){
                     if(sourcesIds[i] !== ''){
                         var source = model.getSource({origId: sourcesIds[i]});
-                        var tochange = {change: {sourceIdx: {id: source.id}, options: {configuration: {options: {visibility: false}},type: 'selected'}}};
-                        model.changeSource(tochange);
+                        if(source){
+                            var tochange = {change: {sourceIdx: {id: source.id}, options: {configuration: {options: {visibility: false}},type: 'selected'}}};
+                            model.changeSource(tochange);
+                        }
                     }
                 }
             });
@@ -41,8 +43,10 @@
                 for(var i = 0; i < sourcesIds.length; i++){
                     if(sourcesIds[i] !== ''){
                         var source = model.getSource({origId: sourcesIds[i]});
-                        var tochange = {change: {sourceIdx: {id: source.id}, options: {configuration: {options: {visibility: true}},type: 'selected'}}};
-                        model.changeSource(tochange);
+                        if(source){
+                            var tochange = {change: {sourceIdx: {id: source.id}, options: {configuration: {options: {visibility: true}},type: 'selected'}}};
+                            model.changeSource(tochange);
+                        }
                     }
                 }
             });
