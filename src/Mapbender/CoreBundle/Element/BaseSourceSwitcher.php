@@ -17,6 +17,7 @@ class BaseSourceSwitcher extends Element
     static public function getClassTitle()
     {
         return "BaseSourceSwitcher";
+//        return "mb.core.basesourceswitcher.class.title";
     }
 
     /**
@@ -25,6 +26,7 @@ class BaseSourceSwitcher extends Element
     static public function getClassDescription()
     {
         return "BaseSourceSwitcher";
+//        return "mb.core.basesourceswitcher.class.Description";
     }
 
     /**
@@ -33,6 +35,10 @@ class BaseSourceSwitcher extends Element
     static public function getClassTags()
     {
         return array('basesourceswitcher', "base", "source", "switcher");
+//        return array(
+//            "mb.core.basesourceswitcher.tag.base",
+//            "mb.core.basesourceswitcher.tag.source",
+//            "mb.core.basesourceswitcher.tag.switcher");
     }
 
     /**
