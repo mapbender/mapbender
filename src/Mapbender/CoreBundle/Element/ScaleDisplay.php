@@ -16,7 +16,7 @@ class ScaleDisplay extends Element
      */
     static public function getClassTitle()
     {
-        return "mb.core.scaledesplay.class.title";
+        return "mb.core.scaledisplay.class.title";
     }
 
     /**
@@ -24,7 +24,7 @@ class ScaleDisplay extends Element
      */
     static public function getClassDescription()
     {
-        return "mb.core.scaledesplay.class.description";
+        return "mb.core.scaledisplay.class.description";
     }
 
     /**
@@ -33,8 +33,8 @@ class ScaleDisplay extends Element
     static public function getClassTags()
     {
         return array(
-            "mb.core.scaledesplay.tag.scale",
-            "mb.core.scaledesplay.tag.display");
+            "mb.core.scaledisplay.tag.scale",
+            "mb.core.scaledisplay.tag.display");
     }
 
     /**

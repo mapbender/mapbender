@@ -132,7 +132,7 @@
       </trans-unit>
       <trans-unit id="f2c092bf66ee0b1608a750ef1646fcfe" resname="mb.core.layertree.const.parentinvisible">
         <source>mb.core.layertree.const.parentinvisible</source>
-        <target>Parent layer unvisible</target>
+        <target>Parent layer invisible</target>
       </trans-unit>
       <trans-unit id="9274af4427ddd97ba8b314fb87847f55" resname="mb.core.zoombar.panup">
         <source>mb.core.zoombar.panup</source>
@@ -312,7 +312,7 @@
       </trans-unit>
       <trans-unit id="2b611c8cacca06828c4da13b84e8caf3" resname="mb.core.featureinfo.class.description">
         <source>mb.core.featureinfo.class.description</source>
-        <target>Feature info</target>
+        <target>Featureinfo</target>
       </trans-unit>
       <trans-unit id="a7a27b022bb1c74647c76562bc2bca92" resname="mb.core.featureinfo.tag.featureinfo">
         <source>mb.core.featureinfo.tag.featureinfo</source>
@@ -518,20 +518,20 @@
         <source>mb.core.scalebar.tag.bar</source>
         <target>bar</target>
       </trans-unit>
-      <trans-unit id="812e48d5463949ff4ec75821c08e21fa" resname="mb.core.scaledesplay.class.title">
-        <source>mb.core.scaledesplay.class.title</source>
+      <trans-unit id="812e48d5463949ff4ec75821c08e21fa" resname="mb.core.scaledisplay.class.title">
+        <source>mb.core.scaledisplay.class.title</source>
         <target>Scale display</target>
       </trans-unit>
-      <trans-unit id="d87c8436f686b8d9ee50940e48c72d5c" resname="mb.core.scaledesplay.class.description">
-        <source>mb.core.scaledesplay.class.description</source>
+      <trans-unit id="d87c8436f686b8d9ee50940e48c72d5c" resname="mb.core.scaledisplay.class.description">
+        <source>mb.core.scaledisplay.class.description</source>
         <target>Displays the current map scale</target>
       </trans-unit>
-      <trans-unit id="60fb48c3f1fa6eb6d978563437098a07" resname="mb.core.scaledesplay.tag.scale">
-        <source>mb.core.scaledesplay.tag.scale</source>
+      <trans-unit id="60fb48c3f1fa6eb6d978563437098a07" resname="mb.core.scaledisplay.tag.scale">
+        <source>mb.core.scaledisplay.tag.scale</source>
         <target>scale</target>
       </trans-unit>
-      <trans-unit id="73ac4fbf3a468502c350a0d980399b5b" resname="mb.core.scaledesplay.tag.display">
-        <source>mb.core.scaledesplay.tag.display</source>
+      <trans-unit id="73ac4fbf3a468502c350a0d980399b5b" resname="mb.core.scaledisplay.tag.display">
+        <source>mb.core.scaledisplay.tag.display</source>
         <target>display</target>
       </trans-unit>
       <trans-unit id="b85e01d963b6106bb2d2de44e241f97d" resname="mb.core.scaleselector.class.title">
