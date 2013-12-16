@@ -16,6 +16,9 @@ framework:
     default_locale:  %locale%
     session:
         cookie_httponly: true
+        cookie_secure: %cookie_secure%
+        cookie_lifetime: %cookie_lifetime%
+        
 
 # Twig Configuration
 twig:

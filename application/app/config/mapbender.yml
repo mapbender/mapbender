@@ -76,6 +76,14 @@ parameters:
                         icon: iconPrint
                         target: printclient
                         action: open
+                    imageexport-button:
+                        title: Image Export
+                        tooltip: Image Export
+                        class: Mapbender\CoreBundle\Element\Button
+                        label: true
+                        icon: iconImageExport
+                        target: imageexport
+                        action: open
                     legend-button:
                         title: Legend
                         tooltip: Legend
@@ -120,6 +128,13 @@ parameters:
                         tooltip: About
                         label: true
                         class: Mapbender\CoreBundle\Element\AboutDialog
+                    poiButton:
+                        title: POI
+                        tooltip: Send POI
+                        class: Mapbender\CoreBundle\Element\Button
+                        icon: iconPoi
+                        label: true
+                        target: poi
                 content:
                     map:
                         title: Main Map
@@ -169,6 +184,9 @@ parameters:
                         defaultFormat: 'image/png'
                         defaultInfoFormat: 'text/html'
                         splitLayers: false
+                    imageexport:
+                        class: Mapbender\PrintBundle\Element\ImageExport
+                        target: map
                     printclient:
                         class: Mapbender\CoreBundle\Element\PrintClient
                         target: map
@@ -239,6 +257,10 @@ parameters:
                         anchor: left-top
                         scalePrefix: Scale
                         unitPrefix: true
+                    poi:
+                        class: Mapbender\CoreBundle\Element\POI
+                        target: map
+                        body: 'Please take a look at this POI:'
                 sidepane:
                     layertree:
                         title: Layertree
