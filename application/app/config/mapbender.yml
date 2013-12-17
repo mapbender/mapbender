@@ -260,7 +260,7 @@ parameters:
                     poi:
                         class: Mapbender\CoreBundle\Element\POI
                         target: map
-                        body: 'Please take a look at this POI:'
+                        body: 'Please take a look at this POI'
                 sidepane:
                     layertree:
                         title: Layertree
