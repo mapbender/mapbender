@@ -10,6 +10,20 @@ use Mapbender\CoreBundle\Component\Template;
  */
 class Fullscreen extends Template
 {
+    /**
+     * @inheritdoc
+     */
+    public static function getRegionsProperties()
+    {
+        return array(
+            'sidepane' => array(
+                'tabs' => array(
+                    'state' => true,
+                    'options' => array('icon' => 'XXX')
+                )
+            )
+        );
+    }
 
     /**
      * @inheritdoc
