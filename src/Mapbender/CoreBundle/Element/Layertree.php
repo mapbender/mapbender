@@ -93,6 +93,7 @@ class Layertree extends Element
             "autoOpen" => false,
             "showBaseSource" => true,
             "showHeader" => false,
+            "menu" => ""
         );
     }
 

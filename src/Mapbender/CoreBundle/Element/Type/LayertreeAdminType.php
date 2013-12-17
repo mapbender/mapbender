@@ -34,6 +34,14 @@ class LayertreeAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $menuComponents = array(
+            "opacity" => "Opacity",
+            "zoomtolayer" => "Zoom to layer",
+            "metadata" => "Metadata",
+            "metadata" => "Metadata",
+            "legend" => "Legend",
+            "kmlexport" => "KML export",
+        );
         $builder->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
@@ -43,7 +51,9 @@ class LayertreeAdminType extends AbstractType
             ->add('type', 'choice',
                 array(
                 'required' => true,
-                'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
+                'choices' => array(
+                    'dialog' => 'Dialog',
+                    'element' => 'Element')))
             ->add('autoOpen', 'checkbox',
                 array(
                 'required' => false))
@@ -63,7 +73,19 @@ class LayertreeAdminType extends AbstractType
                 'required' => false))
             ->add('showHeader', 'checkbox',
                 array(
-                'required' => false));
+                'required' => false))
+            ->add('menuComponents', 'choice',
+                array(
+                'required' => false,
+                "multiple" => true,
+                'choices' => array(
+                    "" => " ",
+                    "opacity" => "Opacity",
+                    "zoomtolayer" => "Zoom to layer",
+//                    "metadata" => "Metadata",
+//                    "legend" => "Legend",
+//                    "kmlexport" => "KML export"
+        )));
     }
 
 }
