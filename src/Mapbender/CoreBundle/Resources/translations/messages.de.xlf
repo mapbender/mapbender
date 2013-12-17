@@ -8,7 +8,7 @@
       </trans-unit>
       <trans-unit id="1d84c5293abecb3624fa6828185b3493" resname="mb.core.aboutdialog.content.learnmore">
         <source>mb.core.aboutdialog.content.learnmore</source>
-        <target>Lernen Sie Mapbender3 kennen auf unserer</target>
+        <target>Lernen Sie Mapbender3 kennen auf unserer Webseite.</target>
       </trans-unit>
       <trans-unit id="a8b14434dc098a6e7b028915b631cd24" resname="mb.core.aboutdialog.content.linktitle">
         <source>mb.core.aboutdialog.content.linktitle</source>
@@ -20,11 +20,11 @@
       </trans-unit>
       <trans-unit id="d34e7ce2889c54092fc147356c3faa14" resname="mb.core.searchrouter.popup.btn.ok">
         <source>mb.core.searchrouter.popup.btn.ok</source>
-        <target>Search</target>
+        <target>Suchen</target>
       </trans-unit>
       <trans-unit id="23529c02cd41313d7461246d3b172252" resname="mb.core.searchrouter.popup.btn.cancel">
         <source>mb.core.searchrouter.popup.btn.cancel</source>
-        <target>Close</target>
+        <target>Schließen</target>
       </trans-unit>
       <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
         <source>mb.core.poi.sharepoi</source>
@@ -40,47 +40,47 @@
       </trans-unit>
       <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
         <source>mb.core.legend.nolegend</source>
-        <target>No legend available</target>
+        <target>Keine Legende verfügbar.</target>
       </trans-unit>
       <trans-unit id="869cda28f81afcf6b2488ba2f4117e91" resname="mb.core.ruler.popup.btn.ok">
         <source>mb.core.ruler.popup.btn.ok</source>
-        <target>Close</target>
+        <target>Schließen</target>
       </trans-unit>
       <trans-unit id="255dfe21ded353929e03b1f48f3d8603" resname="mb.core.ruler.create_error">
         <source>mb.core.ruler.create_error</source>
-        <target>Ruler: Type must be line or area.</target>
+        <target>Messen: Geometrietyp muss eine Linie oder eine Fläche sein.</target>
       </trans-unit>
       <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
         <source>mb.core.printclient.label.template</source>
-        <target>Template</target>
+        <target>Vorlage</target>
       </trans-unit>
       <trans-unit id="5aeaf1ae0a1e67e0e392f563be749204" resname="mb.core.printclient.label.quality">
         <source>mb.core.printclient.label.quality</source>
-        <target>Quality</target>
+        <target>Qualität</target>
       </trans-unit>
       <trans-unit id="421aa7382e001de0b0960d411265998a" resname="mb.core.printclient.label.scale">
         <source>mb.core.printclient.label.scale</source>
-        <target>Scale</target>
+        <target>Maßstab</target>
       </trans-unit>
       <trans-unit id="1d6b0cb565c46ffb069608c564861358" resname="mb.core.printclient.label.rotation">
         <source>mb.core.printclient.label.rotation</source>
-        <target>Rotation</target>
+        <target>Drehung</target>
       </trans-unit>
       <trans-unit id="6e4242b56cb4757b456f1308ed822a9f" resname="mb.core.printclient.popup.btn.ok">
         <source>mb.core.printclient.popup.btn.ok</source>
-        <target>Print</target>
+        <target>Drucken</target>
       </trans-unit>
       <trans-unit id="0a5f51d624f13c3e7238d5ab610ca6df" resname="mb.core.printclient.popup.btn.cancel">
         <source>mb.core.printclient.popup.btn.cancel</source>
-        <target>Cancel</target>
+        <target>Abbrechen</target>
       </trans-unit>
       <trans-unit id="8d91b0195b98dba3e9c4cfdff582505d" resname="mb.core.printclient.info.noactivelayer">
         <source>mb.core.printclient.info.noactivelayer</source>
-        <target>No active layer!</target>
+        <target>Keine aktive Ebene!</target>
       </trans-unit>
       <trans-unit id="c6c2daa6191922b3b1d289aae1ec8f31" resname="mb.core.overview.nolayer">
         <source>mb.core.overview.nolayer</source>
-        <target>The overview element has no layer.</target>
+        <target>Die Übersicht enthält keine Ebene.</target>
       </trans-unit>
       <trans-unit id="52f2119c302dee02a460f03b9ef78cf2" resname="mb.core.sketch.circle.radius.label">
         <source>mb.core.sketch.circle.radius.label</source>
@@ -100,39 +100,39 @@
       </trans-unit>
       <trans-unit id="f741a4a709f26fdf399f7b805ff27125" resname="mb.core.featureinfo.error.nolayer">
         <source>mb.core.featureinfo.error.nolayer</source>
-        <target>No feature info layer exists.</target>
+        <target>Informationsebene existiert nicht.</target>
       </trans-unit>
       <trans-unit id="4000aaa3f1fd6921b40ae958ee5d0c2b" resname="mb.core.featureinfo.error.unknownoption">
         <source>mb.core.featureinfo.error.unknownoption</source>
-        <target>Unknown or unhandled option %key% for %namespace%.%widgetname%.</target>
+        <target>Unbekannte Option %key% für %namespace%.%widgetname%.</target>
       </trans-unit>
       <trans-unit id="68f99e9993f8179311b9f5aaa0b43ffd" resname="mb.core.featureinfo.popuo.btn.ok">
         <source>mb.core.featureinfo.popuo.btn.ok</source>
-        <target>Close</target>
+        <target>Schließen</target>
       </trans-unit>
       <trans-unit id="d2279b60abd41fd9e228763532d10b02" resname="mb.core.gpsposition.error.notsupported">
         <source>mb.core.gpsposition.error.notsupported</source>
-        <target>I'm sorry, but geolocation services are not supported by your browser.</target>
+        <target>Entschuldigung, aber Geolocation Services werden von Ihrem Browser nicht unterstützt.</target>
       </trans-unit>
       <trans-unit id="73baa3dd55f5169a84b49015e5cbbc6f" resname="mb.core.layertree.confirm.allremove">
         <source>mb.core.layertree.confirm.allremove</source>
-        <target>Really all sources delete?</target>
+        <target>Sind wirklich alle Quellen gelöscht?</target>
       </trans-unit>
       <trans-unit id="261c3c35cd7b5f9737f2c3ab03c1ba76" resname="mb.core.layertree.popup.btn.ok">
         <source>mb.core.layertree.popup.btn.ok</source>
-        <target>Close</target>
+        <target>Schließen</target>
       </trans-unit>
       <trans-unit id="179f487db6ae9a2cc2f6bc20a3973928" resname="mb.core.layertree.const.outofscale">
         <source>mb.core.layertree.const.outofscale</source>
-        <target>Layer out of scale</target>
+        <target>Ebene außerhalb des Maßstabs</target>
       </trans-unit>
       <trans-unit id="ed37a9ab842a774969e361c70f45fd81" resname="mb.core.layertree.const.outofbounds">
         <source>mb.core.layertree.const.outofbounds</source>
-        <target>Layer out of bounds</target>
+        <target>Ebene außerhalb der BoundingBox</target>
       </trans-unit>
       <trans-unit id="f2c092bf66ee0b1608a750ef1646fcfe" resname="mb.core.layertree.const.parentinvisible">
         <source>mb.core.layertree.const.parentinvisible</source>
-        <target>Parent layer invisible</target>
+        <target>Eltern Ebene nicht sichtbar</target>
       </trans-unit>
       <trans-unit id="9274af4427ddd97ba8b314fb87847f55" resname="mb.core.zoombar.panup">
         <source>mb.core.zoombar.panup</source>
@@ -172,19 +172,19 @@
       </trans-unit>
       <trans-unit id="9388cfe7d4bb57b87dcdd53957723380" resname="mb.core.poi.popup.btn.cancel">
         <source>mb.core.poi.popup.btn.cancel</source>
-        <target>Cancel</target>
+        <target>Abbrechen</target>
       </trans-unit>
       <trans-unit id="868e554ea585dc5b1d394eb2b66e972c" resname="mb.core.layertree.tooltip.sublayers_openclose">
         <source>mb.core.layertree.tooltip.sublayers_openclose</source>
-        <target>Sublayer auf/zu</target>
+        <target>Sub-Ebene an/aus</target>
       </trans-unit>
       <trans-unit id="e48917a6335f8fa17b6b68aabc94390b" resname="mb.core.layertree.label.visibility_onoff">
         <source>mb.core.layertree.label.visibility_onoff</source>
-        <target>Visibility on/off</target>
+        <target>Sichtbarkeit an/aus</target>
       </trans-unit>
       <trans-unit id="9f816610733911918c9413a1b5af826a" resname="mb.core.layertree.label.featureinfo_onoff">
         <source>mb.core.layertree.label.featureinfo_onoff</source>
-        <target>FeatureInfo on/off</target>
+        <target>Information an/aus</target>
       </trans-unit>
       <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
         <source>mb.core.layertree.label.transparency</source>
@@ -192,7 +192,7 @@
       </trans-unit>
       <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
         <source>mb.core.layertree.label.zoomtolayer</source>
-        <target>Zoom to layer</target>
+        <target>Auf Ebenenausdehnung zoomen</target>
       </trans-unit>
       <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
         <source>mb.core.layertree.label.metadata</source>
@@ -208,7 +208,7 @@
       </trans-unit>
       <trans-unit id="c1e88d23834e42294c5c46903293bbb3" resname="mb.core.layertree.tooltip.removelayer">
         <source>mb.core.layertree.tooltip.removelayer</source>
-        <target>Layer entfernen</target>
+        <target>Ebene entfernen</target>
       </trans-unit>
       <trans-unit id="263857036bd43f2fed5421b06430c19a" resname="mb.core.layertree.label.sources">
         <source>mb.core.layertree.label.sources</source>
@@ -220,39 +220,39 @@
       </trans-unit>
       <trans-unit id="2ec03c5c014dec42d2bc46c9cf012215" resname="mb.core.aboutdialog.class.title">
         <source>mb.core.aboutdialog.class.title</source>
-        <target>About dialog</target>
+        <target>Über-Dialog</target>
       </trans-unit>
       <trans-unit id="a1fe1182d0efa70a68e07d8375db34ce" resname="mb.core.aboutdialog.class.description">
         <source>mb.core.aboutdialog.class.description</source>
-        <target>Shows a about dialog</target>
+        <target>Über-Dialog wird angezeigt</target>
       </trans-unit>
       <trans-unit id="cb1d0ceba4aa38a8a623c339903c7b71" resname="mb.core.aboutdialog.tag.help">
         <source>mb.core.aboutdialog.tag.help</source>
-        <target>help</target>
+        <target>Hilfe</target>
       </trans-unit>
       <trans-unit id="c02738e437b4048f9b434d851d1e1a3f" resname="mb.core.aboutdialog.tag.info">
         <source>mb.core.aboutdialog.tag.info</source>
-        <target>info</target>
+        <target>Info</target>
       </trans-unit>
       <trans-unit id="80a2c08826a2379b7239f4e9c581805e" resname="mb.core.aboutdialog.tag.about">
         <source>mb.core.aboutdialog.tag.about</source>
-        <target>about</target>
+        <target>Über</target>
       </trans-unit>
       <trans-unit id="befc1f8d20bbd1ba5f26e124d8b94f1a" resname="mb.core.activityindicator.class.title">
         <source>mb.core.activityindicator.class.title</source>
-        <target>Activitiy indicator</target>
+        <target>Aktivitäts-Indikator</target>
       </trans-unit>
       <trans-unit id="4c68bd109de1a07d8c03455e938af4d9" resname="mb.core.activityindicator.class.description">
         <source>mb.core.activityindicator.class.description</source>
-        <target>Shows HTTP activity</target>
+        <target>Zeigt HTTP-Aktivität</target>
       </trans-unit>
       <trans-unit id="fd918578edd7d0cca263c511c5aa5d1e" resname="mb.core.activityindicator.tag.activity">
         <source>mb.core.activityindicator.tag.activity</source>
-        <target>activity</target>
+        <target>Aktivität</target>
       </trans-unit>
       <trans-unit id="bb2ea876407e337655b44710c250006a" resname="mb.core.activityindicator.tag.indicator">
         <source>mb.core.activityindicator.tag.indicator</source>
-        <target>indicator</target>
+        <target>Indikator</target>
       </trans-unit>
       <trans-unit id="1b2f36a63d291efb8bc41dabbd6917a8" resname="mb.core.button.class.title">
         <source>mb.core.button.class.title</source>
@@ -264,31 +264,31 @@
       </trans-unit>
       <trans-unit id="28b6501d35cb5022d2f1a5ffa6c46b0a" resname="mb.core.button.tag.button">
         <source>mb.core.button.tag.button</source>
-        <target>button</target>
+        <target>Button</target>
       </trans-unit>
       <trans-unit id="9c1ccf262204218acfe9d7d4531efdb5" resname="mb.core.coordinatesdisplay.class.title">
         <source>mb.core.coordinatesdisplay.class.title</source>
-        <target>Coordinates display</target>
+        <target>Koordinatenanzeige</target>
       </trans-unit>
       <trans-unit id="cee2d354d34004657e8a450d251585dc" resname="mb.core.coordinatesdisplay.class.description">
         <source>mb.core.coordinatesdisplay.class.description</source>
-        <target>The coordinates display shows your mouse position in map coordinates.</target>
+        <target>Die Koordinatenanzeige zeigt die Mausposition in den Kartenkoordinaten.</target>
       </trans-unit>
       <trans-unit id="eab1a6ab1b72d1da761177f459e3f5ed" resname="mb.core.coordinatesdisplay.tag.coordinates">
         <source>mb.core.coordinatesdisplay.tag.coordinates</source>
-        <target>coordinates</target>
+        <target>Koordinaten</target>
       </trans-unit>
       <trans-unit id="ff24de9e7a96cd53867af20168d49ebd" resname="mb.core.coordinatesdisplay.tag.display">
         <source>mb.core.coordinatesdisplay.tag.display</source>
-        <target>display</target>
+        <target>Anzeige</target>
       </trans-unit>
       <trans-unit id="651e9b111a6dd5b2050eb314a88df0d5" resname="mb.core.coordinatesdisplay.tag.mouse">
         <source>mb.core.coordinatesdisplay.tag.mouse</source>
-        <target>mouse</target>
+        <target>Maus</target>
       </trans-unit>
       <trans-unit id="9d31d5498141043d830d3bcf7b338987" resname="mb.core.coordinatesdisplay.tag.position">
         <source>mb.core.coordinatesdisplay.tag.position</source>
-        <target>position</target>
+        <target>Position</target>
       </trans-unit>
       <trans-unit id="788b3224b624aa4530d43991cedc9ced" resname="mb.core.copyright.class.title">
         <source>mb.core.copyright.class.title</source>
@@ -296,39 +296,39 @@
       </trans-unit>
       <trans-unit id="785b8e73415635049ccda83324dabdd4" resname="mb.core.copyright.class.description">
         <source>mb.core.copyright.class.description</source>
-        <target>Shows terms of use</target>
+        <target>Nutzungsbedingungen</target>
       </trans-unit>
       <trans-unit id="edd9a51254ed3282c94086cb82181c4b" resname="mb.core.copyright.tag.copyright">
         <source>mb.core.copyright.tag.copyright</source>
-        <target>copyright</target>
+        <target>Copyright</target>
       </trans-unit>
       <trans-unit id="8f0414b7eb120282a4e0086e674e03bb" resname="mb.core.copyright.tag.dialog">
         <source>mb.core.copyright.tag.dialog</source>
-        <target>dialog</target>
+        <target>Dialog</target>
       </trans-unit>
       <trans-unit id="5d2843de110ec9bc967ddcbdafed4b04" resname="mb.core.featureinfo.class.title">
         <source>mb.core.featureinfo.class.title</source>
-        <target>FeatureInfo</target>
+        <target>Information</target>
       </trans-unit>
       <trans-unit id="2b611c8cacca06828c4da13b84e8caf3" resname="mb.core.featureinfo.class.description">
         <source>mb.core.featureinfo.class.description</source>
-        <target>Featureinfo</target>
+        <target>Information</target>
       </trans-unit>
       <trans-unit id="a7a27b022bb1c74647c76562bc2bca92" resname="mb.core.featureinfo.tag.featureinfo">
         <source>mb.core.featureinfo.tag.featureinfo</source>
-        <target>featureinfo</target>
+        <target>Information</target>
       </trans-unit>
       <trans-unit id="84265e0b65d9180071e2d8be52ff266d" resname="mb.core.featureinfo.tag.feature">
         <source>mb.core.featureinfo.tag.feature</source>
-        <target>feature</target>
+        <target>Objekt</target>
       </trans-unit>
       <trans-unit id="4ca1e715fc760a219401f2b0bc8ec66d" resname="mb.core.featureinfo.tag.info">
         <source>mb.core.featureinfo.tag.info</source>
-        <target>info</target>
+        <target>Info</target>
       </trans-unit>
       <trans-unit id="466f3c57656eccfdff2975c40964f72a" resname="mb.core.featureinfo.tag.dialog">
         <source>mb.core.featureinfo.tag.dialog</source>
-        <target>dialog</target>
+        <target>Dialog</target>
       </trans-unit>
       <trans-unit id="6b752500265cd713262d3ac40782289e" resname="mb.core.gpsposition.class.title">
         <source>mb.core.gpsposition.class.title</source>
@@ -336,43 +336,43 @@
       </trans-unit>
       <trans-unit id="1ad088a7f936e3e8a90a2c668adb0393" resname="mb.core.gpsposition.class.description">
         <source>mb.core.gpsposition.class.description</source>
-        <target>Renders a button to show the GPS-Position</target>
+        <target>Übergibt einen Button um die GPS-Position anzuzeigen.</target>
       </trans-unit>
       <trans-unit id="63927352ea1d9602ea2d39950657b022" resname="mb.core.gpsposition.tag.gpsposition">
         <source>mb.core.gpsposition.tag.gpsposition</source>
-        <target>gpsposition</target>
+        <target>GPS-Position</target>
       </trans-unit>
       <trans-unit id="1e4a324bb1c86559e915eeae664f16ca" resname="mb.core.gpsposition.tag.gps">
         <source>mb.core.gpsposition.tag.gps</source>
-        <target>gps</target>
+        <target>GPS</target>
       </trans-unit>
       <trans-unit id="b7770cbd87d28b8cc56cf8692909971a" resname="mb.core.gpsposition.tag.position">
         <source>mb.core.gpsposition.tag.position</source>
-        <target>position</target>
+        <target>Position</target>
       </trans-unit>
       <trans-unit id="9a2760ef9a6ef1a36a78fc130f3e4dc2" resname="mb.core.gpsposition.tag.button">
         <source>mb.core.gpsposition.tag.button</source>
-        <target>button</target>
+        <target>Button</target>
       </trans-unit>
       <trans-unit id="91c4794eb87858c6ea0a7f736ffc31d5" resname="mb.core.layertree.class.title">
         <source>mb.core.layertree.class.title</source>
-        <target>Layer tree</target>
+        <target>Ebenenbaum</target>
       </trans-unit>
       <trans-unit id="ef9d6ec32821b43276bd1a3777a7d83c" resname="mb.core.layertree.class.description">
         <source>mb.core.layertree.class.description</source>
-        <target>Tree of map's layers</target>
+        <target>Baum der Karten-Ebenen</target>
       </trans-unit>
       <trans-unit id="6887daa52d3a65065194eae2ddb59766" resname="mb.core.layertree.tag.layertree">
         <source>mb.core.layertree.tag.layertree</source>
-        <target>layertree</target>
+        <target>Ebenenbaum</target>
       </trans-unit>
       <trans-unit id="fa5d8e4f7cddffeb22ee18ed267e20bc" resname="mb.core.layertree.tag.layer">
         <source>mb.core.layertree.tag.layer</source>
-        <target>layer</target>
+        <target>Ebenen</target>
       </trans-unit>
       <trans-unit id="261c2591eda9e2e2f29c5cdc3da88f7d" resname="mb.core.layertree.tag.tree">
         <source>mb.core.layertree.tag.tree</source>
-        <target>tree</target>
+        <target>Baum</target>
       </trans-unit>
       <trans-unit id="0e414a98c26c7e55a83bae397b5faf8d" resname="mb.core.legend.class.title">
         <source>mb.core.legend.class.title</source>
@@ -380,55 +380,55 @@
       </trans-unit>
       <trans-unit id="c6b4222c59ccebdcc9c399ed4e0a8169" resname="mb.core.legend.class.description">
         <source>mb.core.legend.class.description</source>
-        <target>The legend shows the legend of the map's layers</target>
+        <target>Die Legende zeigt die Ebenen der Karte an.</target>
       </trans-unit>
       <trans-unit id="bc4dbd2f4a17fa2486f8c153b2785959" resname="mb.core.legend.tag.layer">
         <source>mb.core.legend.tag.layer</source>
-        <target>layer</target>
+        <target>Ebenen</target>
       </trans-unit>
       <trans-unit id="3a1ad035c9ded1d5f15ad139a3180479" resname="mb.core.legend.tag.legend">
         <source>mb.core.legend.tag.legend</source>
-        <target>legend</target>
+        <target>Legend</target>
       </trans-unit>
       <trans-unit id="6ff9a6860becdb38fc62382a5a94d19f" resname="mb.core.map.class.title">
         <source>mb.core.map.class.title</source>
-        <target>Map</target>
+        <target>Karte</target>
       </trans-unit>
       <trans-unit id="a51d63e59c7008d6fc19ae6fd66e0034" resname="mb.core.mapabs.class.description">
         <source>mb.core.mapabs.class.description</source>
-        <target>MapQuery/OpenLayers based map</target>
+        <target>Die Karte basiert auf MapQuery/OpenLayers</target>
       </trans-unit>
       <trans-unit id="62a123effedc924f13f9f73b303a159e" resname="mb.core.map.tag.map">
         <source>mb.core.map.tag.map</source>
-        <target>map</target>
+        <target>Karte</target>
       </trans-unit>
       <trans-unit id="5b354e24e317b47d82b91e5fb901398e" resname="mb.core.map.tag.mapquery">
         <source>mb.core.map.tag.mapquery</source>
-        <target>mapquery</target>
+        <target>MapQuery</target>
       </trans-unit>
       <trans-unit id="be27b82e95734992bbcd31c4faad6251" resname="mb.core.map.tag.openlayers">
         <source>mb.core.map.tag.openlayers</source>
-        <target>openlayers</target>
+        <target>OpenLayers</target>
       </trans-unit>
       <trans-unit id="4b943baa1ecd120693a0169188869129" resname="mb.core.map.srsnotfound">
         <source>mb.core.map.srsnotfound</source>
-        <target>SRS properties for %srslist% are not found</target>
+        <target>SRS Eigenschaften für %srslist% wurden nicht gefunden.</target>
       </trans-unit>
       <trans-unit id="1545d3b3b00b2d6a9ffa64836e72cf89" resname="mb.core.overview.class.title">
         <source>mb.core.overview.class.title</source>
-        <target>Overview</target>
+        <target>Übersicht</target>
       </trans-unit>
       <trans-unit id="4a541e9cb0bbec61e67b6410c5d91bfd" resname="mb.core.overview.class.description">
         <source>mb.core.overview.class.description</source>
-        <target>Renders a small overview map</target>
+        <target>Zeigt eine kleine Übersichtskarte an.</target>
       </trans-unit>
       <trans-unit id="e5d9eb4a51009c1523e241487f33efb0" resname="mb.core.overview.tag.overview">
         <source>mb.core.overview.tag.overview</source>
-        <target>overview</target>
+        <target>Übersicht</target>
       </trans-unit>
       <trans-unit id="bb3d9d93dcc6f6dabc4d558e5a9f4222" resname="mb.core.overview.tag.map">
         <source>mb.core.overview.tag.map</source>
-        <target>map</target>
+        <target>Karte</target>
       </trans-unit>
       <trans-unit id="7de6b6e60dc29467aa72968a60ec2781" resname="mb.core.poi.class.title">
         <source>mb.core.poi.class.title</source>
@@ -436,31 +436,31 @@
       </trans-unit>
       <trans-unit id="fcb05118e63af0be8eb3f9d50d2b8383" resname="mb.core.poi.class.description">
         <source>mb.core.poi.class.description</source>
-        <target>Create a POI for sharing</target>
+        <target>Erzeugt einen POI</target>
       </trans-unit>
       <trans-unit id="718b2faa45e981d61773328503144051" resname="mb.core.poi.tag.poi">
         <source>mb.core.poi.tag.poi</source>
-        <target>poi</target>
+        <target>POI</target>
       </trans-unit>
       <trans-unit id="2af3ff9534bd82ecac0c9f50041b4c7a" resname="mb.core.poi.tag.point">
         <source>mb.core.poi.tag.point</source>
-        <target>point</target>
+        <target>Punkt</target>
       </trans-unit>
       <trans-unit id="f1ceefdd74e75aa8d53bbdcc65de9972" resname="mb.core.poi.tag.interest">
         <source>mb.core.poi.tag.interest</source>
-        <target>interest</target>
+        <target>Interessse</target>
       </trans-unit>
       <trans-unit id="b180ccb1c56081666f1a56362200e5e1" resname="mb.core.printclient.class.title">
         <source>mb.core.printclient.class.title</source>
-        <target>Print client</target>
+        <target>Druck</target>
       </trans-unit>
       <trans-unit id="269640fdb1e7654374bffe68abf67d3b" resname="mb.core.printclient.class.description">
         <source>mb.core.printclient.class.description</source>
-        <target>Renders a Print dialog</target>
+        <target>Zeigt einen Druck Dialog</target>
       </trans-unit>
       <trans-unit id="02faddbd2151e0d55dfb3084ad20682b" resname="mb.core.printclient.tag.print">
         <source>mb.core.printclient.tag.print</source>
-        <target>print</target>
+        <target>Druck</target>
       </trans-unit>
       <trans-unit id="c5617befbd65f424d0919d2a64132eab" resname="mb.core.printclient.tag.pdf">
         <source>mb.core.printclient.tag.pdf</source>
@@ -484,166 +484,163 @@
       </trans-unit>
       <trans-unit id="89eb0c4bbc2dbf36dfaa030e4424cde7" resname="mb.core.ruler.class.title">
         <source>mb.core.ruler.class.title</source>
-        <target>Line/Area Ruler</target>
+        <target>Linien-/Flächenmesseung</target>
       </trans-unit>
       <trans-unit id="df474f4781cc43d563e67a4bcbde1bbb" resname="mb.core.ruler.class.description">
         <source>mb.core.ruler.class.description</source>
-        <target>Ruler to draw a line/area and display length/area in a dialog</target>
+        <target>Messung: Es wird eine Linie/Fläche gezeichnet, um deren Länge/Fläche in einem Dialog anzuzeigen.</target>
       </trans-unit>
       <trans-unit id="930ae199f6f8a21841e441cb64842229" resname="mb.core.ruler.tag.line">
         <source>mb.core.ruler.tag.line</source>
-        <target>line</target>
+        <target>Linie</target>
       </trans-unit>
       <trans-unit id="f570199e41fc3a71fcad197332f1c315" resname="mb.core.ruler.tag.area">
         <source>mb.core.ruler.tag.area</source>
-        <target>area</target>
+        <target>Fläche</target>
       </trans-unit>
       <trans-unit id="271f9c8a039e12ec95a13cc6b14fcca2" resname="mb.core.ruler.tag.measure">
         <source>mb.core.ruler.tag.measure</source>
-        <target>measure</target>
+        <target>Messen</target>
       </trans-unit>
       <trans-unit id="c0cca69e14f668acf1f83440eda1074a" resname="mb.core.scalebar.class.title">
         <source>mb.core.scalebar.class.title</source>
-        <target>Scale bar</target>
+        <target>Maßstabsleiste</target>
       </trans-unit>
       <trans-unit id="df03ffea85a38b9b604f4253377fe61c" resname="mb.core.scalebar.class.description">
         <source>mb.core.scalebar.class.description</source>
-        <target>Scale bar description</target>
+        <target>Die Maßstabsleiste ist eine schmale Linie, die den aktuellen Maßstab anzeigt.</target>
       </trans-unit>
       <trans-unit id="f00869751975198840c745c4d58b1360" resname="mb.core.scalebar.tag.scale">
         <source>mb.core.scalebar.tag.scale</source>
-        <target>scale</target>
+        <target>Maßstab</target>
       </trans-unit>
       <trans-unit id="cca56645382cac33ff73d2252c54600c" resname="mb.core.scalebar.tag.bar">
         <source>mb.core.scalebar.tag.bar</source>
-        <target>bar</target>
+        <target>Leiste</target>
       </trans-unit>
-      <trans-unit id="812e48d5463949ff4ec75821c08e21fa" resname="mb.core.scaledisplay.class.title">
+      <trans-unit id="84a6d65871a9ef3e993fdc1db86ffcba" resname="mb.core.scaledisplay.class.title">
         <source>mb.core.scaledisplay.class.title</source>
-        <target>Scale display</target>
+        <target>Maßstabsanzeige</target>
       </trans-unit>
-      <trans-unit id="d87c8436f686b8d9ee50940e48c72d5c" resname="mb.core.scaledisplay.class.description">
+      <trans-unit id="e68ccfbb22d73367cbf5455424d7fdcb" resname="mb.core.scaledisplay.class.description">
         <source>mb.core.scaledisplay.class.description</source>
-        <target>Displays the current map scale</target>
+        <target>Der aktuelle Maßstab wird angezeigt.</target>
       </trans-unit>
-      <trans-unit id="60fb48c3f1fa6eb6d978563437098a07" resname="mb.core.scaledisplay.tag.scale">
+      <trans-unit id="071b6b10cd34e561d489c538671de9e6" resname="mb.core.scaledisplay.tag.scale">
         <source>mb.core.scaledisplay.tag.scale</source>
-        <target>scale</target>
+        <target>Maßstab</target>
       </trans-unit>
-      <trans-unit id="73ac4fbf3a468502c350a0d980399b5b" resname="mb.core.scaledisplay.tag.display">
+      <trans-unit id="d2cbf19268c2a9378b16d27a8f2c3c21" resname="mb.core.scaledisplay.tag.display">
         <source>mb.core.scaledisplay.tag.display</source>
-        <target>display</target>
+        <target>Anzeige</target>
       </trans-unit>
       <trans-unit id="b85e01d963b6106bb2d2de44e241f97d" resname="mb.core.scaleselector.class.title">
         <source>mb.core.scaleselector.class.title</source>
-        <target>Scale selector</target>
+        <target>Maßstabsauswahl</target>
       </trans-unit>
       <trans-unit id="d9751023269ee3f4f3d84ad0b6355f8b" resname="mb.core.scaleselector.class.description">
         <source>mb.core.scaleselector.class.description</source>
-        <target>Displays and changes a map scale</target>
+        <target>Das Element zeigt eine Auswahlbox mit Maßstäben an, mit der Maßstäbe geändert werden können.</target>
       </trans-unit>
       <trans-unit id="ea46156a86949b1bfd58cad9bef049c0" resname="mb.core.scaleselector.tag.scale">
         <source>mb.core.scaleselector.tag.scale</source>
-        <target>scale</target>
+        <target>Maßstab</target>
       </trans-unit>
       <trans-unit id="e3e2d4bbdab626252c2d0d480f7209a7" resname="mb.core.scaleselector.tag.selector">
         <source>mb.core.scaleselector.tag.selector</source>
-        <target>selector</target>
+        <target>Auswahl</target>
       </trans-unit>
       <trans-unit id="26ffa92883d7c4140fe66b4d76176b5f" resname="mb.core.searchrouter.class.title">
         <source>mb.core.searchrouter.class.title</source>
-        <target>Search router</target>
+        <target>Suchen</target>
       </trans-unit>
       <trans-unit id="6ab2689e7fbc56d76055949a730142b4" resname="mb.core.searchrouter.class.description">
         <source>mb.core.searchrouter.class.description</source>
-        <target>Configurable search routing element</target>
+        <target>Konfigurierbare Suchen</target>
       </trans-unit>
       <trans-unit id="503c12f9039ad418c497da90113359cb" resname="mb.core.searchrouter.tag.search">
         <source>mb.core.searchrouter.tag.search</source>
-        <target>search</target>
+        <target>Suche</target>
       </trans-unit>
       <trans-unit id="e397392a6736e4c692690852147ee845" resname="mb.core.searchrouter.tag.router">
         <source>mb.core.searchrouter.tag.router</source>
-        <target>router</target>
+        <target>Router</target>
       </trans-unit>
       <trans-unit id="2d82734a91ac66cd751875530abdd2dd" resname="mb.core.sketch.class.title">
         <source>mb.core.sketch.class.title</source>
-        <target>Sketch</target>
+        <target>Skizzen</target>
       </trans-unit>
       <trans-unit id="fc172c08f41ce1029d79190eecdb2446" resname="mb.core.sketch.class.description">
         <source>mb.core.sketch.class.description</source>
-        <target>Sketch description</target>
+        <target>Es wird eine Vektorebene in der Karte hinzugefügt, wodurch Geometrieobjekte gezeichnet werden.</target>
       </trans-unit>
       <trans-unit id="7ae33b15957a16081ce3bff4098cec7a" resname="mb.core.sketch.tag.sketch">
         <source>mb.core.sketch.tag.sketch</source>
-        <target>sketch</target>
+        <target>Skizzen</target>
       </trans-unit>
       <trans-unit id="1b7a2f9aa3b7ee2e3d7989fd4b6f3caa" resname="mb.core.sketch.tag.circle">
         <source>mb.core.sketch.tag.circle</source>
-        <target>circle</target>
+        <target>Kreis</target>
       </trans-unit>
       <trans-unit id="d79bf5328be657237d7d5c90ef421742" resname="mb.core.srsselector.class.title">
         <source>mb.core.srsselector.class.title</source>
-        <target>SRS selector</target>
+        <target>SRS Auswahl</target>
       </trans-unit>
       <trans-unit id="508503c89e4e2a834b66b6ce4a17d51c" resname="mb.core.srsselector.class.description">
         <source>mb.core.srsselector.class.description</source>
-        <target>The spatial reference system selector changes the map's
-            spatial reference system</target>
+        <target>Nach der Auswahl eines räumlichen Referenzsystems (SRS) ändert sich das SRS in der Karte.</target>
       </trans-unit>
       <trans-unit id="ab4fd7ac0477504180eaaa27b0e42464" resname="mb.core.srsselector.tag.srs">
         <source>mb.core.srsselector.tag.srs</source>
-        <target>srs</target>
+        <target>SRS</target>
       </trans-unit>
       <trans-unit id="35d70c6b173b8c1dafdf0bc3f9773321" resname="mb.core.srsselector.tag.selector">
         <source>mb.core.srsselector.tag.selector</source>
-        <target>selector</target>
+        <target>Auswahl</target>
       </trans-unit>
       <trans-unit id="f60b842a67fc8eb5030a1d8dc06d8cd8" resname="mb.core.zoombar.class.title">
         <source>mb.core.zoombar.class.title</source>
-        <target>Navigation toolbar</target>
+        <target>Navigationswerkzeug</target>
       </trans-unit>
       <trans-unit id="7f5f1a808b7d6958c515f4cf6bc0dc58" resname="mb.core.zoombar.class.description">
         <source>mb.core.zoombar.class.description</source>
-        <target>The Navigation Toolbar element provides a floating control to pan and zoom,
-similar to the OpenLayers PanZoomBar control. This element though is easier to
-use when custom styling is needed</target>
+        <target>Das Navigationswerkzeug bietet Zoomen und Verschieben an, ähnlich wie bei OpenLayers.</target>
       </trans-unit>
       <trans-unit id="dd8da2c48bb9ba297c6c85c5760c63b8" resname="mb.core.zoombar.tag.zoom">
         <source>mb.core.zoombar.tag.zoom</source>
-        <target>zoom</target>
+        <target>Zoom</target>
       </trans-unit>
       <trans-unit id="95ba880851677b631f8bb98a6d2d6383" resname="mb.core.zoombar.tag.pan">
         <source>mb.core.zoombar.tag.pan</source>
-        <target>pan</target>
+        <target>Verschieben</target>
       </trans-unit>
       <trans-unit id="5125087b8bc99226bc9852bd732d46ea" resname="mb.core.zoombar.tag.control">
         <source>mb.core.zoombar.tag.control</source>
-        <target>control</target>
+        <target>Kontrolle</target>
       </trans-unit>
       <trans-unit id="e3fb9d6f29c3fc95ffffab704493bc02" resname="mb.core.zoombar.tag.navigation">
         <source>mb.core.zoombar.tag.navigation</source>
-        <target>navigation</target>
+        <target>Navigation</target>
       </trans-unit>
       <trans-unit id="26f98160a1059c3bb9ba4ca8079d70ca" resname="mb.core.zoombar.tag.panel">
         <source>mb.core.zoombar.tag.panel</source>
-        <target>panel</target>
+        <target>Panel</target>
       </trans-unit>
       <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
         <source>mb.core.admin.poi.label.usemailto</source>
-        <target>Use Mailto</target>
+        <target>Mailto verwenden</target>
       </trans-unit>
       <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
         <source>mb.core.admin.legend.label.autoopen</source>
-        <target>Autoopen</target>
+        <target>Automatisches Öffnen</target>
       </trans-unit>
       <trans-unit id="a68b07cd84e92c05aa0182899bccc4c0" resname="mb.core.admin.legend.label.hideemptylayers">
         <source>mb.core.admin.legend.label.hideemptylayers</source>
-        <target>Layer ohne Legende ausblenden</target>
+        <target>Ebenen ohne Objekte ausblenden</target>
       </trans-unit>
       <trans-unit id="cd587ed8a374f42b8c2e5575dcb02ad0" resname="mb.core.admin.legend.label.generatelegendurl">
         <source>mb.core.admin.legend.label.generatelegendurl</source>
-        <target>Legende URL generieren</target>
+        <target>Legenden-URL generieren</target>
       </trans-unit>
       <trans-unit id="90675349c781bc0f026bca337fce8218" resname="mb.core.admin.legend.label.showsourcetitle">
         <source>mb.core.admin.legend.label.showsourcetitle</source>
@@ -651,39 +648,39 @@ use when custom styling is needed</target>
       </trans-unit>
       <trans-unit id="0ca2080280477b91ee0130c78044e3e6" resname="mb.core.admin.legend.label.showlayertitle">
         <source>mb.core.admin.legend.label.showlayertitle</source>
-        <target>Titel des Layers anzeigen</target>
+        <target>Titel der Ebene anzeigen</target>
       </trans-unit>
       <trans-unit id="7dc9941d3994c6bcf1410b0b4ae5400d" resname="mb.core.admin.legend.label.showgroupedlayertitle">
         <source>mb.core.admin.legend.label.showgroupedlayertitle</source>
-        <target>Titel des Layers anzeigen</target>
+        <target>Titel der gruppierten Ebene anzeigen</target>
       </trans-unit>
       <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
         <source>mb.core.admin.featureinfo.label.autoopen</source>
-        <target>Autoopen</target>
+        <target>Automatisches Öffnen</target>
       </trans-unit>
       <trans-unit id="656d615fc3d3f6ea34a34e5a19bcf36c" resname="mb.core.admin.featureinfo.label.deactivateonclose">
         <source>mb.core.admin.featureinfo.label.deactivateonclose</source>
-        <target>Deactivate on close</target>
+        <target>Beim Schließen deaktivieren</target>
       </trans-unit>
       <trans-unit id="f2fca95e4366a0e4a5aad0b95efb5744" resname="mb.core.admin.printclient.label.autoopen">
         <source>mb.core.admin.printclient.label.autoopen</source>
-        <target>Autoopen</target>
+        <target>Automatisches Öffnen</target>
       </trans-unit>
       <trans-unit id="b163e7bd1f8de3ae1a5abf00b6342cee" resname="mb.core.admin.printclient.label.rotatable">
         <source>mb.core.admin.printclient.label.rotatable</source>
-        <target>Rotatable</target>
+        <target>Drehbar</target>
       </trans-unit>
       <trans-unit id="18de8162e371da730a52c3d6d452e5ad" resname="mb.core.admin.copyright.label.autoopen">
         <source>mb.core.admin.copyright.label.autoopen</source>
-        <target>Autoopen</target>
+        <target>Automatisches Öffnen</target>
       </trans-unit>
       <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
         <source>mb.core.admin.layertree.label.showbasesources</source>
-        <target>Hintergurndquellen anzeigen</target>
+        <target>Hintergrundquellen anzeigen</target>
       </trans-unit>
       <trans-unit id="71b752f5f8f9465c2dd33581a4d5e797" resname="mb.core.admin.layertree.label.autoopen">
         <source>mb.core.admin.layertree.label.autoopen</source>
-        <target>Autoopen</target>
+        <target>Automatisches Öffnen</target>
       </trans-unit>
       <trans-unit id="855cb022f4ce41f697c2d2a4674b8509" resname="mb.core.admin.layertree.label.showheader">
         <source>mb.core.admin.layertree.label.showheader</source>

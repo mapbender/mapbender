@@ -8,15 +8,15 @@
       </trans-unit>
       <trans-unit id="1d84c5293abecb3624fa6828185b3493" resname="mb.core.aboutdialog.content.learnmore">
         <source>mb.core.aboutdialog.content.learnmore</source>
-        <target>__mb.core.aboutdialog.content.learnmore</target>
+        <target>learn more about Mapbender3</target>
       </trans-unit>
       <trans-unit id="a8b14434dc098a6e7b028915b631cd24" resname="mb.core.aboutdialog.content.linktitle">
         <source>mb.core.aboutdialog.content.linktitle</source>
-        <target>Link title</target>
+        <target>Visit our official Mapbender3 website</target>
       </trans-unit>
       <trans-unit id="97ab0befb054f94d9b438e6f8b18aa62" resname="mb.core.aboutdialog.content.website">
         <source>mb.core.aboutdialog.content.website</source>
-        <target>__mb.core.aboutdialog.content.website</target>
+        <target>website</target>
       </trans-unit>
       <trans-unit id="d34e7ce2889c54092fc147356c3faa14" resname="mb.core.searchrouter.popup.btn.ok">
         <source>mb.core.searchrouter.popup.btn.ok</source>
@@ -224,7 +224,7 @@
       </trans-unit>
       <trans-unit id="a1fe1182d0efa70a68e07d8375db34ce" resname="mb.core.aboutdialog.class.description">
         <source>mb.core.aboutdialog.class.description</source>
-        <target>Shows a about dialog</target>
+        <target>Shows an about dialog</target>
       </trans-unit>
       <trans-unit id="cb1d0ceba4aa38a8a623c339903c7b71" resname="mb.core.aboutdialog.tag.help">
         <source>mb.core.aboutdialog.tag.help</source>
@@ -300,7 +300,7 @@
       </trans-unit>
       <trans-unit id="edd9a51254ed3282c94086cb82181c4b" resname="mb.core.copyright.tag.copyright">
         <source>mb.core.copyright.tag.copyright</source>
-        <target>_copyright</target>
+        <target>Copyright</target>
       </trans-unit>
       <trans-unit id="8f0414b7eb120282a4e0086e674e03bb" resname="mb.core.copyright.tag.dialog">
         <source>mb.core.copyright.tag.dialog</source>
@@ -332,19 +332,19 @@
       </trans-unit>
       <trans-unit id="6b752500265cd713262d3ac40782289e" resname="mb.core.gpsposition.class.title">
         <source>mb.core.gpsposition.class.title</source>
-        <target>GPS-Position</target>
+        <target>GPS Position</target>
       </trans-unit>
       <trans-unit id="1ad088a7f936e3e8a90a2c668adb0393" resname="mb.core.gpsposition.class.description">
         <source>mb.core.gpsposition.class.description</source>
-        <target>Renders a button to show the GPS-Position</target>
+        <target>Renders a button to show the GPS Position</target>
       </trans-unit>
       <trans-unit id="63927352ea1d9602ea2d39950657b022" resname="mb.core.gpsposition.tag.gpsposition">
         <source>mb.core.gpsposition.tag.gpsposition</source>
-        <target>gpsposition</target>
+        <target>GPS Position</target>
       </trans-unit>
       <trans-unit id="1e4a324bb1c86559e915eeae664f16ca" resname="mb.core.gpsposition.tag.gps">
         <source>mb.core.gpsposition.tag.gps</source>
-        <target>gps</target>
+        <target>GPS</target>
       </trans-unit>
       <trans-unit id="b7770cbd87d28b8cc56cf8692909971a" resname="mb.core.gpsposition.tag.position">
         <source>mb.core.gpsposition.tag.position</source>
@@ -404,11 +404,11 @@
       </trans-unit>
       <trans-unit id="5b354e24e317b47d82b91e5fb901398e" resname="mb.core.map.tag.mapquery">
         <source>mb.core.map.tag.mapquery</source>
-        <target>mapquery</target>
+        <target>MapQuery</target>
       </trans-unit>
       <trans-unit id="be27b82e95734992bbcd31c4faad6251" resname="mb.core.map.tag.openlayers">
         <source>mb.core.map.tag.openlayers</source>
-        <target>openlayers</target>
+        <target>OpenLayers</target>
       </trans-unit>
       <trans-unit id="4b943baa1ecd120693a0169188869129" resname="mb.core.map.srsnotfound">
         <source>mb.core.map.srsnotfound</source>
@@ -508,7 +508,7 @@
       </trans-unit>
       <trans-unit id="df03ffea85a38b9b604f4253377fe61c" resname="mb.core.scalebar.class.description">
         <source>mb.core.scalebar.class.description</source>
-        <target>Scale bar description</target>
+        <target>The scalebar displays a small line indicator representing the current map scale.</target>
       </trans-unit>
       <trans-unit id="f00869751975198840c745c4d58b1360" resname="mb.core.scalebar.tag.scale">
         <source>mb.core.scalebar.tag.scale</source>
@@ -518,19 +518,19 @@
         <source>mb.core.scalebar.tag.bar</source>
         <target>bar</target>
       </trans-unit>
-      <trans-unit id="812e48d5463949ff4ec75821c08e21fa" resname="mb.core.scaledisplay.class.title">
+      <trans-unit id="84a6d65871a9ef3e993fdc1db86ffcba" resname="mb.core.scaledisplay.class.title">
         <source>mb.core.scaledisplay.class.title</source>
         <target>Scale display</target>
       </trans-unit>
-      <trans-unit id="d87c8436f686b8d9ee50940e48c72d5c" resname="mb.core.scaledisplay.class.description">
+      <trans-unit id="e68ccfbb22d73367cbf5455424d7fdcb" resname="mb.core.scaledisplay.class.description">
         <source>mb.core.scaledisplay.class.description</source>
         <target>Displays the current map scale</target>
       </trans-unit>
-      <trans-unit id="60fb48c3f1fa6eb6d978563437098a07" resname="mb.core.scaledisplay.tag.scale">
+      <trans-unit id="071b6b10cd34e561d489c538671de9e6" resname="mb.core.scaledisplay.tag.scale">
         <source>mb.core.scaledisplay.tag.scale</source>
         <target>scale</target>
       </trans-unit>
-      <trans-unit id="73ac4fbf3a468502c350a0d980399b5b" resname="mb.core.scaledisplay.tag.display">
+      <trans-unit id="d2cbf19268c2a9378b16d27a8f2c3c21" resname="mb.core.scaledisplay.tag.display">
         <source>mb.core.scaledisplay.tag.display</source>
         <target>display</target>
       </trans-unit>
@@ -572,7 +572,7 @@
       </trans-unit>
       <trans-unit id="fc172c08f41ce1029d79190eecdb2446" resname="mb.core.sketch.class.description">
         <source>mb.core.sketch.class.description</source>
-        <target>Sketch description</target>
+        <target>Adds a vector layer in the map and enables geometry objects to draw.</target>
       </trans-unit>
       <trans-unit id="7ae33b15957a16081ce3bff4098cec7a" resname="mb.core.sketch.tag.sketch">
         <source>mb.core.sketch.tag.sketch</source>
@@ -588,12 +588,11 @@
       </trans-unit>
       <trans-unit id="508503c89e4e2a834b66b6ce4a17d51c" resname="mb.core.srsselector.class.description">
         <source>mb.core.srsselector.class.description</source>
-        <target>The spatial reference system selector changes the map's
-            spatial reference system</target>
+        <target>The spatial reference system selector changes the map's spatial reference system</target>
       </trans-unit>
       <trans-unit id="ab4fd7ac0477504180eaaa27b0e42464" resname="mb.core.srsselector.tag.srs">
         <source>mb.core.srsselector.tag.srs</source>
-        <target>srs</target>
+        <target>SRS</target>
       </trans-unit>
       <trans-unit id="35d70c6b173b8c1dafdf0bc3f9773321" resname="mb.core.srsselector.tag.selector">
         <source>mb.core.srsselector.tag.selector</source>
@@ -605,9 +604,7 @@
       </trans-unit>
       <trans-unit id="7f5f1a808b7d6958c515f4cf6bc0dc58" resname="mb.core.zoombar.class.description">
         <source>mb.core.zoombar.class.description</source>
-        <target>The Navigation Toolbar element provides a floating control to pan and zoom,
-similar to the OpenLayers PanZoomBar control. This element though is easier to
-use when custom styling is needed</target>
+        <target>The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.</target>
       </trans-unit>
       <trans-unit id="dd8da2c48bb9ba297c6c85c5760c63b8" resname="mb.core.zoombar.tag.zoom">
         <source>mb.core.zoombar.tag.zoom</source>
