@@ -60,7 +60,7 @@
       </trans-unit>
       <trans-unit id="6853f27563c23ed2b4e1be8e42b788aa" resname="mb.wmc.list.description">
         <source>mb.wmc.list.description</source>
-        <target>Description</target>
+        <target>Add configurations from the selectbox to the application.</target>
       </trans-unit>
       <trans-unit id="1cbc6d988a8f10a8908c92bf0ba0d882" resname="mb.wmc.list.toggle">
         <source>mb.wmc.list.toggle</source>
@@ -96,7 +96,7 @@
       </trans-unit>
       <trans-unit id="329a1abceb8068b5dcdb4d63b46d2bd4" resname="mb.wmc.wmceditor.list.description">
         <source>mb.wmc.wmceditor.list.description</source>
-        <target>Description</target>
+        <target>Mapbender can save and edit configurations with the WMC Editor.</target>
       </trans-unit>
       <trans-unit id="82be49e5b51462edf1afdec84259533c" resname="mb.wmc.wmceditor.list.add_wmc">
         <source>mb.wmc.wmceditor.list.add_wmc</source>
@@ -140,7 +140,7 @@
       </trans-unit>
       <trans-unit id="1744637607776d06471ee642aac7a900" resname="mb.wmc.wmcloader.description">
         <source>mb.wmc.wmcloader.description</source>
-        <target>Description</target>
+        <target>Saved configurations can be loaded with the element WMC loader.</target>
       </trans-unit>
       <trans-unit id="50a0a43d7734636fdca90ac4e93c124b" resname="mb.wmc.wmcloader.view_wmc">
         <source>mb.wmc.wmcloader.view_wmc</source>
@@ -188,7 +188,7 @@
       </trans-unit>
       <trans-unit id="b6d9a92724be41fbb79a84f42708290e" resname="mb.wmc.wmceditor.class.description">
         <source>mb.wmc.wmceditor.class.description</source>
-        <target>Creates and edits WMC documents</target>
+        <target>Creates and edits WMC documents.</target>
       </trans-unit>
       <trans-unit id="351cc8f67e3cb73c27792fba58ef9dd6" resname="mb.wmc.wmceditor.tag.wmc">
         <source>mb.wmc.wmceditor.tag.wmc</source>
@@ -220,14 +220,14 @@
       </trans-unit>
       <trans-unit id="eb6f1e211f0c4fce0cb4e847844a7ca0" resname="mb.wmc.wmcloader.class.description">
         <source>mb.wmc.wmcloader.class.description</source>
-        <target>__mb.wmc.wmcloader.class.description</target>
+        <target>A WMC document can be loaded with the element WMC loader.</target>
       </trans-unit>
       <trans-unit id="fa367490fe08a5c455c902eb5714abe4" resname="mb.wmc.wmcloader.tag.wmc">
         <source>mb.wmc.wmcloader.tag.wmc</source>
         <target>wmc</target>
       </trans-unit>
       <trans-unit id="a6b4b9511073b04b86ad123c593cd81b" resname="mb.wmc.wmcloader.tag.loader">
-        <source>loader</source>
+        <source>mb.wmc.wmcloader.tag.loader</source>
         <target>loader</target>
       </trans-unit>
       <trans-unit id="84a803ca295fd79315c77052d5a0e120" resname="mb.wmc.error.wmcxmlloader_notallowed">

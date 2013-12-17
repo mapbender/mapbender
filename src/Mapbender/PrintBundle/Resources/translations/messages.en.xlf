@@ -20,11 +20,11 @@
       </trans-unit>
       <trans-unit id="6bca6f7f34f01cc242ed9e94b644926c" resname="mb.print.imageexport.class.title">
         <source>mb.print.imageexport.class.title</source>
-        <target>Image esport</target>
+        <target>Image export</target>
       </trans-unit>
       <trans-unit id="b503c1ddd7589ad46c6a0bfd6283f7ac" resname="mb.print.imageexport.class.description">
         <source>mb.print.imageexport.class.description</source>
-        <target>Image export description</target>
+        <target>Image Export allows you to export your current mapview. You can choose png or jpeg format.</target>
       </trans-unit>
       <trans-unit id="00bc41ceb94ec77c10f1f83f783198f4" resname="mb.print.imageexport.tag.image">
         <source>mb.print.imageexport.tag.image</source>

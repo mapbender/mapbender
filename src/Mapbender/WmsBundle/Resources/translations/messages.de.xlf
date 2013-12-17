@@ -12,23 +12,23 @@
       </trans-unit>
       <trans-unit id="27c45a8d7df44b7de7adf685e204e80c" resname="mb.wms.wmsloader.error.url">
         <source>mb.wms.wmsloader.error.url</source>
-        <target>WMSLoader: die WMS-Capabilities konnten nicht geladen werden! Die Capabilities URL ist nicht gültig.</target>
+        <target>WMS laden: die WMS-Capabilities konnten nicht geladen werden! Die Capabilities URL ist nicht gültig.</target>
       </trans-unit>
       <trans-unit id="6ff51d3832f0575b54225dea941a97ff" resname="mb.wms.wmsloader.error.service">
         <source>mb.wms.wmsloader.error.service</source>
-        <target>WMSLoader: der Service %service% wird nicht unterstüzt!</target>
+        <target>WMS laden: der Service %service% wird nicht unterstüzt!</target>
       </trans-unit>
       <trans-unit id="8e29e6784e7fce8440c02cff8f93042b" resname="mb.wms.wmsloader.error.operation">
         <source>mb.wms.wmsloader.error.operation</source>
-        <target>WMSLoader: die WMS Operation %operation% wird nicht unterstüzt!</target>
+        <target>WMS laden: die WMS Operation %operation% wird nicht unterstüzt!</target>
       </trans-unit>
       <trans-unit id="906389f11054233d8999e2308e1698d1" resname="mb.wms.wmsloader.error.version">
         <source>mb.wms.wmsloader.error.version</source>
-        <target>WMSLoader: die WMS Version %version% wird nicht unterstüzt!</target>
+        <target>WMS laden: die WMS Version %version% wird nicht unterstüzt!</target>
       </trans-unit>
       <trans-unit id="b21a812df167d5a76cf155957642f5ca" resname="mb.wms.wmsloader.error.load">
         <source>mb.wms.wmsloader.error.load</source>
-        <target>WMSLoader: die WMS-Capabilities konnten nicht geladen werden!</target>
+        <target>WMS laden: die WMS-Capabilities konnten nicht geladen werden!</target>
       </trans-unit>
       <trans-unit id="e0fad091f39559379dc4574bb9d41485" resname="mb.wms.wmsloader.dialog.btn.cancel">
         <source>mb.wms.wmsloader.dialog.btn.cancel</source>
@@ -484,19 +484,19 @@
       </trans-unit>
       <trans-unit id="c6135b9db60a93807e1ce11155d4856a" resname="mb.wms.wmsloader.class.title">
         <source>mb.wms.wmsloader.class.title</source>
-        <target>WMS Loader</target>
+        <target>WMS laden</target>
       </trans-unit>
       <trans-unit id="10a9e19b4afe3b0e70d32737e00b9bb1" resname="mb.wms.wmsloader.class.description">
         <source>mb.wms.wmsloader.class.description</source>
-        <target>Loads a WMS via the getCapabilities-Request</target>
+        <target>Läd ein WMS per getCapabilities-Request</target>
       </trans-unit>
       <trans-unit id="aa2a35216121de6e6cd0ac492ab73f84" resname="mb.wms.wmsloader.tag.wms">
         <source>mb.wms.wmsloader.tag.wms</source>
-        <target>wms</target>
+        <target>WMS</target>
       </trans-unit>
       <trans-unit id="251b3fbc58d81e13d4f5e3d8d79868a1" resname="mb.wms.wmsloader.tag.loader">
         <source>mb.wms.wmsloader.tag.loader</source>
-        <target>loader</target>
+        <target>laden</target>
       </trans-unit>
       <trans-unit id="a3c1e614645662978d87b127212a82e1" resname="mb.wms.wmsloader.admin.label.autoopen">
         <source>mb.wms.wmsloader.admin.label.autoopen</source>
