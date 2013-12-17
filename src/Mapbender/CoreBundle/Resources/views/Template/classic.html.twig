@@ -1,6 +1,8 @@
 {% extends "MapbenderCoreBundle::frontend.html.twig" %}
 
-{% block title %}{{ application.title }}{% endblock %}
+{% block title %}Mapbender3 - {{ application.title }}{% endblock %}
+
+{% block favicon %}{{ asset('favicon.png') }}{% endblock %}
 
 {# TODO: Use controller for app.debug, else use dumped assets #}
 {% block css %}
@@ -36,27 +38,15 @@
           <li class="sidePaneTabItem toggleSideBar"></li>
         </ul>
         <div class="sideContent">
-            {% for element in application.elements.sidepane %}
-              {{ element.render() | raw }}
-            {% endfor %}
-          
+        {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'sidepane' }%}
         </div>
       </div>
     {% endif %}
     <div id="content" class="contentPane">
-      {% if application.elements.content is defined %}
-        {% for element in application.elements.content %}
-          {{ element.render() | raw }}
-        {% endfor %}
-      {% endif %}
+      {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'content' }%}
     </div>
-
     <ul id="footer" class="toolBar itemsRight bottom">
-      {% if application.elements.footer is defined %}
-        {% for element in application.elements.footer %}
-          <li class="toolBarItem">{{ element.render() | raw }}</li>
-        {% endfor %}
-      {% endif %}
+      {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'footer' }%}
     </ul>
   </div>
 
