@@ -84,7 +84,7 @@ class Layertree extends Element
     {
         return array(
             "target" => null,
-            "layerMenu" => false,
+//            "layerMenu" => false,
             "layerRemove" => true,
             "type" => null,
             "displaytype" => null,
@@ -93,7 +93,7 @@ class Layertree extends Element
             "autoOpen" => false,
             "showBaseSource" => true,
             "showHeader" => false,
-            "menu" => ""
+            "menu" => null
         );
     }
 
@@ -102,6 +102,7 @@ class Layertree extends Element
      */
     public function render()
     {
+        $config = $this->entity->getConfiguration();
         return $this->container->get('templating')->render(
                 'MapbenderCoreBundle:Element:layertree.html.twig',
                 array(

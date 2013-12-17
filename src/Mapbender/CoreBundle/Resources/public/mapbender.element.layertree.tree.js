@@ -8,6 +8,7 @@
         model: null,
         dlg: null,
         template: null,
+        menutemplate: null,
         layerconf: null,
         popup: null,
         created: false,
@@ -31,9 +32,9 @@
             this.transConst.outOfBounds = Mapbender.trans("mb.core.layertree.const.outofbounds");
             this.transConst.parentInvisible = Mapbender.trans("mb.core.layertree.const.parentinvisible");
             this.options.titlemaxlength = parseInt(this.options.titlemaxlength);
-            this.options.layerMenu = false;
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
+            this.menutemplate = $('li div.layer-menu', this.element).remove();
             this.template = $('li', this.element).remove();
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
             if(this.options.type === 'element'){
@@ -197,36 +198,36 @@
                 li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                 if(config.toggleable)
                     li.find('.layer-title:first').addClass('toggleable');
-                if(!this.options.layerMenu){
-                    li.find('.layer-menu-btn').remove();
-                }else{
-                    var menu = li.find('.layer-menu:first');
-                    if(!sourceEl.options.legend){
-                        menu.find('.layer-legend').addClass('btn-disabled');
-                    }else{
-                        menu.find('.layer-legend').bind("click", function(e){
-                            e.stopPropagation();
-                            self._showLegend(sourceEl);
-                        });
-                    }
-                    menu.find('.layer-kmlexport').bind("click", function(e){
-                        e.stopPropagation();
-                        self._exportKml(sourceEl);
-                    });
-                    if(sourceEl.options.maxScale !== null){
-                        menu.find('.layer-zoom').addClass('btn-disabled');
-                    }else{
-                        menu.find('.layer-zoom').bind("click", function(e){
-                            e.stopPropagation();
-                            self._zoomToLayer(sourceEl);
-                        });
-                    }
-                    menu.find('.layer-metadata').bind("click", function(e){
-                        e.stopPropagation();
-                        self._showMetadata(sourceEl);
-                    });
-
-                }
+//                if(!this.options.layerMenu){
+//                    li.find('.layer-menu-btn').remove();
+//                }else{
+//                    var menu = li.find('.layer-menu:first');
+//                    if(!sourceEl.options.legend){
+//                        menu.find('.layer-legend').addClass('btn-disabled');
+//                    }else{
+//                        menu.find('.layer-legend').bind("click", function(e){
+//                            e.stopPropagation();
+//                            self._showLegend(sourceEl);
+//                        });
+//                    }
+//                    menu.find('.layer-kmlexport').bind("click", function(e){
+//                        e.stopPropagation();
+//                        self._exportKml(sourceEl);
+//                    });
+//                    if(sourceEl.options.maxScale !== null){
+//                        menu.find('.layer-zoom').addClass('btn-disabled');
+//                    }else{
+//                        menu.find('.layer-zoom').bind("click", function(e){
+//                            e.stopPropagation();
+//                            self._zoomToLayer(sourceEl);
+//                        });
+//                    }
+//                    menu.find('.layer-metadata').bind("click", function(e){
+//                        e.stopPropagation();
+//                        self._showMetadata(sourceEl);
+//                    });
+//
+//                }
                 if(!this.options.layerRemove)
                     li.find('.iconRemove').remove();
                 if(sourceEl.children){
@@ -277,35 +278,35 @@
                     li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if(config.toggleable)
                         li.find('.layer-title:first').addClass('toggleable');
-                    if(!this.options.layerMenu){
-                        li.find('.layer-menu-btn').remove();
-                    }else{
-                        var menu = li.find('.layer-menu:first');
-                        if(!sourceEl.options.legend){
-                            menu.find('.layer-legend').addClass('btn-disabled');
-                        }else{
-                            menu.find('.layer-legend').bind("click", function(e){
-                                e.stopPropagation();
-                                self._showLegend(sourceEl);
-                            });
-                        }
-                        menu.find('.layer-kmlexport').bind("click", function(e){
-                            e.stopPropagation();
-                            self._exportKml(sourceEl);
-                        });
-                        if(sourceEl.options.maxScale !== null){
-                            menu.find('.layer-zoom').addClass('btn-disabled');
-                        }else{
-                            menu.find('.layer-zoom').bind("click", function(e){
-                                e.stopPropagation();
-                                self._zoomToLayer(sourceEl);
-                            });
-                        }
-                        menu.find('.layer-metadata').bind("click", function(e){
-                            e.stopPropagation();
-                            self._showMetadata(sourceEl);
-                        });
-                    }
+//                    if(!this.options.layerMenu){
+//                        li.find('.layer-menu-btn').remove();
+//                    }else{
+//                        var menu = li.find('.layer-menu:first');
+//                        if(!sourceEl.options.legend){
+//                            menu.find('.layer-legend').addClass('btn-disabled');
+//                        }else{
+//                            menu.find('.layer-legend').bind("click", function(e){
+//                                e.stopPropagation();
+//                                self._showLegend(sourceEl);
+//                            });
+//                        }
+//                        menu.find('.layer-kmlexport').bind("click", function(e){
+//                            e.stopPropagation();
+//                            self._exportKml(sourceEl);
+//                        });
+//                        if(sourceEl.options.maxScale !== null){
+//                            menu.find('.layer-zoom').addClass('btn-disabled');
+//                        }else{
+//                            menu.find('.layer-zoom').bind("click", function(e){
+//                                e.stopPropagation();
+//                                self._zoomToLayer(sourceEl);
+//                            });
+//                        }
+//                        menu.find('.layer-metadata').bind("click", function(e){
+//                            e.stopPropagation();
+//                            self._showMetadata(sourceEl);
+//                        });
+//                    }
                     if(!this.options.layerRemove)
                         li.find('.iconRemove').remove();
                     if(sourceEl.children){
@@ -584,6 +585,7 @@
             this.model.changeSource({change: tochange});
         },
         _toggleMenu: function(e){
+        window.console && console.log(e);
         },
         _removeSource: function(e){
             var layer_type = $(e.target).parents("li:first").attr("data-type");
