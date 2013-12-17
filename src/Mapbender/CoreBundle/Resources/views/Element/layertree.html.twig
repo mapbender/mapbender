@@ -13,8 +13,9 @@
       <span class="layer-title labelCheck"></span>
       {% if configuration.menu != null and configuration.menu | length > 0 %}
       <span class="layer-menu-btn">&#9776;
-        <div class="layer-menu ">
-          {% if configuration.menu['opacity'] is difined %}
+        <div class="layer-menu">
+          {% for item in configuration.menu %}
+          {% if item == 'opacity' %}
           <div class="layer-opacity">
             <div class="layer-opacity-slider"></div>
             <div class="layer-opacity-labels">
@@ -23,11 +24,12 @@
               <span class="layer-opacity-label-zero">0 %</span>
             </div>
           </div>
-          {% endif %}
+          {% elseif item == 'zoomtolayer' %}
           <span class="layer-zoom span-btn">{{ 'mb.core.layertree.label.zoomtolayer'|trans }}</span>
-          <span class="layer-metadata span-btn">{{ 'mb.core.layertree.label.metadata'|trans }}</span>
-          <span class="layer-legend span-btn">{{ 'mb.core.layertree.label.legend'|trans }}</span>
-          <span class="layer-kmlexport span-btn">{{ 'mb.core.layertree.label.kmlexport'|trans }}</span>
+          {% else %}
+          <span class="layer span-btn">Undefined</span>
+          {% endif %}
+          {% endfor %}
         </div>
       </span>
       {% endif %}
