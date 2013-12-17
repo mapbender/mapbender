@@ -5,6 +5,7 @@
 
 ## Release History
 * **v3.0.3.0** - 2013-xx-xx
+  - Element Legend: option 'noLegend' removed
   - Translation for en,de added
   - ZoomBar option component 'zoom_in_out' added
   - added cookie_secure: false and cookie_lifetime: 3600 to parameters.yml http://symfony.com/doc/2.1/reference/configuration/framework.html#cookie-lifetime
