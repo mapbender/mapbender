@@ -1,6 +1,8 @@
 {% extends "MapbenderCoreBundle::frontend.html.twig" %}
 
-{% block title %}{{ application.title }}{% endblock %}
+{% block title %}Mapbender3 - {{ application.title }}{% endblock %}
+
+{% block favicon %}{{ asset('favicon.png') }}{% endblock %}
 
 {# TODO: Use controller for app.debug, else use dumped assets #}
 {% block css %}

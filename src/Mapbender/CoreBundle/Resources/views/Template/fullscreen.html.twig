@@ -1,6 +1,8 @@
 {% extends "MapbenderCoreBundle::frontend.html.twig" %}
 
-{% block title %}{{ application.title }}{% endblock %}
+{% block title %}Mapbender3 - {{ application.title }}{% endblock %}
+
+{% block favicon %}{{ asset('favicon.png') }}{% endblock %}
 
 {# TODO: Use controller for app.debug, else use dumped assets #}
 {% block css %}
@@ -23,7 +25,7 @@
 
   <div id="templateWrapper" class="templateWrapper sidePaneOpened">
     <div class="logoContainer">
-      <img class="logo" height="80" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
+      <img class="logo" height="40" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
     </div>
 
     <ul id="toolbar" class="toolBar itemsRight top">
