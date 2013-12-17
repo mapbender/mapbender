@@ -19,44 +19,52 @@
         },
         _hideSources: function(){
             var me = $(this.element),
-                    map = $('#' + this.options.target).data('mapbenderMbMap'),
-                    model = map.getModel();
+                map = $('#' + this.options.target).data('mapbenderMbMap'),
+                model = map.getModel();
             $.each(me.find('.basesourcesetswitch'), function(idx, elm){
                 var sourcesIds = $(elm).attr("data-sourceset").split(",");
                 for(var i = 0; i < sourcesIds.length; i++){
                     if(sourcesIds[i] !== ''){
                         var source = model.getSource({origId: sourcesIds[i]});
                         if(source){
-                            var tochange = {change: {sourceIdx: {id: source.id}, options: {configuration: {options: {visibility: false}},type: 'selected'}}};
+                            var tochange = {change: {sourceIdx: {id: source.id}, options: {configuration: {options: {visibility: false}}, type: 'selected'}}};
                             model.changeSource(tochange);
                         }else{
                             Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));
                         }
+//                        else{ // add translation
+//                            Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));
+//                        }
                     }
                 }
             });
         },
         _showActive: function(){
             var me = $(this.element),
-                    map = $('#' + this.options.target).data('mapbenderMbMap'),
-                    model = map.getModel();
+                map = $('#' + this.options.target).data('mapbenderMbMap'),
+                model = map.getModel();
             $.each(me.find('.basesourcesetswitch[data-state="active"]'), function(idx, elm){
                 var sourcesIds = $(elm).attr("data-sourceset").split(",");
                 for(var i = 0; i < sourcesIds.length; i++){
                     if(sourcesIds[i] !== ''){
                         var source = model.getSource({origId: sourcesIds[i]});
                         if(source){
-                            var tochange = {change: {sourceIdx: {id: source.id}, options: {configuration: {options: {visibility: true}},type: 'selected'}}};
+                            var tochange = {change: {sourceIdx: {id: source.id}, options: {configuration: {options: {visibility: true}}, type: 'selected'}}};
                             model.changeSource(tochange);
                         }
+//                        else{ // add translation
+//                            Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable", {'id': +sourcesIds[i]}));
+//                            json.twig: "mb.core.basesourceswitcher.error.sourcenotavailable": "{{"mb.core.basesourceswitcher.error.sourcenotavailable" | trans }}"
+//                            .xlf: BasesourceSwitcher: source id %id% ist not available
+//                        }
                     }
                 }
             });
         },
         _toggleMapset: function(event){
             var me = $(this.element),
-                    map = $('#' + this.options.target).data('mapbenderMbMap'),
-                    a = $(event.currentTarget);
+                map = $('#' + this.options.target).data('mapbenderMbMap'),
+                a = $(event.currentTarget);
             this._hideSources();
             me.find('.basesourcesetswitch').not(a).attr('data-state', '');
             a.attr('data-state', 'active');

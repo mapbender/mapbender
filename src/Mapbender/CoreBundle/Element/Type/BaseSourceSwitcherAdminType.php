@@ -5,12 +5,18 @@ use Mapbender\CoreBundle\Form\EventListener\BaseSourceSwitcherFieldSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Mapbender\CoreBundle\Component\ExtendedCollection;
 
 /**
  * 
  */
-class BaseSourceSwitcherAdminType extends AbstractType
+class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollection
 {
+    public $hasSubForm = true;
+    
+    public function isSubForm(){
+        return $this->hasSubForm;
+    }
 
     /**
      * @inheritdoc
@@ -39,7 +45,7 @@ class BaseSourceSwitcherAdminType extends AbstractType
         $application = $options["application"];
         $element = $options["element"];
         $instList = array("" => " ");
-        if ($element->getId() !== null) {
+        if ($element !== null && $element->getId() !== null) {
             foreach ($application->getElements() as $appl_element) {
                 $configuration = $element->getConfiguration();
                 if ($appl_element->getId() === intval($configuration["target"])) {
@@ -64,7 +70,7 @@ class BaseSourceSwitcherAdminType extends AbstractType
                 'application' => $application,
                 'property_path' => '[target]',
                 'required' => false));
-        if ($element->getId() !== null) {
+        if ($element !== null && $element->getId() !== null) {
             $builder->add('sourcesets', "collection",
                 array(
                 'property_path' => '[sourcesets]',
