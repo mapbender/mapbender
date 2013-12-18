@@ -38,6 +38,10 @@
         <source>mb.core.poi.text.snippet</source>
         <target>You can use the following snippet in an email to send the POI</target>
       </trans-unit>
+      <trans-unit id="d19f7fb816f3b4515f79e8c5c8546ede" resname="mb.core.basesourceswitcher.error.sourcenotavailable">
+        <source>mb.core.basesourceswitcher.error.sourcenotavailable</source>
+        <target>A source with id %id% is not available</target>
+      </trans-unit>
       <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
         <source>mb.core.legend.nolegend</source>
         <target>No legend available</target>
@@ -253,6 +257,26 @@
       <trans-unit id="bb2ea876407e337655b44710c250006a" resname="mb.core.activityindicator.tag.indicator">
         <source>mb.core.activityindicator.tag.indicator</source>
         <target>indicator</target>
+      </trans-unit>
+      <trans-unit id="294c1985386655b73d5c1704a44242d6" resname="mb.core.basesourceswitcher.class.title">
+        <source>mb.core.basesourceswitcher.class.title</source>
+        <target>Base source switcher</target>
+      </trans-unit>
+      <trans-unit id="5b27fd259590198ffacb9832ea9bb07a" resname="mb.core.basesourceswitcher.class.Description">
+        <source>mb.core.basesourceswitcher.class.Description</source>
+        <target>Change the map's background sources</target>
+      </trans-unit>
+      <trans-unit id="e8db259e0e053a06725b325ba778c123" resname="mb.core.basesourceswitcher.tag.base">
+        <source>mb.core.basesourceswitcher.tag.base</source>
+        <target>base</target>
+      </trans-unit>
+      <trans-unit id="e26245d77479bc7e6881f009caa8a278" resname="mb.core.basesourceswitcher.tag.source">
+        <source>mb.core.basesourceswitcher.tag.source</source>
+        <target>source</target>
+      </trans-unit>
+      <trans-unit id="513988b56bb558e00c71361466e939fe" resname="mb.core.basesourceswitcher.tag.switcher">
+        <source>mb.core.basesourceswitcher.tag.switcher</source>
+        <target>switcher</target>
       </trans-unit>
       <trans-unit id="1b2f36a63d291efb8bc41dabbd6917a8" resname="mb.core.button.class.title">
         <source>mb.core.button.class.title</source>
@@ -626,10 +650,6 @@
         <source>mb.core.zoombar.tag.panel</source>
         <target>panel</target>
       </trans-unit>
-      <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
-        <source>mb.core.admin.poi.label.usemailto</source>
-        <target>Use Mailto</target>
-      </trans-unit>
       <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
         <source>mb.core.admin.legend.label.autoopen</source>
         <target>Autoopen</target>
@@ -674,6 +694,10 @@
         <source>mb.core.admin.copyright.label.autoopen</source>
         <target>Autoopen</target>
       </trans-unit>
+      <trans-unit id="40c239c7f7d130a17c9b299f2e03e738" resname="mb.core.basesourceswitcher.form.mesage">
+        <source>mb.core.basesourceswitcher.form.mesage</source>
+        <target>No basesource set is defined.</target>
+      </trans-unit>
       <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
         <source>mb.core.admin.layertree.label.showbasesources</source>
         <target>Show base sources</target>
@@ -689,6 +713,10 @@
       <trans-unit id="b9e1e1bd4fe12c68c958110c5a3f24aa" resname="mb.core.admin.layertree.label.showlayerremove">
         <source>mb.core.admin.layertree.label.showlayerremove</source>
         <target>Show layer remove</target>
+      </trans-unit>
+      <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
+        <source>mb.core.admin.poi.label.usemailto</source>
+        <target>Use Mailto</target>
       </trans-unit>
     </body>
   </file>
