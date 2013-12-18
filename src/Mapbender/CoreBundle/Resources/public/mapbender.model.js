@@ -402,7 +402,7 @@ Mapbender.Model = {
      */
     _sourceLoadError: function(e, imgEl){
         var source = this.getSource({ollid: e.element.id});
-        Mapbender.source[source.type].onLoadError(imgEl, e.element.id, this.map.olMap.getProjectionObject(), $.proxy(this.sourceLoadErrorCallback, this));
+        Mapbender.source[source.type].onLoadError(imgEl, source.id, this.map.olMap.getProjectionObject(), $.proxy(this.sourceLoadErrorCallback, this));
     },
     sourceLoadErrorCallback: function(loadError){
         this.mbMap.fireModelEvent({name: 'sourceloaderror', value: {source: this.getSource({'id': loadError.sourceId}), error: loadError}});

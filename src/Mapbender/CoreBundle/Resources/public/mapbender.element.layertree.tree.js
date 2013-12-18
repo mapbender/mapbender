@@ -379,6 +379,8 @@
                 for(var layerId in changed.children){
                     if(changed.children[layerId].options){
                         var $li = $('li[data-id="' + layerId + '"]', this.element);
+                        if($li.length === 0)
+                            continue;
                         this._resetNodeSelected($li, changed.children[layerId].options);
                         this._resetNodeInfo($li, changed.children[layerId].options);
                         if(changed.children[layerId].options.state)

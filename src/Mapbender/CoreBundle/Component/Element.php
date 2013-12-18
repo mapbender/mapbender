@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Mapbender\CoreBundle\Component\ExtendedCollection;
 
 /**
  * Base class for all Mapbender elements.
@@ -287,8 +288,9 @@ abstract class Element
     {
         throw new NotFoundHttpException('This element has no Ajax handler.');
     }
-    
-    public function trans($key, array $parameters = array(), $domain = null, $locale = null)
+
+    public function trans($key, array $parameters = array(), $domain = null,
+        $locale = null)
     {
         return $this->container->get('translator')->trans($key);
 //        return $this->container->get('translator')->trans($key, $parameters, $domain, $locale);
@@ -414,12 +416,12 @@ abstract class Element
                 'css' => array(
                     'bundles/mapbendermanager/codemirror2/lib/codemirror.css'));
         } else {
-            $type = $class::getType();
-
-            $formType->add('configuration', new $type(),
-                array(
-                'application' => $application
-            ));
+            $type = new $configurationFormType();
+            $options = array('application' => $application);
+            if($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null){
+                $options['element'] = $element;
+            }
+            $formType->add('configuration', $type, $options);
             $formTheme = $class::getFormTemplate();
             $formAssets = $class::getFormAssets();
         }
