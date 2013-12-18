@@ -11,7 +11,6 @@ Mapbender.Model = {
     layersMaxExtent: {},
     highlightLayer: null,
     baseId: 0,
-
     init: function(mbMap){
         this.mbMap = mbMap;
         var self = this;
@@ -248,7 +247,7 @@ Mapbender.Model = {
     },
     findSource: function(options){
         var sources = [];
-        function findSource(object, options){
+        var findSource = function (object, options){
             var found = null;
             for(key in options){
                 if(object[key]){
@@ -265,8 +264,7 @@ Mapbender.Model = {
                 }
             }
             return found;
-        }
-        ;
+        };
         for(var i = 0; i < this.sourceTree.length; i++){
             var source = this.sourceTree[i];
             if(findSource(source, options))
@@ -453,6 +451,47 @@ Mapbender.Model = {
     highlightOff: function(){
         if(this.highlightLayer)
             this.highlightLayer.remove();
+    },
+    setOpacity: function(source, opacity){
+        if(typeof opacity === 'number' && !isNaN(opacity) && opacity >= 0 && opacity <= 1 && source){
+            this.map.layersList[source.mqlid].opacity(opacity);
+        }
+    },
+    /**
+     * Zooms to layer
+     * @param {object} options of form { sourceId: XXX, layerId: XXX, inherit: BOOL }
+     */
+    zoomToLayer: function(options){
+        var sources = this.findSource({id: options.sourceId});
+        if(sources.length === 1){
+            var extents = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId, options.inherit);
+            var proj = this.map.olMap.getProjectionObject();
+            if(extents && extents[proj.projCode]){
+                this.mbMap.zoomToExtent( OpenLayers.Bounds.fromArray(extents[proj.projCode]), true);
+            }else{
+                var ext = null, extProj = null;
+                for(srs in extents){
+                    extProj = this.getProj(srs);
+                    if(extProj !== null){
+                        ext = OpenLayers.Bounds.fromArray(extents[srs]);
+                        var extObj = {
+                            projection: extProj,
+                            extent: OpenLayers.Bounds.fromArray(extents[srs])
+                        };
+                        var ext_new = this._transformExtent(extObj, proj);
+                        this.mbMap.zoomToExtent(ext_new, true);
+                        break;
+                    }
+                }
+            }
+        }
+    },
+    getLayerExtents: function(options){
+        var sources = this.findSource({id: options.sourceId});
+        if(sources.length === 1){
+            return Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId, options.inherit);
+        }
+        return null;
     },
     /**
      *
@@ -1001,16 +1040,15 @@ Mapbender.Model = {
             delete(this.layersMaxExtent[layer.id]);
         }
     },
-
-    parseURL: function() {
+    parseURL: function(){
         var self = this;
         var ids = Mapbender.urlParam('visiblelayers');
         ids = ids ? ids.split(',') : [];
-        if(ids.length) {
-            $.each(ids, function(idx, id) {
+        if(ids.length){
+            $.each(ids, function(idx, id){
                 var id = id.split('/');
                 var options = {};
-                if(1 < id.length) {
+                if(1 < id.length){
                     options.layers = {};
                     options.layers[id[1]] = {
                         options: {

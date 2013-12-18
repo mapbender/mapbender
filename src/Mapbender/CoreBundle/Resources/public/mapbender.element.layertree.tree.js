@@ -198,36 +198,6 @@
                 li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                 if(config.toggleable)
                     li.find('.layer-title:first').addClass('toggleable');
-//                if(!this.options.layerMenu){
-//                    li.find('.layer-menu-btn').remove();
-//                }else{
-//                    var menu = li.find('.layer-menu:first');
-//                    if(!sourceEl.options.legend){
-//                        menu.find('.layer-legend').addClass('btn-disabled');
-//                    }else{
-//                        menu.find('.layer-legend').bind("click", function(e){
-//                            e.stopPropagation();
-//                            self._showLegend(sourceEl);
-//                        });
-//                    }
-//                    menu.find('.layer-kmlexport').bind("click", function(e){
-//                        e.stopPropagation();
-//                        self._exportKml(sourceEl);
-//                    });
-//                    if(sourceEl.options.maxScale !== null){
-//                        menu.find('.layer-zoom').addClass('btn-disabled');
-//                    }else{
-//                        menu.find('.layer-zoom').bind("click", function(e){
-//                            e.stopPropagation();
-//                            self._zoomToLayer(sourceEl);
-//                        });
-//                    }
-//                    menu.find('.layer-metadata').bind("click", function(e){
-//                        e.stopPropagation();
-//                        self._showMetadata(sourceEl);
-//                    });
-//
-//                }
                 if(!this.options.layerRemove)
                     li.find('.iconRemove').remove();
                 if(sourceEl.children){
@@ -262,9 +232,9 @@
                     var nodeType = this._getNodeType(sourceEl, isroot);
                     li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
 
-                    if(nodeType == this.consts.root){
+                    if(nodeType === this.consts.root){
                         li.addClass("serviceContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
-                    }else if(nodeType == this.consts.group){
+                    }else if(nodeType === this.consts.group){
                         li.addClass("groupContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
                     }
                     li.addClass(config.reorder);
@@ -278,35 +248,6 @@
                     li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if(config.toggleable)
                         li.find('.layer-title:first').addClass('toggleable');
-//                    if(!this.options.layerMenu){
-//                        li.find('.layer-menu-btn').remove();
-//                    }else{
-//                        var menu = li.find('.layer-menu:first');
-//                        if(!sourceEl.options.legend){
-//                            menu.find('.layer-legend').addClass('btn-disabled');
-//                        }else{
-//                            menu.find('.layer-legend').bind("click", function(e){
-//                                e.stopPropagation();
-//                                self._showLegend(sourceEl);
-//                            });
-//                        }
-//                        menu.find('.layer-kmlexport').bind("click", function(e){
-//                            e.stopPropagation();
-//                            self._exportKml(sourceEl);
-//                        });
-//                        if(sourceEl.options.maxScale !== null){
-//                            menu.find('.layer-zoom').addClass('btn-disabled');
-//                        }else{
-//                            menu.find('.layer-zoom').bind("click", function(e){
-//                                e.stopPropagation();
-//                                self._zoomToLayer(sourceEl);
-//                            });
-//                        }
-//                        menu.find('.layer-metadata').bind("click", function(e){
-//                            e.stopPropagation();
-//                            self._showMetadata(sourceEl);
-//                        });
-//                    }
                     if(!this.options.layerRemove)
                         li.find('.iconRemove').remove();
                     if(sourceEl.children){
@@ -480,7 +421,7 @@
             }
         },
         _onSourceLoadError: function(event, option){
-//            window.console && console.log("layertree _onSourceLoadError");
+            window.console && console.log("layertree _onSourceLoadError");
             if(option.source && this.loadStarted[option.source.id]){
                 this.loadStarted[option.source.id] = false;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
@@ -585,19 +526,43 @@
             this.model.changeSource({change: tochange});
         },
         _toggleMenu: function(e){
-            window.console && console.log(e.target);
+            var self = this;
+            function createMenu($element, sourceId, layerId){
+                var menu = self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId", sourceId);
+                $element.append(menu);
+                if(self.model.getLayerExtents({sourceId: sourceId, layerId: layerId, inherit: true})){
+                    $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
+                }
+                //@TODO on other events
+            }
+            function removeMenu($element){
+                //@TODO off other events
+                $('.layer-zoom', $element).off('click');
+                $('div.layer-menu', $element).remove();
+            }
             var element = this.element;
             if(this.options.type === 'dialog' && this.popup && this.popup.$element){
-                element = this.popup;
+                element = this.popup.$element;
             }
-            if($('div.layer-menu', element).length !== 0){
-                //@TODO off events
-                $('div[data-id=""]', element).remove();
-            }else{
-                this.element.append(this.menuTemplate.clone());
-                //@TODO onn events
-            }
+            var layerId = $(e.target).parents('li:first').attr("data-id");
+            var sourceId = $(e.target).parents('li[data-sourceid]:first').attr("data-sourceid");
+                if($('div.layer-menu', element).length !== 0){
+                    var layerIdMenu = $('div.layer-menu', element).attr("data-menuLayerId");
+                    removeMenu(element);
+                    $('div.layer-menu', element).remove();
+                    if(layerIdMenu !== layerId){
+                        createMenu(element, sourceId, layerId);
+                    }
+
+                }else{
+                    createMenu(element, sourceId, layerId);
+    //                this._setOpacity(source[0], 0.5);
+                }
         },
+        _setOpacity: function(source, opacity){
+            this.model.setOpacity(source, opacity);
+        },
+    
         _removeSource: function(e){
             var layer_type = $(e.target).parents("li:first").attr("data-type");
             var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
@@ -616,7 +581,13 @@
         },
         _exportKml: function(elm){
         },
-        _zoomToLayer: function(elm){
+        _zoomToLayer: function(e){
+            var options = {
+                sourceId: $(e.target).parents('div.layer-menu:first').attr("data-menuSourceId"),
+                layerId: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId"),
+                inherit: true
+            };
+            this.model.zoomToLayer(options);
         },
         _showMetadata: function(elm){
         },

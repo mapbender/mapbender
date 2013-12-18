@@ -564,7 +564,24 @@ class WmsInstanceLayer implements InstanceLayerIn
             "minScale" => $this->minScale !== null ? floatval($this->minScale) : null,
             "maxScale" => $this->maxScale !== null ? floatval($this->maxScale) : null
         );
-
+        $llbbox = $this->getWmslayersource()->getLatlonBounds();
+        $srses = array(
+            $llbbox->getSrs() => array(
+                floatval($llbbox->getMinx()),
+                floatval($llbbox->getMiny()),
+                floatval($llbbox->getMaxx()),
+                floatval($llbbox->getMaxy())
+            )
+        );
+        foreach ($this->getWmslayersource()->getBoundingBoxes() as $bbox) {
+            $srses = array_merge($srses,
+                array($bbox->getSrs() => array(
+                    floatval($bbox->getMinx()),
+                    floatval($bbox->getMiny()),
+                    floatval($bbox->getMaxx()),
+                    floatval($bbox->getMaxy()))));
+        }
+        $configuration['bbox'] = $srses;
         if (count($this->wmslayersource->getStyles()) > 0) {
             $styles = $this->wmslayersource->getStyles();
             $legendurl = $styles[0]->getLegendUrl(); // first style object
