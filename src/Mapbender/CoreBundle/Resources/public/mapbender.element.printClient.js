@@ -47,7 +47,7 @@
         defaultAction: function(callback) {
             this.open(callback);
         },
-        
+
         open: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
@@ -86,7 +86,7 @@
                     this.popup.open(self.element);
                  }
             }
-            me.show();        
+            me.show();
 
             this.popupIsOpen = true;
             this._loadPrintFormats();
@@ -211,7 +211,7 @@
                     if(opt_fields[field].options.required === true){
                        span = '<span class="required">*</span>'
                     }
-                    
+
                     extra_fields.append($('<label></label>', {
                         'html': opt_fields[field].label+span,
                         'class': 'labelInput'
@@ -277,36 +277,38 @@
                 center.lon + 0.5 * world_size.x,
                 center.lat + 0.5 * world_size.y).toGeometry(), {});
             this.feature.world_size = world_size;
-            
-            var centroid = this.feature.geometry.getCentroid();
-            var centroid_lonlat = new OpenLayers.LonLat(centroid.x,centroid.y);
-            var centroid_pixel = this.map.map.olMap.getViewPortPxFromLonLat(centroid_lonlat);
-            var centroid_geodesSize = this.map.map.olMap.getGeodesicPixelSize(centroid_pixel);
 
-            var geodes_diag = Math.sqrt(centroid_geodesSize.w*centroid_geodesSize.w + centroid_geodesSize.h*centroid_geodesSize.h) / Math.sqrt(2) * 100000;
+            if(this.map.map.olMap.units !== 'm') {
+                var centroid = this.feature.geometry.getCentroid();
+                var centroid_lonlat = new OpenLayers.LonLat(centroid.x,centroid.y);
+                var centroid_pixel = this.map.map.olMap.getViewPortPxFromLonLat(centroid_lonlat);
+                var centroid_geodesSize = this.map.map.olMap.getGeodesicPixelSize(centroid_pixel);
 
-            var geodes_width = width * scale / (geodes_diag);
-            var geodes_height = height * scale / (geodes_diag);
+                var geodes_diag = Math.sqrt(centroid_geodesSize.w*centroid_geodesSize.w + centroid_geodesSize.h*centroid_geodesSize.h) / Math.sqrt(2) * 100000;
 
-            var ll_pixel_x = centroid_pixel.x - (geodes_width) / 2;
-            var ll_pixel_y = centroid_pixel.y + (geodes_height) / 2;
-            var ur_pixel_x = centroid_pixel.x + (geodes_width) / 2;
-            var ur_pixel_y = centroid_pixel.y - (geodes_height) /2 ;
-            var ll_pixel = new OpenLayers.Pixel(ll_pixel_x, ll_pixel_y);
-            var ur_pixel = new OpenLayers.Pixel(ur_pixel_x, ur_pixel_y);
-            var ll_lonlat = this.map.map.olMap.getLonLatFromPixel(ll_pixel);
-            var ur_lonlat = this.map.map.olMap.getLonLatFromPixel(ur_pixel);
+                var geodes_width = width * scale / (geodes_diag);
+                var geodes_height = height * scale / (geodes_diag);
 
-            this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
-                ll_lonlat.lon,
-                ur_lonlat.lat,
-                ur_lonlat.lon,
-                ll_lonlat.lat).toGeometry(), {});
-            this.feature.world_size = {
-                x: ur_lonlat.lon - ll_lonlat.lon,
-                y: ur_lonlat.lat - ll_lonlat.lat
-            };
-            
+                var ll_pixel_x = centroid_pixel.x - (geodes_width) / 2;
+                var ll_pixel_y = centroid_pixel.y + (geodes_height) / 2;
+                var ur_pixel_x = centroid_pixel.x + (geodes_width) / 2;
+                var ur_pixel_y = centroid_pixel.y - (geodes_height) /2 ;
+                var ll_pixel = new OpenLayers.Pixel(ll_pixel_x, ll_pixel_y);
+                var ur_pixel = new OpenLayers.Pixel(ur_pixel_x, ur_pixel_y);
+                var ll_lonlat = this.map.map.olMap.getLonLatFromPixel(ll_pixel);
+                var ur_lonlat = this.map.map.olMap.getLonLatFromPixel(ur_pixel);
+
+                this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
+                    ll_lonlat.lon,
+                    ur_lonlat.lat,
+                    ur_lonlat.lon,
+                    ll_lonlat.lat).toGeometry(), {});
+                this.feature.world_size = {
+                    x: ur_lonlat.lon - ll_lonlat.lon,
+                    y: ur_lonlat.lat - ll_lonlat.lat
+                };
+            }
+
             this.feature.geometry.rotate(rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
             this.layer.addFeatures(this.feature);
             this.layer.redraw();
@@ -376,7 +378,7 @@
             var template_key = this.element.find('select[name="template"]').val(),
             format = this.options.templates[template_key].format,
             file_prefix = this.options.file_prefix;
-            
+
             // Felder für extent, center und layer dynamisch einbauen
             var fields = $();
 
@@ -409,7 +411,7 @@
                 name: 'center[y]',
                 value: extent.center.y
             }));
-            
+
             $.merge(fields, $('<input />', {
                 type: 'hidden',
                 name: 'file_prefix',
@@ -417,7 +419,7 @@
             }));
 
             var sources = this.map.getSourceTree(), num = 0;
-            
+
             for(var i = 0; i < sources.length; i++) {
                 var layer = this.map.map.layersList[sources[i].mqlid],
                 type = layer.olLayer.CLASS_NAME;
@@ -452,7 +454,7 @@
             form.get(0).setAttribute('action', url);
             form.attr('target', '_blank');
             form.attr('method', 'post');
-            
+
             if (num === 0){
                 Mapbender.info('No active layer!');
             }else{
