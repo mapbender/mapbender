@@ -2,6 +2,22 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="file.ext">
     <body>
+      <trans-unit id="5aaf56d5c062631aa17d768dacd06850" resname="mb.manager.managerbundle.applications">
+        <source>mb.manager.managerbundle.applications</source>
+        <target>Applications</target>
+      </trans-unit>
+      <trans-unit id="d46554dab34c8039119a3a1ae130931f" resname="mb.manager.managerbundle.new_application">
+        <source>mb.manager.managerbundle.new_application</source>
+        <target>New application</target>
+      </trans-unit>
+      <trans-unit id="ae787e5a22c25053f852d0d02fb966db" resname="mb.manager.managerbundle.sources">
+        <source>mb.manager.managerbundle.sources</source>
+        <target>Sources</target>
+      </trans-unit>
+      <trans-unit id="25ae2b51e75d6406f0638ba420c3ec9c" resname="mb.manager.managerbundle.add_source">
+        <source>mb.manager.managerbundle.add_source</source>
+        <target>Add source</target>
+      </trans-unit>
       <trans-unit id="66daa81c3ff5b18311b1228c51816803" resname="mb.manager.element.yaml.message">
         <source>mb.manager.element.yaml.message</source>
         <target>Use the &lt;a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&amp;language=%locale%"&gt;YAML&lt;/a&gt; format to describe the element's configuration.</target>
