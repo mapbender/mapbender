@@ -96,7 +96,7 @@
       </trans-unit>
       <trans-unit id="329a1abceb8068b5dcdb4d63b46d2bd4" resname="mb.wmc.wmceditor.list.description">
         <source>mb.wmc.wmceditor.list.description</source>
-        <target>Mit dem WMC Editor können Konfigurationen gespeichert und bearbeitet werden.</target>
+        <target>Beschreibung</target>
       </trans-unit>
       <trans-unit id="82be49e5b51462edf1afdec84259533c" resname="mb.wmc.wmceditor.list.add_wmc">
         <source>mb.wmc.wmceditor.list.add_wmc</source>
@@ -140,7 +140,7 @@
       </trans-unit>
       <trans-unit id="1744637607776d06471ee642aac7a900" resname="mb.wmc.wmcloader.description">
         <source>mb.wmc.wmcloader.description</source>
-        <target>Die gespeicherten Konfigurationen können mit diesem Element geladen werden.</target>
+        <target>Beschreibung</target>
       </trans-unit>
       <trans-unit id="50a0a43d7734636fdca90ac4e93c124b" resname="mb.wmc.wmcloader.view_wmc">
         <source>mb.wmc.wmcloader.view_wmc</source>
