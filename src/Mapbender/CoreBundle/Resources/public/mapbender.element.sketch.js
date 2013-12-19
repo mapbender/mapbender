@@ -81,6 +81,10 @@
             this.activate(callback);
         },
         activate: function(callback){
+            if(this.activated){
+                this.deactivate();
+                return;
+            }
             var self = this;
             this.callback = callback ? callback : null;
 
