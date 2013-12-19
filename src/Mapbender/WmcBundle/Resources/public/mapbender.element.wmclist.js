@@ -28,6 +28,9 @@
                         }
                         self.element.find("select").html(html);
                         self.element.find("select").change($.proxy(self._selectWmc, self));
+                        if(initDropdown){
+                            initDropdown.call(self.element);
+                        }
                     }
                 }
             });
