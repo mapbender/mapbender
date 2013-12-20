@@ -4,11 +4,11 @@
     <body>
       <trans-unit id="3f141d25282496cf3791bd532359e433" resname="mb.core.aboutdialog.content.versionprefix">
         <source>mb.core.aboutdialog.content.versionprefix</source>
-        <target>v.</target>
+        <target>Version</target>
       </trans-unit>
       <trans-unit id="1d84c5293abecb3624fa6828185b3493" resname="mb.core.aboutdialog.content.learnmore">
         <source>mb.core.aboutdialog.content.learnmore</source>
-        <target>Lernen Sie Mapbender3 kennen auf unserer Webseite.</target>
+        <target>Lernen Sie Mapbender3 kennen </target>
       </trans-unit>
       <trans-unit id="a8b14434dc098a6e7b028915b631cd24" resname="mb.core.aboutdialog.content.linktitle">
         <source>mb.core.aboutdialog.content.linktitle</source>
@@ -16,7 +16,7 @@
       </trans-unit>
       <trans-unit id="97ab0befb054f94d9b438e6f8b18aa62" resname="mb.core.aboutdialog.content.website">
         <source>mb.core.aboutdialog.content.website</source>
-        <target>Webseite</target>
+        <target>- zur Webseite</target>
       </trans-unit>
       <trans-unit id="d34e7ce2889c54092fc147356c3faa14" resname="mb.core.searchrouter.popup.btn.ok">
         <source>mb.core.searchrouter.popup.btn.ok</source>
@@ -28,19 +28,19 @@
       </trans-unit>
       <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
         <source>mb.core.poi.sharepoi</source>
-        <target>POI teilen</target>
+        <target>Treffpunkt vereinbaren</target>
       </trans-unit>
       <trans-unit id="46b75948336bd4019bbaee9324151ecc" resname="mb.core.poi.label.text">
         <source>mb.core.poi.label.text</source>
-        <target>Text</target>
+        <target>Bearbeiten Sie den Text</target>
       </trans-unit>
       <trans-unit id="43279759bfe1cf656538dd558e3748a6" resname="mb.core.poi.text.snippet">
         <source>mb.core.poi.text.snippet</source>
-        <target>Sie können den folgenden Textbaustein in einer E-Mail nutzen, um den POI zu teilen.</target>
+        <target>Sie können den folgenden Link in einer E-Mail verschicken. Der Link öffnet die Anwendung und zeigt den Treffpunkt an.</target>
       </trans-unit>
       <trans-unit id="d19f7fb816f3b4515f79e8c5c8546ede" resname="mb.core.basesourceswitcher.error.sourcenotavailable">
         <source>mb.core.basesourceswitcher.error.sourcenotavailable</source>
-        <target>Quelle mit id %id% ist nichtr vorhanden</target>
+        <target>Der Diensr mit der ID %id% ist nicht vorhanden</target>
       </trans-unit>
       <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
         <source>mb.core.legend.nolegend</source>
@@ -52,7 +52,7 @@
       </trans-unit>
       <trans-unit id="255dfe21ded353929e03b1f48f3d8603" resname="mb.core.ruler.create_error">
         <source>mb.core.ruler.create_error</source>
-        <target>Messen: Geometrietyp muss eine Linie oder eine Fläche sein.</target>
+        <target>Messen: Der Geometrietyp muss eine Linie oder eine Fläche sein.</target>
       </trans-unit>
       <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
         <source>mb.core.printclient.label.template</source>
@@ -92,7 +92,7 @@
       </trans-unit>
       <trans-unit id="6329edbadca4ae33674d3ba4beb0095a" resname="mb.core.sketch.circle.radius.error">
         <source>mb.core.sketch.circle.radius.error</source>
-        <target>Radius ist nicht valid.</target>
+        <target>Der Radius ist nicht gültig.</target>
       </trans-unit>
       <trans-unit id="45477889021de187cea8384dc6ee4d05" resname="mb.core.sketch.circle.form.button.yes">
         <source>mb.core.sketch.circle.form.button.yes</source>
@@ -116,11 +116,11 @@
       </trans-unit>
       <trans-unit id="d2279b60abd41fd9e228763532d10b02" resname="mb.core.gpsposition.error.notsupported">
         <source>mb.core.gpsposition.error.notsupported</source>
-        <target>Entschuldigung, aber Geolocation Services werden von Ihrem Browser nicht unterstützt.</target>
+        <target>Entschuldigung! Der Geolocation Dienst wird Ihrem Browser nicht unterstützt.</target>
       </trans-unit>
       <trans-unit id="73baa3dd55f5169a84b49015e5cbbc6f" resname="mb.core.layertree.confirm.allremove">
         <source>mb.core.layertree.confirm.allremove</source>
-        <target>Sind wirklich alle Quellen gelöscht?</target>
+        <target>Sollen wirklich alle Dienste gelöscht werden?</target>
       </trans-unit>
       <trans-unit id="261c3c35cd7b5f9737f2c3ab03c1ba76" resname="mb.core.layertree.popup.btn.ok">
         <source>mb.core.layertree.popup.btn.ok</source>
@@ -168,7 +168,7 @@
       </trans-unit>
       <trans-unit id="9e35239edca01f34b1092c1bb8539150" resname="mb.core.zoombar.zoombyworld">
         <source>mb.core.zoombar.zoombyworld</source>
-        <target>Zoom auf gesamte Abdeckung</target>
+        <target>Zoom auf gesamte Ausdehnung</target>
       </trans-unit>
       <trans-unit id="960c243a1919783483eb30395e158174" resname="mb.core.poi.popup.btn.ok">
         <source>mb.core.poi.popup.btn.ok</source>
@@ -180,7 +180,7 @@
       </trans-unit>
       <trans-unit id="868e554ea585dc5b1d394eb2b66e972c" resname="mb.core.layertree.tooltip.sublayers_openclose">
         <source>mb.core.layertree.tooltip.sublayers_openclose</source>
-        <target>Sub-Ebene an/aus</target>
+        <target>Ordner auf/zu</target>
       </trans-unit>
       <trans-unit id="e48917a6335f8fa17b6b68aabc94390b" resname="mb.core.layertree.label.visibility_onoff">
         <source>mb.core.layertree.label.visibility_onoff</source>
@@ -220,15 +220,15 @@
       </trans-unit>
       <trans-unit id="937de90c8cbe2cbfca37e4df0c18b6aa" resname="mb.core.layertree.label.deleteallsources">
         <source>mb.core.layertree.label.deleteallsources</source>
-        <target>Alle Quellen entfernen</target>
+        <target>Alle Dienste entfernen</target>
       </trans-unit>
       <trans-unit id="2ec03c5c014dec42d2bc46c9cf012215" resname="mb.core.aboutdialog.class.title">
         <source>mb.core.aboutdialog.class.title</source>
-        <target>Über-Dialog</target>
+        <target>Info-Dialog</target>
       </trans-unit>
       <trans-unit id="a1fe1182d0efa70a68e07d8375db34ce" resname="mb.core.aboutdialog.class.description">
         <source>mb.core.aboutdialog.class.description</source>
-        <target>Über-Dialog wird angezeigt</target>
+        <target>Der Info-Dialog wird angezeigt</target>
       </trans-unit>
       <trans-unit id="cb1d0ceba4aa38a8a623c339903c7b71" resname="mb.core.aboutdialog.tag.help">
         <source>mb.core.aboutdialog.tag.help</source>
@@ -240,11 +240,11 @@
       </trans-unit>
       <trans-unit id="80a2c08826a2379b7239f4e9c581805e" resname="mb.core.aboutdialog.tag.about">
         <source>mb.core.aboutdialog.tag.about</source>
-        <target>Über</target>
+        <target>Info-Dialog</target>
       </trans-unit>
       <trans-unit id="befc1f8d20bbd1ba5f26e124d8b94f1a" resname="mb.core.activityindicator.class.title">
         <source>mb.core.activityindicator.class.title</source>
-        <target>Aktivitäts-Indikator</target>
+        <target>Aktivitätsanzeige</target>
       </trans-unit>
       <trans-unit id="4c68bd109de1a07d8c03455e938af4d9" resname="mb.core.activityindicator.class.description">
         <source>mb.core.activityindicator.class.description</source>
