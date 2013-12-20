@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="b3e21adffaf3ec89f78b9fb121257661" resname="mb.wmc.element.wmceditor.popup.btn.ok">
         <source>mb.wmc.element.wmceditor.popup.btn.ok</source>
-        <target>Abschicken</target>
+        <target>Speichern</target>
       </trans-unit>
       <trans-unit id="f958484a8286d7e99e0b3bae50f20464" resname="mb.wmc.element.wmceditor.popup.btn.cancel">
         <source>mb.wmc.element.wmceditor.popup.btn.cancel</source>
@@ -36,7 +36,7 @@
       </trans-unit>
       <trans-unit id="c77b9c6d41d8bd287d8ef83b42af7c73" resname="mb.wmc.element.wmchandler.error_srs">
         <source>mb.wmc.element.wmchandler.error_srs</source>
-        <target>SRS "%state.extent.srs%" wird von dieser Applikation nicht unterstützt.</target>
+        <target>SRS "%state.extent.srs%" wird von dieser Anwendung nicht unterstützt.</target>
       </trans-unit>
       <trans-unit id="1398f72f7ae5323c2e64e964ec226eec" resname="mb.wmc.element.wmcloader.popup.btn.ok">
         <source>mb.wmc.element.wmcloader.popup.btn.ok</source>
@@ -52,7 +52,7 @@
       </trans-unit>
       <trans-unit id="ebf155ed57c2b787bf8b9c560fbfab04" resname="mb.wmc.list.add_wmc">
         <source>mb.wmc.list.add_wmc</source>
-        <target>Neuen WMC hinzufügen</target>
+        <target>Neues WMC Dokument hinzufügen</target>
       </trans-unit>
       <trans-unit id="e74c2fba29ebe644dd429341c4c5e47c" resname="mb.wmc.list.id">
         <source>mb.wmc.list.id</source>
@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="6853f27563c23ed2b4e1be8e42b788aa" resname="mb.wmc.list.description">
         <source>mb.wmc.list.description</source>
-        <target>Fügt WMC-Konfigurationen aus einer Auswahlbox zu der Applikation hinzu.</target>
+        <target>Auswahlbox über die WMC-Konfigurationen zur Anwendung hinzugefügt werden können.</target>
       </trans-unit>
       <trans-unit id="1cbc6d988a8f10a8908c92bf0ba0d882" resname="mb.wmc.list.toggle">
         <source>mb.wmc.list.toggle</source>
@@ -104,19 +104,19 @@
       </trans-unit>
       <trans-unit id="82be49e5b51462edf1afdec84259533c" resname="mb.wmc.wmceditor.list.add_wmc">
         <source>mb.wmc.wmceditor.list.add_wmc</source>
-        <target>Neuen WMC hinzufügen</target>
+        <target>hinzufügen</target>
       </trans-unit>
       <trans-unit id="76a4bbc43038154b49bcc6bb0d6dbdcf" resname="mb.wmc.wmceditor.list.delete_wmc">
         <source>mb.wmc.wmceditor.list.delete_wmc</source>
-        <target>WMC löschen</target>
+        <target>löschen</target>
       </trans-unit>
       <trans-unit id="946f46ce5b9c2b8aef78bd102fe7e8f0" resname="mb.wmc.wmceditor.list.edit_wmc">
         <source>mb.wmc.wmceditor.list.edit_wmc</source>
-        <target>WMC bearbeiten</target>
+        <target>bearbeiten</target>
       </trans-unit>
       <trans-unit id="515cb5901176080db2ddd27c1a6d98ef" resname="mb.wmc.wmceditor.list.toggle">
         <source>mb.wmc.wmceditor.list.toggle</source>
-        <target>Umschalten öffentlich/privat WMC</target>
+        <target>publizieren/verbergen</target>
       </trans-unit>
       <trans-unit id="9e9268c8f77f5287dc3c69b830ce3ef1" resname="mb.wmc.wmceditor.list.no_wmc">
         <source>mb.wmc.wmceditor.list.no_wmc</source>
@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="b516d036d029316adb16f384d744ee3e" resname="mb.wmc.wmc.delete_confirm">
         <source>mb.wmc.wmc.delete_confirm</source>
-        <target>Möchten Sie wirklich den WMC mit dem Titel &lt;em&gt;%wmc_title%&lt;/em&gt; und der ID &lt;em&gt;%wmc_id%&lt;/em&gt; entfernen?</target>
+        <target>Möchten Sie wirklich die Konfiguration mit dem Titel &lt;em&gt;%wmc_title%&lt;/em&gt; und der ID &lt;em&gt;%wmc_id%&lt;/em&gt; löschen?</target>
       </trans-unit>
       <trans-unit id="f9e25e70a7d907096e58ee21775675d3" resname="mb.wmc.wmcloader.state.load">
         <source>mb.wmc.wmcloader.state.load</source>
@@ -148,7 +148,7 @@
       </trans-unit>
       <trans-unit id="50a0a43d7734636fdca90ac4e93c124b" resname="mb.wmc.wmcloader.view_wmc">
         <source>mb.wmc.wmcloader.view_wmc</source>
-        <target>WMC ansehen</target>
+        <target>laden</target>
       </trans-unit>
       <trans-unit id="fa9bcb4301135e8b5a2ea4a460d01971" resname="mb.wmc.wmcloader.no_wmc">
         <source>mb.wmc.wmcloader.no_wmc</source>
@@ -208,7 +208,7 @@
       </trans-unit>
       <trans-unit id="a466182b91e7c90e8e89e0a7017322ef" resname="mb.wmc.wmclist.class.description">
         <source>mb.wmc.wmclist.class.description</source>
-        <target>Läd ein verfügbares WMC-Dokument in die Karte.</target>
+        <target>Lädt ein verfügbares WMC-Dokument in die Karte.</target>
       </trans-unit>
       <trans-unit id="3f95f9b38e9577764a01c2a600045872" resname="mb.wmc.wmclist.tag.wmc">
         <source>mb.wmc.wmclist.tag.wmc</source>
@@ -220,11 +220,11 @@
       </trans-unit>
       <trans-unit id="042eee8054aa3baa9397244d38ad8228" resname="mb.wmc.wmcloader.class.title">
         <source>mb.wmc.wmcloader.class.title</source>
-        <target>WMC laden</target>
+        <target>laden</target>
       </trans-unit>
       <trans-unit id="eb6f1e211f0c4fce0cb4e847844a7ca0" resname="mb.wmc.wmcloader.class.description">
         <source>mb.wmc.wmcloader.class.description</source>
-        <target>Läd ein WMC-Dokument in die Karte.</target>
+        <target>Lädt ein WMC-Dokument in die Karte.</target>
       </trans-unit>
       <trans-unit id="fa367490fe08a5c455c902eb5714abe4" resname="mb.wmc.wmcloader.tag.wmc">
         <source>mb.wmc.wmcloader.tag.wmc</source>
@@ -236,7 +236,7 @@
       </trans-unit>
       <trans-unit id="84a803ca295fd79315c77052d5a0e120" resname="mb.wmc.error.wmcxmlloader_notallowed">
         <source>mb.wmc.error.wmcxmlloader_notallowed</source>
-        <target>WMC-XML laden ist nicht erlaubt.</target>
+        <target>WMC über XML laden ist nicht erlaubt.</target>
       </trans-unit>
       <trans-unit id="68ab6d8f3b2dc2a0020d23f40b639e97" resname="mb.wmc.error.wmclistloader_notallowed">
         <source>mb.wmc.error.wmclistloader_notallowed</source>
@@ -260,19 +260,19 @@
       </trans-unit>
       <trans-unit id="1ad70ada5396eec4995034a94460ca7b" resname="mb.wmc.error.wmcremoved">
         <source>mb.wmc.error.wmcremoved</source>
-        <target>WMC %wmcid% wurde entfernt.</target>
+        <target>Die Konfiguration %wmcid% wurde gelöscht.</target>
       </trans-unit>
       <trans-unit id="48438f15e13a526eb0ce2f28f4dab55d" resname="mb.wmc.error.wmccannotbesaved">
         <source>mb.wmc.error.wmccannotbesaved</source>
-        <target>WMC %wmcid% kann nicht gespeichert werden.</target>
+        <target>Die Konfiguration %wmcid% kann nicht gespeichert werden.</target>
       </trans-unit>
       <trans-unit id="c6970155c4ab171311dd3b7ae03b109f" resname="mb.wmc.error.wmcsaved">
         <source>mb.wmc.error.wmcsaved</source>
-        <target>WMC %wmcid% wurde gespeichert.</target>
+        <target>Die Konfiguration %wmcid% wurde gespeichert.</target>
       </trans-unit>
       <trans-unit id="777a392870477be18bcbb4d9a3a7f675" resname="mb.wmc.error.statecannotbesaved">
         <source>mb.wmc.error.statecannotbesaved</source>
-        <target>Status kann nicht gespeichert werden.</target>
+        <target>Der Status kann nicht gespeichert werden.</target>
       </trans-unit>
       <trans-unit id="a5531428c051e5c086db2800e7fb5383" resname="mb.wmc.error.statenotfound">
         <source>mb.wmc.error.statenotfound</source>
