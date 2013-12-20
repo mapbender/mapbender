@@ -106,11 +106,13 @@ $.extend(true, Mapbender, {
 
                 requestUrl += (/\?/.test(layer.options.url) ? '&' : '?') + params;
 
+                var proxy = layer.source.configuration.options.proxy;
+
                 $.ajax({
                     url: Mapbender.configuration.application.urls.proxy,
                     contentType: contentType_,
                     data: {
-                        url: encodeURIComponent(requestUrl)
+                        url: proxy ? requestUrl : encodeURIComponent(requestUrl)
                     },
                     success: function(data){
                         callback({
@@ -710,7 +712,7 @@ $.extend(true, Mapbender, {
              * @param {object} source source
              * @param {object} changeOptions options in form of:
              * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
-             * @param {boolean} merge 
+             * @param {boolean} merge
              * @returns {object} changes
              */
             createOptionsLayerState: function(source, changeOptions, selectedOther, merge){
