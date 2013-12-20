@@ -273,7 +273,7 @@
       </trans-unit>
       <trans-unit id="f5cbce523ee9eabac86ea8316bf8e38d" resname="mb.manager.be.element.delete">
         <source>mb.manager.be.element.delete</source>
-        <target>Delete</target>
+        <target>Delete element '%element_title%'</target>
       </trans-unit>
       <trans-unit id="f421912e27fc54853a6a714460b371b8" resname="mb.manager.admin.element.no_element_added.">
         <source>mb.manager.admin.element.no_element_added.</source>
@@ -306,6 +306,98 @@
       <trans-unit id="21eadf44846179e855227d3480ad702e" resname="mb.manager.admin.source.new.add">
         <source>mb.manager.admin.source.new.add</source>
         <target>Add source</target>
+      </trans-unit>
+      <trans-unit id="9a1005faad0ea7267569a1d03a089059" resname="mb.manager.components.popup.add_element.title">
+        <source>mb.manager.components.popup.add_element.title</source>
+        <target>Add element</target>
+      </trans-unit>
+      <trans-unit id="ff708f70707367255e235ece27fe7a46" resname="mb.manager.components.popup.add_element.btn.ok">
+        <source>mb.manager.components.popup.add_element.btn.ok</source>
+        <target>Ok</target>
+      </trans-unit>
+      <trans-unit id="bd3f4068d88f4534e83919bedabe7806" resname="mb.manager.components.popup.add_element.btn.cancel">
+        <source>mb.manager.components.popup.add_element.btn.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="fc396cf2852c16b986e4ddc563eaa6ea" resname="mb.manager.components.popup.add_element.btn.back">
+        <source>mb.manager.components.popup.add_element.btn.back</source>
+        <target>Back</target>
+      </trans-unit>
+      <trans-unit id="dace000d100d3942f1d3584d8b9c221f" resname="mb.manager.components.popup.edit_element.title">
+        <source>mb.manager.components.popup.edit_element.title</source>
+        <target>Edit element</target>
+      </trans-unit>
+      <trans-unit id="3684fd04231e86892a900ae7821e8f6d" resname="mb.manager.components.popup.edit_element.btn.ok">
+        <source>mb.manager.components.popup.edit_element.btn.ok</source>
+        <target>Update</target>
+      </trans-unit>
+      <trans-unit id="7745b9323c961884b97667adc45b5275" resname="mb.manager.components.popup.edit_element.btn.cancel">
+        <source>mb.manager.components.popup.edit_element.btn.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="f39ba72f59f8ae5fc5c575cf4e7bbcee" resname="mb.manager.components.popup.delete_element.subtitle">
+        <source>mb.manager.components.popup.delete_element.subtitle</source>
+        <target>element</target>
+      </trans-unit>
+      <trans-unit id="5b036acf05d1e478b58e642289a3c284" resname="mb.manager.components.popup.delete_element.title">
+        <source>mb.manager.components.popup.delete_element.title</source>
+        <target>Confirm delete</target>
+      </trans-unit>
+      <trans-unit id="4a4f9a17c42a94ebf57a58e89188120f" resname="mb.manager.components.popup.delete_element.btn.ok">
+        <source>mb.manager.components.popup.delete_element.btn.ok</source>
+        <target>Delete</target>
+      </trans-unit>
+      <trans-unit id="4b2bf7e6d785395ba9fcd80e2b19363e" resname="mb.manager.components.popup.delete_element.btn.cancel">
+        <source>mb.manager.components.popup.delete_element.btn.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="7fa3538394527af2388951e707300986" resname="mb.manager.components.popup.add_edit_layerset.title_edit">
+        <source>mb.manager.components.popup.add_edit_layerset.title_edit</source>
+        <target>Edit layerset</target>
+      </trans-unit>
+      <trans-unit id="c7c683e5da7ef72313f3c76b25974ad0" resname="mb.manager.components.popup.add_edit_layerset.title_add">
+        <source>mb.manager.components.popup.add_edit_layerset.title_add</source>
+        <target>Add layerset</target>
+      </trans-unit>
+      <trans-unit id="545b12b1f521a728951bfa25c1aca6b4" resname="mb.manager.components.popup.add_edit_layerset.btn.ok">
+        <source>mb.manager.components.popup.add_edit_layerset.btn.ok</source>
+        <target>Ok</target>
+      </trans-unit>
+      <trans-unit id="77fce388abcd713261cd13c4c4094c07" resname="mb.manager.components.popup.add_edit_layerset.btn.cancel">
+        <source>mb.manager.components.popup.add_edit_layerset.btn.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="eeeb84c4420f068f73c208020f7c659b" resname="mb.manager.components.popup.delete_layerset.title">
+        <source>mb.manager.components.popup.delete_layerset.title</source>
+        <target>Delete layerset</target>
+      </trans-unit>
+      <trans-unit id="181f0497f7b60d959ba6534f4accdd5a" resname="mb.manager.components.popup.delete_layerset.btn.ok">
+        <source>mb.manager.components.popup.delete_layerset.btn.ok</source>
+        <target>Delete</target>
+      </trans-unit>
+      <trans-unit id="cc31ba3e7960c280f361e2f2d096843e" resname="mb.manager.components.popup.delete_layerset.btn.cancel">
+        <source>mb.manager.components.popup.delete_layerset.btn.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="6538cb2a76c24f8237fb9c3b6a31fe51" resname="mb.manager.components.popup.add_instance.title">
+        <source>mb.manager.components.popup.add_instance.title</source>
+        <target>Select source</target>
+      </trans-unit>
+      <trans-unit id="fcca6bf939e65605d5be365eed785b3d" resname="mb.manager.components.popup.add_instance.btn.cancel">
+        <source>mb.manager.components.popup.add_instance.btn.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="c50f832b52a6007ebc0c8aa54bd8915b" resname="mb.manager.components.popup.delete_instance.title">
+        <source>mb.manager.components.popup.delete_instance.title</source>
+        <target>Confirm delete</target>
+      </trans-unit>
+      <trans-unit id="ee955fdf95caee0ac5d3dfbc3fe18602" resname="mb.manager.components.popup.delete_instance.btn.ok">
+        <source>mb.manager.components.popup.delete_instance.btn.ok</source>
+        <target>Delete</target>
+      </trans-unit>
+      <trans-unit id="dfadd8284049b72ec3ef7349a5218b34" resname="mb.manager.components.popup.delete_instance.btn.cancel">
+        <source>mb.manager.components.popup.delete_instance.btn.cancel</source>
+        <target>Cancel</target>
       </trans-unit>
       <trans-unit id="8bf0ac9ea9e7843388def8c0416156c8" resname="mb.core.admin.about_dialog.show_label">
         <source>mb.core.admin.about_dialog.show_label</source>
