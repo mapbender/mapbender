@@ -558,7 +558,9 @@
 
                 }else{
                     createMenu(element, sourceId, layerId);
-    //                this._setOpacity(source[0], 0.5);
+//                    test opacity
+//                    var source = this.model.findSource({id: sourceId});
+//                    this._setOpacity(source[0], 0.5);
                 }
         },
         _setOpacity: function(source, opacity){
