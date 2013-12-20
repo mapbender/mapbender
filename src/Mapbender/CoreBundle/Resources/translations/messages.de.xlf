@@ -224,11 +224,11 @@
       </trans-unit>
       <trans-unit id="2ec03c5c014dec42d2bc46c9cf012215" resname="mb.core.aboutdialog.class.title">
         <source>mb.core.aboutdialog.class.title</source>
-        <target>Info-Dialog</target>
+        <target>Über-Mapbender-Dialog</target>
       </trans-unit>
       <trans-unit id="a1fe1182d0efa70a68e07d8375db34ce" resname="mb.core.aboutdialog.class.description">
         <source>mb.core.aboutdialog.class.description</source>
-        <target>Der Info-Dialog wird angezeigt</target>
+        <target>Der Über-Mapbender-Dialog zeigt Informationen zu Mapbender an.</target>
       </trans-unit>
       <trans-unit id="cb1d0ceba4aa38a8a623c339903c7b71" resname="mb.core.aboutdialog.tag.help">
         <source>mb.core.aboutdialog.tag.help</source>
@@ -248,7 +248,7 @@
       </trans-unit>
       <trans-unit id="4c68bd109de1a07d8c03455e938af4d9" resname="mb.core.activityindicator.class.description">
         <source>mb.core.activityindicator.class.description</source>
-        <target>Zeigt HTTP-Aktivität</target>
+        <target>Zeigt HTTP-Aktivität an.</target>
       </trans-unit>
       <trans-unit id="fd918578edd7d0cca263c511c5aa5d1e" resname="mb.core.activityindicator.tag.activity">
         <source>mb.core.activityindicator.tag.activity</source>
@@ -260,11 +260,11 @@
       </trans-unit>
       <trans-unit id="294c1985386655b73d5c1704a44242d6" resname="mb.core.basesourceswitcher.class.title">
         <source>mb.core.basesourceswitcher.class.title</source>
-        <target>Hintergrund-Umschalter</target>
+        <target>Hintergrund wechseln</target>
       </trans-unit>
       <trans-unit id="5b27fd259590198ffacb9832ea9bb07a" resname="mb.core.basesourceswitcher.class.Description">
         <source>mb.core.basesourceswitcher.class.Description</source>
-        <target>Schaltet hintergrund Quellen um</target>
+        <target>Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.</target>
       </trans-unit>
       <trans-unit id="e8db259e0e053a06725b325ba778c123" resname="mb.core.basesourceswitcher.tag.base">
         <source>mb.core.basesourceswitcher.tag.base</source>
@@ -296,7 +296,7 @@
       </trans-unit>
       <trans-unit id="cee2d354d34004657e8a450d251585dc" resname="mb.core.coordinatesdisplay.class.description">
         <source>mb.core.coordinatesdisplay.class.description</source>
-        <target>Die Koordinatenanzeige zeigt die Mausposition in den Kartenkoordinaten.</target>
+        <target>Die Koordinatenanzeige zeigt die Mausposition in den Kartenkoordinaten an.</target>
       </trans-unit>
       <trans-unit id="eab1a6ab1b72d1da761177f459e3f5ed" resname="mb.core.coordinatesdisplay.tag.coordinates">
         <source>mb.core.coordinatesdisplay.tag.coordinates</source>
@@ -320,7 +320,7 @@
       </trans-unit>
       <trans-unit id="785b8e73415635049ccda83324dabdd4" resname="mb.core.copyright.class.description">
         <source>mb.core.copyright.class.description</source>
-        <target>Nutzungsbedingungen</target>
+        <target>Zeigt Nutzungsbedingungen an.</target>
       </trans-unit>
       <trans-unit id="edd9a51254ed3282c94086cb82181c4b" resname="mb.core.copyright.tag.copyright">
         <source>mb.core.copyright.tag.copyright</source>
@@ -404,19 +404,19 @@
       </trans-unit>
       <trans-unit id="c6b4222c59ccebdcc9c399ed4e0a8169" resname="mb.core.legend.class.description">
         <source>mb.core.legend.class.description</source>
-        <target>Die Legende zeigt die Ebenen der Karte an.</target>
+        <target>Zeigt die Legende zu den aktiven Themen der Karte an.</target>
       </trans-unit>
       <trans-unit id="bc4dbd2f4a17fa2486f8c153b2785959" resname="mb.core.legend.tag.layer">
         <source>mb.core.legend.tag.layer</source>
-        <target>Ebenen</target>
+        <target>Themen</target>
       </trans-unit>
       <trans-unit id="3a1ad035c9ded1d5f15ad139a3180479" resname="mb.core.legend.tag.legend">
         <source>mb.core.legend.tag.legend</source>
-        <target>Legend</target>
+        <target>Legende</target>
       </trans-unit>
       <trans-unit id="6ff9a6860becdb38fc62382a5a94d19f" resname="mb.core.map.class.title">
         <source>mb.core.map.class.title</source>
-        <target>Karte</target>
+        <target>Karte (map)</target>
       </trans-unit>
       <trans-unit id="a51d63e59c7008d6fc19ae6fd66e0034" resname="mb.core.mapabs.class.description">
         <source>mb.core.mapabs.class.description</source>
@@ -440,11 +440,11 @@
       </trans-unit>
       <trans-unit id="1545d3b3b00b2d6a9ffa64836e72cf89" resname="mb.core.overview.class.title">
         <source>mb.core.overview.class.title</source>
-        <target>Übersicht</target>
+        <target>Übersicht (overview)</target>
       </trans-unit>
       <trans-unit id="4a541e9cb0bbec61e67b6410c5d91bfd" resname="mb.core.overview.class.description">
         <source>mb.core.overview.class.description</source>
-        <target>Zeigt eine kleine Übersichtskarte an.</target>
+        <target>Zeigt eine kleine Übersichtskarte (overview) an.</target>
       </trans-unit>
       <trans-unit id="e5d9eb4a51009c1523e241487f33efb0" resname="mb.core.overview.tag.overview">
         <source>mb.core.overview.tag.overview</source>
@@ -452,19 +452,19 @@
       </trans-unit>
       <trans-unit id="bb3d9d93dcc6f6dabc4d558e5a9f4222" resname="mb.core.overview.tag.map">
         <source>mb.core.overview.tag.map</source>
-        <target>Karte</target>
+        <target>Karte (overview)</target>
       </trans-unit>
       <trans-unit id="7de6b6e60dc29467aa72968a60ec2781" resname="mb.core.poi.class.title">
         <source>mb.core.poi.class.title</source>
-        <target>POI</target>
+        <target>MeetingPoint (POI)</target>
       </trans-unit>
       <trans-unit id="fcb05118e63af0be8eb3f9d50d2b8383" resname="mb.core.poi.class.description">
         <source>mb.core.poi.class.description</source>
-        <target>Erzeugt einen POI</target>
+        <target>Element über das eine Treffpunkt generiert und verschickt werden kann.</target>
       </trans-unit>
       <trans-unit id="718b2faa45e981d61773328503144051" resname="mb.core.poi.tag.poi">
         <source>mb.core.poi.tag.poi</source>
-        <target>POI</target>
+        <target>MeetingPoint (POI)</target>
       </trans-unit>
       <trans-unit id="2af3ff9534bd82ecac0c9f50041b4c7a" resname="mb.core.poi.tag.point">
         <source>mb.core.poi.tag.point</source>
@@ -480,7 +480,7 @@
       </trans-unit>
       <trans-unit id="269640fdb1e7654374bffe68abf67d3b" resname="mb.core.printclient.class.description">
         <source>mb.core.printclient.class.description</source>
-        <target>Zeigt einen Druck Dialog</target>
+        <target>Druck Dialog</target>
       </trans-unit>
       <trans-unit id="02faddbd2151e0d55dfb3084ad20682b" resname="mb.core.printclient.tag.print">
         <source>mb.core.printclient.tag.print</source>
@@ -508,7 +508,7 @@
       </trans-unit>
       <trans-unit id="89eb0c4bbc2dbf36dfaa030e4424cde7" resname="mb.core.ruler.class.title">
         <source>mb.core.ruler.class.title</source>
-        <target>Linien-/Flächenmesseung</target>
+        <target>Linien-/Flächenmessung</target>
       </trans-unit>
       <trans-unit id="df474f4781cc43d563e67a4bcbde1bbb" resname="mb.core.ruler.class.description">
         <source>mb.core.ruler.class.description</source>
@@ -564,7 +564,7 @@
       </trans-unit>
       <trans-unit id="d9751023269ee3f4f3d84ad0b6355f8b" resname="mb.core.scaleselector.class.description">
         <source>mb.core.scaleselector.class.description</source>
-        <target>Das Element zeigt eine Auswahlbox mit Maßstäben an, mit der Maßstäbe geändert werden können.</target>
+        <target>Auswahlbox mit verfügbaren Maßstäben zum Wechseln des Maßstabs. Zeigt den aktuellen Maßstab an.</target>
       </trans-unit>
       <trans-unit id="ea46156a86949b1bfd58cad9bef049c0" resname="mb.core.scaleselector.tag.scale">
         <source>mb.core.scaleselector.tag.scale</source>
@@ -580,11 +580,11 @@
       </trans-unit>
       <trans-unit id="6ab2689e7fbc56d76055949a730142b4" resname="mb.core.searchrouter.class.description">
         <source>mb.core.searchrouter.class.description</source>
-        <target>Konfigurierbare Suchen</target>
+        <target>Ermöglicht die Konfiguration von individuellen Suchen</target>
       </trans-unit>
       <trans-unit id="503c12f9039ad418c497da90113359cb" resname="mb.core.searchrouter.tag.search">
         <source>mb.core.searchrouter.tag.search</source>
-        <target>Suche</target>
+        <target>Suchen</target>
       </trans-unit>
       <trans-unit id="e397392a6736e4c692690852147ee845" resname="mb.core.searchrouter.tag.router">
         <source>mb.core.searchrouter.tag.router</source>
@@ -596,7 +596,7 @@
       </trans-unit>
       <trans-unit id="fc172c08f41ce1029d79190eecdb2446" resname="mb.core.sketch.class.description">
         <source>mb.core.sketch.class.description</source>
-        <target>Es wird eine Vektorebene in der Karte hinzugefügt, wodurch Geometrieobjekte gezeichnet werden.</target>
+        <target>Es wird eine Vektorebene in der Karte hinzugefügt, über die Geometrieobjekte temporär gezeichnet werden.</target>
       </trans-unit>
       <trans-unit id="7ae33b15957a16081ce3bff4098cec7a" resname="mb.core.sketch.tag.sketch">
         <source>mb.core.sketch.tag.sketch</source>
@@ -664,7 +664,7 @@
       </trans-unit>
       <trans-unit id="90675349c781bc0f026bca337fce8218" resname="mb.core.admin.legend.label.showsourcetitle">
         <source>mb.core.admin.legend.label.showsourcetitle</source>
-        <target>Titel der Quelle anzeigen</target>
+        <target>Titel der Datenquelle anzeigen</target>
       </trans-unit>
       <trans-unit id="0ca2080280477b91ee0130c78044e3e6" resname="mb.core.admin.legend.label.showlayertitle">
         <source>mb.core.admin.legend.label.showlayertitle</source>
@@ -696,11 +696,11 @@
       </trans-unit>
       <trans-unit id="40c239c7f7d130a17c9b299f2e03e738" resname="mb.core.basesourceswitcher.form.mesage">
         <source>mb.core.basesourceswitcher.form.mesage</source>
-        <target>Kein Quellenset ist definiert.</target>
+        <target>Keine Hintergrund Definitionen vorhanden.</target>
       </trans-unit>
       <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
         <source>mb.core.admin.layertree.label.showbasesources</source>
-        <target>Hintergrundquellen anzeigen</target>
+        <target>Hintergrund anzeigen</target>
       </trans-unit>
       <trans-unit id="71b752f5f8f9465c2dd33581a4d5e797" resname="mb.core.admin.layertree.label.autoopen">
         <source>mb.core.admin.layertree.label.autoopen</source>

@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="b6d9a92724be41fbb79a84f42708290e" resname="mb.wmc.wmceditor.class.description">
         <source>mb.wmc.wmceditor.class.description</source>
-        <target>Erstellt und editiert WMC Dokumente.</target>
+        <target>Zum bearbeiten und verwalten von WMC Dokumenten.</target>
       </trans-unit>
       <trans-unit id="351cc8f67e3cb73c27792fba58ef9dd6" resname="mb.wmc.wmceditor.tag.wmc">
         <source>mb.wmc.wmceditor.tag.wmc</source>
@@ -40,7 +40,7 @@
       </trans-unit>
       <trans-unit id="a466182b91e7c90e8e89e0a7017322ef" resname="mb.wmc.wmclist.class.description">
         <source>mb.wmc.wmclist.class.description</source>
-        <target>Lädt ein verfügbares WMC-Dokument in die Karte.</target>
+        <target>Lädt verfügbare WMC-Dokumente über eine Auswahlbox in die Karte.</target>
       </trans-unit>
       <trans-unit id="3f95f9b38e9577764a01c2a600045872" resname="mb.wmc.wmclist.tag.wmc">
         <source>mb.wmc.wmclist.tag.wmc</source>
@@ -48,15 +48,15 @@
       </trans-unit>
       <trans-unit id="f522491b90f4a0868c31ec17e597d0d9" resname="mb.wmc.wmclist.tag.list">
         <source>mb.wmc.wmclist.tag.list</source>
-        <target>Liste</target>
+        <target>WMC Liste</target>
       </trans-unit>
       <trans-unit id="042eee8054aa3baa9397244d38ad8228" resname="mb.wmc.wmcloader.class.title">
         <source>mb.wmc.wmcloader.class.title</source>
-        <target>laden</target>
+        <target>WMC laden</target>
       </trans-unit>
       <trans-unit id="eb6f1e211f0c4fce0cb4e847844a7ca0" resname="mb.wmc.wmcloader.class.description">
         <source>mb.wmc.wmcloader.class.description</source>
-        <target>Lädt ein WMC-Dokument in die Karte.</target>
+        <target>Lädt verfügbare WMC-Dokumente in die Karte.</target>
       </trans-unit>
       <trans-unit id="fa367490fe08a5c455c902eb5714abe4" resname="mb.wmc.wmcloader.tag.wmc">
         <source>mb.wmc.wmcloader.tag.wmc</source>
@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="a6b4b9511073b04b86ad123c593cd81b" resname="mb.wmc.wmcloader.tag.loader">
         <source>mb.wmc.wmcloader.tag.loader</source>
-        <target>Laden</target>
+        <target>WMC Laden</target>
       </trans-unit>
       <trans-unit id="84a803ca295fd79315c77052d5a0e120" resname="mb.wmc.error.wmcxmlloader_notallowed">
         <source>mb.wmc.error.wmcxmlloader_notallowed</source>
@@ -284,7 +284,7 @@
       </trans-unit>
       <trans-unit id="f9e25e70a7d907096e58ee21775675d3" resname="mb.wmc.wmcloader.state.load">
         <source>mb.wmc.wmcloader.state.load</source>
-        <target>Laden</target>
+        <target>WMC Laden</target>
       </trans-unit>
     </body>
   </file>
