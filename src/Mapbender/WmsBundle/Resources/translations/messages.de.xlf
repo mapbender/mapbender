@@ -8,27 +8,27 @@
       </trans-unit>
       <trans-unit id="f57f5abcae9b2db5284f703f270bfbe4" resname="mb.wms.wmsloader.dialog.label.wmsurl">
         <source>mb.wms.wmsloader.dialog.label.wmsurl</source>
-        <target>WMS URL</target>
+        <target>URL</target>
       </trans-unit>
       <trans-unit id="27c45a8d7df44b7de7adf685e204e80c" resname="mb.wms.wmsloader.error.url">
         <source>mb.wms.wmsloader.error.url</source>
-        <target>WMS laden: die WMS-Capabilities konnten nicht geladen werden! Die Capabilities URL ist nicht gültig.</target>
+        <target>WMS laden: das WMS Capabilities Dokument konnten nicht geladen werden! Die Capabilities-URL ist nicht gültig.</target>
       </trans-unit>
       <trans-unit id="6ff51d3832f0575b54225dea941a97ff" resname="mb.wms.wmsloader.error.service">
         <source>mb.wms.wmsloader.error.service</source>
-        <target>WMS laden: der Service %service% wird nicht unterstüzt!</target>
+        <target>WMS laden: der Service %service% wird nicht unterstützt!</target>
       </trans-unit>
       <trans-unit id="8e29e6784e7fce8440c02cff8f93042b" resname="mb.wms.wmsloader.error.operation">
         <source>mb.wms.wmsloader.error.operation</source>
-        <target>WMS laden: die WMS Operation %operation% wird nicht unterstüzt!</target>
+        <target>WMS laden: die WMS Operation %operation% wird nicht unterstützt!</target>
       </trans-unit>
       <trans-unit id="906389f11054233d8999e2308e1698d1" resname="mb.wms.wmsloader.error.version">
         <source>mb.wms.wmsloader.error.version</source>
-        <target>WMS laden: die WMS Version %version% wird nicht unterstüzt!</target>
+        <target>WMS laden: die WMS Version %version% wird nicht unterstützt!</target>
       </trans-unit>
       <trans-unit id="b21a812df167d5a76cf155957642f5ca" resname="mb.wms.wmsloader.error.load">
         <source>mb.wms.wmsloader.error.load</source>
-        <target>WMS laden: die WMS-Capabilities konnten nicht geladen werden!</target>
+        <target>WMS laden: das WMS Capabilities Dokument konnte nicht geladen werden!</target>
       </trans-unit>
       <trans-unit id="e0fad091f39559379dc4574bb9d41485" resname="mb.wms.wmsloader.dialog.btn.cancel">
         <source>mb.wms.wmsloader.dialog.btn.cancel</source>
@@ -96,7 +96,7 @@
       </trans-unit>
       <trans-unit id="9f72fbfe011c4a4427ec035f1c8d4af6" resname="mb.wms.wmsloader.repo.view.label.abstract">
         <source>mb.wms.wmsloader.repo.view.label.abstract</source>
-        <target>Abstrakt</target>
+        <target>Beschreibung</target>
       </trans-unit>
       <trans-unit id="3a3dd94cebaef1c565f98496e12c65fd" resname="mb.wms.wmsloader.repo.view.label.onlineresource">
         <source>mb.wms.wmsloader.repo.view.label.onlineresource</source>
@@ -264,19 +264,19 @@
       </trans-unit>
       <trans-unit id="8f48e1c6c2953629edc8fbbf69dc5191" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc</source>
-        <target>Erlaubt Auswahl im TOC</target>
+        <target>Erlaubt Auswahl im Layerbaum</target>
       </trans-unit>
       <trans-unit id="44498ccefb53822c054eb4b1814e8b03" resname="mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc</source>
-        <target>Ausgewählt im TOC</target>
+        <target>Ausgewählt im Layerbaum</target>
       </trans-unit>
       <trans-unit id="b3d597ef2d3847f8ceb714daec5ec3a8" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc</source>
-        <target>Erlaubt FeatureInfo im TOC</target>
+        <target>Erlaubt FeatureInfo im Layerbaum</target>
       </trans-unit>
       <trans-unit id="2a21eb0a2bd3134a5bdd8f1e1d88b3fc" resname="mb.wms.wmsloader.repo.instancelayerform.label.infotoc">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.infotoc</source>
-        <target>FeatureInfo im TOC</target>
+        <target>FeatureInfo im Layerbaum</target>
       </trans-unit>
       <trans-unit id="0be27caa38f5c86e7eb93800e9c8bee7" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc</source>
@@ -284,11 +284,11 @@
       </trans-unit>
       <trans-unit id="bf52e15cb3ed6f91042fcce68661d575" resname="mb.wms.wmsloader.repo.instancelayerform.label.toggletoc">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.toggletoc</source>
-        <target>Umschalten im TOC</target>
+        <target>Umschalten im Layerbaum</target>
       </trans-unit>
       <trans-unit id="30c9893ce7fe6e42be698ec20bd90728" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc</source>
-        <target>Erlaubt sortieren im TOC</target>
+        <target>Erlaubt sortieren im Layerbaum</target>
       </trans-unit>
       <trans-unit id="ae591fa9f76a9aeb07c6fc1f19e9737a" resname="mb.wms.wmsloader.repo.instancelayerform.label.moreinfo">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.moreinfo</source>
@@ -300,7 +300,7 @@
       </trans-unit>
       <trans-unit id="7cf9fa73dfd8554ef01eca5993d37de8" resname="mb.wms.wmsloader.repo.instancelayerform.label.layersname">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.layersname</source>
-        <target>Layer-Name</target>
+        <target>Name</target>
       </trans-unit>
       <trans-unit id="76215f732815d520a74a29ebd44c9f5d" resname="mb.wms.wmsloader.repo.instancelayerform.label.style">
         <source>mb.wms.wmsloader.repo.instancelayerform.label.style</source>
@@ -324,7 +324,7 @@
       </trans-unit>
       <trans-unit id="c1911bf51c11b84dd12e4d83bb4a7dad" resname="mb.wms.wmsloader.repo.layer.label.abstract">
         <source>mb.wms.wmsloader.repo.layer.label.abstract</source>
-        <target>Abstrakt</target>
+        <target>Beschreibung</target>
       </trans-unit>
       <trans-unit id="73d19f9b6f10a0e810c1030dce879863" resname="mb.wms.wmsloader.repo.layer.label.queryable">
         <source>mb.wms.wmsloader.repo.layer.label.queryable</source>
@@ -344,11 +344,11 @@
       </trans-unit>
       <trans-unit id="9cc0a9fe2c14d6e6fd6c7d7c6bfbb347" resname="mb.wms.wmsloader.repo.layer.label.fixedwidth">
         <source>mb.wms.wmsloader.repo.layer.label.fixedwidth</source>
-        <target>fixe Breite</target>
+        <target>feste Breite</target>
       </trans-unit>
       <trans-unit id="b8ddd3c5f13429e159d723c05ccae235" resname="mb.wms.wmsloader.repo.layer.label.fixedheight">
         <source>mb.wms.wmsloader.repo.layer.label.fixedheight</source>
-        <target>fixe Höhe</target>
+        <target>feste Höhe</target>
       </trans-unit>
       <trans-unit id="5d6138358bdc16cddcdfceb57934bf37" resname="mb.wms.wmsloader.repo.layer.label.latlonbounds">
         <source>mb.wms.wmsloader.repo.layer.label.latlonbounds</source>
@@ -488,7 +488,7 @@
       </trans-unit>
       <trans-unit id="10a9e19b4afe3b0e70d32737e00b9bb1" resname="mb.wms.wmsloader.class.description">
         <source>mb.wms.wmsloader.class.description</source>
-        <target>Läd ein WMS per getCapabilities-Request</target>
+        <target>Lädt einen WMS per getCapabilities-Request</target>
       </trans-unit>
       <trans-unit id="aa2a35216121de6e6cd0ac492ab73f84" resname="mb.wms.wmsloader.tag.wms">
         <source>mb.wms.wmsloader.tag.wms</source>
