@@ -47,7 +47,7 @@ class ElementController extends Controller
                 'description' => $trans->trans($elementClassName::getClassDescription()),
                 'tags' => $tags);
         }
-        ksort($elements);
+        ksort($elements, SORT_LOCALE_STRING);
         return array(
             'elements' => $elements,
             'region' => $this->get('request')->get('region'));

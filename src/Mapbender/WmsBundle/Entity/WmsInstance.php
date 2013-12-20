@@ -647,7 +647,8 @@ class WmsInstance extends SourceInstance
         return array(
             'js' => array(
                 '@MapbenderWmsBundle/Resources/public/mapbender.source.wms.js'),
-            'css' => array());
+            'css' => array(),
+            'trans' => array('MapbenderWmsBundle::wmsbundle.json.twig'));
     }
 
     /**
