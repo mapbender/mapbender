@@ -78,7 +78,9 @@ class WmcList extends Element
         );
         return array(
             'js' => $js,
-            'css' => array()
+            'css' => array(),
+            'trans' => array(
+                'MapbenderWmcBundle:Element:wmclist.json.twig')
         );
     }
 

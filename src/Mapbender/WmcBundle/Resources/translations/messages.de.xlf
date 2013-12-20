@@ -2,6 +2,10 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="de" datatype="plaintext" original="file.ext">
     <body>
+      <trans-unit id="e909afa8127513f6f090d29866ce35f3" resname="mb.wmc.element.wmclist.select.def_option">
+        <source>mb.wmc.element.wmclist.select.def_option</source>
+        <target>Bitte auswählen</target>
+      </trans-unit>
       <trans-unit id="f462936e18a6c720b36b31e3a1c98e47" resname="mb.wmc.element.suggestmap.content.email">
         <source>mb.wmc.element.suggestmap.content.email</source>
         <target>Als E-Mail</target>
