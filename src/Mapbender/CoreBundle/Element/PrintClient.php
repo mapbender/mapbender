@@ -181,6 +181,13 @@ class PrintClient extends Element
                 foreach ($data['layers'] as $idx => $layer) {
                     $data['layers'][$idx] = json_decode($layer, true);
                 }
+                
+                if (isset($data['overview'])){
+                    foreach ($data['overview'] as $idx => $layer) {
+                        $data['overview'][$idx] = json_decode($layer, true);
+                    }
+                }
+                    
                 $content = json_encode($data);
 
                 // Forward to Printer Service URL using OWSProxy

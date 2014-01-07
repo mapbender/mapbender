@@ -256,7 +256,7 @@
             rotation= parseInt(-rotation);
 
             this.lastScale = scale;
-
+            
             var world_size = {
                 x: width * scale / 100,
                 y: height * scale / 100
@@ -376,7 +376,7 @@
             var template_key = this.element.find('select[name="template"]').val(),
             format = this.options.templates[template_key].format,
             file_prefix = this.options.file_prefix;
-            
+                         
             // Felder für extent, center und layer dynamisch einbauen
             var fields = $();
 
@@ -415,7 +415,7 @@
                 name: 'file_prefix',
                 value: file_prefix
             }));
-
+              
             var sources = this.map.getSourceTree(), num = 0;
             
             for(var i = 0; i < sources.length; i++) {
@@ -442,11 +442,50 @@
                     }));
                     num++;
                 }
-            }
+            }    
+            
+            // overview
+            
+            var ovMap = this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap')[0],
+            count = 0;
+            if (undefined !== ovMap){
+                for(var i = 0; i < ovMap.layers.length; i++) {
+                    var url = ovMap.layers[i].getURL(ovMap.map.getExtent());
+                    
+                    var extent = ovMap.map.getExtent();
+                    var mwidth = extent.getWidth();
+                    
+                    var size = ovMap.size;
+                    var width = size.w;
+                    
+                    var res = mwidth / width;
+                    
+                    var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
+                    var scale_deg = Math.round(OpenLayers.Util.getScaleFromResolution(res));
+                    
+                    var overview = {};            
+                    overview.url = url;
+                    overview.scale = scale;
+
+                    $.merge(fields, $('<input />', {
+                        type: 'hidden',
+                        name: 'overview[' + count + ']',
+                        value: JSON.stringify(overview)
+                    }));
+                    count++;
+                } 
+            }                 
+            
+            // ruler path
+            var vector_layers = this.map.map.olMap.getLayersByClass('OpenLayers.Layer.Vector');
+            
+            var ruler_layer = this.map.map.olMap.getLayersByName('OpenLayers.Handler.Path');
+            
+            
             $('div#layers').empty();
             fields.appendTo(form.find('div#layers'));
+            
             // Post in neuen Tab (action bei form anpassen)
-
             var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
 
             form.get(0).setAttribute('action', url);

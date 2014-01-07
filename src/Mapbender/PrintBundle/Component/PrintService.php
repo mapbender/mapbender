@@ -27,9 +27,14 @@ class PrintService
      *
      */
     public function doPrint($content)
-    {
+    {   
         $this->data = json_decode($content, true);
         $template = $this->data['template'];
+//        print "<pre>";
+//        print_r($this->data);
+//        print "</pre>";
+//        die();
+        
         $this->getTemplateConf($template);
         $this->createUrlArray();
         $this->setMapParameter();
@@ -52,6 +57,10 @@ class PrintService
     {
         $odgParser = new OdgParser($this->container);
         $this->conf = $odgParser->getConf($template);
+//        print "<pre>";
+//        print_r($this->conf);
+//        print "</pre>";
+//        die();
     }
 
     /**
@@ -397,7 +406,13 @@ class PrintService
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
         }
         unlink($tempdir . '/mergedimage.png');
-
+        
+        if (isset($this->data['overview'])) {
+            $this->getOverviewMap();
+        }
+        
+        $this->draw();
+        
         if (null != $this->data['file_prefix']) {
             $pdf->Output($this->data['file_prefix'] . '.pdf', 'D'); //file output
         } else {
@@ -440,5 +455,176 @@ class PrintService
             $this->conf['northarrow']['height'] * 10);
         unlink($tempdir . '/rotatednorth.png');
     }
+    
+    private function getOverviewMap()
+    {
+        foreach ($this->data['overview'] as $i => $layer) {
+            $url = strstr($this->data['overview'][$i]['url'], 'BBOX', true);
+            
+            // TODO
+            //$ov_width = 12800;
+            //$ov_height = 9600;
+            
+            $ov_width = $this->conf['overview']['width'] * $this->data['overview'][0]['scale'] / 100;
+            $ov_height = $this->conf['overview']['height'] * $this->data['overview'][0]['scale'] / 100;
 
+            $centerx = $this->data['center']['x'];
+            $centery = $this->data['center']['y'];
+
+            $ll_x = $centerx - $ov_width * 0.5;
+            $ll_y = $centery - $ov_height * 0.5;
+            $ur_x = $centerx + $ov_width * 0.5;
+            $ur_y = $centery + $ov_height * 0.5;
+            
+            
+            $bbox = 'BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
+            $url .= $bbox;
+            
+            // image size
+            $conf = $this->conf;
+            $quality = $this->data['quality'];      
+            $ov_image_width = round($conf['overview']['width'] / 2.54 * $quality);
+            $ov_image_height = round($conf['overview']['height'] / 2.54 * $quality);            
+            
+            $width = '&WIDTH=' . $ov_image_width;
+            $height = '&HEIGHT=' . $ov_image_height;
+            $url .= $width . $height;
+            
+            $this->overview_urls[$i] = $url;           
+            
+            // get image
+            $this->container->get("logger")->debug("Print Overview Request Nr.: " . $i . ' ' . $url);
+            $attributes = array();
+            $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
+            $subRequest = new Request(array(
+                'url' => $url
+                ), array(), $attributes, array(), array(), array(), '');
+            $response = $this->container->get('http_kernel')->handle($subRequest,
+                HttpKernelInterface::SUB_REQUEST);
+
+            $tempdir = $this->tempdir;
+            $imagename = $tempdir . '/tempovimage' . $i;
+
+            file_put_contents($imagename, $response->getContent());
+            $im = null;
+            switch (trim($response->headers->get('content-type'))) {
+                case 'image/png' :
+                    $im = imagecreatefrompng($imagename);
+                    break;
+                case 'image/jpeg' :
+                    $im = imagecreatefromjpeg($imagename);
+                    break;
+                case 'image/gif' :
+                    $im = imagecreatefromgif($imagename);
+                    break;
+                default:
+                    continue;
+                    $this->container->get("logger")->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
+            }
+
+            if ($im !== null) {
+                imagesavealpha($im, true);
+                imagepng($im, $imagename);
+            }
+                
+        }
+        
+        // create final merged image
+        $finalimagename = $tempdir . '/mergedovimage.png';
+        $finalImage = imagecreatetruecolor($ov_image_width,
+            $ov_image_height);
+        $bg = ImageColorAllocate($finalImage, 255, 255, 255);
+        imagefilledrectangle($finalImage, 0, 0, $ov_image_width,
+            $ov_image_height, $bg);
+        imagepng($finalImage, $finalimagename);
+        foreach ($this->overview_urls as $k => $url) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if (is_file($tempdir . '/tempovimage' . $k) && finfo_file($finfo,
+                    $tempdir . '/tempovimage' . $k) == 'image/png') {
+                $dest = imagecreatefrompng($finalimagename);
+                $src = imagecreatefrompng($tempdir . '/tempovimage' . $k);
+                imagecopy($dest, $src, 0, 0, 0, 0, $ov_image_width,
+                    $ov_image_height);
+                imagepng($dest, $finalimagename);
+            }
+            unlink($tempdir . '/tempovimage' . $k);
+            finfo_close($finfo);
+        }
+        
+    
+        $this->pdf->Image($tempdir . '/mergedovimage.png',
+                    $this->conf['overview']['x'] * 10,
+                    $this->conf['overview']['y'] * 10,
+                    $this->conf['overview']['width'] * 10,
+                    $this->conf['overview']['height'] * 10);
+        
+        $this->pdf->Rect($this->conf['overview']['x'] * 10,
+                         $this->conf['overview']['y'] * 10,
+                         $this->conf['overview']['width'] * 10,
+                         $this->conf['overview']['height'] * 10);
+        
+        $ovcenterx = $this->conf['overview']['x'] * 10 + $this->conf['overview']['width'] * 10 * 0.5;
+        $ovcentery = $this->conf['overview']['y'] * 10 + $this->conf['overview']['height'] * 10 * 0.5;       
+        
+        $map_width = $this->data['extent']['width'];
+        $map_height = $this->data['extent']['height'];
+        
+        $ov_mapwidth = $map_width / $this->data['overview'][0]['scale'] * 100;
+        $ov_mapheight = $map_height / $this->data['overview'][0]['scale'] * 100;
+        
+                
+        $this->pdf->Rect($ovcenterx - $ov_mapwidth * 10 * 0.5,
+                         $ovcentery - $ov_mapheight * 10 * 0.5,
+                         $ov_mapwidth * 10,
+                         $ov_mapheight * 10);
+        
+        
+        unlink($tempdir . '/mergedovimage.png');
+    }
+    
+    private function draw()
+    {      
+        
+        $this->pdf->SetDrawColor(0, 0, 255);
+        $this->pdf->SetLineWidth(1);
+        
+//        $centerx = $this->data['center']['x'];
+//        $centery = $this->data['center']['y'];
+        
+        $centerx = 366188.72;
+        $centery = 5622343.23;
+        
+        $blubx = 364980.72;
+        $bluby = 5622359.23;
+        
+        $point = $this->realWorld2mapPos($centerx, $centery);
+        $point2 = $this->realWorld2mapPos($blubx, $bluby);
+        
+        $this->pdf->Line($this->x_ul+$point[0], $this->y_ul+$point[1], $this->x_ul+$point2[0], $this->y_ul+$point2[1]);
+        
+        
+    }
+    
+    private function realWorld2mapPos($rw_x,$rw_y)
+    {
+        $map_width = $this->data['extent']['width'];
+        $map_height = $this->data['extent']['height'];
+        $centerx = $this->data['center']['x'];
+        $centery = $this->data['center']['y'];
+
+        $minX = $centerx - $map_width * 0.5;
+        $minY = $centery - $map_height * 0.5;
+        $maxX = $centerx + $map_width * 0.5;
+        $maxY = $centery + $map_height * 0.5;
+        
+        $extentx = $maxX - $minX ; 
+	$extenty = $maxY - $minY ;
+        
+        $pixPos_x = (($rw_x - $minX)/$extentx) * $this->conf['map']['width'] * 10 ;
+	$pixPos_y = (($maxY - $rw_y)/$extenty) * $this->conf['map']['height'] * 10;
+        
+        $pixPos = array($pixPos_x, $pixPos_y);
+	   
+	return $pixPos;
+    }
 }
