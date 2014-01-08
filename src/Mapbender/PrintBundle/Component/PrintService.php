@@ -267,7 +267,11 @@ class PrintService
                     continue;
                 //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
-
+            
+            if ($k == 0 && isset($this->data['features'])){
+                $this->drawRotatedFeatures($im);
+            }
+            
             //rotate image
             $transColor = imagecolorallocatealpha($im, 255, 255, 255, 127);
             $rotatedImage = imagerotate($im, $rotation, $transColor);
@@ -380,7 +384,12 @@ class PrintService
                     break;
             }
         }
-
+        
+        // draw features
+        if ($this->data['rotation'] == 0 && isset($this->data['features'])) {
+            $this->drawFeatures();
+        }
+        
         if ($this->data['rotation'] == 0) {
             $tempdir = sys_get_temp_dir();
             foreach ($this->layer_urls as $k => $url)
@@ -405,13 +414,12 @@ class PrintService
 
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
         }
-        unlink($tempdir . '/mergedimage.png');
-        
-        if (isset($this->data['overview'])) {
+               
+        if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
             $this->getOverviewMap();
         }
         
-        $this->draw();
+        unlink($tempdir . '/mergedimage.png');
         
         if (null != $this->data['file_prefix']) {
             $pdf->Output($this->data['file_prefix'] . '.pdf', 'D'); //file output
@@ -459,15 +467,11 @@ class PrintService
     private function getOverviewMap()
     {
         foreach ($this->data['overview'] as $i => $layer) {
-            $url = strstr($this->data['overview'][$i]['url'], 'BBOX', true);
-            
-            // TODO
-            //$ov_width = 12800;
-            //$ov_height = 9600;
+            $url = strstr($this->data['overview'][$i]['url'], 'BBOX', true);           
             
             $ov_width = $this->conf['overview']['width'] * $this->data['overview'][0]['scale'] / 100;
             $ov_height = $this->conf['overview']['height'] * $this->data['overview'][0]['scale'] / 100;
-
+            
             $centerx = $this->data['center']['x'];
             $centery = $this->data['center']['y'];
 
@@ -549,9 +553,66 @@ class PrintService
             }
             unlink($tempdir . '/tempovimage' . $k);
             finfo_close($finfo);
-        }
+        }       
         
-    
+        $image = imagecreatefrompng($tempdir . '/mergedovimage.png');             
+        
+        // ohne rotation      
+        if ($this->data['rotation'] == 0) {
+        
+            $map_width = $this->data['extent']['width'];
+            $map_height = $this->data['extent']['height'];
+            $centerx = $this->data['center']['x'];
+            $centery = $this->data['center']['y'];
+
+            $ll_x = $centerx - $map_width * 0.5;
+            $ll_y = $centery - $map_height * 0.5;
+            $ur_x = $centerx + $map_width * 0.5;
+            $ur_y = $centery + $map_height * 0.5;
+
+            $lowerleft = $this->realWorld2ovMapPos($ov_width, $ov_height, $ll_x, $ll_y);
+            $upperright = $this->realWorld2ovMapPos($ov_width, $ov_height, $ur_x, $ur_y);
+
+
+            $lowerleft[0] = round($lowerleft[0]);
+            $lowerleft[1] = round($lowerleft[1]);
+            $upperright[0] = round($upperright[0]);
+            $upperright[1] = round($upperright[1]);
+
+            $red = ImageColorAllocate($image,255,0,0); 
+            imageline ( $image, $lowerleft[0], $upperright[1], $upperright[0], $upperright[1], $red);
+            imageline ( $image, $upperright[0], $upperright[1], $upperright[0], $lowerleft[1], $red);
+            imageline ( $image, $upperright[0], $lowerleft[1], $lowerleft[0], $lowerleft[1], $red);
+            imageline ( $image, $lowerleft[0], $lowerleft[1], $lowerleft[0], $upperright[1], $red);
+        
+        }else{// mit rotation                    
+
+            $ll_x = $this->data['extent_feature'][3]['x'];           
+            $ll_y = $this->data['extent_feature'][3]['y'];
+            $ul_x = $this->data['extent_feature'][0]['x'];
+            $ul_y = $this->data['extent_feature'][0]['y'];
+            
+            $lr_x = $this->data['extent_feature'][2]['x'];
+            $lr_y = $this->data['extent_feature'][2]['y'];       
+            $ur_x = $this->data['extent_feature'][1]['x'];
+            $ur_y = $this->data['extent_feature'][1]['y'];
+            
+            
+            $p1 = $this->realWorld2ovMapPos($ov_width, $ov_height, $ll_x, $ll_y);
+            $p2 = $this->realWorld2ovMapPos($ov_width, $ov_height, $ul_x, $ul_y);
+            $p3 = $this->realWorld2ovMapPos($ov_width, $ov_height, $ur_x, $ur_y);
+            $p4 = $this->realWorld2ovMapPos($ov_width, $ov_height, $lr_x, $lr_y);
+            
+            
+            $red = ImageColorAllocate($image,255,0,0); 
+            imageline ( $image, $p1[0], $p1[1], $p2[0], $p2[1], $red);
+            imageline ( $image, $p2[0], $p2[1], $p3[0], $p3[1], $red);
+            imageline ( $image, $p3[0], $p3[1], $p4[0], $p4[1], $red);
+            imageline ( $image, $p4[0], $p4[1], $p1[0], $p1[1], $red);
+        }
+               
+        imagepng($image, $tempdir . '/mergedovimage.png');
+        
         $this->pdf->Image($tempdir . '/mergedovimage.png',
                     $this->conf['overview']['x'] * 10,
                     $this->conf['overview']['y'] * 10,
@@ -561,52 +622,64 @@ class PrintService
         $this->pdf->Rect($this->conf['overview']['x'] * 10,
                          $this->conf['overview']['y'] * 10,
                          $this->conf['overview']['width'] * 10,
-                         $this->conf['overview']['height'] * 10);
-        
-        $ovcenterx = $this->conf['overview']['x'] * 10 + $this->conf['overview']['width'] * 10 * 0.5;
-        $ovcentery = $this->conf['overview']['y'] * 10 + $this->conf['overview']['height'] * 10 * 0.5;       
-        
-        $map_width = $this->data['extent']['width'];
-        $map_height = $this->data['extent']['height'];
-        
-        $ov_mapwidth = $map_width / $this->data['overview'][0]['scale'] * 100;
-        $ov_mapheight = $map_height / $this->data['overview'][0]['scale'] * 100;
-        
-                
-        $this->pdf->Rect($ovcenterx - $ov_mapwidth * 10 * 0.5,
-                         $ovcentery - $ov_mapheight * 10 * 0.5,
-                         $ov_mapwidth * 10,
-                         $ov_mapheight * 10);
-        
-        
+                         $this->conf['overview']['height'] * 10);    
+
         unlink($tempdir . '/mergedovimage.png');
     }
     
-    private function draw()
+    private function drawFeatures()
     {      
+        $tempdir = $this->tempdir;
+        $image = imagecreatefrompng($tempdir . '/mergedimage.png');        
         
-        $this->pdf->SetDrawColor(0, 0, 255);
-        $this->pdf->SetLineWidth(1);
+        $feature = $this->data['features'][0];
         
-//        $centerx = $this->data['center']['x'];
-//        $centery = $this->data['center']['y'];
+        $points;        
+        foreach ($feature as $k => $v){
+            $points[$k] = $this->realWorld2mapPos($feature[$k]['x'],$feature[$k]['y']);
+        }       
         
-        $centerx = 366188.72;
-        $centery = 5622343.23;
+        $red = ImageColorAllocate($image,255,0,0); 
         
-        $blubx = 364980.72;
-        $bluby = 5622359.23;
-        
-        $point = $this->realWorld2mapPos($centerx, $centery);
-        $point2 = $this->realWorld2mapPos($blubx, $bluby);
-        
-        $this->pdf->Line($this->x_ul+$point[0], $this->y_ul+$point[1], $this->x_ul+$point2[0], $this->y_ul+$point2[1]);
-        
-        
+        $keys = array_keys($points);
+        $last_key = end($keys);
+        foreach ($points as $k => $v){
+            if ($k == $last_key) {
+                break;
+            }else{
+                imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
+            }
+        }
+
+        imagepng($image, $tempdir . '/mergedimage.png');
     }
+    
+    private function drawRotatedFeatures($image)
+    {              
+        $feature = $this->data['features'][0];
+        
+        $points;        
+        foreach ($feature as $k => $v){
+            $points[$k] = $this->realWorld2rotatedMapPos($feature[$k]['x'],$feature[$k]['y']);
+        }     
+
+        $red = ImageColorAllocate($image,255,0,0); 
+        
+        $keys = array_keys($points);
+        $last_key = end($keys);
+        foreach ($points as $k => $v){
+            if ($k == $last_key) {
+                break;
+            }else{
+                imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
+            }
+        }
+        
+    }      
     
     private function realWorld2mapPos($rw_x,$rw_y)
     {
+        $quality = $this->data['quality'];
         $map_width = $this->data['extent']['width'];
         $map_height = $this->data['extent']['height'];
         $centerx = $this->data['center']['x'];
@@ -620,11 +693,70 @@ class PrintService
         $extentx = $maxX - $minX ; 
 	$extenty = $maxY - $minY ;
         
-        $pixPos_x = (($rw_x - $minX)/$extentx) * $this->conf['map']['width'] * 10 ;
-	$pixPos_y = (($maxY - $rw_y)/$extenty) * $this->conf['map']['height'] * 10;
+        $pixPos_x = (($rw_x - $minX)/$extentx) * round($this->conf['map']['width']  / 2.54 * $quality) ;
+	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['map']['height']  / 2.54 * $quality);
         
         $pixPos = array($pixPos_x, $pixPos_y);
 	   
 	return $pixPos;
     }
+    
+    private function realWorld2ovMapPos($ov_width, $ov_height, $rw_x,$rw_y)
+    {
+        $quality = $this->data['quality'];     
+        $centerx = $this->data['center']['x'];
+        $centery = $this->data['center']['y'];
+
+        $minX = $centerx - $ov_width * 0.5;
+        $minY = $centery - $ov_height * 0.5;
+        $maxX = $centerx + $ov_width * 0.5;
+        $maxY = $centery + $ov_height * 0.5;
+        
+        $extentx = $maxX - $minX ; 
+	$extenty = $maxY - $minY ;      
+        
+        $pixPos_x = (($rw_x - $minX)/$extentx) * round($this->conf['overview']['width'] / 2.54 * $quality) ;
+	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['overview']['height'] / 2.54 * $quality); 
+
+        $pixPos = array($pixPos_x, $pixPos_y);
+	   
+	return $pixPos;
+    }
+    
+    private function realWorld2rotatedMapPos($rw_x,$rw_y)
+    {
+        $rotation = $this->data['rotation'];
+        $map_width = $this->data['extent']['width'];
+        $map_height = $this->data['extent']['height'];
+        $centerx = $this->data['center']['x'];
+        $centery = $this->data['center']['y'];
+
+        //set needed extent
+        $neededExtentWidth = round(abs(sin(deg2rad($rotation)) * $map_height) +
+            abs(cos(deg2rad($rotation)) * $map_width));
+        $neededExtentHeight = round(abs(sin(deg2rad($rotation)) * $map_width) +
+            abs(cos(deg2rad($rotation)) * $map_height));
+
+        $minX = $centerx - $neededExtentWidth * 0.5;
+        $minY = $centery - $neededExtentHeight * 0.5;
+        $maxX = $centerx + $neededExtentWidth * 0.5;
+        $maxY = $centery + $neededExtentHeight * 0.5;
+
+        //set needed image size
+        $neededImageWidth = round(abs(sin(deg2rad($rotation)) * $this->image_height) +
+            abs(cos(deg2rad($rotation)) * $this->image_width));
+        $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->image_width) +
+            abs(cos(deg2rad($rotation)) * $this->image_height));
+        
+        $extentx = $maxX - $minX ; 
+	$extenty = $maxY - $minY ;      
+        
+        $pixPos_x = (($rw_x - $minX)/$extentx) * round($neededImageWidth) ;
+	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($neededImageHeight); 
+
+        $pixPos = array($pixPos_x, $pixPos_y);
+	   
+	return $pixPos;
+    }
+    
 }

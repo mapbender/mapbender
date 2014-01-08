@@ -187,6 +187,16 @@ class PrintClient extends Element
                         $data['overview'][$idx] = json_decode($layer, true);
                     }
                 }
+                
+                if (isset($data['features'])){
+                    foreach ($data['features'] as $idx => $value) {
+                        $data['features'][$idx] = json_decode($value, true);
+                    }
+                }
+                
+                if (isset($data['extent_feature'])){         
+                        $data['extent_feature'] = json_decode($data['extent_feature'], true);                  
+                }
                     
                 $content = json_encode($data);
 
