@@ -138,7 +138,7 @@
                     width: 500,
                     buttons: {
                         'ok': {
-                            label: 'Close',
+                            label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
                             cssClass: 'button right',
                             callback: function(){
                                 if(self.options.deactivateOnClose) {

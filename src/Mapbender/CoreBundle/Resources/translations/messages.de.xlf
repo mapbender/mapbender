@@ -110,8 +110,8 @@
         <source>mb.core.featureinfo.error.unknownoption</source>
         <target>Unbekannte Option %key% für %namespace%.%widgetname%.</target>
       </trans-unit>
-      <trans-unit id="68f99e9993f8179311b9f5aaa0b43ffd" resname="mb.core.featureinfo.popuo.btn.ok">
-        <source>mb.core.featureinfo.popuo.btn.ok</source>
+      <trans-unit id="68f99e9993f8179311b9f5aaa0b43ffd" resname="mb.core.featureinfo.popup.btn.ok">
+        <source>mb.core.featureinfo.popup.btn.ok</source>
         <target>Schließen</target>
       </trans-unit>
       <trans-unit id="d2279b60abd41fd9e228763532d10b02" resname="mb.core.gpsposition.error.notsupported">
