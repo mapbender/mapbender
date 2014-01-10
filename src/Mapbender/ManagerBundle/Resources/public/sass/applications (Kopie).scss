@@ -32,7 +32,7 @@
   &:hover{@include opacity(1);}
 }
 .elementPopup{width:460px;}
-
+.buttonBack{margin-left:$space !important;}
 
 
 
@@ -87,7 +87,12 @@
   .ui-sortable-helper{background-color:darken($contentColor, 3%)}
   .placeholderRow{height:$space;}
 }
-
+.layersetTable{
+  tbody tr{cursor:move;}
+  .idColumn{width:3%;}
+  .typeColumn{width:7%;} // very ugly, but fixing the scale behaviour by dragging at the moment
+  .titleColumn{width: 70%;}
+} 
 
 
 
@@ -141,8 +146,24 @@ $elementPopupWidth: $popupModalWidth - ($space * 3);
   .labelInput{width:$label;}
   .input, .dropdown{width:$elementPopupWidth - $label + $space;}
 }
-//----------------------------
-
+.elementFormGps{
+  $label:100px;
+  .labelInput{width:$label;}
+  .input, .dropdown{width:$elementPopupWidth - $label + $space;}
+  .labelCheck{margin-right:$space;}
+}
+.elementFormCopyright, .elementFormActivity{
+  $label:100px;
+  .labelInput{width:$label;}
+  .dropdown, .input{width:$elementPopupWidth - $label + $space;}
+}
+.elementFormLegend{
+  $label:90px;
+  .labelInput{width:$label;}
+  .dropdown, .input{width:$elementPopupWidth - $label  + $space;}
+  .checkWrapper{margin-bottom:$space/2;}
+  .labelCheck{margin-right:$space;}
+}
 .elementFormFeatureInfo{
   $label:60px;
   .labelInput{width:$label;}
@@ -150,7 +171,93 @@ $elementPopupWidth: $popupModalWidth - ($space * 3);
   .checkWrapper{margin-bottom:$space/2;}
   .labelCheck{margin-right:$space;}
 }
-
+.elementFormMap{
+  $label:100px;
+  height:380px;
+  overflow:auto;
+  .labelInput{width:$label;}
+  .checkWrapper{margin-bottom:$space/2;}
+  .dropdown, .input{width:$elementPopupWidth - $label - $space/2;}
+  .singleRow{
+    float:right;
+    width:$elementPopupWidth - $label - $space;
+    .labelInput, & > .input{float:left;}
+    .labelInput{
+      width:40px;
+      margin-right:5px;
+    }
+    .input{
+      width:80px;
+      &:first-child{margin-right:5px;}
+    }
+  }
+}
+.elementFormLayerTree{
+  $label:100px;
+  .labelInput{width:$label;}
+  .dropdown, .input{width:$elementPopupWidth - $label  + $space;}
+  .checkWrapper{margin-bottom:$space/2;}
+  .labelCheck{margin-right:$space;}
+}
+.elementFormOverview{
+  $label:70px;
+  .labelInput{width:$label;}
+  .checkWrapper{margin-bottom:$space/2;}
+  .labelCheck{margin-right:$space;}
+  .dropdown, .input{width:$elementPopupWidth - $label + $space ;}
+  .singleRow{
+    .labelInput, & > .input{float:left;}
+    .labelInput{
+      width:15px;
+      margin-right:5px;
+    }
+    .input{
+      width:140px;
+      &:first-child{margin-right:$space/2;}
+    }
+  }
+}
+.elementFormScaleBar{
+  $label:70px;
+  .labelInput{width:$label;}
+  .dropdown, .input, select{width:$elementPopupWidth - $label + $space;}
+  select{margin-bottom:$space/2;}
+  .singleRow{
+    .labelInput, & > .input{float:left;}
+    .labelInput{
+      width:15px;
+      margin-right:5px;
+    }
+    .input{
+      width:140px;
+      &:first-child{margin-right:$space/2;}
+    }
+  }
+}
+.elementFormToolbar{
+  $label:80px;
+  .labelInput{width:$label;}
+  .checkWrapper{margin-bottom:$space/2;}
+  .labelCheck{margin-right:$space;}
+  .dropdown, .input, select{width:$elementPopupWidth - $label;}
+  select{margin-bottom:$space/2;}
+  .singleRow{
+    .labelInput, & > .input{float:left;}
+    .labelInput{
+      width:15px;
+      margin-right:5px;
+    }
+    .input{
+      width:125px;
+      &:first-child{margin-right:$space/2;}
+    }
+  }
+}
+.elementFormYaml{
+  $label:90px;
+  .labelInput{width:$label;}
+  .dropdown, .input{width:$elementPopupWidth - $label  + $space;}
+}
 .elementFormWmsLoader{
   $label:110px;
   .labelInput{width:$label;}
@@ -158,7 +265,33 @@ $elementPopupWidth: $popupModalWidth - ($space * 3);
   .checkWrapper{margin-bottom:$space/2;}
   .labelCheck{margin-right:$space;}
 }
-
+.elementFormPrintClient{
+  $label:110px;
+  overflow: auto;
+  height:380px;
+  .labelInput{width:$label;}
+  .dropdown, .input{width:$elementPopupWidth - $label  - $space;}
+  .checkWrapper{margin-bottom:$space/2;}
+  .labelCheck{margin-right:$space;}
+  .singleRow{
+    .labelInput, & > .input{float:left;}
+    .labelInput{
+      width:25px;
+      margin-right:$space/2;
+    }
+    .input{
+      width:90px;
+      &:first-child{margin-right:$space/2;}
+    }
+  }
+}
+.elementFormSearchRouter{
+  $label:90px;
+  overflow: auto;
+  max-height: $popupMaxHeight;
+  .labelInput{width:$label;}
+  .input{width:$elementPopupWidth - $label - $space*2;}
+}
 .collectionItem{
   clear:both;
   & > .labelInput{display:none;}
@@ -182,10 +315,3 @@ $elementPopupWidth: $popupModalWidth - ($space * 3);
     left:40px + $space/2;
   }
 }
-
-.layersetTable{
-  tbody tr{cursor:move;}
-  .idColumn{width:3%;}
-  .typeColumn{width:7%;} // very ugly, but fixing the scale behaviour by dragging at the moment
-  .titleColumn{width: 70%;}
-} 
