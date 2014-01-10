@@ -1,0 +1,54 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.mb-element-overview{
+  .toggleOverview{
+    $buttonFirstColor:#6fb536;
+    $buttonSecondColor:#5fa229;
+
+    padding:0px 6px;
+    color:$lightFontColor;
+    background-color:$buttonFirstColor;
+
+    @extend .icon;
+    @extend .iconClose;
+    @extend .buttonCore;
+    @include box-shadow(0 0 6px rgba(0,0,0,0.1),
+                        inset 0 -10px 10px $buttonSecondColor);
+    @include border-radius($radius);
+  }
+  .olMap{
+    background-color:white;
+    @include transition(width .2s linear);
+    @include box-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
+    & > div{
+        border:{
+        top:solid 3px $firstColor;
+        left:solid 1px $thirdColor;
+        right:solid 1px $thirdColor;
+        bottom:solid 1px $thirdColor;
+      }
+    }
+  }
+  &.closed{
+    .olMap{width:0px !important;}
+    .toggleOverview{
+      @extend .iconOpen;
+    }
+  }
+
+  &.right-top .toggleOverview{@include pos(0,'','',-25px);}
+  &.left-top .toggleOverview{@include pos(0,-25px,'','');}
+  &.right-bottom .toggleOverview{@include pos('','',0,-25px);}
+  &.left-bottom .toggleOverview{@include pos('',-25px,0,'');}
+}
+.olControlOverviewMapExtentRectangle {
+    overflow: hidden;
+    cursor: move;
+    border: 2px solid $firstColor;
+}
+.olControlOverviewMapRectReplacement {
+    @extend .icon;
+    @extend .iconTarget;
+    cursor: move;
+}

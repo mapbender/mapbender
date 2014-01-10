@@ -2,6 +2,15 @@
 
 {% block title %}{{ "mb.manager.admin.application.new" | trans}}{% endblock %}
 
+{% block css %}
+  {{parent()}}
+  {% stylesheets filter="compass,cssrewrite"
+    "bundles/mapbendermanager/sass/applications.scss"
+  %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+  {% endstylesheets %}
+{% endblock %}
+
 {% block js %}
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>

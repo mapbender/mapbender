@@ -1,0 +1,11 @@
+.hidden{display:none;}
+.right{float:right;}
+.left{float:left;}
+.clear{
+  clear:both;
+  @include clearfix();
+}
+.clearContainer{
+  height:0px;
+  @extend .clear;
+}

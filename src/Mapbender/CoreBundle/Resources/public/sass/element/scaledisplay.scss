@@ -1,0 +1,9 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.contentPane{
+  .mb-element-scaledisplay{
+    padding:$space/4 $space/2;
+    @include frontendContainerStyle();
+  }
+}

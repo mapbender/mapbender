@@ -1,0 +1,192 @@
+@import "libs/variables";
+@import "libs/mixins";
+@import "libs/normalize";
+@import "libs/icons"; 
+
+@import "modules/base"; 
+@import "modules/layout";
+@import "modules/popup"; 
+@import "modules/text";
+@import "modules/input";
+@import "modules/button"; 
+@import "modules/seperator"; 
+@import "modules/container"; 
+@import "modules/tabcontainer";
+@import "modules/checkbox";
+@import "modules/dropdown";
+@import "modules/table";
+
+$bannerHeight:170px;
+$contentPaneWidth:800px;
+$navWidth:200px;
+$pageWidth:$contentPaneWidth + $navWidth;
+
+// --------------------------------------------------------------- PAGE
+.page{
+  position:relative;
+  top:-$bannerHeight;
+  margin: 0 auto;
+  width:$pageWidth;
+}
+
+
+
+
+
+
+// ----------------------------------------------------------- PAGE TOP
+.head{
+  position: relative;
+  height:$bannerHeight;
+
+  // remove broken head background when the page is smaller than defined width
+  min-width:$pageWidth;
+  border-top:solid 5px darken($firstColor, 10%);
+  background-image:url($headPatternUrl);
+  @include background(linear-gradient(rgba(255,255,255,.1), rgba(255,255,255,0)),
+                      url($headPatternUrl));
+
+  @include box-shadow(inset lighten(#000, 20%) 0px 1px 0px);
+
+  hr{@include pos('',0,0,0);}
+}
+.accountBar{
+  color:$middleFontColor;
+  cursor:pointer;
+  padding:($space/4) ($space/2) ($space/4) ($space/2);
+  background-color:$contentColor;
+  @include box-shadow(0px 0px 3px black);
+  @include pos(0,0,'','');
+}
+.accountMenu{
+  height:20px;
+  overflow: hidden;
+  position: relative;
+  @include transition(all 0.2s ease-in-out);
+  &.opened{height:65px;}
+  .iconDown{
+    padding-right:$space;
+    &:before{@include pos('',0,'','');}
+  }
+}
+
+
+
+
+
+
+// ---------------------------------------------------------- PAGE LEFT
+.leftPane{
+  width:$navWidth;
+  @include pos(0, '', '', 0);
+
+  .navigation{
+    background-color:$contentColor;
+    @include box-shadow(0px 0px 3px rgba(0, 0, 0, 0.6));
+  }
+  .logo{
+    max-height:120px;
+    @include pos($space,'','',($space + $space/2));
+  }
+}
+.logoContainer{
+  position:relative;
+  height:$bannerHeight;
+}
+
+.navLevel1{
+  border-right:1px solid lighten($firstColor, 40%);
+  padding:$space/2 $space;
+  background-color:$contentColor;
+  @include box-shadow(0px 0px 3px rgba(0, 0, 0, 1));
+  @include pos($bannerHeight,0,'',0);
+
+  &>.navItem {display:block;}
+  & > .activeItem{
+    .navLevel2 > .navItem{display:block;}
+  }
+}
+.navLevel2, .navLevel3{margin-left:$space/2;}
+.navLevel2{
+  & > .activeItem{
+    .navLevel3 > .navItem{display:block;}
+  }
+}
+.navItem{
+  // display:none; // XXXVH new navigation structure needed -> next release, but first show all navigation items
+  a {
+    &:before{margin-right:5px;}
+
+    font:{
+      family: $fontFamily;
+      size: $fontSize - 2;
+    }
+    color:$middleFontColor;
+    padding:($space/4) ($space/2);
+
+    @include text-shadow(1px 1px 0px $lightFontColor);
+    @include transition(color 0.2s linear);
+
+    &:hover{color:$darkFontColor;}
+  }
+  &.activeItem {
+    display: block;
+    & > a{color: $ciColor !important;}
+  }
+}
+
+
+
+
+
+// ---------------------------------------------------------- PAGE RIGHT
+.rightPane{
+  width:$contentPaneWidth;
+  @include pos(0, 0, '', $navWidth);
+}
+
+
+
+
+
+// --------------------------------------------------------- PAGE CENTER 
+.contentPane{
+  $top:$space*5;
+
+  padding-top:$top + $space;
+
+  & > .content{
+    min-height: 600px; 
+    position:relative;
+    padding:$space;
+    margin:0px;
+    background-color:$contentColor;
+    background-image:url($contentPatternUrl);
+    @include box-shadow(0px 0px 3px rgba(0, 0, 0, 0.6));
+    @include border-radius($radius);
+
+    hr{@include pos(0,0,'',0);}
+
+    // uuhh baby show me your paper effect ... hrrr
+    &:before, &:after{
+      content:"";
+      background-color:$contentColor;
+      height:10px; 
+      @include box-shadow(0px 0px 3px rgba(0, 0, 0, 0.6));
+      @include border-radius($radius);
+    }     
+    &:before{
+      z-index:-10; 
+      @include pos('',5px,-3px,5px);
+    }
+    &:after{
+      content:"";
+      z-index:-20;
+      @include pos('',10px,-6px,10px);
+    }
+  }
+  .mapbenderVersion{
+    color:$lightFontColor;
+    @include pos($top,0,'','');
+  }
+}

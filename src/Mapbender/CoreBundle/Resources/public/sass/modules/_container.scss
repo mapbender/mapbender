@@ -1,0 +1,72 @@
+.box{
+  border: solid 1px $thirdColor;
+  background-color: $contentColor;
+  @include box-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
+}
+.listFilterBoxes{
+  .filterItem{
+    position:relative;
+    background-color: $contentColor;
+    margin-bottom:$space;
+  }
+  .col1{
+    text-align:center;
+    color:$lightFontColor;
+    padding:$space/4;
+    line-height:$lineHeight - 6;
+    background-color:$firstColor;
+    @include pos(0,'',0,0);
+  }
+  .col2{padding:$space/2;}    
+  .buttonGroup{@include pos($space/2,$space/2,'','');}
+  .description{
+    margin-top:$space/2;
+    padding-top:$space/2;
+    border-top:dashed 1px darken(#fff, 30%);
+  }
+}
+.messageBox{
+  padding:$space/2;
+  margin-bottom:$space;
+  @include border-radius($radius);
+
+  &.error{
+    color:$errorColor;
+    background-color: lighten($errorColor, 50%);
+    border:solid 1px lighten($errorColor, 40%);
+  }
+  &.hint{
+    color:$hintColor;
+    background-color: lighten($hintColor, 50%);
+    border:solid 1px lighten($hintColor, 40%);
+  }
+
+  @include box-shadow(0 0 3px rgba(0, 0, 0, 0.1),
+                      inset 0px 0px 3px #fff);
+}
+.flashBox{
+  $width:280px;
+
+  padding:($space/4) ($space/2);
+  background-color:$contentColor;
+  text-align: center;
+  width: $width;
+  margin-left:-$width/2;
+  @include pos(0,'','',50%);
+  @include transition(all 1s ease-in-out);
+  @include opacity(1);
+  @include box-shadow(0px 0px 3px black);
+
+  &.success{
+    &:before{
+      @extend .icon;
+    }
+    @extend .iconThumbsUp;
+    color:darken($noticeColor, 10%);
+    background-color: lighten($noticeColor, 50%);
+  }
+  &.kill{
+    top:-100px;
+    @include opacity(0);
+  }
+}

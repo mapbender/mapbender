@@ -1,0 +1,69 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.mb-element-layertree{
+  .iconFolder{
+    display:none;
+    margin-right:5px;
+  }
+
+  // needed for the feature info icon
+  .featureInfoWrapper{
+    width:$space;
+    text-align:center;
+    &.iconCheckboxActive{@extend .iconInfoActive}
+  }
+  .serviceContainer, .groupContainer{
+    border-left:dotted 1px black;
+    margin-bottom:1px; // Fix for Firefox
+
+    // elements with childrens
+    & > .leaveContainer{
+      .iconFolder{display:block;}
+      .layer-title{@extend .subTitle;}
+    }
+
+    // show only layers which are toggled
+    .layers{display:none;}    
+    &.showLeaves > .layers{display:block;}
+
+    .leave{
+      margin-left:20px;
+      position: relative;
+      &.invisible{@include opacity(.3);}
+
+      &:before{
+        content:'';
+        display: block;
+        height:5px;
+        width:5px;
+        border-top:dotted 1px black;
+        @include absolute(10px '' '' -15px);
+      }
+    }
+    .leaveContainer{
+      margin-left:-6px;
+      margin-top:1px; // Fix for Firefox
+    }
+  }
+  .checkWrapper{position: relative;}
+
+  [data-state="loading"]{
+    @include opacity(.7);
+    @extend .iconActivity;
+    &:before{
+      -webkit-animation:spin 1s linear infinite;
+      -moz-animation:spin 1s linear infinite;
+      animation:spin 1s linear infinite;
+      @include absolute('' $space*2 '' '');
+    }
+  }
+  [data-state="error"]{
+    @extend .iconWarning;
+    .layer-title{color:$errorColor !important;}// if error, overwrite the title color
+    &:before{
+      color:$errorColor;
+      @include absolute('' $space*2 '' '');
+    }
+  }
+}

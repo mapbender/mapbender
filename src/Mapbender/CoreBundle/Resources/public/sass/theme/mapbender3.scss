@@ -1,0 +1,133 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+@import "libs/variables";
+@import "libs/mixins";
+@import "libs/normalize";
+@import "libs/icons"; 
+
+@import "modules/base"; 
+@import "modules/layout";
+@import "modules/popup"; 
+@import "modules/text";
+@import "modules/input";
+@import "modules/button"; 
+@import "modules/seperator"; 
+@import "modules/tabcontainer";
+@import "modules/checkbox";
+@import "modules/dropdown";
+
+/* ------------------------------------------------------------- MISC */
+.mb-hiddenCheckbox{
+  position: absolute;
+  @include opacity(0);
+}
+
+
+
+/* ---------------------------------------------------------- TOOLBAR */
+.logoContainer{background-image:url($headPatternUrl);}
+.toolBar{
+  @include frontendContainerStyle();
+  .labelInput{@include text-shadow(inherit);}
+
+  &.top{
+    padding:$space/4 $space/2 $space/4 $space/2;
+    .toolBarItem{
+      display:inline-block;
+      padding:5px;
+    }
+    border-bottom:solid 1px darken($contentColor, 20%);
+  }
+  &.bottom{
+    [class^="icon"]:before,[class*=" icon"]:before{font-size: 14px;}
+    padding:$space/4 $space/2 $space/4 $space/2;
+    .toolBarItem{
+      height:30px;
+      line-height:30px;
+      font-size:90%;
+      padding:5px;
+    }
+
+    .dropdownList{
+      bottom:0px;
+      margin-bottom: $inputHeight;
+    }
+  }
+  .toolBarItemActive{
+    background-color: $contentColor;
+    color:$firstColor;
+    @include text-shadow(1px 1px 0 white);
+    @include border-radius($radius);
+  }
+  .toolBarItem{
+    display:inline;
+  }
+  &.itemsRight{
+    text-align:right;
+    .toolBarItem{padding-left:$space/4;}
+  }
+  &.itemsCenter{
+    text-align:center;
+    .toolBarItem{padding-right:$space/2;}
+  }
+  // space between icon and label
+  .iconBig:before{padding-right:5px;}
+}
+
+
+
+
+
+/* --------------------------------------------------------- SIDEPANE */
+.sidePaneTabItem{
+  $buttonFirstColor:#6fb536;
+  $buttonSecondColor:#5fa229;
+
+  display: block;
+  padding:($space/4) ($space/2);
+  margin-bottom:5px;
+  color:$lightFontColor;
+  background-color:$buttonFirstColor;
+  text-align: center;
+  border:{
+    top:1px solid darken(white, 30%);
+    bottom:1px solid darken(white, 30%);
+  }
+
+  @extend .icon;
+  @extend .iconOpen;
+  @extend .buttonCore;
+  @include box-shadow(0 0 6px rgba(0,0,0,0.1),
+                      inset 0 -10px 10px $buttonSecondColor);
+}
+.sidePane{
+  overflow: visible;
+  background-image:url($contentPatternUrl);
+  border-top:1px solid darken(white, 30%);
+  border-bottom:1px solid darken(white, 30%);
+  @include transition(all 0.4s ease-in-out);
+
+  // style for the left side pane
+  &.left{
+    border-right:1px solid darken(white, 30%);
+    @include box-shadow(3px 0px 8px rgba(0, 0, 0, 0.1));
+  }
+
+  // style for the right side pane
+  &.right{
+    border-left:1px solid darken(white, 30%);
+    @include box-shadow(-3px 0px 8px rgba(0, 0, 0, 0.1));
+  }
+  .sideContent{
+    padding:$space;
+    display: none;
+  }
+}
+.sidePaneOpened{
+  .sideContent{
+    display:block;
+    overflow: auto;
+  }
+  .sidePaneTabItem{@extend .iconClose;}
+}

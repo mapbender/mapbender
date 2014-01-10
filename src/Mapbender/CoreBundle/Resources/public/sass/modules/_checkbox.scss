@@ -1,0 +1,11 @@
+.checkWrapper{
+  cursor:pointer;
+  width:$fontSize;
+  &.checkboxDisabled{@include opacity(0.4);}
+}
+.checkbox{
+  @include pos(-9999px,'','',0);
+  height: 100%;
+  width: 100%;
+  @include opacity(0);
+}

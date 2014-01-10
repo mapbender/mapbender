@@ -4,10 +4,32 @@
 
 {% block favicon %}{{ asset('favicon.png') }}{% endblock %}
 
-{# TODO: Use controller for app.debug, else use dumped assets #}
 {% block css %}
-  <link rel="stylesheet" href="{{ asset('bundles/fomcore/css/frontend/mapbender3_theme.css') }}">
-  <link rel="stylesheet" href="{{ asset('bundles/fomcore/css/frontend/fullscreen.css') }}">
+  {% stylesheets filter="compass,cssrewrite"
+    "bundles/mapbendercore/sass/theme/mapbender3.scss"
+    "bundles/mapbendercore/sass/template/fullscreen.scss"
+
+    "bundles/mapbendercore/sass/element/about_dialog.scss"
+    "bundles/mapbendercore/sass/element/activityindicator.scss"
+    "bundles/mapbendercore/sass/element/basesourceswitcher.scss"
+    "bundles/mapbendercore/sass/element/button.scss"
+    "bundles/mapbendercore/sass/element/coordinatesdisplay.scss"
+    "bundles/mapbendercore/sass/element/copyright.scss"
+    "bundles/mapbendercore/sass/element/gpsposition.scss"
+    "bundles/mapbendercore/sass/element/layertree.scss"
+    "bundles/mapbendercore/sass/element/legend.scss"
+    "bundles/mapbendercore/sass/element/map.scss"
+    "bundles/mapbendercore/sass/element/overview.scss"
+    "bundles/mapbendercore/sass/element/printclient.scss"
+    "bundles/mapbendercore/sass/element/scalebar.scss"
+    "bundles/mapbendercore/sass/element/scaledisplay.scss"
+    "bundles/mapbendercore/sass/element/search_router.scss"
+    "bundles/mapbendercore/sass/element/zoombar.scss"
+    "bundles/mapbenderwms/sass/element/wmsloader.scss"
+    "bundles/mapbenderwmc/sass/element/wmceditor.scss"
+  %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+  {% endstylesheets %}
 {% endblock %}
   
 {% block trans %}
