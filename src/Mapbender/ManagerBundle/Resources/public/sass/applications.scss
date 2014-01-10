@@ -121,54 +121,11 @@
   .iconCheckboxActive{@extend .iconTabActive}
   .labelInput{display:none;}
 }
-
-
-// ----------------------------------------- ELEMENT FORMULARS
-$elementPopupWidth: $popupModalWidth - ($space * 3);
 .region{
   padding-top:$space;
   border-top:dashed 1px darken(#fff, 30%);
 }
-.elementForm{
-  .labelInput{margin-bottom:$space/2;}
-  textarea{
-    height:150px;
-    resize: none;
-  }
-}
-.defaultForm{
-  $label:70px;
-  .labelInput{width:$label;}
-  .input, .dropdown{width:$elementPopupWidth - $label + $space;}
-}
-//----------------------------
 
-.elementFormFeatureInfo{
-  $label:60px;
-  .labelInput{width:$label;}
-  .dropdown, .input{width:$elementPopupWidth - $label  + $space;}
-  .checkWrapper{margin-bottom:$space/2;}
-  .labelCheck{margin-right:$space;}
-}
-
-.elementFormWmsLoader{
-  $label:110px;
-  .labelInput{width:$label;}
-  .dropdown, .input{width:$elementPopupWidth - $label  + $space;}
-  .checkWrapper{margin-bottom:$space/2;}
-  .labelCheck{margin-right:$space;}
-}
-
-.collectionItem{
-  clear:both;
-  & > .labelInput{display:none;}
-  .labelInput{clear:both;}
-  textarea{
-    height:100px;
-    margin-bottom:$space;
-  }
-}
-.collectionRemove{line-height:$inputHeight;}
 
 
 

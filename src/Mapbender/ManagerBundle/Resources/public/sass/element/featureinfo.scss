@@ -1,0 +1,10 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.elementFormFeatureInfo{
+  $label:60px;
+  .labelInput{width:$label;}
+  .dropdown, .input{width:$elementPopupWidth - $label  + $space;}
+  .checkWrapper{margin-bottom:$space/2;}
+  .labelCheck{margin-right:$space;}
+}
