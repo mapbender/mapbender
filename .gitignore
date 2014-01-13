@@ -9,6 +9,7 @@ extra/
 */app/config/parameters.yml
 */app/bootstrap.php.cache
 */composer.phar
+*/composer.lock
 */vendor
 *.tar.gz
 *.rpm
