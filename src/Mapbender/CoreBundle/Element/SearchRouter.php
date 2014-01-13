@@ -112,7 +112,6 @@ class SearchRouter extends Element
         }
 
         if ('search' === $action) {
-
             $this->setupForms();
             $form = $this->forms[$target];
             $data = json_decode($request->getContent());
