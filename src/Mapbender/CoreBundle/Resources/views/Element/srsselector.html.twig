@@ -1,8 +1,8 @@
 {% if configuration.label == true %}
   <span class="labelInput">{{ title|trans }}</span>
 {% endif %}
-<div id="{{ id }}" class="mb-element mb-element-srsselector dropdown">
-  <select class="hiddenDropdown" id="srsselector" title="{{ title|trans }}"></select>
+<div id="{{ id }}" class="mb-element mb-element-srsselector dropdown" title="{{ configuration.tooltip|default(title)|trans }}">
+  <select class="hiddenDropdown" id="srsselector"></select>
   <div class="dropdownValue iconDown"></div>
   <ul class="dropdownList"></ul>
 </div>

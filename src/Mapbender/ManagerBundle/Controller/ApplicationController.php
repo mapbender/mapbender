@@ -21,6 +21,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
 //FIXME: make this work without an explicit import
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\RegionProperties;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -42,7 +43,7 @@ class ApplicationController extends Controller
             'Mapbender\CoreBundle\Entity\Application');
 
         $applications = $this->get('mapbender')->getApplicationEntities();
-        $allowed_applications = array ();
+        $allowed_applications = array();
         foreach ($applications as $application) {
             if ($securityContext->isGranted('VIEW', $application)) {
                 if (!$application->isPublished() && !$securityContext->isGranted('OWNER',
@@ -53,7 +54,7 @@ class ApplicationController extends Controller
             }
         }
 
-        return array (
+        return array(
             'applications' => $allowed_applications,
             'create_permission' => $securityContext->isGranted('CREATE', $oid)
         );
@@ -75,7 +76,7 @@ class ApplicationController extends Controller
 
         $form = $this->createApplicationForm($application);
 
-        return array (
+        return array(
             'application' => $application,
             'form' => $form->createView(),
             'form_name' => $form->getName());
@@ -101,16 +102,33 @@ class ApplicationController extends Controller
         $form->bindRequest($request);
         if ($form->isValid()) {
             $application->setUpdated(new \DateTime('now'));
-            $application->setTemplate("Mapbender\CoreBundle\Template\Fullscreen");
             $em = $this->getDoctrine()->getEntityManager();
 
             $em->getConnection()->beginTransaction();
             $em->persist($application);
             $em->flush();
 
+            $templateClass = $application->getTemplate();
+            $templateProps = $templateClass::getRegionsProperties();
+            foreach ($templateProps as $regionName => $regionProps) {
+                $regionProperties = new RegionProperties();
+                $application->addRegionProperties($regionProperties);
+                $regionProperties->setApplication($application);
+                $regionProperties->setName($regionName);
+                foreach ($regionProps as $propName => $propValue) {
+                    if ($propValue['state'])
+                            $regionProperties->addProperty($propName);
+                }
+                $em->persist($regionProperties);
+                $em->flush();
+            }
+            $em->persist($application);
+            $em->flush();
             $aclManager = $this->get('fom.acl.manager');
             $aclManager->setObjectACLFromForm($application, $form->get('acl'),
                 'object');
+
+
             $em->getConnection()->commit();
             if ($this->createApplicationDir($application->getSlug())) {
                 $this->get('session')->setFlash('success',
@@ -125,7 +143,7 @@ class ApplicationController extends Controller
                     $this->generateUrl('mapbender_manager_application_index'));
         }
 
-        return array (
+        return array(
             'application' => $application,
             'form' => $form->createView(),
             'form_name' => $form->getName());
@@ -144,23 +162,49 @@ class ApplicationController extends Controller
 
         // ACL access check
         $this->checkGranted('EDIT', $application);
-
+        $templateClass = $application->getTemplate();
+        $templateProps = $templateClass::getRegionsProperties();
+        $em = $this->getDoctrine()->getEntityManager();
+        // add RegionProperties if defined
+        foreach ($templateProps as $regionName => $regionProps) {
+            $exists = false;
+            foreach($application->getRegionProperties() as $regprops){
+                if($regprops->getName() === $regionName){
+                    $exists = true;
+                    break;
+                }
+            }
+            if(!$exists){
+                $regionProperties = new RegionProperties();
+                $application->addRegionProperties($regionProperties);
+                $regionProperties->setApplication($application);
+                $regionProperties->setName($regionName);
+                foreach ($regionProps as $propName => $propValue) {
+                    if ($propValue['state'])
+                            $regionProperties->addProperty($propName);
+                }
+                $em->persist($regionProperties);
+                $em->flush();
+                $em->persist($application);
+                $em->flush();
+            }
+        }
         $form = $this->createApplicationForm($application);
 
-        $templateClass = $application->getTemplate();
         $em = $this->getDoctrine()->getEntityManager();
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
 
-        return array (
+        return array(
             'application' => $application,
             'regions' => $templateClass::getRegions(),
             'slug' => $slug,
             'available_elements' => $this->getElementList(),
             'sources' => $sources,
             'form' => $form->createView(),
-            'form_name' => $form->getName());
+            'form_name' => $form->getName(),
+            'template_name' => $templateClass::getTitle());
     }
 
     /**
@@ -184,16 +228,14 @@ class ApplicationController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
 
             $em->getConnection()->beginTransaction();
-            $templateClassNew = $application->getTemplate();
-            $regions = $templateClassNew::getRegions();
-            if ($templateClassOld !== $templateClassNew && count($regions) > 0) {
-                foreach ($application->getElements() as $element) {
-                    if (!in_array($element->getRegion(), $regions)) {
-                        $element->setRegion($regions[0]);
-                    }
-                }
-            }
             $application->setUpdated(new \DateTime('now'));
+
+            //
+            // Avoid a null template.
+            // It's a bad solution. The best way to handle it, is
+            // to put the application forms and formtypes into seperate files.
+            //
+            $application->setTemplate($templateClassOld);
 
             try {
                 $em->flush();
@@ -225,7 +267,7 @@ class ApplicationController extends Controller
             }
             return $this->redirect(
                     $this->generateUrl('mapbender_manager_application_edit',
-                        array (
+                        array(
                         'slug' => $application->getSlug())));
         } else {
             $application->setSlug($slug);
@@ -253,14 +295,15 @@ class ApplicationController extends Controller
         $sources = $query->getResult();
         return new Response($this->container->get('templating')
                 ->render('MapbenderManagerBundle:Application:edit.html.twig',
-                    array (
+                    array(
                     'application' => $application,
                     'regions' => $templateClass::getRegions(),
                     'slug' => $slug,
                     'available_elements' => $this->getElementList(),
                     'sources' => $sources,
                     'form' => $form->createView(),
-                    'form_name' => $form->getName())));
+                    'form_name' => $form->getName(),
+                    'template_name' => $templateClass::getTitle())));
     }
 
     /**
@@ -278,7 +321,7 @@ class ApplicationController extends Controller
 
         $form = $this->createForm(new ApplicationCopyType(), $tocopy);
 
-        return array ('form' => $form->createView());
+        return array('form' => $form->createView());
     }
 
     /**
@@ -319,7 +362,7 @@ class ApplicationController extends Controller
             return $this->redirect(
                     $this->generateUrl('mapbender_manager_application_index'));
         } else {
-            return array ('form' => $form->createView());
+            return array('form' => $form->createView());
         }
     }
 
@@ -392,11 +435,11 @@ class ApplicationController extends Controller
                 break;
         }
 
-        return new Response(json_encode(array (
+        return new Response(json_encode(array(
                 'oldState' => $currentState ? 'enabled' : 'disabled',
                 'newState' => $newState ? 'enabled' : 'disabled',
                 'message' => $message)), 200,
-            array (
+            array(
             'Content-Type' => 'application/json'
         ));
     }
@@ -421,7 +464,7 @@ class ApplicationController extends Controller
         $this->checkGranted('EDIT', $application);
 
         $id = $application->getId();
-        return array (
+        return array(
             'application' => $application,
             'form' => $this->createDeleteForm($id)->createView());
     }
@@ -483,7 +526,7 @@ class ApplicationController extends Controller
 
         $form = $this->createForm(new LayersetType(), $layerset);
 
-        return array (
+        return array(
             "isnew" => true,
             "application" => $application,
             'form' => $form->createView());
@@ -507,7 +550,7 @@ class ApplicationController extends Controller
 
         $form = $this->createForm(new LayersetType(), $layerset);
 
-        return array (
+        return array(
             "isnew" => false,
             "application" => $application,
             'form' => $form->createView());
@@ -544,12 +587,12 @@ class ApplicationController extends Controller
                 "Your layerset has been saved");
             return $this->redirect($this->generateUrl(
                         'mapbender_manager_application_edit',
-                        array ('slug' => $slug)));
+                        array('slug' => $slug)));
         }
         $this->get('session')->setFlash('error',
             'Layerset title is already used.');
         return $this->redirect($this->generateUrl(
-                    'mapbender_manager_application_edit', array ('slug' => $slug)));
+                    'mapbender_manager_application_edit', array('slug' => $slug)));
     }
 
     /**
@@ -566,7 +609,7 @@ class ApplicationController extends Controller
         $layerset = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
-        return array (
+        return array(
             'application' => $application,
             'layerset' => $layerset,
             'form' => $this->createDeleteForm($layerset->getId())->createView()
@@ -601,12 +644,12 @@ class ApplicationController extends Controller
                 'Your layerset has been deleted.');
             return $this->redirect($this->generateUrl(
                         'mapbender_manager_application_edit',
-                        array ('slug' => $slug)) . "#layersets");
+                        array('slug' => $slug)) . "#layersets");
         }
         $this->get('session')->setFlash('error',
             'Your layerset con not be delete.');
         return $this->redirect($this->generateUrl(
-                    'mapbender_manager_application_edit', array ('slug' => $slug)) . "#layersets");
+                    'mapbender_manager_application_edit', array('slug' => $slug)) . "#layersets");
     }
 
     /* Layerset block end */
@@ -635,14 +678,14 @@ class ApplicationController extends Controller
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
 
-        $allowed_sources = array ();
+        $allowed_sources = array();
         foreach ($sources as $source) {
             if ($securityContext->isGranted('EDIT', $source)) {
                 $allowed_sources[] = $source;
             }
         }
 
-        return array (
+        return array(
             'application' => $application,
             'layerset' => $layerset,
             'sources' => $allowed_sources);
@@ -695,7 +738,7 @@ class ApplicationController extends Controller
         return $this->redirect(
                 $this->generateUrl(
                     "mapbender_manager_repository_instance",
-                    array ("slug" => $slug, "instanceId" => $sourceInstance->getId()))
+                    array("slug" => $slug, "instanceId" => $sourceInstance->getId()))
         );
     }
 
@@ -719,7 +762,7 @@ class ApplicationController extends Controller
 
         return $this->forward(
                 $manager['bundle'] . ":" . "Repository:deleteInstance",
-                array ("slug" => $slug, "instanceId" => $instanceId));
+                array("slug" => $slug, "instanceId" => $instanceId));
     }
 
     /* Instance block end */
@@ -729,16 +772,21 @@ class ApplicationController extends Controller
      */
     private function createApplicationForm($application)
     {
-        $available_templates = array ();
+        $available_templates = array();
         foreach ($this->get('mapbender')->getTemplates() as $templateClassName) {
             $available_templates[$templateClassName] =
                 $templateClassName::getTitle();
         }
         asort($available_templates);
-
+        $available_properties = array();
+        if ($application->getTemplate() !== null) {
+            $templateClassName = $application->getTemplate();
+            $available_properties = $templateClassName::getRegionsProperties();
+        }
         return $this->createForm(new ApplicationType(), $application,
-                array (
-                'available_templates' => $available_templates));
+                array(
+                'available_templates' => $available_templates,
+                'available_properties' => $available_properties));
     }
 
     /**
@@ -746,9 +794,9 @@ class ApplicationController extends Controller
      */
     private function getElementList()
     {
-        $available_elements = array ();
+        $available_elements = array();
         foreach ($this->get('mapbender')->getElements() as $elementClassName) {
-            $available_elements[$elementClassName] = array (
+            $available_elements[$elementClassName] = array(
                 'title' => $elementClassName::getClassTitle(),
                 'description' => $elementClassName::getClassDescription(),
                 'tags' => $elementClassName::getClassTags());
@@ -763,7 +811,7 @@ class ApplicationController extends Controller
      */
     private function createDeleteForm($id)
     {
-        return $this->createFormBuilder(array ('id' => $id))
+        return $this->createFormBuilder(array('id' => $id))
                 ->add('id', 'hidden')
                 ->getForm();
     }

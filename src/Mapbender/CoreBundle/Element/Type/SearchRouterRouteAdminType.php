@@ -1,11 +1,9 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 
 class SearchRouterRouteAdminType extends AbstractType
 {
@@ -30,7 +28,9 @@ class SearchRouterRouteAdminType extends AbstractType
     {
         $builder->add('title', 'text', array(
             'label' => 'Title'));
-        $builder->add('configuration', 'textarea', array(
+        $builder->add('configuration', 'textarea',
+            array(
             'label' => 'Configuration'));
     }
+
 }

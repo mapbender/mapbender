@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -11,13 +10,17 @@ use Mapbender\CoreBundle\Component\Element;
  */
 class Button extends Element
 {
+    /**
+     * @inheritdoc
+     */
+    public static $ext_api = false;
 
     /**
      * @inheritdoc
      */
     static public function getClassTitle()
     {
-        return "Button";
+        return "mb.core.button.class.title";
     }
 
     /**
@@ -25,7 +28,7 @@ class Button extends Element
      */
     static public function getClassDescription()
     {
-        return "";
+        return "mb.core.button.class.description";
     }
 
     /**
@@ -33,7 +36,7 @@ class Button extends Element
      */
     static public function getClassTags()
     {
-        return array('Button');
+        return array("mb.core.button.tag.button");
     }
 
     /**
@@ -75,7 +78,9 @@ class Button extends Element
     public function getAssets()
     {
         return array(
-            'js' => array('mapbender.element.button.js','@FOMCoreBundle/Resources/public/js/widgets/checkbox.js'),
+            'js' => array(
+                'mapbender.element.button.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js'),
             'css' => array());
     }
 
@@ -85,11 +90,11 @@ class Button extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:button.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            'title' => $this->getTitle(),
-                            'configuration' => $this->entity->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:button.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    'title' => $this->getTitle(),
+                    'configuration' => $this->entity->getConfiguration()));
     }
 
     /**
@@ -99,5 +104,5 @@ class Button extends Element
     {
         return 'MapbenderManagerBundle:Element:button.html.twig';
     }
-}
 
+}

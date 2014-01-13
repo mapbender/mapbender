@@ -33,7 +33,10 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = Mapbender.Model;
             this.model.init(this);
-            this.options = { layerDefs: [] };
+            this.options = {
+                layerDefs: [],
+                poiIcon: this.options.poiIcon
+            };
             this.map = me.data('mapQuery');
             self._trigger('ready');
             this._ready();
@@ -298,14 +301,14 @@
                     this.fireModelEvent({name: 'srsadded', value: response.data[i]});
                 }
             } else if(response.error){
-                Mapbender.error(response.error);
+                Mapbender.error(Mapbender.trans(response.error));
             }
         },
         /**
          * Loads the srs definitions from server
          */
         _loadSrsError: function(response){
-            Mapbender.error(response);
+            Mapbender.error(Mapbender.trans(response));
         }
     });
 

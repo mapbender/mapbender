@@ -1,10 +1,7 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-
-//use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Ruler extends Element
 {
@@ -14,7 +11,7 @@ class Ruler extends Element
      */
     static public function getClassTitle()
     {
-        return 'Line/Area Ruler';
+        return "mb.core.ruler.class.title";
     }
 
     /**
@@ -22,7 +19,7 @@ class Ruler extends Element
      */
     static public function getClassDescription()
     {
-        return "Ruler to draw a line/area and display length/area in a dialog";
+        return "mb.core.ruler.class.description";
     }
 
     /**
@@ -30,7 +27,10 @@ class Ruler extends Element
      */
     static public function getClassTags()
     {
-        return array();
+        return array(
+            "mb.core.ruler.tag.line",
+            "mb.core.ruler.tag.area",
+            "mb.core.ruler.tag.measure");
     }
 
     /**
@@ -41,7 +41,8 @@ class Ruler extends Element
         return array(
             'js' => array('@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),
-            'css' => array());
+            'css' => array(),
+            'trans' => array('MapbenderCoreBundle:Element:ruler.json.twig'));
     }
 
     /**
@@ -85,12 +86,11 @@ class Ruler extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:measure_dialog.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            'title' => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:measure_dialog.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    'title' => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
 }
-

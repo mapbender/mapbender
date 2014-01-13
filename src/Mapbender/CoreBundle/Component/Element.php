@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Mapbender\CoreBundle\Component\ExtendedCollection;
 
 /**
  * Base class for all Mapbender elements.
@@ -23,6 +24,20 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 abstract class Element
 {
+    /**
+     * Extended API. The ext_api defins, if an element can be used as a target
+     * element.
+     * @var boolean extended api 
+     */
+    public static $ext_api = true;
+
+    /**
+     * Merge Configurations. The merge_configurations defines, if the default 
+     * configuration array and the configuration array should be merged
+     * @var boolean merge configurations
+     */
+    public static $merge_configurations = true;
+
     /**
      * Application
      * @var Application An application object
@@ -98,7 +113,7 @@ abstract class Element
      */
     static public function getClassTags()
     {
-        return array ();
+        return array();
     }
 
     /**
@@ -110,7 +125,7 @@ abstract class Element
      */
     static public function getDefaultConfiguration()
     {
-        return array ();
+        return array();
     }
 
     /*     * ***********************************************************************
@@ -224,7 +239,7 @@ abstract class Element
      */
     public function getAssets()
     {
-        return array ();
+        return array();
     }
 
     /**
@@ -274,6 +289,13 @@ abstract class Element
         throw new NotFoundHttpException('This element has no Ajax handler.');
     }
 
+    public function trans($key, array $parameters = array(), $domain = null,
+        $locale = null)
+    {
+        return $this->container->get('translator')->trans($key);
+//        return $this->container->get('translator')->trans($key, $parameters, $domain, $locale);
+    }
+
     /*     * ***********************************************************************
      *                                                                       *
      *                          Backend stuff                                *
@@ -310,9 +332,9 @@ abstract class Element
      */
     public static function getFormAssets()
     {
-        return array (
-            'js' => array (),
-            'css' => array ());
+        return array(
+            'js' => array(),
+            'css' => array());
     }
 
     /**
@@ -331,7 +353,7 @@ abstract class Element
             } else if (is_array($value)) {
                 if (isset($default[$key])) {
                     $result[$key] = Element::mergeArrays($default[$key],
-                            $main[$key], array ());
+                            $main[$key], array());
                 } else {
                     $result[$key] = $main[$key];
                 }
@@ -341,8 +363,10 @@ abstract class Element
         }
         if ($default !== null && is_array($default)) {
             foreach ($default as $key => $value) {
-                if (!isset($result[$key]) || (isset($result[$key]) && $result[$key]
-                    === null && $value !== null)) {
+                if (!isset($result[$key])
+                    || (isset($result[$key])
+                    && $result[$key] === null
+                    && $value !== null)) {
                     $result[$key] = $value;
                 }
             }
@@ -371,7 +395,7 @@ abstract class Element
 
         // Create base form shared by all elements
         $formType = $container->get('form.factory')->createBuilder('form',
-                $element, array ())
+                $element, array())
             ->add('title', 'text')
             ->add('class', 'hidden')
             ->add('region', 'hidden');
@@ -386,30 +410,30 @@ abstract class Element
         $configurationFormType = $class::getType();
         if ($configurationFormType === null) {
             $formType->add('configuration', new YAMLConfigurationType(),
-                array (
+                array(
                 'required' => false,
-                'attr' => array (
+                'attr' => array(
                     'class' => 'code-yaml')));
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
-            $formAssets = array (
-                'js' => array (
+            $formAssets = array(
+                'js' => array(
                     'bundles/mapbendermanager/codemirror2/lib/codemirror.js',
                     'bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js',
                     'bundles/mapbendermanager/js/form-yaml.js'),
-                'css' => array (
+                'css' => array(
                     'bundles/mapbendermanager/codemirror2/lib/codemirror.css'));
         } else {
-            $type = $class::getType();
-
-            $formType->add('configuration', new $type(),
-                array (
-                'application' => $application
-            ));
+            $type = new $configurationFormType();
+            $options = array('application' => $application);
+            if($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null){
+                $options['element'] = $element;
+            }
+            $formType->add('configuration', $type, $options);
             $formTheme = $class::getFormTemplate();
             $formAssets = $class::getFormAssets();
         }
 
-        return array (
+        return array(
             'form' => $formType->getForm(),
             'theme' => $formTheme,
             'assets' => $formAssets);

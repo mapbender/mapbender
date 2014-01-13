@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Component;
 
 /**
@@ -18,11 +17,9 @@ class Utils
      */
     public static function getBool($booleanOrNull, $nullable = false)
     {
-        if($nullable)
-        {
+        if ($nullable) {
             return $booleanOrNull;
-        } else
-        {
+        } else {
             return $booleanOrNull === null ? false : $booleanOrNull;
         }
     }
@@ -38,39 +35,28 @@ class Utils
     {
         $url = "";
         $pos = strpos($baseUrl, "?");
-        if($pos === false)
-        {
+        if ($pos === false) {
             $url = $baseUrl . "?";
-        } else if(strlen($baseUrl) - 1 !== $pos)
-        {
+        } else if (strlen($baseUrl) - 1 !== $pos) {
             $pos = strpos($baseUrl, "&");
-            if($pos === false)
-            {
+            if ($pos === false) {
                 $url = $baseUrl . "&";
-            } else if(strlen($baseUrl) - 1 !== $pos)
-            {
+            } else if (strlen($baseUrl) - 1 !== $pos) {
                 $url = $baseUrl . "&";
-            } else
-            {
+            } else {
                 $url = $baseUrl;
             }
-        } else
-        {
+        } else {
             $url = $baseUrl;
         }
-        if(is_string($parameters))
-        {
+        if (is_string($parameters)) {
             return $url . $parameters;
-        } else if(is_array($parameters))
-        {
+        } else if (is_array($parameters)) {
             $params = array();
-            foreach($parameters as $key => $value)
-            {
-                if(is_string($key))
-                {
+            foreach ($parameters as $key => $value) {
+                if (is_string($key)) {
                     $params[] = $key . "=" . $value;
-                } else
-                {
+                } else {
                     $params[] = $value;
                 }
             }
@@ -78,7 +64,7 @@ class Utils
         }
         return null;
     }
-    
+
     /**
      * Removes a file or directory (recursive)
      * 
@@ -89,8 +75,42 @@ class Utils
     {
         $class_func = array(__CLASS__, __FUNCTION__);
         return is_file($path) ?
-                @unlink($path) :
-                array_map($class_func, glob($path.'/*')) == @rmdir($path);
+            @unlink($path) :
+            array_map($class_func, glob($path . '/*')) == @rmdir($path);
+    }
+
+    /**
+     * Validates an URL
+     * 
+     * @param string $url URL
+     * @param array $paramsToRemove  array of lower case parameter names to 
+     * remove from url
+     * @return string URL without parameter $paramName
+     */
+    public static function validateUrl($url, $paramsToRemove)
+    {
+        $rowUrl = parse_url($url);
+        $newurl = $rowUrl["scheme"] . "://" . $rowUrl['host'];
+        if (isset($rowUrl['port']) && intval($rowUrl['port']) !== 80) {
+            $newurl .= ':' . $rowUrl['port'];
+        }
+        if (isset($rowUrl['path']) && strlen($rowUrl['path']) > 0) {
+            $newurl .= $rowUrl['path'];
+        }
+        $queries = array();
+        $getParams = array();
+        if (isset($rowUrl["query"])) {
+            parse_str($rowUrl["query"], $getParams);
+        }
+        foreach ($getParams as $key => $value) {
+            if (!in_array(strtolower($key), $paramsToRemove)) {
+                $queries[] = $key . "=" . $value;
+            }
+        }
+        if (count($queries) > 0) {
+            $newurl .= '?' . implode("&", $queries);
+        }
+        return $newurl;
     }
 
 }

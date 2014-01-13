@@ -1,7 +1,7 @@
-<div id="{{ id }}" class="mb-element mb-element-wmsloader" title="{{ title |trans }}">
-    <p class="description">{{ "Example"|trans }}: http://wms.wheregroup.com/cgi-bin/germany.xml?VERSION=1.1.1&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS</p>
+<div id="{{ id }}" class="mb-element mb-element-wmsloader" title="{{ configuration.tooltip|default(title)|trans }}">
+    <p class="description">{{ "mb.wms.wmsloader.dialog.label.example"|trans }}: http://wms.wheregroup.com/cgi-bin/germany.xml?VERSION=1.1.1&amp;REQUEST=GetCapabilities&amp;SERVICE=WMS</p>
     <br>
-    <label class="labelInput" for="loadWmsUrl">{{"Service url"|trans}}</label>
+    <label class="labelInput" for="loadWmsUrl">{{ "mb.wms.wmsloader.dialog.label.wmsurl"|trans}}:</label>
     <input name="loadWmsUrl" class="input url" type="text" />
     <a id="abc" mb-action="source.add.wms" mb-wms-merge="1" mb-wms-layers="Gewaesser,Fluesse" href="http://wms.wheregroup.com/cgi-bin/germany.xml?VERSION=1.1.1&REQUEST=GetCapabilities&SERVICE=WMS">declarative GERMANY</a>
     <a id="abc" mb-action="source.add.wms" mb-wms-merge="1" mb-wms-layers="_all" href="http://wms.wheregroup.com/cgi-bin/mapserv?map=%2Fdata%2Fumn%2Fmapbender_user%2Fmapbender_user.map&request=GetCapabilities&service=WMS">declarative MBUSER</a>

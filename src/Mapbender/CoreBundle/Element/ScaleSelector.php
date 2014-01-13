@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -19,7 +18,7 @@ class ScaleSelector extends Element
      */
     public static function getClassTitle()
     {
-        return "Scale Selector";
+        return "mb.core.scaleselector.class.title";
     }
 
     /**
@@ -27,7 +26,7 @@ class ScaleSelector extends Element
      */
     public static function getClassDescription()
     {
-        return "Displays and changes a map scale.";
+        return "mb.core.scaleselector.class.description";
     }
 
     /**
@@ -35,7 +34,9 @@ class ScaleSelector extends Element
      */
     public static function getClassTags()
     {
-        return array('scale', 'selector');
+        return array(
+            "mb.core.scaleselector.tag.scale",
+            "mb.core.scaleselector.tag.selector");
     }
 
     /**
@@ -83,11 +84,11 @@ class ScaleSelector extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:scaleselector.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            "title" => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:scaleselector.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    "title" => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
     /**
@@ -97,5 +98,5 @@ class ScaleSelector extends Element
     {
         return 'MapbenderManagerBundle:Element:scaleselector.html.twig';
     }
-}
 
+}

@@ -29,7 +29,6 @@ $.widget("mapbender.mbOverview", {
         $(this.element).addClass(this.options.anchor);
         if(!this.options.maximized) {
             $(this.element).addClass("closed");
-	    $(this.element).find('#mb-element-overview-map').css("display", "none");
         }
         var proj = mbMap.model.mapMaxExtent.projection;
         var max_ext = mbMap.model.mapMaxExtent.extent;
@@ -63,7 +62,7 @@ $.widget("mapbender.mbOverview", {
                 });
             });
         if(layers_overview.length === 0){
-            Mapbender.error('The overview element has no layer.');
+            Mapbender.error(Mapbender.trans("mb.core.overview.nolayer"));
             return;
         }
         this.mapOrigExtents = {
@@ -101,13 +100,7 @@ $.widget("mapbender.mbOverview", {
      * Opens/closes the overview element
      */
     _openClose: function(event){
-        if($(this.element).hasClass('closed')){
-            $(this.element).removeClass('closed');
-	    $(this.element).find('#mb-element-overview-map').css("display", "block");
-        } else {
-            $(this.element).addClass('closed');
-	    $(this.element).find('#mb-element-overview-map').css("display", "none");
-        }
+        $(this.element).toggleClass('closed');
     },
 
     /*

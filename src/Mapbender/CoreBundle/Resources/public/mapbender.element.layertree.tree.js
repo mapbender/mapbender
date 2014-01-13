@@ -11,12 +11,14 @@
         layerconf: null,
         popup: null,
         created: false,
+        loadStarted: {},
         consts: {
             source: "source",
             root: "root",
             group: "group",
             simple: "simple"
         },
+        transConst: {outOfScale: '',outOfBounds: '', parentInvisible: ''},
         _create: function(){
             if(!Mapbender.checkTarget("mbLayertree", this.options.target)){
                 return;
@@ -25,14 +27,18 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
-            this.options.layerMenu= false;
+            this.transConst.outOfScale = Mapbender.trans("mb.core.layertree.const.outofscale");
+            this.transConst.outOfBounds = Mapbender.trans("mb.core.layertree.const.outofbounds");
+            this.transConst.parentInvisible = Mapbender.trans("mb.core.layertree.const.parentinvisible");
+            this.options.titlemaxlength = parseInt(this.options.titlemaxlength);
+            this.options.layerMenu = false;
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li', this.element).remove();
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
             if(this.options.type === 'element'){
                 this._createTree();
-            } else if(this.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true){
+            }else if(this.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true){
                 this.open();
             }
             this._trigger('ready');
@@ -54,16 +60,16 @@
                     }
                 }
             }
-            
+
             this._reset();
-            
+
             $(document).bind('mbmapsourceloadstart', $.proxy(self._onSourceLoadStart, self));
             $(document).bind('mbmapsourceloadend', $.proxy(self._onSourceLoadEnd, self));
             $(document).bind('mbmapsourceloaderror', $.proxy(self._onSourceLoadError, self));
             $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
-            
+
             this.created = true;
         },
         _reset: function(){
@@ -76,26 +82,25 @@
             var self = this;
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
-            this.element.on('click',  '.iconFolder', $.proxy(self._toggleContent, self));
-            this.element.on('click',  '#delete-all', $.proxy(self._removeAllSources, self));
-            this.element.on('click',  '.iconRemove', $.proxy(self._removeSource, self));
-            this.element.on('click',  '.layer-menu-btn', $.proxy(self._toggleMenu, self));
+            this.element.on('click', '.iconFolder', $.proxy(self._toggleContent, self));
+            this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
+            this.element.on('click', '.iconRemove', $.proxy(self._removeSource, self));
+            this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
         },
         _removeEvents: function(){
             var self = this;
             this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
-            this.element.off('click',  '.iconFolder', $.proxy(self._toggleContent, self));
-            this.element.off('click',  '#delete-all', $.proxy(self._removeAllSources, self));
-            this.element.off('click',  '.iconRemove', $.proxy(self._removeSource, self));
-            this.element.off('click',  '.layer-menu-btn', $.proxy(self._toggleMenu, self));
-    
+            this.element.off('click', '.iconFolder', $.proxy(self._toggleContent, self));
+            this.element.off('click', '#delete-all', $.proxy(self._removeAllSources, self));
+            this.element.off('click', '.iconRemove', $.proxy(self._removeSource, self));
+            this.element.off('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
+
         },
         _resetEvents: function(){
             this._removeEvents();
             this._createEvents();
         },
-                
         _resetCheckboxes: function(){
             var self = this;
             this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
@@ -103,21 +108,16 @@
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             if(initCheckbox){
-                $('.checkbox', self.element).each(function() {
+                $('.checkbox', self.element).each(function(){
                     initCheckbox.call(this);
                 });
             }
         },
         _resetSortable: function(){
-//            this._unSortable();
+            this._unSortable();
             this._createSortable();
         },
         _unSortable: function(){
-//            $("ul.layers", this.element).each(function(){
-//                var that = this;
-//                if($(that).sortable())
-//                    $(that).sortable('destroy');
-//            });
         },
         _createSortable: function(){
             var self = this;
@@ -135,24 +135,24 @@
                             var bid = $(beforeEl).attr('data-sourceid');
                             if(!bid)
                                 bid = $(beforeEl).parents('li[data-sourceid]:first').attr('data-sourceid');
-                            beforeObj = { sourceIdx: {id: bid}, layerIdx: {id: $(beforeEl).attr("data-id")}};
+                            beforeObj = {sourceIdx: {id: bid}, layerIdx: {id: $(beforeEl).attr("data-id")}};
                         }
                         if(elm.next().length !== 0){
                             var afterEl = $(elm.next()[0]);
                             var aid = $(afterEl).attr('data-sourceid');
                             if(!aid)
                                 aid = $(afterEl).parents('li[data-sourceid]:first').attr('data-sourceid');
-                            afterObj = { sourceIdx: {id: aid}, layerIdx: {id: $(afterEl).attr("data-id")}};
+                            afterObj = {sourceIdx: {id: aid}, layerIdx: {id: $(afterEl).attr("data-id")}};
                         }
                         var id = $(elm).attr('data-sourceid');
                         if(!id)
                             id = $(elm).parents('li[data-sourceid]:first').attr('data-sourceid');
-                        tomoveObj = { sourceIdx: {id: id}};
+                        tomoveObj = {sourceIdx: {id: id}};
                         if($(ui.item).attr("data-type") !== self.consts.root){
                             tomoveObj['layerIdx'] = {id: $(ui.item).attr("data-id")};
                         }
                         /* "before" at layerTree is "after" at model.sourceTree */
-                        self.model.changeSource({ change: { move: { tomove: tomoveObj, before: afterObj, after: beforeObj }}});
+                        self.model.changeSource({change: {move: {tomove: tomoveObj, before: afterObj, after: beforeObj}}});
                     }
                 });
             });
@@ -172,7 +172,7 @@
                 li.attr('data-id', sourceEl.options.id);
                 li.attr('data-sourceid', source.id)
                 var nodeType = this._getNodeType(sourceEl, isroot);
-                li.attr('data-type', nodeType);
+                li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
                 if(nodeType === this.consts.root || nodeType === this.consts.group){
                     if(nodeType === this.consts.root){
                         li.addClass("serviceContainer");
@@ -194,9 +194,9 @@
                 li.find('input.layer-info').attr('checked', config.info ? 'checked' : null);
                 if(!config.infoable)
                     li.find('input.layer-info').attr('disabled', 'disabled');
-                li.find('.layer-title').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
+                li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                 if(config.toggleable)
-                    li.find('.layer-title').addClass('toggleable');
+                    li.find('.layer-title:first').addClass('toggleable');
                 if(!this.options.layerMenu){
                     li.find('.layer-menu-btn').remove();
                 }else{
@@ -244,6 +244,7 @@
             return li;
         },
         _createTreeNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found){
+            var self = this;
             if(sourceEl.type){ // source
                 var li = "";
                 for(var i = 0; i < sourceEl.configuration.children.length; i++){
@@ -258,7 +259,7 @@
                     li.attr('data-id', sourceEl.options.id);
                     isroot ? li.attr('data-sourceid', source.id) : li.removeAttr('data-sourceid');
                     var nodeType = this._getNodeType(sourceEl, isroot);
-                    li.attr('data-type', nodeType);
+                    li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
 
                     if(nodeType == this.consts.root){
                         li.addClass("serviceContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
@@ -273,9 +274,9 @@
                     li.find('input.layer-info').attr('checked', config.info ? 'checked' : null);
                     if(!config.infoable)
                         li.find('input.layer-info').attr('disabled', 'disabled');
-                    li.find('.layer-title').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
+                    li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if(config.toggleable)
-                        li.find('.layer-title').addClass('toggleable');
+                        li.find('.layer-title:first').addClass('toggleable');
                     if(!this.options.layerMenu){
                         li.find('.layer-menu-btn').remove();
                     }else{
@@ -340,7 +341,8 @@
             return null;
         },
         _onSourceAdded: function(event, options){
-            if(!this.created || !options.added) return;
+            if(!this.created || !options.added)
+                return;
             var added = options.added;
             //window.console && console.log("layertree _onSourceAdded");
             var before = added.after, after = added.before;
@@ -389,115 +391,101 @@
             this._reset();
         },
         _onSourceChanged: function(event, options){
-            if(options.changed && options.changed.options){
-                this._optionsChanged(options.changed);
-            }else if(options.changed && options.changed.layerRemoved){
-                this._removeLayer(options.changed);
+//            window.console && console.log("layertree _onSourceChanged", options);
+            if(options.changed && options.changed.children){
+                this._changeChildren(options.changed);
+//                this.resetSource(this.model.getSource(options.changed.sourceIdx));
+            }else if(options.changed && options.changed.childRemoved){
+                this._removeChild(options.changed);
             }
         },
-        _optionsChanged: function(changed){
-            var source = this.model.getSource(changed.options.sourceIdx);
-            if(changed.options.children){
-                for(var layerId in changed.options.children){
-                    var changedEl = changed.options.children[layerId];
-                    var lif = $(this.element).find('li[data-id="' + layerId + '"][data-sourceid="' + source.id + '"]:first');
-                    /* check selected */
-                    var chk_selected = lif.find('input[name="selected"]:first');
-                    if(changedEl.options){
-                        if(changedEl.options.treeOptions.selected !== chk_selected.is(':checked'))
-                            chk_selected.get(0).checked = changedEl.options.treeOptions.selected;
-                        if(chk_selected.is(':checked'))
-                            chk_selected.parents('.checkWrapper:first').addClass("iconCheckboxActive");
-                        else
-                            chk_selected.parents('.checkWrapper:first').removeClass("iconCheckboxActive");
-                        if(changedEl.options.treeOptions.info !== lif.find('input[name="info"]:first').is(':checked'))
-                            lif.find('input[name="info"]:first').get(0).checked = changedEl.options.treeOptions.info;
+        _resetNodeSelected: function($li, layerOptions){
+            var chk_selected = $('input[name="selected"]:first', $li);
+            chk_selected.prop('checked', layerOptions.treeOptions.selected);
+            initCheckbox.call(chk_selected);
+        },
+        _resetNodeInfo: function($li, layerOptions){
+            var chk_info = $('input[name="info"]:first', $li);
+            chk_info.prop('checked', layerOptions.treeOptions.info);
+            initCheckbox.call(chk_info.get(0));
+        },
+        _resetNodeVisible: function($li, layerDef){
+            if(layerDef.state.visibility){
+                $li.removeClass("invisible").find('span.layer-state:first').attr("title", "");
+            } else if(layerDef.state.outOfScale){
+                $li.addClass("invisible").find('span.layer-state').attr("title", "out of scale");
+            }
+        },
+
+        _resetSourceAtTree: function(source){
+            var self = this;
+            function _resetSourceAtTree(layer, parent){
+                var $li = $('li[data-id="' + layer.options.id + '"]', this.element);
+                self._resetNodeSelected($li, layer.options);
+                self._resetNodeInfo($li, layer.options);
+                self._resetNodeVisible($li, layer);
+                if(layer.children){
+                    for(var i = 0; i < layer.children.length; i++){
+                        _resetSourceAtTree(layer.children[i], layer);
                     }
-                    /* check visibility */
-                    if(changedEl.state.visibility){
-                        lif.removeClass("invisible").find('span.layer-state:first').attr("title", "");
-                    }else{
-                        if(chk_selected.is(':checked'))
-                            lif.addClass("invisible").find('span.layer-state:first').attr("title", changedEl.state.outOfScale ? "outOfScale" : "parent invisible");
-                        else
-                            lif.addClass("invisible").find('span.layer-state:first').attr("title", "");
+                }
+            };
+            _resetSourceAtTree(source.configuration.children[0], null);
+        },
+        _changeChildren: function(changed){
+            if(changed.children){
+                for(var layerId in changed.children){
+                    if(changed.children[layerId].options){
+                        var $li = $('li[data-id="' + layerId + '"]', this.element);
+                        if($li.length === 0)
+                            continue;
+                        this._resetNodeSelected($li, changed.children[layerId].options);
+                        this._resetNodeInfo($li, changed.children[layerId].options);
+                        if(changed.children[layerId].options.state)
+                            this._resetNodeVisible($li, changed.children[layerId].options);
                     }
                 }
             }
         },
-        _removeLayer: function(changed){
+        _removeChild: function(changed){
             var self = this;
-            if(changed && changed.sourceIdx && changed.layerRemoved){
+            if(changed && changed.sourceIdx && changed.childRemoved){
                 var source = this.model.getSource(changed.sourceIdx);
-                    // TODO check source id ?
-                $('ul.layers:first li[data-id="' + changed.layerRemoved.layer.options.id + '"]', self.element).remove();
+                // TODO check source id ?
+                $('ul.layers:first li[data-id="' + changed.childRemoved.layer.options.id + '"]', self.element).remove();
             }
         },
         _onSourceRemoved: function(event, removed){
+//            window.console && console.log("layertree _onSourceRemoved");
             if(removed && removed.source && removed.source.id){
                 $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element).remove();
                 this._setSourcesCount();
             }
         },
         _onSourceLoadStart: function(event, option){ // sets "loading" for layers
-            //window.console && console.log("layertree _onSourceLoadStart");
-            if(!option.source)
-                return;
-            var source = option.source;
-            if(this.options.displaytype === "tree"){
-                var source_li = $(this.element).find('li[data-sourceid="' + source.id + '"]');
-                if(source_li.find('input.layer-selected:first').is(':checked')
-                        && !source_li.hasClass('invisible')){
-                    source_li.addClass('loading');
-                    source_li.find('li').each(function(idx, el){
-                        var li_el = $(el);
-                        if(li_el.find('input.layer-selected:first').is(':checked')
-                                && !li_el.hasClass('invisible')){
-                            li_el.addClass('loading');
-                        }
-                    });
+//            window.console && console.log("layertree _onSourceLoadStart");
+            if(option.source){
+                this.loadStarted[option.source.id ] = true;
+                var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
+                if($('input.layer-selected:first', source_li).is(':checked') && !source_li.hasClass('invisible')){
+                    source_li.attr('data-state', 'loading').find('span.layer-state:first').attr("title",source_li.attr('data-title'));
                 }
-            }else if(this.options.displaytype === "list"){
-                $(this.element).find('li[data-sourceid="' + source.id + '"]').each(function(idx, elm){
-                    if($(elm).find('input[name="selected"]:first').is(':checked')
-                            && !$(elm).hasClass('invisible')){
-                        $(elm).removeClass('error').addClass("loading");
-                    }
-                });
             }
         },
         _onSourceLoadEnd: function(event, option){ // removes "loading" from layers
-            if(!option.source)
-                return;
-            var source = option.source;
-            if(this.options.displaytype === "tree"){
-                var source_li = $(this.element).find('li[data-sourceid="' + source.id + '"]');
-                source_li.removeClass('loading').removeClass('error').find('span.layer-state:first').attr("title", "");
-                source_li.find('li').each(function(idx, el){
-                    $(el).removeClass('loading').removeClass('error').find('span.layer-state:first').attr("title", "");
-                });
-            }else if(this.options.displaytype === "list"){
-                $(this.element).find('li[data-sourceid="' + source.id + '"]').removeClass('loading');
+//            window.console && console.log("layertree _onSourceLoadEnd");
+            if(option.source && this.loadStarted[option.source.id]){
+                this.loadStarted[option.source.id] = false;
+                var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
+                source_li.attr('data-state', '');
             }
         },
-        _onSourceLoadError: function(event, option){ // sets "error" for layers
-            if(!option.source)
-                return;
-            if(this.options.displaytype === "tree"){
-                var source_li = $(this.element).find('li[data-sourceid="' + option.source.id + '"]');
-                source_li.removeClass('loading').removeClass('invisible').addClass('error').find('span.layer-state:first').attr("title", option.error.details);
-                source_li.find('li').each(function(idx, el){
-                    $(el).removeClass('loading').removeClass('invisible').addClass('error').find('span.layer-state:first').attr("title", option.error.details);
-                });
-            }else if(this.options.displaytype === "list"){
-                $(this.element).find('li[data-sourceid="' + option.source.id + '"]').each(function(idx, elm){
-                    if($(elm).find('input[name="selected"]:first').is(':checked')){
-                        $(elm).removeClass('invisible').removeClass('loading').addClass('error');
-                        $(elm).find('span.state').attr({
-                            title: option.error.details
-                        });
-                    }
-                });
+        _onSourceLoadError: function(event, option){
+//            window.console && console.log("layertree _onSourceLoadError");
+            if(option.source && this.loadStarted[option.source.id]){
+                this.loadStarted[option.source.id] = false;
+                var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
+                source_li.attr('data-state', 'error').find('span.layer-title:first').attr("title",option.error.details);
             }
         },
         _subStringText: function(text){
@@ -544,17 +532,17 @@
             if(nodeConfig.state.outOfScale){
                 conf["visibility"] = {
                     state: "invisible",
-                    tooltip: "outOfScale"
+                    tooltip: this.transConst.outOfScale
                 };
             }else if(nodeConfig.state.outOfBounds){
                 conf["visibility"] = {
                     state: "invisible",
-                    tooltip: "outOfBounds"
+                    tooltip: this.transConst.outOfBounds
                 };
             }else if(!nodeConfig.state.visibility){
                 conf["visibility"] = {
                     state: "invisible",
-                    tooltip: "parent invisible"
+                    tooltip: this.transConst.parentinvisible
                 };
             }else{
                 conf["visibility"] = {
@@ -573,6 +561,10 @@
                 me.addClass("iconFolderActive");
                 me.parents('li:first').addClass("showLeaves");
             }
+            var li = me.parents('li:first[data-sourceid]');
+            if(li.length > 0){
+                this._resetSourceAtTree(this.model.getSource({id: li.attr('data-sourceid')}));
+            }
             return false;
         },
         _toggleSelected: function(e){
@@ -585,26 +577,27 @@
                 tochange.options.children[li.attr('data-id')] = {options: {treeOptions: {selected: $(e.target).is(':checked')}}};
             }
             tochange.options['type'] = 'selected';
-            this.model.changeSource({ change: tochange});
+            this.model.changeSource({change: tochange});
         },
         _toggleInfo: function(e){
             var li = $(e.target).parents('li:first');
             var tochange = {sourceIdx: {id: li.attr('data-sourceid')}, options: {children: {}, type: 'info'}};
             tochange.options.children[li.attr('data-id')] = {options: {treeOptions: {info: $(e.target).is(':checked')}}};
-            this.model.changeSource({ change: tochange});
+            this.model.changeSource({change: tochange});
         },
-        _toggleMenu: function(e){},
+        _toggleMenu: function(e){
+        },
         _removeSource: function(e){
             var layer_type = $(e.target).parents("li:first").attr("data-type");
             var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
             if(sourceId && layer_type && this.consts.root === layer_type){ // remove source
-                this.model.removeSource({remove:{ sourceIdx: {id: sourceId}}});
-            } else if(sourceId && layer_type && this.consts.group === layer_type){// remove group layer
+                this.model.removeSource({remove: {sourceIdx: {id: sourceId}}});
+            }else if(sourceId && layer_type && this.consts.group === layer_type){// remove group layer
                 var layer_id = $(e.target).parents("li:first").attr("data-id");
-                this.model.changeSource({ change: { layerRemove: { sourceIdx: {id: sourceId}, layer: {options: {id: layer_id}}}}});
-            } else if(sourceId && layer_type && this.consts.simple === layer_type){// remove group layer
+                this.model.changeSource({change: {layerRemove: {sourceIdx: {id: sourceId}, layer: {options: {id: layer_id}}}}});
+            }else if(sourceId && layer_type && this.consts.simple === layer_type){// remove group layer
                 var layer_id = $(e.target).parents("li:first").attr("data-id");
-                this.model.changeSource({ change: { layerRemove: { sourceIdx: {id: sourceId}, layer: {options: {id: layer_id}}}}});
+                this.model.changeSource({change: {layerRemove: {sourceIdx: {id: sourceId}, layer: {options: {id: layer_id}}}}});
             }
             this._setSourcesCount();
         },
@@ -628,10 +621,10 @@
         },
         _removeAllSources: function(e){
             var self = this;
-            if(confirm("Really all sources delete?")){
+            if(Mapbender.confirm(Mapbender.trans("mb.core.layertree.confirm.allremove"))){
                 $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm){
                     var sourceId = $(elm).attr('data-sourceid');
-                    self.model.removeSource({remove:{ sourceIdx: {id: sourceId}}});
+                    self.model.removeSource({remove: {sourceIdx: {id: sourceId}}});
                 });
             }
             this._setSourcesCount();
@@ -663,7 +656,7 @@
                         width: 350,
                         buttons: {
                             'ok': {
-                                label: 'Close',
+                                label: Mapbender.trans("mb.core.layertree.popup.btn.ok"),
                                 cssClass: 'button right',
                                 callback: function(){
                                     self.close();
@@ -672,7 +665,7 @@
                         }
                     });
                     this._reset();
-                } else {
+                }else{
                     this._reset();
                     this.popup.open();
                 }
@@ -699,18 +692,18 @@
         /**
          *
          */
-        ready: function(callback) {
-            if(this.readyState === true) {
+        ready: function(callback){
+            if(this.readyState === true){
                 callback();
-            } else {
+            }else{
                 this.readyCallbacks.push(callback);
             }
         },
         /**
          *
          */
-        _ready: function() {
-            for(callback in this.readyCallbacks) {
+        _ready: function(){
+            for(callback in this.readyCallbacks){
                 callback();
                 delete(this.readyCallbacks[callback]);
             }

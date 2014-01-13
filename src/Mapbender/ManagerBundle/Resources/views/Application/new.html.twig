@@ -1,6 +1,6 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ "New Application" | trans}}{% endblock %}
+{% block title %}{{ "mb.manager.admin.application.new" | trans}}{% endblock %}
 
 {% block js %}
   {{parent()}}
@@ -12,14 +12,15 @@
   <form action="{{ path('mapbender_manager_application_create') }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}} novalidate="novalidate">
     <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
       <ul class="tabs">
-        <li id="tabBaseData" class="tab active">{{"Base data" | trans }}</li>
-        <li id="tabSecurity" class="tab">{{"Security" | trans }}</li>
+        <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.new.base_data" | trans }}</li>
+        <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData">
+        {{ form_label(form.template) }}{{ form_widget(form.template) }}
+        <div class="clearContainer"></div>
         {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
         <div class="messageBox hint">
-          {% trans %}Create a new application by providing basic information and then
-          use the edit mode to choose template, add elements and layers.{% endtrans %}
+            {{"mb.manager.admin.application.create_use" | trans }}
         </div>
       </div>
       <div id="containerSecurity" class="container">
@@ -30,8 +31,8 @@
     <div class="clearContainer"></div>
 
     <div class="right">
-      <input type="submit" value="{{ 'Create' | trans }}" class="button"/>
-      <a href="{{ url('mapbender_manager_application_index') }}" class="button critical">{{ 'Cancel' | trans}}</a>
+      <input type="submit" value="{{ 'mb.manager.admin.application.btn.create' | trans }}" class="button"/>
+      <a href="{{ url('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.btn.cancel' | trans}}</a>
     </div>
 
     <div class="clearContainer"></div>

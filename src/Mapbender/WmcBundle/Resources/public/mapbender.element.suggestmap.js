@@ -40,9 +40,12 @@
         },
         _getStateSuccess: function(response, textStatus, jqXHR){
             if(response.data){
-                //                var wmcstate = $.parseJSON(response.data);
                 for(stateid in response.data){
-                    var state = $.parseJSON(response.data[stateid]);
+                    var state;
+                    if(response.data[stateid])
+                        state = response.data[stateid]
+                    else
+                        state = $.parseJSON(response.data[stateid]);
                     if(!state.window)
                         state = $.parseJSON(state);
                     this._addToMap(stateid, state);
@@ -66,7 +69,7 @@
             var wmcProj = model.getProj(state.extent.srs),
                     mapProj = model.map.olMap.getProjectionObject();
             if(wmcProj === null){
-                Mapbender.error('SRS "' + state.extent.srs + '" is not supported by this application.');
+                Mapbender.error(Mapbender.trans("mb.wmc.element.suggestmap.error_srs", {"srs": state.extent.srs}));
             }else if(wmcProj.projCode === mapProj.projCode){
                 var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
                 target[widget]("zoomToExtent", OpenLayers.Bounds.fromArray(boundsAr));
@@ -135,7 +138,7 @@
                     width: 350,
                     buttons: {
                         'ok': {
-                            label: 'Close',
+                            label: Mapbender.trans("mb.wmc.element.suggestmap.popup.btn.ok"),
                             cssClass: 'button right',
                             callback: function(){
                                 self.close();
@@ -165,10 +168,10 @@
                     if(response.id){
                         var help = document.location.href.split("?");
                         var url = help[0];
-                        url = url.replace(/#/gi, '') + "?state=" + response.id;
+                        url = url.replace(/#/gi, '') + "?stateid=" + response.id;
                         callback(url);
                     }else if(response.error){
-                        Mapbender.error(response.error);
+                        Mapbender.error(Mapbender.trans(response.error));
                     }
                 },
                 error: self._suggestStateError
@@ -190,36 +193,26 @@
         },
         _suggestEmail: function(url){
             if(url){
-                var mail_cmd = "mailto:?subject=" + this.element.attr("title") + "&body=" + encodeURIComponent(url);
-                document.location.href = mail_cmd;
+                Mapbender.SMC.callEmail(this.element.attr("title"), url);
             }
         },
         _suggestTwitter: function(url){
             if(url){
-                var cmd = $('<a href="http://www.twitter.com/home?status=' + this.element.attr('title') + ': ' + encodeURIComponent(url) + '" target="_BLANK">Twitter</a>');
-                cmd[0].click();
-                cmd.remove();
-                cmd = null;
+                Mapbender.SMC.callTwitter(this.element.attr("title"), url);
             }
         },
         _suggestFacebook: function(url){
             if(url){
-                var cmd = $('<a href="http://www.facebook.com/sharer.php?u=' + encodeURIComponent(url) + '&t=' + this.element.attr('title') + '" target="_BLANK">Facebook</a>');
-                cmd[0].click();
-                cmd.remove();
-                cmd = null;
+                Mapbender.SMC.callFacebook(this.element.attr("title"), url);
             }
         },
         _suggestGooglePlus: function(url){
             if(url){
-                var cmd = $('<a href="plus.google.com/share?url=' + encodeURIComponent(url) + '" target="_BLANK">Google+</a>');
-                cmd[0].click();
-                cmd.remove();
-                cmd = null;
+                Mapbender.SMC.callGooglePlus(this.element.attr("title"), url);
             }
         },
         _suggestStateError: function(response){
-            Mapbender.error(response);
+            Mapbender.error(Mapbender.trans(response));
         },
         _destroy: $.noop
     });

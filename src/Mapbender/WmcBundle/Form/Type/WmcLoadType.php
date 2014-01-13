@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmcBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -23,8 +22,7 @@ class WmcLoadType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('xml', 'file',
-                      array('required' => true));
+        $builder->add('xml', 'file', array('required' => true));
     }
 
 }

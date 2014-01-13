@@ -44,6 +44,7 @@ $(function(){
     $('#listFilterApplications').find(".iconRemove").bind("click", function(){
         var self    = $(this);
         var content = self.parent().siblings(".title").text();
+        var content = $('<div/>').text(self.parent().siblings(".title").text()).html();
 
         if(popup){
             popup = popup.destroy();

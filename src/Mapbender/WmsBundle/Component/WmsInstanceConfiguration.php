@@ -1,8 +1,8 @@
 <?php
-
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfiguration;
+use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
 
 /*
  * To change this template, choose Tools | Templates
@@ -16,14 +16,14 @@ use Mapbender\CoreBundle\Component\InstanceConfiguration;
  */
 class WmsInstanceConfiguration extends InstanceConfiguration
 {
-    
+
     /**
      * Sets options
      * 
      * @param ServiceConfigurationOptions $options ServiceConfigurationOptions
      * @return InstanceConfiguration 
      */
-    public function setOptions($options)
+    public function setOptions(InstanceConfigurationOptions $options)
     {
         $this->options = $options;
         return $this;
@@ -62,8 +62,7 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     }
 
     /**
-     * 
-     * @return array
+     * @inheritdoc
      */
     public function toArray()
     {
@@ -75,6 +74,31 @@ class WmsInstanceConfiguration extends InstanceConfiguration
             "children" => $this->children
         );
     }
-}
 
+    /**
+     * @inheritdoc
+     */
+    public static function fromArray($options)
+    {
+        $ic = null;
+        if($options && is_array($options))
+        {
+            $ic = new WmsInstanceConfiguration();
+            if(isset($options['type'])){
+                $ic->type = $options['type'];
+            }
+            if(isset($options['title'])){
+                $ic->title = $options['title'];
+            }
+            if(isset($options['isBaseSource'])){
+                $ic->isBaseSource = $options['isBaseSource'];
+            }
+            if(isset($options['options'])){
+                $ic->options = WmsInstanceConfigurationOptions::fromArray($options['options']);
+            }
+        }
+        return $ic;
+    }
+
+}
 ?>

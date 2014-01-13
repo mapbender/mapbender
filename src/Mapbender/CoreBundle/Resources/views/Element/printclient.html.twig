@@ -1,7 +1,7 @@
-<div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title|trans }}">
+<div id="{{ id }}" class="mb-element mb-element-printclient" title="{{ title |trans }}">
     <div class="format-form">
         <form id="formats" action="">
-            <label class="labelInput">{{ 'Template' | trans }}</label>
+            <label class="labelInput">{{ 'mb.core.printclient.label.template' | trans }}</label>
             <div class="dropdown">
               <select name="template" class="hiddenDropdown">
                   {% for id, template in configuration.templates %}
@@ -12,14 +12,14 @@
               <ul class="dropdownList"></ul>
             </div>            
 
-            <label class="labelInput">{{ 'Quality' | trans }}</label>
+            <label class="labelInput">{{ 'mb.core.printclient.label.quality' | trans }}</label>
             <div class="dropdown">
               <select name="quality" class="hiddenDropdown"></select>
               <div class="dropdownValue iconDown"></div>
               <ul class="dropdownList"></ul>
             </div>
 
-            <label class="labelInput">{{ 'Scale' | trans }}</label>
+            <label class="labelInput">{{ 'mb.core.printclient.label.scale' | trans }}</label>
             <div class="dropdown">
               <select name="scale_select" class="hiddenDropdown"></select>
               <div class="dropdownValue iconDown"></div>
@@ -28,7 +28,7 @@
             <div>
               <input class="input" type="text" name="scale_text" size="8"/>
             </div>
-            <label class="labelInput" for="rotation">{{ 'Rotation' | trans }}</label>
+            <label class="labelInput" for="rotation">{{ 'mb.core.printclient.label.rotation' | trans }}</label>
             <input class="input" type="text" name="rotation"/>
 
             <div id="slider"></div>
@@ -37,6 +37,7 @@
             <div class="clearContainer"></div>
             <br>
             <div id="layers"></div>
+            <input type="submit" style="display: none"/>
         </form>
     </div>
 </div>

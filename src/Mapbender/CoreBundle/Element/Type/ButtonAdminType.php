@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -36,35 +35,37 @@ class ButtonAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
-                ->add('icon', 'choice',
-                      array(
-                    'required' => false,
-                    "choices" => array(
-                        "" => "None",
-                        "iconAbout"      => "About",
-                        "iconAreaRuler"  => "Area ruler",
-                        "iconInfoActive" => "Feature info",
-                        "iconGps"        => "GPS",
-                        "iconLegend"     => "Legend",
-                        "iconPrint"      => "Print",
-                        "iconSearch"     => "Search",
-                        "iconLayertree"  => "Layer tree",
-                        "iconWms"        => "WMS",
-                        "iconHelp"       => "Help",
-                        "iconWmcEditor"  => "WMC Editor",
-                        "iconWmcLoader"  => "WMC Loader"
-                        )))
-                ->add('label', 'checkbox', array('required' => false))
-                ->add('target', 'target_element',
-                      array(
-                    'element_class' => '%Element%',
-                    'application' => $options['application'],
-                    'property_path' => '[target]',
-                    'required' => false))
-                ->add('click', 'text', array('required' => false))
-                ->add('group', 'text', array('required' => false))
-                ->add('action', 'text', array('required' => false))
-                ->add('deactivate', 'text', array('required' => false));
+            ->add('icon', 'choice',
+                array(
+                'required' => false,
+                "choices" => array(
+                    "" => "None",
+                    "iconAbout" => "About",
+                    "iconAreaRuler" => "Area ruler",
+                    "iconInfoActive" => "Feature info",
+                    "iconGps" => "GPS",
+                    "iconLegend" => "Legend",
+                    "iconPrint" => "Print",
+                    "iconSearch" => "Search",
+                    "iconLayertree" => "Layer tree",
+                    "iconWms" => "WMS",
+                    "iconHelp" => "Help",
+                    "iconWmcEditor" => "WMC Editor",
+                    "iconWmcLoader" => "WMC Loader",
+                    "iconPoi" => "POI",
+                    "iconImageExport" => "Image Export",
+					"iconSketch" => "Sketch"
+            )))
+            ->add('label', 'checkbox', array('required' => false))
+            ->add('target', 'target_element',
+                array(
+                'application' => $options['application'],
+                'property_path' => '[target]',
+                'required' => false))
+            ->add('click', 'text', array('required' => false))
+            ->add('group', 'text', array('required' => false))
+            ->add('action', 'text', array('required' => false))
+            ->add('deactivate', 'text', array('required' => false));
     }
 
 }

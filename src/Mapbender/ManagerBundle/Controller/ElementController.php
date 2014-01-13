@@ -33,15 +33,22 @@ class ElementController extends Controller
      */
     public function selectAction($slug)
     {
-        $elements = array ();
+        $trans = $this->container->get('translator');
+        $elements = array();
         foreach ($this->get('mapbender')->getElements() as $elementClassName) {
-            $elements[$elementClassName] = array (
-                'title' => $elementClassName::getClassTitle(),
-                'description' => $elementClassName::getClassDescription(),
-                'tags' => $elementClassName::getClassTags());
+            $title = $trans->trans($elementClassName::getClassTitle());
+            $tags = array();
+            foreach($elementClassName::getClassTags() as $tag){
+                $tags[] = $trans->trans($tag);
+            }
+            $elements[$title] = array(
+                'class' => $elementClassName,
+                'title' => $title,
+                'description' => $trans->trans($elementClassName::getClassDescription()),
+                'tags' => $tags);
         }
-
-        return array (
+        ksort($elements, SORT_LOCALE_STRING);
+        return array(
             'elements' => $elements,
             'region' => $this->get('request')->get('region'));
     }
@@ -67,14 +74,19 @@ class ElementController extends Controller
 
         // Get first region (by default)
         $template = $application->getTemplate();
-//        $regions = $template::getRegions();
+        $regions = $template::getRegions();
         $region = $this->get('request')->get('region');
 
-        $element = ComponentElement::getDefaultElement($class, $region);
-        $form = ComponentElement::getElementForm($this->container, $application,
-                $element);
+        $appl = new \Mapbender\CoreBundle\Component\Application($this->container,
+            $application, array());
 
-        return array (
+        $elmComp = new $class($appl, $this->container,
+            ComponentElement::getDefaultElement($class, $region));
+        $elmComp->getEntity()->setTitle($elmComp->trans($elmComp->getClassTitle()));
+        $form = ComponentElement::getElementForm($this->container, $application,
+                $elmComp->getEntity());
+
+        return array(
             'form' => $form['form']->createView(),
             'theme' => $form['theme'],
             'assets' => $form['assets']);
@@ -104,7 +116,7 @@ class ElementController extends Controller
             $query = $em->createQuery(
                 "SELECT e FROM MapbenderCoreBundle:Element e"
                 . " WHERE e.region=:reg AND e.application=:app");
-            $query->setParameters(array (
+            $query->setParameters(array(
                 "reg" => $element->getRegion(),
                 "app" => $element->getApplication()->getId()));
             $elements = $query->getResult();
@@ -115,7 +127,7 @@ class ElementController extends Controller
             $em->flush();
             $entity_class = $element->getClass();
             $appl = new \Mapbender\CoreBundle\Component\Application($this->container,
-                $application, array ());
+                $application, array());
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
             $this->get('session')->setFlash('success',
@@ -123,7 +135,7 @@ class ElementController extends Controller
 
             return new Response('', 201);
         } else {
-            return array (
+            return array(
                 'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
                 'assets' => $form['assets']);
@@ -150,7 +162,7 @@ class ElementController extends Controller
         $form = ComponentElement::getElementForm($this->container, $application,
                 $element);
 
-        return array (
+        return array(
             'form' => $form['form']->createView(),
             'theme' => $form['theme'],
             'assets' => $form['assets']);
@@ -189,7 +201,7 @@ class ElementController extends Controller
 
             $entity_class = $element->getClass();
             $appl = new \Mapbender\CoreBundle\Component\Application($this->container,
-                $application, array ());
+                $application, array());
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
             $this->get('session')->setFlash('success',
@@ -197,7 +209,7 @@ class ElementController extends Controller
 
             return new Response('', 205);
         } else {
-            return array (
+            return array(
                 'form' => $form['type']->getForm()->createView(),
                 'theme' => $form['theme'],
                 'assets' => $form['assets']);
@@ -269,7 +281,7 @@ class ElementController extends Controller
                 . $id . '" does not exist.');
         }
 
-        return array (
+        return array(
             'element' => $element,
             'form' => $this->createDeleteForm($id)->createView());
     }
@@ -298,7 +310,7 @@ class ElementController extends Controller
             "SELECT e FROM MapbenderCoreBundle:Element e"
             . " WHERE e.region=:reg AND e.application=:app"
             . " AND e.weight>=:min ORDER BY e.weight ASC");
-        $query->setParameters(array (
+        $query->setParameters(array(
             "reg" => $element->getRegion(),
             "app" => $element->getApplication()->getId(),
             "min" => $element->getWeight()));
@@ -338,11 +350,12 @@ class ElementController extends Controller
         }
         $number = $this->get("request")->get("number");
         $newregion = $this->get("request")->get("region");
-        if (intval($number) === $element->getWeight() && $element->getRegion() === $newregion) {
-            return new Response(json_encode(array (
+        if (intval($number) === $element->getWeight() && $element->getRegion() ===
+            $newregion) {
+            return new Response(json_encode(array(
                     'error' => '',
                     'result' => 'ok')), 200,
-                array ('Content-Type' => 'application/json'));
+                array('Content-Type' => 'application/json'));
         }
         if ($element->getRegion() === $newregion) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -353,7 +366,7 @@ class ElementController extends Controller
                 "SELECT e FROM MapbenderCoreBundle:Element e"
                 . " WHERE e.region=:reg AND e.application=:app"
                 . " ORDER BY e.weight ASC");
-            $query->setParameters(array (
+            $query->setParameters(array(
                 "reg" => $newregion,
                 "app" => $element->getApplication()->getId()));
             $elements = $query->getResult();
@@ -389,7 +402,7 @@ class ElementController extends Controller
                 "SELECT e FROM MapbenderCoreBundle:Element e"
                 . " WHERE e.region=:reg AND e.application=:app"
                 . " AND e.weight>=:min ORDER BY e.weight ASC");
-            $query->setParameters(array (
+            $query->setParameters(array(
                 "reg" => $element->getRegion(),
                 "app" => $element->getApplication()->getId(),
                 "min" => $element->getWeight()));
@@ -408,7 +421,7 @@ class ElementController extends Controller
                 "SELECT e FROM MapbenderCoreBundle:Element e"
                 . " WHERE e.region=:reg AND e.application=:app"
                 . " AND e.weight>=:min ORDER BY e.weight ASC");
-            $query->setParameters(array (
+            $query->setParameters(array(
                 "reg" => $newregion,
                 "app" => $element->getApplication()->getId(),
                 "min" => $number));
@@ -430,10 +443,10 @@ class ElementController extends Controller
             $em->persist($application);
             $em->flush();
         }
-        return new Response(json_encode(array (
+        return new Response(json_encode(array(
                 'error' => '',
                 'result' => 'ok')), 200,
-            array (
+            array(
             'Content-Type' => 'application/json'));
     }
 
@@ -451,9 +464,9 @@ class ElementController extends Controller
 
         $enabled = $this->get("request")->get("enabled");
         if (!$element) {
-            return new Response(json_encode(array (
+            return new Response(json_encode(array(
                     'error' => 'An element with the id "' . $id . '" does not exist.')),
-                200, array ('Content-Type' => 'application/json'));
+                200, array('Content-Type' => 'application/json'));
         } else {
             $enabled_before = $element->getEnabled();
             $enabled = $enabled === "true" ? true : false;
@@ -461,14 +474,14 @@ class ElementController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
             $em->persist($element);
             $em->flush();
-            return new Response(json_encode(array (
-                    'success' => array (
+            return new Response(json_encode(array(
+                    'success' => array(
                         "id" => $element->getId(),
                         "type" => "element",
-                        "enabled" => array (
+                        "enabled" => array(
                             'before' => $enabled_before,
                             'after' => $enabled)))), 200,
-                array ('Content-Type' => 'application/json'));
+                array('Content-Type' => 'application/json'));
         }
     }
 
@@ -477,7 +490,7 @@ class ElementController extends Controller
      */
     private function createDeleteForm($id)
     {
-        return $this->createFormBuilder(array ('id' => $id))
+        return $this->createFormBuilder(array('id' => $id))
                 ->add('id', 'hidden')
                 ->getForm();
     }

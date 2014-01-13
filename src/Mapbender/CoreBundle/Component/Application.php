@@ -3,7 +3,6 @@
 /**
  * TODO: License
  */
-
 namespace Mapbender\CoreBundle\Component;
 
 use Assetic\Asset\AssetCollection;
@@ -13,7 +12,6 @@ use Assetic\FilterManager;
 use Assetic\Asset\StringAsset;
 use Assetic\AssetManager;
 use Assetic\Factory\AssetFactory;
-
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -32,7 +30,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class Application
 {
-
     /**
      * @var ContainerInterface $container The container
      */
@@ -63,7 +60,8 @@ class Application
      * @param Entity $entity The configuration entity
      * @param array $urls Array of runtime URLs
      */
-    public function __construct(ContainerInterface $container, Entity $entity, array $urls)
+    public function __construct(ContainerInterface $container, Entity $entity,
+        array $urls)
     {
         $this->container = $container;
         $this->entity = $entity;
@@ -147,9 +145,10 @@ class Application
      * @param boolean $js   Whether to include the JavaScript
      * @return string $html The rendered HTML
      */
-    public function render($format = 'html', $html = true, $css = true, $js = true)
+    public function render($format = 'html', $html = true, $css = true,
+        $js = true, $trans = true)
     {
-        return $this->getTemplate()->render($format, $html, $css, $js);
+        return $this->getTemplate()->render($format, $html, $css, $js, $trans);
     }
 
     /**
@@ -161,18 +160,18 @@ class Application
      */
     public function getAssets($type)
     {
-        if($type !== 'css' && $type !== 'js')
-        {
+        if ($type !== 'css' && $type !== 'js' && $type !== 'trans') {
             throw new \RuntimeException('Asset type \'' . $type .
-                    '\' is unknown.');
+            '\' is unknown.');
         }
 
         // Add all assets to an asset manager first to avoid duplication
         $assets = new AssetManager();
 
-        if($type === 'js')
-        {
+        if ($type === 'js') {
             // Mapbender API
+            $file = '@MapbenderCoreBundle/Resources/public/stubs.js';
+            $this->addAsset($assets, $type, $file);
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.js';
             $this->addAsset($assets, $type, $file);
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.model.js';
@@ -181,58 +180,86 @@ class Application
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.trans.js';
             $this->addAsset($assets, $type, $file);
             // WDT fixup
-            if($this->container->has('web_profiler.debug_toolbar'))
-            {
+            if ($this->container->has('web_profiler.debug_toolbar')) {
                 $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js';
                 $this->addAsset($assets, $type, $file);
             }
         }
-        if($type === 'css')
-        {
+        if ($type === 'css') {
             //$file = '@MapbenderCoreBundle/Resources/public/mapbender.application.css';
             //$this->addAsset($assets, $type, $file);
         }
 
+        if ($type === 'trans') {
+            $file = '@MapbenderCoreBundle/Resources/public/mapbender.trans.js';
+            $this->addAsset($assets, $type, $file);
+        }
+
         // Load all elements assets
-        foreach($this->getElements() as $region => $elements)
-        {
-            foreach($elements as $element)
-            {
+        $translations = array();
+        foreach ($this->getElements() as $region => $elements) {
+            foreach ($elements as $element) {
                 $element_assets = $element->getAssets();
-                foreach($element_assets[$type] as $asset)
-                {
-                    $this->addAsset($assets, $type, $this->getReference($element, $asset));
+                if (isset($element_assets[$type])) {
+                    foreach ($element_assets[$type] as $asset) {
+                        if ($type === 'trans') {
+                            $elementTranslations = json_decode($this->container->get('templating')->render($asset),
+                                true);
+                            $translations = array_merge($translations,
+                                $elementTranslations);
+                        } else {
+                            $this->addAsset($assets, $type,
+                                $this->getReference($element, $asset));
+                        }
+                    }
                 }
             }
         }
-
+        $layerTranslations = array();
         // Load all layer assets
-        foreach($this->getLayersets() as $layerset)
-        {
-            foreach($layerset->layerObjects as $layer)
-            {
+        foreach ($this->getLayersets() as $layerset) {
+            foreach ($layerset->layerObjects as $layer) {
                 $layer_assets = $layer->getAssets();
-                foreach($layer_assets[$type] as $asset)
-                {
-                    $this->addAsset($assets, $type, $this->getReference($layer, $asset));
+                if (isset($layer_assets[$type])) {
+                    foreach ($layer_assets[$type] as $asset) {
+                        if ($type === 'trans') {
+                            if (!isset($layerTranslations[$asset])) {
+                                $layerTranslations[$asset] = json_decode($this->container->get('templating')->render($asset),
+                                    true);
+                            }
+                        } else {
+                            $this->addAsset($assets, $type,
+                                $this->getReference($layer, $asset));
+                        }
+                    }
                 }
             }
+        }
+        foreach ($layerTranslations as $key => $value) {
+            $translations = array_merge($translations, $value);
         }
 
         // Load the template assets last, so it can easily overwrite element
         // and layer assets for application specific styling for example
-        foreach($this->getTemplate()->getAssets($type) as $asset)
-        {
-            $file = $this->getReference($this->template, $asset);
-            $this->addAsset($assets, $type, $file);
+        foreach ($this->getTemplate()->getAssets($type) as $asset) {
+            if ($type === 'trans') {
+                $elementTranslations = json_decode($this->container->get('templating')->render($asset),
+                    true);
+                $translations = array_merge($translations, $elementTranslations);
+            } else {
+                $file = $this->getReference($this->template, $asset);
+                $this->addAsset($assets, $type, $file);
+            }
         }
-
+        if ($type === 'trans') {
+            $transAsset = new StringAsset('Mapbender.i18n = ' . json_encode($translations,
+                    JSON_FORCE_OBJECT) . ';');
+            $assets->set('i18n', $transAsset);
+        }
         // Load extra assets given by application
         $extra_assets = $this->getEntity()->getExtraAssets();
-        if(is_array($extra_assets) && array_key_exists($type, $extra_assets))
-        {
-            foreach($extra_assets[$type] as $asset)
-            {
+        if (is_array($extra_assets) && array_key_exists($type, $extra_assets)) {
+            foreach ($extra_assets[$type] as $asset) {
                 $asset = trim($asset);
                 $this->addAsset($assets, $type, $asset);
             }
@@ -240,8 +267,7 @@ class Application
 
         // Get all assets out of the manager and into an collection
         $collection = new AssetCollection();
-        foreach($assets->getNames() as $name)
-        {
+        foreach ($assets->getNames() as $name) {
             $collection->add($assets->get($name));
         }
 
@@ -258,28 +284,25 @@ class Application
         // for URL rewrite
         $sourceBase = null;
         $sourcePath = null;
-        if($reference[0] == '@')
-        {
+        if ($reference[0] == '@') {
             // Bundle name
             $bundle = substr($reference, 1, strpos($reference, '/') - 1);
             // Installation root directory
             $root = dirname($this->container->getParameter('kernel.root_dir'));
             // Path inside the Resources/public folder
-            $assetPath = substr($reference, strlen('@' . $bundle . '/Resources/public'));
+            $assetPath = substr($reference,
+                strlen('@' . $bundle . '/Resources/public'));
 
             // Path for the public version
             $public = $root . '/web/bundles/' .
-                    preg_replace('/bundle$/', '', strtolower($bundle)) .
-                    $assetPath;
+                preg_replace('/bundle$/', '', strtolower($bundle)) .
+                $assetPath;
 
             $sourceBase = '';
             $sourcePath = $public;
         }
 
-        $asset = new FileAsset($file,
-                        array(),
-                        $sourceBase,
-                        $sourcePath);
+        $asset = new FileAsset($file, array(), $sourceBase, $sourcePath);
         $name = str_replace(array('@', '/', '.', '-'), '__', $reference);
         $manager->set($name, $asset);
     }
@@ -301,10 +324,8 @@ class Application
 
         // Get all element configurations
         $configuration['elements'] = array();
-        foreach($this->getElements() as $region => $elements)
-        {
-            foreach($elements as $element)
-            {
+        foreach ($this->getElements() as $region => $elements) {
+            foreach ($elements as $element) {
                 $configuration['elements'][$element->getId()] = array(
                     'init' => $element->getWidgetName(),
                     'configuration' => $element->getConfiguration());
@@ -313,17 +334,15 @@ class Application
 
         // Get all layer configurations
         $configuration['layersets'] = array();
-        foreach($this->getLayersets() as $layerset)
-        {
+        foreach ($this->getLayersets() as $layerset) {
             $configuration['layersets'][$layerset->getId()] = array();
             $num = 0;
-            foreach($layerset->layerObjects as $layer)
-            {
+            foreach ($layerset->layerObjects as $layer) {
                 $layerconf = array(
                     $layer->getId() => array(
                         'type' => $layer->getType(),
                         'title' => $layer->getTitle(),
-                        'configuration' => $layer->getConfiguration()));
+                        'configuration' => $layer->getConfiguration($this->container->get('signer'))));
                 $configuration['layersets'][$layerset->getId()][$num] = $layerconf;
                 $num++;
             }
@@ -343,12 +362,9 @@ class Application
     public function getElement($id)
     {
         $elements = $this->getElements();
-        foreach($elements as $region => $element_list)
-        {
-            foreach($element_list as $element)
-            {
-                if($id == $element->getId())
-                {
+        foreach ($elements as $region => $element_list) {
+            foreach ($element_list as $element) {
+                if ($id == $element->getId()) {
                     return $element;
                 }
             }
@@ -367,13 +383,11 @@ class Application
     private function getReference($object, $file)
     {
         // If it starts with an @ we assume it's already an assetic reference
-        if($file[0] !== '@')
-        {
+        if ($file[0] !== '@') {
             $namespaces = explode('\\', get_class($object));
             $bundle = sprintf('%s%s', $namespaces[0], $namespaces[1]);
             return sprintf('@%s/Resources/public/%s', $bundle, $file);
-        } else
-        {
+        } else {
             return $file;
         }
     }
@@ -385,8 +399,7 @@ class Application
      */
     public function getTemplate()
     {
-        if($this->template === null)
-        {
+        if ($this->template === null) {
             $template = $this->entity->getTemplate();
             $this->template = new $template($this->container, $this);
         }
@@ -402,48 +415,56 @@ class Application
      */
     public function getElements($region = null)
     {
-        if($this->elements === null)
-        {
+        if ($this->elements === null) {
+            $securityContext = $this->container->get('security.context');
             // Set up all elements (by region)
             $this->elements = array();
-            foreach($this->entity->getElements() as $entity)
-            {
+            foreach ($this->entity->getElements() as $entity) {
+                $application_entity = $this->getEntity();
+                if ($application_entity::SOURCE_YAML === $application_entity->getSource()
+                    && count($entity->yaml_roles)) {
+                    $passed = false;
+                    foreach ($entity->yaml_roles as $role) {
+                        if ($securityContext->isGranted($role)) {
+                            $passed = true;
+                            break;
+                        }
+                    }
+                    if (!$passed) {
+                        continue;
+                    }
+                }
                 $class = $entity->getClass();
-                if(!$entity->getEnabled()) {
+                if (!$entity->getEnabled()) {
                     continue;
                 }
                 $element = new $class($this, $this->container, $entity);
                 $r = $entity->getRegion();
 
-                if(!array_key_exists($r, $this->elements))
-                {
+                if (!array_key_exists($r, $this->elements)) {
                     $this->elements[$r] = array();
                 }
                 $this->elements[$r][] = $element;
             }
 
             // Sort each region element's by weight
-            foreach($this->elements as $r => $elements)
-            {
-                usort($elements, function($a, $b)
-                        {
-                            $wa = $a->getEntity()->getWeight();
-                            $wb = $b->getEntity()->getWeight();
-                            if($wa == $wb)
-                            {
-                                return 0;
-                            }
-                            return ($wa < $wb) ? -1 : 1;
-                        });
+            foreach ($this->elements as $r => $elements) {
+                usort($elements,
+                    function($a, $b) {
+                        $wa = $a->getEntity()->getWeight();
+                        $wb = $b->getEntity()->getWeight();
+                        if ($wa == $wb) {
+                            return 0;
+                        }
+                        return ($wa < $wb) ? -1 : 1;
+                    });
             }
         }
 
-        if($region)
-        {
+        if ($region) {
             return array_key_exists($region, $this->elements) ?
-                    $this->elements[$region] : array();
-        } else
-        {
+                $this->elements[$region] : array();
+        } else {
             return $this->elements;
         }
     }
@@ -455,32 +476,25 @@ class Application
      */
     public function getLayersets()
     {
-        if($this->layers === null)
-        {
+        if ($this->layers === null) {
 
             // Set up all elements (by region)
             $this->layers = array();
-            foreach($this->entity->getLayersets() as $layerset)
-            {
+            foreach ($this->entity->getLayersets() as $layerset) {
                 $layerset->layerObjects = array();
-                foreach($layerset->getInstances() as $instance)
-                {
-                    if($this->getEntity()->getSource() === Entity::SOURCE_YAML)
-                    {
+                foreach ($layerset->getInstances() as $instance) {
+                    if ($this->getEntity()->getSource() === Entity::SOURCE_YAML) {
                         $layerset->layerObjects[] = $instance;
-                    } else
-                    {
-                        if($instance->getEnabled()){
+                    } else {
+                        if ($instance->getEnabled()) {
                             $layerset->layerObjects[] = $instance;
                         }
                     }
                 }
                 $this->layers[$layerset->getId()] = $layerset;
             }
-
         }
         return $this->layers;
     }
 
 }
-

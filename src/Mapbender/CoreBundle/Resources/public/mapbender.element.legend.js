@@ -31,7 +31,7 @@
         },
         _setup: function(){
             var self = this;
-
+            this.options.noLegend = Mapbender.trans("mb.core.legend.nolegend");
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
 
             this.layerTitle = this.options.showLayerTitle ? "" : "notshow";
@@ -60,7 +60,6 @@
             var hasChildren = false;
             for(layer in added.children){
                 hasChildren = true;
-                alert("legende layer added");
             }
             if(!hasChildren){
                 var sources = this._getSource(added.source, added.source.configuration.children[0], 1);
@@ -75,7 +74,6 @@
             var hasChildren = false;
             for(layer in added.children){
                 hasChildren = true;
-                alert("legende layer added");
             }
             if(!hasChildren){
                 if(added.after && added.after.source){
@@ -112,7 +110,7 @@
             }
             if(options.changed && options.changed.options){
 
-            } else if(context && options.changed && options.changed.layerRemoved){
+            } else if(context && options.changed && options.changed.childRemoved){
                 function layerlist(layer, layers){
                     layers.push(layer.options.id);
                     if(layer.children)
@@ -120,9 +118,8 @@
                             layerlist(layer_, layers);
                         })
                 }
-                var source = this.model.getSource(options.changed.sourceIdx);
                 var layers = [];
-                layerlist(options.changed.layerRemoved.layer, layers);
+                layerlist(options.changed.childRemoved.layer, layers);
                 $.each(layers, function(idx, layerid){
                     $('li[data-id="' + layerid + '"]', context).remove();
                 });

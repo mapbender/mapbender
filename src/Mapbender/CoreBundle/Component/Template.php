@@ -51,7 +51,7 @@ abstract class Template
      */
     public function getAssets($type)
     {
-        if($type !== 'css' && $type !== 'js')
+        if($type !== 'css' && $type !== 'js' && $type !== 'trans')
         {
             throw new \RuntimeException('The asset type \'' . $type .
                     '\' is not supported.');
@@ -80,5 +80,16 @@ abstract class Template
      * @return string $html The rendered HTML
      */
     abstract public function render($format = 'html', $html = true, $css = true, $js = true);
+    
+    /**
+     * Get the available regions properties.
+     *
+     * @return array
+     */
+    public static function getRegionsProperties()
+    {
+        return array();
+    }
+    
 }
 

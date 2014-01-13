@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -17,7 +16,7 @@ class ScaleBar extends Element
      */
     static public function getClassTitle()
     {
-        return "ScaleBar";
+        return "mb.core.scalebar.class.title";
     }
 
     /**
@@ -25,7 +24,7 @@ class ScaleBar extends Element
      */
     static public function getClassDescription()
     {
-        return "";
+        return "mb.core.scalebar.class.description";
     }
 
     /**
@@ -33,7 +32,9 @@ class ScaleBar extends Element
      */
     static public function getClassTags()
     {
-        return array('ScaleBar', "Map's scale bar");
+        return array(
+            "mb.core.scalebar.tag.scale",
+            "mb.core.scalebar.tag.bar");
     }
 
     /**
@@ -91,12 +92,11 @@ class ScaleBar extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:scalebar.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            "title" => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:scalebar.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    "title" => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
 }
-

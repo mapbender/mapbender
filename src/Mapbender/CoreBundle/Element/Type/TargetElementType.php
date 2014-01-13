@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -7,7 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Form\DataTransformer\ElementIdTransformer;
 
 /**
@@ -16,10 +15,11 @@ use Mapbender\CoreBundle\Form\DataTransformer\ElementIdTransformer;
 class TargetElementType extends AbstractType
 {
     /**
-     *
-     * @var type 
+     * ContainerInterface
+     * @var ContainerInterface Container
      */
     protected $container;
+
     /**
      * @inheritdoc
      */
@@ -27,6 +27,7 @@ class TargetElementType extends AbstractType
     {
         $this->container = $container;
     }
+
     /**
      * @inheritdoc
      */
@@ -34,6 +35,7 @@ class TargetElementType extends AbstractType
     {
         return $this->container;
     }
+
     /**
      * @inheritdoc
      */
@@ -41,6 +43,7 @@ class TargetElementType extends AbstractType
     {
         return 'target_element';
     }
+
     /**
      * @inheritdoc
      */
@@ -48,41 +51,71 @@ class TargetElementType extends AbstractType
     {
         return 'entity';
     }
+
     /**
      * @inheritdoc
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $type = $this;
-        
+
         $resolver->setDefaults(array(
             'application' => null,
             'element_class' => null,
             'class' => 'MapbenderCoreBundle:Element',
             'property' => 'title',
             'query_builder' => function(Options $options) use ($type) {
-                $builderName = preg_replace("/[^\w]/", "", $options['property_path']);
+                $builderName = preg_replace("/[^\w]/", "",
+                    $options['property_path']);
                 $repository = $type->getContainer()->get('doctrine')->getRepository($options['class']);
-                $qb = $repository->createQueryBuilder($builderName);
-                if(is_integer(strpos($options['element_class'], "%"))){
-                    $filter = $qb->expr()->andX(
-                        $qb->expr()->eq($builderName . '.application', $options['application']->getId()),
-                        $qb->expr()->like($builderName . '.class', ':class')
-                    );
-                    $qb->where($filter);
-                    $qb->setParameter('class', $options['element_class']);
+                $a = $options['element_class'];
+                if (isset($options['element_class']) && $options['element_class']
+                    !== null) {
+                    $qb = $repository->createQueryBuilder($builderName);
+                    if (is_integer(strpos($options['element_class'], "%"))) {
+                        $filter = $qb->expr()->andX(
+                            $qb->expr()->eq($builderName . '.application',
+                                $options['application']->getId()),
+                            $qb->expr()->like($builderName . '.class', ':class')
+                        );
+                        $qb->where($filter);
+                        $qb->setParameter('class', $options['element_class']);
+                    } else {
+                        $filter = $qb->expr()->andX(
+                            $qb->expr()->eq($builderName . '.application',
+                                $options['application']->getId()),
+                            $qb->expr()->eq($builderName . '.class', ':class')
+                        );
+                        $qb->where($filter);
+                        $qb->setParameter('class', $options['element_class']);
+                    }
+                    return $qb;
                 } else {
-                    $filter = $qb->expr()->andX(
-                        $qb->expr()->eq($builderName . '.application', $options['application']->getId()),
-                        $qb->expr()->eq($builderName . '.class', ':class')
-                    );
+                    $elm_ids = array();
+                    foreach ($options['application']->getElements() as
+                            $element_entity) {
+                        $class = $element_entity->getClass();
+                        $appl = new Application($type->getContainer(),
+                            $options['application'], array());
+                        $element = new $class($appl, $type->getContainer(),
+                            $element_entity);
+                        $elm_class = get_class($element);
+                        if ($elm_class::$ext_api) {
+                            $elm_ids[] = $element->getId();
+                        }
+                    }
+                    $qb = $repository->createQueryBuilder($builderName);
+                    $filter = $qb->expr()->andX();
+                    $filter->add($qb->expr()->in($builderName . '.id',
+                            ':elm_ids'));
                     $qb->where($filter);
-                    $qb->setParameter('class', $options['element_class']);
+                    $qb->setParameter('elm_ids', $elm_ids);
+                    return $qb;
                 }
-                return $qb;
             }
         ));
     }
+
     /**
      * @inheritdoc
      */
@@ -92,4 +125,5 @@ class TargetElementType extends AbstractType
         $transformer = new ElementIdTransformer($entityManager);
         $builder->addModelTransformer($transformer);
     }
+
 }

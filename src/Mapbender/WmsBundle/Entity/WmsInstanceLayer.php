@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,7 +19,6 @@ use Mapbender\CoreBundle\Component\Utils;
  */
 class WmsInstanceLayer implements InstanceLayerIn
 {
-
     /**
      * @var integer $id
      * @ORM\Id
@@ -557,8 +555,9 @@ class WmsInstanceLayer implements InstanceLayerIn
     public function getConfiguration()
     {
         $configuration = array(
-            "id" => $this->id,
-            "name" => $this->wmslayersource->getName() !== null ? $this->wmslayersource->getName() : "",
+            "id" => strval($this->id),
+            "name" => $this->wmslayersource->getName() !== null ? $this->wmslayersource->getName()
+                    : "",
             "title" => $this->title,
             "queryable" => $this->getInfo(),
             "style" => $this->style,
@@ -566,27 +565,25 @@ class WmsInstanceLayer implements InstanceLayerIn
             "maxScale" => $this->maxScale !== null ? floatval($this->maxScale) : null
         );
 
-        if(count($this->wmslayersource->getStyles()) > 0)
-        {
+        if (count($this->wmslayersource->getStyles()) > 0) {
             $styles = $this->wmslayersource->getStyles();
             $legendurl = $styles[0]->getLegendUrl(); // first style object
-            if($legendurl !== null){
-            $configuration["legend"] = array(
-                "url" => $legendurl->getOnlineResource()->getHref(),
-                "width" => intval($legendurl->getWidth()),
-                "height" => intval($legendurl->getHeight()));
+            if ($legendurl !== null) {
+                $configuration["legend"] = array(
+                    "url" => $legendurl->getOnlineResource()->getHref(),
+                    "width" => intval($legendurl->getWidth()),
+                    "height" => intval($legendurl->getHeight()));
             }
-        } else if($this->wmsinstance->getSource()->getGetLegendGraphic() !== null)
-        {
+        } else if ($this->wmsinstance->getSource()->getGetLegendGraphic() !== null) {
             $legend = $this->wmsinstance->getSource()->getGetLegendGraphic();
             $url = $legend->getHttpGet();
             $formats = $legend->getFormats();
             $params = "service=WMS&request=GetLegendGraphic"
-                    . "&version="
-                    . $this->wmsinstance->getSource()->getVersion()
-                    . "&layer=" . $this->wmslayersource->getName()
-                    . (count($formats) > 0 ? "&format=" . $formats[0] : "")
-                    . "&sld_version=1.1.0";
+                . "&version="
+                . $this->wmsinstance->getSource()->getVersion()
+                . "&layer=" . $this->wmslayersource->getName()
+                . (count($formats) > 0 ? "&format=" . $formats[0] : "")
+                . "&sld_version=1.1.0";
             $legendgraphic = Utils::getHttpUrl($url, $params);
             $configuration["legend"] = array(
                 "graphic" => $legendgraphic);
@@ -604,7 +601,7 @@ class WmsInstanceLayer implements InstanceLayerIn
         );
         return $configuration;
     }
-    
+
     /**
      * 
      * @param 
