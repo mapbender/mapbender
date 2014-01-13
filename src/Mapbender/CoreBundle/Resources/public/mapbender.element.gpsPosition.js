@@ -53,7 +53,7 @@ $.widget("mapbender.mbGpsPosition", {
 
             }, function error(msg) {}, { enableHighAccuracy: true, maximumAge: 0 });
         } else {
-            alert("I'm sorry, but geolocation services are not supported by your browser.");
+            Mapbender.error(Mapbender.trans("mb.core.gpsposition.error.notsupported"));
         }
     },
 

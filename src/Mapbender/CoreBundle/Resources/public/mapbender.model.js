@@ -11,6 +11,7 @@ Mapbender.Model = {
     layersMaxExtent: {},
     highlightLayer: null,
     baseId: 0,
+
     init: function(mbMap){
         this.mbMap = mbMap;
         var self = this;
@@ -403,8 +404,10 @@ Mapbender.Model = {
      */
     _sourceLoadError: function(e, imgEl){
         var source = this.getSource({ollid: e.element.id});
-        var loadError = Mapbender.source[source.type].onLoadError(imgEl, e.element.id, this.map.olMap.getProjectionObject());
-        this.mbMap.fireModelEvent({name: 'sourceloaderror', value: {source: source, error: loadError}});
+        Mapbender.source[source.type].onLoadError(imgEl, source.id, this.map.olMap.getProjectionObject(), $.proxy(this.sourceLoadErrorCallback, this));
+    },
+    sourceLoadErrorCallback: function(loadError){
+        this.mbMap.fireModelEvent({name: 'sourceloaderror', value: {source: this.getSource({'id': loadError.sourceId}), error: loadError}});
     },
     /**
      *
@@ -459,6 +462,7 @@ Mapbender.Model = {
         if(addOptions.add){
             var sourceDef = addOptions.add.sourceDef, before = addOptions.add.before, after = addOptions.add.after;
             sourceDef.id = this.generateSourceId();
+
             if(typeof sourceDef.origId === 'undefined')
                 sourceDef.origId = sourceDef.id;
             this.mbMap.fireModelEvent({

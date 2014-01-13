@@ -301,14 +301,14 @@
                     this.fireModelEvent({name: 'srsadded', value: response.data[i]});
                 }
             } else if(response.error){
-                Mapbender.error(response.error);
+                Mapbender.error(Mapbender.trans(response.error));
             }
         },
         /**
          * Loads the srs definitions from server
          */
         _loadSrsError: function(response){
-            Mapbender.error(response);
+            Mapbender.error(Mapbender.trans(response));
         }
     });
 

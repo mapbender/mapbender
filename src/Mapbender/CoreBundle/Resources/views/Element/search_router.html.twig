@@ -1,4 +1,4 @@
-<div class="mb-element mb-element-searchrouter" id="{{ element.id }}" title="{{ element.title }}">
+<div class="mb-element mb-element-searchrouter" id="{{ element.id }}" title="{{ element.title | trans }}">
     {{ form_label(element.getRouteSelectForm.route) }}{{ form_widget(element.getRouteSelectForm.route) }}
 
     <div class="search-forms" novalidate="novalidate">

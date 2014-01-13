@@ -66,14 +66,14 @@
                         width: 320,
                         buttons: {
                                 'cancel': {
-                                    label: 'Cancel',
+                                    label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
                                     cssClass: 'button buttonCancel critical right',
                                     callback: function(){
                                         self.close();
                                     }
                                 },
                                 'ok': {
-                                    label: 'Print',
+                                    label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
                                     cssClass: 'button right',
                                     callback: function(){
                                         self._print();
@@ -256,7 +256,7 @@
             rotation= parseInt(-rotation);
 
             this.lastScale = scale;
-
+            
             var world_size = {
                 x: width * scale / 100,
                 y: height * scale / 100
@@ -369,6 +369,32 @@
             return data;
         },
 
+        _extractGeometriesFromFeature: function(feature) {
+            var verts = feature.geometry.getVertices();
+            if(feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
+                verts.push(verts[0]);
+            }
+            return [verts];
+        },
+
+        _extractGeometriesFromLayer: function(layer) {
+            var self = this;
+            return $.map(layer.features, self._extractGeometriesFromFeature);
+        },
+
+        _extractGeometriesFromMap: function(map) {
+            var self = this;
+            var lays = $.grep(map.layers, function(lay) {
+                return lay.name !== 'Print' && lay.CLASS_NAME === 'OpenLayers.Layer.Vector';
+            });
+            var geoms = $.map(lays, $.proxy(self._extractGeometriesFromLayer, this));
+            return geoms;
+            var all = [];
+            $.each(geoms, function(idx, val) {
+                $.merge(all, val);
+            });
+        },
+
         _printDirectly: function() {
             var form = $('form#formats', this.element),
             extent = this._getPrintExtent();
@@ -377,6 +403,14 @@
             format = this.options.templates[template_key].format,
             file_prefix = this.options.file_prefix;
             
+            var feature_coords = new Array();
+            var feature_comp = this.feature.geometry.components[0].components;
+            for(var i = 0; i < feature_comp.length-1; i++) {
+                feature_coords[i] = new Object();
+                feature_coords[i]['x'] = feature_comp[i].x;
+                feature_coords[i]['y'] = feature_comp[i].y;
+            }
+         
             // Felder für extent, center und layer dynamisch einbauen
             var fields = $();
 
@@ -415,7 +449,13 @@
                 name: 'file_prefix',
                 value: file_prefix
             }));
-
+            
+            $.merge(fields, $('<input />', {
+                type: 'hidden',
+                name: 'extent_feature',
+                value: JSON.stringify(feature_coords)
+            }));
+              
             var sources = this.map.getSourceTree(), num = 0;
             
             for(var i = 0; i < sources.length; i++) {
@@ -425,7 +465,7 @@
                     continue;
                 }
                 if(0 !== type.indexOf('OpenLayers.Layer.')) {
-                    window.console && console.log('Layer is of unknown type for print.', layer);
+//                    window.console && console.log('Layer is of unknown type for print.', layer);
                     continue;
                 }
 
@@ -442,11 +482,66 @@
                     }));
                     num++;
                 }
+            }    
+            
+            // overview
+            
+            var ovMap = this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap')[0],
+            count = 0;
+            if (undefined !== ovMap){
+                for(var i = 0; i < ovMap.layers.length; i++) {
+                    var url = ovMap.layers[i].getURL(ovMap.map.getExtent());
+                    
+                    var extent = ovMap.map.getExtent();
+                    var mwidth = extent.getWidth();
+                    
+                    var size = ovMap.size;
+                    var width = size.w;
+                    
+                    var res = mwidth / width;
+                    
+                    var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
+                    var scale_deg = Math.round(OpenLayers.Util.getScaleFromResolution(res));
+                    
+                    var overview = {};            
+                    overview.url = url;
+                    overview.scale = scale;
+
+                    $.merge(fields, $('<input />', {
+                        type: 'hidden',
+                        name: 'overview[' + count + ']',
+                        value: JSON.stringify(overview)
+                    }));
+                    count++;
+                } 
+            }                 
+            
+            // drawn features      
+            var feature_list = this._extractGeometriesFromMap(this.map.map.olMap);
+            var c = 0;   
+            for(var i = 0; i < feature_list.length; i++) {
+                
+                var point_array = new Array();
+                
+                for(var j = 0; j < feature_list[i].length; j++){
+                    point_array[j] = new Object();
+                    point_array[j]['x'] = feature_list[i][j].x;
+                    point_array[j]['y'] = feature_list[i][j].y;
+                }
+                
+                $.merge(fields, $('<input />', {
+                        type: 'hidden',
+                        name: 'features[' + c + ']',
+                        value: JSON.stringify(point_array)
+                    }));
+                c++;
             }
+            
+            
             $('div#layers').empty();
             fields.appendTo(form.find('div#layers'));
+            
             // Post in neuen Tab (action bei form anpassen)
-
             var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
 
             form.get(0).setAttribute('action', url);
@@ -454,7 +549,7 @@
             form.attr('method', 'post');
             
             if (num === 0){
-                Mapbender.info('No active layer!');
+                Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
             }else{
                 //click hidden submit button to check requierd fields
                 form.find('input[type="submit"]').click();

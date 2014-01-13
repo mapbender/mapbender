@@ -4,11 +4,7 @@ namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Mapbender\CoreBundle\Form\Type\PositionType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Mapbender\CoreBundle\Form\Type\ExtentType;
-use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Element\DataTranformer\LayersetNameTranformer;
 
 /**
  * 

@@ -31,7 +31,7 @@
         },
         _setup: function(){
             var self = this;
-
+            this.options.noLegend = Mapbender.trans("mb.core.legend.nolegend");
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
 
             this.layerTitle = this.options.showLayerTitle ? "" : "notshow";
@@ -60,7 +60,6 @@
             var hasChildren = false;
             for(layer in added.children){
                 hasChildren = true;
-                alert("legende layer added");
             }
             if(!hasChildren){
                 var sources = this._getSource(added.source, added.source.configuration.children[0], 1);
@@ -75,7 +74,6 @@
             var hasChildren = false;
             for(layer in added.children){
                 hasChildren = true;
-                alert("legende layer added");
             }
             if(!hasChildren){
                 if(added.after && added.after.source){

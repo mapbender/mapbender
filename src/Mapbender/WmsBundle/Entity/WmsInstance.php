@@ -12,7 +12,7 @@ use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Component\Style;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\LegendUrl;
-use ArsGeografica\Signing\Signer;
+use Mapbender\CoreBundle\Component\Signer;
 
 
 /**
@@ -144,10 +144,7 @@ class WmsInstance extends SourceInstance
         }
 
         if($signer) {
-            $url = $this->configuration['options']['url'];
-            $signature = strlen($url) . substr($signer->sign($url), strlen($url));
-            $sep = (false === strstr($url, '?') ? '?' : '&');
-            $this->configuration['options']['url'] .= $sep . '_signature=' . $signature;
+            $this->configuration['options']['url'] = $signer->signUrl($this->configuration['options']['url']);
         }
 
         return $this->configuration;
@@ -650,7 +647,8 @@ class WmsInstance extends SourceInstance
         return array(
             'js' => array(
                 '@MapbenderWmsBundle/Resources/public/mapbender.source.wms.js'),
-            'css' => array());
+            'css' => array(),
+            'trans' => array('MapbenderWmsBundle::wmsbundle.json.twig'));
     }
 
     /**

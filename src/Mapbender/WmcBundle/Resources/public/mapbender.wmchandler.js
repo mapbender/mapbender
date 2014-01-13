@@ -51,7 +51,7 @@ Mapbender.WmcHandler = function(mapWidget, options){
             }
         }
         if(wmcProj === null){
-            Mapbender.error('SRS "' + state.extent.srs + '" is not supported by this application.');
+            Mapbender.error(Mapbender.trans(Mapbender.trans("mb.wmc.element.wmchandler.error_srs", {"srs": state.extent.srs})));
         }else if(wmcProj.projCode === mapProj.projCode){
             if(!this.options.keepExtent){
                 var boundsAr = [state.extent.minx, state.extent.miny, state.extent.maxx, state.extent.maxy];
@@ -86,6 +86,10 @@ Mapbender.WmcHandler = function(mapWidget, options){
             }
         }
         this.mapWidget.removeSources(toKeepSources);
+    };
+    
+    this._addWmcToMap = function(sources){
+        
     };
 
     this._addWmcToMap = function(sources){

@@ -27,7 +27,8 @@
                     this.options.layers = value;
                     break;
                 default:
-                    throw "Unknown or unhandled option " + key + " for " + this.namespace + "." + this.widgetName;
+                    throw Mapbender.trans("mb.core.featureinfo.error.unknownoption",
+                    { 'key': key, 'namespace': this.namespace, 'widgetname': this.widgetName});
             }
         },
         /**
@@ -60,6 +61,17 @@
             }
             this.callback ? this.callback.call() : this.callback = null;
         },
+        _onTabs: function(){
+            $(".tabContainer", this.popup.$element).on('click', '.tab', function() {
+                var me = $(this);
+                me.parent().parent().find(".active").removeClass("active");
+                me.addClass("active");
+                $("#" + me.attr("id").replace("tab", "container")).addClass("active");
+            });
+        },
+         _offTabs: function(){
+            $(".tabContainer", this.popup.$element).off('click', '.tab');
+         },
         /**
          * Trigger the Feature Info call for each layer. 
          * Also set up feature info dialog if needed.
@@ -81,6 +93,7 @@
 
             // XXXVH: Need to optimize this section for better performance!
             // Go over all layers
+            var first = true;
             $.each(this.map.layers(), function(idx, layer){
                 if(!layer.visible()){
                     return;
@@ -94,9 +107,10 @@
                 newContainer = $('<div id="container' + layer.id + '" class="container"></div>');
 
                 // activate the first container
-                if(idx == 0){
+                if(first){
                     newTab.addClass("active");
                     newContainer.addClass("active");
+                    first = false;
                 }
 
                 header.append(newTab);
@@ -108,8 +122,9 @@
                         break;
                 }
             });
-
-            var content = (fi_exist) ? tabContainer : '<p class="description">No feature info layer exists.</p>';
+            //console.log($(".tabContainer, .tabContainerAlt", self.element));
+            //$(".tabContainer, .tabContainerAlt", self.element).on('click', '.tab', $.proxy(toggleTabContainer));
+            var content = (fi_exist) ? tabContainer : '<p class="description">'+Mapbender.trans('mb.core.featureinfo.error.nolayer')+'</p>';
 
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
@@ -123,7 +138,7 @@
                     width: 500,
                     buttons: {
                         'ok': {
-                            label: 'Close',
+                            label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
                             cssClass: 'button right',
                             callback: function(){
                                 if(self.options.deactivateOnClose) {
@@ -135,8 +150,11 @@
                         }
                     }
                 });
+                this._onTabs();
             }else{
+                this._offTabs();
                 this.popup.open(content);
+                this._onTabs();
             }
         },
         /**

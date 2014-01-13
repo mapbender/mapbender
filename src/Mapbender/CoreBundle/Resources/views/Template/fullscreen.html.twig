@@ -1,57 +1,58 @@
 {% extends "MapbenderCoreBundle::frontend.html.twig" %}
 
-{% block title %}{{ application.title }}{% endblock %}
+{% block title %}Mapbender3 - {{ application.title }}{% endblock %}
+
+{% block favicon %}{{ asset('favicon.png') }}{% endblock %}
 
 {# TODO: Use controller for app.debug, else use dumped assets #}
 {% block css %}
   <link rel="stylesheet" href="{{ asset('bundles/fomcore/css/frontend/mapbender3_theme.css') }}">
   <link rel="stylesheet" href="{{ asset('bundles/fomcore/css/frontend/fullscreen.css') }}">
 {% endblock %}
-
+  
+{% block trans %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'trans'}) }}"></script>
+{% endblock %}
+  
 {% block js %}
   {{parent()}}
   <script type="text/javascript" src="{{ path('mapbender_core_application_assets', {'slug': application.slug, 'type': 'js'}) }}"></script>
 {% endblock %}
+  
+
 {% block frontend_content %}
-  <div class="logoContainer">
-    <img class="logo" height="80" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
-  </div>
 
-  <ul id="toolbar" class="toolBar itemsRight top">
-    {% if application.elements.toolbar is defined %}
-      {% for element in application.elements.toolbar %}
-        <li class="toolBarItem">{{ element.render() | raw }}</li>
-      {% endfor %}
-    {% endif %}
-  </ul>
-{% if application.elements.sidepane is defined %}
-  <div id="sidepane" class="clear sidePane left">
-    <ul class="sidePaneTabs">
-      <li class="sidePaneTabItem toggleSideBar"></li>
-    </ul>
-    <div class="sideContent">
-        {% for element in application.elements.sidepane %}
-          {{ element.render() | raw }}
-        {% endfor %}
-      
+  <div id="templateWrapper" class="templateWrapper sidePaneOpened">
+    <div class="logoContainer">
+      <img class="logo" height="40" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
     </div>
-  </div>
-{% endif %}
-  <div id="content" class="contentPane">
-    {% if application.elements.content is defined %}
-      {% for element in application.elements.content %}
-        {{ element.render() | raw }}
-      {% endfor %}
-    {% endif %}
-  </div>
 
-  <ul id="footer" class="toolBar itemsRight bottom">
-    {% if application.elements.footer is defined %}
-      {% for element in application.elements.footer %}
-        <li class="toolBarItem">{{ element.render() | raw }}</li>
-      {% endfor %}
-    {% endif %}
-  </ul>
+    <ul id="toolbar" class="toolBar itemsRight top">
+      {% if application.elements.toolbar is defined %}
+        {% for element in application.elements.toolbar %}
+          <li class="toolBarItem">{{ element.render() | raw }}</li>
+        {% endfor %}
+      {% endif %}
+    </ul>
+  {% if application.elements.sidepane is defined %}
+    <div id="sidepane" class="clear sidePane left">
+      <ul class="sidePaneTabs">
+        <li class="sidePaneTabItem toggleSideBar"></li>
+      </ul>
+      <div class="sideContent">
+        {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'sidepane' }%}
+      </div>
+    </div>
+  {% endif %}
+    <div id="content" class="contentPane">
+      {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'content' }%}
+    </div>
+
+    <ul id="footer" class="toolBar itemsRight bottom">
+      {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'footer' }%}
+    </ul>
+  </div>
 
   <script type="text/javascript">
     var Mapbender = Mapbender || {};

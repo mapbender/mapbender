@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -52,7 +51,10 @@ class ButtonAdminType extends AbstractType
                     "iconWms" => "WMS",
                     "iconHelp" => "Help",
                     "iconWmcEditor" => "WMC Editor",
-                    "iconWmcLoader" => "WMC Loader"
+                    "iconWmcLoader" => "WMC Loader",
+                    "iconPoi" => "POI",
+                    "iconImageExport" => "Image Export",
+					"iconSketch" => "Sketch"
             )))
             ->add('label', 'checkbox', array('required' => false))
             ->add('target', 'target_element',

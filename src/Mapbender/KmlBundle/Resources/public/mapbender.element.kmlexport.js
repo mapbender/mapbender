@@ -1,29 +1,25 @@
-(function($) {
+(function($){
 
-$.widget("mapbender.mbKmlExport", {
-    options: {},
+    $.widget("mapbender.mbKmlExport", {
+        options: {},
+        elementUrl: null,
+        form: null,
+        _create: function(){
+            var self = this;
+            this.form = $(this.element);
+            this.elementUrl = Mapbender.configuration.elementPath +
+                this.form.attr('id') + '/';
+        },
+        _destroy: $.noop,
+        _layer2form: function(layer){
+            if(layer.options.type !== 'wms'){
+                return;
+            }
 
-    elementUrl: null,
-    form: null,
-
-    _create: function() {
-        var self = this;
-        this.form = $(this.element);
-        this.elementUrl = Mapbender.configuration.elementPath +
-            this.form.attr('id') + '/';
-    },
-
-    _destroy: $.noop,
-
-    _layer2form: function(layer) {
-        if(layer.options.type !== 'wms') {
-            return;
-        }
-
-        $('<input></input>')
-            .attr('type', 'hidden')
-            .attr('name', 'layers[' + layer.label + ']')
-            .val($.param({
+            $('<input></input>')
+                .attr('type', 'hidden')
+                .attr('name', 'layers[' + layer.label + ']')
+                .val($.param({
                 params: layer.olLayer.params,
                 options: {
                     layers: layer.olLayer.options.layers,
@@ -32,52 +28,49 @@ $.widget("mapbender.mbKmlExport", {
                     visibility: layer.olLayer.visible
                 }
             }))
-            .appendTo(this.form);
-    },
+                .appendTo(this.form);
+        },
+        _map2form: function(targetId){
+            var map = $('#' + targetId).data('mapbenderMbMap').map;
 
-    _map2form: function(targetId) {
-        var map = $('#' + targetId).data('mapbenderMbMap').map;
+            var extent = map.olMap.getExtent();
+            $('<input></input>')
+                .attr('type', 'hidden')
+                .attr('name', 'extent')
+                .val(extent.toBBOX())
+                .appendTo(this.form);
 
-        var extent = map.olMap.getExtent();
-        $('<input></input>')
-            .attr('type', 'hidden')
-            .attr('name', 'extent')
-            .val(extent.toBBOX())
-            .appendTo(this.form);
+            $('<input></input>')
+                .attr('type', 'hidden')
+                .attr('name', 'srs')
+                .val(map.olMap.getProjection())
+                .appendTo(this.form);
+        },
+        exportMap: function(targetId){
+            var map = $('#' + targetId).data('mapbenderMbMap').map,
+                mbLayers = map.layers(),
+                self = this;
 
-        $('<input></input>')
-            .attr('type', 'hidden')
-            .attr('name', 'srs')
-            .val(map.olMap.getProjection())
-            .appendTo(this.form);
-    },
+            this.form.empty();
 
-    exportMap: function(targetId) {
-        var map = $('#' + targetId).data('mapbenderMbMap').map,
-            mbLayers = map.layers(),
-            self = this;
+            $.each(mbLayers, function(k, v){
+                self._layer2form(v);
+            });
 
-        this.form.empty();
+            this._map2form(targetId);
 
-        $.each(mbLayers, function(k, v) {
-            self._layer2form(v);
-        });
+            this.form.submit();
+        },
+        exportLayer: function(layer){
+            var mapId = layer.map.element.attr('id');
+            this.form.empty();
 
-        this._map2form(targetId);
+            this._layer2form(layer);
 
-        this.form.submit();
-    },
+            this._map2form(mapId);
 
-    exportLayer: function(layer) {
-        var mapId = layer.map.element.attr('id');
-        this.form.empty();
-
-        this._layer2form(layer);
-
-        this._map2form(mapId);
-
-        this.form.submit();
-    }
-});
+            this.form.submit();
+        }
+    });
 
 })(jQuery);

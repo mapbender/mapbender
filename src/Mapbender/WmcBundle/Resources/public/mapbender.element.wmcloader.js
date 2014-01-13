@@ -16,7 +16,7 @@
         _setup: function(){
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             if(typeof this.options.load !== 'undefined'
-                    && typeof this.options.load.wmcid !== 'undefined'){
+                && typeof this.options.load.wmcid !== 'undefined'){
                 var wmc_id = this.options.load.wmcid;
                 var map = $('#' + this.options.target).data('mapbenderMbMap');
                 var wmcHandlier = new Mapbender.WmcHandler(map);
@@ -68,14 +68,14 @@
                     width: 400,
                     buttons: {
                         'cancel': {
-                            label: 'Cancel',
+                            label: Mapbender.trans("mb.wmc.element.wmcloader.popup.btn.cancel"),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self.close();
                             }
                         },
                         'ok': {
-                            label: 'Load',
+                            label: Mapbender.trans("mb.wmc.element.wmcloader.popup.btn.ok"),
                             cssClass: 'button buttonYes right',
                             callback: function(){
                                 $('#wmc-load input[type="submit"]', self.popup.$element).click();
@@ -83,7 +83,7 @@
                             }
                         },
                         'back': {
-                            label: 'Back',
+                            label: Mapbender.trans("mb.wmc.element.wmcloader.popup.btn.back"),
                             cssClass: 'button left buttonBack',
                             callback: function(){
                                 $(".popupSubContent").remove();
@@ -109,7 +109,6 @@
                 type: "POST",
                 success: function(data){
                     $("#popupContent").html(data);
-//                    var popup = $("#popup");
                     $(".loadWmcId").on("click", $.proxy(self._loadFromId, self));
                     $(".loadWmcXml").on("click", $.proxy(self._loadForm, self));
                 }
@@ -127,7 +126,7 @@
                         url: url,
                         type: "GET",
                         complete: function(data){
-                            if(data != undefined){
+                            if(typeof data !== 'undefined'){
                                 var pop = $(".popup", self.popup.$element);
                                 var popupContent = $(".popupContent", self.popup.$element);
                                 var contentWrapper = pop.find(".contentWrapper");
@@ -168,7 +167,7 @@
                     beforeSerialize: function(e){
                         var map = $('#' + self.options.target).data('mapbenderMbMap')
                         var state = map.getMapState();
-                        $('input#wmc_state_json',self.popup.$element).val(JSON.stringify(state));
+                        $('input#wmc_state_json', self.popup.$element).val(JSON.stringify(state));
                     },
                     contentType: 'json',
                     context: self,
@@ -187,7 +186,7 @@
                                 wmcHandlier.addToMap(wmc_id, response.success[wmc_id]);
                             }
                         }else if(response.error){
-                            $(".popupSubContent", self.popup.$element).html(response.error);
+                            $(".popupSubContent", self.popup.$element).html(Mapbender.trans(response.error));
                             $(".popupSubTitle", self.popup.$element).text("ERROR");
                         }
                     },
@@ -231,9 +230,11 @@
             var self = this;
             var map = $('#' + this.options.target).data('mapbenderMbMap');
             var st = JSON.stringify(map.getMapState());
-            var form = $('<form method="POST" action="'+(self.elementUrl+'wmcasxml')+'" target="_BLANK" />');
+            var form = $('<form method="POST" action="' + (self.elementUrl + 'wmcasxml') + '" target="_BLANK" />');
             $('<input></input>').attr('type', 'hidden').attr('name', 'state').val(st).appendTo(form);
+            form.appendTo($('body'));
             form.submit();
+            form.remove();
         },
         /**
          *

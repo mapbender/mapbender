@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -15,7 +14,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SearchRouter extends Element
 {
-
     /**
      *
      * @var type
@@ -27,7 +25,7 @@ class SearchRouter extends Element
      */
     static public function getClassTitle()
     {
-        return "Search Router";
+        return "mb.core.searchrouter.class.title";
     }
 
     /**
@@ -35,7 +33,7 @@ class SearchRouter extends Element
      */
     static public function getClassDescription()
     {
-        return "Configurable search routing element";
+        return "mb.core.searchrouter.class.description";
     }
 
     /**
@@ -43,7 +41,9 @@ class SearchRouter extends Element
      */
     static public function getClassTags()
     {
-        return array('Search', 'Router');
+        return array(
+            "mb.core.searchrouter.tag.search",
+            "mb.core.searchrouter.tag.router");
     }
 
     /**
@@ -68,7 +68,8 @@ class SearchRouter extends Element
                 'vendor/backbone.js',
                 'mapbender.element.searchRouter.Feature.js',
                 'mapbender.element.searchRouter.Search.js',
-                'mapbender.element.searchRouter.js'));
+                'mapbender.element.searchRouter.js'),
+            'trans' => array('MapbenderCoreBundle:Element:search_router.json.twig'));
     }
 
     /**
@@ -82,39 +83,35 @@ class SearchRouter extends Element
 
         list($target, $action) = explode('/', $action);
         $conf = $this->getConfiguration();
-        if(!array_key_exists($target, $conf['routes']))
-        {
+        if (!array_key_exists($target, $conf['routes'])) {
             throw new NotFoundHttpException();
         }
 
-        if('autocomplete' === $action)
-        {
+        if ('autocomplete' === $action) {
             $data = json_decode($request->getContent());
 
             // Get search config
             $conf = $this->getConfiguration();
-            if(!array_key_exists($target, $conf['routes']))
-            {
+            if (!array_key_exists($target, $conf['routes'])) {
                 throw new NotFoundHttpException();
             }
             $conf = $conf['routes'][$target];
             $engine = new $conf['class']($this->container);
 
             $results = $engine->autocomplete(
-                    $conf, $data->key, $data->value, $data->properties,
-                    $data->srs, $data->extent);
+                $conf, $data->key, $data->value, $data->properties, $data->srs,
+                $data->extent);
 
             $response->setContent(json_encode(array(
-                        'key' => $data->key,
-                        'value' => $data->value,
-                        'properties' => $data->properties,
-                        'results' => $results
-                    )));
+                'key' => $data->key,
+                'value' => $data->value,
+                'properties' => $data->properties,
+                'results' => $results
+            )));
             return $response;
         }
 
-        if('search' === $action)
-        {
+        if ('search' === $action) {
 
             $this->setupForms();
             $form = $this->forms[$target];
@@ -128,13 +125,13 @@ class SearchRouter extends Element
                 'autocomplete_keys' => get_object_vars($data->autocomplete_keys)
             );
             $features = $engine->search(
-                    $conf, $query, $request->get('srs'), $request->get('extent'));
+                $conf, $query, $request->get('srs'), $request->get('extent'));
 
             // Return GeoJSON FeatureCollection
             $response->setContent(json_encode(array(
-                        'type' => 'FeatureCollection',
-                        'features' => $features,
-                        'query' => $query['form'])));
+                'type' => 'FeatureCollection',
+                'features' => $features,
+                'query' => $query['form'])));
             return $response;
         }
 
@@ -147,8 +144,8 @@ class SearchRouter extends Element
     public function render()
     {
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:search_router.html.twig',
-                                 array('element' => $this));
+                ->render('MapbenderCoreBundle:Element:search_router.html.twig',
+                    array('element' => $this));
     }
 
     /**
@@ -161,8 +158,8 @@ class SearchRouter extends Element
         $configuration = $this->getConfiguration();
 
         $form = $this->container->get('form.factory')->createNamed(
-                'search_routes', new SearchRouterSelectType(), null,
-                array('routes' => $configuration['routes']));
+            'search_routes', new SearchRouterSelectType(), null,
+            array('routes' => $configuration['routes']));
 
         return $form->createView();
     }
@@ -172,11 +169,9 @@ class SearchRouter extends Element
      */
     protected function setupForms()
     {
-        if(null === $this->forms)
-        {
+        if (null === $this->forms) {
             $configuration = $this->getConfiguration();
-            foreach($configuration['routes'] as $name => $conf)
-            {
+            foreach ($configuration['routes'] as $name => $conf) {
                 $this->forms[$name] = $this->setupForm($name, $conf);
             }
         }
@@ -188,8 +183,7 @@ class SearchRouter extends Element
      */
     public function getForms()
     {
-        if(null === $this->forms)
-        {
+        if (null === $this->forms) {
             $this->setupForms();
         }
 
@@ -206,8 +200,7 @@ class SearchRouter extends Element
     protected function setupForm($name, array $conf)
     {
         $form = $this->container->get('form.factory')->createNamed(
-                $name, new SearchRouterFormType(), null,
-                array('fields' => $conf));
+            $name, new SearchRouterFormType(), null, array('fields' => $conf));
 
         return $form;
     }
@@ -216,11 +209,11 @@ class SearchRouter extends Element
      * @inheritdoc
      */
     /* @todo: This one does not work yet
-    public static function getType()
-    {
-        return 'Mapbender\CoreBundle\Element\Type\SearchRouterAdminType';
-    }
-    */
+      public static function getType()
+      {
+      return 'Mapbender\CoreBundle\Element\Type\SearchRouterAdminType';
+      }
+     */
 
     /**
      * @inheritdoc
@@ -229,4 +222,5 @@ class SearchRouter extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:search_router.html.twig';
     }
+
 }

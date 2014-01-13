@@ -41,11 +41,26 @@ $.extend(true, Mapbender, {
                 return mqLayerDef;
             },
             _addProxy: function(url){
-                return OpenLayers.ProxyHost + url;
+                return OpenLayers.ProxyHost + encodeURIComponent(url);
             },
             _removeProxy: function(url){
                 if(url.indexOf(OpenLayers.ProxyHost) === 0){
                     return url.substring(OpenLayers.ProxyHost.length);
+                }
+                return url;
+            },
+            removeSignature: function(url){
+                var pos = -1;
+                pos = url.indexOf("_signature");
+                if(pos !== -1){
+                    var url_new = url.substring(0, pos);
+                    if(url_new.lastIndexOf('&') === url_new.length - 1){
+                        url_new = url_new.substring(0, url_new.lastIndexOf('&'));
+                    }
+                    if(url_new.lastIndexOf('?') === url_new.length - 1){
+                        url_new = url_new.substring(0, url_new.lastIndexOf('?'));
+                    }
+                    return url_new;
                 }
                 return url;
             },
@@ -282,21 +297,22 @@ $.extend(true, Mapbender, {
                     url: layer.getURL(bounds)
                 };
             },
-            onLoadError: function(imgEl, sourceId, projection){
-                var loadError = {sourceid: sourceId, details: ''};
+            onLoadError: function(imgEl, sourceId, projection, callback){
+                var self = this;
+                var loadError = {sourceId: sourceId, details: ''};
                 $.ajax({
                     type: "GET",
                     async: false,
-                    url: Mapbender.configuration.application.urls.proxy + "?url=" + encodeURIComponent(imgEl.attr('src')),
+                    url: Mapbender.configuration.application.urls.proxy + "?url=" + encodeURIComponent(self._removeProxy(imgEl.attr('src'))),
                     success: function(message, text, response){
                         if(typeof(response.responseText) === "string"){
-                            var details = "The map cannot be displayed.";
+                            var details = Mapbender.trans("mb.wms.source.image_error.datails");
                             var layerTree;
                             try{
                                 layerTree = new OpenLayers.Format.WMSCapabilities().read(response.responseText);
                             }catch(e){
                                 layerTree = null;
-                                details += ".\n" + "Exception" + ": " + e.toString();
+                                details += ".\n" + Mapbender.trans("mb.wms.source.image_error.exception",{'exception': e.toString()});
                             }
                             if(layerTree && layerTree.error){
                                 if(layerTree.error.exceptionReport && layerTree.error.exceptionReport.exceptions){
@@ -313,16 +329,17 @@ $.extend(true, Mapbender, {
                             }
                         }
                         loadError.details = details;
+                        callback(loadError);
                     },
                     error: function(err){
-                        var details = "The map cannot be displayed.";
+                        var details = Mapbender.trans("mb.wms.source.image_error.datails");
                         if(err.status == 200){
                             var capabilities;
                             try{
                                 capabilities = new OpenLayers.Format.WMSCapabilities().read(err.responseText);
                             }catch(e){
                                 capabilities = null;
-                                details += ".\n" + "Exception" + ": " + e.toString();
+                                details += ".\n" + Mapbender.trans("mb.wms.source.image_error.exception",{'exception': e.toString()});
                             }
                             if(capabilities && capabilities.error){
                                 if(capabilities.error.exceptionReport && capabilities.error.exceptionReport.exceptions){
@@ -343,12 +360,12 @@ $.extend(true, Mapbender, {
                                 }
                             }
                         }else{
-                            details += ".\n" + "HTTP status code" + ": " + err.status + " - " + err.statusText;
+                            details += ".\n" + Mapbender.trans("mb.wms.source.image_error.statuscode") + ": " + err.status + " - " + err.statusText;
                         }
                         loadError.details = details;
+                        callback(loadError);
                     }
                 });
-                return loadError;
             },
             hasLayers: function(source, withoutGrouped){
                 var options = this.layerCount(source);
@@ -564,7 +581,7 @@ $.extend(true, Mapbender, {
                 _changeOptions(rootLayer, scale, {state: {visibility: true}}, toChangeOpts, result);
                 return result;
                 function _changeOptions(layer, scale, parentState, toChangeOpts, result){
-                    var layerChanged, 
+                    var layerChanged,
                         elchanged = false;
                     if(toChangeOpts.options.children[layer.options.id]){
                         layerChanged = toChangeOpts.options.children[layer.options.id];
@@ -724,14 +741,14 @@ $.extend(true, Mapbender, {
                             if(sel !== layer.options.treeOptions.selected){
                                 toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
                             }
-                        } else{
+                        }else{
                             var help = optionsToChange.layers[layer.options.name] ? optionsToChange.layers[layer.options.name].options.treeOptions.selected : selectedOther;
                             var sel = help || layer.options.treeOptions.selected;
                             if(sel !== layer.options.treeOptions.selected){
                                 toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
                             }
                         }
-                        
+
                         if(sel && layer.options.treeOptions.allow.info){
                             if(toChange[layer.options.id]){
                                 toChange[layer.options.id].options.treeOptions['info'] = true;
