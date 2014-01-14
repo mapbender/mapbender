@@ -322,7 +322,7 @@ $(function() {
                     label: 'Update',
                     cssClass: 'button right',
                     callback: function() {
-                        $("#elementForm").submit();
+                        $("#elementSecurity").submit();
                         window.setTimeout(function() {
                             window.location.reload();
                         }, 50);

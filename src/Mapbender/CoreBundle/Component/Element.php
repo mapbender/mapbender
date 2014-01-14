@@ -401,10 +401,13 @@ abstract class Element
             ->add('region', 'hidden');
 
         $formType->add('acl', 'acl',
-            array (
+            array(
             'property_path' => false,
             'data' => $element, //$options['data'],
-            'permissions' => array (1 => 'view')));
+            'permissions' => array(
+                'show' => array(
+                    1 => 'View')))
+        );
 
         // Get configuration form, either basic YAML one or special form
         $configurationFormType = $class::getType();
@@ -425,7 +428,8 @@ abstract class Element
         } else {
             $type = new $configurationFormType();
             $options = array('application' => $application);
-            if($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null){
+            if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !==
+                null) {
                 $options['element'] = $element;
             }
             $formType->add('configuration', $type, $options);
