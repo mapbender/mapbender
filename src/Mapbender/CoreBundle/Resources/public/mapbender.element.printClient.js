@@ -478,7 +478,7 @@
                     $.merge(fields, $('<input />', {
                         type: 'hidden',
                         name: 'layers[' + num + ']',
-                        value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent()))
+                        value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy))
                     }));
                     num++;
                 }

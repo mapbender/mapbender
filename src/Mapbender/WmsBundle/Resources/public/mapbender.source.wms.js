@@ -291,11 +291,12 @@ $.extend(true, Mapbender, {
                     return null;
                 }
             },
-            getPrintConfig: function(layer, bounds){
-                return {
+            getPrintConfig: function(layer, bounds, isProxy){
+                var printConfig =  {
                     type: 'wms',
-                    url: layer.getURL(bounds)
+                    url: isProxy ? this._removeProxy(layer.getURL(bounds)) : layer.getURL(bounds)
                 };
+                return printConfig;
             },
             onLoadError: function(imgEl, sourceId, projection, callback){
                 var self = this;
