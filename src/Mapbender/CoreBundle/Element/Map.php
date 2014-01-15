@@ -78,7 +78,7 @@ class Map extends Element
                 'mapquery/src/jquery.mapquery.core.js',
                 'proj4js/proj4js-compressed.js',
                 'mapbender.element.map.js'),
-            'css' => array('@MapbenderCoreBundles/Resources/public/sass/element/map.scss'));
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/map.scss'));
     }
 
     /**
