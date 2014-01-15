@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * 
+ *
  */
 class Layertree extends Element
 {
@@ -64,11 +64,11 @@ class Layertree extends Element
             'js' => array(
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js'),
-            'css' => array(),
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/layertree.scss'),
             'trans' => array('MapbenderCoreBundle:Element:layertree.json.twig')
         );
         $config = parent::getConfiguration();
-        if (true) //@TODO 
+        if (true) //@TODO
                 $assets["js"][] = 'mapbender.element.layertree.tree.js';
         else if (isset($config["displaytype"]) && $config["displaytype"] === "list")
                 $assets["js"][] = 'mapbender.element.layertree.list.js';

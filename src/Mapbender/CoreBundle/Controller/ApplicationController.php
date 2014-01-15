@@ -75,7 +75,8 @@ class ApplicationController extends Controller {
         //      http://www.thecssninja.com/javascript/source-mapping
         $filters = array(
             'js' => array(),
-            'css' => array($this->container->get('assetic.filter.cssrewrite')),
+            'css' => array($this->container->get('assetic.filter.compass'),
+                           $this->container->get('assetic.filter.cssrewrite')),
             'trans' => array());
 
         // Set target path for CSS rewrite to work

@@ -5,7 +5,7 @@ use Mapbender\CoreBundle\Component\Template;
 
 /**
  * Template Fullscreen
- * 
+ *
  * @author Christian Wygoda
  */
 class Fullscreen extends Template
@@ -40,9 +40,10 @@ class Fullscreen extends Template
     {
         parent::getAssets($type);
         $assets = array(
-            'css' => array('@FOMCoreBundle/Resources/public/css/frontend/fullscreen.css'),
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
+                           '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
             'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js'),
+                          '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js'),
             'trans' => array()
         );
 

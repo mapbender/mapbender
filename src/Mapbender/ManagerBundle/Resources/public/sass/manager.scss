@@ -1,16 +1,16 @@
 @import "libs/variables";
 @import "libs/mixins";
 @import "libs/normalize";
-@import "libs/icons"; 
+@import "libs/icons";
 
-@import "modules/base"; 
+@import "modules/base";
 @import "modules/layout";
-@import "modules/popup"; 
+@import "modules/popup";
 @import "modules/text";
 @import "modules/input";
-@import "modules/button"; 
-@import "modules/seperator"; 
-@import "modules/container"; 
+@import "modules/button";
+@import "modules/seperator";
+@import "modules/container";
 @import "modules/tabcontainer";
 @import "modules/checkbox";
 @import "modules/dropdown";
@@ -149,14 +149,14 @@ $pageWidth:$contentPaneWidth + $navWidth;
 
 
 
-// --------------------------------------------------------- PAGE CENTER 
+// --------------------------------------------------------- PAGE CENTER
 .contentPane{
   $top:$space*5;
 
   padding-top:$top + $space;
 
   & > .content{
-    min-height: 600px; 
+    min-height: 600px;
     position:relative;
     padding:$space;
     margin:0px;
@@ -171,12 +171,12 @@ $pageWidth:$contentPaneWidth + $navWidth;
     &:before, &:after{
       content:"";
       background-color:$contentColor;
-      height:10px; 
+      height:10px;
       @include box-shadow(0px 0px 3px rgba(0, 0, 0, 0.6));
       @include border-radius($radius);
-    }     
+    }
     &:before{
-      z-index:-10; 
+      z-index:-10;
       @include pos('',5px,-3px,5px);
     }
     &:after{

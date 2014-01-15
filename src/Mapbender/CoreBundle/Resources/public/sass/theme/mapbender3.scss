@@ -4,15 +4,15 @@
 @import "libs/variables";
 @import "libs/mixins";
 @import "libs/normalize";
-@import "libs/icons"; 
+@import "libs/icons";
 
-@import "modules/base"; 
+@import "modules/base";
 @import "modules/layout";
-@import "modules/popup"; 
+@import "modules/popup";
 @import "modules/text";
 @import "modules/input";
-@import "modules/button"; 
-@import "modules/seperator"; 
+@import "modules/button";
+@import "modules/seperator";
 @import "modules/tabcontainer";
 @import "modules/checkbox";
 @import "modules/dropdown";
@@ -103,7 +103,8 @@
 }
 .sidePane{
   overflow: visible;
-  background-image:url($contentPatternUrl);
+  background-color: $contentColor;
+  background-image: url($contentPatternUrl);
   border-top:1px solid darken(white, 30%);
   border-bottom:1px solid darken(white, 30%);
   @include transition(all 0.4s ease-in-out);
