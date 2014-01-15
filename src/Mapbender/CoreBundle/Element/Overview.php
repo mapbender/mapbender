@@ -79,7 +79,7 @@ class Overview extends Element
         return array(
             'js' => array('mapbender.element.overview.js'),
             //TODO: Split up
-            'css' => array());
+            'css' => array('@MapbenderCoreBundles/Resources/public/sass/element/overview.scss'));
     }
 
     /**

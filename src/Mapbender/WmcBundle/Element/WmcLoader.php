@@ -86,7 +86,7 @@ class WmcLoader extends Element
         );
         return array(
             'js' => $js,
-            'css' => array(),
+        'css' => array('@MapbenderWmcBundle/Resources/public/sass/element/wmcloader.scss'));
             'trans' => array(
                 'MapbenderWmcBundle:Element:wmcloader.json.twig',
                 'MapbenderWmcBundle:Element:wmchandler.json.twig')

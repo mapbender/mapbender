@@ -57,7 +57,7 @@ class CoordinatesDisplay extends Element
     {
         return array(
             'js' => array('mapbender.element.coordinatesdisplay.js'),
-            'css' => array()
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/coordinatesdisplay.scss')
         );
     }
 

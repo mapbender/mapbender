@@ -82,7 +82,7 @@ class ScaleDisplay extends Element
     {
         return array(
             'js' => array('mapbender.element.scaledisplay.js'),
-            'css' => array());
+            'css' => array('@MapbenderCoreBundles/Resources/public/sass/element/scaledisplay.scss'));
     }
 
     /**

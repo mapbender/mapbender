@@ -72,7 +72,7 @@ class ActivityIndicator extends Element
     {
         return array(
             'js' => array('mapbender.element.activityindicator.js'),
-            'css' => array());
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/activityindicator.scss'));
     }
 
     /**

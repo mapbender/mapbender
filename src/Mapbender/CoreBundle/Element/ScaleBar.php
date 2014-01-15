@@ -83,7 +83,7 @@ class ScaleBar extends Element
         return array(
             'js' => array('mapbender.element.scalebar.js'),
             //TODO: Split up
-            'css' => array());
+            'css' => array('@MapbenderCoreBundles/Resources/public/sass/element/scalebar.scss'));
     }
 
     /**
