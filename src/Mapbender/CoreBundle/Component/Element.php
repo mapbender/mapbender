@@ -389,21 +389,22 @@ abstract class Element
      * @return dsd
      */
     public static function getElementForm($container, $application,
-        Entity $element)
+        Entity $element, $onlyAcl = false)
     {
         $class = $element->getClass();
 
         // Create base form shared by all elements
         $formType = $container->get('form.factory')->createBuilder('form',
-                $element, array())
-            ->add('title', 'text')
-            ->add('class', 'hidden')
-            ->add('region', 'hidden');
-
+            $element, array());
+        if (!$onlyAcl) {
+            $formType->add('title', 'text')
+                ->add('class', 'hidden')
+                ->add('region', 'hidden');
+        }
         $formType->add('acl', 'acl',
             array(
             'property_path' => false,
-            'data' => $element, //$options['data'],
+            'data' => $element,
             'permissions' => array(
                 'show' => array(
                     1 => 'View')))

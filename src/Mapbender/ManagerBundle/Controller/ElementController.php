@@ -38,7 +38,7 @@ class ElementController extends Controller
         foreach ($this->get('mapbender')->getElements() as $elementClassName) {
             $title = $trans->trans($elementClassName::getClassTitle());
             $tags = array();
-            foreach($elementClassName::getClassTags() as $tag){
+            foreach ($elementClassName::getClassTags() as $tag) {
                 $tags[] = $trans->trans($tag);
             }
             $elements[$title] = array(
@@ -234,26 +234,44 @@ class ElementController extends Controller
         }
         if ($this->getRequest()->getMethod() === 'POST') {
             $form = ComponentElement::getElementForm($this->container,
-                    $application, $element);
+                    $application, $element, true);
             $request = $this->getRequest();
+            $form['form']->bindRequest($request);
+            if ($form['form']->isValid()) {
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->getConnection()->beginTransaction();
+                try {
+                    $application->setUpdated(new \DateTime('now'));
+                    $em->persist($application);
 
-            $form->bindRequest($request);
-            $em = $this->getDoctrine()->getEntityManager();
+                    $aclManager = $this->get('fom.acl.manager');
+                    $aclManager->setObjectACLFromForm($element,
+                        $form['form']->get('acl'), 'object');
+                    $em->flush();
+                    $em->getConnection()->commit();
+                    $this->get('session')->setFlash('success',
+                        "Your element's access has been changed.");
+                } catch (\Exception $e) {
+                    $this->get('session')->setFlash('error',
+                        "There was an error trying to change your element's access.");
+                    $em->getConnection()->rollback();
+                    $em->close();
 
-            $em->getConnection()->beginTransaction();
-            $application->setUpdated(new \DateTime('now'));
-            $em->persist($application);
-
-            $aclManager = $this->get('fom.acl.manager');
-            $aclManager->setObjectACLFromForm($element, $form->get('acl'),
-                'object');
-            $em->flush();
-            $em->getConnection()->commit();
+                    if ($this->container->getParameter('kernel.debug')) {
+                        throw($e);
+                    }
+                }
+            } else {
+                return array(
+                    'form' => $form['form']->createView(),
+                    'theme' => $form['theme'],
+                    'assets' => $form['assets']);
+            }
         } else {
 
             $form = ComponentElement::getElementForm($this->container,
-                    $application, $element);
-            return array (
+                    $application, $element, true);
+            return array(
                 'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
                 'assets' => $form['assets']);
