@@ -370,11 +370,18 @@
         },
 
         _extractGeometriesFromFeature: function(feature) {
-            var verts = feature.geometry.getVertices();
-            if(feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
-                verts.push(verts[0]);
+            var res = [];
+            if(!$.isArray(feature)) {
+                feature = [feature];
             }
-            return [verts];
+            $.each(feature, function(k, v){
+                var verts = v.geometry.getVertices();
+                if(v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
+                    verts.push(verts[0]);
+                }
+                res.push(verts);
+            });
+            return res;
         },
 
         _extractGeometriesFromLayer: function(layer) {
