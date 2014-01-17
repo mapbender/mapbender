@@ -15,7 +15,7 @@ class GpsPosition extends Element
      */
     static public function getClassTitle()
     {
-        return "GPS-Position";
+        return "mb.core.gpsposition.class.title";
     }
 
     /**
@@ -23,7 +23,7 @@ class GpsPosition extends Element
      */
     static public function getClassDescription()
     {
-        return "Renders a button to show the GPS-Position";
+        return "mb.core.gpsposition.class.description";
     }
 
     /**
@@ -31,7 +31,11 @@ class GpsPosition extends Element
      */
     static public function getClassTags()
     {
-        return array('GPS','Position');
+        return array(
+            "mb.core.gpsposition.tag.gpsposition",
+            "mb.core.gpsposition.tag.gps",
+            "mb.core.gpsposition.tag.position",
+            "mb.core.gpsposition.tag.button");
     }
 
     /**
@@ -43,7 +47,8 @@ class GpsPosition extends Element
             'js' => array(
                 'mapbender.element.button.js',
                 'mapbender.element.gpsPosition.js'),
-            'css' => array());
+            'css' => array(),
+            'trans' => array('MapbenderCoreBundle:Element:gpsposition.json.twig'));
     }
 
     /**

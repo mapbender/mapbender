@@ -27,7 +27,8 @@
                     this.options.layers = value;
                     break;
                 default:
-                    throw "Unknown or unhandled option " + key + " for " + this.namespace + "." + this.widgetName;
+                    throw Mapbender.trans("mb.core.featureinfo.error.unknownoption",
+                    { 'key': key, 'namespace': this.namespace, 'widgetname': this.widgetName});
             }
         },
         /**
@@ -123,7 +124,7 @@
             });
             //console.log($(".tabContainer, .tabContainerAlt", self.element));
             //$(".tabContainer, .tabContainerAlt", self.element).on('click', '.tab', $.proxy(toggleTabContainer));
-            var content = (fi_exist) ? tabContainer : '<p class="description">No feature info layer exists.</p>';
+            var content = (fi_exist) ? tabContainer : '<p class="description">'+Mapbender.trans('mb.core.featureinfo.error.nolayer')+'</p>';
 
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
@@ -137,7 +138,7 @@
                     width: 500,
                     buttons: {
                         'ok': {
-                            label: 'Close',
+                            label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
                             cssClass: 'button right',
                             callback: function(){
                                 if(self.options.deactivateOnClose) {

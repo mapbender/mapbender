@@ -14,7 +14,7 @@ class WmcList extends Element
      */
     static public function getClassTitle()
     {
-        return "WmcList";
+        return "mb.wmc.wmclist.class.title";
     }
 
     /**
@@ -22,7 +22,7 @@ class WmcList extends Element
      */
     static public function getClassDescription()
     {
-        return "Generates a selectbox with configurations that can be loaded";
+        return "mb.wmc.wmclist.class.description";
     }
 
     /**
@@ -30,7 +30,7 @@ class WmcList extends Element
      */
     static public function getClassTags()
     {
-        return array("wmc", "list");
+        return array("mb.wmc.suggestmap.wmc", "mb.wmc.suggestmap.list");
     }
 
     /**
@@ -78,7 +78,9 @@ class WmcList extends Element
         );
         return array(
             'js' => $js,
-            'css' => array()
+            'css' => array(),
+            'trans' => array(
+                'MapbenderWmcBundle:Element:wmclist.json.twig')
         );
     }
 

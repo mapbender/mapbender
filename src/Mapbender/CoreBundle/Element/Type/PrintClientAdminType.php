@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -36,23 +35,24 @@ class PrintClientAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new PrintClientSubscriber($builder->getFormFactory(), $options["application"]);
+        $subscriber = new PrintClientSubscriber($builder->getFormFactory(),
+            $options["application"]);
         $builder->addEventSubscriber($subscriber);
         $builder->add('target', 'target_element',
-                      array(
-                    'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
-                    'application' => $options['application'],
-                    'property_path' => '[target]',
-                    'required' => false))
-                ->add('autoOpen', 'checkbox',
-                      array(
-                    'required' => false))
-                ->add('scales', 'text', array('required' => false))
-                ->add('file_prefix', 'text', array('required' => false))
-                ->add('rotatable', 'checkbox',
-                      array(
-                    'required' => false))
-                ->add('optional_fields', 'text', array('required' => false));
+                array(
+                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+                'application' => $options['application'],
+                'property_path' => '[target]',
+                'required' => false))
+            ->add('autoOpen', 'checkbox',
+                array(
+                'required' => false))
+            ->add('scales', 'text', array('required' => false))
+            ->add('file_prefix', 'text', array('required' => false))
+            ->add('rotatable', 'checkbox',
+                array(
+                'required' => false))
+            ->add('optional_fields', 'text', array('required' => false));
     }
 
 }

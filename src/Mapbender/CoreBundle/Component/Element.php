@@ -6,13 +6,13 @@
  *       constructor and throw an exception. The application then should catch
  *       the exception and handle it.
  */
-
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Mapbender\CoreBundle\Component\ExtendedCollection;
 
 /**
  * Base class for all Mapbender elements.
@@ -30,7 +30,7 @@ abstract class Element
      * @var boolean extended api 
      */
     public static $ext_api = true;
-    
+
     /**
      * Merge Configurations. The merge_configurations defines, if the default 
      * configuration array and the configuration array should be merged
@@ -64,7 +64,7 @@ abstract class Element
      * @param ContainerInterface $container The container object
      */
     public function __construct(Application $application,
-            ContainerInterface $container, Entity $entity)
+        ContainerInterface $container, Entity $entity)
     {
         $this->application = $application;
         $this->container = $container;
@@ -289,6 +289,13 @@ abstract class Element
         throw new NotFoundHttpException('This element has no Ajax handler.');
     }
 
+    public function trans($key, array $parameters = array(), $domain = null,
+        $locale = null)
+    {
+        return $this->container->get('translator')->trans($key);
+//        return $this->container->get('translator')->trans($key, $parameters, $domain, $locale);
+    }
+
     /*     * ***********************************************************************
      *                                                                       *
      *                          Backend stuff                                *
@@ -340,42 +347,33 @@ abstract class Element
      */
     public static function mergeArrays($default, $main, $result)
     {
-        foreach($main as $key => $value)
-        {
-            if($value === null)
-            {
+        foreach ($main as $key => $value) {
+            if ($value === null) {
                 $result[$key] = null;
-            } else if(is_array($value))
-            {
-                if(isset($default[$key]))
-                {
+            } else if (is_array($value)) {
+                if (isset($default[$key])) {
                     $result[$key] = Element::mergeArrays($default[$key],
-                                                         $main[$key], array());
-                } else
-                {
+                            $main[$key], array());
+                } else {
                     $result[$key] = $main[$key];
                 }
-            } else
-            {
+            } else {
                 $result[$key] = $value;
             }
         }
-        if($default !== null && is_array($default))
-        {
-            foreach($default as $key => $value)
-            {
-                if(!isset($result[$key])
-                        || (isset($result[$key])
-                            && $result[$key] === null
-                            && $value !== null))
-                {
+        if ($default !== null && is_array($default)) {
+            foreach ($default as $key => $value) {
+                if (!isset($result[$key])
+                    || (isset($result[$key])
+                    && $result[$key] === null
+                    && $value !== null)) {
                     $result[$key] = $value;
                 }
             }
         }
         return $result;
     }
-    
+
     /**
      * Post save
      */
@@ -383,28 +381,29 @@ abstract class Element
     {
         
     }
-    
+
     /**
      * Create form for given element
      *
      * @param string $class
      * @return dsd
      */
-    public static function getElementForm($container, $application, Entity $element)
+    public static function getElementForm($container, $application,
+        Entity $element)
     {
         $class = $element->getClass();
 
         // Create base form shared by all elements
-        $formType = $container->get('form.factory')->createBuilder('form', $element, array())
-                ->add('title', 'text')
-                ->add('class', 'hidden')
-                ->add('region', 'hidden');
+        $formType = $container->get('form.factory')->createBuilder('form',
+                $element, array())
+            ->add('title', 'text')
+            ->add('class', 'hidden')
+            ->add('region', 'hidden');
         // Get configuration form, either basic YAML one or special form
         $configurationFormType = $class::getType();
-        if($configurationFormType === null)
-        {
+        if ($configurationFormType === null) {
             $formType->add('configuration', new YAMLConfigurationType(),
-                           array(
+                array(
                 'required' => false,
                 'attr' => array(
                     'class' => 'code-yaml')));
@@ -416,14 +415,13 @@ abstract class Element
                     'bundles/mapbendermanager/js/form-yaml.js'),
                 'css' => array(
                     'bundles/mapbendermanager/codemirror2/lib/codemirror.css'));
-        } else
-        {
-            $type = $class::getType();
-
-            $formType->add('configuration', new $type(),
-                           array(
-                'application' => $application
-            ));
+        } else {
+            $type = new $configurationFormType();
+            $options = array('application' => $application);
+            if($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null){
+                $options['element'] = $element;
+            }
+            $formType->add('configuration', $type, $options);
             $formTheme = $class::getFormTemplate();
             $formAssets = $class::getFormAssets();
         }
@@ -433,7 +431,7 @@ abstract class Element
             'theme' => $formTheme,
             'assets' => $formAssets);
     }
-    
+
     /**
      * Create default element
      *
@@ -446,14 +444,13 @@ abstract class Element
         $element = new Entity();
         $configuration = $class::getDefaultConfiguration();
         $element
-                ->setClass($class)
-                ->setRegion($region)
-                ->setWeight(0)
-                ->setTitle($class::getClassTitle())
-                ->setConfiguration($configuration);
+            ->setClass($class)
+            ->setRegion($region)
+            ->setWeight(0)
+            ->setTitle($class::getClassTitle())
+            ->setConfiguration($configuration);
 
         return $element;
     }
 
 }
-

@@ -81,6 +81,10 @@
             this.activate(callback);
         },
         activate: function(callback){
+            if(this.activated){
+                this.deactivate();
+                return;
+            }
             var self = this;
             this.callback = callback ? callback : null;
 
@@ -135,7 +139,7 @@
          */
         _open: function(e){
             var self = this;
-            var content = '<label for="inputCircleRadius" class="labelInput left">Radius:</label>';//'mb.core.sketch.circle.radius.label'
+            var content = '<label for="inputCircleRadius" class="labelInput left">'+Mapbender.trans('mb.core.sketch.circle.radius.label')+':</label>';
             content += '<input id="inputCircleRadius" type="text" class="input listFilterInput" />'
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
@@ -150,19 +154,19 @@
                     width: 400,
                     buttons: {
                         'cancel': {
-                            label: 'Cancel', //mb.core.sketch.circle.form.button.cancel
+                            label: Mapbender.trans('mb.core.sketch.circle.form.button.cancel'),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self._close();
                             }
                         },
                         'ok': {
-                            label: 'OK', //mb.core.sketch.circle.form.button.yes
+                            label: Mapbender.trans('mb.core.sketch.circle.form.button.yes'),
                             cssClass: 'button buttonYes right',
                             callback: function(){
                                 var radius = parseInt($('#inputCircleRadius', self.popup.$element).val());
                                 if(isNaN(radius)){
-                                    Mapbender.error(); //'mb.core.sketch.circle.radius.error');
+                                    Mapbender.error(Mapbender.trans('mb.core.sketch.circle.radius.error'));
                                 }else{
                                     var bounds = e.feature.geometry.bounds,
                                         center = new OpenLayers.Geometry.Point((bounds.left + bounds.right) / 2.0, (bounds.bottom + bounds.top) / 2.0),

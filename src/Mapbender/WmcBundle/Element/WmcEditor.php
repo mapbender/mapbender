@@ -22,7 +22,7 @@ class WmcEditor extends Element
      */
     static public function getClassTitle()
     {
-        return "WmcEditor";
+        return "mb.wmc.wmceditor.class.title";
     }
 
     /**
@@ -30,7 +30,7 @@ class WmcEditor extends Element
      */
     static public function getClassDescription()
     {
-        return "Save and edit configurations with the WMC Editor";
+        return "mb.wmc.wmceditor.class.description";
     }
 
     /**
@@ -38,7 +38,7 @@ class WmcEditor extends Element
      */
     static public function getClassTags()
     {
-        return array("wmc", "editor");
+        return array("mb.wmc.suggestmap.wmc","mb.wmc.suggestmap.editor");
     }
 
     /**
@@ -88,7 +88,10 @@ class WmcEditor extends Element
             'mapbender.wmchandler.js');
         return array(
             'js' => $js,
-            'css' => array()
+            'css' => array(),
+            'trans' => array(
+                'MapbenderWmcBundle:Element:wmceditor.json.twig',
+                'MapbenderWmcBundle:Element:wmchandler.json.twig')
         );
     }
 
@@ -233,8 +236,9 @@ class WmcEditor extends Element
             return new Response(json_encode(array("data" => array($id => $wmc->getState()->getJson()))),
                 200, array('Content-Type' => 'application/json'));
         } else {
-            return new Response(json_encode(array("error" => 'WMC: ' . $wmcid . ' is not found')),
-                200, array('Content-Type' => 'application/json'));
+            return new Response(json_encode(array("error" => $this->trans("mb.wmc.error.wmcnotfound",
+                        array('%wmcid%' => $wmcid)))), 200,
+                array('Content-Type' => 'application/json'));
         }
     }
 
@@ -250,7 +254,6 @@ class WmcEditor extends Element
                 200, array('Content-Type' => 'application/json'));
         }
         $wmchandler = new WmcHandler($this, $this->application, $this->container);
-//	$wmchandler->checkAccessEditor();
         $wmclist = $wmchandler->getWmcList(false);
         $responseBody = $this->container->get('templating')
             ->render('MapbenderWmcBundle:Wmc:wmceditor-list.html.twig',
@@ -291,8 +294,9 @@ class WmcEditor extends Element
                     $form->bindRequest($request);
                     if (!$form->isValid()) {
                         return new Response(json_encode(array(
-                                "error" => "WMC: " . $wmc->getId() . " can not be found.")),
-                            200, array('Content-Type' => 'application/json'));
+                                "error" => $this->trans("mb.wmc.error.wmcnotfound",
+                                    array('%wmcid%' => $wmc->getId())))), 200,
+                            array('Content-Type' => 'application/json'));
                     }
                 }
                 $wmc->setState($wmchandler->unSignUrls($wmc->getState()));
@@ -327,12 +331,14 @@ class WmcEditor extends Element
                 }
                 $em->getConnection()->commit();
                 return new Response(json_encode(array(
-                        "success" => "WMC: " . $wmc->getId() . " is saved.")),
-                    200, array('Content-Type' => 'application/json'));
+                        "success" => $this->trans("mb.wmc.error.wmcsaved",
+                            array('%wmcid%' => $wmc->getId())))), 200,
+                    array('Content-Type' => 'application/json'));
             } else {
                 return new Response(json_encode(array(
-                        "error" => 'WMC: ' . $wmc->getId() . ' can not be saved.')),
-                    200, array('Content-Type' => 'application/json'));
+                        "error" => $this->trans("mb.wmc.error.wmccannotbesaved",
+                            array('%wmcid%' => $wmc->getId())))), 200,
+                    array('Content-Type' => 'application/json'));
             }
         }
     }
@@ -364,7 +370,8 @@ class WmcEditor extends Element
                 'wmc' => $wmc));
             return new Response($html, 200, array('Content-Type' => 'text/html'));
         } else {
-            return new Response('WMC is not found', 200,
+            return new Response($this->trans("mb.wmc.error.wmcnotfound",
+                    array('%wmcid%' => '')), 200,
                 array('Content-Type' => 'text/html'));
         }
     }
@@ -405,17 +412,19 @@ class WmcEditor extends Element
                 $em->flush();
                 $em->getConnection()->commit();
                 return new Response(json_encode(array(
-                        "success" => "WMC: " . $wmcid . " is removed.")), 200,
+                        "success" => $this->trans("mb.wmc.error.wmcremoved",
+                            array('%wmcid%' => $wmcid)))), 200,
                     array('Content-Type' => 'application/json'));
             } else {
                 return new Response(json_encode(array(
-                        "error" => "WMC  is not found")), 200,
+                        "error" => $this->trans("mb.wmc.error.wmcnotfound",
+                            array('%wmcid%' => '')))), 200,
                     array('Content-Type' => 'application/json'));
             }
         }
         return new Response(json_encode(array(
-                "error" => "WMC cannot be removed.")), 200,
-            array('Content-Type' => 'application/json'));
+                "error" => $this->trans("mb.wmc.error.wmccannotberemoved"))),
+            200, array('Content-Type' => 'application/json'));
     }
 
     /**

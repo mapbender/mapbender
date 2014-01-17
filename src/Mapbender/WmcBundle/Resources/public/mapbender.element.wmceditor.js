@@ -64,14 +64,14 @@
                     width: 480,
                     buttons: {
                         'cancel': {
-                            label: 'Cancel',
+                            label: Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.cancel"),
                             cssClass: 'button buttonCancel critical right',
                             callback: function(){
                                 self.close();
                             }
                         },
                         'ok': {
-                            label: 'Submit',
+                            label: Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.ok"),
                             cssClass: 'button buttonYes right',
                             callback: function(){
                                 $('form input[type="submit"]', self.popup.$element).click();
@@ -79,7 +79,7 @@
                             }
                         },
                         'back': {
-                            label: 'Back',
+                            label: Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.back"),
                             cssClass: 'button left buttonBack',
                             callback: function(){
                                 $(".popupSubContent", self.popup.$element).remove();
@@ -107,7 +107,6 @@
                     url: self.elementUrl + "list",
                     type: "POST",
                     success: function(data){
-//                        $(".popupContent", self.popup.$element).empty();
                         $(".popupContent", self.popup.$element).html(data);
                         $(".checkWrapper input.checkbox", self.popup.$element).each(function(){
                             initCheckbox.call(this);
@@ -254,16 +253,16 @@
                     success: function(response){
                         self._loadList();
                         if(response.success){
-                            $(".popupSubContent", self.popup.$element).html(response.success);
+                            $(".popupSubContent", self.popup.$element).html(Mapbender.trans(response.success));
                             $(".popupSubTitle", self.popup.$element).text(" ");
                         }else{
                             self._loadList();
-                            $(".popupSubContent", self.popup.$element).html(response.error);
+                            $(".popupSubContent", self.popup.$element).html(Mapbender.trans(response.error));
                             $(".popupSubTitle", self.popup.$element).text(" ");
                         }
                     },
                     error: function(response){
-                        Mapbender.error(response);
+                        Mapbender.error(Mapbender.trans(response));
                     }
                 });
             }
@@ -286,7 +285,7 @@
                     //TODO?
                 },
                 error: function(response){
-                    Mapbender.error(response);
+                    Mapbender.error(Mapbender.trans(response));
                 }
             });
             return false;

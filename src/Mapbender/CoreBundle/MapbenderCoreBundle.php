@@ -6,13 +6,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Mapbender\CoreBundle;
 
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
-
 
 /**
  * CoreBundle.
@@ -21,6 +19,7 @@ use Mapbender\CoreBundle\DependencyInjection\Compiler\MapbenderYamlCompilerPass;
  */
 class MapbenderCoreBundle extends MapbenderBundle
 {
+
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
@@ -34,8 +33,8 @@ class MapbenderCoreBundle extends MapbenderBundle
     public function getTemplates()
     {
         return array('Mapbender\CoreBundle\Template\Fullscreen',
-                     'Mapbender\CoreBundle\Template\FullscreenAlternative',
-                     'Mapbender\CoreBundle\Template\Classic');
+            'Mapbender\CoreBundle\Template\FullscreenAlternative',
+            'Mapbender\CoreBundle\Template\Classic');
     }
 
     /**
@@ -46,6 +45,7 @@ class MapbenderCoreBundle extends MapbenderBundle
         return array(
             'Mapbender\CoreBundle\Element\AboutDialog',
             'Mapbender\CoreBundle\Element\ActivityIndicator',
+            'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
             'Mapbender\CoreBundle\Element\Button',
             'Mapbender\CoreBundle\Element\CoordinatesDisplay',
             'Mapbender\CoreBundle\Element\Copyright',
@@ -55,6 +55,7 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Legend',
             'Mapbender\CoreBundle\Element\Map',
             'Mapbender\CoreBundle\Element\Overview',
+            'Mapbender\CoreBundle\Element\POI',
             'Mapbender\CoreBundle\Element\PrintClient',
             'Mapbender\CoreBundle\Element\Ruler',
             'Mapbender\CoreBundle\Element\ScaleBar',
@@ -64,7 +65,7 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\Sketch',
             'Mapbender\CoreBundle\Element\SrsSelector',
             'Mapbender\CoreBundle\Element\ZoomBar'
-            );
+        );
     }
 
     /**
@@ -76,5 +77,5 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Entity\Application' => 'Application',
             'Mapbender\CoreBundle\Entity\Source' => 'Service Source');
     }
-}
 
+}

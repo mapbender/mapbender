@@ -17,7 +17,7 @@ class WmcLoader extends Element
      */
     static public function getClassTitle()
     {
-        return "WmcLoader";
+        return "mb.wmc.wmcloader.class.title";
     }
 
     /**
@@ -25,7 +25,7 @@ class WmcLoader extends Element
      */
     static public function getClassDescription()
     {
-        return "Load configurations with the element WMC Loader";
+        return "mb.wmc.wmcloader.class.description";
     }
 
     /**
@@ -33,7 +33,7 @@ class WmcLoader extends Element
      */
     static public function getClassTags()
     {
-        return array("wmc", "loader");
+        return array("mb.wmc.suggestmap.wmc", "mb.wmc.suggestmap.loader");
     }
 
     /**
@@ -86,7 +86,10 @@ class WmcLoader extends Element
         );
         return array(
             'js' => $js,
-            'css' => array()
+            'css' => array(),
+            'trans' => array(
+                'MapbenderWmcBundle:Element:wmcloader.json.twig',
+                'MapbenderWmcBundle:Element:wmchandler.json.twig')
         );
     }
 
@@ -149,8 +152,8 @@ class WmcLoader extends Element
     protected function loadWmc()
     {
         $config = $this->getConfiguration();
-        if (in_array("wmcidloader", $config['components']) || in_array("wmclistloader",
-                $config['components'])) {
+        if (in_array("wmcidloader", $config['components'])
+            || in_array("wmclistloader", $config['components'])) {
             $wmcid = $this->container->get('request')->get("_id", null);
             $wmchandler = new WmcHandler($this, $this->application,
                 $this->container);
@@ -158,14 +161,18 @@ class WmcLoader extends Element
             if ($wmc) {
 
                 $id = $wmc->getId();
-                return new Response(json_encode(array("data" => array($id => $wmc->getState()->getJson()))),
+                return new Response(json_encode(array(
+                        "data" => array($id => $wmc->getState()->getJson()))),
                     200, array('Content-Type' => 'application/json'));
             } else {
-                return new Response(json_encode(array("error" => 'WMC: ' . $wmcid . ' is not found')),
-                    200, array('Content-Type' => 'application/json'));
+                return new Response(json_encode(array(
+                        "error" => $this->trans("mb.wmc.error.wmcnotfound",
+                            array('%wmcid%' => $wmcid)))), 200,
+                    array('Content-Type' => 'application/json'));
             }
         } else {
-            return new Response(json_encode(array("error" => 'WMC: ' . $wmcid . ' can not be loaded- IdLoader is not allowed.')),
+            return new Response(json_encode(array(
+                    "error" => $this->trans('mb.wmc.error.wmcidloader_notallowed'))),
                 200, array('Content-Type' => 'application/json'));
         }
     }
@@ -185,7 +192,7 @@ class WmcLoader extends Element
             return new Response($html, 200, array('Content-Type' => 'text/html'));
         } else {
             return new Response(json_encode(array(
-                    "error" => 'WMC:  can not be loaded- WmcXmlLoader is not allowed.')),
+                    "error" => $this->trans("mb.wmc.error.wmcxmlloader_notallowed"))),
                 200, array('Content-Type' => 'application/json'));
         }
     }
@@ -215,7 +222,7 @@ class WmcLoader extends Element
             $response->setContent($responseBody);
             return $response;
         } else {
-            $response->setContent('WMC List can not be loaded- WmcListLoader is not allowed.');
+            $response->setContent($this->trans("mb.wmc.error.wmclistloader_notallowed"));
             return $response;
         }
     }
@@ -255,7 +262,7 @@ class WmcLoader extends Element
             }
         } else {
             return new Response(json_encode(array(
-                    "error" => 'WMC:  can not be loaded- WmcXmlLoader is not allowed.')),
+                    "error" => $this->trans("mb.wmc.error.wmcxmlloader_notallowed"))),
                 200, array('Content-Type' => 'application/json'));
         }
     }
@@ -284,17 +291,17 @@ class WmcLoader extends Element
                         200, array('Content-Type' => 'application/json'));
                 } else {
                     return new Response(json_encode(array(
-                            "error" => 'WMC:  can not be loaded.')), 200,
-                        array('Content-Type' => 'application/json'));
+                            "error" => $this->trans("mb.wmc.error.wmccannotbeloaded"))),
+                        200, array('Content-Type' => 'application/json'));
                 }
             } else {
                 return new Response(json_encode(array(
-                        "error" => 'WMC:  can not be loaded.')), 200,
-                    array('Content-Type' => 'application/json'));
+                        "error" => $this->trans("mb.wmc.error.wmccannotbeloaded"))),
+                    200, array('Content-Type' => 'application/json'));
             }
         } else {
             return new Response(json_encode(array(
-                    "error" => 'WMC:  can not be loaded- WmcXmlLoader is not allowed.')),
+                    "error" => $this->trans("mb.wmc.error.wmcxmlloader_notallowed"))),
                 200, array('Content-Type' => 'application/json'));
         }
     }

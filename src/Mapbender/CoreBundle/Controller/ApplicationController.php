@@ -75,19 +75,22 @@ class ApplicationController extends Controller {
         //      http://www.thecssninja.com/javascript/source-mapping
         $filters = array(
             'js' => array(),
-            'css' => array($this->container->get('assetic.filter.cssrewrite')));
+            'css' => array($this->container->get('assetic.filter.cssrewrite')),
+            'trans' => array());
 
         // Set target path for CSS rewrite to work
         // Replace backward slashes (Windows paths) with forward slashes...
-        $path = $this->get('request')->server->get('PATH_INFO');
-        if(!$path) {
-            $path = $this->get('request')->server->get('REQUEST_URI');
-        }
-        $target = str_replace('\\', '/', realpath($this->get('request')->server->get('SCRIPT_FILENAME')) . $path);
+        $uri = $this->get('request')->getRequestUri();
+        $basepath = $this->get('request')->getBasePath();
+        $path = substr($uri, strlen($basepath));
+
+        $target = realpath($this->get('kernel')->getRootDir() . '/../web') . $path;
+        $target = str_replace('\\', '/', $target);
 
         $mimetypes = array(
             'css' => 'text/css',
-            'js' => 'application/javascript');
+            'js' => 'application/javascript',
+            'trans' => 'application/javascript');
 
         $application_update_time = new \DateTime();
         $application_entity = $this->getApplication($slug)->getEntity();

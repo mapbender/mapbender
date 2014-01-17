@@ -22,7 +22,7 @@
         _create: function(){
             var self = this;
             if(this.options.type !== 'line' && this.options.type !== 'area'){
-                throw 'mbRuler: Type must be line or area.';
+                throw Mapbender.trans("mb.core.ruler.create_error");
             }
             if(!Mapbender.checkTarget("mbRuler", this.options.target)){
                 return;
@@ -112,7 +112,7 @@
                     width: 300,
                     buttons: {
                         'ok': {
-                            label: 'Close',
+                            label: Mapbender.trans("mb.core.ruler.popup.btn.ok"),
                             cssClass: 'button right',
                             callback: function(){
                                 self.deactivate();

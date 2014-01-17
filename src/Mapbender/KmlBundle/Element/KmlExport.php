@@ -8,15 +8,18 @@ use Symfony\Component\HttpFoundation\Response;
 class KmlExport extends Element {
 
     public static function getClassTitle() {
-        return "KML export element";
+        return "mb.kml.kmlexport.class.title";
     }
 
     public static function getClassDescription() {
-        return "KML export element";
+        return "mb.kml.kmlexport.class.description";
     }
 
     public static function getClassTags() {
-        return array();
+        return array(
+            "mb.kml.kmlexport.tag.kml",
+            "mb.kml.kmlexport.tag.export"
+        );
     }
 
 

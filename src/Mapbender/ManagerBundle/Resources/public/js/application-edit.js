@@ -199,8 +199,8 @@ $(function() {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
-            title:"Add element",
-            subtitle: " - " + self.parent().siblings(".subTitle").text(),
+            title: Mapbender.trans("mb.manager.components.popup.add_element.title"),
+            subtitle: " - " + Mapbender.trans(self.parent().siblings(".subTitle").text()),
             closeOnOutsideClick: true,
             cssClass:"elementPopup",
             content: [
@@ -216,14 +216,14 @@ $(function() {
             ],
             buttons: {
                 'cancel': {
-                    label: 'Cancel',
+                    label: Mapbender.trans("mb.manager.components.popup.add_element.btn.cancel"),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
                         popup.close();
                     }
                 },
                 'ok': {
-                    label: 'Ok',
+                    label: Mapbender.trans("mb.manager.components.popup.add_element.btn.ok"),
                     cssClass: 'button buttonYes right',
                     callback: function() {
                        $("#elementForm").submit();
@@ -231,7 +231,7 @@ $(function() {
                     }
                 },
                 'back': {
-                    label: 'Back',
+                    label: Mapbender.trans("mb.manager.components.popup.add_element.btn.back"),
                     cssClass: 'button left buttonBack',
                     callback: function() {
                         $(".popupSubContent").remove();
@@ -254,7 +254,7 @@ $(function() {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
-            title:"Edit element",
+            title:Mapbender.trans("mb.manager.components.popup.edit_element.title"),
             closeOnOutsideClick: true,
             content: [
                 $.ajax({
@@ -268,14 +268,14 @@ $(function() {
             ],
             buttons: {
                 'cancel': {
-                    label: 'Cancel',
+                    label: Mapbender.trans("mb.manager.components.popup.edit_element.btn.cancel"),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
                         this.close();
                     }
                 },
                 'ok': {
-                    label: 'Update',
+                    label: Mapbender.trans("mb.manager.components.popup.edit_element.btn.ok"),
                     cssClass: 'button right',
                     callback: function() {
                         $("#elementForm").submit();
@@ -292,26 +292,26 @@ $(function() {
     // Delete element
     $('.removeElement').bind("click", function(){
         var self = $(this);
-        var content = self.attr('title');
+        var content = $('<div/>').text(self.attr('title')).html();
 
         if(popup){
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
-            title:"Confirm delete",
-            subTitle: " - element",
+            title: Mapbender.trans("mb.manager.components.popup.delete_element.title"),
+            subTitle: " - " + Mapbender.trans("mb.manager.components.popup.delete_element.subtitle"),
             closeOnOutsideClick: true,
             content: [content + "?"],
             buttons: {
                 'cancel': {
-                    label: 'Cancel',
+                    label: Mapbender.trans("mb.manager.components.popup.delete_element.btn.cancel"),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
                         this.close();
                     }
                 },
                 'ok': {
-                    label: 'Delete',
+                    label: Mapbender.trans("mb.manager.components.popup.delete_element.btn.ok"),
                     cssClass: 'button right',
                     callback: function() {
                         $.ajax({
@@ -337,22 +337,22 @@ $(function() {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
-            title: ((self.hasClass("editLayerset")) ? "Edit layerset"  
-                                                    : "Add layerset"),
+            title: ((self.hasClass("editLayerset")) ? Mapbender.trans("mb.manager.components.popup.add_edit_layerset.title_edit")
+                                                    : Mapbender.trans("mb.manager.components.popup.add_edit_layerset.title_add")),
             closeOnOutsideClick: true,
             content: [
                 $.ajax({url: self.attr("href")})
             ],
             buttons: {
                 'cancel': {
-                    label: 'Cancel',
+                    label: Mapbender.trans("mb.manager.components.popup.add_edit_layerset.btn.cancel"),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
                         this.close();
                     }
                 },
                 'ok': {
-                    label: 'OK',
+                    label: Mapbender.trans("mb.manager.components.popup.add_edit_layerset.btn.ok"),
                     cssClass: 'button right',
                     callback: function() {
                         $("#layersetForm").submit();
@@ -374,7 +374,7 @@ $(function() {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
-            title:"Delete layerset",
+            title: Mapbender.trans("mb.manager.components.popup.delete_layerset.title"),
             subTitle: " - " + $(this).siblings("legend").text(),
             closeOnOutsideClick: true,
             content: [
@@ -382,14 +382,14 @@ $(function() {
             ],
             buttons: {
                 'cancel': {
-                    label: 'Cancel',
+                    label: Mapbender.trans("mb.manager.components.popup.delete_layerset.btn.cancel"),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
                         this.close();
                     }
                 },
                 'ok': {
-                    label: 'Delete',
+                    label: Mapbender.trans("mb.manager.components.popup.delete_layerset.btn.ok"),
                     cssClass: 'button right',
                     callback: function() {
                         $("#deleteLaysersetForm").submit();
@@ -406,7 +406,7 @@ $(function() {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
-            title:"Select source",
+            title: Mapbender.trans("mb.manager.components.popup.add_instance.title"),
             subTitle: " - " + self.parent().siblings(".subTitle").text(),
             closeOnOutsideClick: true,
             content: [
@@ -414,7 +414,7 @@ $(function() {
             ],
             buttons: {
                 'cancel': {
-                    label: 'Cancel',
+                    label: Mapbender.trans("mb.manager.components.popup.add_instance.btn.cancel"),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
                         this.close();
@@ -435,20 +435,20 @@ $(function() {
         }
 
         popup = new Mapbender.Popup2({
-            title:"Confirm delete",
+            title: Mapbender.trans("mb.manager.components.popup.delete_instance.title"),
             subtitle: " - layerset",
             closeOnOutsideClick: true,
             content: [content + "?"],
             buttons: {
                 'cancel': {
-                    label: 'Cancel',
+                    label: Mapbender.trans("mb.manager.components.popup.delete_instance.btn.cancel"),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
                         this.close();
                     }
                 },
-                'delete': {
-                    label: 'Delete',
+                'ok': {
+                    label: Mapbender.trans("mb.manager.components.popup.delete_instance.btn.ok"),
                     cssClass: 'button right',
                     callback: function() {
                         $.ajax({
@@ -492,5 +492,5 @@ $(function() {
             });
         });
     });
-    
+
 });

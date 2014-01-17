@@ -18,6 +18,7 @@
             group: "group",
             simple: "simple"
         },
+        transConst: {outOfScale: '',outOfBounds: '', parentInvisible: ''},
         _create: function(){
             if(!Mapbender.checkTarget("mbLayertree", this.options.target)){
                 return;
@@ -26,6 +27,9 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         _setup: function(){
+            this.transConst.outOfScale = Mapbender.trans("mb.core.layertree.const.outofscale");
+            this.transConst.outOfBounds = Mapbender.trans("mb.core.layertree.const.outofbounds");
+            this.transConst.parentInvisible = Mapbender.trans("mb.core.layertree.const.parentinvisible");
             this.options.titlemaxlength = parseInt(this.options.titlemaxlength);
             this.options.layerMenu = false;
             var self = this;
@@ -433,6 +437,8 @@
                 for(var layerId in changed.children){
                     if(changed.children[layerId].options){
                         var $li = $('li[data-id="' + layerId + '"]', this.element);
+                        if($li.length === 0)
+                            continue;
                         this._resetNodeSelected($li, changed.children[layerId].options);
                         this._resetNodeInfo($li, changed.children[layerId].options);
                         if(changed.children[layerId].options.state)
@@ -526,17 +532,17 @@
             if(nodeConfig.state.outOfScale){
                 conf["visibility"] = {
                     state: "invisible",
-                    tooltip: "outOfScale"
+                    tooltip: this.transConst.outOfScale
                 };
             }else if(nodeConfig.state.outOfBounds){
                 conf["visibility"] = {
                     state: "invisible",
-                    tooltip: "outOfBounds"
+                    tooltip: this.transConst.outOfBounds
                 };
             }else if(!nodeConfig.state.visibility){
                 conf["visibility"] = {
                     state: "invisible",
-                    tooltip: "parent invisible"
+                    tooltip: this.transConst.parentinvisible
                 };
             }else{
                 conf["visibility"] = {
@@ -615,7 +621,7 @@
         },
         _removeAllSources: function(e){
             var self = this;
-            if(confirm("Really all sources delete?")){
+            if(Mapbender.confirm(Mapbender.trans("mb.core.layertree.confirm.allremove"))){
                 $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm){
                     var sourceId = $(elm).attr('data-sourceid');
                     self.model.removeSource({remove: {sourceIdx: {id: sourceId}}});
@@ -650,7 +656,7 @@
                         width: 350,
                         buttons: {
                             'ok': {
-                                label: 'Close',
+                                label: Mapbender.trans("mb.core.layertree.popup.btn.ok"),
                                 cssClass: 'button right',
                                 callback: function(){
                                     self.close();

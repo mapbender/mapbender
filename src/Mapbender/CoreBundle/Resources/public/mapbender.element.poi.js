@@ -14,7 +14,7 @@ $.widget('mapbender.mbPOI', {
     poiMarkerLayer: null,
 
     _create: function() {
-        if(!Mapbender.checkTarget("mbFeatureInfo", this.options.target)){
+        if(!Mapbender.checkTarget("mbPOI", this.options.target)){
             return;
         }
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
@@ -96,14 +96,14 @@ $.widget('mapbender.mbPOI', {
             content: $('.input', this.element).html(),
             buttons: {
                 'cancel': {
-                    label: 'Cancel',
+                    label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
                         this.close();
                     }
                 },
                 'ok': {
-                    label: 'Ok',
+                    label: Mapbender.trans('mb.core.poi.popup.btn.ok'),
                     cssClass: 'button right',
                     callback: function() {
                         self._sendPoi(this.$element);
@@ -135,7 +135,10 @@ $.widget('mapbender.mbPOI', {
         var params = $.param({ poi: poi });
         var poiURL = 'http://' + window.location.host + window.location.pathname + '?' + params;
         body += '\n\n' + poiURL;
-
+        /*
+         * @ TODO use MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js
+         * to call social networks
+         */
         if(this.options.useMailto) {
             var mailto_link = 'mailto:?body=' + escape(body);
             win = window.open(mailto_link,'emailWindow');

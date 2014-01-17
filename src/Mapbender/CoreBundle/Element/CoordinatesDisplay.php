@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -20,7 +19,7 @@ class CoordinatesDisplay extends Element
      */
     public static function getClassTitle()
     {
-        return 'Coordinates Display';
+        return "mb.core.coordinatesdisplay.class.title";
     }
 
     /**
@@ -28,7 +27,7 @@ class CoordinatesDisplay extends Element
      */
     public static function getClassDescription()
     {
-        return 'The coordinates display shows your mouse position in map coordinates.';
+        return "mb.core.coordinatesdisplay.class.description";
     }
 
     /**
@@ -36,7 +35,11 @@ class CoordinatesDisplay extends Element
      */
     public static function getClassTags()
     {
-        return array('coordinates', 'display', 'mouse', 'position');
+        return array(
+            'mb.core.coordinatesdisplay.tag.coordinates',
+            'mb.core.coordinatesdisplay.tag.display',
+            'mb.core.coordinatesdisplay.tag.mouse',
+            'mb.core.coordinatesdisplay.tag.position');
     }
 
     /**
@@ -90,11 +93,11 @@ class CoordinatesDisplay extends Element
     {
         $a = $this->getConfiguration();
         return $this->container->get('templating')
-                        ->render('MapbenderCoreBundle:Element:coordinatesdisplay.html.twig',
-                                 array(
-                            'id' => $this->getId(),
-                            'title' => $this->getTitle(),
-                            'configuration' => $this->getConfiguration()));
+                ->render('MapbenderCoreBundle:Element:coordinatesdisplay.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    'title' => $this->getTitle(),
+                    'configuration' => $this->getConfiguration()));
     }
 
     /**
@@ -104,5 +107,5 @@ class CoordinatesDisplay extends Element
     {
         return 'MapbenderManagerBundle:Element:coordinatesdisplay.html.twig';
     }
-}
 
+}
