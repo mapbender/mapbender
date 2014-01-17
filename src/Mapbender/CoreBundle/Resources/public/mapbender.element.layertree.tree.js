@@ -59,6 +59,7 @@
                         $("ul.layers:first", this.element).append($(li_s));
                     }
                 }
+                this._resetSourceAtTree(sources[i]);
             }
 
             this._reset();
@@ -478,6 +479,7 @@
                 this.loadStarted[option.source.id] = false;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
                 source_li.attr('data-state', '');
+                this._resetSourceAtTree(option.source);
             }
         },
         _onSourceLoadError: function(event, option){
