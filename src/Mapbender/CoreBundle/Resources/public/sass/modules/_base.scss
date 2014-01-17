@@ -1,8 +1,4 @@
-*{
-  &:focus, &:hover, &:active{outline:none;}
-
-  @include box-sizing(border-box);
-}
+*{@include box-sizing(border-box);}
 html, body{
   width:100%;
   height:100%;
@@ -14,11 +10,11 @@ html, body{
   }
   line-height:$lineHeight;
   color:$darkFontColor;
-  background-image:url($imageBasePath + "/body.png");
+  background-image:url($imageBasePath + '/body.png');
 
-  @include background(linear-gradient(rgba(255,255,255,.3) 100px, 
-                                      rgba(255,255,255,0)) fixed, 
-                      url($imageBasePath + "/body.png"));
+  @include background(linear-gradient(rgba(255,255,255,.3) 100px,
+                                      rgba(255,255,255,0)) fixed,
+                      url($imageBasePath + '/body.png'));
 }
 ul, ol{list-style:none;}
 hr, h1, h2, h3, ul, ol, li{margin:0;padding:0px;}

@@ -4,5 +4,5 @@
 .elementFormYaml{
   $label:90px;
   .labelInput{width:$label;}
-  .dropdown, .input{width:$elementPopupWidth - $label  + $space;}
+  .dropdown, .input{width:$elementPopupWidth - $label;}
 }

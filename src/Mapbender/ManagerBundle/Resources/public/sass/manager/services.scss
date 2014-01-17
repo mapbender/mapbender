@@ -1,5 +1,6 @@
 @import "libs/variables";
 @import "libs/mixins";
+@import "libs/icons";
 
 // ------------------------------------------------------------- SERVICES
 .listFilterInput{
@@ -24,12 +25,12 @@
   $inputWidth:300px;
 
   width:$labelWidth + $inputWidth + $space*2 + 2; // + border
-  margin-right:$space;  
+  margin-right:$space;
 
   .labelInput{width:$labelWidth;}
   .input{
-    margin-bottom:$space/2;  
-    width: $inputWidth; 
+    margin-bottom:$space/2;
+    width: $inputWidth;
   }
 }
 
@@ -39,21 +40,21 @@
 
 
 // --------------------------------------------------------- VIEW SERVICE
-.serviceContainer{ 
+.serviceContainer{
   .labelText{float:left;}
   .metaText{@extend .smallText;}
   margin-bottom:$space;
 }
-.serviceMetaContainer{ 
-  $labelWidth:120px; 
- 
-  .labelText{width:$labelWidth;} 
+.serviceMetaContainer{
+  $labelWidth:120px;
+
+  .labelText{width:$labelWidth;}
   .metaText{margin-left:$labelWidth + $space/2;}
   .metaUrl{word-wrap: break-word;}
 }
-.serviceContactContainer{ 
+.serviceContactContainer{
   $labelWidth:90px;
-   
+
   .labelText{width:$labelWidth; }
   .metaText{margin-left:$labelWidth + $space/2; }
 }
@@ -64,7 +65,7 @@
   .metaText{margin-left:$labelWidth + $space/2; }
   .metaFormats{line-height:1em;margin-top:0.6em;}
 }
-.serviceLayersContainer{ 
+.serviceLayersContainer{
   $labeText:85px;
 
   .list, li{clear:both;}

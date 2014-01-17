@@ -11,41 +11,28 @@
   border-bottom:dashed 1px darken(#fff, 30%);
 
   @extend .biggerText;
-  @include text-shadow(#fff 1px 1px 0px);
 }
 .title{
   font-weight:normal;
   color:$darkFontColor;
   @extend .bigText;
-  @include text-shadow(#fff 1px 1px 0px);
 }
 .subTitle{
   font-size:$fontSize;
   color:$ciColor;
-  @include text-shadow(#fff 1px 1px 0px);
-}
-fieldset{
-  padding:$space;
-
-  legend{
-    @extend .subTitle;
-    margin:0px !important;
-    padding:0 5px 0 5px;
-  }
 }
 .labelInput, .labelText, .labelCheck{
   @extend .smallText;
   @include noUserSelect;
-  @include text-shadow(#fff 1px 1px 0px); 
 }
 .labelInput{
   display: inline-block;
   color:$middleFontColor;
+  margin-right:$space/2;
   line-height:$lineHeight + 8;
 
   .required{
     color:$errorColor;
-    @include text-shadow(#fff 1px 1px 0px); 
   }
 }
 .labelCheck{

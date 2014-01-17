@@ -11,7 +11,7 @@
 .defaultForm{
   $label:70px;
   .labelInput{width:$label;}
-  .input, .dropdown{width:$elementPopupWidth - $label + $space;}
+  .input, .dropdown{width:$elementPopupWidth - $label;}
 }
 .collectionItem{
   clear:both;

@@ -1,5 +1,6 @@
 @import "libs/variables";
 @import "libs/mixins";
+@import "libs/icons";
 
 // ------------------------------------------------------- APPLICATIONS
 .listFilterInput{
@@ -28,7 +29,6 @@
   color:$darkFontColor;
   margin-left:5px;
   @include opacity(0.6);
-  @include transition(opacity .2s ease-in-out);
   &:hover{@include opacity(1);}
 }
 .elementPopup{width:460px;}
@@ -42,37 +42,35 @@
 .applicationTabContainer{
   margin-bottom:$space;
 
-  .containerBaseData{
-    .labelInput{
-      width:80px;
-      float:left;
-      display: block;
-      margin-bottom: $space/2;
-    }
-    textarea, input, .dropdown{width: 300px;}
-    textarea{height:100px;}
-    .messageBox{
-      width:270px;
-      @include pos($space,$space,'','');
-    }
-  }
-  .containerLayout{
-    .dropdown{
-      width:200px;
-      margin-bottom:$space;
-      margin-left:$space;
-    }
-  }
-
   table{
     .iconCheckbox{@extend .iconPublish}
     .iconCheckboxActive{@extend .iconPublishActive}
   }
-
-  .containerLayers{
-    .iconCheckbox{@extend .iconPublish}
-    .iconCheckboxActive{@extend .iconPublishActive}
+}
+.containerBaseData{
+  .labelInput{
+    width:80px;
+    float:left;
+    display: block;
+    margin-bottom: $space/2;
   }
+  textarea, input, .dropdown{width: 300px;}
+  textarea{height:100px;}
+  .messageBox{
+    width:270px;
+    @include absolute($space $space '' '');
+  }
+}
+.containerLayout{
+  .dropdown{
+    width:200px;
+    margin-bottom:$space;
+    margin-left:$space;
+  }
+}
+.containerLayers{
+  .iconCheckbox{@extend .iconPublish}
+  .iconCheckboxActive{@extend .iconPublishActive}
 }
 .popup{
   .popupSubContent{
@@ -145,4 +143,4 @@
   .idColumn{width:3%;}
   .typeColumn{width:7%;} // very ugly, but fixing the scale behaviour by dragging at the moment
   .titleColumn{width: 70%;}
-} 
+}

@@ -4,6 +4,6 @@
 .elementFormGps{
   $label:100px;
   .labelInput{width:$label;}
-  .input, .dropdown{width:$elementPopupWidth - $label + $space;}
+  .input, .dropdown{width:$elementPopupWidth - $label}
   .labelCheck{margin-right:$space;}
 }

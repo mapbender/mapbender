@@ -6,5 +6,5 @@
   overflow: auto;
   max-height: $popupMaxHeight;
   .labelInput{width:$label;}
-  .input{width:$elementPopupWidth - $label - $space*2;}
+  .input{width:$elementPopupWidth - $label - $space;}
 }

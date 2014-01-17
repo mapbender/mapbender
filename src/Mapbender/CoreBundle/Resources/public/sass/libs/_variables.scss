@@ -1,9 +1,6 @@
 //--------------------------------------------------------------patterns
-// $imageBasePath: "../../mapbendercore/image";
-// $iconBasePath: "../../mapbendercore/fonts";
-$imageBasePath: "../../image";
-$iconBasePath: "../../fonts";
-
+$imageBasePath: "../../../mapbendercore/image";
+$iconBasePath: "../../../mapbendercore/fonts";
 
 $contentPatternUrl: $imageBasePath + "/content.png";
 $headPatternUrl: $imageBasePath + "/head.png";

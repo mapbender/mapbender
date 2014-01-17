@@ -4,5 +4,5 @@
 .elementFormActivity{
   $label:100px;
   .labelInput{width:$label;}
-  .dropdown, .input{width:$elementPopupWidth - $label + $space;}
+  .input{width:$elementPopupWidth - $label;}
 }

@@ -4,7 +4,7 @@
 .elementFormScaleBar{
   $label:70px;
   .labelInput{width:$label;}
-  .dropdown, .input, select{width:$elementPopupWidth - $label + $space;}
+  .dropdown, .input, select{width:$elementPopupWidth - $label;}
   select{margin-bottom:$space/2;}
   .singleRow{
     .labelInput, & > .input{float:left;}

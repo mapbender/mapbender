@@ -86,7 +86,7 @@ class WmcLoader extends Element
         );
         return array(
             'js' => $js,
-        'css' => array('@MapbenderWmcBundle/Resources/public/sass/element/wmcloader.scss'));
+            'css' => array('@MapbenderWmcBundle/Resources/public/sass/element/wmcloader.scss'),
             'trans' => array(
                 'MapbenderWmcBundle:Element:wmcloader.json.twig',
                 'MapbenderWmcBundle:Element:wmchandler.json.twig')
@@ -146,7 +146,7 @@ class WmcLoader extends Element
 
     /**
      * Returns a json encoded or html form wmc or error if wmc is not found.
-     * 
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function loadWmc()
@@ -199,8 +199,8 @@ class WmcLoader extends Element
 
     /**
      * Returns a html encoded list of all wmc documents
-     * 
-     * @return \Symfony\Component\HttpFoundation\Response 
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function getWmcList()
     {
@@ -228,7 +228,7 @@ class WmcLoader extends Element
     }
 
     /**
-     * 
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     private function getWmcAsXml()

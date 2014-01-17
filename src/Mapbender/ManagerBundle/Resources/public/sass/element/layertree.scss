@@ -4,7 +4,7 @@
 .elementFormLayerTree{
   $label:100px;
   .labelInput{width:$label;}
-  .dropdown, .input{width:$elementPopupWidth - $label  + $space;}
+  .dropdown, .input{width:$elementPopupWidth - $label;}
   .checkWrapper{margin-bottom:$space/2;}
   .labelCheck{margin-right:$space;}
 }

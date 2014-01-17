@@ -1,7 +1,6 @@
 .box{
   border: solid 1px $thirdColor;
   background-color: $contentColor;
-  @include box-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
 }
 .listFilterBoxes{
   .filterItem{
@@ -15,10 +14,10 @@
     padding:$space/4;
     line-height:$lineHeight - 6;
     background-color:$firstColor;
-    @include pos(0,'',0,0);
+    @include absolute(0 '' 0 0);
   }
-  .col2{padding:$space/2;}    
-  .buttonGroup{@include pos($space/2,$space/2,'','');}
+  .col2{padding:$space/2;}
+  .buttonGroup{@include absolute($space/2 $space/2 '' '');}
   .description{
     margin-top:$space/2;
     padding-top:$space/2;
@@ -28,7 +27,6 @@
 .messageBox{
   padding:$space/2;
   margin-bottom:$space;
-  @include border-radius($radius);
 
   &.error{
     color:$errorColor;
@@ -41,8 +39,7 @@
     border:solid 1px lighten($hintColor, 40%);
   }
 
-  @include box-shadow(0 0 3px rgba(0, 0, 0, 0.1),
-                      inset 0px 0px 3px #fff);
+  @include box-shadow(inset 0px 0px 3px #fff);
 }
 .flashBox{
   $width:280px;
@@ -52,10 +49,9 @@
   text-align: center;
   width: $width;
   margin-left:-$width/2;
-  @include pos(0,'','',50%);
+  @include absolute(0 '' '' 50%);
   @include transition(all 1s ease-in-out);
   @include opacity(1);
-  @include box-shadow(0px 0px 3px black);
 
   &.success{
     &:before{
@@ -68,5 +64,14 @@
   &.kill{
     top:-100px;
     @include opacity(0);
+  }
+}
+fieldset{
+  padding:$space;
+
+  legend{
+    @extend .subTitle;
+    margin:0;
+    padding:0 5px 0 5px;
   }
 }

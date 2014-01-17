@@ -13,11 +13,10 @@
   }
 
   @extend .smallText;
-  @include box-shadow(inset 0 1px 2px lighten($thirdColor, 25%));
-  @include border-radius($radius);
 }
 .inputWrapper{
   position: relative;
+  display: inline-block;
 
   .validationMsgBox{
     position: absolute;
@@ -25,14 +24,12 @@
     min-width: 260px;
     margin-left: -$space/2;
     color:$errorColor;
-    padding: 3px $space/2 3px $space/2;
+    padding: 3px $space/2 2px $space/2;
     background-color: lighten($errorColor, 50%);
     border:solid 1px lighten($errorColor, 40%);
 
     @include opacity(1);
-    @include border-radius($radius);
-    @include box-shadow(0 0 3px rgba(0, 0, 0, 0.1),
-                          inset 0px 0px 3px #fff);
+    @include box-shadow(inset 0px 0px 3px #fff);
     @include transition(all 0.8s ease-in-out);
 
     &.hide{
@@ -42,12 +39,11 @@
 
     // small arrow left
     &:after, &:before {
-      position: absolute;
-      right: 100%;
       border: solid transparent;
       content: "";
       height: 0;
       width: 0;
+      @include absolute('' 100% '' '');
     }
     &:after{
       border-right-color: lighten($errorColor, 50%);

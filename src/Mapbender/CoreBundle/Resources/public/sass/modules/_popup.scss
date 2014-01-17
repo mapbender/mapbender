@@ -1,6 +1,5 @@
 .overlay{
-  background:url("../../images/overlay.png");
-  @include noUserSelect();
+  background:url($imageBasePath + '/overlay.png');
   @include opacity(0);
   @include transition(opacity 0.4s ease-in-out);
 }
@@ -15,7 +14,7 @@
 .popupSubTitle{@extend .labelInput;}
 .popupContent, .popupSubContent{
   padding:0 $space/2 0 $space;
-  margin:0 $space $space 0;  
+  margin:0 $space $space 0;
   max-height: $popupMaxHeight; // hack hack discothek
   overflow-y:auto;
 }
@@ -28,10 +27,13 @@
   background-color:#f4f4f4;
   padding-bottom:$space;
   background-image:url($contentPatternUrl);
+  border: {
+      top: solid 1px $secondColor;
+      left: solid 1px $thirdColor;
+      right: solid 1px $thirdColor;
+      bottom: solid 5px $thirdColor;
+  }
   @include transition(margin 0.4s ease-in-out);
-  @include border-radius($radius);
-  @include box-shadow(1px 1px 2px rgba(0, 0, 0, 0.9),
-                      inset 0px 0px 2px #fff);
 
   &.popupOverflow{
     .popupContent, .popupSubContent{overflow:visible;}

@@ -17,7 +17,6 @@
     tr{
       border-top: solid 1px darken($contentColor, 10%);
       vertical-align: top;
-      @include transition(background 0.2s ease-in-out);
 
       &:hover{background-color:darken($contentColor, 3%);}
     }
@@ -41,7 +40,6 @@
     right:solid 1px $thirdColor;
     bottom:solid 1px $thirdColor;
   }
-  @include box-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
 }
 .permissionsTable{
   $height:26px;
@@ -108,7 +106,6 @@
     bottom:solid 1px $thirdColor;
   }
   @include border-bottom-radius($radius);
-  @include box-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
   width:100% !important;
   .hide{display:none;}
   [class^="icon"],[class*=" icon"]{margin-left:10px;}
