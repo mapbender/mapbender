@@ -420,18 +420,18 @@
 
         _resetSourceAtTree: function(source){
             var self = this;
-            function _resetSourceAtTree(layer, parent){
-                var $li = $('li[data-id="' + layer.options.id + '"]', this.element);
-                self._resetNodeSelected($li, layer.options);
-                self._resetNodeInfo($li, layer.options);
-                self._resetNodeVisible($li, layer);
+            function resetSourceAtTree(layer, parent){
+                var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
+                    self._resetNodeSelected($li, layer.options);
+                    self._resetNodeInfo($li, layer.options);
+                    self._resetNodeVisible($li, layer);
                 if(layer.children){
                     for(var i = 0; i < layer.children.length; i++){
-                        _resetSourceAtTree(layer.children[i], layer);
+                        resetSourceAtTree(layer.children[i], layer);
                     }
                 }
             };
-            _resetSourceAtTree(source.configuration.children[0], null);
+            resetSourceAtTree(source.configuration.children[0], null);
         },
         _changeChildren: function(changed){
             if(changed.children){

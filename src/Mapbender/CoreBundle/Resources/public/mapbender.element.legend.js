@@ -141,6 +141,30 @@
         _onSourceLoadStart: function(event, option){
         },
         _onSourceLoadEnd: function(event, option){
+            this._checkLayers(option.source);
+        },
+        _checkLayers: function(source){
+            var self = this, elm = null;
+            if(this.options.elementType === "dialog" && this.popup && this.popup.$element){
+                elm = this.popup.$element;
+            } else {
+                elm = self.element;
+            }
+            function checkLayers(layer, parent){
+                var $li = $('li[data-id="' + layer.options.id + '"]', elm);
+                if (layer.state.visibility){
+                    $li.removeClass('notvisible');
+                }else{
+                    $li.addClass('notvisible');
+                }
+                
+                if(layer.children){
+                    for(var i = 0; i < layer.children.length; i++){
+                        checkLayers(layer.children[i], layer);
+                    }
+                }
+            };
+            checkLayers(source.configuration.children[0], null);
         },
         _onSourceLoadError: function(event, option){
             $(this.element).find('ul[data-sourceid="' + option.source.id + '"] li').addClass('notvisible');
@@ -223,9 +247,7 @@
         _createLegendHtml: function(sources){
             var html = "";
             for(var i = 0; i < sources.length; i++){
-                if(sources[i].visible !== 'notvisible'){
-                    html += this._createLayerHtml(sources[i], "");
-                }
+                html += this._createLayerHtml(sources[i], "");
             }
             return html;
         },
@@ -378,6 +400,11 @@
             }else{
                 this._createLegend(this._createLegendHtml(sources));
             }
+            sources = this.model.getSources();
+            for (var i = 0; i < sources.length; i++){
+                this._checkLayers(sources[i]);
+            }
+           
         },
         close: function(){
             if(this.options.elementType === "dialog"){
