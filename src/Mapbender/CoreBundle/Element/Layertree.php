@@ -91,9 +91,8 @@ class Layertree extends Element
             "useAccordion" => false,
             "titlemaxlength" => intval(20),
             "autoOpen" => false,
-//            "showBaseSource" => true,
+            "showBaseSource" => true,
             "showHeader" => false,
-            "baseSources" => array()
         );
     }
 
