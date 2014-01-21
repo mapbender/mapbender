@@ -24,7 +24,7 @@ class SimpleSearch extends Element
      */
     static public function getClassDescription()
     {
-        return "mb.core.ruler.class.description";
+        return "mb.core.simplesearch.class.description";
     }
 
     /**

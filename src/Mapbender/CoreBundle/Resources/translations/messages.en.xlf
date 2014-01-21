@@ -430,6 +430,14 @@
         <source>mb.core.zoombar.tag.panel</source>
         <target>panel</target>
       </trans-unit>
+      <trans-unit id="8558c0db68060954e93d0d7b7a38a19c" resname="mb.core.simplesearch.class.title">
+        <source>mb.core.simplesearch.class.title</source>
+        <target>Simple Search</target>
+      </trans-unit>
+      <trans-unit id="f5721f3be6fafc85615fee69cc4e94bc" resname="mb.core.simplesearch.class.description">
+        <source>mb.core.simplesearch.class.description</source>
+        <target>Single field search on JSON sources (e.g. Solr)</target>
+      </trans-unit>
       <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
         <source>mb.core.legend.nolegend</source>
         <target>No legend available</target>
@@ -521,6 +529,10 @@
       <trans-unit id="9e35239edca01f34b1092c1bb8539150" resname="mb.core.zoombar.zoombyworld">
         <source>mb.core.zoombar.zoombyworld</source>
         <target>Zoom by world</target>
+      </trans-unit>
+      <trans-unit id="13348442cc6a27032d2b4aa28b75a5d3" resname="Search">
+        <source>Search</source>
+        <target>Search</target>
       </trans-unit>
       <trans-unit id="f741a4a709f26fdf399f7b805ff27125" resname="mb.core.featureinfo.error.nolayer">
         <source>mb.core.featureinfo.error.nolayer</source>
