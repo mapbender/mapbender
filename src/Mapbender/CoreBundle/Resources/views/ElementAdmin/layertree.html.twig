@@ -10,6 +10,12 @@
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
     <div class="clearContainer"></div>
+    {% if form.configuration.baseSources is defined %}
+    {{ form_label(form.configuration.baseSources) }}{{ form_widget(form.configuration.baseSources) }}
+    <div class="clearContainer"></div>
+    {% else %}
+    <span>{{ 'mb.core.basesourceswitcher.form.mesage'| trans }}</span>
+    {% endif %}
     {{ form_label(form.configuration.type) }}{{ form_widget(form.configuration.type) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.displaytype) }}{{ form_widget(form.configuration.displaytype) }}

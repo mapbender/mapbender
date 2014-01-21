@@ -11,7 +11,7 @@ use Mapbender\CoreBundle\Form\DataTransformer\ObjectIdTransformer;
 /**
  * 
  */
-class LayersetType extends AbstractType
+class LayersetSourcesAdminType extends AbstractType
 {
     /**
      *
@@ -40,7 +40,7 @@ class LayersetType extends AbstractType
      */
     public function getName()
     {
-        return 'app_layerset';
+        return 'layerset_sources';
     }
 
     /**
@@ -59,14 +59,15 @@ class LayersetType extends AbstractType
         $type = $this;
         $resolver->setDefaults(array(
             'application' => null,
-            'class' => 'MapbenderCoreBundle:Layerset',
+            'target_layerset' => null,
+            'class' => 'MapbenderCoreBundle:SourceInstance',
             'property' => 'title',
             'query_builder' => function(Options $options) use ($type) {
                 $repository = $type->getContainer()->get('doctrine')->getRepository($options['class']);
                 return $repository->createQueryBuilder('ls')
                         ->select('ls')
-                        ->where('ls.application = :appl')
-                        ->setParameter('appl', $options['application']);
+                        ->where('ls.layerset = :layerset AND ls.enabled = true')
+                        ->setParameter('layerset', $options['target_layerset']);
             }));
     }
 
@@ -77,7 +78,7 @@ class LayersetType extends AbstractType
     {
         $entityManager = $this->container->get('doctrine')->getEntityManager();
         $transformer = new ObjectIdTransformer($entityManager,
-            'MapbenderCoreBundle:Layerset');
+            'MapbenderCoreBundle:SourceInstance');
         $builder->addModelTransformer($transformer);
     }
 
