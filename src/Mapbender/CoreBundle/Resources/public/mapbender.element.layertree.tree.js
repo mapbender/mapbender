@@ -1,7 +1,6 @@
 (function($){
     $.widget("mapbender.mbLayertree", {
         options: {
-            title: 'Layertree',
             autoOpen: false,
             target: null
         },

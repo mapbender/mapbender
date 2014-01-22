@@ -18,6 +18,8 @@
         },
 
         _setup: function() {
+            if(this.options.autoOpen)
+                this.activate();
             this._trigger('ready');
             this._ready();
         },
