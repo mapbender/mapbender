@@ -78,6 +78,7 @@
          * Also set up feature info dialog if needed.
          */
         _triggerFeatureInfo: function(e){
+            this._trigger('featureinfo', null, { action: "clicked", title: this.element.attr('title'), id: this.element.attr('id')});
             var self = this,
                 x = e.pageX - $(this.map.element).offset().left,
                 y = e.pageY - $(this.map.element).offset().top,
