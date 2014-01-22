@@ -197,7 +197,7 @@
                     li.find('input.layer-info').attr('disabled', 'disabled');
                 li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                 if(config.toggleable)
-                    li.find('.layer-title:first').addClass('toggleable');
+                    li.addClass('toggleable');
                 if(!this.options.layerMenu){
                     li.find('.layer-menu-btn').remove();
                 }else{
@@ -277,7 +277,7 @@
                         li.find('input.layer-info').attr('disabled', 'disabled');
                     li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if(config.toggleable)
-                        li.find('.layer-title:first').addClass('toggleable');
+                        li.addClass('toggleable');
                     if(!this.options.layerMenu){
                         li.find('.layer-menu-btn').remove();
                     }else{
@@ -507,7 +507,7 @@
             }
         },
         _getNodeType: function(node, isroot){
-            if(node.children && isroot){
+            if(isroot){
                 return this.consts.root;
             }else if(node.children){
                 return this.consts.group;
@@ -556,6 +556,8 @@
         },
         _toggleContent: function(e){
             var me = $(e.target);
+            if(!me.parents('li:first').hasClass('toggleable'))
+                return false;
             if(me.hasClass("iconFolderActive")){
                 me.removeClass("iconFolderActive");
                 me.parents('li:first').removeClass("showLeaves");
