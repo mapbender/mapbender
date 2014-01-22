@@ -35,6 +35,10 @@ class FeatureInfoAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
+            ->add('type', 'choice',
+                array(
+                'required' => true,
+                'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
             ->add('autoOpen', 'checkbox', array('required' => false))
             ->add('deactivateOnClose', 'checkbox', array('required' => false))
             ->add('target', 'target_element',
