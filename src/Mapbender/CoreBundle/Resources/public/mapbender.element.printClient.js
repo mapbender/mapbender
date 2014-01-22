@@ -319,7 +319,6 @@
 
             if(true == this.popupIsOpen){
                 if(null === this.layer) {
-
                     this.layer = new OpenLayers.Layer.Vector("Print", {
                         styleMap: new OpenLayers.StyleMap({
                             'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
@@ -371,54 +370,12 @@
             return data;
         },
 
-        _extractGeometriesFromFeature: function(feature) {
-            var res = [];
-            if(!$.isArray(feature)) {
-                feature = [feature];
-            }
-            $.each(feature, function(k, v){
-                var verts = v.geometry.getVertices();
-                if(v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
-                    verts.push(verts[0]);
-                }
-                res.push(verts);
-            });
-            return res;
-        },
-
-        _extractGeometriesFromLayer: function(layer) {
-            var self = this;
-            return $.map(layer.features, self._extractGeometriesFromFeature);
-        },
-
-        _extractGeometriesFromMap: function(map) {
-            var self = this;
-            var lays = $.grep(map.layers, function(lay) {
-                return lay.name !== 'Print' && lay.CLASS_NAME === 'OpenLayers.Layer.Vector';
-            });
-            var geoms = $.map(lays, $.proxy(self._extractGeometriesFromLayer, this));
-            return geoms;
-            var all = [];
-            $.each(geoms, function(idx, val) {
-                $.merge(all, val);
-            });
-        },
-
         _printDirectly: function() {
             var form = $('form#formats', this.element),
-            extent = this._getPrintExtent();
-            form.find('div.layers').html('');
-            var template_key = this.element.find('select[name="template"]').val(),
+            extent = this._getPrintExtent(),
+            template_key = this.element.find('select[name="template"]').val(),
             format = this.options.templates[template_key].format,
             file_prefix = this.options.file_prefix;
-
-            var feature_coords = new Array();
-            var feature_comp = this.feature.geometry.components[0].components;
-            for(var i = 0; i < feature_comp.length-1; i++) {
-                feature_coords[i] = new Object();
-                feature_coords[i]['x'] = feature_comp[i].x;
-                feature_coords[i]['y'] = feature_comp[i].y;
-            }
 
             // Felder für extent, center und layer dynamisch einbauen
             var fields = $();
@@ -458,57 +415,73 @@
                 name: 'file_prefix',
                 value: file_prefix
             }));
-
+            
+            // koordinaten fuer extent feature mitschicken
+            var feature_coords = new Array();
+            var feature_comp = this.feature.geometry.components[0].components;
+            for(var i = 0; i < feature_comp.length-1; i++) {
+                feature_coords[i] = new Object();
+                feature_coords[i]['x'] = feature_comp[i].x;
+                feature_coords[i]['y'] = feature_comp[i].y;
+            }
+            
             $.merge(fields, $('<input />', {
                 type: 'hidden',
                 name: 'extent_feature',
                 value: JSON.stringify(feature_coords)
-            }));
+            }));        
+            
+            // layer auslesen
+            var sources = this.map.getSourceTree(), lyrCount = 0;
 
-            var sources = this.map.getSourceTree(), num = 0;
-
-            for(var i = 0; i < sources.length; i++) {
+            for (var i = 0; i < sources.length; i++) {
                 var layer = this.map.map.layersList[sources[i].mqlid],
                 type = layer.olLayer.CLASS_NAME;
-                if(layer.olLayer.params.LAYERS.length === 0){
-                    continue;
-                }
-                if(0 !== type.indexOf('OpenLayers.Layer.')) {
-//                    window.console && console.log('Layer is of unknown type for print.', layer);
-                    continue;
-                }
 
-                if(layer.olLayer.type === 'vector') {
-                // Vector layers are all the same:
-                //   * Get all features as GeoJSON
-                //   * TODO: Get Styles...
-                // TODO: Implement this thing
-                } else if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
+                if (0 !== type.indexOf('OpenLayers.Layer.')) {
+                    continue;
+                }
+                
+                if (layer.olLayer.type === 'vector') {
+                    // Vector layers are all the same:
+                    //   * Get all features as GeoJSON
+                    //   * TODO: Get Styles...
+                    // TODO: Implement this thing
+                } else if (Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
+                    var source = sources[i],
+                            scale = this._getPrintScale(),
+                            toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: source.mqlid}};
+                    var result = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
+                    var old = layer.olLayer.params.LAYERS;
+                    layer.olLayer.params.LAYERS = result.layers;
                     $.merge(fields, $('<input />', {
                         type: 'hidden',
-                        name: 'layers[' + num + ']',
+                        name: 'layers[' + lyrCount + ']',
                         value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy))
                     }));
-                    num++;
+                    layer.olLayer.params.LAYERS = old;
                 }
+                
+                if(layer.olLayer.params.LAYERS.length !== 0){
+                    lyrCount++;
+                }
+                
             }
+            
+            $('div#layers').empty();
+            fields.appendTo(form.find('div#layers'));
 
-            // overview
-
+            // overview map
             var ovMap = this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap')[0],
             count = 0;
             if (undefined !== ovMap){
                 for(var i = 0; i < ovMap.layers.length; i++) {
                     var url = ovMap.layers[i].getURL(ovMap.map.getExtent());
-
                     var extent = ovMap.map.getExtent();
                     var mwidth = extent.getWidth();
-
                     var size = ovMap.size;
                     var width = size.w;
-
                     var res = mwidth / width;
-
                     var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
                     var scale_deg = Math.round(OpenLayers.Util.getScaleFromResolution(res));
 
@@ -525,7 +498,7 @@
                 }
             }
 
-            // drawn features
+            // feature koordinaten mitschicken
             var feature_list = this._extractGeometriesFromMap(this.map.map.olMap);
             var c = 0;
             for(var i = 0; i < feature_list.length; i++) {
@@ -546,10 +519,6 @@
                 c++;
             }
 
-
-            $('div#layers').empty();
-            fields.appendTo(form.find('div#layers'));
-
             // Post in neuen Tab (action bei form anpassen)
             var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
 
@@ -557,12 +526,11 @@
             form.attr('target', '_blank');
             form.attr('method', 'post');
 
-            if (num === 0){
+            if (lyrCount === 0){
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
             }else{
                 //click hidden submit button to check requierd fields
                 form.find('input[type="submit"]').click();
-                //form.submit();
             }
         },
 
@@ -584,8 +552,42 @@
                     self.height = data['height'];
                     self._updateGeometry();
                 }
-            })
+            });
         },
+        
+        _extractGeometriesFromFeature: function(feature) {
+            var res = [];
+            if(!$.isArray(feature)) {
+                feature = [feature];
+            }
+            $.each(feature, function(k, v){
+                var verts = v.geometry.getVertices();
+                if(v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
+                    verts.push(verts[0]);
+                }
+                res.push(verts);
+            });
+            return res;
+        },
+
+        _extractGeometriesFromLayer: function(layer) {
+            var self = this;
+            return $.map(layer.features, self._extractGeometriesFromFeature);
+        },
+
+        _extractGeometriesFromMap: function(map) {
+            var self = this;
+            var lays = $.grep(map.layers, function(lay) {
+                return lay.name !== 'Print' && lay.CLASS_NAME === 'OpenLayers.Layer.Vector';
+            });
+            var geoms = $.map(lays, $.proxy(self._extractGeometriesFromLayer, this));
+            return geoms;
+            var all = [];
+            $.each(geoms, function(idx, val) {
+                $.merge(all, val);
+            });
+        },
+        
         /**
          *
          */
