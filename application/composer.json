@@ -19,7 +19,7 @@
         "jms/security-extra-bundle": "1.2.*",
         "jms/di-extra-bundle": "1.1.*",
 
-        "friendsofsymfony/jsrouting-bundle": "dev-master",
+        "friendsofsymfony/jsrouting-bundle": "1.5.*",
         "kriswallsmith/buzz": "dev-master",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "toooni/fpdf": "dev-master",
