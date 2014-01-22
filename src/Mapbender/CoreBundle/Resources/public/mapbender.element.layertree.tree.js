@@ -18,7 +18,7 @@
             group: "group",
             simple: "simple"
         },
-        transConst: {outOfScale: '',outOfBounds: '', parentInvisible: ''},
+        transConst: {outOfScale: '', outOfBounds: '', parentInvisible: ''},
         _create: function(){
             if(!Mapbender.checkTarget("mbLayertree", this.options.target)){
                 return;
@@ -197,7 +197,7 @@
                     li.find('input.layer-info').attr('disabled', 'disabled');
                 li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                 if(config.toggleable)
-                    li.find('.layer-title:first').addClass('toggleable');
+                    li.addClass('toggleable');
                 if(!this.options.layerMenu){
                     li.find('.layer-menu-btn').remove();
                 }else{
@@ -277,7 +277,7 @@
                         li.find('input.layer-info').attr('disabled', 'disabled');
                     li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if(config.toggleable)
-                        li.find('.layer-title:first').addClass('toggleable');
+                        li.addClass('toggleable');
                     if(!this.options.layerMenu){
                         li.find('.layer-menu-btn').remove();
                     }else{
@@ -413,24 +413,24 @@
         _resetNodeVisible: function($li, layerDef){
             if(layerDef.state.visibility){
                 $li.removeClass("invisible").find('span.layer-state:first').attr("title", "");
-            } else if(layerDef.state.outOfScale){
+            }else if(layerDef.state.outOfScale){
                 $li.addClass("invisible").find('span.layer-state').attr("title", "out of scale");
             }
         },
-
         _resetSourceAtTree: function(source){
             var self = this;
             function resetSourceAtTree(layer, parent){
                 var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
-                    self._resetNodeSelected($li, layer.options);
-                    self._resetNodeInfo($li, layer.options);
-                    self._resetNodeVisible($li, layer);
+                self._resetNodeSelected($li, layer.options);
+                self._resetNodeInfo($li, layer.options);
+                self._resetNodeVisible($li, layer);
                 if(layer.children){
                     for(var i = 0; i < layer.children.length; i++){
                         resetSourceAtTree(layer.children[i], layer);
                     }
                 }
-            };
+            }
+            ;
             resetSourceAtTree(source.configuration.children[0], null);
         },
         _changeChildren: function(changed){
@@ -469,7 +469,7 @@
                 this.loadStarted[option.source.id ] = true;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
                 if($('input.layer-selected:first', source_li).is(':checked') && !source_li.hasClass('invisible')){
-                    source_li.attr('data-state', 'loading').find('span.layer-state:first').attr("title",source_li.attr('data-title'));
+                    source_li.attr('data-state', 'loading').find('span.layer-state:first').attr("title", source_li.attr('data-title'));
                 }
             }
         },
@@ -487,7 +487,7 @@
             if(option.source && this.loadStarted[option.source.id]){
                 this.loadStarted[option.source.id] = false;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
-                source_li.attr('data-state', 'error').find('span.layer-title:first').attr("title",option.error.details);
+                source_li.attr('data-state', 'error').find('span.layer-title:first').attr("title", option.error.details);
             }
         },
         _subStringText: function(text){
@@ -507,7 +507,7 @@
             }
         },
         _getNodeType: function(node, isroot){
-            if(node.children && isroot){
+            if(isroot){
                 return this.consts.root;
             }else if(node.children){
                 return this.consts.group;
@@ -556,6 +556,8 @@
         },
         _toggleContent: function(e){
             var me = $(e.target);
+            if(!me.parents('li:first').hasClass('toggleable'))
+                return false;
             if(me.hasClass("iconFolderActive")){
                 me.removeClass("iconFolderActive");
                 me.parents('li:first').removeClass("showLeaves");
