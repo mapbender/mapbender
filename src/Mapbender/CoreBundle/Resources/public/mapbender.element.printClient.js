@@ -430,13 +430,17 @@
                 name: 'extent_feature',
                 value: JSON.stringify(feature_coords)
             }));        
-            
+            var schalter = 0;
             // layer auslesen
             var sources = this.map.getSourceTree(), lyrCount = 0;
 
             for (var i = 0; i < sources.length; i++) {
                 var layer = this.map.map.layersList[sources[i].mqlid],
                 type = layer.olLayer.CLASS_NAME;
+                
+                if (schalter === 1 && layer.olLayer.params.LAYERS.length === 0){
+                    continue;
+                }
 
                 if (0 !== type.indexOf('OpenLayers.Layer.')) {
                     continue;
@@ -451,21 +455,19 @@
                     var source = sources[i],
                             scale = this._getPrintScale(),
                             toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: source.mqlid}};
-                    var result = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
-                    var old = layer.olLayer.params.LAYERS;
-                    layer.olLayer.params.LAYERS = result.layers;
-                    $.merge(fields, $('<input />', {
-                        type: 'hidden',
-                        name: 'layers[' + lyrCount + ']',
-                        value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy))
-                    }));
-                    layer.olLayer.params.LAYERS = old;
-                }
-                
-                if(layer.olLayer.params.LAYERS.length !== 0){
-                    lyrCount++;
-                }
-                
+                    var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
+                    if (visLayers.layers.length > 0){            
+                        var prevLayers = layer.olLayer.params.LAYERS;
+                        layer.olLayer.params.LAYERS = visLayers.layers;                 
+                        $.merge(fields, $('<input />', {
+                            type: 'hidden',
+                            name: 'layers[' + lyrCount + ']',
+                            value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy))
+                        }));
+                        layer.olLayer.params.LAYERS = prevLayers;
+                        lyrCount++;
+                    }    
+                }             
             }
             
             $('div#layers').empty();
