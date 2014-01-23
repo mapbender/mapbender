@@ -14,7 +14,6 @@ use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\CoreBundle\Component\Signer;
 
-
 /**
  * WmsInstance class
  *
@@ -133,7 +132,7 @@ class WmsInstance extends SourceInstance
      *
      * @return array $configuration
      */
-    public function getConfiguration(Signer $signer=null)
+    public function getConfiguration(Signer $signer = null)
     {
         if ($this->getSource() === null) { // from yaml
             $this->generateYmlConfiguration();
@@ -143,11 +142,28 @@ class WmsInstance extends SourceInstance
             }
         }
 
-        if($signer) {
+        if ($signer) {
             $this->configuration['options']['url'] = $signer->signUrl($this->configuration['options']['url']);
+            $this->signeUrls($signer, $this->configuration['children'][0]);
         }
 
         return $this->configuration;
+    }
+
+    private function signeUrls(Signer $signer, &$layer)
+    {
+        if ($layer['options']['legend']) {
+            if (isset($layer['options']['legend']['graphic'])) {
+                $layer['options']['legend']['graphic'] = $signer->signUrl($layer['options']['legend']['graphic']);
+            } else if (isset($layer['options']['legend']['url'])) {
+                $layer['options']['legend']['url'] = $signer->signUrl($layer['options']['legend']['url']);
+            }
+        }
+        if (isset($layer['children'])) {
+            foreach ($layer['children'] as &$child) {
+                $this->signeUrls($signer, $child);
+            }
+        }
     }
 
     /**

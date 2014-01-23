@@ -71,24 +71,27 @@ $.widget("mapbender.mbOverview", {
                 extent: max_ext
             }
         };
-        this.overview = new OpenLayers.Control.OverviewMap({
-            div: $(self.element).find('#mb-element-overview-map').get(0),
-            size: new OpenLayers.Size(self.options.width, self.options.height),
+        var div = $('#mb-element-overview-map', self.element);
+        div = div.size() > 0 ? div.get(0): undefined;
+        var overviewOptions = {
+            layers: layers_overview,
+            div: div,
+//            size: new OpenLayers.Size(self.options.width, self.options.height),
             //maximized: self.options.maximized,
             mapOptions: {
                 maxExtent: max_ext,
                 projection: proj,
                 theme: null
-            },
-            layers: layers_overview
-        });
+            }
+        };
         if(this.options.fixed) {
-            $.extend(this.overview, {
+            $.extend(overviewOptions, {
                 minRatio: 1,
-                maxRatio: 1000000000,
-                autoPan: false
+                maxRatio: 1000000000
+//            ,autoPan: false
             });
         }
+        this.overview = new OpenLayers.Control.OverviewMap(overviewOptions);
         mbMap.map.olMap.addControl(this.overview);
         $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
         $(self.element).find('.toggleOverview').bind('click', $.proxy(this._openClose, this));
