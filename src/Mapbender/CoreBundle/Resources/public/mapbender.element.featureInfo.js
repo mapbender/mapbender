@@ -169,10 +169,14 @@
         _featureInfoCallback: function(data){
             var text = '';
             try{ // cut css
-                text = data.response.replace(/document.writeln[^;]*;/g, '')
-                    .replace(/\n/g, '')
-                    .replace(/<link[^>]*>/gi, '')
-                    .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
+                if(data.response.search('<link') > -1 || data.response.search('<style') > -1){
+                    text = data.response.replace(/document.writeln[^;]*;/g, '')
+                        .replace(/\n/g, '')
+                        .replace(/<link[^>]*>/gi, '')
+                        .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
+                } else {
+                    text = data.response.replace(/\n/g, '<br/>');
+                }
             }catch(e){
             }
             //TODO: Needs some escaping love
