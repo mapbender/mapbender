@@ -11,6 +11,7 @@
         popup: null,
         created: false,
         loadStarted: {},
+        sourceAtTree: {},
         consts: {
             source: "source",
             root: "root",
@@ -57,8 +58,9 @@
                         var li_s = self._createSourceList(sources[i], sources[i], this.model.getScale());
                         $("ul.layers:first", this.element).append($(li_s));
                     }
+                    this.sourceAtTree[sources[i].id ] = {id: sources[i].id};
+                    this._resetSourceAtTree(sources[i]);
                 }
-                this._resetSourceAtTree(sources[i]);
             }
 
             this._reset();
@@ -388,6 +390,7 @@
                     }
                 }
             }
+            this.sourceAtTree[added.source.id ] = {id: added.source.id};
             this._reset();
         },
         _onSourceChanged: function(event, options){
@@ -464,7 +467,7 @@
         },
         _onSourceLoadStart: function(event, option){ // sets "loading" for layers
 //            window.console && console.log("layertree _onSourceLoadStart");
-            if(option.source){
+            if(option.source && this.sourceAtTree[option.source.id ]){
                 this.loadStarted[option.source.id ] = true;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
                 if($('input.layer-selected:first', source_li).is(':checked') && !source_li.hasClass('invisible')){
@@ -474,7 +477,7 @@
         },
         _onSourceLoadEnd: function(event, option){ // removes "loading" from layers
 //            window.console && console.log("layertree _onSourceLoadEnd");
-            if(option.source && this.loadStarted[option.source.id]){
+            if(option.source && this.sourceAtTree[option.source.id ] && this.loadStarted[option.source.id]){
                 this.loadStarted[option.source.id] = false;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
                 source_li.attr('data-state', '');
@@ -483,7 +486,7 @@
         },
         _onSourceLoadError: function(event, option){
 //            window.console && console.log("layertree _onSourceLoadError");
-            if(option.source && this.loadStarted[option.source.id]){
+            if(option.source && this.sourceAtTree[option.source.id ] && this.loadStarted[option.source.id]){
                 this.loadStarted[option.source.id] = false;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
                 source_li.attr('data-state', 'error').find('span.layer-title:first').attr("title", option.error.details);
