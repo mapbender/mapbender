@@ -46,7 +46,11 @@
       {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'content' }%}
     </div>
     <ul id="footer" class="toolBar itemsRight bottom">
-      {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'footer' }%}
+      {% if application.elements.footer is defined %}
+        {% for element in application.elements.footer %}
+          <li class="toolBarItem">{{ element.render() | raw }}</li>
+        {% endfor %}
+      {% endif %}
     </ul>
   </div>
 

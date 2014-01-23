@@ -2,7 +2,6 @@
 
     $.widget("mapbender.mbLegend", {
         options: {
-            title: 'Legend',
             autoOpen: true,
             target: null,
             noLegend: "No legend available",
