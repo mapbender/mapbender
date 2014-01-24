@@ -10,11 +10,13 @@ use Mapbender\CoreBundle\Component\ExtendedCollection;
 /**
  * 
  */
-class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollection
+class BaseSourceSwitcherAdminType extends AbstractType
+    implements ExtendedCollection
 {
     public $hasSubForm = true;
-    
-    public function isSubForm(){
+
+    public function isSubForm()
+    {
         return $this->hasSubForm;
     }
 
