@@ -10,8 +10,8 @@ $.extend(true, Mapbender, {
                     /* set unic id for a layer */
                     layer.options.id = parent ? parent.options.id + "_" + num : id + "_" + num;
                     if(proxy && layer.options.legend){
-                        if(layer.options.legend.legendurl){
-                            layer.options.legend.legendurl = self._addProxy(layer.options.legend.legendurl);
+                        if(layer.options.legend.graphic){
+                            layer.options.legend.graphic = self._addProxy(layer.options.legend.graphic);
                         } else if(layer.options.legend.url){
                             layer.options.legend.url = self._addProxy(layer.options.legend.url);
                         }
@@ -22,7 +22,7 @@ $.extend(true, Mapbender, {
                         }
                     }
                 }
-                _setProperties(rootLayer, null, layerDef.id, 0, layerDef.configuration.options.url);
+                _setProperties(rootLayer, null, layerDef.id, 0, layerDef.configuration.options.proxy);
 
                 var finalUrl = layerDef.configuration.options.url;
 
