@@ -144,7 +144,9 @@ class WmsInstance extends SourceInstance
 
         if ($signer) {
             $this->configuration['options']['url'] = $signer->signUrl($this->configuration['options']['url']);
-            $this->signeUrls($signer, $this->configuration['children'][0]);
+            if($this->proxy){
+                $this->signeUrls($signer, $this->configuration['children'][0]);
+            }
         }
 
         return $this->configuration;
