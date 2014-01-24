@@ -660,6 +660,7 @@
                         content: [self.element.show()],
                         destroyOnClose: true,
                         width: 350,
+                        cssClass: 'customLayertree',
                         buttons: {
                             'ok': {
                                 label: Mapbender.trans("mb.core.layertree.popup.btn.ok"),
