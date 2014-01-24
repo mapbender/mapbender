@@ -408,13 +408,13 @@ class PrintService
                     $this->conf['northarrow']['height'] * 10);
             }
         } else {
-            if (isset($this->conf['northarrow'])) {
-                $this->rotateNorthArrow();
-            }
             $pdf->Image($tempdir . '/mergedimage.png', $this->x_ul, $this->y_ul,
                 $this->width, $this->height, 'png', '', false, 0, 5, -1 * 0);
 
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
+            if (isset($this->conf['northarrow'])) {
+                $this->rotateNorthArrow();
+            }
         }
                
         if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
