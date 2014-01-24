@@ -53,7 +53,7 @@ class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollec
                     foreach ($application->getLayersets() as $layerset) {
                         if (intval($mapconfig['layerset']) === $layerset->getId()) {
                             foreach ($layerset->getInstances() as $instance) {
-                                if ($instance->getEnabled())
+                                if ($instance->getEnabled() && $instance->isBaseSource())
                                         $instList[strval($instance->getId())] = $instance->getTitle();
                             }
                             break;
