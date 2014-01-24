@@ -24,7 +24,6 @@
   $labelWidth:70px;
   $inputWidth:300px;
 
-  width:$labelWidth + $inputWidth + $space*2 + 2; // + border
   margin-right:$space;
 
   .labelInput{width:$labelWidth;}
@@ -40,6 +39,12 @@
 
 
 // --------------------------------------------------------- VIEW SERVICE
+.iconBig, .iconSmall{
+  color:$darkFontColor;
+  margin-left:5px;
+  @include opacity(0.6);
+  &:hover{@include opacity(1);}
+}
 .serviceContainer{
   .labelText{float:left;}
   .metaText{@extend .smallText;}
