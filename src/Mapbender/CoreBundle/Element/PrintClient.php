@@ -83,7 +83,7 @@ class PrintClient extends Element
                     "label" => "A3 Landscape",
                     "format" => "a3")
                 ,
-                array(
+                /*array(
                     'template' => "a2_landscape_offical",
                     "label" => "A2 Landscape offical",
                     "format" => "a2")
@@ -91,7 +91,7 @@ class PrintClient extends Element
                 array(
                     'template' => "a4_landscape_offical",
                     "label" => "A4 Landscape offical",
-                    "format" => "a4")
+                    "format" => "a4")*/
             ),
             "scales" => array(500, 1000, 5000, 10000, 25000),
             "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
