@@ -19,6 +19,7 @@
         width: null,
         height: null,
         popupIsOpen: true,
+        rotateValue: 0,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
@@ -233,11 +234,17 @@
         },
 
         _updateGeometry: function(reset) {
-            var template = this.element.find('select[name="template"]').val();
-            var width = this.width;
-            var height = this.height;
-            var scale = this._getPrintScale();
+            var template = this.element.find('select[name="template"]').val(),
+                width = this.width,
+                height = this.height,
+                scale = this._getPrintScale(),
+                rotationField = $('input[name="rotation"]');
+            
+            if (rotationField.val() == '' && this.rotateValue !== '0'){
+                rotationField.val('0'); 
+            }
             var rotation = $('input[name="rotation"]').val();
+            this.rotateValue = rotation;
 
             if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
                 if(null !== this.lastScale) {
