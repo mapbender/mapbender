@@ -185,15 +185,15 @@ class PrintService
         imagepng($finalImage, $finalimagename);
         foreach ($this->layer_urls as $k => $url) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($tempdir . '/tempimage' . $k) && finfo_file($finfo,
+            if (file_exists($tempdir . '/tempimage' . $k) && finfo_file($finfo,
                     $tempdir . '/tempimage' . $k) == 'image/png') {
                 $dest = imagecreatefrompng($finalimagename);
                 $src = imagecreatefrompng($tempdir . '/tempimage' . $k);
                 imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
                     $this->image_height);
                 imagepng($dest, $finalimagename);
-            }
-            unlink($tempdir . '/tempimage' . $k);
+                unlink($tempdir . '/tempimage' . $k);           
+            }  
             finfo_close($finfo);
         }
     }
@@ -288,7 +288,7 @@ class PrintService
                 $newx = ($rotated_width - $this->image_width ) / 2;
                 $newy = ($rotated_height - $this->image_height ) / 2;
 
-                $clippedImageName = $tempdir . '/clipped_image' . $k . '.png';
+                $clippedImageName = $tempdir . '/clipped_image' . $k;
                 $clippedImage = imagecreatetruecolor($this->image_width,
                     $this->image_height);
 
@@ -311,12 +311,18 @@ class PrintService
             $this->image_height, $bg);
         imagepng($finalImage, $finalimagename);
         foreach ($this->layer_urls as $k => $url) {
-            $dest = imagecreatefrompng($finalimagename);
-            $src = imagecreatefrompng($tempdir . '/clipped_image' . $k . '.png');
-            imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
-                $this->image_height);
-            imagepng($dest, $finalimagename);
-            unlink($tempdir . '/clipped_image' . $k . '.png');
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if (file_exists($tempdir . '/clipped_image' . $k) && finfo_file($finfo,
+                    $tempdir . '/clipped_image' . $k) == 'image/png') {
+                      
+                $dest = imagecreatefrompng($finalimagename);
+                $src = imagecreatefrompng($tempdir . '/clipped_image' . $k);
+                imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
+                    $this->image_height);
+                imagepng($dest, $finalimagename);
+                unlink($tempdir . '/clipped_image' . $k);
+            }
+            finfo_close($finfo);
         }
     }
 
