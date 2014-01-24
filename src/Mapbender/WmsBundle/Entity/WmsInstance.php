@@ -152,7 +152,7 @@ class WmsInstance extends SourceInstance
 
     private function signeUrls(Signer $signer, &$layer)
     {
-        if ($layer['options']['legend']) {
+        if (isset($layer['options']['legend'])) {
             if (isset($layer['options']['legend']['graphic'])) {
                 $layer['options']['legend']['graphic'] = $signer->signUrl($layer['options']['legend']['graphic']);
             } else if (isset($layer['options']['legend']['url'])) {
