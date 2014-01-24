@@ -46,7 +46,7 @@
             this.mapClickHandler = function(e){
                 self._triggerFeatureInfo.call(self, e);
             };
-            this.map.element.bind('click', self.mapClickHandler);
+            this.map.element.bind('touch', self.mapClickHandler);
         },
         deactivate: function(){
             if(this.map){
