@@ -61,6 +61,8 @@ class SearchRouter extends Element
     {
         return array(
             'js' => array(
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                 'vendor/underscore.js',
                 'vendor/json2.js',
                 'vendor/backbone.js',
@@ -111,7 +113,6 @@ class SearchRouter extends Element
         }
 
         if ('search' === $action) {
-
             $this->setupForms();
             $form = $this->forms[$target];
             $data = json_decode($request->getContent());

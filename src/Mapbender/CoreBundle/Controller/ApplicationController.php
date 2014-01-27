@@ -81,11 +81,12 @@ class ApplicationController extends Controller {
 
         // Set target path for CSS rewrite to work
         // Replace backward slashes (Windows paths) with forward slashes...
-        $path = $this->get('request')->server->get('PATH_INFO');
-        if(!$path) {
-            $path = $this->get('request')->server->get('REQUEST_URI');
-        }
-        $target = str_replace('\\', '/', realpath($this->get('request')->server->get('SCRIPT_FILENAME')) . $path);
+        $uri = $this->get('request')->getRequestUri();
+        $basepath = $this->get('request')->getBasePath();
+        $path = substr($uri, strlen($basepath));
+
+        $target = realpath($this->get('kernel')->getRootDir() . '/../web') . $path;
+        $target = str_replace('\\', '/', $target);
 
         $mimetypes = array(
             'css' => 'text/css',
