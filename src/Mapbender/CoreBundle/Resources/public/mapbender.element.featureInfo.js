@@ -9,6 +9,7 @@
         map: null,
         mapClickHandler: null,
         popup: null,
+
         _create: function(){
             if(!Mapbender.checkTarget("mbFeatureInfo", this.options.target)){
                 return;
@@ -16,12 +17,22 @@
             var self = this;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
+
         _setup: function(){
+            // Set up click handler
+            this.map = $('#' + this.options.target).data('mapQuery');
+            this.mapClickHandler = new OpenLayers.Handler.Click(this, {
+                'click': this._triggerFeatureInfo
+            }, {
+                map: this.map.olMap
+            });
+
             if(this.options.autoOpen)
                 this.activate();
             this._trigger('ready');
             this._ready();
         },
+
         _setOption: function(key, value){
             switch(key){
                 case "layers":
@@ -32,37 +43,35 @@
                         {'key': key, 'namespace': this.namespace, 'widgetname': this.widgetName});
             }
         },
+
         /**
          * Default action for mapbender element
          */
         defaultAction: function(callback){
             this.activate(callback);
         },
+
         activate: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
-            this.map = $('#' + this.options.target).data('mapQuery');
             $('#' + this.options.target).addClass('mb-feature-info-active');
-            this.mapClickHandler = function(e){
-                self._triggerFeatureInfo.call(self, e);
-            };
-            console.log('hallo');
-            this.map.element.on('click', self.mapClickHandler);
+            this.mapClickHandler.activate();
         },
+
         deactivate: function(){
-            if(this.map){
-                $('#' + this.options.target).removeClass('mb-feature-info-active');
-                this.map.element.unbind('click', this.mapClickHandler);
-                $(".toolBarItemActive").removeClass("toolBarItemActive");
-                if(this.popup){
-                    if(this.popup.$element){
-                        this.popup.destroy();
-                    }
-                    this.popup = null;
+            $('#' + this.options.target).removeClass('mb-feature-info-active');
+            $(".toolBarItemActive").removeClass("toolBarItemActive");
+            if(this.popup){
+                if(this.popup.$element){
+                    this.popup.destroy();
                 }
+                this.popup = null;
             }
+
+            this.mapClickHandler.deactivate();
             this.callback ? this.callback.call() : this.callback = null;
         },
+
         _onTabs: function(){
             $(".tabContainer", this.popup.$element).on('click', '.tab', function(){
                 var me = $(this);
@@ -71,18 +80,20 @@
                 $("#" + me.attr("id").replace("tab", "container")).addClass("active");
             });
         },
+
         _offTabs: function(){
             $(".tabContainer", this.popup.$element).off('click', '.tab');
         },
+
         /**
-         * Trigger the Feature Info call for each layer. 
+         * Trigger the Feature Info call for each layer.
          * Also set up feature info dialog if needed.
          */
         _triggerFeatureInfo: function(e){
             this._trigger('featureinfo', null, { action: "clicked", title: this.element.attr('title'), id: this.element.attr('id')});
             var self = this,
-                x = e.pageX - $(this.map.element).offset().left,
-                y = e.pageY - $(this.map.element).offset().top,
+                x = e.xy.x,
+                y = e.xy.y,
                 fi_exist = false;
 
             $(this.element).empty();
@@ -163,6 +174,7 @@
                 this.element.append(content);
             }
         },
+
         /**
          * Once data is coming back from each layer's FeatureInfo call,
          * insert it into the corresponding tab.
@@ -183,6 +195,7 @@
             //TODO: Needs some escaping love
             $('#container' + data.layerId).removeClass('loading').html(text);
         },
+
         /**
          *
          */
@@ -193,6 +206,7 @@
                 this.readyCallbacks.push(callback);
             }
         },
+
         /**
          *
          */
