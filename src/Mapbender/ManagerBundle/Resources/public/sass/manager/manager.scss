@@ -32,7 +32,12 @@ $pageWidth:$contentPaneWidth + $navWidth;
   margin: 0 auto;
   width:$pageWidth;
 }
-
+.iconBig, .iconSmall{
+  color:$darkFontColor;
+  margin-left:5px;
+  @include opacity(0.6);
+  &:hover{@include opacity(1);}
+}
 
 
 

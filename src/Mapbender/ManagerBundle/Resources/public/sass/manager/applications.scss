@@ -25,12 +25,6 @@
     color:lighten($darkFontColor, 10%);
   }
 }
-.iconBig, .iconSmall{
-  color:$darkFontColor;
-  margin-left:5px;
-  @include opacity(0.6);
-  &:hover{@include opacity(1);}
-}
 .elementPopup{width:460px;}
 
 
@@ -100,7 +94,6 @@
   padding:5px $space/2 5px $space/2;
   border:solid 1px white;
   @include border-radius($radius);
-  @include transition(all 0.2s ease-in-out);
 
   .iconOk{
     @include opacity(0);

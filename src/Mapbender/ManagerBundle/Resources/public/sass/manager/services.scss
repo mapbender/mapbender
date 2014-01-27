@@ -39,12 +39,6 @@
 
 
 // --------------------------------------------------------- VIEW SERVICE
-.iconBig, .iconSmall{
-  color:$darkFontColor;
-  margin-left:5px;
-  @include opacity(0.6);
-  &:hover{@include opacity(1);}
-}
 .serviceContainer{
   .labelText{float:left;}
   .metaText{@extend .smallText;}
@@ -105,7 +99,6 @@
     font-style:italic;
 
     @include opacity(1);
-    @include text-shadow(#fff 1px 1px 0px);
 
     &.iconSmall:before{margin-right:$space/2;}
   }
@@ -178,8 +171,6 @@
 
   @include opacity(1);
   @include border-radius($radius);
-  @include box-shadow(0 0 3px rgba(0, 0, 0, 0.1),
-                        inset 0px 0px 3px #fff);
   @include transition(all 0.2s ease-in-out);
 
   &.hide{

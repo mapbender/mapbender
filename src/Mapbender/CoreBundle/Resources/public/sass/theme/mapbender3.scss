@@ -1,8 +1,5 @@
 @import "libs/variables";
 @import "libs/mixins";
-
-@import "libs/variables";
-@import "libs/mixins";
 @import "libs/normalize";
 @import "libs/icons";
 
@@ -29,7 +26,6 @@
 .logoContainer{background-image:url($headPatternUrl);}
 .toolBar{
   @include frontendContainerStyle();
-  .labelInput{@include text-shadow(inherit);}
 
   &.top{
     padding:$space/4 $space/2 $space/4 $space/2;
@@ -57,7 +53,6 @@
   .toolBarItemActive{
     background-color: $contentColor;
     color:$firstColor;
-    @include text-shadow(1px 1px 0 white);
     @include border-radius($radius);
   }
   .toolBarItem{
@@ -90,16 +85,10 @@
   color:$lightFontColor;
   background-color:$buttonFirstColor;
   text-align: center;
-  border:{
-    top:1px solid darken(white, 30%);
-    bottom:1px solid darken(white, 30%);
-  }
 
   @extend .icon;
   @extend .iconOpen;
   @extend .buttonCore;
-  @include box-shadow(0 0 6px rgba(0,0,0,0.1),
-                      inset 0 -10px 10px $buttonSecondColor);
 }
 .sidePane{
   overflow: visible;
@@ -110,16 +99,10 @@
   @include transition(all 0.4s ease-in-out);
 
   // style for the left side pane
-  &.left{
-    border-right:1px solid darken(white, 30%);
-    @include box-shadow(3px 0px 8px rgba(0, 0, 0, 0.1));
-  }
+  &.left{border-right:1px solid darken(white, 30%);}
 
   // style for the right side pane
-  &.right{
-    border-left:1px solid darken(white, 30%);
-    @include box-shadow(-3px 0px 8px rgba(0, 0, 0, 0.1));
-  }
+  &.right{border-left:1px solid darken(white, 30%);}
   .sideContent{
     padding:$space;
     display: none;

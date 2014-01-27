@@ -11,7 +11,6 @@
   margin-left: $space;
   float:left;
   background-color: white;
-  @include box-shadow(0px 0px 3px black);
 }
 
 
@@ -30,10 +29,10 @@
   .left-top, .right-top, .left-bottom, .right-bottom{z-index: 1;}
 
   /* Positioning */
-  .left-top{@include pos($space*7,'','',$space);}
-  .right-top{@include pos($space*3,$space,'','');}
-  .left-bottom{@include pos('','',$space*3,$space);}
-  .right-bottom{@include pos('',$space,$space*3,'');}
+  .left-top{@include absolute($space*7 '' '' $space);}
+  .right-top{@include absolute($space*3 $space '' '');}
+  .left-bottom{@include absolute('' '' $space*3 $space);}
+  .right-bottom{@include absolute('' $space $space*3 '');}
 }
 
 
@@ -44,7 +43,7 @@
 .toolBar{
   z-index:4;
   &.top{position:relative;}
-  &.bottom{@include pos('',0,0,0);}
+  &.bottom{@include absolute('' 0 0 0);}
 }
 
 
@@ -56,7 +55,7 @@ $tabSize:32px;
 .sidePaneTabs{
   width: $tabSize;
   height: $tabSize;
-  @include pos(40%,'','','');
+  @include absolute(40% '' '' '');
   @include transition(all 0.3s ease-in-out);
 }
 .sidePane{
@@ -68,11 +67,11 @@ $tabSize:32px;
   }
 
   &.left{
-    @include pos(120px,'',$space*3,0);
+    @include absolute(120px '' $space*3 0);
     .sidePaneTabs{right:-$tabSize;}
   }
   &.right{
-    @include pos(80px,0,$space*3,'');
+    @include absolute(80px 0 $space*3 '');
     .sidePaneTabs{left:-$tabSize;}
   }
   .sideContent{@include stretch();}

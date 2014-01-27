@@ -197,6 +197,20 @@ class Application
 
         // Load all elements assets
         $translations = array();
+
+        // Load the template assets last, so it can easily overwrite element
+        // and layer assets for application specific styling for example
+        foreach ($this->getTemplate()->getAssets($type) as $asset) {
+            if ($type === 'trans') {
+                $elementTranslations = json_decode($this->container->get('templating')->render($asset),
+                    true);
+                $translations = array_merge($translations, $elementTranslations);
+            } else {
+                $file = $this->getReference($this->template, $asset);
+                $this->addAsset($assets, $type, $file);
+            }
+        }
+
         foreach ($this->getElements() as $region => $elements) {
             foreach ($elements as $element) {
                 $element_assets = $element->getAssets();
@@ -237,19 +251,6 @@ class Application
         }
         foreach ($layerTranslations as $key => $value) {
             $translations = array_merge($translations, $value);
-        }
-
-        // Load the template assets last, so it can easily overwrite element
-        // and layer assets for application specific styling for example
-        foreach ($this->getTemplate()->getAssets($type) as $asset) {
-            if ($type === 'trans') {
-                $elementTranslations = json_decode($this->container->get('templating')->render($asset),
-                    true);
-                $translations = array_merge($translations, $elementTranslations);
-            } else {
-                $file = $this->getReference($this->template, $asset);
-                $this->addAsset($assets, $type, $file);
-            }
         }
         if ($type === 'trans') {
             $transAsset = new StringAsset('Mapbender.i18n = ' . json_encode($translations,
@@ -471,7 +472,7 @@ class Application
 
     /**
      * Returns all layersets
-     * 
+     *
      * @return array the layersets
      */
     public function getLayersets()

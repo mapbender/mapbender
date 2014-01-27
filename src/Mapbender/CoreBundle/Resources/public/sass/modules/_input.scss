@@ -29,7 +29,6 @@
     border:solid 1px lighten($errorColor, 40%);
 
     @include opacity(1);
-    @include box-shadow(inset 0px 0px 3px #fff);
     @include transition(all 0.8s ease-in-out);
 
     &.hide{
