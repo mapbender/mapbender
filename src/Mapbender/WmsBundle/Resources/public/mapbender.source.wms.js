@@ -3,18 +3,26 @@ $.extend(true, Mapbender, {
     source: {
         'wms': {
             create: function(layerDef){
+                var self = this;
                 var rootLayer = layerDef.configuration.children[0];
 
-                function _setId(layer, parent, id, num){
+                function _setProperties(layer, parent, id, num, proxy){
                     /* set unic id for a layer */
                     layer.options.id = parent ? parent.options.id + "_" + num : id + "_" + num;
+                    if(proxy && layer.options.legend){
+                        if(layer.options.legend.graphic){
+                            layer.options.legend.graphic = self._addProxy(layer.options.legend.graphic);
+                        } else if(layer.options.legend.url){
+                            layer.options.legend.url = self._addProxy(layer.options.legend.url);
+                        }
+                    }
                     if(layer.children){
                         for(var i = 0; i < layer.children.length; i++){
-                            _setId(layer.children[i], layer, id, i);
+                            _setProperties(layer.children[i], layer, id, i, proxy);
                         }
                     }
                 }
-                _setId(rootLayer, null, layerDef.id, 0);
+                _setProperties(rootLayer, null, layerDef.id, 0, layerDef.configuration.options.proxy);
 
                 var finalUrl = layerDef.configuration.options.url;
 

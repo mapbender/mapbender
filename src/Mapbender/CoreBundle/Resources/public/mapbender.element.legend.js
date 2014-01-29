@@ -2,7 +2,6 @@
 
     $.widget("mapbender.mbLegend", {
         options: {
-            title: 'Legend',
             autoOpen: true,
             target: null,
             noLegend: "No legend available",
@@ -103,14 +102,23 @@
         _onSourceChanged: function(event, options){
             var self = this;
             var context = null;
-            if(this.options.elementType === "element"){
+            if(this.options.elementType === "blockelement"){
                 context = this.element;
             }else if(this.options.elementType === "dialog" && this.popup && this.popup.$element){
                 context = this.popup.$element;
             }
             if(options.changed && options.changed.options){
 
-            } else if(context && options.changed && options.changed.childRemoved){
+            }else if(context && options.changed && options.changed.children){
+                for(layerName in options.changed.children){
+                    var layer = options.changed.children[layerName];
+                    if(layer.state.visibility){
+                        $('li[data-id="' + layerName + '"]', context).removeClass('notvisible');
+                    }else{
+                        $('li[data-id="' + layerName + '"]', context).addClass('notvisible');
+                    }
+                }
+            }else if(context && options.changed && options.changed.childRemoved){
                 function layerlist(layer, layers){
                     layers.push(layer.options.id);
                     if(layer.children)
@@ -128,7 +136,7 @@
         },
         _onSourceRemoved: function(event, removed){
             var context = null;
-            if(this.options.elementType === "element"){
+            if(this.options.elementType === "blockelement"){
                 context = this.element;
             }else if(this.options.elementType === "dialog" && this.popup && this.popup.$element){
                 context = this.popup.$element;
@@ -147,23 +155,23 @@
             var self = this, elm = null;
             if(this.options.elementType === "dialog" && this.popup && this.popup.$element){
                 elm = this.popup.$element;
-            } else {
+            }else{
                 elm = self.element;
             }
             function checkLayers(layer, parent){
                 var $li = $('li[data-id="' + layer.options.id + '"]', elm);
-                if (layer.state.visibility){
+                if(layer.state.visibility){
                     $li.removeClass('notvisible');
                 }else{
                     $li.addClass('notvisible');
                 }
-                
+
                 if(layer.children){
                     for(var i = 0; i < layer.children.length; i++){
                         checkLayers(layer.children[i], layer);
                     }
                 }
-            };
+            }
             checkLayers(source.configuration.children[0], null);
         },
         _onSourceLoadError: function(event, option){
@@ -401,10 +409,10 @@
                 this._createLegend(this._createLegendHtml(sources));
             }
             sources = this.model.getSources();
-            for (var i = 0; i < sources.length; i++){
+            for(var i = 0; i < sources.length; i++){
                 this._checkLayers(sources[i]);
             }
-           
+
         },
         close: function(){
             if(this.options.elementType === "dialog"){
@@ -413,7 +421,7 @@
                         this.popup.destroy();
                     this.popup = null;
                 }
-                
+
             }
             if(this.callback){
                 this.callback.call();

@@ -9,7 +9,6 @@
             group: undefined,
             immediate: true,
             persist: true,
-            title: 'Measurement',
             type: 'line',
             precision: 2
         },
