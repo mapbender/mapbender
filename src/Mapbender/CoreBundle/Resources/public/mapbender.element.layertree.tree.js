@@ -410,7 +410,9 @@
         _resetNodeInfo: function($li, layerOptions){
             var chk_info = $('input[name="info"]:first', $li);
             chk_info.prop('checked', layerOptions.treeOptions.info);
-            initCheckbox.call(chk_info.get(0));
+            chk_info.each(function(k, v) {
+                initCheckbox.call(v);
+            });
         },
         _resetNodeVisible: function($li, layerDef){
             if(layerDef.state.visibility){
