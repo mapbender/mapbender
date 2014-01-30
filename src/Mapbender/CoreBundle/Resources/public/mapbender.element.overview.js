@@ -74,7 +74,7 @@
             var overviewOptions = {
                 layers: layers_overview,
                 div: div,
-//            size: new OpenLayers.Size(self.options.width, self.options.height),
+                size: new OpenLayers.Size(self.options.width, self.options.height),
                 //maximized: self.options.maximized,
                 mapOptions: {
                     maxExtent: max_ext,
