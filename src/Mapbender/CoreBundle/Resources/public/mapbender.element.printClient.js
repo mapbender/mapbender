@@ -229,7 +229,7 @@
                     }
                 }
             }else{
-                $('#extra_fields').hide();
+                //$('#extra_fields').hide();
             }
 
         },
