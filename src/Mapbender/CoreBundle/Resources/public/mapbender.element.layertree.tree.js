@@ -419,6 +419,8 @@
                 $li.removeClass("invisible").find('span.layer-state:first').attr("title", "");
             }else if(layerDef.state.outOfScale){
                 $li.addClass("invisible").find('span.layer-state').attr("title", "out of scale");
+            }else if(!layerDef.state.outOfScale){
+                $li.removeClass("invisible").find('span.layer-state').attr("title", "");
             }
         },
         _resetSourceAtTree: function(source){
