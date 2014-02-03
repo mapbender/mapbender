@@ -372,7 +372,15 @@ Mapbender.Model = {
     _checkOutOfScale: function(e){
         var self = this;
         $.each(self.sourceTree, function(idx, source){
-            self._checkAndRedrawSource({sourceIdx: {id: source.id}, options: {children: {}}});
+            var result = self._checkAndRedrawSource({sourceIdx: {id: source.id}, options: {children: {}}});
+            for(child in result.children){
+                if(result.children[child].state && typeof result.children[child].state.outOfScale !== 'undefined'){
+                    var changed = {changed: {children: result.children, sourceIdx: result.sourceIdx}};
+                    self.mbMap.fireModelEvent({name: 'sourceChanged', value: changed});//{options: result}});
+                    break;
+                }
+            }
+            
         });
     },
     /**
@@ -635,18 +643,18 @@ Mapbender.Model = {
         if(before && after
             && before.source.id.toString() === after.source.id.toString()
             && before.source.id.toString() === tomove.source.id.toString()){
-            window.console && console.log("move layer inside");
+//            window.console && console.log("move layer inside");
             var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {id: before.layerId});
             var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {id: after.layerId});
             layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
             this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, beforeLayer.idx, before, after);
         }else if(before && before.source.id.toString() === tomove.source.id.toString()){
-            window.console && console.log("move layer into last pos");
+//            window.console && console.log("move layer into last pos");
             var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {id: before.layerId});
             layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
             this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, beforeLayer.idx, before, after);
         }else if(after && after.source.id.toString() === tomove.source.id.toString()){
-            window.console && console.log("move layer into first pos");
+//            window.console && console.log("move layer into first pos");
             var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {id: after.layerId});
             layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
             this._reorderLayers(tomove.source, layerToMove.layer, afterLayer.parent, afterLayer.idx, before, after);
@@ -667,7 +675,7 @@ Mapbender.Model = {
             this._insertLayer(tomove, before, after);
         }else if(before && !after){
             if(!tomove.layerId){
-                window.console && console.log("move source into last pos");
+//                window.console && console.log("move source into last pos");
                 this._moveSource(tomove.source, before, after);
             }else{
                 alert("not implemented yet");
@@ -683,7 +691,7 @@ Mapbender.Model = {
             }
         }else if(after && !before){ // move source for tree
             if(!tomove.layerId){
-                window.console && console.log("move source into first pos");
+//                window.console && console.log("move source into first pos");
                 this._moveSource(tomove.source, before, after);
             }else{
                 alert("not implemented yet");
@@ -699,7 +707,7 @@ Mapbender.Model = {
             }
         }else{
             if(!tomove.layerId){ // move source for tree
-                window.console && console.log("move source inside");
+//                window.console && console.log("move source inside");
                 this._moveSource(tomove.source, before, after);
             }else{
                 alert("not implemented yet");

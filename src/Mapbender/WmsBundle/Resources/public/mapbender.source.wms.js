@@ -646,7 +646,7 @@ $.extend(true, Mapbender, {
                     }
                     if(!layer.state.outOfScale){
                         if(layer.options.maxScale){
-                            if(layer.options.maxScale >= scale){
+                            if(layer.options.maxScale > scale){
                                 layer.state.outOfScale = false;
                             }else{
                                 layer.state.outOfScale = true;
