@@ -2,6 +2,10 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="file.ext">
     <body>
+      <trans-unit id="e909afa8127513f6f090d29866ce35f3" resname="mb.wmc.element.wmclist.select.def_option">
+        <source>mb.wmc.element.wmclist.select.def_option</source>
+        <target>Pleace select</target>
+      </trans-unit>
       <trans-unit id="f462936e18a6c720b36b31e3a1c98e47" resname="mb.wmc.element.suggestmap.content.email">
         <source>mb.wmc.element.suggestmap.content.email</source>
         <target>As e-mail</target>
@@ -96,7 +100,7 @@
       </trans-unit>
       <trans-unit id="329a1abceb8068b5dcdb4d63b46d2bd4" resname="mb.wmc.wmceditor.list.description">
         <source>mb.wmc.wmceditor.list.description</source>
-        <target>Mapbender can save and edit configurations with the WMC Editor.</target>
+        <target>Description</target>
       </trans-unit>
       <trans-unit id="82be49e5b51462edf1afdec84259533c" resname="mb.wmc.wmceditor.list.add_wmc">
         <source>mb.wmc.wmceditor.list.add_wmc</source>
@@ -140,7 +144,7 @@
       </trans-unit>
       <trans-unit id="1744637607776d06471ee642aac7a900" resname="mb.wmc.wmcloader.description">
         <source>mb.wmc.wmcloader.description</source>
-        <target>Saved configurations can be loaded with the element WMC loader.</target>
+        <target>Description</target>
       </trans-unit>
       <trans-unit id="50a0a43d7734636fdca90ac4e93c124b" resname="mb.wmc.wmcloader.view_wmc">
         <source>mb.wmc.wmcloader.view_wmc</source>

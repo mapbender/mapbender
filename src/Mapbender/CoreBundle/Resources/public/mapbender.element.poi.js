@@ -133,7 +133,7 @@ $.widget('mapbender.mbPOI', {
             label: body.replace(/\n|\r/g, '<br />')
         });
         var params = $.param({ poi: poi });
-        var poiURL = 'http://' + window.location.host + window.location.pathname + '?' + params;
+        var poiURL = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + params;
         body += '\n\n' + poiURL;
         /*
          * @ TODO use MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js

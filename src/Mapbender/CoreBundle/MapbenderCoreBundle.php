@@ -45,6 +45,7 @@ class MapbenderCoreBundle extends MapbenderBundle
         return array(
             'Mapbender\CoreBundle\Element\AboutDialog',
             'Mapbender\CoreBundle\Element\ActivityIndicator',
+            'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
             'Mapbender\CoreBundle\Element\Button',
             'Mapbender\CoreBundle\Element\CoordinatesDisplay',
             'Mapbender\CoreBundle\Element\Copyright',
@@ -61,8 +62,8 @@ class MapbenderCoreBundle extends MapbenderBundle
             'Mapbender\CoreBundle\Element\ScaleDisplay',
             'Mapbender\CoreBundle\Element\ScaleSelector',
             'Mapbender\CoreBundle\Element\SearchRouter',
+            'Mapbender\CoreBundle\Element\SimpleSearch',
             'Mapbender\CoreBundle\Element\Sketch',
-            'Mapbender\CoreBundle\Element\BaseSourceSwitcher',
             'Mapbender\CoreBundle\Element\SrsSelector',
             'Mapbender\CoreBundle\Element\ZoomBar'
         );

@@ -162,10 +162,35 @@ class ApplicationController extends Controller
 
         // ACL access check
         $this->checkGranted('EDIT', $application);
-
+        $templateClass = $application->getTemplate();
+        $templateProps = $templateClass::getRegionsProperties();
+        $em = $this->getDoctrine()->getEntityManager();
+        // add RegionProperties if defined
+        foreach ($templateProps as $regionName => $regionProps) {
+            $exists = false;
+            foreach($application->getRegionProperties() as $regprops){
+                if($regprops->getName() === $regionName){
+                    $exists = true;
+                    break;
+                }
+            }
+            if(!$exists){
+                $regionProperties = new RegionProperties();
+                $application->addRegionProperties($regionProperties);
+                $regionProperties->setApplication($application);
+                $regionProperties->setName($regionName);
+                foreach ($regionProps as $propName => $propValue) {
+                    if ($propValue['state'])
+                            $regionProperties->addProperty($propName);
+                }
+                $em->persist($regionProperties);
+                $em->flush();
+                $em->persist($application);
+                $em->flush();
+            }
+        }
         $form = $this->createApplicationForm($application);
 
-        $templateClass = $application->getTemplate();
         $em = $this->getDoctrine()->getEntityManager();
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");

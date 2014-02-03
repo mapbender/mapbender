@@ -215,18 +215,28 @@ class Application
                 }
             }
         }
-
+        $layerTranslations = array();
         // Load all layer assets
         foreach ($this->getLayersets() as $layerset) {
             foreach ($layerset->layerObjects as $layer) {
                 $layer_assets = $layer->getAssets();
                 if (isset($layer_assets[$type])) {
                     foreach ($layer_assets[$type] as $asset) {
-                        $this->addAsset($assets, $type,
-                            $this->getReference($layer, $asset));
+                        if ($type === 'trans') {
+                            if (!isset($layerTranslations[$asset])) {
+                                $layerTranslations[$asset] = json_decode($this->container->get('templating')->render($asset),
+                                    true);
+                            }
+                        } else {
+                            $this->addAsset($assets, $type,
+                                $this->getReference($layer, $asset));
+                        }
                     }
                 }
             }
+        }
+        foreach ($layerTranslations as $key => $value) {
+            $translations = array_merge($translations, $value);
         }
 
         // Load the template assets last, so it can easily overwrite element

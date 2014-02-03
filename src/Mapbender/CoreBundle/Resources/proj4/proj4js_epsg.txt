@@ -2649,7 +2649,6 @@
   EPSG:22289|Cape / Lo29|+proj=tmerc +lat_0=0 +lon_0=29 +k=1 +x_0=0 +y_0=0 +axis=wsu +a=6378249.145 +b=6356514.966398753 +towgs84=-136,-108,-292,0,0,0,0 +units=m +no_defs
   EPSG:22291|Cape / Lo31|+proj=tmerc +lat_0=0 +lon_0=31 +k=1 +x_0=0 +y_0=0 +axis=wsu +a=6378249.145 +b=6356514.966398753 +towgs84=-136,-108,-292,0,0,0,0 +units=m +no_defs
   EPSG:22293|Cape / Lo33|+proj=tmerc +lat_0=0 +lon_0=33 +k=1 +x_0=0 +y_0=0 +axis=wsu +a=6378249.145 +b=6356514.966398753 +towgs84=-136,-108,-292,0,0,0,0 +units=m +no_defs
-  EPSG:22300||
   EPSG:22332|Carthage / UTM zone 32N|+proj=utm +zone=32 +a=6378249.2 +b=6356515 +towgs84=-263,6,431,0,0,0,0 +units=m +no_defs
   EPSG:22391|Carthage / Nord Tunisie|+proj=lcc +lat_1=36 +lat_0=36 +lon_0=9.9 +k_0=0.999625544 +x_0=500000 +y_0=300000 +a=6378249.2 +b=6356515 +towgs84=-263,6,431,0,0,0,0 +units=m +no_defs
   EPSG:22392|Carthage / Sud Tunisie|+proj=lcc +lat_1=33.3 +lat_0=33.3 +lon_0=9.9 +k_0=0.999625769 +x_0=500000 +y_0=300000 +a=6378249.2 +b=6356515 +towgs84=-263,6,431,0,0,0,0 +units=m +no_defs
@@ -3256,7 +3255,6 @@
   EPSG:29635|Sudan / UTM zone 35N (deprecated)|+proj=utm +zone=35 +a=6378249.2 +b=6356515 +units=m +no_defs
   EPSG:29636|Sudan / UTM zone 36N (deprecated)|+proj=utm +zone=36 +a=6378249.2 +b=6356515 +units=m +no_defs
   EPSG:29700|Tananarive (Paris) / Laborde Grid (deprecated)|+proj=omerc +lat_0=-18.9 +lonc=44.10000000000001 +alpha=18.9 +k=0.9995000000000001 +x_0=400000 +y_0=800000 +gamma=18.9 +ellps=intl +towgs84=-189,-242,-91,0,0,0,0 +pm=paris +units=m +no_defs
-  EPSG:29701||
   EPSG:29702|Tananarive (Paris) / Laborde Grid approximation|+proj=omerc +lat_0=-18.9 +lonc=44.10000000000001 +alpha=18.9 +k=0.9995000000000001 +x_0=400000 +y_0=800000 +gamma=18.9 +ellps=intl +towgs84=-189,-242,-91,0,0,0,0 +pm=paris +units=m +no_defs
   EPSG:29738|Tananarive / UTM zone 38S|+proj=utm +zone=38 +south +ellps=intl +towgs84=-189,-242,-91,0,0,0,0 +units=m +no_defs
   EPSG:29739|Tananarive / UTM zone 39S|+proj=utm +zone=39 +south +ellps=intl +towgs84=-189,-242,-91,0,0,0,0 +units=m +no_defs
@@ -3908,5 +3906,5 @@
   EPSG:32760|WGS 84 / UTM zone 60S|+proj=utm +zone=60 +south +datum=WGS84 +units=m +no_defs
   EPSG:32761|WGS 84 / UPS South (N,E)|+proj=stere +lat_0=-90 +lat_ts=-90 +lon_0=0 +k=0.994 +x_0=2000000 +y_0=2000000 +datum=WGS84 +units=m +no_defs
   EPSG:32766|WGS 84 / TM 36 SE|+proj=tmerc +lat_0=0 +lon_0=36 +k=0.9996 +x_0=500000 +y_0=10000000 +datum=WGS84 +units=m +no_defs
-  EPSG:900913||+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs
-  EPSG:900914||+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs
+  EPSG:900913|Web Mercator|+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs
+  EPSG:900914|Web Mercator?|+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs

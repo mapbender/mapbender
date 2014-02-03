@@ -22,12 +22,15 @@
                 type: "POST",
                 success: function(data){
                     if(data.success){
-                        var html = '<option value="">Pleace select ...</option>';
+                        var html = '<option value="">' + Mapbender.trans("mb.wmc.element.wmclist.select.def_option") + ' ...</option>';
                         for(wmc_id in data.success){
                             html += '<option value="' + wmc_id + '">' + data.success[wmc_id] + '</option>';
                         }
                         self.element.find("select").html(html);
                         self.element.find("select").change($.proxy(self._selectWmc, self));
+                        if(initDropdown){
+                            initDropdown.call(self.element);
+                        }
                     }
                 }
             });

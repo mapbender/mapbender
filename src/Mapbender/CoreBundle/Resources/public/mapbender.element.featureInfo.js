@@ -16,8 +16,7 @@
             var self = this;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
-
-        _setup: function() {
+        _setup: function(){
             this._trigger('ready');
             this._ready();
         },
@@ -28,7 +27,7 @@
                     break;
                 default:
                     throw Mapbender.trans("mb.core.featureinfo.error.unknownoption",
-                    { 'key': key, 'namespace': this.namespace, 'widgetname': this.widgetName});
+                        {'key': key, 'namespace': this.namespace, 'widgetname': this.widgetName});
             }
         },
         /**
@@ -62,31 +61,31 @@
             this.callback ? this.callback.call() : this.callback = null;
         },
         _onTabs: function(){
-            $(".tabContainer", this.popup.$element).on('click', '.tab', function() {
+            $(".tabContainer", this.popup.$element).on('click', '.tab', function(){
                 var me = $(this);
                 me.parent().parent().find(".active").removeClass("active");
                 me.addClass("active");
                 $("#" + me.attr("id").replace("tab", "container")).addClass("active");
             });
         },
-         _offTabs: function(){
+        _offTabs: function(){
             $(".tabContainer", this.popup.$element).off('click', '.tab');
-         },
+        },
         /**
          * Trigger the Feature Info call for each layer. 
          * Also set up feature info dialog if needed.
          */
         _triggerFeatureInfo: function(e){
             var self = this,
-                    x = e.pageX - $(this.map.element).offset().left,
-                    y = e.pageY - $(this.map.element).offset().top,
-                    fi_exist = false;
+                x = e.pageX - $(this.map.element).offset().left,
+                y = e.pageY - $(this.map.element).offset().top,
+                fi_exist = false;
 
             $(this.element).empty();
 
             var tabContainer = $('<div id="featureInfoTabContainer" class="tabContainer featureInfoTabContainer">' +
-                    '<ul class="tabs"></ul>' +
-                    '</div>');
+                '<ul class="tabs"></ul>' +
+                '</div>');
             var header = tabContainer.find(".tabs");
             var layers = this.map.layers();
             var newTab, newContainer;
@@ -124,12 +123,13 @@
             });
             //console.log($(".tabContainer, .tabContainerAlt", self.element));
             //$(".tabContainer, .tabContainerAlt", self.element).on('click', '.tab', $.proxy(toggleTabContainer));
-            var content = (fi_exist) ? tabContainer : '<p class="description">'+Mapbender.trans('mb.core.featureinfo.error.nolayer')+'</p>';
+            var content = (fi_exist) ? tabContainer : '<p class="description">' + Mapbender.trans('mb.core.featureinfo.error.nolayer') + '</p>';
 
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
                     draggable: true,
+                    resizable: true,
                     modal: false,
                     closeButton: false,
                     closeOnPopupCloseClick: false,
@@ -138,10 +138,10 @@
                     width: 500,
                     buttons: {
                         'ok': {
-                            label: 'Close',
+                            label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
                             cssClass: 'button right',
                             callback: function(){
-                                if(self.options.deactivateOnClose) {
+                                if(self.options.deactivateOnClose){
                                     self.deactivate();
                                 }else{
                                     this.close();
@@ -164,10 +164,14 @@
         _featureInfoCallback: function(data){
             var text = '';
             try{ // cut css
-                text = data.response.replace(/document.writeln[^;]*;/g, '')
+                if(data.response.search('<link') > -1 || data.response.search('<style') > -1){
+                    text = data.response.replace(/document.writeln[^;]*;/g, '')
                         .replace(/\n/g, '')
                         .replace(/<link[^>]*>/gi, '')
                         .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
+                } else {
+                    text = data.response.replace(/\n/g, '<br/>');
+                }
             }catch(e){
             }
             //TODO: Needs some escaping love

@@ -2,6 +2,9 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
+
+
 class SQLSearchEngine
 {
 
@@ -132,6 +135,69 @@ class SQLSearchEngine
         // Build WHERE condition
         $cond = $qb->expr()->andx();
         $params = array();
+
+        // This function switches by compare configuration (exact, like, ilike, ...)
+        $createExpr = function($key, $value) use ($cond, $config, $connection, &$params, $qb) {
+            $compare = array_key_exists('compare', $config['form'][$key]) ? $config['form'][$key]['compare'] : null;
+            switch($compare) {
+                case 'exact':
+                    $cond->add($qb->expr()->eq('t.' . $key, ':' . $key));
+                    $params[$key] = $value;
+                    break;
+                case 'iexact':
+                $cond->add($qb->expr()->eq('LOWER(t.' . $key . ')', 'LOWER(:' .$key . ')'));
+                    $params[$key] = $value;
+                    break;
+
+
+                case 'like':
+                case 'like-left':
+                case 'like-right':
+                    $cond->add($qb->expr()->like('t.' . $key, ':' . $key));
+
+                    // First, asume two-sided search
+                    $prefix = '%';
+                    $suffix = '%';
+                    $op = explode('-', $compare);
+                    if(2 === count($op) && 'left' === $op[1]) {
+                        // For left-sided search remove suffix
+                        $suffix = '';
+                    }
+                    if(2 === count($op) && 'right' === $op[1]) {
+                        // For right-sided search remove prefix
+                        $prefix = '';
+                    }
+                    $params[$key] = $prefix . $value . $suffix;
+                    break;
+                case 'ilike':
+                case 'ilike-left':
+                case 'ilike-right':
+                default:
+                    // First, asume two-sided search
+                    $prefix = '%';
+                    $suffix = '%';
+                    if(is_string($compare)) {
+                        $op = explode('-', $compare);
+                        if(2 === count($op) && 'left' === $op[1]) {
+                            // For left-sided search remove suffix
+                            $suffix = '';
+                        }
+                        if(2 === count($op) && 'right' === $op[1]) {
+                            // For right-sided search remove prefix
+                            $prefix = '';
+                        }
+                    }
+
+                    if($connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+                        $cond->add($qb->expr()->comparison('t.' . $key, 'ILIKE', ':' . $key));
+                    } else {
+                        $cond->add($qb->expr()->like('LOWER(t.' . $key . ')', 'LOWER(:' . $key . ')'));
+                    }
+
+                    $params[$key] = $prefix . $value . $suffix;
+            }
+        };
+
         foreach($data['form'] as $key => $value)
         {
             if(array_key_exists($key, $data['autocomplete_keys']))
@@ -146,20 +212,17 @@ class SQLSearchEngine
                 $values = explode(' ', $value);
                 for($i = 0; $i < count($keys); $i++)
                 {
-                    // @todo: Platform independency (::varchar, lower)
-                    $cond->add($qb->expr()->like('LOWER(t.' . $keys[$i] . '::varchar)', '?'));
-                    $params[] = '%' . (count($values) > $i ? strtolower($values[$i]) : '') . '%';
+                    $createExpr($keys[$i], $value);
                 }
             } else
             {
-                $cond->add($qb->expr()->like('t.' . $key, '?'));
-                $params[] = '%' . $value . '%';
+
+                $createExpr($key, $value);
             }
         }
         $qb->where($cond);
 
         // Create prepared statement and execute
-        $this->container->get('logger')->info('SQL: ' . $qb->getSql() . '; Params: ' . print_r($params, true));
         $stmt = $connection->executeQuery($qb->getSql(), $params);
         $rows = $stmt->fetchAll();
 

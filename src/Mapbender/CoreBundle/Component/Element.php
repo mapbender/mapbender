@@ -27,12 +27,12 @@ abstract class Element
     /**
      * Extended API. The ext_api defins, if an element can be used as a target
      * element.
-     * @var boolean extended api 
+     * @var boolean extended api
      */
     public static $ext_api = true;
 
     /**
-     * Merge Configurations. The merge_configurations defines, if the default 
+     * Merge Configurations. The merge_configurations defines, if the default
      * configuration array and the configuration array should be merged
      * @var boolean merge configurations
      */
@@ -339,7 +339,7 @@ abstract class Element
 
     /**
      *  Merges the default configuration array and the configuration array
-     * 
+     *
      * @param array $default the default configuration of an element
      * @param array $main the configuration of an element
      * @param array $result the result configuration
@@ -379,7 +379,7 @@ abstract class Element
      */
     public function postSave()
     {
-        
+
     }
 
     /**

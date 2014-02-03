@@ -83,7 +83,7 @@ class PrintClient extends Element
                     "label" => "A3 Landscape",
                     "format" => "a3")
                 ,
-                array(
+                /*array(
                     'template' => "a2_landscape_offical",
                     "label" => "A2 Landscape offical",
                     "format" => "a2")
@@ -91,7 +91,7 @@ class PrintClient extends Element
                 array(
                     'template' => "a4_landscape_offical",
                     "label" => "A4 Landscape offical",
-                    "format" => "a4")
+                    "format" => "a4")*/
             ),
             "scales" => array(500, 1000, 5000, 10000, 25000),
             "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
@@ -181,6 +181,23 @@ class PrintClient extends Element
                 foreach ($data['layers'] as $idx => $layer) {
                     $data['layers'][$idx] = json_decode($layer, true);
                 }
+                
+                if (isset($data['overview'])){
+                    foreach ($data['overview'] as $idx => $layer) {
+                        $data['overview'][$idx] = json_decode($layer, true);
+                    }
+                }
+                
+                if (isset($data['features'])){
+                    foreach ($data['features'] as $idx => $value) {
+                        $data['features'][$idx] = json_decode($value, true);
+                    }
+                }
+                
+                if (isset($data['extent_feature'])){         
+                        $data['extent_feature'] = json_decode($data['extent_feature'], true);                  
+                }
+                    
                 $content = json_encode($data);
 
                 // Forward to Printer Service URL using OWSProxy

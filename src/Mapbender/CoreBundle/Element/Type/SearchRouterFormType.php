@@ -34,10 +34,6 @@ class SearchRouterFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         foreach ($options['fields']['form'] as $name => $conf) {
-            $conf = array_merge_recursive(array(
-                'options' => array(
-                    'required' => false)), $conf);
-
             $builder->add($name, $conf['type'], $conf['options']);
         }
     }
