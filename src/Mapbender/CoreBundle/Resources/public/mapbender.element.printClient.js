@@ -34,13 +34,6 @@
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
 
-            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
-            .bind('change', $.proxy(this._updateGeometry, this));
-            $('input[name="scale_text"], input[name="rotation"]', this.element)
-            .bind('keyup', $.proxy(this._updateGeometry, this));
-            $('select[name="template"]', this.element)
-            .bind('change', $.proxy(this._getPrintSize, this))
-            .trigger('change');
             this._trigger('ready');
             this._ready();
         },
@@ -88,7 +81,15 @@
                  }
             }
             me.show();
-
+            
+            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
+            .bind('change', $.proxy(this._updateGeometry, this));
+            $('input[name="scale_text"], input[name="rotation"]', this.element)
+            .bind('keyup', $.proxy(this._updateGeometry, this));
+            $('select[name="template"]', this.element)
+            .bind('change', $.proxy(this._getPrintSize, this))
+            .trigger('change');
+    
             this.popupIsOpen = true;
             this._loadPrintFormats();
             this._updateElements();
@@ -228,7 +229,7 @@
                     }
                 }
             }else{
-                $('#extra_fields').hide();
+                //$('#extra_fields').hide();
             }
 
         },
