@@ -58,6 +58,7 @@
                         closeOnESC: false,
                         content: self.element,
                         width: 320,
+                        cssClass: 'customPrintDialog',
                         buttons: {
                                 'cancel': {
                                     label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
