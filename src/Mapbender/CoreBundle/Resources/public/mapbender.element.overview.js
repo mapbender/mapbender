@@ -77,7 +77,6 @@
                 size: new OpenLayers.Size(self.options.width, self.options.height),
                 //maximized: self.options.maximized,
                 mapOptions: {
-                    maxExtent: max_ext,
                     projection: proj,
                     theme: null
                 }
@@ -85,8 +84,8 @@
             if(this.options.fixed){
                 $.extend(overviewOptions, {
                     minRatio: 1,
-                    maxRatio: 1000000000
-//            ,autoPan: false
+                    maxRatio: 1000000000,
+                    autoPan: true
                 });
             }
             this.overview = new OpenLayers.Control.OverviewMap(overviewOptions);
