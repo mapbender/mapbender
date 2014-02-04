@@ -32,7 +32,6 @@
             this.transConst.outOfBounds = Mapbender.trans("mb.core.layertree.const.outofbounds");
             this.transConst.parentInvisible = Mapbender.trans("mb.core.layertree.const.parentinvisible");
             this.options.titlemaxlength = parseInt(this.options.titlemaxlength);
-            this.options.layerMenu = false;
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.menuTemplate = $('li div.layer-menu', this.element).remove();
@@ -201,7 +200,7 @@
                 li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                 if(config.toggleable)
                     li.addClass('toggleable');
-                if(!this.options.layerMenu){
+                if(this.options.menu.length === 0){
                     li.find('.layer-menu-btn').remove();
                 }else{
                     var menu = li.find('.layer-menu:first');
@@ -281,7 +280,7 @@
                     li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if(config.toggleable)
                         li.addClass('toggleable');
-                    if(!this.options.layerMenu){
+                    if(this.options.menu.length === 0){
                         li.find('.layer-menu-btn').remove();
                     }else{
                         var menu = li.find('.layer-menu:first');
