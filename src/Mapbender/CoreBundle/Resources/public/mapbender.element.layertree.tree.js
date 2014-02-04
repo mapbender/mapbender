@@ -34,8 +34,9 @@
             this.options.titlemaxlength = parseInt(this.options.titlemaxlength);
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            this.menuTemplate = $('li div.layer-menu', this.element).remove();
             this.template = $('li', this.element).remove();
+            this.menuTemplate = $('#layer-menu', this.template).remove();
+            
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
             if(this.options.type === 'element'){
                 this._createTree();
@@ -202,33 +203,6 @@
                     li.addClass('toggleable');
                 if(this.options.menu.length === 0){
                     li.find('.layer-menu-btn').remove();
-                }else{
-                    var menu = li.find('.layer-menu:first');
-                    if(!sourceEl.options.legend){
-                        menu.find('.layer-legend').addClass('btn-disabled');
-                    }else{
-                        menu.find('.layer-legend').bind("click", function(e){
-                            e.stopPropagation();
-                            self._showLegend(sourceEl);
-                        });
-                    }
-                    menu.find('.layer-kmlexport').bind("click", function(e){
-                        e.stopPropagation();
-                        self._exportKml(sourceEl);
-                    });
-                    if(sourceEl.options.maxScale !== null){
-                        menu.find('.layer-zoom').addClass('btn-disabled');
-                    }else{
-                        menu.find('.layer-zoom').bind("click", function(e){
-                            e.stopPropagation();
-                            self._zoomToLayer(sourceEl);
-                        });
-                    }
-                    menu.find('.layer-metadata').bind("click", function(e){
-                        e.stopPropagation();
-                        self._showMetadata(sourceEl);
-                    });
-
                 }
                 if(!this.options.layerRemove)
                     li.find('.iconRemove').remove();
@@ -282,32 +256,6 @@
                         li.addClass('toggleable');
                     if(this.options.menu.length === 0){
                         li.find('.layer-menu-btn').remove();
-                    }else{
-                        var menu = li.find('.layer-menu:first');
-                        if(!sourceEl.options.legend){
-                            menu.find('.layer-legend').addClass('btn-disabled');
-                        }else{
-                            menu.find('.layer-legend').bind("click", function(e){
-                                e.stopPropagation();
-                                self._showLegend(sourceEl);
-                            });
-                        }
-                        menu.find('.layer-kmlexport').bind("click", function(e){
-                            e.stopPropagation();
-                            self._exportKml(sourceEl);
-                        });
-                        if(sourceEl.options.maxScale !== null){
-                            menu.find('.layer-zoom').addClass('btn-disabled');
-                        }else{
-                            menu.find('.layer-zoom').bind("click", function(e){
-                                e.stopPropagation();
-                                self._zoomToLayer(sourceEl);
-                            });
-                        }
-                        menu.find('.layer-metadata').bind("click", function(e){
-                            e.stopPropagation();
-                            self._showMetadata(sourceEl);
-                        });
                     }
                     if(!this.options.layerRemove)
                         li.find('.iconRemove').remove();
@@ -608,29 +556,26 @@
             }
             function removeMenu($element){
                 //@TODO off other events
-                $('.layer-zoom', $element).off('click');
-                $('div.layer-menu', $element).remove();
+                $('.layer-zoom').off('click');
+                $('#layer-menu').remove();
             }
-            var element = this.element;
-            if(this.options.type === 'dialog' && this.popup && this.popup.$element){
-                element = this.popup.$element;
-            }
-            var layerId = $(e.target).parents('li:first').attr("data-id");
-            var sourceId = $(e.target).parents('li[data-sourceid]:first').attr("data-sourceid");
-                if($('div.layer-menu', element).length !== 0){
-                    var layerIdMenu = $('div.layer-menu', element).attr("data-menuLayerId");
-                    removeMenu(element);
-                    $('div.layer-menu', element).remove();
-                    if(layerIdMenu !== layerId){
-                        createMenu(element, sourceId, layerId);
-                    }
-
-                }else{
-                    createMenu(element, sourceId, layerId);
-//                    test opacity
-//                    var source = this.model.findSource({id: sourceId});
-//                    this._setOpacity(source[0], 0.5);
+            var $btnMenu = $(e.target);
+            var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
+            var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
+            if($('#layer-menu').length !== 0){
+                var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
+                removeMenu($('#layer-menu'));
+//                $('#layer-menu', $btnMenu).remove();
+                if(layerIdMenu !== currentLayerId){
+                    createMenu($btnMenu, currentSourceId, currentLayerId);
                 }
+
+            }else{
+                createMenu($btnMenu, currentSourceId, currentLayerId);
+////                test opacity
+//                var source = this.model.findSource({id: sourceId});
+//                this._setOpacity(source[0], 0.5); // 0.0 - 1.0
+            }
         },
         _setOpacity: function(source, opacity){
             this.model.setOpacity(source, opacity);

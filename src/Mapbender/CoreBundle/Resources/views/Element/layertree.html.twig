@@ -13,8 +13,8 @@
       <span class="layer-title labelCheck"></span>
       {% if configuration.menu != null and configuration.menu | length > 0 %}
       <span class="layer-menu-btn">&#9776;
-        <div class="layer-menu">
-          {% for item in configuration.menu %}
+        <div id="layer-menu">
+        {% for item in configuration.menu %}
           {% if item == 'opacity' %}
           <div class="layer-opacity">
             <div class="layer-opacity-slider"></div>
@@ -29,7 +29,7 @@
           {% else %}
           <span class="layer span-btn inactive">Undefined</span>
           {% endif %}
-          {% endfor %}
+        {% endfor %}
         </div>
       </span>
       {% endif %}
