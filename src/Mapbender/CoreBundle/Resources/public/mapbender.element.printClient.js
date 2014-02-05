@@ -467,11 +467,16 @@
                     var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
                     if (visLayers.layers.length > 0){            
                         var prevLayers = layer.olLayer.params.LAYERS;
-                        layer.olLayer.params.LAYERS = visLayers.layers;                 
+                        layer.olLayer.params.LAYERS = visLayers.layers;
+                        
+                        var opacity = sources[i].configuration.options.opacity;
+                        var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
+                        lyrConf.opacity = opacity;
+                        
                         $.merge(fields, $('<input />', {
                             type: 'hidden',
                             name: 'layers[' + lyrCount + ']',
-                            value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy))
+                            value: JSON.stringify(lyrConf)
                         }));
                         layer.olLayer.params.LAYERS = prevLayers;
                         lyrCount++;
