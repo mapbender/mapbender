@@ -561,8 +561,9 @@
                         steps: 100,
                         handleClass: "layer-opacity-handle",
                         animationCallback: function(x, y){
-                            $("#layer-opacity").find(".layer-opacity-handle").text(Math.round(x * 100));
-                            self._setOpacity(source, parseFloat(x));
+                            var percentage = Math.round(x * 100);
+                            $("#layer-opacity").find(".layer-opacity-handle").text(percentage);
+                            self._setOpacity(self.model.findSource({id: sourceId})[0], percentage/100.0);
                         }
                     });
                 }

@@ -454,6 +454,7 @@ Mapbender.Model = {
     },
     setOpacity: function(source, opacity){
         if(typeof opacity === 'number' && !isNaN(opacity) && opacity >= 0 && opacity <= 1 && source){
+            source.configuration.options.opacity = opacity;
             this.map.layersList[source.mqlid].opacity(opacity);
         }
     },
