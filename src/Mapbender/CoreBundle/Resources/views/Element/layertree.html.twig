@@ -13,16 +13,12 @@
       <span class="layer-title labelCheck"></span>
       {% if configuration.menu != null and configuration.menu | length > 0 %}
       <span class="layer-menu-btn">&#9776;
-        <div id="layer-menu">
+        <div id="layer-menu" class="layer-menu">
         {% for item in configuration.menu %}
           {% if item == 'opacity' %}
-          <div class="layer-opacity">
-            <div class="layer-opacity-slider"></div>
-            <div class="layer-opacity-labels">
-              <span class="layer-opacity-label-hundred">100 %</span>
-              <span class="layer-opacity-label">{{ "mb.core.layertree.label.transparency"|trans }}</span>
-              <span class="layer-opacity-label-zero">0 %</span>
-            </div>
+          <span class="labelInput">{{ "mb.core.layertree.label.transparency"|trans }}:</span>
+          <div id="layer-opacity" class="layer-opacity-bar">
+              <div class="layer-opacity-handle">100</div>
           </div>
           {% elseif item == 'zoomtolayer' %}
           <span class="layer-zoom span-btn inactive">{{ 'mb.core.layertree.label.zoomtolayer'|trans }}</span>
