@@ -64,7 +64,6 @@ class Layertree extends Element
             'js' => array(
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/dragdealer.min.js',
-                '@FOMCoreBundle/Resources/public/js/layertree.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js'),
             'css' => array(),
             'trans' => array('MapbenderCoreBundle:Element:layertree.json.twig')

@@ -36,7 +36,7 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li', this.element).remove();
             this.menuTemplate = $('#layer-menu', this.template).remove();
-            
+
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
             if(this.options.type === 'element'){
                 this._createTree();
@@ -359,7 +359,7 @@
         _resetNodeInfo: function($li, layerOptions){
             var chk_info = $('input[name="info"]:first', $li);
             chk_info.prop('checked', layerOptions.treeOptions.info);
-            chk_info.each(function(k, v) {
+            chk_info.each(function(k, v){
                 initCheckbox.call(v);
             });
         },
@@ -549,15 +549,32 @@
             function createMenu($element, sourceId, layerId){
                 var menu = self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId", sourceId);
                 $element.append(menu);
-                if(self.model.getLayerExtents({sourceId: sourceId, layerId: layerId, inherit: true})){
-                    $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
+                $(menu).on('click', function(e){
+                    e.stopPropagation();
+                });
+                if($.inArray("opacity", self.options.menu) !== -1){
+                    new Dragdealer('layer-opacity', {
+                        horizontal: true,
+                        vertical: false,
+                        steps: 100,
+                        handleClass: "layer-opacity-handle",
+                        animationCallback: function(x, y){
+                            $("#layer-opacity").find(".layer-opacity-handle").text(Math.round(x * 100));
+                            self._setOpacity(self.model.findSource({id: sourceId})[0], parseFloat(x));
+                        }
+                    });
+                }
+                if($.inArray("zoomtolayer", 0, self.options.menu) !== -1){
+                    if(self.model.getLayerExtents({sourceId: sourceId, layerId: layerId, inherit: true})){
+                        $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
+                    }
                 }
                 //@TODO on other events
             }
             function removeMenu($element){
-                //@TODO off other events
                 $('.layer-zoom').off('click');
-                $('#layer-menu').remove();
+                $('#layer-menu').off('click').remove();
+                //@TODO off other events
             }
             var $btnMenu = $(e.target);
             var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
@@ -565,22 +582,17 @@
             if($('#layer-menu').length !== 0){
                 var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
                 removeMenu($('#layer-menu'));
-//                $('#layer-menu', $btnMenu).remove();
                 if(layerIdMenu !== currentLayerId){
                     createMenu($btnMenu, currentSourceId, currentLayerId);
                 }
 
             }else{
                 createMenu($btnMenu, currentSourceId, currentLayerId);
-////                test opacity
-//                var source = this.model.findSource({id: sourceId});
-//                this._setOpacity(source[0], 0.5); // 0.0 - 1.0
             }
         },
         _setOpacity: function(source, opacity){
             this.model.setOpacity(source, opacity);
         },
-    
         _removeSource: function(e){
             var layer_type = $(e.target).parents("li:first").attr("data-type");
             var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
