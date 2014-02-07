@@ -547,6 +547,7 @@
         _toggleMenu: function(e){
             var self = this;
             function createMenu($element, sourceId, layerId){
+                var source = self.model.findSource({id: sourceId})[0];
                 var menu = self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId", sourceId);
                 $element.append(menu);
                 $(menu).on('click', function(e){
@@ -554,13 +555,14 @@
                 });
                 if($.inArray("opacity", self.options.menu) !== -1){
                     new Dragdealer('layer-opacity', {
+                        x: source.configuration.options.opacity,
                         horizontal: true,
                         vertical: false,
                         steps: 100,
                         handleClass: "layer-opacity-handle",
                         animationCallback: function(x, y){
                             $("#layer-opacity").find(".layer-opacity-handle").text(Math.round(x * 100));
-                            self._setOpacity(self.model.findSource({id: sourceId})[0], parseFloat(x));
+                            self._setOpacity(source, parseFloat(x));
                         }
                     });
                 }
