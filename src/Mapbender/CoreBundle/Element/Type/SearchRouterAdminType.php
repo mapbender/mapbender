@@ -5,6 +5,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Mapbender\CoreBundle\Element\Type\SearchRouterRouteAdminType;
+use Mapbender\CoreBundle\Element\DataTransformer\SearchRouterRouteTransformer;
+
 
 class SearchRouterAdminType extends AbstractType
 {
@@ -29,12 +31,17 @@ class SearchRouterAdminType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('routes', 'collection',
-            array(
-            'type' => new SearchRouterRouteAdminType(),
-            'allow_add' => true,
-            'allow_delete' => true
-        ));
+        $builder
+            ->add('dialog', 'checkbox', array(
+                'property_path' => '[asDialog]'))
+            ->add('timeout', 'integer', array(
+                'label' => 'Timeout factor',
+                'property_path' => '[timeoutFactor]'))
+            ->add($builder->create('routes', 'collection', array(
+                'type' => new SearchRouterRouteAdminType(),
+                'allow_add' => true,
+                'allow_delete' => true
+            ))->addViewTransformer(new SearchRouterRouteTransformer()));
     }
 
 }

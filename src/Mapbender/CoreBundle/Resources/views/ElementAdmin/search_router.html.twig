@@ -1,5 +1,9 @@
 <div class="elementFormSearchRouter elementForm">
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
+    {{ form_label(form.configuration.dialog) }}{{ form_widget(form.configuration.dialog) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.timeout) }}{{ form_widget(form.configuration.timeout) }}
+    <div class="clearContainer"></div>
     {{ form_label(form.configuration.routes) }}{{ form_widget(form.configuration.routes) }}
 </div>
