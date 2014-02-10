@@ -2,6 +2,12 @@
 
 * **v3.0.X.X** -
   - Closed XSS vulnerability which required admin permissions
+  - Added cache for compiled static assets
+    - new parameter mapbender.static_assets, defaults to true
+    - new parameter mapbender.static_assets_path, defaults to web/css/application
+    - Compiled assets get cached to the directory set with the aforementioned parameter
+      - This directory needs to be cleared before packaging or updating.
+      - This directory needs to be refreshed before packaging.
 
 ## Release History
 * **v3.0.3.0** - 2013-xx-xx

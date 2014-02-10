@@ -21,6 +21,13 @@ monolog:
 
 assetic:
     use_controller: true
+    filters:
+        cssrewrite: ~
+        sass: ~
+        compass:
+            style: nested
+            load_paths:
+                 - "%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/public/sass"
 
 #swiftmailer:
 #    delivery_address: me@example.com
