@@ -103,5 +103,4 @@ ows_proxy3_core:
 #            - host_b
 
 # Mapbender Configuration
-mapbender_core:
-    static_assets: %use_static_assets%
+mapbender_core: ~
