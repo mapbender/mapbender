@@ -116,24 +116,26 @@ $.extend(true, Mapbender, {
 
                 var proxy = layer.source.configuration.options.proxy;
 
-                $.ajax({
+                var request = $.ajax({
                     url: Mapbender.configuration.application.urls.proxy,
                     contentType: contentType_,
                     data: {
                         url: proxy ? requestUrl : encodeURIComponent(requestUrl)
-                    },
-                    success: function(data){
-                        callback({
-                            layerId: layer.id,
-                            response: data
-                        });
-                    },
-                    error: function(error){
-                        callback({
-                            layerId: layer.id,
-                            response: 'ERROR'
-                        });
                     }
+                });
+
+                request.done(function(data, textStatus, jqXHR) {
+                    callback({
+                        layerId: layer.id,
+                        response: data
+                    }, jqXHR);
+                });
+
+                request.fail(function(jqXHR, textStatus, errorThrown) {
+                    callback({
+                        layerId: layer.id,
+                        response: textStatus
+                    }, jqXHR);
                 });
             },
             loadFromUrl: function(url){
