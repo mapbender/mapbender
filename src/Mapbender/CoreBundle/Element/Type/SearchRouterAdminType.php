@@ -32,6 +32,11 @@ class SearchRouterAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('target', 'target_element', array(
+                'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
+                'application' => $options['application'],
+                'property_path' => '[target]',
+                'required' => false))
             ->add('dialog', 'checkbox', array(
                 'property_path' => '[asDialog]'))
             ->add('timeout', 'integer', array(
