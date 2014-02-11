@@ -60,8 +60,7 @@ class SQLSearchEngine
             $select .= ', t.' . $config['form'][$key]['autocomplete-key'];
         }
 
-        $select .= ', t.hausnummer_zusatz';
-        $qb->select(!$distinct ? 'DISTINCT ' . $select : $select);
+        $qb->select($distinct ? 'DISTINCT ' . $select : $select);
 
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
@@ -83,6 +82,9 @@ class SQLSearchEngine
             array_walk($using, function($key) use ($properties, $logger, $cond, $qb, &$params) {
                 if(property_exists($properties, $key)) {
                     $value = $properties->$key;
+                    if(!$value) {
+                        return;
+                    }
                     $cond->add($qb->expr()->eq('t.' . $key, '?'));
                     $params[] = $value;
                 } else {
