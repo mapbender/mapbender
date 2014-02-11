@@ -170,24 +170,24 @@ class Application
         if ($type === 'js') {
             // Mapbender API
             $file = '@MapbenderCoreBundle/Resources/public/stubs.js';
-            $this->addAsset($assets, $type, $file, $filters);
+            $this->addAsset($assets, $type, $file);
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.js';
-            $this->addAsset($assets, $type, $file, $filters);
+            $this->addAsset($assets, $type, $file);
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.model.js';
-            $this->addAsset($assets, $type, $file, $filters);
+            $this->addAsset($assets, $type, $file);
             // Translation API
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.trans.js';
-            $this->addAsset($assets, $type, $file, $filters);
+            $this->addAsset($assets, $type, $file);
             // WDT fixup
             if ($this->container->has('web_profiler.debug_toolbar')) {
                 $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js';
-                $this->addAsset($assets, $type, $file, $filters);
+                $this->addAsset($assets, $type, $file);
             }
         }
 
         if ($type === 'trans') {
             $file = '@MapbenderCoreBundle/Resources/public/mapbender.trans.js';
-            $this->addAsset($assets, $type, $file, $filters);
+            $this->addAsset($assets, $type, $file);
         }
 
         // Load all elements assets
@@ -250,7 +250,7 @@ class Application
         if ($type === 'trans') {
             $transAsset = new StringAsset('Mapbender.i18n = ' . json_encode($translations,
                     JSON_FORCE_OBJECT) . ';');
-            $assets->set('i18n', $transAsset);
+            $this->addAsset($assets, $type, $transAsset);
         }
         // Load extra assets given by application
         $extra_assets = $this->getEntity()->getExtraAssets();

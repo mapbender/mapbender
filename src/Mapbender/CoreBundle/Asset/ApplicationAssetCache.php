@@ -4,6 +4,7 @@ namespace Mapbender\CoreBundle\Asset;
 
 use Assetic\AssetManager;
 use Assetic\Asset\AssetCollection;
+use Assetic\Asset\StringAsset;
 use Assetic\Asset\FileAsset;
 use Assetic\Cache\FilesystemCache;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -46,6 +47,10 @@ class ApplicationAssetCache
         $manager = new AssetManager();
         $cache = new FilesystemCache($static_assets_cache_path);
         foreach($this->inputs as $input) {
+            if($input instanceof StringAsset) {
+                continue;
+            }
+
             // First, build file asset with filters and public path information
             $file = $locator->locate($input);
             $publicSourcePath = $this->getPublicSourcePath($input);
