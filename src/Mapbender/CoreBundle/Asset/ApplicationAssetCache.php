@@ -36,7 +36,12 @@ class ApplicationAssetCache
                 $this->container->get('assetic.filter.cssrewrite')));
 
         // For each asset build compiled, cached asset
-        $assets = new AssetCollection(array(), $filters[$this->type], $this->targetPath);
+        $assetRootPath = $this->getAssetRootPath();
+        $assetTargetPath = $this->targetPath;
+
+        $assets = new AssetCollection(array(), $filters[$this->type], $assetRootPath);
+        $assets->setTargetPath($this->targetPath);
+
         $locator = $this->container->get('file_locator');
         $manager = new AssetManager();
         $cache = new FilesystemCache($static_assets_cache_path);
@@ -44,7 +49,7 @@ class ApplicationAssetCache
             // First, build file asset with filters and public path information
             $file = $locator->locate($input);
             $publicSourcePath = $this->getPublicSourcePath($input);
-            $fileAsset = new FileAsset($file, $filters[$this->type], '', $publicSourcePath);
+            $fileAsset = new FileAsset($file, $filters[$this->type], null, $assetRootPath . '/' . $publicSourcePath);
             $fileAsset->setTargetPath($this->targetPath);
 
             // Then wrap it into a cached asset, which required as valid cache name first
@@ -52,8 +57,8 @@ class ApplicationAssetCache
             $name = str_replace(array('/', '.', '-'), '__', $name);
             $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, $useTimestamp);
 
-            // Load the cached asset for one-time compilation
-            $cachedAsset->load();
+            // Dump the cached asset for one-time compilation
+            $cachedAsset->dump();
 
             // Collect all assets into a manager for dupe removal
             $manager->set($name, $cachedAsset);
@@ -72,41 +77,29 @@ class ApplicationAssetCache
         return $assets;
     }
 
+    protected function getAssetRootPath()
+    {
+        return dirname($this->container->getParameter('kernel.root_dir')) . '/web';
+    }
+
     protected function getPublicSourcePath($input)
     {
         $sourcePath = null;
         if ($input[0] == '@') {
             // Bundle name
             $bundle = substr($input, 1, strpos($input, '/') - 1);
-            // Installation root directory
-            $root = dirname($this->container->getParameter('kernel.root_dir'));
             // Path inside the Resources/public folder
             $assetPath = substr($input,
                 strlen('@' . $bundle . '/Resources/public'));
 
-            // Path for the public version
-            $public = $root . '/web/bundles/' .
-                preg_replace('/bundle$/', '', strtolower($bundle)) .
-                $assetPath;
-
-            return $public;
+            return 'bundles/' . preg_replace('/bundle$/', '', strtolower($bundle)) . $assetPath;
         }
     }
 
     protected function getTargetPath($targetPath = null)
     {
-        if(null !== $targetPath) {
-            return $targetPath;
-        }
-
-        // Replace backward slashes (Windows paths) with forward slashes...
-        $uri = $this->container->get('request')->getRequestUri();
-        $basepath = $this->container->get('request')->getBasePath();
-        $path = substr($uri, strlen($basepath));
-
-        $target = realpath($this->container->get('kernel')->getRootDir() . '/../web') . $path;
-        $target = str_replace('\\', '/', $target);
-
+        $route = $this->container->get('router')->getRouteCollection()->get('mapbender_core_application_assets');
+        $target = realpath($this->container->get('kernel')->getRootDir() . '/../web/app.php') . $route->getPattern();
         return $target;
     }
 }
