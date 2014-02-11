@@ -31,8 +31,7 @@ class SearchRouterRouteAdminType extends AbstractType
         $yamlTransformer = new YAMLDataTransformer(20);
         $builder->add('title', 'text', array(
             'label' => 'Title'));
-        $builder->add($builder->create('configuration', 'textarea',
-            array(
+        $builder->add($builder->create('configuration', 'textarea', array(
             'label' => 'Configuration'))->addViewTransformer($yamlTransformer));
     }
 
