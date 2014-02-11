@@ -18,7 +18,6 @@
     padding:3px 10px 3px 10px;
     @include relative('' '' '-$tabPopHeight*2' '');
     @extend .smallText;
-    @include transition(all 0.2s ease-in-out);
     @include noUserSelect();
 
     &:hover{bottom:-$tabPopHeight;}
