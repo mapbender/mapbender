@@ -47,7 +47,6 @@ $sidePaneWidth:280px;
 /* --------------------------------------------------------- TOOLBARS */
 .toolBar{
   z-index:4;
-  @include transition(all 0.3s linear);
   &.top{@include absolute($headHeight 0 '' 0);}
   &.bottom{@include absolute('' 0 (-$space) 0);}
 }
