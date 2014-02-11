@@ -640,7 +640,7 @@
       </trans-unit>
       <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
         <source>mb.core.layertree.label.zoomtolayer</source>
-        <target>Auf Ebenenausdehnung zoomen</target>
+        <target>Zoom auf Ebene</target>
       </trans-unit>
       <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
         <source>mb.core.layertree.label.metadata</source>
