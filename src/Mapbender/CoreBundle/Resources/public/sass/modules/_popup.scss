@@ -10,16 +10,13 @@
   border-bottom:dashed 1px darken(#fff, 30%);
   &.draggable{cursor:move;}
 }
-.popupButtons{margin-right:$space;}
+.popupButtons{@include absolute('' $space $space 0);}
 .popupSubTitle{@extend .labelInput;}
-.popupContent, .popupSubContent{
-  padding:0 $space/2 0 $space;
-  margin:0 $space $space 0;
-  max-height: $popupMaxHeight; // hack hack discothek
-  overflow-y:auto;
-}
+.popupContent, .popupSubContent{padding:0 $space;}
 .popupSubContent{width: $popupModalWidth;}
 .popup{
+  min-width: 300px;
+  min-height: 200px;
   position:relative;
   z-index:9999;
   width: $popupModalWidth;
@@ -62,4 +59,19 @@
   }
 
   .button{margin-left:3px;}
+}
+.popupScroll{
+  overflow: auto;
+  @include absolute(70px 0 $space*3 0);
+}
+.ui-resizable-se{
+  font-size: 16px;
+  @extend .icon;
+  @include absolute('' 3px -3px '');
+  @include transform(rotate(45deg));
+  cursor: default;
+  &:before{
+    content: "\f054";
+    display: block;
+  }
 }
