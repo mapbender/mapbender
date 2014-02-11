@@ -30,7 +30,7 @@ class NamedAssetCache extends AssetCache
 
     public function load(FilterInterface $additionalFilter = null)
     {
-        $cacheKey = self::getCacheKey($this->name, $this->asset, $additionalFilter, '', $this->suffix, $this->useTimestamp);
+        $cacheKey = self::getCacheKey2($this->name, $this->asset, $additionalFilter, '', $this->suffix, $this->useTimestamp);
         if ($this->cache->has($cacheKey)) {
             $this->asset->setContent($this->cache->get($cacheKey));
 
@@ -43,7 +43,7 @@ class NamedAssetCache extends AssetCache
 
     public function dump(FilterInterface $additionalFilter = null)
     {
-        $cacheKey = self::getCacheKey($this->name, $this->asset, $additionalFilter, '', $this->suffix, $this->useTimestamp);
+        $cacheKey = self::getCacheKey2($this->name, $this->asset, $additionalFilter, '', $this->suffix, $this->useTimestamp);
         if ($this->cache->has($cacheKey)) {
             return $this->cache->get($cacheKey);
         }
@@ -54,7 +54,10 @@ class NamedAssetCache extends AssetCache
         return $content;
     }
 
-    private static function getCacheKey($name, AssetInterface $asset, FilterInterface $additionalFilter = null, $salt = '', $suffix, $useTimestamp= false)
+    /**
+     * Stupid naming for stupid PHP 5.3 which has stupid overloading
+     */
+    private static function getCacheKey2($name, AssetInterface $asset, FilterInterface $additionalFilter = null, $salt = '', $suffix, $useTimestamp= false)
     {
         if ($additionalFilter) {
             $asset = clone $asset;
