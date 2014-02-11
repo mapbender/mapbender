@@ -35,6 +35,7 @@
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li', this.element).remove();
+            this.template.removeClass('hidden');
             this.menuTemplate = $('#layer-menu', this.template).remove();
 
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
@@ -43,6 +44,7 @@
             }else if(this.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true){
                 this.open();
             }
+            this.element.removeClass('hidden');
             this._trigger('ready');
             this._ready();
         },
@@ -548,12 +550,21 @@
             var self = this;
             function createMenu($element, sourceId, layerId){
                 var source = self.model.findSource({id: sourceId})[0];
-                var menu = self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId", sourceId);
+                var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId", sourceId));
+                if($element.parents('li:first').attr('data-type') === self.consts.root){
+                } else {
+                    menu.find('#layer-opacity').remove();
+                    menu.find('#layer-opacity-title').remove();
+                }
+                menu.removeClass('hidden');
                 $element.append(menu);
                 $(menu).on('click', function(e){
                     e.stopPropagation();
                 });
-                if($.inArray("opacity", self.options.menu) !== -1){
+//                self.element.on('click', function(e){
+//                    removeMenu($element);
+//                });
+                if($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0){
                     new Dragdealer('layer-opacity', {
                         x: source.configuration.options.opacity,
                         horizontal: true,
@@ -567,7 +578,7 @@
                         }
                     });
                 }
-                if($.inArray("zoomtolayer", 0, self.options.menu) !== -1){
+                if($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0){
                     if(self.model.getLayerExtents({sourceId: sourceId, layerId: layerId, inherit: true})){
                         $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                     }
@@ -577,6 +588,7 @@
             function removeMenu($element){
                 $('.layer-zoom').off('click');
                 $('#layer-menu').off('click').remove();
+//                self.element.off('click');
                 //@TODO off other events
             }
             var $btnMenu = $(e.target);
