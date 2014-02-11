@@ -72,7 +72,7 @@
             $(".tabContainer", this.popup.$element).off('click', '.tab');
         },
         /**
-         * Trigger the Feature Info call for each layer. 
+         * Trigger the Feature Info call for each layer.
          * Also set up feature info dialog if needed.
          */
         _triggerFeatureInfo: function(e){
@@ -129,6 +129,7 @@
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
                     draggable: true,
+                    resizable: true,
                     modal: false,
                     closeButton: false,
                     closeOnPopupCloseClick: false,
@@ -160,21 +161,32 @@
          * Once data is coming back from each layer's FeatureInfo call,
          * insert it into the corresponding tab.
          */
-        _featureInfoCallback: function(data){
-            var text = '';
-            try{ // cut css
-                if(data.response.search('<link') > -1 || data.response.search('<style') > -1){
-                    text = data.response.replace(/document.writeln[^;]*;/g, '')
-                        .replace(/\n/g, '')
-                        .replace(/<link[^>]*>/gi, '')
-                        .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
-                } else {
-                    text = data.response.replace(/\n/g, '<br/>');
-                }
-            }catch(e){
+        _featureInfoCallback: function(data, jqXHR){
+            var container = $('#container' + data.layerId);
+            switch(jqXHR.getResponseHeader('Content-Type')) {
+                case 'text/html':
+                    var html = data.response;
+                    try{ // cut css
+                        if(data.response.search('<link') > -1 || data.response.search('<style') > -1){
+                            html = data.response.replace(/document.writeln[^;]*;/g, '')
+                                .replace(/\n/g, '')
+                                .replace(/<link[^>]*>/gi, '')
+                                .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
+                        }
+                    }catch(e){
+                        html = '';
+                    }
+
+                    container.html(html);
+                    break;
+                case 'text/plain':
+                default:
+                    var text = data.response;
+                    container.append($('<pre></pre>', {
+                        text: text
+                    }));
             }
-            //TODO: Needs some escaping love
-            $('#container' + data.layerId).removeClass('loading').html(text);
+            container.removeClass('loading');
         },
         /**
          *
