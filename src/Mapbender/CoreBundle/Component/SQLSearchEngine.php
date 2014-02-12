@@ -37,24 +37,30 @@ class SQLSearchEngine
         $connection = $this->container->get('doctrine.dbal.' . $connection . '_connection');
         $qb = $connection->createQueryBuilder();
 
+        $distinct = false;
+        if(array_key_exists('attr', $config['form'][$key]['options'])
+            && array_key_exists('data-autocomplete-distinct', $config['form'][$key]['options']['attr'])
+            && strtolower($config['form'][$key]['options']['attr']['data-autocomplete-distinct']) == 'on') {
+            $distinct = true;
+        }
+
         $keys = array($key);
         $values = array($value);
-        if(array_key_exists('split', $config['form'][$key]))
-        {
+        if(array_key_exists('split', $config['form'][$key])) {
             $keys = $config['form'][$key]['split'];
             $values = explode(' ', $value);
         }
 
         // Build SELECT
-        $select = implode(', ', array_map(function($attribute)
-                        {
-                            return 't.' . $attribute;
-                        }, $keys));
-        if(array_key_exists('autocomplete-key', $config['form'][$key]))
-        {
+        $select = implode(', ', array_map(function($attribute) {
+            return 't.' . $attribute;
+        }, $keys));
+
+        if(array_key_exists('autocomplete-key', $config['form'][$key])) {
             $select .= ', t.' . $config['form'][$key]['autocomplete-key'];
         }
-        $qb->select($select);
+
+        $qb->select($distinct ? 'DISTINCT ' . $select : $select);
 
         // Add FROM
         $qb->from($config['class_options']['relation'], 't');
@@ -62,40 +68,53 @@ class SQLSearchEngine
         // Build WHERE condition
         $cond = $qb->expr()->andx();
         $params = array();
-        for($i = 0; $i < count($keys); $i++)
-        {
+        for($i = 0; $i < count($keys); $i++) {
             // @todo: Platform independency (::varchar, lower)
             $cond->add($qb->expr()->like('LOWER(t.' . $keys[$i] . '::varchar)', '?'));
             $params[] = '%' . (count($values) > $i ? strtolower($values[$i]) : '') . '%';
         }
+
+        $logger = $this->container->get('logger');
+
+        if(array_key_exists('attr', $config['form'][$key]['options'])
+            && array_key_exists('data-autocomplete-using', $config['form'][$key]['options']['attr'])) {
+            $using = explode(',', $config['form'][$key]['options']['attr']['data-autocomplete-using']);
+            array_walk($using, function($key) use ($properties, $logger, $cond, $qb, &$params) {
+                if(property_exists($properties, $key)) {
+                    $value = $properties->$key;
+                    if(!$value) {
+                        return;
+                    }
+                    $cond->add($qb->expr()->eq('t.' . $key, '?'));
+                    $params[] = $value;
+                } else {
+                    $logger->warn('Key "' . $key . '" for autocomplete-using does not exist in data.');
+                }
+            });
+        }
+
         $qb->where($cond);
 
         // Create prepared statement and execute
-        $this->container->get('logger')->info('SQL: ' . $qb->getSql() . '; Params: ' . print_r($params, true));
         $stmt = $connection->executeQuery($qb->getSql(), $params);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        array_walk($rows, function(&$row) use ($key, $keys, $config)
-                {
-                    $value = array();
-                    foreach($keys as $k)
-                    {
-                        $value[] = $row[$k];
-                    }
+        array_walk($rows, function(&$row) use ($key, $keys, $config) {
+            $value = array();
+            foreach($keys as $k) {
+                $value[] = $row[$k];
+            }
 
-                    if(array_key_exists('autocomplete-key', $config['form'][$key]))
-                    {
-                        $row = array(
-                            'key' => $row[$config['form'][$key]['autocomplete-key']],
-                            'value' => implode(' ', $value));
-                    } else
-                    {
-                        $row = array(
-                            'value' => implode(' ', $value)
-                        );
-                    }
-                });
-
+            if(array_key_exists('autocomplete-key', $config['form'][$key])) {
+                $row = array(
+                    'key' => $row[$config['form'][$key]['autocomplete-key']],
+                    'value' => implode(' ', $value));
+            } else {
+                $row = array(
+                    'value' => implode(' ', $value)
+                );
+            }
+        });
         return $rows;
     }
 
