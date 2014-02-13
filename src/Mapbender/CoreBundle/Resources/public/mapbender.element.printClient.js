@@ -535,6 +535,18 @@
                 c++;
             }
             
+            // replace pattern
+            
+            if (this.options.replace_pattern === 'undefined'){
+                for(var i = 0; i < this.options.replace_pattern.length; i++) {
+                    $.merge(fields, $('<input />', {
+                        type: 'hidden',
+                        name: 'replace_pattern[' + i + ']',
+                        value: JSON.stringify(this.options.replace_pattern[i])
+                    }));
+                }
+            }           
+                     
             $('div#layers').empty();
             fields.appendTo(form.find('div#layers'));
             
