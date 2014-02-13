@@ -146,14 +146,10 @@ Mapbender.Model = {
         }
 
         if(bbox){
-            this.center({
-                box: bbox.toArray()
-            });
+            this.map.olMap.zoomToExtent(bbox, true);
         }else{
             if(!centered){
-                this.center({
-                    box: start_extent.extent ? start_extent.extent.toArray() : start_extent.toArray()
-                });
+                this.map.olMap.zoomToExtent(start_extent.extent ? start_extent.extent : start_extent, true);
             }
         }
 

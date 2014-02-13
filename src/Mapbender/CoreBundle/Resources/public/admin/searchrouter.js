@@ -1,15 +1,9 @@
-/**
- * Mapbender Manager form customization: YAML editor.
- */
 (function() {
-    var form = $('form');
-    var yaml = form.find('textarea.code-yaml');
-    yaml.each(function() {
-        if('undefined' !== typeof $(this).data('editor')) {
-            return;
-        }
 
-        var editor = CodeMirror.fromTextArea(this, {
+    var addYamlEditor = function(textarea) {
+        var _textarea = textarea[0];
+
+        var editor = CodeMirror.fromTextArea(_textarea, {
             mode: 'yaml',
             lineNumbers: true,
             onCursorActivity: function() {
@@ -19,7 +13,14 @@
             }
         });
         var hlLine = editor.setLineClass(0, "activeline");
-        $(this).data('editor', editor);
-    });
+        textarea.data('editor', editor);
+    };
+
+    var context = $('form#elementForm');
+    var init = function() {
+        addYamlEditor($('textarea', context));
+    }
+
+    init();
 })();
 
