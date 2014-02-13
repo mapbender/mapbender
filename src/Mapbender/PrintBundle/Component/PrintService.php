@@ -37,6 +37,7 @@ class PrintService
         
         $this->getTemplateConf($template);
         $this->createUrlArray();
+        //$this->addReplacePattern();
         $this->setMapParameter();
 
         if ($this->data['rotation'] == 0) {
@@ -70,13 +71,48 @@ class PrintService
     private function createUrlArray()
     {
         foreach ($this->data['layers'] as $i => $layer) {
-            $url = strstr($this->data['layers'][$i]['url'], 'BBOX', true);
+            $url = strstr($this->data['layers'][$i]['url'], '&BBOX', true);
             $this->layer_urls[$i] = $url;
             //opacity
             $this->layerOpacity[$i] = $this->data['layers'][$i]['opacity']*100;
         }
     }
-
+    
+    private function addReplacePattern()
+    {
+        if(!isset($this->data['replace_pattern'])){
+            return;
+        }
+        
+        $quality = $this->data['quality'];
+        $default;
+        foreach ($this->layer_urls as $k => $url) {
+            foreach ($this->data['replace_pattern'] as $rKey => $pattern) {  
+                if(isset($pattern['default'])){
+                    if(isset($pattern['default'][$quality])){
+                        $default = $pattern['default'][$quality];
+                    }else{
+                        $default = '';
+                    }
+                    continue;
+                }
+                if(strpos($url,$pattern['pattern']) === false){
+                    continue;
+                }
+                if(strpos($url,$pattern['pattern']) !== false){
+                    if(isset($pattern['replacement'][$quality])){
+                        $url = str_replace($pattern['pattern'], $pattern['replacement'][$quality], $url);
+                        $this->layer_urls[$k] = $url;
+                        continue 2;
+                    }
+                }
+                
+            }
+           $url .= $default; 
+           $this->layer_urls[$k] = $url;
+        }
+    }
+    
     /**
      * Todo
      *
@@ -110,7 +146,7 @@ class PrintService
         $ur_x = $centerx + $map_width * 0.5;
         $ur_y = $centery + $map_height * 0.5;
 
-        $bbox = 'BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
+        $bbox = '&BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
 
         foreach ($this->layer_urls as $k => $url) {
             $url .= $bbox;
@@ -128,9 +164,6 @@ class PrintService
             $width = '&WIDTH=' . $this->image_width;
             $height = '&HEIGHT=' . $this->image_height;
             $url .= $width . $height;
-            if ($this->data['quality'] != '72') {
-                $url .= '&map_resolution=' . $this->data['quality'];
-            }
             $this->layer_urls[$k] = $url;
         }
     }
@@ -199,7 +232,7 @@ class PrintService
                         $this->image_height);
                 }
                 imagepng($dest, $finalimagename);
-                unlink($tempdir . '/tempimage' . $k);           
+                //unlink($tempdir . '/tempimage' . $k);           
             }  
             finfo_close($finfo);
         }
@@ -429,7 +462,8 @@ class PrintService
                 $this->rotateNorthArrow();
             }
         }
-               
+        
+        // add overview map 
         if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
             $this->getOverviewMap();
         }
@@ -647,25 +681,45 @@ class PrintService
         $tempdir = $this->tempdir;
         $image = imagecreatefrompng($tempdir . '/mergedimage.png');        
         
-        $feature = $this->data['features'][0];
+//        print "<pre>";
+//        print_r($this->data['features']);
+//        print "</pre>";
+//        die();
         
-        $points;        
-        foreach ($feature as $k => $v){
-            $points[$k] = $this->realWorld2mapPos($feature[$k]['x'],$feature[$k]['y']);
-        }       
-        
-        $red = ImageColorAllocate($image,255,0,0); 
-        
-        $keys = array_keys($points);
-        $last_key = end($keys);
-        foreach ($points as $k => $v){
-            if ($k == $last_key) {
-                break;
-            }else{
-                imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
+        foreach ($this->data['features'] as $fKey => $feature){
+            $points = array();        
+            foreach ($feature['geom'] as $vKey => $vVal){
+                $points[$vKey] = $this->realWorld2mapPos($feature['geom'][$vKey]['x'],$feature['geom'][$vKey]['y']);
+            }     
+
+            if($feature['type'] === 'line'){
+                $red = ImageColorAllocate($image,255,0,0); 
+                imagesetthickness($image, 2);
+                $keys = array_keys($points);
+                $last_key = end($keys);
+                foreach ($points as $k => $v){
+                    if ($k == $last_key) {
+                        break;
+                    }else{
+                        imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
+                    }
+                }
+            }
+            if($feature['type'] === 'point'){
+                $red = ImageColorAllocate($image,255,0,0); 
+                imagefilledellipse ($image , $points[0][0], $points[0][1] , 5 , 5 , $red );
+            }
+            if($feature['type'] === 'polygon'){
+                $red = ImageColorAllocate($image,255,0,0);
+                $values = array();
+                foreach ($points as $k => $v){
+                    array_push($values, $points[$k][0], $points[$k][1]);
+                }
+                imagesetthickness($image, 2);
+                imagepolygon($image, $values, count($points), $red);
             }
         }
-
+        
         imagepng($image, $tempdir . '/mergedimage.png');
     }
     
