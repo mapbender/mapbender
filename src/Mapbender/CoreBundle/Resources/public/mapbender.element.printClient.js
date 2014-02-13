@@ -58,6 +58,7 @@
                         closeOnESC: false,
                         content: self.element,
                         width: 320,
+                        height: 350,
                         cssClass: 'customPrintDialog',
                         buttons: {
                                 'cancel': {
