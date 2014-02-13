@@ -429,7 +429,8 @@ class PrintService
                 $this->rotateNorthArrow();
             }
         }
-               
+        
+        // add overview map 
         if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
             $this->getOverviewMap();
         }
@@ -647,25 +648,45 @@ class PrintService
         $tempdir = $this->tempdir;
         $image = imagecreatefrompng($tempdir . '/mergedimage.png');        
         
-        $feature = $this->data['features'][0];
+//        print "<pre>";
+//        print_r($this->data['features']);
+//        print "</pre>";
+//        die();
         
-        $points;        
-        foreach ($feature as $k => $v){
-            $points[$k] = $this->realWorld2mapPos($feature[$k]['x'],$feature[$k]['y']);
-        }       
-        
-        $red = ImageColorAllocate($image,255,0,0); 
-        
-        $keys = array_keys($points);
-        $last_key = end($keys);
-        foreach ($points as $k => $v){
-            if ($k == $last_key) {
-                break;
-            }else{
-                imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
+        foreach ($this->data['features'] as $fKey => $feature){
+            $points = array();        
+            foreach ($feature['geom'] as $vKey => $vVal){
+                $points[$vKey] = $this->realWorld2mapPos($feature['geom'][$vKey]['x'],$feature['geom'][$vKey]['y']);
+            }     
+
+            if($feature['type'] === 'line'){
+                $red = ImageColorAllocate($image,255,0,0); 
+                imagesetthickness($image, 2);
+                $keys = array_keys($points);
+                $last_key = end($keys);
+                foreach ($points as $k => $v){
+                    if ($k == $last_key) {
+                        break;
+                    }else{
+                        imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
+                    }
+                }
+            }
+            if($feature['type'] === 'point'){
+                $red = ImageColorAllocate($image,255,0,0); 
+                imagefilledellipse ($image , $points[0][0], $points[0][1] , 5 , 5 , $red );
+            }
+            if($feature['type'] === 'polygon'){
+                $red = ImageColorAllocate($image,255,0,0);
+                $values = array();
+                foreach ($points as $k => $v){
+                    array_push($values, $points[$k][0], $points[$k][1]);
+                }
+                imagesetthickness($image, 2);
+                imagepolygon($image, $values, count($points), $red);
             }
         }
-
+        
         imagepng($image, $tempdir . '/mergedimage.png');
     }
     
