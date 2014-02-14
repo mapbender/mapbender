@@ -57,8 +57,7 @@
                         closeOnPopupCloseClick: false,
                         closeOnESC: false,
                         content: self.element,
-                        width: 320,
-                        height: 350,
+                        width: 340,
                         cssClass: 'customPrintDialog',
                         buttons: {
                                 'cancel': {
@@ -83,7 +82,7 @@
                  }
             }
             me.show();
-            
+
             $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
             .bind('change', $.proxy(this._updateGeometry, this));
             $('input[name="scale_text"], input[name="rotation"]', this.element)
@@ -91,7 +90,7 @@
             $('select[name="template"]', this.element)
             .bind('change', $.proxy(this._getPrintSize, this))
             .trigger('change');
-    
+
             this.popupIsOpen = true;
             this._loadPrintFormats();
             this._updateElements();
