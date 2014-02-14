@@ -174,6 +174,7 @@ class PrintService
      */
     private function getImages()
     {
+        $temp_names = array();
         foreach ($this->layer_urls as $k => $url) {
             $this->container->get("logger")->debug("Print Request Nr.: " . $k . ' ' . $url);
             $attributes = array();
@@ -185,7 +186,8 @@ class PrintService
                 HttpKernelInterface::SUB_REQUEST);
 
             $tempdir = $this->tempdir;
-            $imagename = $tempdir . '/tempimage' . $k;
+            $imagename = tempnam($tempdir, 'mb_print');
+            $temp_names[] = $imagename;
 
             file_put_contents($imagename, $response->getContent());
             $im = null;
@@ -212,18 +214,18 @@ class PrintService
             }
         } 
         // create final merged image
-        $finalimagename = $tempdir . '/mergedimage.png';
+        $finalimagename = tempnam($tempdir, 'mb_print_merged');
+        $this->finalimagename = $finalimagename;
         $finalImage = imagecreatetruecolor($this->image_width,
             $this->image_height);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $this->image_width,
             $this->image_height, $bg);
-        foreach ($this->layer_urls as $k => $url) {
+        foreach ($temp_names as $temp_name) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (file_exists($tempdir . '/tempimage' . $k) && finfo_file($finfo,
-                    $tempdir . '/tempimage' . $k) == 'image/png') {
+            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
                 $dest = $finalImage;
-                $src = imagecreatefrompng($tempdir . '/tempimage' . $k);
+                $src = imagecreatefrompng($temp_name);
                 if ($this->layerOpacity[$k] !== 100){
                     ImageCopyMerge($dest, $src, 0, 0, 0, 0, $this->image_width,
                        $this->image_height, $this->layerOpacity[$k]);
@@ -232,7 +234,7 @@ class PrintService
                         $this->image_height);
                 }
                 imagepng($dest, $finalimagename);
-                //unlink($tempdir . '/tempimage' . $k);           
+                unlink($temp_name);           
             }  
             finfo_close($finfo);
         }
@@ -246,7 +248,8 @@ class PrintService
     {
         $tempdir = $this->tempdir;
         $rotation = $this->data['rotation'];
-
+        $temp_names = array();
+        $temp_names_clip = array();
         foreach ($this->layer_urls as $k => $url) {
             $map_width = $this->data['extent']['width'];
             $map_height = $this->data['extent']['height'];
@@ -264,7 +267,7 @@ class PrintService
             $ur_x = $centerx + $neededExtentWidth * 0.5;
             $ur_y = $centery + $neededExtentHeight * 0.5;
 
-            $bbox = 'BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
+            $bbox = '&BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
             $url .= $bbox;
             $this->layer_urls[$k] = $url;
 
@@ -278,7 +281,7 @@ class PrintService
             $h = '&HEIGHT=' . $neededImageHeight;
             $url .= $w . $h;
             $this->layer_urls[$k] = $url;
-
+        
             //get image
             $attributes = array();
             $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
@@ -289,7 +292,8 @@ class PrintService
                 HttpKernelInterface::SUB_REQUEST);
 
             $tempdir = $this->tempdir;
-            $imagename = $tempdir . '/tempimage' . $k;
+            $imagename = tempnam($tempdir, 'mb_print');
+            $temp_names[] = $imagename;
 
             file_put_contents($imagename, $response->getContent());
             $im = null;
@@ -328,7 +332,8 @@ class PrintService
                 $newx = ($rotated_width - $this->image_width ) / 2;
                 $newy = ($rotated_height - $this->image_height ) / 2;
 
-                $clippedImageName = $tempdir . '/clipped_image' . $k;
+                $clippedImageName = tempnam($tempdir, 'mb_print');
+                $temp_names_clip[] = $clippedImageName;
                 $clippedImage = imagecreatetruecolor($this->image_width,
                     $this->image_height);
 
@@ -338,29 +343,27 @@ class PrintService
                 imagecopy($clippedImage, $rotatedImage, 0, 0, $newx, $newy,
                     $this->image_width, $this->image_height);
                 imagepng($clippedImage, $clippedImageName);
-
-                unlink($tempdir . '/tempimage' . $k);
+                unlink($imagename);
             }
         }
         // create final merged image
-        $finalimagename = $tempdir . '/mergedimage.png';
+        $finalimagename = tempnam($tempdir, 'mb_print_merged');
+        $this->finalimagename = $finalimagename;
         $finalImage = imagecreatetruecolor($this->image_width,
             $this->image_height);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $this->image_width,
             $this->image_height, $bg);
         imagepng($finalImage, $finalimagename);
-        foreach ($this->layer_urls as $k => $url) {
+        foreach ($temp_names_clip as $temp_name) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (file_exists($tempdir . '/clipped_image' . $k) && finfo_file($finfo,
-                    $tempdir . '/clipped_image' . $k) == 'image/png') {
-                      
+            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {        
                 $dest = imagecreatefrompng($finalimagename);
-                $src = imagecreatefrompng($tempdir . '/clipped_image' . $k);
+                $src = imagecreatefrompng($temp_name);
                 imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
                     $this->image_height);
                 imagepng($dest, $finalimagename);
-                unlink($tempdir . '/clipped_image' . $k);
+                unlink($temp_name);
             }
             finfo_close($finfo);
         }
@@ -441,7 +444,7 @@ class PrintService
         if ($this->data['rotation'] == 0) {
             $tempdir = sys_get_temp_dir();
             foreach ($this->layer_urls as $k => $url)
-                    $pdf->Image($tempdir . '/mergedimage.png', $this->x_ul,
+                    $pdf->Image($this->finalimagename, $this->x_ul,
                     $this->y_ul, $this->width, $this->height, 'png', '', false,
                     0, 5, -1 * 0);
 
@@ -454,7 +457,7 @@ class PrintService
                     $this->conf['northarrow']['height'] * 10);
             }
         } else {
-            $pdf->Image($tempdir . '/mergedimage.png', $this->x_ul, $this->y_ul,
+            $pdf->Image($this->finalimagename, $this->x_ul, $this->y_ul,
                 $this->width, $this->height, 'png', '', false, 0, 5, -1 * 0);
 
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
@@ -468,7 +471,7 @@ class PrintService
             $this->getOverviewMap();
         }
         
-        unlink($tempdir . '/mergedimage.png');
+        unlink($this->finalimagename);
         
         if (null != $this->data['file_prefix']) {
             $pdf->Output($this->data['file_prefix'] . '.pdf', 'D'); //file output
@@ -490,31 +493,34 @@ class PrintService
         $im = imagecreatefrompng($northarrow);
         $transColor = imagecolorallocatealpha($im, 255, 255, 255, 127);
         $rotated = imagerotate($im, $rotation, $transColor);
-        imagepng($rotated, $tempdir . '/rotatednorth.png');
+        $imagename = tempnam($tempdir, 'mb_northarrow');
+        imagepng($rotated, $imagename);
 
         if ($rotation == 90 || $rotation == 270) {
             //
         } else {
-            $src_img = imagecreatefrompng($tempdir . '/rotatednorth.png');
-            $srcsize = getimagesize($tempdir . '/rotatednorth.png');
+            $src_img = imagecreatefrompng($imagename);
+            $srcsize = getimagesize($imagename);
             $destsize = getimagesize($resource_dir . '/images/northarrow.png');
             $x = ($srcsize[0] - $destsize[0]) / 2;
             $y = ($srcsize[1] - $destsize[1]) / 2;
             $dst_img = imagecreatetruecolor($destsize[0], $destsize[1]);
             imagecopy($dst_img, $src_img, 0, 0, $x, $y, $srcsize[0], $srcsize[1]);
-            imagepng($dst_img, $tempdir . '/rotatednorth.png');
+            imagepng($dst_img, $imagename);
         }
 
-        $this->pdf->Image($tempdir . '/rotatednorth.png',
-            $this->conf['northarrow']['x'] * 10,
-            $this->conf['northarrow']['y'] * 10,
-            $this->conf['northarrow']['width'] * 10,
-            $this->conf['northarrow']['height'] * 10);
-        unlink($tempdir . '/rotatednorth.png');
+        $this->pdf->Image($imagename,
+                            $this->conf['northarrow']['x'] * 10,
+                            $this->conf['northarrow']['y'] * 10,
+                            $this->conf['northarrow']['width'] * 10,
+                            $this->conf['northarrow']['height'] * 10,
+                            'png');
+        unlink($imagename);
     }
     
     private function getOverviewMap()
     {
+        $temp_names = array();
         foreach ($this->data['overview'] as $i => $layer) {
             $url = strstr($this->data['overview'][$i]['url'], 'BBOX', true);           
             
@@ -556,7 +562,8 @@ class PrintService
                 HttpKernelInterface::SUB_REQUEST);
 
             $tempdir = $this->tempdir;
-            $imagename = $tempdir . '/tempovimage' . $i;
+            $imagename = tempnam($tempdir, 'mb_print');
+            $temp_names[] = $imagename;
 
             file_put_contents($imagename, $response->getContent());
             $im = null;
@@ -583,28 +590,27 @@ class PrintService
         }
         
         // create final merged image
-        $finalimagename = $tempdir . '/mergedovimage.png';
+        $finalimagename = tempnam($tempdir, 'mb_print_merged');
         $finalImage = imagecreatetruecolor($ov_image_width,
             $ov_image_height);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $ov_image_width,
             $ov_image_height, $bg);
         imagepng($finalImage, $finalimagename);
-        foreach ($this->overview_urls as $k => $url) {
+        foreach ($temp_names as $temp_name) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($tempdir . '/tempovimage' . $k) && finfo_file($finfo,
-                    $tempdir . '/tempovimage' . $k) == 'image/png') {
+            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
                 $dest = imagecreatefrompng($finalimagename);
-                $src = imagecreatefrompng($tempdir . '/tempovimage' . $k);
+                $src = imagecreatefrompng($temp_name);
                 imagecopy($dest, $src, 0, 0, 0, 0, $ov_image_width,
                     $ov_image_height);
                 imagepng($dest, $finalimagename);
             }
-            unlink($tempdir . '/tempovimage' . $k);
+            unlink($temp_name);
             finfo_close($finfo);
         }       
         
-        $image = imagecreatefrompng($tempdir . '/mergedovimage.png');             
+        $image = imagecreatefrompng($finalimagename);             
         
         // ohne rotation      
         if ($this->data['rotation'] == 0) {
@@ -660,26 +666,26 @@ class PrintService
             imageline ( $image, $p4[0], $p4[1], $p1[0], $p1[1], $red);
         }
                
-        imagepng($image, $tempdir . '/mergedovimage.png');
+        imagepng($image, $finalimagename);
         
-        $this->pdf->Image($tempdir . '/mergedovimage.png',
+        $this->pdf->Image($finalimagename,
                     $this->conf['overview']['x'] * 10,
                     $this->conf['overview']['y'] * 10,
                     $this->conf['overview']['width'] * 10,
-                    $this->conf['overview']['height'] * 10);
+                    $this->conf['overview']['height'] * 10,
+                    'png');
         
         $this->pdf->Rect($this->conf['overview']['x'] * 10,
                          $this->conf['overview']['y'] * 10,
                          $this->conf['overview']['width'] * 10,
                          $this->conf['overview']['height'] * 10);    
 
-        unlink($tempdir . '/mergedovimage.png');
+        unlink($finalimagename);
     }
     
     private function drawFeatures()
     {      
-        $tempdir = $this->tempdir;
-        $image = imagecreatefrompng($tempdir . '/mergedimage.png');        
+        $image = imagecreatefrompng($this->finalimagename);        
         
 //        print "<pre>";
 //        print_r($this->data['features']);
@@ -720,7 +726,7 @@ class PrintService
             }
         }
         
-        imagepng($image, $tempdir . '/mergedimage.png');
+        imagepng($image, $this->finalimagename);
     }
     
     private function drawRotatedFeatures($image)
