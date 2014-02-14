@@ -561,8 +561,23 @@
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
             }else{
                 //click hidden submit button to check requierd fields
+                this._checkFields()
                 form.find('input[type="submit"]').click();
+                
             }
+        },
+                
+        _checkFields: function(){
+            $('#formats input[required]').on('change invalid', function() {
+            var textfield = $(this).get(0);
+            // 'setCustomValidity not only sets the message, but also marks
+            // the field as invalid. In order to see whether the field really is
+            // invalid, we have to remove the message first
+            textfield.setCustomValidity('');
+                if (!textfield.validity.valid) {
+                    textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));  
+                }
+            });
         },
 
         _getPrintSize: function() {
