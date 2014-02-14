@@ -136,6 +136,7 @@
                     closeOnESC: false,
                     content: content,
                     width: 500,
+                    height: 400,
                     buttons: {
                         'ok': {
                             label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),

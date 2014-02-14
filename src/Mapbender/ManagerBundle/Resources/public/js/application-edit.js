@@ -257,7 +257,6 @@ $(function() {
         popup = new Mapbender.Popup2({
             title:Mapbender.trans("mb.manager.components.popup.edit_element.title"),
             closeOnOutsideClick: true,
-            resizable: true,
             height: 450,
             content: [
                 $.ajax({
