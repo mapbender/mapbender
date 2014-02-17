@@ -49,7 +49,7 @@ into three parts:
 
 You can either go ahead by hand, or use the provided bootstrap script:::
 
-  curl https://raw.github.com/mapbender/mapbender-starter/master/bin/bootstrap.sh -o - | sh
+  curl https://raw.github.com/mapbender/mapbender-starter/develop/bootstrap.sh -o - | sh -s -- mapbender-starter
 
 Cloning
 ~~~~~~~
@@ -115,4 +115,3 @@ two users are hardcoded (name/password):
 
  user/user
  root/root
-
