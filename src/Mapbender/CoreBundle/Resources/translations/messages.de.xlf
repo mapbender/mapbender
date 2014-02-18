@@ -178,6 +178,14 @@
         <source>mb.core.zoombar.zoombyworld</source>
         <target>Zoom auf gesamte Ausdehnung</target>
       </trans-unit>
+      <trans-unit id="5feedcb7eb18018c003e6fa2562c4b53" resname="mb.core.zoombar.zoomin">
+        <source>mb.core.zoombar.zoomin</source>
+        <target>Hineinzoomen</target>
+      </trans-unit>
+      <trans-unit id="c13aa9d4bce372c110a373dad4519db8" resname="mb.core.zoombar.zoomout">
+        <source>mb.core.zoombar.zoomout</source>
+        <target>Herauszoomen</target>
+      </trans-unit>
       <trans-unit id="960c243a1919783483eb30395e158174" resname="mb.core.poi.popup.btn.ok">
         <source>mb.core.poi.popup.btn.ok</source>
         <target>Ok</target>
