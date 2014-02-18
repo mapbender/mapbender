@@ -37,6 +37,10 @@ class SimpleSearchAdminType extends AbstractType
                 'label' => 'Query URL key',
                 'property_path' => '[query_key]',
                 'required' => true))
+            ->add('query_format', 'text', array(
+                'label' => 'Query key format',
+                'property_path' => '[query_format]',
+                'required' => true))
             ->add('collection_path', 'text', array(
                 'property_path' => '[collection_path]',
                 'required' => false))
