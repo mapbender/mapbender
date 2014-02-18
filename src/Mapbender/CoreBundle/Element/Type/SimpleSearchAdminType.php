@@ -58,6 +58,12 @@ class SimpleSearchAdminType extends AbstractType
                 'required' => true))
             ->add('delay', 'number', array(
                 'property_path' => '[delay]',
-                'required' => true));
+                'required' => true))
+            ->add('result_buffer', 'number', array(
+                'property_path' => '[result][buffer]'))
+            ->add('result_minscale', 'number', array(
+                'property_path' => '[result][minscale]'))
+            ->add('result_maxscale', 'number', array(
+                'property_path' => '[result][maxscale]'));
     }
 }
