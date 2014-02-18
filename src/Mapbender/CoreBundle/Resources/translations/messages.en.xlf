@@ -18,8 +18,8 @@
         <source>mb.core.aboutdialog.content.website</source>
         <target>website</target>
       </trans-unit>
-      <trans-unit id="13348442cc6a27032d2b4aa28b75a5d3" resname="Search">
-        <source>Search</source>
+      <trans-unit id="982d326f994e1c5e3f11f1a1b8493506" resname="mb.core.simplesearch.input.search">
+        <source>mb.core.simplesearch.input.search</source>
         <target>Search</target>
       </trans-unit>
       <trans-unit id="d34e7ce2889c54092fc147356c3faa14" resname="mb.core.searchrouter.popup.btn.ok">
@@ -180,11 +180,11 @@
       </trans-unit>
       <trans-unit id="5feedcb7eb18018c003e6fa2562c4b53" resname="mb.core.zoombar.zoomin">
         <source>mb.core.zoombar.zoomin</source>
-        <target>__mb.core.zoombar.zoomin</target>
+        <target>Zoom in</target>
       </trans-unit>
       <trans-unit id="c13aa9d4bce372c110a373dad4519db8" resname="mb.core.zoombar.zoomout">
         <source>mb.core.zoombar.zoomout</source>
-        <target>__mb.core.zoombar.zoomout</target>
+        <target>Zoom out</target>
       </trans-unit>
       <trans-unit id="960c243a1919783483eb30395e158174" resname="mb.core.poi.popup.btn.ok">
         <source>mb.core.poi.popup.btn.ok</source>
