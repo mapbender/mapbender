@@ -268,8 +268,8 @@
         /**
          * Turns off the highlight layer at map
          */
-        highlightOff: function() {
-            this.model.highlightOff();
+        highlightOff: function(features) {
+            this.model.highlightOff(features);
         },
         /**
          * Loads the srs definitions from server

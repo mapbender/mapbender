@@ -2,6 +2,11 @@
 
 {% block title %}{{ application.title }}{% endblock %}
 
+{#% block css %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.css') }}">
+{% endblock %#}
+
 {% block js %}
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>

@@ -25,9 +25,6 @@
             var self = this;
             var mbMap = $('#' + this.options.target).data('mapbenderMbMap');
             $(this.element).addClass(this.options.anchor);
-            if(!this.options.maximized){
-                $(this.element).addClass("closed");
-            }
             var proj = mbMap.model.mapMaxExtent.projection;
             var max_ext = mbMap.model.mapMaxExtent.extent;
             this.startproj = proj;
@@ -74,7 +71,7 @@
             var overviewOptions = {
                 layers: layers_overview,
                 div: div,
-//            size: new OpenLayers.Size(self.options.width, self.options.height),
+                size: new OpenLayers.Size(self.options.width, self.options.height),
                 //maximized: self.options.maximized,
                 mapOptions: {
                     maxExtent: max_ext,
@@ -89,10 +86,15 @@
 //            ,autoPan: false
                 });
             }
-            this.overview = new OpenLayers.Control.OverviewMap(overviewOptions);
+            this.overview = new OpenLayers.Control.OverviewMap(overviewOptions);          
             mbMap.map.olMap.addControl(this.overview);
             $(document).bind('mbmapsrschanged', $.proxy(this._changeSrs, this));
             $(self.element).find('.toggleOverview').bind('click', $.proxy(this._openClose, this));
+            
+            if(!this.options.maximized){
+                $(this.element).addClass("closed");
+            }    
+                
             this._trigger('ready');
             this._ready();
         },

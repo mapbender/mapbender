@@ -145,7 +145,14 @@ class Map extends Element
         $configuration["srsDefs"] = $this->getSrsDefinitions($allsrs);
         $srs_req = $this->container->get('request')->get('srs');
         if ($srs_req) {
-            if (!isset($allsrs[$srs])) {
+            $exists = false;
+            foreach ($allsrs as $srsItem) {
+                if(strtoupper($srsItem['name']) === strtoupper($srs_req)){
+                    $exists = true;
+                    break;
+                }
+            }
+            if (!$exists) {
                 throw new \RuntimeException('The srs: "' . $srs_req
                 . '" does not supported.');
             }

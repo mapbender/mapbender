@@ -567,7 +567,7 @@ class WmsInstanceLayer implements InstanceLayerIn
 
         if (count($this->wmslayersource->getStyles()) > 0) {
             $styles = $this->wmslayersource->getStyles();
-            $legendurl = $styles[0]->getLegendUrl(); // first style object
+            $legendurl = $styles[count($styles) -1]->getLegendUrl(); // the last style from object's styles
             if ($legendurl !== null) {
                 $configuration["legend"] = array(
                     "url" => $legendurl->getOnlineResource()->getHref(),
