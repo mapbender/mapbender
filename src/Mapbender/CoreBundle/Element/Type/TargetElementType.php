@@ -82,7 +82,7 @@ class TargetElementType extends AbstractType
                         $qb->setParameter('class', $options['element_class']);
                     } else {
                         $filter = $qb->expr()->andX(
-                            $qb->exprpga()->eq($builderName . '.application',
+                            $qb->expr()->eq($builderName . '.application',
                                 $options['application']->getId()),
                             $qb->expr()->eq($builderName . '.class', ':class')
                         );
