@@ -164,7 +164,7 @@
          */
         _featureInfoCallback: function(data, jqXHR){
             var container = $('#container' + data.layerId);
-            switch(jqXHR.getResponseHeader('Content-Type')) {
+            switch(jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0]) {
                 case 'text/html':
                     var html = data.response;
                     try{ // cut css
