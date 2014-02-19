@@ -4,7 +4,8 @@
         options: {
             layers: undefined,
             target: undefined,
-            deactivateOnClose: true
+            deactivateOnClose: true,
+            type: 'dialog'
         },
         map: null,
         mapClickHandler: null,
