@@ -1,5 +1,5 @@
-<div id="{{ id }}" class="mb-element mb-element-layertree" title="{{ title |trans }}">
-  <li class="hide-elm leave showLeaves" data-state="" data-title="">
+<div id="{{ id }}" class="mb-element mb-element-layertree hidden" title="{{ title |trans }}">
+  <li class="hidden leave showLeaves" data-state="" data-title="">
     <div class="leaveContainer">
       <span class="layer-spinner"></span>
       <span class="layer-state"></span>
@@ -11,22 +11,24 @@
         <input class="layer-info checkbox" type="checkbox" name="info"/>
       </div>
       <span class="layer-title labelCheck"></span>
+      {% if configuration.menu is defined and configuration.menu != null and configuration.menu | length > 0 %}
       <span class="layer-menu-btn">&#9776;
-        <div class="layer-menu hide-elm">
-          <div class="layer-opacity">
-            <div class="layer-opacity-slider"></div>
-            <div class="layer-opacity-labels">
-              <span class="layer-opacity-label-hundred">100 %</span>
-              <span class="layer-opacity-label">{{ "mb.core.layertree.label.transparency"|trans }}</span>
-              <span class="layer-opacity-label-zero">0 %</span>
-            </div>
+        <div id="layer-menu" class="layer-menu hidden">
+        {% for item in configuration.menu %}
+          {% if item == 'opacity' %}
+          <span id="layer-opacity-title" class="labelInput">{{ "mb.core.layertree.label.transparency"|trans }}:</span>
+          <div id="layer-opacity" class="layer-opacity-bar">
+              <div class="layer-opacity-handle">100</div>
           </div>
-          <span class="layer-zoom span-btn">{{ 'mb.core.layertree.label.zoomtolayer'|trans }}</span>
-          <span class="layer-metadata span-btn">{{ 'mb.core.layertree.label.metadata'|trans }}</span>
-          <span class="layer-legend span-btn">{{ 'mb.core.layertree.label.legend'|trans }}</span>
-          <span class="layer-kmlexport span-btn">{{ 'mb.core.layertree.label.kmlexport'|trans }}</span>
+          {% elseif item == 'zoomtolayer' %}
+          <div class="layer-zoom span-btn inactive button buttonOk">{{ 'mb.core.layertree.label.zoomtolayer'|trans }}</div>
+          {% else %}
+          <span class="layer span-btn labelInput inactive">Undefined</span>
+          {% endif %}
+        {% endfor %}
         </div>
       </span>
+      {% endif %}
       <span class="iconRemove" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
     </div>
     <ul id="list-first" class="layers"></ul>

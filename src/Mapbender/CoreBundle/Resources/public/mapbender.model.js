@@ -294,7 +294,7 @@ Mapbender.Model = {
     },
     findSource: function(options){
         var sources = [];
-        function findSource(object, options){
+        var findSource = function (object, options){
             var found = null;
             for(key in options){
                 if(object[key]){
@@ -311,8 +311,7 @@ Mapbender.Model = {
                 }
             }
             return found;
-        }
-        ;
+        };
         for(var i = 0; i < this.sourceTree.length; i++){
             var source = this.sourceTree[i];
             if(findSource(source, options))
@@ -511,6 +510,48 @@ Mapbender.Model = {
             var a = 0;
             this.highlightLayer.olLayer.removeFeatures(features);
         }
+    },
+    setOpacity: function(source, opacity){
+        if(typeof opacity === 'number' && !isNaN(opacity) && opacity >= 0 && opacity <= 1 && source){
+            source.configuration.options.opacity = opacity;
+            this.map.layersList[source.mqlid].opacity(opacity);
+        }
+    },
+    /**
+     * Zooms to layer
+     * @param {object} options of form { sourceId: XXX, layerId: XXX, inherit: BOOL }
+     */
+    zoomToLayer: function(options){
+        var sources = this.findSource({id: options.sourceId});
+        if(sources.length === 1){
+            var extents = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId, options.inherit);
+            var proj = this.map.olMap.getProjectionObject();
+            if(extents && extents[proj.projCode]){
+                this.mbMap.zoomToExtent( OpenLayers.Bounds.fromArray(extents[proj.projCode]), true);
+            }else{
+                var ext = null, extProj = null;
+                for(srs in extents){
+                    extProj = this.getProj(srs);
+                    if(extProj !== null){
+                        ext = OpenLayers.Bounds.fromArray(extents[srs]);
+                        var extObj = {
+                            projection: extProj,
+                            extent: OpenLayers.Bounds.fromArray(extents[srs])
+                        };
+                        var ext_new = this._transformExtent(extObj, proj);
+                        this.mbMap.zoomToExtent(ext_new, true);
+                        break;
+                    }
+                }
+            }
+        }
+    },
+    getLayerExtents: function(options){
+        var sources = this.findSource({id: options.sourceId});
+        if(sources.length === 1){
+            return Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId, options.inherit);
+        }
+        return null;
     },
     /**
      *

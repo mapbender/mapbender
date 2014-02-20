@@ -8,6 +8,7 @@
         model: null,
         dlg: null,
         template: null,
+        menuTemplate: null,
         layerconf: null,
         popup: null,
         created: false,
@@ -32,16 +33,19 @@
             this.transConst.outOfBounds = Mapbender.trans("mb.core.layertree.const.outofbounds");
             this.transConst.parentInvisible = Mapbender.trans("mb.core.layertree.const.parentinvisible");
             this.options.titlemaxlength = parseInt(this.options.titlemaxlength);
-            this.options.layerMenu = false;
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li', this.element).remove();
+            this.template.removeClass('hidden');
+            this.menuTemplate = $('#layer-menu', this.template).remove();
+
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
             if(this.options.type === 'element'){
                 this._createTree();
             }else if(this.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true){
                 this.open();
             }
+            this.element.removeClass('hidden');
             this._trigger('ready');
             this._ready();
         },
@@ -200,35 +204,8 @@
                 li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                 if(config.toggleable)
                     li.addClass('toggleable');
-                if(!this.options.layerMenu){
+                if(this.options.menu.length === 0){
                     li.find('.layer-menu-btn').remove();
-                }else{
-                    var menu = li.find('.layer-menu:first');
-                    if(!sourceEl.options.legend){
-                        menu.find('.layer-legend').addClass('btn-disabled');
-                    }else{
-                        menu.find('.layer-legend').bind("click", function(e){
-                            e.stopPropagation();
-                            self._showLegend(sourceEl);
-                        });
-                    }
-                    menu.find('.layer-kmlexport').bind("click", function(e){
-                        e.stopPropagation();
-                        self._exportKml(sourceEl);
-                    });
-                    if(sourceEl.options.maxScale !== null){
-                        menu.find('.layer-zoom').addClass('btn-disabled');
-                    }else{
-                        menu.find('.layer-zoom').bind("click", function(e){
-                            e.stopPropagation();
-                            self._zoomToLayer(sourceEl);
-                        });
-                    }
-                    menu.find('.layer-metadata').bind("click", function(e){
-                        e.stopPropagation();
-                        self._showMetadata(sourceEl);
-                    });
-
                 }
                 if(!this.options.layerRemove)
                     li.find('.iconRemove').remove();
@@ -266,9 +243,9 @@
                     var nodeType = this._getNodeType(sourceEl, isroot);
                     li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
 
-                    if(nodeType == this.consts.root){
+                    if(nodeType === this.consts.root){
                         li.addClass("serviceContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
-                    }else if(nodeType == this.consts.group){
+                    }else if(nodeType === this.consts.group){
                         li.addClass("groupContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
                     }
                     li.addClass(config.reorder);
@@ -282,34 +259,8 @@
                     li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if(config.toggleable)
                         li.addClass('toggleable');
-                    if(!this.options.layerMenu){
+                    if(this.options.menu.length === 0){
                         li.find('.layer-menu-btn').remove();
-                    }else{
-                        var menu = li.find('.layer-menu:first');
-                        if(!sourceEl.options.legend){
-                            menu.find('.layer-legend').addClass('btn-disabled');
-                        }else{
-                            menu.find('.layer-legend').bind("click", function(e){
-                                e.stopPropagation();
-                                self._showLegend(sourceEl);
-                            });
-                        }
-                        menu.find('.layer-kmlexport').bind("click", function(e){
-                            e.stopPropagation();
-                            self._exportKml(sourceEl);
-                        });
-                        if(sourceEl.options.maxScale !== null){
-                            menu.find('.layer-zoom').addClass('btn-disabled');
-                        }else{
-                            menu.find('.layer-zoom').bind("click", function(e){
-                                e.stopPropagation();
-                                self._zoomToLayer(sourceEl);
-                            });
-                        }
-                        menu.find('.layer-metadata').bind("click", function(e){
-                            e.stopPropagation();
-                            self._showMetadata(sourceEl);
-                        });
                     }
                     if(!this.options.layerRemove)
                         li.find('.iconRemove').remove();
@@ -606,6 +557,66 @@
             this.model.changeSource({change: tochange});
         },
         _toggleMenu: function(e){
+            var self = this;
+            function createMenu($element, sourceId, layerId){
+                var source = self.model.findSource({id: sourceId})[0];
+                var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId", sourceId));
+                if($element.parents('li:first').attr('data-type') === self.consts.root){
+                } else {
+                    menu.find('#layer-opacity').remove();
+                    menu.find('#layer-opacity-title').remove();
+                }
+                menu.removeClass('hidden');
+                $element.append(menu);
+                $(menu).on('click', function(e){
+                    e.stopPropagation();
+                });
+//                self.element.on('click', function(e){
+//                    removeMenu($element);
+//                });
+                if($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0){
+                    new Dragdealer('layer-opacity', {
+                        x: source.configuration.options.opacity,
+                        horizontal: true,
+                        vertical: false,
+                        steps: 100,
+                        handleClass: "layer-opacity-handle",
+                        animationCallback: function(x, y){
+                            var percentage = Math.round(x * 100);
+                            $("#layer-opacity").find(".layer-opacity-handle").text(percentage);
+                            self._setOpacity(self.model.findSource({id: sourceId})[0], percentage/100.0);
+                        }
+                    });
+                }
+                if($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0){
+                    if(self.model.getLayerExtents({sourceId: sourceId, layerId: layerId, inherit: true})){
+                        $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
+                    }
+                }
+                //@TODO on other events
+            }
+            function removeMenu($element){
+                $('.layer-zoom').off('click');
+                $('#layer-menu').off('click').remove();
+//                self.element.off('click');
+                //@TODO off other events
+            }
+            var $btnMenu = $(e.target);
+            var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
+            var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
+            if($('#layer-menu').length !== 0){
+                var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
+                removeMenu($('#layer-menu'));
+                if(layerIdMenu !== currentLayerId){
+                    createMenu($btnMenu, currentSourceId, currentLayerId);
+                }
+
+            }else{
+                createMenu($btnMenu, currentSourceId, currentLayerId);
+            }
+        },
+        _setOpacity: function(source, opacity){
+            this.model.setOpacity(source, opacity);
         },
         _removeSource: function(e){
             var layer_type = $(e.target).parents("li:first").attr("data-type");
@@ -625,7 +636,13 @@
         },
         _exportKml: function(elm){
         },
-        _zoomToLayer: function(elm){
+        _zoomToLayer: function(e){
+            var options = {
+                sourceId: $(e.target).parents('div.layer-menu:first').attr("data-menuSourceId"),
+                layerId: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId"),
+                inherit: true
+            };
+            this.model.zoomToLayer(options);
         },
         _showMetadata: function(elm){
         },
