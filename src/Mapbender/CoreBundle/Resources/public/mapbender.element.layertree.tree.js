@@ -3,7 +3,8 @@
         options: {
             autoOpen: false,
             target: null,
-			layerInfo: true
+			layerInfo: true,
+            menu: [],
         },
         model: null,
         dlg: null,
