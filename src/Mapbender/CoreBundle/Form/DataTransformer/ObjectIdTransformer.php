@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Mapbender\CoreBundle\Entity\Element;
 
@@ -15,7 +16,6 @@ class ObjectIdTransformer implements DataTransformerInterface
      * @var ObjectManager
      */
     private $om;
-    
     private $classname;
 
     /**
@@ -33,16 +33,23 @@ class ObjectIdTransformer implements DataTransformerInterface
      * @param  Element|null $element
      * @return string
      */
-        public function transform($id)
+    public function transform($id)
     {
         if (!$id) {
             return null;
         }
 
-        $element = $this->om
-            ->getRepository($this->classname)
-            ->findOneBy(array('id' => $id));
-        return $element;
+        if (is_array($id)) {
+            $em = $this->om->getRepository($this->classname)->createQueryBuilder('si')->getEntityManager();
+            $query = $em->createQuery("SELECT ob FROM " . $this->classname . " ob WHERE ob.id IN("
+                . implode(',', $id) . ") ORDER BY ob.id ASC");
+            $result = $query->getResult();
+            return new ArrayCollection($result);
+        } else {
+            $result = $this->om->getRepository($this->classname)->findOneBy(array(
+                'id' => $id));
+            return $result;
+        }
     }
 
     /**
@@ -57,6 +64,15 @@ class ObjectIdTransformer implements DataTransformerInterface
         if (null === $element) {
             return "";
         }
-        return (string) $element->getId();
+        if ($element instanceof ArrayCollection) {
+            $result = array();
+            foreach ($element as $item) {
+                $result[] = (string) $item->getId();
+            }
+            return $result;
+        } else {
+            return (string) $element->getId();
+        }
     }
+
 }

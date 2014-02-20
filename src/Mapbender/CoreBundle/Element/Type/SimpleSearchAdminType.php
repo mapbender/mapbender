@@ -37,6 +37,10 @@ class SimpleSearchAdminType extends AbstractType
                 'label' => 'Query URL key',
                 'property_path' => '[query_key]',
                 'required' => true))
+            ->add('query_format', 'text', array(
+                'label' => 'Query key format',
+                'property_path' => '[query_format]',
+                'required' => true))
             ->add('collection_path', 'text', array(
                 'property_path' => '[collection_path]',
                 'required' => false))
@@ -54,6 +58,12 @@ class SimpleSearchAdminType extends AbstractType
                 'required' => true))
             ->add('delay', 'number', array(
                 'property_path' => '[delay]',
-                'required' => true));
+                'required' => true))
+            ->add('result_buffer', 'number', array(
+                'property_path' => '[result][buffer]'))
+            ->add('result_minscale', 'number', array(
+                'property_path' => '[result][minscale]'))
+            ->add('result_maxscale', 'number', array(
+                'property_path' => '[result][maxscale]'));
     }
 }

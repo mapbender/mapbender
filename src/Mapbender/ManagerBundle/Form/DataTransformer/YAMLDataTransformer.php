@@ -15,6 +15,13 @@ use Symfony\Component\Yaml\Exception\DumpException;
  */
 class YAMLDataTransformer implements DataTransformerInterface
 {
+    protected $indentLevel;
+
+    public function __construct($indentLevel = 2)
+    {
+        $this->indentLevel = $indentLevel;
+    }
+
     /**
      * Transforms array to YAML
      *
@@ -26,7 +33,7 @@ class YAMLDataTransformer implements DataTransformerInterface
         $dumper = new Dumper();
 
         try {
-            $yaml = $dumper->dump($array, 2);
+            $yaml = $dumper->dump($array, $this->indentLevel);
         } catch(DumpException $e) {
             throw new TransformationFailedException();
         }

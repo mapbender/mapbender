@@ -177,7 +177,7 @@ class WmsInstance extends SourceInstance
         $wmsconf = new WmsInstanceConfiguration();
         $wmsconf->setType(strtolower($this->getType()));
         $wmsconf->setTitle($this->title);
-        $wmsconf->setIsBaseSource(true);
+        $wmsconf->setIsBaseSource($this->isBasesource());
 
         $options = new WmsInstanceConfigurationOptions();
         $options->setUrl($this->configuration["url"])
@@ -277,7 +277,7 @@ class WmsInstance extends SourceInstance
         $wmsconf = new WmsInstanceConfiguration();
         $wmsconf->setType(strtolower($this->getType()));
         $wmsconf->setTitle($this->title);
-        $wmsconf->setIsBaseSource(true);
+        $wmsconf->setIsBaseSource($this->isBasesource());
 
         $options = new WmsInstanceConfigurationOptions();
         $options->setUrl($this->source->getGetMap()->getHttpGet())
@@ -639,6 +639,11 @@ class WmsInstance extends SourceInstance
     public function removeLayer(WmsInstanceLayer $layers)
     {
         $this->layers->removeElement($layers);
+    }
+    
+    public function __toString()
+    {
+        return $this->getId();
     }
 
     /**

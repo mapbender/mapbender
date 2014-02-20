@@ -4,11 +4,13 @@
         options: {
             layers: undefined,
             target: undefined,
-            deactivateOnClose: true
+            deactivateOnClose: true,
+            type: 'dialog'
         },
         map: null,
         mapClickHandler: null,
         popup: null,
+
         _create: function(){
             if(!Mapbender.checkTarget("mbFeatureInfo", this.options.target)){
                 return;
@@ -16,10 +18,22 @@
             var self = this;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
+
         _setup: function(){
+            // Set up click handler
+            this.map = $('#' + this.options.target).data('mapQuery');
+            this.mapClickHandler = new OpenLayers.Handler.Click(this, {
+                'click': this._triggerFeatureInfo
+            }, {
+                map: this.map.olMap
+            });
+
+            if(this.options.autoOpen)
+                this.activate();
             this._trigger('ready');
             this._ready();
         },
+
         _setOption: function(key, value){
             switch(key){
                 case "layers":
@@ -30,36 +44,35 @@
                         {'key': key, 'namespace': this.namespace, 'widgetname': this.widgetName});
             }
         },
+
         /**
          * Default action for mapbender element
          */
         defaultAction: function(callback){
             this.activate(callback);
         },
+
         activate: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
-            this.map = $('#' + this.options.target).data('mapQuery');
             $('#' + this.options.target).addClass('mb-feature-info-active');
-            this.mapClickHandler = function(e){
-                self._triggerFeatureInfo.call(self, e);
-            };
-            this.map.element.bind('click', self.mapClickHandler);
+            this.mapClickHandler.activate();
         },
+
         deactivate: function(){
-            if(this.map){
-                $('#' + this.options.target).removeClass('mb-feature-info-active');
-                this.map.element.unbind('click', this.mapClickHandler);
-                $(".toolBarItemActive").removeClass("toolBarItemActive");
-                if(this.popup){
-                    if(this.popup.$element){
-                        this.popup.destroy();
-                    }
-                    this.popup = null;
+            $('#' + this.options.target).removeClass('mb-feature-info-active');
+            $(".toolBarItemActive").removeClass("toolBarItemActive");
+            if(this.popup){
+                if(this.popup.$element){
+                    this.popup.destroy();
                 }
+                this.popup = null;
             }
+
+            this.mapClickHandler.deactivate();
             this.callback ? this.callback.call() : this.callback = null;
         },
+
         _onTabs: function(){
             $(".tabContainer", this.popup.$element).on('click', '.tab', function(){
                 var me = $(this);
@@ -68,17 +81,20 @@
                 $("#" + me.attr("id").replace("tab", "container")).addClass("active");
             });
         },
+
         _offTabs: function(){
             $(".tabContainer", this.popup.$element).off('click', '.tab');
         },
+
         /**
-         * Trigger the Feature Info call for each layer. 
+         * Trigger the Feature Info call for each layer.
          * Also set up feature info dialog if needed.
          */
         _triggerFeatureInfo: function(e){
+            this._trigger('featureinfo', null, { action: "clicked", title: this.element.attr('title'), id: this.element.attr('id')});
             var self = this,
-                x = e.pageX - $(this.map.element).offset().left,
-                y = e.pageY - $(this.map.element).offset().top,
+                x = e.xy.x,
+                y = e.xy.y,
                 fi_exist = false;
 
             $(this.element).empty();
@@ -124,59 +140,74 @@
             //console.log($(".tabContainer, .tabContainerAlt", self.element));
             //$(".tabContainer, .tabContainerAlt", self.element).on('click', '.tab', $.proxy(toggleTabContainer));
             var content = (fi_exist) ? tabContainer : '<p class="description">' + Mapbender.trans('mb.core.featureinfo.error.nolayer') + '</p>';
-
-            if(!this.popup || !this.popup.$element){
-                this.popup = new Mapbender.Popup2({
-                    title: self.element.attr('title'),
-                    draggable: true,
-                    resizable: true,
-                    modal: false,
-                    closeButton: false,
-                    closeOnPopupCloseClick: false,
-                    closeOnESC: false,
-                    content: content,
-                    width: 500,
-                    buttons: {
-                        'ok': {
-                            label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
-                            cssClass: 'button right',
-                            callback: function(){
-                                if(self.options.deactivateOnClose){
-                                    self.deactivate();
-                                }else{
-                                    this.close();
+            if(this.options.type === 'dialog'){
+                if(!this.popup || !this.popup.$element){
+                    this.popup = new Mapbender.Popup2({
+                        title: self.element.attr('title'),
+                        draggable: true,
+                        modal: false,
+                        closeButton: false,
+                        closeOnPopupCloseClick: false,
+                        closeOnESC: false,
+                        content: content,
+                        width: 500,
+                        buttons: {
+                            'ok': {
+                                label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
+                                cssClass: 'button right',
+                                callback: function(){
+                                    if(self.options.deactivateOnClose){
+                                        self.deactivate();
+                                    }else{
+                                        this.close();
+                                    }
                                 }
                             }
                         }
-                    }
-                });
-                this._onTabs();
-            }else{
-                this._offTabs();
-                this.popup.open(content);
-                this._onTabs();
+                    });
+                    this._onTabs();
+                }else{
+                    this._offTabs();
+                    this.popup.open(content);
+                    this._onTabs();
+                }
+            } else if(this.options.type === 'element'){
+                this.element.append(content);
             }
         },
+
         /**
          * Once data is coming back from each layer's FeatureInfo call,
          * insert it into the corresponding tab.
          */
-        _featureInfoCallback: function(data){
-            var text = '';
-            try{ // cut css
-                if(data.response.search('<link') > -1 || data.response.search('<style') > -1){
-                    text = data.response.replace(/document.writeln[^;]*;/g, '')
-                        .replace(/\n/g, '')
-                        .replace(/<link[^>]*>/gi, '')
-                        .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
-                } else {
-                    text = data.response.replace(/\n/g, '<br/>');
-                }
-            }catch(e){
+        _featureInfoCallback: function(data, jqXHR){
+            var container = $('#container' + data.layerId);
+            switch(jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0]) {
+                case 'text/html':
+                    var html = data.response;
+                    try{ // cut css
+                        if(data.response.search('<link') > -1 || data.response.search('<style') > -1){
+                            html = data.response.replace(/document.writeln[^;]*;/g, '')
+                                .replace(/\n/g, '')
+                                .replace(/<link[^>]*>/gi, '')
+                                .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
+                        }
+                    }catch(e){
+                        html = '';
+                    }
+
+                    container.html(html);
+                    break;
+                case 'text/plain':
+                default:
+                    var text = data.response;
+                    container.append($('<pre></pre>', {
+                        text: text
+                    }));
             }
-            //TODO: Needs some escaping love
-            $('#container' + data.layerId).removeClass('loading').html(text);
+            container.removeClass('loading');
         },
+
         /**
          *
          */
@@ -187,6 +218,7 @@
                 this.readyCallbacks.push(callback);
             }
         },
+
         /**
          *
          */

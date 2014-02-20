@@ -33,7 +33,12 @@
       </div>
 
       <div class="left rightContainer">
+          <div class="left">
         {{ form_widget(form.visible) }}<label for="{{form.visible.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.visible"|trans}}</label>
+        </div>
+        <div class="left">
+        {{ form_widget(form.basesource) }}<label for="{{form.basesource.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.basesource"|trans}}</label>
+        </div>
         <div class="clear"></div>
         {{ form_widget(form.proxy) }}<label for="{{form.proxy.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.proxy"|trans}}</label>
         <div class="clear"></div>

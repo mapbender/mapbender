@@ -74,6 +74,7 @@ class SimpleSearch extends Element
         return array(
             'query_url' => 'http://',
             'query_key' => 'q',
+            'query_format' => '%s',
             'collection_path' => '',
             'label_attribute' => 'label',
             'geom_attribute' => 'geom',
@@ -108,12 +109,13 @@ class SimpleSearch extends Element
     public function httpAction($action) {
         $configuration = $this->getConfiguration();
 
-        $q = $this->container->get('request')->get('term');
+        $q = $this->container->get('request')->get('term', '');
+        $qf = $configuration['query_format'] ? $configuration['query_format'] : '%s';
 
         // Build query URL
         $url = $configuration['query_url'];
         $url .= (false === strpos($url, '?') ? '?' : '&');
-        $url .= $configuration['query_key'] . '=' . $q;
+        $url .= $configuration['query_key'] . '=' . sprintf($qf, $q);
 
         // Execute query
         $response = $this->container->get('http_kernel')

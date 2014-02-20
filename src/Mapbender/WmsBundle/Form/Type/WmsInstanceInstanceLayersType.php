@@ -79,6 +79,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
                       array(
                     'choices' => $formats_exc,
                     'required' => false))
+                ->add('basesource', 'checkbox',
+                      array(
+                    'required' => false))
                 ->add('visible', 'checkbox',
                       array(
                     'required' => false))

@@ -2,7 +2,8 @@
     $.widget("mapbender.mbLayertree", {
         options: {
             autoOpen: false,
-            target: null
+            target: null,
+			layerInfo: true
         },
         model: null,
         dlg: null,
@@ -208,6 +209,8 @@
                 }
                 if(!this.options.layerRemove)
                     li.find('.iconRemove').remove();
+				if(!this.options.layerInfo)
+					li.find('.iconInfo').remove();
                 if(sourceEl.children){
                     li.find('ul:first').attr('id', 'list-' + sourceEl.options.id);
                     if(config.toggle){
@@ -353,6 +356,13 @@
                 this._removeChild(options.changed);
             }
         },
+        _resetNodeOutOfScale: function($li, layerDef){
+            if(layerDef.state.outOfScale){
+                $li.addClass("invisible").find('span.layer-state').attr("title", "out of scale");
+            }else if(!layerDef.state.outOfScale){
+                $li.removeClass("invisible").find('span.layer-state').attr("title", "");
+            }
+        },
         _resetNodeSelected: function($li, layerOptions){
             var chk_selected = $('input[name="selected"]:first', $li);
             chk_selected.prop('checked', layerOptions.treeOptions.selected);
@@ -368,11 +378,8 @@
         _resetNodeVisible: function($li, layerDef){
             if(layerDef.state.visibility){
                 $li.removeClass("invisible").find('span.layer-state:first').attr("title", "");
-            }else if(layerDef.state.outOfScale){
-                $li.addClass("invisible").find('span.layer-state').attr("title", "out of scale");
-            }else if(!layerDef.state.outOfScale){
-                $li.removeClass("invisible").find('span.layer-state').attr("title", "");
             }
+            this._resetNodeOutOfScale($li, layerDef);
         },
         _resetSourceAtTree: function(source){
             var self = this;
@@ -393,14 +400,17 @@
         _changeChildren: function(changed){
             if(changed.children){
                 for(var layerId in changed.children){
-                    if(changed.children[layerId].options){
-                        var $li = $('li[data-id="' + layerId + '"]', this.element);
-                        if($li.length === 0)
-                            continue;
-                        this._resetNodeSelected($li, changed.children[layerId].options);
-                        this._resetNodeInfo($li, changed.children[layerId].options);
-                        if(changed.children[layerId].options.state)
-                            this._resetNodeVisible($li, changed.children[layerId].options);
+                    var $li = $('li[data-id="' + layerId + '"]', this.element);
+                    if($li.length !== 0){
+                        if(changed.children[layerId].options){
+                            this._resetNodeSelected($li, changed.children[layerId].options);
+                            this._resetNodeInfo($li, changed.children[layerId].options);
+                            if(changed.children[layerId].options.state){
+                                this._resetNodeVisible($li, changed.children[layerId].options);
+                            }
+                        }else if(changed.children[layerId].state){
+                            this._resetNodeOutOfScale($li, changed.children[layerId]);
+                        }
                     }
                 }
             }
