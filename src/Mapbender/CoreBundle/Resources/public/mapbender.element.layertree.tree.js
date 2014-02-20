@@ -2,7 +2,8 @@
     $.widget("mapbender.mbLayertree", {
         options: {
             autoOpen: false,
-            target: null
+            target: null,
+			layerInfo: true
         },
         model: null,
         dlg: null,
@@ -231,6 +232,8 @@
                 }
                 if(!this.options.layerRemove)
                     li.find('.iconRemove').remove();
+				if(!this.options.layerInfo)
+					li.find('.iconInfo').remove();
                 if(sourceEl.children){
                     li.find('ul:first').attr('id', 'list-' + sourceEl.options.id);
                     if(config.toggle){
