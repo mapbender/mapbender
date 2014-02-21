@@ -590,7 +590,7 @@ Mapbender.Model = {
                 mapQueryLayer.olLayer.events.register("loadstart", mapQueryLayer.olLayer, function(e){
                     self._sourceLoadStart(e);
                 });
-                mapQueryLayer.olLayer.events.register("tileloaded", mapQueryLayer.olLayer, function(e){
+                mapQueryLayer.olLayer.events.register("loadend", mapQueryLayer.olLayer, function(e){
                     var imgEl = $('div[id="' + e.element.id + '"]  .olImageLoadError');
                     if(imgEl.length > 0){
                         self._sourceLoadError(e, imgEl);
