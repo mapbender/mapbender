@@ -26,7 +26,6 @@ class ImageExportService
     public function export($content)
     {
         $this->data = json_decode($content, true);
-
         $this->format = $this->data['format'];
         $this->requests = $this->data['requests'];
         $this->getImages();
@@ -40,6 +39,12 @@ class ImageExportService
     {
         $temp_names = array();
         foreach ($this->requests as $k => $url) {
+            
+            $url = strstr($url, '&WIDTH', true);
+            $width = '&WIDTH=' . $this->data['width'];
+            $height = '&HEIGHT=' . $this->data['height'];
+            $url .= $width . $height;
+            
             $this->container->get("logger")->debug("Image Export Request Nr.: " . $k . ' ' . $url);
             $attributes = array();
             $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
