@@ -106,10 +106,15 @@ class TargetElementType extends AbstractType
                     }
                     $qb = $repository->createQueryBuilder($builderName);
                     $filter = $qb->expr()->andX();
-                    $filter->add($qb->expr()->in($builderName . '.id',
-                            ':elm_ids'));
-                    $qb->where($filter);
-                    $qb->setParameter('elm_ids', $elm_ids);
+                    if(count($elm_ids) > 0){
+                        $filter->add($qb->expr()->in($builderName . '.id', ':elm_ids'));
+                        $qb->where($filter);
+                        $qb->setParameter('elm_ids', $elm_ids);
+                    } else {
+                        $filter->add($qb->expr()->eq($builderName . '.application',
+                                $options['application']->getId()));
+                        $qb->where($filter);
+                    }
                     return $qb;
                 }
             }

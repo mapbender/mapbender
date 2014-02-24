@@ -4,7 +4,8 @@
         options: {
             layers: undefined,
             target: undefined,
-            deactivateOnClose: true
+            deactivateOnClose: true,
+            type: 'dialog'
         },
         map: null,
         mapClickHandler: null,
@@ -179,21 +180,32 @@
          * Once data is coming back from each layer's FeatureInfo call,
          * insert it into the corresponding tab.
          */
-        _featureInfoCallback: function(data){
-            var text = '';
-            try{ // cut css
-                if(data.response.search('<link') > -1 || data.response.search('<style') > -1){
-                    text = data.response.replace(/document.writeln[^;]*;/g, '')
-                        .replace(/\n/g, '')
-                        .replace(/<link[^>]*>/gi, '')
-                        .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
-                } else {
-                    text = data.response.replace(/\n/g, '<br/>');
-                }
-            }catch(e){
+        _featureInfoCallback: function(data, jqXHR){
+            var container = $('#container' + data.layerId);
+            switch(jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0]) {
+                case 'text/html':
+                    var html = data.response;
+                    try{ // cut css
+                        if(data.response.search('<link') > -1 || data.response.search('<style') > -1){
+                            html = data.response.replace(/document.writeln[^;]*;/g, '')
+                                .replace(/\n/g, '')
+                                .replace(/<link[^>]*>/gi, '')
+                                .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
+                        }
+                    }catch(e){
+                        html = '';
+                    }
+
+                    container.html(html);
+                    break;
+                case 'text/plain':
+                default:
+                    var text = data.response;
+                    container.append($('<pre></pre>', {
+                        text: text
+                    }));
             }
-            //TODO: Needs some escaping love
-            $('#container' + data.layerId).removeClass('loading').html(text);
+            container.removeClass('loading');
         },
 
         /**

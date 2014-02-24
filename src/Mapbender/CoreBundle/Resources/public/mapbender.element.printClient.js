@@ -34,13 +34,6 @@
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
 
-            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
-            .bind('change', $.proxy(this._updateGeometry, this));
-            $('input[name="scale_text"], input[name="rotation"]', this.element)
-            .bind('keyup', $.proxy(this._updateGeometry, this));
-            $('select[name="template"]', this.element)
-            .bind('change', $.proxy(this._getPrintSize, this))
-            .trigger('change');
             this._trigger('ready');
             this._ready();
         },
@@ -64,7 +57,8 @@
                         closeOnPopupCloseClick: false,
                         closeOnESC: false,
                         content: self.element,
-                        width: 320,
+                        width: 340,
+                        cssClass: 'customPrintDialog',
                         buttons: {
                                 'cancel': {
                                     label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
@@ -88,6 +82,14 @@
                  }
             }
             me.show();
+
+            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
+            .bind('change', $.proxy(this._updateGeometry, this));
+            $('input[name="scale_text"], input[name="rotation"]', this.element)
+            .bind('keyup', $.proxy(this._updateGeometry, this));
+            $('select[name="template"]', this.element)
+            .bind('change', $.proxy(this._getPrintSize, this))
+            .trigger('change');
 
             this.popupIsOpen = true;
             this._loadPrintFormats();
@@ -228,7 +230,7 @@
                     }
                 }
             }else{
-                $('#extra_fields').hide();
+                //$('#extra_fields').hide();
             }
 
         },
@@ -240,7 +242,7 @@
                 scale = this._getPrintScale(),
                 rotationField = $('input[name="rotation"]');
             
-            if (rotationField.val() == '' && this.rotateValue !== '0'){
+            if (rotationField.val() === '' && this.rotateValue !== '0'){
                 rotationField.val('0'); 
             }
             var rotation = $('input[name="rotation"]').val();
@@ -324,7 +326,7 @@
         _updateElements: function() {
             var self = this;
 
-            if(true == this.popupIsOpen){
+            if(true === this.popupIsOpen){
                 if(null === this.layer) {
                     this.layer = new OpenLayers.Layer.Vector("Print", {
                         styleMap: new OpenLayers.StyleMap({
@@ -465,20 +467,22 @@
                     var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
                     if (visLayers.layers.length > 0){            
                         var prevLayers = layer.olLayer.params.LAYERS;
-                        layer.olLayer.params.LAYERS = visLayers.layers;                 
+                        layer.olLayer.params.LAYERS = visLayers.layers;
+                        
+                        var opacity = sources[i].configuration.options.opacity;
+                        var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
+                        lyrConf.opacity = opacity;
+                        
                         $.merge(fields, $('<input />', {
                             type: 'hidden',
                             name: 'layers[' + lyrCount + ']',
-                            value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy))
+                            value: JSON.stringify(lyrConf)
                         }));
                         layer.olLayer.params.LAYERS = prevLayers;
                         lyrCount++;
                     }    
                 }             
             }
-            
-            $('div#layers').empty();
-            fields.appendTo(form.find('div#layers'));
 
             // overview map
             var ovMap = this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap')[0],
@@ -507,27 +511,44 @@
                 }
             }
 
-            // feature koordinaten mitschicken
-            var feature_list = this._extractGeometriesFromMap(this.map.map.olMap);
+            // feature from vector layer
+            var feature_list = this._extractFeaturesFromMap(this.map.map.olMap);
             var c = 0;
             for(var i = 0; i < feature_list.length; i++) {
-
                 var point_array = new Array();
-
-                for(var j = 0; j < feature_list[i].length; j++){
+                for(var j = 0; j < feature_list[i].geom.length; j++){
                     point_array[j] = new Object();
-                    point_array[j]['x'] = feature_list[i][j].x;
-                    point_array[j]['y'] = feature_list[i][j].y;
+                    point_array[j]['x'] = feature_list[i].geom[j].x;
+                    point_array[j]['y'] = feature_list[i].geom[j].y;
                 }
+
+                var feature = {};
+                feature.geom = point_array;
+                feature.type = feature_list[i].type;
 
                 $.merge(fields, $('<input />', {
                         type: 'hidden',
                         name: 'features[' + c + ']',
-                        value: JSON.stringify(point_array)
+                        value: JSON.stringify(feature)
                     }));
                 c++;
             }
-
+            
+            // replace pattern
+            
+            if (this.options.replace_pattern === 'undefined'){
+                for(var i = 0; i < this.options.replace_pattern.length; i++) {
+                    $.merge(fields, $('<input />', {
+                        type: 'hidden',
+                        name: 'replace_pattern[' + i + ']',
+                        value: JSON.stringify(this.options.replace_pattern[i])
+                    }));
+                }
+            }           
+                     
+            $('div#layers').empty();
+            fields.appendTo(form.find('div#layers'));
+            
             // Post in neuen Tab (action bei form anpassen)
             var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
 
@@ -539,8 +560,23 @@
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
             }else{
                 //click hidden submit button to check requierd fields
+                this._checkFields()
                 form.find('input[type="submit"]').click();
+                
             }
+        },
+                
+        _checkFields: function(){
+            $('#formats input[required]').on('change invalid', function() {
+            var textfield = $(this).get(0);
+            // 'setCustomValidity not only sets the message, but also marks
+            // the field as invalid. In order to see whether the field really is
+            // invalid, we have to remove the message first
+            textfield.setCustomValidity('');
+                if (!textfield.validity.valid) {
+                    textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));  
+                }
+            });
         },
 
         _getPrintSize: function() {
@@ -565,36 +601,54 @@
         },
         
         _extractGeometriesFromFeature: function(feature) {
-            var res = [];
+            var coords = [],
+                type;
             if(!$.isArray(feature)) {
                 feature = [feature];
             }
+            var onScreen = true;
             $.each(feature, function(k, v){
-                var verts = v.geometry.getVertices();
-                if(v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
-                    verts.push(verts[0]);
+                if(v.onScreen() === true){
+                    var verts = v.geometry.getVertices();
+                    if(v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
+                        //verts.push(verts[0]);
+                        type = 'polygon';
+                    }
+                    if (v.geometry.CLASS_NAME === 'OpenLayers.Geometry.LineString' || v.geometry.CLASS_NAME === 'OpenLayers.Geometry.MultiLineString'){
+                        type = 'line';
+                    }
+                    if (v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point'){
+                        type = 'point';
+                    }
+                    coords.push(verts);
+                }else{
+                    onScreen = false;
                 }
-                res.push(verts);
-            });
-            return res;
+            });         
+            if (onScreen === false){
+                return;
+            }         
+            var feature = {};
+            feature.geom = coords[0];
+            feature.type = type;
+            
+            return feature;
         },
 
         _extractGeometriesFromLayer: function(layer) {
             var self = this;
+            if (layer.options.name === 'rulerlayer'){
+                return self._extractGeometriesFromFeature(layer.features[0]);
+            }
             return $.map(layer.features, self._extractGeometriesFromFeature);
         },
 
-        _extractGeometriesFromMap: function(map) {
+        _extractFeaturesFromMap: function(map) {
             var self = this;
-            var lays = $.grep(map.layers, function(lay) {
+            var layers = $.grep(map.layers, function(lay) {
                 return lay.name !== 'Print' && lay.CLASS_NAME === 'OpenLayers.Layer.Vector';
             });
-            var geoms = $.map(lays, $.proxy(self._extractGeometriesFromLayer, this));
-            return geoms;
-            var all = [];
-            $.each(geoms, function(idx, val) {
-                $.merge(all, val);
-            });
+            return $.map(layers, $.proxy(self._extractGeometriesFromLayer, this));
         },
         
         /**

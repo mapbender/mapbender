@@ -58,7 +58,8 @@
                         .concat(['measuremodify']),
                 handlerOptions: {
                     layerOptions: {
-                        styleMap: styleMap
+                        styleMap: styleMap,
+                        name: 'rulerlayer'
                     }
                 },
                 persist: this.options.persist,
