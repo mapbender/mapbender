@@ -154,6 +154,14 @@
         <source>mb.core.zoombar.zoombyworld</source>
         <target>__mb.core.zoombar.zoombyworld</target>
       </trans-unit>
+      <trans-unit id="5feedcb7eb18018c003e6fa2562c4b53" resname="mb.core.zoombar.zoomin">
+        <source>mb.core.zoombar.zoomin</source>
+        <target>__mb.core.zoombar.zoomin</target>
+      </trans-unit>
+      <trans-unit id="c13aa9d4bce372c110a373dad4519db8" resname="mb.core.zoombar.zoomout">
+        <source>mb.core.zoombar.zoomout</source>
+        <target>__mb.core.zoombar.zoomout</target>
+      </trans-unit>
       <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
         <source>mb.core.printclient.label.template</source>
         <target>__mb.core.printclient.label.template</target>
@@ -173,6 +181,10 @@
       <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
         <source>mb.core.legend.nolegend</source>
         <target>__mb.core.legend.nolegend</target>
+      </trans-unit>
+      <trans-unit id="91bc32055005b136d2a134db512294b2" resname="mb.core.legend.popup.btn.ok">
+        <source>mb.core.legend.popup.btn.ok</source>
+        <target>__mb.core.legend.popup.btn.ok</target>
       </trans-unit>
       <trans-unit id="960c243a1919783483eb30395e158174" resname="mb.core.poi.popup.btn.ok">
         <source>mb.core.poi.popup.btn.ok</source>
@@ -201,18 +213,6 @@
       <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
         <source>mb.core.layertree.label.zoomtolayer</source>
         <target>__mb.core.layertree.label.zoomtolayer</target>
-      </trans-unit>
-      <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
-        <source>mb.core.layertree.label.metadata</source>
-        <target>__mb.core.layertree.label.metadata</target>
-      </trans-unit>
-      <trans-unit id="6c94e9d72f4b9fe8f3d778bbd0f3a0c4" resname="mb.core.layertree.label.legend">
-        <source>mb.core.layertree.label.legend</source>
-        <target>__mb.core.layertree.label.legend</target>
-      </trans-unit>
-      <trans-unit id="8c1f66fa95ed2baff3594f48febee178" resname="mb.core.layertree.label.kmlexport">
-        <source>mb.core.layertree.label.kmlexport</source>
-        <target>__mb.core.layertree.label.kmlexport</target>
       </trans-unit>
       <trans-unit id="c1e88d23834e42294c5c46903293bbb3" resname="mb.core.layertree.tooltip.removelayer">
         <source>mb.core.layertree.tooltip.removelayer</source>
@@ -270,9 +270,9 @@
         <source>mb.core.layertree.const.parentinvisible</source>
         <target>__mb.core.layertree.const.parentinvisible</target>
       </trans-unit>
-      <trans-unit id="13348442cc6a27032d2b4aa28b75a5d3" resname="Search">
-        <source>Search</source>
-        <target>__Search</target>
+      <trans-unit id="982d326f994e1c5e3f11f1a1b8493506" resname="mb.core.simplesearch.input.search">
+        <source>mb.core.simplesearch.input.search</source>
+        <target>__mb.core.simplesearch.input.search</target>
       </trans-unit>
       <trans-unit id="d19f7fb816f3b4515f79e8c5c8546ede" resname="mb.core.basesourceswitcher.error.sourcenotavailable">
         <source>mb.core.basesourceswitcher.error.sourcenotavailable</source>
@@ -737,6 +737,22 @@
       <trans-unit id="f5721f3be6fafc85615fee69cc4e94bc" resname="mb.core.simplesearch.class.description">
         <source>mb.core.simplesearch.class.description</source>
         <target>__mb.core.simplesearch.class.description</target>
+      </trans-unit>
+      <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
+        <source>mb.core.layertree.label.metadata</source>
+        <target>__mb.core.layertree.label.metadata</target>
+      </trans-unit>
+      <trans-unit id="6c94e9d72f4b9fe8f3d778bbd0f3a0c4" resname="mb.core.layertree.label.legend">
+        <source>mb.core.layertree.label.legend</source>
+        <target>__mb.core.layertree.label.legend</target>
+      </trans-unit>
+      <trans-unit id="8c1f66fa95ed2baff3594f48febee178" resname="mb.core.layertree.label.kmlexport">
+        <source>mb.core.layertree.label.kmlexport</source>
+        <target>__mb.core.layertree.label.kmlexport</target>
+      </trans-unit>
+      <trans-unit id="13348442cc6a27032d2b4aa28b75a5d3" resname="Search">
+        <source>Search</source>
+        <target>__Search</target>
       </trans-unit>
       <trans-unit id="bd119ab6a5ece631673030875e90a43d" resname="FeatureInfo">
         <source>FeatureInfo</source>

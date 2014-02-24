@@ -2,6 +2,74 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="de" datatype="plaintext" original="file.ext">
     <body>
+      <trans-unit id="18de8162e371da730a52c3d6d452e5ad" resname="mb.core.admin.copyright.label.autoopen">
+        <source>mb.core.admin.copyright.label.autoopen</source>
+        <target>Automatisches Öffnen</target>
+      </trans-unit>
+      <trans-unit id="40c239c7f7d130a17c9b299f2e03e738" resname="mb.core.basesourceswitcher.form.mesage">
+        <source>mb.core.basesourceswitcher.form.mesage</source>
+        <target>Keine Hintergrund Definitionen vorhanden.</target>
+      </trans-unit>
+      <trans-unit id="f2fca95e4366a0e4a5aad0b95efb5744" resname="mb.core.admin.printclient.label.autoopen">
+        <source>mb.core.admin.printclient.label.autoopen</source>
+        <target>Automatisches Öffnen</target>
+      </trans-unit>
+      <trans-unit id="b163e7bd1f8de3ae1a5abf00b6342cee" resname="mb.core.admin.printclient.label.rotatable">
+        <source>mb.core.admin.printclient.label.rotatable</source>
+        <target>Drehbar</target>
+      </trans-unit>
+      <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
+        <source>mb.core.admin.layertree.label.showbasesources</source>
+        <target>Hintergrund anzeigen</target>
+      </trans-unit>
+      <trans-unit id="71b752f5f8f9465c2dd33581a4d5e797" resname="mb.core.admin.layertree.label.autoopen">
+        <source>mb.core.admin.layertree.label.autoopen</source>
+        <target>Automatisches Öffnen</target>
+      </trans-unit>
+      <trans-unit id="855cb022f4ce41f697c2d2a4674b8509" resname="mb.core.admin.layertree.label.showheader">
+        <source>mb.core.admin.layertree.label.showheader</source>
+        <target>Header anzeigen</target>
+      </trans-unit>
+      <trans-unit id="b9e1e1bd4fe12c68c958110c5a3f24aa" resname="mb.core.admin.layertree.label.showlayerremove">
+        <source>mb.core.admin.layertree.label.showlayerremove</source>
+        <target>"Layer entfernen" anzeigen</target>
+      </trans-unit>
+      <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
+        <source>mb.core.admin.poi.label.usemailto</source>
+        <target>Mailto verwenden</target>
+      </trans-unit>
+      <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
+        <source>mb.core.admin.legend.label.autoopen</source>
+        <target>Automatisches Öffnen</target>
+      </trans-unit>
+      <trans-unit id="a68b07cd84e92c05aa0182899bccc4c0" resname="mb.core.admin.legend.label.hideemptylayers">
+        <source>mb.core.admin.legend.label.hideemptylayers</source>
+        <target>Ebenen ohne Objekte ausblenden</target>
+      </trans-unit>
+      <trans-unit id="cd587ed8a374f42b8c2e5575dcb02ad0" resname="mb.core.admin.legend.label.generatelegendurl">
+        <source>mb.core.admin.legend.label.generatelegendurl</source>
+        <target>Legenden-URL generieren</target>
+      </trans-unit>
+      <trans-unit id="90675349c781bc0f026bca337fce8218" resname="mb.core.admin.legend.label.showsourcetitle">
+        <source>mb.core.admin.legend.label.showsourcetitle</source>
+        <target>Titel der Datenquelle anzeigen</target>
+      </trans-unit>
+      <trans-unit id="0ca2080280477b91ee0130c78044e3e6" resname="mb.core.admin.legend.label.showlayertitle">
+        <source>mb.core.admin.legend.label.showlayertitle</source>
+        <target>Titel der Ebene anzeigen</target>
+      </trans-unit>
+      <trans-unit id="7dc9941d3994c6bcf1410b0b4ae5400d" resname="mb.core.admin.legend.label.showgroupedlayertitle">
+        <source>mb.core.admin.legend.label.showgroupedlayertitle</source>
+        <target>Titel der gruppierten Ebene anzeigen</target>
+      </trans-unit>
+      <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
+        <source>mb.core.admin.featureinfo.label.autoopen</source>
+        <target>Automatisches Öffnen</target>
+      </trans-unit>
+      <trans-unit id="656d615fc3d3f6ea34a34e5a19bcf36c" resname="mb.core.admin.featureinfo.label.deactivateonclose">
+        <source>mb.core.admin.featureinfo.label.deactivateonclose</source>
+        <target>Beim Schließen deaktivieren</target>
+      </trans-unit>
       <trans-unit id="3f141d25282496cf3791bd532359e433" resname="mb.core.aboutdialog.content.versionprefix">
         <source>mb.core.aboutdialog.content.versionprefix</source>
         <target>Version</target>
@@ -18,42 +86,6 @@
         <source>mb.core.aboutdialog.content.website</source>
         <target>- zur Webseite</target>
       </trans-unit>
-      <trans-unit id="982d326f994e1c5e3f11f1a1b8493506" resname="mb.core.simplesearch.input.search">
-        <source>mb.core.simplesearch.input.search</source>
-        <target>Suchen</target>
-      </trans-unit>
-      <trans-unit id="d34e7ce2889c54092fc147356c3faa14" resname="mb.core.searchrouter.popup.btn.ok">
-        <source>mb.core.searchrouter.popup.btn.ok</source>
-        <target>Suchen</target>
-      </trans-unit>
-      <trans-unit id="23529c02cd41313d7461246d3b172252" resname="mb.core.searchrouter.popup.btn.cancel">
-        <source>mb.core.searchrouter.popup.btn.cancel</source>
-        <target>Schließen</target>
-      </trans-unit>
-      <trans-unit id="c6f45ed7c4b619ab7d4f83f3271fb6c1" resname="mb.core.searchrouter.popup.btn.reset">
-        <source>mb.core.searchrouter.popup.btn.reset</source>
-        <target>Zurücksetzen</target>
-      </trans-unit>
-      <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
-        <source>mb.core.poi.sharepoi</source>
-        <target>Treffpunkt vereinbaren</target>
-      </trans-unit>
-      <trans-unit id="46b75948336bd4019bbaee9324151ecc" resname="mb.core.poi.label.text">
-        <source>mb.core.poi.label.text</source>
-        <target>Bearbeiten Sie den Text</target>
-      </trans-unit>
-      <trans-unit id="43279759bfe1cf656538dd558e3748a6" resname="mb.core.poi.text.snippet">
-        <source>mb.core.poi.text.snippet</source>
-        <target>Sie können den folgenden Link in einer E-Mail verschicken. Der Link öffnet die Anwendung und zeigt den Treffpunkt an.</target>
-      </trans-unit>
-      <trans-unit id="d19f7fb816f3b4515f79e8c5c8546ede" resname="mb.core.basesourceswitcher.error.sourcenotavailable">
-        <source>mb.core.basesourceswitcher.error.sourcenotavailable</source>
-        <target>Der Diensr mit der ID %id% ist nicht vorhanden</target>
-      </trans-unit>
-      <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
-        <source>mb.core.legend.nolegend</source>
-        <target>Keine Legende verfügbar.</target>
-      </trans-unit>
       <trans-unit id="869cda28f81afcf6b2488ba2f4117e91" resname="mb.core.ruler.popup.btn.ok">
         <source>mb.core.ruler.popup.btn.ok</source>
         <target>Schließen</target>
@@ -62,21 +94,17 @@
         <source>mb.core.ruler.create_error</source>
         <target>Messen: Der Geometrietyp muss eine Linie oder eine Fläche sein.</target>
       </trans-unit>
-      <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
-        <source>mb.core.printclient.label.template</source>
-        <target>Vorlage</target>
+      <trans-unit id="f741a4a709f26fdf399f7b805ff27125" resname="mb.core.featureinfo.error.nolayer">
+        <source>mb.core.featureinfo.error.nolayer</source>
+        <target>Informationsebene existiert nicht.</target>
       </trans-unit>
-      <trans-unit id="5aeaf1ae0a1e67e0e392f563be749204" resname="mb.core.printclient.label.quality">
-        <source>mb.core.printclient.label.quality</source>
-        <target>Qualität</target>
+      <trans-unit id="4000aaa3f1fd6921b40ae958ee5d0c2b" resname="mb.core.featureinfo.error.unknownoption">
+        <source>mb.core.featureinfo.error.unknownoption</source>
+        <target>Unbekannte Option %key% für %namespace%.%widgetname%.</target>
       </trans-unit>
-      <trans-unit id="421aa7382e001de0b0960d411265998a" resname="mb.core.printclient.label.scale">
-        <source>mb.core.printclient.label.scale</source>
-        <target>Maßstab</target>
-      </trans-unit>
-      <trans-unit id="1d6b0cb565c46ffb069608c564861358" resname="mb.core.printclient.label.rotation">
-        <source>mb.core.printclient.label.rotation</source>
-        <target>Drehung</target>
+      <trans-unit id="21505ff4507774e2777bb6a166e8bf31" resname="mb.core.featureinfo.popup.btn.ok">
+        <source>mb.core.featureinfo.popup.btn.ok</source>
+        <target>Schließen</target>
       </trans-unit>
       <trans-unit id="6e4242b56cb4757b456f1308ed822a9f" resname="mb.core.printclient.popup.btn.ok">
         <source>mb.core.printclient.popup.btn.ok</source>
@@ -93,62 +121,6 @@
       <trans-unit id="31c04113d72fe80fff824faee81d4ddf" resname="mb.core.printclient.form.required">
         <source>mb.core.printclient.form.required</source>
         <target>Bitte füllen Sie dieses Feld aus</target>
-      </trans-unit>
-      <trans-unit id="c6c2daa6191922b3b1d289aae1ec8f31" resname="mb.core.overview.nolayer">
-        <source>mb.core.overview.nolayer</source>
-        <target>Die Übersicht enthält keine Ebene.</target>
-      </trans-unit>
-      <trans-unit id="52f2119c302dee02a460f03b9ef78cf2" resname="mb.core.sketch.circle.radius.label">
-        <source>mb.core.sketch.circle.radius.label</source>
-        <target>Radius</target>
-      </trans-unit>
-      <trans-unit id="6329edbadca4ae33674d3ba4beb0095a" resname="mb.core.sketch.circle.radius.error">
-        <source>mb.core.sketch.circle.radius.error</source>
-        <target>Der Radius ist nicht gültig.</target>
-      </trans-unit>
-      <trans-unit id="45477889021de187cea8384dc6ee4d05" resname="mb.core.sketch.circle.form.button.yes">
-        <source>mb.core.sketch.circle.form.button.yes</source>
-        <target>Übernehmen</target>
-      </trans-unit>
-      <trans-unit id="94226bb9060eba51287384df96529632" resname="mb.core.sketch.circle.form.button.cancel">
-        <source>mb.core.sketch.circle.form.button.cancel</source>
-        <target>Abbrechen</target>
-      </trans-unit>
-      <trans-unit id="f741a4a709f26fdf399f7b805ff27125" resname="mb.core.featureinfo.error.nolayer">
-        <source>mb.core.featureinfo.error.nolayer</source>
-        <target>Informationsebene existiert nicht.</target>
-      </trans-unit>
-      <trans-unit id="4000aaa3f1fd6921b40ae958ee5d0c2b" resname="mb.core.featureinfo.error.unknownoption">
-        <source>mb.core.featureinfo.error.unknownoption</source>
-        <target>Unbekannte Option %key% für %namespace%.%widgetname%.</target>
-      </trans-unit>
-      <trans-unit id="21505ff4507774e2777bb6a166e8bf31" resname="mb.core.featureinfo.popup.btn.ok">
-        <source>mb.core.featureinfo.popup.btn.ok</source>
-        <target>Schließen</target>
-      </trans-unit>
-      <trans-unit id="d2279b60abd41fd9e228763532d10b02" resname="mb.core.gpsposition.error.notsupported">
-        <source>mb.core.gpsposition.error.notsupported</source>
-        <target>Entschuldigung! Der Geolocation Dienst wird Ihrem Browser nicht unterstützt.</target>
-      </trans-unit>
-      <trans-unit id="73baa3dd55f5169a84b49015e5cbbc6f" resname="mb.core.layertree.confirm.allremove">
-        <source>mb.core.layertree.confirm.allremove</source>
-        <target>Sollen wirklich alle Dienste gelöscht werden?</target>
-      </trans-unit>
-      <trans-unit id="261c3c35cd7b5f9737f2c3ab03c1ba76" resname="mb.core.layertree.popup.btn.ok">
-        <source>mb.core.layertree.popup.btn.ok</source>
-        <target>Schließen</target>
-      </trans-unit>
-      <trans-unit id="179f487db6ae9a2cc2f6bc20a3973928" resname="mb.core.layertree.const.outofscale">
-        <source>mb.core.layertree.const.outofscale</source>
-        <target>Ebene außerhalb des Maßstabs</target>
-      </trans-unit>
-      <trans-unit id="ed37a9ab842a774969e361c70f45fd81" resname="mb.core.layertree.const.outofbounds">
-        <source>mb.core.layertree.const.outofbounds</source>
-        <target>Ebene außerhalb der BoundingBox</target>
-      </trans-unit>
-      <trans-unit id="f2c092bf66ee0b1608a750ef1646fcfe" resname="mb.core.layertree.const.parentinvisible">
-        <source>mb.core.layertree.const.parentinvisible</source>
-        <target>Eltern Ebene nicht sichtbar</target>
       </trans-unit>
       <trans-unit id="9274af4427ddd97ba8b314fb87847f55" resname="mb.core.zoombar.panup">
         <source>mb.core.zoombar.panup</source>
@@ -190,6 +162,30 @@
         <source>mb.core.zoombar.zoomout</source>
         <target>Herauszoomen</target>
       </trans-unit>
+      <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
+        <source>mb.core.printclient.label.template</source>
+        <target>Vorlage</target>
+      </trans-unit>
+      <trans-unit id="5aeaf1ae0a1e67e0e392f563be749204" resname="mb.core.printclient.label.quality">
+        <source>mb.core.printclient.label.quality</source>
+        <target>Qualität</target>
+      </trans-unit>
+      <trans-unit id="421aa7382e001de0b0960d411265998a" resname="mb.core.printclient.label.scale">
+        <source>mb.core.printclient.label.scale</source>
+        <target>Maßstab</target>
+      </trans-unit>
+      <trans-unit id="1d6b0cb565c46ffb069608c564861358" resname="mb.core.printclient.label.rotation">
+        <source>mb.core.printclient.label.rotation</source>
+        <target>Drehung</target>
+      </trans-unit>
+      <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
+        <source>mb.core.legend.nolegend</source>
+        <target>Keine Legende verfügbar.</target>
+      </trans-unit>
+      <trans-unit id="91bc32055005b136d2a134db512294b2" resname="mb.core.legend.popup.btn.ok">
+        <source>mb.core.legend.popup.btn.ok</source>
+        <target>Schließen</target>
+      </trans-unit>
       <trans-unit id="960c243a1919783483eb30395e158174" resname="mb.core.poi.popup.btn.ok">
         <source>mb.core.poi.popup.btn.ok</source>
         <target>Ok</target>
@@ -218,18 +214,6 @@
         <source>mb.core.layertree.label.zoomtolayer</source>
         <target>Zoom auf Ebene</target>
       </trans-unit>
-      <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
-        <source>mb.core.layertree.label.metadata</source>
-        <target>Metadaten</target>
-      </trans-unit>
-      <trans-unit id="6c94e9d72f4b9fe8f3d778bbd0f3a0c4" resname="mb.core.layertree.label.legend">
-        <source>mb.core.layertree.label.legend</source>
-        <target>Legende</target>
-      </trans-unit>
-      <trans-unit id="8c1f66fa95ed2baff3594f48febee178" resname="mb.core.layertree.label.kmlexport">
-        <source>mb.core.layertree.label.kmlexport</source>
-        <target>KML Export</target>
-      </trans-unit>
       <trans-unit id="c1e88d23834e42294c5c46903293bbb3" resname="mb.core.layertree.tooltip.removelayer">
         <source>mb.core.layertree.tooltip.removelayer</source>
         <target>Ebene entfernen</target>
@@ -241,6 +225,82 @@
       <trans-unit id="937de90c8cbe2cbfca37e4df0c18b6aa" resname="mb.core.layertree.label.deleteallsources">
         <source>mb.core.layertree.label.deleteallsources</source>
         <target>Alle Dienste entfernen</target>
+      </trans-unit>
+      <trans-unit id="d34e7ce2889c54092fc147356c3faa14" resname="mb.core.searchrouter.popup.btn.ok">
+        <source>mb.core.searchrouter.popup.btn.ok</source>
+        <target>Suchen</target>
+      </trans-unit>
+      <trans-unit id="23529c02cd41313d7461246d3b172252" resname="mb.core.searchrouter.popup.btn.cancel">
+        <source>mb.core.searchrouter.popup.btn.cancel</source>
+        <target>Schließen</target>
+      </trans-unit>
+      <trans-unit id="c6f45ed7c4b619ab7d4f83f3271fb6c1" resname="mb.core.searchrouter.popup.btn.reset">
+        <source>mb.core.searchrouter.popup.btn.reset</source>
+        <target>Zurücksetzen</target>
+      </trans-unit>
+      <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
+        <source>mb.core.poi.sharepoi</source>
+        <target>Treffpunkt vereinbaren</target>
+      </trans-unit>
+      <trans-unit id="46b75948336bd4019bbaee9324151ecc" resname="mb.core.poi.label.text">
+        <source>mb.core.poi.label.text</source>
+        <target>Bearbeiten Sie den Text</target>
+      </trans-unit>
+      <trans-unit id="43279759bfe1cf656538dd558e3748a6" resname="mb.core.poi.text.snippet">
+        <source>mb.core.poi.text.snippet</source>
+        <target>Sie können den folgenden Link in einer E-Mail verschicken. Der Link öffnet die Anwendung und zeigt den Treffpunkt an.</target>
+      </trans-unit>
+      <trans-unit id="73baa3dd55f5169a84b49015e5cbbc6f" resname="mb.core.layertree.confirm.allremove">
+        <source>mb.core.layertree.confirm.allremove</source>
+        <target>Sollen wirklich alle Dienste gelöscht werden?</target>
+      </trans-unit>
+      <trans-unit id="261c3c35cd7b5f9737f2c3ab03c1ba76" resname="mb.core.layertree.popup.btn.ok">
+        <source>mb.core.layertree.popup.btn.ok</source>
+        <target>Schließen</target>
+      </trans-unit>
+      <trans-unit id="179f487db6ae9a2cc2f6bc20a3973928" resname="mb.core.layertree.const.outofscale">
+        <source>mb.core.layertree.const.outofscale</source>
+        <target>Ebene außerhalb des Maßstabs</target>
+      </trans-unit>
+      <trans-unit id="ed37a9ab842a774969e361c70f45fd81" resname="mb.core.layertree.const.outofbounds">
+        <source>mb.core.layertree.const.outofbounds</source>
+        <target>Ebene außerhalb der BoundingBox</target>
+      </trans-unit>
+      <trans-unit id="f2c092bf66ee0b1608a750ef1646fcfe" resname="mb.core.layertree.const.parentinvisible">
+        <source>mb.core.layertree.const.parentinvisible</source>
+        <target>Eltern Ebene nicht sichtbar</target>
+      </trans-unit>
+      <trans-unit id="982d326f994e1c5e3f11f1a1b8493506" resname="mb.core.simplesearch.input.search">
+        <source>mb.core.simplesearch.input.search</source>
+        <target>Suchen</target>
+      </trans-unit>
+      <trans-unit id="d19f7fb816f3b4515f79e8c5c8546ede" resname="mb.core.basesourceswitcher.error.sourcenotavailable">
+        <source>mb.core.basesourceswitcher.error.sourcenotavailable</source>
+        <target>Der Diensr mit der ID %id% ist nicht vorhanden</target>
+      </trans-unit>
+      <trans-unit id="c6c2daa6191922b3b1d289aae1ec8f31" resname="mb.core.overview.nolayer">
+        <source>mb.core.overview.nolayer</source>
+        <target>Die Übersicht enthält keine Ebene.</target>
+      </trans-unit>
+      <trans-unit id="d2279b60abd41fd9e228763532d10b02" resname="mb.core.gpsposition.error.notsupported">
+        <source>mb.core.gpsposition.error.notsupported</source>
+        <target>Entschuldigung! Der Geolocation Dienst wird Ihrem Browser nicht unterstützt.</target>
+      </trans-unit>
+      <trans-unit id="52f2119c302dee02a460f03b9ef78cf2" resname="mb.core.sketch.circle.radius.label">
+        <source>mb.core.sketch.circle.radius.label</source>
+        <target>Radius</target>
+      </trans-unit>
+      <trans-unit id="6329edbadca4ae33674d3ba4beb0095a" resname="mb.core.sketch.circle.radius.error">
+        <source>mb.core.sketch.circle.radius.error</source>
+        <target>Der Radius ist nicht gültig.</target>
+      </trans-unit>
+      <trans-unit id="45477889021de187cea8384dc6ee4d05" resname="mb.core.sketch.circle.form.button.yes">
+        <source>mb.core.sketch.circle.form.button.yes</source>
+        <target>Übernehmen</target>
+      </trans-unit>
+      <trans-unit id="94226bb9060eba51287384df96529632" resname="mb.core.sketch.circle.form.button.cancel">
+        <source>mb.core.sketch.circle.form.button.cancel</source>
+        <target>Abbrechen</target>
       </trans-unit>
       <trans-unit id="2ec03c5c014dec42d2bc46c9cf012215" resname="mb.core.aboutdialog.class.title">
         <source>mb.core.aboutdialog.class.title</source>
@@ -678,73 +738,17 @@
         <source>mb.core.simplesearch.class.description</source>
         <target>Einfeldsuche über JSON-Daten (z.B. Solr)</target>
       </trans-unit>
-      <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
-        <source>mb.core.admin.poi.label.usemailto</source>
-        <target>Mailto verwenden</target>
+      <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
+        <source>mb.core.layertree.label.metadata</source>
+        <target>Metadaten</target>
       </trans-unit>
-      <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
-        <source>mb.core.admin.legend.label.autoopen</source>
-        <target>Automatisches Öffnen</target>
+      <trans-unit id="6c94e9d72f4b9fe8f3d778bbd0f3a0c4" resname="mb.core.layertree.label.legend">
+        <source>mb.core.layertree.label.legend</source>
+        <target>Legende</target>
       </trans-unit>
-      <trans-unit id="a68b07cd84e92c05aa0182899bccc4c0" resname="mb.core.admin.legend.label.hideemptylayers">
-        <source>mb.core.admin.legend.label.hideemptylayers</source>
-        <target>Ebenen ohne Objekte ausblenden</target>
-      </trans-unit>
-      <trans-unit id="cd587ed8a374f42b8c2e5575dcb02ad0" resname="mb.core.admin.legend.label.generatelegendurl">
-        <source>mb.core.admin.legend.label.generatelegendurl</source>
-        <target>Legenden-URL generieren</target>
-      </trans-unit>
-      <trans-unit id="90675349c781bc0f026bca337fce8218" resname="mb.core.admin.legend.label.showsourcetitle">
-        <source>mb.core.admin.legend.label.showsourcetitle</source>
-        <target>Titel der Datenquelle anzeigen</target>
-      </trans-unit>
-      <trans-unit id="0ca2080280477b91ee0130c78044e3e6" resname="mb.core.admin.legend.label.showlayertitle">
-        <source>mb.core.admin.legend.label.showlayertitle</source>
-        <target>Titel der Ebene anzeigen</target>
-      </trans-unit>
-      <trans-unit id="7dc9941d3994c6bcf1410b0b4ae5400d" resname="mb.core.admin.legend.label.showgroupedlayertitle">
-        <source>mb.core.admin.legend.label.showgroupedlayertitle</source>
-        <target>Titel der gruppierten Ebene anzeigen</target>
-      </trans-unit>
-      <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
-        <source>mb.core.admin.featureinfo.label.autoopen</source>
-        <target>Automatisches Öffnen</target>
-      </trans-unit>
-      <trans-unit id="656d615fc3d3f6ea34a34e5a19bcf36c" resname="mb.core.admin.featureinfo.label.deactivateonclose">
-        <source>mb.core.admin.featureinfo.label.deactivateonclose</source>
-        <target>Beim Schließen deaktivieren</target>
-      </trans-unit>
-      <trans-unit id="f2fca95e4366a0e4a5aad0b95efb5744" resname="mb.core.admin.printclient.label.autoopen">
-        <source>mb.core.admin.printclient.label.autoopen</source>
-        <target>Automatisches Öffnen</target>
-      </trans-unit>
-      <trans-unit id="b163e7bd1f8de3ae1a5abf00b6342cee" resname="mb.core.admin.printclient.label.rotatable">
-        <source>mb.core.admin.printclient.label.rotatable</source>
-        <target>Drehbar</target>
-      </trans-unit>
-      <trans-unit id="18de8162e371da730a52c3d6d452e5ad" resname="mb.core.admin.copyright.label.autoopen">
-        <source>mb.core.admin.copyright.label.autoopen</source>
-        <target>Automatisches Öffnen</target>
-      </trans-unit>
-      <trans-unit id="40c239c7f7d130a17c9b299f2e03e738" resname="mb.core.basesourceswitcher.form.mesage">
-        <source>mb.core.basesourceswitcher.form.mesage</source>
-        <target>Keine Hintergrund Definitionen vorhanden.</target>
-      </trans-unit>
-      <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
-        <source>mb.core.admin.layertree.label.showbasesources</source>
-        <target>Hintergrund anzeigen</target>
-      </trans-unit>
-      <trans-unit id="71b752f5f8f9465c2dd33581a4d5e797" resname="mb.core.admin.layertree.label.autoopen">
-        <source>mb.core.admin.layertree.label.autoopen</source>
-        <target>Automatisches Öffnen</target>
-      </trans-unit>
-      <trans-unit id="855cb022f4ce41f697c2d2a4674b8509" resname="mb.core.admin.layertree.label.showheader">
-        <source>mb.core.admin.layertree.label.showheader</source>
-        <target>Header anzeigen</target>
-      </trans-unit>
-      <trans-unit id="b9e1e1bd4fe12c68c958110c5a3f24aa" resname="mb.core.admin.layertree.label.showlayerremove">
-        <source>mb.core.admin.layertree.label.showlayerremove</source>
-        <target>"Layer entfernen" anzeigen</target>
+      <trans-unit id="8c1f66fa95ed2baff3594f48febee178" resname="mb.core.layertree.label.kmlexport">
+        <source>mb.core.layertree.label.kmlexport</source>
+        <target>KML Export</target>
       </trans-unit>
       <trans-unit id="13348442cc6a27032d2b4aa28b75a5d3" resname="Search">
         <source>Search</source>
