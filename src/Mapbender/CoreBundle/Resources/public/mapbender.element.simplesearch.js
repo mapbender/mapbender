@@ -6,6 +6,9 @@ $.widget('mapbender.mbSimpleSearch', {
         delay: 0
     },
 
+    marker: null,
+    layer: null,
+
     _create: function() {
         var self = this;
         var searchInput = $('.searchterm', this.element);
@@ -65,6 +68,42 @@ $.widget('mapbender.mbSimpleSearch', {
                     if(Math.round(res) > minRes) {
                         zoom = olMap.getZoomForResolution(minRes);
                     }
+                }
+            }
+
+            // Add marker
+            if(self.options.result.icon_url) {
+                if(!self.marker) {
+                    var addMarker = function() {
+                        var offset = (self.options.result.icon_offset || '').split(', ;');
+                        var x = parseInt(offset[0]);
+
+                        var size = {
+                            'w': image.naturalWidth,
+                            'h': image.naturalHeight
+                        };
+
+                        var y = parseInt(offset[1]);
+
+                        offset = {
+                            'x': !isNaN(x) ? x : 0,
+                            'y': !isNaN(y) ? y : 0
+                        };
+
+                        var icon = new OpenLayers.Icon(image.src, size, offset);
+                        self.marker = new OpenLayers.Marker(bounds.getCenterLonLat(), icon);
+                        self.layer = new OpenLayers.Layer.Markers();
+                        olMap.addLayer(self.layer);
+                        self.layer.addMarker(self.marker);
+                    }
+
+                    var image = new Image();
+                    image.src = self.options.result.icon_url;
+                    image.onload = addMarker;
+                    image.onerror = addMarker;
+                } else {
+                    var newPx = olMap.getLayerPxFromLonLat(bounds.getCenterLonLat());
+                    self.marker.moveTo(newPx);
                 }
             }
 
