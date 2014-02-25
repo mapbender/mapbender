@@ -101,7 +101,7 @@
 
             var tabContainer = $('<div id="featureInfoTabContainer" class="tabContainer featureInfoTabContainer">' +
                 '<ul class="tabs"></ul>' +
-                '</div>');
+                '</div><br>');
             var header = tabContainer.find(".tabs");
             var layers = this.map.layers();
             var newTab, newContainer;
@@ -154,7 +154,7 @@
                         buttons: {
                             'ok': {
                                 label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
-                                cssClass: 'button right',
+                                cssClass: 'button buttonCancel critical right',
                                 callback: function(){
                                     if(self.options.deactivateOnClose){
                                         self.deactivate();
@@ -165,6 +165,16 @@
                             }
                         }
                     });
+                    if(typeof this.options.printResult !== 'undefined' && this.options.printResult === true){
+                        this.popup.addButtons({'print': {
+                                label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
+                                cssClass: 'button right',
+                                callback: function(){
+                                        self._printContent();
+                                }
+                        }});
+                    }
+                    
                     this._onTabs();
                 }else{
                     this._offTabs();
@@ -207,7 +217,14 @@
             }
             container.removeClass('loading');
         },
-
+        
+        _printContent: function(){
+            var w = window.open("", "title", "attributes");
+            $(w.document.body).html(($('#featureInfoTabContainer').find('div.active').html()));
+            w.print();
+            w.close();    
+        },
+        
         /**
          *
          */

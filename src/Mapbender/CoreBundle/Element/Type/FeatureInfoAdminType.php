@@ -40,6 +40,7 @@ class FeatureInfoAdminType extends AbstractType
                 'required' => true,
                 'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
             ->add('autoOpen', 'checkbox', array('required' => false))
+            ->add('printResult', 'checkbox', array('required' => false))    
             ->add('deactivateOnClose', 'checkbox', array('required' => false))
             ->add('target', 'target_element',
                 array(

@@ -51,6 +51,7 @@ class FeatureInfo extends Element
             'type' => 'dialog',
             "autoOpen" => false,
             "deactivateOnClose" => true,
+            "printResult" => false,
             "target" => null);
     }
 
