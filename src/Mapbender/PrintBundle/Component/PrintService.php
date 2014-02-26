@@ -207,7 +207,6 @@ class PrintService
                 default:
                     continue;
                     $this->container->get("logger")->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
-                //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
 
             if ($im !== null) {    
@@ -250,41 +249,45 @@ class PrintService
     private function rotate()
     {
         $tempdir = $this->tempdir;
-        $rotation = $this->data['rotation'];
-        $temp_names = array();
-        $temp_names_clip = array();
-        foreach ($this->layer_urls as $k => $url) {
-            $map_width = $this->data['extent']['width'];
-            $map_height = $this->data['extent']['height'];
-            $centerx = $this->data['center']['x'];
-            $centery = $this->data['center']['y'];
-
-            //set needed extent
-            $neededExtentWidth = round(abs(sin(deg2rad($rotation)) * $map_height) +
-                abs(cos(deg2rad($rotation)) * $map_width));
-            $neededExtentHeight = round(abs(sin(deg2rad($rotation)) * $map_width) +
-                abs(cos(deg2rad($rotation)) * $map_height));
-
-            $ll_x = $centerx - $neededExtentWidth * 0.5;
-            $ll_y = $centery - $neededExtentHeight * 0.5;
-            $ur_x = $centerx + $neededExtentWidth * 0.5;
-            $ur_y = $centery + $neededExtentHeight * 0.5;
-
-            $bbox = '&BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
-            $url .= $bbox;
-            $this->layer_urls[$k] = $url;
-
-            //set needed image size
-            $neededImageWidth = round(abs(sin(deg2rad($rotation)) * $this->image_height) +
-                abs(cos(deg2rad($rotation)) * $this->image_width));
-            $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->image_width) +
-                abs(cos(deg2rad($rotation)) * $this->image_height));
-
-            $w = '&WIDTH=' . $neededImageWidth;
-            $h = '&HEIGHT=' . $neededImageHeight;
-            $url .= $w . $h;
-            $this->layer_urls[$k] = $url;
+        $rotation = $this->data['rotation'];     
+        $map_width = $this->data['extent']['width'];
+        $map_height = $this->data['extent']['height'];
+        $centerx = $this->data['center']['x'];
+        $centery = $this->data['center']['y'];
         
+        //set needed extent
+        $neededExtentWidth = round(abs(sin(deg2rad($rotation)) * $map_height) +
+            abs(cos(deg2rad($rotation)) * $map_width));
+        $neededExtentHeight = round(abs(sin(deg2rad($rotation)) * $map_width) +
+            abs(cos(deg2rad($rotation)) * $map_height));
+        
+        $ll_x = $centerx - $neededExtentWidth * 0.5;
+        $ll_y = $centery - $neededExtentHeight * 0.5;
+        $ur_x = $centerx + $neededExtentWidth * 0.5;
+        $ur_y = $centery + $neededExtentHeight * 0.5;
+        
+        $bbox = '&BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
+        
+        //set needed image size
+        $neededImageWidth = round(abs(sin(deg2rad($rotation)) * $this->image_height) +
+            abs(cos(deg2rad($rotation)) * $this->image_width));
+        $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->image_width) +
+            abs(cos(deg2rad($rotation)) * $this->image_height));
+        
+        $w = '&WIDTH=' . $neededImageWidth;
+        $h = '&HEIGHT=' . $neededImageHeight;
+        
+        $temp_names = array();
+        
+        foreach ($this->layer_urls as $k => $url) {          
+            $url .= $bbox . $w . $h;    
+            
+            if ($this->data['quality'] != '72') {
+                $url .= '&map_resolution=' . $this->data['quality'];
+            }
+            
+            $this->container->get("logger")->debug("Print Request Nr.: " . $k . ' ' . $url);
+            
             //get image
             $attributes = array();
             $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
@@ -294,7 +297,6 @@ class PrintService
             $response = $this->container->get('http_kernel')->handle($subRequest,
                 HttpKernelInterface::SUB_REQUEST);
 
-            $tempdir = $this->tempdir;
             $imagename = tempnam($tempdir, 'mb_print');
             $temp_names[] = $imagename;
 
@@ -312,64 +314,67 @@ class PrintService
                     break;
                 default:
                     continue;
-                //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
+                    $this->container->get("logger")->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
             
-            if ($k == 0 && isset($this->data['features'])){
-                $this->drawRotatedFeatures($im);
-            }
             if ($im !== null) {
-            
-                //rotate image
-                $transColor = imagecolorallocatealpha($im, 255, 255, 255, 127);
-                $rotatedImage = imagerotate($im, $rotation, $transColor);
-                imagealphablending($rotatedImage, false);
-                imagesavealpha($rotatedImage, true);
-                imagepng($rotatedImage, $imagename);
-
-                //clip image from rotated
-                $rotated_width = round(abs(sin(deg2rad($rotation)) * $neededImageHeight) +
-                    abs(cos(deg2rad($rotation)) * $neededImageWidth));
-                $rotated_height = round(abs(sin(deg2rad($rotation)) * $neededImageWidth) +
-                    abs(cos(deg2rad($rotation)) * $neededImageHeight));
-                $newx = ($rotated_width - $this->image_width ) / 2;
-                $newy = ($rotated_height - $this->image_height ) / 2;
-
-                $clippedImageName = tempnam($tempdir, 'mb_print');
-                $temp_names_clip[] = $clippedImageName;
-                $clippedImage = imagecreatetruecolor($this->image_width,
-                    $this->image_height);
-
-                imagealphablending($clippedImage, false);
-                imagesavealpha($clippedImage, true);
-
-                imagecopy($clippedImage, $rotatedImage, 0, 0, $newx, $newy,
-                    $this->image_width, $this->image_height);
-                imagepng($clippedImage, $clippedImageName);
-                unlink($imagename);
+                imagealphablending($im, false);
+                imagesavealpha($im, true);
+                imagepng($im, $imagename);
             }
         }
-        // create final merged image
-        $finalimagename = tempnam($tempdir, 'mb_print_merged');
-        $this->finalimagename = $finalimagename;
-        $finalImage = imagecreatetruecolor($this->image_width,
-            $this->image_height);
+        
+        // create temp merged image
+        $tempimagename = tempnam($tempdir, 'mb_print_tempmerged');
+        $this->finalimagename = $tempimagename;
+        $finalImage = imagecreatetruecolor($neededImageWidth,
+            $neededImageHeight);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
-        imagefilledrectangle($finalImage, 0, 0, $this->image_width,
-            $this->image_height, $bg);
-        imagepng($finalImage, $finalimagename);
-        foreach ($temp_names_clip as $temp_name) {
+        imagefilledrectangle($finalImage, 0, 0, $neededImageWidth,
+            $neededImageHeight, $bg);
+        imagepng($finalImage, $tempimagename);
+        foreach ($temp_names as $temp_name) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {        
-                $dest = imagecreatefrompng($finalimagename);
+                $dest = imagecreatefrompng($tempimagename);
                 $src = imagecreatefrompng($temp_name);
-                imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
-                    $this->image_height);
-                imagepng($dest, $finalimagename);
+                imagecopy($dest, $src, 0, 0, 0, 0, $neededImageWidth,
+                    $neededImageHeight);
+                imagepng($dest, $tempimagename);
                 unlink($temp_name);
             }
             finfo_close($finfo);
         }
+        
+        //rotate image
+        $tempimg = imagecreatefrompng($tempimagename);
+        $transColor = imagecolorallocatealpha($tempimg, 255, 255, 255, 127);
+        $rotatedImage = imagerotate($tempimg, $rotation, $transColor);
+        imagealphablending($rotatedImage, false);
+        imagesavealpha($rotatedImage, true);
+        
+        $rotatimagename = tempnam($tempdir, 'mb_printrotated');
+        imagepng($rotatedImage, $rotatimagename);
+
+        //clip image from rotated
+        $rotated_width = round(abs(sin(deg2rad($rotation)) * $neededImageHeight) +
+            abs(cos(deg2rad($rotation)) * $neededImageWidth));
+        $rotated_height = round(abs(sin(deg2rad($rotation)) * $neededImageWidth) +
+            abs(cos(deg2rad($rotation)) * $neededImageHeight));
+        $newx = ($rotated_width - $this->image_width ) / 2;
+        $newy = ($rotated_height - $this->image_height ) / 2;
+
+        $clippedImageName = tempnam($tempdir, 'mb_printclip');
+        $clippedImage = imagecreatetruecolor($this->image_width,
+            $this->image_height);
+        imagealphablending($clippedImage, false);
+        imagesavealpha($clippedImage, true);
+        imagecopy($clippedImage, $rotatedImage, 0, 0, $newx, $newy,
+            $this->image_width, $this->image_height);
+        imagepng($clippedImage, $clippedImageName);
+        $this->finalimagename = $clippedImageName;
+        unlink($tempimagename);
+        unlink($rotatimagename);
     }
 
     /**
