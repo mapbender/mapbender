@@ -220,9 +220,9 @@
         
         _printContent: function(){
             var w = window.open("", "title", "attributes");
-            $(w.document.body).html(($('#featureInfoTabContainer').find('div.active').html()));
-            w.print();
-            w.close();    
+            var c = $('#featureInfoTabContainer').find('div.active').html();
+            w.document.write(c);    
+            w.setTimeout(function(){w.print();},1000);      
         },
         
         /**
