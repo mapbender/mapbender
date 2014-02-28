@@ -124,43 +124,43 @@
       </trans-unit>
       <trans-unit id="9274af4427ddd97ba8b314fb87847f55" resname="mb.core.zoombar.panup">
         <source>mb.core.zoombar.panup</source>
-        <target>__mb.core.zoombar.panup</target>
+        <target>shuif omhoog</target>
       </trans-unit>
       <trans-unit id="5d9ce5e3d3eea5da11c8a0aef5345eb9" resname="mb.core.zoombar.panright">
         <source>mb.core.zoombar.panright</source>
-        <target>__mb.core.zoombar.panright</target>
+        <target>shuif rechts</target>
       </trans-unit>
       <trans-unit id="fccfef101736b6635da3b0e5a2319418" resname="mb.core.zoombar.pandown">
         <source>mb.core.zoombar.pandown</source>
-        <target>__mb.core.zoombar.pandown</target>
+        <target>shuif omlaag</target>
       </trans-unit>
       <trans-unit id="fe00b345e9c46350ce7945e1abdbb787" resname="mb.core.zoombar.panleft">
         <source>mb.core.zoombar.panleft</source>
-        <target>__mb.core.zoombar.panleft</target>
+        <target>shuif links</target>
       </trans-unit>
       <trans-unit id="8f867fb77fb4bb576647c7a16b431474" resname="mb.core.zoombar.goback">
         <source>mb.core.zoombar.goback</source>
-        <target>__mb.core.zoombar.goback</target>
+        <target>ga terug</target>
       </trans-unit>
       <trans-unit id="0e800b52545b464cd93311c60c6007f6" resname="mb.core.zoombar.goforward">
         <source>mb.core.zoombar.goforward</source>
-        <target>__mb.core.zoombar.goforward</target>
+        <target>ga voorwaarts</target>
       </trans-unit>
       <trans-unit id="209477f6d7629c4e272555dee781929e" resname="mb.core.zoombar.zoombybox">
         <source>mb.core.zoombar.zoombybox</source>
-        <target>__mb.core.zoombar.zoombybox</target>
+        <target>zoom in</target>
       </trans-unit>
       <trans-unit id="9e35239edca01f34b1092c1bb8539150" resname="mb.core.zoombar.zoombyworld">
         <source>mb.core.zoombar.zoombyworld</source>
-        <target>__mb.core.zoombar.zoombyworld</target>
+        <target>zoom uit</target>
       </trans-unit>
       <trans-unit id="5feedcb7eb18018c003e6fa2562c4b53" resname="mb.core.zoombar.zoomin">
         <source>mb.core.zoombar.zoomin</source>
-        <target>__mb.core.zoombar.zoomin</target>
+        <target>zoom in</target>
       </trans-unit>
       <trans-unit id="c13aa9d4bce372c110a373dad4519db8" resname="mb.core.zoombar.zoomout">
         <source>mb.core.zoombar.zoomout</source>
-        <target>__mb.core.zoombar.zoomout</target>
+        <target>zoom uit</target>
       </trans-unit>
       <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
         <source>mb.core.printclient.label.template</source>
