@@ -88,7 +88,7 @@
       </trans-unit>
       <trans-unit id="869cda28f81afcf6b2488ba2f4117e91" resname="mb.core.ruler.popup.btn.ok">
         <source>mb.core.ruler.popup.btn.ok</source>
-        <target>__mb.core.ruler.popup.btn.ok</target>
+        <target>Sluiten</target>
       </trans-unit>
       <trans-unit id="255dfe21ded353929e03b1f48f3d8603" resname="mb.core.ruler.create_error">
         <source>mb.core.ruler.create_error</source>
@@ -196,15 +196,15 @@
       </trans-unit>
       <trans-unit id="868e554ea585dc5b1d394eb2b66e972c" resname="mb.core.layertree.tooltip.sublayers_openclose">
         <source>mb.core.layertree.tooltip.sublayers_openclose</source>
-        <target>__mb.core.layertree.tooltip.sublayers_openclose</target>
+        <target>sub lagen menu open/dicht</target>
       </trans-unit>
       <trans-unit id="e48917a6335f8fa17b6b68aabc94390b" resname="mb.core.layertree.label.visibility_onoff">
         <source>mb.core.layertree.label.visibility_onoff</source>
-        <target>__mb.core.layertree.label.visibility_onoff</target>
+        <target>laag aan/uit</target>
       </trans-unit>
       <trans-unit id="9f816610733911918c9413a1b5af826a" resname="mb.core.layertree.label.featureinfo_onoff">
         <source>mb.core.layertree.label.featureinfo_onoff</source>
-        <target>__mb.core.layertree.label.featureinfo_onoff</target>
+        <target>eigenschap aan/uit</target>
       </trans-unit>
       <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
         <source>mb.core.layertree.label.transparency</source>
@@ -216,7 +216,7 @@
       </trans-unit>
       <trans-unit id="c1e88d23834e42294c5c46903293bbb3" resname="mb.core.layertree.tooltip.removelayer">
         <source>mb.core.layertree.tooltip.removelayer</source>
-        <target>__mb.core.layertree.tooltip.removelayer</target>
+        <target>laag wissen</target>
       </trans-unit>
       <trans-unit id="263857036bd43f2fed5421b06430c19a" resname="mb.core.layertree.label.sources">
         <source>mb.core.layertree.label.sources</source>
@@ -256,7 +256,7 @@
       </trans-unit>
       <trans-unit id="261c3c35cd7b5f9737f2c3ab03c1ba76" resname="mb.core.layertree.popup.btn.ok">
         <source>mb.core.layertree.popup.btn.ok</source>
-        <target>__mb.core.layertree.popup.btn.ok</target>
+        <target>Sluiten</target>
       </trans-unit>
       <trans-unit id="179f487db6ae9a2cc2f6bc20a3973928" resname="mb.core.layertree.const.outofscale">
         <source>mb.core.layertree.const.outofscale</source>
