@@ -43,7 +43,8 @@ $.extend(true, Mapbender, {
                     singleTile: !layerDef.configuration.options.tiled,
                     attribution: layerDef.configuration.options.attribution, // attribution add !!!
                     minScale: rootLayer.minScale,
-                    maxScale: rootLayer.maxScale
+                    maxScale: rootLayer.maxScale,
+                    transitionEffect: 'resize'
                 };
 
                 return mqLayerDef;
