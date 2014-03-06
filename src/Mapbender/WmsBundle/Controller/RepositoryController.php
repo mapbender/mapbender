@@ -76,7 +76,7 @@ class RepositoryController extends Controller
     }
 
     /**
-     * @ManagerRoute("/new")
+     * @ManagerRoute("/create")
      * @Method({ "POST" })
      * @Template("MapbenderWmsBundle:Repository:new.html.twig")
      */

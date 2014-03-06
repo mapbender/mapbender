@@ -37,6 +37,7 @@ class PrintService
         
         $this->getTemplateConf($template);
         $this->createUrlArray();
+        //$this->addReplacePattern();
         $this->setMapParameter();
 
         if ($this->data['rotation'] == 0) {
@@ -70,11 +71,48 @@ class PrintService
     private function createUrlArray()
     {
         foreach ($this->data['layers'] as $i => $layer) {
-            $url = strstr($this->data['layers'][$i]['url'], 'BBOX', true);
+            $url = strstr($this->data['layers'][$i]['url'], '&BBOX', true);
             $this->layer_urls[$i] = $url;
+            //opacity
+            $this->layerOpacity[$i] = $this->data['layers'][$i]['opacity']*100;
         }
     }
-
+    
+    private function addReplacePattern()
+    {
+        if(!isset($this->data['replace_pattern'])){
+            return;
+        }
+        
+        $quality = $this->data['quality'];
+        $default;
+        foreach ($this->layer_urls as $k => $url) {
+            foreach ($this->data['replace_pattern'] as $rKey => $pattern) {  
+                if(isset($pattern['default'])){
+                    if(isset($pattern['default'][$quality])){
+                        $default = $pattern['default'][$quality];
+                    }else{
+                        $default = '';
+                    }
+                    continue;
+                }
+                if(strpos($url,$pattern['pattern']) === false){
+                    continue;
+                }
+                if(strpos($url,$pattern['pattern']) !== false){
+                    if(isset($pattern['replacement'][$quality])){
+                        $url = str_replace($pattern['pattern'], $pattern['replacement'][$quality], $url);
+                        $this->layer_urls[$k] = $url;
+                        continue 2;
+                    }
+                }
+                
+            }
+           $url .= $default; 
+           $this->layer_urls[$k] = $url;
+        }
+    }
+    
     /**
      * Todo
      *
@@ -108,7 +146,7 @@ class PrintService
         $ur_x = $centerx + $map_width * 0.5;
         $ur_y = $centery + $map_height * 0.5;
 
-        $bbox = 'BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
+        $bbox = '&BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
 
         foreach ($this->layer_urls as $k => $url) {
             $url .= $bbox;
@@ -139,6 +177,7 @@ class PrintService
      */
     private function getImages()
     {
+        $temp_names = array();
         foreach ($this->layer_urls as $k => $url) {
             $this->container->get("logger")->debug("Print Request Nr.: " . $k . ' ' . $url);
             $attributes = array();
@@ -150,7 +189,8 @@ class PrintService
                 HttpKernelInterface::SUB_REQUEST);
 
             $tempdir = $this->tempdir;
-            $imagename = $tempdir . '/tempimage' . $k;
+            $imagename = tempnam($tempdir, 'mb_print');
+            $temp_names[] = $imagename;
 
             file_put_contents($imagename, $response->getContent());
             $im = null;
@@ -167,33 +207,37 @@ class PrintService
                 default:
                     continue;
                     $this->container->get("logger")->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
-                //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
 
-            if ($im !== null) {
-                imagesavealpha($im, true);
-                imagepng($im, $imagename);
+            if ($im !== null) {    
+                    imagealphablending($im, false);
+                    imagesavealpha($im, true);
+                    imagepng($im, $imagename);     
             }
-        }
+        } 
         // create final merged image
-        $finalimagename = $tempdir . '/mergedimage.png';
+        $finalimagename = tempnam($tempdir, 'mb_print_merged');
+        $this->finalimagename = $finalimagename;
         $finalImage = imagecreatetruecolor($this->image_width,
             $this->image_height);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $this->image_width,
             $this->image_height, $bg);
-        imagepng($finalImage, $finalimagename);
-        foreach ($this->layer_urls as $k => $url) {
+        foreach ($temp_names as $temp_name) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($tempdir . '/tempimage' . $k) && finfo_file($finfo,
-                    $tempdir . '/tempimage' . $k) == 'image/png') {
-                $dest = imagecreatefrompng($finalimagename);
-                $src = imagecreatefrompng($tempdir . '/tempimage' . $k);
-                imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
-                    $this->image_height);
+            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
+                $dest = $finalImage;
+                $src = imagecreatefrompng($temp_name);
+                if ($this->layerOpacity[$k] !== 100){
+                    ImageCopyMerge($dest, $src, 0, 0, 0, 0, $this->image_width,
+                       $this->image_height, $this->layerOpacity[$k]);
+                }else{
+                    imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
+                        $this->image_height);
+                }
                 imagepng($dest, $finalimagename);
-            }
-            unlink($tempdir . '/tempimage' . $k);
+                unlink($temp_name);           
+            }  
             finfo_close($finfo);
         }
     }
@@ -205,40 +249,45 @@ class PrintService
     private function rotate()
     {
         $tempdir = $this->tempdir;
-        $rotation = $this->data['rotation'];
-
-        foreach ($this->layer_urls as $k => $url) {
-            $map_width = $this->data['extent']['width'];
-            $map_height = $this->data['extent']['height'];
-            $centerx = $this->data['center']['x'];
-            $centery = $this->data['center']['y'];
-
-            //set needed extent
-            $neededExtentWidth = round(abs(sin(deg2rad($rotation)) * $map_height) +
-                abs(cos(deg2rad($rotation)) * $map_width));
-            $neededExtentHeight = round(abs(sin(deg2rad($rotation)) * $map_width) +
-                abs(cos(deg2rad($rotation)) * $map_height));
-
-            $ll_x = $centerx - $neededExtentWidth * 0.5;
-            $ll_y = $centery - $neededExtentHeight * 0.5;
-            $ur_x = $centerx + $neededExtentWidth * 0.5;
-            $ur_y = $centery + $neededExtentHeight * 0.5;
-
-            $bbox = 'BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
-            $url .= $bbox;
-            $this->layer_urls[$k] = $url;
-
-            //set needed image size
-            $neededImageWidth = round(abs(sin(deg2rad($rotation)) * $this->image_height) +
-                abs(cos(deg2rad($rotation)) * $this->image_width));
-            $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->image_width) +
-                abs(cos(deg2rad($rotation)) * $this->image_height));
-
-            $w = '&WIDTH=' . $neededImageWidth;
-            $h = '&HEIGHT=' . $neededImageHeight;
-            $url .= $w . $h;
-            $this->layer_urls[$k] = $url;
-
+        $rotation = $this->data['rotation'];     
+        $map_width = $this->data['extent']['width'];
+        $map_height = $this->data['extent']['height'];
+        $centerx = $this->data['center']['x'];
+        $centery = $this->data['center']['y'];
+        
+        //set needed extent
+        $neededExtentWidth = round(abs(sin(deg2rad($rotation)) * $map_height) +
+            abs(cos(deg2rad($rotation)) * $map_width));
+        $neededExtentHeight = round(abs(sin(deg2rad($rotation)) * $map_width) +
+            abs(cos(deg2rad($rotation)) * $map_height));
+        
+        $ll_x = $centerx - $neededExtentWidth * 0.5;
+        $ll_y = $centery - $neededExtentHeight * 0.5;
+        $ur_x = $centerx + $neededExtentWidth * 0.5;
+        $ur_y = $centery + $neededExtentHeight * 0.5;
+        
+        $bbox = '&BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
+        
+        //set needed image size
+        $neededImageWidth = round(abs(sin(deg2rad($rotation)) * $this->image_height) +
+            abs(cos(deg2rad($rotation)) * $this->image_width));
+        $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->image_width) +
+            abs(cos(deg2rad($rotation)) * $this->image_height));
+        
+        $w = '&WIDTH=' . $neededImageWidth;
+        $h = '&HEIGHT=' . $neededImageHeight;
+        
+        $temp_names = array();
+        
+        foreach ($this->layer_urls as $k => $url) {          
+            $url .= $bbox . $w . $h;    
+            
+            if ($this->data['quality'] != '72') {
+                $url .= '&map_resolution=' . $this->data['quality'];
+            }
+            
+            $this->container->get("logger")->debug("Print Request Nr.: " . $k . ' ' . $url);
+            
             //get image
             $attributes = array();
             $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
@@ -248,11 +297,11 @@ class PrintService
             $response = $this->container->get('http_kernel')->handle($subRequest,
                 HttpKernelInterface::SUB_REQUEST);
 
-            $tempdir = $this->tempdir;
-            $imagename = $tempdir . '/tempimage' . $k;
+            $imagename = tempnam($tempdir, 'mb_print');
+            $temp_names[] = $imagename;
 
             file_put_contents($imagename, $response->getContent());
-
+            $im = null;
             switch (trim($response->headers->get('content-type'))) {
                 case 'image/png' :
                     $im = imagecreatefrompng($imagename);
@@ -265,57 +314,67 @@ class PrintService
                     break;
                 default:
                     continue;
-                //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
+                    $this->container->get("logger")->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
             
-            if ($k == 0 && isset($this->data['features'])){
-                $this->drawRotatedFeatures($im);
+            if ($im !== null) {
+                imagealphablending($im, false);
+                imagesavealpha($im, true);
+                imagepng($im, $imagename);
             }
-            
-            //rotate image
-            $transColor = imagecolorallocatealpha($im, 255, 255, 255, 127);
-            $rotatedImage = imagerotate($im, $rotation, $transColor);
-            imagealphablending($rotatedImage, false);
-            imagesavealpha($rotatedImage, true);
-            imagepng($rotatedImage, $imagename);
-
-            //clip image from rotated
-            $rotated_width = round(abs(sin(deg2rad($rotation)) * $neededImageHeight) +
-                abs(cos(deg2rad($rotation)) * $neededImageWidth));
-            $rotated_height = round(abs(sin(deg2rad($rotation)) * $neededImageWidth) +
-                abs(cos(deg2rad($rotation)) * $neededImageHeight));
-            $newx = ($rotated_width - $this->image_width ) / 2;
-            $newy = ($rotated_height - $this->image_height ) / 2;
-
-            $clippedImageName = $tempdir . '/clipped_image' . $k . '.png';
-            $clippedImage = imagecreatetruecolor($this->image_width,
-                $this->image_height);
-
-            imagealphablending($clippedImage, false);
-            imagesavealpha($clippedImage, true);
-
-            imagecopy($clippedImage, $rotatedImage, 0, 0, $newx, $newy,
-                $this->image_width, $this->image_height);
-            imagepng($clippedImage, $clippedImageName);
-
-            unlink($tempdir . '/tempimage' . $k);
         }
-        // create final merged image
-        $finalimagename = $tempdir . '/mergedimage.png';
-        $finalImage = imagecreatetruecolor($this->image_width,
-            $this->image_height);
+        
+        // create temp merged image
+        $tempimagename = tempnam($tempdir, 'mb_print_tempmerged');
+        $this->finalimagename = $tempimagename;
+        $finalImage = imagecreatetruecolor($neededImageWidth,
+            $neededImageHeight);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
-        imagefilledrectangle($finalImage, 0, 0, $this->image_width,
-            $this->image_height, $bg);
-        imagepng($finalImage, $finalimagename);
-        foreach ($this->layer_urls as $k => $url) {
-            $dest = imagecreatefrompng($finalimagename);
-            $src = imagecreatefrompng($tempdir . '/clipped_image' . $k . '.png');
-            imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
-                $this->image_height);
-            imagepng($dest, $finalimagename);
-            unlink($tempdir . '/clipped_image' . $k . '.png');
+        imagefilledrectangle($finalImage, 0, 0, $neededImageWidth,
+            $neededImageHeight, $bg);
+        imagepng($finalImage, $tempimagename);
+        foreach ($temp_names as $temp_name) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {        
+                $dest = imagecreatefrompng($tempimagename);
+                $src = imagecreatefrompng($temp_name);
+                imagecopy($dest, $src, 0, 0, 0, 0, $neededImageWidth,
+                    $neededImageHeight);
+                imagepng($dest, $tempimagename);
+                unlink($temp_name);
+            }
+            finfo_close($finfo);
         }
+        
+        //rotate image
+        $tempimg = imagecreatefrompng($tempimagename);
+        $transColor = imagecolorallocatealpha($tempimg, 255, 255, 255, 127);
+        $rotatedImage = imagerotate($tempimg, $rotation, $transColor);
+        imagealphablending($rotatedImage, false);
+        imagesavealpha($rotatedImage, true);
+        
+        $rotatimagename = tempnam($tempdir, 'mb_printrotated');
+        imagepng($rotatedImage, $rotatimagename);
+
+        //clip image from rotated
+        $rotated_width = round(abs(sin(deg2rad($rotation)) * $neededImageHeight) +
+            abs(cos(deg2rad($rotation)) * $neededImageWidth));
+        $rotated_height = round(abs(sin(deg2rad($rotation)) * $neededImageWidth) +
+            abs(cos(deg2rad($rotation)) * $neededImageHeight));
+        $newx = ($rotated_width - $this->image_width ) / 2;
+        $newy = ($rotated_height - $this->image_height ) / 2;
+
+        $clippedImageName = tempnam($tempdir, 'mb_printclip');
+        $clippedImage = imagecreatetruecolor($this->image_width,
+            $this->image_height);
+        imagealphablending($clippedImage, false);
+        imagesavealpha($clippedImage, true);
+        imagecopy($clippedImage, $rotatedImage, 0, 0, $newx, $newy,
+            $this->image_width, $this->image_height);
+        imagepng($clippedImage, $clippedImageName);
+        $this->finalimagename = $clippedImageName;
+        unlink($tempimagename);
+        unlink($rotatimagename);
     }
 
     /**
@@ -377,7 +436,7 @@ class PrintService
                     break;
                 default:
                     if (isset($this->data['extra'][$k])) {
-                        $pdf->Cell($this->conf['fields'][$k]['width'] * 10,
+                        $pdf->MultiCell($this->conf['fields'][$k]['width'] * 10,
                             $this->conf['fields'][$k]['height'] * 10,
                             utf8_decode($this->data['extra'][$k]));
                     }
@@ -393,7 +452,7 @@ class PrintService
         if ($this->data['rotation'] == 0) {
             $tempdir = sys_get_temp_dir();
             foreach ($this->layer_urls as $k => $url)
-                    $pdf->Image($tempdir . '/mergedimage.png', $this->x_ul,
+                    $pdf->Image($this->finalimagename, $this->x_ul,
                     $this->y_ul, $this->width, $this->height, 'png', '', false,
                     0, 5, -1 * 0);
 
@@ -406,20 +465,21 @@ class PrintService
                     $this->conf['northarrow']['height'] * 10);
             }
         } else {
-            if (isset($this->conf['northarrow'])) {
-                $this->rotateNorthArrow();
-            }
-            $pdf->Image($tempdir . '/mergedimage.png', $this->x_ul, $this->y_ul,
+            $pdf->Image($this->finalimagename, $this->x_ul, $this->y_ul,
                 $this->width, $this->height, 'png', '', false, 0, 5, -1 * 0);
 
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
+            if (isset($this->conf['northarrow'])) {
+                $this->rotateNorthArrow();
+            }
         }
-               
+        
+        // add overview map 
         if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
             $this->getOverviewMap();
         }
         
-        unlink($tempdir . '/mergedimage.png');
+        unlink($this->finalimagename);
         
         if (null != $this->data['file_prefix']) {
             $pdf->Output($this->data['file_prefix'] . '.pdf', 'D'); //file output
@@ -441,31 +501,34 @@ class PrintService
         $im = imagecreatefrompng($northarrow);
         $transColor = imagecolorallocatealpha($im, 255, 255, 255, 127);
         $rotated = imagerotate($im, $rotation, $transColor);
-        imagepng($rotated, $tempdir . '/rotatednorth.png');
+        $imagename = tempnam($tempdir, 'mb_northarrow');
+        imagepng($rotated, $imagename);
 
         if ($rotation == 90 || $rotation == 270) {
             //
         } else {
-            $src_img = imagecreatefrompng($tempdir . '/rotatednorth.png');
-            $srcsize = getimagesize($tempdir . '/rotatednorth.png');
+            $src_img = imagecreatefrompng($imagename);
+            $srcsize = getimagesize($imagename);
             $destsize = getimagesize($resource_dir . '/images/northarrow.png');
             $x = ($srcsize[0] - $destsize[0]) / 2;
             $y = ($srcsize[1] - $destsize[1]) / 2;
             $dst_img = imagecreatetruecolor($destsize[0], $destsize[1]);
             imagecopy($dst_img, $src_img, 0, 0, $x, $y, $srcsize[0], $srcsize[1]);
-            imagepng($dst_img, $tempdir . '/rotatednorth.png');
+            imagepng($dst_img, $imagename);
         }
 
-        $this->pdf->Image($tempdir . '/rotatednorth.png',
-            $this->conf['northarrow']['x'] * 10,
-            $this->conf['northarrow']['y'] * 10,
-            $this->conf['northarrow']['width'] * 10,
-            $this->conf['northarrow']['height'] * 10);
-        unlink($tempdir . '/rotatednorth.png');
+        $this->pdf->Image($imagename,
+                            $this->conf['northarrow']['x'] * 10,
+                            $this->conf['northarrow']['y'] * 10,
+                            $this->conf['northarrow']['width'] * 10,
+                            $this->conf['northarrow']['height'] * 10,
+                            'png');
+        unlink($imagename);
     }
     
     private function getOverviewMap()
     {
+        $temp_names = array();
         foreach ($this->data['overview'] as $i => $layer) {
             $url = strstr($this->data['overview'][$i]['url'], 'BBOX', true);           
             
@@ -507,7 +570,8 @@ class PrintService
                 HttpKernelInterface::SUB_REQUEST);
 
             $tempdir = $this->tempdir;
-            $imagename = $tempdir . '/tempovimage' . $i;
+            $imagename = tempnam($tempdir, 'mb_print');
+            $temp_names[] = $imagename;
 
             file_put_contents($imagename, $response->getContent());
             $im = null;
@@ -534,28 +598,27 @@ class PrintService
         }
         
         // create final merged image
-        $finalimagename = $tempdir . '/mergedovimage.png';
+        $finalimagename = tempnam($tempdir, 'mb_print_merged');
         $finalImage = imagecreatetruecolor($ov_image_width,
             $ov_image_height);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $ov_image_width,
             $ov_image_height, $bg);
         imagepng($finalImage, $finalimagename);
-        foreach ($this->overview_urls as $k => $url) {
+        foreach ($temp_names as $temp_name) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($tempdir . '/tempovimage' . $k) && finfo_file($finfo,
-                    $tempdir . '/tempovimage' . $k) == 'image/png') {
+            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
                 $dest = imagecreatefrompng($finalimagename);
-                $src = imagecreatefrompng($tempdir . '/tempovimage' . $k);
+                $src = imagecreatefrompng($temp_name);
                 imagecopy($dest, $src, 0, 0, 0, 0, $ov_image_width,
                     $ov_image_height);
                 imagepng($dest, $finalimagename);
             }
-            unlink($tempdir . '/tempovimage' . $k);
+            unlink($temp_name);
             finfo_close($finfo);
         }       
         
-        $image = imagecreatefrompng($tempdir . '/mergedovimage.png');             
+        $image = imagecreatefrompng($finalimagename);             
         
         // ohne rotation      
         if ($this->data['rotation'] == 0) {
@@ -611,47 +674,67 @@ class PrintService
             imageline ( $image, $p4[0], $p4[1], $p1[0], $p1[1], $red);
         }
                
-        imagepng($image, $tempdir . '/mergedovimage.png');
+        imagepng($image, $finalimagename);
         
-        $this->pdf->Image($tempdir . '/mergedovimage.png',
+        $this->pdf->Image($finalimagename,
                     $this->conf['overview']['x'] * 10,
                     $this->conf['overview']['y'] * 10,
                     $this->conf['overview']['width'] * 10,
-                    $this->conf['overview']['height'] * 10);
+                    $this->conf['overview']['height'] * 10,
+                    'png');
         
         $this->pdf->Rect($this->conf['overview']['x'] * 10,
                          $this->conf['overview']['y'] * 10,
                          $this->conf['overview']['width'] * 10,
                          $this->conf['overview']['height'] * 10);    
 
-        unlink($tempdir . '/mergedovimage.png');
+        unlink($finalimagename);
     }
     
     private function drawFeatures()
     {      
-        $tempdir = $this->tempdir;
-        $image = imagecreatefrompng($tempdir . '/mergedimage.png');        
+        $image = imagecreatefrompng($this->finalimagename);        
         
-        $feature = $this->data['features'][0];
+//        print "<pre>";
+//        print_r($this->data['features']);
+//        print "</pre>";
+//        die();
         
-        $points;        
-        foreach ($feature as $k => $v){
-            $points[$k] = $this->realWorld2mapPos($feature[$k]['x'],$feature[$k]['y']);
-        }       
-        
-        $red = ImageColorAllocate($image,255,0,0); 
-        
-        $keys = array_keys($points);
-        $last_key = end($keys);
-        foreach ($points as $k => $v){
-            if ($k == $last_key) {
-                break;
-            }else{
-                imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
+        foreach ($this->data['features'] as $fKey => $feature){
+            $points = array();        
+            foreach ($feature['geom'] as $vKey => $vVal){
+                $points[$vKey] = $this->realWorld2mapPos($feature['geom'][$vKey]['x'],$feature['geom'][$vKey]['y']);
+            }     
+
+            if($feature['type'] === 'line'){
+                $red = ImageColorAllocate($image,255,0,0); 
+                imagesetthickness($image, 2);
+                $keys = array_keys($points);
+                $last_key = end($keys);
+                foreach ($points as $k => $v){
+                    if ($k == $last_key) {
+                        break;
+                    }else{
+                        imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
+                    }
+                }
+            }
+            if($feature['type'] === 'point'){
+                $red = ImageColorAllocate($image,255,0,0); 
+                imagefilledellipse ($image , $points[0][0], $points[0][1] , 5 , 5 , $red );
+            }
+            if($feature['type'] === 'polygon'){
+                $red = ImageColorAllocate($image,255,0,0);
+                $values = array();
+                foreach ($points as $k => $v){
+                    array_push($values, $points[$k][0], $points[$k][1]);
+                }
+                imagesetthickness($image, 2);
+                imagepolygon($image, $values, count($points), $red);
             }
         }
-
-        imagepng($image, $tempdir . '/mergedimage.png');
+        
+        imagepng($image, $this->finalimagename);
     }
     
     private function drawRotatedFeatures($image)

@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -556,18 +557,34 @@ class WmsInstanceLayer implements InstanceLayerIn
     {
         $configuration = array(
             "id" => strval($this->id),
-            "name" => $this->wmslayersource->getName() !== null ? $this->wmslayersource->getName()
-                    : "",
+            "name" => $this->wmslayersource->getName() !== null ? $this->wmslayersource->getName() : "",
             "title" => $this->title,
             "queryable" => $this->getInfo(),
             "style" => $this->style,
             "minScale" => $this->minScale !== null ? floatval($this->minScale) : null,
             "maxScale" => $this->maxScale !== null ? floatval($this->maxScale) : null
         );
-
+        $srses = array();
+        $llbbox = $this->getWmslayersource()->getLatlonBounds();
+        if ($llbbox !== null) {
+            $srses[$llbbox->getSrs()] = array(
+                floatval($llbbox->getMinx()),
+                floatval($llbbox->getMiny()),
+                floatval($llbbox->getMaxx()),
+                floatval($llbbox->getMaxy())
+            );
+        }
+        foreach ($this->getWmslayersource()->getBoundingBoxes() as $bbox) {
+            $srses[$bbox->getSrs()] = array(
+                floatval($bbox->getMinx()),
+                floatval($bbox->getMiny()),
+                floatval($bbox->getMaxx()),
+                floatval($bbox->getMaxy()));
+        }
+        $configuration['bbox'] = $srses;
         if (count($this->wmslayersource->getStyles()) > 0) {
             $styles = $this->wmslayersource->getStyles();
-            $legendurl = $styles[0]->getLegendUrl(); // first style object
+            $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
             if ($legendurl !== null) {
                 $configuration["legend"] = array(
                     "url" => $legendurl->getOnlineResource()->getHref(),

@@ -11,7 +11,7 @@ use Mapbender\CoreBundle\Form\DataTransformer\ObjectIdTransformer;
 /**
  * 
  */
-class LayersetType extends AbstractType
+class LayersetAdminType extends AbstractType
 {
     /**
      *

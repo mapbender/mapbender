@@ -12,6 +12,7 @@ $.widget('mapbender.mbPOI', {
     popup: null,
     point: null,
     poiMarkerLayer: null,
+    poi: null,
 
     _create: function() {
         if(!Mapbender.checkTarget("mbPOI", this.options.target)){
@@ -90,6 +91,7 @@ $.widget('mapbender.mbPOI', {
         var self = this;
         this.popup = new Mapbender.Popup2({
             draggable: true,
+            cssClass: 'mb-poi-popup',
             destroyOnClose: true,
             modal: false,
             title: this.element.attr('title'),
@@ -99,6 +101,7 @@ $.widget('mapbender.mbPOI', {
                     label: Mapbender.trans('mb.core.poi.popup.btn.cancel'),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
+                        self._reset();
                         this.close();
                     }
                 },
@@ -107,7 +110,6 @@ $.widget('mapbender.mbPOI', {
                     cssClass: 'button right',
                     callback: function() {
                         self._sendPoi(this.$element);
-                        this.close();
                     }
                 }
             }
@@ -126,14 +128,16 @@ $.widget('mapbender.mbPOI', {
     _sendPoi: function(content) {
         var form = $('form', content);
         var body = $('#body', form).val();
-        var coordx = $('#coordx', form).val();
-        var coordy = $('#coordy', form).val();
+
+        if(!this.poi) {
+            return;
+        }
 
         var poi = $.extend({}, this.poi, {
             label: body.replace(/\n|\r/g, '<br />')
         });
         var params = $.param({ poi: poi });
-        var poiURL = 'http://' + window.location.host + window.location.pathname + '?' + params;
+        var poiURL = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + params;
         body += '\n\n' + poiURL;
         /*
          * @ TODO use MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js
@@ -156,6 +160,14 @@ $.widget('mapbender.mbPOI', {
                 buttons: {}
             });
         }
+
+        this._reset();
+        this.popup.close();
+
+    },
+
+    _reset: function() {
+        this.poi = null;
     }
 });
 

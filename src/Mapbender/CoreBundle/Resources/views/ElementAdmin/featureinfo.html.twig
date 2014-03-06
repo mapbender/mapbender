@@ -4,10 +4,14 @@
     </div>
     {{ form_widget(form.configuration.deactivateOnClose) }}<label for="{{form.configuration.deactivateOnClose.vars.id}}" class="labelCheck">{{"mb.core.admin.featureinfo.label.deactivateonclose"|trans}}</label>
     <div class="clearContainer"></div>
+    {{ form_widget(form.configuration.printResult) }}<label for="{{form.configuration.printResult.vars.id}}" class="labelCheck">print Result</label>
+    <div class="clearContainer"></div>
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.tooltip) }}{{ form_widget(form.configuration.tooltip) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.type) }}{{ form_widget(form.configuration.type) }}
     <div class="clearContainer"></div>
 </div>

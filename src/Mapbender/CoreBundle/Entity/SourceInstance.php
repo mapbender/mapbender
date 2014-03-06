@@ -51,6 +51,11 @@ abstract class SourceInstance
     protected $enabled = true;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $basesource = true;
+
+    /**
      * Creates an instance
      */
     public function __construct()
@@ -187,6 +192,28 @@ abstract class SourceInstance
     }
 
     /**
+     * Sets a basesource
+     *
+     * @param boolean $basesource
+     * @return SourceInstance SourceInstance
+     */
+    public function setBasesource($basesource)
+    {
+        $this->basesource = $basesource;
+        return $this;
+    }
+
+    /**
+     * Returns a basesource
+     *
+     * @return basesource
+     */
+    public function isBasesource()
+    {
+        return $this->basesource;
+    }
+
+    /**
      * Returns instance source
      *
      * @return Source
@@ -224,4 +251,10 @@ abstract class SourceInstance
      * @param EntityManager $em
      */
     public abstract function copy(EntityManager $em);
+    
+    
+    public function __toString()
+    {
+        return $this->getId();
+    }
 }

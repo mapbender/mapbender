@@ -12,7 +12,7 @@
       </trans-unit>
       <trans-unit id="04cd08843fed089f29b6aa525b3380cf" resname="mb.manager.admin.element.delete.confirm">
         <source>mb.manager.admin.element.delete.confirm</source>
-        <target>Wollen Sie wirklich das Element löschen?</target>
+        <target>Wollen Sie ddas Element wirklich löschen?</target>
       </trans-unit>
       <trans-unit id="8f31981eb7f9c7b4331f1550f0e68b6c" resname="mb.manager.admin.element.btn.delete">
         <source>mb.manager.admin.element.btn.delete</source>

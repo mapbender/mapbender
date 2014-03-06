@@ -19,6 +19,7 @@
         width: null,
         height: null,
         popupIsOpen: true,
+        rotateValue: 0,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
@@ -33,13 +34,6 @@
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
 
-            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
-            .bind('change', $.proxy(this._updateGeometry, this));
-            $('input[name="scale_text"], input[name="rotation"]', this.element)
-            .bind('keyup', $.proxy(this._updateGeometry, this));
-            $('select[name="template"]', this.element)
-            .bind('change', $.proxy(this._getPrintSize, this))
-            .trigger('change');
             this._trigger('ready');
             this._ready();
         },
@@ -47,7 +41,7 @@
         defaultAction: function(callback) {
             this.open(callback);
         },
-        
+
         open: function(callback){
             this.callback = callback ? callback : null;
             var self = this;
@@ -63,7 +57,8 @@
                         closeOnPopupCloseClick: false,
                         closeOnESC: false,
                         content: self.element,
-                        width: 320,
+                        width: 340,
+                        cssClass: 'customPrintDialog',
                         buttons: {
                                 'cancel': {
                                     label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
@@ -86,7 +81,15 @@
                     this.popup.open(self.element);
                  }
             }
-            me.show();        
+            me.show();
+
+            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
+            .bind('change', $.proxy(this._updateGeometry, this));
+            $('input[name="scale_text"], input[name="rotation"]', this.element)
+            .bind('keyup', $.proxy(this._updateGeometry, this));
+            $('select[name="template"]', this.element)
+            .bind('change', $.proxy(this._getPrintSize, this))
+            .trigger('change');
 
             this.popupIsOpen = true;
             this._loadPrintFormats();
@@ -211,7 +214,7 @@
                     if(opt_fields[field].options.required === true){
                        span = '<span class="required">*</span>'
                     }
-                    
+
                     extra_fields.append($('<label></label>', {
                         'html': opt_fields[field].label+span,
                         'class': 'labelInput'
@@ -227,17 +230,23 @@
                     }
                 }
             }else{
-                $('#extra_fields').hide();
+                //$('#extra_fields').hide();
             }
 
         },
 
         _updateGeometry: function(reset) {
-            var template = this.element.find('select[name="template"]').val();
-            var width = this.width;
-            var height = this.height;
-            var scale = this._getPrintScale();
+            var template = this.element.find('select[name="template"]').val(),
+                width = this.width,
+                height = this.height,
+                scale = this._getPrintScale(),
+                rotationField = $('input[name="rotation"]');
+            
+            if (rotationField.val() === '' && this.rotateValue !== '0'){
+                rotationField.val('0'); 
+            }
             var rotation = $('input[name="rotation"]').val();
+            this.rotateValue = rotation;
 
             if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
                 if(null !== this.lastScale) {
@@ -256,7 +265,7 @@
             rotation= parseInt(-rotation);
 
             this.lastScale = scale;
-            
+
             var world_size = {
                 x: width * scale / 100,
                 y: height * scale / 100
@@ -277,36 +286,38 @@
                 center.lon + 0.5 * world_size.x,
                 center.lat + 0.5 * world_size.y).toGeometry(), {});
             this.feature.world_size = world_size;
-            
-            var centroid = this.feature.geometry.getCentroid();
-            var centroid_lonlat = new OpenLayers.LonLat(centroid.x,centroid.y);
-            var centroid_pixel = this.map.map.olMap.getViewPortPxFromLonLat(centroid_lonlat);
-            var centroid_geodesSize = this.map.map.olMap.getGeodesicPixelSize(centroid_pixel);
 
-            var geodes_diag = Math.sqrt(centroid_geodesSize.w*centroid_geodesSize.w + centroid_geodesSize.h*centroid_geodesSize.h) / Math.sqrt(2) * 100000;
+            if(this.map.map.olMap.units === 'degrees' || this.map.map.olMap.units === 'dd') {
+                var centroid = this.feature.geometry.getCentroid();
+                var centroid_lonlat = new OpenLayers.LonLat(centroid.x,centroid.y);
+                var centroid_pixel = this.map.map.olMap.getViewPortPxFromLonLat(centroid_lonlat);
+                var centroid_geodesSize = this.map.map.olMap.getGeodesicPixelSize(centroid_pixel);
 
-            var geodes_width = width * scale / (geodes_diag);
-            var geodes_height = height * scale / (geodes_diag);
+                var geodes_diag = Math.sqrt(centroid_geodesSize.w*centroid_geodesSize.w + centroid_geodesSize.h*centroid_geodesSize.h) / Math.sqrt(2) * 100000;
 
-            var ll_pixel_x = centroid_pixel.x - (geodes_width) / 2;
-            var ll_pixel_y = centroid_pixel.y + (geodes_height) / 2;
-            var ur_pixel_x = centroid_pixel.x + (geodes_width) / 2;
-            var ur_pixel_y = centroid_pixel.y - (geodes_height) /2 ;
-            var ll_pixel = new OpenLayers.Pixel(ll_pixel_x, ll_pixel_y);
-            var ur_pixel = new OpenLayers.Pixel(ur_pixel_x, ur_pixel_y);
-            var ll_lonlat = this.map.map.olMap.getLonLatFromPixel(ll_pixel);
-            var ur_lonlat = this.map.map.olMap.getLonLatFromPixel(ur_pixel);
+                var geodes_width = width * scale / (geodes_diag);
+                var geodes_height = height * scale / (geodes_diag);
 
-            this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
-                ll_lonlat.lon,
-                ur_lonlat.lat,
-                ur_lonlat.lon,
-                ll_lonlat.lat).toGeometry(), {});
-            this.feature.world_size = {
-                x: ur_lonlat.lon - ll_lonlat.lon,
-                y: ur_lonlat.lat - ll_lonlat.lat
-            };
-            
+                var ll_pixel_x = centroid_pixel.x - (geodes_width) / 2;
+                var ll_pixel_y = centroid_pixel.y + (geodes_height) / 2;
+                var ur_pixel_x = centroid_pixel.x + (geodes_width) / 2;
+                var ur_pixel_y = centroid_pixel.y - (geodes_height) /2 ;
+                var ll_pixel = new OpenLayers.Pixel(ll_pixel_x, ll_pixel_y);
+                var ur_pixel = new OpenLayers.Pixel(ur_pixel_x, ur_pixel_y);
+                var ll_lonlat = this.map.map.olMap.getLonLatFromPixel(ll_pixel);
+                var ur_lonlat = this.map.map.olMap.getLonLatFromPixel(ur_pixel);
+
+                this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
+                    ll_lonlat.lon,
+                    ur_lonlat.lat,
+                    ur_lonlat.lon,
+                    ll_lonlat.lat).toGeometry(), {});
+                this.feature.world_size = {
+                    x: ur_lonlat.lon - ll_lonlat.lon,
+                    y: ur_lonlat.lat - ll_lonlat.lat
+                };
+            }
+
             this.feature.geometry.rotate(rotation, new OpenLayers.Geometry.Point(center.lon, center.lat));
             this.layer.addFeatures(this.feature);
             this.layer.redraw();
@@ -315,9 +326,8 @@
         _updateElements: function() {
             var self = this;
 
-            if(true == this.popupIsOpen){
+            if(true === this.popupIsOpen){
                 if(null === this.layer) {
-
                     this.layer = new OpenLayers.Layer.Vector("Print", {
                         styleMap: new OpenLayers.StyleMap({
                             'default': $.extend({}, OpenLayers.Feature.Vector.style['default'], this.options.style)
@@ -369,48 +379,13 @@
             return data;
         },
 
-        _extractGeometriesFromFeature: function(feature) {
-            var verts = feature.geometry.getVertices();
-            if(feature.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
-                verts.push(verts[0]);
-            }
-            return [verts];
-        },
-
-        _extractGeometriesFromLayer: function(layer) {
-            var self = this;
-            return $.map(layer.features, self._extractGeometriesFromFeature);
-        },
-
-        _extractGeometriesFromMap: function(map) {
-            var self = this;
-            var lays = $.grep(map.layers, function(lay) {
-                return lay.name !== 'Print' && lay.CLASS_NAME === 'OpenLayers.Layer.Vector';
-            });
-            var geoms = $.map(lays, $.proxy(self._extractGeometriesFromLayer, this));
-            return geoms;
-            var all = [];
-            $.each(geoms, function(idx, val) {
-                $.merge(all, val);
-            });
-        },
-
         _printDirectly: function() {
             var form = $('form#formats', this.element),
-            extent = this._getPrintExtent();
-            form.find('div.layers').html('');
-            var template_key = this.element.find('select[name="template"]').val(),
+            extent = this._getPrintExtent(),
+            template_key = this.element.find('select[name="template"]').val(),
             format = this.options.templates[template_key].format,
             file_prefix = this.options.file_prefix;
-            
-            var feature_coords = new Array();
-            var feature_comp = this.feature.geometry.components[0].components;
-            for(var i = 0; i < feature_comp.length-1; i++) {
-                feature_coords[i] = new Object();
-                feature_coords[i]['x'] = feature_comp[i].x;
-                feature_coords[i]['y'] = feature_comp[i].y;
-            }
-         
+
             // Felder für extent, center und layer dynamisch einbauen
             var fields = $();
 
@@ -443,67 +418,87 @@
                 name: 'center[y]',
                 value: extent.center.y
             }));
-            
+
             $.merge(fields, $('<input />', {
                 type: 'hidden',
                 name: 'file_prefix',
                 value: file_prefix
             }));
             
+            // koordinaten fuer extent feature mitschicken
+            var feature_coords = new Array();
+            var feature_comp = this.feature.geometry.components[0].components;
+            for(var i = 0; i < feature_comp.length-1; i++) {
+                feature_coords[i] = new Object();
+                feature_coords[i]['x'] = feature_comp[i].x;
+                feature_coords[i]['y'] = feature_comp[i].y;
+            }
+            
             $.merge(fields, $('<input />', {
                 type: 'hidden',
                 name: 'extent_feature',
                 value: JSON.stringify(feature_coords)
-            }));
-              
-            var sources = this.map.getSourceTree(), num = 0;
-            
-            for(var i = 0; i < sources.length; i++) {
+            }));        
+            var schalter = 0;
+            // layer auslesen
+            var sources = this.map.getSourceTree(), lyrCount = 0;
+
+            for (var i = 0; i < sources.length; i++) {
                 var layer = this.map.map.layersList[sources[i].mqlid],
                 type = layer.olLayer.CLASS_NAME;
-                if(layer.olLayer.params.LAYERS.length === 0){
-                    continue;
-                }
-                if(0 !== type.indexOf('OpenLayers.Layer.')) {
-//                    window.console && console.log('Layer is of unknown type for print.', layer);
+                
+                if (schalter === 1 && layer.olLayer.params.LAYERS.length === 0){
                     continue;
                 }
 
-                if(layer.olLayer.type === 'vector') {
-                // Vector layers are all the same:
-                //   * Get all features as GeoJSON
-                //   * TODO: Get Styles...
-                // TODO: Implement this thing
-                } else if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
-                    $.merge(fields, $('<input />', {
-                        type: 'hidden',
-                        name: 'layers[' + num + ']',
-                        value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent()))
-                    }));
-                    num++;
+                if (0 !== type.indexOf('OpenLayers.Layer.')) {
+                    continue;
                 }
-            }    
-            
-            // overview
-            
+                
+                if (layer.olLayer.type === 'vector') {
+                    // Vector layers are all the same:
+                    //   * Get all features as GeoJSON
+                    //   * TODO: Get Styles...
+                    // TODO: Implement this thing
+                } else if (Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
+                    var source = sources[i],
+                            scale = this._getPrintScale(),
+                            toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: source.mqlid}};
+                    var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
+                    if (visLayers.layers.length > 0){            
+                        var prevLayers = layer.olLayer.params.LAYERS;
+                        layer.olLayer.params.LAYERS = visLayers.layers;
+                        
+                        var opacity = sources[i].configuration.options.opacity;
+                        var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
+                        lyrConf.opacity = opacity;
+                        
+                        $.merge(fields, $('<input />', {
+                            type: 'hidden',
+                            name: 'layers[' + lyrCount + ']',
+                            value: JSON.stringify(lyrConf)
+                        }));
+                        layer.olLayer.params.LAYERS = prevLayers;
+                        lyrCount++;
+                    }    
+                }             
+            }
+
+            // overview map
             var ovMap = this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap')[0],
             count = 0;
             if (undefined !== ovMap){
                 for(var i = 0; i < ovMap.layers.length; i++) {
                     var url = ovMap.layers[i].getURL(ovMap.map.getExtent());
-                    
                     var extent = ovMap.map.getExtent();
                     var mwidth = extent.getWidth();
-                    
                     var size = ovMap.size;
                     var width = size.w;
-                    
                     var res = mwidth / width;
-                    
                     var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
                     var scale_deg = Math.round(OpenLayers.Util.getScaleFromResolution(res));
-                    
-                    var overview = {};            
+
+                    var overview = {};
                     overview.url = url;
                     overview.scale = scale;
 
@@ -513,31 +508,44 @@
                         value: JSON.stringify(overview)
                     }));
                     count++;
-                } 
-            }                 
-            
-            // drawn features      
-            var feature_list = this._extractGeometriesFromMap(this.map.map.olMap);
-            var c = 0;   
-            for(var i = 0; i < feature_list.length; i++) {
-                
-                var point_array = new Array();
-                
-                for(var j = 0; j < feature_list[i].length; j++){
-                    point_array[j] = new Object();
-                    point_array[j]['x'] = feature_list[i][j].x;
-                    point_array[j]['y'] = feature_list[i][j].y;
                 }
-                
+            }
+
+            // feature from vector layer
+            var feature_list = this._extractFeaturesFromMap(this.map.map.olMap);
+            var c = 0;
+            for(var i = 0; i < feature_list.length; i++) {
+                var point_array = new Array();
+                for(var j = 0; j < feature_list[i].geom.length; j++){
+                    point_array[j] = new Object();
+                    point_array[j]['x'] = feature_list[i].geom[j].x;
+                    point_array[j]['y'] = feature_list[i].geom[j].y;
+                }
+
+                var feature = {};
+                feature.geom = point_array;
+                feature.type = feature_list[i].type;
+
                 $.merge(fields, $('<input />', {
                         type: 'hidden',
                         name: 'features[' + c + ']',
-                        value: JSON.stringify(point_array)
+                        value: JSON.stringify(feature)
                     }));
                 c++;
             }
             
+            // replace pattern
             
+            if (this.options.replace_pattern === 'undefined'){
+                for(var i = 0; i < this.options.replace_pattern.length; i++) {
+                    $.merge(fields, $('<input />', {
+                        type: 'hidden',
+                        name: 'replace_pattern[' + i + ']',
+                        value: JSON.stringify(this.options.replace_pattern[i])
+                    }));
+                }
+            }           
+                     
             $('div#layers').empty();
             fields.appendTo(form.find('div#layers'));
             
@@ -547,14 +555,28 @@
             form.get(0).setAttribute('action', url);
             form.attr('target', '_blank');
             form.attr('method', 'post');
-            
-            if (num === 0){
+
+            if (lyrCount === 0){
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
             }else{
                 //click hidden submit button to check requierd fields
+                this._checkFields()
                 form.find('input[type="submit"]').click();
-                //form.submit();
+                
             }
+        },
+                
+        _checkFields: function(){
+            $('#formats input[required]').on('change invalid', function() {
+            var textfield = $(this).get(0);
+            // 'setCustomValidity not only sets the message, but also marks
+            // the field as invalid. In order to see whether the field really is
+            // invalid, we have to remove the message first
+            textfield.setCustomValidity('');
+                if (!textfield.validity.valid) {
+                    textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));  
+                }
+            });
         },
 
         _getPrintSize: function() {
@@ -575,8 +597,60 @@
                     self.height = data['height'];
                     self._updateGeometry();
                 }
-            })
+            });
         },
+        
+        _extractGeometriesFromFeature: function(feature) {
+            var coords = [],
+                type;
+            if(!$.isArray(feature)) {
+                feature = [feature];
+            }
+            var onScreen = true;
+            $.each(feature, function(k, v){
+                if(v.onScreen() === true){
+                    var verts = v.geometry.getVertices();
+                    if(v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
+                        //verts.push(verts[0]);
+                        type = 'polygon';
+                    }
+                    if (v.geometry.CLASS_NAME === 'OpenLayers.Geometry.LineString' || v.geometry.CLASS_NAME === 'OpenLayers.Geometry.MultiLineString'){
+                        type = 'line';
+                    }
+                    if (v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point'){
+                        type = 'point';
+                    }
+                    coords.push(verts);
+                }else{
+                    onScreen = false;
+                }
+            });         
+            if (onScreen === false){
+                return;
+            }         
+            var feature = {};
+            feature.geom = coords[0];
+            feature.type = type;
+            
+            return feature;
+        },
+
+        _extractGeometriesFromLayer: function(layer) {
+            var self = this;
+            if (layer.options.name === 'rulerlayer'){
+                return self._extractGeometriesFromFeature(layer.features[0]);
+            }
+            return $.map(layer.features, self._extractGeometriesFromFeature);
+        },
+
+        _extractFeaturesFromMap: function(map) {
+            var self = this;
+            var layers = $.grep(map.layers, function(lay) {
+                return lay.name !== 'Print' && lay.CLASS_NAME === 'OpenLayers.Layer.Vector';
+            });
+            return $.map(layers, $.proxy(self._extractGeometriesFromLayer, this));
+        },
+        
         /**
          *
          */

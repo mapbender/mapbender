@@ -26,7 +26,6 @@ class ImageExportService
     public function export($content)
     {
         $this->data = json_decode($content, true);
-
         $this->format = $this->data['format'];
         $this->requests = $this->data['requests'];
         $this->getImages();
@@ -38,7 +37,14 @@ class ImageExportService
      */
     private function getImages()
     {
+        $temp_names = array();
         foreach ($this->requests as $k => $url) {
+            
+            $url = strstr($url, '&WIDTH', true);
+            $width = '&WIDTH=' . $this->data['width'];
+            $height = '&HEIGHT=' . $this->data['height'];
+            $url .= $width . $height;
+            
             $this->container->get("logger")->debug("Image Export Request Nr.: " . $k . ' ' . $url);
             $attributes = array();
             $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
@@ -49,7 +55,8 @@ class ImageExportService
                 HttpKernelInterface::SUB_REQUEST);
 
             $tempdir = $this->tempdir;
-            $imagename = $tempdir . '/tempimage' . $k;
+            $imagename = tempnam($tempdir, 'mb_imgexp');
+            $temp_names[] = $imagename;
 
             file_put_contents($imagename, $response->getContent());
             $im = null;
@@ -79,51 +86,42 @@ class ImageExportService
         }
 
         // create final merged image
-        $finalimagename = $tempdir . '/mergedimage.png';
+        $finalimagename = tempnam($tempdir, 'mb_imgexp_merged');
         $finalImage = imagecreatetruecolor($this->image_width,
             $this->image_height);
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $this->image_width,
             $this->image_height, $bg);
         imagepng($finalImage, $finalimagename);
-        foreach ($this->requests as $k => $url) {
+        foreach ($temp_names as $temp_name) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($tempdir . '/tempimage' . $k) && finfo_file($finfo,
-                    $tempdir . '/tempimage' . $k) == 'image/png') {
+            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
                 $dest = imagecreatefrompng($finalimagename);
-                $src = imagecreatefrompng($tempdir . '/tempimage' . $k);
+                $src = imagecreatefrompng($temp_name);
                 imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
                     $this->image_height);
                 imagepng($dest, $finalimagename);
             }
-            unlink($tempdir . '/tempimage' . $k);
+            unlink($temp_name);
             finfo_close($finfo);
         }
 
         $date = date("Ymd");
         $time = date("His");
 
+        $file = $finalimagename;
+        $image = imagecreatefrompng($file);
         if ($this->format == 'png') {
-            $file = $tempdir . '/mergedimage.png';
-            $image = imagecreatefrompng($file);
-            unlink($tempdir . '/mergedimage.png');
-            imagepng($image, $tempdir . '/export_temp.png');
-            $pngfile = $tempdir . '/export_temp.png';
             header("Content-type: image/png");
             header("Content-Disposition: attachment; filename=export_" . $date . $time . ".png");
-            header('Content-Length: ' . filesize($pngfile));
-            readfile($pngfile);
+            header('Content-Length: ' . filesize($file));
+            imagepng($image);
         } else {
-            $file = $tempdir . '/mergedimage.png';
-            $image = imagecreatefrompng($file);
-            unlink($tempdir . '/mergedimage.png');
-            imagejpeg($image, $tempdir . '/export_temp.jpg', 100);
-            $jpgfile = $tempdir . '/export_temp.jpg';
             header("Content-type: image/jpeg");
             header("Content-Disposition: attachment; filename=export_" . $date . $time . ".jpg");
-            header('Content-Length: ' . filesize($jpgfile));
-            readfile($jpgfile);
+            header('Content-Length: ' . filesize($file));
+            imagejpeg($image, null, 85);
         }
+        unlink($finalimagename);
     }
-
 }

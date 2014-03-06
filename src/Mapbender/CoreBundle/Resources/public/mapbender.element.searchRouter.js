@@ -2,11 +2,12 @@
 
     $.widget('mapbender.mbSearchRouter', {
         options: {
-            asDialog: true, // Display as jQuery UI dialog
+            asDialog: true,     // Display as jQuery UI dialog
             timeoutFactor: 2    // use delay * timeoutFactor before showing
-                // autocomplete again after a search has been
-                // started
+                                // autocomplete again after a search has been
+                                // started
         },
+
         callbackUrl: null,
         selected: null,
         highlightLayer: null,
@@ -16,6 +17,7 @@
         searchModel: null,
         autocompleteModel: null,
         popup: null,
+
         /**
          * Widget creator
          */
@@ -26,6 +28,7 @@
             var self = this;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
+
         _setup: function(){
             var self = this;
 
@@ -88,53 +91,60 @@
             }
             this._trigger('ready');
             this._ready();
+
+            if(this.options.autoOpen) {
+                this.open();
+            }
         },
+
+        defaultAction: function(callback){
+            this.open(callback);
+        },
+
         /**
          * Open method stub. Calls dialog's open method if widget is configured as
          * an dialog (asDialog: true), otherwise just goes on and does nothing.
          */
-        defaultAction: function(callback){
-            this.open(callback);
-        },
         open: function(callback){
             this.callback = callback ? callback : null;
-            if(true === this.options.asDialog){
-                var self = this;
-                var me = $(this.element);
-
+            if(true === this.options.asDialog) {
                 if(!this.popup || !this.popup.$element){
                     this.popup = new Mapbender.Popup2({
-                        title: self.element.attr('title'),
+                        title: this.element.attr('title'),
                         draggable: true,
                         modal: false,
                         closeButton: false,
                         closeOnPopupCloseClick: false,
                         closeOnESC: false,
-                        content: self.element,
+                        content: this.element,
                         width: 450,
+                        resizable: true,
+                        height: 350,
                         buttons: {
                             'cancel': {
                                 label: Mapbender.trans('mb.core.searchrouter.popup.btn.cancel'),
                                 cssClass: 'button buttonCancel critical right',
-                                callback: function(){
-                                    self.close();
-                                }
+                                callback: $.proxy(this.close, this)
+                            },
+                            'reset': {
+                                label: Mapbender.trans('mb.core.searchrouter.popup.btn.reset'),
+                                cssClass: 'button right',
+                                callback: $.proxy(this._reset, this)
                             },
                             'ok': {
                                 label: Mapbender.trans("mb.core.searchrouter.popup.btn.ok"),
                                 cssClass: 'button right',
-                                callback: function(){
-                                    $('form[name="' + self.selected + '"]', self.element).submit();
-                                }
+                                callback: $.proxy(this._search, this)
                             }
                         }
                     });
                 }else{
 
                 }
-                me.show();
+                this.element.show();
             }
         },
+
         /**
          * Close method stub. Calls dialog's close method if widget is configured
          * as an dialog (asDialog: true), otherwise just goes on and does nothing.
@@ -151,6 +161,7 @@
             }
             this.callback ? this.callback.call() : this.callback = null;
         },
+
         /**
          * Set up result table when a search was selected.
          *
@@ -169,11 +180,16 @@
                 form.get(0).reset();
             });
 
-            var container = $('.search-results', this.element).empty();
-            if('table' === this.options.routes[this.selected].results.view){
-                this._prepareResultTable(container);
-            }
+            $('.search-results', this.element).empty();
         },
+
+        /**
+         * Reset current search form
+         */
+        _reset: function() {
+            $('select#search_routes_route', this.element).change();
+        },
+
         /**
          * Set up autocomplete widgets for all inputs with data-autcomplete="on"
          *
@@ -193,6 +209,7 @@
                 select: this._autocompleteSelect
             }).keydown(this._autocompleteKeydown);
         },
+
         /**
          * Set up autocpmplete provided by custom widget (data-autcomplete="custom:<widget>")
          *
@@ -203,6 +220,7 @@
             var plugin = $(input).data('autocomplete').substr(7);
             $(input)[plugin]();
         },
+
         /**
          * Autocomplete source handler, does all Ajax magic.
          *
@@ -226,6 +244,7 @@
 
             target.data('autocompleteModel').submit(target, request);
         },
+
         /**
          * Store autocomplete key if suggestion was selected.
          *
@@ -237,6 +256,7 @@
                 $(event.target).attr('data-autocomplete-key', ui.item.key);
             }
         },
+
         /**
          * Remove stored autocomplete key when key was pressed.
          *
@@ -245,6 +265,7 @@
         _autocompleteKeydown: function(event){
             $(event.target).removeAttr('data-autocomplete-key');
         },
+
         /**
          * Autocomplete search handler.
          *
@@ -263,6 +284,24 @@
                 event.preventDefault();
             }
         },
+
+        /**
+         * Start a search, but only after successful form validation
+         */
+        _search: function() {
+            var form = $('form[name="' + this.selected + '"]', this.element);
+            var valid = true;
+            $.each($(':input[required]', form), function() {
+                if('' === $(this).val()) {
+                    valid = false;
+                }
+            });
+
+            if(valid) {
+                form.submit();
+            }
+        },
+
         /**
          * Prepare search result table
          */
@@ -286,14 +325,20 @@
 
             this._setupResultCallback();
         },
+
         /**
          * Update result list when search model's results property was changed
          */
         _searchResults: function(model, results, options){
-            if('table' === this.options.routes[this.selected].results.view){
+            if('table' === this.options.routes[this.selected].results.view) {
+                var container = $('.search-results', this.element);
+                if($('table', container).length === 0) {
+                    this._prepareResultTable(container);
+                }
                 this._searchResultsTable(model, results, options);
             }
         },
+
         /**
          * Rebuilds result table with search result data.
          *
@@ -318,7 +363,6 @@
                     d = feature.get('properties')[header];
                     row.append($('<td>' + (d || '') + '</td>'));
                 }
-                row.data('feature', feature);
                 tbody.append(row);
 
                 features.push(feature.getFeature());
@@ -327,6 +371,7 @@
             table.append(tbody);
             layer.addFeatures(features);
         },
+
         /**
          * Add active class to widget for styling when Ajax is running
          */
@@ -334,6 +379,7 @@
             var outer = this.options.asDialog ? this.element.parent() : this.element;
             outer.addClass('search-active');
         },
+
         /**
          * Remove active class from widget
          */
@@ -341,6 +387,7 @@
             var outer = this.options.asDialog ? this.element.parent() : this.element;
             outer.removeClass('search-active');
         },
+
         /**
          * Get highlight layer. Will construct one if neccessary.
          * @TODO: Backbonify (view)
@@ -361,6 +408,7 @@
 
             return this.highlightLayer;
         },
+
         /**
          * Set up result callback (zoom on click for example)
          */
@@ -378,6 +426,7 @@
                 this.resultCallbackEvent = event;
             }
         },
+
         /**
          * Result callback
          *
@@ -430,7 +479,16 @@
 
             // finally, zoom
             map.setCenter(featureExtent.getCenterLonLat(), zoom);
+
+            // And highlight new feature
+            var layer = feature.layer;
+            $.each(layer.selectedFeatures, function(idx, feature) {
+                layer.drawFeature(feature, 'default');
+            });
+            layer.drawFeature(feature, 'select');
+            layer.selectedFeatures.push(feature);
         },
+
         /**
          *
          */
@@ -441,6 +499,7 @@
                 this.readyCallbacks.push(callback);
             }
         },
+
         /**
          *
          */
@@ -452,5 +511,4 @@
             this.readyState = true;
         }
     });
-
 })(jQuery);

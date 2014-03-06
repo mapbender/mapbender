@@ -10,11 +10,13 @@ use Mapbender\CoreBundle\Component\ExtendedCollection;
 /**
  * 
  */
-class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollection
+class BaseSourceSwitcherAdminType extends AbstractType
+    implements ExtendedCollection
 {
     public $hasSubForm = true;
-    
-    public function isSubForm(){
+
+    public function isSubForm()
+    {
         return $this->hasSubForm;
     }
 
@@ -53,7 +55,7 @@ class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollec
                     foreach ($application->getLayersets() as $layerset) {
                         if (intval($mapconfig['layerset']) === $layerset->getId()) {
                             foreach ($layerset->getInstances() as $instance) {
-                                if ($instance->getEnabled())
+                                if ($instance->getEnabled() && $instance->isBaseSource())
                                         $instList[strval($instance->getId())] = $instance->getTitle();
                             }
                             break;
@@ -63,7 +65,8 @@ class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollec
                 }
             }
         }
-        $builder->add('tooltip', 'text', array('required' => false))
+        $builder->add('title', 'text', array('required' => true))
+            ->add('tooltip', 'text', array('required' => false))
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',

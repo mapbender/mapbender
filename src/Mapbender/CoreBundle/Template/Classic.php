@@ -40,7 +40,8 @@ class Classic extends Template
         $assets = array(
             'css' => array('@FOMCoreBundle/Resources/public/css/frontend/classic.css'),
             'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js'),
+                '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
+                '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
             'trans' => array()
         );
 

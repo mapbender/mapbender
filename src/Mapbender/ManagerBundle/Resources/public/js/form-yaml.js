@@ -5,6 +5,10 @@
     var form = $('form');
     var yaml = form.find('textarea.code-yaml');
     yaml.each(function() {
+        if('undefined' !== typeof $(this).data('editor')) {
+            return;
+        }
+
         var editor = CodeMirror.fromTextArea(this, {
             mode: 'yaml',
             lineNumbers: true,
@@ -15,6 +19,7 @@
             }
         });
         var hlLine = editor.setLineClass(0, "activeline");
+        $(this).data('editor', editor);
     });
 })();
 

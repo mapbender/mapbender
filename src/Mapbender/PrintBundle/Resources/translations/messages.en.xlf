@@ -2,10 +2,6 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="file.ext">
     <body>
-      <trans-unit id="50fd9c4ef28186f1a9457f7fdb5a9884" resname="mb.print.imageexport.chooseformat">
-        <source>mb.print.imageexport.chooseformat</source>
-        <target>Choose Export Format</target>
-      </trans-unit>
       <trans-unit id="814be710cc84cc30f8e43a9a2ee9efdf" resname="mb.print.imageexport.popup.btn.ok">
         <source>mb.print.imageexport.popup.btn.ok</source>
         <target>Export</target>
@@ -17,6 +13,10 @@
       <trans-unit id="95e1feff870b1aeaf9d2fba1cf105e12" resname="mb.print.imageexport.info.noactivelayer">
         <source>mb.print.imageexport.info.noactivelayer</source>
         <target>No active layer!</target>
+      </trans-unit>
+      <trans-unit id="50fd9c4ef28186f1a9457f7fdb5a9884" resname="mb.print.imageexport.chooseformat">
+        <source>mb.print.imageexport.chooseformat</source>
+        <target>Choose Export Format</target>
       </trans-unit>
       <trans-unit id="6bca6f7f34f01cc242ed9e94b644926c" resname="mb.print.imageexport.class.title">
         <source>mb.print.imageexport.class.title</source>

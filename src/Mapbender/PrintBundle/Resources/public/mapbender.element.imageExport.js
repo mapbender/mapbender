@@ -98,7 +98,7 @@
             var self = this;
             var sources = this.map.getSourceTree(), num = 0;
             var layers = new Array();
-
+            var imageSize = this.map.map.olMap.getCurrentSize();
             for(var i = 0; i < sources.length; i++){
                 var layer = this.map.map.layersList[sources[i].mqlid];
 
@@ -107,7 +107,7 @@
                 }
 
                 if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function'){
-                    var temp = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent());
+                    var temp = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
                     layers[num] = temp['url'];
                     num++;
                 }
@@ -120,7 +120,9 @@
 
                 var data = {
                     requests: layers,
-                    format: format
+                    format: format,
+                    width: imageSize.w,
+                    height: imageSize.h
                 };
                 var form = $('<form method="POST" action="' + url + '"  />');
                 $('<input></input>').attr('type', 'hidden').attr('name', 'data').val(JSON.stringify(data)).appendTo(form);

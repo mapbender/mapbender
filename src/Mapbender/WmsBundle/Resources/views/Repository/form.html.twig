@@ -1,6 +1,6 @@
 <fieldset class="serviceAddBox left box">
   <legend>{{"mb.wms.wmsloader.repo.form.label.ogcwms"|trans}}</legend>
-  <form action="{{path('mapbender_wms_repository_create')}}" method="post" novalidate="novalidate">
+  <form action="{{path('mapbender_manager_repository_create', {'managertype': form.vars.data.getManagertype()})}}" method="post" novalidate="novalidate">
       <label class="left labelInput" for="{{ form.originUrl.get('id') }}">{{"mb.wms.wmsloader.repo.form.label.serviceurl" | trans}}</label>
       {{ form_widget(form.originUrl) }}
       <div class="clearContainer"></div>

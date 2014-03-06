@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * 
+ *
  */
 class SearchRouterSelectType extends AbstractType
 {
@@ -38,8 +38,7 @@ class SearchRouterSelectType extends AbstractType
             $routes[$name] = $conf['title'];
         }
 
-        $builder->add('route', 'choice',
-            array(
+        $builder->add('route', 'choice', array(
             'choices' => $routes,
             'mapped' => false,
             'property_path' => false,
