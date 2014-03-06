@@ -61,6 +61,7 @@ class SearchRouter extends Element
     {
         return array(
             'js' => array(
+                '@MapbenderCoreBundle/Resources/public/mapquery/lib/openlayers/OpenLayers.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
                 'vendor/underscore.js',
