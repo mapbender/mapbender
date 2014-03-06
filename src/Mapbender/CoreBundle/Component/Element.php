@@ -406,8 +406,7 @@ abstract class Element
             'property_path' => false,
             'data' => $element,
             'permissions' => array(
-                'show' => array(
-                    1 => 'View')))
+                    1 => 'View'))
         );
 
         // Get configuration form, either basic YAML one or special form
