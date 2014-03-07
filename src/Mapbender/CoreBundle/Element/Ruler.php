@@ -36,7 +36,7 @@ class Ruler extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array(
             'js' => array('@MapbenderCoreBundle/Resources/public/mapbender.element.ruler.js',

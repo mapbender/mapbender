@@ -58,22 +58,18 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         $assets = array(
             'js' => array(
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/layertree.scss'),
-            'trans' => array('MapbenderCoreBundle:Element:layertree.json.twig')
+                '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
+                'mapbender.element.layertree.tree.js'),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/layertree.scss'),
+            'trans' => array(
+                'MapbenderCoreBundle:Element:layertree.json.twig')
         );
-        $config = parent::getConfiguration();
-        if (true) //@TODO
-                $assets["js"][] = 'mapbender.element.layertree.tree.js';
-        else if (isset($config["displaytype"]) && $config["displaytype"] === "list")
-                $assets["js"][] = 'mapbender.element.layertree.list.js';
-        else if (isset($config["displaytype"]) && $config["displaytype"] === "tree")
-                $assets["js"][] = 'mapbender.element.layertree.tree.js';
         return $assets;
     }
 

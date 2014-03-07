@@ -77,7 +77,7 @@ class WmcLoader extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         $js = array(
             'jquery.form.js',
@@ -86,7 +86,7 @@ class WmcLoader extends Element
         );
         return array(
             'js' => $js,
-            'css' => array('@MapbenderWmcBundle/Resources/public/sass/element/wmcloader.scss'),
+            'css' => array(),
             'trans' => array(
                 'MapbenderWmcBundle:Element:wmcloader.json.twig',
                 'MapbenderWmcBundle:Element:wmchandler.json.twig')
