@@ -41,7 +41,7 @@ class Configuration implements ConfigurationInterface {
                     ->defaultTrue()
                 ->end()
                 ->scalarNode('static_assets_cache_path')
-                    ->defaultValue('%kernel.root_dir%/../web/css/application')
+                    ->defaultValue('%kernel.root_dir%/../web/assets')
                 ->end()
             ->end();
 
