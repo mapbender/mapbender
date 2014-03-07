@@ -16,7 +16,7 @@ $searchRouterInputWidth:290px;
   }
   .dropdown{
     margin-left:-90px;
-    width:$searchRouterInputWidth + 90;
+    width:$searchRouterInputWidth;
   }
   .ui-helper-hidden-accessible{display: none;}
   .search-results{
@@ -29,6 +29,7 @@ $searchRouterInputWidth:290px;
   }
   td{padding-right:$space/2;}
   tr{@extend .linkButton}
+  .search-forms > form > div > div {clear:both;} // the ugly and unflexible way
 }
 // dublicate ! > components
 .ui-autocomplete{

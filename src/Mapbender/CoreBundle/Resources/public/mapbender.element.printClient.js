@@ -34,13 +34,6 @@
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
 
-            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
-            .bind('change', $.proxy(this._updateGeometry, this));
-            $('input[name="scale_text"], input[name="rotation"]', this.element)
-            .bind('keyup', $.proxy(this._updateGeometry, this));
-            $('select[name="template"]', this.element)
-            .bind('change', $.proxy(this._getPrintSize, this))
-            .trigger('change');
             this._trigger('ready');
             this._ready();
         },
@@ -65,6 +58,7 @@
                         closeOnESC: false,
                         content: self.element,
                         width: 320,
+                        cssClass: 'customPrintDialog',
                         buttons: {
                                 'cancel': {
                                     label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
@@ -88,7 +82,15 @@
                  }
             }
             me.show();
-
+            
+            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
+            .bind('change', $.proxy(this._updateGeometry, this));
+            $('input[name="scale_text"], input[name="rotation"]', this.element)
+            .bind('keyup', $.proxy(this._updateGeometry, this));
+            $('select[name="template"]', this.element)
+            .bind('change', $.proxy(this._getPrintSize, this))
+            .trigger('change');
+    
             this.popupIsOpen = true;
             this._loadPrintFormats();
             this._updateElements();
@@ -228,7 +230,7 @@
                     }
                 }
             }else{
-                $('#extra_fields').hide();
+                //$('#extra_fields').hide();
             }
 
         },
@@ -465,11 +467,16 @@
                     var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
                     if (visLayers.layers.length > 0){            
                         var prevLayers = layer.olLayer.params.LAYERS;
-                        layer.olLayer.params.LAYERS = visLayers.layers;                 
+                        layer.olLayer.params.LAYERS = visLayers.layers;
+                        
+                        var opacity = sources[i].configuration.options.opacity;
+                        var lyrConf = Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy);
+                        lyrConf.opacity = opacity;
+                        
                         $.merge(fields, $('<input />', {
                             type: 'hidden',
                             name: 'layers[' + lyrCount + ']',
-                            value: JSON.stringify(Mapbender.source[sources[i].type].getPrintConfig(layer.olLayer, this.map.map.olMap.getExtent(), sources[i].configuration.options.proxy))
+                            value: JSON.stringify(lyrConf)
                         }));
                         layer.olLayer.params.LAYERS = prevLayers;
                         lyrCount++;

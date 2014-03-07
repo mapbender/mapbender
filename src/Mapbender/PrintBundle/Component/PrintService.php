@@ -72,6 +72,8 @@ class PrintService
         foreach ($this->data['layers'] as $i => $layer) {
             $url = strstr($this->data['layers'][$i]['url'], 'BBOX', true);
             $this->layer_urls[$i] = $url;
+            //opacity
+            $this->layerOpacity[$i] = $this->data['layers'][$i]['opacity']*100;
         }
     }
 
@@ -170,11 +172,12 @@ class PrintService
                 //throw new \RuntimeException("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
 
-            if ($im !== null) {
-                imagesavealpha($im, true);
-                imagepng($im, $imagename);
+            if ($im !== null) {    
+                    imagealphablending($im, false);
+                    imagesavealpha($im, true);
+                    imagepng($im, $imagename);     
             }
-        }
+        } 
         // create final merged image
         $finalimagename = $tempdir . '/mergedimage.png';
         $finalImage = imagecreatetruecolor($this->image_width,
@@ -182,15 +185,19 @@ class PrintService
         $bg = ImageColorAllocate($finalImage, 255, 255, 255);
         imagefilledrectangle($finalImage, 0, 0, $this->image_width,
             $this->image_height, $bg);
-        imagepng($finalImage, $finalimagename);
         foreach ($this->layer_urls as $k => $url) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             if (file_exists($tempdir . '/tempimage' . $k) && finfo_file($finfo,
                     $tempdir . '/tempimage' . $k) == 'image/png') {
-                $dest = imagecreatefrompng($finalimagename);
+                $dest = $finalImage;
                 $src = imagecreatefrompng($tempdir . '/tempimage' . $k);
-                imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
-                    $this->image_height);
+                if ($this->layerOpacity[$k] !== 100){
+                    ImageCopyMerge($dest, $src, 0, 0, 0, 0, $this->image_width,
+                       $this->image_height, $this->layerOpacity[$k]);
+                }else{
+                    imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
+                        $this->image_height);
+                }
                 imagepng($dest, $finalimagename);
                 unlink($tempdir . '/tempimage' . $k);           
             }  
@@ -385,7 +392,7 @@ class PrintService
                     break;
                 default:
                     if (isset($this->data['extra'][$k])) {
-                        $pdf->Cell($this->conf['fields'][$k]['width'] * 10,
+                        $pdf->MultiCell($this->conf['fields'][$k]['width'] * 10,
                             $this->conf['fields'][$k]['height'] * 10,
                             utf8_decode($this->data['extra'][$k]));
                     }

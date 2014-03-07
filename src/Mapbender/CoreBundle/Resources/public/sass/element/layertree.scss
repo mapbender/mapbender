@@ -24,7 +24,7 @@
     }
 
     // show only layers which are toggled
-    .layers{display:none;}    
+    .layers{display:none;}
     &.showLeaves > .layers{display:block;}
 
     .leave{

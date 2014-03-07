@@ -3,11 +3,9 @@
 
 .elementFormMap{
   $label:100px;
-  height:380px;
-  overflow:auto;
   .labelInput{width:$label;}
   .checkWrapper{margin-bottom:$space/2;}
-  .dropdown, .input{width:$elementPopupWidth - $label - $space/2;}
+  .dropdown, .input{width:$elementPopupWidth - $label - $space;}
   .singleRow{
     float:right;
     width:$elementPopupWidth - $label - $space;

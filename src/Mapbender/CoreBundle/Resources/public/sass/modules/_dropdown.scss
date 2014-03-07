@@ -36,6 +36,7 @@
     width: 100%;
 
     li{
+      line-height: $lineHeight;
       padding-left: 5px;
       &:hover{
         color:$ciColor;

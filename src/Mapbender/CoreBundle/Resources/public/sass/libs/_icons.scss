@@ -13,6 +13,7 @@
 .icon{
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
+  font-family: 'FontAwesome';
 
   // some resets
   cursor: pointer;
@@ -42,27 +43,27 @@
   100%{transform:rotate(359deg)}
 }
 
-// 
+//
 // WATCHOUT:
 // firefox doesn't like the above 'icon' class selector.
 // So we choose here the ugly way...
 // What what in the butt... XD
-// 
-.iconCheckboxActive, .iconCheckboxHalf, .iconCheckbox, 
-.iconRadio, .iconRadioActive, .iconView, .iconHelp, 
-.iconLinkButton, .iconDown, .iconRight, .iconLeft, 
-.iconTop, .iconExpand, .iconExpandClosed, .iconMove, 
-.iconAbout, .iconPrint, .iconGps, .iconLayertree, 
-.iconLegend, .iconInfo, .iconInfoActive, .iconSearch, 
-.iconWms, .iconOpen, .iconClose, .iconActivity, 
-.iconCoordinates, .iconPrev, .iconNext, .iconZoomSelect, 
-.iconZoomMin, .iconZoomIn, .iconZoomOut, .iconZoomLevel, 
-.iconZoomLevelSelected, .iconAreaRuler, .iconFolder, 
-.iconFolderActive, .iconTarget, .iconGroup, .iconAdd, 
-.iconRemove, .iconOk, .iconEdit, .iconPublish, 
-.iconPublishActive, .iconAppDefault, .iconCancel, 
-.iconThumbsUp, .iconThumbsDown, .iconGroup, .iconUser, 
-.iconSettings, .iconSignOut, .iconSignIn, .iconMore, 
+//
+.iconCheckboxActive, .iconCheckboxHalf, .iconCheckbox,
+.iconRadio, .iconRadioActive, .iconView, .iconHelp,
+.iconLinkButton, .iconDown, .iconRight, .iconLeft,
+.iconTop, .iconExpand, .iconExpandClosed, .iconMove,
+.iconAbout, .iconPrint, .iconGps, .iconLayertree,
+.iconLegend, .iconInfo, .iconInfoActive, .iconSearch,
+.iconWms, .iconOpen, .iconClose, .iconActivity,
+.iconCoordinates, .iconPrev, .iconNext, .iconZoomSelect,
+.iconZoomMin, .iconZoomIn, .iconZoomOut, .iconZoomLevel,
+.iconZoomLevelSelected, .iconAreaRuler, .iconFolder,
+.iconFolderActive, .iconTarget, .iconGroup, .iconAdd,
+.iconRemove, .iconOk, .iconEdit, .iconPublish,
+.iconPublishActive, .iconAppDefault, .iconCancel,
+.iconThumbsUp, .iconThumbsDown, .iconGroup, .iconUser,
+.iconSettings, .iconSignOut, .iconSignIn, .iconMore,
 .iconCopy, .iconKey, .iconWarning{
   &:before{font-family: FontAwesome;}
 }
