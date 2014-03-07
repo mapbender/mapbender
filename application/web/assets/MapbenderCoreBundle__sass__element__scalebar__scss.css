@@ -1,0 +1,23 @@
+/* line 4, assetic_compassW8MwOE.scss */
+.mb-element-scaleline {
+  text-align: center;
+  display: inline-block; }
+  /* line 7, assetic_compassW8MwOE.scss */
+  .mb-element-scaleline .scaleBorder {
+    border-left: solid 2px #404040;
+    border-right: solid 2px #404040;
+    border-bottom: solid 2px #404040;
+    height: 5px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0; }
+
+/* line 19, assetic_compassW8MwOE.scss */
+.toolBar .mb-element-scaleline {
+  position: relative;
+  bottom: 5px;
+  padding-bottom: 5px; }
+  /* line 23, assetic_compassW8MwOE.scss */
+  .toolBar .mb-element-scaleline .scaleBorder {
+    border-color: white; }
