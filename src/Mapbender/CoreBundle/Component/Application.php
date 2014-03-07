@@ -149,6 +149,24 @@ class Application
         return $this->getTemplate()->render($format, $html, $css, $js, $trans);
     }
 
+    static public function listAssets()
+    {
+        $assets = array(
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/stubs.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.application.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
+                ),
+            'css' => array(
+            ),
+            'trans' => array(
+                '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
+            ));
+        return $assets;
+    }
+
     /**
      * Get the assets as an AsseticCollection.
      * Filters can be applied later on with the ensureFilter method.
@@ -167,27 +185,9 @@ class Application
         //$assets = new LazyAssetManager($this->container->get('assetic.asset_factory'));
         $assets = array();
 
-        if ($type === 'js') {
-            // Mapbender API
-            $file = '@MapbenderCoreBundle/Resources/public/stubs.js';
-            $this->addAsset($assets, $type, $file);
-            $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.js';
-            $this->addAsset($assets, $type, $file);
-            $file = '@MapbenderCoreBundle/Resources/public/mapbender.model.js';
-            $this->addAsset($assets, $type, $file);
-            // Translation API
-            $file = '@MapbenderCoreBundle/Resources/public/mapbender.trans.js';
-            $this->addAsset($assets, $type, $file);
-            // WDT fixup
-            if ($this->container->has('web_profiler.debug_toolbar')) {
-                $file = '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js';
-                $this->addAsset($assets, $type, $file);
-            }
-        }
-
-        if ($type === 'trans') {
-            $file = '@MapbenderCoreBundle/Resources/public/mapbender.trans.js';
-            $this->addAsset($assets, $type, $file);
+        $_assets = $this::listAssets();
+        foreach($_assets[$type] as $asset) {
+            $this->addAsset($assets, $type, $asset);
         }
 
         // Load all elements assets
@@ -337,7 +337,9 @@ class Application
 
     /**
      * Build an Assetic reference path from a given objects bundle name(space)
-     * and the filename/path within that bundles Resources/public folder
+     * and the filename/path within that bundles Resources/public folder.
+     *
+     * @todo: This is duplicated in DumpMapbenderAssetsCommand
      *
      * @param object $object
      * @param string $file

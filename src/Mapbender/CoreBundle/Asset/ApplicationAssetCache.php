@@ -16,13 +16,15 @@ class ApplicationAssetCache
     protected $inputs;
     protected $type;
     protected $targetPath;
+    protected $force;
 
-    public function __construct(ContainerInterface $container, $inputs, $type, $targetPath = null)
+    public function __construct(ContainerInterface $container, $inputs, $type, $force = false)
     {
         $this->container = $container;
         $this->inputs = $inputs;
         $this->type = $type;
-        $this->targetPath = $this->getTargetPath($targetPath);
+        $this->targetPath = $this->getTargetPath();
+        $this->force = $force;
     }
 
     public function fill($slug = null, $useTimestamp = false)
@@ -60,7 +62,7 @@ class ApplicationAssetCache
             // Then wrap it into a cached asset, which required as valid cache name first
             $name = str_replace(array('@', 'Resources/public/'), '', $input);
             $name = str_replace(array('/', '.', '-'), '__', $name);
-            $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, $useTimestamp);
+            $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, $useTimestamp, $this->force);
 
             // Dump the cached asset for one-time compilation
             $cachedAsset->dump();
@@ -101,7 +103,7 @@ class ApplicationAssetCache
         }
     }
 
-    protected function getTargetPath($targetPath = null)
+    protected function getTargetPath()
     {
         $route = $this->container->get('router')->getRouteCollection()->get('mapbender_core_application_assets');
         $target = realpath($this->container->get('kernel')->getRootDir() . '/../web/app.php') . $route->getPattern();

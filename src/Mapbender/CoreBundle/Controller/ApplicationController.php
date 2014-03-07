@@ -15,8 +15,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
-use Assetic\Factory\AssetFactory;
-use Assetic\Factory\LazyAssetManager;
 
 
 /**
@@ -75,15 +73,16 @@ class ApplicationController extends Controller {
         $useTimestamp = !$this->container->getParameter('mapbender.static_assets');
         $assets = $cache->fill($slug, $useTimestamp);
 
-
         // Determine last-modified timestamp for both DB- and YAML-based apps
         $application_update_time = new \DateTime();
         $application_entity = $this->getApplication($slug)->getEntity();
 
-        $factory = new AssetFactory('/');
-        $manager = new LazyAssetManager($factory);
+        $assets_mtime = 0;
+        foreach($assets as $asset) {
+            $assets_mtime = max($assets_mtime, $asset->getLastModified());
+        }
         $asset_modification_time = new \DateTime();
-        $asset_modification_time->setTimestamp($manager->getLastModified($assets));
+        $asset_modification_time->setTimestamp($assets_mtime);
 
         if($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
             $updateTime = max($application->getEntity()->getUpdated(), $asset_modification_time);

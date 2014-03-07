@@ -36,9 +36,8 @@ class Fullscreen extends Template
     /**
      * @inheritdoc
      */
-    public function getAssets($type)
+    static public function listAssets()
     {
-        parent::getAssets($type);
         $assets = array(
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
                            '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
@@ -47,7 +46,15 @@ class Fullscreen extends Template
                           '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
             'trans' => array()
         );
+        return $assets;
+    }
 
+    /**
+     * @inheritdoc
+     */
+    public function getAssets($type)
+    {
+        $assets = $this::listAssets();
         return $assets[$type];
     }
 
