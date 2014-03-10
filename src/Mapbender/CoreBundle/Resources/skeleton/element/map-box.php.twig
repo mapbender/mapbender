@@ -35,6 +35,10 @@ class {{ className }} extends Element {
             'target' => null);
     }
 
+    public function getWidgetName() {
+        return 'mapbender.mb{{ className }}';
+    }
+
     public function httpAction($action) {
         $response = new Response();
 

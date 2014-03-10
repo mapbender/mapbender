@@ -47,6 +47,10 @@ class {{ className }} extends Element {
         return $response;
     }
 
+    public function getWidgetName() {
+        return 'mapbender.mb{{ className }}';
+    }
+
     public function render() {
         return $this->get('templating')->render('{{ bundle }}:Element:{{ classNameLower }}.html.twig', array(
                 'id' => $this->getId(),

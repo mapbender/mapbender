@@ -57,6 +57,10 @@ class {{ className }} extends Element {
         return 'MapbenderManagerBundle:Element:button.html.twig';
     }
 
+    public function getWidgetName() {
+        return 'mapbender.mb{{ className }}';
+    }
+
     /**
      * If you want a custom button template, copy the button template from the
      * CoreBundle to your own bundle as a starter.
