@@ -25,7 +25,7 @@
     color:lighten($darkFontColor, 10%);
   }
 }
-.elementPopup{width:460px;}
+.elementPopup{width:$popupModalWidth;}
 
 
 
@@ -48,18 +48,11 @@
     display: block;
     margin-bottom: $space/2;
   }
-  textarea, input, .dropdown{width: 300px;}
+  textarea, input, .dropdown{min-width: 300px;}
   textarea{height:100px;}
   .messageBox{
     width:270px;
     @include absolute($space $space '' '');
-  }
-}
-.containerLayout{
-  .dropdown{
-    width:200px;
-    margin-bottom:$space;
-    margin-left:$space;
   }
 }
 .containerLayers{
@@ -68,7 +61,6 @@
 }
 .popup{
   .popupSubContent{
-    width: 440px;
     overflow: visible;
     .labelInput, .input{float:left;}
   }

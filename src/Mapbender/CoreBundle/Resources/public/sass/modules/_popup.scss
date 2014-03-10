@@ -12,11 +12,14 @@
 }
 .popupButtons{@include absolute('' $space $space 0);}
 .popupSubTitle{@extend .labelInput;}
-.popupContent, .popupSubContent{padding:0 $space;}
-.popupSubContent{width: $popupModalWidth;}
+.popupContent, .popupSubContent{
+  padding:0 20px;
+  margin-bottom: $space;
+}
+.popupSubContent{width: 100%;}
 .popup{
   min-width: 300px;
-  min-height: 200px;
+  min-height: 250px;
   position:relative;
   z-index:9999;
   width: $popupModalWidth;
@@ -70,8 +73,8 @@
     content: "\f054";
     display: block;
   }
-  .popupScroll{
-    overflow: auto;
-    @include absolute(70px 0 $space*3 0);
-  }
+}
+.popupScroll{
+  overflow: auto;
+  @include absolute(70px 0 $space*3 0);
 }

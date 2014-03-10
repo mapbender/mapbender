@@ -4,7 +4,6 @@
 .elementFormLegend{
   $label:90px;
   .labelInput{width:$label;}
-  .dropdown, .input{width:$elementPopupWidth - $label;}
   .checkWrapper{margin-bottom:$space/2;}
   .labelCheck{margin-right:$space;}
 }

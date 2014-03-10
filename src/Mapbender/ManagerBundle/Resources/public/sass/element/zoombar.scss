@@ -6,7 +6,6 @@
   .labelInput{width:$label;}
   .checkWrapper{margin-bottom:$space/2;}
   .labelCheck{margin-right:$space;}
-  .dropdown, .input, select{width:$elementPopupWidth - $label;}
   select{margin-bottom:$space/2;}
   .singleRow{
     .labelInput, & > .input{float:left;}

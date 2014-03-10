@@ -7,11 +7,13 @@
     height:150px;
     resize: none;
   }
+  .input{width:100%}
+  .dropdown{min-width:70%;}
+  .inputWrapper, select{width:70%;}
 }
 .defaultForm{
   $label:70px;
   .labelInput{width:$label;}
-  .input, .dropdown{width:$elementPopupWidth - $label;}
 }
 .collectionItem{
   clear:both;

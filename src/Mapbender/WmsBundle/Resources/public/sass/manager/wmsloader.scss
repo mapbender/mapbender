@@ -4,7 +4,6 @@
 .elementFormWmsLoader{
   $label:110px;
   .labelInput{width:$label;}
-  .dropdown, .input{width:$elementPopupWidth - $label  + $space;}
   .checkWrapper{margin-bottom:$space/2;}
   .labelCheck{margin-right:$space;}
 }

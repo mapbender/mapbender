@@ -14,10 +14,7 @@ $searchRouterInputWidth:290px;
     width:$searchRouterInputWidth;
     margin-bottom: $space;
   }
-  .dropdown{
-    margin-left:-90px;
-    width:$searchRouterInputWidth;
-  }
+  .dropdown{min-width:$searchRouterInputWidth;}
   .ui-helper-hidden-accessible{display: none;}
   .search-results{
     max-height:200px;

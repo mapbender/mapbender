@@ -59,6 +59,14 @@
     color:darken($noticeColor, 10%);
     background-color: lighten($noticeColor, 50%);
   }
+  &.error{
+    &:before{
+      @extend .icon;
+    }
+    @extend .iconThumbsDown;
+    color:darken($errorColor, 10%);
+    background-color: lighten($errorColor, 50%);
+  }
   &.kill{
     top:-100px;
     @include opacity(0);

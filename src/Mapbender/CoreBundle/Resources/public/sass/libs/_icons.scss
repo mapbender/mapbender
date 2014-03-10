@@ -64,7 +64,8 @@
 .iconPublishActive, .iconAppDefault, .iconCancel,
 .iconThumbsUp, .iconThumbsDown, .iconGroup, .iconUser,
 .iconSettings, .iconSignOut, .iconSignIn, .iconMore,
-.iconCopy, .iconKey, .iconWarning{
+.iconCopy, .iconKey, .iconWarning, .iconEmail, .iconTwitter,
+.iconFacebook, .iconGooglePlus{
   &:before{font-family: FontAwesome;}
 }
 
@@ -116,6 +117,10 @@
 .iconPoi:before{content:"\f08d";}
 .iconImageExport:before{content:"\f030";}
 .iconWarning:before{content:"\f071";}
+.iconEmail:before {content: "\f0e0";}
+.iconTwitter:before {content: "\f081";}
+.iconFacebook:before {content: "\f082";}
+.iconGooglePlus:before {content: "\f0d4";}
 
 // only backend
 .iconGroup:before{content: "\f0c0";}
