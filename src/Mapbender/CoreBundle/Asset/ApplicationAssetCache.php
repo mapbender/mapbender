@@ -50,6 +50,7 @@ class ApplicationAssetCache
         $cache = new FilesystemCache($static_assets_cache_path);
         foreach($this->inputs as $input) {
             if($input instanceof StringAsset) {
+                $manager->set($name, $input);
                 continue;
             }
 
