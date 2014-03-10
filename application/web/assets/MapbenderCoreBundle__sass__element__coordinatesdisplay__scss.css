@@ -1,0 +1,14 @@
+/* line 4, assetic_compassYs5IRt.scss */
+.iconCoordinates {
+  cursor: default;
+  vertical-align: baseline; }
+  /* line 7, assetic_compassYs5IRt.scss */
+  .iconCoordinates:before {
+    margin-right: 5px; }
+
+/* line 11, assetic_compassYs5IRt.scss */
+.contentPane .mb-element-coordsdisplay {
+  z-index: 20;
+  position: absolute;
+  right: 20px;
+  bottom: 40px; }

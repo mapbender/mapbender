@@ -1,0 +1,52 @@
+/* line 5, assetic_compassJPTTU2.scss */
+.mb-element-searchrouter {
+  display: none; }
+  /* line 8, assetic_compassJPTTU2.scss */
+  .mb-element-searchrouter .labelInput {
+    width: 90px;
+    float: left; }
+  /* line 12, assetic_compassJPTTU2.scss */
+  .mb-element-searchrouter .dropdown, .mb-element-searchrouter .input {
+    float: left;
+    width: 290px;
+    margin-bottom: 20px; }
+  /* line 17, assetic_compassJPTTU2.scss */
+  .mb-element-searchrouter .dropdown {
+    margin-left: -90px;
+    width: 290px; }
+  /* line 21, assetic_compassJPTTU2.scss */
+  .mb-element-searchrouter .ui-helper-hidden-accessible {
+    display: none; }
+  /* line 22, assetic_compassJPTTU2.scss */
+  .mb-element-searchrouter .search-results {
+    max-height: 200px;
+    overflow-y: auto; }
+  /* line 26, assetic_compassJPTTU2.scss */
+  .mb-element-searchrouter th {
+    text-align: left; }
+  /* line 30, assetic_compassJPTTU2.scss */
+  .mb-element-searchrouter td {
+    padding-right: 10px; }
+  /* line 32, assetic_compassJPTTU2.scss */
+  .mb-element-searchrouter .search-forms > form > div > div {
+    clear: both; }
+
+/* line 35, assetic_compassJPTTU2.scss */
+.ui-autocomplete {
+  z-index: 1000;
+  background-color: #FFF;
+  color: #858585;
+  cursor: pointer;
+  line-height: 21px;
+  max-width: 290px;
+  max-height: 200px;
+  overflow: auto;
+  border: solid 1px #c8c8c8;
+  font-size: 12px; }
+  /* line 47, assetic_compassJPTTU2.scss */
+  .ui-autocomplete li {
+    padding-left: 5px; }
+    /* line 49, assetic_compassJPTTU2.scss */
+    .ui-autocomplete li:hover {
+      color: #5b932a;
+      background-color: #f9f9f9; }

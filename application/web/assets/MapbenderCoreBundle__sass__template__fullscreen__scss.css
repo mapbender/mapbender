@@ -1,0 +1,115 @@
+/* -------------------------------------------------------------- LOGO */
+/* line 6, assetic_compassJeUFco.scss */
+.logoContainer {
+  position: relative;
+  z-index: 10;
+  display: inline-block;
+  padding: 10px 20px;
+  margin-left: 20px;
+  float: left;
+  background-color: white; }
+
+/* ---------------------------------------------------------- CONTENT */
+/* line 21, assetic_compassJeUFco.scss */
+.templateWrapper {
+  margin: 0 auto;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+
+/* line 25, assetic_compassJeUFco.scss */
+.contentPane {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Positioning */ }
+  /* line 29, assetic_compassJeUFco.scss */
+  .contentPane .left-top, .contentPane .right-top, .contentPane .left-bottom, .contentPane .right-bottom {
+    z-index: 1; }
+  /* line 32, assetic_compassJeUFco.scss */
+  .contentPane .left-top {
+    position: absolute;
+    top: 140px;
+    left: 20px; }
+  /* line 33, assetic_compassJeUFco.scss */
+  .contentPane .right-top {
+    position: absolute;
+    top: 60px;
+    right: 20px; }
+  /* line 34, assetic_compassJeUFco.scss */
+  .contentPane .left-bottom {
+    position: absolute;
+    bottom: 60px;
+    left: 20px; }
+  /* line 35, assetic_compassJeUFco.scss */
+  .contentPane .right-bottom {
+    position: absolute;
+    right: 20px;
+    bottom: 60px; }
+
+/* --------------------------------------------------------- TOOLBARS */
+/* line 43, assetic_compassJeUFco.scss */
+.toolBar {
+  z-index: 4; }
+  /* line 45, assetic_compassJeUFco.scss */
+  .toolBar.top {
+    position: relative; }
+  /* line 46, assetic_compassJeUFco.scss */
+  .toolBar.bottom {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0; }
+
+/* --------------------------------------------------------- SIDEPANE */
+/* line 55, assetic_compassJeUFco.scss */
+.sidePaneTabs {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: 40%;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out; }
+
+/* line 61, assetic_compassJeUFco.scss */
+.sidePane {
+  width: 10px;
+  z-index: 20; }
+  /* line 66, assetic_compassJeUFco.scss */
+  .sidePane.notCollapsable .sidePaneTabs {
+    display: none; }
+  /* line 69, assetic_compassJeUFco.scss */
+  .sidePane.left {
+    position: absolute;
+    top: 120px;
+    bottom: 60px;
+    left: 0; }
+    /* line 71, assetic_compassJeUFco.scss */
+    .sidePane.left .sidePaneTabs {
+      right: -32px; }
+  /* line 73, assetic_compassJeUFco.scss */
+  .sidePane.right {
+    position: absolute;
+    top: 80px;
+    right: 0;
+    bottom: 60px; }
+    /* line 75, assetic_compassJeUFco.scss */
+    .sidePane.right .sidePaneTabs {
+      left: -32px; }
+  /* line 77, assetic_compassJeUFco.scss */
+  .sidePane .sideContent {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0; }
+
+/* line 79, assetic_compassJeUFco.scss */
+.sidePaneOpened .sidePane {
+  width: 350px; }
