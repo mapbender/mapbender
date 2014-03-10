@@ -1,0 +1,4 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.sideContent .mb-button, {@extend .button;}

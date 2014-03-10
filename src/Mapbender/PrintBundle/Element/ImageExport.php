@@ -49,7 +49,7 @@ class ImageExport extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array('js' => array('mapbender.element.imageExport.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',

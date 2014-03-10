@@ -1,0 +1,526 @@
+@import "libs/variables";
+@import "libs/mixins";
+@import "libs/normalize";
+@import "libs/icons"; 
+
+@import "modules/base"; 
+@import "modules/layout";
+@import "modules/popup"; 
+@import "modules/text";
+@import "modules/input";
+@import "modules/button"; 
+@import "modules/seperator"; 
+@import "modules/tabcontainer";
+@import "modules/checkbox";
+@import "modules/dropdown";
+
+
+/* ------------------------------------------------------------- MISC */
+.mb-element-activityindicator{display:none;}
+.mb-activity, .mb-activity-ajax{
+  .mb-element-activityindicator{
+    display: inline-block;
+    -webkit-animation:spin 1s linear infinite;
+    -moz-animation:spin 1s linear infinite;
+    animation:spin 1s linear infinite;
+    @include text-shadow(0 0 1px black);
+  }
+}
+.mb-hiddenCheckbox{
+  position: absolute;
+  @include opacity(0);
+}
+.iconCoordinates{
+  cursor:default;
+  vertical-align: baseline;
+  &:before{margin-right:5px;}
+}
+.mb-element-copyright{
+  @include opacity(0.6);
+}
+.mb-element-copyright-link{
+  cursor:pointer;
+  color:$lightFontColor;
+  text-decoration:none;
+}
+.mb-element-copyright-dialog{display: none;}
+
+
+
+
+
+/* ---------------------------------------------------------- TOOLBAR */
+.logoContainer{background-image:url($headPatternUrl);}
+.toolBar{
+  @include frontendContainerStyle();
+  .labelInput{@include text-shadow(inherit);}
+
+  &.top{
+    padding:$space/4 $space/2 $space/4 $space/2;
+    .toolBarItem{
+      display:inline-block;
+      padding:5px;
+    }
+    border-bottom:solid 1px darken($contentColor, 20%);
+  }
+  &.bottom{
+    [class^="icon"]:before,[class*=" icon"]:before{font-size: 14px;}
+    padding:$space/4 $space/2 $space/4 $space/2;
+    .toolBarItem{
+      height:30px;
+      line-height:30px;
+      font-size:90%;
+      padding:5px;
+    }
+
+    .dropdownList{
+      bottom:0px;
+      margin-bottom: $inputHeight;
+    }
+  }
+  .toolBarItemActive{
+    background-color: $contentColor;
+    color:$firstColor;
+    @include text-shadow(1px 1px 0 white);
+    @include border-radius($radius);
+  }
+  .toolBarItem{
+    display:inline;
+  }
+  &.itemsRight{
+    text-align:right;
+    .toolBarItem{padding-left:$space/4;}
+  }
+  &.itemsCenter{
+    text-align:center;
+    .toolBarItem{padding-right:$space/2;}
+  }
+  // space between icon and label
+  .iconBig:before{padding-right:5px;}
+}
+
+
+
+
+
+/* --------------------------------------------------------- SIDEPANE */
+.sidePaneTabItem{
+  $buttonFirstColor:#6fb536;
+  $buttonSecondColor:#5fa229;
+
+  display: block;
+  padding:($space/4) ($space/2);
+  margin-bottom:5px;
+  color:$lightFontColor;
+  background-color:$buttonFirstColor;
+  text-align: center;
+  border:{
+    top:1px solid darken(white, 30%);
+    bottom:1px solid darken(white, 30%);
+  }
+
+  @extend .icon;
+  @extend .iconOpen;
+  @extend .buttonCore;
+  @include box-shadow(0 0 6px rgba(0,0,0,0.1),
+                      inset 0 -10px 10px $buttonSecondColor);
+}
+.sidePane{
+  overflow: visible;
+  background-image:url($contentPatternUrl);
+  border-top:1px solid darken(white, 30%);
+  border-bottom:1px solid darken(white, 30%);
+  @include transition(all 0.4s ease-in-out);
+
+  // style for the left side pane
+  &.left{
+    border-right:1px solid darken(white, 30%);
+    @include box-shadow(3px 0px 8px rgba(0, 0, 0, 0.1));
+  }
+
+  // style for the right side pane
+  &.right{
+    border-left:1px solid darken(white, 30%);
+    @include box-shadow(-3px 0px 8px rgba(0, 0, 0, 0.1));
+  }
+  .sideContent{
+    padding:$space;
+    display: none;
+  }
+}
+.sidePaneOpened{
+  .sideContent{
+    display:block;
+    overflow: auto;
+  }
+  .sidePaneTabItem{@extend .iconClose;}
+}
+/* -------------------------------------------- ELEMENTS */
+
+.sideContent{
+  .mb-aboutButton, .mb-gpsButton, 
+  .mb-button, {@extend .button;}
+}
+
+
+
+
+
+
+/* ----------------------------------------------------------- CONTENT */
+/* ----------------------------------------------- ELEMENTS */
+.dropdown{
+  text-align: left;
+  min-width: 200px;
+  @include text-shadow(none);
+}
+.hiddenDropdown{display:none;}
+
+.contentPane{
+  /* Activity indecator */
+  .mb-element-coordsdisplay{
+    z-index: 20;
+    @include pos('',$space,$space*2,'');
+  }
+
+  /* Scale display */
+  .mb-element-scaledisplay{
+    padding:$space/4 $space/2;
+    @include frontendContainerStyle();
+  }
+
+  /* Map */
+  .mb-element-map{
+    width:100%;
+    height:100%;
+    z-index: 1;
+    @include pos(0,0,0,0);
+  }
+}
+
+/* Navigation toolbar */
+.mb-element-zoombar{
+  &.iconMove:before{
+    @include pos(-$space,0,'','');
+  }
+}
+.pan{
+  height: 49px;
+  width: 49px;
+  position:relative;
+  @include border-radius(50%,50%);
+  @include frontendContainerStyle();
+
+  .iconTop{@include pos(1px,'','',18px);}
+  .iconRight{@include pos(15px,6px,'','');}
+  .iconDown{@include pos('','',1px,18px);}
+  .iconLeft{@include pos(15px,'','',7px);}
+}
+.toolPane{
+  margin:$space/2 5px 0px 5px;
+  padding:5px 0px;
+  @include border-radius($radius);
+  @include frontendContainerStyle();
+
+  & > li{margin:3px 0;}
+}
+.historyPrev, .historyNext{margin-left:5px;}
+.zoomBox{
+  text-align:center;
+  &.activeZoomIcon{
+    .iconZoom{@include opacity(1);}
+  }
+}
+.zoomWorld, .zoomSlider{text-align:center;}
+.zoomSliderLevels{margin:0px;}
+.iconZoomLevel{
+  font-size:10px;
+  line-height:10px;
+  margin-top:5px;
+  margin-bottom:10px;
+}
+.iconZoomOut, .iconZoomLevel{
+  position: relative;
+  display:block;
+}
+.iconZoomLevel{
+  &:not(:first-child):after{
+    content:'';
+    height:7px;
+    border-left:dotted 1px white;
+    @include pos(-8px,'','',19px);
+  }
+}
+
+.olMapViewport{
+  &.MapbenderControlZoomBoxActive{cursor: crosshair;}
+  .olHandlerBoxZoomBox {
+    border: 2px solid $firstColor;
+    background-color: white;
+    @include opacity(.8);
+  }
+}
+
+/* Overview */
+.mb-element-overview{
+  .toggleOverview{
+    $buttonFirstColor:#6fb536;
+    $buttonSecondColor:#5fa229;
+
+    padding:0px 6px;
+    color:$lightFontColor;
+    background-color:$buttonFirstColor;
+
+    @extend .icon;
+    @extend .iconClose;
+    @extend .buttonCore;
+    @include box-shadow(0 0 6px rgba(0,0,0,0.1),
+                        inset 0 -10px 10px $buttonSecondColor);
+    @include border-radius($radius);
+  }
+  .olMap{
+    background-color:white;
+    @include transition(width .2s linear);
+    @include box-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
+    & > div{
+        border:{
+        top:solid 3px $firstColor;
+        left:solid 1px $thirdColor;
+        right:solid 1px $thirdColor;
+        bottom:solid 1px $thirdColor;
+      }
+    }
+  }
+  &.closed{
+    .olMap{width:0px !important;}
+    .toggleOverview{
+      @extend .iconOpen;
+    }
+  }
+
+  &.right-top .toggleOverview{@include pos(0,'','',-25px);}
+  &.left-top .toggleOverview{@include pos(0,-25px,'','');}
+  &.right-bottom .toggleOverview{@include pos('','',0,-25px);}
+  &.left-bottom .toggleOverview{@include pos('',-25px,0,'');}
+}
+.olControlOverviewMapExtentRectangle {
+    overflow: hidden;
+    cursor: move;
+    border: 2px solid $firstColor;
+}
+.olControlOverviewMapRectReplacement {
+    @extend .icon;
+    @extend .iconTarget;
+    cursor: move;
+}
+
+/* Scalebar */
+.mb-element-scaleline{
+  text-align: center;
+  display: inline-block;
+  .scaleBorder{
+    border:{
+      left:solid 2px $firstColor;
+      right:solid 2px $firstColor;
+      bottom:solid 2px $firstColor;
+    }
+    height:5px;
+    @include pos('',0,0,0);
+  }
+}
+
+/* WMS Loader */
+.mb-element-wmsloader{
+  display: none;
+  .input{width:340px;}
+}
+
+/* Print client */
+.mb-element-printclient{
+  display:none;
+  overflow: visible;
+
+  .labelInput{width:60px;}
+  .input, .dropdown{
+    width:190px;
+    margin-bottom:$space/2;
+    min-width: 0px;
+  }
+}
+
+/* Layer tree */
+.mb-element-layertree{
+  .iconFolder{
+    display:none;
+    margin-right:5px;
+  }
+
+  // needed for the feature info icon
+  .featureInfoWrapper{
+    width:$space;
+    text-align:center;
+    &.iconCheckboxActive{@extend .iconInfoActive}
+  }
+  .serviceContainer, .groupContainer{
+    border-left:dotted 1px black;
+    margin-bottom:1px; // Fix for Firefox
+
+    // elements with childrens
+    & > .leaveContainer{
+      .iconFolder{display:block;}
+      .layer-title{@extend .subTitle;}
+    }
+
+    // show only layers which are toggled
+    .layers{display:none;}    
+    &.showLeaves > .layers{display:block;}
+
+    .leave{
+      margin-left:20px;
+      position: relative;
+      &.invisible{@include opacity(.3);}
+
+      &:before{
+        content:'';
+        display: block;
+        height:5px;
+        width:5px;
+        border-top:dotted 1px black;
+        @include pos(10px,'','',-15px);
+      }
+    }
+    .leaveContainer{
+      margin-left:-6px;
+      margin-top:1px; // Fix for Firefox
+    }
+  }
+  .checkWrapper{position: relative;}
+
+  [data-state="loading"]{
+    @include opacity(.7);
+    @extend .iconActivity;
+    &:before{
+      -webkit-animation:spin 1s linear infinite;
+      -moz-animation:spin 1s linear infinite;
+      animation:spin 1s linear infinite;
+      @include absolute('' $space*2 '' '');
+    }
+  }
+  [data-state="error"]{
+    @extend .iconWarning;
+    .layer-title{color:$errorColor !important;}// if error, overwrite the title color
+    &:before{
+      color:$errorColor;
+      @include absolute('' $space*2 '' '');
+    }
+  }
+}
+/* Legend */
+// notshow -> hide always legend item
+// notvisible -> hide legend item by user
+.notshow, .notvisible{display:none;}
+
+/* Search router */
+$searchRouterInputWidth:290px;
+.mb-element-searchrouter{
+  display: none;
+
+  .labelInput{
+    width:90px;
+    float:left;
+  }
+  .dropdown, .input{
+    float:left;
+    width:$searchRouterInputWidth;
+    margin-bottom: $space;
+  }
+  .dropdown{
+    margin-left:-90px;
+    width:$searchRouterInputWidth + 90;
+  }
+  .ui-helper-hidden-accessible{display: none;}
+  .search-results{
+    max-height:200px;
+    overflow-y: auto;
+  }
+  th{
+    @extend .subTitle;
+    text-align:left;
+  }
+  td{padding-right:$space/2;}
+  tr{@extend .linkButton}
+}
+// dublicate ! > components
+.ui-autocomplete{
+  z-index: 1000;
+  background-color: #FFF;
+  color:$secondColor;
+  cursor:pointer;
+  line-height:$lineHeight;
+  max-width: $searchRouterInputWidth;
+  max-height: 200px;
+  overflow: auto;
+  border:solid 1px lighten($thirdColor, 15%);
+  font-size: $fontSize - 2;
+
+  li{
+    padding-left: 5px;
+    &:hover{
+      color:$ciColor;
+      background-color:$contentColor;
+    }
+  }
+}
+
+/* WMC Editor */
+.mb-wmcEditor{
+  .tableCore{
+    width:100%;
+  }
+  th{text-align:left;}
+  .iconColumn{padding-left:$space/2;}
+  .iconAdd{color:$darkFontColor;}
+  .buttonBack{margin-left:$space;}
+  tr{vertical-align:top;}
+}
+.elementFormWMC{
+  .labelInput{
+    width:110px;
+    float:left;
+  }
+  .inputWrapper{margin-bottom:$space/2;}
+  .input{width:300px;}
+}
+
+
+/* ----------------------------------------------------------- TOOLBAR */
+/* ----------------------------------------------- ELEMENTS */
+.toolBar{
+  .mb-element-scaleline{
+    position: relative;
+    bottom:5px;
+    padding-bottom:5px;
+    .scaleBorder{border-color:$lightFontColor}
+  }
+}
+
+.mb-element-basesourceswitcher{
+  li{
+    padding:5px 7px;
+    background-color: #b5b5b5;
+    display:inline-block;
+    margin-right:-4px; 
+    color:$lightFontColor;
+    cursor:pointer;
+    @include text-shadow(none);
+    @include transition(all .2s ease-in-out);
+
+    &:first-child{@include border-left-radius($radius);}
+    &:last-child{@include border-right-radius($radius);}
+
+    &:hover, &[data-state="active"]{
+      color:$firstColor;
+      background-color: $contentColor;
+    }
+  }
+}

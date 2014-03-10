@@ -69,7 +69,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array(
             'js' => array(
@@ -78,7 +78,7 @@ class Map extends Element
                 'mapquery/src/jquery.mapquery.core.js',
                 'proj4js/proj4js-compressed.js',
                 'mapbender.element.map.js'),
-            'css' => array());
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/map.scss'));
     }
 
     /**

@@ -51,14 +51,14 @@ class Copyright extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array(
             'js' => array(
                 'mapbender.element.copyright.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
             ),
-            'css' => array()
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/copyright.scss')
         );
     }
 

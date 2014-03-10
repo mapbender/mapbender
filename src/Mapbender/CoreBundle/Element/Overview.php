@@ -74,12 +74,12 @@ class Overview extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array(
             'js' => array('mapbender.element.overview.js'),
             //TODO: Split up
-            'css' => array('mapbender.element.overview.css'));
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/overview.scss'));
     }
 
     /**
