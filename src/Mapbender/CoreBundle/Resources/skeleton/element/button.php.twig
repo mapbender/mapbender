@@ -3,20 +3,19 @@
 namespace {{ bundleNamespace }}\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class {{ className }} extends Element implements ElementInterface {
-    public function getTitle() {
+class {{ className }} extends Element {
+    public static function getClassTitle() {
         return "Please give me a title";
     }
 
-    public function getDescription() {
+    public static function getClassDescription() {
         return "Please give me a description";
     }
 
-    public function getTags() {
+    public static function getClassTags() {
         return array();
     }
 
@@ -30,19 +29,17 @@ class {{ className }} extends Element implements ElementInterface {
         );
     }
 
-    public function getConfiguration() {
-        $opts = $this->configuration;
-        $opts['text'] = $this->name;
-        // Resolve the run-time id of the target widget
-        if(array_key_exists('target', $this->configuration)) {
-            $elementId = $this->configuration['target'];
-            $finalId = $this->application->getFinalId($elementId);
-            $opts = array_merge($opts, array('target' => $finalId));
-        }
+    public static function getDefaultConfiguration() {
         return array(
-            'options' => $opts,
-            'init' => 'mb{{ className }}',
-        );
+            'title' => 'button',
+            'tooltip' => 'button',
+            'label' => true,
+            'icon' => null,
+            'target' => null,
+            'click' => null,
+            'group' => null,
+            'action' => null,
+            'deactivate' => null);
     }
 
     public function httpAction($action) {
@@ -56,15 +53,18 @@ class {{ className }} extends Element implements ElementInterface {
         return $response;
     }
 
+    public static function getFormTemplate() {
+        return 'MapbenderManagerBundle:Element:button.html.twig';
+    }
+
     /**
      * If you want a custom button template, copy the button template from the
      * CoreBundle to your own bundle as a starter.
      */
     public function render() {
         return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
-                'id' => $this->id,
-                'configuration' => $this->configuration,
-                'label' => $this->configuration['title']));
+                'id' => $this->getId(),
+                'configuration' => $this->entity->getConfiguration(),
+                'title' => $this->getTitle()));
     }
 }
-

@@ -3,20 +3,19 @@
 namespace {{ bundleNamespace }}\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class {{ className }} extends Element implements ElementInterface {
-    public function getTitle() {
+class {{ className }} extends Element {
+    public static function getClassTitle() {
         return "Please give me a title";
     }
 
-    public function getDescription() {
+    public static function getClassDescription() {
         return "Please give me a description";
     }
 
-    public function getTags() {
+    public static function getClassTags() {
         return array();
     }
 
@@ -31,19 +30,10 @@ class {{ className }} extends Element implements ElementInterface {
         );
     }
 
-    public function getConfiguration() {
-        $opts = $this->configuration;
-        $opts['text'] = $this->name;
-        // Resolve the run-time id of the target widget
-        if(array_key_exists('target', $this->configuration)) {
-            $elementId = $this->configuration['target'];
-            $finalId = $this->application->getFinalId($elementId);
-            $opts = array_merge($opts, array('target' => $finalId));
-        }
+    public static function getDefaultConfiguration() {
         return array(
-            'options' => $opts,
-            'init' => 'mb{{ className }}',
-        );
+            'title' => 'some element',
+            'target' => null);
     }
 
     public function httpAction($action) {
@@ -59,9 +49,8 @@ class {{ className }} extends Element implements ElementInterface {
 
     public function render() {
         return $this->get('templating')->render('{{ bundle }}:Element:{{ classNameLower }}.html.twig', array(
-                'id' => $this->id,
-                'configuration' => $this->configuration,
-                'label' => $this->name));
+                'id' => $this->getId(),
+                'configuration' => $this->entity->getConfiguration(),
+                'title' => $this->getTitle()));
     }
 }
-
