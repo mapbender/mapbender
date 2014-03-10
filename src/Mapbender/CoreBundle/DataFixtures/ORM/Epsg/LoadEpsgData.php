@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\CoreBundle\DataFixtures\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -21,16 +20,13 @@ class LoadEpsgData implements FixtureInterface
     {
         $filepath = __DIR__ . '/../../../Resources/proj4/proj4js_epsg.txt';
         $file = @fopen($filepath, "r");
-        while(!feof($file))
-        {
+        while (!feof($file)) {
             $help = trim(str_ireplace("\n", "", fgets($file)));
-            if(strlen($help) === 0)
-            {
+            if (strlen($help) === 0) {
                 continue;
             }
             $temp = explode("|", $help);
-            if($temp[0] === null || strlen($temp[0]) === 0)
-            {
+            if ($temp[0] === null || strlen($temp[0]) === 0) {
                 continue;
             }
             $srs = new SRS();

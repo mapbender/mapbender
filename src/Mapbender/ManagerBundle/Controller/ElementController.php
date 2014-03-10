@@ -38,7 +38,7 @@ class ElementController extends Controller
         foreach ($this->get('mapbender')->getElements() as $elementClassName) {
             $title = $trans->trans($elementClassName::getClassTitle());
             $tags = array();
-            foreach($elementClassName::getClassTags() as $tag){
+            foreach ($elementClassName::getClassTags() as $tag) {
                 $tags[] = $trans->trans($tag);
             }
             $elements[$title] = array(
@@ -211,6 +211,68 @@ class ElementController extends Controller
         } else {
             return array(
                 'form' => $form['type']->getForm()->createView(),
+                'theme' => $form['theme'],
+                'assets' => $form['assets']);
+        }
+    }
+
+    /**
+     * @ManagerRoute("/application/{slug}/element/{id}/security", requirements={"id" = "\d+"})
+     * @Template("MapbenderManagerBundle:Element:security.html.twig")
+     */
+    public function securityAction($slug, $id)
+    {
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+
+        $element = $this->getDoctrine()
+            ->getRepository('MapbenderCoreBundle:Element')
+            ->findOneById($id);
+
+        if (!$element) {
+            throw $this->createNotFoundException('The element with the id "'
+                . $id . '" does not exist.');
+        }
+        if ($this->getRequest()->getMethod() === 'POST') {
+            $form = ComponentElement::getElementForm($this->container,
+                    $application, $element, true);
+            $request = $this->getRequest();
+            $form['form']->bindRequest($request);
+            if ($form['form']->isValid()) {
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->getConnection()->beginTransaction();
+                try {
+                    $application->setUpdated(new \DateTime('now'));
+                    $em->persist($application);
+
+                    $aclManager = $this->get('fom.acl.manager');
+                    $aclManager->setObjectACLFromForm($element,
+                        $form['form']->get('acl'), 'object');
+                    $em->flush();
+                    $em->getConnection()->commit();
+                    $this->get('session')->setFlash('success',
+                        "Your element's access has been changed.");
+                } catch (\Exception $e) {
+                    $this->get('session')->setFlash('error',
+                        "There was an error trying to change your element's access.");
+                    $em->getConnection()->rollback();
+                    $em->close();
+
+                    if ($this->container->getParameter('kernel.debug')) {
+                        throw($e);
+                    }
+                }
+            } else {
+                return array(
+                    'form' => $form['form']->createView(),
+                    'theme' => $form['theme'],
+                    'assets' => $form['assets']);
+            }
+        } else {
+
+            $form = ComponentElement::getElementForm($this->container,
+                    $application, $element, true);
+            return array(
+                'form' => $form['form']->createView(),
                 'theme' => $form['theme'],
                 'assets' => $form['assets']);
         }
