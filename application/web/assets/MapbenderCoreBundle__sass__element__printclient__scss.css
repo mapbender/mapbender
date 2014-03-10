@@ -1,0 +1,12 @@
+/* line 4, assetic_compass2SHHbA.scss */
+.mb-element-printclient {
+  display: none;
+  overflow: visible; }
+  /* line 8, assetic_compass2SHHbA.scss */
+  .mb-element-printclient .labelInput {
+    width: 60px; }
+  /* line 9, assetic_compass2SHHbA.scss */
+  .mb-element-printclient .input, .mb-element-printclient .dropdown {
+    width: 190px;
+    margin-bottom: 10px;
+    min-width: 0px; }

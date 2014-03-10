@@ -1,0 +1,18 @@
+/* line 5, assetic_compasswmSPKJ.scss */
+.contentPane .mb-element-scaledisplay {
+  padding: 5px 10px;
+  color: white;
+  background-color: #606060;
+  background-color: rgba(0, 0, 0, 0.8); }
+  /* line 57, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_mixins.scss */
+  .contentPane .mb-element-scaledisplay [class^="icon"], .contentPane .mb-element-scaledisplay [class*=" icon"] {
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
+    opacity: 0.7;
+    -webkit-transition: opacity 0.2s ease-in-out;
+    -moz-transition: opacity 0.2s ease-in-out;
+    -o-transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out; }
+    /* line 60, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_mixins.scss */
+    .contentPane .mb-element-scaledisplay [class^="icon"]:hover, .contentPane .mb-element-scaledisplay [class*=" icon"]:hover {
+      filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+      opacity: 1; }
