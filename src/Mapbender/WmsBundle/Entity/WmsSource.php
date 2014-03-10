@@ -954,7 +954,7 @@ class WmsSource extends Source
         $instLayer_root->setInfo(Utils::getBool($queryable));
         $instLayer_root->setAllowinfo(Utils::getBool($queryable));
 
-        $instLayer_root->setToggle(true);
+        $instLayer_root->setToggle(false);
         $instLayer_root->setAllowtoggle(true);
 
         $instLayer_root->setPriority($num);
@@ -994,7 +994,7 @@ class WmsSource extends Source
             $instsublayer->setParent($instlayer);
             $instance->addLayer($instsublayer);
             if ($wmssublayer->getSublayer()->count() > 0) {
-                $instsublayer->setToggle(true);
+                $instsublayer->setToggle(false);
                 $instsublayer->setAllowtoggle(true);
             }
             $this->addSublayer($instsublayer, $wmssublayer, $num, $instance);
