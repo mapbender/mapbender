@@ -351,7 +351,7 @@
                         width: 350,
                         buttons: {
                             'ok': {
-                                label: 'Close',
+                                label: Mapbender.trans('mb.core.legend.popup.btn.ok'),
                                 cssClass: 'button right',
                                 callback: function(){
                                     self.close();

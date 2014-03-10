@@ -11,7 +11,6 @@ Mapbender.Model = {
     layersMaxExtent: {},
     highlightLayer: null,
     baseId: 0,
-
     init: function(mbMap){
         this.mbMap = mbMap;
         var self = this;
@@ -21,7 +20,7 @@ Mapbender.Model = {
             Proj4js.defs[this.srsDefs[i].name] = this.srsDefs[i].definition;
         }
 
-        if(typeof(this.mbMap.options.dpi) !== 'undefined'){
+        if(typeof (this.mbMap.options.dpi) !== 'undefined'){
             this.resolution = OpenLayers.DOTS_PER_INCH = this.mbMap.options.dpi;
         }
 
@@ -99,9 +98,9 @@ Mapbender.Model = {
             poiIcon = new OpenLayers.Icon(
                 Mapbender.configuration.application.urls.asset +
                 this.mbMap.options.poiIcon.image, {
-                w: this.mbMap.options.poiIcon.width,
-                h: this.mbMap.options.poiIcon.height
-            }, {
+                    w: this.mbMap.options.poiIcon.width,
+                    h: this.mbMap.options.poiIcon.height
+                }, {
                 x: this.mbMap.options.poiIcon.xoffset,
                 y: this.mbMap.options.poiIcon.yoffset
             });
@@ -146,14 +145,10 @@ Mapbender.Model = {
         }
 
         if(bbox){
-            this.center({
-                box: bbox.toArray()
-            });
+            this.map.olMap.zoomToExtent(bbox, true);
         }else{
             if(!centered){
-                this.center({
-                    box: start_extent.extent ? start_extent.extent.toArray() : start_extent.toArray()
-                });
+                this.map.olMap.zoomToExtent(start_extent.extent ? start_extent.extent : start_extent, true);
             }
         }
 
@@ -165,6 +160,9 @@ Mapbender.Model = {
         $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
         this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
         this.map.olMap.events.register('movestart', this, $.proxy(this._checkOutOfBounds, this));
+    },
+    getCurrentProj: function(){
+        return this.proj;
     },
     getProj: function(srscode){
         var proj = null;
@@ -182,6 +180,51 @@ Mapbender.Model = {
     getAllSrs: function(){
         return this.srsDefs;
     },
+    /**
+     * Calculates an extent from a geometry with buffer.
+     * @param {OpenLayers.Geometry} geom geometry
+     * @param {object} buffer {w: WWW,h: HHH}. WWW- buffer for x (kilometer), HHH- buffer for y (kilometer). 
+     * @returns {OpenLayers.Bounds}
+     */
+    calculateExtent: function(geom, buffer){
+        var proj = this.getCurrentProj(),
+            centroid = geom.getCentroid(),
+            bounds = geom.getBounds() ? geom.getBounds() : geom.calculateBounds(),
+            buffer_bounds = {w: (bounds.right - bounds.left) / 2, h: (bounds.top - bounds.bottom) / 2},
+        k, w, h;
+        if(proj.proj.units === 'degrees' || proj.proj.units === 'dd'){
+            var point_lonlat = new OpenLayers.LonLat(centroid.x, centroid.y);
+            var point_pixel = this.map.olMap.getViewPortPxFromLonLat(point_lonlat);
+            var point_geodesSize = this.map.olMap.getGeodesicPixelSize(point_pixel);
+            var lb = new OpenLayers.Pixel(point_pixel.x - buffer.w / point_geodesSize.w, point_pixel.y - buffer.h / point_geodesSize.h);
+            var rt = new OpenLayers.Pixel(point_pixel.x + buffer.w / point_geodesSize.w, point_pixel.y + buffer.h / point_geodesSize.h);
+            var lb_lonlat = this.map.olMap.getLonLatFromLayerPx(lb);
+            var rt_lonlat = this.map.olMap.getLonLatFromLayerPx(rt);
+            return new OpenLayers.Bounds(
+                lb_lonlat.lon - buffer_bounds.w,
+                lb_lonlat.lat - buffer_bounds.h,
+                rt_lonlat.lon + buffer_bounds.w,
+                rt_lonlat.lat + buffer_bounds.h);
+        }else if(proj.proj.units === 'm'){
+            w = buffer.w;
+            h = buffer.h;
+        }else if(proj.proj.units === 'ft'){
+            w = buffer.w / 0.3048;
+            h = buffer.h / 0.3048;
+        }else if(proj.proj.units === 'us-ft'){
+            k = 0.3048 * 0.999998; // k === us-ft
+            w = buffer.w / k;
+            h = buffer.h / k;
+        }else{
+            w = 0;
+            h = 0;
+        }
+        return new OpenLayers.Bounds(
+            centroid.x - 0.5 * w - buffer_bounds.w,
+            centroid.y - 0.5 * h - buffer_bounds.h,
+            centroid.x + 0.5 * w + buffer_bounds.w,
+            centroid.y + 0.5 * h + buffer_bounds.h);
+    },
     _convertLayerDef: function(layerDef){
         if(typeof Mapbender.source[layerDef.type] !== 'object'
             && typeof Mapbender.source[layerDef.type].create !== 'function'){
@@ -194,6 +237,9 @@ Mapbender.Model = {
     generateSourceId: function(){
         this.baseId++;
         return this.baseId.toString();
+    },
+    getMapExtent: function(){
+        return this.map.olMap.getExtent();
     },
     getMapState: function(){
         var proj = this.map.olMap.getProjectionObject();
@@ -248,7 +294,7 @@ Mapbender.Model = {
     },
     findSource: function(options){
         var sources = [];
-        function findSource(object, options){
+        var findSource = function (object, options){
             var found = null;
             for(key in options){
                 if(object[key]){
@@ -265,8 +311,7 @@ Mapbender.Model = {
                 }
             }
             return found;
-        }
-        ;
+        };
         for(var i = 0; i < this.sourceTree.length; i++){
             var source = this.sourceTree[i];
             if(findSource(source, options))
@@ -380,7 +425,7 @@ Mapbender.Model = {
                     break;
                 }
             }
-            
+
         });
     },
     /**
@@ -458,9 +503,55 @@ Mapbender.Model = {
     /**
      *
      */
-    highlightOff: function(){
-        if(this.highlightLayer)
+    highlightOff: function(features){
+        if(!features && this.highlightLayer){
             this.highlightLayer.remove();
+        }else if(features && this.highlightLayer){
+            var a = 0;
+            this.highlightLayer.olLayer.removeFeatures(features);
+        }
+    },
+    setOpacity: function(source, opacity){
+        if(typeof opacity === 'number' && !isNaN(opacity) && opacity >= 0 && opacity <= 1 && source){
+            source.configuration.options.opacity = opacity;
+            this.map.layersList[source.mqlid].opacity(opacity);
+        }
+    },
+    /**
+     * Zooms to layer
+     * @param {object} options of form { sourceId: XXX, layerId: XXX, inherit: BOOL }
+     */
+    zoomToLayer: function(options){
+        var sources = this.findSource({id: options.sourceId});
+        if(sources.length === 1){
+            var extents = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId, options.inherit);
+            var proj = this.map.olMap.getProjectionObject();
+            if(extents && extents[proj.projCode]){
+                this.mbMap.zoomToExtent( OpenLayers.Bounds.fromArray(extents[proj.projCode]), true);
+            }else{
+                var ext = null, extProj = null;
+                for(srs in extents){
+                    extProj = this.getProj(srs);
+                    if(extProj !== null){
+                        ext = OpenLayers.Bounds.fromArray(extents[srs]);
+                        var extObj = {
+                            projection: extProj,
+                            extent: OpenLayers.Bounds.fromArray(extents[srs])
+                        };
+                        var ext_new = this._transformExtent(extObj, proj);
+                        this.mbMap.zoomToExtent(ext_new, true);
+                        break;
+                    }
+                }
+            }
+        }
+    },
+    getLayerExtents: function(options){
+        var sources = this.findSource({id: options.sourceId});
+        if(sources.length === 1){
+            return Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId, options.inherit);
+        }
+        return null;
     },
     /**
      *
@@ -499,7 +590,7 @@ Mapbender.Model = {
                 mapQueryLayer.olLayer.events.register("loadstart", mapQueryLayer.olLayer, function(e){
                     self._sourceLoadStart(e);
                 });
-                mapQueryLayer.olLayer.events.register("tileloaded", mapQueryLayer.olLayer, function(e){
+                mapQueryLayer.olLayer.events.register("loadend", mapQueryLayer.olLayer, function(e){
                     var imgEl = $('div[id="' + e.element.id + '"]  .olImageLoadError');
                     if(imgEl.length > 0){
                         self._sourceLoadError(e, imgEl);
@@ -1009,16 +1100,15 @@ Mapbender.Model = {
             delete(this.layersMaxExtent[layer.id]);
         }
     },
-
-    parseURL: function() {
+    parseURL: function(){
         var self = this;
         var ids = Mapbender.urlParam('visiblelayers');
         ids = ids ? ids.split(',') : [];
-        if(ids.length) {
-            $.each(ids, function(idx, id) {
+        if(ids.length){
+            $.each(ids, function(idx, id){
                 var id = id.split('/');
                 var options = {};
-                if(1 < id.length) {
+                if(1 < id.length){
                     options.layers = {};
                     options.layers[id[1]] = {
                         options: {

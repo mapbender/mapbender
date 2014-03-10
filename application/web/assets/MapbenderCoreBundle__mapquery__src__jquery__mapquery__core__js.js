@@ -390,6 +390,8 @@ extent from the map. The coordinates are returned in displayProjection.
         }
     },
     _updateSelectFeatureControl: function(layerIds) {
+        // We ain't using that
+        return;
         var vectorLayers = [];
         var layersList = this.layersList;
         if (this.selectFeatureControl!==null) {

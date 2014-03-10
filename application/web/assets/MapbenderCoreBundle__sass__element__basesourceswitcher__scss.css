@@ -1,4 +1,4 @@
-/* line 5, assetic_compassaiXV1P.scss */
+/* line 5, assetic_compassfEDiBq.scss */
 .mb-element-basesourceswitcher li {
   padding: 5px 7px;
   background-color: #b5b5b5;
@@ -10,7 +10,7 @@
   -moz-transition: all 0.2s ease-in-out;
   -o-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out; }
-  /* line 14, assetic_compassaiXV1P.scss */
+  /* line 14, assetic_compassfEDiBq.scss */
   .mb-element-basesourceswitcher li:first-child {
     -moz-border-radius-topleft: 3px;
     -webkit-border-top-left-radius: 3px;
@@ -18,7 +18,7 @@
     -moz-border-radius-bottomleft: 3px;
     -webkit-border-bottom-left-radius: 3px;
     border-bottom-left-radius: 3px; }
-  /* line 15, assetic_compassaiXV1P.scss */
+  /* line 15, assetic_compassfEDiBq.scss */
   .mb-element-basesourceswitcher li:last-child {
     -moz-border-radius-topright: 3px;
     -webkit-border-top-right-radius: 3px;
@@ -26,7 +26,7 @@
     -moz-border-radius-bottomright: 3px;
     -webkit-border-bottom-right-radius: 3px;
     border-bottom-right-radius: 3px; }
-  /* line 17, assetic_compassaiXV1P.scss */
+  /* line 17, assetic_compassfEDiBq.scss */
   .mb-element-basesourceswitcher li:hover, .mb-element-basesourceswitcher li[data-state="active"] {
     color: #404040;
     background-color: #f9f9f9; }

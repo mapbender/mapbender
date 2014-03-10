@@ -7,16 +7,21 @@ var initDropdown = function(){
         var newElement, select;
 
         me.find("option").each(function(i, e){
-            $(e).addClass("opt-" + i)
-            newElement = $('<li class="item-' + i + '">' + $(e).text() + '</li>')
+            $(e).addClass("opt-" + i);
+            newElement = $('<li class="item-' + i + '">' + $(e).text() + '</li>');
             dropdownList.append(newElement);
         });
     }
 
     select = (me.find("option[selected=selected]").length > 0) ? "option[selected=selected]"
         : "option:first";
+
     me.find(".dropdownValue").text(me.find(select).text())
 
+    if(me.css("minWidth").replace("px", "") == "0"){
+        width = dropdownList.width();
+        me.width(width + 60); // space * 3
+    }
 };
 $(function(){
     // init dropdown list --------------------------------------------------------------------
