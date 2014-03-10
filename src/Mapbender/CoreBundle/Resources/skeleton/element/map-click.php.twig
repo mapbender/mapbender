@@ -56,7 +56,7 @@ class {{ className }} extends Element {
      * CoreBundle to your own bundle as a starter.
      */
     public function render() {
-        return $this->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
+        return $this->container->get('templating')->render('MapbenderCoreBundle:Element:button.html.twig', array(
                 'id' => $this->getId(),
                 'configuration' => $this->entity->getConfiguration(),
                 'title' => $this->getTitle()));
