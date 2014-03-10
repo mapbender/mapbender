@@ -1,0 +1,36 @@
+//--------------------------------------------------------------patterns
+$imageBasePath: "../../../mapbendercore/image";
+$iconBasePath: "../../../mapbendercore/fonts";
+
+$contentPatternUrl: $imageBasePath + "/content.png";
+$headPatternUrl: $imageBasePath + "/head.png";
+
+//------------------------------------------------------------------font
+$fontFamily:"Calluna Sans", "Gill Sans", Calibri, "Trebuchet MS", sans-serif;
+$fontSize:14px;
+
+//-----------------------------------------------------------------other
+$lineHeight:21px;
+$space: 20px;
+$radius: 3px;
+$popupModalWidth:460px;
+$popupMaxHeight:370px;
+$inputHeight:28px;
+
+$elementPopupWidth: $popupModalWidth - ($space * 3);
+//----------------------------------------------------------------colors
+$firstColor:#404040; // dark gray
+$secondColor:#858585; // middle gray
+$thirdColor:#a2a2a2;  // light gray
+$contentColor:#f9f9f9; // very light gray
+$errorColor:#aa2323; // red
+$hintColor:#2375a8; // blue
+$noticeColor:#22a522; // green
+
+$darkFontColor:#3f3f3f; // darker gray
+$middleFontColor:#707070; // lighter gray
+$lightFontColor:#fff; // white
+
+// the holy colors
+$ciColor:#5b932a; // green
+$ciColor2:#4899ba; // blue

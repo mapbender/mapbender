@@ -34,6 +34,11 @@ abstract class Template
         throw new \RuntimeException('getTitle must be implemented in subclasses');
     }
 
+    static public function listAssets()
+    {
+        return array();
+    }
+
     /**
      * Get the element assets.
      *
@@ -51,13 +56,8 @@ abstract class Template
      */
     public function getAssets($type)
     {
-        if($type !== 'css' && $type !== 'js' && $type !== 'trans')
-        {
-            throw new \RuntimeException('The asset type \'' . $type .
-                    '\' is not supported.');
-        }
-
-        return array();
+        $assets = self::listAssets();
+        return array_key_exists($type, $assets) ? $assets[$type] : array();
     }
 
     /**
@@ -80,7 +80,7 @@ abstract class Template
      * @return string $html The rendered HTML
      */
     abstract public function render($format = 'html', $html = true, $css = true, $js = true);
-    
+
     /**
      * Get the available regions properties.
      *
@@ -90,6 +90,6 @@ abstract class Template
     {
         return array();
     }
-    
+
 }
 

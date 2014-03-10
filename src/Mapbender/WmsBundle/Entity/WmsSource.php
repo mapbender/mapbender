@@ -1025,4 +1025,8 @@ class WmsSource extends Source
         $em->flush();
     }
 
+    public function update(Source $source)
+    {
+        
+    }
 }

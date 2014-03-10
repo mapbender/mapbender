@@ -1,0 +1,22 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.elementFormMap{
+  $label:100px;
+  .labelInput{width:$label;}
+  .checkWrapper{margin-bottom:$space/2;}
+  .dropdown, .input{width:$elementPopupWidth - $label - $space;}
+  .singleRow{
+    float:right;
+    width:$elementPopupWidth - $label - $space;
+    .labelInput, & > .input{float:left;}
+    .labelInput{
+      width:40px;
+      margin-right:5px;
+    }
+    .input{
+      width:80px;
+      &:first-child{margin-right:5px;}
+    }
+  }
+}

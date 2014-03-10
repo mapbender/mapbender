@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * WmsLoader
- * 
+ *
  * @author Karim Malhas
  * @author Paul Schmidt
  */
@@ -64,17 +64,29 @@ class WmsLoader extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         $files = array(
             'js' => array(
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                'mapbender.element.wmsloader.js'),
+                'mapbender.element.wmsloader.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js'),
             'css' => array(),
             'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));
+        return $files;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAssets()
+    {
+        $files = self::listAssets();
+
         $config = $this->getConfiguration();
-        if (isset($config['useDeclarative']) && $config['useDeclarative'] === true) {
-            $files['js'][] = "@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js";
+        if(!(isset($config['useDeclarative']) && $config['useDeclarative'] === true)) {
+            $idx = array_search('@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js', $files['js']);
+            unset($files['js'][$idx]);
         }
         return $files;
     }
@@ -130,8 +142,8 @@ class WmsLoader extends Element
     }
 
     /**
-     * Returns 
-     * 
+     * Returns
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function getCapabilities()
@@ -151,8 +163,8 @@ class WmsLoader extends Element
     }
 
     /**
-     * Returns 
-     * 
+     * Returns
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function signeUrl()
@@ -165,8 +177,8 @@ class WmsLoader extends Element
     }
 
     /**
-     * Returns 
-     * 
+     * Returns
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function signeSources()

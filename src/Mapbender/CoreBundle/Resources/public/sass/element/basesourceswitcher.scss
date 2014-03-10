@@ -1,0 +1,22 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.mb-element-basesourceswitcher{
+  li{
+    padding:5px 7px;
+    background-color: #b5b5b5;
+    display:inline-block;
+    margin-right:-4px;
+    color:$lightFontColor;
+    cursor:pointer;
+    @include transition(all .2s ease-in-out);
+
+    &:first-child{@include border-left-radius($radius);}
+    &:last-child{@include border-right-radius($radius);}
+
+    &:hover, &[data-state="active"]{
+      color:$firstColor;
+      background-color: $contentColor;
+    }
+  }
+}

@@ -237,9 +237,23 @@ abstract class Element
      *
      * @return array
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array();
+    }
+
+    /**
+     * Get the element assets.
+     *
+     * This should be a subset of the static function listAssets. Assets can be
+     * removed from the overall list depending on the configuration for
+     * example. By default, the same list as by listAssets is returned.
+     *
+     * @return array
+     */
+    public function getAssets()
+    {
+        return $this::listAssets();
     }
 
     /**

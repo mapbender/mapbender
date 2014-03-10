@@ -40,13 +40,13 @@ class Legend extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array(
             'js' => array(
                 'mapbender.element.legend.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js' ),
-            'css' => array(),
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/legend.scss'),
             'trans' => array('MapbenderCoreBundle:Element:legend.json.twig')
         );
     }

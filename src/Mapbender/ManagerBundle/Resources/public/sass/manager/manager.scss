@@ -1,0 +1,174 @@
+@import "libs/variables";
+@import "libs/mixins";
+@import "libs/normalize";
+@import "libs/icons";
+
+@import "modules/base";
+@import "modules/text";
+@import "modules/layout";
+@import "modules/popup";
+@import "modules/input";
+@import "modules/button";
+@import "modules/seperator";
+@import "modules/container";
+@import "modules/tabcontainer";
+@import "modules/checkbox";
+@import "modules/dropdown";
+@import "modules/table";
+
+$bannerHeight:170px;
+$contentPaneWidth:800px;
+$navWidth:200px;
+$pageWidth:$contentPaneWidth + $navWidth;
+
+
+
+
+
+// ------------------------------------------------------------------------ PAGE
+.page{
+  position:relative;
+  top:-$bannerHeight;
+  margin: 0 auto;
+  width:$pageWidth;
+}
+.iconBig, .iconSmall{
+  color:$darkFontColor;
+  margin-left:5px;
+  @include opacity(0.6);
+  &:hover{@include opacity(1);}
+}
+
+
+
+
+// -------------------------------------------------------------------- PAGE TOP
+.head{
+  position: relative;
+  height:$bannerHeight;
+
+  // remove broken head background when the page is smaller than defined width
+  min-width:$pageWidth;
+  border-top:solid 5px darken($firstColor, 10%);
+  background-image:url($headPatternUrl);
+  @include background(linear-gradient(rgba(255,255,255,.1),
+                                      rgba(255,255,255,0)),
+                      url($headPatternUrl));
+  hr{@include absolute('' 0 0 0);}
+}
+.accountBar{
+  color:$middleFontColor;
+  cursor:pointer;
+  padding:($space/4) ($space/2) ($space/4) ($space/2);
+  background-color:$contentColor;
+  @include absolute(0 0 '' '');
+}
+.accountMenu{
+  height:20px;
+  overflow: hidden;
+  position: relative;
+  @include transition(all 0.2s ease-in-out);
+  &.opened{height:65px;}
+  .iconDown{
+    padding-right:$space;
+    &:before{@include absolute('' 0 '' '');}
+  }
+}
+
+
+
+
+
+
+// ------------------------------------------------------------------- PAGE LEFT
+.leftPane{
+  width:$navWidth;
+  @include absolute(0 '' '' 0);
+
+  .navigation{background-color:$contentColor;}
+  .logo{
+    max-height:120px;
+    @include absolute($space '' '' ($space + $space/2));
+  }
+}
+.logoContainer{
+  position:relative;
+  height:$bannerHeight;
+}
+
+.navLevel1{
+  padding:$space/2 $space;
+  background-color:$contentColor;
+  border-left:solid 1px $thirdColor;
+  border-bottom:solid 1px $thirdColor;
+  @include absolute($bannerHeight 0 '' 0);
+
+  &>.navItem {display:block;}
+  & > .activeItem{
+    .navLevel2 > .navItem{display:block;}
+  }
+}
+.navLevel2, .navLevel3{margin-left:$space/2;}
+.navLevel2{
+  & > .activeItem{
+    .navLevel3 > .navItem{display:block;}
+  }
+}
+.navItem{
+  a {
+    &:before{margin-right:5px;}
+
+    font:{
+      family: $fontFamily;
+      size: $fontSize - 2;
+    }
+    color:$middleFontColor;
+    padding:($space/4) ($space/2);
+
+    &:hover{color:$darkFontColor;}
+  }
+  &.activeItem {
+    display: block;
+    & > a{color: $ciColor;}
+  }
+}
+
+
+
+
+
+// ------------------------------------------------------------------ PAGE RIGHT
+.rightPane{
+  width:$contentPaneWidth;
+  @include absolute(0 0 '' $navWidth);
+}
+
+
+
+
+
+// ----------------------------------------------------------------- PAGE CENTER
+.contentPane{
+  $top:$space*5;
+
+  padding-top:$top + $space;
+
+  & > .content{
+    min-height: 600px;
+    position:relative;
+    padding:$space;
+    margin:0px;
+    background-color:$contentColor;
+    background-image:url($contentPatternUrl);
+    border: {
+      top: solid 1px $secondColor;
+      left: solid 1px $thirdColor;
+      right: solid 1px $thirdColor;
+      bottom: solid 5px $thirdColor;
+    }
+  }
+  .mapbenderVersion{
+    color:$lightFontColor;
+    text-align:right;
+  }
+}

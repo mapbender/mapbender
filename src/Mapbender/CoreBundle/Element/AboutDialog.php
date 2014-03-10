@@ -40,14 +40,14 @@ class AboutDialog extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array(
             'js' => array(
                 'mapbender.element.button.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 'mapbender.element.aboutDialog.js'),
-            'css' => array());
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/about_dialog.scss' ));
     }
 
     /**

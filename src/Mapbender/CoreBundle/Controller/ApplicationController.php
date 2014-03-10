@@ -14,6 +14,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
+use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
+
 
 /**
  * Application controller.
@@ -64,65 +66,48 @@ class ApplicationController extends Controller {
      */
     public function assetsAction($slug, $type) {
         $response = new Response();
+
+        // Load required assets for application
         $application = $this->getApplication($slug);
-        $assets = $application->getAssets($type);
-        $asset_modification_time = new \DateTime();
-        $asset_modification_time->setTimestamp($assets->getLastModified());
+        $cache = new ApplicationAssetCache($this->container, $application->getAssets($type), $type);
+        $useTimestamp = !$this->container->getParameter('mapbender.static_assets');
+        $assets = $cache->fill($slug, $useTimestamp);
 
-        // @TODO: Make filters part of the bundle configuration
-        // @TODO: I'd like to have source maps support in here for easier
-        //      debugging of minified code, see
-        //      http://www.thecssninja.com/javascript/source-mapping
-        $filters = array(
-            'js' => array(),
-            'css' => array($this->container->get('assetic.filter.cssrewrite')),
-            'trans' => array());
-
-        // Set target path for CSS rewrite to work
-        // Replace backward slashes (Windows paths) with forward slashes...
-        $uri = $this->get('request')->getRequestUri();
-        $basepath = $this->get('request')->getBasePath();
-        $path = substr($uri, strlen($basepath));
-
-        $target = realpath($this->get('kernel')->getRootDir() . '/../web') . $path;
-        $target = str_replace('\\', '/', $target);
-
-        $mimetypes = array(
-            'css' => 'text/css',
-            'js' => 'application/javascript',
-            'trans' => 'application/javascript');
-
+        // Determine last-modified timestamp for both DB- and YAML-based apps
         $application_update_time = new \DateTime();
         $application_entity = $this->getApplication($slug)->getEntity();
 
-        // Determine last-modified timestamp for both DB- and YAML-based apps
+        $assets_mtime = 0;
+        foreach($assets as $asset) {
+            $assets_mtime = max($assets_mtime, $asset->getLastModified());
+        }
+        $asset_modification_time = new \DateTime();
+        $asset_modification_time->setTimestamp($assets_mtime);
+
         if($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
-            $updateTime = max($application->getEntity()->getUpdated(),
-                $asset_modification_time);
+            $updateTime = max($application->getEntity()->getUpdated(), $asset_modification_time);
         } else {
             $cacheUpdateTime = new \DateTime($this->container->getParameter('mapbender.cache_creation'));
             $updateTime = max($cacheUpdateTime, $asset_modification_time);
         }
 
+        // Create HTTP 304 if possible
         $response->setLastModified($updateTime);
+        $response->headers->set('X-Asset-Modification-Time', $asset_modification_time->format('c'));
         if($response->isNotModified($this->get('request'))) {
             return $response;
         }
 
-        // @TODO: I'd rather use $assets->dump, but that clones each asset
-        // which assigns a new weird targetPath. Gotta check that some time.
-        $parts = array();
-        foreach($assets->all() as $asset) {
-            foreach($filters[$type] as $filter) {
-                $asset->ensureFilter($filter);
-            }
-            $asset->setTargetPath($target);
-            $parts[] = $asset->dump();
-        }
+        /* @todo: Add per-application user CSS */
 
+        // Dump assets to client
+        $mimetypes = array(
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'trans' => 'application/javascript');
 
         $response->headers->set('Content-Type', $mimetypes[$type]);
-        $response->setContent(implode("\n", $parts));
+        $response->setContent($assets->dump());
         return $response;
     }
 
@@ -136,8 +121,6 @@ class ApplicationController extends Controller {
      */
     public function elementAction($slug, $id, $action) {
         $element = $this->getApplication($slug)->getElement($id);
-
-        //$this->checkAllowedRoles($element->getRoles());
 
         return $element->httpAction($action);
     }
