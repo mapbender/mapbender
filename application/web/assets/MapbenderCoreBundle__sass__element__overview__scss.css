@@ -1,0 +1,56 @@
+/* line 5, assetic_compassmqoygy.scss */
+.mb-element-overview .toggleOverview {
+  padding: 0px 6px;
+  color: white;
+  background-color: #6fb536;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px; }
+/* line 18, assetic_compassmqoygy.scss */
+.mb-element-overview .olMap {
+  background-color: white;
+  -webkit-transition: width 0.2s linear;
+  -moz-transition: width 0.2s linear;
+  -o-transition: width 0.2s linear;
+  transition: width 0.2s linear; }
+  /* line 21, assetic_compassmqoygy.scss */
+  .mb-element-overview .olMap > div {
+    border-top: solid 3px #404040;
+    border-left: solid 1px #a2a2a2;
+    border-right: solid 1px #a2a2a2;
+    border-bottom: solid 1px #a2a2a2; }
+/* line 31, assetic_compassmqoygy.scss */
+.mb-element-overview.closed .olMap {
+  width: 0px !important; }
+/* line 37, assetic_compassmqoygy.scss */
+.mb-element-overview.right-top .toggleOverview {
+  position: absolute;
+  top: 0;
+  left: -25px; }
+/* line 38, assetic_compassmqoygy.scss */
+.mb-element-overview.left-top .toggleOverview {
+  position: absolute;
+  top: 0;
+  right: -25px; }
+/* line 39, assetic_compassmqoygy.scss */
+.mb-element-overview.right-bottom .toggleOverview {
+  position: absolute;
+  bottom: 0;
+  left: -25px; }
+/* line 40, assetic_compassmqoygy.scss */
+.mb-element-overview.left-bottom .toggleOverview {
+  position: absolute;
+  right: -25px;
+  bottom: 0; }
+
+/* line 42, assetic_compassmqoygy.scss */
+.olControlOverviewMapExtentRectangle {
+  overflow: hidden;
+  cursor: move;
+  border: 2px solid #404040; }
+
+/* line 47, assetic_compassmqoygy.scss */
+.olControlOverviewMapRectReplacement {
+  cursor: move; }
