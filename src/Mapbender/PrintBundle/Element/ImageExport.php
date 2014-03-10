@@ -5,7 +5,7 @@ use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * 
+ *
  */
 class ImageExport extends Element
 {
@@ -54,7 +54,8 @@ class ImageExport extends Element
         return array('js' => array('mapbender.element.imageExport.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
-            'css' => array(),
+            'css' => array(
+                'sass/element/imageexport.scss'),
             'trans' => array('MapbenderPrintBundle:Element:imageexport.json.twig'));
     }
 
