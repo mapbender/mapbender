@@ -386,7 +386,11 @@ class Application
             $this->elements = array();
             foreach ($this->entity->getElements() as $entity) {
                 $application_entity = $this->getEntity();
-                if ($application_entity::SOURCE_YAML === $application_entity->getSource()
+                if ($application_entity::SOURCE_DB === $application_entity->getSource()){
+                    if(!$securityContext->isGranted('VIEW', $entity)){
+                        continue;
+                    }
+                } else if ($application_entity::SOURCE_YAML === $application_entity->getSource()
                     && count($entity->yaml_roles)) {
                     $passed = false;
                     foreach ($entity->yaml_roles as $role) {

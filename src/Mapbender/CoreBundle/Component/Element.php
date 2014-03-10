@@ -403,16 +403,26 @@ abstract class Element
      * @return dsd
      */
     public static function getElementForm($container, $application,
-        Entity $element)
+        Entity $element, $onlyAcl = false)
     {
         $class = $element->getClass();
 
         // Create base form shared by all elements
         $formType = $container->get('form.factory')->createBuilder('form',
-                $element, array())
-            ->add('title', 'text')
-            ->add('class', 'hidden')
-            ->add('region', 'hidden');
+            $element, array());
+        if (!$onlyAcl) {
+            $formType->add('title', 'text')
+                ->add('class', 'hidden')
+                ->add('region', 'hidden');
+        }
+        $formType->add('acl', 'acl',
+            array(
+            'property_path' => false,
+            'data' => $element,
+            'permissions' => array(
+                    1 => 'View'))
+        );
+
         // Get configuration form, either basic YAML one or special form
         $configurationFormType = $class::getType();
         if ($configurationFormType === null) {
@@ -432,7 +442,8 @@ abstract class Element
         } else {
             $type = new $configurationFormType();
             $options = array('application' => $application);
-            if($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null){
+            if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !==
+                null) {
                 $options['element'] = $element;
             }
             $formType->add('configuration', $type, $options);
