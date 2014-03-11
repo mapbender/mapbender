@@ -1,4 +1,4 @@
-<div class="elementForm">
+<div class="elementForm defaultForm elementFormBaseSourceSwitcher">
   <div class="clearContainer"></div>
   {{ form_label(form.title) }}{{ form_widget(form.title) }}
   <div class="clearContainer"></div>
@@ -6,12 +6,11 @@
   <div class="clearContainer"></div>
   {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
   <div class="clearContainer"></div>
-  
+
   {% if form.configuration.sourcesets is defined %}
   {{ form_label(form.configuration.sourcesets) }}{{ form_widget(form.configuration.sourcesets) }}
   <div class="clearContainer"></div>
   {% else %}
   <span>{{ 'mb.core.basesourceswitcher.form.mesage'| trans }}</span>
   {% endif %}
-  
 </div>

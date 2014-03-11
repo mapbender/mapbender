@@ -75,13 +75,13 @@ class Button extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array(
             'js' => array(
                 'mapbender.element.button.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js'),
-            'css' => array());
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/button.scss'));
     }
 
     /**

@@ -78,11 +78,11 @@ class ScaleDisplay extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array(
             'js' => array('mapbender.element.scaledisplay.js'),
-            'css' => array());
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/scaledisplay.scss'));
     }
 
     /**

@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface {
         $rootNode = $treeBuilder->root('mapbender_core');
 
         $defaultScreenshotPath = 'app_screenshots';
-	$defaultUploadDir = "uploads"; # from application/web
+    	$defaultUploadDir = "uploads"; # from application/web
 
         $rootNode
             ->children()
@@ -36,6 +36,12 @@ class Configuration implements ConfigurationInterface {
                 ->end()
                 ->scalarNode('screenshot_path')
                     ->defaultValue($defaultScreenshotPath)
+                ->end()
+                ->booleanNode('sass_assets')
+                    ->defaultFalse()
+                ->end()
+                ->scalarNode('static_assets_cache_path')
+                    ->defaultValue('%kernel.root_dir%/../web/assets')
                 ->end()
             ->end();
 

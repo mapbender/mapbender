@@ -1,0 +1,13 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.mb-element-printclient{
+  display:none;
+  overflow: visible;
+
+  .labelInput{width:60px;}
+  .input, .dropdown{
+    min-width:190px;
+    margin-bottom:$space/2;
+  }
+}

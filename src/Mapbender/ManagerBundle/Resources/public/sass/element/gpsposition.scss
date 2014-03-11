@@ -1,0 +1,8 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.elementFormGps{
+  $label:100px;
+  .labelInput{width:$label;}
+  .labelCheck{margin-right:$space;}
+}

@@ -1,0 +1,9 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.elementFormLayerTree{
+  $label:100px;
+  .labelInput{width:$label;}
+  .checkWrapper{margin-bottom:$space/2;}
+  .labelCheck{margin-right:$space;}
+}

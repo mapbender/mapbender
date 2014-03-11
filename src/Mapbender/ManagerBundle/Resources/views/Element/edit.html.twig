@@ -5,16 +5,6 @@
   {% else %}
   <form id="elementForm" action="{{ path('mapbender_manager_element_create', { 'slug': app.request.get('slug') }) }}" method="post" {{ form_enctype(form)}} novalidate="novalidate">
   {% endif %}
-
-    {{ form_row(form._token) }}
-    {{ form_row(form.class) }}
-    {{ form_row(form.region) }}
-
-    {% if theme is defined and theme != '' %}
-      {% include(theme) %}
-    {% else %}
-      {{ form_rest(form) }}
-    {% endif %}
-
+    {% include 'MapbenderManagerBundle:Element:form-basic.html.twig' %}
   </form>
 {% endblock %}

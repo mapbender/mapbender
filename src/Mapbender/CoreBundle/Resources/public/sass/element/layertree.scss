@@ -1,0 +1,118 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.mb-element-layertree{
+  .iconFolder{
+    display:none;
+    margin-right:5px;
+  }
+
+  // needed for the feature info icon
+  .featureInfoWrapper{
+    width:$space;
+    text-align:center;
+    &.iconCheckboxActive{@extend .iconInfoActive}
+  }
+  .serviceContainer, .groupContainer{
+    border-left:dotted 1px black;
+    margin-bottom:1px; // Fix for Firefox
+
+    // elements with childrens
+    & > .leaveContainer{
+      .iconFolder{display:block;}
+      .layer-title{@extend .subTitle;}
+    }
+
+    // show only layers which are toggled
+    .layers{display:none;}
+    &.showLeaves > .layers{display:block;}
+
+    .leave{
+      margin-left:20px;
+      position: relative;
+      &.invisible{@include opacity(.3);}
+
+      &:before{
+        content:'';
+        display: block;
+        height:5px;
+        width:5px;
+        border-top:dotted 1px black;
+        @include absolute(10px '' '' -15px);
+      }
+    }
+    .leaveContainer{
+      margin-left:-6px;
+      margin-top:1px; // Fix for Firefox
+    }
+  }
+  .checkWrapper{position: relative;}
+
+  [data-state="loading"]{
+    @include opacity(.7);
+    @extend .iconActivity;
+    &:before{
+      -webkit-animation:spin 1s linear infinite;
+      -moz-animation:spin 1s linear infinite;
+      animation:spin 1s linear infinite;
+      @include absolute('' $space*2 '' '');
+    }
+  }
+  [data-state="error"]{
+    @extend .iconWarning;
+    .layer-title{color:$errorColor !important;}// if error, overwrite the title color
+    &:before{
+      color:$errorColor;
+      @include absolute('' $space*2 '' '');
+    }
+  }
+}
+.layer-menu-btn{
+  position: relative;
+}
+.layer-menu{
+  position: absolute;
+  background-color: white;
+  padding: $space/2;
+  margin-top: $space/2;
+  margin-left: -5px;
+  z-index: 20;
+  min-width: 120px;
+  max-width: 200px;
+  border:solid 1px $thirdColor;
+  @include border-radius($radius);
+
+  &:before{
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-bottom:10px solid $firstColor;
+    border-left:10px solid transparent;
+    border-right:10px solid transparent;
+    @include absolute(-$space/2 '' '' 0);
+  }
+}
+$layer-opacity-bar-height: 5px;
+.layer-opacity-bar{
+  position: relative;
+  color:$lightFontColor;
+  height: $layer-opacity-bar-height;
+  background-color: $thirdColor;
+  width: 100px;
+  margin-bottom: $space;
+  @include border-radius(2px);
+}
+.layer-opacity-handle{
+  position: absolute;
+  top: -$layer-opacity-bar-height;
+  left: 0;
+  cursor: pointer;
+  width: 30px;
+  height: 16px;
+  line-height: 16px;
+  background-color:#6fb536;
+  font-size: 12px;
+  text-align:center;
+  @include border-radius(4px);
+}

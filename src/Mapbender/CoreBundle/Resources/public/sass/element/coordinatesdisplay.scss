@@ -1,0 +1,15 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.iconCoordinates{
+  cursor:default;
+  vertical-align: baseline;
+  &:before{margin-right:5px;}
+}
+
+.contentPane{
+  .mb-element-coordsdisplay{
+    z-index: 20;
+    @include pos('',$space,$space*2,'');
+  }
+}

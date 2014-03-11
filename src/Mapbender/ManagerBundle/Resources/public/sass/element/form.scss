@@ -1,0 +1,27 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.elementForm{
+  .labelInput{margin-bottom:$space/2;}
+  textarea{
+    height:150px;
+    resize: none;
+  }
+  .input{width:100%}
+  .dropdown{min-width:70%;}
+  .inputWrapper, select{width:70%;}
+}
+.defaultForm{
+  $label:70px;
+  .labelInput{width:$label;}
+}
+.collectionItem{
+  clear:both;
+  & > .labelInput{display:none;}
+  .labelInput{clear:both;}
+  textarea{
+    height:100px;
+    margin-bottom:$space;
+  }
+}
+.collectionRemove{line-height:$inputHeight;}

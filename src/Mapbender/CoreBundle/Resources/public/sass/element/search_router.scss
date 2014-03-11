@@ -1,0 +1,51 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+$searchRouterInputWidth:290px;
+.mb-element-searchrouter{
+  display: none;
+
+  .labelInput{
+    width:90px;
+    float:left;
+  }
+  .dropdown, .input{
+    float:left;
+    width:$searchRouterInputWidth;
+    margin-bottom: $space;
+  }
+  .dropdown{min-width:$searchRouterInputWidth;}
+  .ui-helper-hidden-accessible{display: none;}
+  .search-results{
+    max-height:200px;
+    overflow-y: auto;
+  }
+  th{
+    @extend .subTitle;
+    text-align:left;
+  }
+  td{padding-right:$space/2;}
+  tr{@extend .linkButton}
+  .search-forms > form > div > div {clear:both;} // the ugly and unflexible way
+}
+// dublicate ! > components
+.ui-autocomplete{
+  z-index: 1000;
+  background-color: #FFF;
+  color:$secondColor;
+  cursor:pointer;
+  line-height:$lineHeight;
+  max-width: $searchRouterInputWidth;
+  max-height: 200px;
+  overflow: auto;
+  border:solid 1px lighten($thirdColor, 15%);
+  font-size: $fontSize - 2;
+
+  li{
+    padding-left: 5px;
+    &:hover{
+      color:$ciColor;
+      background-color:$contentColor;
+    }
+  }
+}

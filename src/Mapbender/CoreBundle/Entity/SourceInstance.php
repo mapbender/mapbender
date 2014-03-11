@@ -118,13 +118,37 @@ abstract class SourceInstance
     }
 
     /**
-     * Returns assets
+     * Get the source assets.
      *
-     * @return array assets
+     * Returns an array of references to asset files of the given type.
+     * Assets are grouped by css and javascript.
+     * References can either be filenames/path which are searched for in the
+     * Resources/public directory of the element's bundle or assetic references
+     * indicating the bundle to search in:
+     *
+     * array(
+     *   'foo.css'),
+     *   '@MapbenderCoreBundle/Resources/public/foo.css'));
+     *
+     * @return array
+     */
+    static public function listAssets()
+    {
+        return array();
+    }
+
+    /**
+     * Get the source assets.
+     *
+     * This should be a subset of the static function listAssets. Assets can be
+     * removed from the overall list depending on the configuration for
+     * example. By default, the same list as by listAssets is returned.
+     *
+     * @return array
      */
     public function getAssets()
     {
-        return array();
+        return $this::listAssets();
     }
 
     /**
@@ -251,8 +275,8 @@ abstract class SourceInstance
      * @param EntityManager $em
      */
     public abstract function copy(EntityManager $em);
-    
-    
+
+
     public function __toString()
     {
         return $this->getId();

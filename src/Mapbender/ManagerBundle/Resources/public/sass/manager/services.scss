@@ -1,0 +1,209 @@
+@import "libs/variables";
+@import "libs/mixins";
+@import "libs/icons";
+@import "modules/text";
+
+// ------------------------------------------------------------- SERVICES
+.listFilterInput{
+  margin-bottom:$space;
+  width:250px;
+}
+.listFilterServiceBoxes{
+  $col1Width: 60px;
+
+  .col1{width:$col1Width;}
+  .col2{margin-left: $col1Width;}
+}
+
+
+
+
+
+
+// ---------------------------------------------------------- ADD SERVICE
+.serviceAddBox{
+  $labelWidth:70px;
+  $inputWidth:300px;
+
+  margin-right:$space;
+
+  .labelInput{width:$labelWidth;}
+  .input{
+    margin-bottom:$space/2;
+    width: $inputWidth;
+  }
+}
+
+
+
+
+
+
+// --------------------------------------------------------- VIEW SERVICE
+.serviceContainer{
+  .labelText{float:left;}
+  .metaText{@extend .smallText;}
+  margin-bottom:$space;
+}
+.serviceMetaContainer{
+  $labelWidth:120px;
+
+  .labelText{width:$labelWidth;}
+  .metaText{margin-left:$labelWidth + $space/2;}
+  .metaUrl{word-wrap: break-word;}
+}
+.serviceContactContainer{
+  $labelWidth:90px;
+
+  .labelText{width:$labelWidth; }
+  .metaText{margin-left:$labelWidth + $space/2; }
+}
+.serviceServiceContainer{
+  $labelWidth:160px;
+
+  .labelText{width:$labelWidth;}
+  .metaText{margin-left:$labelWidth + $space/2; }
+  .metaFormats{line-height:1em;margin-top:0.6em;}
+}
+.serviceLayersContainer{
+  $labeText:85px;
+
+  .list, li{clear:both;}
+  .list{
+    border-left:dashed 1px darken(#fff, 20%);
+    margin-bottom:$space/2;
+    &.closed{
+      & > li{display:none;}
+      & > .openCloseTitle{display:block;}
+    }
+    li{margin-left:$space;}
+
+    // no margin for labeltext lists ...
+    ul.left li{
+      margin-left:0px;
+      // ... and metatext below lists
+      .metaText{margin-left:0px;}
+    }
+  }
+  .labelText{
+    width:$labeText;
+    margin-right:$space/2;
+  }
+  .openCloseTitle{
+    color:$darkFontColor;
+    cursor:pointer;
+    display: inline-block;
+    margin-left:-10px !important;
+    background-color:$contentColor;
+    padding-left:5px;
+    height:17px;
+    font-style:italic;
+
+    @include opacity(1);
+
+    &.iconSmall:before{margin-right:$space/2;}
+  }
+  .closed .openCloseTitle{background-color:$contentColor;}
+  .metaText{
+    display: block;
+    margin-left:$labeText + $space/2;
+    word-wrap: break-word;
+  }
+}
+
+
+
+
+
+// --------------------------------------------------------- EDIT SERVICE
+.instanceContainer{
+  .linkButton{display:inline-block;}
+  .labelInput{
+    width:100px;
+    display: inline-block;
+  }
+  .dropdown{
+    min-width:250px;
+    margin-bottom:$space/2;
+  }
+  .checkWrapper, .labelCheck{
+    display: inline-block;
+    margin-top:8px;
+    height:$inputHeight;
+  }
+  .leftContainer{margin-right:$space;}
+  .rightContainer{width:200px;} // omg is this ugly!
+}
+.instanceTable{
+  margin-top:$space;
+  margin-bottom:$space;
+
+  .checkboxColumn{text-align:center;}
+  .odd{background-color:darken($contentColor, 6%);}
+
+  thead .checkboxColumn{padding:0px;}
+  tbody{
+    .input, .dropdown{min-width:100%;}
+    .titleColumn{width:220px;}
+    .minScaleColumn, .maxScaleColumn, .styleColumn{width:90px;}
+    .checkboxColumn{padding:5px 3px 5px 3px;}
+    .checkWrapper{margin-top:5px;width: 100%;}
+  }
+  .dummy{display:none;}
+  .iconLinkButton{
+    font-size:18px;
+    line-height:$inputHeight + 10;
+    margin-left:$space;
+    padding:0px;
+  }
+  .moreColumn{padding-left:0px;}
+  .iconMore{
+    position: relative;
+    line-height:$inputHeight;
+  }
+}
+.infoMsgBox{
+  z-index: 10;
+  min-width: 260px;
+  padding: 3px $space/2 3px $space/2;
+  background-color: white;
+  border:solid 1px $thirdColor;
+  @include pos(-8px,$space + $space/2,'','');
+
+  @include opacity(1);
+  @include border-radius($radius);
+  @include transition(all 0.2s ease-in-out);
+
+  &.hide{
+    @include opacity(0);
+    @include pos('',1000px,'','');
+  }
+
+  // small arrow left
+  &:after, &:before {
+    position: absolute;
+    left: 100%;
+    border: solid transparent;
+    content: "";
+    height: 0;
+    width: 0;
+  }
+  &:after{
+    border-left-color: $firstColor;
+    border-width: 4px;
+    top: $space - 7px;
+    margin-top: -4px;
+  }
+  &:before{
+    border-left-color: $firstColor;
+    border-width: 6px;
+    top: $space - 7px;
+    margin-top: -5px;
+  }
+
+  .labelText{
+    width:100px;
+    display:inline-block;
+  }
+  .dropdown{min-width:130px !important;}
+}

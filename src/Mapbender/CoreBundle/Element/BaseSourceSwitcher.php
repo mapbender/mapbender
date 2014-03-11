@@ -77,10 +77,11 @@ class BaseSourceSwitcher extends Element
     /**
      * @inheritdoc
      */
-    public function getAssets()
+    static public function listAssets()
     {
         return array(
-            'js' => array('mapbender.element.basesourceswitcher.js')
+            'js' => array('mapbender.element.basesourceswitcher.js'),
+            'css'=> array('@MapbenderCoreBundle/Resources/public/sass/element/basesourceswitcher.scss')
         );
     }
 
