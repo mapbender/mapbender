@@ -237,6 +237,7 @@ parameters:
                         titleMaxLength: 20
                         showBaseSource: true
                         layerRemove: true
+                        menu: false
                     overview:
                         title: Overview
                         class: Mapbender\CoreBundle\Element\Overview
@@ -273,6 +274,7 @@ parameters:
                         titleMaxLength: 20
                         showBaseSource: true
                         layerRemove: true
+                        menu: [opacity,zoomtolayer]
                 footer:
                     activityindicator:
                         class: Mapbender\CoreBundle\Element\ActivityIndicator
@@ -516,6 +518,7 @@ parameters:
                         showHeader: false
                         layerMenu: false
                         layerRemove: false
+                        menu: false
                     overview:
                         title: Overview
                         class: Mapbender\CoreBundle\Element\Overview
