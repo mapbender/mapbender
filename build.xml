@@ -224,7 +224,7 @@
 
     <target name="prepare" depends="deps,doc">
         <exec command="application/app/console assets:install application/web/" />
-        <exec command="application/app/console assetic:dump --env=prod --no-debug" />
+        <exec command="application/app/console assetic:dump --env=dev" />
         <exec command="application/app/console mapbender:assets:dump --env=prod" />
         <exec command="application/app/console doctrine:database:drop --force" />
         <exec command="application/app/console doctrine:database:create" />

@@ -25,7 +25,7 @@ assetic:
         cssrewrite: ~
         sass: ~
         compass:
-            style: nested
+            style: compressed
             load_paths:
                  - "%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/public/sass"
 
