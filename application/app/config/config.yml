@@ -105,4 +105,4 @@ ows_proxy3_core:
 
 # Mapbender Configuration
 mapbender_core:
-    static_assets: %use_static_assets%
+    sass_assets: false

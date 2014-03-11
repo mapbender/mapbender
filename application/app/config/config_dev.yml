@@ -20,7 +20,7 @@ monolog:
             level: info
 
 assetic:
-    use_controller: true
+    use_controller: %sass_assets%
     filters:
         cssrewrite: ~
         sass: ~
@@ -29,5 +29,5 @@ assetic:
             load_paths:
                  - "%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/public/sass"
 
-#swiftmailer:
-#    delivery_address: me@example.com
+mapbender_core:
+    sass_assets: %sass_assets%

@@ -25,6 +25,6 @@ parameters:
     cookie_secure: false
     cookie_lifetime: 3600
 
-    use_static_assets: true
+    sass_assets: false
     compass_path: ~
     ruby_path: ~
