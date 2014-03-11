@@ -1,14 +1,1 @@
-/* line 4, assetic_compassKuXuu1.scss */
-.iconCoordinates {
-  cursor: default;
-  vertical-align: baseline; }
-  /* line 7, assetic_compassKuXuu1.scss */
-  .iconCoordinates:before {
-    margin-right: 5px; }
-
-/* line 11, assetic_compassKuXuu1.scss */
-.contentPane .mb-element-coordsdisplay {
-  z-index: 20;
-  position: absolute;
-  right: 20px;
-  bottom: 40px; }
+.iconCoordinates{cursor:default;vertical-align:baseline}.iconCoordinates:before{margin-right:5px}.contentPane .mb-element-coordsdisplay{z-index:20;position:absolute;right:20px;bottom:40px}

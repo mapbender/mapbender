@@ -1,0 +1,978 @@
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, nav, section, summary {
+  display: block; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+audio, canvas, video {
+  display: inline;
+  zoom: 1; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+audio:not([controls]) {
+  display: none;
+  height: 0; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+[hidden] {
+  display: none; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+html, button, input, select, textarea {
+  font-family: sans-serif; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+a:focus {
+  outline: thin dotted; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+a:active, a:hover {
+  outline: 0; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+h1 {
+  font-size: 2em;
+  margin: .67em 0; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+h2 {
+  font-size: 1.5em;
+  margin: .83em 0; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+h3 {
+  font-size: 1.17em;
+  margin: 1em 0; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+h4 {
+  font-size: 1em;
+  margin: 1.33em 0; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+h5 {
+  font-size: .83em;
+  margin: 1.67em 0; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+h6 {
+  font-size: .67em;
+  margin: 2.33em 0; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+abbr[title] {
+  border-bottom: 1px dotted; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+b, strong {
+  font-weight: 700; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+blockquote {
+  margin: 1em 40px; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+dfn {
+  font-style: italic; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+mark {
+  background: #ff0;
+  color: #000; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+code, kbd, pre, samp {
+  font-family: monospace, serif;
+  _font-family: 'courier new', monospace;
+  font-size: 1em; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+q {
+  quotes: none; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+q:before, q:after {
+  content: none; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+small {
+  font-size: 80%; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+sub, sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+sup {
+  top: -.5em; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+sub {
+  bottom: -.25em; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+dd {
+  margin: 0 0 0 40px; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+menu, ol, ul {
+  padding: 0 0 0 40px; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+nav ul, nav ol {
+  list-style: none;
+  list-style-image: none; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+img {
+  border: 0;
+  -ms-interpolation-mode: bicubic; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+svg:not(:root) {
+  overflow: hidden; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+fieldset {
+  border: 1px solid silver;
+  margin: 0 2px;
+  padding: .35em .625em .75em; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+legend {
+  border: 0;
+  white-space: normal;
+  margin-left: -7px;
+  padding: 0; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+button, input, select, textarea {
+  font-size: 100%;
+  vertical-align: middle;
+  margin: 0; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+button, input {
+  line-height: normal; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+button, html input[type=button],
+input[type=reset], input[type=submit] {
+  -webkit-appearance: button;
+  cursor: pointer;
+  overflow: visible; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+button[disabled], input[disabled] {
+  cursor: default; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+input[type=checkbox], input[type=radio] {
+  box-sizing: border-box;
+  height: 13px;
+  width: 13px;
+  padding: 0; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+input[type=search] {
+  -webkit-appearance: textfield;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-search-decoration {
+  -webkit-appearance: none; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+button::-moz-focus-inner, input::-moz-focus-inner {
+  border: 0;
+  padding: 0; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+textarea {
+  overflow: auto;
+  vertical-align: top; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+body, figure, form {
+  margin: 0; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_normalize.scss */
+p, pre, dl, menu, ol, ul {
+  margin: 1em 0; }
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url("../../bundles/mapbendercore/fonts/fontawesome-webfont.eot");
+  src: url("../../bundles/mapbendercore/fonts/fontawesome-webfont.eot") format("embedded-opentype"), url("../../bundles/mapbendercore/fonts/fontawesome-webfont.woff") format("woff"), url("../../bundles/mapbendercore/fonts/fontawesome-webfont.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal; }
+
+/* line 13, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+[class^="icon"],
+[class*=" icon"],
+.icon,
+.flashBox.success:before {
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  font-family: 'FontAwesome';
+  cursor: pointer;
+  display: inline;
+  width: auto;
+  height: auto;
+  vertical-align: top; }
+
+/* line 25, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconBig {
+  line-height: 20px; }
+  /* line 27, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+  .iconBig:before {
+    font-family: FontAwesome;
+    font-size: 20px; }
+
+@-webkit-keyframes spin {
+  /* line 34, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+  0% {
+    -webkit-transform: rotate(0deg); }
+
+  /* line 35, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+  100% {
+    -webkit-transform: rotate(359deg); } }
+
+@-moz-keyframes spin {
+  /* line 38, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+  0% {
+    -moz-transform: rotate(0deg); }
+
+  /* line 39, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+  100% {
+    -moz-transform: rotate(359deg); } }
+
+@keyframes spin {
+  /* line 42, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+  0% {
+    transform: rotate(0deg); }
+
+  /* line 43, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+  100% {
+    transform: rotate(359deg); } }
+
+/* line 68, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconCheckboxActive:before, .iconCheckboxHalf:before, .iconCheckbox:before,
+.iconRadio:before, .iconRadioActive:before, .iconView:before, .iconHelp:before,
+.iconLinkButton:before, .iconDown:before, .iconRight:before, .iconLeft:before,
+.iconTop:before, .iconExpand:before, .iconExpandClosed:before, .iconMove:before,
+.iconAbout:before, .iconPrint:before, .iconGps:before, .iconLayertree:before,
+.iconLegend:before, .iconInfo:before, .iconInfoActive:before, .iconSearch:before,
+.iconWms:before, .iconOpen:before, .iconClose:before, .iconActivity:before,
+.iconCoordinates:before, .iconPrev:before, .iconNext:before, .iconZoomSelect:before,
+.iconZoomMin:before, .iconZoomIn:before, .iconZoomOut:before, .iconZoomLevel:before,
+.iconZoomLevelSelected:before, .iconAreaRuler:before, .iconFolder:before,
+.iconFolderActive:before, .iconTarget:before, .iconGroup:before, .iconAdd:before,
+.iconRemove:before, .iconOk:before, .iconEdit:before, .iconPublish:before,
+.iconPublishActive:before, .iconAppDefault:before, .iconCancel:before,
+.iconThumbsUp:before,
+.flashBox.success:before, .iconThumbsDown:before, .iconGroup:before, .iconUser:before,
+.iconSettings:before, .iconSignOut:before, .iconSignIn:before, .iconMore:before,
+.iconCopy:before, .iconKey:before, .iconWarning:before {
+  font-family: FontAwesome; }
+
+/* line 72, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconCheckboxActive:before {
+  content: "\f046" !important; }
+
+/* line 73, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconCheckboxHalf:before {
+  content: "\f147" !important; }
+
+/* line 74, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconCheckbox:before {
+  content: "\f096"; }
+
+/* line 75, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconRadio:before {
+  content: "\f111"; }
+
+/* line 76, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconRadioActive:before {
+  content: "\f10c"; }
+
+/* line 77, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconView:before {
+  content: "\f108"; }
+
+/* line 78, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconHelp:before {
+  content: "\f059"; }
+
+/* line 79, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconLinkButton:before {
+  content: "\f0da"; }
+
+/* line 80, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconDown:before {
+  content: "\f078"; }
+
+/* line 81, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconRight:before {
+  content: "\f054"; }
+
+/* line 82, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconLeft:before {
+  content: "\f053"; }
+
+/* line 83, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconTop:before {
+  content: "\f077"; }
+
+/* line 84, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconExpand:before {
+  content: "\f117"; }
+
+/* line 85, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconExpandClosed:before {
+  content: "\f116"; }
+
+/* line 86, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconMove:before {
+  content: "\f047"; }
+
+/* line 89, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconAbout:before {
+  content: "\f0c0"; }
+
+/* line 90, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconPrint:before {
+  content: "\f02f"; }
+
+/* line 91, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconGps:before {
+  content: "\f041"; }
+
+/* line 92, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconLayertree:before {
+  content: "\f0e8"; }
+
+/* line 93, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconLegend:before {
+  content: "\f00b"; }
+
+/* line 94, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconInfo:before {
+  content: "\f129"; }
+
+/* line 95, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconInfoActive:before {
+  content: "\f05a" !important; }
+
+/* line 96, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconSearch:before {
+  content: "\f002"; }
+
+/* line 97, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconWms:before {
+  content: "\f0ac"; }
+
+/* line 98, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconWmcEditor:before {
+  content: "\f044"; }
+
+/* line 99, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconWmcLoader:before {
+  content: "\f07c"; }
+
+/* line 100, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconOpen:before {
+  content: "\f067"; }
+
+/* line 101, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconClose:before {
+  content: "\f068"; }
+
+/* line 102, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconActivity:before {
+  content: "\f110"; }
+
+/* line 103, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconCoordinates:before {
+  content: "\f05b"; }
+
+/* line 104, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconPrev:before {
+  content: "\f0e2"; }
+
+/* line 105, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconNext:before {
+  content: "\f01e"; }
+
+/* line 106, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconZoomSelect:before {
+  content: "\f00e"; }
+
+/* line 107, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconZoomMin:before {
+  content: "\f0ac"; }
+
+/* line 108, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconZoomIn:before {
+  content: "\f116"; }
+
+/* line 109, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconZoomOut:before {
+  content: "\f117"; }
+
+/* line 110, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconZoomLevel:before {
+  content: "\f10c"; }
+
+/* line 111, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconZoomLevelSelected:before {
+  content: "\f111"; }
+
+/* line 112, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconAreaRuler:before {
+  content: "\f125"; }
+
+/* line 113, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconFolder:before {
+  content: "\f07b"; }
+
+/* line 114, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconFolderActive:before {
+  content: "\f07c"; }
+
+/* line 115, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconTarget:before {
+  content: "\f05b"; }
+
+/* line 116, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconPoi:before {
+  content: "\f08d"; }
+
+/* line 117, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconImageExport:before {
+  content: "\f030"; }
+
+/* line 118, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconWarning:before {
+  content: "\f071"; }
+
+/* line 121, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconGroup:before {
+  content: "\f0c0"; }
+
+/* line 122, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconAdd:before {
+  content: "\f067"; }
+
+/* line 123, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconRemove:before {
+  content: "\f00d"; }
+
+/* line 124, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconOk:before {
+  content: "\f00c" !important; }
+
+/* line 125, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconEdit:before {
+  content: "\f040"; }
+
+/* line 126, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconPublish:before {
+  content: "\f070" !important; }
+
+/* line 127, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconPublishActive:before {
+  content: "\f06e" !important; }
+
+/* line 128, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconAppDefault:before {
+  content: "\f03e"; }
+
+/* line 129, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconCancel:before {
+  content: "\f05c"; }
+
+/* line 130, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconThumbsUp:before, .flashBox.success:before {
+  content: "\f087"; }
+
+/* line 131, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconThumbsDown:before {
+  content: "\f088"; }
+
+/* line 132, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconGroup:before {
+  content: "\f0c0"; }
+
+/* line 133, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconUser:before {
+  content: "\f007"; }
+
+/* line 134, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconSettings:before {
+  content: "\f0ad"; }
+
+/* line 135, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconSignOut:before {
+  content: "\f08b"; }
+
+/* line 136, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconSignIn:before {
+  content: "\f090"; }
+
+/* line 137, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconMore:before {
+  content: "\f141"; }
+
+/* line 138, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconCopy:before {
+  content: "\f0c5"; }
+
+/* line 139, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconKey:before {
+  content: "\f084"; }
+
+/* line 140, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconTab:before {
+  content: "\f114"; }
+
+/* line 141, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/libs/_icons.scss */
+.iconTabActive:before {
+  content: "\f07b" !important; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_base.scss */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_base.scss */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Calluna Sans", "Gill Sans", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 14px;
+  line-height: 21px;
+  color: #3f3f3f;
+  background-image: url("../../bundles/mapbendercore/image/body.png");
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(100px, rgba(255, 255, 255, 0.3)), color-stop(100%, rgba(255, 255, 255, 0))) fixed, url("../../bundles/mapbendercore/image/body.png");
+  background: -webkit-linear-gradient(rgba(255, 255, 255, 0.3) 100px, rgba(255, 255, 255, 0)) fixed, url("../../bundles/mapbendercore/image/body.png");
+  background: -moz-linear-gradient(rgba(255, 255, 255, 0.3) 100px, rgba(255, 255, 255, 0)) fixed, url("../../bundles/mapbendercore/image/body.png");
+  background: -o-linear-gradient(rgba(255, 255, 255, 0.3) 100px, rgba(255, 255, 255, 0)) fixed, url("../../bundles/mapbendercore/image/body.png");
+  background: linear-gradient(rgba(255, 255, 255, 0.3) 100px, rgba(255, 255, 255, 0)) fixed, url("../../bundles/mapbendercore/image/body.png"); }
+
+/* line 19, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_base.scss */
+ul, ol {
+  list-style: none; }
+
+/* line 20, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_base.scss */
+hr, h1, h2, h3, ul, ol, li {
+  margin: 0;
+  padding: 0px; }
+
+/* line 21, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_base.scss */
+a {
+  text-decoration: none; }
+
+/* line 22, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_base.scss */
+p {
+  margin: 0px; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_layout.scss */
+.hidden {
+  display: none; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_layout.scss */
+.right {
+  float: right; }
+
+/* line 3, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_layout.scss */
+.left {
+  float: left; }
+
+/* line 4, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_layout.scss */
+.clear, .clearContainer {
+  clear: both;
+  overflow: hidden;
+  *zoom: 1; }
+
+/* line 8, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_layout.scss */
+.clearContainer {
+  height: 0px; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.italic {
+  font-style: italic; }
+
+/* line 2, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.smallerText {
+  font-size: 10px; }
+
+/* line 3, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.smallText, .labelInput, .labelText, .labelCheck, .description, .input, .buttonCore, .button, .button.critical, .linkButton {
+  font-size: 12px; }
+
+/* line 4, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.bigText, .title {
+  font-size: 16px; }
+
+/* line 5, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.biggerText, .contentTitle {
+  font-size: 22px; }
+
+/* line 6, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.contentTitle {
+  font-weight: normal;
+  font-style: italic;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: dashed 1px #b3b3b3; }
+
+/* line 15, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.title {
+  font-weight: normal;
+  color: #3f3f3f; }
+
+/* line 20, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.subTitle, fieldset legend {
+  font-size: 14px;
+  color: #5b932a; }
+
+/* line 24, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.labelInput, .labelText, .labelCheck {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+
+/* line 28, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.labelInput {
+  display: inline-block;
+  color: #707070;
+  margin-right: 10px;
+  line-height: 29px; }
+  /* line 34, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+  .labelInput .required {
+    color: #aa2323; }
+
+/* line 38, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.labelCheck {
+  color: #707070;
+  margin-left: 5px; }
+
+/* line 42, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.labelText {
+  color: #5b932a; }
+
+/* line 43, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_text.scss */
+.description {
+  color: #707070;
+  font-style: italic; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_input.scss */
+.input {
+  color: #858585;
+  border: solid 1px #c8c8c8;
+  line-height: 21px;
+  height: 28px;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #f9f9f9; }
+  /* line 10, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_input.scss */
+  .input:focus {
+    outline: none;
+    border: 1px solid #8dce55; }
+
+/* line 17, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_input.scss */
+.inputWrapper {
+  position: relative;
+  display: inline-block; }
+  /* line 21, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_input.scss */
+  .inputWrapper .validationMsgBox {
+    position: absolute;
+    z-index: 9999;
+    min-width: 260px;
+    margin-left: -10px;
+    color: #aa2323;
+    padding: 3px 10px 2px 10px;
+    background-color: #f6d6d6;
+    border: solid 1px #eeabab;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    opacity: 1;
+    -webkit-transition: all 0.8s ease-in-out;
+    -moz-transition: all 0.8s ease-in-out;
+    -o-transition: all 0.8s ease-in-out;
+    transition: all 0.8s ease-in-out; }
+    /* line 34, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_input.scss */
+    .inputWrapper .validationMsgBox.hide {
+      filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+      opacity: 0;
+      margin-left: 0px; }
+    /* line 40, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_input.scss */
+    .inputWrapper .validationMsgBox:after, .inputWrapper .validationMsgBox:before {
+      border: solid transparent;
+      content: "";
+      height: 0;
+      width: 0;
+      position: absolute;
+      right: 100%; }
+    /* line 47, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_input.scss */
+    .inputWrapper .validationMsgBox:after {
+      border-right-color: #f6d6d6;
+      border-width: 3px;
+      top: 14px;
+      margin-top: -3px; }
+    /* line 53, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_input.scss */
+    .inputWrapper .validationMsgBox:before {
+      border-right-color: #eeabab;
+      border-width: 5px;
+      top: 14px;
+      margin-top: -5px; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_button.scss */
+.buttonCore, .button, .button.critical, .linkButton {
+  font-family: "Calluna Sans", "Gill Sans", Calibri, "Trebuchet MS", sans-serif;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  @-moz-document url-prefix() {
+    /* line 10, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_button.scss */
+    .buttonCore {
+      font: 12px sans-serif; } }
+
+  border: none;
+  cursor: pointer; }
+
+/* line 15, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_button.scss */
+.button {
+  padding: 5px 10px;
+  line-height: 14px;
+  margin: 0px;
+  border: 1px solid #538e24;
+  color: white;
+  background-color: #6fb536; }
+  /* line 28, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_button.scss */
+  .button:hover {
+    background-color: #63a130; }
+  /* line 30, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_button.scss */
+  .button.critical {
+    border: 1px solid #9f3434;
+    color: white;
+    background-color: #d36565; }
+    /* line 38, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_button.scss */
+    .button.critical:hover {
+      background-color: #cd5151; }
+
+/* line 41, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_button.scss */
+.linkButton {
+  color: #707070; }
+  /* line 45, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_button.scss */
+  .linkButton:before {
+    margin-right: 5px; }
+  /* line 46, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_button.scss */
+  .linkButton:hover, .linkButton.activeLink, .linkButton:active {
+    color: #5b932a; }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_seperator.scss */
+.seperator {
+  border: none;
+  border-bottom: dashed 1px #b3b3b3; }
+
+/* line 5, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_seperator.scss */
+.dekoSeperator {
+  height: 6px;
+  border: none;
+  outline: none;
+  border-bottom: solid 1px #404040;
+  background: url("../../bundles/mapbendercore/image/line.png"); }
+
+/* line 1, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+.box {
+  border: solid 1px #a2a2a2;
+  background-color: #f9f9f9; }
+
+/* line 6, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+.listFilterBoxes .filterItem {
+  position: relative;
+  background-color: #f9f9f9;
+  margin-bottom: 20px; }
+/* line 11, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+.listFilterBoxes .col1 {
+  text-align: center;
+  color: white;
+  padding: 5px;
+  line-height: 15px;
+  background-color: #404040;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0; }
+/* line 19, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+.listFilterBoxes .col2 {
+  padding: 10px; }
+/* line 20, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+.listFilterBoxes .buttonGroup {
+  position: absolute;
+  top: 10px;
+  right: 10px; }
+/* line 21, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+.listFilterBoxes .description {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: dashed 1px #b3b3b3; }
+
+/* line 27, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+.messageBox {
+  padding: 10px;
+  margin-bottom: 20px; }
+  /* line 31, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+  .messageBox.error {
+    color: #aa2323;
+    background-color: #f6d6d6;
+    border: solid 1px #eeabab; }
+  /* line 36, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+  .messageBox.hint {
+    color: #2375a8;
+    background-color: #d4e9f6;
+    border: solid 1px #aad3ed; }
+
+/* line 42, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+.flashBox {
+  padding: 5px 10px;
+  background-color: #f9f9f9;
+  text-align: center;
+  width: 280px;
+  margin-left: -140px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  -webkit-transition: all 1s ease-in-out;
+  -moz-transition: all 1s ease-in-out;
+  -o-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  opacity: 1; }
+  /* line 54, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+  .flashBox.success {
+    color: #197b19;
+    background-color: #d1f5d1; }
+  /* line 62, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+  .flashBox.kill {
+    top: -100px;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    opacity: 0; }
+
+/* line 67, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+fieldset {
+  padding: 20px; }
+  /* line 70, ../home/cwygoda/Workspace/Coding/mapbender-starter2/application/mapbender/src/Mapbender/CoreBundle/Resources/public/sass/modules/_container.scss */
+  fieldset legend {
+    margin: 0;
+    padding: 0 5px 0 5px; }
+
+/* line 17, assetic_compassyUYNke.scss */
+.head {
+  position: relative;
+  border-top: solid 5px #272727;
+  background-image: url("../../bundles/mapbendercore/image/head.png");
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(255, 255, 255, 0.1)), color-stop(100%, rgba(255, 255, 255, 0))), url("../../bundles/mapbendercore/image/head.png");
+  background: -webkit-linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)), url("../../bundles/mapbendercore/image/head.png");
+  background: -moz-linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)), url("../../bundles/mapbendercore/image/head.png");
+  background: -o-linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)), url("../../bundles/mapbendercore/image/head.png");
+  background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0)), url("../../bundles/mapbendercore/image/head.png"); }
+
+/* line 25, assetic_compassyUYNke.scss */
+.dekoSeperator {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+
+/* line 26, assetic_compassyUYNke.scss */
+.authWrapper {
+  position: absolute;
+  top: 15%;
+  right: 0;
+  left: 0; }
+
+/* line 27, assetic_compassyUYNke.scss */
+.logo {
+  max-height: 120px; }
+
+/* line 28, assetic_compassyUYNke.scss */
+.head {
+  height: 300px; }
+
+/* line 29, assetic_compassyUYNke.scss */
+.labelInput {
+  display: block; }
+
+/* line 30, assetic_compassyUYNke.scss */
+.input {
+  margin-bottom: 10px; }
+
+/* line 31, assetic_compassyUYNke.scss */
+.logoContainer {
+  text-align: center;
+  display: block;
+  position: relative;
+  top: -280px; }
+
+/* line 36, assetic_compassyUYNke.scss */
+.linkButton {
+  margin-right: 10px;
+  margin-top: 5px; }
+
+/* line 40, assetic_compassyUYNke.scss */
+.loginBox {
+  padding: 20px;
+  margin: 0 auto;
+  width: 340px;
+  background-image: url("../../bundles/mapbendercore/image/content.png");
+  border-top: solid 1px #858585;
+  border-left: solid 1px #a2a2a2;
+  border-right: solid 1px #a2a2a2;
+  border-bottom: solid 5px #a2a2a2;
+  position: relative;
+  top: -260px; }
+  /* line 55, assetic_compassyUYNke.scss */
+  .loginBox.login .labelInput {
+    width: 60px; }
+  /* line 56, assetic_compassyUYNke.scss */
+  .loginBox.login .input {
+    width: 220px; }
+  /* line 60, assetic_compassyUYNke.scss */
+  .loginBox.forgot .labelInput {
+    width: 135px; }
+  /* line 61, assetic_compassyUYNke.scss */
+  .loginBox.forgot .input {
+    width: 145px; }
+  /* line 65, assetic_compassyUYNke.scss */
+  .loginBox.register .labelInput {
+    width: 125px; }
+  /* line 66, assetic_compassyUYNke.scss */
+  .loginBox.register .input {
+    width: 155px; }

@@ -1,14 +1,1 @@
-/* line 4, assetic_compassCsFQMR.scss */
-.mb-element-copyright {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
-  opacity: 0.6; }
-
-/* line 5, assetic_compassCsFQMR.scss */
-.mb-element-copyright-link {
-  cursor: pointer;
-  color: white;
-  text-decoration: none; }
-
-/* line 10, assetic_compassCsFQMR.scss */
-.mb-element-copyright-dialog {
-  display: none; }
+.mb-element-copyright{filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=60);opacity:0.6}.mb-element-copyright-link{cursor:pointer;color:#fff;text-decoration:none}.mb-element-copyright-dialog{display:none}
