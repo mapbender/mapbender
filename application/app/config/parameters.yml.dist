@@ -26,5 +26,5 @@ parameters:
     cookie_lifetime: 3600
 
     use_static_assets: true
-    compass_path: /var/lib/gems/1.9.1/bin/compass
-    ruby_path: /usr/bin/ruby1.9.1
+    compass_path: ~
+    ruby_path: ~

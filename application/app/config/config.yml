@@ -34,7 +34,6 @@ twig:
 assetic:
     debug:          %kernel.debug%
     use_controller: false
-    use_controller: true
     ruby: %ruby_path%
     filters:
         cssrewrite: ~
