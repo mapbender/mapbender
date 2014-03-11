@@ -60,26 +60,25 @@ class ApplicationAssetCache
             $fileAsset = new FileAsset($file, $filters[$this->type], null, $assetRootPath . '/' . $publicSourcePath);
             $fileAsset->setTargetPath($this->targetPath);
 
-            // Then wrap it into a cached asset, which required as valid cache name first
             $name = str_replace(array('@', 'Resources/public/'), '', $input);
             $name = str_replace(array('/', '.', '-'), '__', $name);
-            $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, $useTimestamp, $this->force);
+            if(!('js' === $this->type && $this->container->get('kernel')->isDebug())) {
+                // Then wrap it into a cached asset, which required as valid cache name first
+                $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, $useTimestamp, $this->force);
 
-            // Dump the cached asset for one-time compilation
-            $cachedAsset->dump();
+                // Dump the cached asset for one-time compilation
+                $cachedAsset->dump();
 
-            // Collect all assets into a manager for dupe removal
-            $manager->set($name, $cachedAsset);
+                // Collect all assets into a manager for dupe removal
+                $manager->set($name, $cachedAsset);
+            } else {
+                $manager->set($name, $fileAsset);
+            }
         }
 
         // Finally, wrap everything into a single asset collection
         foreach($manager->getNames() as $name) {
             $assets->add($manager->get($name));
-        }
-
-        // If we we're building for a specified application, cache the final result, too
-        if(null !== $slug) {
-            // @todo
         }
 
         return $assets;

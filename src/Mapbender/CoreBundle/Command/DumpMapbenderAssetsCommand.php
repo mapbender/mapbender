@@ -33,8 +33,13 @@ EOT
         $mapbender = $this->getContainer()->get('mapbender');
         $extraProviders = array(
             'Mapbender\CoreBundle\Component\Application',
+            'Mapbender\WmsBundle\Entity\WmsInstance',
         );
-        $assetProviders = array_merge($mapbender->getElements(), $mapbender->getTemplates(), $extraProviders);
+        $assetProviders = array_merge(
+            $mapbender->getElements(),
+            $mapbender->getTemplates(),
+            $mapbender->getLayers(),
+            $extraProviders);
 
         $assets = array();
         foreach($assetProviders as $provider) {
