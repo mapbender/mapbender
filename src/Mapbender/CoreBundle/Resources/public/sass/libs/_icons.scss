@@ -65,7 +65,7 @@
 .iconThumbsUp, .iconThumbsDown, .iconGroup, .iconUser,
 .iconSettings, .iconSignOut, .iconSignIn, .iconMore,
 .iconCopy, .iconKey, .iconWarning, .iconEmail, .iconTwitter,
-.iconFacebook, .iconGooglePlus{
+.iconFacebook, .iconGooglePlus, .iconSketch{
   &:before{font-family: FontAwesome;}
 }
 
@@ -121,6 +121,7 @@
 .iconTwitter:before {content: "\f081";}
 .iconFacebook:before {content: "\f082";}
 .iconGooglePlus:before {content: "\f0d4";}
+.iconSketch:before {content: "\f044";}
 
 // only backend
 .iconGroup:before{content: "\f0c0";}

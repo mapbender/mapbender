@@ -1,0 +1,10 @@
+@import "libs/variables";
+@import "libs/mixins";
+@import "modules/input";
+@import "modules/text";
+
+.mb-poi-popup textarea{
+    @extend .input;
+    width: 100%;
+    height:90px;
+}
