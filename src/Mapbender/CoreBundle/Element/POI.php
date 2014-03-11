@@ -52,8 +52,8 @@ class POI extends Element
             'target' => null
         );
     }
-    
-    
+
+
 
     /**
      * @inheritdoc
@@ -74,7 +74,7 @@ class POI extends Element
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
 // to call social networks '@MapbenderCoreBundle/Resources/public/mapbender.social_media_connector.js'
             ),
-            'css' => array(),
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/poi.scss'),
             'trans' => array('MapbenderCoreBundle:Element:poi.json.twig'));
     }
 
