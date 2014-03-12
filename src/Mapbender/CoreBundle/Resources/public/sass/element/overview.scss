@@ -1,5 +1,8 @@
 @import "libs/variables";
 @import "libs/mixins";
+@import "libs/icons";
+@import "modules/button";
+@import "modules/text";
 
 .mb-element-overview{
   .toggleOverview{
@@ -34,10 +37,10 @@
     }
   }
 
-  &.right-top .toggleOverview{@include pos(0,'','',-25px);}
-  &.left-top .toggleOverview{@include pos(0,-25px,'','');}
-  &.right-bottom .toggleOverview{@include pos('','',0,-25px);}
-  &.left-bottom .toggleOverview{@include pos('',-25px,0,'');}
+  &.right-top .toggleOverview{@include absolute(0 '' '' -25px);}
+  &.left-top .toggleOverview{@include absolute(0 -25px '' '');}
+  &.right-bottom .toggleOverview{@include absolute('' '' 0 -25px);}
+  &.left-bottom .toggleOverview{@include absolute('' -25px 0 '');}
 }
 .olControlOverviewMapExtentRectangle {
     overflow: hidden;

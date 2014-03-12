@@ -10,6 +10,6 @@
 .contentPane{
   .mb-element-coordsdisplay{
     z-index: 20;
-    @include pos('',$space,$space*2,'');
+    @include absolute('' $space $space*2 '');
   }
 }
