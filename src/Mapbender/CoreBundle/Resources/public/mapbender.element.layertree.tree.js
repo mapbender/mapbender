@@ -166,8 +166,7 @@
             });
         },
         _createSourceTree: function(source, sourceEl, scale, type, isroot){
-            var self = this;
-            if(sourceEl.type){ // source
+            if(sourceEl.type){
                 var li = "";
                 sourceEl.layers = [];
                 for(var i = 0; i < sourceEl.configuration.children.length; i++){
@@ -192,7 +191,7 @@
                     if(config.toggle === true)
                         li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
                     else
-                        li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");// todo
+                        li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");
                 }
                 li.addClass(config.reorder);
                 li.find('.layer-state').attr('title', config.visibility.tooltip);
@@ -227,8 +226,7 @@
             return li;
         },
         _createTreeNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found){
-            var self = this;
-            if(sourceEl.type){ // source
+            if(sourceEl.type){
                 var li = "";
                 for(var i = 0; i < sourceEl.configuration.children.length; i++){
                     li = this._createTreeNode(source, sourceEl.configuration.children[i], scale, layerToAdd, parent, sourceEl.type, true, false);
@@ -301,7 +299,6 @@
             if(!this.created || !options.added)
                 return;
             var added = options.added;
-            //window.console && console.log("layertree _onSourceAdded");
             var before = added.after, after = added.before;
             if(added.source.configuration.baseSource && !this.options.showBaseSource){
                 return;
@@ -349,10 +346,8 @@
             this._reset();
         },
         _onSourceChanged: function(event, options){
-//            window.console && console.log("layertree _onSourceChanged", options);
             if(options.changed && options.changed.children){
                 this._changeChildren(options.changed);
-//                this.resetSource(this.model.getSource(options.changed.sourceIdx));
             }else if(options.changed && options.changed.childRemoved){
                 this._removeChild(options.changed);
             }
@@ -420,19 +415,16 @@
             var self = this;
             if(changed && changed.sourceIdx && changed.childRemoved){
                 var source = this.model.getSource(changed.sourceIdx);
-                // TODO check source id ?
                 $('ul.layers:first li[data-id="' + changed.childRemoved.layer.options.id + '"]', self.element).remove();
             }
         },
         _onSourceRemoved: function(event, removed){
-//            window.console && console.log("layertree _onSourceRemoved");
             if(removed && removed.source && removed.source.id){
                 $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element).remove();
                 this._setSourcesCount();
             }
         },
-        _onSourceLoadStart: function(event, option){ // sets "loading" for layers
-//            window.console && console.log("layertree _onSourceLoadStart");
+        _onSourceLoadStart: function(event, option){
             if(option.source && this.sourceAtTree[option.source.id ]){
                 this.loadStarted[option.source.id ] = true;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
@@ -441,8 +433,7 @@
                 }
             }
         },
-        _onSourceLoadEnd: function(event, option){ // removes "loading" from layers
-//            window.console && console.log("layertree _onSourceLoadEnd");
+        _onSourceLoadEnd: function(event, option){
             if(option.source && this.sourceAtTree[option.source.id ] && this.loadStarted[option.source.id]){
                 this.loadStarted[option.source.id] = false;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
@@ -451,7 +442,6 @@
             }
         },
         _onSourceLoadError: function(event, option){
-//            window.console && console.log("layertree _onSourceLoadError");
             if(option.source && this.sourceAtTree[option.source.id ] && this.loadStarted[option.source.id]){
                 this.loadStarted[option.source.id] = false;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
@@ -572,9 +562,6 @@
                 $(menu).on('click', function(e){
                     e.stopPropagation();
                 });
-//                self.element.on('click', function(e){
-//                    removeMenu($element);
-//                });
                 if($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0){
                     new Dragdealer('layer-opacity', {
                         x: source.configuration.options.opacity,
@@ -594,13 +581,10 @@
                         $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                     }
                 }
-                //@TODO on other events
             }
             function removeMenu($element){
                 $('.layer-zoom').off('click');
                 $('#layer-menu').off('click').remove();
-//                self.element.off('click');
-                //@TODO off other events
             }
             var $btnMenu = $(e.target);
             var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
@@ -622,12 +606,12 @@
         _removeSource: function(e){
             var layer_type = $(e.target).parents("li:first").attr("data-type");
             var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
-            if(sourceId && layer_type && this.consts.root === layer_type){ // remove source
+            if(sourceId && layer_type && this.consts.root === layer_type){
                 this.model.removeSource({remove: {sourceIdx: {id: sourceId}}});
-            }else if(sourceId && layer_type && this.consts.group === layer_type){// remove group layer
+            }else if(sourceId && layer_type && this.consts.group === layer_type){
                 var layer_id = $(e.target).parents("li:first").attr("data-id");
                 this.model.changeSource({change: {layerRemove: {sourceIdx: {id: sourceId}, layer: {options: {id: layer_id}}}}});
-            }else if(sourceId && layer_type && this.consts.simple === layer_type){// remove group layer
+            }else if(sourceId && layer_type && this.consts.simple === layer_type){
                 var layer_id = $(e.target).parents("li:first").attr("data-id");
                 this.model.changeSource({change: {layerRemove: {sourceIdx: {id: sourceId}, layer: {options: {id: layer_id}}}}});
             }
