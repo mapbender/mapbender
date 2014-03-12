@@ -243,6 +243,7 @@ class ElementController extends Controller
                 try {
                     $application->setUpdated(new \DateTime('now'));
                     $em->persist($application);
+                    $em->detach($element); // prevent element from being stored with default config
 
                     $aclManager = $this->get('fom.acl.manager');
                     $aclManager->setObjectACLFromForm($element,

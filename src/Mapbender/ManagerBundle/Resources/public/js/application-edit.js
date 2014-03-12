@@ -203,7 +203,8 @@ $(function() {
             subtitle: " - " + Mapbender.trans(self.parent().siblings(".subTitle").text()),
             closeOnOutsideClick: true,
             cssClass:"elementPopup",
-            height: 450,
+            height: 550,
+            width: 550,
             content: [
                 $.ajax({
                     url: self.attr("href"),
@@ -257,7 +258,8 @@ $(function() {
         popup = new Mapbender.Popup2({
             title:Mapbender.trans("mb.manager.components.popup.edit_element.title"),
             closeOnOutsideClick: true,
-            height: 450,
+            height: 550,
+            width: 550,
             content: [
                 $.ajax({
                     url: self.attr("data-url"),
@@ -321,7 +323,7 @@ $(function() {
 
                                         groupUserItem = $(e);
                                         groupUserType = (groupUserItem.find(".tdContentWrapper")
-                                                                      .hasClass("iconGroup") ? "iconGroup" 
+                                                                      .hasClass("iconGroup") ? "iconGroup"
                                                                                              : "iconUser");
                                         $("#permissionsBody").find(".labelInput").each(function(i, e){
                                             me = $(e);
