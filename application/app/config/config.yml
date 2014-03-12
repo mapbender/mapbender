@@ -34,11 +34,12 @@ twig:
 assetic:
     debug:          %kernel.debug%
     use_controller: false
-    use_controller: true
+    ruby: %ruby_path%
     filters:
         cssrewrite: ~
         sass: ~
         compass:
+            bin: %compass_path%
             no_line_comments: true
             style: compressed
             load_paths:
@@ -103,4 +104,5 @@ ows_proxy3_core:
 #            - host_b
 
 # Mapbender Configuration
-mapbender_core: ~
+mapbender_core:
+    sass_assets: false

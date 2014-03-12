@@ -15,9 +15,9 @@ parameters:
                     mapbender_users:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Mapbender Users
-                        url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
+                        url: http://wms.wheregroup.com/cgi-bin/mapbender_user.xml
                         layers:
-                            10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
+                            10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapbender_user.xml?REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
                             22: { name: Mapbender_Names,   title : Name, visible: true, queryable: true}
                         info_format: text/html
                         visible: true
@@ -237,6 +237,7 @@ parameters:
                         titleMaxLength: 20
                         showBaseSource: true
                         layerRemove: true
+                        menu: false
                     overview:
                         title: Overview
                         class: Mapbender\CoreBundle\Element\Overview
@@ -273,6 +274,7 @@ parameters:
                         titleMaxLength: 20
                         showBaseSource: true
                         layerRemove: true
+                        menu: [opacity,zoomtolayer]
                 footer:
                     activityindicator:
                         class: Mapbender\CoreBundle\Element\ActivityIndicator
@@ -317,9 +319,9 @@ parameters:
                     mapbender_users:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Mapbender Users
-                        url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
+                        url: http://wms.wheregroup.com/cgi-bin/mapbender_user.xml
                         layers:
-                            10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
+                            10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapbender_user.xml?REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
                             22: { name: Mapbender_Names,   title : Name, visible: true, queryable: true}
                         info_format: text/html
                         visible: true
@@ -516,6 +518,7 @@ parameters:
                         showHeader: false
                         layerMenu: false
                         layerRemove: false
+                        menu: false
                     overview:
                         title: Overview
                         class: Mapbender\CoreBundle\Element\Overview

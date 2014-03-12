@@ -3,9 +3,9 @@
 */doc/api
 */doc/*.html
 */web/bundles
-*/web/css
 */web/doc
 */web/uploads
+*/web/assets/*.trans
 extra/
 */app/config/parameters.yml
 */app/bootstrap.php.cache

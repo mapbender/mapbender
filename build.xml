@@ -18,7 +18,7 @@
     <!--
         These next propertes are short strings that are usefull in a lot of places
     -->
-    <property name="project.shortdescription" value="" /> 
+    <property name="project.shortdescription" value="" />
     <property name="project.description" value="" />
     <property name="project.url" value="http://projects.wheregroup.com/${package}" />
     <property name="project.license" value="GPLv3" />
@@ -40,7 +40,7 @@
     <taskdef name="rpm" classname="phing.tasks.RPMTask" />
 
     <taskdef name="deb" classname="phing.tasks.DEBTask" />
-    
+
     <taskdef name="nsis" classname="phing.tasks.NSISTask" />
 
 
@@ -67,6 +67,7 @@
         </tar>
         -->
         <exec command="tar czf artefacts/${package}-${version.full}.tar.gz -C ${buildroot} ${package}-${version.full}" passthru="true" />
+        <exec command='tar czf artefacts/${package}-vendors-${version.full}.tar.gz -C ${buildroot}/${package}-${version.full} vendor' />
         <delete dir="${buildroot}" />
     </target>
 
@@ -79,9 +80,9 @@
                 <include name="packaging/opensuse-rpm/**"/>
             </fileset>
         </copy>
-        <copy 
-            file="${buildroot}/packaging/opensuse-rpm/SPECS/template.spec.dist" 
-            tofile="${buildroot}/packaging/opensuse-rpm/SPECS/${package}.spec" 
+        <copy
+            file="${buildroot}/packaging/opensuse-rpm/SPECS/template.spec.dist"
+            tofile="${buildroot}/packaging/opensuse-rpm/SPECS/${package}.spec"
             overwrite="true">
         <filterchain>
             <replacetokens begintoken="@@" endtoken="@@">
@@ -99,7 +100,7 @@
             </replacetokens>
         </filterchain>
         </copy>
-        <copy 
+        <copy
               file="${buildroot}/packaging/opensuse-rpm/SOURCES/pathadjustments.patch.dist"
               tofile="${buildroot}/packaging/opensuse-rpm/SOURCES/pathadjustments.patch"
               overwrite="true"
@@ -113,13 +114,13 @@
                 </replacetokens>
             </filterchain>
         </copy>
-        <copy 
-            file="artefacts/${package}-${version.full}.tar.gz" 
+        <copy
+            file="artefacts/${package}-${version.full}.tar.gz"
             todir="${buildroot}/packaging/opensuse-rpm/SOURCES/"
             overwrite="true"
         />
         <rpm sign="${opensuserpm.sign}" specfile="${buildroot}/packaging/opensuse-rpm/SPECS/${package}.spec" topdir="${buildroot}/packaging/opensuse-rpm/" />
-        <copy 
+        <copy
             file="${buildroot}/packaging/opensuse-rpm/RPMS/noarch/${package}-${version.full}-${packaging.release}.noarch.rpm"
             todir="artefacts/"
             overwrite="true"
@@ -134,15 +135,15 @@
                 <include name="packaging/debiansqueeze/**"/>
             </fileset>
         </copy>
-        <copy 
-            file="artefacts/${package}-${version.full}.tar.gz" 
+        <copy
+            file="artefacts/${package}-${version.full}.tar.gz"
             tofile="${buildroot}/packaging/debiansqueeze/${package}_${version.full}.orig.tar.gz" />
-        <untar 
+        <untar
             file="${buildroot}/packaging/debiansqueeze/${package}_${version.full}.orig.tar.gz"
             todir="${buildroot}/packaging/debiansqueeze/"
         />
         <mkdir dir="${buildroot}/packaging/debiansqueeze/${package}-${version.full}/debian" />
-        <copy 
+        <copy
             todir="${buildroot}/packaging/debiansqueeze/${package}-${version.full}/debian"
             overwrite="true">
             <fileset dir="${buildroot}/packaging/debiansqueeze/debian.dist/">
@@ -162,7 +163,7 @@
                 </replacetokens>
             </filterchain>
         </copy>
-        <deb buildroot="${buildroot}/packaging/debiansqueeze/${package}-${version.full}/" /> 
+        <deb buildroot="${buildroot}/packaging/debiansqueeze/${package}-${version.full}/" />
         <copy file="${buildroot}/packaging/debiansqueeze/${package}_${version.full}_all.deb" todir="artefacts/" overwrite="true" />
         <delete dir="${buildroot}" />
     </target>
@@ -174,9 +175,9 @@
                 <include name="packaging/nsis/**"/>
             </fileset>
         </copy>
-        <copy 
-            file="${buildroot}/packaging/nsis/template.nsis.dist" 
-            tofile="${buildroot}/packaging/nsis/${package}.nsis" 
+        <copy
+            file="${buildroot}/packaging/nsis/template.nsis.dist"
+            tofile="${buildroot}/packaging/nsis/${package}.nsis"
             overwrite="true">
             <filterchain>
                 <replacetokens begintoken="@@" endtoken="@@">
@@ -223,7 +224,8 @@
 
     <target name="prepare" depends="deps,doc">
         <exec command="application/app/console assets:install application/web/" />
-        <exec command="application/app/console assetic:dump --env=prod --no-debug" />
+        <exec command="application/app/console assetic:dump --env=dev" />
+        <exec command="application/app/console mapbender:assets:dump --env=prod" />
         <exec command="application/app/console doctrine:database:drop --force" />
         <exec command="application/app/console doctrine:database:create" />
         <exec command="application/app/console doctrine:schema:create" />
@@ -237,6 +239,8 @@
         <delete>
             <fileset  dir=".">
                 <include name="application/doc/api" />
+                <include name="application/web/css" />
+                <include name="application/web/assets" />
                 <include name="application/doc/*.html" />
                 <include name="artefacts/**" />
                 <include name="testresults/**" />
@@ -245,7 +249,7 @@
         <delete dir="artefacts" />
         <!-- clean the assets from web! -->
     </target>
-    
+
     <target name="unittest" depends="lint">
         <!-- <echo>Unitests are disabled</echo> -->
         <exec command="phpunit -c application/app --process-isolation" passthru="true" checkreturn="false" />
@@ -262,7 +266,7 @@
             </batchtest>
         </phpunit>
     </target>
-    
+
     <target name="test" depends="unittest">
     </target>
 
@@ -294,4 +298,3 @@
         <phing target="deps" />
     </target>
 </project>
-

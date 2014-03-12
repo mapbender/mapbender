@@ -1,6 +1,6 @@
 # Changelog
 
-* **v3.0.X.X** -
+* **v3.0.3.0** - 2014-03-xx
   - Closed XSS vulnerability which required admin permissions
   - Added cache for compiled static assets
     - new parameter mapbender.static_assets, defaults to true
@@ -8,13 +8,23 @@
     - Compiled assets get cached to the directory set with the aforementioned parameter
       - This directory needs to be cleared before packaging or updating.
       - This directory needs to be refreshed before packaging.
-
-## Release History
-* **v3.0.3.0** - 2013-xx-xx
   - Element Legend: option 'noLegend' removed
   - Translation for en,de added
   - ZoomBar option component 'zoom_in_out' added
   - added cookie_secure: false and cookie_lifetime: 3600 to parameters.yml http://symfony.com/doc/2.1/reference/configuration/framework.html#cookie-lifetime
+  - Enhancements for Search-Router für SQL-Suchen (Selectboxes, Distinct)
+  - WMC Editor and LoaderWMSLoader Enhancement add WMS via link
+  - Sketch to draw temporary objects
+  - POI - Meetingpoint
+  - Imageexport to generate png or jpg
+  - Change WMS Collection via button (BaselayerSwitcher)
+  - Print with overview
+  - Sidepane with different elements (chnage via button)
+  - Layertree context menue to change opacity and to zoom to layer
+  - Open application with parameters (f.e. position)
+   
+
+## Release History
 
 * **v3.0.2.0** - 2013-11-26
   - Signer for OwsProxy added
@@ -31,8 +41,6 @@
   - console.* stubs
   - Proxy security: Only pass correctly signed URLs
   - Allow for multiple application YAML files
-
-## Release History
 
 * **v3.0.1.1** - 2013-09-26
   - The development controller app_dev.php is limited to localhost again

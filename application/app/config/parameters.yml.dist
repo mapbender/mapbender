@@ -24,3 +24,7 @@ parameters:
     # framework : http://symfony.com/doc/2.1/reference/configuration/framework.html#cookie-lifetime
     cookie_secure: false
     cookie_lifetime: 3600
+
+    sass_assets: false
+    compass_path: ~
+    ruby_path: ~
