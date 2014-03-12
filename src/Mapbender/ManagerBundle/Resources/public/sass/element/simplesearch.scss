@@ -1,0 +1,8 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.elementFormSimpleSearch{
+  $label:110px;
+  .labelInput{width:$label;}
+  .inputWrapper, .dropdown{width:70%;}
+}
