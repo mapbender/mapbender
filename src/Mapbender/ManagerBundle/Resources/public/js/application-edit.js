@@ -203,7 +203,7 @@ $(function() {
             subtitle: " - " + Mapbender.trans(self.parent().siblings(".subTitle").text()),
             closeOnOutsideClick: true,
             cssClass:"elementPopup",
-            height: 450,
+            height: 550,
             width: 550,
             content: [
                 $.ajax({
@@ -258,7 +258,7 @@ $(function() {
         popup = new Mapbender.Popup2({
             title:Mapbender.trans("mb.manager.components.popup.edit_element.title"),
             closeOnOutsideClick: true,
-            height: 450,
+            height: 550,
             width: 550,
             content: [
                 $.ajax({
