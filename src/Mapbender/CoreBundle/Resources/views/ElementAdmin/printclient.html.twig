@@ -16,10 +16,14 @@
     {{ form_label(form.configuration.quality_levels) }}
     {% for level in form.configuration.quality_levels %}
         <div class="singleRow">
-            {{form_label(level.dpi)}}
-            {{ form_widget(level.dpi) }}
-            {{form_label(level.label)}}
-            {{ form_widget(level.label) }}
+            <div class="left">
+                {{form_label(level.dpi)}}
+                {{ form_widget(level.dpi) }}
+            </div>
+            <div class="left">
+                {{form_label(level.label)}}
+                {{ form_widget(level.label) }}
+            </div>
         </div>
         <div class="clearContainer"></div>
         <span class="labelInput"></span>
