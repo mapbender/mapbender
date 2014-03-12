@@ -1,5 +1,8 @@
 @import "libs/variables";
 @import "libs/mixins";
+@import "libs/icons";
+@import "modules/button";
+@import "modules/text";
 
 .mb-element-layertree{
   .iconFolder{
@@ -68,7 +71,7 @@
   }
 }
 .layer-menu-btn{
-  position: relative;
+  position: relative !important;
 }
 .layer-menu{
   position: absolute;

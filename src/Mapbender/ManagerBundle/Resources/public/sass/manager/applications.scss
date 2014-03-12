@@ -117,11 +117,6 @@
 // ------------------------------------------------------------- LAYERS
 .layersetForm{
   .labelInput{width:40px;float:left;}
-  .input{
-    position: absolute;
-    right:0px;
-    left:40px + $space/2;
-  }
 }
 
 .layersetTable{
