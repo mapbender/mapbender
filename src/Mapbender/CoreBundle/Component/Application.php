@@ -13,6 +13,7 @@ use Assetic\Factory\AssetFactory;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 /**
  * Application is the main Mapbender3 class.
@@ -382,14 +383,20 @@ class Application
     {
         if ($this->elements === null) {
             $securityContext = $this->container->get('security.context');
+            $aclProvider = $this->container->get('security.acl.provider');
             // Set up all elements (by region)
             $this->elements = array();
             foreach ($this->entity->getElements() as $entity) {
                 $application_entity = $this->getEntity();
                 if ($application_entity::SOURCE_DB === $application_entity->getSource()){
-                    if(!$securityContext->isGranted('VIEW', $entity)){
-                        continue;
-                    }
+                    try {
+                        // If no ACL exists, an exception is thrown
+                        $acl = $aclProvider->findAcl(ObjectIdentity::fromDomainObject($entity));
+                        // An empy ACL may exist, too
+                        if(count($acl->getObjectAces()) > 0 && !$securityContext->isGranted('VIEW', $entity)){
+                            continue;
+                        }
+                    } catch(\Exception $e) {}
                 } else if ($application_entity::SOURCE_YAML === $application_entity->getSource()
                     && count($entity->yaml_roles)) {
                     $passed = false;
