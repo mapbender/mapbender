@@ -559,7 +559,8 @@
                 }
                 menu.removeClass('hidden');
                 $element.append(menu);
-                $(menu).on('click', function(e){
+                $(menu).on('click mousedown mousemove', function(e){
+                    console.log(e);
                     e.stopPropagation();
                 });
                 if($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0){
