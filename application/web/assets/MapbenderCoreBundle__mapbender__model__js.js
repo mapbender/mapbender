@@ -80,12 +80,6 @@ Mapbender.Model = {
         this.map.layersList.mapquery0.olLayer.isBaseLayer = true;
         this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
         this._addLayerMaxExtent(this.map.layersList.mapquery0);
-        $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr){
-            $.each(defArr, function(idx, layerDef){
-                layerDef['origId'] = idx;
-                self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
-            });
-        });
 
         this.parseURL();
 
@@ -130,9 +124,6 @@ Mapbender.Model = {
                     }));
             }
         });
-        if(poiMarkerLayer){
-            this.map.olMap.addLayer(poiMarkerLayer);
-        }
         var centered = false;
         if(poiBox){
             if(pois.length == 1 && pois[0].scale){
@@ -152,14 +143,25 @@ Mapbender.Model = {
             }
         }
 
+        $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
+        this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
+        this.map.olMap.events.register('movestart', this, $.proxy(this._checkOutOfBounds, this));
+        
+        $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr){
+            $.each(defArr, function(idx, layerDef){
+                layerDef['origId'] = idx;
+                self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
+            });
+        });
+        
+        if(poiMarkerLayer){
+            this.map.olMap.addLayer(poiMarkerLayer);
+        }
+
         // Popups have to be set after map extent initialization
         $.each(poiPopups, function(idx, popup){
             self.map.olMap.addPopup(popup);
         });
-
-        $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
-        this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
-        this.map.olMap.events.register('movestart', this, $.proxy(this._checkOutOfBounds, this));
     },
     getCurrentProj: function(){
         return this.proj;
