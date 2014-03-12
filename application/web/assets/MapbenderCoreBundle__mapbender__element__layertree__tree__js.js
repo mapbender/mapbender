@@ -301,7 +301,7 @@
             if(!this.created || !options.added)
                 return;
             var added = options.added;
-            //window.console && console.log("layertree _onSourceAdded");
+            window.console && console.log("layertree _onSourceAdded");
             var before = added.after, after = added.before;
             if(added.source.configuration.baseSource && !this.options.showBaseSource){
                 return;
@@ -349,7 +349,7 @@
             this._reset();
         },
         _onSourceChanged: function(event, options){
-//            window.console && console.log("layertree _onSourceChanged", options);
+            window.console && console.log("layertree _onSourceChanged", options);
             if(options.changed && options.changed.children){
                 this._changeChildren(options.changed);
 //                this.resetSource(this.model.getSource(options.changed.sourceIdx));
@@ -431,8 +431,8 @@
                 this._setSourcesCount();
             }
         },
-        _onSourceLoadStart: function(event, option){ // sets "loading" for layers
-//            window.console && console.log("layertree _onSourceLoadStart");
+        _onSourceLoadStart: function(event, option){ // sets "loading" for layers XXX
+            window.console && console.log("layertree _onSourceLoadStart");
             if(option.source && this.sourceAtTree[option.source.id ]){
                 this.loadStarted[option.source.id ] = true;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
