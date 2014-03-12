@@ -62,6 +62,7 @@ class Layertree extends Element
     {
         $assets = array(
             'js' => array(
+                '@FOMCoreBundle/Resources/public/js/dragdealer.min.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
                 'mapbender.element.layertree.tree.js'),
