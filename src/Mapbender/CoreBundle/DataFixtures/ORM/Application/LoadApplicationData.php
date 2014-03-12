@@ -10,11 +10,13 @@ use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
  * The class LoadApplicationData loads the applications from the "mapbender.yml"
  * into a mapbender database.
- * 
+ *
  * @author Paul Schmidt
  */
 class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
@@ -22,8 +24,8 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
 
     /**
      * Container
-     * 
-     * @var ContainerInterface 
+     *
+     * @var ContainerInterface
      */
     private $container;
 
@@ -92,6 +94,16 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 $layersets_map[$layersetName] = $layerset->getId();
             }
             $manager->persist($application);
+
+            // Set inital ACL
+            $aces = array();
+            $aces[] = array (
+                'sid' => new RoleSecurityIdentity('IS_AUTHENTICATED_ANONYMOUSLY'),
+                'mask' => MaskBuilder::MASK_VIEW);
+
+            $aclManager = $this->container->get('fom.acl.manager');
+            $aclManager->setObjectACL($application, $aces, 'object');
+
             $elements_map = array();
             // Then create elements
             foreach($definition['elements'] as $region => $elementsDefinition)
