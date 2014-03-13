@@ -8,9 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Form\DataTransformer\ElementIdTransformer;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+
 
 /**
- * 
+ *
  */
 class TargetElementType extends AbstractType
 {
@@ -131,4 +134,17 @@ class TargetElementType extends AbstractType
         $builder->addModelTransformer($transformer);
     }
 
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $choices = $view->vars['choices'];
+        $translator = $this->container->get('translator');
+
+        usort($choices, function($a, $b) use ($translator) {
+            return strcasecmp($translator->trans($a->label), $translator->trans($b->label));
+        });
+
+        $view->vars = array_replace($view->vars, array(
+            'choices' => $choices
+        ));
+    }
 }

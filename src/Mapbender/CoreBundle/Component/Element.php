@@ -419,6 +419,7 @@ abstract class Element
             array(
             'property_path' => false,
             'data' => $element,
+            'create_standard_permissions' => false,
             'permissions' => array(
                     1 => 'View'))
         );

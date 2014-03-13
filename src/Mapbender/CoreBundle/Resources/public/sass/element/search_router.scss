@@ -1,5 +1,7 @@
 @import "libs/variables";
 @import "libs/mixins";
+@import "modules/button";
+@import "modules/text";
 
 $searchRouterInputWidth:290px;
 .mb-element-searchrouter{

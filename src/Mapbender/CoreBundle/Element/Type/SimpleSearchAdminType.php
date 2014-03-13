@@ -64,6 +64,10 @@ class SimpleSearchAdminType extends AbstractType
             ->add('result_minscale', 'number', array(
                 'property_path' => '[result][minscale]'))
             ->add('result_maxscale', 'number', array(
-                'property_path' => '[result][maxscale]'));
+                'property_path' => '[result][maxscale]'))
+            ->add('result_icon_url', 'text', array(
+                'property_path' => '[result][icon_url]'))
+            ->add('result_icon_offset', 'text', array(
+                'property_path' => '[result][icon_offset]'));
     }
 }

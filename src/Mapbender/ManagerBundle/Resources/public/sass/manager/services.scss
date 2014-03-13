@@ -132,7 +132,6 @@
     height:$inputHeight;
   }
   .leftContainer{margin-right:$space;}
-  .rightContainer{width:200px;} // omg is this ugly!
 }
 .instanceTable{
   margin-top:$space;
@@ -143,8 +142,7 @@
 
   thead .checkboxColumn{padding:0px;}
   tbody{
-    .input, .dropdown{min-width:100%;}
-    .titleColumn{width:220px;}
+    .dropdown{min-width:100%;}
     .minScaleColumn, .maxScaleColumn, .styleColumn{width:90px;}
     .checkboxColumn{padding:5px 3px 5px 3px;}
     .checkWrapper{margin-top:5px;width: 100%;}
@@ -161,6 +159,8 @@
     position: relative;
     line-height:$inputHeight;
   }
+  .input{width:90px;}
+  .titleColumn .input{width:220px;}
 }
 .infoMsgBox{
   z-index: 10;

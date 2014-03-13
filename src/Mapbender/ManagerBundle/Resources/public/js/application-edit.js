@@ -400,6 +400,9 @@ $(function() {
                                     ++count;
                                 });
                             }
+                            $('.contentItem:first .permissionsTable').removeClass('hidePermissions');
+                            $('.contentItem:first #permissionsDescription').addClass('hidden');
+
                             $(".contentItem:not(.contentItem:first)", popup.$element).remove();
                         }
                         $(".buttonAdd, .buttonBack", popup.$element).addClass('hidden');
