@@ -671,7 +671,6 @@
                         modal: false,
                         draggable: true,
                         closeButton: false,
-                        closeOnPopupCloseClick: false,
                         closeOnESC: false,
                         content: [self.element.show()],
                         destroyOnClose: true,

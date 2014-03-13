@@ -147,7 +147,6 @@
                         draggable: true,
                         modal: false,
                         closeButton: false,
-                        closeOnPopupCloseClick: false,
                         closeOnESC: false,
                         content: content,
                         resizable: true,
@@ -164,6 +163,11 @@
                                     }
                                 }
                             }
+                        }
+                    });
+                    this.popup.$element.on('close', function() {
+                        if(self.options.deactivateOnClose){
+                            self.deactivate();
                         }
                     });
                     if(typeof this.options.printResult !== 'undefined' && this.options.printResult === true){

@@ -345,7 +345,7 @@
                         draggable: true,
                         modal: false,
                         closeButton: false,
-                        closeOnPopupCloseClick: false,
+                        closeOnPopupCloseClick: true,
                         closeOnESC: false,
                         content: ('<ul>' + html + '</ul>'),
                         width: 350,

@@ -39,7 +39,7 @@
                     modal: false,
                     closeButton: false,
                     closeOnESC: false,
-                    closeOnPopupCloseClick: false,
+                    closeOnPopupCloseClick: true,
                     content: self.element,
                     destroyOnClose: true,
                     width: 500,
@@ -206,7 +206,7 @@
                 }
             });
         },
-        
+
         _addSources: function(sourceDefs, sourceOpts){
             var self = this;
             var mbMap = $('#' + self.options.target).data('mapbenderMbMap');

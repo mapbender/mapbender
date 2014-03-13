@@ -222,6 +222,8 @@ class ElementController extends Controller
      */
     public function securityAction($slug, $id)
     {
+        $em = $this->getDoctrine()->getEntityManager();
+
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
         $element = $this->getDoctrine()
@@ -232,18 +234,17 @@ class ElementController extends Controller
             throw $this->createNotFoundException('The element with the id "'
                 . $id . '" does not exist.');
         }
+        $em->detach($element); // prevent element from being stored with default config/stored again
         if ($this->getRequest()->getMethod() === 'POST') {
             $form = ComponentElement::getElementForm($this->container,
                     $application, $element, true);
             $request = $this->getRequest();
             $form['form']->bindRequest($request);
             if ($form['form']->isValid()) {
-                $em = $this->getDoctrine()->getEntityManager();
                 $em->getConnection()->beginTransaction();
                 try {
                     $application->setUpdated(new \DateTime('now'));
                     $em->persist($application);
-                    $em->detach($element); // prevent element from being stored with default config
 
                     $aclManager = $this->get('fom.acl.manager');
                     $aclManager->setObjectACLFromForm($element,

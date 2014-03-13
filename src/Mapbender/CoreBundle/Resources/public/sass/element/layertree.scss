@@ -73,6 +73,10 @@
 .layer-menu-btn{
   position: relative !important;
 }
+.layer-menu-btn:before{
+  content: '\f0c9';
+  font-family: 'FontAwesome';
+}
 .layer-menu{
   position: absolute;
   background-color: white;

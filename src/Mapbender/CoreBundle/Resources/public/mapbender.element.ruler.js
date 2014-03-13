@@ -105,9 +105,8 @@
                     modal: false,
                     draggable: true,
                     closeButton: false,
-                    closeOnESC: false,
+                    closeOnESC: true,
                     destroyOnClose: true,
-                    closeOnPopupCloseClick: false,
                     content: self.container,
                     width: 300,
                     buttons: {
@@ -120,9 +119,11 @@
                         }
                     }
                 });
+                this.popup.$element.on('close', $.proxy(this.deactivate, this));
             }else{
                 this.popup.open("");
             }
+
             (this.options.type === 'line') ?
                     $("#linerulerButton").parent().addClass("toolBarItemActive") :
                     $("#arearulerButton").parent().addClass("toolBarItemActive");
@@ -176,7 +177,7 @@
                 this.segments.empty();
             }
             this.total.html('<b>'+measure+'</b>');
-            
+
         },
         _getMeasureFromEvent: function(event){
             var measure = event.measure,
@@ -213,4 +214,3 @@
     });
 
 })(jQuery);
-
