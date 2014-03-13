@@ -166,7 +166,7 @@
             $.ajax({
                 url: self.elementUrl + 'getCapabilities',
                 data: {
-                    url: encodeURIComponent(options.gcurl)
+                    url: options.gcurl
                 },
                 dataType: 'text',
                 success: function(data, textStatus, jqXHR){
