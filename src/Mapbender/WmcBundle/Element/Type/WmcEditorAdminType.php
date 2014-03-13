@@ -44,14 +44,14 @@ class WmcEditorAdminType extends AbstractType
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false));
-        $builder->add('accessGroups', 'fom_groups',
-            array(
-            'return_entity' => false,
-            'user_groups' => false,
-            'property_path' => '[accessGroups]',
-            'required' => false,
-            'multiple' => true,
-            'empty_value' => 'Choose an option',));
+//        $builder->add('accessGroups', 'fom_groups',
+//            array(
+//            'return_entity' => false,
+//            'user_groups' => false,
+//            'property_path' => '[accessGroups]',
+//            'required' => false,
+//            'multiple' => true,
+//            'empty_value' => 'Choose an option',));
     }
 
 }
