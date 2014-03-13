@@ -150,6 +150,7 @@
                         closeOnPopupCloseClick: false,
                         closeOnESC: false,
                         content: content,
+                        resizable: true,
                         width: 500,
                         buttons: {
                             'ok': {
@@ -174,7 +175,7 @@
                                 }
                         }});
                     }
-                    
+
                     this._onTabs();
                 }else{
                     this._offTabs();
@@ -217,14 +218,14 @@
             }
             container.removeClass('loading');
         },
-        
+
         _printContent: function(){
             var w = window.open("", "title", "attributes");
             var c = $('#featureInfoTabContainer').find('div.active').html();
-            w.document.write(c);    
-            w.setTimeout(function(){w.print();},1000);      
+            w.document.write(c);
+            w.setTimeout(function(){w.print();},1000);
         },
-        
+
         /**
          *
          */
