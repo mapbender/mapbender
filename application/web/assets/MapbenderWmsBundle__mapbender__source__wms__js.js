@@ -638,26 +638,7 @@ $.extend(true, Mapbender, {
                             }
                         };
                     }
-                    if(layer.options.minScale){
-                        if(layer.options.minScale <= scale){
-                            layer.state.outOfScale = false;
-                        }else{
-                            layer.state.outOfScale = true;
-                        }
-                    }else{
-                        layer.state.outOfScale = false;
-                    }
-                    if(!layer.state.outOfScale){
-                        if(layer.options.maxScale){
-                            if(layer.options.maxScale > scale){
-                                layer.state.outOfScale = false;
-                            }else{
-                                layer.state.outOfScale = true;
-                            }
-                        }else{
-                            layer.state.outOfScale = false;
-                        }
-                    }
+                    layer.state.outOfScale = (layer.options.minScale ? layer.options.minScale <= scale : true) && (layer.options.maxScale ? layer.options.maxScale > scale : true) ? false : true;
                     /* @TODO outOfBounds for layers ?  */
                     if(layer.children){
                         if(parentState.state.visibility

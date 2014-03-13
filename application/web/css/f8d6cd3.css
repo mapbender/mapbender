@@ -31,3 +31,5 @@
 .elementFormSearchRouter{max-height:370px}.elementFormSearchRouter .labelInput{width:90px}
 
 .elementFormToolbar .labelInput{width:80px}.elementFormToolbar .checkWrapper{margin-bottom:10px}.elementFormToolbar .labelCheck{margin-right:20px}.elementFormToolbar select{margin-bottom:10px}.elementFormToolbar .singleRow .labelInput,.elementFormToolbar .singleRow>.input{float:left}.elementFormToolbar .singleRow .labelInput{width:15px;margin-right:5px}.elementFormToolbar .singleRow .input{width:125px}.elementFormToolbar .singleRow .input:first-child{margin-right:10px}
+
+.elementFormBaseSourceSwitcher .collectionItem{position:relative;margin-bottom:20px}.elementFormBaseSourceSwitcher .iconRemove{position:absolute;top:0;right:30px}
