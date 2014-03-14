@@ -45,6 +45,8 @@
   width:0px;
   z-index:999;
   @include fixed(0 0 0 0);
+  height:100%;
+  width:100%;
 
   &.show .popup{margin:80px auto 0 auto;}
   &.ui-draggable-dragging{@include opacity(0.6);}
@@ -53,8 +55,6 @@
     .popupHead{cursor:move;}
   }
   &.modal{
-    height:100%;
-    width:100%;
     .overlay{
       @include opacity(0.9);
       @include fixed(0 0 0 0);
