@@ -54,6 +54,7 @@
                         }
                     }
                 });
+                this.popup.$element.on('close', $.proxy(this.close, this));
             }else{
                 if(this.popupIsOpen === false){
                     this.popup.open(self.element);
