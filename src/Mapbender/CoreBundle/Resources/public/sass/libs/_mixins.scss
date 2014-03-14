@@ -19,7 +19,7 @@
   @include position($args);
 }
 @mixin fixed($args){
-  position:fixed;
+  position:fixed !important; //dirty
   @include position($args);
 }
 @mixin relative($args){
