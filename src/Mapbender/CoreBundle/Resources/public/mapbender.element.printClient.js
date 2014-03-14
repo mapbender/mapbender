@@ -56,7 +56,8 @@
                         closeButton: false,
                         closeOnESC: false,
                         content: self.element,
-                        width: 340,
+                        width: 350,
+                        height: 370,
                         cssClass: 'customPrintDialog',
                         buttons: {
                                 'cancel': {
@@ -214,7 +215,7 @@
                 for(var field in opt_fields){
                     var span = '';
                     if(opt_fields[field].options.required === true){
-                       span = '<span class="required">*</span>'
+                       span = '<span class="required">*</span>';
                     }
 
                     extra_fields.append($('<label></label>', {
@@ -537,8 +538,8 @@
             }
 
             // replace pattern
-
-            if (this.options.replace_pattern === 'undefined'){
+            
+            if (typeof this.options.replace_pattern !== 'undefined' && this.options.replace_pattern !== null){
                 for(var i = 0; i < this.options.replace_pattern.length; i++) {
                     $.merge(fields, $('<input />', {
                         type: 'hidden',
@@ -576,7 +577,7 @@
             // invalid, we have to remove the message first
             textfield.setCustomValidity('');
                 if (!textfield.validity.valid) {
-                    textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));
+                    textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));  
                 }
             });
         },

@@ -30,10 +30,6 @@ class PrintService
     {   
         $this->data = json_decode($content, true);
         $template = $this->data['template'];
-//        print "<pre>";
-//        print_r($this->data);
-//        print "</pre>";
-//        die();
         
         $this->getTemplateConf($template);
         $this->createUrlArray();
@@ -58,10 +54,6 @@ class PrintService
     {
         $odgParser = new OdgParser($this->container);
         $this->conf = $odgParser->getConf($template);
-//        print "<pre>";
-//        print_r($this->conf);
-//        print "</pre>";
-//        die();
     }
 
     /**
@@ -85,14 +77,12 @@ class PrintService
         }
         
         $quality = $this->data['quality'];
-        $default;
+        $default = '';
         foreach ($this->layer_urls as $k => $url) {
             foreach ($this->data['replace_pattern'] as $rKey => $pattern) {  
                 if(isset($pattern['default'])){
                     if(isset($pattern['default'][$quality])){
                         $default = $pattern['default'][$quality];
-                    }else{
-                        $default = '';
                     }
                     continue;
                 }
@@ -102,7 +92,8 @@ class PrintService
                 if(strpos($url,$pattern['pattern']) !== false){
                     if(isset($pattern['replacement'][$quality])){
                         $url = str_replace($pattern['pattern'], $pattern['replacement'][$quality], $url);
-                        $this->layer_urls[$k] = $url;
+                        $signer = $this->container->get('signer');
+                        $this->layer_urls[$k] = $signer->signUrl($url);
                         continue 2;
                     }
                 }
@@ -164,8 +155,10 @@ class PrintService
             $width = '&WIDTH=' . $this->image_width;
             $height = '&HEIGHT=' . $this->image_height;
             $url .= $width . $height;
-            if ($this->data['quality'] != '72') {
-                $url .= '&map_resolution=' . $this->data['quality'];
+            if(!isset($this->data['replace_pattern'])){
+                if ($this->data['quality'] != '72') {
+                    $url .= '&map_resolution=' . $this->data['quality'];
+                }
             }
             $this->layer_urls[$k] = $url;
         }
@@ -282,8 +275,10 @@ class PrintService
         foreach ($this->layer_urls as $k => $url) {          
             $url .= $bbox . $w . $h;    
             
-            if ($this->data['quality'] != '72') {
-                $url .= '&map_resolution=' . $this->data['quality'];
+            if(!isset($this->data['replace_pattern'])){
+                if ($this->data['quality'] != '72') {
+                    $url .= '&map_resolution=' . $this->data['quality'];
+                }
             }
             
             $this->container->get("logger")->debug("Print Request Nr.: " . $k . ' ' . $url);
@@ -450,11 +445,10 @@ class PrintService
         }
         
         if ($this->data['rotation'] == 0) {
-            $tempdir = sys_get_temp_dir();
-            foreach ($this->layer_urls as $k => $url)
-                    $pdf->Image($this->finalimagename, $this->x_ul,
-                    $this->y_ul, $this->width, $this->height, 'png', '', false,
-                    0, 5, -1 * 0);
+
+            $pdf->Image($this->finalimagename, $this->x_ul,
+            $this->y_ul, $this->width, $this->height, 'png', '', false,
+            0, 5, -1 * 0);
 
             $pdf->Rect($this->x_ul, $this->y_ul, $this->width, $this->height);
             if (isset($this->conf['northarrow'])) {
@@ -693,12 +687,7 @@ class PrintService
     
     private function drawFeatures()
     {      
-        $image = imagecreatefrompng($this->finalimagename);        
-        
-//        print "<pre>";
-//        print_r($this->data['features']);
-//        print "</pre>";
-//        die();
+        $image = imagecreatefrompng($this->finalimagename);              
         
         foreach ($this->data['features'] as $fKey => $feature){
             $points = array();        

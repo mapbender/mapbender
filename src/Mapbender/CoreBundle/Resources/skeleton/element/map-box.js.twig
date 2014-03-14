@@ -12,10 +12,13 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
     boxControl: null,
 
     _create: function() {
+        this._super('_create');
+        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+    },
+
+    _setup: function() {
         var self = this;
         var boxProxy = $.proxy(this._mapBoxHandler, this);
-
-        this._super('_create');
         this.map = $('#' + this.options.target);
 
         this.boxControl = new OpenLayers.Control();
@@ -66,7 +69,7 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
                     xmax: boundsOrPixel.x,
                     ymax: boundsOrPixel.y
                 }
-            }
+            };
         } else {
             extent = {
                 pixel: {
@@ -75,7 +78,7 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
                     xmax: boundsOrPixel.right,
                     ymax: boundsOrPixel.top
                 }
-            }
+            };
         }
 
         var ll = this.map.data('mbMap').map.olMap.
@@ -100,11 +103,11 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
     /**
      * This should be used for your own logic. This function receives an
      * coordinates object which has two properties 'pixel' and 'world' which
-     * hold the pixel and world coordinates of the drawn box extent. Each 
+     * hold the pixel and world coordinates of the drawn box extent. Each
      * property has xmin, ymin, xmax and ymax values.
      */
     _mapBoxWorker: function(extent) {
-        alert('You clicked: [' + 
+        alert('You clicked: [' +
                 extent.pixel.xmin + ',' + extent.pixel.ymin +
                 ' x ' +
                 extent.pixel.xmax + ',' + extent.pixel.ymax +
@@ -117,4 +120,3 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
 });
 
 })(jQuery);
-
