@@ -65,7 +65,7 @@
 .iconThumbsUp, .iconThumbsDown, .iconGroup, .iconUser,
 .iconSettings, .iconSignOut, .iconSignIn, .iconMore,
 .iconCopy, .iconKey, .iconWarning, .iconEmail, .iconTwitter,
-.iconFacebook, .iconGooglePlus, .iconSketch{
+.iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu{
   &:before{font-family: FontAwesome;}
 }
 
@@ -85,6 +85,7 @@
 .iconExpand:before{content:"\f117";}
 .iconExpandClosed:before{content:"\f116";}
 .iconMove:before{content:"\f047";}
+.iconMenu:before{content:"\f0c9";}
 
 // only frontend
 .iconAbout:before{content:"\f0c0";}
