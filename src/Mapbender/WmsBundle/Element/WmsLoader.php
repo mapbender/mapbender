@@ -71,7 +71,7 @@ class WmsLoader extends Element
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 'mapbender.element.wmsloader.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.distpatcher.js'),
-            'css' => array(),
+            'css' => array('@MapbenderWmsBundle/Resources/public/sass/element/wmsloader.scss'),
             'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));
         return $files;
     }
