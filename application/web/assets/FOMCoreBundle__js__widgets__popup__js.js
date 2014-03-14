@@ -239,9 +239,13 @@ var Mapbender = (function($, Mapbender) {
 
             selfElement.trigger('close');
             selfElement.removeClass("show");
-            selfElement.one(transitionEvent, function(){
+            if(transitionEvent) {
+                selfElement.one(transitionEvent, function(){
+                    selfElement.detach();
+                });
+            } else {
                 selfElement.detach();
-            });
+            }
             if(this.options.destroyOnClose) {
                 this.destroy();
             }

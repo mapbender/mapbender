@@ -27,7 +27,7 @@
                     draggable: true,
                     closeOnOutsideClick: true,
                     closeButton: false,
-                    closeOnPopupCloseClick: false,
+                    closeOnPopupCloseClick: true,
                     content: [ $.ajax({url: self.elementUrl + 'content'})],
                     width: 350,
                     height: 170,

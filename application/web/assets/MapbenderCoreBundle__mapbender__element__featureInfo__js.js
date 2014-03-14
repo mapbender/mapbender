@@ -147,11 +147,11 @@
                         draggable: true,
                         modal: false,
                         closeButton: false,
-                        closeOnPopupCloseClick: false,
                         closeOnESC: false,
                         content: content,
                         resizable: true,
                         width: 500,
+                        height: 500,
                         buttons: {
                             'ok': {
                                 label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
@@ -164,6 +164,11 @@
                                     }
                                 }
                             }
+                        }
+                    });
+                    this.popup.$element.on('close', function() {
+                        if(self.options.deactivateOnClose){
+                            self.deactivate();
                         }
                     });
                     if(typeof this.options.printResult !== 'undefined' && this.options.printResult === true){

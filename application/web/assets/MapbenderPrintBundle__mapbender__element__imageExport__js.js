@@ -34,7 +34,6 @@
                     header: true,
                     modal: false,
                     closeButton: false,
-                    closeOnPopupCloseClick: false,
                     closeOnESC: false,
                     content: self.element,
                     width: 250,

@@ -113,13 +113,13 @@
                         title: this.element.attr('title'),
                         draggable: true,
                         modal: false,
-                        closeButton: false,
+                        closeButton: true,
                         closeOnPopupCloseClick: false,
                         closeOnESC: false,
                         content: this.element,
                         width: 450,
                         resizable: true,
-                        height: 350,
+                        height: 500,
                         buttons: {
                             'cancel': {
                                 label: Mapbender.trans('mb.core.searchrouter.popup.btn.cancel'),

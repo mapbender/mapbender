@@ -203,10 +203,10 @@ parameters:
                             - { dpi: 288,  label: Document (288dpi)}
                         rotatable: true
                         optional_fields:
-                            title:                                  
-                                label: Title              # label of the optional field         
-                                options:                  # 
-                                    required: true        # true or false          
+                            title:
+                                label: Title              # label of the optional field
+                                options:                  #
+                                    required: true        # true or false
                     lineruler:
                         title: Distance
                         tooltip: 'ruler'
@@ -237,7 +237,7 @@ parameters:
                         titleMaxLength: 20
                         showBaseSource: true
                         layerRemove: true
-                        menu: false
+                        menu: []
                     overview:
                         title: Overview
                         class: Mapbender\CoreBundle\Element\Overview
@@ -252,7 +252,7 @@ parameters:
                         fixed: false
                     scaledisplay:
                         title: Scale Display
-                        class: Mapbender\CoreBundle\Element\ScaleDisplay  
+                        class: Mapbender\CoreBundle\Element\ScaleDisplay
                         tooltip: Scale
                         target: map
                         anchor: left-top
@@ -518,7 +518,7 @@ parameters:
                         showHeader: false
                         layerMenu: false
                         layerRemove: false
-                        menu: false
+                        menu: []
                     overview:
                         title: Overview
                         class: Mapbender\CoreBundle\Element\Overview
