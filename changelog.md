@@ -1,8 +1,14 @@
 # Changelog
 
-* **v3.0.3.0** - 2014-03-xx
+* **v3.x.x.x** - 201x-xx-xx
+  - xxx
+
+
+## Release History
+
+* **v3.0.3.0** - 2014-03-14
   - Added function for validate WMS GetCapabilities documents 
-  - Acl for Elements added
+  - ACL for Elements added
   - Parameter "BaseSource" for SourceInstances added
   - Closed XSS vulnerability which required admin permissions
   - Added cache for compiled static assets
@@ -22,12 +28,12 @@
   - Imageexport to generate png or jpg
   - Change WMS Collection via button (BaselayerSwitcher)
   - Print with overview
+  - Print define optional fields
+  - Print define replace pattern
   - Sidepane with different elements (chnage via button)
   - Layertree context menue to change opacity and to zoom to layer
   - Open application with parameters (f.e. position)
    
-
-## Release History
 
 * **v3.0.2.0** - 2013-11-26
   - Signer for OwsProxy added
