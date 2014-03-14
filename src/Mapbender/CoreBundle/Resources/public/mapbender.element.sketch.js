@@ -148,7 +148,6 @@
                     modal: false,
                     closeButton: false,
                     closeOnESC: false,
-                    closeOnPopupCloseClick: false,
                     content: [content],
                     destroyOnClose: true,
                     width: 400,
@@ -179,6 +178,7 @@
                         }
                     }
                 });
+                this.popup.$element.on('close', $.proxy(this._close, this));
             }else{
                 this.popup.open();
             }
@@ -200,4 +200,3 @@
         _destroy: $.noop
     });
 })(jQuery);
-

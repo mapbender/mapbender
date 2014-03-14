@@ -57,7 +57,6 @@
                     modal: false,
                     closeButton: false,
                     closeOnESC: false,
-                    closeOnPopupCloseClick: false,
                     content: [$.ajax({
                             url: self.elementUrl + 'list',
                             complete: function(data){
@@ -94,6 +93,7 @@
                         }
                     }
                 });
+                this.popup.$element.on('close', $.proxy(this.close, this));
                 $(".popup").find(".buttonYes, .buttonBack").hide();
             }else{
                 this.popup.open($.ajax({url: self.elementUrl + 'list'}));

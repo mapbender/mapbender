@@ -4,7 +4,7 @@
             autoOpen: false,
             target: null,
 			layerInfo: true,
-            menu: [],
+            menu: []
         },
         model: null,
         dlg: null,
@@ -177,7 +177,7 @@
                 var li = this.template.clone();
                 li.removeClass('hide-elm');
                 li.attr('data-id', sourceEl.options.id);
-                li.attr('data-sourceid', source.id)
+                li.attr('data-sourceid', source.id);
                 var nodeType = this._getNodeType(sourceEl, isroot);
                 li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
                 if(nodeType === this.consts.root || nodeType === this.consts.group){
@@ -559,7 +559,7 @@
                 }
                 menu.removeClass('hidden');
                 $element.append(menu);
-                $(menu).on('click', function(e){
+                $(menu).on('click mousedown mousemove', function(e){
                     e.stopPropagation();
                 });
                 if($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0){
@@ -669,13 +669,14 @@
                     this.popup = new Mapbender.Popup2({
                         title: self.element.attr('title'),
                         modal: false,
+                        resizable: true,
                         draggable: true,
                         closeButton: false,
-                        closeOnPopupCloseClick: false,
                         closeOnESC: false,
                         content: [self.element.show()],
                         destroyOnClose: true,
                         width: 350,
+                        height: 500,
                         cssClass: 'customLayertree',
                         buttons: {
                             'ok': {

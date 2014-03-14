@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmcBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -6,12 +7,10 @@ use Mapbender\CoreBundle\Entity\State;
 use Mapbender\WmcBundle\Component\WmcHandler;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmcBundle\Form\Type\WmcDeleteType;
-use Mapbender\WmcBundle\Form\Type\WmcLoadType;
 use Mapbender\WmcBundle\Form\Type\WmcType;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WmcEditor extends Element
@@ -38,7 +37,7 @@ class WmcEditor extends Element
      */
     static public function getClassTags()
     {
-        return array("mb.wmc.suggestmap.wmc","mb.wmc.suggestmap.editor");
+        return array("mb.wmc.suggestmap.wmc", "mb.wmc.suggestmap.editor");
     }
 
     /**
@@ -49,7 +48,6 @@ class WmcEditor extends Element
         return array(
             "tooltip" => null,
             "target" => null,
-            "accessGroups" => array(),
         );
     }
 
@@ -154,10 +152,6 @@ class WmcEditor extends Element
      */
     protected function setPublic()
     {
-        if (!$this->accessGroups()) {
-            return new Response(json_encode(array("error" => 'Access denied.')),
-                200, array('Content-Type' => 'application/json'));
-        }
         $wmcid = $this->container->get("request")->get("wmcid", null);
         $enabled = $this->container->get("request")->get("public", null);
         $wmc = $this->container->get('doctrine')
@@ -171,8 +165,7 @@ class WmcEditor extends Element
         return new Response(json_encode(array(
                 "message" => "public switched",
                 "newState" => $enabled,
-                "oldState" => $oldenabled)), 200,
-            array('Content-Type' => 'application/json'));
+                "oldState" => $oldenabled)), 200, array('Content-Type' => 'application/json'));
     }
 
     /**
@@ -182,16 +175,11 @@ class WmcEditor extends Element
      */
     protected function getWmc()
     {
-        if (!$this->accessGroups()) {
-            return new Response("Access denied.", 200,
-                array('Content-Type' => 'text/html'));
-        }
         $wmcid = $this->container->get("request")->get("wmcid", null);
         $wmchandler = new WmcHandler($this, $this->application, $this->container);
         if ($wmcid) {
             $wmc = $wmchandler->getWmc($wmcid, false);
-            $form = $this->container->get("form.factory")->create(new WmcType(),
-                $wmc);
+            $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
             $html = $this->container->get('templating')
                 ->render('MapbenderWmcBundle:Wmc:wmceditor-form.html.twig',
                 array(
@@ -205,8 +193,7 @@ class WmcEditor extends Element
             $state->setServerurl($wmchandler->getBaseUrl());
             $state->setSlug($this->application->getSlug());
             $state = $wmchandler->signUrls($state);
-            $form = $this->container->get("form.factory")->create(new WmcType(),
-                $wmc);
+            $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
             $html = $this->container->get('templating')
                 ->render('MapbenderWmcBundle:Wmc:wmceditor-form.html.twig',
                 array(
@@ -223,22 +210,16 @@ class WmcEditor extends Element
      */
     protected function loadWmc()
     {
-        if (!$this->accessGroups()) {
-            return new Response(json_encode(array("error" => 'Access denied.')),
-                200, array('Content-Type' => 'application/json'));
-        }
         $wmcid = $this->container->get('request')->get("_id", null);
         if ($wmcid) {
-            $wmchandler = new WmcHandler($this, $this->application,
-                $this->container);
+            $wmchandler = new WmcHandler($this, $this->application, $this->container);
             $wmc = $wmchandler->getWmc($wmcid, false);
             $id = $wmc->getId();
-            return new Response(json_encode(array("data" => array($id => $wmc->getState()->getJson()))),
-                200, array('Content-Type' => 'application/json'));
+            return new Response(json_encode(array("data" => array($id => $wmc->getState()->getJson()))), 200,
+                array('Content-Type' => 'application/json'));
         } else {
             return new Response(json_encode(array("error" => $this->trans("mb.wmc.error.wmcnotfound",
-                        array('%wmcid%' => $wmcid)))), 200,
-                array('Content-Type' => 'application/json'));
+                        array('%wmcid%' => $wmcid)))), 200, array('Content-Type' => 'application/json'));
         }
     }
 
@@ -249,10 +230,6 @@ class WmcEditor extends Element
      */
     protected function getWmcList()
     {
-        if (!$this->accessGroups()) {
-            return new Response(json_encode(array("error" => 'Access denied.')),
-                200, array('Content-Type' => 'application/json'));
-        }
         $wmchandler = new WmcHandler($this, $this->application, $this->container);
         $wmclist = $wmchandler->getWmcList(false);
         $responseBody = $this->container->get('templating')
@@ -273,15 +250,10 @@ class WmcEditor extends Element
      */
     protected function saveWmc()
     {
-        if (!$this->accessGroups()) {
-            return new Response(json_encode(array("error" => 'Access denied.')),
-                200, array('Content-Type' => 'application/json'));
-        }
         $wmchandler = new WmcHandler($this, $this->application, $this->container);
         $request = $this->container->get('request');
         $wmc = Wmc::create();
-        $form = $this->container->get("form.factory")->create(new WmcType(),
-            $wmc);
+        $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
         if ($request->getMethod() === 'POST') {
             $form->bindRequest($request);
             if ($form->isValid()) { //TODO: Is file an image (jpg/png/gif?)
@@ -289,14 +261,13 @@ class WmcEditor extends Element
                     $wmc = $this->container->get('doctrine')
                         ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
                         ->find($wmc->getId());
-                    $form = $this->container->get("form.factory")->create(new WmcType(),
-                        $wmc);
+                    $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
                     $form->bindRequest($request);
                     if (!$form->isValid()) {
                         return new Response(json_encode(array(
                                 "error" => $this->trans("mb.wmc.error.wmcnotfound",
-                                    array('%wmcid%' => $wmc->getId())))), 200,
-                            array('Content-Type' => 'application/json'));
+                                    array('%wmcid%' => '"' . $wmc->getState()->getTitle() . '" (' . $wmc->getId() . ')')))),
+                            200, array('Content-Type' => 'application/json'));
                     }
                 }
                 $wmc->setState($wmchandler->unSignUrls($wmc->getState()));
@@ -308,16 +279,13 @@ class WmcEditor extends Element
                     if ($wmc->getScreenshot() !== null) {
                         $upload_directory = $wmchandler->getWmcDir();
                         if ($upload_directory !== null) {
-                            $filename = sprintf('screenshot-%d.%s',
-                                $wmc->getId(),
+                            $filename = sprintf('screenshot-%d.%s', $wmc->getId(),
                                 $wmc->getScreenshot()->guessExtension());
-                            $wmc->getScreenshot()->move($upload_directory,
-                                $filename);
+                            $wmc->getScreenshot()->move($upload_directory, $filename);
                             $wmc->setScreenshotPath($filename);
                             $format = $wmc->getScreenshot()->getClientMimeType();
                             $logourl = $wmchandler->getWmcUrl($filename);
-                            $logoUrl = LegendUrl::create(null, null,
-                                    OnlineResource::create($format, $logourl));
+                            $logoUrl = LegendUrl::create(null, null, OnlineResource::create($format, $logourl));
                             $state = $wmc->getState();
                             $state->setServerurl($wmchandler->getBaseUrl());
                             $state->setSlug($this->application->getSlug());
@@ -332,13 +300,12 @@ class WmcEditor extends Element
                 $em->getConnection()->commit();
                 return new Response(json_encode(array(
                         "success" => $this->trans("mb.wmc.error.wmcsaved",
-                            array('%wmcid%' => $wmc->getId())))), 200,
-                    array('Content-Type' => 'application/json'));
+                            array('%wmcid%' => '"' . $wmc->getState()->getTitle() . '" (' . $wmc->getId() . ')')))),
+                    200, array('Content-Type' => 'application/json'));
             } else {
                 return new Response(json_encode(array(
-                        "error" => $this->trans("mb.wmc.error.wmccannotbesaved",
-                            array('%wmcid%' => $wmc->getId())))), 200,
-                    array('Content-Type' => 'application/json'));
+                        "error" => $this->trans("mb.wmc.error.wmccannotbesaved", array('%wmcid%' => $wmc->getId())))),
+                    200, array('Content-Type' => 'application/json'));
             }
         }
     }
@@ -350,17 +317,11 @@ class WmcEditor extends Element
      */
     protected function confirmDeleteWmc()
     {
-        if (!$this->accessGroups()) {
-            return new Response("Access denied.", 200,
-                array('Content-Type' => 'text/html'));
-        }
         $wmcid = $this->container->get('request')->get("_id", null);
         if ($wmcid) {
-            $wmchandler = new WmcHandler($this, $this->application,
-                $this->container);
+            $wmchandler = new WmcHandler($this, $this->application, $this->container);
             $wmc = $wmchandler->getWmc($wmcid, false);
-            $form = $this->container->get("form.factory")->create(new WmcDeleteType(),
-                $wmc);
+            $form = $this->container->get("form.factory")->create(new WmcDeleteType(), $wmc);
             $html = $this->container->get('templating')
                 ->render('MapbenderWmcBundle:Wmc:deletewmc.html.twig',
                 array(
@@ -370,8 +331,7 @@ class WmcEditor extends Element
                 'wmc' => $wmc));
             return new Response($html, 200, array('Content-Type' => 'text/html'));
         } else {
-            return new Response($this->trans("mb.wmc.error.wmcnotfound",
-                    array('%wmcid%' => '')), 200,
+            return new Response($this->trans("mb.wmc.error.wmcnotfound", array('%wmcid%' => '')), 200,
                 array('Content-Type' => 'text/html'));
         }
     }
@@ -384,18 +344,12 @@ class WmcEditor extends Element
      */
     protected function deleteWmc()
     {
-        if (!$this->accessGroups()) {
-            return new Response(json_encode(array("error" => 'Access denied.')),
-                200, array('Content-Type' => 'application/json'));
-        }
         $wmc = Wmc::create();
-        $form = $this->container->get("form.factory")->create(new WmcDeleteType(),
-            $wmc);
+        $form = $this->container->get("form.factory")->create(new WmcDeleteType(), $wmc);
         if ($this->container->get('request')->getMethod() === 'POST') {
             $form->bindRequest($this->container->get('request'));
             if ($form->isValid()) {
-                $wmchandler = new WmcHandler($this, $this->application,
-                    $this->container);
+                $wmchandler = new WmcHandler($this, $this->application, $this->container);
                 $wmcid = $wmc->getId();
                 $wmc = $wmchandler->getWmc($wmcid, false);
                 $em = $this->container->get('doctrine')->getEntityManager();
@@ -413,38 +367,17 @@ class WmcEditor extends Element
                 $em->getConnection()->commit();
                 return new Response(json_encode(array(
                         "success" => $this->trans("mb.wmc.error.wmcremoved",
-                            array('%wmcid%' => $wmcid)))), 200,
+                            array('%wmcid%' => '"' . $wmc->getState()->getTitle() . '" (' . $wmcid . ")")))), 200,
                     array('Content-Type' => 'application/json'));
             } else {
                 return new Response(json_encode(array(
-                        "error" => $this->trans("mb.wmc.error.wmcnotfound",
-                            array('%wmcid%' => '')))), 200,
+                        "error" => $this->trans("mb.wmc.error.wmcnotfound", array('%wmcid%' => '')))), 200,
                     array('Content-Type' => 'application/json'));
             }
         }
         return new Response(json_encode(array(
-                "error" => $this->trans("mb.wmc.error.wmccannotberemoved"))),
-            200, array('Content-Type' => 'application/json'));
-    }
-
-    /**
-     * 
-     * 
-     * @return boolean true
-     */
-    protected function accessGroups()
-    {
-        $config = $this->getConfiguration();
-        foreach ($config['accessGroups'] as $groupId) {
-            $groupObj = $this->container->get('doctrine')->getEntityManager()
-                    ->getRepository('FOMUserBundle:Group')->findOneBy(array(
-                'id' => $groupId));
-            $a = $groupObj->getAsRole();
-            if ($this->container->get("security.context")->isGranted($groupObj->getAsRole())) {
-                return true;
-            }
-        }
-        return false;
+                "error" => $this->trans("mb.wmc.error.wmccannotberemoved"))), 200,
+            array('Content-Type' => 'application/json'));
     }
 
 }
