@@ -114,7 +114,6 @@
                         draggable: true,
                         modal: false,
                         closeButton: true,
-                        closeOnPopupCloseClick: false,
                         closeOnESC: false,
                         content: this.element,
                         width: 450,
@@ -138,6 +137,7 @@
                             }
                         }
                     });
+                    this.popup.$element.on('close', $.proxy(this.close, this));
                 }else{
 
                 }

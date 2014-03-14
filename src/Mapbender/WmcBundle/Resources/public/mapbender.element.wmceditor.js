@@ -47,7 +47,6 @@
                     modal: false,
                     closeButton: false,
                     closeOnESC: false,
-                    closeOnPopupCloseClick: false,
                     cssClass: 'mb-wmcEditor',
                     content: [$.ajax({
                             url: self.elementUrl + 'list',
@@ -90,6 +89,7 @@
                         }
                     }
                 });
+                this.popup.$element.on('close', $.proxy(this.close, this));
                 $(".popup").find(".buttonYes, .buttonBack").hide();
             }else{
                 $(".popupContent", self.popup.$element).empty();
