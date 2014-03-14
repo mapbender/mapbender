@@ -37,4 +37,6 @@
         {{form_label(template.format)}}   {{ form_widget(template.format) }}
         <div class="clearContainer"></div>
     {% endfor %}
+	{{ form_label(form.configuration.optional_fields) }}{{ form_widget(form.configuration.optional_fields) }}
+    {{ form_label(form.configuration.replace_pattern) }}{{ form_widget(form.configuration.replace_pattern) }}
 </div>
