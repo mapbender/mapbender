@@ -669,12 +669,14 @@
                     this.popup = new Mapbender.Popup2({
                         title: self.element.attr('title'),
                         modal: false,
+                        resizable: true,
                         draggable: true,
                         closeButton: false,
                         closeOnESC: false,
                         content: [self.element.show()],
                         destroyOnClose: true,
                         width: 350,
+                        height: 500,
                         cssClass: 'customLayertree',
                         buttons: {
                             'ok': {
