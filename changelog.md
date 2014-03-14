@@ -1,6 +1,9 @@
 # Changelog
 
 * **v3.0.3.0** - 2014-03-xx
+  - Added function for validate WMS GetCapabilities documents 
+  - Acl for Elements added
+  - Parameter "BaseSource" for SourceInstances added
   - Closed XSS vulnerability which required admin permissions
   - Added cache for compiled static assets
     - new parameter mapbender.static_assets, defaults to true
