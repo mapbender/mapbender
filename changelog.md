@@ -1,6 +1,7 @@
 # Changelog
 
 * **v3.0.3.0** - 2014-03-xx
+  - Acl for Elements added
   - Closed XSS vulnerability which required admin permissions
   - Added cache for compiled static assets
     - new parameter mapbender.static_assets, defaults to true
