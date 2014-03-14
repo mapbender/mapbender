@@ -219,6 +219,9 @@ class SQLSearchEngine
 
         foreach($data['form'] as $key => $value)
         {
+            if(null === $value) {
+                continue;
+            }
             if(array_key_exists($key, $data['autocomplete_keys']))
             {
                 // Autocomplete value given, match to configured attribute
