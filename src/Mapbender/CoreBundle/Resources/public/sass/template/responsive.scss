@@ -1,0 +1,129 @@
+@import "libs/variables";
+@import "libs/mixins";
+@import "libs/icons";
+
+.templateWrapper{
+  height: 100%;
+  width: 100%;
+  @include absolute(0 0 0 0);
+
+  &[data-state="open"]{
+    .infoContainerPane{max-height: 80px;}
+    .infoContainerTrigger{
+      @extend .iconClose;
+      bottom: 80px;
+      border-bottom-right-radius:0;
+      border-bottom-left-radius:0;
+    }
+  }
+}
+
+/* -------------------------------------------------------------- LOGO */
+.logoContainer{
+  z-index: 10;
+  background:none;
+  @include absolute($space '' '' $space);
+}
+
+
+
+
+
+/* ----------------------------------------------------------  TOOLBAR */
+.toolBar{
+  z-index: 4;
+  padding: .6em .8em;
+  margin-left: $space*3;
+  @include frontendContainerStyle();
+  @include absolute($space $space '' '');
+
+  & > li{
+    display:inline-block;
+    &:not(:first-child):before{
+      content: '|';
+      display: inline-block;
+      height: 14px;
+      overflow: hidden;
+      opacity: 0.2;
+      vertical-align: top;
+      margin: 1px 4px 0 4px;
+    }
+  }
+}
+li.toolBarMoreButton{
+  display: none;
+  position: relative;
+  &[data-state="show"]{display: inline-block};
+  i:before{font-style:normal;}
+}
+.toolbarMoreMenu{
+  display: none;
+  padding: 6px;
+  @include absolute($space*3 (-$space/2) '' 5px);
+  @include frontendContainerStyle();
+  &[data-state="show"]{display: block};
+
+  // small arrow left
+  &:after{
+    $arrowSize: 8px;
+    position: absolute;
+    left: 50%;
+    border: solid transparent;
+    content: '';
+    height: 0;
+    width: 0;
+    border-bottom-color: $firstColor;
+    border-width: $arrowSize;
+    top: (-$arrowSize*2);
+    margin-left: -$arrowSize;
+  }
+
+  & > .toolBarItem{
+    display: inline-block;
+    width:100%;
+    text-align:center;
+    margin-top:8px;
+    .mb-button:before{padding:0px;}
+  }
+}
+
+
+
+
+
+
+/* --------------------------------------------------- INFO CONTAINER */
+.infoContainerTrigger{
+  cursor: pointer;
+  z-index: 10;
+  padding: 10px 16px;
+  transition-delay: .2s;
+  -webkit-transition-delay: .2s;
+  @include transition(all .2s ease-in-out);
+  @include absolute('' $space $space '');
+  @include frontendContainerStyle();
+}
+.infoContainerPane{
+  max-height:0;
+  height:100%;
+  z-index: 10;
+  @include absolute('' 0 0 0);
+  @include transition(all .2s ease-in-out);
+  @include frontendContainerStyle();
+  border-radius: 0;
+}
+
+
+
+
+
+
+
+
+
+
+/* ---------------------------------------------------------- CONTENT */
+.contentPane{
+  overflow:hidden;
+  @include absolute(0 0 0 0);
+}
