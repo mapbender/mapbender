@@ -61,7 +61,7 @@ class Responsive extends Template
      */
     public static function getRegions()
     {
-        return array('toolbar', 'content', 'infocontainer', 'contextpane');
+        return array('toolbar', 'content', 'infocontainer');
     }
 
     /**
@@ -71,8 +71,7 @@ class Responsive extends Template
         return array('toolbar'       => array('Mapbender\CoreBundle\Element\Button',
                                               'Mapbender\CoreBundle\Element\AboutDialog'),
                      'content'       => array(),
-                     'infocontainer' => array(),
-                     'contextpane'   => array());
+                     'infocontainer' => array());
     }
 
     /**

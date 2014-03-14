@@ -65,7 +65,7 @@
 .iconThumbsUp, .iconThumbsDown, .iconGroup, .iconUser,
 .iconSettings, .iconSignOut, .iconSignIn, .iconMore,
 .iconCopy, .iconKey, .iconWarning, .iconEmail, .iconTwitter,
-.iconFacebook, .iconGooglePlus, .iconSketch{
+.iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu, .iconOverview{
   &:before{font-family: FontAwesome;}
 }
 
@@ -85,6 +85,8 @@
 .iconExpand:before{content:"\f117";}
 .iconExpandClosed:before{content:"\f116";}
 .iconMove:before{content:"\f047";}
+.iconMenu:before{content:"\f0c9";}
+
 
 // only frontend
 .iconAbout:before{content:"\f0c0";}
@@ -95,7 +97,7 @@
 .iconInfo:before{content:"\f129";}
 .iconInfoActive:before{content:"\f05a" !important;} // overwrite the default icon if checked
 .iconSearch:before{content:"\f002";}
-.iconWms:before{content:"\f0ac";}
+.iconWms:before, .iconOverview:before{content:"\f0ac";}
 .iconWmcEditor:before {content:"\f044";}
 .iconWmcLoader:before {content:"\f07c";}
 .iconOpen:before{content:"\f067";}
@@ -122,6 +124,7 @@
 .iconFacebook:before {content: "\f082";}
 .iconGooglePlus:before {content: "\f0d4";}
 .iconSketch:before {content: "\f044";}
+.iconMore:before {content: "\f0c9";}
 
 // only backend
 .iconGroup:before{content: "\f0c0";}

@@ -38,24 +38,15 @@
       </li>
     </ul>
 
-
-    <ul id="contextpane" class="contextPane">
-      {% if application.elements.footer is defined %}
-        {% for element in application.elements.footer %}
-          <li class="toolBarItem">{{ element.render() | raw }}</li>
-        {% endfor %}
-      {% endif %}
-    </ul>
-
     <div id="content" class="contentPane">
       {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'content' }%}
-      <div id="infocontainerTrigger" class="infoContainerTrigger iconOpen"></div>
+      <div id="infocontainerTrigger" class="infoContainerTrigger iconMenu"></div>
     </div>
 
     <ul id="infocontainer" class="infoContainerPane">
-      {% if application.elements.infocontainer is defined %}
-        {% for element in application.elements.infocontainer %}
-          <li>{{ element.render() | raw }}</li>
+      {% if application.elements.footer is defined %}
+        {% for element in application.elements.footer %}
+          <li class="toolBarItem">{{ element.render() | raw }}</li>
         {% endfor %}
       {% endif %}
     </ul>

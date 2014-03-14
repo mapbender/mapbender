@@ -10,7 +10,6 @@
   &[data-state="open"]{
     .infoContainerPane{max-height: 80px;}
     .infoContainerTrigger{
-      @extend .iconClose;
       bottom: 80px;
       border-bottom-right-radius:0;
       border-bottom-left-radius:0;
@@ -35,6 +34,7 @@
   padding: .6em .8em;
   margin-left: $space*3;
   @include frontendContainerStyle();
+  border-radius: 4px;
   @include absolute($space $space '' '');
 
   & > li{
@@ -61,6 +61,7 @@ li.toolBarMoreButton{
   padding: 6px;
   @include absolute($space*3 (-$space/2) '' 5px);
   @include frontendContainerStyle();
+  border-radius: 4px;
   &[data-state="show"]{display: block};
 
   // small arrow left
@@ -96,12 +97,13 @@ li.toolBarMoreButton{
 .infoContainerTrigger{
   cursor: pointer;
   z-index: 10;
-  padding: 10px 16px;
+  padding: 6px 12px;
   transition-delay: .2s;
   -webkit-transition-delay: .2s;
   @include transition(all .2s ease-in-out);
   @include absolute('' $space $space '');
   @include frontendContainerStyle();
+  border-radius: 4px;
 }
 .infoContainerPane{
   max-height:0;
@@ -126,4 +128,17 @@ li.toolBarMoreButton{
 .contentPane{
   overflow:hidden;
   @include absolute(0 0 0 0);
+}
+
+.mb-element-overview{
+  .toggleOverview{
+    cursor: pointer;
+    z-index: 10;
+    transition-delay: .2s;
+    -webkit-transition-delay: .2s;
+    @include transition(all .2s ease-in-out);
+    @include absolute(inherit $space $space*4 inherit);
+    @include frontendContainerStyle();
+    border-radius: 4px;
+  }
 }
