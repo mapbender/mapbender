@@ -12,6 +12,7 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
 
+    # locale en, de, it are available       
     fallback_locale:   en
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
@@ -25,6 +26,8 @@ parameters:
     cookie_secure: false
     cookie_lifetime: 3600
 
+    # activate sass_assets and define the compass_path, ruby_path, if you want to work with compass and edit sass files
+    # if not leave sass_assets: false 
     sass_assets: false
     compass_path: ~
     ruby_path: ~
