@@ -96,7 +96,11 @@ class PrintClient extends Element
             "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
                 array('dpi' => "288", 'label' => "Document (288dpi)")),
             "rotatable" => true,
-            "optional_fields" => null,
+            "optional_fields" => array(
+                            "title" => array("label" => 'Title', "options" => array("required" => false)),
+                            "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
+                            "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))
+                            ),            
             "replace_pattern" => null,
             "file_prefix" => 'mapbender3'
         );
