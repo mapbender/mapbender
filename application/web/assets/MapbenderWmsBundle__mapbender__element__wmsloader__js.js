@@ -77,6 +77,7 @@
                         }
                     }
                 });
+                this.popup.$element.on('close', $.proxy(this.close, this));
             }else{
                 this.popup.open();
             }

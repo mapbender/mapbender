@@ -689,6 +689,7 @@
                         }
                     });
                     this._reset();
+                    this.popup.$element.on('close', $.proxy(this.close, this));
                 }else{
                     this._reset();
                     this.popup.open();

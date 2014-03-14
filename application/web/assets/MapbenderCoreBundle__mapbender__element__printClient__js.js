@@ -56,7 +56,7 @@
                         closeButton: false,
                         closeOnESC: false,
                         content: self.element,
-                        width: 350,
+                        width: 360,
                         height: 370,
                         cssClass: 'customPrintDialog',
                         buttons: {
