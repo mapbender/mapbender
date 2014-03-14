@@ -13,6 +13,10 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
 
     _create: function() {
         this._super('_create');
+        Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
+    },
+
+    _setup: function() {
         this.map = $('#' + this.options.target);
         this.mapClickProxy = $.proxy(this._mapClickHandler, this);
     },
@@ -69,7 +73,7 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
      * has x and y values.
      */
     _mapClickWorker: function(coordinates) {
-        alert('You clicked: ' + 
+        alert('You clicked: ' +
                 coordinates.pixel.x + ' x ' + coordinates.pixel.y +
                 ' (Pixel), which equals ' +
                 coordinates.world.x + ' x ' + coordinates.world.y +
@@ -78,4 +82,3 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
 });
 
 })(jQuery);
-

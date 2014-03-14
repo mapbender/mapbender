@@ -200,7 +200,7 @@
       </trans-unit>
       <trans-unit id="868e554ea585dc5b1d394eb2b66e972c" resname="mb.core.layertree.tooltip.sublayers_openclose">
         <source>mb.core.layertree.tooltip.sublayers_openclose</source>
-        <target>Ordner auf/zu</target>
+        <target>öffnen/schließen</target>
       </trans-unit>
       <trans-unit id="e48917a6335f8fa17b6b68aabc94390b" resname="mb.core.layertree.label.visibility_onoff">
         <source>mb.core.layertree.label.visibility_onoff</source>
@@ -720,7 +720,7 @@
       </trans-unit>
       <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
         <source>mb.core.admin.layertree.label.showbasesources</source>
-        <target>Hintergrund anzeigen</target>
+        <target>BaseSources anzeigen</target>
       </trans-unit>
       <trans-unit id="71b752f5f8f9465c2dd33581a4d5e797" resname="mb.core.admin.layertree.label.autoopen">
         <source>mb.core.admin.layertree.label.autoopen</source>

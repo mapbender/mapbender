@@ -216,7 +216,7 @@
       </trans-unit>
       <trans-unit id="b117b1f45a600d80fb7bb9861e2f86b5" resname="mb.wms.wmsloader.repo.instance.label.toggle">
         <source>mb.wms.wmsloader.repo.instance.label.toggle</source>
-        <target>umschalten</target>
+        <target>aufklappen</target>
       </trans-unit>
       <trans-unit id="99c32582fc37600097bc585b40948c0e" resname="mb.wms.wmsloader.repo.instance.label.reorder">
         <source>mb.wms.wmsloader.repo.instance.label.reorder</source>
