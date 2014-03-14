@@ -151,6 +151,7 @@
                         content: content,
                         resizable: true,
                         width: 500,
+                        height: 500,
                         buttons: {
                             'ok': {
                                 label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),

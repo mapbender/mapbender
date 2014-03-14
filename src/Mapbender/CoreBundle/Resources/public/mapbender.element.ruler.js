@@ -104,11 +104,13 @@
                     title: self.element.attr('title'),
                     modal: false,
                     draggable: true,
+                    resizable: true,
                     closeButton: false,
                     closeOnESC: true,
                     destroyOnClose: true,
                     content: self.container,
                     width: 300,
+                    height: 300,
                     buttons: {
                         'ok': {
                             label: Mapbender.trans("mb.core.ruler.popup.btn.ok"),
