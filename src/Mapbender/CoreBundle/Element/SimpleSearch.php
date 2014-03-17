@@ -112,6 +112,14 @@ class SimpleSearch extends Element
         $q = $this->container->get('request')->get('term', '');
         $qf = $configuration['query_format'] ? $configuration['query_format'] : '%s';
 
+        // Replace Whitespace if desired
+        if(array_key_exists('query_ws_replace', $configuration)) {
+            $pattern = $configuration['query_ws_replace'];
+            if('' !== trim($pattern)) {
+                $q = preg_replace( '/\s+/', $pattern, $q);
+            }
+        }
+
         // Build query URL
         $url = $configuration['query_url'];
         $url .= (false === strpos($url, '?') ? '?' : '&');
