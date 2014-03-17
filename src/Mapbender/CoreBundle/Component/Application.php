@@ -194,19 +194,6 @@ class Application
         // Load all elements assets
         $translations = array();
 
-        // Load the template assets last, so it can easily overwrite element
-        // and layer assets for application specific styling for example
-        foreach ($this->getTemplate()->getAssets($type) as $asset) {
-            if ($type === 'trans') {
-                $elementTranslations = json_decode($this->container->get('templating')->render($asset),
-                    true);
-                $translations = array_merge($translations, $elementTranslations);
-            } else {
-                $file = $this->getReference($this->template, $asset);
-                $this->addAsset($assets, $type, $file);
-            }
-        }
-
         foreach ($this->getElements() as $region => $elements) {
             foreach ($elements as $element) {
                 $element_assets = $element->getAssets();
@@ -225,6 +212,7 @@ class Application
                 }
             }
         }
+
         $layerTranslations = array();
         // Load all layer assets
         foreach ($this->getLayersets() as $layerset) {
@@ -253,6 +241,20 @@ class Application
                     JSON_FORCE_OBJECT) . ';');
             $this->addAsset($assets, $type, $transAsset);
         }
+
+        // Load the template assets last, so it can easily overwrite element
+        // and layer assets for application specific styling for example
+        foreach ($this->getTemplate()->getAssets($type) as $asset) {
+            if ($type === 'trans') {
+                $elementTranslations = json_decode($this->container->get('templating')->render($asset),
+                    true);
+                $translations = array_merge($translations, $elementTranslations);
+            } else {
+                $file = $this->getReference($this->template, $asset);
+                $this->addAsset($assets, $type, $file);
+            }
+        }
+
         // Load extra assets given by application
         $extra_assets = $this->getEntity()->getExtraAssets();
         if (is_array($extra_assets) && array_key_exists($type, $extra_assets)) {
