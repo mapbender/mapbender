@@ -6,8 +6,8 @@
 
 ## Release History
 
-* **v3.0.3.0** - 2014-03-14
-  - Added function for validate WMS GetCapabilities documents 
+* **v3.0.3.0** - 2014-03-17
+  - Added function for validate WMS GetCapabilities documents
   - ACL for Elements added
   - Parameter "BaseSource" for SourceInstances added
   - Closed XSS vulnerability which required admin permissions
@@ -33,7 +33,7 @@
   - Sidepane with different elements (chnage via button)
   - Layertree context menue to change opacity and to zoom to layer
   - Open application with parameters (f.e. position)
-   
+
 
 * **v3.0.2.0** - 2013-11-26
   - Signer for OwsProxy added
