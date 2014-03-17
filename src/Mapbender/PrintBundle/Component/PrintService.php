@@ -33,7 +33,7 @@ class PrintService
         
         $this->getTemplateConf($template);
         $this->createUrlArray();
-        //$this->addReplacePattern();
+        $this->addReplacePattern();
         $this->setMapParameter();
 
         if ($this->data['rotation'] == 0) {
