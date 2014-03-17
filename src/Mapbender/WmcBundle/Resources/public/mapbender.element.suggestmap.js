@@ -128,7 +128,6 @@
                     modal: false,
                     closeButton: false,
                     closeOnESC: false,
-                    closeOnPopupCloseClick: false,
                     content: [$.ajax({
                             url: self.elementUrl + 'content',
                             complete: function(data){
@@ -146,6 +145,7 @@
                         }
                     }
                 });
+                this.popup.$element.on('close', $.proxy(this.close, this));
             }else{
                 this.popup.open($.ajax({url: self.elementUrl + 'content'}));
             }
