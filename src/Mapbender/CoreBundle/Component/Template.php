@@ -61,6 +61,17 @@ abstract class Template
     }
 
     /**
+     * Get assets for late including. These will be appended to the asset output last.
+     * Remember to list them in listAssets!
+     * @param string $type Asset type to list, can be 'css' or 'js'
+     * @return array
+     */
+    public function getLateAssets($type)
+    {
+        return array();
+    }
+
+    /**
      * Get the template regions available in the Twig template.
      *
      * @return array
