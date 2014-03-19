@@ -97,7 +97,7 @@ abstract class WmsCapabilitiesParser
      * @throws WmsException if an service exception
      * @throws NotSupportedVersionException if a service version is not supported
      */
-    public static function createDocument($data, $validate = true)
+    public static function createDocument($data, $validate = false)
     {
         $doc = new \DOMDocument();
         if (!@$doc->loadXML($data)) {
