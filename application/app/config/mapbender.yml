@@ -15,9 +15,9 @@ parameters:
                     mapbender_users:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Mapbender Users
-                        url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
+                        url: http://wms.wheregroup.com/cgi-bin/mapbender_user.xml
                         layers:
-                            10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
+                            10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapbender_user.xml?REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
                             22: { name: Mapbender_Names,   title : Name, visible: true, queryable: true}
                         info_format: text/html
                         visible: true
@@ -76,6 +76,14 @@ parameters:
                         icon: iconPrint
                         target: printclient
                         action: open
+                    imageexport-button:
+                        title: Image Export
+                        tooltip: Image Export
+                        class: Mapbender\CoreBundle\Element\Button
+                        label: true
+                        icon: iconImageExport
+                        target: imageexport
+                        action: open
                     legend-button:
                         title: Legend
                         tooltip: Legend
@@ -120,6 +128,13 @@ parameters:
                         tooltip: About
                         label: true
                         class: Mapbender\CoreBundle\Element\AboutDialog
+                    poiButton:
+                        title: POI
+                        tooltip: Send POI
+                        class: Mapbender\CoreBundle\Element\Button
+                        icon: iconPoi
+                        label: true
+                        target: poi
                 content:
                     map:
                         title: Main Map
@@ -169,6 +184,9 @@ parameters:
                         defaultFormat: 'image/png'
                         defaultInfoFormat: 'text/html'
                         splitLayers: false
+                    imageexport:
+                        class: Mapbender\PrintBundle\Element\ImageExport
+                        target: map
                     printclient:
                         class: Mapbender\CoreBundle\Element\PrintClient
                         target: map
@@ -185,10 +203,10 @@ parameters:
                             - { dpi: 288,  label: Document (288dpi)}
                         rotatable: true
                         optional_fields:
-                            title:                                  
-                                label: Title              # label of the optional field         
-                                options:                  # 
-                                    required: true        # true or false          
+                            title:
+                                label: Title              # label of the optional field
+                                options:                  #
+                                    required: true        # true or false
                     lineruler:
                         title: Distance
                         tooltip: 'ruler'
@@ -219,6 +237,7 @@ parameters:
                         titleMaxLength: 20
                         showBaseSource: true
                         layerRemove: true
+                        menu: []
                     overview:
                         title: Overview
                         class: Mapbender\CoreBundle\Element\Overview
@@ -233,12 +252,16 @@ parameters:
                         fixed: false
                     scaledisplay:
                         title: Scale Display
-                        class: Mapbender\CoreBundle\Element\ScaleDisplay  
+                        class: Mapbender\CoreBundle\Element\ScaleDisplay
                         tooltip: Scale
                         target: map
                         anchor: left-top
                         scalePrefix: Scale
                         unitPrefix: true
+                    poi:
+                        class: Mapbender\CoreBundle\Element\POI
+                        target: map
+                        body: 'Please take a look at this POI'
                 sidepane:
                     layertree:
                         title: Layertree
@@ -251,6 +274,7 @@ parameters:
                         titleMaxLength: 20
                         showBaseSource: true
                         layerRemove: true
+                        menu: [opacity,zoomtolayer]
                 footer:
                     activityindicator:
                         class: Mapbender\CoreBundle\Element\ActivityIndicator
@@ -295,9 +319,9 @@ parameters:
                     mapbender_users:
                         class: Mapbender\WmsBundle\Entity\WmsInstance
                         title: Mapbender Users
-                        url: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map
+                        url: http://wms.wheregroup.com/cgi-bin/mapbender_user.xml
                         layers:
-                            10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapserv?map=/data/umn/mapbender_user/mapbender_user.map&REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
+                            10: { name: Mapbender_User,    title : User, visible: true, legendurl: http://wms.wheregroup.com/cgi-bin/mapbender_user.xml?REQUEST=GetLegendGraphic&VERSION=1.1.1&SERVICE=WMS&Layer=Mapbender_User&FORMAT=image/png }
                             22: { name: Mapbender_Names,   title : Name, visible: true, queryable: true}
                         info_format: text/html
                         visible: true
@@ -494,6 +518,7 @@ parameters:
                         showHeader: false
                         layerMenu: false
                         layerRemove: false
+                        menu: []
                     overview:
                         title: Overview
                         class: Mapbender\CoreBundle\Element\Overview

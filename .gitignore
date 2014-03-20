@@ -5,10 +5,12 @@
 */web/bundles
 */web/doc
 */web/uploads
+*/web/assets/*.trans
 extra/
 */app/config/parameters.yml
 */app/bootstrap.php.cache
 */composer.phar
+*/composer.lock
 */vendor
 *.tar.gz
 *.rpm

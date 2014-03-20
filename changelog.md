@@ -1,6 +1,44 @@
 # Changelog
 
-* **v3.0.2.0** -
+* **v3.x.x.x** - 201x-xx-xx
+  - xxx
+
+
+## Release History
+
+* **v3.0.3.0** - 2014-03-17
+  - Added function for validate WMS GetCapabilities documents
+  - ACL for Elements added
+  - Parameter "BaseSource" for SourceInstances added
+  - Closed XSS vulnerability which required admin permissions
+  - Added cache for compiled static assets
+    - new parameter mapbender.static_assets, defaults to true
+    - new parameter mapbender.static_assets_path, defaults to web/css/application
+    - Compiled assets get cached to the directory set with the aforementioned parameter
+      - This directory needs to be cleared before packaging or updating.
+      - This directory needs to be refreshed before packaging.
+  - Element Legend: option 'noLegend' removed
+  - Translation for en,de added
+  - ZoomBar option component 'zoom_in_out' added
+  - added cookie_secure: false and cookie_lifetime: 3600 to parameters.yml http://symfony.com/doc/2.1/reference/configuration/framework.html#cookie-lifetime
+  - Enhancements for Search-Router für SQL-Suchen (Selectboxes, Distinct)
+  - WMC Editor and LoaderWMSLoader Enhancement add WMS via link
+  - Sketch to draw temporary objects
+  - POI - Meetingpoint
+  - Imageexport to generate png or jpg
+  - Change WMS Collection via button (BaselayerSwitcher)
+  - Print with overview
+  - Print define optional fields
+  - Print define replace pattern
+  - Sidepane with different elements (chnage via button)
+  - Layertree context menue to change opacity and to zoom to layer
+  - Open application with parameters (f.e. position)
+
+
+* **v3.0.2.0** - 2013-11-26
+  - Signer for OwsProxy added
+  - Properties for regions added
+  - Sketch feature (circle) added
   - Update layertree changed
   - Funktion Model.changeLayerState added
   - LoadWms load declarative WMS added
@@ -12,8 +50,6 @@
   - console.* stubs
   - Proxy security: Only pass correctly signed URLs
   - Allow for multiple application YAML files
-
-## Release History
 
 * **v3.0.1.1** - 2013-09-26
   - The development controller app_dev.php is limited to localhost again
