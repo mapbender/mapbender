@@ -319,13 +319,13 @@ $(function() {
                                     popup.addContent(data);
                                     var groupUserItem, text, me, groupUserType;
 
-                                    $("#listFilterGroupsAndUsers").find(".filterItem").each(function(i, e){
+                                    $("#listFilterGroupsAndUsers", popup.$element).find(".filterItem").each(function(i, e){
 
                                         groupUserItem = $(e);
                                         groupUserType = (groupUserItem.find(".tdContentWrapper")
                                                                       .hasClass("iconGroup") ? "iconGroup"
                                                                                              : "iconUser");
-                                        $("#permissionsBody").find(".labelInput").each(function(i, e){
+                                        $("#permissionsBody", popup.$element).find(".labelInput").each(function(i, e){
                                             me = $(e);
                                             text = me.text().trim();
                                             if((groupUserItem.text().trim().toUpperCase().indexOf(text.toUpperCase()) >= 0) &&
@@ -364,7 +364,7 @@ $(function() {
                     cssClass: 'button buttonOk right',
                     callback: function() {
                         toremove = null;
-                        $("#elementSecurity").submit();
+                        $("#elementSecurity", popup.$element).submit();
                         window.setTimeout(function() {
                             window.location.reload();
                         }, 50);
@@ -400,8 +400,8 @@ $(function() {
                                     ++count;
                                 });
                             }
-                            $('.contentItem:first .permissionsTable').removeClass('hidePermissions');
-                            $('.contentItem:first #permissionsDescription').addClass('hidden');
+                            $('.contentItem:first .permissionsTable', popup.$element).removeClass('hidePermissions');
+                            $('.contentItem:first #permissionsDescription', popup.$element).addClass('hidden');
 
                             $(".contentItem:not(.contentItem:first)", popup.$element).remove();
                         }

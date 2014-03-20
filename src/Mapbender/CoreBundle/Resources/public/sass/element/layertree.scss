@@ -22,6 +22,7 @@
 
     // elements with childrens
     & > .leaveContainer{
+      position: relative;
       .iconFolder{display:block;}
       .layer-title{@extend .subTitle;}
     }
@@ -72,6 +73,10 @@
 }
 .layer-menu-btn{
   position: relative !important;
+}
+.layer-menu-btn:before{
+  content: '\f0c9';
+  font-family: 'FontAwesome';
 }
 .layer-menu{
   position: absolute;

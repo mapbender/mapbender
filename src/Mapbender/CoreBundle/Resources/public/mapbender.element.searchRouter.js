@@ -113,13 +113,12 @@
                         title: this.element.attr('title'),
                         draggable: true,
                         modal: false,
-                        closeButton: false,
-                        closeOnPopupCloseClick: false,
+                        closeButton: true,
                         closeOnESC: false,
                         content: this.element,
                         width: 450,
                         resizable: true,
-                        height: 350,
+                        height: 500,
                         buttons: {
                             'cancel': {
                                 label: Mapbender.trans('mb.core.searchrouter.popup.btn.cancel'),
@@ -138,6 +137,7 @@
                             }
                         }
                     });
+                    this.popup.$element.on('close', $.proxy(this.close, this));
                 }else{
 
                 }

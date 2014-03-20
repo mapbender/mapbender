@@ -306,8 +306,7 @@ abstract class Element
     public function trans($key, array $parameters = array(), $domain = null,
         $locale = null)
     {
-        return $this->container->get('translator')->trans($key);
-//        return $this->container->get('translator')->trans($key, $parameters, $domain, $locale);
+        return $this->container->get('translator')->trans($key, $parameters);
     }
 
     /*     * ***********************************************************************

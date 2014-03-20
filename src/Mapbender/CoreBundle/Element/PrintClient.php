@@ -84,20 +84,24 @@ class PrintClient extends Element
                     "format" => "a3")
                 ,
                 array(
+                    'template' => "a4_landscape_offical",
+                    "label" => "A4 Landscape offical",
+                    "format" => "a4"),
+                array(
                     'template' => "a2_landscape_offical",
                     "label" => "A2 Landscape offical",
                     "format" => "a2")
-                ,
-                array(
-                    'template' => "a4_landscape_offical",
-                    "label" => "A4 Landscape offical",
-                    "format" => "a4")
             ),
             "scales" => array(500, 1000, 5000, 10000, 25000),
             "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
-                array('dpi' => "288", 'label' => "Draft (288dpi)")),
+                array('dpi' => "288", 'label' => "Document (288dpi)")),
             "rotatable" => true,
-            "optional_fields" => null,
+            "optional_fields" => array(
+                            "title" => array("label" => 'Title', "options" => array("required" => false)),
+                            "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
+                            "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))
+                            ),            
+            "replace_pattern" => null,
             "file_prefix" => 'mapbender3'
         );
     }

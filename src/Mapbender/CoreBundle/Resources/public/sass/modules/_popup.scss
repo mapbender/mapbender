@@ -46,15 +46,16 @@
   z-index:999;
   @include fixed(0 0 0 0);
 
-  &.show .popup{margin:80px auto 0 auto;}
   &.ui-draggable-dragging{@include opacity(0.6);}
   &.ui-draggable{
     position:absolute !important; // avoid strange popup growing behaviour
+    .popup{margin:80px 0 0 100px;}
     .popupHead{cursor:move;}
   }
   &.modal{
     height:100%;
     width:100%;
+    .popup{margin-top:$space*4;}
     .overlay{
       @include opacity(0.9);
       @include fixed(0 0 0 0);

@@ -39,7 +39,7 @@
                     modal: false,
                     closeButton: false,
                     closeOnESC: false,
-                    closeOnPopupCloseClick: false,
+                    closeOnPopupCloseClick: true,
                     content: self.element,
                     destroyOnClose: true,
                     width: 500,
@@ -77,6 +77,7 @@
                         }
                     }
                 });
+                this.popup.$element.on('close', $.proxy(this.close, this));
             }else{
                 this.popup.open();
             }
@@ -166,7 +167,7 @@
             $.ajax({
                 url: self.elementUrl + 'getCapabilities',
                 data: {
-                    url: encodeURIComponent(options.gcurl)
+                    url: options.gcurl
                 },
                 dataType: 'text',
                 success: function(data, textStatus, jqXHR){
@@ -206,7 +207,7 @@
                 }
             });
         },
-        
+
         _addSources: function(sourceDefs, sourceOpts){
             var self = this;
             var mbMap = $('#' + self.options.target).data('mapbenderMbMap');

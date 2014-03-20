@@ -31,18 +31,11 @@ class ApplicationAssetCache
     {
         $static_assets_cache_path = $this->container->getParameter('mapbender.static_assets_cache_path');
 
-        $filters = array(
-            'js'    => array(),
-            'trans' => array(),
-            'css'   => array(
-                $this->container->get('assetic.filter.compass'),
-                $this->container->get('assetic.filter.cssrewrite')));
-
         // For each asset build compiled, cached asset
         $assetRootPath = $this->getAssetRootPath();
         $assetTargetPath = $this->targetPath;
 
-        $assets = new AssetCollection(array(), $filters[$this->type], $assetRootPath);
+        $assets = new AssetCollection(array(), array(), $assetRootPath);
         $assets->setTargetPath($this->targetPath);
 
         $locator = $this->container->get('file_locator');
@@ -57,7 +50,17 @@ class ApplicationAssetCache
             // First, build file asset with filters and public path information
             $file = $locator->locate($input);
             $publicSourcePath = $this->getPublicSourcePath($input);
-            $fileAsset = new FileAsset($file, $filters[$this->type], null, $assetRootPath . '/' . $publicSourcePath);
+
+            // Build filter list (None for JS/Trans, Compass for SASS and Rewrite for SASS/CSS)
+            $filters = array();
+            if('css' === $this->type) {
+                if('scss' === pathinfo($file, PATHINFO_EXTENSION)) {
+                    $filters[] = $this->container->get('assetic.filter.compass');
+                }
+                $filters[] = $this->container->get('assetic.filter.cssrewrite');
+            }
+
+            $fileAsset = new FileAsset($file, $filters, null, $assetRootPath . '/' . $publicSourcePath);
             $fileAsset->setTargetPath($this->targetPath);
 
             $name = str_replace(array('@', 'Resources/public/'), '', $input);

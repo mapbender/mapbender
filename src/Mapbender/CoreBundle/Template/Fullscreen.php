@@ -18,7 +18,7 @@ class Fullscreen extends Template
         return array(
             'sidepane' => array(
                 'tabs' => array(
-                    'state' => true,
+                    'state' => false,
                     'options' => array('icon' => 'XXX')
                 )
             )
@@ -47,6 +47,19 @@ class Fullscreen extends Template
             'trans' => array()
         );
         return $assets;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLateAssets($type)
+    {
+        $assets = array(
+            'css' => array(),
+            'js' => array(),
+            'trans' => array()
+        );
+        return $assets[$type];
     }
 
     /**

@@ -34,7 +34,6 @@
                     header: true,
                     modal: false,
                     closeButton: false,
-                    closeOnPopupCloseClick: false,
                     closeOnESC: false,
                     content: self.element,
                     width: 250,
@@ -55,6 +54,7 @@
                         }
                     }
                 });
+                this.popup.$element.on('close', $.proxy(this.close, this));
             }else{
                 if(this.popupIsOpen === false){
                     this.popup.open(self.element);

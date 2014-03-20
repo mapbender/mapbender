@@ -16,7 +16,7 @@
       </trans-unit>
       <trans-unit id="25ae2b51e75d6406f0638ba420c3ec9c" resname="mb.manager.managerbundle.add_source">
         <source>mb.manager.managerbundle.add_source</source>
-        <target>Datenquelle hinzufügen</target>
+        <target>Neue Datenquelle</target>
       </trans-unit>
       <trans-unit id="66daa81c3ff5b18311b1228c51816803" resname="mb.manager.element.yaml.message">
         <source>mb.manager.element.yaml.message</source>
@@ -116,7 +116,7 @@
       </trans-unit>
       <trans-unit id="55e18fb3b32d459c43c4108aa49ed8a2" resname="mb.manager.admin.application.security.public">
         <source>mb.manager.admin.application.security.public</source>
-        <target>öffentlich</target>
+        <target>aktiviert</target>
       </trans-unit>
       <trans-unit id="27cef7d0a0eeb318a4e438d61725648d" resname="mb.manager.admin.layerset.add">
         <source>mb.manager.admin.layerset.add</source>

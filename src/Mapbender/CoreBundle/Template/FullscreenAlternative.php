@@ -18,7 +18,7 @@ class FullscreenAlternative extends Template
         return array(
             'sidepane' => array(
                 'tabs' => array(
-                    'state' => true,
+                    'state' => false,
                     'options' => array('icon' => 'XXX')
                 )
             )
