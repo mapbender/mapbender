@@ -86,7 +86,8 @@ class WmcEditor extends Element
             'mapbender.wmchandler.js');
         return array(
             'js' => $js,
-            'css' => array(),
+            'css' => array(
+                'sass/element/wmceditor.scss'),
             'trans' => array(
                 'MapbenderWmcBundle:Element:wmceditor.json.twig',
                 'MapbenderWmcBundle:Element:wmchandler.json.twig')
@@ -146,8 +147,8 @@ class WmcEditor extends Element
     }
 
     /**
-     * Returns a json encoded 
-     * 
+     * Returns a json encoded
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function setPublic()
@@ -170,7 +171,7 @@ class WmcEditor extends Element
 
     /**
      * Returns a json encoded or html form wmc or error if wmc is not found.
-     * 
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function getWmc()
@@ -205,7 +206,7 @@ class WmcEditor extends Element
 
     /**
      * Returns a json encoded or html form wmc or error if wmc is not found.
-     * 
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function loadWmc()
@@ -225,8 +226,8 @@ class WmcEditor extends Element
 
     /**
      * Returns a html encoded list of all wmc documents
-     * 
-     * @return \Symfony\Component\HttpFoundation\Response 
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function getWmcList()
     {
@@ -245,7 +246,7 @@ class WmcEditor extends Element
     }
 
     /**
-     * 
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function saveWmc()
@@ -312,7 +313,7 @@ class WmcEditor extends Element
 
     /**
      * Returns a json encoded or html form wmc or error if wmc is not found.
-     * 
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function confirmDeleteWmc()
@@ -338,7 +339,7 @@ class WmcEditor extends Element
 
     /**
      * Returns a json encoded wmc or error if wmc is not found.
-     * 
+     *
      * @param integer|string $id wmc id
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
