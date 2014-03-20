@@ -61,6 +61,8 @@
                             }})],
                     destroyOnClose: true,
                     width: 480,
+                    height: 500,
+                    resizable: true,
                     buttons: {
                         'cancel': {
                             label: Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.cancel"),
