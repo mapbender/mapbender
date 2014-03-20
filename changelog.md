@@ -1,10 +1,12 @@
 # Changelog
 
 * **v3.x.x.x** - 201x-xx-xx
-  - xxx
-
 
 ## Release History
+
+* **v3.0.3.1** - 2014-03-20
+  - Disabled WMS validation as it renders many services unusable.
+  - Made WMC editor resizable and taller
 
 * **v3.0.3.0** - 2014-03-17
   - Added function for validate WMS GetCapabilities documents
