@@ -59,3 +59,17 @@
     &:hover{@include opacity(1);}
   }
 }
+@mixin smartphones(){
+  @media only screen
+  and (min-width : 320px)
+  and (max-width : 600px)
+  {
+    @content;
+  }
+}
+@mixin desktops(){
+  @media only screen
+  and (min-width : 601px) {
+    @content;
+  }
+}

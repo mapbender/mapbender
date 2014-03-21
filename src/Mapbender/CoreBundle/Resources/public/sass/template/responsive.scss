@@ -14,7 +14,10 @@
       border-bottom-right-radius:0;
       border-bottom-left-radius:0;
     }
-    .mb-element-overview{bottom: $space*7;}
+    .mb-element-overview{bottom: $space*5;}
+    @include smartphones(){
+      .mb-element-zoombar{bottom: $space*5;}
+    }
   }
 }
 
@@ -102,7 +105,7 @@ li.toolBarMoreButton{
   transition-delay: .2s;
   -webkit-transition-delay: .2s;
   @include transition(all .2s ease-in-out);
-  @include absolute('' $space $space '');
+  @include absolute('' '' $space $space);
   @include frontendContainerStyle();
   border-radius: 4px;
 }
@@ -132,9 +135,14 @@ li.toolBarMoreButton{
 }
 
 .mb-element-overview{
+
+  @include smartphones(){
+    display:none !important;
+  }
+
   position: absolute;
   right: $space;
-  bottom: $space*4;
+  bottom: $space;
   transition-delay: .2s;
   -webkit-transition-delay: .2s;
   opacity: 1;
@@ -183,5 +191,21 @@ li.toolBarMoreButton{
   z-index:20;
   .olMap{
     border: 2px solid rgba(0,0,0,0.8);
+  }
+}
+
+.mb-element-zoombar{
+  z-index: 30;
+  @include transition(all .2s ease-in-out);
+
+  @include desktops(){
+    @include absolute($space*4 $space '' '');
+  }
+
+  @include smartphones(){
+    .zoomSliderLevels, .zoomBox, .pan, .history{display:none !important;}
+    .toolPane{padding:6px 10px;}
+    @include absolute('' $space $space '');
+    top: auto !important;
   }
 }
