@@ -2,7 +2,7 @@ $(function(){
     'use strict';
 
     var toolbar       = $('#toolbar');
-    var toolbarHeight = Math.round(toolbar.height());
+    var toolbarHeight = toolbar.attr('data-height');
     var last, sub, lastSub, item;
 
     window.onresize = function(event) {
@@ -30,12 +30,19 @@ $(function(){
     };
 
     $('#toolbarMoreButton').on('click', function(){
-        $('#toolbarMoreMenu').attr('data-state', 'show');
-        $('#toolbarMoreMenu').one('mouseover', function(){
-            $('#content').one('mouseover', function(){
-                $('#toolbarMoreMenu').removeAttr('data-state');
+        var menu = $('#toolbarMoreMenu');
+
+        if(menu.attr('data-state') == 'show'){
+            menu.removeAttr('data-state');
+        }else{
+            menu.attr('data-state', 'show');
+            menu.one('mouseover', function(){
+                $('#content').one('mouseover', function(){
+                    menu.removeAttr('data-state');
+                });
             });
-        });
+        }
+
     });
 
     $('#infocontainerTrigger').on('click', function(){
@@ -47,4 +54,9 @@ $(function(){
             wrapper.attr('data-state', 'open');
         }
     });
+
+    while(toolbarHeight < toolbar.height()){
+        $(window).trigger('resize');
+    }
+
 });

@@ -26,7 +26,7 @@
       <img class="logo" height="40" alt="Mapbender 3 Manager" src="{{ asset(fom.server_logo)}}" />
     </div>
 
-    <ul id="toolbar" class="toolBar">
+    <ul id="toolbar" class="toolBar" data-height="24">
       {% if application.elements.toolbar is defined %}
         {% for element in application.elements.toolbar %}
           <li class="toolBarItem">{{ element.render() | raw }}</li>

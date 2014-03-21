@@ -10,10 +10,11 @@
   &[data-state="open"]{
     .infoContainerPane{max-height: 80px;}
     .infoContainerTrigger{
-      bottom: 80px;
+      bottom: $space*4;
       border-bottom-right-radius:0;
       border-bottom-left-radius:0;
     }
+    .mb-element-overview{bottom: $space*7;}
   }
 }
 
@@ -131,14 +132,56 @@ li.toolBarMoreButton{
 }
 
 .mb-element-overview{
+  position: absolute;
+  right: $space;
+  bottom: $space*4;
+  transition-delay: .2s;
+  -webkit-transition-delay: .2s;
+  opacity: 1;
+  @include transition(all .2s ease-in-out);
+
+  .overviewContainer{
+    opacity: 1;
+    @include transition(opacity .2s ease-in-out);
+  }
+
+  &.closed{
+    .overviewContainer{
+      width: 0;
+      height: 0;
+      opacity: 0;
+    }
+
+    .toggleOverview{
+      z-index: 10;
+      padding: 6px 12px !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      top: inherit !important;
+      left: inherit !important;
+      border-radius: 4px !important;
+    }
+  }
+
   .toggleOverview{
+    font-size: 14px !important;
     cursor: pointer;
-    z-index: 10;
-    transition-delay: .2s;
-    -webkit-transition-delay: .2s;
-    @include transition(all .2s ease-in-out);
-    @include absolute(inherit $space $space*4 inherit);
+    z-index: 30;
+    padding: 2px 7px !important;
+    right: -3px !important;
+    bottom: -3px !important;
+    top: inherit !important;
+    left: inherit !important;
+    border-radius: 0 !important;
+    @include transition(padding .2s ease-in-out);
     @include frontendContainerStyle();
-    border-radius: 4px;
+  }
+  .olMapViewport{border:none !important;}
+}
+.olControlOverviewMapElement{
+  @include absolute('' -3px -3px '');
+  z-index:20;
+  .olMap{
+    border: 2px solid rgba(0,0,0,0.8);
   }
 }
