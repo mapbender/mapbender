@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
@@ -99,11 +100,13 @@ abstract class WmsCapabilitiesParser
      */
     public static function createDocument($data, $validate = false)
     {
+        $isDtd = stripos(substr($data, 0, 100), '<!DOCTYPE') ? true : false;
         $doc = new \DOMDocument();
-        if (!@$doc->loadXML($data)) {
+        if (!@$doc->loadXML($data, $isDtd ? LIBXML_DTDLOAD | LIBXML_DTDVALID : 0)) {
             throw new XmlParseException("Could not parse CapabilitiesDocument.");
         }
-
+        // substitute xincludes
+        $doc->xinclude();
         if ($doc->documentElement->tagName == "ServiceExceptionReport") {
             $message = $doc->documentElement->nodeValue;
             throw new WmsException($message);
@@ -114,14 +117,21 @@ abstract class WmsCapabilitiesParser
             throw new NotSupportedVersionException("No supported CapabilitiesDocument");
         }
 
-        if ($validate && !@$doc->validate()) {
-            throw new XmlParseException("A WMS document is not valid");
-        }
-
         $version = $doc->documentElement->getAttribute("version");
         if ($version !== "1.1.1" && $version !== "1.3.0") {
             throw new NotSupportedVersionException('The WMS version "'
             . $version . '" is not supported.');
+        }
+
+        if ($validate) {
+            if ($isDtd && !@$doc->validate()) { // check with DTD
+                throw new XmlParseException("A WMS document (DTD) is not valid");
+            } else if (!$isDtd) {
+                // TODO create CREATEDSCHEMA
+                if ($version === '1.3.0' && !$doc->schemaValidate('CREATEDSCHEMA')) {
+                    throw new XmlParseException("A WMS document is not valid");
+                }
+            }
         }
         return $doc;
     }
