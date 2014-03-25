@@ -88,5 +88,4 @@ $(function(){
     while(toolbarHeight < toolbar.height()){
         $(window).trigger('resize');
     }
-
 });
