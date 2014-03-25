@@ -32,9 +32,6 @@
     </ul>
     {% if application.elements.sidepane is defined %}
       <div id="sidepane" class="clear sidePane left opened">
-        <ul class="sidePaneTabs">
-          <li class="sidePaneTabItem toggleSideBar"></li>
-        </ul>
         <div class="sideContent">
         {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'sidepane' }%}
         </div>
