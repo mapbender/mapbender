@@ -40,6 +40,7 @@
             // bind form reset to reset search model
             this.element.delegate('.search-forms form', 'reset', function(){
                 self.searchModel.reset();
+                self._getLayer().removeAllFeatures();
             });
             // bind form submit to send search model
             this.element.delegate('.search-forms form', 'submit', function(evt){
