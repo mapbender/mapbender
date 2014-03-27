@@ -258,7 +258,7 @@ Mapbender.Model = {
         for(var i = 0; i < sources.length; i++){
             var source = $.extend(true, {}, sources[i]);
             source.layers = [];
-            var root = source.configuration.children[0].children[0];
+            var root = source.configuration.children[0];
             var list = Mapbender.source[source.type].getLayersList(source, root, true);
             $.each(list.layers, function(idx, layer){
                 source.layers.push(layer.options.name);

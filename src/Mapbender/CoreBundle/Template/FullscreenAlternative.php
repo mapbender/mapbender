@@ -39,7 +39,8 @@ class FullscreenAlternative extends Template
     static public function listAssets()
     {
         $assets = array(
-            'css' => array(), //'@FOMCoreBundle/Resources/public/css/frontend/fullscreen_alternative.css'
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
+                           '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen_alternative.scss'),
             'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
