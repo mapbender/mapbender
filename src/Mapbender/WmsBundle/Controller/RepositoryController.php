@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Controller;
 
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
@@ -34,9 +35,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class RepositoryController extends Controller
 {
-
     public static $WMS_DIR = "xml/wms";
-    
+
     /**
      * @ManagerRoute("/new")
      * @Method({ "GET" })
@@ -44,8 +44,7 @@ class RepositoryController extends Controller
      */
     public function newAction()
     {
-        $form = $this->get("form.factory")->create(new WmsSourceSimpleType(),
-            new WmsSource());
+        $form = $this->get("form.factory")->create(new WmsSourceSimpleType(), new WmsSource());
         return array(
             "form" => $form->createView()
         );
@@ -58,8 +57,7 @@ class RepositoryController extends Controller
      */
     public function startAction()
     {
-        $form = $this->get("form.factory")->create(new WmsSourceSimpleType(),
-            new WmsSource());
+        $form = $this->get("form.factory")->create(new WmsSourceSimpleType(), new WmsSource());
         return array(
             "form" => $form->createView()
         );
@@ -94,8 +92,7 @@ class RepositoryController extends Controller
             throw new AccessDeniedException();
         }
 
-        $form = $this->get("form.factory")->create(new WmsSourceSimpleType(),
-            $wmssource_req);
+        $form = $this->get("form.factory")->create(new WmsSourceSimpleType(), $wmssource_req);
         $form->bindRequest($request);
         if ($form->isValid()) {
             $purl = parse_url($wmssource_req->getOriginUrl());
@@ -123,21 +120,21 @@ class RepositoryController extends Controller
                 $content = $browserResponse->getContent();
                 $doc = WmsCapabilitiesParser::createDocument($content);
                 $validate = true;
-                if($validate === true){
+                if ($validate === true) {
                     $validator = new XmlValidator($this->container, $proxy_config, "xml/");
                     $doc = $validator->validate($doc);
                 }
                 $wmsParser = WmsCapabilitiesParser::getParser($doc);
                 $wmssource = $wmsParser->parse();
             } catch (\Exception $e) {
-                $this->get("logger")->debug($e->getMessage());
+                $this->get("logger")->err($e->getMessage());
                 $this->get('session')->setFlash('error', $e->getMessage());
                 return $this->redirect($this->generateUrl(
                             "mapbender_manager_repository_new", array(), true));
             }
 
             if (!$wmssource) {
-                $this->get("logger")->debug('Could not parse data for url "'
+                $this->get("logger")->err('Could not parse data for url "'
                     . $wmssource_req->getOriginUrl() . '"');
                 $this->get('session')->setFlash('error',
                     'Could not parse data for url "'
@@ -157,8 +154,7 @@ class RepositoryController extends Controller
             $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
             $rootlayer = $wmssource->getLayers()->get(0);
             $this->getDoctrine()->getEntityManager()->persist($rootlayer);
-            $this->saveLayer($this->getDoctrine()->getEntityManager(),
-                $rootlayer);
+            $this->saveLayer($this->getDoctrine()->getEntityManager(), $rootlayer);
             $this->getDoctrine()->getEntityManager()->persist($wmssource);
             $this->getDoctrine()->getEntityManager()->flush();
 
@@ -174,8 +170,7 @@ class RepositoryController extends Controller
             $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
             $aclProvider->updateAcl($acl);
 
-            $this->get('session')->setFlash('success',
-                "Your WMS has been created");
+            $this->get('session')->setFlash('success', "Your WMS has been created");
             return $this->redirect($this->generateUrl(
                         "mapbender_manager_repository_view",
                         array(
@@ -243,8 +238,7 @@ class RepositoryController extends Controller
         $instance->remove($em);
         $em->flush();
         $em->getConnection()->commit();
-        $this->get('session')->setFlash('success',
-            'Your source instance has been deleted.');
+        $this->get('session')->setFlash('success', 'Your source instance has been deleted.');
         return new Response();
     }
 
@@ -308,8 +302,7 @@ class RepositoryController extends Controller
                 $this->get('session')->setFlash(
                     'success', 'Your Wms Instance has been changed.');
                 return $this->redirect($this->generateUrl(
-                            'mapbender_manager_application_edit',
-                            array("slug" => $slug)) . '#layersets');
+                            'mapbender_manager_application_edit', array("slug" => $slug)) . '#layersets');
             } else { // edit
                 return array(
                     "form" => $form->createView(),
@@ -343,14 +336,12 @@ class RepositoryController extends Controller
             return new Response(json_encode(array(
                     'error' => 'The wms instance layer with'
                     . ' the id "' . $instanceId . '" does not exist.',
-                    'result' => '')), 200,
-                array('Content-Type' => 'application/json'));
+                    'result' => '')), 200, array('Content-Type' => 'application/json'));
         }
         if (intval($number) === $instLay->getPriority()) {
             return new Response(json_encode(array(
                     'error' => '',
-                    'result' => 'ok')), 200,
-                array('Content-Type' => 'application/json'));
+                    'result' => 'ok')), 200, array('Content-Type' => 'application/json'));
         }
         $em = $this->getDoctrine()->getEntityManager();
         $instLay->setPriority($number);
@@ -393,8 +384,7 @@ class RepositoryController extends Controller
         $em->getConnection()->commit();
         return new Response(json_encode(array(
                 'error' => '',
-                'result' => 'ok')), 200,
-            array(
+                'result' => 'ok')), 200, array(
             'Content-Type' => 'application/json'));
     }
 
@@ -412,8 +402,8 @@ class RepositoryController extends Controller
             ->find($instanceId);
         if (!$wmsinstance) {
             return new Response(json_encode(array(
-                    'error' => 'The wms instance with the id "' . $instanceId . '" does not exist.')),
-                200, array('Content-Type' => 'application/json'));
+                    'error' => 'The wms instance with the id "' . $instanceId . '" does not exist.')), 200,
+                array('Content-Type' => 'application/json'));
         } else {
             $enabled_before = $wmsinstance->getEnabled();
             $enabled = $enabled === "true" ? true : false;
@@ -427,8 +417,7 @@ class RepositoryController extends Controller
                         "type" => "instance",
                         "enabled" => array(
                             'before' => $enabled_before,
-                            'after' => $enabled)))), 200,
-                array('Content-Type' => 'application/json'));
+                            'after' => $enabled)))), 200, array('Content-Type' => 'application/json'));
         }
     }
 
