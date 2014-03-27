@@ -490,6 +490,26 @@
         <source>mb.wms.wmsloader.tag.loader</source>
         <target>laden</target>
       </trans-unit>
+      <trans-unit id="96e9b7c327851c6e892a4d0aed27302c" resname="mb.wms.repository.parser.couldnotparse">
+        <source>mb.wms.repository.parser.couldnotparse</source>
+        <target>Das XML Dokument kann  nicht geparst werden.</target>
+      </trans-unit>
+      <trans-unit id="c76ec427cfde142ec2a3f5d87c5f9454" resname="mb.wms.repository.parser.not_supported_document">
+        <source>mb.wms.repository.parser.not_supported_document</source>
+        <target>Das XML Dokument ist nicht unterstützt.</target>
+      </trans-unit>
+      <trans-unit id="7ea651c787edebfab98ab66d859648b5" resname="mb.wms.repository.parser.not_supported_version">
+        <source>mb.wms.repository.parser.not_supported_version</source>
+        <target>Die WMS Version ist nicht unterstützt.</target>
+      </trans-unit>
+      <trans-unit id="f098d803a9bffa45349533789e8f014c" resname="mb.wms.repository.parser.not_valid_dtd">
+        <source>mb.wms.repository.parser.not_valid_dtd</source>
+        <target>Das XML Dokument ist nicht valid (DTD).</target>
+      </trans-unit>
+      <trans-unit id="e2fc7117cebcbc8e35869e22e81cd7aa" resname="mb.wms.repository.parser.not_valid_xsd">
+        <source>mb.wms.repository.parser.not_valid_xsd</source>
+        <target>Das XML Dokument ist nicht valid (XSD).</target>
+      </trans-unit>
       <trans-unit id="a3c1e614645662978d87b127212a82e1" resname="mb.wms.wmsloader.admin.label.autoopen">
         <source>mb.wms.wmsloader.admin.label.autoopen</source>
         <target>Automatisch öffnen</target>

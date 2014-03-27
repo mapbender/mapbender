@@ -2,6 +2,7 @@
 namespace Mapbender\WmsBundle\Controller;
 
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\CoreBundle\Component\XmlValidator;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\WmsBundle\Component\Exception\WmsException;
@@ -34,6 +35,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class RepositoryController extends Controller
 {
 
+    public static $WMS_DIR = "xml/wms";
+    
     /**
      * @ManagerRoute("/new")
      * @Method({ "GET" })
@@ -119,6 +122,11 @@ class RepositoryController extends Controller
                 $browserResponse = $proxy->handle();
                 $content = $browserResponse->getContent();
                 $doc = WmsCapabilitiesParser::createDocument($content);
+                $validate = true;
+                if($validate === true){
+                    $validator = new XmlValidator($this->container, $proxy_config, "xml/");
+                    $doc = $validator->validate($doc);
+                }
                 $wmsParser = WmsCapabilitiesParser::getParser($doc);
                 $wmssource = $wmsParser->parse();
             } catch (\Exception $e) {
