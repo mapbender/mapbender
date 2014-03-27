@@ -121,7 +121,7 @@ class RepositoryController extends Controller
                 $doc = WmsCapabilitiesParser::createDocument($content);
                 $validate = true;
                 if ($validate === true) {
-                    $validator = new XmlValidator($this->container, $proxy_config, "xml/");
+                    $validator = new XmlValidator($this->container, $proxy_config, "xmlschemas/");
                     $doc = $validator->validate($doc);
                 }
                 $wmsParser = WmsCapabilitiesParser::getParser($doc);
