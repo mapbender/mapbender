@@ -454,6 +454,10 @@
         <source>mb.wms.wmsloader.repo.form.label.ogcwms</source>
         <target>OGC WMS</target>
       </trans-unit>
+      <trans-unit id="4befb8858096af62c683845b37f5f535" resname="mb.wms.wmsloader.repo.form.label.validate">
+        <source>mb.wms.wmsloader.repo.form.label.validate</source>
+        <target>Validieren</target>
+      </trans-unit>
       <trans-unit id="62be339a16eb03f936fbf6f412dc717a" resname="mb.wms.wmsloader.repo.form.label.serviceurl">
         <source>mb.wms.wmsloader.repo.form.label.serviceurl</source>
         <target>Dienste-URL</target>

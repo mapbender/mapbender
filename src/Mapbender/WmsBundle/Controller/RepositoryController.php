@@ -94,6 +94,7 @@ class RepositoryController extends Controller
 
         $form = $this->get("form.factory")->create(new WmsSourceSimpleType(), $wmssource_req);
         $form->bindRequest($request);
+        $validate = $form->get('validate')->getData();
         if ($form->isValid()) {
             $purl = parse_url($wmssource_req->getOriginUrl());
             if (!isset($purl['scheme']) || !isset($purl['host'])) {
@@ -119,7 +120,6 @@ class RepositoryController extends Controller
                 $browserResponse = $proxy->handle();
                 $content = $browserResponse->getContent();
                 $doc = WmsCapabilitiesParser::createDocument($content);
-                $validate = true;
                 if ($validate === true) {
                     $validator = new XmlValidator($this->container, $proxy_config, "xmlschemas/");
                     $doc = $validator->validate($doc);

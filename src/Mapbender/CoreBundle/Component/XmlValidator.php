@@ -23,20 +23,28 @@ class XmlValidator
      * @var type container
      */
     protected $container;
+
     /**
      * @var string path to local directory for schemas, document type definitions.
      */
     protected $dir;
+
     /**
      * @var array Proxy connection parameters
      */
     protected $proxy_config;
+    /**
+     *
+     * @var array temp files to delete 
+     */
+    protected $filesToDelete;
 
     public function __construct($container, array $proxy_config, $orderFromWeb = null)
     {
         $this->container = $container;
         $this->dir = $this->createDir($orderFromWeb);
         $this->proxy_config = $proxy_config;
+        $this->filesToDelete = array();
     }
 
     /**
@@ -49,31 +57,32 @@ class XmlValidator
      */
     public function validate(\DOMDocument $doc)
     {
+        $this->filesToDelete = array();
         if (isset($doc->doctype)) {// DTD
             $docH = new \DOMDocument();
-            if ($this->dir !== null) {
-                $filePath = $this->addFileSchema($this->dir . $this->fileNameFromUrl($doc->doctype->name,
-                        $doc->doctype->systemId));
-                if (!is_file($filePath)) {
-                    $proxy_query = ProxyQuery::createFromUrl($doc->doctype->systemId);
-                    $proxy = new CommonProxy($this->proxy_config, $proxy_query);
-                    try {
-                        $browserResponse = $proxy->handle();
-                        $content = $browserResponse->getContent();
-                        file_put_contents($filePath, $content);
-                    } catch (\Exception $e) {
-                        throw $e;
-                    }
+            $filePath = $this->getFileName($doc->doctype->name, $doc->doctype->systemId);
+            if (!is_file($filePath)) {
+                $proxy_query = ProxyQuery::createFromUrl($doc->doctype->systemId);
+                $proxy = new CommonProxy($this->proxy_config, $proxy_query);
+                try {
+                    $browserResponse = $proxy->handle();
+                    $content = $browserResponse->getContent();
+                    file_put_contents($filePath, $content);
+                } catch (\Exception $e) {
+                    $this->removeFiles();
+                    throw $e;
                 }
-                $docStr = str_replace($doc->doctype->systemId, $filePath, $doc->saveXML());
-                $doc->loadXML($docStr);
-                unset($docStr);
             }
+            $docStr = str_replace($doc->doctype->systemId, $this->addFileSchema($filePath), $doc->saveXML());
+            $doc->loadXML($docStr);
+            unset($docStr);
             if (!@$docH->loadXML($doc->saveXML(), LIBXML_DTDLOAD | LIBXML_DTDVALID)) {
+                $this->removeFiles();
                 throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
             }
             $doc = $docH;
             if (!@$doc->validate()) { // check with DTD
+                $this->removeFiles();
                 throw new XmlParseException("mb.wms.repository.parser.not_valid_dtd");
             }
         } else {
@@ -101,10 +110,13 @@ EOF
                     $message .= "\n" . $error->message;
                 }
                 $this->container->get('logger')->err($message);
+                libxml_clear_errors();
+                $this->removeFiles();
                 throw new XmlParseException("mb.wms.repository.parser.not_valid_xsd");
             }
             libxml_clear_errors();
         }
+        $this->removeFiles();
         return $doc;
     }
 
@@ -128,28 +140,6 @@ EOF
     }
 
     /**
-     * Creates the xsd schemas directory or checks it. 
-     * 
-     * @param string $orderFromWeb the path to xsd schemas directory (from "web" directory relative).
-     * @return string | null the absoulute path to xsd schemas directory or null.
-     */
-    private function createDir($orderFromWeb)
-    {
-        if ($orderFromWeb === null)
-            return null;
-        $orderFromWeb = $this->normalizePath($this->container->get('kernel')->getRootDir() . '/../web/' . $orderFromWeb);
-        if (!is_dir($orderFromWeb)) {
-            if (mkdir($orderFromWeb)) {
-                return $orderFromWeb;
-            } else {
-                return null;
-            }
-        } else {
-            return $orderFromWeb;
-        }
-    }
-
-    /**
      * Adds namespace and location to schema location array.
      * 
      * @param array $schemaLocations schema locations
@@ -159,19 +149,12 @@ EOF
      */
     private function addSchemaLocation(&$schemaLocations, $ns, $path)
     {
-        if ($this->dir === null) {
-            if (stripos($path, "http://") === 0) {
-                $schemaLocations[$ns] = $path;
-                return true;
-            }
-        } else {
-            if (stripos($path, "http:") === 0) {
-                $this->addSchemaLocationReq($schemaLocations, $ns, $path);
-                return true;
-            } else if (is_file($path)) {
-                $schemaLocations[$ns] = $path;
-                return true;
-            }
+        if (stripos($path, "http:") === 0) {
+            $this->addSchemaLocationReq($schemaLocations, $ns, $path);
+            return true;
+        } else if (is_file($path)) {
+            $schemaLocations[$ns] = $this->addFileSchema($path);
+            return true;
         }
         return false;
     }
@@ -181,16 +164,15 @@ EOF
      * 
      * @param array $schemaLocations schema locations
      * @param string $ns namespace
-     * @param string $path path or url
+     * @param string $url path or url
      * @throws \Exception  create exception
      * @throws XmlParseException xml parse exception
      */
-    private function addSchemaLocationReq(&$schemaLocations, $ns, $path)
+    private function addSchemaLocationReq(&$schemaLocations, $ns, $url)
     {
-        $fileName = $this->fileNameFromUrl($ns, $path);
-        $fullFileName = $this->dir . $fileName;
+        $fullFileName = $this->getFileName($ns, $url);
         if (!is_file($fullFileName)) {
-            $proxy_query = ProxyQuery::createFromUrl($path);
+            $proxy_query = ProxyQuery::createFromUrl($url);
             $proxy = new CommonProxy($this->proxy_config, $proxy_query);
             try {
                 $browserResponse = $proxy->handle();
@@ -212,6 +194,60 @@ EOF
             }
         }
         $schemaLocations[$ns] = $this->addFileSchema($fullFileName);
+    }
+
+    /**
+     * Generates a file path
+     * 
+     * @param string $ns namespace
+     * @param string $url url
+     * @return string file path
+     */
+    private function getFileName($ns, $url)
+    {
+        if ($this->dir === null) {
+            $tmpfile = sys_get_temp_dir() . "/" . "mb3_" . time();
+            $this->filesToDelete[] = $tmpfile;
+            return $tmpfile;
+        } else {
+            $fileName = $this->fileNameFromUrl($ns, $url);
+            return $this->dir . $fileName;
+        }
+    }
+
+    /**
+     * Removes all xsd, dtd temp files
+     */
+    private function removeFiles()
+    {
+        foreach ($this->filesToDelete as $fileToDel) {
+            if (is_file($fileToDel)) {
+                unlink($fileToDel);
+            }
+        }
+    }
+
+    /**
+     * Creates the xsd schemas directory or checks it. 
+     * 
+     * @param string $orderFromWeb the path to xsd schemas directory (from "web" directory relative).
+     * @return string | null the absoulute path to xsd schemas directory or null.
+     */
+    private function createDir($orderFromWeb)
+    {
+        if ($orderFromWeb === null) {
+            return null;
+        }
+        $orderFromWeb = $this->normalizePath($this->container->get('kernel')->getRootDir() . '/../web/' . $orderFromWeb);
+        if (!is_dir($orderFromWeb)) {
+            if (mkdir($orderFromWeb)) {
+                return $orderFromWeb;
+            } else {
+                return null;
+            }
+        } else {
+            return $orderFromWeb;
+        }
     }
 
     /**
