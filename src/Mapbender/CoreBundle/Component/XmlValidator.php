@@ -33,6 +33,7 @@ class XmlValidator
      * @var array Proxy connection parameters
      */
     protected $proxy_config;
+
     /**
      *
      * @var array temp files to delete 
@@ -206,7 +207,7 @@ EOF
     private function getFileName($ns, $url)
     {
         if ($this->dir === null) {
-            $tmpfile = sys_get_temp_dir() . "/" . "mb3_" . time();
+            $tmpfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "mb3_" . time();
             $this->filesToDelete[] = $tmpfile;
             return $tmpfile;
         } else {
@@ -274,7 +275,6 @@ EOF
             $urlName = substr($urlName, strlen($urlName) >= $maxurllength ? strlen($urlName) - $maxurllength : 0,
                 $maxurllength);
         }
-        // TODO OS Windows file name strtolower??
         return $this->normalizePath($nsName . "_" . $urlName);
     }
 
@@ -286,10 +286,9 @@ EOF
      */
     private function normalizePath($path)
     {
-        // TODO replace separator in $path with OS file separator ???
         $path = preg_replace("/[\/\\\][^\/\\\]+[\/\\\][\.]{2}/", "", $path);
         if (!strpos($path, "..")) {
-            return $path;
+            return preg_replace("/[\/\\\]/", DIRECTORY_SEPARATOR, $path);
         } else {
             $this->normalizePath($path);
         }
@@ -303,10 +302,11 @@ EOF
      */
     private function addFileSchema($filePath)
     {
-        if (stripos($filePath, "file:") !== 0) {
-            return "file:///" . $filePath;
+        $filePath_ = preg_replace("/[\/\\\]/", "/", $filePath);
+        if (stripos($filePath_, "file:") !== 0) {
+            return "file:///" . $filePath_;
         } else {
-            return $filePath;
+            return $filePath_;
         }
     }
 
