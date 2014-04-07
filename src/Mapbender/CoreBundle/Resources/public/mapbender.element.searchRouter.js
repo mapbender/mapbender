@@ -238,11 +238,12 @@
 
                 model.on('request', this._setActive, this);
                 model.on('sync', function(){
-                    response(model.get('results'));
+                    model.response(model.get('results'));
                 });
                 model.on('error', response([]));
             }
 
+            target.data('autocompleteModel').response = response;
             target.data('autocompleteModel').submit(target, request);
         },
 
