@@ -90,6 +90,23 @@
                 $('#search_routes_route_control_group').hide()
                     .next('hr').hide();
             }
+
+            if(!this.options.asDialog) {
+                this.element.on('click', '.search-action-buttons a', function(event) {
+                    event.preventDefault();
+                    var target = $(event.target).attr('href');
+                    var targetBase = '#' + self.element.attr('id') + '/button/';
+                    switch(target) {
+                        case (targetBase + 'reset'):
+                            self._reset();
+                            break;
+                        case (targetBase + 'ok'):
+                            self._search();
+                            break;
+                    }
+                });
+            }
+
             this._trigger('ready');
             this._ready();
 
