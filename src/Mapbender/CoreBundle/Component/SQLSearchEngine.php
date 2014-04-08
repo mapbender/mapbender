@@ -94,6 +94,7 @@ class SQLSearchEngine
         }
 
         $qb->where($cond);
+        $qb->orderBy('t.' . $key, 'ASC');
 
         // Create prepared statement and execute
         $stmt = $connection->executeQuery($qb->getSql(), $params);
