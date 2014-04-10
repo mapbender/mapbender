@@ -30,7 +30,7 @@ class PrintService
     {   
         $this->data = json_decode($content, true);
         $template = $this->data['template'];
-        
+
         $this->getTemplateConf($template);
         $this->createUrlArray();
         $this->addReplacePattern();
@@ -198,8 +198,8 @@ class PrintService
                     $im = imagecreatefromgif($imagename);
                     break;
                 default:
-                    continue;
                     $this->container->get("logger")->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
+                    continue;
             }
 
             if ($im !== null) {    
@@ -221,13 +221,7 @@ class PrintService
             if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
                 $dest = $finalImage;
                 $src = imagecreatefrompng($temp_name);
-                if ($this->layerOpacity[$k] !== 100){
-                    ImageCopyMerge($dest, $src, 0, 0, 0, 0, $this->image_width,
-                       $this->image_height, $this->layerOpacity[$k]);
-                }else{
-                    imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width,
-                        $this->image_height);
-                }
+                imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width, $this->image_height);
                 imagepng($dest, $finalimagename);
                 unlink($temp_name);           
             }  

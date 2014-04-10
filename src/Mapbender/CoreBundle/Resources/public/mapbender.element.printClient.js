@@ -97,7 +97,7 @@
             this.popupIsOpen = true;
             this._loadPrintFormats();
             this._updateElements();
-            this._updateGeometry(true);
+            //this._updateGeometry(true);
         },
 
         close: function() {
@@ -244,8 +244,8 @@
                 height = this.height,
                 scale = this._getPrintScale(),
                 rotationField = $('input[name="rotation"]');
-
-            if (rotationField.val() === '' && this.rotateValue !== '0'){
+                
+            if (rotationField.val() === '' && this.rotateValue > '0'){
                 rotationField.val('0');
             }
             var rotation = $('input[name="rotation"]').val();

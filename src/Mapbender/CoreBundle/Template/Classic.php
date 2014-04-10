@@ -37,13 +37,26 @@ class Classic extends Template
     static public function listAssets()
     {
         $assets = array(
-            'css' => array(), // '@FOMCoreBundle/Resources/public/css/frontend/classic.css'
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
+                           '@MapbenderCoreBundle/Resources/public/sass/template/classic.scss'),
             'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
-                '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
+                          '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
             'trans' => array()
         );
         return $assets;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLateAssets($type)
+    {
+        $assets = array(
+            'css' => array(),
+            'js' => array(),
+            'trans' => array()
+        );
+        return $assets[$type];
     }
 
     /**

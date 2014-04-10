@@ -1,3 +1,11 @@
+{% if whitelist_exists is defined %}
+    {% if whitelist_exists %}
+        <div class="messageBox hint">
+            {{ "Only for this region available elements are displayed." | trans }}
+        </div>
+    {% endif %}
+{% endif %}
+
 {% for class, meta in elements %}
 <a class="checkContainer chooseElement" data-tags="{{ meta.tags | join(',') | lower }}" title="Choose {{meta.title}} Element" href="{{ path('mapbender_manager_element_new', {'slug': app.request.get('slug'), 'class': meta.class, 'region': region}) }}">
     <span class="subTitle">{{ meta.title }}</span>

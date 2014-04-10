@@ -16,8 +16,8 @@ class Fullscreen extends Template
     public static function getRegionsProperties()
     {
         return array(
-            'sidepane' => array(
-                'tabs' => array(
+            'sidepane' => array
+(                'tabs' => array(
                     'state' => false,
                     'options' => array('icon' => 'XXX')
                 )
@@ -99,5 +99,4 @@ class Fullscreen extends Template
                     'region_props' => $region_props,
                     'default_region_props' => $default_region_props));
     }
-
 }
