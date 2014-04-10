@@ -14,6 +14,7 @@ use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Exception\NotAllAclsFoundException;
 
 /**
  * Application is the main Mapbender3 class.
@@ -397,6 +398,19 @@ class Application
         if ($this->elements === null) {
             $securityContext = $this->container->get('security.context');
             $aclProvider = $this->container->get('security.acl.provider');
+            
+            // preload acl in one single sql query
+            $oids = array();
+            $acls;
+            foreach ($this->entity->getElements() as $entity) {
+                $oids[] = ObjectIdentity::fromDomainObject($entity);
+            }
+            try {
+                $aclProvider->findAcls($oids);        
+            } catch(NotAllAclsFoundException $e) { 
+                $acls = $e->getPartialResult();
+            } catch(\Exception $e) {}
+            
             // Set up all elements (by region)
             $this->elements = array();
             foreach ($this->entity->getElements() as $entity) {
