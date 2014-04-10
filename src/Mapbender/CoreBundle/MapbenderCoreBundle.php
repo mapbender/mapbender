@@ -34,6 +34,7 @@ class MapbenderCoreBundle extends MapbenderBundle
     {
         return array('Mapbender\CoreBundle\Template\Fullscreen',
             'Mapbender\CoreBundle\Template\FullscreenAlternative',
+            'Mapbender\CoreBundle\Template\Responsive',
             'Mapbender\CoreBundle\Template\Classic');
     }
 
