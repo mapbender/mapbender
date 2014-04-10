@@ -75,6 +75,29 @@ class WmsLoader extends Element
             'trans' => array('MapbenderWmsBundle:Element:wmsloader.json.twig'));
         return $files;
     }
+    
+     /**
+     * @inheritdoc
+     */
+    public function getConfiguration()
+    {
+        $configuration = parent::getConfiguration();
+        $wms_url = $this->container->get('request')->get('wms_url');
+        if ($wms_url) {
+            $all = $this->container->get('request')->query->all();
+            foreach ($all as $key => $value) {
+                if(strtolower($key) === "version" && stripos($wms_url, "version") === false){
+                    $wms_url .= "&version=" . $value;
+                } else if(strtolower($key) === "request" && stripos($wms_url, "request") === false){
+                    $wms_url .= "&request=" . $value;
+                } else if(strtolower($key) === "service" && stripos($wms_url, "service") === false){
+                    $wms_url .= "&service=" . $value;
+                }
+            }
+            $configuration['wms_url'] = urldecode($wms_url);
+        }
+        return $configuration;
+    }
 
     /**
      * @inheritdoc

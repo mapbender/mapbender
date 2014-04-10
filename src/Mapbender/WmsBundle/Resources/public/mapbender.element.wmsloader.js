@@ -3,7 +3,9 @@
     $.widget("mapbender.mbWmsloader", {
         options: {
             autoOpen: false,
-            title: Mapbender.trans('mb.wms.wmsloader.title')
+            title: Mapbender.trans('mb.wms.wmsloader.title'),
+            splitLayers: false,
+            wms_url: null
         },
         elementUrl: null,
         _create: function(){
@@ -21,6 +23,19 @@
                 Mapbender.declarative['source.add.wms'] = $.proxy(this.loadDeclarativeWms, this);
             }else{
                 Mapbender['declarative'] = {'source.add.wms': $.proxy(this.loadDeclarativeWms, this)};
+            }
+            if(this.options.wms_url && this.options.wms_url !== ''){
+                var options = {
+                    'gcurl': this.options.wms_url,
+                    'type': 'url',
+                    'layers': {},
+                    'global': {
+                        'mergeSource': false,
+                        'splitLayers': this.options.splitLayers,
+                        'options': {'treeOptions': {'selected': true}}
+                    }
+                };
+                this.loadWms(options);
             }
             this._trigger('ready');
             this._ready();
