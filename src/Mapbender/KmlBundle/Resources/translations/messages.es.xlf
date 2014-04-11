@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="9aad13ad5582f429e3c111fd845c4eaa" resname="mb.kml.kmlexport.xml.name">
+        <source>mb.kml.kmlexport.xml.name</source>
+        <target>Exportar KML a Mapbender</target>
+      </trans-unit>
+      <trans-unit id="e270fb5b6849c6043e37995ed2f12080" resname="mb.kml.kmlexport.class.title">
+        <source>mb.kml.kmlexport.class.title</source>
+        <target>Exportar KML</target>
+      </trans-unit>
+      <trans-unit id="dffcff9a8f59a0bbdf8957132d6a2313" resname="mb.kml.kmlexport.class.description">
+        <source>mb.kml.kmlexport.class.description</source>
+        <target>Exportar-KML exporta los datos del mapa como archivo "kml"</target>
+      </trans-unit>
+      <trans-unit id="f58f8274525ea1b6ab9e51a76351342f" resname="mb.kml.kmlexport.tag.kml">
+        <source>mb.kml.kmlexport.tag.kml</source>
+        <target>kml</target>
+      </trans-unit>
+      <trans-unit id="c6ec088130b7b31990fdd110af038793" resname="mb.kml.kmlexport.tag.export">
+        <source>mb.kml.kmlexport.tag.export</source>
+        <target>exportar</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
