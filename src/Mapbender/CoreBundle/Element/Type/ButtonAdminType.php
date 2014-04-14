@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * 
+ *
  */
 class ButtonAdminType extends AbstractType
 {
@@ -52,6 +52,8 @@ class ButtonAdminType extends AbstractType
                     "iconHelp" => "Help",
                     "iconWmcEditor" => "WMC Editor",
                     "iconWmcLoader" => "WMC Loader",
+                    "iconCoordinates" => "Coordinates",
+                    "iconGpsTarget" => "Gps Target",
                     "iconPoi" => "POI",
                     "iconImageExport" => "Image Export",
 					"iconSketch" => "Sketch"

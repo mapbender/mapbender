@@ -65,7 +65,8 @@
 .iconThumbsUp, .iconThumbsDown, .iconGroup, .iconUser,
 .iconSettings, .iconSignOut, .iconSignIn, .iconMore,
 .iconCopy, .iconKey, .iconWarning, .iconEmail, .iconTwitter,
-.iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu, .iconOverview{
+.iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu,
+.iconOverview, .iconGpsTarget{
   &:before{font-family: FontAwesome;}
 }
 
@@ -103,6 +104,7 @@
 .iconClose:before{content:"\f068";}
 .iconActivity:before{content:"\f110";}
 .iconCoordinates:before{content:"\f05b";}
+.iconGpsTarget:before{content:"\f05b";}
 .iconPrev:before{content:"\f0e2";}
 .iconNext:before{content:"\f01e";}
 .iconZoomSelect:before{content:"\f00e";}
