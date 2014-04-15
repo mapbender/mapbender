@@ -30,12 +30,12 @@ class PrintController extends Controller
         $container = $this->container;
         $printservice = new PrintService($container);
 
-        $displayInline = true
+        $displayInline = true;
 
         $reponse = new Response($printservice->doPrint($content), 200, array(
             'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
             'Content-Disposition' => 'attachment; filename=' . $filename
-        );
+        ));
 
         return $response;
     }
