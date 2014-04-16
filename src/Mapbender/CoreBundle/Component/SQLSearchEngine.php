@@ -71,7 +71,7 @@ class SQLSearchEngine
         for($i = 0; $i < count($keys); $i++) {
             // @todo: Platform independency (::varchar, lower)
             $cond->add($qb->expr()->like('LOWER(t.' . $keys[$i] . '::varchar)', '?'));
-            $params[] = '%' . (count($values) > $i ? strtolower($values[$i]) : '') . '%';
+            $params[] = '%' . (count($values) > $i ? mb_strtolower($values[$i], 'UTF-8') : '') . '%';
         }
 
         $logger = $this->container->get('logger');
