@@ -369,7 +369,7 @@
             var headers = this.options.routes[this.selected].results.headers,
                 table = $('.search-results table', this.element),
                 tbody = $('<tbody></tbody>'),
-                layer = this._getLayer();
+                layer = this._getLayer(true);
 
             $('tbody', table).remove();
             layer.removeAllFeatures();
@@ -407,16 +407,30 @@
             outer.removeClass('search-active');
         },
 
+        _createStyleMap: function(styles, options) {
+            var o = _.defaults({}, options, {
+                extendDefault: true,
+                defaultBase: OpenLayers.Feature.Vector.style['default']
+            });
+            var s = styles || OpenLayers.Feature.Vector.style;
+
+            _.defaults(s['default'], o.defaultBase);
+
+            return new OpenLayers.StyleMap(s, {
+                extendDefault: o.extendDefault
+            });
+        },
+
         /**
          * Get highlight layer. Will construct one if neccessary.
          * @TODO: Backbonify (view)
          *
          * @return OpenLayers.Layer.Vector Highlight layer
          */
-        _getLayer: function(){
-            if(this.highlightLayer === null){
+        _getLayer: function(forceRebuild){
+            if(this.highlightLayer === null || forceRebuild){
                 this.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight', {
-                    styleMap: new OpenLayers.StyleMap(this.options.style)
+                    styleMap: this._createStyleMap(this.options.routes[this.selected].results.styleMap)
                 });
             }
 
