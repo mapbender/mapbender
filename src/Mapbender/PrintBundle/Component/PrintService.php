@@ -205,7 +205,30 @@ class PrintService
             if ($im !== null) {    
                     imagealphablending($im, false);
                     imagesavealpha($im, true);
-                    imagepng($im, $imagename);     
+
+                    // Taking the painful way to alpha blending. Stupid PHP-GD
+                    $opacity = floatVal($this->data['layers'][$k]['opacity']);
+                    if(1.0 !== $opacity) {
+                        $width = imagesx($im);
+                        $height = imagesy($im);
+                        for ($x = 0; $x < $width; $x++) {
+                            for ($y = 0; $y < $height; $y++) {
+                                $colorIn = imagecolorsforindex($im, imagecolorat($im, $x, $y));
+                                $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
+
+                                $colorOut = imagecolorallocatealpha(
+                                    $im,
+                                    $colorIn['red'],
+                                    $colorIn['green'],
+                                    $colorIn['blue'],
+                                    $alphaOut);
+                                imagesetpixel($im, $x, $y, $colorOut);
+                                imagecolordeallocate($im, $colorOut);
+                            }
+                        }
+                    }
+
+                    imagepng($im, $imagename);
             }
         } 
         // create final merged image
