@@ -61,6 +61,7 @@ class ImageExportService
             file_put_contents($imagename, $response->getContent());
             $im = null;
             switch (trim($response->headers->get('content-type'))) {
+                case 'image/png; mode=8bit' : 
                 case 'image/png' :
                     $im = imagecreatefrompng($imagename);
                     break;

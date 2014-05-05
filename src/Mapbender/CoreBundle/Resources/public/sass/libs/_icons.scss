@@ -65,7 +65,8 @@
 .iconThumbsUp, .iconThumbsDown, .iconGroup, .iconUser,
 .iconSettings, .iconSignOut, .iconSignIn, .iconMore,
 .iconCopy, .iconKey, .iconWarning, .iconEmail, .iconTwitter,
-.iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu{
+.iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu,
+.iconOverview, .iconGpsTarget{
   &:before{font-family: FontAwesome;}
 }
 
@@ -96,13 +97,14 @@
 .iconInfo:before{content:"\f129";}
 .iconInfoActive:before{content:"\f05a" !important;} // overwrite the default icon if checked
 .iconSearch:before{content:"\f002";}
-.iconWms:before{content:"\f0ac";}
+.iconWms:before, .iconOverview:before{content:"\f0ac";}
 .iconWmcEditor:before {content:"\f044";}
 .iconWmcLoader:before {content:"\f07c";}
 .iconOpen:before{content:"\f067";}
 .iconClose:before{content:"\f068";}
 .iconActivity:before{content:"\f110";}
 .iconCoordinates:before{content:"\f05b";}
+.iconGpsTarget:before{content:"\f05b";}
 .iconPrev:before{content:"\f0e2";}
 .iconNext:before{content:"\f01e";}
 .iconZoomSelect:before{content:"\f00e";}
@@ -123,6 +125,7 @@
 .iconFacebook:before {content: "\f082";}
 .iconGooglePlus:before {content: "\f0d4";}
 .iconSketch:before {content: "\f044";}
+.iconMore:before {content: "\f0c9";}
 
 // only backend
 .iconGroup:before{content: "\f0c0";}
