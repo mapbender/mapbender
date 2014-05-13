@@ -1,0 +1,202 @@
+mb.core.aboutdialog.content.versionprefix: Version
+mb.core.aboutdialog.content.learnmore: 'Lernen Sie Mapbender3 kennen '
+mb.core.aboutdialog.content.linktitle: 'Besuchen Sie die offizielle Mapbender3 Webseite.'
+mb.core.aboutdialog.content.website: '- zur Webseite'
+mb.core.simplesearch.input.search: Suchen
+mb.core.searchrouter.popup.btn.ok: Suchen
+mb.core.searchrouter.popup.btn.cancel: Schließen
+mb.core.searchrouter.popup.btn.reset: Zurücksetzen
+mb.core.poi.sharepoi: 'Treffpunkt vereinbaren'
+mb.core.poi.text.snippet: 'Sie können den folgenden Link in einer E-Mail verschicken. Der Link öffnet die Anwendung und zeigt den Treffpunkt an.'
+mb.core.basesourceswitcher.error.sourcenotavailable: 'Der Diensr mit der ID %id% ist nicht vorhanden'
+mb.core.legend.nolegend: 'Keine Legende verfügbar.'
+mb.core.legend.popup.btn.ok: Schließen
+mb.core.ruler.popup.btn.ok: Schließen
+mb.core.ruler.create_error: 'Messen: Der Geometrietyp muss eine Linie oder eine Fläche sein.'
+mb.core.printclient.label.template: Vorlage
+mb.core.printclient.label.quality: Qualität
+mb.core.printclient.label.scale: Maßstab
+mb.core.printclient.label.rotation: Drehung
+mb.core.printclient.popup.btn.ok: Drucken
+mb.core.printclient.popup.btn.cancel: Abbrechen
+mb.core.printclient.info.noactivelayer: 'Keine aktive Ebene!'
+mb.core.printclient.form.required: 'Bitte füllen Sie dieses Feld aus'
+mb.core.overview.nolayer: 'Die Übersicht enthält keine Ebene.'
+mb.core.sketch.circle.radius.label: Radius
+mb.core.sketch.circle.radius.error: 'Der Radius ist nicht gültig.'
+mb.core.sketch.circle.form.button.yes: Übernehmen
+mb.core.sketch.circle.form.button.cancel: Abbrechen
+mb.core.featureinfo.error.nolayer: 'Informationsebene existiert nicht.'
+mb.core.featureinfo.error.unknownoption: 'Unbekannte Option %key% für %namespace%.%widgetname%.'
+mb.core.featureinfo.popup.btn.ok: Schließen
+mb.core.gpsposition.error.notsupported: 'Entschuldigung! Der Geolocation Dienst wird Ihrem Browser nicht unterstützt.'
+mb.core.layertree.confirm.allremove: 'Sollen wirklich alle Dienste gelöscht werden?'
+mb.core.layertree.popup.btn.ok: Schließen
+mb.core.layertree.const.outofscale: 'Ebene außerhalb des Maßstabs'
+mb.core.layertree.const.outofbounds: 'Ebene außerhalb der BoundingBox'
+mb.core.layertree.const.parentinvisible: 'Eltern Ebene nicht sichtbar'
+mb.core.zoombar.panup: 'Nach oben verschieben'
+mb.core.zoombar.panright: 'Nach rechts verschieben'
+mb.core.zoombar.pandown: 'Nach unten verschieben'
+mb.core.zoombar.panleft: 'Nach links verschieben'
+mb.core.zoombar.goback: Zurück
+mb.core.zoombar.goforward: Vor
+mb.core.zoombar.zoombybox: 'Ausschnitt aufziehen'
+mb.core.zoombar.zoombyworld: 'Zoom auf gesamte Ausdehnung'
+mb.core.zoombar.zoomin: Hineinzoomen
+mb.core.zoombar.zoomout: Herauszoomen
+mb.core.poi.popup.btn.ok: Ok
+mb.core.poi.popup.btn.cancel: Abbrechen
+mb.core.layertree.tooltip.sublayers_openclose: öffnen/schließen
+mb.core.layertree.label.visibility_onoff: 'Sichtbarkeit an/aus'
+mb.core.layertree.label.featureinfo_onoff: 'Information an/aus'
+mb.core.layertree.label.transparency: Transparenz
+mb.core.layertree.label.zoomtolayer: 'Zoom auf Ebene'
+mb.core.layertree.label.metadata: Metadaten
+mb.core.layertree.tooltip.removelayer: 'Ebene entfernen'
+mb.core.layertree.label.sources: Quellen
+mb.core.layertree.label.deleteallsources: 'Alle Dienste entfernen'
+mb.core.aboutdialog.class.title: Über-Mapbender-Dialog
+mb.core.aboutdialog.class.description: 'Der Über-Mapbender-Dialog zeigt Informationen zu Mapbender an.'
+mb.core.aboutdialog.tag.help: Hilfe
+mb.core.aboutdialog.tag.info: Info
+mb.core.aboutdialog.tag.about: Info-Dialog
+mb.core.activityindicator.class.title: Aktivitätsanzeige
+mb.core.activityindicator.class.description: 'Zeigt HTTP-Aktivität an.'
+mb.core.activityindicator.tag.activity: Aktivität
+mb.core.activityindicator.tag.indicator: Indikator
+mb.core.basesourceswitcher.class.title: 'Hintergrund wechseln'
+mb.core.basesourceswitcher.class.Description: 'Hintergrundkarten können definiert werden. In der Anwendung kann zwischen diesen gewechselt werden.'
+mb.core.basesourceswitcher.tag.base: base
+mb.core.basesourceswitcher.tag.source: source
+mb.core.basesourceswitcher.tag.switcher: switcher
+mb.core.button.class.title: Button
+mb.core.button.class.description: 'Button '
+mb.core.button.tag.button: Button
+mb.core.coordinatesdisplay.class.title: Koordinatenanzeige
+mb.core.coordinatesdisplay.class.description: 'Die Koordinatenanzeige zeigt die Mausposition in den Kartenkoordinaten an.'
+mb.core.coordinatesdisplay.tag.coordinates: Koordinaten
+mb.core.coordinatesdisplay.tag.display: Anzeige
+mb.core.coordinatesdisplay.tag.mouse: Maus
+mb.core.coordinatesdisplay.tag.position: Position
+mb.core.copyright.class.title: Copyright
+mb.core.copyright.class.description: 'Zeigt Nutzungsbedingungen an.'
+mb.core.copyright.tag.copyright: Copyright
+mb.core.copyright.tag.dialog: Dialog
+mb.core.featureinfo.class.title: Information
+mb.core.featureinfo.class.description: Information
+mb.core.featureinfo.tag.featureinfo: Information
+mb.core.featureinfo.tag.feature: Objekt
+mb.core.featureinfo.tag.info: Info
+mb.core.featureinfo.tag.dialog: Dialog
+mb.core.gpsposition.class.title: GPS-Position
+mb.core.gpsposition.class.description: 'Übergibt einen Button um die GPS-Position anzuzeigen.'
+mb.core.gpsposition.tag.gpsposition: GPS-Position
+mb.core.gpsposition.tag.gps: GPS
+mb.core.gpsposition.tag.position: Position
+mb.core.gpsposition.tag.button: Button
+mb.core.layertree.class.title: Ebenenbaum
+mb.core.layertree.class.description: 'Baum der Karten-Ebenen'
+mb.core.layertree.tag.layertree: Ebenenbaum
+mb.core.layertree.tag.layer: Ebenen
+mb.core.layertree.tag.tree: Baum
+mb.core.legend.class.title: Legende
+mb.core.legend.class.description: 'Zeigt die Legende zu den aktiven Themen der Karte an.'
+mb.core.legend.tag.layer: Themen
+mb.core.legend.tag.legend: Legende
+mb.core.map.class.title: 'Karte (map)'
+mb.core.mapabs.class.description: 'Die Karte basiert auf MapQuery/OpenLayers'
+mb.core.map.tag.map: Karte
+mb.core.map.tag.mapquery: MapQuery
+mb.core.map.tag.openlayers: OpenLayers
+mb.core.map.srsnotfound: 'SRS Eigenschaften für %srslist% wurden nicht gefunden.'
+mb.core.overview.class.title: 'Übersicht (overview)'
+mb.core.overview.class.description: 'Zeigt eine kleine Übersichtskarte (overview) an.'
+mb.core.overview.tag.overview: Übersicht
+mb.core.overview.tag.map: 'Karte (overview)'
+mb.core.poi.class.title: 'MeetingPoint (POI)'
+mb.core.poi.class.description: 'Element über das eine Treffpunkt generiert und verschickt werden kann.'
+mb.core.poi.tag.poi: 'MeetingPoint (POI)'
+mb.core.poi.tag.point: Punkt
+mb.core.poi.tag.interest: Interessse
+mb.core.printclient.class.title: Druck
+mb.core.printclient.class.description: 'Druck Dialog'
+mb.core.printclient.tag.print: Druck
+mb.core.printclient.tag.pdf: pdf
+mb.core.printclient.tag.png: png
+mb.core.printclient.tag.gif: gif
+mb.core.printclient.tag.jpg: jpg
+mb.core.printclient.tag.jpeg: jpeg
+mb.core.ruler.class.title: Linien-/Flächenmessung
+mb.core.ruler.class.description: 'Messung: Es wird eine Linie/Fläche gezeichnet, um deren Länge/Fläche in einem Dialog anzuzeigen.'
+mb.core.ruler.tag.line: Linie
+mb.core.ruler.tag.area: Fläche
+mb.core.ruler.tag.measure: Messen
+mb.core.scalebar.class.title: Maßstabsleiste
+mb.core.scalebar.class.description: 'Maßstabsleiste, die den aktuellen Maßstab anzeigt.'
+mb.core.scalebar.tag.scale: Maßstab
+mb.core.scalebar.tag.bar: Leiste
+mb.core.scaledisplay.class.title: Maßstabsanzeige
+mb.core.scaledisplay.class.description: 'Der aktuelle Maßstab wird angezeigt.'
+mb.core.scaledisplay.tag.scale: Maßstab
+mb.core.scaledisplay.tag.display: Anzeige
+mb.core.scaleselector.class.title: Maßstabsauswahl
+mb.core.scaleselector.class.description: 'Auswahlbox mit verfügbaren Maßstäben zum Wechseln des Maßstabs. Zeigt den aktuellen Maßstab an.'
+mb.core.scaleselector.tag.scale: Maßstab
+mb.core.scaleselector.tag.selector: Auswahl
+mb.core.searchrouter.class.title: Suchen
+mb.core.searchrouter.class.description: 'Ermöglicht die Konfiguration von individuellen Suchen'
+mb.core.searchrouter.tag.search: Suchen
+mb.core.searchrouter.tag.router: Router
+mb.core.sketch.class.title: Skizzen
+mb.core.sketch.class.description: 'Es wird eine Vektorebene in der Karte hinzugefügt, über die Geometrieobjekte temporär gezeichnet werden.'
+mb.core.sketch.tag.sketch: Skizzen
+mb.core.sketch.tag.circle: Kreis
+mb.core.srsselector.class.title: 'SRS Auswahl'
+mb.core.srsselector.class.description: 'Nach der Auswahl eines räumlichen Referenzsystems (SRS) ändert sich das SRS in der Karte.'
+mb.core.srsselector.tag.srs: SRS
+mb.core.srsselector.tag.selector: Auswahl
+mb.core.zoombar.class.title: Navigationswerkzeug
+mb.core.zoombar.class.description: 'Das Navigationswerkzeug bietet Zoomen und Verschieben an, ähnlich wie bei OpenLayers.'
+mb.core.zoombar.tag.zoom: Zoom
+mb.core.zoombar.tag.pan: Verschieben
+mb.core.zoombar.tag.control: Kontrolle
+mb.core.zoombar.tag.navigation: Navigation
+mb.core.zoombar.tag.panel: Panel
+mb.core.simplesearch.class.title: 'Einfache Suche'
+mb.core.simplesearch.class.description: 'Einfeldsuche über JSON-Daten (z.B. Solr)'
+mb.core.metadata.popup.title: __mb.core.metadata.popup.title
+mb.core.metadata.section.contact: __mb.core.metadata.section.contact
+mb.core.metadata.section.contact.person: __mb.core.metadata.section.contact.person
+mb.core.metadata.section.contact.position: __mb.core.metadata.section.contact.position
+mb.core.metadata.section.contact.organization: __mb.core.metadata.section.contact.organization
+mb.core.metadata.section.contact.voiceTelephone: __mb.core.metadata.section.contact.voiceTelephone
+mb.core.metadata.section.contact.facsimileTelephone: __mb.core.metadata.section.contact.facsimileTelephone
+mb.core.metadata.section.contact.electronicMailAddress: __mb.core.metadata.section.contact.electronicMailAddress
+mb.core.metadata.section.contact.address: __mb.core.metadata.section.contact.address
+mb.core.metadata.section.contact.addressType: __mb.core.metadata.section.contact.addressType
+mb.core.metadata.section.contact.addressCity: __mb.core.metadata.section.contact.addressCity
+mb.core.metadata.section.contact.addressStateOrProvince: __mb.core.metadata.section.contact.addressStateOrProvince
+mb.core.metadata.section.contact.addressPostCode: __mb.core.metadata.section.contact.addressPostCode
+mb.core.metadata.section.contact.addressCountry: __mb.core.metadata.section.contact.addressCountry
+mb.core.admin.poi.label.usemailto: 'Mailto verwenden'
+mb.core.admin.legend.label.autoopen: 'Automatisches Öffnen'
+mb.core.admin.legend.label.hideemptylayers: 'Ebenen ohne Objekte ausblenden'
+mb.core.admin.legend.label.generatelegendurl: 'Legenden-URL generieren'
+mb.core.admin.legend.label.showsourcetitle: 'Titel der Datenquelle anzeigen'
+mb.core.admin.legend.label.showlayertitle: 'Titel der Ebene anzeigen'
+mb.core.admin.legend.label.showgroupedlayertitle: 'Titel der gruppierten Ebene anzeigen'
+mb.core.admin.featureinfo.label.autoopen: 'Automatisches Öffnen'
+mb.core.admin.featureinfo.label.deactivateonclose: 'Beim Schließen deaktivieren'
+mb.core.admin.printclient.label.autoopen: 'Automatisches Öffnen'
+mb.core.admin.printclient.label.rotatable: Drehbar
+mb.core.admin.copyright.label.autoopen: 'Automatisches Öffnen'
+mb.core.basesourceswitcher.form.mesage: 'Keine Hintergrund Definitionen vorhanden.'
+mb.core.admin.layertree.label.showbasesources: 'BaseSources anzeigen'
+mb.core.admin.layertree.label.autoopen: 'Automatisches Öffnen'
+mb.core.admin.layertree.label.showheader: 'Header anzeigen'
+mb.core.admin.layertree.label.showlayerremove: '"Layer entfernen" anzeigen'
+mb.core.poi.label.text: 'Bearbeiten Sie den Text'
+mb.core.layertree.label.legend: Legende
+mb.core.layertree.label.kmlexport: 'KML Export'
+Search: Suchen

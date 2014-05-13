@@ -321,6 +321,14 @@ Mapbender.Model = {
         }
         return sources;
     },
+    findLayer: function(sourceOptions, layerOptions){
+        var source = this.findSource(sourceOptions);
+        if(source.length === 1){
+            return Mapbender.source[source[0].type].findLayer(source[0], layerOptions);
+        } else {
+            return null;
+        }
+    },
     /**
      * Returns the source's position
      */

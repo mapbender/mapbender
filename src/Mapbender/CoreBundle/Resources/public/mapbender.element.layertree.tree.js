@@ -3,7 +3,7 @@
         options: {
             autoOpen: false,
             target: null,
-			layerInfo: true,
+            layerInfo: true,
             menu: []
         },
         model: null,
@@ -209,8 +209,8 @@
                 }
                 if(!this.options.layerRemove)
                     li.find('.iconRemove').remove();
-				if(!this.options.layerInfo)
-					li.find('.iconInfo').remove();
+                if(!this.options.layerInfo)
+                    li.find('.iconInfo').remove();
                 if(sourceEl.children){
                     li.find('ul:first').attr('id', 'list-' + sourceEl.options.id);
                     if(config.toggle){
@@ -553,7 +553,7 @@
                 var source = self.model.findSource({id: sourceId})[0];
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId", sourceId));
                 if($element.parents('li:first').attr('data-type') === self.consts.root){
-                } else {
+                }else{
                     menu.find('#layer-opacity').remove();
                     menu.find('#layer-opacity-title').remove();
                 }
@@ -572,7 +572,7 @@
                         animationCallback: function(x, y){
                             var percentage = Math.round(x * 100);
                             $("#layer-opacity").find(".layer-opacity-handle").text(percentage);
-                            self._setOpacity(self.model.findSource({id: sourceId})[0], percentage/100.0);
+                            self._setOpacity(self.model.findSource({id: sourceId})[0], percentage / 100.0);
                         }
                     });
                 }
@@ -581,9 +581,16 @@
                         $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                     }
                 }
+                if($.inArray("metadata", self.options.menu) !== -1 && menu.find('.layer-metadata').length > 0){
+                    var layer = self.model.findLayer({id: sourceId}, {id: layerId});
+                    if(layer){
+                        $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata, self));
+                    }
+                }
             }
             function removeMenu($element){
                 $('.layer-zoom').off('click');
+                $('.layer-metadata').off('click');
                 $('#layer-menu').off('click').remove();
             }
             var $btnMenu = $(e.target);
@@ -629,7 +636,12 @@
             };
             this.model.zoomToLayer(options);
         },
-        _showMetadata: function(elm){
+        _showMetadata: function(e){
+            Mapbender.Metadata.call(
+                this.options.target,
+                {id: $(e.target).parents('div.layer-menu:first').attr("data-menuSourceId")},
+                {id: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId")}
+            );
         },
         _setSourcesCount: function(){
             var countObj = {};

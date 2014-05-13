@@ -22,6 +22,8 @@
           </div>
           {% elseif item == 'zoomtolayer' %}
           <div class="layer-zoom span-btn inactive button buttonOk">{{ 'mb.core.layertree.label.zoomtolayer'|trans }}</div>
+          {% elseif item == 'metadata' %}
+          <div class="layer-metadata span-btn inactive button buttonOk">{{ 'mb.core.layertree.label.metadata'|trans }}</div>
           {% else %}
           <span class="layer span-btn labelInput inactive">Undefined</span>
           {% endif %}

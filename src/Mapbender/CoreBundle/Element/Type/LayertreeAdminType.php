@@ -79,7 +79,7 @@ class LayertreeAdminType extends AbstractType
                     "" => " ",
                     "opacity" => "Opacity",
                     "zoomtolayer" => "Zoom to layer",
-//                    "metadata" => "Metadata",
+                    "metadata" => "Metadata",
 //                    "legend" => "Legend",
 //                    "kmlexport" => "KML export"
         )));
