@@ -256,29 +256,29 @@ class Map extends Element
             "sections" => array()
         );
         $sourceId = $this->container->get('request')->get("sourceId", null);
-        $layerId = $this->container->get('request')->get("layerId", null);
+        $layerName = $this->container->get('request')->get("layerName", null);
         $repository = 'Mapbender\CoreBundle\Entity\SourceInstance';
         $instance = $this->container->get("doctrine")->getRepository($repository)
             ->find($sourceId);
-        $source = $instance->getSource();
-        
+        # add source metadata
+        $src = $instance->getSource();
         $source_items = array();
-        $source_items[] = array("title" => Map::getNotNull($source->getTitle()));
-        $source_items[] = array("name" => Map::getNotNull($source->getName()));
-        $source_items[] = array("version" => Map::getNotNull($source->getVersion()));
-        $source_items[] = array("originUrl" => Map::getNotNull($source->getOriginUrl()));
-        $source_items[] = array("description" => Map::getNotNull($source->getDescription()));
-        $source_items[] = array("onlineResource" => Map::getNotNull($source->getOnlineResource() !== null ? $source->getOnlineResource()->getHref() : ""));
-        $source_items[] = array("exceptionFormats" => Map::getNotNull(implode(",", $source->getExceptionFormats())));
-        $source_items[] = array("fees" => Map::getNotNull($source->getFees()));
-        $source_items[] = array("accessconstraints" => Map::getNotNull($source->getAccessConstraints()));
+        $source_items[] = array("title" => Map::getNotNull($src->getTitle()));
+        $source_items[] = array("name" => Map::getNotNull($src->getName()));
+        $source_items[] = array("version" => Map::getNotNull($src->getVersion()));
+        $source_items[] = array("originUrl" => Map::getNotNull($src->getOriginUrl()));
+        $source_items[] = array("description" => Map::getNotNull($src->getDescription()));
+        $source_items[] = array("onlineResource" =>
+            Map::getNotNull($src->getOnlineResource() !== null ? $src->getOnlineResource()->getHref() : ""));
+        $source_items[] = array("exceptionFormats" => Map::getNotNull(implode(",", $src->getExceptionFormats())));
+        $source_items[] = array("fees" => Map::getNotNull($src->getFees()));
+        $source_items[] = array("accessconstraints" => Map::getNotNull($src->getAccessConstraints()));
         $result["sections"][] = array(
             "title" => "common",
             "items" => $source_items
         );
-        
-        
-        $contact = $source->getContact();
+        # add source contact metadata
+        $contact = $src->getContact();
         $contact_items = array();
         $contact_items[] = array("person" => Map::getNotNull($contact->getPerson()));
         $contact_items[] = array("position" => Map::getNotNull($contact->getPosition()));
@@ -297,6 +297,32 @@ class Map extends Element
             "title" => "contact",
             "items" => $contact_items
         );
+
+        # add layer metadata
+        if ($layerName !== '') {
+            $layer = null;
+            foreach ($instance->getLayers() as $layerH) {
+                if ($layerH->getWmslayersource()->getName() === $layerName) {
+                    $layer = $layerH;
+                    break;
+                }
+            }
+            if ($layer) {
+                $layer_items = array();
+                $layer_items[] = array("name" => Map::getNotNull($layer->getWmslayersource()->getName()));
+                $layer_items[] = array("title" => Map::getNotNull($layer->getTitle()));
+                $bbox = $layer->getWmslayersource()->getLatlonBounds();
+                $layer_items[] = array("bbox" => Map::getNotNull($bbox->getSrs() . " " .
+                        $bbox->getMinx() . "," . $bbox->getMiny() . "," . $bbox->getMaxx() . "," . $bbox->getMaxy()));
+                $layer_items[] = array(
+                    "srs" => Map::getNotNull(implode(',', $layer->getWmslayersource()->getSrs())));
+                $result["sections"][] = array(
+                    "title" => "layer",
+                    "items" => $layer_items
+                );
+            }
+        }
+
 
         return $result;
     }

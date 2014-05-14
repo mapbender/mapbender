@@ -766,6 +766,26 @@
         <source>mb.core.metadata.section.contact.addressCountry</source>
         <target>Land</target>
       </trans-unit>
+      <trans-unit id="c38799798ac35fb2e9e2d922636fa5bb" resname="mb.core.metadata.section.layer">
+        <source>mb.core.metadata.section.layer</source>
+        <target>Ebene</target>
+      </trans-unit>
+      <trans-unit id="e2f98554ad73ccc374d1a7f3c0af78f8" resname="mb.core.metadata.section.layer.name">
+        <source>mb.core.metadata.section.layer.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="cdb032c731e47758f3cc866fd70efe4d" resname="mb.core.metadata.section.layer.title">
+        <source>mb.core.metadata.section.layer.title</source>
+        <target>Titel</target>
+      </trans-unit>
+      <trans-unit id="2d8834a8ca14246a42082c33455b2b2c" resname="mb.core.metadata.section.layer.srs">
+        <source>mb.core.metadata.section.layer.srs</source>
+        <target>Srs</target>
+      </trans-unit>
+      <trans-unit id="02b2fd5741559c735c92f9e9e7735ccb" resname="mb.core.metadata.section.layer.bbox">
+        <source>mb.core.metadata.section.layer.bbox</source>
+        <target>BoundingBox</target>
+      </trans-unit>
       <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
         <source>mb.core.admin.poi.label.usemailto</source>
         <target>Mailto verwenden</target>

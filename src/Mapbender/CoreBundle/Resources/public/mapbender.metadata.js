@@ -21,44 +21,46 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions){
                 link.click();
                 link.remove();
             }else{
-                $.ajax({
-                    type: "POST",
-                    url: map.elementUrl + "metadata",
-                    data: {
-                        sourceId: source[0].origId,
-                        sourceType: source[0].type,
-                        layerId: layer.options.name && layer.options.name !== '' ? layer.options.name : ''
-                    },
-                    dataType: 'html',
-                    success: function(data, textStatus, jqXHR){
-                        Mapbender.Metadata.show(data);
-                    },
-                    error: function(jqXHR, textStatus, errorThrown){
-                        Mapbender.error(errorThrown);
-                    }
+                var metadata_popup = null;
+                metadata_popup = new Mapbender.Popup2({
+                    title: Mapbender.trans("mb.core.metadata.popup.title"),
+                    modal: false,
+                    resizable: true,
+                    draggable: true,
+                    closeButton: false,
+                    closeOnESC: false,
+                    content: [
+                        $.ajax({
+                            type: "POST",
+                            url: map.elementUrl + "metadata",
+                            data: {
+                                sourceId: source[0].origId,
+                                sourceType: source[0].type,
+                                layerName: layer.options.name && layer.options.name !== '' ? layer.options.name : ''
+                            },
+                            dataType: 'html',
+                            complete: function(data){
+//                                console.log(metadata_popup.$element);
+//                                $(".tabContainer, .tabContainerAlt", $(metadata_popup.$element)).on('click', '.tab', function() {
+//                                    var me = $(this);
+//                                    me.parent().parent().find(".active").removeClass("active");
+//                                    me.addClass("active");
+//                                    $("#" + me.attr("id").replace("tab", "container")).addClass("active");
+//                                });
+                            },
+//                            success: function(data, textStatus, jqXHR){
+//                                Mapbender.Metadata.show(data);
+//                            },
+                            error: function(jqXHR, textStatus, errorThrown){
+                                Mapbender.error(errorThrown);
+                            }
+                        })
+                    ],
+                    destroyOnClose: true,
+                    width: 850,
+                    height: 600
                 });
             }
         }
     }
 };
-Mapbender.Metadata.show = function(content){
-    /*if(!Mapbender.Metadata.popup){
-        Mapbender.Metadata.popup = */
-            new Mapbender.Popup2({
-            title: Mapbender.trans("mb.core.metadata.popup.title"),
-            modal: false,
-            resizable: true,
-            draggable: true,
-            closeButton: false,
-            closeOnESC: false,
-            content: [content],
-            destroyOnClose: true,
-            width: 850,
-            height: 600
-        });
-    /*}else{
-        Mapbender.Metadata.popup.content = [content];
-    }*/
-
-};
-
