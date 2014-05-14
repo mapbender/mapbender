@@ -66,7 +66,8 @@
 .iconSettings, .iconSignOut, .iconSignIn, .iconMore,
 .iconCopy, .iconKey, .iconWarning, .iconEmail, .iconTwitter,
 .iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu,
-.iconOverview, .iconGpsTarget{
+.iconOverview, .iconGpsTarget, .iconClock, .iconFile,
+.iconBolt {
   &:before{font-family: FontAwesome;}
 }
 
@@ -126,6 +127,9 @@
 .iconGooglePlus:before {content: "\f0d4";}
 .iconSketch:before {content: "\f044";}
 .iconMore:before {content: "\f0c9";}
+.iconClock:before {content: "\f017";}
+.iconFile:before {content: "\f016";}
+.iconBolt:before {content: "\f0e7";}
 
 // only backend
 .iconGroup:before{content: "\f0c0";}

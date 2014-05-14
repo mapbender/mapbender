@@ -5,7 +5,8 @@
             layers: undefined,
             target: undefined,
             deactivateOnClose: true,
-            type: 'dialog'
+            type: 'dialog',
+            customHandler: {}
         },
         map: null,
         mapClickHandler: null,
@@ -137,8 +138,7 @@
                         break;
                 }
             });
-            //console.log($(".tabContainer, .tabContainerAlt", self.element));
-            //$(".tabContainer, .tabContainerAlt", self.element).on('click', '.tab', $.proxy(toggleTabContainer));
+
             var content = (fi_exist) ? tabContainer : '<p class="description">' + Mapbender.trans('mb.core.featureinfo.error.nolayer') + '</p>';
             if(this.options.type === 'dialog'){
                 if(!this.popup || !this.popup.$element){
@@ -157,10 +157,9 @@
                                 label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
                                 cssClass: 'button buttonCancel critical right',
                                 callback: function(){
+                                    this.close();
                                     if(self.options.deactivateOnClose){
                                         self.deactivate();
-                                    }else{
-                                        this.close();
                                     }
                                 }
                             }
@@ -198,7 +197,8 @@
          */
         _featureInfoCallback: function(data, jqXHR){
             var container = $('#container' + data.layerId);
-            switch(jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0]) {
+            var mime = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
+            switch(mime) {
                 case 'text/html':
                     var html = data.response;
                     try{ // cut css
@@ -216,10 +216,15 @@
                     break;
                 case 'text/plain':
                 default:
-                    var text = data.response;
-                    container.append($('<pre></pre>', {
-                        text: text
-                    }));
+                    var instanceId = parseInt($('#' + this.options.target).data('mapQuery').layersList[data.layerId].source.origId);
+                    if('function' === typeof this.options.customHandler[instanceId]) {
+                        this.options.customHandler[instanceId](data.response, container);
+                    } else {
+                        var text = data.response;
+                        container.append($('<pre></pre>', {
+                            text: text
+                        }));
+                    }
             }
             container.removeClass('loading');
         },

@@ -30,12 +30,22 @@ class NamedAssetCache extends AssetCache
         parent::__construct($asset, $cache);
     }
 
+    public function isCached(FilterInterface $additionalFilter = null)
+    {
+        $cacheKey = $this->getKey($additionalFilter);
+        return !$this->force && $this->cache->has($cacheKey);
+    }
+
+    public function getKey(FilterInterface $additionalFilter = null)
+    {
+        return self::getCacheKey2($this->name, $this->asset, $additionalFilter, '', $this->suffix, $this->useTimestamp);
+    }
+
     public function load(FilterInterface $additionalFilter = null)
     {
-        $cacheKey = self::getCacheKey2($this->name, $this->asset, $additionalFilter, '', $this->suffix, $this->useTimestamp);
-        if ($this->cache->has($cacheKey)) {
+        $cacheKey = $this->getKey($additionalFilter);
+        if ($this->isCached($additionalFilter)) {
             $this->asset->setContent($this->cache->get($cacheKey));
-
             return;
         }
 
@@ -45,8 +55,8 @@ class NamedAssetCache extends AssetCache
 
     public function dump(FilterInterface $additionalFilter = null)
     {
-        $cacheKey = self::getCacheKey2($this->name, $this->asset, $additionalFilter, '', $this->suffix, $this->useTimestamp);
-        if (!$this->force && $this->cache->has($cacheKey)) {
+        $cacheKey = $this->getKey($additionalFilter);
+        if($this->isCached()) {
             return $this->cache->get($cacheKey);
         }
 
@@ -61,8 +71,10 @@ class NamedAssetCache extends AssetCache
      */
     private static function getCacheKey2($name, AssetInterface $asset, FilterInterface $additionalFilter = null, $salt = '', $suffix, $useTimestamp= false)
     {
-        // Return early for no hash at all
-        return ($suffix ? $name . $suffix : $name);
+        if(!$useTimestamp) {
+            // Return early for no hash at all
+            return ($suffix ? $name . $suffix : $name);
+        }
 
         if ($additionalFilter) {
             $asset = clone $asset;
@@ -91,7 +103,7 @@ class NamedAssetCache extends AssetCache
             $cacheKey .= serialize($values);
         }
 
-        $key = $name . '-' . substr(sha1($cacheKey . $salt), 0, 7);
+        $key = $name . '-' . sha1($cacheKey . $salt);
         $key .= $suffix ? $suffix : '';
         return $key;
     }

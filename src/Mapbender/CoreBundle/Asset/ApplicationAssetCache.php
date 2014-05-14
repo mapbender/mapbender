@@ -41,6 +41,11 @@ class ApplicationAssetCache
         $locator = $this->container->get('file_locator');
         $manager = new AssetManager();
         $cache = new FilesystemCache($static_assets_cache_path);
+        $devCache = null;
+        if($this->container->get('kernel')->isDebug() && $this->container->getParameter('mapbender.sass_assets')) {
+            $devCache = new FilesystemCache($static_assets_cache_path . '/.dev-cache');
+        }
+
         foreach($this->inputs as $input) {
             if($input instanceof StringAsset) {
                 $manager->set($name, $input);
@@ -65,17 +70,20 @@ class ApplicationAssetCache
 
             $name = str_replace(array('@', 'Resources/public/'), '', $input);
             $name = str_replace(array('/', '.', '-'), '__', $name);
-            if(!('js' === $this->type && $this->container->get('kernel')->isDebug())) {
-                // Then wrap it into a cached asset, which required as valid cache name first
-                $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, $useTimestamp, $this->force);
 
-                // Dump the cached asset for one-time compilation
-                $cachedAsset->dump();
-
-                // Collect all assets into a manager for dupe removal
-                $manager->set($name, $cachedAsset);
+            // If we want to compile on the fly, two caches have to be used - one for on-the-fly and one for later on
+            if($devCache) {
+                $devCachedAsset = new NamedAssetCache($name, $fileAsset, $devCache, '.' . $this->type, true, $this->force);
+                if(!$devCachedAsset->isCached()) {
+                    $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, false, true);
+                    $cachedAsset->dump();
+                }
+                $devCachedAsset->dump();
+                $manager->set($name, $devCachedAsset);
             } else {
-                $manager->set($name, $fileAsset);
+                $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, false, $this->force);
+                $cachedAsset->dump();
+                $manager->set($name, $cachedAsset);
             }
         }
 
