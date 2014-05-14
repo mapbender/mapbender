@@ -41,10 +41,7 @@ class ApplicationAssetCache
         $locator = $this->container->get('file_locator');
         $manager = new AssetManager();
         $cache = new FilesystemCache($static_assets_cache_path);
-        $devCache = null;
-        if($this->container->get('kernel')->isDebug() && $this->container->getParameter('mapbender.sass_assets')) {
-            $devCache = new FilesystemCache($static_assets_cache_path . '/.dev-cache');
-        }
+        $devCache = new FilesystemCache($static_assets_cache_path . '/.dev-cache');
 
         foreach($this->inputs as $input) {
             if($input instanceof StringAsset) {
@@ -71,19 +68,34 @@ class ApplicationAssetCache
             $name = str_replace(array('@', 'Resources/public/'), '', $input);
             $name = str_replace(array('/', '.', '-'), '__', $name);
 
-            // If we want to compile on the fly, two caches have to be used - one for on-the-fly and one for later on
-            if($devCache) {
-                $devCachedAsset = new NamedAssetCache($name, $fileAsset, $devCache, '.' . $this->type, true, $this->force);
-                if(!$devCachedAsset->isCached()) {
-                    $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, false, true);
+            // Only assets which need to be compiled need to be cached. Twice that is. Once while in dev mode, taking
+            // the timestamp into consideration and once for when compiling is not possible/required (regular dev or
+            // prod mode). This second cache will also get updated whenever a assets needs to get updated in the dev
+            // cache.
+            //
+            // All other assets get passed trough.
+            $isDevPlus = $this->container->get('kernel')->isDebug() && $this->container->getParameter('mapbender.sass_assets');
+            $needsCompiling = false;
+
+            // SASS things need to be compiled.
+            if('scss' === pathinfo($file, PATHINFO_EXTENSION)) $needsCompiling = true;
+
+            if($needsCompiling) {
+                if($isDevPlus) {
+                    $devCachedAsset = new NamedAssetCache($name, $fileAsset, $devCache, '.' . $this->type, true, $this->force);
+                    if(!$devCachedAsset->isCached()) {
+                        $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, false, true);
+                        $cachedAsset->dump();
+                    }
+                    $devCachedAsset->dump();
+                    $manager->set($name, $devCachedAsset);
+                } else {
+                    $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, false, $this->force);
                     $cachedAsset->dump();
+                    $manager->set($name, $cachedAsset);
                 }
-                $devCachedAsset->dump();
-                $manager->set($name, $devCachedAsset);
             } else {
-                $cachedAsset = new NamedAssetCache($name, $fileAsset, $cache, '.' . $this->type, false, $this->force);
-                $cachedAsset->dump();
-                $manager->set($name, $cachedAsset);
+                $manager->set($name, $fileAsset);
             }
         }
 
