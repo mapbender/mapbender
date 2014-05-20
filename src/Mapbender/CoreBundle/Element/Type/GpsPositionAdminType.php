@@ -45,7 +45,9 @@ class GpsPositionAdminType extends AbstractType
                 'required' => false))
             ->add('icon', new IconClassType())
             ->add('action', 'text', array('required' => false))
-            ->add('refreshinterval', 'text', array('required' => false));
+            ->add('refreshinterval', 'text', array('required' => false))
+            ->add('follow', 'checkbox', array(
+                'property_path' => '[follow]'));
     }
 
 }

@@ -1,7 +1,9 @@
 (function($) {
 
 $.widget("mapbender.mbGpsPosition", {
-    options: {},
+    options: {
+        follow: false
+    },
 
     map: null,
     interval : null,
@@ -76,9 +78,9 @@ $.widget("mapbender.mbGpsPosition", {
     _centerMap: function (point){
         var olmap = this.map.map.olMap;
         var extent = olmap.getExtent();
-        if (extent.containsLonLat(point) === false)
+        if (extent.containsLonLat(point) === false || true === this.options.follow || true)
         {
-            olmap.setCenter(point, olmap.getZoom(), false, true);
+            olmap.panTo(point);
         }
     },
 
