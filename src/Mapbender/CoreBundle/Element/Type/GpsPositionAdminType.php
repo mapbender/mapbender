@@ -43,27 +43,7 @@ class GpsPositionAdminType extends AbstractType
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
-            ->add('icon', 'choice',
-                array(
-                'required' => false,
-                "choices" => array(
-                    "" => "None",
-                    "iconAbout" => "About",
-                    "iconAreaRuler" => "Area ruler",
-                    "iconInfoActive" => "Feature info",
-                    "iconGps" => "GPS",
-                    "iconLegend" => "Legend",
-                    "iconPrint" => "Print",
-                    "iconSearch" => "Search",
-                    "iconLayertree" => "Layer tree",
-                    "iconWms" => "WMS",
-                    "iconHelp" => "Help",
-                    "iconWmcEditor" => "WMC Editor",
-                    "iconWmcLoader" => "WMC Loader",
-                    "iconPoi" => "POI",
-                    "iconImageExport" => "Image Export",
-                    "iconSketch" => "Sketch"
-            )))
+            ->add('icon', new IconClassType())
             ->add('action', 'text', array('required' => false))
             ->add('refreshinterval', 'text', array('required' => false));
     }

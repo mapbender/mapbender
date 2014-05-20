@@ -35,29 +35,7 @@ class ButtonAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('tooltip', 'text', array('required' => false))
-            ->add('icon', 'choice',
-                array(
-                'required' => false,
-                "choices" => array(
-                    "" => "None",
-                    "iconAbout" => "About",
-                    "iconAreaRuler" => "Area ruler",
-                    "iconInfoActive" => "Feature info",
-                    "iconGps" => "GPS",
-                    "iconLegend" => "Legend",
-                    "iconPrint" => "Print",
-                    "iconSearch" => "Search",
-                    "iconLayertree" => "Layer tree",
-                    "iconWms" => "WMS",
-                    "iconHelp" => "Help",
-                    "iconWmcEditor" => "WMC Editor",
-                    "iconWmcLoader" => "WMC Loader",
-                    "iconCoordinates" => "Coordinates",
-                    "iconGpsTarget" => "Gps Target",
-                    "iconPoi" => "POI",
-                    "iconImageExport" => "Image Export",
-					"iconSketch" => "Sketch"
-            )))
+            ->add('icon', new IconClassType())
             ->add('label', 'checkbox', array('required' => false))
             ->add('target', 'target_element',
                 array(
