@@ -31,6 +31,8 @@
 
     <div class="metaData">
       <div class="left leftContainer">
+        {{ form_label(form.title) }}{{ form_widget(form.title) }}
+        <div class="clear"></div>
         {{ form_label(form.format) }}{{ form_widget(form.format) }}
         <div class="clear"></div>
         {{ form_label(form.infoformat) }}{{ form_widget(form.infoformat) }}
