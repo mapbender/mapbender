@@ -43,7 +43,9 @@ class SearchRouterSelectType extends AbstractType
             'mapped' => false,
             'property_path' => false,
             'multiple' => false,
-            'expanded' => false));
+            'expanded' => false,
+            'attr' => array(
+                'autocomplete' => 'off')));
     }
 
 }
