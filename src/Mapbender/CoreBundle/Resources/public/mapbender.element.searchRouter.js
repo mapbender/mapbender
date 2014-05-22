@@ -396,23 +396,21 @@
 
         _showResultState: function() {
             var table = $('.search-results table', this.element);
-            var noResults = $('.no-results', this.element);
+            var counter = $('.result-counter', this.element);
+
+            if(0 === counter.length) {
+                counter = $('<div></div>', {'class': 'result-counter'}).appendTo($('.search-results', this.element));
+            }
 
             var results = this.searchModel.get('results');
 
             if(results.length > 0) {
-                noResults.hide();
+                counter.text(Mapbender.trans('mb.core.searchrouter.result_counter', {
+                    count: results.length}));
                 table.show();
             } else {
                 table.hide();
-
-                if(noResults.length === 0) {
-                    $('<div></div>', {
-                        'class': 'no-results',
-                        'text': Mapbender.trans('mb.core.searchrouter.no_results')
-                    }).appendTo($('.search-results', this.element));
-                }
-                noResults.show();
+                counter.text(Mapbender.trans('mb.core.searchrouter.no_results'));
             }
         },
 
