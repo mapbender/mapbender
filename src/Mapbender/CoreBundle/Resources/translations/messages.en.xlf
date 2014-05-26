@@ -508,7 +508,7 @@
       </trans-unit>
       <trans-unit id="f518bb2f60b3deb2e5b973e00e8088f2" resname="mb.core.searchrouter.result_counter">
         <source>mb.core.searchrouter.result_counter</source>
-        <target>Results: %count%.</target>
+        <target>Results: %count%</target>
       </trans-unit>
       <trans-unit id="9274af4427ddd97ba8b314fb87847f55" resname="mb.core.zoombar.panup">
         <source>mb.core.zoombar.panup</source>

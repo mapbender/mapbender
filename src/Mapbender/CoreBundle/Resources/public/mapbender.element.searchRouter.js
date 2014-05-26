@@ -399,7 +399,7 @@
             var counter = $('.result-counter', this.element);
 
             if(0 === counter.length) {
-                counter = $('<div></div>', {'class': 'result-counter'}).appendTo($('.search-results', this.element));
+                counter = $('<div></div>', {'class': 'result-counter'}).prependTo($('.search-results', this.element));
             }
 
             var results = this.searchModel.get('results');
