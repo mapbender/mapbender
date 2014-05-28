@@ -19,6 +19,11 @@ var Mapbender = Mapbender || {};
 $.extend(true, Mapbender, {
     source: {
         'wms': {
+            defaultMqLayer: {
+                type: 'wms',
+                noMagic: true,
+                transitionEffect: 'resize'
+            },
             create: function(layerDef){
                 var self = this;
                 var rootLayer = layerDef.configuration.children[0];
@@ -48,10 +53,8 @@ $.extend(true, Mapbender, {
                 }
 
                 var mqLayerDef = {
-                    type: 'wms',
                     label: layerDef.title,
                     url: finalUrl,
-                    noMagic: true,
                     transparent: layerDef.configuration.options.transparent,
                     format: layerDef.configuration.options.format,
                     isBaseLayer: layerDef.configuration.options.baselayer,
@@ -60,10 +63,9 @@ $.extend(true, Mapbender, {
                     singleTile: !layerDef.configuration.options.tiled,
                     attribution: layerDef.configuration.options.attribution, // attribution add !!!
                     minScale: rootLayer.minScale,
-                    maxScale: rootLayer.maxScale,
-                    transitionEffect: 'resize'
+                    maxScale: rootLayer.maxScale
                 };
-
+                $.extend(mqLayerDef, Mapbender.source.wms.defaultMqLayer);
                 return mqLayerDef;
             },
             _addProxy: function(url){
