@@ -43,7 +43,7 @@ class GpsPositionAdminType extends AbstractType
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
-            ->add('icon', new IconClassType())
+            ->add('icon', new IconClassType(), array('required' => false))
             ->add('action', 'text', array('required' => false))
             ->add('refreshinterval', 'text', array('required' => false))
             ->add('follow', 'checkbox', array(
