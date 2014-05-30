@@ -51,6 +51,7 @@
 
             this.searchModel.on('request', this._setActive, this);
             this.searchModel.on('error sync', this._setInactive, this);
+            this.searchModel.on('error sync', this._showResultState, this);
 
             this.resultCallbackProxy = $.proxy(this._resultCallback, this);
 
@@ -375,6 +376,8 @@
             layer.removeAllFeatures();
             features = [];
 
+            if(results.length > 0) $('.no-results', this.element).hide();
+
             results.each(function(feature, idx){
                 var row = $('<tr></tr>');
                 row.data('feature', feature);
@@ -389,6 +392,26 @@
 
             table.append(tbody);
             layer.addFeatures(features);
+        },
+
+        _showResultState: function() {
+            var table = $('.search-results table', this.element);
+            var counter = $('.result-counter', this.element);
+
+            if(0 === counter.length) {
+                counter = $('<div></div>', {'class': 'result-counter'}).prependTo($('.search-results', this.element));
+            }
+
+            var results = this.searchModel.get('results');
+
+            if(results.length > 0) {
+                counter.text(Mapbender.trans('mb.core.searchrouter.result_counter', {
+                    count: results.length}));
+                table.show();
+            } else {
+                table.hide();
+                counter.text(Mapbender.trans('mb.core.searchrouter.no_results'));
+            }
         },
 
         /**
