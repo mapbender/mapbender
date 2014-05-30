@@ -21,7 +21,7 @@ class IconClassType extends AbstractType
     {
         $resolver->setDefaults(array(
             'empty_value' => 'Choose an option',
-            'empty_data' => 'XXX',
+            'empty_data' => '',
             'choices' => array(
                 'iconAbout' => 'About',
                 'iconAreaRuler' => 'Area ruler',
