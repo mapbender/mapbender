@@ -269,7 +269,7 @@ class Map extends Element
         $source_items[] = array("originUrl" => Map::getNotNull($src->getOriginUrl()));
         $source_items[] = array("description" => Map::getNotNull($src->getDescription()));
         $source_items[] = array("onlineResource" =>
-            Map::getNotNull($src->getOnlineResource() !== null ? $src->getOnlineResource()->getHref() : ""));
+            Map::getNotNull($src->getOnlineResource() !== null ? $src->getOnlineResource() : ""));
         $source_items[] = array("exceptionFormats" => Map::getNotNull(implode(",", $src->getExceptionFormats())));
         $source_items[] = array("fees" => Map::getNotNull($src->getFees()));
         $source_items[] = array("accessconstraints" => Map::getNotNull($src->getAccessConstraints()));
