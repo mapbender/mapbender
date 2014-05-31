@@ -46,6 +46,14 @@
         <source>mb.core.searchrouter.popup.btn.reset</source>
         <target>Zurücksetzen</target>
       </trans-unit>
+      <trans-unit id="a091e836228a240d137f28d1f7e99f5e" resname="mb.core.searchrouter.no_results">
+        <source>mb.core.searchrouter.no_results</source>
+        <target>__mb.core.searchrouter.no_results</target>
+      </trans-unit>
+      <trans-unit id="f518bb2f60b3deb2e5b973e00e8088f2" resname="mb.core.searchrouter.result_counter">
+        <source>mb.core.searchrouter.result_counter</source>
+        <target>__mb.core.searchrouter.result_counter</target>
+      </trans-unit>
       <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
         <source>mb.core.poi.sharepoi</source>
         <target>Treffpunkt vereinbaren</target>

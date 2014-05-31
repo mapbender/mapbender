@@ -62,7 +62,7 @@ EOT
         }, $assets);
 
         foreach($assets as $type => $items) {
-            $output->writeln(sprintf('Dumping %d assets of type %s...', count($items), $type));
+            $output->writeln(sprintf('Considering %d assets of type %s...', count($items), $type));
             $cache = new ApplicationAssetCache($this->getContainer(), $items, $type, true);
             $assets = $cache->fill();
         }
