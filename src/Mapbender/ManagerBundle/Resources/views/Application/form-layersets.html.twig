@@ -24,7 +24,7 @@
             {% for instance in layerset.instances %}
               <tr class="sourceinst" data-id="{{ instance.id }}" data-href="{{ path('mapbender_manager_repository_instanceweight', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}">
                 <td class="idColumn description">{{ instance.source.id }}</td>
-                <td class="titleColumn description">{{ instance.title }}</td>
+                <td class="titleColumn description">{{ instance.source.title }}{% if instance.title != instance.source.title %} ({{ instance.title }}){% endif %}</td>
                 <td class="typeColumn description">{{ instance.source.type }}</td>
                 <td class="iconColumn">
                   <div class="checkWrapper left iconCheckbox iconSmall {% if instance.enabled %}iconCheckboxActive{% endif %}" title="{{"mb.manager.admin.instance.show_hide"|trans}} {{instance.title}}">
