@@ -14,3 +14,5 @@ before_script:
   - rm -rf mapbender
   - ln -s ../../mapbender
 script: phpunit -c app/
+after_script:
+  - php vendor/bin/coveralls-v
