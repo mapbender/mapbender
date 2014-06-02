@@ -9,6 +9,7 @@ before_script:
   - cd mapbender-starter
   - git submodule update --init --recursive
   - cd application
+  - cp app/config/parameters.yml.dist app/config/parameters.yml
   - composer install
   - rm -rf mapbender
   - ln -s ../../mapbender
