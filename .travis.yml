@@ -10,7 +10,7 @@ before_script:
   - git submodule update --init --recursive
   - cd application
   - cp app/config/parameters.yml.dist app/config/parameters.yml
-  - composer install
+  - composer install --dev
   - rm -rf mapbender
   - ln -s ../../mapbender
 script: phpunit -c app/
