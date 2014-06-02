@@ -7,6 +7,7 @@ before_script:
   - cd ..
   - git clone https://github.com/mapbender/mapbender-starter
   - cd mapbender-starter
+  - git checkout feature/testing
   - git submodule update --init --recursive
   - cd application
   - cp app/config/parameters.yml.dist app/config/parameters.yml
@@ -15,4 +16,4 @@ before_script:
   - ln -s ../../mapbender
 script: phpunit -c app/
 after_script:
-  - php bin/coveralls -v # test
+  - php bin/coveralls -v
