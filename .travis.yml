@@ -3,3 +3,12 @@ php:
   - 5.5
   - 5.4
   - 5.3
+before_script:
+  - cd ..
+  - git clone https://github.com/mapbender/mapbender-starter
+  - cd mapbender-starter
+  - git submodule update --init --recursive
+  - cd application
+  - rm -rf mapbender
+  - ln -s ../../mapbender
+  - cd ..
