@@ -11,5 +11,4 @@ before_script:
   - cd application
   - rm -rf mapbender
   - ln -s ../../mapbender
-  - cd ..
 script: phpunit -c app/
