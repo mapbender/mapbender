@@ -14,7 +14,7 @@ before_script:
   - composer update --dev
   - rm -rf mapbender
   - ln -s ../../mapbender
-  - phantomjs --webdriver=9876
+  - phantomjs --webdriver=9876 &
 script: phpunit -c app/
 after_script:
   - php bin/coveralls -v
@@ -22,4 +22,5 @@ after_script:
   - cd mapbender
   - export MYREV=$(git rev-parse HEAD)
   - cd ..
+  - cat /tmp/weblog
   - php ocular.phar code-coverage:upload --repository g/mapbender/mapbender --format=php-clover ../testresults/clover.xml --revision $MYREV
