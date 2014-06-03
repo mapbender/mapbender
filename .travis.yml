@@ -18,4 +18,4 @@ script: phpunit -c app/
 after_script:
   - php bin/coveralls -v
   - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover ../testresults/coverage.xml
+  - php ocular.phar code-coverage:upload --format=php-clover ../testresults/clover.xml
