@@ -27,16 +27,16 @@
         {% if metadata.display == 'tabs' %}
             <ul class="tabs">
             {% for section in metadata.sections %}
-                <li id="tab{{loop.index}}" class="tab{% if loop.first %} active{% endif %}">{{ prefix~section.title | trans}}</li>
+                <li id="metadatatab{{loop.index}}" class="metadatatab{% if loop.first %} active{% endif %} tab">{{ prefix~section.title | trans}}</li>
             {% endfor %}
             </ul>
         {% endif %}
         {% for section in metadata.sections %}
             {% if metadata.display != 'tabs' %}
             {% set vt=prefix~section.title %}
-            <div id="tab{{loop.index}}" class="tab{% if loop.first %} active{% endif %}">{{ vt | trans}}</div>
+            <div id="metadatatab{{loop.index}}" class="metadatatab{% if loop.first %} active{% endif %} tab">{{ vt | trans}}</div>
             {% endif %}
-            <div id="container{{loop.index}}" class="container{% if loop.first %} active{% endif %}">
+            <div id="metadatacontainer{{loop.index}}" class="metadatacontainer{% if loop.first %} active{% endif %}">
             {% for item in section.items %}
                 {% for key,val in item %}
                 {% set vt=prefix~section.title~'.'~key %}
