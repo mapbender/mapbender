@@ -1,3 +1,6 @@
+imports:
+  - php
+  - javascript
 tools:
   external_code_coverage:
     runs: 1
