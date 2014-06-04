@@ -21,7 +21,7 @@ class LoginTest extends \PHPUnit_Extensions_Selenium2TestCase
       return $res;
   }
 
-  public function testLoginAsRoot()
+  public function loginRoot()
   {
     $test = $this; // Workaround for anonymous function scopes in PHP < v5.4.
     $session = $this->prepareSession(); // Make the session available.
@@ -60,5 +60,24 @@ class LoginTest extends \PHPUnit_Extensions_Selenium2TestCase
       return $boolean === true ?: null;
     });
   }
+
+  public function logoutRoot() {
+    $test = $this; // Workaround for anonymous function scopes in PHP < v5.4.
+    $this->waitUntil(function() use ($test) {
+      try {
+        $boolean = (strpos($test->byLinkText('Logout')->text(), "Logout") !== false);
+      } catch (\Exception $e) {
+        $boolean = false;
+      }
+      return $boolean === true ?: null;
+    });
+    $this->byLinkText("Logout")->click();
+  }
+
+  public function testLoginLogoutRoot() {
+    $this->loginRoot();
+    $this->logoutRoot();
+  }
+
 }
 ?>
