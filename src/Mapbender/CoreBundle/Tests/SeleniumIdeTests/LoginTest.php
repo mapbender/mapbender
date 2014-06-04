@@ -27,6 +27,14 @@ class LoginTest extends \PHPUnit_Extensions_Selenium2TestCase
     $session = $this->prepareSession(); // Make the session available.
     // get
     $this->url('http://' . TEST_WEB_SERVER_HOST . ':' . TEST_WEB_SERVER_PORT . '/app_dev.php/');
+    $this->waitUntil(function() use ($test) {
+      try {
+        $boolean = ($test->byLinkText("Login") instanceof \PHPUnit_Extensions_Selenium2TestCase_Element);
+      } catch (\Exception $e) {
+        $boolean = false;
+      }
+      return $boolean === true ?: null;
+    });
     // clickElement
     $this->byLinkText("Login")->click();
     // sendKeysToElement
