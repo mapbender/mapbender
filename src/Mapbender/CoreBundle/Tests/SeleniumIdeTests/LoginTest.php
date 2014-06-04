@@ -26,9 +26,13 @@ class LoginTest extends \PHPUnit_Extensions_Selenium2TestCase
     $test = $this; // Workaround for anonymous function scopes in PHP < v5.4.
     $session = $this->prepareSession(); // Make the session available.
     // get
-    $this->url("http://localhost:8000/");
+    $this->url('http://' . TEST_WEB_SERVER_HOST . ':' . TEST_WEB_SERVER_PORT . '/app_dev.php/');
     // clickElement
     $this->byLinkText("Login")->click();
+    // sendKeysToElement
+    $element = $this->byId("username");
+    $element->click();
+    $element->value("\\9");
     // setElementText
     $element = $this->byId("username");
     $element->click();
@@ -39,29 +43,17 @@ class LoginTest extends \PHPUnit_Extensions_Selenium2TestCase
     $element->click();
     $element->clear();
     $element->value("root");
+    // waitForElementPresent
+    $this->waitUntil(function() use ($test) {
+      try {
+        $boolean = ($test->byCssSelector("input.right.button") instanceof \PHPUnit_Extensions_Selenium2TestCase_Element);
+      } catch (\Exception $e) {
+        $boolean = false;
+      }
+      return $boolean === true ?: null;
+    });
     // clickElement
     $this->byCssSelector("input.right.button")->click();
-    // clickElement
-    $this->byLinkText("New application")->click();
-    // setElementText
-    $element = $this->byId("application_title");
-    $element->click();
-    $element->clear();
-    $element->value();
-    /* $this->open("/"); */
-    /* $this->click("//a[contains(@href, '/user/login')]"); */
-    /* $this->waitForPageToLoad("3000"); */
-    /* $this->type("id=username", "root"); */
-    /* $this->type("id=password", "root"); */
-    /* $this->click("css=input.right.button"); */
-    /* $this->waitForPageToLoad("3000"); */
-    /* for ($second = 0; ; $second++) { */
-    /*     if ($second >= 60) $this->fail("timeout"); */
-    /*     try { */
-    /*         if ($this->isElementPresent("//\*[@id=\"accountMenu\"]")) break; */
-    /*     } catch (Exception $e) {} */
-    /*     sleep(1); */
-    /* } */
   }
 }
 ?>
