@@ -27,9 +27,10 @@ class LoginTest extends \PHPUnit_Extensions_Selenium2TestCase
     $session = $this->prepareSession(); // Make the session available.
     // get
     $this->url('http://' . TEST_WEB_SERVER_HOST . ':' . TEST_WEB_SERVER_PORT . '/app_dev.php/');
+    // waitForTextPresent
     $this->waitUntil(function() use ($test) {
       try {
-        $boolean = ($test->byLinkText("Login") instanceof \PHPUnit_Extensions_Selenium2TestCase_Element);
+        $boolean = (strpos($test->byTag('html')->text(), "Login") !== false);
       } catch (\Exception $e) {
         $boolean = false;
       }
@@ -37,10 +38,6 @@ class LoginTest extends \PHPUnit_Extensions_Selenium2TestCase
     });
     // clickElement
     $this->byLinkText("Login")->click();
-    // sendKeysToElement
-    $element = $this->byId("username");
-    $element->click();
-    $element->value("\\9");
     // setElementText
     $element = $this->byId("username");
     $element->click();
@@ -51,17 +48,17 @@ class LoginTest extends \PHPUnit_Extensions_Selenium2TestCase
     $element->click();
     $element->clear();
     $element->value("root");
+    // clickElement
+    $this->byCssSelector("input.right.button")->click();
     // waitForElementPresent
     $this->waitUntil(function() use ($test) {
       try {
-        $boolean = ($test->byCssSelector("input.right.button") instanceof \PHPUnit_Extensions_Selenium2TestCase_Element);
+        $boolean = ($test->byId("accountOpen") instanceof \PHPUnit_Extensions_Selenium2TestCase_Element);
       } catch (\Exception $e) {
         $boolean = false;
       }
       return $boolean === true ?: null;
     });
-    // clickElement
-    $this->byCssSelector("input.right.button")->click();
   }
 }
 ?>
