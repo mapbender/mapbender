@@ -40,7 +40,7 @@
             {% for item in section.items %}
                 {% for key,val in item %}
                 {% set vt=prefix~section.title~'.'~key %}
-                <div class="metaText">{{ vt | trans}}:</div>
+                <div class="labelText">{{ vt | trans}}:</div>
                 <div class="metaText">{{val}}</div>
                 <div class="clearContainer"></div>
                 {% endfor %}
