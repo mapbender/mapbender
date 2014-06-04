@@ -19,9 +19,16 @@ class LoginTest extends \PHPUnit_Extensions_SeleniumTestCase
     $this->click("//a[contains(@href, '/user/login')]");
     $this->waitForPageToLoad("3000");
     $this->type("id=username", "root");
-    $this->type("id=password", "foobar123");
+    $this->type("id=password", "root");
     $this->click("css=input.right.button");
     $this->waitForPageToLoad("3000");
+    for ($second = 0; ; $second++) {
+        if ($second >= 60) $this->fail("timeout");
+        try {
+            if ($this->isElementPresent("//*[@id=\"accountMenu\"]")) break;
+        } catch (Exception $e) {}
+        sleep(1);
+    }
   }
 }
 ?>
