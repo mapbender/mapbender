@@ -36,7 +36,7 @@ class SeleniumPhantomJsTest extends \PHPUnit_Extensions_Selenium2TestCase {
         try {
             $this->url('http://' . TEST_WEB_SERVER_HOST . ':' . TEST_WEB_SERVER_PORT . '/app_dev.php/');
             $this->assertEquals('Applications', $this->title());
-        }catch(\Exception $e) {
+        }catch(\PHPUnit_Extensions_Selenium2TestCase_WebDriverException $e) {
             // skip test on PHP 5.3
             if(PHP_MINOR_VERSION == 3) {
                 return;
