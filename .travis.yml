@@ -19,7 +19,7 @@ before_script:
   - php app/console doctrine:fixtures:load --fixtures=./mapbender/src/Mapbender/CoreBundle/DataFixtures/ORM/Epsg/ --append
   - phantomjs --webdriver=9876 &
   - export PJSPORT=$(echo $!)
-script: phpunit -c app/
+script: phpunit -c app/ --coverage-clover ../../testresults/clover.xml
 after_script:
   - php bin/coveralls -v
   - wget https://scrutinizer-ci.com/ocular.phar
