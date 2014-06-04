@@ -2,7 +2,7 @@
 
 namespace Mapbender\CoreBundle\Tests\SeleniumIdeTests;
 
-class LoginTest extends \PHPUnit_Extensions_Selenium2TestCase
+class AddAndRemoveUserTestTest extends \PHPUnit_Extensions_Selenium2TestCase
 {
   protected function setUp()
   {
