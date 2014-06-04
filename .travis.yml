@@ -1,9 +1,15 @@
 language: php
+env:
+  global:
+    - secure: "R/frivP2njTayUQqNfgCZT06dfeyVFeDcRP4O+ImBTbTdpqoXBu8CmEqBbeNuk9bje1i4W1GWTX8WEAwpxHeNEDubsCScxc4PFNKqDU9TIU8nVAE5gwgrSiigJk7LlnQfkHNzFngak0godcAUas27DG7tFRWPA7VNbKJ3pJumf4="
+    - secure: "T5FALrFEEcaeLQVPgdULZ2jvv3VRrhcvX0vWVzfV1OHUttYx5TXPyJRHv60eZecWUtO/HjzkaQeDxsfcrYOD5s9tuFeruw5gXxhDDn0ZM5Jcv7K9YGqCQ7IoOI+qgWZZuntEOhwzTHAAfsfEpf7nqKwJ5CJFicJDV0sIOIvN480="
+
 php:
   - 5.5
   - 5.4
   - 5.3
 before_script:
+  - curl https://gist.github.com/santiycr/5139565/raw/sauce_connect_setup.sh | bash
   - cd ..
   - git clone https://github.com/mapbender/mapbender-starter
   - cd mapbender-starter
