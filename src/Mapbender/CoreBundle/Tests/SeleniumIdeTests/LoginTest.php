@@ -9,7 +9,7 @@ class LoginTest extends \PHPUnit_Extensions_SeleniumTestCase
       $this->setHost('localhost');
       $this->setPort(4445);
       $this->setBrowser("*chrome");
-      $this->getDriver(array('name' => 'chrome'))->setWebDriverCapabilities(array('tunnel-identifier' => getenv('TRAVIS_JOB_NUMBER')));
+      $this->getDriver(array('name' => '*chrome', 'host' => 'localhost', 'port' => 4445))->setWebDriverCapabilities(array('tunnel-identifier' => getenv('TRAVIS_JOB_NUMBER')));
       $this->setBrowserUrl('http://' . TEST_WEB_SERVER_HOST . ':' . TEST_WEB_SERVER_PORT . '/app_dev.php/');
   }
 
