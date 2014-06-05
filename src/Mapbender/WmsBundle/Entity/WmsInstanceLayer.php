@@ -591,7 +591,9 @@ class WmsInstanceLayer implements InstanceLayerIn
                     "width" => intval($legendurl->getWidth()),
                     "height" => intval($legendurl->getHeight()));
             }
-        } else if ($this->wmsinstance->getSource()->getGetLegendGraphic() !== null) {
+        } else if ($this->wmsinstance->getSource()->getGetLegendGraphic() !== null
+            && $this->wmslayersource->getName() !== null
+            && $this->wmslayersource->getName() !== "") {
             $legend = $this->wmsinstance->getSource()->getGetLegendGraphic();
             $url = $legend->getHttpGet();
             $formats = $legend->getFormats();
