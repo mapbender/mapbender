@@ -65,12 +65,24 @@ class LoginTest extends \PHPUnit_Extensions_Selenium2TestCase
     $test = $this; // Workaround for anonymous function scopes in PHP < v5.4.
     $this->waitUntil(function() use ($test) {
       try {
+        $boolean = (strpos($test->byTag('html')->text(), "Logged in as: root") !== false);
+      } catch (\Exception $e) {
+        $boolean = false;
+      }
+      return $boolean === true ?: null;
+    });
+    // clickElement
+    $this->byId("accountOpen")->click();
+    
+    $this->waitUntil(function() use ($test) {
+      try {
         $boolean = (strpos($test->byLinkText('Logout')->text(), "Logout") !== false);
       } catch (\Exception $e) {
         $boolean = false;
       }
       return $boolean === true ?: null;
     });
+    // clickElement
     $this->byLinkText("Logout")->click();
   }
 
