@@ -3,6 +3,8 @@ from selenium.webdriver.phantomjs.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 
+from lib import get_url, get_sreenshot_path  # Changed
+
 success = True
 wd = WebDriver()
 wd.implicitly_wait(60)
@@ -15,7 +17,7 @@ def is_alert_present(wd):
         return False
 
 try:
-    wd.get("http://localhost/data/mapbender-starter/application/web/app_dev.php/")
+    wd.get(get_url('app_test.php/'))  # Changed
     wd.find_element_by_link_text("Login").click()
     wd.find_element_by_id("username").click()
     wd.find_element_by_id("username").clear()
@@ -41,9 +43,13 @@ try:
     wd.find_element_by_css_selector("input.button").click()
     wd.find_element_by_css_selector("span.iconRemove.iconSmall").click()
     wd.find_element_by_link_text("Delete").click()
-    wd.save_screenshot("./test.png")
+    wd.save_screenshot(get_sreenshot_path('success'))  # Changed
+except Exception as e:  # Changed ff
+    wd.save_screenshot(get_sreenshot_path('error'))
+    wd.save_screenshot('error.png')
+    wd.quit()
+    raise e
 finally:
-    wd.save_screenshot("./error.png")
     wd.quit()
     if not success:
         raise Exception("Test failed.")
