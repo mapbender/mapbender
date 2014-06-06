@@ -8,6 +8,13 @@ use FOM\Component\Test\SharedApplicationWebTestCase;
 
 class SeleniumPythonTest extends SharedApplicationWebTestCase
 {
+    public function setUp() {
+        if(PHP_MINOR_VERSION == 3) {
+            $this->markTestIncomplete('This test does not run on PHP 5.3.');
+            return;
+        }
+    }
+
     public function moduleProvider()
     {
         $data = array();
