@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -10,6 +11,7 @@ use Mapbender\PrintBundle\Component\OdgParser;
  */
 class PrintClient extends Element
 {
+
     public static $merge_configurations = false;
 
     /**
@@ -47,7 +49,8 @@ class PrintClient extends Element
      */
     static public function listAssets()
     {
-        return array('js' => array('mapbender.element.printClient.js',
+        return array('js' => array(
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.printClient.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/printclient.scss'),
@@ -97,10 +100,10 @@ class PrintClient extends Element
                 array('dpi' => "288", 'label' => "Document (288dpi)")),
             "rotatable" => true,
             "optional_fields" => array(
-                            "title" => array("label" => 'Title', "options" => array("required" => false)),
-                            "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
-                            "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))
-                            ),            
+                "title" => array("label" => 'Title', "options" => array("required" => false)),
+                "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
+                "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))
+            ),
             "replace_pattern" => null,
             "file_prefix" => 'mapbender3'
         );
@@ -159,8 +162,7 @@ class PrintClient extends Element
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:printclient.html.twig',
-                    array(
+                ->render('MapbenderCoreBundle:Element:printclient.html.twig', array(
                     'id' => $this->getId(),
                     'title' => $this->getTitle(),
                     'configuration' => $this->getConfiguration()
@@ -185,38 +187,36 @@ class PrintClient extends Element
                 foreach ($data['layers'] as $idx => $layer) {
                     $data['layers'][$idx] = json_decode($layer, true);
                 }
-                
-                if (isset($data['overview'])){
+
+                if (isset($data['overview'])) {
                     foreach ($data['overview'] as $idx => $layer) {
                         $data['overview'][$idx] = json_decode($layer, true);
                     }
                 }
-                
-                if (isset($data['features'])){
+
+                if (isset($data['features'])) {
                     foreach ($data['features'] as $idx => $value) {
                         $data['features'][$idx] = json_decode($value, true);
                     }
                 }
-                
-                if (isset($data['replace_pattern'])){
+
+                if (isset($data['replace_pattern'])) {
                     foreach ($data['replace_pattern'] as $idx => $value) {
                         $data['replace_pattern'][$idx] = json_decode($value, true);
                     }
                 }
-                
-                if (isset($data['extent_feature'])){         
-                        $data['extent_feature'] = json_decode($data['extent_feature'], true);                  
+
+                if (isset($data['extent_feature'])) {
+                    $data['extent_feature'] = json_decode($data['extent_feature'], true);
                 }
-                    
+
                 $content = json_encode($data);
 
                 // Forward to Printer Service URL using OWSProxy
-                $url = $this->container->get('router')->generate('mapbender_print_print_service',
-                    array(), true);
+                $url = $this->container->get('router')->generate('mapbender_print_print_service', array(), true);
 
                 return $this->container->get('http_kernel')->forward(
-                        'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-                        array(
+                        'OwsProxy3CoreBundle:OwsProxy:genericProxy', array(
                         'url' => $url,
                         'content' => $content
                         )
