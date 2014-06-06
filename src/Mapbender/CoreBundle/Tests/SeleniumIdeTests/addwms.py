@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from selenium.webdriver.phantomjs.webdriver import WebDriver
+from selenium.webdriver.firefox.webdriver import WebDriver
+#from selenium.webdriver.phantomjs.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -7,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from lib.user import login
 from lib.logout import logout
 from lib.aux import get_sreenshot_path  # Changed
+from lib.wms import addwms
 
 success = True
 wd = WebDriver()
@@ -22,13 +24,7 @@ def is_alert_present(wd):
 
 try:
     login(wd)
-    wd.find_element_by_link_text("Add source").click()
-    wd.find_element_by_id("wmssource_originUrl").send_keys("http://osm-demo.wheregroup.com/service?REQUEST=GetCapabilities")
-    wd.find_element_by_name("load").click()
-    if not ("WMS OpenStreetMap (OSM) Demo WhereGroup" in wd.find_element_by_tag_name("html").text):
-        success = False
-        print("verifyTextPresent failed")
-    wd.save_screenshot(get_sreenshot_path('addwms'))  # Changed
+    addwms(wd)
     logout(wd)
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
