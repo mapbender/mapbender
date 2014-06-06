@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.phantomjs.webdriver import WebDriver
-from selenium.webdriver.common.action_chains import ActionChains
-import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-from lib import get_url, get_sreenshot_path  # Changed
+from lib.loginroot import loginroot
+from lib.aux import get_sreenshot_path  # Changed
 
 success = True
 wd = WebDriver()
 wd.implicitly_wait(60)
+
 
 def is_alert_present(wd):
     try:
@@ -17,15 +20,7 @@ def is_alert_present(wd):
         return False
 
 try:
-    wd.get(get_url('app_test.php/'))  # Changed
-    wd.find_element_by_link_text("Login").click()
-    wd.find_element_by_id("username").click()
-    wd.find_element_by_id("username").clear()
-    wd.find_element_by_id("username").send_keys("root")
-    wd.find_element_by_id("password").click()
-    wd.find_element_by_id("password").clear()
-    wd.find_element_by_id("password").send_keys("root")
-    wd.find_element_by_css_selector("input.right.button").click()
+    loginroot(wd)
     wd.find_element_by_css_selector("h1.contentTitle").click()
     wd.find_element_by_link_text("New user").click()
     wd.find_element_by_id("user_username").click()
@@ -42,11 +37,17 @@ try:
     wd.find_element_by_id("user_password_second").send_keys("test1234")
     wd.find_element_by_css_selector("input.button").click()
     wd.find_element_by_css_selector("span.iconRemove.iconSmall").click()
+    wd.save_screenshot(get_sreenshot_path('test'))  # Changed
+    WebDriverWait(wd, 10).until(
+        EC.presence_of_element_located((By.LINK_TEXT, "Delete"))
+    )
+    if not ("Confirm delete" in wd.find_element_by_tag_name("html").text):
+        success = False
+        print("verifyTextPresent failed")
     wd.find_element_by_link_text("Delete").click()
     wd.save_screenshot(get_sreenshot_path('success'))  # Changed
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
-    wd.save_screenshot('error.png')
     wd.quit()
     raise e
 finally:
