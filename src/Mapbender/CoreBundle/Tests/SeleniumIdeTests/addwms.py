@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
-from selenium.webdriver.firefox.webdriver import WebDriver
-#from selenium.webdriver.phantomjs.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 from lib.user import login
 from lib.logout import logout
-from lib.aux import get_sreenshot_path  # Changed
+from lib.aux import get_sreenshot_path, create_webdriver  # Changed
 from lib.wms import addwms
+from lib.wms import deletewms
 
 success = True
-wd = WebDriver()
-wd.implicitly_wait(60)
+wd = create_webdriver()
 
 
 def is_alert_present(wd):
@@ -25,6 +20,7 @@ def is_alert_present(wd):
 try:
     login(wd)
     addwms(wd)
+    deletewms(wd)
     logout(wd)
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
