@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.phantomjs.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 import time
 from includes.loginroot import loginroot 
 
@@ -33,8 +36,15 @@ try:
     wd.find_element_by_id("user_password_second").send_keys("test1234")
     wd.find_element_by_css_selector("input.button").click()
     wd.find_element_by_css_selector("span.iconRemove.iconSmall").click()
-    wd.find_element_by_link_text("Delete").click()
     wd.save_screenshot("./test.png")
+    WebDriverWait(wd, 10).until(
+        EC.presence_of_element_located((wd.find_element_by_link_text("Delete")))
+    )
+    if not ("Confirm delete" in wd.find_element_by_tag_name("html").text):
+        success = False
+        print("verifyTextPresent failed")
+    wd.find_element_by_link_text("Delete").click()
+
 finally:
     wd.save_screenshot("./error.png")
     wd.quit()
