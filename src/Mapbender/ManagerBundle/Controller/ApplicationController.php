@@ -99,7 +99,7 @@ class ApplicationController extends Controller
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
 
-        $form->bindRequest($request);
+        $form->bind($request);
         if ($form->isValid()) {
             $application->setUpdated(new \DateTime('now'));
             $em = $this->getDoctrine()->getEntityManager();
@@ -223,7 +223,7 @@ class ApplicationController extends Controller
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
 
-        $form->bindRequest($request);
+        $form->bind($request);
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
 
@@ -339,7 +339,7 @@ class ApplicationController extends Controller
         $form = $this->createForm(new ApplicationCopyType(), $test);
         $request = $this->getRequest();
 
-        $form->bindRequest($request);
+        $form->bind($request);
         if ($form->isValid()) {
             $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
             $em = $this->getDoctrine()->getEntityManager();
@@ -578,7 +578,7 @@ class ApplicationController extends Controller
                 ->find($layersetId);
             $form = $this->createForm(new LayersetType(), $layerset);
         }
-        $form->bindRequest($this->get('request'));
+        $form->bind($this->get('request'));
         if ($form->isValid()) {
             $this->getDoctrine()->getEntityManager()->persist($layerset);
             $this->getDoctrine()->getEntityManager()->flush();
@@ -783,6 +783,7 @@ class ApplicationController extends Controller
             $templateClassName = $application->getTemplate();
             $available_properties = $templateClassName::getRegionsProperties();
         }
+
         return $this->createForm(new ApplicationType(), $application,
                 array(
                 'available_templates' => $available_templates,
@@ -856,8 +857,8 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Creates or checks if the application's directories are created or exist. 
-     * 
+     * Creates or checks if the application's directories are created or exist.
+     *
      * @param string $slug application's slug
      * @param type $old_slug the old application's slug (to rename)
      * @return boolean true if the application's directories are created or
@@ -898,7 +899,7 @@ class ApplicationController extends Controller
 
     /**
      * Removes all application's directories with content
-     * 
+     *
      * @param string $slug application slug
      * @return boolean true if the directories are removed or not exist otherwise false
      */

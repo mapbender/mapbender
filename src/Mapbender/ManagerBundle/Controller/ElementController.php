@@ -134,7 +134,7 @@ class ElementController extends Controller
         $element->setApplication($application);
         $form = ComponentElement::getElementForm($this->container, $application,
                 $element);
-        $form['form']->bindRequest($this->get('request'));
+        $form['form']->bind($this->get('request'));
 
         if ($form['form']->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -215,7 +215,7 @@ class ElementController extends Controller
         $form = ComponentElement::getElementForm($this->container, $application,
                 $element);
 //        $form = $this->getElementForm($application, $element);
-        $form['form']->bindRequest($this->get('request'));
+        $form['form']->bind($this->get('request'));
 
         if ($form['form']->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -264,7 +264,7 @@ class ElementController extends Controller
             $form = ComponentElement::getElementForm($this->container,
                     $application, $element, true);
             $request = $this->getRequest();
-            $form['form']->bindRequest($request);
+            $form['form']->bind($request);
             if ($form['form']->isValid()) {
                 $em->getConnection()->beginTransaction();
                 try {

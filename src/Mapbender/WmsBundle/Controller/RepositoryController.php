@@ -93,7 +93,7 @@ class RepositoryController extends Controller
 
         $form = $this->get("form.factory")->create(new WmsSourceSimpleType(),
             $wmssource_req);
-        $form->bindRequest($request);
+        $form->bind($request);
         if ($form->isValid()) {
             $purl = parse_url($wmssource_req->getOriginUrl());
             if (!isset($purl['scheme']) || !isset($purl['host'])) {
@@ -257,10 +257,10 @@ class RepositoryController extends Controller
             $wmsinstance_req->setSource($wmsinstance->getSource());
             $form_req = $this->createForm(
                 new WmsInstanceInstanceLayersType(), $wmsinstance_req);
-            $form_req->bindRequest($this->get('request'));
+            $form_req->bind($this->get('request'));
             $form = $this->createForm(
                 new WmsInstanceInstanceLayersType(), $wmsinstance);
-            $form->bindRequest($this->get('request'));
+            $form->bind($this->get('request'));
             $wmsinstance->setTransparency(
                 Utils::getBool($wmsinstance_req->getTransparency()));
             $wmsinstance->setVisible(

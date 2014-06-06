@@ -24,7 +24,6 @@ class ApplicationType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
 //        $subscriber = new RegionSubscriber($builder->getFormFactory(), $options);
 //        $builder->addEventSubscriber($subscriber);
         $builder
@@ -69,7 +68,7 @@ class ApplicationType extends AbstractType
 
         $builder->add('acl', 'acl',
             array(
-            'property_path' => false,
+            'mapped' => false,
             'data' => $options['data'],
             'permissions' => 'standard::object'));
     }

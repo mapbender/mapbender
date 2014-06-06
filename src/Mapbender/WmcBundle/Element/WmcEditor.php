@@ -256,14 +256,14 @@ class WmcEditor extends Element
         $wmc = Wmc::create();
         $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
         if ($request->getMethod() === 'POST') {
-            $form->bindRequest($request);
+            $form->bind($request);
             if ($form->isValid()) { //TODO: Is file an image (jpg/png/gif?)
                 if ($wmc->getId() !== null) {
                     $wmc = $this->container->get('doctrine')
                         ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
                         ->find($wmc->getId());
                     $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
-                    $form->bindRequest($request);
+                    $form->bind($request);
                     if (!$form->isValid()) {
                         return new Response(json_encode(array(
                                 "error" => $this->trans("mb.wmc.error.wmcnotfound",
@@ -348,7 +348,7 @@ class WmcEditor extends Element
         $wmc = Wmc::create();
         $form = $this->container->get("form.factory")->create(new WmcDeleteType(), $wmc);
         if ($this->container->get('request')->getMethod() === 'POST') {
-            $form->bindRequest($this->container->get('request'));
+            $form->bind($this->container->get('request'));
             if ($form->isValid()) {
                 $wmchandler = new WmcHandler($this, $this->application, $this->container);
                 $wmcid = $wmc->getId();
