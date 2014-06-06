@@ -2,6 +2,7 @@
 from selenium.webdriver.phantomjs.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
 import time
+from includes.loginroot import loginroot 
 
 success = True
 wd = WebDriver()
@@ -15,15 +16,7 @@ def is_alert_present(wd):
         return False
 
 try:
-    wd.get("http://localhost/data/mapbender-starter/application/web/app_dev.php/")
-    wd.find_element_by_link_text("Login").click()
-    wd.find_element_by_id("username").click()
-    wd.find_element_by_id("username").clear()
-    wd.find_element_by_id("username").send_keys("root")
-    wd.find_element_by_id("password").click()
-    wd.find_element_by_id("password").clear()
-    wd.find_element_by_id("password").send_keys("root")
-    wd.find_element_by_css_selector("input.right.button").click()
+    loginroot(wd)
     wd.find_element_by_css_selector("h1.contentTitle").click()
     wd.find_element_by_link_text("New user").click()
     wd.find_element_by_id("user_username").click()
