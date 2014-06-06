@@ -23,7 +23,7 @@ before_script:
   - php app/console fom:user:resetroot --username root --password root --email root@root.de --silent
   - phantomjs --webdriver=9876 &
   - export PJSPORT=$(echo $!)
-  - pip install selenium
+  - sudo pip install selenium
 script: phpunit -c app/ --coverage-clover ../testresults/clover.xml
 after_script:
   - php bin/coveralls -v
