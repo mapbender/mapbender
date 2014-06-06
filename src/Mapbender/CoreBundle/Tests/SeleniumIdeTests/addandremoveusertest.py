@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.phantomjs.webdriver import WebDriver
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -38,7 +39,7 @@ try:
     wd.find_element_by_css_selector("span.iconRemove.iconSmall").click()
     wd.save_screenshot("./test.png")
     WebDriverWait(wd, 10).until(
-        EC.presence_of_element_located((wd.find_element_by_link_text("Delete")))
+        EC.presence_of_element_located((By.LINK_TEXT,"Delete"))
     )
     if not ("Confirm delete" in wd.find_element_by_tag_name("html").text):
         success = False
