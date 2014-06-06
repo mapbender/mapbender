@@ -98,7 +98,7 @@ class RepositoryController extends Controller
             $purl = parse_url($wmssource_req->getOriginUrl());
             if (!isset($purl['scheme']) || !isset($purl['host'])) {
                 $this->get("logger")->debug("The url is not valid.");
-                $this->get('session')->setFlash('error', "The url is not valid.");
+                $this->get('session')->getFlashBag()->set('error', "The url is not valid.");
                 return $this->redirect($this->generateUrl(
                             "mapbender_manager_repository_new", array(), true));
             }
@@ -123,7 +123,7 @@ class RepositoryController extends Controller
                 $wmssource = $wmsParser->parse();
             } catch (\Exception $e) {
                 $this->get("logger")->debug($e->getMessage());
-                $this->get('session')->setFlash('error', $e->getMessage());
+                $this->get('session')->getFlashBag()->set('error', $e->getMessage());
                 return $this->redirect($this->generateUrl(
                             "mapbender_manager_repository_new", array(), true));
             }
@@ -131,7 +131,7 @@ class RepositoryController extends Controller
             if (!$wmssource) {
                 $this->get("logger")->debug('Could not parse data for url "'
                     . $wmssource_req->getOriginUrl() . '"');
-                $this->get('session')->setFlash('error',
+                $this->get('session')->getFlashBag()->set('error',
                     'Could not parse data for url "'
                     . $wmssource_req->getOriginUrl() . '"');
                 return $this->redirect($this->generateUrl(
@@ -166,7 +166,7 @@ class RepositoryController extends Controller
             $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
             $aclProvider->updateAcl($acl);
 
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 "Your WMS has been created");
             return $this->redirect($this->generateUrl(
                         "mapbender_manager_repository_view",
@@ -215,7 +215,7 @@ class RepositoryController extends Controller
         $wmssource->remove($em);
         $em->flush();
         $em->getConnection()->commit();
-        $this->get('session')->setFlash('success', "Your WMS has been deleted");
+        $this->get('session')->getFlashBag()->set('success', "Your WMS has been deleted");
         return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
     }
 
@@ -235,7 +235,7 @@ class RepositoryController extends Controller
         $instance->remove($em);
         $em->flush();
         $em->getConnection()->commit();
-        $this->get('session')->setFlash('success',
+        $this->get('session')->getFlashBag()->set('success',
             'Your source instance has been deleted.');
         return new Response();
     }
@@ -297,7 +297,7 @@ class RepositoryController extends Controller
 
                 $em->getConnection()->commit();
 
-                $this->get('session')->setFlash(
+                $this->get('session')->getFlashBag()->set(
                     'success', 'Your Wms Instance has been changed.');
                 return $this->redirect($this->generateUrl(
                             'mapbender_manager_application_edit',

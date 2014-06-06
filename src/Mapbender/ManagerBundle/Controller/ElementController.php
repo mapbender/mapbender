@@ -155,7 +155,7 @@ class ElementController extends Controller
                 $application, array());
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 'Your element has been saved.');
 
             return new Response('', 201);
@@ -229,7 +229,7 @@ class ElementController extends Controller
                 $application, array());
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 'Your element has been saved.');
 
             return new Response('', 205);
@@ -276,10 +276,10 @@ class ElementController extends Controller
                         $form['form']->get('acl'), 'object');
                     $em->flush();
                     $em->getConnection()->commit();
-                    $this->get('session')->setFlash('success',
+                    $this->get('session')->getFlashBag()->set('success',
                         "Your element's access has been changed.");
                 } catch (\Exception $e) {
-                    $this->get('session')->setFlash('error',
+                    $this->get('session')->getFlashBag()->set('error',
                         "There was an error trying to change your element's access.");
                     $em->getConnection()->rollback();
                     $em->close();
@@ -371,7 +371,7 @@ class ElementController extends Controller
         $em->remove($element);
         $em->flush();
 
-        $this->get('session')->setFlash('success',
+        $this->get('session')->getFlashBag()->set('success',
             'Your element has been removed.');
 
         return new Response();

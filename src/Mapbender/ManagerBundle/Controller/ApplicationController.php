@@ -131,10 +131,10 @@ class ApplicationController extends Controller
 
             $em->getConnection()->commit();
             if ($this->createApplicationDir($application->getSlug())) {
-                $this->get('session')->setFlash('success',
+                $this->get('session')->getFlashBag()->set('success',
                     'Your application has been saved.');
             } else {
-                $this->get('session')->setFlash('error',
+                $this->get('session')->getFlashBag()->set('error',
                     "Your application has been saved but"
                     . " the application's can not be created.");
             }
@@ -248,15 +248,15 @@ class ApplicationController extends Controller
                 if ($this->createApplicationDir($application->getSlug(),
                         $old_slug)) {
 
-                    $this->get('session')->setFlash('success',
+                    $this->get('session')->getFlashBag()->set('success',
                         'Your application has been updated.');
                 } else {
-                    $this->get('session')->setFlash('error',
+                    $this->get('session')->getFlashBag()->set('error',
                         "Your application has been updated but"
                         . " the application's directories can not be created.");
                 }
             } catch (\Exception $e) {
-                $this->get('session')->setFlash('error',
+                $this->get('session')->getFlashBag()->set('error',
                     'There was an error trying to save your application.');
                 $em->getConnection()->rollback();
                 $em->close();
@@ -352,10 +352,10 @@ class ApplicationController extends Controller
             $em->flush();
             $em->getConnection()->commit();
             if ($this->createApplicationDir($cloned->getSlug())) {
-                $this->get('session')->setFlash('success',
+                $this->get('session')->getFlashBag()->set('success',
                     'Your application has been copied.');
             } else {
-                $this->get('session')->setFlash('error',
+                $this->get('session')->getFlashBag()->set('error',
                     "Your application has been copied but"
                     . " the application's directories can not be created.");
             }
@@ -389,10 +389,10 @@ class ApplicationController extends Controller
         $em->flush();
         $em->getConnection()->commit();
         if ($this->createApplicationDir($cloned->getSlug())) {
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 'Your application has been copied.');
         } else {
-            $this->get('session')->setFlash('error',
+            $this->get('session')->getFlashBag()->set('error',
                 "Your application has been copied but"
                 . " the application's directories can not be created.");
         }
@@ -454,7 +454,7 @@ class ApplicationController extends Controller
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         if ($application === null) {
-            $this->get('session')->setFlash('error',
+            $this->get('session')->getFlashBag()->set('error',
                 'Your application has been already deleted.');
             return $this->redirect(
                     $this->generateUrl('mapbender_manager_application_index'));
@@ -492,15 +492,15 @@ class ApplicationController extends Controller
             $em->flush();
             $em->commit();
             if ($this->removeApplicationDir($slug)) {
-                $this->get('session')->setFlash('success',
+                $this->get('session')->getFlashBag()->set('success',
                     'Your application has been deleted.');
             } else {
-                $this->get('session')->setFlash('error',
+                $this->get('session')->getFlashBag()->set('error',
                     "Your application has been deleted"
                     . " but the application's directories can not be removed.");
             }
         } catch (Exception $e) {
-            $this->get('session')->setFlash('error',
+            $this->get('session')->getFlashBag()->set('error',
                 'Your application couldn\'t be deleted.');
         }
 
@@ -583,13 +583,13 @@ class ApplicationController extends Controller
             $this->getDoctrine()->getEntityManager()->persist($layerset);
             $this->getDoctrine()->getEntityManager()->flush();
             $this->get("logger")->debug("Layerset saved");
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 "Your layerset has been saved");
             return $this->redirect($this->generateUrl(
                         'mapbender_manager_application_edit',
                         array('slug' => $slug)));
         }
-        $this->get('session')->setFlash('error',
+        $this->get('session')->getFlashBag()->set('error',
             'Layerset title is already used.');
         return $this->redirect($this->generateUrl(
                     'mapbender_manager_application_edit', array('slug' => $slug)));
@@ -640,13 +640,13 @@ class ApplicationController extends Controller
 
             $this->get("logger")->debug('The layerset "'
                 . $layerset->getId() . '"has been deleted.');
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 'Your layerset has been deleted.');
             return $this->redirect($this->generateUrl(
                         'mapbender_manager_application_edit',
                         array('slug' => $slug)) . "#layersets");
         }
-        $this->get('session')->setFlash('error',
+        $this->get('session')->getFlashBag()->set('error',
             'Your layerset con not be delete.');
         return $this->redirect($this->generateUrl(
                     'mapbender_manager_application_edit', array('slug' => $slug)) . "#layersets");
@@ -733,7 +733,7 @@ class ApplicationController extends Controller
 
         $this->get("logger")->debug('A new instance "'
             . $sourceInstance->getId() . '"has been created. Please edit it!');
-        $this->get('session')->setFlash('success',
+        $this->get('session')->getFlashBag()->set('success',
             'A new instance has been created. Please edit it!');
         return $this->redirect(
                 $this->generateUrl(
