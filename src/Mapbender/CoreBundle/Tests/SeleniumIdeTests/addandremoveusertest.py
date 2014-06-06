@@ -4,7 +4,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from lib.loginroot import loginroot
+from lib.user import login
+from lib.logout import logout
 from lib.aux import get_sreenshot_path  # Changed
 
 success = True
@@ -20,7 +21,7 @@ def is_alert_present(wd):
         return False
 
 try:
-    loginroot(wd)
+    login(wd)
     wd.find_element_by_css_selector("h1.contentTitle").click()
     wd.find_element_by_link_text("New user").click()
     wd.find_element_by_id("user_username").click()
@@ -45,6 +46,7 @@ try:
         success = False
         print("verifyTextPresent failed")
     wd.find_element_by_link_text("Delete").click()
+    logout(wd)
     wd.save_screenshot(get_sreenshot_path('success'))  # Changed
 except Exception as e:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
