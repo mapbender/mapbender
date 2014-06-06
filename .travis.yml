@@ -9,6 +9,7 @@ before_script:
   - git clone https://github.com/mapbender/mapbender-starter
   - cd mapbender-starter
   - git checkout feature/testing
+  - git checkout $TRAVIS_BRANCH
   - git submodule update --init --recursive
   - cd application
   - cp app/config/parameters.yml.dist app/config/parameters.yml
