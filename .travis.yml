@@ -5,6 +5,7 @@ php:
   - 5.5
   - 5.4
   - 5.3
+
 before_script:
   - cd ..
   - git clone https://github.com/mapbender/mapbender-starter
@@ -24,7 +25,9 @@ before_script:
   - phantomjs --webdriver=9876 &
   - export PJSPORT=$(echo $!)
   - sudo pip install selenium
+
 script: phpunit -c app/ --coverage-clover ../testresults/clover.xml
+
 after_script:
   - php bin/coveralls -v
   - wget https://scrutinizer-ci.com/ocular.phar
