@@ -283,7 +283,7 @@ class Map extends Element
             foreach ($srsNames as $srsName) {
                 $names[] = $srsName['name'];
             }
-            $em = $this->container->get("doctrine")->getEntityManager();
+            $em = $this->container->get("doctrine")->getManager();
             $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
                     . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
                 ->setParameter('name', $names);
