@@ -40,7 +40,7 @@ class ObjectIdTransformer implements DataTransformerInterface
         }
 
         if (is_array($id)) {
-            $em = $this->om->getRepository($this->classname)->createQueryBuilder('si')->getEntityManager();
+            $em = $this->om->getRepository($this->classname)->createQueryBuilder('si')->getManager();
             $query = $em->createQuery("SELECT ob FROM " . $this->classname . " ob WHERE ob.id IN("
                 . implode(',', $id) . ") ORDER BY ob.id ASC");
             $result = $query->getResult();

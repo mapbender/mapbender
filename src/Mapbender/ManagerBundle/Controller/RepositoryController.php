@@ -36,7 +36,7 @@ class RepositoryController extends Controller
         $securityContext = $this->get('security.context');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
 
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
@@ -216,7 +216,7 @@ class RepositoryController extends Controller
         }
 
         if ($layersetId === $layersetId_new) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $instance->setWeight($number);
             $em->persist($instance);
             $em->flush();
@@ -251,7 +251,7 @@ class RepositoryController extends Controller
             $layerset_new = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Layerset")
                 ->find($layersetId_new);
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $instance->setLayerset($layerset_new);
             $layerset_new->addInstance($instance);
             $instance->setWeight($number);

@@ -138,7 +138,7 @@ class RepositoryController extends Controller
                             "mapbender_manager_repository_new", array(), true));
             }
             $wmsWithSameTitle = $this->getDoctrine()
-                ->getEntityManager()
+                ->getManager()
                 ->getRepository("MapbenderWmsBundle:WmsSource")
                 ->findByTitle($wmssource->getTitle());
 
@@ -148,11 +148,11 @@ class RepositoryController extends Controller
 
             $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
             $rootlayer = $wmssource->getLayers()->get(0);
-            $this->getDoctrine()->getEntityManager()->persist($rootlayer);
-            $this->saveLayer($this->getDoctrine()->getEntityManager(),
+            $this->getDoctrine()->getManager()->persist($rootlayer);
+            $this->saveLayer($this->getDoctrine()->getManager(),
                 $rootlayer);
-            $this->getDoctrine()->getEntityManager()->persist($wmssource);
-            $this->getDoctrine()->getEntityManager()->flush();
+            $this->getDoctrine()->getManager()->persist($wmssource);
+            $this->getDoctrine()->getManager()->flush();
 
             // ACL
             $aclProvider = $this->get('security.acl.provider');
@@ -201,7 +201,7 @@ class RepositoryController extends Controller
         $wmsinstances = $this->getDoctrine()
             ->getRepository("MapbenderWmsBundle:WmsInstance")
             ->findBySource($sourceId);
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
 
         $aclProvider = $this->get('security.acl.provider');
@@ -230,7 +230,7 @@ class RepositoryController extends Controller
         $instance = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:SourceInstance")
             ->find($instanceId);
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
         $instance->remove($em);
         $em->flush();
@@ -289,7 +289,7 @@ class RepositoryController extends Controller
                 }
             }
             if ($form->isValid()) { //save
-                $em = $this->getDoctrine()->getEntityManager();
+                $em = $this->getDoctrine()->getManager();
                 $em->getConnection()->beginTransaction();
                 $wmsinstance->generateConfiguration();
                 $em->persist($wmsinstance);
@@ -344,7 +344,7 @@ class RepositoryController extends Controller
                     'result' => 'ok')), 200,
                 array('Content-Type' => 'application/json'));
         }
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $instLay->setPriority($number);
         $em->persist($instLay);
         $em->flush();
@@ -410,7 +410,7 @@ class RepositoryController extends Controller
             $enabled_before = $wmsinstance->getEnabled();
             $enabled = $enabled === "true" ? true : false;
             $wmsinstance->setEnabled($enabled);
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $em->persist($wmsinstance);
             $em->flush();
             return new Response(json_encode(array(

@@ -116,7 +116,7 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
 
         // Doctrine Entity?
         try {
-            $this->registry->getEntityManager($options['entity_manager'])->getClassMetadata($configuration->getClass());
+            $this->registry->getManager($options['entity_manager'])->getClassMetadata($configuration->getClass());
 
             return true;
         } catch (MappingException $e) {

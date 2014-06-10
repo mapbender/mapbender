@@ -102,7 +102,7 @@ class ApplicationController extends Controller
         $form->bind($request);
         if ($form->isValid()) {
             $application->setUpdated(new \DateTime('now'));
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
 
             $em->getConnection()->beginTransaction();
             $em->persist($application);
@@ -164,7 +164,7 @@ class ApplicationController extends Controller
         $this->checkGranted('EDIT', $application);
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         // add RegionProperties if defined
         foreach ($templateProps as $regionName => $regionProps) {
             $exists = false;
@@ -191,7 +191,7 @@ class ApplicationController extends Controller
         }
         $form = $this->createApplicationForm($application);
 
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
@@ -225,7 +225,7 @@ class ApplicationController extends Controller
 
         $form->bind($request);
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
 
             $em->getConnection()->beginTransaction();
             $application->setUpdated(new \DateTime('now'));
@@ -289,7 +289,7 @@ class ApplicationController extends Controller
         }
 
         $templateClass = $application->getTemplate();
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
@@ -342,7 +342,7 @@ class ApplicationController extends Controller
         $form->bind($request);
         if ($form->isValid()) {
             $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
             $cloned = $tocopy->copy($this->container, $em);
             $cloned->setSlug($test->getSlug());
@@ -379,7 +379,7 @@ class ApplicationController extends Controller
         // ACL access check
         $this->checkGranted('CREATE', $tocopy);
         $newslug = $this->generateSlug($slug);
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
         $cloned = $tocopy->copy($this->container, $em);
         $cloned->setSlug($newslug);
@@ -413,7 +413,7 @@ class ApplicationController extends Controller
         // ACL access check
         $this->checkGranted('EDIT', $application);
 
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
         $requestedState = $this->get('request')->get('state');
         $currentState = $application->isPublished();
@@ -483,7 +483,7 @@ class ApplicationController extends Controller
         $this->checkGranted('DELETE', $application);
 
         try {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $aclProvider = $this->get('security.acl.provider');
             $em->getConnection()->beginTransaction();
             $oid = ObjectIdentity::fromDomainObject($application);
@@ -580,8 +580,8 @@ class ApplicationController extends Controller
         }
         $form->bind($this->get('request'));
         if ($form->isValid()) {
-            $this->getDoctrine()->getEntityManager()->persist($layerset);
-            $this->getDoctrine()->getEntityManager()->flush();
+            $this->getDoctrine()->getManager()->persist($layerset);
+            $this->getDoctrine()->getManager()->flush();
             $this->get("logger")->debug("Layerset saved");
             $this->get('session')->getFlashBag()->set('success',
                 "Your layerset has been saved");
@@ -630,7 +630,7 @@ class ApplicationController extends Controller
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
         if ($layerset !== null) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
 
             $em->getConnection()->beginTransaction();
 
@@ -673,7 +673,7 @@ class ApplicationController extends Controller
             ->find($layersetId);
 
         $securityContext = $this->get('security.context');
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
@@ -716,7 +716,7 @@ class ApplicationController extends Controller
         $sourceInstance->setWeight(-1);
 
         $layerset->addInstance($sourceInstance);
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $em->persist($sourceInstance);
         $em->persist($application);
         $em->persist($layerset);

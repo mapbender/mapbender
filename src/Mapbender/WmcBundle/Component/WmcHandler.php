@@ -66,7 +66,7 @@ class WmcHandler
             $state->setTitle("SuggestMap");
             $state->setJson($jsonState);
             $state = $this->unSignUrls($state);
-            $em = $this->container->get('doctrine')->getEntityManager();
+            $em = $this->container->get('doctrine')->getManager();
             $em->persist($state);
             $em->flush();
         }
@@ -81,7 +81,7 @@ class WmcHandler
      */
     public function getWmc($wmcid, $onlyPublic = TRUE)
     {
-        $query = $this->container->get('doctrine')->getEntityManager()
+        $query = $this->container->get('doctrine')->getManager()
             ->createQuery("SELECT wmc FROM MapbenderWmcBundle:Wmc wmc"
                 . " JOIN wmc.state s Where"
 //		. " s.slug IN (:slug) AND"
@@ -107,7 +107,7 @@ class WmcHandler
      */
     public function getWmcList($onlyPublic = true)
     {
-        $query = $this->container->get('doctrine')->getEntityManager()
+        $query = $this->container->get('doctrine')->getManager()
             ->createQuery("SELECT wmc FROM MapbenderWmcBundle:Wmc wmc"
                 . " JOIN wmc.state s Where s.slug IN (:slug)"
                 . ($onlyPublic === TRUE ? " AND wmc.public='true'" : "")
