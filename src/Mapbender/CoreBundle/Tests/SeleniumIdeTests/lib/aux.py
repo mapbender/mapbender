@@ -4,7 +4,6 @@ from selenium.webdriver.phantomjs.webdriver import WebDriver
 from os import getenv, makedirs
 from os.path import basename, dirname, exists
 
-
 def get_url(path):
     """Build full URL to test server based on path and env vars"""
     return 'http://%(host)s:%(port)s/%(path)s' % {
@@ -30,4 +29,3 @@ def create_webdriver():
     wd.implicitly_wait(60)
     wd.set_window_size(1400,1000)
     return wd
-

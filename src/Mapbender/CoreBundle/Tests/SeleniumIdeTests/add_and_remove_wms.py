@@ -22,10 +22,10 @@ try:
     addwms(wd)
     deletewms(wd)
     logout(wd)
-except Exception as e:  # Changed ff
+except:  # Changed ff
     wd.save_screenshot(get_sreenshot_path('error'))
     wd.quit()
-    raise e
+    raise
 finally:
     wd.quit()
     if not success:
