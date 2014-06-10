@@ -6,7 +6,7 @@ def addwms(wd, url='http://osm-demo.wheregroup.com/service?REQUEST=GetCapabiliti
     wd.find_element_by_id("wmssource_originUrl").send_keys(url)
     wd.find_element_by_name("load").click()
     if not ("Your WMS has been created" in wd.find_element_by_tag_name("html").text):
-        raise Exception("verifyTextPresent failed:\n" + wd.find_element_by_tag_name("html"))
+        raise Exception("verifyTextPresent failed:\n" + wd.find_element_by_tag_name("html").text)
 
 def check_has_class(elm, name):
     return name in elm.get_attribute('class')
