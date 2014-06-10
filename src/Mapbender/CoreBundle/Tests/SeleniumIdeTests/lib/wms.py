@@ -22,5 +22,5 @@ def deletewms(wd):
     if (elm.is_displayed()):
         WebDriverWait(wd, 10).until(lambda d: not check_has_class(elm, 'ajaxWaiting'))
     wd.find_element_by_link_text("Delete").click()
-    if not ("Your WMS has been deleted" in wd.find_element_by_tag_name("html").text):
+    if not ("Your WMS has been deleted" in wd.find_element_by_class_name("flashBox").text):
         raise Exception("verifyTextPresent failed: Your WMS has been deleted")
