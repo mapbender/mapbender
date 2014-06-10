@@ -10,7 +10,7 @@ def addwms(wd, url='http://osm-demo.wheregroup.com/service?REQUEST=GetCapabiliti
 
 def is_stale(elm):
     try:
-        elm.text
+        elm.is_displayed()
         return False
     except:
         return True
