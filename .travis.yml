@@ -1,3 +1,7 @@
+global:
+  env:
+    secure: "pjCub1n/YxROvFHPNQCtdSOHYxAzFAKbxfIv/q+ANEGuuM8DTvE0KrcCPM/QWH1I6stnwrkwScE+Es8+A529T8gxZPqHO1MxEy28v8ObQnb/Ai5rB58tdVBZKpDHmjNd26mxn9vJX8/n+l60r5/dznNQtjtMeRBkKtsD/2JtR0E="
+
 language: php
 
 php:
@@ -20,7 +24,8 @@ before_script:
   - ln -s ../../mapbender
   - php app/console doctrine:database:create
   - php app/console doctrine:schema:create
-  - php app/console doctrine:fixtures:load --fixtures=./mapbender/src/Mapbender/CoreBundle/DataFixtures/ORM/Epsg/ --append
+  - php app/console doctrine:fixtures:load --fixtures=./mapbender/src/Mapbender/CoreBundle/DataFixtures/ORM/Epsg/
+  --append
   - php app/console fom:user:resetroot --username root --password root --email root@root.de --silent
   - phantomjs --webdriver=9876 &
   - export PJSPORT=$(echo $!)
@@ -34,7 +39,8 @@ after_script:
   - cd mapbender
   - export MYREV=$(git rev-parse HEAD)
   - cd ..
-  - cat /tmp/weblog
-  - cat /tmp/wh
   - php ocular.phar code-coverage:upload --repository g/mapbender/mapbender --format=php-clover ../testresults/clover.xml --revision $MYREV
   - kill -9 $PJSPORT
+  - echo -e :"Host mapbender3.org\n\tStrictHostKeyChecking no" >> ~/.ssh/config
+  - sshpass -p "$travispassword" ssh travis@mapbender3.org mkdir public/screenshots/$TRAVIS_BUILD/
+  - sshpass -p "$travispassword" scp ../testresults/screenshots/* travis@mapbender3.org:public/screenshots/$TRAVIS_BUILD/
