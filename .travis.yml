@@ -40,7 +40,7 @@ after_script:
   - cd ..
   - php ocular.phar code-coverage:upload --repository g/mapbender/mapbender --format=php-clover ../testresults/clover.xml --revision $MYREV
   - kill -9 $PJSPORT
-  - echo -e :"Host mapbender3.org\n\tStrictHostKeyChecking no" >> ~/.ssh/config
+  - echo -e "Host mapbender3.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - sudo apt-get -qq update
   - sudo apt-get -qq install sshpass
   - sshpass -p "$travispassword" ssh travis@mapbender3.org mkdir public/screenshots/$TRAVIS_JOB_NUMBER/
