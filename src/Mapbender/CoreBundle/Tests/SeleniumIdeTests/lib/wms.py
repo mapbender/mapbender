@@ -10,8 +10,7 @@ def addwms(wd, url='http://osm-demo.wheregroup.com/service?REQUEST=GetCapabiliti
 
 def is_stale(elm):
     try:
-        elm.is_displayed()
-        return False
+        return not elm.is_displayed()
     except:
         return True
 
@@ -30,8 +29,6 @@ def deletewms(wd):
         WebDriverWait(wd, 10).until(lambda d: not check_has_class(elm, 'ajaxWaiting'))
     elm = wd.find_element_by_link_text("Delete")
     elm.click()
-    with open('/tmp/wh', 'w') as f:
-        f.write(wd.find_element_by_class_name('flashBox').text)
-#    WebDriverWait(wd, 10).until(lambda d: is_stale(elm))
+    WebDriverWait(wd, 10).until(lambda d: is_stale(elm))
     if not ("Your WMS has been deleted" in wd.find_element_by_class_name("flashBox").text):
         raise Exception("verifyTextPresent failed: Your WMS has been deleted")
