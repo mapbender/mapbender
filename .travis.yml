@@ -1,5 +1,5 @@
-global:
-  env:
+env:
+  global:
     secure: "pjCub1n/YxROvFHPNQCtdSOHYxAzFAKbxfIv/q+ANEGuuM8DTvE0KrcCPM/QWH1I6stnwrkwScE+Es8+A529T8gxZPqHO1MxEy28v8ObQnb/Ai5rB58tdVBZKpDHmjNd26mxn9vJX8/n+l60r5/dznNQtjtMeRBkKtsD/2JtR0E="
 
 language: php
