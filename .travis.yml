@@ -43,5 +43,5 @@ after_script:
   - echo -e "Host mapbender3.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - sudo apt-get -qq update
   - sudo apt-get -qq install sshpass
-  - sshpass -p "$travispassword" ssh travis@mapbender3.org mkdir public/screenshots/$TRAVIS_JOB_NUMBER/
-  - sshpass -p "$travispassword" scp ../testresults/screenshots/* travis@mapbender3.org:public/screenshots/$TRAVIS_JOB_NUMBER/
+  - sshpass -p "$travispassword" ssh travis@mapbender3.org mkdir -p public/screenshot/$TRAVIS_JOB_NUMBER/
+  - sshpass -p "$travispassword" scp ../testresults/screenshot/* travis@mapbender3.org:public/screenshot/$TRAVIS_JOB_NUMBER/
