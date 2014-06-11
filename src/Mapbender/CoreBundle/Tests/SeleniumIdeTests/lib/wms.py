@@ -31,5 +31,7 @@ def deletewms(wd):
     elm = wd.find_element_by_link_text("Delete")
     elm.click()
     WebDriverWait(wd, 10).until(lambda d: is_stale(elm))
+    with open('/tmp/wh', 'w') as f:
+        f.write(wd.find_element_by_class_name('flashBox').text)
     if not ("Your WMS has been deleted" in wd.find_element_by_class_name("flashBox").text):
         raise Exception("verifyTextPresent failed: Your WMS has been deleted")

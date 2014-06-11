@@ -35,5 +35,6 @@ after_script:
   - export MYREV=$(git rev-parse HEAD)
   - cd ..
   - cat /tmp/weblog
+  - cat /tmp/wh
   - php ocular.phar code-coverage:upload --repository g/mapbender/mapbender --format=php-clover ../testresults/clover.xml --revision $MYREV
   - kill -9 $PJSPORT
