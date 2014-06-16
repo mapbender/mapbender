@@ -19,7 +19,8 @@ $.widget('mapbender.mbSimpleSearch', {
             url: url,
             delay: this.options.delay,
             dataTitle: this.options.label_attribute,
-            dataIdx: null
+            dataIdx: null,
+            preProcessor: $.proxy(this._tokenize, this)
         });
 
         // On manual submit (enter key, submit button), trigger autocomplete manually
@@ -113,6 +114,18 @@ $.widget('mapbender.mbSimpleSearch', {
                 zoom: zoom
             });
         });
+    },
+
+    _tokenize: function(string) {
+        if('' == this.options.token_regex_in || '' == this.options.token_regex_out) return string;
+
+        var tokens = string.split(' ');
+        var regex = new RegExp(this.options.token_regex_in);
+        for(var i = 0; i < tokens.length; i++) {
+            tokens[i] = tokens[i].replace(regex, this.options.token_regex_out);
+        }
+
+        return tokens.join(' ');
     }
 });
 
