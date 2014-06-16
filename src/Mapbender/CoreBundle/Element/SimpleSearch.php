@@ -75,6 +75,8 @@ class SimpleSearch extends Element
             'query_url' => 'http://',
             'query_key' => 'q',
             'query_format' => '%s',
+            'token_regex_in' => '',
+            'token_regex_out' => '',
             'collection_path' => '',
             'label_attribute' => 'label',
             'geom_attribute' => 'geom',
