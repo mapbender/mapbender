@@ -242,6 +242,10 @@
                 scale = this._getPrintScale(),
                 rotationField = $('input[name="rotation"]');
                 
+            // remove all not numbers from input
+            rotationField.val(rotationField.val().replace(/[^\d]+/,''));
+                
+                
             if (rotationField.val() === '' && this.rotateValue > '0'){
                 rotationField.val('0');
             }
@@ -260,7 +264,7 @@
                 if(null !== this.lastRotation) {
                     $('input[name="rotation"]').val(this.lastRotation).change();
                 }
-                return;
+                //return;
             }
             rotation= parseInt(-rotation);
 
