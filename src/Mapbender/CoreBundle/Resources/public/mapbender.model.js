@@ -164,7 +164,7 @@ Mapbender.Model = {
         });
     },
     getCurrentProj: function(){
-        return this.proj;
+        return this.map.olMap.getProjectionObject();
     },
     getProj: function(srscode){
         var proj = null;
