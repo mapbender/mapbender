@@ -489,6 +489,7 @@ Mapbender.Model = {
                 }
             });
             this.map.olMap.addControl(selectControl);
+            selectControl.handlers.feature.stopDown = false;
             selectControl.activate();
         }
         var o = $.extend({}, {clearFirst: true, "goto": true}, options);
