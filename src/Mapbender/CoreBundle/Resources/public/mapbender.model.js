@@ -489,7 +489,9 @@ Mapbender.Model = {
                 }
             });
             this.map.olMap.addControl(selectControl);
+            // Let events bubble up for other elements to pick them up
             selectControl.handlers.feature.stopDown = false;
+            selectControl.handlers.feature.stopClick = false;
             selectControl.activate();
         }
         var o = $.extend({}, {clearFirst: true, "goto": true}, options);
