@@ -186,51 +186,55 @@ class PrintService
             $temp_names[] = $imagename;
 
             file_put_contents($imagename, $response->getContent());
-            $im = null;
+            $om = null;
             switch (trim($response->headers->get('content-type'))) {
                 case 'image/png' :
-                    $im = imagecreatefrompng($imagename);
+                    $om = imagecreatefrompng($imagename);
                     break;
                 case 'image/jpeg' :
-                    $im = imagecreatefromjpeg($imagename);
+                    $om = imagecreatefromjpeg($imagename);
                     break;
                 case 'image/gif' :
-                    $im = imagecreatefromgif($imagename);
+                    $om = imagecreatefromgif($imagename);
                     break;
                 default:
                     $this->container->get("logger")->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
                     continue;
             }
+            
+            if ($om !== null) {
+                // Make sure input image is truecolor with alpha, regardless of input mode!
+                $im = imagecreatetruecolor($this->image_width, $this->image_height);
+                imagealphablending($im, false);
+                imagesavealpha($im, true);            
+                imagecopyresampled($im, $om, 0, 0, 0, 0, $this->image_width, $this->image_height, $this->image_width, $this->image_height);
 
-            if ($im !== null) {    
-                    imagealphablending($im, false);
-                    imagesavealpha($im, true);
 
-                    // Taking the painful way to alpha blending. Stupid PHP-GD
-                    $opacity = floatVal($this->data['layers'][$k]['opacity']);
-                    if(1.0 !== $opacity) {
-                        $width = imagesx($im);
-                        $height = imagesy($im);
-                        for ($x = 0; $x < $width; $x++) {
-                            for ($y = 0; $y < $height; $y++) {
-                                $colorIn = imagecolorsforindex($im, imagecolorat($im, $x, $y));
-                                $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
+                // Taking the painful way to alpha blending. Stupid PHP-GD
+                $opacity = floatVal($this->data['layers'][$k]['opacity']);
+                if(1.0 !== $opacity) {
+                    $width = imagesx($im);
+                    $height = imagesy($im);
+                    for ($x = 0; $x < $width; $x++) {
+                        for ($y = 0; $y < $height; $y++) {
+                            $colorIn = imagecolorsforindex($im, imagecolorat($im, $x, $y));
+                            $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;                                
 
-                                $colorOut = imagecolorallocatealpha(
-                                    $im,
-                                    $colorIn['red'],
-                                    $colorIn['green'],
-                                    $colorIn['blue'],
-                                    $alphaOut);
-                                imagesetpixel($im, $x, $y, $colorOut);
-                                imagecolordeallocate($im, $colorOut);
-                            }
+                            $colorOut = imagecolorallocatealpha(
+                                $im,
+                                $colorIn['red'],
+                                $colorIn['green'],
+                                $colorIn['blue'],
+                                $alphaOut);
+                            imagesetpixel($im, $x, $y, $colorOut);
+                            imagecolordeallocate($im, $colorOut);
                         }
                     }
+                }
 
-                    imagepng($im, $imagename);
+                imagepng($im, $imagename);
             }
-        } 
+        }
         // create final merged image
         $finalimagename = tempnam($tempdir, 'mb_print_merged');
         $this->finalimagename = $finalimagename;
@@ -246,8 +250,8 @@ class PrintService
                 $src = imagecreatefrompng($temp_name);
                 imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width, $this->image_height);
                 imagepng($dest, $finalimagename);
-                unlink($temp_name);           
-            }  
+                unlink($temp_name);
+            }
             finfo_close($finfo);
         }
     }
@@ -259,47 +263,47 @@ class PrintService
     private function rotate()
     {
         $tempdir = $this->tempdir;
-        $rotation = $this->data['rotation'];     
+        $rotation = $this->data['rotation'];
         $map_width = $this->data['extent']['width'];
         $map_height = $this->data['extent']['height'];
         $centerx = $this->data['center']['x'];
         $centery = $this->data['center']['y'];
-        
+
         //set needed extent
         $neededExtentWidth = round(abs(sin(deg2rad($rotation)) * $map_height) +
             abs(cos(deg2rad($rotation)) * $map_width));
         $neededExtentHeight = round(abs(sin(deg2rad($rotation)) * $map_width) +
             abs(cos(deg2rad($rotation)) * $map_height));
-        
+
         $ll_x = $centerx - $neededExtentWidth * 0.5;
         $ll_y = $centery - $neededExtentHeight * 0.5;
         $ur_x = $centerx + $neededExtentWidth * 0.5;
         $ur_y = $centery + $neededExtentHeight * 0.5;
-        
+
         $bbox = '&BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
-        
+
         //set needed image size
         $neededImageWidth = round(abs(sin(deg2rad($rotation)) * $this->image_height) +
             abs(cos(deg2rad($rotation)) * $this->image_width));
         $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->image_width) +
             abs(cos(deg2rad($rotation)) * $this->image_height));
-        
+
         $w = '&WIDTH=' . $neededImageWidth;
         $h = '&HEIGHT=' . $neededImageHeight;
-        
+
         $temp_names = array();
-        
-        foreach ($this->layer_urls as $k => $url) {          
-            $url .= $bbox . $w . $h;    
-            
+
+        foreach ($this->layer_urls as $k => $url) {
+            $url .= $bbox . $w . $h;
+
             if(!isset($this->data['replace_pattern'])){
                 if ($this->data['quality'] != '72') {
                     $url .= '&map_resolution=' . $this->data['quality'];
                 }
             }
-            
+
             $this->container->get("logger")->debug("Print Request Nr.: " . $k . ' ' . $url);
-            
+
             //get image
             $attributes = array();
             $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
@@ -313,29 +317,57 @@ class PrintService
             $temp_names[] = $imagename;
 
             file_put_contents($imagename, $response->getContent());
-            $im = null;
+            $om = null;
             switch (trim($response->headers->get('content-type'))) {
                 case 'image/png' :
-                    $im = imagecreatefrompng($imagename);
+                    $om = imagecreatefrompng($imagename);
                     break;
                 case 'image/jpeg' :
-                    $im = imagecreatefromjpeg($imagename);
+                    $om = imagecreatefromjpeg($imagename);
                     break;
                 case 'image/gif' :
-                    $im = imagecreatefromgif($imagename);
+                    $om = imagecreatefromgif($imagename);
                     break;
                 default:
                     continue;
                     $this->container->get("logger")->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
             }
-            
-            if ($im !== null) {
+
+            if ($om !== null) {
+                // Make sure input image is truecolor with alpha, regardless of input mode!
+                $im = imagecreatetruecolor($neededImageWidth, $neededImageHeight);
                 imagealphablending($im, false);
-                imagesavealpha($im, true);
+                imagesavealpha($im, true);            
+                imagecopyresampled($im, $om, 0, 0, 0, 0, $neededImageWidth, $neededImageHeight, $neededImageWidth, $neededImageHeight);
+
+                // Taking the painful way to alpha blending. Stupid PHP-GD
+                $opacity = floatVal($this->data['layers'][$k]['opacity']);
+                if(1.0 !== $opacity) {
+                    $width = imagesx($im);
+                    $height = imagesy($im);
+                    for ($x = 0; $x < $width; $x++) {
+                        for ($y = 0; $y < $height; $y++) {
+                            $colorIn = imagecolorsforindex($im, imagecolorat($im, $x, $y));
+                            $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;                                
+
+                            $colorOut = imagecolorallocatealpha(
+                                $im,
+                                $colorIn['red'],
+                                $colorIn['green'],
+                                $colorIn['blue'],
+                                $alphaOut);
+                            imagesetpixel($im, $x, $y, $colorOut);
+                            imagecolordeallocate($im, $colorOut);
+                        }
+                    }
+                }
+
                 imagepng($im, $imagename);
             }
+            
+            
         }
-        
+
         // create temp merged image
         $tempimagename = tempnam($tempdir, 'mb_print_tempmerged');
         $this->finalimagename = $tempimagename;
@@ -347,7 +379,7 @@ class PrintService
         imagepng($finalImage, $tempimagename);
         foreach ($temp_names as $temp_name) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {        
+            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
                 $dest = imagecreatefrompng($tempimagename);
                 $src = imagecreatefrompng($temp_name);
                 imagecopy($dest, $src, 0, 0, 0, 0, $neededImageWidth,
@@ -357,7 +389,7 @@ class PrintService
             }
             finfo_close($finfo);
         }
-        
+
         //rotate image
         $tempimg = imagecreatefrompng($tempimagename);
         $transColor = imagecolorallocatealpha($tempimg, 255, 255, 255, 127);
@@ -488,6 +520,11 @@ class PrintService
         // add overview map 
         if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
             $this->getOverviewMap();
+        }
+        
+        // add scalebar    
+        if (isset($this->conf['scalebar']) ) {
+            $this->drawScaleBar();
         }
         
         unlink($this->finalimagename);
@@ -700,6 +737,36 @@ class PrintService
                          $this->conf['overview']['height'] * 10);    
 
         unlink($finalimagename);
+    }
+    
+    private function drawScaleBar(){
+        // temp scale bar
+        
+        $pdf = $this->pdf;
+        // Linienbreite einstellen, 0.5 mm
+        $pdf->SetLineWidth(0.1);
+        // Rahmenfarbe 
+        $pdf->SetDrawColor(0, 0, 0);
+        // Füllung 
+        $pdf->SetFillColor(0,0,0);
+        // Schriftart definieren
+        $pdf->SetFont('arial', '', 10 );
+        
+        $length = 0.01 * $this->data['scale_select'] * 5;
+        $suffix = 'm';
+        
+        $pdf->Text( $this->conf['scalebar']['x'] * 10 -1 , $this->conf['scalebar']['y'] * 10 - 1 , '0' );
+        $pdf->Text( $this->conf['scalebar']['x'] * 10 + 46, $this->conf['scalebar']['y'] * 10 - 1 , $length . '' . $suffix);
+        
+        $pdf->Rect($this->conf['scalebar']['x'] * 10 , $this->conf['scalebar']['y'] * 10, 10, 2, 'FD');
+        $pdf->SetFillColor(255, 255, 255);
+        $pdf->Rect($this->conf['scalebar']['x'] * 10 + 10 , $this->conf['scalebar']['y'] * 10, 10, 2, 'FD');
+        $pdf->SetFillColor(0,0,0);
+        $pdf->Rect($this->conf['scalebar']['x'] * 10 + 20  , $this->conf['scalebar']['y'] * 10, 10, 2, 'FD');
+        $pdf->SetFillColor(255, 255, 255);
+        $pdf->Rect($this->conf['scalebar']['x'] * 10 + 30 , $this->conf['scalebar']['y'] * 10, 10, 2, 'FD');
+        $pdf->SetFillColor(0,0,0);
+        $pdf->Rect($this->conf['scalebar']['x'] * 10 + 40  , $this->conf['scalebar']['y'] * 10, 10, 2, 'FD');
     }
     
     private function drawFeatures()
