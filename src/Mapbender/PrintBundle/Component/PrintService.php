@@ -43,7 +43,7 @@ class PrintService
         } else {
             $this->rotate();
         }
-        $this->buildPdf();
+        return $this->buildPdf();
     }
 
     /**
@@ -427,7 +427,7 @@ class PrintService
      */
     private function buildPdf()
     {
-        require('PDF_ImageAlpha.php');
+        require_once('PDF_ImageAlpha.php');
         $tempdir = $this->tempdir;
         $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $format = $this->data['format'];
@@ -529,11 +529,7 @@ class PrintService
         
         unlink($this->finalimagename);
         
-        if (null != $this->data['file_prefix']) {
-            $pdf->Output($this->data['file_prefix'] . '.pdf', 'D'); //file output
-        } else {
-            $pdf->Output();
-        }
+        return $pdf->Output(null, 'S');
     }
 
     /**
