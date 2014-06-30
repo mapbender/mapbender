@@ -28,7 +28,7 @@ class PrintService
      */
     public function doPrint($content)
     {   
-        $this->data = json_decode($content, true);
+        $this->data = $content;
         $template = $this->data['template'];
 
         $this->getTemplateConf($template);
