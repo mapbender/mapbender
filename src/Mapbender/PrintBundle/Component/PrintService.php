@@ -28,7 +28,7 @@ class PrintService
      */
     public function doPrint($content)
     {   
-        $this->data = json_decode($content, true);
+        $this->data = $content;
         $template = $this->data['template'];
 
         $this->getTemplateConf($template);
@@ -244,15 +244,15 @@ class PrintService
         imagefilledrectangle($finalImage, 0, 0, $this->image_width,
             $this->image_height, $bg);
         foreach ($temp_names as $temp_name) {
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
+            // Note: suppressing the errors IS bad, bad PHP wants us to do it that way
+            $src = @imagecreatefrompng($temp_name);
+            // Check that imagecreatefrompng did yield something
+            if ($src) {
                 $dest = $finalImage;
-                $src = imagecreatefrompng($temp_name);
                 imagecopy($dest, $src, 0, 0, 0, 0, $this->image_width, $this->image_height);
                 imagepng($dest, $finalimagename);
                 unlink($temp_name);
             }
-            finfo_close($finfo);
         }
     }
 
@@ -378,16 +378,16 @@ class PrintService
             $neededImageHeight, $bg);
         imagepng($finalImage, $tempimagename);
         foreach ($temp_names as $temp_name) {
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
+            // Note: suppressing the errors IS bad, bad PHP wants us to do it that way
+            $src = @imagecreatefrompng($temp_name);
+            // Check that imagecreatefrompng did yield something
+            if ($src) {
                 $dest = imagecreatefrompng($tempimagename);
-                $src = imagecreatefrompng($temp_name);
                 imagecopy($dest, $src, 0, 0, 0, 0, $neededImageWidth,
                     $neededImageHeight);
                 imagepng($dest, $tempimagename);
                 unlink($temp_name);
             }
-            finfo_close($finfo);
         }
 
         //rotate image
@@ -650,8 +650,10 @@ class PrintService
             $ov_image_height, $bg);
         imagepng($finalImage, $finalimagename);
         foreach ($temp_names as $temp_name) {
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if (is_file($temp_name) && finfo_file($finfo, $temp_name) == 'image/png') {
+            // Note: suppressing the errors IS bad, bad PHP wants us to do it that way
+            $src = @imagecreatefrompng($temp_name);
+            // Check that imagecreatefrompng did yield something
+            if ($src) {
                 $dest = imagecreatefrompng($finalimagename);
                 $src = imagecreatefrompng($temp_name);
                 imagecopy($dest, $src, 0, 0, 0, 0, $ov_image_width,
@@ -659,7 +661,6 @@ class PrintService
                 imagepng($dest, $finalimagename);
             }
             unlink($temp_name);
-            finfo_close($finfo);
         }       
         
         $image = imagecreatefrompng($finalimagename);             

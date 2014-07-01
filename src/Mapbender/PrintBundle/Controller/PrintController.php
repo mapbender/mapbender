@@ -18,7 +18,7 @@ class PrintController extends Controller
     public function serviceAction()
     {
         $content = $this->get('request')->getContent();
-        $data = json_decode($data);
+        $data = json_decode($content, true);
 
         $filename = 'mapbender_print.pdf';
         if(array_key_exists('file_prefix', $data) &&
@@ -32,7 +32,7 @@ class PrintController extends Controller
 
         $displayInline = true;
 
-        $reponse = new Response($printservice->doPrint($content), 200, array(
+        $response = new Response($printservice->doPrint($data), 200, array(
             'Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
             'Content-Disposition' => 'attachment; filename=' . $filename
         ));
