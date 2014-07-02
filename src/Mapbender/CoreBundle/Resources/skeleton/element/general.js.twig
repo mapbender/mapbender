@@ -8,7 +8,7 @@ $.widget("mapbender.mb{{ widgetName }}", {
     _create: function() {
         var self = this;
         var me = $(this.element);
-        this.elementUrl = Mapbender.configuration.elementPath + me.attr('id') + '/';
+        this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
     },
 
     _destroy: $.noop

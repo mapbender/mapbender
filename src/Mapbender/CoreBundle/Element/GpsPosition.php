@@ -5,7 +5,7 @@ namespace Mapbender\CoreBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 
 /**
- * 
+ *
  */
 class GpsPosition extends Element
 {
@@ -58,7 +58,7 @@ class GpsPosition extends Element
     {
         return 'Mapbender\CoreBundle\Element\Type\GpsPositionAdminType';
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -70,9 +70,10 @@ class GpsPosition extends Element
             'autoStart' => false,
             'target' => null,
             'icon' => null,
-            'refreshinterval' => '5000');
+            'refreshinterval' => '5000',
+            'follow' => false);
     }
-    
+
     /**
      * @inheritdoc
      */

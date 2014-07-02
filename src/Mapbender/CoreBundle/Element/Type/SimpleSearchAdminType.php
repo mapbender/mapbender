@@ -41,6 +41,14 @@ class SimpleSearchAdminType extends AbstractType
                 'label' => 'Query key format',
                 'property_path' => '[query_format]',
                 'required' => true))
+            ->add('token_regex_in', 'text', array(
+                'label' => 'Token search (JavaScript regex)',
+                'property_path' => '[token_regex_in]',
+                'required' => false))
+            ->add('token_regex_out', 'text', array(
+                'label' => 'Token replace (JavaScript regex)',
+                'property_path' => '[token_regex_out]',
+                'required' => false))
             ->add('collection_path', 'text', array(
                 'property_path' => '[collection_path]',
                 'required' => false))

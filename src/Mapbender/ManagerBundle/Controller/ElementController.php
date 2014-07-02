@@ -33,9 +33,32 @@ class ElementController extends Controller
      */
     public function selectAction($slug)
     {
-        $trans = $this->container->get('translator');
-        $elements = array();
-        foreach ($this->get('mapbender')->getElements() as $elementClassName) {
+        $application = $this->get('mapbender')->getApplicationEntity($slug);
+        $template    = $application->getTemplate();
+        $region      = $this->get('request')->get('region');
+        $whitelist   = null;
+        $classNames  = null;
+
+        //
+        // It's a quick solution for the Responsive template
+        // Each template should have a whitelist
+        //
+        if($template::getTitle() === 'Responsive'){
+            $whitelist = $template::getElementWhitelist();
+            $whitelist = $whitelist[$region];
+        }
+
+        $trans      = $this->container->get('translator');
+        $elements   = array();
+
+        //
+        // Get only the class names from the whitelist elements, otherwise
+        // get them all
+        //
+        $classNames = ($whitelist) ? $whitelist
+                                   : $this->get('mapbender')->getElements();
+
+        foreach ($classNames as $elementClassName) {
             $title = $trans->trans($elementClassName::getClassTitle());
             $tags = array();
             foreach ($elementClassName::getClassTags() as $tag) {
@@ -47,10 +70,12 @@ class ElementController extends Controller
                 'description' => $trans->trans($elementClassName::getClassDescription()),
                 'tags' => $tags);
         }
+
         ksort($elements, SORT_LOCALE_STRING);
         return array(
             'elements' => $elements,
-            'region' => $this->get('request')->get('region'));
+            'region' => $region,
+            'whitelist_exists' => ($whitelist !== null)); // whitelist_exists variable can be removed, if every template supports whitelists
     }
 
     /**

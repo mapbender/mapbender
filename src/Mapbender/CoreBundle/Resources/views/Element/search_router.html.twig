@@ -3,11 +3,17 @@
 
     <div class="search-forms" novalidate="novalidate">
         {% for form in element.forms %}
-            <form name="{{ form.getName() }}">
+            <form name="{{ form.getName() }}" autocomplete="off">
                 {{ form_widget(form.createView) }}
             </form>
         {% endfor %}
     </div>
     <div class="clear"></div>
     <div class="search-results"></div>
+    {%- if not element.configuration.asDialog %}
+    <div class="search-action-buttons">
+        <a href="#{{ element.id }}/button/reset" class="button right">{{ 'mb.core.searchrouter.popup.btn.reset' | trans }}</a>
+        <a href="#{{ element.id }}/button/ok" class="button right">{{ 'mb.core.searchrouter.popup.btn.ok' | trans }}</a>
+    </div>
+    {% endif -%}
 </div>

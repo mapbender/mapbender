@@ -51,6 +51,7 @@
 
             this.searchModel.on('request', this._setActive, this);
             this.searchModel.on('error sync', this._setInactive, this);
+            this.searchModel.on('error sync', this._showResultState, this);
 
             this.resultCallbackProxy = $.proxy(this._resultCallback, this);
 
@@ -90,6 +91,23 @@
                 $('#search_routes_route_control_group').hide()
                     .next('hr').hide();
             }
+
+            if(!this.options.asDialog) {
+                this.element.on('click', '.search-action-buttons a', function(event) {
+                    event.preventDefault();
+                    var target = $(event.target).attr('href');
+                    var targetBase = '#' + self.element.attr('id') + '/button/';
+                    switch(target) {
+                        case (targetBase + 'reset'):
+                            self._reset();
+                            break;
+                        case (targetBase + 'ok'):
+                            self._search();
+                            break;
+                    }
+                });
+            }
+
             this._trigger('ready');
             this._ready();
 
@@ -238,11 +256,12 @@
 
                 model.on('request', this._setActive, this);
                 model.on('sync', function(){
-                    response(model.get('results'));
+                    model.response(model.get('results'));
                 });
                 model.on('error', response([]));
             }
 
+            target.data('autocompleteModel').response = response;
             target.data('autocompleteModel').submit(target, request);
         },
 
@@ -351,11 +370,13 @@
             var headers = this.options.routes[this.selected].results.headers,
                 table = $('.search-results table', this.element),
                 tbody = $('<tbody></tbody>'),
-                layer = this._getLayer();
+                layer = this._getLayer(true);
 
             $('tbody', table).remove();
             layer.removeAllFeatures();
             features = [];
+
+            if(results.length > 0) $('.no-results', this.element).hide();
 
             results.each(function(feature, idx){
                 var row = $('<tr></tr>');
@@ -371,6 +392,26 @@
 
             table.append(tbody);
             layer.addFeatures(features);
+        },
+
+        _showResultState: function() {
+            var table = $('.search-results table', this.element);
+            var counter = $('.result-counter', this.element);
+
+            if(0 === counter.length) {
+                counter = $('<div></div>', {'class': 'result-counter'}).prependTo($('.search-results', this.element));
+            }
+
+            var results = this.searchModel.get('results');
+
+            if(results.length > 0) {
+                counter.text(Mapbender.trans('mb.core.searchrouter.result_counter', {
+                    count: results.length}));
+                table.show();
+            } else {
+                table.hide();
+                counter.text(Mapbender.trans('mb.core.searchrouter.no_results'));
+            }
         },
 
         /**
@@ -389,16 +430,30 @@
             outer.removeClass('search-active');
         },
 
+        _createStyleMap: function(styles, options) {
+            var o = _.defaults({}, options, {
+                extendDefault: true,
+                defaultBase: OpenLayers.Feature.Vector.style['default']
+            });
+            var s = styles || OpenLayers.Feature.Vector.style;
+
+            _.defaults(s['default'], o.defaultBase);
+
+            return new OpenLayers.StyleMap(s, {
+                extendDefault: o.extendDefault
+            });
+        },
+
         /**
          * Get highlight layer. Will construct one if neccessary.
          * @TODO: Backbonify (view)
          *
          * @return OpenLayers.Layer.Vector Highlight layer
          */
-        _getLayer: function(){
-            if(this.highlightLayer === null){
+        _getLayer: function(forceRebuild){
+            if(this.highlightLayer === null || forceRebuild){
                 this.highlightLayer = new OpenLayers.Layer.Vector('Search Highlight', {
-                    styleMap: new OpenLayers.StyleMap(this.options.style)
+                    styleMap: this._createStyleMap(this.options.routes[this.selected].results.styleMap)
                 });
             }
 

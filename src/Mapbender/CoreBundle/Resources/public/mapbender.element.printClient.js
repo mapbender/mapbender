@@ -33,7 +33,14 @@
 
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
-
+            
+            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
+                .on('change', $.proxy(this._updateGeometry, this));
+            $('input[name="scale_text"], input[name="rotation"]', this.element)
+                .on('keyup', $.proxy(this._updateGeometry, this));
+            $('select[name="template"]', this.element)
+                .on('change', $.proxy(this._getPrintSize, this));
+            
             this._trigger('ready');
             this._ready();
         },
@@ -82,22 +89,12 @@
                     this.popup.open(self.element);
                  }
             }
-
-
             me.show();
-
-            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
-            .bind('change', $.proxy(this._updateGeometry, this));
-            $('input[name="scale_text"], input[name="rotation"]', this.element)
-            .bind('keyup', $.proxy(this._updateGeometry, this));
-            $('select[name="template"]', this.element)
-            .bind('change', $.proxy(this._getPrintSize, this))
-            .trigger('change');
-
             this.popupIsOpen = true;
+            this._getPrintSize();
             this._loadPrintFormats();
             this._updateElements();
-            //this._updateGeometry(true);
+            this._updateGeometry(true);
         },
 
         close: function() {
@@ -115,46 +112,13 @@
 
         _loadPrintFormats: function() {
             var self = this;
-            var count = 0;
-            var quality_levels = this.options.quality_levels;
-            var quality = $('select[name="quality"]', this.element);
-            var list = quality.siblings(".dropdownList");
-            var valueContainer = quality.siblings(".dropdownValue");
-            list.empty();
-            quality.empty();
-            if (null === quality_levels){
-                quality.parent().hide();
-            } else {
-                for(key in quality_levels) {
-                    quality.append($('<option></option>', {
-                        'value': key,
-                        'html': quality_levels[key],
-                        'class': "opt-" + count
-                    }));
-                    list.append($('<li></li>', {
-                        'html': quality_levels[key],
-                        'class': "item-" + count
-                    }));
-
-                    if(count == 0){
-                        valueContainer.text(quality_levels[key]);
-                    }
-
-                    count++;
-                }
-                if(count < 2) {
-                    quality.parent().hide();
-                } else {
-                    quality.parent().show();
-                }
-            }
 
             var scale_text = $('input[name="scale_text"]', this.element),
             scale_select = $('select[name="scale_select"]', this.element);
-            list = scale_select.siblings(".dropdownList");
+            var list = scale_select.siblings(".dropdownList");
             list.empty();
             var valueContainer = scale_select.siblings(".dropdownValue");
-            count = 0;
+            var count = 0;
             if(null === this.options.scales) {
                 var scale = 5000;
                 scale_text.val(scale).parent().show();
@@ -245,6 +209,10 @@
                 scale = this._getPrintScale(),
                 rotationField = $('input[name="rotation"]');
                 
+            // remove all not numbers from input
+            rotationField.val(rotationField.val().replace(/[^\d]+/,''));
+                
+                
             if (rotationField.val() === '' && this.rotateValue > '0'){
                 rotationField.val('0');
             }
@@ -263,7 +231,7 @@
                 if(null !== this.lastRotation) {
                     $('input[name="rotation"]').val(this.lastRotation).change();
                 }
-                return;
+                //return;
             }
             rotation= parseInt(-rotation);
 
@@ -584,7 +552,7 @@
 
         _getPrintSize: function() {
             var self = this;
-            var template = $('select[name="template"]', this.element).val();
+            var template = $('select[name="template"]', this.element).val(),
             data = {
                 template: template
             };

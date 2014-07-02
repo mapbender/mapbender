@@ -11,12 +11,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class Template
 {
-
     protected $container;
     protected $application;
 
+    /** @var string Bundle public resource path */
+    private static $resourcePath;
+
+
     public function __construct(ContainerInterface $container, Application $application)
     {
+        self::$resourcePath     = '@'. $this->getBundleName().'/Resources/public';
         $this->container = $container;
         $this->application = $application;
     }
@@ -102,5 +106,23 @@ abstract class Template
         return array();
     }
 
+    /**
+     * Get template bundle name
+     *
+     * @return string Bundle name
+     */
+    public function getBundleName() {
+        $reflection = new \ReflectionClass(get_class($this));
+        return preg_replace('/\\\\|Template$/', '', $reflection->getNamespaceName());
+    }
+
+    /**
+     * Get resource path
+     *
+     * @return string
+     */
+    public static function getResourcePath() {
+        return self::$resourcePath;
+    }
 }
 

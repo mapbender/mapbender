@@ -29,10 +29,14 @@ $searchRouterInputWidth:290px;
   td{padding-right:$space/2;}
   tr{@extend .linkButton}
   .search-forms > form > div > div {clear:both;} // the ugly and unflexible way
+
+  .result-counter {
+    text-align: right;
+  }
 }
 // dublicate ! > components
 .ui-autocomplete{
-  z-index: 1000;
+  z-index: 20000;
   background-color: #FFF;
   color:$secondColor;
   cursor:pointer;
