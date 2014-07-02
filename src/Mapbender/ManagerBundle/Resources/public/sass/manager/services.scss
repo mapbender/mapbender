@@ -125,13 +125,18 @@
   .dropdown{
     min-width:250px;
     margin-bottom:$space/2;
-  }
+  }      
   .checkWrapper, .labelCheck{
     display: inline-block;
     margin-top:8px;
     height:$inputHeight;
   }
   .leftContainer{margin-right:$space;}
+  .leftContainer .inputWrapper{
+    min-width:250px;
+    margin-bottom:$space/2;
+  }
+  .leftContainer .inputWrapper input{ width: 100%; }
 }
 .instanceTable{
   margin-top:$space;

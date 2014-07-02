@@ -35,6 +35,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class RepositoryController extends Controller
 {
+
     public static $WMS_DIR = "xml/wms";
 
     /**
@@ -94,7 +95,7 @@ class RepositoryController extends Controller
 
         $form = $this->get("form.factory")->create(new WmsSourceSimpleType(), $wmssource_req);
         $form->bindRequest($request);
-        $validate = $form->get('validate')->getData();
+        $onlyvalid = $form->get('onlyvalid')->getData();
         if ($form->isValid()) {
             $purl = parse_url($wmssource_req->getOriginUrl());
             if (!isset($purl['scheme']) || !isset($purl['host'])) {
@@ -104,8 +105,7 @@ class RepositoryController extends Controller
                             "mapbender_manager_repository_new", array(), true));
             }
             $proxy_config = $this->container->getParameter("owsproxy.proxy");
-            $proxy_query = ProxyQuery::createFromUrl(trim($wmssource_req->getOriginUrl()),
-                    $wmssource_req->getUsername(), $wmssource_req->getPassword());
+            $proxy_query = ProxyQuery::createFromUrl(trim($wmssource_req->getOriginUrl()), $wmssource_req->getUsername(), $wmssource_req->getPassword());
             if ($proxy_query->getGetPostParamValue("request", true) === null) {
                 $proxy_query->addQueryParameter("request", "GetCapabilities");
             }
@@ -120,12 +120,27 @@ class RepositoryController extends Controller
                 $browserResponse = $proxy->handle();
                 $content = $browserResponse->getContent();
                 $doc = WmsCapabilitiesParser::createDocument($content);
-                if ($validate === true) {
+                if ($onlyvalid === true) {
                     $validator = new XmlValidator($this->container, $proxy_config, "xmlschemas/");
                     $doc = $validator->validate($doc);
+                    $wmsParser = WmsCapabilitiesParser::getParser($doc);
+                    $wmssource = $wmsParser->parse();
+                    $wmssource->setValid(true);
+                } else {
+                    try {
+                        $validator = new XmlValidator($this->container, $proxy_config, "xmlschemas/");
+                        $doc = $validator->validate($doc);
+                        $wmsParser = WmsCapabilitiesParser::getParser($doc);
+                        $wmssource = $wmsParser->parse();
+                        $wmssource->setValid(true);
+                    } catch (\Exception $e) {
+                        $this->get("logger")->warn($e->getMessage());
+                        $this->get('session')->setFlash('warning', $e->getMessage());
+                        $wmsParser = WmsCapabilitiesParser::getParser($doc);
+                        $wmssource = $wmsParser->parse();
+                        $wmssource->setValid(false);
+                    }
                 }
-                $wmsParser = WmsCapabilitiesParser::getParser($doc);
-                $wmssource = $wmsParser->parse();
             } catch (\Exception $e) {
                 $this->get("logger")->err($e->getMessage());
                 $this->get('session')->setFlash('error', $e->getMessage());
@@ -136,8 +151,7 @@ class RepositoryController extends Controller
             if (!$wmssource) {
                 $this->get("logger")->err('Could not parse data for url "'
                     . $wmssource_req->getOriginUrl() . '"');
-                $this->get('session')->setFlash('error',
-                    'Could not parse data for url "'
+                $this->get('session')->setFlash('error', 'Could not parse data for url "'
                     . $wmssource_req->getOriginUrl() . '"');
                 return $this->redirect($this->generateUrl(
                             "mapbender_manager_repository_new", array(), true));
@@ -172,8 +186,7 @@ class RepositoryController extends Controller
 
             $this->get('session')->setFlash('success', "Your WMS has been created");
             return $this->redirect($this->generateUrl(
-                        "mapbender_manager_repository_view",
-                        array(
+                        "mapbender_manager_repository_view", array(
                         "sourceId" => $wmssource->getId()), true));
         }
 
@@ -402,8 +415,7 @@ class RepositoryController extends Controller
             ->find($instanceId);
         if (!$wmsinstance) {
             return new Response(json_encode(array(
-                    'error' => 'The wms instance with the id "' . $instanceId . '" does not exist.')), 200,
-                array('Content-Type' => 'application/json'));
+                    'error' => 'The wms instance with the id "' . $instanceId . '" does not exist.')), 200, array('Content-Type' => 'application/json'));
         } else {
             $enabled_before = $wmsinstance->getEnabled();
             $enabled = $enabled === "true" ? true : false;

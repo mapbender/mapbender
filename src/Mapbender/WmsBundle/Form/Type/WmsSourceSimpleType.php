@@ -26,7 +26,7 @@ class WmsSourceSimpleType extends AbstractType
     {
         $builder
             // Base data
-            ->add('validate', 'checkbox',
+            ->add('onlyvalid', 'checkbox',
                 array(
                 'mapped' => false,
                 'data' => true,

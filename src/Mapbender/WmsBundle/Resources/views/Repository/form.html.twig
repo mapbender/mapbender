@@ -1,7 +1,7 @@
 <fieldset class="serviceAddBox left box">
   <legend>{{"mb.wms.wmsloader.repo.form.label.ogcwms"|trans}}</legend>
   <form action="{{path('mapbender_manager_repository_create', {'managertype': form.vars.data.getManagertype()})}}" method="post" novalidate="novalidate">
-      {{ form_widget(form.validate) }}<label for="{{form.validate.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.form.label.validate"|trans}}</label>
+      {{ form_widget(form.onlyvalid) }}<label for="{{form.onlyvalid.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.form.label.onlyvalid"|trans}}</label>
       <div class="clearContainer"></div>
       <label class="left labelInput" for="{{ form.originUrl.get('id') }}">{{"mb.wms.wmsloader.repo.form.label.serviceurl" | trans}}</label>
       {{ form_widget(form.originUrl) }}

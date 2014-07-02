@@ -48,10 +48,11 @@ class WmsInstanceInstanceLayersType extends AbstractType
         {
             $formats[$value] = $value;
         }
-        $builder->add('format', 'choice',
-                      array(
-            'choices' => $formats,
-            'required' => true));
+        $builder->add('title', 'text', array(
+                'required' => true))
+            ->add('format', 'choice', array(
+                'choices' => $formats,
+                'required' => true));
         $gfi = $wmsinstance->getSource()->getGetFeatureInfo();
         $arr = $gfi && $gfi->getFormats() !== null ? $gfi->getFormats() : array();
         $formats_gfi = array();
