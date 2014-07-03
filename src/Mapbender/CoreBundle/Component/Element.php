@@ -434,11 +434,11 @@ abstract class Element
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
             $formAssets = array(
                 'js' => array(
-                    'bundles/mapbendermanager/codemirror2/lib/codemirror.js',
-                    'bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js',
+                    'bundles/mapbendermanager/codemirror/lib/codemirror.js',
+                    'bundles/mapbendermanager/codemirror/mode/yaml/yaml.js',
                     'bundles/mapbendermanager/js/form-yaml.js'),
                 'css' => array(
-                    'bundles/mapbendermanager/codemirror2/lib/codemirror.css'));
+                    'bundles/mapbendermanager/codemirror/lib/codemirror.css'));
         } else {
             $type = new $configurationFormType();
             $options = array('application' => $application);
