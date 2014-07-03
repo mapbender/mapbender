@@ -456,7 +456,7 @@
       </trans-unit>
       <trans-unit id="a4cef6a675aeeecd2599ae2801c72cc0" resname="mb.wms.wmsloader.repo.form.label.onlyvalid">
         <source>mb.wms.wmsloader.repo.form.label.onlyvalid</source>
-        <target>Nur valide</target>
+        <target>Nur valid</target>
       </trans-unit>
       <trans-unit id="62be339a16eb03f936fbf6f412dc717a" resname="mb.wms.wmsloader.repo.form.label.serviceurl">
         <source>mb.wms.wmsloader.repo.form.label.serviceurl</source>
