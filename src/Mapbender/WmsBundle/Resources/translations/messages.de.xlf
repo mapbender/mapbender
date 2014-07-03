@@ -454,7 +454,7 @@
         <source>mb.wms.wmsloader.repo.form.label.ogcwms</source>
         <target>OGC WMS</target>
       </trans-unit>
-      <trans-unit id="4befb8858096af62c683845b37f5f535" resname="mb.wms.wmsloader.repo.form.label.onlyvalid">
+      <trans-unit id="a4cef6a675aeeecd2599ae2801c72cc0" resname="mb.wms.wmsloader.repo.form.label.onlyvalid">
         <source>mb.wms.wmsloader.repo.form.label.onlyvalid</source>
         <target>Nur valide</target>
       </trans-unit>
