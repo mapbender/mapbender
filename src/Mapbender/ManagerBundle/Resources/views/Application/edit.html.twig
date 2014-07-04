@@ -5,6 +5,7 @@
 {% block css %}
   {{parent()}}
     <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/codemirror/lib/codemirror.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/codemirror/theme/neo.css') }}"/>
   {% stylesheets filter="compass,cssrewrite"
     "bundles/mapbendermanager/sass/manager/applications.scss"
     "bundles/fomuser/sass/user/user_control.scss"
@@ -32,6 +33,11 @@
 
 {% block js %}
   {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/lib/codemirror.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/mode/css/css.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/keymap/sublime.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/addon/selection/active-line.js') }}"></script>
+
   <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-edit.js') }}"></script>
 {% endblock %}
@@ -44,6 +50,7 @@
         <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.edit.base_data" | trans }}</li>
         <li id="tabLayout" class="tab">{{"mb.manager.admin.application.layouts" | trans }}</li>
         <li id="tabLayers" class="tab">{{"mb.manager.admin.application.layersets" | trans }}</li>
+        <li id="tabCustomCss" class="tab">{{"mb.manager.admin.application.custom_css" | trans }}</li>
         <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData">
@@ -54,6 +61,9 @@
       </div>
       <div id="containerLayers" class="container containerLayers">
         {% include 'MapbenderManagerBundle:Application:form-layersets.html.twig' %}
+      </div>
+      <div id="containerCustomCss" class="container containerCustomCss">
+        {% include 'MapbenderManagerBundle:Application:form-css.html.twig' %}
       </div>
       <div id="containerSecurity" class="container containerSecurity">
         {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}

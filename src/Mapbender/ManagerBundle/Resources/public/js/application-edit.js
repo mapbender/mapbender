@@ -648,4 +648,25 @@ $(function() {
         });
     });
 
+    // Custom CSS editor
+    (function($) {
+        var textarea = $('#application_custom_css');
+        codeMirror = CodeMirror.fromTextArea(textarea[0], {
+            mode: 'css',
+            keyMap: 'sublime',
+            styleActiveLine: true,
+            matchBrackets: true,
+            lineNumbers: true,
+            theme: 'neo'
+        });
+
+        codeMirror.on('change', function() {
+            codeMirror.save();
+        });
+
+        $('#tabCustomCss').on('click', function() {
+            codeMirror.refresh();
+            codeMirror.focus();
+        });
+    })(jQuery)
 });

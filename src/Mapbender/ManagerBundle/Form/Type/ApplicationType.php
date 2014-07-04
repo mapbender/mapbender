@@ -60,6 +60,8 @@ class ApplicationType extends AbstractType
                 )
 //                'choices' => $options['available_templates'],
             ))
+            ->add('custom_css', 'textarea', array(
+                'required' => false))
 
             // Security
             ->add('published', 'checkbox',
