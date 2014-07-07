@@ -221,14 +221,18 @@ $(function() {
                     label: Mapbender.trans("mb.manager.components.popup.add_element.btn.cancel"),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
-                        popup.close();
+                        console.log("XXX");
+                        $("#elementForm").data('dirty', false);
+                        this.close();
                     }
                 },
                 'ok': {
                     label: Mapbender.trans("mb.manager.components.popup.add_element.btn.ok"),
                     cssClass: 'button buttonYes right',
                     callback: function() {
-                       $("#elementForm").submit();
+                       $("#elementForm")
+                        .data('dirty', false)
+                        .submit();
                        return false;
                     }
                 },
@@ -236,6 +240,7 @@ $(function() {
                     label: Mapbender.trans("mb.manager.components.popup.add_element.btn.back"),
                     cssClass: 'button left buttonBack',
                     callback: function() {
+                        $("#elementForm").data('dirty', false);
                         $(".popupSubContent").remove();
                         $(".popupSubTitle").text("");
                         $(".popup").find(".buttonYes, .buttonBack").hide();
@@ -245,6 +250,18 @@ $(function() {
             }
         });
 
+        var onChange = function(event) {
+            $('#elementForm', popup.$element).data('dirty', true);
+            popup.$element.off('change', onChange);
+        };
+        popup.$element.on('change', onChange);
+        popup.$element.on('close', function(event, token) {
+            if(true === $('#elementForm', popup.$element).data('dirty')) {
+                if(!confirm('Ignore Changes?')) {
+                    token.cancel = true;
+                }
+            }
+        });
         return false;
     });
 
@@ -275,6 +292,7 @@ $(function() {
                     label: Mapbender.trans("mb.manager.components.popup.edit_element.btn.cancel"),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
+                        $("#elementForm").data('dirty', false);
                         this.close();
                     }
                 },
@@ -282,11 +300,26 @@ $(function() {
                     label: Mapbender.trans("mb.manager.components.popup.edit_element.btn.ok"),
                     cssClass: 'button right',
                     callback: function() {
-                        $("#elementForm").submit();
+                        $("#elementForm")
+                            .data('dirty', false)
+                            .submit();
                         window.setTimeout(function() {
                             window.location.reload();
                         }, 50);
                     }
+                }
+            }
+        });
+
+        var onChange = function(event) {
+            $('#elementForm', popup.$element).data('dirty', true);
+            popup.$element.off('change', onChange);
+        };
+        popup.$element.on('change', onChange);
+        popup.$element.on('close', function(event, token) {
+            if(true === $('#elementForm', popup.$element).data('dirty')) {
+                if(!confirm('Ignore Changes?')) {
+                    token.cancel = true;
                 }
             }
         });
