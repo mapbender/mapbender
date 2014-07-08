@@ -14,7 +14,7 @@ before_script:
   - cd ..
   - git clone https://github.com/mapbender/mapbender-starter
   - cd mapbender-starter
-  - git checkout feature/testing
+  - git checkout develop
   - if (test $TRAVIS_PULL_REQUEST = false) then git checkout $TRAVIS_BRANCH; fi
   - git submodule update --init --recursive
   - cd application
