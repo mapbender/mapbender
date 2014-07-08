@@ -299,6 +299,7 @@ class RepositoryController extends Controller
                                 $layer_tmp->getInfo(), true));
                         $layer->setAllowinfo(Utils::getBool(
                                 $layer_tmp->getAllowinfo(), true));
+                        $layer->setPriority($layer_tmp->getPriority());
                         break;
                     }
                 }
