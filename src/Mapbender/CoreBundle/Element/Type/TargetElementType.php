@@ -129,7 +129,7 @@ class TargetElementType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $entityManager = $this->container->get('doctrine')->getEntityManager();
+        $entityManager = $this->container->get('doctrine')->getManager();
         $transformer = new ElementIdTransformer($entityManager);
         $builder->addModelTransformer($transformer);
     }

@@ -9,9 +9,8 @@ use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
  *   Tests the WmsCapabilitiesParser. Note that te tests are coupled to the testdata somewhaty tightly. This is on purpose
  *   to keep the tests simple
  */
-class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase {
-
-
+class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase
+{
     public function testMinimal(){
 
         $keyword = new Mapbender\CoreBundle\Entity\Keyword();
@@ -32,7 +31,7 @@ class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testMinimalInvalidNoName(){
-        // names are important but if they are missing they should not cause problems 
+        // names are important but if they are missing they should not cause problems
         $data = file_get_contents((dirname(__FILE__) ."/testdata/wms-1.1.1-getcapabilities.minimalinvalid.noname.xml"));
         $doc = WmsCapabilitiesParser::createDocument($data);
         $parser  = WmsCapabilitiesParser::getParser($doc);
@@ -53,8 +52,8 @@ class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(1,$wms->getLayers()->count());
 
         $rootLayer = $wms->getRootLayer();
-        $this->assertSame("The Title",$rootLayer->getTitle(),"Root layer title irsd wrong"); 
-        $this->assertSame("TheLayer",$rootLayer->getName(), "Root Layer Name is wrong"); 
+        $this->assertSame("The Title",$rootLayer->getTitle(),"Root layer title irsd wrong");
+        $this->assertSame("TheLayer",$rootLayer->getName(), "Root Layer Name is wrong");
         $this->assertSame("A Layerabstract",$rootLayer->getAbstract(),"Root Layer abstract is wrong" );
         # The root layer itself has no sublayers
         $this->assertEquals(0,$rootLayer->getSublayer()->count(), "Root Layer does not have 0 sub layers");
@@ -81,5 +80,5 @@ class WmsCapabilitiesParserTest extends PHPUnit_Framework_TestCase {
         $strbb = $bb->getMinx()." ".$bb->getMiny()." ".$bb->getMaxx()." ".$bb->getMaxy();
         $this->assertEquals("-10.4 35.7 -180 180",$strbb);
     }
-    
+
 }

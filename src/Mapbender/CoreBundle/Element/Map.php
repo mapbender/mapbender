@@ -74,6 +74,7 @@ class Map extends Element
         return array(
             'js' => array(
                 'mapquery/lib/openlayers/OpenLayers.js',
+                /* 'mapquery/lib/openlayers/lib/deprecated.js', */
                 'mapquery/lib/jquery/jquery.tmpl.js',
                 'mapquery/src/jquery.mapquery.core.js',
                 'proj4js/proj4js-compressed.js',
@@ -282,7 +283,7 @@ class Map extends Element
             foreach ($srsNames as $srsName) {
                 $names[] = $srsName['name'];
             }
-            $em = $this->container->get("doctrine")->getEntityManager();
+            $em = $this->container->get("doctrine")->getManager();
             $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
                     . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
                 ->setParameter('name', $names);

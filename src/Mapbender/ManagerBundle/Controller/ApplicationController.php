@@ -99,10 +99,10 @@ class ApplicationController extends Controller
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
 
-        $form->bindRequest($request);
+        $form->bind($request);
         if ($form->isValid()) {
             $application->setUpdated(new \DateTime('now'));
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
 
             $em->getConnection()->beginTransaction();
             $em->persist($application);
@@ -131,10 +131,10 @@ class ApplicationController extends Controller
 
             $em->getConnection()->commit();
             if ($this->createApplicationDir($application->getSlug())) {
-                $this->get('session')->setFlash('success',
+                $this->get('session')->getFlashBag()->set('success',
                     'Your application has been saved.');
             } else {
-                $this->get('session')->setFlash('error',
+                $this->get('session')->getFlashBag()->set('error',
                     "Your application has been saved but"
                     . " the application's can not be created.");
             }
@@ -164,7 +164,7 @@ class ApplicationController extends Controller
         $this->checkGranted('EDIT', $application);
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         // add RegionProperties if defined
         foreach ($templateProps as $regionName => $regionProps) {
             $exists = false;
@@ -191,7 +191,7 @@ class ApplicationController extends Controller
         }
         $form = $this->createApplicationForm($application);
 
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
@@ -223,9 +223,9 @@ class ApplicationController extends Controller
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
 
-        $form->bindRequest($request);
+        $form->bind($request);
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
 
             $em->getConnection()->beginTransaction();
             $application->setUpdated(new \DateTime('now'));
@@ -248,15 +248,15 @@ class ApplicationController extends Controller
                 if ($this->createApplicationDir($application->getSlug(),
                         $old_slug)) {
 
-                    $this->get('session')->setFlash('success',
+                    $this->get('session')->getFlashBag()->set('success',
                         'Your application has been updated.');
                 } else {
-                    $this->get('session')->setFlash('error',
+                    $this->get('session')->getFlashBag()->set('error',
                         "Your application has been updated but"
                         . " the application's directories can not be created.");
                 }
             } catch (\Exception $e) {
-                $this->get('session')->setFlash('error',
+                $this->get('session')->getFlashBag()->set('error',
                     'There was an error trying to save your application.');
                 $em->getConnection()->rollback();
                 $em->close();
@@ -289,7 +289,7 @@ class ApplicationController extends Controller
         }
 
         $templateClass = $application->getTemplate();
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
@@ -339,10 +339,10 @@ class ApplicationController extends Controller
         $form = $this->createForm(new ApplicationCopyType(), $test);
         $request = $this->getRequest();
 
-        $form->bindRequest($request);
+        $form->bind($request);
         if ($form->isValid()) {
             $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $em->getConnection()->beginTransaction();
             $cloned = $tocopy->copy($this->container, $em);
             $cloned->setSlug($test->getSlug());
@@ -352,10 +352,10 @@ class ApplicationController extends Controller
             $em->flush();
             $em->getConnection()->commit();
             if ($this->createApplicationDir($cloned->getSlug())) {
-                $this->get('session')->setFlash('success',
+                $this->get('session')->getFlashBag()->set('success',
                     'Your application has been copied.');
             } else {
-                $this->get('session')->setFlash('error',
+                $this->get('session')->getFlashBag()->set('error',
                     "Your application has been copied but"
                     . " the application's directories can not be created.");
             }
@@ -379,7 +379,7 @@ class ApplicationController extends Controller
         // ACL access check
         $this->checkGranted('CREATE', $tocopy);
         $newslug = $this->generateSlug($slug);
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
         $cloned = $tocopy->copy($this->container, $em);
         $cloned->setSlug($newslug);
@@ -389,10 +389,10 @@ class ApplicationController extends Controller
         $em->flush();
         $em->getConnection()->commit();
         if ($this->createApplicationDir($cloned->getSlug())) {
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 'Your application has been copied.');
         } else {
-            $this->get('session')->setFlash('error',
+            $this->get('session')->getFlashBag()->set('error',
                 "Your application has been copied but"
                 . " the application's directories can not be created.");
         }
@@ -413,7 +413,7 @@ class ApplicationController extends Controller
         // ACL access check
         $this->checkGranted('EDIT', $application);
 
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
         $requestedState = $this->get('request')->get('state');
         $currentState = $application->isPublished();
@@ -454,7 +454,7 @@ class ApplicationController extends Controller
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         if ($application === null) {
-            $this->get('session')->setFlash('error',
+            $this->get('session')->getFlashBag()->set('error',
                 'Your application has been already deleted.');
             return $this->redirect(
                     $this->generateUrl('mapbender_manager_application_index'));
@@ -483,7 +483,7 @@ class ApplicationController extends Controller
         $this->checkGranted('DELETE', $application);
 
         try {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $aclProvider = $this->get('security.acl.provider');
             $em->getConnection()->beginTransaction();
             $oid = ObjectIdentity::fromDomainObject($application);
@@ -492,15 +492,15 @@ class ApplicationController extends Controller
             $em->flush();
             $em->commit();
             if ($this->removeApplicationDir($slug)) {
-                $this->get('session')->setFlash('success',
+                $this->get('session')->getFlashBag()->set('success',
                     'Your application has been deleted.');
             } else {
-                $this->get('session')->setFlash('error',
+                $this->get('session')->getFlashBag()->set('error',
                     "Your application has been deleted"
                     . " but the application's directories can not be removed.");
             }
         } catch (Exception $e) {
-            $this->get('session')->setFlash('error',
+            $this->get('session')->getFlashBag()->set('error',
                 'Your application couldn\'t be deleted.');
         }
 
@@ -578,18 +578,18 @@ class ApplicationController extends Controller
                 ->find($layersetId);
             $form = $this->createForm(new LayersetType(), $layerset);
         }
-        $form->bindRequest($this->get('request'));
+        $form->bind($this->get('request'));
         if ($form->isValid()) {
-            $this->getDoctrine()->getEntityManager()->persist($layerset);
-            $this->getDoctrine()->getEntityManager()->flush();
+            $this->getDoctrine()->getManager()->persist($layerset);
+            $this->getDoctrine()->getManager()->flush();
             $this->get("logger")->debug("Layerset saved");
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 "Your layerset has been saved");
             return $this->redirect($this->generateUrl(
                         'mapbender_manager_application_edit',
                         array('slug' => $slug)));
         }
-        $this->get('session')->setFlash('error',
+        $this->get('session')->getFlashBag()->set('error',
             'Layerset title is already used.');
         return $this->redirect($this->generateUrl(
                     'mapbender_manager_application_edit', array('slug' => $slug)));
@@ -630,7 +630,7 @@ class ApplicationController extends Controller
             ->getRepository("MapbenderCoreBundle:Layerset")
             ->find($layersetId);
         if ($layerset !== null) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
 
             $em->getConnection()->beginTransaction();
 
@@ -640,13 +640,13 @@ class ApplicationController extends Controller
 
             $this->get("logger")->debug('The layerset "'
                 . $layerset->getId() . '"has been deleted.');
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 'Your layerset has been deleted.');
             return $this->redirect($this->generateUrl(
                         'mapbender_manager_application_edit',
                         array('slug' => $slug)) . "#layersets");
         }
-        $this->get('session')->setFlash('error',
+        $this->get('session')->getFlashBag()->set('error',
             'Your layerset con not be delete.');
         return $this->redirect($this->generateUrl(
                     'mapbender_manager_application_edit', array('slug' => $slug)) . "#layersets");
@@ -673,7 +673,7 @@ class ApplicationController extends Controller
             ->find($layersetId);
 
         $securityContext = $this->get('security.context');
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
@@ -716,7 +716,7 @@ class ApplicationController extends Controller
         $sourceInstance->setWeight(-1);
 
         $layerset->addInstance($sourceInstance);
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $em->persist($sourceInstance);
         $em->persist($application);
         $em->persist($layerset);
@@ -733,7 +733,7 @@ class ApplicationController extends Controller
 
         $this->get("logger")->debug('A new instance "'
             . $sourceInstance->getId() . '"has been created. Please edit it!');
-        $this->get('session')->setFlash('success',
+        $this->get('session')->getFlashBag()->set('success',
             'A new instance has been created. Please edit it!');
         return $this->redirect(
                 $this->generateUrl(
@@ -783,6 +783,7 @@ class ApplicationController extends Controller
             $templateClassName = $application->getTemplate();
             $available_properties = $templateClassName::getRegionsProperties();
         }
+
         return $this->createForm(new ApplicationType(), $application,
                 array(
                 'available_templates' => $available_templates,
@@ -856,8 +857,8 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Creates or checks if the application's directories are created or exist. 
-     * 
+     * Creates or checks if the application's directories are created or exist.
+     *
      * @param string $slug application's slug
      * @param type $old_slug the old application's slug (to rename)
      * @return boolean true if the application's directories are created or
@@ -898,7 +899,7 @@ class ApplicationController extends Controller
 
     /**
      * Removes all application's directories with content
-     * 
+     *
      * @param string $slug application slug
      * @return boolean true if the directories are removed or not exist otherwise false
      */

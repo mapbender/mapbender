@@ -160,7 +160,7 @@ class WmcEditor extends Element
             ->find($wmcid);
         $oldenabled = $wmc->getPublic() ? "enabled" : "disabled";
         $wmc->setPublic($enabled === "enabled" ? true : false);
-        $em = $this->container->get('doctrine')->getEntityManager();
+        $em = $this->container->get('doctrine')->getManager();
         $em->persist($wmc);
         $em->flush();
         return new Response(json_encode(array(
@@ -256,14 +256,14 @@ class WmcEditor extends Element
         $wmc = Wmc::create();
         $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
         if ($request->getMethod() === 'POST') {
-            $form->bindRequest($request);
+            $form->bind($request);
             if ($form->isValid()) { //TODO: Is file an image (jpg/png/gif?)
                 if ($wmc->getId() !== null) {
                     $wmc = $this->container->get('doctrine')
                         ->getRepository('Mapbender\WmcBundle\Entity\Wmc')
                         ->find($wmc->getId());
                     $form = $this->container->get("form.factory")->create(new WmcType(), $wmc);
-                    $form->bindRequest($request);
+                    $form->bind($request);
                     if (!$form->isValid()) {
                         return new Response(json_encode(array(
                                 "error" => $this->trans("mb.wmc.error.wmcnotfound",
@@ -272,7 +272,7 @@ class WmcEditor extends Element
                     }
                 }
                 $wmc->setState($wmchandler->unSignUrls($wmc->getState()));
-                $em = $this->container->get('doctrine')->getEntityManager();
+                $em = $this->container->get('doctrine')->getManager();
                 $em->getConnection()->beginTransaction();
                 $em->persist($wmc);
                 $em->flush();
@@ -348,12 +348,12 @@ class WmcEditor extends Element
         $wmc = Wmc::create();
         $form = $this->container->get("form.factory")->create(new WmcDeleteType(), $wmc);
         if ($this->container->get('request')->getMethod() === 'POST') {
-            $form->bindRequest($this->container->get('request'));
+            $form->bind($this->container->get('request'));
             if ($form->isValid()) {
                 $wmchandler = new WmcHandler($this, $this->application, $this->container);
                 $wmcid = $wmc->getId();
                 $wmc = $wmchandler->getWmc($wmcid, false);
-                $em = $this->container->get('doctrine')->getEntityManager();
+                $em = $this->container->get('doctrine')->getManager();
                 $em->getConnection()->beginTransaction();
                 if ($wmc->getScreenshotPath() !== null) {
                     $filepath = $wmchandler->getWmcDir() . '/' . $wmc->getScreenshotPath();

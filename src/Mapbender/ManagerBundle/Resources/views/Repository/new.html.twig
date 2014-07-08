@@ -14,7 +14,7 @@
 {% block manager_content %}
 
 {% for manager in managers %}
-  {% render manager.startAction %}
+  {% render controller(manager.startAction) %}
   <div class="clearContainer"></div>
 {% endfor %}
 
