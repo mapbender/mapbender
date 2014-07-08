@@ -416,7 +416,7 @@ abstract class Element
         }
         $formType->add('acl', 'acl',
             array(
-            'property_path' => false,
+            'mapped' => false,
             'data' => $element,
             'create_standard_permissions' => false,
             'permissions' => array(

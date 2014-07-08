@@ -134,10 +134,10 @@ class ElementController extends Controller
         $element->setApplication($application);
         $form = ComponentElement::getElementForm($this->container, $application,
                 $element);
-        $form['form']->bindRequest($this->get('request'));
+        $form['form']->bind($this->get('request'));
 
         if ($form['form']->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $query = $em->createQuery(
                 "SELECT e FROM MapbenderCoreBundle:Element e"
                 . " WHERE e.region=:reg AND e.application=:app");
@@ -155,7 +155,7 @@ class ElementController extends Controller
                 $application, array());
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 'Your element has been saved.');
 
             return new Response('', 201);
@@ -215,10 +215,10 @@ class ElementController extends Controller
         $form = ComponentElement::getElementForm($this->container, $application,
                 $element);
 //        $form = $this->getElementForm($application, $element);
-        $form['form']->bindRequest($this->get('request'));
+        $form['form']->bind($this->get('request'));
 
         if ($form['form']->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $application = $element->getApplication();
             $application->setUpdated(new \DateTime());
             $em->persist($element);
@@ -229,7 +229,7 @@ class ElementController extends Controller
                 $application, array());
             $elComp = new $entity_class($appl, $this->container, $element);
             $elComp->postSave();
-            $this->get('session')->setFlash('success',
+            $this->get('session')->getFlashBag()->set('success',
                 'Your element has been saved.');
 
             return new Response('', 205);
@@ -247,7 +247,7 @@ class ElementController extends Controller
      */
     public function securityAction($slug, $id)
     {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
         $application = $this->get('mapbender')->getApplicationEntity($slug);
 
@@ -264,7 +264,7 @@ class ElementController extends Controller
             $form = ComponentElement::getElementForm($this->container,
                     $application, $element, true);
             $request = $this->getRequest();
-            $form['form']->bindRequest($request);
+            $form['form']->bind($request);
             if ($form['form']->isValid()) {
                 $em->getConnection()->beginTransaction();
                 try {
@@ -276,10 +276,10 @@ class ElementController extends Controller
                         $form['form']->get('acl'), 'object');
                     $em->flush();
                     $em->getConnection()->commit();
-                    $this->get('session')->setFlash('success',
+                    $this->get('session')->getFlashBag()->set('success',
                         "Your element's access has been changed.");
                 } catch (\Exception $e) {
-                    $this->get('session')->setFlash('error',
+                    $this->get('session')->getFlashBag()->set('error',
                         "There was an error trying to change your element's access.");
                     $em->getConnection()->rollback();
                     $em->close();
@@ -350,7 +350,7 @@ class ElementController extends Controller
                 . $id . '" does not exist.');
         }
 
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
             "SELECT e FROM MapbenderCoreBundle:Element e"
             . " WHERE e.region=:reg AND e.application=:app"
@@ -371,7 +371,7 @@ class ElementController extends Controller
         $em->remove($element);
         $em->flush();
 
-        $this->get('session')->setFlash('success',
+        $this->get('session')->getFlashBag()->set('success',
             'Your element has been removed.');
 
         return new Response();
@@ -403,7 +403,7 @@ class ElementController extends Controller
                 array('Content-Type' => 'application/json'));
         }
         if ($element->getRegion() === $newregion) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $element->setWeight($number);
             $em->persist($element);
             $em->flush();
@@ -442,7 +442,7 @@ class ElementController extends Controller
             $em->flush();
         } else {
             // handle old region
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $query = $em->createQuery(
                 "SELECT e FROM MapbenderCoreBundle:Element e"
                 . " WHERE e.region=:reg AND e.application=:app"
@@ -516,7 +516,7 @@ class ElementController extends Controller
             $enabled_before = $element->getEnabled();
             $enabled = $enabled === "true" ? true : false;
             $element->setEnabled($enabled);
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $em->persist($element);
             $em->flush();
             return new Response(json_encode(array(

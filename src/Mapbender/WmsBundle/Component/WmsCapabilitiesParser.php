@@ -6,9 +6,9 @@ use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\WmsBundle\Component\Exception\WmsException;
 
 /**
- * Class that Parses WMS GetCapabilies Document 
+ * Class that Parses WMS GetCapabilies Document
  * Parses WMS GetCapabilities documents
- * 
+ *
  * @author Karim Malhas
  * @author Paul Schmidt
  */
@@ -27,15 +27,15 @@ abstract class WmsCapabilitiesParser
 
     /**
      * The resolution
-     * 
-     * @var integer 
+     *
+     * @var integer
      */
     protected $resolution = 72;
 
     /**
      * Creates an instance
-     * 
-     * @param \DOMDocument $doc 
+     *
+     * @param \DOMDocument $doc
      */
     public function __construct(\DOMDocument $doc)
     {
@@ -46,7 +46,7 @@ abstract class WmsCapabilitiesParser
 
     /**
      * Sets the resolution
-     * 
+     *
      * @param integer $resolution
      */
     protected function setReslolution($resolution)
@@ -55,7 +55,7 @@ abstract class WmsCapabilitiesParser
     }
 
     /**
-     * Finds the value 
+     * Finds the value
      * @param string $xpath xpath expression
      * @param \DOMNode $contextElm the node to use as context for evaluating the
      * XPath expression.
@@ -68,6 +68,9 @@ abstract class WmsCapabilitiesParser
         }
         try {
             $elm = $this->xpath->query($xpath, $contextElm)->item(0);
+            if(!$elm) {
+                return null;
+            }
             if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
                 return $elm->value;
             } else if ($elm->nodeType == XML_TEXT_NODE) {
@@ -89,7 +92,7 @@ abstract class WmsCapabilitiesParser
 
     /**
      * Creates a document
-     * 
+     *
      * @param string $data the string containing the XML
      * @param boolean $validate to validate of xml
      * @return \DOMDocument a GetCapabilites document
@@ -128,7 +131,7 @@ abstract class WmsCapabilitiesParser
 
     /**
      * Gets a capabilities parser
-     * 
+     *
      * @param \DOMDocument $doc the GetCapabilities document
      * @return \Mapbender\WmsBundle\Component\WmsCapabilitiesParser111
      * |\Mapbender\WmsBundle\Component\WmsCapabilitiesParser130 a capabilities parser
