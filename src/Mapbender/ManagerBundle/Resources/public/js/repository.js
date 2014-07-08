@@ -73,12 +73,10 @@ $(function() {
     $('tr[data-type="root"], tr[data-type="node"]', $('.instanceTable tbody')).each(function() {
         var id = $(this).attr("data-id");
         var children = [];
-        var start_pos = null;
-        var stop_pos = null;
         $('.instanceTable tbody').sortable({
             cursor: 'move',
             axis: 'y',
-            items: 'tr:not(.root,[data-parent="' + id + '"])',
+            items: 'tr:not(.root)',
             distance: 6,
             containment: 'parent',
             start: function(event, ui) {
@@ -86,8 +84,6 @@ $(function() {
                     return false;
                 var subs = $('.instanceTable tbody tr[data-parent="' + $(ui.item).attr('data-id') + '"]');
                 children = [];
-                start_pos = $(ui.item).index() - $(ui.item).prevAll('.header').length;
-                stop_pos = null;
                 if (subs.length > 0) {
                     var nextAll = $(ui.item).nextAll('[data-id]');
                     for (var i = 0; i < nextAll.length; i++) {
