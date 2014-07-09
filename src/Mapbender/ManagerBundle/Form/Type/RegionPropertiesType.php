@@ -18,22 +18,16 @@ class RegionPropertiesType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'available_properties' => array()));
+            'available_properties' => array(),
+            'auto_initialize' => false
+            ));
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $subscriber = new RegionPropertiesSubscriber($builder->getFormFactory(), $options);
         $builder->addEventSubscriber($subscriber);
-        $available_properties = $options['available_properties'];
-        $builder->add('name', 'hidden')
-//            ->add('properties', 'choice',
-//                array(
-//                'expanded' => true,
-//                'multiple' => true,
-//                'choices' => array("tabs"=> "tabs","blabla" => "blabla"),
-//            ))
-        ;
+        $builder->add('name', 'hidden');
     }
 
 }
