@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\WmcBundle\Component;
 
+use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\Element;
 use Mapbender\CoreBundle\Component\StateHandler;
 use Mapbender\CoreBundle\Component\Utils;
@@ -154,9 +155,8 @@ class WmcHandler
      */
     public function getWmcDir()
     {
-        $wmc_dir = $this->container->get('kernel')->getRootDir() . '/../web/'
-            . $this->container->getParameter("mapbender.uploads_dir")
-            . "/" . $this->application->getSlug() . '/' . WmcHandler::$WMC_DIR;
+        $uploads_dir = Application::getApplicationDir($this->container, $this->application->getSlug());
+        $wmc_dir = $uploads_dir . '/' . WmcHandler::$WMC_DIR;
         if (!is_dir($wmc_dir)) {
             if (mkdir($wmc_dir)) {
                 return $wmc_dir;

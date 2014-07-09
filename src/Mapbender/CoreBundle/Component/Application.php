@@ -10,6 +10,7 @@ use Assetic\Asset\FileAsset;
 use Assetic\FilterManager;
 use Assetic\Asset\StringAsset;
 use Assetic\Factory\AssetFactory;
+use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -498,6 +499,103 @@ class Application
             }
         }
         return $this->layers;
+    }
+
+    /**
+     * Returns the uploads directory. 
+     * 
+     * @param ContainerInterface $container Container
+     * @return string the path to uploads dir or null.
+     */
+    public static function getUploadsDir($container)
+    {
+        $uploads_dir = $container->get('kernel')->getRootDir() . '/../web/'
+            . $container->getParameter("mapbender.uploads_dir");
+        $ok = true;
+        if (!is_dir($uploads_dir)) {
+            $ok = mkdir($uploads_dir);
+        }
+        if ($ok) {
+            return $uploads_dir;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the application's directory. 
+     * 
+     * @param ContainerInterface $container Container
+     * @param string $slug application's slug
+     * @return boolean true if the application's directories are created or
+     * exist otherwise false.
+     */
+    public static function getApplicationDir($container, $slug)
+    {
+        if (Application::createApplicationDir($container, $slug)) {
+            return Application::getUploadsDir($container, $slug) . "/" . $slug;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Creates or checks if the application's directories are created or exist. 
+     * 
+     * @param ContainerInterface $container Container
+     * @param string $slug application's slug
+     * @param string $old_slug the old application's slug.
+     * @return boolean true if the application's directories are created or
+     * exist otherwise false.
+     */
+    public static function createApplicationDir($container, $slug, $old_slug = null)
+    {
+        $uploads_dir = Application::getUploadsDir($container);
+        if ($uploads_dir === null) {
+            return false;
+        }
+        if ($old_slug === null) {
+            $slug_dir = $uploads_dir . "/" . $slug;
+            if (!is_dir($slug_dir)) {
+                return mkdir($slug_dir);
+            } else {
+                return true;
+            }
+        } else {
+            $old_slug_dir = $uploads_dir . "/" . $old_slug;
+            if (is_dir($old_slug_dir)) {
+                $slug_dir = $uploads_dir . "/" . $slug;
+                return rename($old_slug_dir, $slug_dir);
+            } else {
+                if (mkdir($old_slug_dir)) {
+                    $slug_dir = $uploads_dir . "/" . $slug;
+                    return rename($old_slug_dir, $slug_dir);
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes application's entity directoriy
+     * 
+     * @param ContainerInterface $container Container
+     * @param string $slug application's slug
+     * @return boolean true if the directories are removed or not exist otherwise false
+     */
+    public static function removeApplicationDir($container, $slug)
+    {
+        $uploads_dir = Application::getUploadsDir($container);
+        if (!is_dir($uploads_dir)) {
+            return true;
+        }
+        $slug_dir = $uploads_dir . "/" . $slug;
+        if (!is_dir($slug_dir)) {
+            return true;
+        } else {
+            return Utils::deleteFileAndDir($slug_dir);
+        }
     }
 
 }
