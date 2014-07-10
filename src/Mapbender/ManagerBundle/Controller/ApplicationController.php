@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
@@ -54,9 +55,17 @@ class ApplicationController extends Controller
             }
         }
 
+        if($application->getScreenshot() == null){
+            $screenshot_url = $application->getScreenshot();
+        }else{
+            $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+            $screenshot_url = $app_web_url."/".$application->getScreenshot();
+        }
+
         return array(
             'applications' => $allowed_applications,
-            'create_permission' => $securityContext->isGranted('CREATE', $oid)
+            'create_permission' => $securityContext->isGranted('CREATE', $oid),
+            'screenshot'=> $screenshot_url
         );
     }
 
@@ -129,7 +138,7 @@ class ApplicationController extends Controller
 
 
             $em->getConnection()->commit();
-            if (AppComponent::createApplicationDir($this->container, $application->getSlug())) {
+            if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been saved.');
             } else {
                 $this->get('session')->getFlashBag()->set('error', "Your application has been saved but"
@@ -192,7 +201,14 @@ class ApplicationController extends Controller
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
-        $app_directory = AppComponent::getApplicationDir($this->container, $application->getSlug());
+        $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+
+        if($application->getScreenshot() == null){
+            $screenshot_url = $application->getScreenshot();
+        }else{
+            $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+            $screenshot_url = $app_web_url."/".$application->getScreenshot();
+        }
 
         return array(
             'application' => $application,
@@ -203,7 +219,10 @@ class ApplicationController extends Controller
             'form' => $form->createView(),
             'form_name' => $form->getName(),
             'template_name' => $templateClass::getTitle(),
-            'screenshot' =>"/".$application->getScreenshot());
+            'screenshot' => $screenshot_url
+
+            // 'screenshot' => $app_web_url."/".$application->getScreenshot()
+            );
             
     }
 
@@ -222,7 +241,6 @@ class ApplicationController extends Controller
         $templateClassOld = $application->getTemplate();
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
-        
 
         $form->bind($request);
         if ($form->isValid()) {
@@ -278,7 +296,7 @@ class ApplicationController extends Controller
             $error = $form->getErrors();
             $error = $error[0]->getMessageTemplate();
         } else {
-            foreach ($form->getChildren() as $child) {
+            foreach ($form->all() as $child) {
                 if (count($child->getErrors()) > 0) {
                     $error = $child->getErrors();
                     $error = $error[0]->getMessageTemplate();
@@ -349,7 +367,7 @@ class ApplicationController extends Controller
             $em->persist($cloned);
             $em->flush();
             $em->getConnection()->commit();
-            if (AppComponent::createApplicationDir($this->container, $cloned->getSlug())) {
+            if (AppComponent::createAppWebDir($this->container, $cloned->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been copied.');
             } else {
                 $this->get('session')->getFlashBag()->set('error', "Your application has been copied but"
@@ -384,7 +402,7 @@ class ApplicationController extends Controller
         $em->persist($cloned);
         $em->flush();
         $em->getConnection()->commit();
-        if (AppComponent::createApplicationDir($this->container, $cloned->getSlug())) {
+        if (AppComponent::createAppWebDir($this->container, $cloned->getSlug())) {
             $this->get('session')->getFlashBag()->set('success', 'Your application has been copied.');
         } else {
             $this->get('session')->getFlashBag()->set('error', "Your application has been copied but"
@@ -483,7 +501,7 @@ class ApplicationController extends Controller
             $em->remove($application);
             $em->flush();
             $em->commit();
-            if (AppComponent::removeApplicationDir($this->container, $slug)) {
+            if (AppComponent::removeAppWebDir($this->container, $slug)) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been deleted.');
             } else {
                 $this->get('session')->getFlashBag()->set('error', "Your application has been deleted"
@@ -740,8 +758,14 @@ class ApplicationController extends Controller
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getSource()->getManagertype()];
 
-        return $this->forward(
-                $manager['bundle'] . ":" . "Repository:deleteInstance", array("slug" => $slug, "instanceId" => $instanceId));
+        $path = array(
+            '_controller' => $manager['bundle'] . ":" . "Repository:deleteInstance",
+            "slug" => $slug,
+            "instanceId" => $instanceId
+        );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /* Instance block end */

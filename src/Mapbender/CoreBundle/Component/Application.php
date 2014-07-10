@@ -502,12 +502,12 @@ class Application
     }
 
     /**
-     * Returns the uploads directory. 
+     * Returns the public "uploads" directory. 
      * 
      * @param ContainerInterface $container Container
      * @return string the path to uploads dir or null.
      */
-    public static function getUploadsDir($container)
+    public static function getUploadsDir($container, $webRelative = false)
     {
         $uploads_dir = $container->get('kernel')->getRootDir() . '/../web/'
             . $container->getParameter("mapbender.uploads_dir");
@@ -516,23 +516,27 @@ class Application
             $ok = mkdir($uploads_dir);
         }
         if ($ok) {
-            return $uploads_dir;
+            if(!$webRelative){
+                return $uploads_dir;
+            } else {
+                return $container->getParameter("mapbender.uploads_dir");
+            }
         } else {
             return null;
         }
     }
 
     /**
-     * Returns the application's directory. 
+     * Returns the application's public directory. 
      * 
      * @param ContainerInterface $container Container
      * @param string $slug application's slug
      * @return boolean true if the application's directories are created or
      * exist otherwise false.
      */
-    public static function getApplicationDir($container, $slug)
+    public static function getAppWebDir($container, $slug)
     {
-        if (Application::createApplicationDir($container, $slug)) {
+        if (Application::createAppWebDir($container, $slug)) {
             return Application::getUploadsDir($container, $slug) . "/" . $slug;
         } else {
             return null;
@@ -540,7 +544,7 @@ class Application
     }
 
     /**
-     * Creates or checks if the application's directories are created or exist. 
+     * Creates or checks if the application's public directory is created or exist. 
      * 
      * @param ContainerInterface $container Container
      * @param string $slug application's slug
@@ -548,7 +552,7 @@ class Application
      * @return boolean true if the application's directories are created or
      * exist otherwise false.
      */
-    public static function createApplicationDir($container, $slug, $old_slug = null)
+    public static function createAppWebDir($container, $slug, $old_slug = null)
     {
         $uploads_dir = Application::getUploadsDir($container);
         if ($uploads_dir === null) {
@@ -578,13 +582,13 @@ class Application
     }
 
     /**
-     * Removes application's entity directoriy
+     * Removes application's public directoriy.
      * 
      * @param ContainerInterface $container Container
      * @param string $slug application's slug
      * @return boolean true if the directories are removed or not exist otherwise false
      */
-    public static function removeApplicationDir($container, $slug)
+    public static function removeAppWebDir($container, $slug)
     {
         $uploads_dir = Application::getUploadsDir($container);
         if (!is_dir($uploads_dir)) {
@@ -596,6 +600,27 @@ class Application
         } else {
             return Utils::deleteFileAndDir($slug_dir);
         }
+    }
+
+    /**
+     * Gets a url to application's public directory.
+     * 
+     * @return string a url to wmc directory or to file with "$filename" 
+     */
+    public static function getAppWebUrl($container, $slug)
+    {
+        return Application::getBaseUrl($container) . '/' . Application::getUploadsDir($container, true) . "/" . $slug;
+    }
+    
+    /**
+     * Gets a base url
+     * 
+     * @return string a base url
+     */
+    public static function getBaseUrl($container)
+    {
+        $request = $container->get('request');
+        return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
     }
 
 }

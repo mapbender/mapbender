@@ -47,8 +47,13 @@
         <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData">
-        <div class="left">{% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}</div>
-        <div class="iconAppDefault right" style="width:300px; height:215px; border:1px solid black;"> <img src="{{screenshot}}" alt="screenshot"></div>
+          <div class="left">{% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}</div>
+          {% if screenshot is empty %} 
+              <div class="right iconAppDefault"></div> 
+          {% else %}
+              <div class="right"><img src="{{screenshot}}" style="width:300px; height:215px;" alt="screenshot"></div>
+          {% endif %}
+
         <div class="clearContainer"></div>
       </div>
       <div id="containerLayout" class="container containerLayout">

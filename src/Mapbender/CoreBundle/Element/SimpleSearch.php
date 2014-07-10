@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * Simple Search - Just type, select and show result
@@ -119,12 +120,13 @@ class SimpleSearch extends Element
         $url .= (false === strpos($url, '?') ? '?' : '&');
         $url .= $configuration['query_key'] . '=' . sprintf($qf, $q);
 
-        // Execute query
-        $response = $this->container->get('http_kernel')
-            ->forward('OwsProxy3CoreBundle:OwsProxy:genericProxy', array(
-                'url' => $url
-            ));
-
+        $path = array(
+            '_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
+            'url' => $url
+        );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
         // Dive into result JSON if needed (Solr for example 'response.docs')
         if('' !== $configuration['collection_path']) {
             $data = json_decode($response->getContent(), true);

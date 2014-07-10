@@ -49,7 +49,7 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Checks the form fields by PRE_BIND DataEvent
+     * Checks the form fields by PRE_BIND FormEvent
      * 
      * @param FormEvent $event
      */
@@ -76,7 +76,7 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Checks the form fields by PRE_SET_DATA DataEvent
+     * Checks the form fields by PRE_SET_DATA FormEvent
      * 
      * @param FormEvent $event
      */

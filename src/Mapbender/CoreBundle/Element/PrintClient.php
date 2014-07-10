@@ -3,6 +3,7 @@ namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Mapbender\PrintBundle\Component\OdgParser;
 
 /**
@@ -214,13 +215,14 @@ class PrintClient extends Element
                 $url = $this->container->get('router')->generate('mapbender_print_print_service',
                     array(), true);
 
-                return $this->container->get('http_kernel')->forward(
-                        'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-                        array(
-                        'url' => $url,
-                        'content' => $content
-                        )
+                $path = array(
+                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
+                    'url' => $url,
+                    'content' => $content
                 );
+                $subRequest = $request->duplicate(array(), null, $path);
+                return $this->container->get('http_kernel')->handle(
+                        $subRequest, HttpKernelInterface::SUB_REQUEST);
 
             case 'queued':
 

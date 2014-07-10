@@ -544,7 +544,7 @@ class Application
             }
             $targets = array();
             $form = ComponentElement::getElementForm($container, $this, $element);
-            foreach ($form['form']['configuration']->getChildren() as $fieldName =>
+            foreach ($form['form']['configuration']->all() as $fieldName =>
                     $fieldValue) {
                 $norm = $fieldValue->getNormData();
                 $data = $fieldValue->getData();

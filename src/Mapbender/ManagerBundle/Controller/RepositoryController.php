@@ -12,6 +12,7 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Entity\Source;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -96,12 +97,11 @@ class RepositoryController extends Controller
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$managertype];
-        return $this->forward(
-                $manager['bundle'] . ":" . "Repository:create", array()
-        );
-//        return array(
-//            'managers' => $managers
-//        );
+        
+        $path = array('_controller' => $manager['bundle'] . ":" . "Repository:create");
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -115,10 +115,13 @@ class RepositoryController extends Controller
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
-        return $this->forward(
-                $manager['bundle'] . ":" . "Repository:view",
-                array("id" => $source->getId())
+        $path = array(
+            '_controller' => $manager['bundle'] . ":" . "Repository:view",
+            "id" => $source->getId()
         );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -158,10 +161,14 @@ class RepositoryController extends Controller
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
-        return $this->forward(
-                $manager['bundle'] . ":" . "Repository:delete",
-                array("sourceId" => $source->getId())
+
+        $path = array(
+            '_controller' => $manager['bundle'] . ":" . "Repository:delete",
+            "sourceId" => $source->getId()
         );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -185,10 +192,15 @@ class RepositoryController extends Controller
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
-        return $this->forward(
-                $manager['bundle'] . ":" . "Repository:instance",
-                array("slug" => $slug, "instanceId" => $sourceInst->getId())
+        
+        $path = array(
+            '_controller' => $manager['bundle'] . ":" . "Repository:instance",
+            "slug" => $slug,
+            "instanceId" => $sourceInst->getId()
         );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -322,12 +334,16 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
-        return $this->forward(
-                $manager['bundle'] . ":" . "Repository:instanceenabled",
-                array("slug" => $slug,
-                "layersetId" => $layersetId,
-                "instanceId" => $sourceInst->getId(),)
+
+        $path = array(
+            '_controller' => $manager['bundle'] . ":" . "Repository:instanceenabled",
+            "slug" => $slug,
+            "layersetId" => $layersetId,
+            "instanceId" => $sourceInst->getId()
         );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -341,12 +357,16 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
-        return $this->forward(
-                $manager['bundle'] . ":" . "Repository:instancelayerpriority",
-                array("slug" => $slug,
-                "instanceId" => $sourceInst->getId(),
-                "instLayerId" => $instLayerId)
+        
+        $path = array(
+            '_controller' => $manager['bundle'] . ":" . "Repository:instancelayerpriority",
+            "slug" => $slug,
+            "instanceId" => $sourceInst->getId(),
+            "instLayerId" => $instLayerId
         );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
 }
