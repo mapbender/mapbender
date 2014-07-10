@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
@@ -730,8 +731,14 @@ class ApplicationController extends Controller
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getSource()->getManagertype()];
 
-        return $this->forward(
-                $manager['bundle'] . ":" . "Repository:deleteInstance", array("slug" => $slug, "instanceId" => $instanceId));
+        $path = array(
+            '_controller' => $manager['bundle'] . ":" . "Repository:deleteInstance",
+            "slug" => $slug,
+            "instanceId" => $instanceId
+        );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /* Instance block end */

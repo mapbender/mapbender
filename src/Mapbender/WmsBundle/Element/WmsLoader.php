@@ -3,6 +3,7 @@ namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * WmsLoader
@@ -183,6 +184,13 @@ class WmsLoader extends Element
                 'url' => urlencode($signedUrl)
                 )
         );
+        $path = array(
+            '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint',
+            'url' => urlencode($signedUrl)
+        );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**

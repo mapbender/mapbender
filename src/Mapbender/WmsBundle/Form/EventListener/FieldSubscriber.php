@@ -51,70 +51,65 @@ class FieldSubscriber implements EventSubscriberInterface
         $data = $event->getData();
         $form = $event->getForm();
 
-        if(null === $data)
-        {
+        if (null === $data) {
             return;
         }
 
-        if($data->getSublayer()->count() > 0)
-        {
+        if ($data->getSublayer()->count() > 0) {
             $form->remove('toggle');
             $form->add($this->factory->createNamed(
-                            'toggle', 'checkbox', null,
-                            array(
-                        'disabled' => false,
-                        "required" => false)));
+                    'toggle', 'checkbox', null, array(
+                    'disabled' => false,
+                    "required" => false,
+                    'auto_initialize' => false)));
             $form->remove('allowtoggle');
             $form->add($this->factory->createNamed(
-                            'allowtoggle', 'checkbox', null,
-                            array(
-                        'required' => false,
-                        'disabled' => false)));
-        } else
-        {
+                    'allowtoggle', 'checkbox', null, array(
+                    'required' => false,
+                    'disabled' => false,
+                    'auto_initialize' => false)));
+        } else {
             $form->remove('toggle');
             $form->add($this->factory->createNamed(
-                            'toggle', 'checkbox', null,
-                            array(
-                        'disabled' => true,
-                        "required" => false)));
+                    'toggle', 'checkbox', null, array(
+                    'disabled' => true,
+                    "required" => false,
+                    'auto_initialize' => false)));
             $form->remove('allowtoggle');
             $form->add($this->factory->createNamed(
-                            'allowtoggle', 'checkbox', null,
-                            array(
-                        'required' => false,
-                        'disabled' => true)));
+                    'allowtoggle', 'checkbox', null, array(
+                    'required' => false,
+                    'disabled' => true,
+                    'auto_initialize' => false)));
         }
 
-        if($data->getWmslayersource()->getQueryable() === true)
-        {
+        if ($data->getWmslayersource()->getQueryable() === true) {
             $form->remove('info');
             $form->add($this->factory->createNamed(
-                            'info', 'checkbox', null,
-                            array(
-                        'disabled' => false,
-                        "required" => false)));
+                    'info', 'checkbox', null, array(
+                    'disabled' => false,
+                    "required" => false,
+                    'auto_initialize' => false)));
             $form->remove('allowinfo');
             $form->add($this->factory->createNamed(
-                            'allowinfo', 'checkbox', null,
-                            array(
-                        'disabled' => false,
-                        "required" => false)));
+                    'allowinfo', 'checkbox', null, array(
+                    'disabled' => false,
+                    "required" => false,
+                    'auto_initialize' => false)));
         }
         $arrStyles = $data->getWmslayersource()->getStyles();
         $styleOpt = array("" => "");
-        foreach($arrStyles as $style)
-        {
+        foreach ($arrStyles as $style) {
             $styleOpt[$style->getName()] = $style->getTitle();
         }
 
         $form->remove('style');
         $form->add($this->factory->createNamed(
-                        'style', 'choice', null,
-                        array(
-                    'label' => 'style',
-                    'choices' => $styleOpt,
-                    "required" => false)));
+                'style', 'choice', null, array(
+                'label' => 'style',
+                'choices' => $styleOpt,
+                "required" => false,
+                'auto_initialize' => false)));
     }
 
 }

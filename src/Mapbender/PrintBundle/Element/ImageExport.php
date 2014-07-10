@@ -1,7 +1,9 @@
 <?php
+
 namespace Mapbender\PrintBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -100,8 +102,7 @@ class ImageExport extends Element
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderPrintBundle:Element:imageexport.html.twig',
-                    array(
+                ->render('MapbenderPrintBundle:Element:imageexport.html.twig', array(
                     'id' => $this->getId(),
                     'title' => $this->getTitle(),
                     'configuration' => $this->getConfiguration()
@@ -118,18 +119,17 @@ class ImageExport extends Element
             case 'export':
                 $request = $this->container->get('request');
                 $data = $request->get('data');
-
                 // Forward to Printer Service URL using OWSProxy
-                $url = $this->container->get('router')->generate('mapbender_print_print_export',
-                    array(), true);
-
-                return $this->container->get('http_kernel')->forward(
-                        'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-                        array(
-                        'url' => $url,
-                        'content' => $data
-                        )
+                $url = $this->container->get('router')->generate('mapbender_print_print_export', array(), true);
+                
+                $path = array(
+                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
+                    'url' => $url,
+                    'content' => $data
                 );
+                $subRequest = $request->duplicate(array(), null, $path);
+                return $this->container->get('http_kernel')->handle(
+                        $subRequest, HttpKernelInterface::SUB_REQUEST);
         }
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Mapbender\CoreBundle\Form\EventListener\BaseSourceSwitcherFieldSubscriber;
@@ -10,9 +11,9 @@ use Mapbender\CoreBundle\Component\ExtendedCollection;
 /**
  * 
  */
-class BaseSourceSwitcherAdminType extends AbstractType
-    implements ExtendedCollection
+class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollection
 {
+
     public $hasSubForm = true;
 
     public function isSubForm()
@@ -56,7 +57,7 @@ class BaseSourceSwitcherAdminType extends AbstractType
                         if (intval($mapconfig['layerset']) === $layerset->getId()) {
                             foreach ($layerset->getInstances() as $instance) {
                                 if ($instance->getEnabled() && $instance->isBaseSource())
-                                        $instList[strval($instance->getId())] = $instance->getTitle();
+                                    $instList[strval($instance->getId())] = $instance->getTitle();
                             }
                             break;
                         }
@@ -67,19 +68,18 @@ class BaseSourceSwitcherAdminType extends AbstractType
         }
         $builder->add('title', 'text', array('required' => true))
             ->add('tooltip', 'text', array('required' => false))
-            ->add('target', 'target_element',
-                array(
+            ->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $application,
                 'property_path' => '[target]',
                 'required' => false));
         if ($element !== null && $element->getId() !== null) {
-            $builder->add('sourcesets', "collection",
-                array(
+            $builder->add('sourcesets', "collection", array(
                 'property_path' => '[sourcesets]',
                 'type' => new SourceSetAdminType(),
                 'allow_add' => true,
                 'allow_delete' => true,
+                'auto_initialize' => false,
                 'options' => array(
                     'sources' => $instList
             )));

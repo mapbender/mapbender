@@ -21,7 +21,7 @@ class PrintClientSubscriber implements EventSubscriberInterface
      * @var \Symfony\Component\Form\FormFactoryInterface 
      */
     private $factory;
-    
+
     /**
      * The application
      * 
@@ -59,37 +59,32 @@ class PrintClientSubscriber implements EventSubscriberInterface
     {
         $data = $event->getData();
         $form = $event->getForm();
-        if(null === $data)
-        {
+        if (null === $data) {
             return;
         }
-        if(key_exists("scales", $data) && is_string($data["scales"]))
-        {
+        if (key_exists("scales", $data) && is_string($data["scales"])) {
             $data["scales"] = preg_split("/\s?,\s?/", $data["scales"]);
             $event->setData($data);
         }
-        
-        if(key_exists("templates", $data) )
-        {
-            $form->add($this->factory->createNamed(
-                                'templates', "collection", null,
-                                array(
-                            'property_path' => '[templates]',
-                            'type' => new PrintClientTemplateAdminType(),
-                            'options' => array(
-                                ))));
-        }
-        if(key_exists("quality_levels", $data) )
-        {
-            $form->add($this->factory->createNamed(
-                                'quality_levels', "collection", null,
-                                array(
-                            'property_path' => '[quality_levels]',
-                            'type' => new PrintClientQualityAdminType(),
-                            'options' => array(
-                                ))));
-        }
 
+        if (key_exists("templates", $data)) {
+            $form->add($this->factory->createNamed(
+                    'templates', "collection", null, array(
+                    'property_path' => '[templates]',
+                    'auto_initialize' => false,
+                    'type' => new PrintClientTemplateAdminType(),
+                    'options' => array(
+            ))));
+        }
+        if (key_exists("quality_levels", $data)) {
+            $form->add($this->factory->createNamed(
+                    'quality_levels', "collection", null, array(
+                    'property_path' => '[quality_levels]',
+                    'auto_initialize' => false,
+                    'type' => new PrintClientQualityAdminType(),
+                    'options' => array(
+            ))));
+        }
     }
 
     /**
@@ -101,39 +96,34 @@ class PrintClientSubscriber implements EventSubscriberInterface
     {
         $data = $event->getData();
         $form = $event->getForm();
-        if(null === $data)
-        {
+        if (null === $data) {
             return;
         }
 
-        if(key_exists("scales", $data) && is_array($data["scales"]))
-        {
+        if (key_exists("scales", $data) && is_array($data["scales"])) {
             $data["scales"] = implode(",", $data["scales"]);
             $event->setData($data);
         }
-        
-        if(key_exists("templates", $data) )
-        {
+
+        if (key_exists("templates", $data)) {
             $form->add($this->factory->createNamed(
-                                'templates', "collection", null,
-                                array(
-                            'property_path' => '[templates]',
-                            'type' => new PrintClientTemplateAdminType(),
-                            'options' => array(
-                                ))));
+                    'templates', "collection", null, array(
+                    'property_path' => '[templates]',
+                    'auto_initialize' => false,
+                    'type' => new PrintClientTemplateAdminType(),
+                    'options' => array(
+            ))));
         }
-        
-        if(key_exists("quality_levels", $data) )
-        {
+
+        if (key_exists("quality_levels", $data)) {
             $form->add($this->factory->createNamed(
-                                'quality_levels', "collection", null,
-                                array(
-                            'property_path' => '[quality_levels]',
-                            'type' => new PrintClientQualityAdminType(),
-                            'options' => array(
-                                ))));
+                    'quality_levels', "collection", null, array(
+                    'property_path' => '[quality_levels]',
+                    'auto_initialize' => false,
+                    'type' => new PrintClientQualityAdminType(),
+                    'options' => array(
+            ))));
         }
-        
     }
 
 }
