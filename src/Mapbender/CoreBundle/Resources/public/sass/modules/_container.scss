@@ -15,6 +15,10 @@
     line-height:$lineHeight - 6;
     background-color:$firstColor;
     @include absolute(0 '' 0 0);
+    .iconBig,.icon{
+        color: $lightFontColor;
+        cursor: default;
+    }
   }
   .col2{padding:$space/2;}
   .buttonGroup{@include absolute($space/2 $space/2 '' '');}
@@ -66,6 +70,14 @@
     @extend .iconThumbsDown;
     color:darken($errorColor, 10%);
     background-color: lighten($errorColor, 50%);
+  }
+  &.warning{
+    &:before{
+      @extend .icon;
+    }
+    @extend .iconThumbsUp;
+    color:darken($warningColor, 10%);
+    background-color: lighten($warningColor, 50%);
   }
   &.kill{
     top:-100px;

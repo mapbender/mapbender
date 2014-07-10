@@ -39,6 +39,13 @@ abstract class Source
      * @ORM\Column(type="string", length=128, nullable=true)
      */
     protected $alias = "";
+    
+    
+    /**
+     * @var boolean $valid is a source valid
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $valid = false;
 
     /**
      * @var string $description The source description
@@ -130,6 +137,28 @@ abstract class Source
     public function getClassname()
     {
         return get_class();
+    }
+
+    /**
+     * Set valid
+     *
+     * @param boolean $valid
+     * @return Source
+     */
+    public function setValid($valid)
+    {
+        $this->valid = $valid;
+        return $this;
+    }
+
+    /**
+     * Get valid
+     *
+     * @return boolean 
+     */
+    public function getValid()
+    {
+        return $this->valid;
     }
 
     /**

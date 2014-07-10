@@ -82,6 +82,10 @@
         <source>mb.core.admin.button.show_label</source>
         <target>Mostra label</target>
       </trans-unit>
+      <trans-unit id="de8b0c7081e586c1705003fe9fea9fc7" resname="mb.manager.admin.messagebox.only_region_elements">
+        <source>mb.manager.admin.messagebox.only_region_elements</source>
+        <target>Only for this region available elements are displayed.</target>
+      </trans-unit>
       <trans-unit id="49ead166f1617a1c075be9feb88ef264" resname="mb.core.element.be.button.show_label">
         <source>mb.core.element.be.button.show_label</source>
         <target>Mostra label</target>
@@ -105,6 +109,14 @@
       <trans-unit id="7d61128cc95ad7927ef6f836feb88197" resname="mb.manager.admin.filter.source">
         <source>mb.manager.admin.filter.source</source>
         <target>Filtra fonte</target>
+      </trans-unit>
+      <trans-unit id="2baeb9ca4bc58fe89fa3284be858890d" resname="mb.manager.admin.source.valid">
+        <source>mb.manager.admin.source.valid</source>
+        <target>Source valid</target>
+      </trans-unit>
+      <trans-unit id="4dc2095208f7942a6870ad5153701bc9" resname="mb.manager.admin.source.notvalid">
+        <source>mb.manager.admin.source.notvalid</source>
+        <target>Source notvalid</target>
       </trans-unit>
       <trans-unit id="9d74c4df1bed8b409f8b88b02eebc115" resname="mb.manager.admin.source.no_source">
         <source>mb.manager.admin.source.no_source</source>

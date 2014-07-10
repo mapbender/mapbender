@@ -603,24 +603,39 @@ class Application
     }
 
     /**
-     * Gets a url to application's public directory.
-     * 
-     * @return string a url to wmc directory or to file with "$filename" 
+     * Returns an url to application's public directory.
+     *
+     * @param ContainerInterface $container Container
+     * @param string $slug application's slug
+     * @return string a url to wmc directory or to file with "$filename"
      */
     public static function getAppWebUrl($container, $slug)
     {
-        return Application::getBaseUrl($container) . '/' . Application::getUploadsDir($container, true) . "/" . $slug;
+        return Application::getUploadsUrl($container) . "/" . $slug;
     }
-    
+
     /**
-     * Gets a base url
-     * 
+     * Returns an url to public "uploads" directory.
+     *
+     * @param ContainerInterface $container Container
+     * @return string an url to public "uploads" directory
+     */
+    public static function getUploadsUrl($container)
+    {
+        $base_url = Application::getBaseUrl($container);
+        return $base_url . '/' . Application::getUploadsDir($container, true);
+    }
+
+    /**
+     * Returns a base url.
+     *
+     * @param ContainerInterface $container Container
      * @return string a base url
      */
     public static function getBaseUrl($container)
     {
         $request = $container->get('request');
         return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-    }
+    } 
 
 }
