@@ -69,7 +69,9 @@ class RepositoryController extends Controller
      */
     public function viewAction(WmsSource $wms)
     {
-        if (!$this->get('security.context')->isGranted('OWNER', $wms)) {
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $wms)) {
             throw new AccessDeniedException();
         }
         return array("wms" => $wms);
