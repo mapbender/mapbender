@@ -609,8 +609,7 @@ class Application
      */
     public static function getAppWebUrl($container, $slug)
     {
-        return Application::getBaseUrl($container) . '/' . Application::getUploadsDir($container, true)
-            . $container->getParameter("mapbender.uploads_dir") . "/" . $slug;
+        return Application::getBaseUrl($container) . '/' . Application::getUploadsDir($container, true) . "/" . $slug;
     }
     
     /**
