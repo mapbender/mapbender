@@ -2,7 +2,7 @@
 
 namespace Mapbender\CoreBundle\Form\EventListener;
 
-use Symfony\Component\Form\Event\DataEvent;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
@@ -51,11 +51,11 @@ class PrintClientSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Checkt form fields by PRE_BIND DataEvent
+     * Checkt form fields by PRE_BIND FormEvent
      * 
-     * @param DataEvent $event
+     * @param FormEvent $event
      */
-    public function preBind(DataEvent $event)
+    public function preBind(FormEvent $event)
     {
         $data = $event->getData();
         $form = $event->getForm();
@@ -93,11 +93,11 @@ class PrintClientSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Checkt form fields by PRE_SET_DATA DataEvent
+     * Checkt form fields by PRE_SET_DATA FormEvent
      * 
-     * @param DataEvent $event
+     * @param FormEvent $event
      */
-    public function preSetData(DataEvent $event)
+    public function preSetData(FormEvent $event)
     {
         $data = $event->getData();
         $form = $event->getForm();

@@ -129,7 +129,7 @@ class ApplicationController extends Controller
 
 
             $em->getConnection()->commit();
-            if (AppComponent::createApplicationDir($this->container, $application->getSlug())) {
+            if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been saved.');
             } else {
                 $this->get('session')->getFlashBag()->set('error', "Your application has been saved but"
@@ -241,7 +241,7 @@ class ApplicationController extends Controller
                 $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
                 $em->getConnection()->commit();
 
-                if (AppComponent::createApplicationDir($this->container, $application->getSlug(), $old_slug)) {
+                if (AppComponent::createAppWebDir($this->container, $application->getSlug(), $old_slug)) {
                     $this->get('session')->getFlashBag()->set('success', 'Your application has been updated.');
                 } else {
                     $this->get('session')->getFlashBag()->set('error', "Your application has been updated but" . " the application's directories can not be created.");
@@ -268,7 +268,7 @@ class ApplicationController extends Controller
             $error = $form->getErrors();
             $error = $error[0]->getMessageTemplate();
         } else {
-            foreach ($form->getChildren() as $child) {
+            foreach ($form->all() as $child) {
                 if (count($child->getErrors()) > 0) {
                     $error = $child->getErrors();
                     $error = $error[0]->getMessageTemplate();
@@ -339,7 +339,7 @@ class ApplicationController extends Controller
             $em->persist($cloned);
             $em->flush();
             $em->getConnection()->commit();
-            if (AppComponent::createApplicationDir($this->container, $cloned->getSlug())) {
+            if (AppComponent::createAppWebDir($this->container, $cloned->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been copied.');
             } else {
                 $this->get('session')->getFlashBag()->set('error', "Your application has been copied but"
@@ -374,7 +374,7 @@ class ApplicationController extends Controller
         $em->persist($cloned);
         $em->flush();
         $em->getConnection()->commit();
-        if (AppComponent::createApplicationDir($this->container, $cloned->getSlug())) {
+        if (AppComponent::createAppWebDir($this->container, $cloned->getSlug())) {
             $this->get('session')->getFlashBag()->set('success', 'Your application has been copied.');
         } else {
             $this->get('session')->getFlashBag()->set('error', "Your application has been copied but"
@@ -473,7 +473,7 @@ class ApplicationController extends Controller
             $em->remove($application);
             $em->flush();
             $em->commit();
-            if (AppComponent::removeApplicationDir($this->container, $slug)) {
+            if (AppComponent::removeAppWebDir($this->container, $slug)) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been deleted.');
             } else {
                 $this->get('session')->getFlashBag()->set('error', "Your application has been deleted"

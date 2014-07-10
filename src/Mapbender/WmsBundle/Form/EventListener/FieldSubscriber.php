@@ -2,7 +2,7 @@
 
 namespace Mapbender\WmsBundle\Form\EventListener;
 
-use Symfony\Component\Form\Event\DataEvent;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
@@ -43,10 +43,10 @@ class FieldSubscriber implements EventSubscriberInterface
     /**
      * Presets a form data
      * 
-     * @param \Symfony\Component\Form\Event\DataEvent $event
+     * @param FormEvent $event
      * @return type
      */
-    public function preSetData(DataEvent $event)
+    public function preSetData(FormEvent $event)
     {
         $data = $event->getData();
         $form = $event->getForm();

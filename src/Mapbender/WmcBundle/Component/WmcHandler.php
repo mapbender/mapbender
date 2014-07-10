@@ -137,14 +137,12 @@ class WmcHandler
      */
     public function getWmcUrl($filename = null)
     {
-        $url_base = $this->getBaseUrl() . '/'
-            . $this->container->getParameter("mapbender.uploads_dir")
-            . "/" . $this->application->getSlug() . '/' . WmcHandler::$WMC_DIR;
-        ;
+        $url_base = Application::getAppWebUrl($this->container, $this->application->getSlug());
+        $url_wmc = $url_base . '/' . WmcHandler::$WMC_DIR;
         if ($filename !== null) {
-            return $url_base . '/' . $filename;
+            return $url_wmc . '/' . $filename;
         } else {
-            return $url_base;
+            return $url_wmc;
         }
     }
 
@@ -155,7 +153,7 @@ class WmcHandler
      */
     public function getWmcDir()
     {
-        $uploads_dir = Application::getApplicationDir($this->container, $this->application->getSlug());
+        $uploads_dir = Application::getAppWebDir($this->container, $this->application->getSlug());
         $wmc_dir = $uploads_dir . '/' . WmcHandler::$WMC_DIR;
         if (!is_dir($wmc_dir)) {
             if (mkdir($wmc_dir)) {
