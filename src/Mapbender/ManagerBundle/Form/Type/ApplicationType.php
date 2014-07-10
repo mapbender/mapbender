@@ -45,6 +45,11 @@ class ApplicationType extends AbstractType
                 'attr' => array(
                     'title' => 'The HTML template used for this '
                     . 'application.')))
+            ->add('screenshotFile', 'file',
+                array('label' => 'Screenshot',
+                'attr' => array(
+                    'title' => 'Screenshot',
+                    'required' => false)))
             ->add('regionProperties', 'collection', array(
                 'type' => new RegionPropertiesType(),
                 'options' => array(

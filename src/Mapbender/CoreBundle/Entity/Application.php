@@ -327,6 +327,26 @@ class Application
     }
 
     /**
+     * Set screenshotFile
+     *
+     * @param file $screenshotFile
+     */
+    public function setScreenshotFile($screenshotFile)
+    {
+        $this->screenshotFile = $screenshotFile;
+    }
+
+    /**
+     * Get screenshotFile
+     *
+     * @return file
+     */
+    public function getScreenshotFile()
+    {
+        return $this->screenshotFile;
+    }
+
+    /**
      * Set owner
      *
      * @param User $owner
@@ -441,6 +461,22 @@ class Application
             return $this->preparedElements;
         }
     }
+
+    // public function getScreenshotFile(){
+
+    // }
+
+    // public function setScreenshotFile(){
+    //     return $Scree
+    // }
+
+    // public function setScreenshot($screenshot){
+    //     return $screenshot;
+    // }
+
+    // public function getScreenshot(){
+    //     require $screenshot;
+    // }
 
     public function __toString()
     {

@@ -192,6 +192,7 @@ class ApplicationController extends Controller
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
+        $app_directory = AppComponent::getApplicationDir($this->container, $application->getSlug());
 
         return array(
             'application' => $application,
@@ -201,7 +202,9 @@ class ApplicationController extends Controller
             'sources' => $sources,
             'form' => $form->createView(),
             'form_name' => $form->getName(),
-            'template_name' => $templateClass::getTitle());
+            'template_name' => $templateClass::getTitle(),
+            'screenshot' =>"/".$application->getScreenshot());
+            
     }
 
     /**
@@ -219,6 +222,7 @@ class ApplicationController extends Controller
         $templateClassOld = $application->getTemplate();
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
+        
 
         $form->bind($request);
         if ($form->isValid()) {
@@ -233,18 +237,24 @@ class ApplicationController extends Controller
             // to put the application forms and formtypes into seperate files.
             //
             $application->setTemplate($templateClassOld);
-
             try {
-                $em->flush();
-
-                $aclManager = $this->get('fom.acl.manager');
-                $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-                $em->getConnection()->commit();
-
                 if (AppComponent::createApplicationDir($this->container, $application->getSlug(), $old_slug)) {
+                    if($application->getScreenshotFile() !== null){
+                        $app_directory = AppComponent::getApplicationDir($this->container, $application->getSlug());
+                        $filename = sprintf('screenshot-%d.%s', $application->getId(),
+                                    $application->getScreenshotFile()->guessExtension());
+                        $application->getScreenshotFile()->move($app_directory, $filename);
+                        $application->setScreenshot($filename);
+                    }
+                    $em->flush();
+                    $aclManager = $this->get('fom.acl.manager');
+                    $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
+                    $em->getConnection()->commit();
                     $this->get('session')->getFlashBag()->set('success', 'Your application has been updated.');
                 } else {
                     $this->get('session')->getFlashBag()->set('error', "Your application has been updated but" . " the application's directories can not be created.");
+                    $em->getConnection()->rollback();
+                    $em->close();
                 }
             } catch (\Exception $e) {
                 $this->get('session')->getFlashBag()->set('error', 'There was an error trying to save your application.');
