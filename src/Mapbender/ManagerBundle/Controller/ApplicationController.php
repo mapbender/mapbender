@@ -189,21 +189,13 @@ class ApplicationController extends Controller
 
             $em->getConnection()->beginTransaction();
             $application->setUpdated(new \DateTime('now'));
-
             //
             // Avoid a null template.
             // It's a bad solution. The best way to handle it, is
             // to put the application forms and formtypes into seperate files.
             //
             $application->setTemplate($templateClassOld);
-            $this->setRP($application, $form);
-//            $rps = $application->getRegionProperties();
-//            foreach($rps as $rp){
-//                $region = $rp->getName();
-//                $props = $rp->getProperties();
-//                $a = 0;
-//            }
-
+            $this->setRegionProperties($application, $form);
             try {
                 $em->flush();
 
@@ -798,7 +790,7 @@ class ApplicationController extends Controller
         return $copySlug;
     }
     
-    private function setRP($application, $form){
+    private function setRegionProperties($application, $form){
         
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
@@ -831,10 +823,6 @@ class ApplicationController extends Controller
                 $application->addRegionProperties($regionProperties);
                 $regionProperties->setApplication($application);
                 $regionProperties->setName($regionName);
-//                foreach ($regionProps as $propName => $propValue) {
-//                    if ($propValue['state'])
-//                        $regionProperties->addProperty($propName);
-//                }
                 $em->persist($regionProperties);
                 $em->flush();
                 $em->persist($application);
