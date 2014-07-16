@@ -58,6 +58,7 @@
 .containerLayers{
   .iconCheckbox{@extend .iconPublish}
   .iconCheckboxActive{@extend .iconPublishActive}
+  
 }
 .popup{
   .popupSubContent{
@@ -101,9 +102,14 @@
 }
 .regionProperties{
   margin-right: $space/2;
-  .iconCheckbox{@extend .iconTab}
-  .iconCheckboxActive{@extend .iconTabActive}
+  .radioWrapper{margin-left: $space/2;}
   .labelInput{display:none;}
+  .iconRadio{@include opacity(.3);@extend .iconCheckbox}
+  .iconRadioActive{@include opacity(1);@extend .iconCheckbox}
+  .iconRadiotabs{@include opacity(.3);@extend .iconTabActive}
+  .iconRadiotabsActive{@include opacity(1);@extend .iconTabActive}
+  .iconRadioaccordion{@include opacity(.3);@extend .iconBars}
+  .iconRadioaccordionActive{@include opacity(1);@extend .iconBars}
 }
 .region{
   padding-top:$space;

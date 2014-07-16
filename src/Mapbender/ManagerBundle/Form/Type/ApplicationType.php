@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Mapbender\ManagerBundle\Form\EventListener\RegionSubscriber;
+use Mapbender\ManagerBundle\Form\EventListener\RegionPropertiesSubscriber;
 
 class ApplicationType extends AbstractType
 {
@@ -25,6 +26,8 @@ class ApplicationType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+//        $subscriber = new RegionPropertiesSubscriber($builder->getFormFactory(), $options);
+//        $builder->addEventSubscriber($subscriber);
         $builder
             // Base data
             ->add('title', 'text', array(
@@ -43,20 +46,34 @@ class ApplicationType extends AbstractType
             ->add('template', 'choice', array(
                 'choices' => $options['available_templates'],
                 'attr' => array(
-                    'title' => 'The HTML template used for this '
-                    . 'application.')))
-            ->add('regionProperties', 'collection', array(
-                'type' => new RegionPropertiesType(),
-                'options' => array(
-                    'data_class' => 'Mapbender\CoreBundle\Entity\RegionProperties',
-                    'available_properties' => $options['available_properties'],
-                    'auto_initialize' => false,
-                    'allow_add' => true,
-//                    'allow_delete' => true,
-            )))
+                    'title' => 'The HTML template used for this application.')))
             ->add('published', 'checkbox', array(
                 'required' => false,
                 'label' => 'Published'));
+        $app = $options['data'];
+        foreach ($options['available_properties'] as $region => $properties) {
+            $data = "";
+            foreach ($app->getRegionProperties() as $key => $regProps) {
+                if ($regProps->getName() === $region) {
+                    $help = $regProps->getProperties();
+                    if (array_key_exists('name', $help)) {
+                        $data = $help['name'];
+                    }
+                }
+            }
+            $choices = array();
+            foreach ($properties as $values) {
+                $choices[$values['name']] = $values['label'];
+            }
+            $builder->add($region, 'choice', array(
+                'property_path' => '[' . $region . ']',
+                'required' => false,
+                'mapped' => false,
+                'expanded' => true,
+                'data' => $data,
+                'choices' => $choices
+            ));
+        }
 
         // Security
         $builder->add('acl', 'acl', array(

@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Template;
 
 use Mapbender\CoreBundle\Component\Template;
@@ -10,17 +11,22 @@ use Mapbender\CoreBundle\Component\Template;
  */
 class Fullscreen extends Template
 {
+
     /**
      * @inheritdoc
      */
     public static function getRegionsProperties()
     {
         return array(
-            'sidepane' => array
-(                'tabs' => array(
-                    'state' => false,
-                    'options' => array('icon' => 'XXX')
-                )
+            'sidepane' => array(
+                'tabs' => array(
+                    'name' => 'tabs',
+                    'icon' => 'iconTab',
+                    'label' => 'mb.manager.template.region.tabs.label'),
+                'accordion' => array(
+                    'name' => 'accordion',
+                    'icon' => 'iconAccordion',
+                    'label' => 'mb.manager.template.region.accordion.label')
             )
         );
     }
@@ -40,10 +46,10 @@ class Fullscreen extends Template
     {
         $assets = array(
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
-                           '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
+                '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
             'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                          '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
-                          '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
+                '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
+                '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
             'trans' => array()
         );
         return $assets;
@@ -82,16 +88,14 @@ class Fullscreen extends Template
     /**
      * @inheritdoc
      */
-    public function render($format = 'html', $html = true, $css = true,
-        $js = true)
+    public function render($format = 'html', $html = true, $css = true, $js = true)
     {
         $region_props = $this->application->getEntity()->getNamedRegionProperties();
         $default_region_props = $this->getRegionsProperties();
 
         $templating = $this->container->get('templating');
         return $templating
-                ->render('MapbenderCoreBundle:Template:fullscreen.html.twig',
-                    array(
+                ->render('MapbenderCoreBundle:Template:fullscreen.html.twig', array(
                     'html' => $html,
                     'css' => $css,
                     'js' => $js,
@@ -99,4 +103,5 @@ class Fullscreen extends Template
                     'region_props' => $region_props,
                     'default_region_props' => $default_region_props));
     }
+
 }

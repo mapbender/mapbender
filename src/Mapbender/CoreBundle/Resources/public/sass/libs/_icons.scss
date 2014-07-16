@@ -68,7 +68,7 @@
 .iconWarningSmpl, .iconEmail, .iconTwitter,
 .iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu,
 .iconOverview, .iconGpsTarget, .iconClock, .iconFile,
-.iconBolt, .iconStarO {
+.iconBolt, .iconStarO, .iconBars {
   &:before{font-family: FontAwesome;}
 }
 
@@ -76,8 +76,8 @@
 .iconCheckboxActive:before{content:"\f046" !important;} // overwrite the default icon if checked
 .iconCheckboxHalf:before{content:"\f147" !important;} // overwrite the default icon if checked
 .iconCheckbox:before{content:"\f096";}
-.iconRadio:before{content:"\f111";}
-.iconRadioActive:before{content:"\f10c";}
+.iconRadio:before{content:"\f10c";}
+.iconRadioActive:before{content:"\f192";}
 .iconView:before{content:"\f108";}
 .iconHelp:before{content:"\f059";}
 .iconLinkButton:before{content:"\f0da";}
@@ -134,6 +134,7 @@
 .iconFile:before {content: "\f016";}
 .iconBolt:before {content: "\f0e7";}
 .iconStarO:before{content:"\f006";}
+.iconBars:before{content:"\f0c9";}
 
 // only backend
 .iconGroup:before{content: "\f0c0";}

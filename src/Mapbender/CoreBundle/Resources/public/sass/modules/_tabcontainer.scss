@@ -59,7 +59,17 @@
       color:$lightFontColor;
     }
   }
-  .container{
+  .accordion{
+    display: block;
+    @extend .button;
+
+    &.active{
+      cursor:default;
+      background-color:darken(#6fb536, 10%);
+      color:$lightFontColor;
+    }
+  }
+  .container-tab{
     border-top:dashed 1px $thirdColor;
     margin-top:$space;
     clear:left;
@@ -67,7 +77,18 @@
     padding:$space;
     z-index:20;
     position:relative;
+    overflow: auto;
 
     &.active{display:block;}
+  }
+  .container-accordion{
+    clear:left;
+    display:none;
+    padding:$space;
+    z-index:20;
+    position:relative;
+
+    &.active{display:block;
+    overflow: auto;}
   }
 }

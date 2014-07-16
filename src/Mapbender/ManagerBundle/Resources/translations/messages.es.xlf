@@ -442,6 +442,14 @@
         <source>mb.core.admin.about_dialog.show_label</source>
         <target>Mostrar etiqueta botón</target>
       </trans-unit>
+      <trans-unit id="fc73409cc94d703de1cf50d3801da59e" resname="mb.manager.template.region.tabs.label">
+        <source>mb.manager.template.region.tabs.label</source>
+        <target>Tabs</target>
+      </trans-unit>
+      <trans-unit id="0475b124fc415027ca6a776af40a4062" resname="mb.manager.template.region.accordion.label">
+        <source>mb.manager.template.region.accordion.label</source>
+        <target>Accordion</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
