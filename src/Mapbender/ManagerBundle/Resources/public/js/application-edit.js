@@ -264,9 +264,9 @@ $(function() {
                 $.ajax({
                     url: self.attr("data-url"),
                     complete: function(){
+                        $('.popupContent form').submit(submitHandler);
                         $(".popupContent").removeClass("popupContent")
                                           .addClass("popupSubContent");
-                        $('.popupContent form').submit(submitHandler);
                     }
                 })
             ],
