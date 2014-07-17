@@ -1,17 +1,18 @@
 <?php
+
 namespace Mapbender\ManagerBundle\Form\EventListener;
 
-use Symfony\Component\Form\Event\DataEvent;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
-
 
 /**
  * 
  */
 class RegionPropertiesSubscriber implements EventSubscriberInterface
 {
+
     /**
      * A FormFactoryInterface 's Factory
      * 
@@ -48,11 +49,11 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Checks the form fields by PRE_BIND DataEvent
+     * Checks the form fields by PRE_BIND FormEvent
      * 
-     * @param DataEvent $event
+     * @param FormEvent $event
      */
-    public function preBind(DataEvent $event)
+    public function preBind(FormEvent $event)
     {
         $data = $event->getData();
         $form = $event->getForm();
@@ -61,26 +62,25 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
         }
         if (key_exists("name", $data) && isset($this->options['available_properties'][$data['name']])) {
             $choices = array();
-            foreach ($this->options['available_properties'][$data['name']] as
-                    $key => $value) {
+            foreach ($this->options['available_properties'][$data['name']] as $key => $value) {
                 $choices[$key] = $key;
             }
             $form->add($this->factory->createNamed(
-                    'properties', "choice", null,
-                    array(
+                    'properties', "choice", null, array(
                     'expanded' => true,
                     'multiple' => true,
-                    'choices' => $choices
+                    'choices' => $choices,
+                    'auto_initialize' => false
             )));
         }
     }
 
     /**
-     * Checks the form fields by PRE_SET_DATA DataEvent
+     * Checks the form fields by PRE_SET_DATA FormEvent
      * 
-     * @param DataEvent $event
+     * @param FormEvent $event
      */
-    public function preSetData(DataEvent $event)
+    public function preSetData(FormEvent $event)
     {
         $data = $event->getData();
         $form = $event->getForm();
@@ -89,16 +89,15 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
         }
         if ($data->getName() !== null && isset($this->options['available_properties'][$data->getName()])) {
             $choices = array();
-            foreach ($this->options['available_properties'][$data->getName()] as
-                    $key => $value) {
+            foreach ($this->options['available_properties'][$data->getName()] as $key => $value) {
                 $choices[$key] = $key;
             }
             $form->add($this->factory->createNamed(
-                    'properties', "choice", null,
-                    array(
+                    'properties', "choice", null, array(
                     'expanded' => true,
                     'multiple' => true,
-                    'choices' => $choices
+                    'choices' => $choices,
+                    'auto_initialize' => false
             )));
         }
     }

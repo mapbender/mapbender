@@ -21,10 +21,14 @@ class ExtentType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $view->getChild(0)->set('label', 'min x')->set('attr', array('placeholder' => 'min x'));
-        $view->getChild(1)->set('label', 'min y')->set('attr', array('placeholder' => 'min y'));
-        $view->getChild(2)->set('label', 'max x')->set('attr', array('placeholder' => 'max x'));
-        $view->getChild(3)->set('label', 'max y')->set('attr', array('placeholder' => 'max y'));
+        $view->children[0]->vars['label'] = 'min x';
+        $view->children[0]->vars['attr'] = array('placeholder' => 'min x');
+        $view->children[1]->vars['label'] = 'min y';
+        $view->children[1]->vars['attr'] = array('placeholder' => 'min y');
+        $view->children[2]->vars['label'] = 'max x';
+        $view->children[2]->vars['attr'] = array('placeholder' => 'max x');
+        $view->children[3]->vars['label'] = 'max y';
+        $view->children[3]->vars['attr'] = array('placeholder' => 'max y');
     }
 }
 

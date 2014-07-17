@@ -125,13 +125,18 @@
   .dropdown{
     min-width:250px;
     margin-bottom:$space/2;
-  }
+  }      
   .checkWrapper, .labelCheck{
     display: inline-block;
     margin-top:8px;
     height:$inputHeight;
   }
   .leftContainer{margin-right:$space;}
+  .leftContainer .inputWrapper{
+    min-width:250px;
+    margin-bottom:$space/2;
+  }
+  .leftContainer .inputWrapper input{ width: 100%; }
 }
 .instanceTable{
   margin-top:$space;
@@ -143,24 +148,28 @@
   thead .checkboxColumn{padding:0px;}
   tbody{
     .dropdown{min-width:100%;}
-    .minScaleColumn, .maxScaleColumn, .styleColumn{width:90px;}
+    .minScaleColumn, .maxScaleColumn, .styleColumn{width:80px;}
     .checkboxColumn{padding:5px 3px 5px 3px;}
     .checkWrapper{margin-top:5px;width: 100%;}
   }
+  .level0{margin-left:4px;}
+  .level1{margin-left:10px;}
+  .level2{margin-left:16px;}
+  .level3{margin-left:22px;}
+  .level4{margin-left:28px;}
   .dummy{display:none;}
-  .iconLinkButton{
-    font-size:18px;
+  .itemType{
     line-height:$inputHeight + 10;
-    margin-left:$space;
     padding:0px;
+    cursor:ns-resize;
   }
   .moreColumn{padding-left:0px;}
   .iconMore{
     position: relative;
     line-height:$inputHeight;
   }
-  .input{width:90px;}
-  .titleColumn .input{width:220px;}
+  .input{width:80px;}
+  .titleColumn .input{width:200px;}
 }
 .infoMsgBox{
   z-index: 10;

@@ -971,7 +971,7 @@ class WmsSource extends Source
      * @param integer $num
      * @param WmsIstance $instance
      */
-    private function addSublayer($instlayer, $wmslayer, $num, $instance)
+    private function addSublayer($instlayer, $wmslayer, &$num, $instance)
     {
         foreach ($wmslayer->getSublayer() as $wmssublayer) {
             $num++;

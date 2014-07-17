@@ -21,8 +21,10 @@ class PositionType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $view->getChild(0)->set('label', 'x')->set('attr', array('placeholder' => 'x'));
-        $view->getChild(1)->set('label', 'y')->set('attr', array('placeholder' => 'y'));
+        $view->children[0]->vars['label'] = 'x';
+        $view->children[0]->vars['attr'] = array('placeholder' => 'x');
+        $view->children[1]->vars['label'] = 'y';
+        $view->children[1]->vars['attr'] = array('placeholder' => 'y');
     }
 }
 

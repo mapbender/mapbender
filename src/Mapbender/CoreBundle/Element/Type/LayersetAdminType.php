@@ -75,7 +75,7 @@ class LayersetAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $entityManager = $this->container->get('doctrine')->getEntityManager();
+        $entityManager = $this->container->get('doctrine')->getManager();
         $transformer = new ObjectIdTransformer($entityManager,
             'MapbenderCoreBundle:Layerset');
         $builder->addModelTransformer($transformer);

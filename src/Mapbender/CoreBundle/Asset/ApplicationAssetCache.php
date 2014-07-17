@@ -129,7 +129,7 @@ class ApplicationAssetCache
     protected function getTargetPath()
     {
         $route = $this->container->get('router')->getRouteCollection()->get('mapbender_core_application_assets');
-        $target = realpath($this->container->get('kernel')->getRootDir() . '/../web/app.php') . $route->getPattern();
+        $target = str_replace('\\', '/', realpath($this->container->get('kernel')->getRootDir() . '/../web/app.php')) . $route->getPattern();
         return $target;
     }
 }

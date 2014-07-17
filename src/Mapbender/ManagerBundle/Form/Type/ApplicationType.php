@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\ManagerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -24,52 +25,42 @@ class ApplicationType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
-//        $subscriber = new RegionSubscriber($builder->getFormFactory(), $options);
-//        $builder->addEventSubscriber($subscriber);
         $builder
             // Base data
-            ->add('title', 'text',
-                array(
+            ->add('title', 'text', array(
                 'attr' => array(
                     'title' => 'The application title, as shown in the browser '
                     . 'title bar and in lists.')))
-            ->add('slug', 'text',
-                array(
+            ->add('slug', 'text', array(
                 'label' => 'URL title',
                 'attr' => array(
                     'title' => 'The URL title (slug) is based on the title and used in the '
                     . 'application URL.')))
-            ->add('description', 'textarea',
-                array(
+            ->add('description', 'textarea', array(
                 'required' => false,
                 'attr' => array(
                     'title' => 'The description is used in overview lists.')))
-            ->add('template', 'choice',
-                array(
+            ->add('template', 'choice', array(
                 'choices' => $options['available_templates'],
                 'attr' => array(
                     'title' => 'The HTML template used for this '
                     . 'application.')))
-            ->add('regionProperties', 'collection',
-                array(
+            ->add('regionProperties', 'collection', array(
                 'type' => new RegionPropertiesType(),
                 'options' => array(
                     'data_class' => 'Mapbender\CoreBundle\Entity\RegionProperties',
-                    'available_properties' => $options['available_properties']
-                )
-//                'choices' => $options['available_templates'],
-            ))
-
-            // Security
-            ->add('published', 'checkbox',
-                array(
+                    'available_properties' => $options['available_properties'],
+                    'auto_initialize' => false,
+                    'allow_add' => true,
+//                    'allow_delete' => true,
+            )))
+            ->add('published', 'checkbox', array(
                 'required' => false,
                 'label' => 'Published'));
 
-        $builder->add('acl', 'acl',
-            array(
-            'property_path' => false,
+        // Security
+        $builder->add('acl', 'acl', array(
+            'mapped' => false,
             'data' => $options['data'],
             'permissions' => 'standard::object'));
     }

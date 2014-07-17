@@ -10,13 +10,8 @@
     {% if form_layer.vars.value.id == layer.id %}
         <tr id="{{ type }}{{ layer.id }}" class="{{ type }} level{{ level }}" data-id="{{ form_layer.vars.value.id }}"{% if layer.parent != null %} data-parent="{{layer.parent.id}}"{% endif %} data-type="{{ type }}"
             data-href="{{url("mapbender_manager_repository_instancelayerweight", {"slug": slug, "instanceId": instance.id, "instLayerId": form_layer.vars.value.id})}}">
-
-            {% if layer.parent != null %}
-              <td class="iconLinkButton"></td>
-              <td class="titleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.layerstitle"|trans }}">{{ form_widget(form_layer.title) }}</td>
-            {% else %}
-              <td class="titleColumn" colspan="2" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.layerstitle"|trans }}">{{ form_widget(form_layer.title) }}</td>
-            {% endif %}
+            <td class="level{{ level }} itemType {% if type == 'node' or  type == 'root' %}iconFolderActive{% else %}iconLinkButton{% endif %} iconSmall"></td>
+            <td class="titleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.layerstitle"|trans }}">{{ form_widget(form_layer.title) }}</td>
 
             <td class="minScaleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.minscale"|trans }}">{{ form_widget(form_layer.minScale) }}</td>
             <td class="maxScaleColumn" title="{{ "mb.wms.wmsloader.repo.instancelayerform.label.maxsclase"|trans }}">{{ form_widget(form_layer.maxScale) }}</td>
@@ -32,6 +27,7 @@
             <td class="moreColumn">
               <span class="iconMore" title="{{'mb.wms.wmsloader.repo.instancelayerform.label.moreinfo'|trans}}">
                 <div class="infoMsgBox hide">
+                  <span class="hide layer-priority">{{ form_widget(form_layer.priority) }}</span
                   <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.id"|trans }}</span><span class="smallText">{{instance.id}}</span><br>
                   <span class="labelText">{{ "mb.wms.wmsloader.repo.instancelayerform.label.layersname"|trans }}</span><span class="smallText">{{ form_layer.vars.data.wmslayersource.name}}</span>
                   <br>

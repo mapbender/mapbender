@@ -14,7 +14,11 @@
 
             <label class="labelInput">{{ 'mb.core.printclient.label.quality' | trans }}</label>
             <div class="dropdown">
-              <select name="quality" class="hiddenDropdown"></select>
+                <select name="quality" class="hiddenDropdown">
+                    {% for key , label in configuration.quality_levels %}
+                     <option value="{{ key }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
               <div class="dropdownValue iconDown"></div>
               <ul class="dropdownList"></ul>
             </div>

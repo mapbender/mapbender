@@ -181,6 +181,7 @@
                 var nodeType = this._getNodeType(sourceEl, isroot);
                 li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
                 if (nodeType === this.consts.root || nodeType === this.consts.group) {
+                    $('.featureInfoWrapper:first', li).remove();
                     if (nodeType === this.consts.root) {
                         li.addClass("serviceContainer");
                     } else if (nodeType === this.consts.group) {

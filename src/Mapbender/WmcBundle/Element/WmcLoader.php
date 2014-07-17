@@ -275,7 +275,7 @@ class WmcLoader extends Element
             $wmc = Wmc::create();
             $form = $this->container->get("form.factory")->create(new WmcLoadType(),
                 $wmc);
-            $form->bindRequest($request);
+            $form->bind($request);
             if ($form->isValid()) {
                 if ($wmc->getXml() !== null) {
                     $file = $wmc->getXml();

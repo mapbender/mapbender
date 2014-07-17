@@ -64,10 +64,11 @@
 .iconPublishActive, .iconAppDefault, .iconCancel,
 .iconThumbsUp, .iconThumbsDown, .iconGroup, .iconUser,
 .iconSettings, .iconSignOut, .iconSignIn, .iconMore,
-.iconCopy, .iconKey, .iconWarning, .iconEmail, .iconTwitter,
+.iconCopy, .iconKey, .iconWarning, .iconWarningCcl,
+.iconWarningSmpl, .iconEmail, .iconTwitter,
 .iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu,
 .iconOverview, .iconGpsTarget, .iconClock, .iconFile,
-.iconBolt {
+.iconBolt, .iconStarO {
   &:before{font-family: FontAwesome;}
 }
 
@@ -110,8 +111,8 @@
 .iconNext:before{content:"\f01e";}
 .iconZoomSelect:before{content:"\f00e";}
 .iconZoomMin:before{content:"\f0ac";}
-.iconZoomIn:before{content:"\f116";}
-.iconZoomOut:before{content:"\f117";}
+.iconZoomIn:before{content:"\f196";}
+.iconZoomOut:before{content:"\f147";}
 .iconZoomLevel:before{content:"\f10c";}
 .iconZoomLevelSelected:before{content:"\f111";}
 .iconAreaRuler:before{content:"\f125";}
@@ -121,6 +122,8 @@
 .iconPoi:before{content:"\f08d";}
 .iconImageExport:before{content:"\f030";}
 .iconWarning:before{content:"\f071";}
+.iconWarningCcl:before{content:"\f06a";}
+.iconWarningSmpl:before{content:"\f12a";}
 .iconEmail:before {content: "\f0e0";}
 .iconTwitter:before {content: "\f081";}
 .iconFacebook:before {content: "\f082";}
@@ -130,6 +133,7 @@
 .iconClock:before {content: "\f017";}
 .iconFile:before {content: "\f016";}
 .iconBolt:before {content: "\f0e7";}
+.iconStarO:before{content:"\f006";}
 
 // only backend
 .iconGroup:before{content: "\f0c0";}

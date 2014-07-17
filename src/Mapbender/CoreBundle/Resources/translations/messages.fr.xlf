@@ -1022,6 +1022,14 @@
         <source>You can use the following snippet in an email to send the POI.</source>
         <target>You can use the following snippet in an email to send the POI.</target>
       </trans-unit>
+      <trans-unit id="a091e836228a240d137f28d1f7e99f5e" resname="mb.core.searchrouter.no_results">
+        <source>mb.core.searchrouter.no_results</source>
+        <target>__mb.core.searchrouter.no_results</target>
+      </trans-unit>
+      <trans-unit id="f518bb2f60b3deb2e5b973e00e8088f2" resname="mb.core.searchrouter.result_counter">
+        <source>mb.core.searchrouter.result_counter</source>
+        <target>__mb.core.searchrouter.result_counter</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
