@@ -150,7 +150,6 @@ $(function() {
                     }, 10);
                 }
             }
-
         });
         e.preventDefault();
         return false;
@@ -283,9 +282,6 @@ $(function() {
                     cssClass: 'button right',
                     callback: function() {
                         $("#elementForm").submit();
-                        window.setTimeout(function() {
-                            window.location.reload();
-                        }, 50);
                     }
                 }
             }
