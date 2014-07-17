@@ -268,40 +268,22 @@ class RepositoryController extends Controller
             ->find($instanceId);
 
         if ($this->getRequest()->getMethod() == 'POST') { //save
-            $wmsinstance_req = new WmsInstance();
-            $wmsinstance_req->setSource($wmsinstance->getSource());
-            $form_req = $this->createForm(new WmsInstanceInstanceLayersType(), $wmsinstance_req);
-            $form_req->bind($this->get('request'));
             $form = $this->createForm(new WmsInstanceInstanceLayersType(), $wmsinstance);
             $form->bind($this->get('request'));
-            $wmsinstance->setTransparency(Utils::getBool($wmsinstance_req->getTransparency()));
-            $wmsinstance->setVisible(Utils::getBool($wmsinstance_req->getVisible()));
-            $wmsinstance->setOpacity(Utils::getBool($wmsinstance_req->getOpacity()));
-            $wmsinstance->setProxy(Utils::getBool($wmsinstance_req->getProxy()));
-            $wmsinstance->setTiled(Utils::getBool($wmsinstance_req->getTiled()));
-            foreach ($wmsinstance->getLayers() as $layer) {
-                foreach ($wmsinstance_req->getLayers() as $layer_tmp) {
-                    if ($layer_tmp->getId() === $layer->getId()) {
-                        $layer->setActive(Utils::getBool($layer_tmp->getActive()));
-                        $layer->setSelected(Utils::getBool($layer_tmp->getSelected()));
-                        $layer->setSelectedDefault(Utils::getBool($layer_tmp->getSelectedDefault()));
-                        $layer->setInfo(Utils::getBool($layer_tmp->getInfo(), true));
-                        $layer->setAllowinfo(Utils::getBool($layer_tmp->getAllowinfo(), true));
-                        $layer->setPriority($layer_tmp->getPriority());
-                        break;
-                    }
-                }
-            }
             if ($form->isValid()) { //save
                 $em = $this->getDoctrine()->getManager();
                 $em->getConnection()->beginTransaction();
                 $em->persist($wmsinstance);
                 $em->flush();
+                $em->getConnection()->commit();
+                $this->getDoctrine()->resetManager();
+                $em = $this->getDoctrine()->getManager();
+                $wmsinstance = $this->getDoctrine()
+                    ->getRepository("MapbenderWmsBundle:WmsInstance")
+                    ->find($wmsinstance->getId());
                 $wmsinstance->generateConfiguration();
                 $em->persist($wmsinstance);
                 $em->flush();
-
-                $em->getConnection()->commit();
 
                 $this->get('session')->getFlashBag()->set(
                     'success', 'Your Wms Instance has been changed.');

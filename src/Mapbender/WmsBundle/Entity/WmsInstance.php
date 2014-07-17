@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -25,6 +26,7 @@ use Mapbender\CoreBundle\Component\Signer;
  */
 class WmsInstance extends SourceInstance
 {
+
     /**
      * @var array $configuration The instance configuration
      * @ORM\Column(type="array", nullable=true)
@@ -144,7 +146,7 @@ class WmsInstance extends SourceInstance
 
         if ($signer) {
             $this->configuration['options']['url'] = $signer->signUrl($this->configuration['options']['url']);
-            if($this->proxy){
+            if ($this->proxy) {
                 $this->signeUrls($signer, $this->configuration['children'][0]);
             }
         }
@@ -238,8 +240,7 @@ class WmsInstance extends SourceInstance
                     ->setParent($rootlayer)
                     ->setWmslayersource($layersource)
                     ->setWmsInstance($this);
-                $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo()
-                            ? true : false);
+                $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo() ? true : false);
                 $rootlayer->addSublayer($layer);
                 $this->addLayer($layer);
             }
@@ -267,8 +268,7 @@ class WmsInstance extends SourceInstance
             )
         );
         foreach ($rootlayer->getWmslayersource()->getBoundingBoxes() as $bbox) {
-            $srses = array_merge($srses,
-                array($bbox->getSrs() => array(
+            $srses = array_merge($srses, array($bbox->getSrs() => array(
                     floatval($bbox->getMinx()),
                     floatval($bbox->getMiny()),
                     floatval($bbox->getMaxx()),
@@ -301,15 +301,16 @@ class WmsInstance extends SourceInstance
      * @param array $configuration
      * @return array
      */
-    public function generateLayersConfiguration(WmsInstanceLayer $layer,
-        $configuration = array())
+    public function generateLayersConfiguration(WmsInstanceLayer $layer, $configuration = array())
     {
         if ($layer->getActive() === true) {
             $children = array();
-            foreach ($layer->getSublayer() as $sublayer) {
-                $configurationTemp = $this->generateLayersConfiguration($sublayer);
-                if (count($configurationTemp) > 0) {
-                    $children[] = $configurationTemp;
+            if ($layer->getSublayer()->count() > 0) {
+                foreach ($layer->getSublayer() as $sublayer) {
+                    $configurationTemp = $this->generateLayersConfiguration($sublayer);
+                    if (count($configurationTemp) > 0) {
+                        $children[] = $configurationTemp;
+                    }
                 }
             }
             $layerConf = $layer->getConfiguration();
@@ -696,8 +697,7 @@ class WmsInstance extends SourceInstance
      * @param EntityManager $em
      * @param WmsInstanceLayer $instLayer
      */
-    private function removeLayerRecursive(EntityManager $em,
-        WmsInstanceLayer $instLayer)
+    private function removeLayerRecursive(EntityManager $em, WmsInstanceLayer $instLayer)
     {
         foreach ($instLayer->getSublayer() as $sublayer) {
             $this->removeLayerRecursive($em, $sublayer);
@@ -735,8 +735,7 @@ class WmsInstance extends SourceInstance
      * @param EntityManager $em
      * @param WmsInstanceLayer $instLayer
      */
-    private function copyLayerRecursive(EntityManager $em,
-        WmsInstance $instCloned, WmsInstanceLayer $origin,
+    private function copyLayerRecursive(EntityManager $em, WmsInstance $instCloned, WmsInstanceLayer $origin,
         WmsInstanceLayer $clonedParent = null)
     {
         $cloned = $origin->copy($em);
