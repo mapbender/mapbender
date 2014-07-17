@@ -273,11 +273,14 @@ class RepositoryController extends Controller
             if ($form->isValid()) { //save
                 $em = $this->getDoctrine()->getManager();
                 $em->getConnection()->beginTransaction();
+                foreach ($wmsinstance->getLayers() as $layer){
+                    $em->persist($layer);
+                    $em->flush();
+                    $em->refresh($layer);
+                }
                 $em->persist($wmsinstance);
                 $em->flush();
                 $em->getConnection()->commit();
-                $this->getDoctrine()->resetManager();
-                $em = $this->getDoctrine()->getManager();
                 $wmsinstance = $this->getDoctrine()
                     ->getRepository("MapbenderWmsBundle:WmsInstance")
                     ->find($wmsinstance->getId());
