@@ -19,11 +19,9 @@ class Classic extends Template
             'sidepane' => array(
                 'tabs' => array(
                     'name' => 'tabs',
-                    'icon' => 'iconTab',
                     'label' => 'mb.manager.template.region.tabs.label'),
                 'accordion' => array(
                     'name' => 'accordion',
-                    'icon' => 'iconAccordion',
                     'label' => 'mb.manager.template.region.accordion.label')
             )
         );
