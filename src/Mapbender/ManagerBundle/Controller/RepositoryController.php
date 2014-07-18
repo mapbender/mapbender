@@ -184,7 +184,9 @@ class RepositoryController extends Controller
         }
 
         $securityContext = $this->get('security.context');
-        if (!$securityContext->isGranted('EDIT', $sourceInst->getSource())) {
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!($securityContext->isGranted('EDIT', $sourceInst->getSource()) ||
+              $securityContext->isGranted('EDIT', $oid))) {
             throw new AccessDeniedHttpException();
         }
 
