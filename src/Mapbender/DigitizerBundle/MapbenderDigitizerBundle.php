@@ -24,6 +24,7 @@ class MapbenderDigitizerBundle extends MapbenderBundle
     public function getElements()
     {
         return array(
+            'Mapbender\DigitizerBundle\Element\DigitizerToolbar'
             );
     }
 
