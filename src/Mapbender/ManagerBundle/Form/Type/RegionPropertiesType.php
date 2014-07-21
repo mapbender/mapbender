@@ -19,8 +19,7 @@ class RegionPropertiesType extends AbstractType
     {
         $resolver->setDefaults(array(
             'available_properties' => array(),
-            'auto_initialize' => false,
-            'allow_add' => true));
+            'data_class' => 'Mapbender\CoreBundle\Entity\RegionProperties'));
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -28,6 +27,7 @@ class RegionPropertiesType extends AbstractType
         $subscriber = new RegionPropertiesSubscriber($builder->getFormFactory(), $options);
         $builder->addEventSubscriber($subscriber);
         $builder->add('name', 'hidden');
+        $builder->add('name');
     }
 
 }

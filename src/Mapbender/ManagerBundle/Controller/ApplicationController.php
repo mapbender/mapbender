@@ -108,23 +108,7 @@ class ApplicationController extends Controller
             $em->getConnection()->beginTransaction();
             $em->persist($application);
             $em->flush();
-
-            $templateClass = $application->getTemplate();
-            $templateProps = $templateClass::getRegionsProperties();
-            foreach ($templateProps as $regionName => $regionProps) {
-                $regionProperties = new RegionProperties();
-                $application->addRegionProperties($regionProperties);
-                $regionProperties->setApplication($application);
-                $regionProperties->setName($regionName);
-                foreach ($regionProps as $propName => $propValue) {
-                    if ($propValue['state'])
-                        $regionProperties->addProperty($propName);
-                }
-                $em->persist($regionProperties);
-                $em->flush();
-            }
-            $em->persist($application);
-            $em->flush();
+            $this->checkRegionProperties($application);
             $aclManager = $this->get('fom.acl.manager');
             $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
 
@@ -164,29 +148,7 @@ class ApplicationController extends Controller
         $templateProps = $templateClass::getRegionsProperties();
         $em = $this->getDoctrine()->getManager();
         // add RegionProperties if defined
-        foreach ($templateProps as $regionName => $regionProps) {
-            $exists = false;
-            foreach ($application->getRegionProperties() as $regprops) {
-                if ($regprops->getName() === $regionName) {
-                    $exists = true;
-                    break;
-                }
-            }
-            if (!$exists) {
-                $regionProperties = new RegionProperties();
-                $application->addRegionProperties($regionProperties);
-                $regionProperties->setApplication($application);
-                $regionProperties->setName($regionName);
-                foreach ($regionProps as $propName => $propValue) {
-                    if ($propValue['state'])
-                        $regionProperties->addProperty($propName);
-                }
-                $em->persist($regionProperties);
-                $em->flush();
-                $em->persist($application);
-                $em->flush();
-            }
-        }
+        $this->checkRegionProperties($application);
         $form = $this->createApplicationForm($application);
 
         $em = $this->getDoctrine()->getManager();
@@ -227,14 +189,13 @@ class ApplicationController extends Controller
 
             $em->getConnection()->beginTransaction();
             $application->setUpdated(new \DateTime('now'));
-
             //
             // Avoid a null template.
             // It's a bad solution. The best way to handle it, is
             // to put the application forms and formtypes into seperate files.
             //
             $application->setTemplate($templateClassOld);
-
+            $this->setRegionProperties($application, $form);
             try {
                 $em->flush();
 
@@ -828,6 +789,48 @@ class ApplicationController extends Controller
             $count++;
         } while ($this->get('mapbender')->getApplicationEntity($copySlug));
         return $copySlug;
+    }
+    
+    private function setRegionProperties($application, $form){
+        
+        $templateClass = $application->getTemplate();
+        $templateProps = $templateClass::getRegionsProperties();
+        foreach ($templateProps as $regionName => $regionProperties) {
+            foreach($application->getRegionProperties() as $regionProperty){
+                if($regionProperty->getName() === $regionName){
+                    $regprops = $form->get($regionName)->getData();
+                    $regionProperty->setProperties($regprops ? $regionProperties[$regprops] : array());
+                }
+            }
+        }
+    }
+    
+    private function checkRegionProperties($application)
+    {
+        $templateClass = $application->getTemplate();
+        $templateProps = $templateClass::getRegionsProperties();
+        $em = $this->getDoctrine()->getManager();
+        // add RegionProperties if defined
+        foreach ($templateProps as $regionName => $regionProps) {
+            $exists = false;
+            foreach ($application->getRegionProperties() as $regprops) {
+                if ($regprops->getName() === $regionName) {
+                    $exists = true;
+                    break;
+                }
+            }
+            if (!$exists) {
+                $regionProperties = new RegionProperties();
+                $application->addRegionProperties($regionProperties);
+                $regionProperties->setApplication($application);
+                $regionProperties->setName($regionName);
+                $em->persist($regionProperties);
+                $em->flush();
+                $em->persist($application);
+                $em->flush();
+            }
+        }
+        
     }
 
 }

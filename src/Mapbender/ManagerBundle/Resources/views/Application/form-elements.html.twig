@@ -5,13 +5,13 @@
   <div class="clearContainer"></div>
   <div class="{{region}} region">
     <h3 class="left subTitle">{{ region | capitalize }}</h3>
-    {% if form.regionProperties is defined %}
+    {% if form[region] is defined %}
     <div class="right regionProperties">
-      {% for form_regionProperties in form.regionProperties %}
-        {% if form_regionProperties.vars.value.name == region %}
-          {{ form_widget(form_regionProperties) }}
-        {% endif %}
-      {% endfor %}
+      {#% for form[region] in form.regionProperties %}
+        {% if form_regionProperties.vars.value.name == region %#}
+          {{ form_widget(form[region]) }}
+        {#% endif %}
+      {% endfor %#}
     </div>
     {% endif %}
     <div class="clearContainer"></div>

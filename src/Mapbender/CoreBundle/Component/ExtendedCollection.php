@@ -9,9 +9,9 @@ namespace Mapbender\CoreBundle\Component;
 
 /**
  *
- * @author paul
+ * @author Paul Schmidt
  */
 interface ExtendedCollection
 {
-    //put your code here
+    
 }

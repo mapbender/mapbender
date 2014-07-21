@@ -269,8 +269,7 @@ class WmsInstance extends SourceInstance
             )
         );
         foreach ($rootlayer->getWmslayersource()->getBoundingBoxes() as $bbox) {
-            $srses = array_merge($srses,
-                array($bbox->getSrs() => array(
+            $srses = array_merge($srses, array($bbox->getSrs() => array(
                     floatval($bbox->getMinx()),
                     floatval($bbox->getMiny()),
                     floatval($bbox->getMaxx()),
@@ -307,10 +306,12 @@ class WmsInstance extends SourceInstance
     {
         if ($layer->getActive() === true) {
             $children = array();
-            foreach ($layer->getSublayer() as $sublayer) {
-                $configurationTemp = $this->generateLayersConfiguration($sublayer);
-                if (count($configurationTemp) > 0) {
-                    $children[] = $configurationTemp;
+            if ($layer->getSublayer()->count() > 0) {
+                foreach ($layer->getSublayer() as $sublayer) {
+                    $configurationTemp = $this->generateLayersConfiguration($sublayer);
+                    if (count($configurationTemp) > 0) {
+                        $children[] = $configurationTemp;
+                    }
                 }
             }
             $layerConf = $layer->getConfiguration();
