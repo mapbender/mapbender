@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Controller;
 
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\XmlValidator;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
@@ -424,6 +425,33 @@ class RepositoryController extends Controller
                             'before' => $enabled_before,
                             'after' => $enabled)))), 200, array('Content-Type' => 'application/json'));
         }
+    }
+    
+    /**
+     * Get Metadata for a wms service
+     *
+     * @ManagerRoute("/instance/metadata")
+     * @Method({ "POST" })
+     */
+    public function metadataAction()
+    {
+        $sourceId = $this->container->get('request')->get("sourceId", null);
+        $instance = $this->container->get("doctrine")
+                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getSource())) {
+            throw new AccessDeniedException();
+        }
+        $layerName = $this->container->get('request')->get("layerName", null);
+        $metadata = $instance->getMetadata();
+        $metadata->setContenttype(SourceMetadata::$CONTENTTYPE_ELEMENT);
+        $metadata->setContainer(SourceMetadata::$CONTAINER_ACCORDION);
+        $content = $metadata->render($this->container->get('templating'), $layerName);
+        $response = new Response();
+        $response->setContent($content);
+        $response->headers->set('Content-Type', 'text/html');
+        return $response;
     }
 
 }

@@ -385,7 +385,6 @@ Mapbender.Model = {
      * Checks the source changes and returns the source changes.
      */
     _checkAndRedrawSource: function(toChangeOpts) {
-        console.log("_checkAndRedrawSource", toChangeOpts);
         var source = this.getSource(toChangeOpts.sourceIdx);
         var result = Mapbender.source[source.type].changeOptions(source, this.map.olMap.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
@@ -402,7 +401,6 @@ Mapbender.Model = {
         return result.changed;
     },
     _checkChanges: function(e) {
-        console.log("_checkChanges", e);
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
             var result = Mapbender.source[source.type].changeOptions(source, self.map.olMap.getScale(), {sourceIdx: {id: source.id}, options: {children: {}}});

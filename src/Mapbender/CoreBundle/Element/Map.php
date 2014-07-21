@@ -125,8 +125,7 @@ class Map extends Element
         if (isset($configuration["otherSrs"])) {
             if (is_array($configuration["otherSrs"])) {
                 $otherSrs = $configuration["otherSrs"];
-            } else if (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"]))
-                > 0) {
+            } else if (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
                 $otherSrs = preg_split("/\s?,\s?/", $configuration["otherSrs"]);
             }
             foreach ($otherSrs as $srs) {
@@ -236,103 +235,12 @@ class Map extends Element
                 $response->setContent(json_encode($data));
                 $response->headers->set('Content-Type', 'application/json');
                 break;
-            case 'metadata':
-                $metadata = $this->getMetadata();
-                $metadata['content'] = "raw";
-                $html = $this->container->get('templating')
-                    ->render('MapbenderCoreBundle::metadata.html.twig', array('metadata' => $metadata));
-                $response->setContent($html);
-                $response->headers->set('Content-Type', 'text/html');
-                break;
             default:
                 throw new NotFoundHttpException('No such action');
         }
         return $response;
     }
-
-    private function getMetadata()
-    {
-        $result = array(
-            "display" => "notab",
-            "sections" => array()
-        );
-        $sourceId = $this->container->get('request')->get("sourceId", null);
-        $layerName = $this->container->get('request')->get("layerName", null);
-        $repository = 'Mapbender\CoreBundle\Entity\SourceInstance';
-        $instance = $this->container->get("doctrine")->getRepository($repository)
-            ->find($sourceId);
-        # add source metadata
-        $src = $instance->getSource();
-        $source_items = array();
-        $source_items[] = array("title" => Map::getNotNull($src->getTitle()));
-        $source_items[] = array("name" => Map::getNotNull($src->getName()));
-        $source_items[] = array("version" => Map::getNotNull($src->getVersion()));
-        $source_items[] = array("originUrl" => Map::getNotNull($src->getOriginUrl()));
-        $source_items[] = array("description" => Map::getNotNull($src->getDescription()));
-        $source_items[] = array("onlineResource" =>
-            Map::getNotNull($src->getOnlineResource() !== null ? $src->getOnlineResource() : ""));
-        $source_items[] = array("exceptionFormats" => Map::getNotNull(implode(",", $src->getExceptionFormats())));
-        $source_items[] = array("fees" => Map::getNotNull($src->getFees()));
-        $source_items[] = array("accessconstraints" => Map::getNotNull($src->getAccessConstraints()));
-        $result["sections"][] = array(
-            "title" => "common",
-            "items" => $source_items
-        );
-        # add source contact metadata
-        $contact = $src->getContact();
-        $contact_items = array();
-        $contact_items[] = array("person" => Map::getNotNull($contact->getPerson()));
-        $contact_items[] = array("position" => Map::getNotNull($contact->getPosition()));
-        $contact_items[] = array("organization" => Map::getNotNull($contact->getOrganization()));
-
-        $contact_items[] = array("voiceTelephone" => Map::getNotNull($contact->getVoiceTelephone()));
-        $contact_items[] = array("facsimileTelephone" => Map::getNotNull($contact->getFacsimileTelephone()));
-        $contact_items[] = array("electronicMailAddress" => Map::getNotNull($contact->getElectronicMailAddress()));
-        $contact_items[] = array("address" => Map::getNotNull($contact->getAddress()));
-        $contact_items[] = array("addressType" => Map::getNotNull($contact->getAddressType()));
-        $contact_items[] = array("addressCity" => Map::getNotNull($contact->getAddressCity()));
-        $contact_items[] = array("addressStateOrProvince" => Map::getNotNull($contact->getAddressStateOrProvince()));
-        $contact_items[] = array("addressPostCode" => Map::getNotNull($contact->getAddressPostCode()));
-        $contact_items[] = array("addressCountry" => Map::getNotNull($contact->getAddressCountry()));
-        $result["sections"][] = array(
-            "title" => "contact",
-            "items" => $contact_items
-        );
-
-        # add layer metadata
-        if ($layerName !== '') {
-            $layer = null;
-            foreach ($instance->getLayers() as $layerH) {
-                if ($layerH->getWmslayersource()->getName() === $layerName) {
-                    $layer = $layerH;
-                    break;
-                }
-            }
-            if ($layer) {
-                $layer_items = array();
-                $layer_items[] = array("name" => Map::getNotNull($layer->getWmslayersource()->getName()));
-                $layer_items[] = array("title" => Map::getNotNull($layer->getTitle()));
-                $bbox = $layer->getWmslayersource()->getLatlonBounds();
-                $layer_items[] = array("bbox" => Map::getNotNull($bbox->getSrs() . " " .
-                        $bbox->getMinx() . "," . $bbox->getMiny() . "," . $bbox->getMaxx() . "," . $bbox->getMaxy()));
-                $layer_items[] = array(
-                    "srs" => Map::getNotNull(implode(',', $layer->getWmslayersource()->getSrs())));
-                $result["sections"][] = array(
-                    "title" => "layer",
-                    "items" => $layer_items
-                );
-            }
-        }
-
-
-        return $result;
-    }
-
-    private static function getNotNull($value)
-    {
-        return $value !== null ? $value : "";
-    }
-
+    
     protected function loadSrsDefinitions()
     {
         $srsList = $this->container->get('request')->get("srs", null);

@@ -32,25 +32,13 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions){
                     content: [
                         $.ajax({
                             type: "POST",
-                            url: map.elementUrl + "metadata",
+                            url: Mapbender.configuration.application.urls['metadata'],
                             data: {
                                 sourceId: source[0].origId,
-                                sourceType: source[0].type,
                                 layerName: layer.options.name && layer.options.name !== '' ? layer.options.name : ''
                             },
                             dataType: 'html',
-                            complete: function(data){
-//                                console.log(metadata_popup.$element);
-//                                $(".tabContainer, .tabContainerAlt", $(metadata_popup.$element)).on('click', '.tab', function() {
-//                                    var me = $(this);
-//                                    me.parent().parent().find(".active").removeClass("active");
-//                                    me.addClass("active");
-//                                    $("#" + me.attr("id").replace("tab", "container")).addClass("active");
-//                                });
-                            },
-//                            success: function(data, textStatus, jqXHR){
-//                                Mapbender.Metadata.show(data);
-//                            },
+                            complete: function(data){ },
                             error: function(jqXHR, textStatus, errorThrown){
                                 Mapbender.error(errorThrown);
                             }

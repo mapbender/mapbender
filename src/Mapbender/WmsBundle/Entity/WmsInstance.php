@@ -1,18 +1,20 @@
 <?php
+
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\Signer;
+use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\LegendUrl;
+use Mapbender\WmsBundle\Component\OnlineResource;
+use Mapbender\WmsBundle\Component\Style;
 use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
 use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
-use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\WmsMetadata;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\WmsBundle\Component\Style;
-use Mapbender\WmsBundle\Component\OnlineResource;
-use Mapbender\WmsBundle\Component\LegendUrl;
-use Mapbender\CoreBundle\Component\Signer;
 
 /**
  * WmsInstance class
@@ -25,6 +27,7 @@ use Mapbender\CoreBundle\Component\Signer;
  */
 class WmsInstance extends SourceInstance
 {
+
     /**
      * @var array $configuration The instance configuration
      * @ORM\Column(type="array", nullable=true)
@@ -144,7 +147,7 @@ class WmsInstance extends SourceInstance
 
         if ($signer) {
             $this->configuration['options']['url'] = $signer->signUrl($this->configuration['options']['url']);
-            if($this->proxy){
+            if ($this->proxy) {
                 $this->signeUrls($signer, $this->configuration['children'][0]);
             }
         }
@@ -238,8 +241,7 @@ class WmsInstance extends SourceInstance
                     ->setParent($rootlayer)
                     ->setWmslayersource($layersource)
                     ->setWmsInstance($this);
-                $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo()
-                            ? true : false);
+                $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo() ? true : false);
                 $rootlayer->addSublayer($layer);
                 $this->addLayer($layer);
             }
@@ -301,8 +303,7 @@ class WmsInstance extends SourceInstance
      * @param array $configuration
      * @return array
      */
-    public function generateLayersConfiguration(WmsInstanceLayer $layer,
-        $configuration = array())
+    public function generateLayersConfiguration(WmsInstanceLayer $layer, $configuration = array())
     {
         if ($layer->getActive() === true) {
             $children = array();
@@ -683,6 +684,15 @@ class WmsInstance extends SourceInstance
     }
 
     /**
+     * 
+     * @return WmsMetadata
+     */
+    public function getMetadata()
+    {
+        return new WmsMetadata($this);
+    }
+
+    /**
      * @inheritdoc
      */
     public function remove(EntityManager $em)
@@ -696,8 +706,7 @@ class WmsInstance extends SourceInstance
      * @param EntityManager $em
      * @param WmsInstanceLayer $instLayer
      */
-    private function removeLayerRecursive(EntityManager $em,
-        WmsInstanceLayer $instLayer)
+    private function removeLayerRecursive(EntityManager $em, WmsInstanceLayer $instLayer)
     {
         foreach ($instLayer->getSublayer() as $sublayer) {
             $this->removeLayerRecursive($em, $sublayer);
@@ -735,8 +744,7 @@ class WmsInstance extends SourceInstance
      * @param EntityManager $em
      * @param WmsInstanceLayer $instLayer
      */
-    private function copyLayerRecursive(EntityManager $em,
-        WmsInstance $instCloned, WmsInstanceLayer $origin,
+    private function copyLayerRecursive(EntityManager $em, WmsInstance $instCloned, WmsInstanceLayer $origin,
         WmsInstanceLayer $clonedParent = null)
     {
         $cloned = $origin->copy($em);

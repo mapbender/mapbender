@@ -1,4 +1,4 @@
-{% if metadata.content == 'html' %}
+{% if metadata.contenttype == 'html' %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
         <title>Metadata</title>
@@ -23,20 +23,20 @@
     <body>
 {% endif %}
         <div class="tabContainerAlt">
-        {% set prefix='mb.core.metadata.section.' %}
-        {% if metadata.display == 'tabs' %}
+        {% if metadata.container == 'tabs' %}
             <ul class="tabs">
             {% for section in metadata.sections %}
-                <li id="metadatatab{{loop.index}}" class="metadatatab{% if loop.first %} active{% endif %} tab">{{ prefix~section.title | trans}}</li>
+                {% set vt=prefix~section.title %}
+                <li id="metadatatab{{loop.index}}" class="metadatatab{% if loop.first %} active{% endif %} tab">{{ vt | trans}}</li>
             {% endfor %}
             </ul>
         {% endif %}
         {% for section in metadata.sections %}
-            {% if metadata.display != 'tabs' %}
+            {% if metadata.container == 'accordion' %}
             {% set vt=prefix~section.title %}
             <div id="metadatatab{{loop.index}}" class="metadatatab{% if loop.first %} active{% endif %} tab">{{ vt | trans}}</div>
             {% endif %}
-            <div id="metadatacontainer{{loop.index}}" class="metadatacontainer{% if loop.first %} active{% endif %}">
+            <div id="metadatacontainer{{loop.index}}" class="metadatacontainer{% if loop.first and metadata.container != 'none' %} active{% endif %}">
             {% for item in section.items %}
                 {% for key,val in item %}
                 {% set vt=prefix~section.title~'.'~key %}
@@ -48,7 +48,7 @@
             </div>   
         {% endfor %}
         </div>
-{% if metadata.content == 'html' %}        
+{% if metadata.contenttype == 'html' %}        
     </body>
 </html>
 {% endif %}
