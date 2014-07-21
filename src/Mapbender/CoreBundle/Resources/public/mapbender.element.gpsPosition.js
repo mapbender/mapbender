@@ -2,11 +2,13 @@
 
 $.widget("mapbender.mbGpsPosition", {
     options: {
-        follow: false
+        follow: false,
+        average: 1
     },
 
     map: null,
     interval : null,
+    stack: [],
 
     _create: function() {
         var self = this;
@@ -16,6 +18,10 @@ $.widget("mapbender.mbGpsPosition", {
                 return;
         }
         Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+
+        if(!this.options.average) {
+            this.options.average = 1;
+        }
 
         me.click(function() {
             me.parent().addClass("toolBarItemActive");
@@ -50,6 +56,20 @@ $.widget("mapbender.mbGpsPosition", {
                 var newProj = olmap.getProjectionObject();
                 var p = new OpenLayers.LonLat(position.coords.longitude,position.coords.latitude);
                 p.transform(proj, newProj);
+
+                // Averaging: Building a queue...
+                self.stack.push(p);
+                if(self.stack.length > self.options.average) {
+                    self.stack.splice(0, 1);
+                }
+
+                // ...and reducing it.
+                p = _.reduce(self.stack, function(memo, p) {
+                    memo.lon += p.lon / self.stack.length;
+                    memo.lat += p.lat / self.stack.length;
+                    return memo;
+                }, new OpenLayers.LonLat(0, 0));
+
                 self._createMarker(p);
                 self._centerMap(p);
 
