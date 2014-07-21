@@ -25,7 +25,8 @@ class GpsPositionAdminType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'application' => null
+            'application' => null,
+            'average' => 1
         ));
     }
 
@@ -46,6 +47,10 @@ class GpsPositionAdminType extends AbstractType
             ->add('icon', new IconClassType(), array('required' => false))
             ->add('action', 'text', array('required' => false))
             ->add('refreshinterval', 'text', array('required' => false))
+            ->add('average', 'text', array(
+                'required' => false,
+                'property_path' => '[average]'
+                ))
             ->add('follow', 'checkbox', array(
                 'property_path' => '[follow]'));
     }
