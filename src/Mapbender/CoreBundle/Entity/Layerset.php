@@ -164,7 +164,7 @@ class Layerset
         return (string) $this->getId();
     }
     
-    public function copy(EntityManager $em)
+    public function copy(EntityManager $em, $instanceMap = array())
     {
         $ls = new Layerset();
         $ls->title = $this->title;
@@ -172,6 +172,7 @@ class Layerset
         {
             $cloned = $instance->copy($em);
             $ls->addInstance($cloned->setLayerset($ls));
+            $instanceMap[$instance->getId()] = $cloned->getId();
         }
         return $ls;
     }
