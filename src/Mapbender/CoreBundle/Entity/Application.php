@@ -508,7 +508,7 @@ class Application
         foreach ($this->elements as $element) {
             $copied = $element->copy($em);
             $copied->setApplication($app);
-            $copied->setConfiguration(array());
+//            $copied->setConfiguration(array());
             $em->persist($copied);
             $app->addElements($copied);
             $em->persist($app);
