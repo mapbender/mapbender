@@ -490,8 +490,9 @@ class Application
         foreach ($this->layersets as $layerset) {
             $instanceMap = array();
             $layerset_cloned = $layerset->copy($em, $instanceMap);
+            $layerset_cloned->setApplication($app);
             $em->persist($layerset_cloned);
-            $app->addLayerset($layerset_cloned->setApplication($app));
+            $app->addLayerset($layerset_cloned);
             $layersetMap[strval($layerset->getId())] = array('layerset' => $layerset_cloned, 'instanceMap' => $instanceMap);
         }
         if (isset($layerset))

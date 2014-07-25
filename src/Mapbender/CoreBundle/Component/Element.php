@@ -387,7 +387,7 @@ abstract class Element
     }
 
     /**
-     * Post save
+     * Changes Element after save.
      */
     public function postSave()
     {
@@ -395,7 +395,13 @@ abstract class Element
     }
     
     /**
-     * Post copy
+     * Creates a copy of the Element Entity configuration and updates it.
+     * 
+     * @param \Doctrine\ORM\EntityManager $em EntitiyManager
+     * @param \Mapbender\CoreBundle\Entity\Application $copiedApp copied application entity
+     * @param array $elementsMap list with all copied elements
+     * @param type $layersetMap list with all copied instanes
+     * @return Entity Element with copied configuration
      */
     public function copyConfiguration(EntityManager $em, AppEntity &$copiedApp, &$elementsMap, &$layersetMap)
     {
