@@ -22,21 +22,16 @@
     </head>
     <body>
 {% endif %}
-        <div class="tabContainerAlt">
         {% if metadata.container == 'tabs' %}
+        <div class="tabContainerAlt">
             <ul class="tabs">
             {% for section in metadata.sections %}
                 {% set vt=prefix~section.title %}
-                <li id="metadatatab{{loop.index}}" class="metadatatab{% if loop.first %} active{% endif %} tab">{{ vt | trans}}</li>
+                <li id="tab{{loop.index}}" class="tab{% if loop.first %} active{% endif %}">{{ vt | trans}}</li>
             {% endfor %}
             </ul>
-        {% endif %}
-        {% for section in metadata.sections %}
-            {% if metadata.container == 'accordion' %}
-            {% set vt=prefix~section.title %}
-            <div id="metadatatab{{loop.index}}" class="metadatatab{% if loop.first %} active{% endif %} tab">{{ vt | trans}}</div>
-            {% endif %}
-            <div id="metadatacontainer{{loop.index}}" class="metadatacontainer{% if loop.first and metadata.container != 'none' %} active{% endif %}">
+            {% for section in metadata.sections %}
+            <div id="container{{loop.index}}" class="container-tab{% if loop.first %} active{% endif %}">
             {% for item in section.items %}
                 {% for key,val in item %}
                 {% set vt=prefix~section.title~'.'~key %}
@@ -46,8 +41,43 @@
                 {% endfor %}
             {% endfor %}
             </div>   
-        {% endfor %}
+            {% endfor %}        
         </div>
+        {% elseif metadata.container == 'accordion' %}
+        <div class="tabContainerAlt">
+        {% for section in metadata.sections %}
+            {% set vt=prefix~section.title %}
+            <div id="accordion{{loop.index}}" class="accordion{% if loop.first %} active{% endif %}">{{ vt | trans}}</div>
+            <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}">
+            {% for item in section.items %}
+                {% for key,val in item %}
+                {% set vt=prefix~section.title~'.'~key %}
+                <div class="labelText">{{ vt | trans}}:</div>
+                <div class="metaText">{{val}}</div>
+                <div class="clearContainer"></div>
+                {% endfor %}
+            {% endfor %}
+            </div>   
+        {% endfor %}        
+        </div>
+        {% else %}
+        <div>
+        {% for section in metadata.sections %}
+            {% set vt=prefix~section.title %}
+            <div>{{ vt | trans}}</div>
+            <div>
+            {% for item in section.items %}
+                {% for key,val in item %}
+                {% set vt=prefix~section.title~'.'~key %}
+                <div class="labelText">{{ vt | trans}}:</div>
+                <div class="metaText">{{val}}</div>
+                <div class="clearContainer"></div>
+                {% endfor %}
+            {% endfor %}
+            </div>   
+        {% endfor %}        
+        </div>
+        {% endif %}
 {% if metadata.contenttype == 'html' %}        
     </body>
 </html>

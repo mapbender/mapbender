@@ -8,7 +8,10 @@
  */
 namespace Mapbender\CoreBundle\Component;
 
+use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Entity\Element as Entity;
+use Mapbender\CoreBundle\Entity\Application as AppEntity;
+use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -388,11 +391,60 @@ abstract class Element
     }
 
     /**
-     * Post save
+     * Changes Element after save.
      */
     public function postSave()
     {
+        
+    }
+    
+    /**
+     * Creates a copy of the Element Entity configuration and updates it.
+     * 
+     * @param \Doctrine\ORM\EntityManager $em EntitiyManager
+     * @param \Mapbender\CoreBundle\Entity\Application $copiedApp copied application entity
+     * @param array $elementsMap list with all copied elements
+     * @param type $layersetMap list with all copied instanes
+     * @return Entity Element with copied configuration
+     */
+    public function copyConfiguration(EntityManager $em, AppEntity &$copiedApp, &$elementsMap, &$layersetMap)
+    {
+        $subElements = array();
+        $toOverwrite = array();
+        $form = Element::getElementForm($this->container, $this->application->getEntity(), $this->entity);
+        // overwrite 
+        foreach ($form['form']['configuration']->all() as $fieldName => $fieldValue) {
+            $norm = $fieldValue->getNormData();
+            if ($norm instanceof Entity) { // Element only target ???
+                $subElements[$fieldName] = $norm->getId();
 
+                $fv = $form['form']->createView();
+            } else if ($norm instanceof Layerset) { // Map
+                if (key_exists(strval($norm->getId()), $layersetMap)) {
+                    $toOverwrite[$fieldName] = $layersetMap[strval($norm->getId())]['layerset']->getId();
+                } else {
+                    $toOverwrite[$fieldName] = null;
+                }
+            }
+        }
+        $copiedElm = $elementsMap[$this->entity->getId()];
+        $configuration = $this->entity->getConfiguration();
+        foreach ($toOverwrite as $key => $value) {
+            $configuration[$key] = $value;
+        }
+        $copiedElm->setConfiguration($configuration);
+        if (count($subElements) > 0) {
+            foreach ($subElements as $name => $value) {
+                $configuration = $copiedElm->getConfiguration();
+                $targetId = null;
+                if($value !== null){
+                    $targetId = $elementsMap[$value]->getId();
+                }
+                $configuration[$name] = $targetId;
+                $copiedElm->setConfiguration($configuration);
+            }
+        }
+        return $copiedElm;
     }
 
     /**
