@@ -2,6 +2,250 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="es" datatype="plaintext" original="file.ext">
     <body>
+      <trans-unit id="f741a4a709f26fdf399f7b805ff27125" resname="mb.core.featureinfo.error.nolayer">
+        <source>mb.core.featureinfo.error.nolayer</source>
+        <target>No existe feature info de la capa.</target>
+      </trans-unit>
+      <trans-unit id="4000aaa3f1fd6921b40ae958ee5d0c2b" resname="mb.core.featureinfo.error.unknownoption">
+        <source>mb.core.featureinfo.error.unknownoption</source>
+        <target>Desconocido o inmanejable opción %key% para %namespace%.%widgetname%.</target>
+      </trans-unit>
+      <trans-unit id="21505ff4507774e2777bb6a166e8bf31" resname="mb.core.featureinfo.popup.btn.ok">
+        <source>mb.core.featureinfo.popup.btn.ok</source>
+        <target>Cerrar</target>
+      </trans-unit>
+      <trans-unit id="3f141d25282496cf3791bd532359e433" resname="mb.core.aboutdialog.content.versionprefix">
+        <source>mb.core.aboutdialog.content.versionprefix</source>
+        <target>v.</target>
+      </trans-unit>
+      <trans-unit id="1d84c5293abecb3624fa6828185b3493" resname="mb.core.aboutdialog.content.learnmore">
+        <source>mb.core.aboutdialog.content.learnmore</source>
+        <target>aprende mas sobre Mapbender3</target>
+      </trans-unit>
+      <trans-unit id="a8b14434dc098a6e7b028915b631cd24" resname="mb.core.aboutdialog.content.linktitle">
+        <source>mb.core.aboutdialog.content.linktitle</source>
+        <target>Visita nuestri sitio oficial de Mapbender3</target>
+      </trans-unit>
+      <trans-unit id="97ab0befb054f94d9b438e6f8b18aa62" resname="mb.core.aboutdialog.content.website">
+        <source>mb.core.aboutdialog.content.website</source>
+        <target>website</target>
+      </trans-unit>
+      <trans-unit id="982d326f994e1c5e3f11f1a1b8493506" resname="mb.core.simplesearch.input.search">
+        <source>mb.core.simplesearch.input.search</source>
+        <target>Buscar</target>
+      </trans-unit>
+      <trans-unit id="d34e7ce2889c54092fc147356c3faa14" resname="mb.core.searchrouter.popup.btn.ok">
+        <source>mb.core.searchrouter.popup.btn.ok</source>
+        <target>Buscar</target>
+      </trans-unit>
+      <trans-unit id="23529c02cd41313d7461246d3b172252" resname="mb.core.searchrouter.popup.btn.cancel">
+        <source>mb.core.searchrouter.popup.btn.cancel</source>
+        <target>Cerrar</target>
+      </trans-unit>
+      <trans-unit id="c6f45ed7c4b619ab7d4f83f3271fb6c1" resname="mb.core.searchrouter.popup.btn.reset">
+        <source>mb.core.searchrouter.popup.btn.reset</source>
+        <target>Reiniciar</target>
+      </trans-unit>
+      <trans-unit id="a091e836228a240d137f28d1f7e99f5e" resname="mb.core.searchrouter.no_results">
+        <source>mb.core.searchrouter.no_results</source>
+        <target>No results</target>
+      </trans-unit>
+      <trans-unit id="f518bb2f60b3deb2e5b973e00e8088f2" resname="mb.core.searchrouter.result_counter">
+        <source>mb.core.searchrouter.result_counter</source>
+        <target>Result counter</target>
+      </trans-unit>
+      <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
+        <source>mb.core.poi.sharepoi</source>
+        <target>Compartir POI</target>
+      </trans-unit>
+      <trans-unit id="43279759bfe1cf656538dd558e3748a6" resname="mb.core.poi.text.snippet">
+        <source>mb.core.poi.text.snippet</source>
+        <target>Puedes usar el siguiente fragmento en un email para enviar el POI</target>
+      </trans-unit>
+      <trans-unit id="d19f7fb816f3b4515f79e8c5c8546ede" resname="mb.core.basesourceswitcher.error.sourcenotavailable">
+        <source>mb.core.basesourceswitcher.error.sourcenotavailable</source>
+        <target>Una fuente con id %id% no está habilitado</target>
+      </trans-unit>
+      <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
+        <source>mb.core.legend.nolegend</source>
+        <target>No hay leyenda disponible</target>
+      </trans-unit>
+      <trans-unit id="91bc32055005b136d2a134db512294b2" resname="mb.core.legend.popup.btn.ok">
+        <source>mb.core.legend.popup.btn.ok</source>
+        <target>Cerrar</target>
+      </trans-unit>
+      <trans-unit id="869cda28f81afcf6b2488ba2f4117e91" resname="mb.core.ruler.popup.btn.ok">
+        <source>mb.core.ruler.popup.btn.ok</source>
+        <target>Cerrar</target>
+      </trans-unit>
+      <trans-unit id="255dfe21ded353929e03b1f48f3d8603" resname="mb.core.ruler.create_error">
+        <source>mb.core.ruler.create_error</source>
+        <target>Regla: Tipo debe ser línea o área.</target>
+      </trans-unit>
+      <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
+        <source>mb.core.printclient.label.template</source>
+        <target>Plantilla</target>
+      </trans-unit>
+      <trans-unit id="5aeaf1ae0a1e67e0e392f563be749204" resname="mb.core.printclient.label.quality">
+        <source>mb.core.printclient.label.quality</source>
+        <target>Calidad</target>
+      </trans-unit>
+      <trans-unit id="421aa7382e001de0b0960d411265998a" resname="mb.core.printclient.label.scale">
+        <source>mb.core.printclient.label.scale</source>
+        <target>Escala</target>
+      </trans-unit>
+      <trans-unit id="1d6b0cb565c46ffb069608c564861358" resname="mb.core.printclient.label.rotation">
+        <source>mb.core.printclient.label.rotation</source>
+        <target>Rotación</target>
+      </trans-unit>
+      <trans-unit id="6e4242b56cb4757b456f1308ed822a9f" resname="mb.core.printclient.popup.btn.ok">
+        <source>mb.core.printclient.popup.btn.ok</source>
+        <target>Imprimir</target>
+      </trans-unit>
+      <trans-unit id="0a5f51d624f13c3e7238d5ab610ca6df" resname="mb.core.printclient.popup.btn.cancel">
+        <source>mb.core.printclient.popup.btn.cancel</source>
+        <target>Cancelar</target>
+      </trans-unit>
+      <trans-unit id="8d91b0195b98dba3e9c4cfdff582505d" resname="mb.core.printclient.info.noactivelayer">
+        <source>mb.core.printclient.info.noactivelayer</source>
+        <target>No hay capa activa!</target>
+      </trans-unit>
+      <trans-unit id="31c04113d72fe80fff824faee81d4ddf" resname="mb.core.printclient.form.required">
+        <source>mb.core.printclient.form.required</source>
+        <target>Por favor rellene este campo</target>
+      </trans-unit>
+      <trans-unit id="c6c2daa6191922b3b1d289aae1ec8f31" resname="mb.core.overview.nolayer">
+        <source>mb.core.overview.nolayer</source>
+        <target>El elemento overview no tiene capa.</target>
+      </trans-unit>
+      <trans-unit id="52f2119c302dee02a460f03b9ef78cf2" resname="mb.core.sketch.circle.radius.label">
+        <source>mb.core.sketch.circle.radius.label</source>
+        <target>Radio</target>
+      </trans-unit>
+      <trans-unit id="6329edbadca4ae33674d3ba4beb0095a" resname="mb.core.sketch.circle.radius.error">
+        <source>mb.core.sketch.circle.radius.error</source>
+        <target>Radio no es válido</target>
+      </trans-unit>
+      <trans-unit id="45477889021de187cea8384dc6ee4d05" resname="mb.core.sketch.circle.form.button.yes">
+        <source>mb.core.sketch.circle.form.button.yes</source>
+        <target>Si</target>
+      </trans-unit>
+      <trans-unit id="94226bb9060eba51287384df96529632" resname="mb.core.sketch.circle.form.button.cancel">
+        <source>mb.core.sketch.circle.form.button.cancel</source>
+        <target>Cancelar</target>
+      </trans-unit>
+      <trans-unit id="7676545c9153a0ed87dc96296d665c5a" resname="mb.core.metadata.popup.title">
+        <source>mb.core.metadata.popup.title</source>
+        <target>Metadata</target>
+      </trans-unit>
+      <trans-unit id="d2279b60abd41fd9e228763532d10b02" resname="mb.core.gpsposition.error.notsupported">
+        <source>mb.core.gpsposition.error.notsupported</source>
+        <target>Lo siento, pero los servicios de geolocalización no son soportados por su navegador.</target>
+      </trans-unit>
+      <trans-unit id="73baa3dd55f5169a84b49015e5cbbc6f" resname="mb.core.layertree.confirm.allremove">
+        <source>mb.core.layertree.confirm.allremove</source>
+        <target>¿Realmente borrar todas las fuentes?</target>
+      </trans-unit>
+      <trans-unit id="261c3c35cd7b5f9737f2c3ab03c1ba76" resname="mb.core.layertree.popup.btn.ok">
+        <source>mb.core.layertree.popup.btn.ok</source>
+        <target>Cerrar</target>
+      </trans-unit>
+      <trans-unit id="179f487db6ae9a2cc2f6bc20a3973928" resname="mb.core.layertree.const.outofscale">
+        <source>mb.core.layertree.const.outofscale</source>
+        <target>Capa fuera de la escala</target>
+      </trans-unit>
+      <trans-unit id="ed37a9ab842a774969e361c70f45fd81" resname="mb.core.layertree.const.outofbounds">
+        <source>mb.core.layertree.const.outofbounds</source>
+        <target>Capa fuera de límites</target>
+      </trans-unit>
+      <trans-unit id="f2c092bf66ee0b1608a750ef1646fcfe" resname="mb.core.layertree.const.parentinvisible">
+        <source>mb.core.layertree.const.parentinvisible</source>
+        <target>Capa pariente invisible</target>
+      </trans-unit>
+      <trans-unit id="9274af4427ddd97ba8b314fb87847f55" resname="mb.core.zoombar.panup">
+        <source>mb.core.zoombar.panup</source>
+        <target>Mover arriba</target>
+      </trans-unit>
+      <trans-unit id="5d9ce5e3d3eea5da11c8a0aef5345eb9" resname="mb.core.zoombar.panright">
+        <source>mb.core.zoombar.panright</source>
+        <target>Mover derecha</target>
+      </trans-unit>
+      <trans-unit id="fccfef101736b6635da3b0e5a2319418" resname="mb.core.zoombar.pandown">
+        <source>mb.core.zoombar.pandown</source>
+        <target>Mover abajo</target>
+      </trans-unit>
+      <trans-unit id="fe00b345e9c46350ce7945e1abdbb787" resname="mb.core.zoombar.panleft">
+        <source>mb.core.zoombar.panleft</source>
+        <target>Mover izquierda</target>
+      </trans-unit>
+      <trans-unit id="8f867fb77fb4bb576647c7a16b431474" resname="mb.core.zoombar.goback">
+        <source>mb.core.zoombar.goback</source>
+        <target>Atrás</target>
+      </trans-unit>
+      <trans-unit id="0e800b52545b464cd93311c60c6007f6" resname="mb.core.zoombar.goforward">
+        <source>mb.core.zoombar.goforward</source>
+        <target>Adelante</target>
+      </trans-unit>
+      <trans-unit id="209477f6d7629c4e272555dee781929e" resname="mb.core.zoombar.zoombybox">
+        <source>mb.core.zoombar.zoombybox</source>
+        <target>Acercamiento por recuadro</target>
+      </trans-unit>
+      <trans-unit id="9e35239edca01f34b1092c1bb8539150" resname="mb.core.zoombar.zoombyworld">
+        <source>mb.core.zoombar.zoombyworld</source>
+        <target>Acercamiento global</target>
+      </trans-unit>
+      <trans-unit id="5feedcb7eb18018c003e6fa2562c4b53" resname="mb.core.zoombar.zoomin">
+        <source>mb.core.zoombar.zoomin</source>
+        <target>Acercar</target>
+      </trans-unit>
+      <trans-unit id="c13aa9d4bce372c110a373dad4519db8" resname="mb.core.zoombar.zoomout">
+        <source>mb.core.zoombar.zoomout</source>
+        <target>Alejar</target>
+      </trans-unit>
+      <trans-unit id="960c243a1919783483eb30395e158174" resname="mb.core.poi.popup.btn.ok">
+        <source>mb.core.poi.popup.btn.ok</source>
+        <target>Aceptar</target>
+      </trans-unit>
+      <trans-unit id="9388cfe7d4bb57b87dcdd53957723380" resname="mb.core.poi.popup.btn.cancel">
+        <source>mb.core.poi.popup.btn.cancel</source>
+        <target>Cancelar</target>
+      </trans-unit>
+      <trans-unit id="868e554ea585dc5b1d394eb2b66e972c" resname="mb.core.layertree.tooltip.sublayers_openclose">
+        <source>mb.core.layertree.tooltip.sublayers_openclose</source>
+        <target>Subcapas abrit/cerrar</target>
+      </trans-unit>
+      <trans-unit id="e48917a6335f8fa17b6b68aabc94390b" resname="mb.core.layertree.label.visibility_onoff">
+        <source>mb.core.layertree.label.visibility_onoff</source>
+        <target>Visibilidad prender/apagar</target>
+      </trans-unit>
+      <trans-unit id="9f816610733911918c9413a1b5af826a" resname="mb.core.layertree.label.featureinfo_onoff">
+        <source>mb.core.layertree.label.featureinfo_onoff</source>
+        <target>Featureinfo prender/apagar</target>
+      </trans-unit>
+      <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
+        <source>mb.core.layertree.label.transparency</source>
+        <target>Transparencia</target>
+      </trans-unit>
+      <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
+        <source>mb.core.layertree.label.zoomtolayer</source>
+        <target>Aumento a la capa</target>
+      </trans-unit>
+      <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
+        <source>mb.core.layertree.label.metadata</source>
+        <target>Metadata</target>
+      </trans-unit>
+      <trans-unit id="c1e88d23834e42294c5c46903293bbb3" resname="mb.core.layertree.tooltip.removelayer">
+        <source>mb.core.layertree.tooltip.removelayer</source>
+        <target>Remover capa</target>
+      </trans-unit>
+      <trans-unit id="263857036bd43f2fed5421b06430c19a" resname="mb.core.layertree.label.sources">
+        <source>mb.core.layertree.label.sources</source>
+        <target>Fuentes</target>
+      </trans-unit>
+      <trans-unit id="937de90c8cbe2cbfca37e4df0c18b6aa" resname="mb.core.layertree.label.deleteallsources">
+        <source>mb.core.layertree.label.deleteallsources</source>
+        <target>Quitar todas las fuentes</target>
+      </trans-unit>
       <trans-unit id="2ec03c5c014dec42d2bc46c9cf012215" resname="mb.core.aboutdialog.class.title">
         <source>mb.core.aboutdialog.class.title</source>
         <target>Diálogo Acerca de</target>
@@ -438,6 +682,10 @@
         <source>mb.core.simplesearch.class.description</source>
         <target>Campo de búsqueda sencillo en base JSON (e.g. Solr)</target>
       </trans-unit>
+      <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
+        <source>mb.core.admin.poi.label.usemailto</source>
+        <target>Usar Email a</target>
+      </trans-unit>
       <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
         <source>mb.core.admin.legend.label.autoopen</source>
         <target>Autoabrir</target>
@@ -462,9 +710,29 @@
         <source>mb.core.admin.legend.label.showgroupedlayertitle</source>
         <target>Mostrar titulo de capa agrupado</target>
       </trans-unit>
+      <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
+        <source>mb.core.admin.featureinfo.label.autoopen</source>
+        <target>Autoabrir</target>
+      </trans-unit>
+      <trans-unit id="656d615fc3d3f6ea34a34e5a19bcf36c" resname="mb.core.admin.featureinfo.label.deactivateonclose">
+        <source>mb.core.admin.featureinfo.label.deactivateonclose</source>
+        <target>Desactivar al cerrar</target>
+      </trans-unit>
+      <trans-unit id="f2fca95e4366a0e4a5aad0b95efb5744" resname="mb.core.admin.printclient.label.autoopen">
+        <source>mb.core.admin.printclient.label.autoopen</source>
+        <target>Autoabrir</target>
+      </trans-unit>
+      <trans-unit id="b163e7bd1f8de3ae1a5abf00b6342cee" resname="mb.core.admin.printclient.label.rotatable">
+        <source>mb.core.admin.printclient.label.rotatable</source>
+        <target>Rotable</target>
+      </trans-unit>
       <trans-unit id="18de8162e371da730a52c3d6d452e5ad" resname="mb.core.admin.copyright.label.autoopen">
         <source>mb.core.admin.copyright.label.autoopen</source>
         <target>Autoabrir</target>
+      </trans-unit>
+      <trans-unit id="40c239c7f7d130a17c9b299f2e03e738" resname="mb.core.basesourceswitcher.form.mesage">
+        <source>mb.core.basesourceswitcher.form.mesage</source>
+        <target>No fuentebase seteada esta definida.</target>
       </trans-unit>
       <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
         <source>mb.core.admin.layertree.label.showbasesources</source>
@@ -482,265 +750,9 @@
         <source>mb.core.admin.layertree.label.showlayerremove</source>
         <target>Mostrar quitar capa</target>
       </trans-unit>
-      <trans-unit id="40c239c7f7d130a17c9b299f2e03e738" resname="mb.core.basesourceswitcher.form.mesage">
-        <source>mb.core.basesourceswitcher.form.mesage</source>
-        <target>No fuentebase seteada esta definida.</target>
-      </trans-unit>
-      <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
-        <source>mb.core.admin.featureinfo.label.autoopen</source>
-        <target>Autoabrir</target>
-      </trans-unit>
-      <trans-unit id="656d615fc3d3f6ea34a34e5a19bcf36c" resname="mb.core.admin.featureinfo.label.deactivateonclose">
-        <source>mb.core.admin.featureinfo.label.deactivateonclose</source>
-        <target>Desactivar al cerrar</target>
-      </trans-unit>
-      <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
-        <source>mb.core.admin.poi.label.usemailto</source>
-        <target>Usar Email a</target>
-      </trans-unit>
-      <trans-unit id="f2fca95e4366a0e4a5aad0b95efb5744" resname="mb.core.admin.printclient.label.autoopen">
-        <source>mb.core.admin.printclient.label.autoopen</source>
-        <target>Autoabrir</target>
-      </trans-unit>
-      <trans-unit id="b163e7bd1f8de3ae1a5abf00b6342cee" resname="mb.core.admin.printclient.label.rotatable">
-        <source>mb.core.admin.printclient.label.rotatable</source>
-        <target>Rotable</target>
-      </trans-unit>
-      <trans-unit id="869cda28f81afcf6b2488ba2f4117e91" resname="mb.core.ruler.popup.btn.ok">
-        <source>mb.core.ruler.popup.btn.ok</source>
-        <target>Cerrar</target>
-      </trans-unit>
-      <trans-unit id="255dfe21ded353929e03b1f48f3d8603" resname="mb.core.ruler.create_error">
-        <source>mb.core.ruler.create_error</source>
-        <target>Regla: Tipo debe ser línea o área.</target>
-      </trans-unit>
-      <trans-unit id="d34e7ce2889c54092fc147356c3faa14" resname="mb.core.searchrouter.popup.btn.ok">
-        <source>mb.core.searchrouter.popup.btn.ok</source>
-        <target>Buscar</target>
-      </trans-unit>
-      <trans-unit id="23529c02cd41313d7461246d3b172252" resname="mb.core.searchrouter.popup.btn.cancel">
-        <source>mb.core.searchrouter.popup.btn.cancel</source>
-        <target>Cerrar</target>
-      </trans-unit>
-      <trans-unit id="c6f45ed7c4b619ab7d4f83f3271fb6c1" resname="mb.core.searchrouter.popup.btn.reset">
-        <source>mb.core.searchrouter.popup.btn.reset</source>
-        <target>Reiniciar</target>
-      </trans-unit>
-      <trans-unit id="52f2119c302dee02a460f03b9ef78cf2" resname="mb.core.sketch.circle.radius.label">
-        <source>mb.core.sketch.circle.radius.label</source>
-        <target>Radio</target>
-      </trans-unit>
-      <trans-unit id="6329edbadca4ae33674d3ba4beb0095a" resname="mb.core.sketch.circle.radius.error">
-        <source>mb.core.sketch.circle.radius.error</source>
-        <target>Radio no es válido</target>
-      </trans-unit>
-      <trans-unit id="45477889021de187cea8384dc6ee4d05" resname="mb.core.sketch.circle.form.button.yes">
-        <source>mb.core.sketch.circle.form.button.yes</source>
-        <target>Si</target>
-      </trans-unit>
-      <trans-unit id="94226bb9060eba51287384df96529632" resname="mb.core.sketch.circle.form.button.cancel">
-        <source>mb.core.sketch.circle.form.button.cancel</source>
-        <target>Cancelar</target>
-      </trans-unit>
-      <trans-unit id="73baa3dd55f5169a84b49015e5cbbc6f" resname="mb.core.layertree.confirm.allremove">
-        <source>mb.core.layertree.confirm.allremove</source>
-        <target>¿Realmente borrar todas las fuentes?</target>
-      </trans-unit>
-      <trans-unit id="261c3c35cd7b5f9737f2c3ab03c1ba76" resname="mb.core.layertree.popup.btn.ok">
-        <source>mb.core.layertree.popup.btn.ok</source>
-        <target>Cerrar</target>
-      </trans-unit>
-      <trans-unit id="179f487db6ae9a2cc2f6bc20a3973928" resname="mb.core.layertree.const.outofscale">
-        <source>mb.core.layertree.const.outofscale</source>
-        <target>Capa fuera de la escala</target>
-      </trans-unit>
-      <trans-unit id="ed37a9ab842a774969e361c70f45fd81" resname="mb.core.layertree.const.outofbounds">
-        <source>mb.core.layertree.const.outofbounds</source>
-        <target>Capa fuera de límites</target>
-      </trans-unit>
-      <trans-unit id="f2c092bf66ee0b1608a750ef1646fcfe" resname="mb.core.layertree.const.parentinvisible">
-        <source>mb.core.layertree.const.parentinvisible</source>
-        <target>Capa pariente invisible</target>
-      </trans-unit>
-      <trans-unit id="868e554ea585dc5b1d394eb2b66e972c" resname="mb.core.layertree.tooltip.sublayers_openclose">
-        <source>mb.core.layertree.tooltip.sublayers_openclose</source>
-        <target>Subcapas abrit/cerrar</target>
-      </trans-unit>
-      <trans-unit id="e48917a6335f8fa17b6b68aabc94390b" resname="mb.core.layertree.label.visibility_onoff">
-        <source>mb.core.layertree.label.visibility_onoff</source>
-        <target>Visibilidad prender/apagar</target>
-      </trans-unit>
-      <trans-unit id="9f816610733911918c9413a1b5af826a" resname="mb.core.layertree.label.featureinfo_onoff">
-        <source>mb.core.layertree.label.featureinfo_onoff</source>
-        <target>Featureinfo prender/apagar</target>
-      </trans-unit>
-      <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
-        <source>mb.core.layertree.label.transparency</source>
-        <target>Transparencia</target>
-      </trans-unit>
-      <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
-        <source>mb.core.layertree.label.zoomtolayer</source>
-        <target>Aumento a la capa</target>
-      </trans-unit>
-      <trans-unit id="c1e88d23834e42294c5c46903293bbb3" resname="mb.core.layertree.tooltip.removelayer">
-        <source>mb.core.layertree.tooltip.removelayer</source>
-        <target>Remover capa</target>
-      </trans-unit>
-      <trans-unit id="263857036bd43f2fed5421b06430c19a" resname="mb.core.layertree.label.sources">
-        <source>mb.core.layertree.label.sources</source>
-        <target>Fuentes</target>
-      </trans-unit>
-      <trans-unit id="937de90c8cbe2cbfca37e4df0c18b6aa" resname="mb.core.layertree.label.deleteallsources">
-        <source>mb.core.layertree.label.deleteallsources</source>
-        <target>Quitar todas las fuentes</target>
-      </trans-unit>
-      <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
-        <source>mb.core.legend.nolegend</source>
-        <target>No hay leyenda disponible</target>
-      </trans-unit>
-      <trans-unit id="91bc32055005b136d2a134db512294b2" resname="mb.core.legend.popup.btn.ok">
-        <source>mb.core.legend.popup.btn.ok</source>
-        <target>Cerrar</target>
-      </trans-unit>
-      <trans-unit id="6e4242b56cb4757b456f1308ed822a9f" resname="mb.core.printclient.popup.btn.ok">
-        <source>mb.core.printclient.popup.btn.ok</source>
-        <target>Imprimir</target>
-      </trans-unit>
-      <trans-unit id="0a5f51d624f13c3e7238d5ab610ca6df" resname="mb.core.printclient.popup.btn.cancel">
-        <source>mb.core.printclient.popup.btn.cancel</source>
-        <target>Cancelar</target>
-      </trans-unit>
-      <trans-unit id="8d91b0195b98dba3e9c4cfdff582505d" resname="mb.core.printclient.info.noactivelayer">
-        <source>mb.core.printclient.info.noactivelayer</source>
-        <target>No hay capa activa!</target>
-      </trans-unit>
-      <trans-unit id="31c04113d72fe80fff824faee81d4ddf" resname="mb.core.printclient.form.required">
-        <source>mb.core.printclient.form.required</source>
-        <target>Por favor rellene este campo</target>
-      </trans-unit>
-      <trans-unit id="982d326f994e1c5e3f11f1a1b8493506" resname="mb.core.simplesearch.input.search">
-        <source>mb.core.simplesearch.input.search</source>
-        <target>Buscar</target>
-      </trans-unit>
-      <trans-unit id="3f141d25282496cf3791bd532359e433" resname="mb.core.aboutdialog.content.versionprefix">
-        <source>mb.core.aboutdialog.content.versionprefix</source>
-        <target>v.</target>
-      </trans-unit>
-      <trans-unit id="1d84c5293abecb3624fa6828185b3493" resname="mb.core.aboutdialog.content.learnmore">
-        <source>mb.core.aboutdialog.content.learnmore</source>
-        <target>aprende mas sobre Mapbender3</target>
-      </trans-unit>
-      <trans-unit id="a8b14434dc098a6e7b028915b631cd24" resname="mb.core.aboutdialog.content.linktitle">
-        <source>mb.core.aboutdialog.content.linktitle</source>
-        <target>Visita nuestri sitio oficial de Mapbender3</target>
-      </trans-unit>
-      <trans-unit id="97ab0befb054f94d9b438e6f8b18aa62" resname="mb.core.aboutdialog.content.website">
-        <source>mb.core.aboutdialog.content.website</source>
-        <target>website</target>
-      </trans-unit>
-      <trans-unit id="960c243a1919783483eb30395e158174" resname="mb.core.poi.popup.btn.ok">
-        <source>mb.core.poi.popup.btn.ok</source>
-        <target>Aceptar</target>
-      </trans-unit>
-      <trans-unit id="9388cfe7d4bb57b87dcdd53957723380" resname="mb.core.poi.popup.btn.cancel">
-        <source>mb.core.poi.popup.btn.cancel</source>
-        <target>Cancelar</target>
-      </trans-unit>
-      <trans-unit id="f741a4a709f26fdf399f7b805ff27125" resname="mb.core.featureinfo.error.nolayer">
-        <source>mb.core.featureinfo.error.nolayer</source>
-        <target>No existe feature info de la capa.</target>
-      </trans-unit>
-      <trans-unit id="4000aaa3f1fd6921b40ae958ee5d0c2b" resname="mb.core.featureinfo.error.unknownoption">
-        <source>mb.core.featureinfo.error.unknownoption</source>
-        <target>Desconocido o inmanejable opción %key% para %namespace%.%widgetname%.</target>
-      </trans-unit>
-      <trans-unit id="21505ff4507774e2777bb6a166e8bf31" resname="mb.core.featureinfo.popup.btn.ok">
-        <source>mb.core.featureinfo.popup.btn.ok</source>
-        <target>Cerrar</target>
-      </trans-unit>
-      <trans-unit id="9274af4427ddd97ba8b314fb87847f55" resname="mb.core.zoombar.panup">
-        <source>mb.core.zoombar.panup</source>
-        <target>Mover arriba</target>
-      </trans-unit>
-      <trans-unit id="5d9ce5e3d3eea5da11c8a0aef5345eb9" resname="mb.core.zoombar.panright">
-        <source>mb.core.zoombar.panright</source>
-        <target>Mover derecha</target>
-      </trans-unit>
-      <trans-unit id="fccfef101736b6635da3b0e5a2319418" resname="mb.core.zoombar.pandown">
-        <source>mb.core.zoombar.pandown</source>
-        <target>Mover abajo</target>
-      </trans-unit>
-      <trans-unit id="fe00b345e9c46350ce7945e1abdbb787" resname="mb.core.zoombar.panleft">
-        <source>mb.core.zoombar.panleft</source>
-        <target>Mover izquierda</target>
-      </trans-unit>
-      <trans-unit id="8f867fb77fb4bb576647c7a16b431474" resname="mb.core.zoombar.goback">
-        <source>mb.core.zoombar.goback</source>
-        <target>Atrás</target>
-      </trans-unit>
-      <trans-unit id="0e800b52545b464cd93311c60c6007f6" resname="mb.core.zoombar.goforward">
-        <source>mb.core.zoombar.goforward</source>
-        <target>Adelante</target>
-      </trans-unit>
-      <trans-unit id="209477f6d7629c4e272555dee781929e" resname="mb.core.zoombar.zoombybox">
-        <source>mb.core.zoombar.zoombybox</source>
-        <target>Acercamiento por recuadro</target>
-      </trans-unit>
-      <trans-unit id="9e35239edca01f34b1092c1bb8539150" resname="mb.core.zoombar.zoombyworld">
-        <source>mb.core.zoombar.zoombyworld</source>
-        <target>Acercamiento global</target>
-      </trans-unit>
-      <trans-unit id="5feedcb7eb18018c003e6fa2562c4b53" resname="mb.core.zoombar.zoomin">
-        <source>mb.core.zoombar.zoomin</source>
-        <target>Acercar</target>
-      </trans-unit>
-      <trans-unit id="c13aa9d4bce372c110a373dad4519db8" resname="mb.core.zoombar.zoomout">
-        <source>mb.core.zoombar.zoomout</source>
-        <target>Alejar</target>
-      </trans-unit>
-      <trans-unit id="d19f7fb816f3b4515f79e8c5c8546ede" resname="mb.core.basesourceswitcher.error.sourcenotavailable">
-        <source>mb.core.basesourceswitcher.error.sourcenotavailable</source>
-        <target>Una fuente con id %id% no está habilitado</target>
-      </trans-unit>
-      <trans-unit id="d2279b60abd41fd9e228763532d10b02" resname="mb.core.gpsposition.error.notsupported">
-        <source>mb.core.gpsposition.error.notsupported</source>
-        <target>Lo siento, pero los servicios de geolocalización no son soportados por su navegador.</target>
-      </trans-unit>
-      <trans-unit id="c6c2daa6191922b3b1d289aae1ec8f31" resname="mb.core.overview.nolayer">
-        <source>mb.core.overview.nolayer</source>
-        <target>El elemento overview no tiene capa.</target>
-      </trans-unit>
-      <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
-        <source>mb.core.poi.sharepoi</source>
-        <target>Compartir POI</target>
-      </trans-unit>
-      <trans-unit id="43279759bfe1cf656538dd558e3748a6" resname="mb.core.poi.text.snippet">
-        <source>mb.core.poi.text.snippet</source>
-        <target>Puedes usar el siguiente fragmento en un email para enviar el POI</target>
-      </trans-unit>
-      <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
-        <source>mb.core.printclient.label.template</source>
-        <target>Plantilla</target>
-      </trans-unit>
-      <trans-unit id="5aeaf1ae0a1e67e0e392f563be749204" resname="mb.core.printclient.label.quality">
-        <source>mb.core.printclient.label.quality</source>
-        <target>Calidad</target>
-      </trans-unit>
-      <trans-unit id="421aa7382e001de0b0960d411265998a" resname="mb.core.printclient.label.scale">
-        <source>mb.core.printclient.label.scale</source>
-        <target>Escala</target>
-      </trans-unit>
-      <trans-unit id="1d6b0cb565c46ffb069608c564861358" resname="mb.core.printclient.label.rotation">
-        <source>mb.core.printclient.label.rotation</source>
-        <target>Rotación</target>
-      </trans-unit>
       <trans-unit id="46b75948336bd4019bbaee9324151ecc" resname="mb.core.poi.label.text">
         <source>mb.core.poi.label.text</source>
         <target>Texto</target>
-      </trans-unit>
-      <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
-        <source>mb.core.layertree.label.metadata</source>
-        <target>Metadata</target>
       </trans-unit>
       <trans-unit id="6c94e9d72f4b9fe8f3d778bbd0f3a0c4" resname="mb.core.layertree.label.legend">
         <source>mb.core.layertree.label.legend</source>

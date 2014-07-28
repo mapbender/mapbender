@@ -5,15 +5,16 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\Signer;
+use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\LegendUrl;
+use Mapbender\WmsBundle\Component\OnlineResource;
+use Mapbender\WmsBundle\Component\Style;
 use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
 use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
-use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\WmsMetadata;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\WmsBundle\Component\Style;
-use Mapbender\WmsBundle\Component\OnlineResource;
-use Mapbender\WmsBundle\Component\LegendUrl;
-use Mapbender\CoreBundle\Component\Signer;
 
 /**
  * WmsInstance class
@@ -681,6 +682,15 @@ class WmsInstance extends SourceInstance
     public function getLayerset()
     {
         parent::getLayerset();
+    }
+
+    /**
+     * 
+     * @return WmsMetadata
+     */
+    public function getMetadata()
+    {
+        return new WmsMetadata($this);
     }
 
     /**

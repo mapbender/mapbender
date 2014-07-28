@@ -42,7 +42,7 @@
           {% endif %}
           <div class="buttonGroup">
             <a class="iconView iconBig" href="{{ url("mapbender_manager_repository_view",{"sourceId":source.id}) }}" title="{{ 'mb.manager.admin.source.show_metadata' | trans }}"></a>
-            {% if is_granted('DELETE', source) %}
+            {% if is_granted('DELETE', oid) or is_granted('DELETE', source) %}
                <span class="iconRemove iconBig"
                 title="{{"mb.manager.admin.source.delete"|trans}} {{ source.title }}"
                 data-url="{{ url("mapbender_manager_repository_confirmdelete",{"sourceId":source.id}) }}"

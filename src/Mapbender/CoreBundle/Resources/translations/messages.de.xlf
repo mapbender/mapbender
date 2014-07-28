@@ -226,6 +226,10 @@
         <source>mb.core.layertree.label.zoomtolayer</source>
         <target>Zoom auf Ebene</target>
       </trans-unit>
+      <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
+        <source>mb.core.layertree.label.metadata</source>
+        <target>Metadaten</target>
+      </trans-unit>
       <trans-unit id="c1e88d23834e42294c5c46903293bbb3" resname="mb.core.layertree.tooltip.removelayer">
         <source>mb.core.layertree.tooltip.removelayer</source>
         <target>Ebene entfernen</target>
@@ -674,10 +678,6 @@
         <source>mb.core.simplesearch.class.description</source>
         <target>Einfeldsuche über JSON-Daten (z.B. Solr)</target>
       </trans-unit>
-      <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
-        <source>mb.core.admin.poi.label.usemailto</source>
-        <target>Mailto verwenden</target>
-      </trans-unit>
       <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
         <source>mb.core.admin.legend.label.autoopen</source>
         <target>Automatisches Öffnen</target>
@@ -701,10 +701,6 @@
       <trans-unit id="7dc9941d3994c6bcf1410b0b4ae5400d" resname="mb.core.admin.legend.label.showgroupedlayertitle">
         <source>mb.core.admin.legend.label.showgroupedlayertitle</source>
         <target>Titel der gruppierten Ebene anzeigen</target>
-      </trans-unit>
-      <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
-        <source>mb.core.admin.featureinfo.label.autoopen</source>
-        <target>Automatisches Öffnen</target>
       </trans-unit>
       <trans-unit id="656d615fc3d3f6ea34a34e5a19bcf36c" resname="mb.core.admin.featureinfo.label.deactivateonclose">
         <source>mb.core.admin.featureinfo.label.deactivateonclose</source>
@@ -746,10 +742,6 @@
         <source>mb.core.poi.label.text</source>
         <target>Bearbeiten Sie den Text</target>
       </trans-unit>
-      <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
-        <source>mb.core.layertree.label.metadata</source>
-        <target>Metadaten</target>
-      </trans-unit>
       <trans-unit id="6c94e9d72f4b9fe8f3d778bbd0f3a0c4" resname="mb.core.layertree.label.legend">
         <source>mb.core.layertree.label.legend</source>
         <target>Legende</target>
@@ -761,6 +753,18 @@
       <trans-unit id="13348442cc6a27032d2b4aa28b75a5d3" resname="Search">
         <source>Search</source>
         <target>Suchen</target>
+      </trans-unit>
+      <trans-unit id="7676545c9153a0ed87dc96296d665c5a" resname="mb.core.metadata.popup.title">
+        <source>mb.core.metadata.popup.title</source>
+        <target>Metadaten</target>
+      </trans-unit>
+      <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
+        <source>mb.core.admin.poi.label.usemailto</source>
+        <target>Use mailto</target>
+      </trans-unit>
+      <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
+        <source>mb.core.admin.featureinfo.label.autoopen</source>
+        <target>Automatisches Öffnen</target>
       </trans-unit>
     </body>
   </file>

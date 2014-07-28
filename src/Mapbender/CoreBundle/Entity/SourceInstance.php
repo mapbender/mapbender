@@ -2,9 +2,9 @@
 
 namespace Mapbender\CoreBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\Signer;
 
 /**
@@ -272,9 +272,15 @@ abstract class SourceInstance
 
     /**
      * Copies a source instance
-     * @param EntityManager $em
+     * @param Manager $em
      */
     public abstract function copy(EntityManager $em);
+    
+    /**
+     * 
+     * @return SourceMetadata
+     */
+    public abstract function getMetadata();
 
 
     public function __toString()

@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -11,6 +12,7 @@ use Mapbender\PrintBundle\Component\OdgParser;
  */
 class PrintClient extends Element
 {
+
     public static $merge_configurations = false;
 
     /**
