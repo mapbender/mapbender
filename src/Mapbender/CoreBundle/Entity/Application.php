@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Component\Application As ApplicationComponent;
 use Mapbender\CoreBundle\Component\Element As ComponentElement;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -83,11 +84,6 @@ class Application
      * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"persist", "remove"})
      */
     protected $layersets;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="FOM\UserBundle\Entity\User", cascade={"persist"})
-     */
-    protected $owner;
 
     /**
      * @ORM\Column(type="boolean")
@@ -326,27 +322,7 @@ class Application
     {
         return $this->screenshot;
     }
-
-    /**
-     * Set owner
-     *
-     * @param User $owner
-     */
-    public function setOwner($owner)
-    {
-        $this->owner = $owner;
-        return $this;
-    }
-
-    /**
-     * Get owner
-     *
-     * @return User
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
+    
 
     /**
      * Set extra assets
@@ -466,20 +442,20 @@ class Application
         return null;
     }
 
-    public function copy($container, EntityManager $em)
+    public function copy($container, EntityManager $em, $app)
     {
 //        $em->detach($this);
-        $app = new Application();
-        $app->slug = $this->slug;
-        $app->title = $this->title;
-        $app->description = $this->description;
-        $app->setUpdated(new \DateTime('now'));
-        $app->setPublished(false);
+//        $app = new Application();
+//        $app->slug = $slug;
+//        $app->title = $this->title;
+//        $app->description = $this->description;
+//        $app->setUpdated(new \DateTime('now'));
+//        $app->setPublished(false);
         $app->preparedElements = $this->preparedElements;
         $app->screenshotPath = $this->screenshotPath;
         $app->source = $this->source;
-        $app->template = $this->template;
-        $app->owner = $this->owner;
+//        $app->template = $this->template;
+//        $app->owner = $this->owner;
         $app->screenshot = $this->screenshot;
         $app->extra_assets = $this->extra_assets;
         $app->screenshotFile = $this->screenshotFile;
@@ -502,6 +478,8 @@ class Application
             $app->addRegionProperties($clonedRP);
         }
         $elementsMap = array();
+        $em->flush();
+        $aclProvider = $container->get('security.acl.provider');
         # save without target
         foreach ($this->elements as $element) {
             $copied = $element->copy($em);
@@ -510,7 +488,22 @@ class Application
             $em->persist($copied);
             $app->addElements($copied);
             $em->persist($app);
+            $em->flush();
             $elementsMap[$element->getId()] = $copied;
+            try{
+                $oid = ObjectIdentity::fromDomainObject($element);
+                $acl = $aclProvider->findAcl($oid);
+                $newAcl = $aclProvider->createAcl(ObjectIdentity::fromDomainObject($copied));
+                foreach($acl->getObjectAces() as $ace) {
+                    $newAcl->insertObjectAce($ace->getSecurityIdentity(), $ace->getMask());
+                }
+                $aclProvider->updateAcl($newAcl);
+            } catch(\Exception $e){
+                $a = 0;
+            }
+            $em->persist($copied);        
+            $em->flush();
+            
         }
         $applicationComponent = new ApplicationComponent($container, $this, array());
         foreach ($this->elements as $element) {
