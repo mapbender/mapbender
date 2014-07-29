@@ -766,6 +766,10 @@
         <source>mb.core.admin.featureinfo.label.autoopen</source>
         <target>Automatisches Öffnen</target>
       </trans-unit>
+      <trans-unit id="4be1f8a2c784e24713e63c07ed4b5f49" resname="mb.core.metadata.popup.btn.ok">
+        <source>mb.core.metadata.popup.btn.ok</source>
+        <target>Schließen</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -456,8 +456,8 @@ Mapbender.Model = {
      *
      */
     _sourceLoadError: function(e, imgEl) {
-        var src = this.getSource({ollid: e.element.id});
-        var mqLayer = this.map.layersList[src.mqlid];
+        var source = this.getSource({ollid: e.element.id});
+        var mqLayer = this.map.layersList[source.mqlid];
         if (mqLayer.olLayer.getVisibility()) {
             Mapbender.source[source.type].onLoadError(imgEl, source.id, this.map.olMap.getProjectionObject(), $.proxy(this.sourceLoadErrorCallback, this));
         } else {

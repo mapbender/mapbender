@@ -27,7 +27,7 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions) {
                     modal: false,
                     resizable: true,
                     draggable: true,
-                    closeButton: false,
+                    closeButton: true,
                     closeOnESC: false,
                     content: [
                         $.ajax({
@@ -50,7 +50,16 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions) {
                     ],
                     destroyOnClose: true,
                     width: 850,
-                    height: 600
+                    height: 600,
+                    buttons: {
+                        'ok': {
+                            label: Mapbender.trans('mb.core.metadata.popup.btn.ok'),
+                            cssClass: 'button buttonCancel critical right',
+                            callback: function() {
+                                this.close();
+                            }
+                        }
+                    }
                 });
             }
         }

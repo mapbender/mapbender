@@ -766,6 +766,10 @@
         <source>Search</source>
         <target>Search</target>
       </trans-unit>
+      <trans-unit id="4be1f8a2c784e24713e63c07ed4b5f49" resname="mb.core.metadata.popup.btn.ok">
+        <source>mb.core.metadata.popup.btn.ok</source>
+        <target>Close</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
