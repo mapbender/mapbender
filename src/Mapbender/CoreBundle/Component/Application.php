@@ -637,5 +637,24 @@ class Application
         $request = $container->get('request');
         return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
     } 
+    
+    /**
+     * Copies an application web order. 
+     * 
+     * @param ContainerInterface $container Container
+     * @param string $srcSslug source application slug
+     * @param string $destSlug destination application slug
+     * @return boolean true if the application  order has been copied otherwise false.
+     */
+    public static function copyAppWebDir($container, $srcSslug, $destSlug)
+    {
+        $src = Application::getAppWebDir($container, $srcSslug);#$this->getApplicationDir($tocopy->getSlug());
+        $dst = Application::getAppWebDir($container, $destSlug);#$this->getApplicationDir($cloned->getSlug());
+        if($src === null || $dst === null){
+            return false;
+        }
+        Utils::copyOrderRecursive($src, $dst);
+        return true;
+    }
 
 }

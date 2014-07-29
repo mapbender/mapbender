@@ -444,18 +444,9 @@ class Application
 
     public function copy($container, EntityManager $em, $app)
     {
-//        $em->detach($this);
-//        $app = new Application();
-//        $app->slug = $slug;
-//        $app->title = $this->title;
-//        $app->description = $this->description;
-//        $app->setUpdated(new \DateTime('now'));
-//        $app->setPublished(false);
         $app->preparedElements = $this->preparedElements;
         $app->screenshotPath = $this->screenshotPath;
         $app->source = $this->source;
-//        $app->template = $this->template;
-//        $app->owner = $this->owner;
         $app->screenshot = $this->screenshot;
         $app->extra_assets = $this->extra_assets;
         $app->screenshotFile = $this->screenshotFile;
