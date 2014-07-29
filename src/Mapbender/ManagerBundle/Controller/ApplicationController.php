@@ -265,6 +265,7 @@ class ApplicationController extends Controller
      */
     public function copyformAction($slug)
     {
+        throw new \Exception('check the action copyform');
         $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
         $this->checkGranted('CREATE', $tocopy);
@@ -283,6 +284,7 @@ class ApplicationController extends Controller
      */
     public function copyAction($slug)
     {
+        throw new \Exception('check the action copy');
         $test = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
         $this->checkGranted('CREATE', $test);
@@ -329,14 +331,33 @@ class ApplicationController extends Controller
         $newslug = $this->generateSlug($slug);
         $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
-        $cloned = $tocopy->copy($this->container, $em);
+        $cloned = new Application();
         $cloned->setSlug($newslug);
         $cloned->setTitle(strtoupper($newslug) . ":" . $tocopy->getTitle());
         $cloned->setDescription(strtoupper($newslug) . ":" . $tocopy->getDescription());
+        $cloned->setTemplate($tocopy->getTemplate());
+        $cloned->setUpdated(new \DateTime('now'));
+        $cloned->setPublished(false);
         $em->persist($cloned);
         $em->flush();
+        $cloned = $tocopy->copy($this->container, $em, $cloned);
+        $em->persist($cloned);
+        $em->flush();
+
+        $aclProvider = $this->get('security.acl.provider');
+        $oid = ObjectIdentity::fromDomainObject($tocopy);
+        $acl = $aclProvider->findAcl($oid);
+        $newAcl = $aclProvider->createAcl(ObjectIdentity::fromDomainObject($cloned));
+        foreach ($acl->getObjectAces() as $ace) {
+            $newAcl->insertObjectAce($ace->getSecurityIdentity(), $ace->getMask());
+        }
+
+        $aclProvider->updateAcl($newAcl);
+        $em->persist($cloned);
+        $em->flush();
+
         $em->getConnection()->commit();
-        if (AppComponent::createAppWebDir($this->container, $cloned->getSlug())) {
+        if(AppComponent::copyAppWebDir($this->container, $tocopy->getSlug(), $cloned->getSlug())){
             $this->get('session')->getFlashBag()->set('success', 'Your application has been copied.');
         } else {
             $this->get('session')->getFlashBag()->set('error', "Your application has been copied but"
