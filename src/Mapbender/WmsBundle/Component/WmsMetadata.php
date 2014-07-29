@@ -10,6 +10,7 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\WmsBundle\Entity\WmsInstance;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
  * 
@@ -40,13 +41,13 @@ class WmsMetadata extends SourceMetadata
             $source_items[] = array("onlineResource" =>
                 SourceMetadata::getNotNull($src->getOnlineResource() !== null ? $src->getOnlineResource() : ""));
             $source_items[] = array("exceptionFormats" => SourceMetadata::getNotNull(implode(",", $src->getExceptionFormats())));
-            $this->addMetadataSection('common', $source_items);
+            $this->addMetadataSection(SourceMetadata::$SECTION_COMMON, $source_items);
         }
         if ($this->getUseUseConditions()) {
             $tou_items = array();
             $tou_items[] = array("fees" => SourceMetadata::getNotNull($src->getFees()));
             $tou_items[] = array("accessconstraints" => SourceMetadata::getNotNull($src->getAccessConstraints()));
-            $this->addMetadataSection('useconditions', $tou_items);
+            $this->addMetadataSection(SourceMetadata::$SECTION_USECONDITIONS, $tou_items);
         }
         # add source contact metadata
         if ($this->getUseContact()) {
@@ -64,7 +65,7 @@ class WmsMetadata extends SourceMetadata
             $contact_items[] = array("addressStateOrProvince" => SourceMetadata::getNotNull($contact->getAddressStateOrProvince()));
             $contact_items[] = array("addressPostCode" => SourceMetadata::getNotNull($contact->getAddressPostCode()));
             $contact_items[] = array("addressCountry" => SourceMetadata::getNotNull($contact->getAddressCountry()));
-            $this->addMetadataSection('contact', $contact_items);
+            $this->addMetadataSection(SourceMetadata::$SECTION_CONTACT, $contact_items);
         }
 
         # add items metadata
@@ -76,23 +77,32 @@ class WmsMetadata extends SourceMetadata
                     break;
                 }
             }
+            $layer_items = array();
             if ($layer) {
-                $layer_items = array();
-                $layer_items[] = array("name" => SourceMetadata::getNotNull($layer->getWmslayersource()->getName()));
-                $layer_items[] = array("title" => SourceMetadata::getNotNull($layer->getTitle()));
-                $bbox = $layer->getWmslayersource()->getLatlonBounds();
-                $layer_items[] = array("bbox" => SourceMetadata::getNotNull($bbox->getSrs() . " " .
-                        $bbox->getMinx() . "," . $bbox->getMiny() . "," . $bbox->getMaxx() . "," . $bbox->getMaxy()));
-                $layer_items[] = array(
-                    "srs" => SourceMetadata::getNotNull(implode(',', $layer->getWmslayersource()->getSrs())));
-                $result["sections"][] = array(
-                    "title" => "layer",
-                    "items" => $layer_items
-                );
+                $layer_items = $this->prepareLayers($layer);
             }
-            $this->addMetadataSection('layer', $layer_items);
+            $this->addMetadataSection(SourceMetadata::$SECTION_ITEMS, $layer_items);
         }
-        # add extended metadata TODO ?
+    }
+    
+    private function prepareLayers($layer)
+    {
+        $layer_items = array();
+        $layer_items[] = array("name" => SourceMetadata::getNotNull($layer->getWmslayersource()->getName()));
+        $layer_items[] = array("title" => SourceMetadata::getNotNull($layer->getTitle()));
+        $bbox = $layer->getWmslayersource()->getLatlonBounds();
+        $layer_items[] = array("bbox" => SourceMetadata::getNotNull($bbox->getSrs() . " " .
+                $bbox->getMinx() . "," . $bbox->getMiny() . "," . $bbox->getMaxx() . "," . $bbox->getMaxy()));
+        $layer_items[] = array(
+            "srs" => SourceMetadata::getNotNull(implode(', ', $layer->getWmslayersource()->getSrs())));
+        if($layer->getSublayer()->count() > 0){
+            $sublayers = array();
+            foreach($layer->getSublayer() as $sublayer){
+                $sublayers[] = $this->prepareLayers($sublayer);
+            }
+            $layer_items[] = array(SourceMetadata::$SECTION_SUBITEMS => $sublayers);
+        }
+        return $layer_items;
     }
 
     /**

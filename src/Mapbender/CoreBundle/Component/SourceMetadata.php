@@ -15,6 +15,36 @@ namespace Mapbender\CoreBundle\Component;
  */
 abstract class SourceMetadata
 {
+    /**
+     * Section 'common'
+     * @var string 
+     */
+    public static $SECTION_COMMON = 'common';
+    /**
+     * Section 'useconditions'
+     * @var string 
+     */
+    public static $SECTION_USECONDITIONS = 'useconditions';
+    /**
+     * Section 'contact'
+     * @var string 
+     */
+    public static $SECTION_CONTACT = 'contact';
+    /**
+     * Section 'items'
+     * @var string 
+     */
+    public static $SECTION_ITEMS = 'items';
+    /**
+     * Section 'subitems'
+     * @var string 
+     */
+    public static $SECTION_SUBITEMS = 'subitems';
+    /**
+     * Section 'item'
+     * @var string 
+     */
+    public static $SECTION_EXTENDED = 'extended';
 
     /**
      * Container 'tabs'

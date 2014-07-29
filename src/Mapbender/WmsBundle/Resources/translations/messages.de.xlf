@@ -626,24 +626,24 @@
         <source>mb.wms.metadata.section.contact.addressCountry</source>
         <target>Staat</target>
       </trans-unit>
-      <trans-unit id="35618b11d8edcb5dfe60254a8508b48d" resname="mb.wms.metadata.section.layer">
-        <source>mb.wms.metadata.section.layer</source>
+      <trans-unit id="ae05bada29989d43f98a4c68e011e836" resname="mb.wms.metadata.section.items">
+        <source>mb.wms.metadata.section.items</source>
         <target>Ebene</target>
       </trans-unit>
-      <trans-unit id="a3a7e1cb96ae7d787f980d5104f9baad" resname="mb.wms.metadata.section.layer.name">
-        <source>mb.wms.metadata.section.layer.name</source>
+      <trans-unit id="c47ba626b11c59d5aa93f5948b6aa5d0" resname="mb.wms.metadata.section.items.name">
+        <source>mb.wms.metadata.section.items.name</source>
         <target>Name</target>
       </trans-unit>
-      <trans-unit id="4832b1d3b92d87307243b3699f922a88" resname="mb.wms.metadata.section.layer.title">
-        <source>mb.wms.metadata.section.layer.title</source>
+      <trans-unit id="04c6ee3360025018f9116ed723ad90fc" resname="mb.wms.metadata.section.items.title">
+        <source>mb.wms.metadata.section.items.title</source>
         <target>Titel</target>
       </trans-unit>
-      <trans-unit id="5f1aebf1cb95ac18919a7352711a3abb" resname="mb.wms.metadata.section.layer.srs">
-        <source>mb.wms.metadata.section.layer.srs</source>
+      <trans-unit id="5859224a9e886b72321a69fd640009d9" resname="mb.wms.metadata.section.items.srs">
+        <source>mb.wms.metadata.section.items.srs</source>
         <target>SRS</target>
       </trans-unit>
-      <trans-unit id="546bea28d4a3e58e2083b7d320730bc5" resname="mb.wms.metadata.section.layer.bbox">
-        <source>mb.wms.metadata.section.layer.bbox</source>
+      <trans-unit id="0e67dce39ced278de46bfc872fe69bb7" resname="mb.wms.metadata.section.items.bbox">
+        <source>mb.wms.metadata.section.items.bbox</source>
         <target>BoundingBox</target>
       </trans-unit>
       <trans-unit id="9f460e7ad44bc13df4bbbd75a9c6fe52" resname="mb.wms.metadata.section.useconditions">
