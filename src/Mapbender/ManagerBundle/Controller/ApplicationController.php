@@ -402,19 +402,7 @@ class ApplicationController extends Controller
         if ($this->createApplicationDir($cloned->getSlug())) {
             $src = $this->getApplicationDir($tocopy->getSlug());
             $dst = $this->getApplicationDir($cloned->getSlug());
-            $dir = opendir($src);
-            @mkdir($dst);
-            while (false !== ( $file = readdir($dir))) {
-                if (( $file != '.' ) && ( $file != '..' )) {
-                    if (is_dir($src . '/' . $file)) {
-                        recurse_copy($src . '/' . $file, $dst . '/' . $file);
-                    } else {
-                        copy($src . '/' . $file, $dst . '/' . $file);
-                    }
-                }
-            }
-            closedir($dir);
-
+            Utils::copyOrderRecursive($src, $dst);
             $this->get('session')->setFlash('success', 'Your application has been copied.');
         } else {
             $this->get('session')->setFlash('error',

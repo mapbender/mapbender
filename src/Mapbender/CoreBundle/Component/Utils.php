@@ -113,4 +113,19 @@ class Utils
         return $newurl;
     }
 
+    public static function copyOrderRecursive($sourceOrder, $destinationOrder)
+    {
+        $dir = opendir($sourceOrder);
+        @mkdir($destinationOrder);
+        while (false !== ( $file = readdir($dir))) {
+            if (( $file != '.' ) && ( $file != '..' )) {
+                if (is_dir($sourceOrder . '/' . $file)) {
+                    Utils::copyOrderRecursive($sourceOrder . '/' . $file, $destinationOrder . '/' . $file);
+                } else {
+                    copy($sourceOrder . '/' . $file, $destinationOrder . '/' . $file);
+                }
+            }
+        }
+        closedir($dir);
+    }
 }
