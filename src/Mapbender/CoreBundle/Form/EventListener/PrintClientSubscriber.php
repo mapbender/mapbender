@@ -47,11 +47,11 @@ class PrintClientSubscriber implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::PRE_BIND => 'preBind');
+            FormEvents::PRE_SUBMIT => 'preBind');
     }
 
     /**
-     * Checkt form fields by PRE_BIND FormEvent
+     * Checkt form fields by PRE_SUBMIT FormEvent
      * 
      * @param FormEvent $event
      */

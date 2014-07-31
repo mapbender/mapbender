@@ -16,6 +16,7 @@
     text-align:center;
     &.iconCheckboxActive{@extend .iconInfoActive}
   }
+  .leave.invisible{@include opacity(.7);} //for .serviceContainer too
   .serviceContainer, .groupContainer{
     border-left:dotted 1px black;
     margin-bottom:1px; // Fix for Firefox
@@ -34,7 +35,6 @@
     .leave{
       margin-left:20px;
       position: relative;
-      &.invisible{@include opacity(.3);}
 
       &:before{
         content:'';

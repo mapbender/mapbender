@@ -530,6 +530,146 @@
         <source>mb.wmc.wmsloader.tag.loader</source>
         <target>cargador</target>
       </trans-unit>
+      <trans-unit id="a4cef6a675aeeecd2599ae2801c72cc0" resname="mb.wms.wmsloader.repo.form.label.onlyvalid">
+        <source>mb.wms.wmsloader.repo.form.label.onlyvalid</source>
+        <target>Only valid</target>
+      </trans-unit>
+      <trans-unit id="96e9b7c327851c6e892a4d0aed27302c" resname="mb.wms.repository.parser.couldnotparse">
+        <source>mb.wms.repository.parser.couldnotparse</source>
+        <target>Could not parse</target>
+      </trans-unit>
+      <trans-unit id="c76ec427cfde142ec2a3f5d87c5f9454" resname="mb.wms.repository.parser.not_supported_document">
+        <source>mb.wms.repository.parser.not_supported_document</source>
+        <target>Not supported document</target>
+      </trans-unit>
+      <trans-unit id="7ea651c787edebfab98ab66d859648b5" resname="mb.wms.repository.parser.not_supported_version">
+        <source>mb.wms.repository.parser.not_supported_version</source>
+        <target>Not supported version</target>
+      </trans-unit>
+      <trans-unit id="f098d803a9bffa45349533789e8f014c" resname="mb.wms.repository.parser.not_valid_dtd">
+        <source>mb.wms.repository.parser.not_valid_dtd</source>
+        <target>Dtd not valid</target>
+      </trans-unit>
+      <trans-unit id="e2fc7117cebcbc8e35869e22e81cd7aa" resname="mb.wms.repository.parser.not_valid_xsd">
+        <source>mb.wms.repository.parser.not_valid_xsd</source>
+        <target>XSD not valid</target>
+      </trans-unit>
+      <trans-unit id="3fc45286dbed3669423eea7520e5278f" resname="mb.wms.metadata.section.common">
+        <source>mb.wms.metadata.section.common</source>
+        <target>Common</target>
+      </trans-unit>
+      <trans-unit id="c92e0e2df5db11fd510a0cd23bd2a1c5" resname="mb.wms.metadata.section.common.title">
+        <source>mb.wms.metadata.section.common.title</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="7f29afe01b89b0f9806207ff2e7e6db4" resname="mb.wms.metadata.section.common.name">
+        <source>mb.wms.metadata.section.common.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="d55540e96386eeff3e2ce0071142ad56" resname="mb.wms.metadata.section.common.version">
+        <source>mb.wms.metadata.section.common.version</source>
+        <target>Version</target>
+      </trans-unit>
+      <trans-unit id="fbab2e3980dd2f1b8cf6ff8fbe06f380" resname="mb.wms.metadata.section.common.originUrl">
+        <source>mb.wms.metadata.section.common.originUrl</source>
+        <target>Origin Url</target>
+      </trans-unit>
+      <trans-unit id="b41a13ce28a88496252ebe893e380f3b" resname="mb.wms.metadata.section.common.description">
+        <source>mb.wms.metadata.section.common.description</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="5c8371b499bb3125d15ea1842edcc671" resname="mb.wms.metadata.section.common.onlineResource">
+        <source>mb.wms.metadata.section.common.onlineResource</source>
+        <target>OnlineResource</target>
+      </trans-unit>
+      <trans-unit id="2b53b27cfc3356b9ce7f957598da62e2" resname="mb.wms.metadata.section.common.exceptionFormats">
+        <source>mb.wms.metadata.section.common.exceptionFormats</source>
+        <target>Exception formats</target>
+      </trans-unit>
+      <trans-unit id="9f460e7ad44bc13df4bbbd75a9c6fe52" resname="mb.wms.metadata.section.useconditions">
+        <source>mb.wms.metadata.section.useconditions</source>
+        <target>Terms of use</target>
+      </trans-unit>
+      <trans-unit id="1af618335ebd3e9ccd2700acc8a595de" resname="mb.wms.metadata.section.useconditions.fees">
+        <source>mb.wms.metadata.section.useconditions.fees</source>
+        <target>Fees</target>
+      </trans-unit>
+      <trans-unit id="d94d43c25c59a77eb1a5aa77f790ba4e" resname="mb.wms.metadata.section.useconditions.accessconstraints">
+        <source>mb.wms.metadata.section.useconditions.accessconstraints</source>
+        <target>Access constraints</target>
+      </trans-unit>
+      <trans-unit id="7330961cd1002614243fe71e8a4721e7" resname="mb.wms.metadata.section.contact">
+        <source>mb.wms.metadata.section.contact</source>
+        <target>Contact</target>
+      </trans-unit>
+      <trans-unit id="1423bd6890ce94762fa8857ec0bf22c2" resname="mb.wms.metadata.section.contact.person">
+        <source>mb.wms.metadata.section.contact.person</source>
+        <target>Person</target>
+      </trans-unit>
+      <trans-unit id="cb79300f2e60f094edfef7fd4e0b83d1" resname="mb.wms.metadata.section.contact.position">
+        <source>mb.wms.metadata.section.contact.position</source>
+        <target>Position</target>
+      </trans-unit>
+      <trans-unit id="77562ca4b9e57650a2210f7e4b82c8a2" resname="mb.wms.metadata.section.contact.organization">
+        <source>mb.wms.metadata.section.contact.organization</source>
+        <target>Organization</target>
+      </trans-unit>
+      <trans-unit id="8956642ac6f7607fa976acf25e4a169e" resname="mb.wms.metadata.section.contact.voiceTelephone">
+        <source>mb.wms.metadata.section.contact.voiceTelephone</source>
+        <target>Telephone</target>
+      </trans-unit>
+      <trans-unit id="f080825f7b3dc90404fc451a1be9c7a7" resname="mb.wms.metadata.section.contact.facsimileTelephone">
+        <source>mb.wms.metadata.section.contact.facsimileTelephone</source>
+        <target>Facsimile</target>
+      </trans-unit>
+      <trans-unit id="b3993c730cdb23a6f00a03e95bf488d0" resname="mb.wms.metadata.section.contact.electronicMailAddress">
+        <source>mb.wms.metadata.section.contact.electronicMailAddress</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="07136ca76c45547a5c4d484686606b7e" resname="mb.wms.metadata.section.contact.address">
+        <source>mb.wms.metadata.section.contact.address</source>
+        <target>Address</target>
+      </trans-unit>
+      <trans-unit id="f5a3514ee73eb0df90d07a3ba3e474f2" resname="mb.wms.metadata.section.contact.addressType">
+        <source>mb.wms.metadata.section.contact.addressType</source>
+        <target>Address type</target>
+      </trans-unit>
+      <trans-unit id="225f44d5f01e8597eae5e97d61f34269" resname="mb.wms.metadata.section.contact.addressCity">
+        <source>mb.wms.metadata.section.contact.addressCity</source>
+        <target>City</target>
+      </trans-unit>
+      <trans-unit id="66035d14243b81d859906433a2af0f80" resname="mb.wms.metadata.section.contact.addressStateOrProvince">
+        <source>mb.wms.metadata.section.contact.addressStateOrProvince</source>
+        <target>State or province</target>
+      </trans-unit>
+      <trans-unit id="20299df7798ce2dfcfdb5a7b3a8ca476" resname="mb.wms.metadata.section.contact.addressPostCode">
+        <source>mb.wms.metadata.section.contact.addressPostCode</source>
+        <target>Post code</target>
+      </trans-unit>
+      <trans-unit id="fe90bfd92d3c625a58393f077c2347e3" resname="mb.wms.metadata.section.contact.addressCountry">
+        <source>mb.wms.metadata.section.contact.addressCountry</source>
+        <target>Country</target>
+      </trans-unit>
+      <trans-unit id="ae05bada29989d43f98a4c68e011e836" resname="mb.wms.metadata.section.items">
+        <source>mb.wms.metadata.section.items</source>
+        <target>Layer</target>
+      </trans-unit>
+      <trans-unit id="c47ba626b11c59d5aa93f5948b6aa5d0" resname="mb.wms.metadata.section.items.name">
+        <source>mb.wms.metadata.section.items.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="04c6ee3360025018f9116ed723ad90fc" resname="mb.wms.metadata.section.items.title">
+        <source>mb.wms.metadata.section.items.title</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="5859224a9e886b72321a69fd640009d9" resname="mb.wms.metadata.section.items.srs">
+        <source>mb.wms.metadata.section.items.srs</source>
+        <target>SRS</target>
+      </trans-unit>
+      <trans-unit id="0e67dce39ced278de46bfc872fe69bb7" resname="mb.wms.metadata.section.items.bbox">
+        <source>mb.wms.metadata.section.items.bbox</source>
+        <target>BoundingBox</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
@@ -104,9 +105,10 @@ abstract class WmsCapabilitiesParser
     {
         $doc = new \DOMDocument();
         if (!@$doc->loadXML($data)) {
-            throw new XmlParseException("Could not parse CapabilitiesDocument.");
+            throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
         }
-
+        // substitute xincludes
+        $doc->xinclude();
         if ($doc->documentElement->tagName == "ServiceExceptionReport") {
             $message = $doc->documentElement->nodeValue;
             throw new WmsException($message);
@@ -114,17 +116,61 @@ abstract class WmsCapabilitiesParser
 
         if ($doc->documentElement->tagName !== "WMS_Capabilities"
             && $doc->documentElement->tagName !== "WMT_MS_Capabilities") {
-            throw new NotSupportedVersionException("No supported CapabilitiesDocument");
-        }
-
-        if ($validate && !@$doc->validate()) {
-            throw new XmlParseException("A WMS document is not valid");
+            throw new NotSupportedVersionException("mb.wms.repository.parser.not_supported_document");
         }
 
         $version = $doc->documentElement->getAttribute("version");
         if ($version !== "1.1.1" && $version !== "1.3.0") {
-            throw new NotSupportedVersionException('The WMS version "'
-            . $version . '" is not supported.');
+            throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
+        }
+        return $doc;
+    }
+
+    public static function getSchemas(\DOMDocument $doc)
+    {
+        $schemaLocations = array();
+        if ($element = $dom->documentElement->getAttributeNS('http://www.w3.org/2001/XMLSchema-instance',
+            'schemaLocation')) {
+            $items = preg_split('/\s+/', $element);
+            for ($i = 0, $nb = count($items); $i < $nb; $i += 2) {
+                $schemaLocations[$items[$i - 1]] = $items[$i];
+            }
+        }
+        return $schemaLocations;
+    }
+
+    public static function validate(\DOMDocument $doc)
+    {
+//        $doc = new \DOMDocument();
+        if (!@$doc->loadXML($data, $validate && isset($doc->doctype) ? LIBXML_DTDLOAD | LIBXML_DTDVALID : 0)) {
+            throw new XmlParseException("mb.wms.repository.parser.couldnotparse");
+        }
+        // substitute xincludes
+        $doc->xinclude();
+        if ($doc->documentElement->tagName == "ServiceExceptionReport") {
+            $message = $doc->documentElement->nodeValue;
+            throw new WmsException($message);
+        }
+
+        if ($doc->documentElement->tagName !== "WMS_Capabilities"
+            && $doc->documentElement->tagName !== "WMT_MS_Capabilities") {
+            throw new NotSupportedVersionException("mb.wms.repository.parser.not_supported_document");
+        }
+
+        $version = $doc->documentElement->getAttribute("version");
+        if ($version !== "1.1.1" && $version !== "1.3.0") {
+            throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
+        }
+
+        if ($validate) {
+            if (isset($doc->doctype) && !@$doc->validate()) { // check with DTD
+                throw new XmlParseException("mb.wms.repository.parser.not_valid_dtd");
+            } else if (!isset($doc->doctype)) {
+                // TODO create CREATEDSCHEMA
+                if ($version === '1.3.0' && !$doc->schemaValidate('CREATEDSCHEMA')) {
+                    throw new XmlParseException("mb.wms.repository.parser.not_valid_xsd");
+                }
+            }
         }
         return $doc;
     }
@@ -133,8 +179,7 @@ abstract class WmsCapabilitiesParser
      * Gets a capabilities parser
      *
      * @param \DOMDocument $doc the GetCapabilities document
-     * @return \Mapbender\WmsBundle\Component\WmsCapabilitiesParser111
-     * |\Mapbender\WmsBundle\Component\WmsCapabilitiesParser130 a capabilities parser
+     * @return WmsCapabilitiesParser111 | WmsCapabilitiesParser130 a capabilities parser
      * @throws NotSupportedVersionException if a service version is not supported
      */
     public static function getParser(\DOMDocument $doc)
@@ -146,8 +191,7 @@ abstract class WmsCapabilitiesParser
             case "1.3.0":
                 return new WmsCapabilitiesParser130($doc);
             default:
-                throw new NotSupportedVersionException("Could not determine WMS Version");
-                break;
+                throw new NotSupportedVersionException('mb.wms.repository.parser.not_supported_version');
         }
     }
 

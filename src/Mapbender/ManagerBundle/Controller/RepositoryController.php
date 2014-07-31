@@ -44,7 +44,7 @@ class RepositoryController extends Controller
 
         $allowed_sources = array();
         foreach ($sources as $source) {
-            if (!$securityContext->isGranted('VIEW', $source)) {
+            if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $source)) {
                 continue;
             }
             $allowed_sources[] = $source;
@@ -53,6 +53,7 @@ class RepositoryController extends Controller
         return array(
             'title' => 'Repository',
             'sources' => $allowed_sources,
+            'oid' => $oid,
             'create_permission' => $securityContext->isGranted('CREATE', $oid)
         );
     }
@@ -135,8 +136,10 @@ class RepositoryController extends Controller
         $source = $this->getDoctrine()
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
 
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $securityContext = $this->get('security.context');
-        if (false === $securityContext->isGranted('DELETE', $source)) {
+
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('DELETE', $source)) {
             throw new AccessDeniedException();
         }
         return array(
@@ -155,7 +158,9 @@ class RepositoryController extends Controller
                 ->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
 
         $securityContext = $this->get('security.context');
-        if (false === $securityContext->isGranted('DELETE', $source)) {
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('DELETE', $source)) {
             throw new AccessDeniedException();
         }
 
@@ -186,7 +191,9 @@ class RepositoryController extends Controller
         }
 
         $securityContext = $this->get('security.context');
-        if (!$securityContext->isGranted('EDIT', $sourceInst->getSource())) {
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!($securityContext->isGranted('EDIT', $sourceInst->getSource()) ||
+              $securityContext->isGranted('EDIT', $oid))) {
             throw new AccessDeniedHttpException();
         }
 

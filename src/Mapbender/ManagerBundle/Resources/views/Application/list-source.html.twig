@@ -5,6 +5,11 @@
   <li class="filterItem">
     <a id="repository-list" class="checkContainer chooseElement" title="Choose {{source.title}}" href="{{ path("mapbender_manager_application_addinstance",{'slug': application.slug, "layersetId": layerset.id, "sourceId": source.id}) }}">
       <span>{{ source.type }}</span>
+      {% if source.valid == true %}
+      <span class="iconStarO icon" title="{{"mb.manager.admin.source.valid"|trans}}"></span>
+      {% elseif source.valid is not null %}
+      <span class="iconWarningSmpl icon" title="{{"mb.manager.admin.source.notvalid"|trans}}"></span>
+      {% endif %}
       <span class="subTitle">{{ source.title }}</span>
       <span>{{ source.alias }}</span>
       <span class="iconOk iconBig"></span>

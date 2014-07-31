@@ -82,6 +82,10 @@
         <source>mb.core.admin.button.show_label</source>
         <target>Beschriftung anzeigen</target>
       </trans-unit>
+      <trans-unit id="de8b0c7081e586c1705003fe9fea9fc7" resname="mb.manager.admin.messagebox.only_region_elements">
+        <source>mb.manager.admin.messagebox.only_region_elements</source>
+        <target>Nur für Region verfügbare Elemente werden angezeigt.</target>
+      </trans-unit>
       <trans-unit id="49ead166f1617a1c075be9feb88ef264" resname="mb.core.element.be.button.show_label">
         <source>mb.core.element.be.button.show_label</source>
         <target>Beschriftung anzeigen</target>
@@ -106,9 +110,17 @@
         <source>mb.manager.admin.filter.source</source>
         <target>Filter Quelle</target>
       </trans-unit>
+      <trans-unit id="2baeb9ca4bc58fe89fa3284be858890d" resname="mb.manager.admin.source.valid">
+        <source>mb.manager.admin.source.valid</source>
+        <target>Quelle valid</target>
+      </trans-unit>
+      <trans-unit id="4dc2095208f7942a6870ad5153701bc9" resname="mb.manager.admin.source.notvalid">
+        <source>mb.manager.admin.source.notvalid</source>
+        <target>Quelle nicht valid</target>
+      </trans-unit>
       <trans-unit id="9d74c4df1bed8b409f8b88b02eebc115" resname="mb.manager.admin.source.no_source">
         <source>mb.manager.admin.source.no_source</source>
-        <target>Kein Quelle</target>
+        <target>Keine Quelle</target>
       </trans-unit>
       <trans-unit id="49a08961b0e5b8b4fb076d6082f67b55" resname="mb.manager.admin.application.security.add_users_groups">
         <source>mb.manager.admin.application.security.add_users_groups</source>
@@ -429,6 +441,14 @@
       <trans-unit id="8bf0ac9ea9e7843388def8c0416156c8" resname="mb.core.admin.about_dialog.show_label">
         <source>mb.core.admin.about_dialog.show_label</source>
         <target>Buttontext anzeigen</target>
+      </trans-unit>
+      <trans-unit id="fc73409cc94d703de1cf50d3801da59e" resname="mb.manager.template.region.tabs.label">
+        <source>mb.manager.template.region.tabs.label</source>
+        <target>Reiter</target>
+      </trans-unit>
+      <trans-unit id="0475b124fc415027ca6a776af40a4062" resname="mb.manager.template.region.accordion.label">
+        <source>mb.manager.template.region.accordion.label</source>
+        <target>Akkordeon</target>
       </trans-unit>
     </body>
   </file>

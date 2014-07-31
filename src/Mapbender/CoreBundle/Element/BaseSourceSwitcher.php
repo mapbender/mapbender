@@ -1,7 +1,10 @@
 <?php
 namespace Mapbender\CoreBundle\Element;
 
+use Doctrine\ORM\EntityManager;
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Entity\Element as Entity;
+use Mapbender\CoreBundle\Entity\Application as AppEntity;
 
 /**
  * Map's overview element
@@ -96,6 +99,66 @@ class BaseSourceSwitcher extends Element
                     'id' => $this->getId(),
                     "title" => $this->getTitle(),
                     'configuration' => $this->getConfiguration()));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function copyConfiguration(EntityManager $em, AppEntity &$copiedApp, &$elementsMap, &$layersetMap)
+    {
+        $subElements = array();
+        $toOverwrite = array();
+        $sourcesets = array();
+        $form = Element::getElementForm($this->container, $this->application->getEntity(), $this->entity);
+        // overwrite 
+        foreach ($form['form']['configuration']->all() as $fieldName => $fieldValue) {
+            $norm = $fieldValue->getNormData();
+            if ($fieldName === 'sourcesets') {
+                $help = array();
+                foreach ($layersetMap as $layersetId => $layerset) {
+                    foreach ($layerset['instanceMap'] as $old => $new){
+                        $help[$old] = $new;
+                    }
+                }
+                $sourcesets = $norm;
+                foreach ($norm as $key => $value) {
+                    $nsources = array();
+                    foreach ($value['sources'] as $instId) {
+                        if (key_exists(strval($instId), $help)) {
+                            $nsources[] = $help[strval($instId)];
+                        }
+                    }
+                    $sourcesets[$key]['sources'] = $nsources;
+                }
+            } else if ($norm instanceof Entity) { // Element only target ???
+                $subElements[$fieldName] = $norm->getId();
+
+                $fv = $form['form']->createView();
+            }
+        }
+        $copiedElm = $elementsMap[$this->entity->getId()];
+        if (count($toOverwrite) > 0) {
+            $configuration = $this->entity->getConfiguration();
+            foreach ($toOverwrite as $key => $value) {
+                $configuration[$key] = $value;
+            }
+            $copiedElm->setConfiguration($configuration);
+        }
+        if (count($subElements) > 0) {
+            foreach ($subElements as $name => $value) {
+                $configuration = $copiedElm->getConfiguration();
+                $targetId = null;
+                if ($value !== null) {
+                    $targetId = $elementsMap[$value]->getId();
+                }
+                $configuration[$name] = $targetId;
+                $copiedElm->setConfiguration($configuration);
+            }
+        }
+        $configuration = $copiedElm->getConfiguration();
+        $configuration['sourcesets'] = $sourcesets;
+        $copiedElm->setConfiguration($configuration);
+        return $copiedElm;
     }
 
 }

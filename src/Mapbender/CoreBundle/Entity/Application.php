@@ -5,7 +5,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Component\Application As ApplicationComponent;
 use Mapbender\CoreBundle\Component\Element As ComponentElement;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -82,11 +84,6 @@ class Application
      * @ORM\OneToMany(targetEntity="Layerset", mappedBy="application", cascade={"persist", "remove"})
      */
     protected $layersets;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="FOM\UserBundle\Entity\User", cascade={"persist"})
-     */
-    protected $owner;
 
     /**
      * @ORM\Column(type="boolean")
@@ -349,27 +346,6 @@ class Application
     }
 
     /**
-     * Set owner
-     *
-     * @param User $owner
-     */
-    public function setOwner($owner)
-    {
-        $this->owner = $owner;
-        return $this;
-    }
-
-    /**
-     * Get owner
-     *
-     * @return User
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
      * Set extra assets
      *
      * @param array $extra_assets
@@ -464,22 +440,6 @@ class Application
         }
     }
 
-    // public function getScreenshotFile(){
-
-    // }
-
-    // public function setScreenshotFile(){
-    //     return $Scree
-    // }
-
-    // public function setScreenshot($screenshot){
-    //     return $screenshot;
-    // }
-
-    // public function getScreenshot(){
-    //     require $screenshot;
-    // }
-
     public function __toString()
     {
         return (string) $this->getId();
@@ -503,118 +463,68 @@ class Application
         return null;
     }
 
-    public function copy($container, EntityManager $em)
+    public function copy($container, EntityManager $em, $app)
     {
-//        $em->detach($this);
-        $app = new Application();
-        $app->slug = $this->slug;
-        $app->title = $this->title;
-        $app->description = $this->description;
-        $app->setUpdated(new \DateTime('now'));
-        $app->setPublished(false);
         $app->preparedElements = $this->preparedElements;
         $app->screenshotPath = $this->screenshotPath;
         $app->source = $this->source;
-        $app->template = $this->template;
-        $app->owner = $this->owner;
         $app->screenshot = $this->screenshot;
         $app->extra_assets = $this->extra_assets;
         $app->screenshotFile = $this->screenshotFile;
-
+        $em->persist($app);
         $layersetMap = array();
         foreach ($this->layersets as $layerset) {
-            $layerset_cloned = $layerset->copy($em);
+            $instanceMap = array();
+            $layerset_cloned = $layerset->copy($em, $instanceMap);
+            $layerset_cloned->setApplication($app);
             $em->persist($layerset_cloned);
-            $layersetMap[strval($layerset->getId())] = $layerset_cloned;
-            $app->addLayerset($layerset_cloned->setApplication($app));
+            $app->addLayerset($layerset_cloned);
+            $layersetMap[strval($layerset->getId())] = array('layerset' => $layerset_cloned, 'instanceMap' => $instanceMap);
         }
-        if (isset($layerset)) unset($layerset);
-        $clonedElmts = array();
+        if (isset($layerset))
+            unset($layerset);
 
-        $this->copyElements($container, $em, $app, $clonedElmts, $layersetMap);
-        return $app;
-    }
-
-    private function copyElements($container, EntityManager $em,
-        Application $clonedApp, $clonedElmts, $layersetMap)
-    {
+        foreach ($this->getRegionProperties() as $regprops) {
+            $clonedRP = $regprops->copy();
+            $clonedRP->setApplication($app);
+            $app->addRegionProperties($clonedRP);
+        }
+        $elementsMap = array();
+        $em->flush();
+        $aclProvider = $container->get('security.acl.provider');
+        # save without target
         foreach ($this->elements as $element) {
-            $options = array();
-            $origElmId = strval($element->getId());
-            if (key_exists($origElmId, $clonedElmts)) {
-                continue;
+            $copied = $element->copy($em);
+            $copied->setApplication($app);
+//            $copied->setConfiguration(array());
+            $em->persist($copied);
+            $app->addElements($copied);
+            $em->persist($app);
+            $em->flush();
+            $elementsMap[$element->getId()] = $copied;
+            try{
+                $oid = ObjectIdentity::fromDomainObject($element);
+                $acl = $aclProvider->findAcl($oid);
+                $newAcl = $aclProvider->createAcl(ObjectIdentity::fromDomainObject($copied));
+                foreach($acl->getObjectAces() as $ace) {
+                    $newAcl->insertObjectAce($ace->getSecurityIdentity(), $ace->getMask());
+                }
+                $aclProvider->updateAcl($newAcl);
+            } catch(\Exception $e){
+                $a = 0;
             }
-            $targets = array();
-            $form = ComponentElement::getElementForm($container, $this, $element);
-            foreach ($form['form']['configuration']->all() as $fieldName =>
-                    $fieldValue) {
-                $norm = $fieldValue->getNormData();
-                $data = $fieldValue->getData();
-                $view = $fieldValue->getViewData();
-                $extra = $fieldValue->getExtraData();
-                if ($norm instanceof Element) { // target Element
-                    $targets[$fieldName] = $norm->getId();
-
-                    $fv = $form['form']->createView();
-                } else if ($norm instanceof Layerset) { // Map
-                    if (key_exists(strval($norm->getId()), $layersetMap)) {
-                        $options[$fieldName] = $layersetMap[strval($norm->getId())]->getId();
-                    } else {
-                        $options[$fieldName] = null;
-                    }
-                }
-            }
-            if (count($targets) === 0) {
-                $clonedElm = $element->copy($em);
-                $em->persist($clonedElm);
-                $clonedElm->setApplication($clonedApp);
-                foreach ($options as $key => $value) {
-                    $configuration = $clonedElm->getConfiguration();
-                    $configuration[$key] = $value;
-                    $clonedElm->setConfiguration($configuration);
-                }
-                $em->persist($clonedElm);
-                $clonedApp->addElements($clonedElm);
-                $clonedElmts[$origElmId] = $clonedElm;
-            } else {
-                $allTargetsCreated = true;
-                foreach ($targets as $name => $value) {
-                    if ($value !== null && !key_exists(strval($value),
-                            $clonedElmts)) {
-                        $allTargetsCreated = false;
-                    }
-                }
-                if (!$allTargetsCreated) {
-                    continue;
-                }
-                $clonedElm = $element->copy($em);
-                $em->persist($clonedElm);
-                $clonedElm->setApplication($clonedApp);
-                foreach ($options as $key => $value) {
-                    $configuration = $clonedElm->getConfiguration();
-                    $configuration[$key] = $value;
-                    $clonedElm->setConfiguration($configuration);
-                }
-
-                foreach ($targets as $name => $value) {
-                    if (key_exists(strval($value), $clonedElmts)) {
-                        $configuration = $clonedElm->getConfiguration();
-                        $target = $clonedElmts[strval($value)];
-                        $configuration[$name] = $target->getId();
-                        $clonedElm->setConfiguration($configuration);
-                    }
-                }
-                $em->persist($clonedElm);
-                $clonedApp->addElements($clonedElm);
-                $clonedElmts[$origElmId] = $clonedElm;
-            }
+            $em->persist($copied);        
+            $em->flush();
+            
         }
-        if (count($clonedElmts) === count($this->elements)) {
-            return;
-        } else {
-            $this->copyElements($container, $em, $clonedApp, $clonedElmts,
-                $layersetMap);
+        $applicationComponent = new ApplicationComponent($container, $this, array());
+        foreach ($this->elements as $element) {
+            $elmclass = $element->getClass();
+            $elemComponent = new $elmclass($applicationComponent, $container, $element);
+            $copied = $elemComponent->copyConfiguration($em, $app, $elementsMap, $layersetMap);
+            $em->persist($copied);
         }
+        return $app;
     }
 
 }
