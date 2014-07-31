@@ -86,7 +86,8 @@ class ApplicationController extends Controller
         return array(
             'application' => $application,
             'form' => $form->createView(),
-            'form_name' => $form->getName());
+            'form_name' => $form->getName(),
+            'screenshot_filename'=>  NULL);
     }
 
     /**
@@ -99,15 +100,19 @@ class ApplicationController extends Controller
     public function createAction()
     {
         $application = new Application();
-
+       
         // ACL access check
         $this->checkGranted('CREATE', $application);
 
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
+        
+        $screenshot_url = "";
 
         $form->bind($request);
         if ($form->isValid()) {
+            $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
+            $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
             $application->setUpdated(new \DateTime('now'));
             $em = $this->getDoctrine()->getManager();
 
@@ -117,8 +122,19 @@ class ApplicationController extends Controller
             $this->checkRegionProperties($application);
             $aclManager = $this->get('fom.acl.manager');
             $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-
-
+            
+            $scFile = $application->getScreenshotFile();
+            if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
+//                die(print_r($scFile));
+                $filename = sprintf('screenshot-%d.%s', $application->getId(), $scFile->guessExtension());
+                $scFile->move($app_directory, $filename);
+                $application->setScreenshot($filename);
+                $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+                $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
+            }
+            $em->persist($application);
+            $em->flush();
+            
             $em->getConnection()->commit();
             if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been saved.');
@@ -134,7 +150,8 @@ class ApplicationController extends Controller
         return array(
             'application' => $application,
             'form' => $form->createView(),
-            'form_name' => $form->getName());
+            'form_name' => $form->getName(),
+            'screenshot_filename'=> $screenshot_url);
     }
 
     /**
