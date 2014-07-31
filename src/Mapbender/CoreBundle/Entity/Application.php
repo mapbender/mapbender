@@ -311,6 +311,7 @@ class Application
     public function setScreenshot($screenshot)
     {
         $this->screenshot = $screenshot;
+        return $this;
     }
 
     /**
@@ -322,7 +323,27 @@ class Application
     {
         return $this->screenshot;
     }
-    
+
+    /**
+     * Set screenshotFile
+     *
+     * @param file $screenshotFile
+     */
+    public function setScreenshotFile($screenshotFile)
+    {
+        $this->screenshotFile = $screenshotFile;
+        return $this;
+    }
+
+    /**
+     * Get screenshotFile
+     *
+     * @return file
+     */
+    public function getScreenshotFile()
+    {
+        return $this->screenshotFile;
+    }
 
     /**
      * Set extra assets

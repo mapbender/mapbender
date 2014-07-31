@@ -45,6 +45,10 @@ class ApplicationController extends Controller
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
 
         $applications = $this->get('mapbender')->getApplicationEntities();
+
+        $uploads_web_url = AppComponent::getUploadsUrl($this->container);
+
+
         $allowed_applications = array();
         foreach ($applications as $application) {
             if ($securityContext->isGranted('VIEW', $application)) {
@@ -57,7 +61,9 @@ class ApplicationController extends Controller
 
         return array(
             'applications' => $allowed_applications,
-            'create_permission' => $securityContext->isGranted('CREATE', $oid)
+            'create_permission' => $securityContext->isGranted('CREATE', $oid),
+            'uploads_web_url' => $uploads_web_url,
+            'time' => new \DateTime()
         );
     }
 
@@ -156,6 +162,18 @@ class ApplicationController extends Controller
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
 
+        $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+
+
+
+        if ($application->getScreenshot() == null) {
+            $screenshot_url = $application->getScreenshot();
+        } else {
+            $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+            $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
+//            die($screenshot_url);
+        }
+
         return array(
             'application' => $application,
             'regions' => $templateClass::getRegions(),
@@ -164,7 +182,10 @@ class ApplicationController extends Controller
             'sources' => $sources,
             'form' => $form->createView(),
             'form_name' => $form->getName(),
-            'template_name' => $templateClass::getTitle());
+            'template_name' => $templateClass::getTitle(),
+            'screenshot' => $screenshot_url,
+            'screenshot_filename' => $application->getScreenshot(),
+            'time' => new \DateTime());
     }
 
     /**
@@ -182,6 +203,9 @@ class ApplicationController extends Controller
         $templateClassOld = $application->getTemplate();
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
+        $screenshot_url = "";
+        $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
+        $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
 
         $form->bind($request);
         if ($form->isValid()) {
@@ -196,17 +220,31 @@ class ApplicationController extends Controller
             //
             $application->setTemplate($templateClassOld);
             $this->setRegionProperties($application, $form);
+            if ($form->get('removeScreenShot')->getData() == '1') {
+                $application->setScreenshot(NULL);
+            }
+            $em->persist($application);
+            $em->flush();
+                //TODO: Fileupload Size
             try {
-                $em->flush();
-
-                $aclManager = $this->get('fom.acl.manager');
-                $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-                $em->getConnection()->commit();
-
                 if (AppComponent::createAppWebDir($this->container, $application->getSlug(), $old_slug)) {
+                    $scFile = $application->getScreenshotFile();
+                    if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
+                        $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
+                        $application->getScreenshotFile()->move($app_directory, $filename);
+                        $application->setScreenshot($filename);
+                    }
+
+                    $em->persist($application);
+                    $em->flush();
+                    $aclManager = $this->get('fom.acl.manager');
+                    $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
+                    $em->getConnection()->commit();
                     $this->get('session')->getFlashBag()->set('success', 'Your application has been updated.');
                 } else {
                     $this->get('session')->getFlashBag()->set('error', "Your application has been updated but" . " the application's directories can not be created.");
+                    $em->getConnection()->rollback();
+                    $em->close();
                 }
             } catch (\Exception $e) {
                 $this->get('session')->getFlashBag()->set('error', 'There was an error trying to save your application.');
@@ -217,11 +255,22 @@ class ApplicationController extends Controller
                     throw($e);
                 }
             }
+            $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
             return $this->redirect(
                     $this->generateUrl('mapbender_manager_application_edit', array(
                         'slug' => $application->getSlug())));
         } else {
+            //
+            // Avoid a null template.
+            // It's a bad solution. The best way to handle it, is
+            // to put the application forms and formtypes into seperate files.
+            //
+            $application->setTemplate($templateClassOld);
             $application->setSlug($slug);
+
+            if ($application->getScreenshot() !== null) {
+                $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
+            }
         }
 
         $error = "error";
@@ -244,6 +293,8 @@ class ApplicationController extends Controller
         $query = $em->createQuery(
             "SELECT s FROM MapbenderCoreBundle:Source s ORDER BY s.id ASC");
         $sources = $query->getResult();
+        $screenshot_filename = $application->getScreenshot();
+
         return new Response($this->container->get('templating')
                 ->render('MapbenderManagerBundle:Application:edit.html.twig', array(
                     'application' => $application,
@@ -253,7 +304,10 @@ class ApplicationController extends Controller
                     'sources' => $sources,
                     'form' => $form->createView(),
                     'form_name' => $form->getName(),
-                    'template_name' => $templateClass::getTitle())));
+                    'template_name' => $templateClass::getTitle(),
+                    'screenshot' => $screenshot_url,
+                    'screenshot_filename' => $screenshot_filename,
+                    'time' => new \DateTime())));
     }
 
     /**
@@ -338,6 +392,7 @@ class ApplicationController extends Controller
         $cloned->setTemplate($tocopy->getTemplate());
         $cloned->setUpdated(new \DateTime('now'));
         $cloned->setPublished(false);
+        $cloned->setScreenshot($tocopy->getScreenshot());
         $em->persist($cloned);
         $em->flush();
         $cloned = $tocopy->copy($this->container, $em, $cloned);

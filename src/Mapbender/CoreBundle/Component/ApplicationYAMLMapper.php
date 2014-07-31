@@ -90,6 +90,7 @@ class ApplicationYAMLMapper
         // First, create an application entity
         $application = new ApplicationEntity();
         $application
+                ->setScreenshot(key_exists("screenshot", $definition) ? $definition['screenshot'] : null)
                 ->setSlug($slug)
                 ->setTitle($definition['title'])
                 ->setDescription($definition['description'])

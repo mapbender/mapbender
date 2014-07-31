@@ -6,5 +6,31 @@
 {{ form_widget(form.slug) }}<br>
 <div class="clearContainer"></div>
 
+<div class="left">
+      {{ form_label(form.screenshotFile) }}
+</div>
+
+<div class="screenshot_upload left">
+    <div class="upload left">
+        <div class="label left upload_button">
+            Datei auswählen:
+        </div>
+        <div class="label right input upload_label">
+            {% if screenshot_filename is not null%}
+                {{screenshot_filename}}
+            {%else%}
+                Keine Datei ausgewählt...
+            {% endif %}
+        </div>
+        {{ form_widget(form.screenshotFile) }}
+    </div>
+</div>
+
+
+
+<div class="clearContainer"></div>
+
 {{ form_label(form.description) }}
 {{ form_widget(form.description) }}
+
+{{ form_widget(form.removeScreenShot) }}

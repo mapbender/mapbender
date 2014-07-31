@@ -26,8 +26,6 @@ class ApplicationType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-//        $subscriber = new RegionPropertiesSubscriber($builder->getFormFactory(), $options);
-//        $builder->addEventSubscriber($subscriber);
         $builder
             // Base data
             ->add('title', 'text', array(
@@ -47,6 +45,16 @@ class ApplicationType extends AbstractType
                 'choices' => $options['available_templates'],
                 'attr' => array(
                     'title' => 'The HTML template used for this application.')))
+            ->add('screenshotFile', 'file',
+                array('label' => 'Screenshot',
+                'attr' => array(
+                    'title' => 'Screenshot',
+                    'required' => false,
+                    'accept'=>'image/jpeg,image/png,image/gif')))
+            // Flag if set true, then screenshot should be 
+            ->add('removeScreenShot', 'hidden',array(
+                'mapped' => false
+            ))
             ->add('published', 'checkbox', array(
                 'required' => false,
                 'label' => 'Published'));
