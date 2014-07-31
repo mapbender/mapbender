@@ -314,6 +314,7 @@ class Application
     public function setScreenshot($screenshot)
     {
         $this->screenshot = $screenshot;
+        return $this;
     }
 
     /**
@@ -334,6 +335,7 @@ class Application
     public function setScreenshotFile($screenshotFile)
     {
         $this->screenshotFile = $screenshotFile;
+        return $this;
     }
 
     /**

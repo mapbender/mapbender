@@ -609,7 +609,18 @@ class Application
      */
     public static function getAppWebUrl($container, $slug)
     {
-        return Application::getBaseUrl($container) . '/' . Application::getUploadsDir($container, true) . "/" . $slug;
+        return Application::getUploadsUrl($container) . "/" . $slug;
+    }
+    
+    /**
+     * Gets a uploads url
+     * 
+     * @return string a base url
+     */
+    public static function getUploadsUrl($container)
+    {
+        $base_url = Application::getBaseUrl($container);
+        return $base_url . '/' . Application::getUploadsDir($container, true);
     }
     
     /**

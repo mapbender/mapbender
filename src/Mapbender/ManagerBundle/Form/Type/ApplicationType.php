@@ -49,7 +49,12 @@ class ApplicationType extends AbstractType
                 array('label' => 'Screenshot',
                 'attr' => array(
                     'title' => 'Screenshot',
-                    'required' => false)))
+                    'required' => false,
+                    'accept'=>'image/jpeg,image/png,image/gif')))
+            // Flag if set true, then screenshot should be 
+            ->add('removeScreenShot', 'hidden',array(
+                'mapped' => false
+            ))
             ->add('regionProperties', 'collection', array(
                 'type' => new RegionPropertiesType(),
                 'options' => array(
