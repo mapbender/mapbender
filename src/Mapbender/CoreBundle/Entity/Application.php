@@ -1,15 +1,17 @@
 <?php
 namespace Mapbender\CoreBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Entity\Element;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Application As ApplicationComponent;
 use Mapbender\CoreBundle\Component\Element As ComponentElement;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Validator\Constraints as Assert;
+use Mapbender\CoreBundle\Component\ExchangeIn;
+use Mapbender\CoreBundle\Entity\Element;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Applicaton entity
@@ -22,7 +24,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="mb_core_application")
  * @ORM\HasLifecycleCallbacks
  */
-class Application
+class Application implements ExchangeIn
 {
     const SOURCE_YAML = 1;
     const SOURCE_DB = 2;
@@ -526,5 +528,59 @@ class Application
         }
         return $app;
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function toArray()
+    {
+        $arr = array();
+        $arr['__class__'] =  get_class($this);
+        $arr['id'] =  $this->id;
+        $arr['source'] =  $this->source;
+        $arr['title'] =  $this->title;
+        $arr['slug'] =  $this->slug;
+        $arr['description'] =  $this->description;
+        $arr['template'] =  $this->template;
+        $arr['published'] =  $this->published;
+        $arr['screenshot'] =  $this->screenshot;
+        $arr['extra_assets'] =  $this->extra_assets;
+        $arr['updated'] =  $this->updated;
+        
+        $arr['regionProperties'] =  array();
+        foreach ($this->getRegionProperties() as $rProps) {
+            $arr['regionProperties'][] = $rProps->toArray();
+        }
+        
+        $arr['elements'] =  array();
+        foreach ($this->elements as $element) {
+            $arr['elements'][] = $element->toArray();
+        }
+        
+        $arr['layersets'] =  array();
+        foreach ($this->layersets as $layerset) {
+            $arr['layerset'][] = $layerset->toArray();
+        }
+        
+        return $arr;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public static function fromArray(array $serialized)
+    {
+        
+    }
+//    
+//    public function serialize(Serializer $serializer, $format)
+//    {
+//        $this->elements = new ArrayCollection();
+//        $this->elements->add(new Element());
+//        $this->layersets = new ArrayCollection();
+//        $this->regionProperties = new ArrayCollection();
+//        $res = json_decode($serializer->serialize($this, $format), true);
+//        $a = 0;
+//    }
 
 }

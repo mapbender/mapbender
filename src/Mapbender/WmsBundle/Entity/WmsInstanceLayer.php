@@ -5,6 +5,7 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityManager;
+use Mapbender\CoreBundle\Component\ExchangeIn;
 use Mapbender\CoreBundle\Component\InstanceLayerIn;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -18,7 +19,7 @@ use Mapbender\CoreBundle\Component\Utils;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
  */
-class WmsInstanceLayer implements InstanceLayerIn
+class WmsInstanceLayer implements InstanceLayerIn,  ExchangeIn
 {
 
     /**
@@ -644,6 +645,45 @@ class WmsInstanceLayer implements InstanceLayerIn
         $inlay->style = $this->style;
         $inlay->priority = $this->priority;
         return $inlay;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function toArray()
+    {
+        $arr = array();
+        $arr['class'] =  get_class($this);
+        $arr['id'] =  $this->id;
+        $arr['title'] =  $this->title;
+        $arr['active'] =  $this->active;
+        $arr['allowselected'] =  $this->allowselected;
+        $arr['selected'] =  $this->selected;
+        $arr['info'] =  $this->info;
+        $arr['allowinfo'] =  $this->allowinfo;
+        $arr['toggle'] =  $this->toggle;
+        $arr['allowtoggle'] =  $this->allowtoggle;
+        $arr['allowreorder'] =  $this->allowreorder;
+        $arr['minScale'] =  $this->minScale;
+        $arr['maxScale'] =  $this->maxScale;
+        $arr['style'] =  $this->style;
+        $arr['priority'] =  $this->priority;
+        $arr['wmsinstance'] =  $this->getWmsinstance()->getId();
+        $arr['wmslayersource'] =  $this->getWmslayersource()->getId();
+        $arr['parent'] =  $this->getParent() !== null ? $this->getParent()->getId() : null;
+        $arr['sublayer'] =  array();
+        foreach($this->getSublayer() as $layer){
+            $arr["sublayer"][] = $layer->getId();
+        }
+        return $arr;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public static function fromArray(array $serialized)
+    {
+        
     }
 
 }

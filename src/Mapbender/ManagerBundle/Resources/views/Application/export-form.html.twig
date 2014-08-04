@@ -1,0 +1,17 @@
+<form action="{{ path('mapbender_manager_application_export') }}" method="post" name="{{ 'mb.manager.admin.application.export' | trans }}" {{ form_enctype(form)}}  novalidate="novalidate" target="_blank">
+  <div class="defaultForm elementForm">
+    {{ form_label(form.applications) }}{{ form_widget(form.applications) }}
+    <div class="clearContainer"></div>
+    <div class="left">
+        {{ form_widget(form.acl) }}<label for="{{form.acl.vars.id}}" class="labelCheck">{{"mb.manager.admin.application.export.acl"|trans}}</label>
+    </div>
+  </div>
+  <div class="clearContainer"></div>
+  <div class="right">
+    <input type="submit" value="{{ 'mb.manager.admin.application.save' | trans }}" class="button"/>
+    <a href="{{ url('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.cancel' | trans}}</a>
+  </div>
+  <div class="clearContainer"></div>
+  {{ form_row(form._token) }}
+  {{ form_rest(form) }}
+</form>

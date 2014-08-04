@@ -734,5 +734,83 @@ $(function() {
             });
         });
     });
-
+//    
+//    var submitImportExport = function(e) {
+//        console.log($(this), e);
+//        $.ajax({
+//            url: $(e.target).attr('action'),
+//            data: $(e.target).serialize(),
+//            type: 'POST',
+//            statusCode: {
+//                200: function(response) {
+//                    alert();
+//                    $("#popupSubContent").html(response);
+//                    var subTitle = $("#popupSubContent").find("#form_title").val();
+//                    $("#popupSubTitle").text(" - " + subTitle);
+//                    $("#popup").find(".buttonYes, .buttonBack").show();
+//                },
+//                201: function() {
+//                    popup.close();
+//                    window.setTimeout(function() {
+//                        window.location.reload();
+//                    }, 10);
+//
+//                },
+//                205: function() {
+//                    popup.close();
+//                    window.setTimeout(function() {
+//                        window.location.reload();
+//                    }, 10);
+//                }
+//            }
+//
+//        });
+//        e.preventDefault();
+//        return false;
+//    };
+//    
+//    $("#application-export").bind("click", function() {
+//        var self = $(this);
+//        if (popup) {
+//            popup = popup.destroy();
+//        }
+//        popup = new Mapbender.Popup2({
+//            title: Mapbender.trans("mb.manager.application.popup.export.title"),
+//            closeOnOutsideClick: true,
+//            height: 350,
+//            width: 550,
+//            content: [
+//                $.ajax({
+//                    url: self.attr("href"),
+//                    complete: function() {
+//                        var pupCont = $(".popupContent");
+//                        pupCont.removeClass("popupContent").addClass("popupSubContent");
+//                        $(".contentItem .right", pupCont).addClass('hidden');
+//                        pupCont.submit(submitImportExport);
+//                    }
+//                })
+//            ],
+//            buttons: {
+//                'cancel': {
+//                    label: Mapbender.trans("mb.manager.application.popup.export.btn.cancel"),
+//                    cssClass: 'button buttonCancel critical right',
+//                    callback: function() {
+////                        $("#elementForm").data('dirty', false);
+//                        this.close();
+//                    }
+//                },
+//                'ok': {
+//                    label: Mapbender.trans("mb.manager.application.popup.export.btn.ok"),
+//                    cssClass: 'button right',
+//                    callback: function() {
+//                        $('form[name="application-export"]', popup.$element).submit();
+////                        window.setTimeout(function() {
+////                            window.location.reload();
+////                        }, 50);
+//                    }
+//                }
+//            }
+//        });
+//        return false;
+//    });
 });

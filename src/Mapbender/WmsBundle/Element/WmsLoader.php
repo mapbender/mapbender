@@ -176,19 +176,23 @@ class WmsLoader extends Element
         $signer = $this->container->get('signer');
         $signedUrl = $signer->signUrl($gc_url);
         $data = $this->container->get('request')->get('data', null);
-        return $this->container->get('http_kernel')->forward(
-                'OwsProxy3CoreBundle:OwsProxy:entryPoint',
-                array(
-                'content' => $data
-                ),array(
-                'url' => urlencode($signedUrl)
-                )
-        );
+//        return $this->container->get('http_kernel')->forward(
+//                'OwsProxy3CoreBundle:OwsProxy:entryPoint',
+//                array(
+//                'content' => $data
+//                ),array(
+//                'url' => urlencode($signedUrl)
+//                )
+//        );
         $path = array(
             '_controller' => 'OwsProxy3CoreBundle:OwsProxy:entryPoint',
             'url' => urlencode($signedUrl)
         );
-        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        $subRequest = $this->container->get('request')->duplicate(
+            array('url' => urlencode($signedUrl)),
+//            $this->getRequest()->query->all(),
+            $this->container->get('request')->request->all(),
+            $path);
         return $this->container->get('http_kernel')->handle(
                 $subRequest, HttpKernelInterface::SUB_REQUEST);
     }

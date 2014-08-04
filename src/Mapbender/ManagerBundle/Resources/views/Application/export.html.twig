@@ -1,0 +1,22 @@
+{% extends "FOMManagerBundle::manager.html.twig" %}
+
+{% block title %}{{ 'mb.manager.admin.application.export' | trans }}{% endblock %}
+
+{% block css %}
+  {{parent()}}
+  {% stylesheets filter="compass,cssrewrite"
+    "bundles/mapbendermanager/sass/manager/applications.scss"
+    "bundles/fomuser/sass/user/user_control.scss"
+  %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+  {% endstylesheets %}
+{% endblock %}
+
+{% block js %}
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
+{% endblock %}
+
+{% block manager_content %}
+{% include 'MapbenderManagerBundle:Application:export-form.html.twig' %}
+{% endblock %}

@@ -1029,4 +1029,23 @@ class WmsSource extends Source
     {
         
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function toArray()
+    {
+        $arr = array();
+        $arr['class'] =  get_class($this);
+        $arr['id'] =  $this->id;
+        $arr['title'] =  $this->title;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public static function fromArray(array $serialized)
+    {
+        
+    }
 }

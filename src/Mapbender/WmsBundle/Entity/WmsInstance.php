@@ -5,6 +5,7 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\ExchangeIn;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Component\LegendUrl;
@@ -25,7 +26,7 @@ use Mapbender\WmsBundle\Entity\WmsSource;
  * @ORM\Table(name="mb_wms_wmsinstance")
  * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
  */
-class WmsInstance extends SourceInstance
+class WmsInstance extends SourceInstance implements ExchangeIn
 {
 
     /**
@@ -759,6 +760,41 @@ class WmsInstance extends SourceInstance
         foreach ($origin->getSublayer() as $sublayer) {
             $this->copyLayerRecursive($em, $instCloned, $sublayer, $cloned);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function toArray()
+    {
+        $arr = array();
+        $arr['__class__'] =  get_class($this);
+        $arr['id'] =  $this->id;
+        $arr['title'] =  $this->title;
+        $arr['configuration'] =  $this->configuration;
+        $arr['source'] =  $this->getSource()->getId();
+        $arr['srs'] =  $this->srs;
+        $arr['format'] =  $this->format;
+        $arr['infoformat'] =  $this->infoformat;
+        $arr['exceptionformat'] =  $this->exceptionformat;
+        $arr['transparency'] =  $this->transparency;
+        $arr['visible'] =  $this->visible;
+        $arr['opacity'] =  $this->opacity;
+        $arr['proxy'] =  $this->proxy;
+        $arr['tiled'] =  $this->tiled;
+        $arr['layers'] =  array();
+        foreach ($this->getLayers() as $layer) {
+            $arr['layers'][] = $layer->toArray();
+        }
+        return $arr;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public static function fromArray(array $serialized)
+    {
+        
     }
 
 }

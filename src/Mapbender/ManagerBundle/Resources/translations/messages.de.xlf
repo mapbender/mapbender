@@ -450,6 +450,46 @@
         <source>mb.manager.template.region.accordion.label</source>
         <target>Akkordeon</target>
       </trans-unit>
+      <trans-unit id="1f0348f8a4838a4c3eef8e5db24cc9b5" resname="mb.manager.managerbundle.import_application">
+        <source>mb.manager.managerbundle.import_application</source>
+        <target>Importieren</target>
+      </trans-unit>
+      <trans-unit id="0956c95cd7247b67ada1981fa3f484bf" resname="mb.manager.managerbundle.export_application">
+        <source>mb.manager.managerbundle.export_application</source>
+        <target>Exportieren</target>
+      </trans-unit>
+      <trans-unit id="96c98e0a838e7d4b8ab344c14d0a3b2a" resname="mb.manager.application.popup.export.title">
+        <source>mb.manager.application.popup.export.title</source>
+        <target>Anwendung exportieren</target>
+      </trans-unit>
+      <trans-unit id="36ea0aa1186cd67474a75b821d43eb42" resname="mb.manager.application.popup.export.btn.cancel">
+        <source>mb.manager.application.popup.export.btn.cancel</source>
+        <target>Abbrechen</target>
+      </trans-unit>
+      <trans-unit id="7793875fd9c8a2987b0cc02b96640b0b" resname="mb.manager.application.popup.export.btn.ok">
+        <source>mb.manager.application.popup.export.btn.ok</source>
+        <target>Exportieren</target>
+      </trans-unit>
+      <trans-unit id="6b5b1eae2aeda6ff2eb50e7bff834eef" resname="mb.manager.admin.application.export">
+        <source>mb.manager.admin.application.export</source>
+        <target>application-export</target>
+      </trans-unit>
+      <trans-unit id="2f8f6a5b0e49772fa2e2ef068a3d6adf" resname="mb.manager.application.popup.import.title">
+        <source>mb.manager.application.popup.import.title</source>
+        <target>Anwendung importieren</target>
+      </trans-unit>
+      <trans-unit id="5ddec19090f52d048f57d96c7fd38c6d" resname="mb.manager.application.popup.import.btn.cancel">
+        <source>mb.manager.application.popup.import.btn.cancel</source>
+        <target>Abbrechen</target>
+      </trans-unit>
+      <trans-unit id="eb17068dd9f6777f50183552b01065d6" resname="mb.manager.application.popup.import.btn.ok">
+        <source>mb.manager.application.popup.import.btn.ok</source>
+        <target>Importieren</target>
+      </trans-unit>
+      <trans-unit id="a5ab6506551284f7237984f22baaae90" resname="mb.manager.admin.application.export.acl">
+        <source>mb.manager.admin.application.export.acl</source>
+        <target>Acl</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

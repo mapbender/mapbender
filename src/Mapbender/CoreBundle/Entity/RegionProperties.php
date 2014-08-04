@@ -8,6 +8,7 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityManager;
+use Mapbender\CoreBundle\Component\ExchangeIn;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -18,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  * @ORM\Table(name="mb_core_regionproperties")
  */
-class RegionProperties
+class RegionProperties implements ExchangeIn
 {
 
     /**
@@ -168,5 +169,27 @@ class RegionProperties
         $rp->name = $this->name;
         $rp->properties = $this->properties;
         return $rp;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function toArray()
+    {
+        $arr = array();
+        $arr['__class__'] =  get_class($this);
+        $arr['id'] =  $this->id;
+        $arr['application'] =  $this->application->getId();
+        $arr['name'] =  $this->name;
+        $arr['properties'] =  $this->properties;
+        return $arr;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public static function fromArray(array $serialized)
+    {
+        
     }
 }

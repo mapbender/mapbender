@@ -8,23 +8,24 @@
 
 namespace Mapbender\ManagerBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Mapbender\CoreBundle\Entity\Application;
-use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
-use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
-use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
+use Mapbender\ManagerBundle\Component\ExportJob;
+use Mapbender\ManagerBundle\Component\ExportHandler;
 //FIXME: make this work without an explicit import
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
+use Mapbender\ManagerBundle\Form\Type\ApplicationType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -90,6 +91,60 @@ class ApplicationController extends Controller
     }
 
     /**
+     * Shows form for creating new applications
+     *
+     * @ManagerRoute("/application/export")
+     * @Template
+     */
+    public function exportAction()
+    {
+        $expHandler = new ExportHandler($this->container);
+        if ($this->getRequest()->getMethod() === 'GET') {
+            $expJob = new ExportJob();
+            $form = $expHandler->createForm($expJob);
+            return array(
+                'form' => $form->createView()
+            );
+        } else if ($this->getRequest()->getMethod() === 'POST') {
+            $expHandler->bindForm();
+            return array(
+                'form' => $form->createView()
+            );
+        }
+        throw new AccessDeniedException("mb.manager.controller.application.method_not_supported");
+//        
+//
+//        $form = $this->createApplicationForm($application);
+//
+//        return array(
+//            'application' => $application,
+//            'form' => $form->createView(),
+//            'form_name' => $form->getName());
+    }
+
+    /**
+     * Shows form for creating new applications
+     *
+     * @ManagerRoute("/application/import")
+     * @Method("GET")
+     * @Template
+     */
+    public function importAction()
+    {
+//        $application = new Application();
+//
+//        // ACL access check
+//        $this->checkGranted('CREATE', $application);
+//
+//        $form = $this->createApplicationForm($application);
+//
+//        return array(
+//            'application' => $application,
+//            'form' => $form->createView(),
+//            'form_name' => $form->getName());
+    }
+
+    /**
      * Create a new application from POSTed data
      *
      * @ManagerRoute("/application")
@@ -123,7 +178,8 @@ class ApplicationController extends Controller
             if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been saved.');
             } else {
-                $this->get('session')->getFlashBag()->set('error', "Your application has been saved but"
+                $this->get('session')->getFlashBag()->set('error',
+                    "Your application has been saved but"
                     . " the application's can not be created.");
             }
 
@@ -225,12 +281,13 @@ class ApplicationController extends Controller
             }
             $em->persist($application);
             $em->flush();
-                //TODO: Fileupload Size
+            //TODO: Fileupload Size
             try {
                 if (AppComponent::createAppWebDir($this->container, $application->getSlug(), $old_slug)) {
                     $scFile = $application->getScreenshotFile();
                     if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
-                        $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
+                        $filename = sprintf('screenshot-%d.%s', $application->getId(),
+                            $application->getScreenshotFile()->guessExtension());
                         $application->getScreenshotFile()->move($app_directory, $filename);
                         $application->setScreenshot($filename);
                     }
@@ -242,7 +299,8 @@ class ApplicationController extends Controller
                     $em->getConnection()->commit();
                     $this->get('session')->getFlashBag()->set('success', 'Your application has been updated.');
                 } else {
-                    $this->get('session')->getFlashBag()->set('error', "Your application has been updated but" . " the application's directories can not be created.");
+                    $this->get('session')->getFlashBag()->set('error',
+                        "Your application has been updated but" . " the application's directories can not be created.");
                     $em->getConnection()->rollback();
                     $em->close();
                 }
@@ -257,7 +315,8 @@ class ApplicationController extends Controller
             }
             $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
             return $this->redirect(
-                    $this->generateUrl('mapbender_manager_application_edit', array(
+                    $this->generateUrl('mapbender_manager_application_edit',
+                        array(
                         'slug' => $application->getSlug())));
         } else {
             //
@@ -296,7 +355,8 @@ class ApplicationController extends Controller
         $screenshot_filename = $application->getScreenshot();
 
         return new Response($this->container->get('templating')
-                ->render('MapbenderManagerBundle:Application:edit.html.twig', array(
+                ->render('MapbenderManagerBundle:Application:edit.html.twig',
+                    array(
                     'application' => $application,
                     'regions' => $templateClass::getRegions(),
                     'slug' => $slug,
@@ -360,7 +420,8 @@ class ApplicationController extends Controller
             if (AppComponent::createAppWebDir($this->container, $cloned->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been copied.');
             } else {
-                $this->get('session')->getFlashBag()->set('error', "Your application has been copied but"
+                $this->get('session')->getFlashBag()->set('error',
+                    "Your application has been copied but"
                     . " the application's directories can not be created.");
             }
             return $this->redirect(
@@ -412,10 +473,11 @@ class ApplicationController extends Controller
         $em->flush();
 
         $em->getConnection()->commit();
-        if(AppComponent::copyAppWebDir($this->container, $tocopy->getSlug(), $cloned->getSlug())){
+        if (AppComponent::copyAppWebDir($this->container, $tocopy->getSlug(), $cloned->getSlug())) {
             $this->get('session')->getFlashBag()->set('success', 'Your application has been copied.');
         } else {
-            $this->get('session')->getFlashBag()->set('error', "Your application has been copied but"
+            $this->get('session')->getFlashBag()->set('error',
+                "Your application has been copied but"
                 . " the application's directories can not be created.");
         }
         return $this->redirect(
@@ -514,7 +576,8 @@ class ApplicationController extends Controller
             if (AppComponent::removeAppWebDir($this->container, $slug)) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been deleted.');
             } else {
-                $this->get('session')->getFlashBag()->set('error', "Your application has been deleted"
+                $this->get('session')->getFlashBag()->set('error',
+                    "Your application has been deleted"
                     . " but the application's directories can not be removed.");
             }
         } catch (Exception $e) {
@@ -747,7 +810,8 @@ class ApplicationController extends Controller
         $this->get('session')->getFlashBag()->set('success', 'A new instance has been created. Please edit it!');
         return $this->redirect(
                 $this->generateUrl(
-                    "mapbender_manager_repository_instance", array("slug" => $slug, "instanceId" => $sourceInstance->getId()))
+                    "mapbender_manager_repository_instance",
+                    array("slug" => $slug, "instanceId" => $sourceInstance->getId()))
         );
     }
 
@@ -797,7 +861,8 @@ class ApplicationController extends Controller
             $available_properties = $templateClassName::getRegionsProperties();
         }
 
-        return $this->createForm(new ApplicationType(), $application, array(
+        return $this->createForm(new ApplicationType(), $application,
+                array(
                 'available_templates' => $available_templates,
                 'available_properties' => $available_properties));
     }
@@ -866,21 +931,22 @@ class ApplicationController extends Controller
         } while ($this->get('mapbender')->getApplicationEntity($copySlug));
         return $copySlug;
     }
-    
-    private function setRegionProperties($application, $form){
-        
+
+    private function setRegionProperties($application, $form)
+    {
+
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
         foreach ($templateProps as $regionName => $regionProperties) {
-            foreach($application->getRegionProperties() as $regionProperty){
-                if($regionProperty->getName() === $regionName){
+            foreach ($application->getRegionProperties() as $regionProperty) {
+                if ($regionProperty->getName() === $regionName) {
                     $regprops = $form->get($regionName)->getData();
                     $regionProperty->setProperties($regprops ? $regionProperties[$regprops] : array());
                 }
             }
         }
     }
-    
+
     private function checkRegionProperties($application)
     {
         $templateClass = $application->getTemplate();
@@ -906,7 +972,6 @@ class ApplicationController extends Controller
                 $em->flush();
             }
         }
-        
     }
 
 }
