@@ -25,7 +25,7 @@ class ApplicationType extends AbstractType
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
-    {
+    {   
         $builder
             // Base data
             ->add('title', 'text', array(
@@ -48,7 +48,6 @@ class ApplicationType extends AbstractType
             ->add('screenshotFile', 'file',
                 array('label' => 'Screenshot',
                 'attr' => array(
-                    'title' => 'Screenshot',
                     'required' => false,
                     'accept'=>'image/jpeg,image/png,image/gif')))
             // Flag if set true, then screenshot should be 

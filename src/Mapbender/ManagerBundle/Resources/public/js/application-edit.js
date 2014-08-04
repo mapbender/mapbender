@@ -690,7 +690,7 @@ $(function() {
         screenShot.find('img.screenshot').remove();
         deleteScreenShotButton.remove();
         screenShot.addClass('default').addClass('iconAppDefault');
-        applicationForm.find('.upload_label').html('Bild entfernt.')
+        applicationForm.find('.upload_label').html(Mapbender.trans("mb.manager.upload.label_delete"));
         applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
     });
     
