@@ -656,8 +656,7 @@ $(function() {
         });
         return false;
     });
-
-
+     
     var applicationForm = $('form[name=application]');
     var screenShot = applicationForm.find('.screenshot_img');
     var deleteScreenShotButton = screenShot.find('.delete');
@@ -675,6 +674,28 @@ $(function() {
         if (fileName.length > 20) {
             fileName = fileName.substring(0, 20) + "...";
         }
+        
+        var file =  this.files;
+        if (file && file[0]) {
+            var reader = new FileReader();
+
+            if (file[0].size <= 102400){
+                screenShot.find('div.messageBox').remove();
+                validationMsgBox.remove();
+                if (screenShot.find('div.cell').length === 0 ){          
+                    screenShot.append('<div class= \"cell\"><img src= \"\" alt="Load" class="screenshot" /></div>');
+                }
+                
+                reader.onload = function (e) {
+                    screenShot.find('img').attr('src', e.target.result);
+                }  
+                reader.readAsDataURL(file[0]);
+            }else{
+                $('<span class=\"validationMsgBox smallText\">'+Mapbender.trans("mb.core.entity.app.screenshotfile.error")+'</span>').insertAfter(fileInput);
+                validationMsgBox = applicationForm.find('span.validationMsgBox');
+            } 
+        } 
+       
         $('.upload_label').html(fileName);
     });
     

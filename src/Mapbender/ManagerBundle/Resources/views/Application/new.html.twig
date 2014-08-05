@@ -26,13 +26,21 @@
         <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security" | trans }}</li>
       </ul>
       <div id="containerBaseData" class="container active containerBaseData">
-        {{ form_label(form.template) }}{{ form_widget(form.template) }}
-        <div class="clearContainer"></div>
-        {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
-        <div class="messageBox hint">
-            {{"mb.manager.admin.application.create_use" | trans }}
-        </div>
+          <div class="left">
+            {{ form_label(form.template) }}{{ form_widget(form.template) }}
+                <div class="clearContainer"></div>
+            {% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}
+           </div>
+           <div class="right screenshot_img">
+                <div class="messageBox hint">
+                    {{"mb.manager.admin.application.create_use" | trans }}
+                </div>
+           </div> 
+            <div class="clearContainer"></div>
+
+        
       </div>
+     
       <div id="containerSecurity" class="container">
         {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
       </div>

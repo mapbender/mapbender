@@ -770,6 +770,10 @@
         <source>mb.core.metadata.popup.btn.ok</source>
         <target>Schließen</target>
       </trans-unit>
+      <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
+        <source>mb.core.entity.app.screenshotfile.error</source>
+        <target>Die Datei ist zu groß . Die maximal zulässige Größe beträgt %limit% bytes.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
