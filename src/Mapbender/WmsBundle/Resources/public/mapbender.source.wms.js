@@ -73,7 +73,7 @@ $.extend(true, Mapbender, {
             },
             _removeProxy: function(url){
                 if(url.indexOf(OpenLayers.ProxyHost) === 0){
-                    return url.substring(OpenLayers.ProxyHost.length);
+                    return decodeURIComponent(url.substring(OpenLayers.ProxyHost.length));
                 }
                 return url;
             },
