@@ -13,8 +13,11 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
+use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Component\ExportJob;
 use Mapbender\ManagerBundle\Component\ExportHandler;
+use Mapbender\ManagerBundle\Component\ImportJob;
+use Mapbender\ManagerBundle\Component\ImportHandler;
 //FIXME: make this work without an explicit import
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Entity\RegionProperties;
@@ -87,11 +90,12 @@ class ApplicationController extends Controller
         return array(
             'application' => $application,
             'form' => $form->createView(),
-            'form_name' => $form->getName());
+            'form_name' => $form->getName(),
+            'screenshot_filename' => NULL);
     }
 
     /**
-     * Shows form for creating new applications
+     * Shows a form for exporting applications. Returns serialized applications.
      *
      * @ManagerRoute("/application/export")
      * @Template
@@ -100,48 +104,72 @@ class ApplicationController extends Controller
     {
         $expHandler = new ExportHandler($this->container);
         if ($this->getRequest()->getMethod() === 'GET') {
-            $expJob = new ExportJob();
-            $form = $expHandler->createForm($expJob);
+            $form = $expHandler->createForm();
             return array(
                 'form' => $form->createView()
             );
         } else if ($this->getRequest()->getMethod() === 'POST') {
-            $expHandler->bindForm();
-            return array(
-                'form' => $form->createView()
-            );
+            if ($expHandler->bindForm()) {
+                $job = $expHandler->getJob();
+                $export = $expHandler->format($expHandler->makeJob());
+                if ($job->getFormat() === ExchangeJob::$FORMAT_JSON) {
+                    return new Response($export, 200,
+                        array(
+                        'Content-Type' => 'application/json',
+                        'Content-disposition' => 'attachment; filename=export.json'
+                    ));
+                } else if ($job->getFormat() === ExchangeJob::$FORMAT_YAML) {
+                    return new Response($export, 200,
+                        array(
+                        'Content-Type' => 'text/plain',
+                        'Content-disposition' => 'attachment; filename=export.yaml'
+                    ));
+                }
+            } else {
+                $form = $expHandler->createForm();
+                return array(
+                    'form' => $form->createView()
+                );
+            }
         }
         throw new AccessDeniedException("mb.manager.controller.application.method_not_supported");
-//        
-//
-//        $form = $this->createApplicationForm($application);
-//
-//        return array(
-//            'application' => $application,
-//            'form' => $form->createView(),
-//            'form_name' => $form->getName());
     }
 
     /**
-     * Shows form for creating new applications
+     * Shows a form for importing applications. Imports serialized applications.
      *
      * @ManagerRoute("/application/import")
-     * @Method("GET")
      * @Template
      */
     public function importAction()
     {
-//        $application = new Application();
-//
-//        // ACL access check
-//        $this->checkGranted('CREATE', $application);
-//
-//        $form = $this->createApplicationForm($application);
-//
-//        return array(
-//            'application' => $application,
-//            'form' => $form->createView(),
-//            'form_name' => $form->getName());
+        $impHandler = new ImportHandler($this->container, $this->getDoctrine()->getManager());
+        if ($this->getRequest()->getMethod() === 'GET') {
+            $form = $impHandler->createForm();
+            return array(
+                'form' => $form->createView()
+            );
+        } else if ($this->getRequest()->getMethod() === 'POST') {
+            if ($impHandler->bindForm()) {
+                $job = $impHandler->getJob();
+                $scFile = $job->getImportFile();
+                $time = new \DateTime('now');
+                $scFile->move(sys_get_temp_dir(), $time->getTimestamp());
+                $tmpfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $time->getTimestamp();
+                $yaml = new \Symfony\Component\Yaml\Parser();
+                $content = $yaml->parse(file_get_contents($tmpfile));
+                unlink($tmpfile);
+                $job->setImportContent($content);
+                $impHandler->makeJob();
+                return $this->redirect($this->generateUrl('mapbender_manager_application_index'));
+            } else {
+                $form = $impHandler->createForm();
+                return array(
+                    'form' => $form->createView()
+                );
+            }
+        }
+        throw new AccessDeniedException("mb.manager.controller.application.method_not_supported");
     }
 
     /**
@@ -443,7 +471,7 @@ class ApplicationController extends Controller
         $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
         $this->checkGranted('CREATE', $tocopy);
-        $newslug = $this->generateSlug($slug);
+        $newslug = AppComponent::generateSlug($this->container, $slug);
         $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
         $cloned = new Application();
@@ -916,20 +944,6 @@ class ApplicationController extends Controller
         } else if ($action === "DELETE" && !$securityContext->isGranted($action, $object)) {
             throw new AccessDeniedException();
         }
-    }
-
-    private function generateSlug($slug)
-    {
-        $application = $this->get('mapbender')->getApplicationEntity($slug);
-        if ($application === null)
-            return $slug;
-        else
-            $count = 0;
-        do {
-            $copySlug = $slug . '_copy' . ($count > 0 ? '_' . $count : '');
-            $count++;
-        } while ($this->get('mapbender')->getApplicationEntity($copySlug));
-        return $copySlug;
     }
 
     private function setRegionProperties($application, $form)

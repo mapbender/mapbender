@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmcBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -55,4 +56,3 @@ class SuggestMapAdminType extends AbstractType
     }
 
 }
-?>

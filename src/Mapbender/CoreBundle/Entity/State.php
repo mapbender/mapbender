@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Signer;
-//use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Source entity

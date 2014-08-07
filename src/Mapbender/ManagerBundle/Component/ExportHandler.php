@@ -9,95 +9,121 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Entity\Application;
+use Mapbender\ManagerBundle\Component\ExchangeNormalizer;
+use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Form\Type\ExportJobType;
-use Mapbender\ManagerBundle\Component\Job;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Yaml\Dumper;
 
 /**
  * Description of ExportHandler
  *
  * @author Paul Schmidt
  */
-class ExportHandler extends JobHandler
+class ExportHandler extends ExchangeHandler
 {
 
-    public function __construct($container)
+    /**
+     * @inheritdoc
+     */
+    public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
+        $this->job = new ExchangeJob();
     }
 
-    private function isGrantedCreate()
-    {
-        $application = new Application();
-        // ACL access check
-        $this->checkGranted('CREATE', $application);
-    }
-
-    private function getAllowedAppllications($all = false)
-    {
-        $applications = $this->getContainer()->get('mapbender')->getApplicationEntities();
-        $allowed_apps = new ArrayCollection();
-        foreach ($applications as $application) {
-            if ($all || $this->isGranted('EDIT', $application)) {
-                $allowed_apps->add($application);
-            }
-        }
-        return $allowed_apps;
-    }
-
-    public function createForm(ExportJob $expJob)
+    /**
+     * @inheritdoc
+     */
+    public function createForm()
     {
         $this->isGrantedCreate();
         $allowed_apps = $this->getAllowedAppllications();
         $type = new ExportJobType();
-        return $this->container->get('form.factory')->create($type, $expJob, array('applications' => $allowed_apps));
+        return $this->container->get('form.factory')->create($type, $this->job, array('applications' => $allowed_apps));
     }
 
+    /**
+     * @inheritdoc
+     */
     public function bindForm()
     {
-        $expJob = new ExportJob();
-        $form = $this->createForm($expJob);
+        $form = $this->createForm();
         $request = $this->container->get('request');
         $form->bind($request);
         if ($form->isValid()) {
-            $export = array();
-            $export["applications"] = $this->exportApps($expJob);
-            $export["acls"] = $this->exportAcls($expJob);
-            $export["sources"] = $this->exportSources($expJob);
-            return $export;
+            return true;
+        } else {
+            return false;
         }
     }
-    
-    public function exportApps(Job $job)
+
+    /**
+     * @inheritdoc
+     */
+    public function makeJob()
+    {
+        $export = array();
+//        $export[ExchangeHandler::$CONTENT_SOURCE] = $this->exportSources();
+        $export[ExchangeHandler::$CONTENT_APP] = $this->exportApps();
+//        $export[ExchangeHandler::$CONTENT_ACL] = $this->exportAcls();
+        return $export;
+    }
+
+    public function format($scr)
+    {
+        if ($this->job->getFormat() === ExchangeJob::$FORMAT_JSON) {
+            return json_encode($scr);
+        } else if ($this->job->getFormat() === ExchangeJob::$FORMAT_YAML) {
+            $dumper = new Dumper();
+            $yaml = $dumper->dump($scr, 20);
+            return $yaml;
+        }
+    }
+
+    private function exportApps()
     {
         $arr = array();
-        foreach ($job->getApplications() as $app) {
-            $arr_ = $app->toArray();
+        $normalizer = new ExchangeNormalizer();
+        foreach ($this->job->getApplications() as $app) {
+            $arr_ = $normalizer->normalize($app);
             $arr[] = $arr_;
         }
         return $arr;
     }
-    
-    public function exportAcls(Job $job)
+
+    private function exportAcls()
     {
         $arr = array();
-        if($job->getAcl()){
+        if ($this->job->getAcl()) {
             // TODO
         }
         return $arr;
     }
-    
-    public function exportSources(Job $job)
+
+    private function exportSources()
     {
-        $arr = array();
-        if($job->getAcl()){
-            // TODO
+        $data = array();
+        $sources = new ArrayCollection();
+        if ($this->job->getAddSources()) {
+            $sources = $this->getAllowedSources();
+            
+        } else {
+            foreach ($this->job->getApplications() as $app) {
+                $help = $this->getAllowedApplicationSources($app);
+                foreach ($help as $src){
+                    if($src->getId() && !$sources->contains($src)){
+                        $sources->add($src);
+                    }
+                }
+            }
         }
-        return $arr;
+        $normalizer = new ExchangeNormalizer();
+        foreach ($sources as $source) {
+            $arr = $normalizer->normalize($source);
+            $data[] = $arr;
+        }
+        return $data;
     }
-    
+
 }

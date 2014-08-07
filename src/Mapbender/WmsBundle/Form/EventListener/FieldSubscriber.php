@@ -83,7 +83,7 @@ class FieldSubscriber implements EventSubscriberInterface
                     'auto_initialize' => false)));
         }
 
-        if ($data->getWmslayersource()->getQueryable() === true) {
+        if ($data->getSourceItem()->getQueryable() === true) {
             $form->remove('info');
             $form->add($this->factory->createNamed(
                     'info', 'checkbox', null, array(
@@ -97,7 +97,7 @@ class FieldSubscriber implements EventSubscriberInterface
                     "required" => false,
                     'auto_initialize' => false)));
         }
-        $arrStyles = $data->getWmslayersource()->getStyles();
+        $arrStyles = $data->getSourceItem()->getStyles();
         $styleOpt = array("" => "");
         foreach ($arrStyles as $style) {
             $styleOpt[$style->getName()] = $style->getTitle();

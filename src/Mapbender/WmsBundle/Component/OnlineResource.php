@@ -20,7 +20,7 @@ class OnlineResource
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $href;
-    
+
     /**
      * 
      * @param string $format
@@ -80,11 +80,9 @@ class OnlineResource
 
     public static function create($format = null, $href = null)
     {
-        if($href === null)
-        {
+        if ($href === null) {
             $olr = null;
-        } else
-        {
+        } else {
             $olr = new OnlineResource();
             $olr->setFormat($format);
             $olr->setHref($href);

@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\UniqueConstraint;
-use Mapbender\CoreBundle\Component\ExchangeIn;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -23,7 +22,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="mb_core_layerset",uniqueConstraints={@UniqueConstraint(name="layerset_idx", columns={"application_id", "title"})})
  * @UniqueEntity(fields={"application", "title"}, message ="Duplicate entry for key 'title'.")
  */
-class Layerset implements ExchangeIn
+class Layerset
 {
 
     /**
@@ -180,31 +179,6 @@ class Layerset implements ExchangeIn
             $instanceMap[strval($instance->getId())] = $cloned->getId();
         }
         return $ls;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function toArray()
-    {
-        $arr = array();
-        $arr['__class__'] =  get_class($this);
-        $arr['id'] =  $this->id;
-        $arr['title'] =  $this->title;
-        $arr['application'] =  $this->getApplication()->getId();
-        $arr['instances'] = array();
-        foreach($this->getInstances() as $instance){
-            $arr['instances'] =  $instance->toArray();
-        }
-        return $arr;
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public static function fromArray(array $serialized)
-    {
-        
     }
 
 }

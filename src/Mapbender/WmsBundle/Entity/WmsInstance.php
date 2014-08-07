@@ -5,7 +5,6 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\ExchangeIn;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Component\LegendUrl;
@@ -26,7 +25,7 @@ use Mapbender\WmsBundle\Entity\WmsSource;
  * @ORM\Table(name="mb_wms_wmsinstance")
  * ORM\DiscriminatorMap({"mb_wms_wmssourceinstance" = "WmsSourceInstance"})
  */
-class WmsInstance extends SourceInstance implements ExchangeIn
+class WmsInstance extends SourceInstance
 {
 
     /**
@@ -36,13 +35,13 @@ class WmsInstance extends SourceInstance implements ExchangeIn
     protected $configuration;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="wmsinstance", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="instance", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
     protected $source;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="wmsinstance", cascade={"refresh", "persist", "remove"})
+     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"refresh", "persist", "remove"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      * @ORM\OrderBy({"priority" = "asc"})
      */
@@ -208,7 +207,7 @@ class WmsInstance extends SourceInstance implements ExchangeIn
                 ->setMaxScale(!isset($this->configuration["maxScale"]) ? null : $this->configuration["maxScale"])
                 ->setSelected(!isset($this->configuration["visible"]) ? false : $this->configuration["visible"])
                 ->setPriority($num)
-                ->setWmslayersource(new WmsLayerSource())
+                ->setSourceItem(new WmsLayerSource())
                 ->setWmsInstance($this);
             $rootlayer->setToggle(false);
             $rootlayer->setAllowtoggle(true);
@@ -240,7 +239,7 @@ class WmsInstance extends SourceInstance implements ExchangeIn
                     ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
                     ->setInfo(!isset($layerDef["queryable"]) ? false : $layerDef["queryable"])
                     ->setParent($rootlayer)
-                    ->setWmslayersource($layersource)
+                    ->setSourceItem($layersource)
                     ->setWmsInstance($this);
                 $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo() ? true : false);
                 $rootlayer->addSublayer($layer);
@@ -260,7 +259,7 @@ class WmsInstance extends SourceInstance implements ExchangeIn
     public function generateConfiguration()
     {
         $rootlayer = $this->getRootlayer();
-        $llbbox = $rootlayer->getWmslayersource()->getLatlonBounds();
+        $llbbox = $rootlayer->getSourceItem()->getLatlonBounds();
         $srses = array(
             $llbbox->getSrs() => array(
                 floatval($llbbox->getMinx()),
@@ -269,7 +268,7 @@ class WmsInstance extends SourceInstance implements ExchangeIn
                 floatval($llbbox->getMaxy())
             )
         );
-        foreach ($rootlayer->getWmslayersource()->getBoundingBoxes() as $bbox) {
+        foreach ($rootlayer->getSourceItem()->getBoundingBoxes() as $bbox) {
             $srses = array_merge($srses, array($bbox->getSrs() => array(
                     floatval($bbox->getMinx()),
                     floatval($bbox->getMiny()),
@@ -604,7 +603,7 @@ class WmsInstance extends SourceInstance implements ExchangeIn
      * @param WmsSource $wmssource
      * @return WmsInstance
      */
-    public function setSource(WmsSource $wmssource = null)
+    public function setSource(Source $wmssource = null)
     {
         $this->source = $wmssource;
 
@@ -751,7 +750,7 @@ class WmsInstance extends SourceInstance implements ExchangeIn
     {
         $cloned = $origin->copy($em);
         $cloned->setWmsinstance($instCloned);
-        $cloned->setWmslayersource($origin->getWmslayersource());
+        $cloned->setSourceItem($origin->getSourceItem());
         if ($clonedParent !== null) {
             $cloned->setParent($clonedParent);
             $clonedParent->addSublayer($cloned);
@@ -760,41 +759,6 @@ class WmsInstance extends SourceInstance implements ExchangeIn
         foreach ($origin->getSublayer() as $sublayer) {
             $this->copyLayerRecursive($em, $instCloned, $sublayer, $cloned);
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function toArray()
-    {
-        $arr = array();
-        $arr['__class__'] =  get_class($this);
-        $arr['id'] =  $this->id;
-        $arr['title'] =  $this->title;
-        $arr['configuration'] =  $this->configuration;
-        $arr['source'] =  $this->getSource()->getId();
-        $arr['srs'] =  $this->srs;
-        $arr['format'] =  $this->format;
-        $arr['infoformat'] =  $this->infoformat;
-        $arr['exceptionformat'] =  $this->exceptionformat;
-        $arr['transparency'] =  $this->transparency;
-        $arr['visible'] =  $this->visible;
-        $arr['opacity'] =  $this->opacity;
-        $arr['proxy'] =  $this->proxy;
-        $arr['tiled'] =  $this->tiled;
-        $arr['layers'] =  array();
-        foreach ($this->getLayers() as $layer) {
-            $arr['layers'][] = $layer->toArray();
-        }
-        return $arr;
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public static function fromArray(array $serialized)
-    {
-        
     }
 
 }

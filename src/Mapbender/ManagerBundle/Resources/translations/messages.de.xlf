@@ -458,37 +458,41 @@
         <source>mb.manager.managerbundle.export_application</source>
         <target>Exportieren</target>
       </trans-unit>
-      <trans-unit id="96c98e0a838e7d4b8ab344c14d0a3b2a" resname="mb.manager.application.popup.export.title">
-        <source>mb.manager.application.popup.export.title</source>
-        <target>Anwendung exportieren</target>
+      <trans-unit id="417ef5ea406e9bb1aa8233eb78555abe" resname="mb.manager.admin.application.import.addApplications">
+        <source>mb.manager.admin.application.import.addApplications</source>
+        <target>Anwendungen</target>
       </trans-unit>
-      <trans-unit id="36ea0aa1186cd67474a75b821d43eb42" resname="mb.manager.application.popup.export.btn.cancel">
-        <source>mb.manager.application.popup.export.btn.cancel</source>
-        <target>Abbrechen</target>
+      <trans-unit id="b2a733728235bb0267b7c85c2432d27f" resname="mb.manager.admin.application.import.addAcl">
+        <source>mb.manager.admin.application.import.addAcl</source>
+        <target>Acls</target>
       </trans-unit>
-      <trans-unit id="7793875fd9c8a2987b0cc02b96640b0b" resname="mb.manager.application.popup.export.btn.ok">
-        <source>mb.manager.application.popup.export.btn.ok</source>
-        <target>Exportieren</target>
+      <trans-unit id="385dcbda58640a31f9bd6d5f2f099134" resname="mb.manager.admin.application.import.addSources">
+        <source>mb.manager.admin.application.import.addSources</source>
+        <target>Quellen</target>
       </trans-unit>
-      <trans-unit id="6b5b1eae2aeda6ff2eb50e7bff834eef" resname="mb.manager.admin.application.export">
-        <source>mb.manager.admin.application.export</source>
-        <target>application-export</target>
-      </trans-unit>
-      <trans-unit id="2f8f6a5b0e49772fa2e2ef068a3d6adf" resname="mb.manager.application.popup.import.title">
-        <source>mb.manager.application.popup.import.title</source>
-        <target>Anwendung importieren</target>
-      </trans-unit>
-      <trans-unit id="5ddec19090f52d048f57d96c7fd38c6d" resname="mb.manager.application.popup.import.btn.cancel">
-        <source>mb.manager.application.popup.import.btn.cancel</source>
-        <target>Abbrechen</target>
-      </trans-unit>
-      <trans-unit id="eb17068dd9f6777f50183552b01065d6" resname="mb.manager.application.popup.import.btn.ok">
-        <source>mb.manager.application.popup.import.btn.ok</source>
+      <trans-unit id="4db8a68cd0721c0161a58a84e343ca0f" resname="mb.manager.admin.application.import.btn.import">
+        <source>mb.manager.admin.application.import.btn.import</source>
         <target>Importieren</target>
       </trans-unit>
-      <trans-unit id="a5ab6506551284f7237984f22baaae90" resname="mb.manager.admin.application.export.acl">
-        <source>mb.manager.admin.application.export.acl</source>
-        <target>Acl</target>
+      <trans-unit id="8dc19f75927b90dc117dd7b1005f4c4a" resname="mb.manager.admin.application.import.btn.cancel">
+        <source>mb.manager.admin.application.import.btn.cancel</source>
+        <target>Abrechen</target>
+      </trans-unit>
+      <trans-unit id="8b66b94f0cac90de6e5cadab57b5e9f2" resname="mb.manager.admin.application.export.addAcl">
+        <source>mb.manager.admin.application.export.addAcl</source>
+        <target>Acls</target>
+      </trans-unit>
+      <trans-unit id="b9e306a74c87d58fa2d7ea5f15558d19" resname="mb.manager.admin.application.export.addSources">
+        <source>mb.manager.admin.application.export.addSources</source>
+        <target>Quellen</target>
+      </trans-unit>
+      <trans-unit id="f7718749231ef31d7ce17e0e9a06aa0e" resname="mb.manager.admin.application.export.btn.export">
+        <source>mb.manager.admin.application.export.btn.export</source>
+        <target>Exportieren</target>
+      </trans-unit>
+      <trans-unit id="40d50597c26f2ed1b922e8a3b57d9d63" resname="mb.manager.admin.application.export.btn.cancel">
+        <source>mb.manager.admin.application.export.btn.cancel</source>
+        <target>Abbrechen</target>
       </trans-unit>
     </body>
   </file>

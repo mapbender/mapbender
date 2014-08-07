@@ -3,7 +3,6 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Source entity
@@ -41,11 +40,6 @@ class Keyword
      * @ORM\Column(type="string", nullable=false)
      */
     protected $sourceclass;
-
-    public function __construct()
-    {
-        
-    }
 
     /**
      * Get id

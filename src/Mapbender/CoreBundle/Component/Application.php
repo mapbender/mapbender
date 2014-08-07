@@ -500,6 +500,27 @@ class Application
         }
         return $this->layers;
     }
+    
+    /**
+     * Checks and generates a valid slug.
+     * 
+     * @param ContainerInterface $container container
+     * @param string $slug slug to check
+     * @return string a valid generated slug
+     */
+    public static function generateSlug($container, $slug)
+    {
+        $application = $container->get('mapbender')->getApplicationEntity($slug);
+        if ($application === null)
+            return $slug;
+        else
+            $count = 0;
+        do {
+            $copySlug = $slug . '_copy' . ($count > 0 ? '_' . $count : '');
+            $count++;
+        } while ($container->get('mapbender')->getApplicationEntity($copySlug));
+        return $copySlug;
+    }
 
     /**
      * Returns the public "uploads" directory. 

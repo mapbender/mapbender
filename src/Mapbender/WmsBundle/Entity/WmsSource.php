@@ -205,7 +205,7 @@ class WmsSource extends Source
      * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="source", cascade={"persist","remove"})
      * 
      */
-    protected $wmsinstance;
+    protected $instances;
 
     public function __construct()
     {
@@ -883,6 +883,23 @@ class WmsSource extends Source
     {
         return $this->keywords;
     }
+//    
+//    /**
+//     * @inheritdoc
+//     */
+//    public function getInstances()
+//    {
+//        return $this->instances;
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    public function setInstances(ArrayCollection $instances)
+//    {
+//        $this->instances = $instances;
+//        return $this;
+//    }
 
     /**
      * Add keyword
@@ -940,8 +957,8 @@ class WmsSource extends Source
         $num = 0;
         $wmslayer_root = $this->getRootlayer();
         $instLayer_root = new WmsInstanceLayer();
-        $instLayer_root->setWmsinstance($instance);
-        $instLayer_root->setWmslayersource($wmslayer_root);
+        $instLayer_root->setSourceInstance($instance);
+        $instLayer_root->setSourceItem($wmslayer_root);
         $instLayer_root->setTitle($wmslayer_root->getTitle());
         // @TODO min max from scaleHint
         $instLayer_root->setMinScale(
@@ -976,8 +993,8 @@ class WmsSource extends Source
         foreach ($wmslayer->getSublayer() as $wmssublayer) {
             $num++;
             $instsublayer = new WmsInstanceLayer();
-            $instsublayer->setWmsinstance($instance);
-            $instsublayer->setWmslayersource($wmssublayer);
+            $instsublayer->setSourceInstance($instance);
+            $instsublayer->setSourceItem($wmssublayer);
             $instsublayer->setTitle($wmssublayer->getTitle());
             // @TODO min max from scaleHint
             $instsublayer->setMinScale(
@@ -1026,25 +1043,6 @@ class WmsSource extends Source
     }
 
     public function update(Source $source)
-    {
-        
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function toArray()
-    {
-        $arr = array();
-        $arr['class'] =  get_class($this);
-        $arr['id'] =  $this->id;
-        $arr['title'] =  $this->title;
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public static function fromArray(array $serialized)
     {
         
     }

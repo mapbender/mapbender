@@ -7,8 +7,6 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\EntityManager;
-use Mapbender\CoreBundle\Component\ExchangeIn;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -19,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  * @ORM\Table(name="mb_core_regionproperties")
  */
-class RegionProperties implements ExchangeIn
+class RegionProperties
 {
 
     /**
@@ -29,7 +27,7 @@ class RegionProperties implements ExchangeIn
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
+
     /**
      * @var Application The configuration entity for the application
      * @ORM\ManyToOne(targetEntity="Application", inversedBy="regionProperties")
@@ -42,17 +40,19 @@ class RegionProperties implements ExchangeIn
      * @Assert\NotBlank()
      */
     protected $name;
+
     /**
      * @var array $properties The region properties
      * @ORM\Column(type="array", nullable=true)
      * @Assert\NotBlank()
      */
     public $properties;
-    
+
     public function __construct()
     {
         $this->properties = array();
     }
+
     /**
      * Set id. DANGER
      *
@@ -100,7 +100,7 @@ class RegionProperties implements ExchangeIn
      *
      * @param Application $application
      */
-    public function setApplication($application)
+    public function setApplication(Application $application)
     {
         $this->application = $application;
         return $this;
@@ -115,13 +115,13 @@ class RegionProperties implements ExchangeIn
     {
         return $this->application;
     }
-    
+
     /**
      * Set properties
      *
      * @param array $properties
      */
-    public function setProperties($properties)
+    public function setProperties(array $properties = array())
     {
         $this->properties = $properties === null || !is_array($properties) ? array() : $properties;
         return $this;
@@ -136,7 +136,7 @@ class RegionProperties implements ExchangeIn
     {
         return $this->properties;
     }
-    
+
     /**
      * Get properties
      *
@@ -147,7 +147,7 @@ class RegionProperties implements ExchangeIn
         $this->properties[] = $property;
         return $this;
     }
-    
+
     /**
      * Get properties
      *
@@ -156,40 +156,20 @@ class RegionProperties implements ExchangeIn
     public function removeProperty($property)
     {
         $help = array();
-        foreach($this->properties as $prop){
-            if($prop !== $property)
+        foreach ($this->properties as $prop) {
+            if ($prop !== $property)
                 $help[] = $prop;
         }
         $this->setProperties($help);
         return $this;
     }
-    
-    public function copy(){
+
+    public function copy()
+    {
         $rp = new RegionProperties();
         $rp->name = $this->name;
         $rp->properties = $this->properties;
         return $rp;
     }
-    
-    /**
-     * @inheritdoc
-     */
-    public function toArray()
-    {
-        $arr = array();
-        $arr['__class__'] =  get_class($this);
-        $arr['id'] =  $this->id;
-        $arr['application'] =  $this->application->getId();
-        $arr['name'] =  $this->name;
-        $arr['properties'] =  $this->properties;
-        return $arr;
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public static function fromArray(array $serialized)
-    {
-        
-    }
+
 }

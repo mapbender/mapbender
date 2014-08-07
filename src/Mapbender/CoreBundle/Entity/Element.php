@@ -265,31 +265,5 @@ class Element
         return $elm;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function toArray()
-    {
-        $arr = array();
-        $arr['__class__'] =  get_class($this);
-        $arr['id'] =  $this->id;
-        $arr['title'] =  $this->title;
-        $arr['class'] =  $this->class;
-        $arr['configuration'] =  $this->configuration;
-        $arr['application'] =  $this->getApplication()->getId();
-        $arr['region'] =  $this->region;
-        $arr['enabled'] =  $this->enabled;
-        $arr['weight'] =  $this->weight;
-        return $arr;
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public static function fromArray(array $serialized)
-    {
-        
-    }
-
 }
 

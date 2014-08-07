@@ -1,6 +1,6 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'mb.manager.managerbundle.export_application' | trans }}{% endblock %}
+{% block title %}{{ 'mb.manager.managerbundle.import_application' | trans }}{% endblock %}
 
 {% block css %}
   {{parent()}}
@@ -19,6 +19,6 @@
 
 {% block manager_content %}
 <div class="containerExchange">
-{% include 'MapbenderManagerBundle:Application:export-form.html.twig' %}
+{% include 'MapbenderManagerBundle:Application:import-form.html.twig' %}
 </div>
 {% endblock %}

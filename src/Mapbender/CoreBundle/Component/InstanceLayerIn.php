@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
  * 
  * @author Paul Schmidt
  */
-interface InstanceLayerIn
+interface InstanceLayerInXXX
 {
 
     /**
@@ -19,7 +19,7 @@ interface InstanceLayerIn
      * @return array configuration parameters
      */
     public function getConfiguration();
-    
+
     /**
      * Copies a source instance
      * @param EntityManager $em
@@ -27,5 +27,3 @@ interface InstanceLayerIn
      */
     public function copy(EntityManager $em);
 }
-
-?>

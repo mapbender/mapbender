@@ -227,5 +227,3 @@ class Dimension
     }
 
 }
-
-?>

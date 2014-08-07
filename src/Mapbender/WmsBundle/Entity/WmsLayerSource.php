@@ -4,7 +4,9 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
+use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\Attribution;
@@ -22,7 +24,7 @@ use Mapbender\CoreBundle\Component\Utils;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
  */
-class WmsLayerSource
+class WmsLayerSource extends SourceItem
 {
     /**
      * @var integer $id
@@ -36,7 +38,7 @@ class WmsLayerSource
      * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
-    protected $source;
+    protected $source;# change this variable name together with "get" "set" functions (s. SourceItem too)
 
     /**
      * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="sublayer")
@@ -205,20 +207,16 @@ class WmsLayerSource
     }
 
     /**
-     * Set wmssource
-     * @param $wmssource
-     * @return WmsSource 
+     * @inheritdoc
      */
-    public function setSource(WmsSource $wmssource)
+    public function setSource(Source $wmssource)
     {
         $this->source = $wmssource;
         return $this;
     }
 
     /**
-     * Get wmssource
-     *
-     * @return WmsSource 
+     * @inheritdoc
      */
     public function getSource()
     {
@@ -805,7 +803,7 @@ class WmsLayerSource
      */
     public function getAuthority()
     {
-        if ($this->getParent() !== null) { // add crses from parent
+        if ($this->getParent() !== null && $this->getParent()->getAuthority() !== null) { // add crses from parent
             return array_merge(
                 $this->getParent()->getAuthority(), $this->authority);
         } else {
@@ -1051,31 +1049,10 @@ class WmsLayerSource
         return get_class();
     }
 
-    /**
-     * @inheritdoc
-     */
+
     public function __toString()
     {
         return (string) $this->id;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function toArray()
-    {
-        $arr = array();
-        $arr['class'] =  get_class($this);
-        $arr['id'] =  $this->id;
-        $arr['title'] =  $this->title;
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public static function fromArray(array $serialized)
-    {
-        
     }
 
 }

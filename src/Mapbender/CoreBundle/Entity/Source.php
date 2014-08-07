@@ -39,8 +39,7 @@ abstract class Source
      * @ORM\Column(type="string", length=128, nullable=true)
      */
     protected $alias = "";
-    
-    
+
     /**
      * @var boolean $valid is a source valid
      * @ORM\Column(type="boolean", nullable=true)
@@ -194,4 +193,17 @@ abstract class Source
      * Remove a source from a database
      */
     public abstract function remove(EntityManager $em);
+//
+//    /**
+//     * Sets an instance collection
+//     * @return ArrayCollection an instance collection
+//     */
+//    public abstract function getInstances();
+//
+//    /**
+//     * Sets an instance collection
+//     * 
+//     * @param ArrayCollection $instances an instance collection
+//     */
+//    public abstract function setInstances(ArrayCollection $instances);
 }

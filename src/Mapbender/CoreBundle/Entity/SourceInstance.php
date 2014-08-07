@@ -54,14 +54,12 @@ abstract class SourceInstance
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $basesource = true;
-
+    
     /**
-     * Creates an instance
+     *
+     * @var Source a source 
      */
-    public function __construct()
-    {
-
-    }
+    protected $source;
 
     /**
      * Returns an id
@@ -238,7 +236,7 @@ abstract class SourceInstance
     }
 
     /**
-     * Returns instance source
+     * Returns source
      *
      * @return Source
      */
