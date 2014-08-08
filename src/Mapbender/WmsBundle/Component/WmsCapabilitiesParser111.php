@@ -1,11 +1,14 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword;
 use Mapbender\WmsBundle\Component\RequestInformation;
 
 /**
@@ -72,14 +75,14 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
 
         $keywordElList = $this->xpath->query("./KeywordList/Keyword",
             $contextElm);
+        $keywords = new ArrayCollection();
         foreach ($keywordElList as $keywordEl) {
-            $keyword = new Keyword();
+            $keyword = new WmsSourceKeyword();
             $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
-            $keyword->setSourceclass($wms->getClassname());
-            $keyword->setSourceid($wms);
-            //FIXME: breaks sqlite
-            //$wms->addKeyword($keyword);
+            $keyword->setReferenceObject($wms);
+            $keywords->add($keyword);
         }
+        $wms->setKeywords($keywords);
 
         $wms->setOnlineResource($this->getValue("./OnlineResource/@xlink:href",
                 $contextElm));
@@ -246,15 +249,14 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
 
         $keywordElList = $this->xpath->query("./KeywordList/Keyword",
             $contextElm);
+        $keywords = new ArrayCollection();
         foreach ($keywordElList as $keywordEl) {
-            $keyword = new Keyword();
+            $keyword = new WmsLayerSourceKeyword();
             $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
-            $keyword->setSourceclass($wmslayer->getClassname());
-            $keyword->setSourceid($wmslayer);
-            // FIXME: breaks sqlite
-            //$wmslayer->addKeyword($keyword);
+            $keyword->setReferenceObject($wmslayer);
+            $keywords->add($keyword);
         }
-
+        $wmslayer->setKeywords($keywords);
         $tempList = $this->xpath->query("./SRS", $contextElm);
         if ($tempList !== null) {
             foreach ($tempList as $item) {

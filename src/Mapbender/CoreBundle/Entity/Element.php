@@ -70,7 +70,7 @@ class Element
      * @ORM\Column(type="integer")
      */
     protected $weight;
-    
+
     public function __construct()
     {
         $this->enabled = true;
@@ -87,6 +87,7 @@ class Element
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -108,6 +109,7 @@ class Element
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -129,6 +131,7 @@ class Element
     public function setClass($class)
     {
         $this->class = $class;
+
         return $this;
     }
 
@@ -150,6 +153,7 @@ class Element
     public function setConfiguration($configuration)
     {
         $this->configuration = $configuration;
+
         return $this;
     }
 
@@ -171,6 +175,7 @@ class Element
     public function setRegion($region)
     {
         $this->region = $region;
+
         return $this;
     }
 
@@ -192,6 +197,7 @@ class Element
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+
         return $this;
     }
 
@@ -213,6 +219,7 @@ class Element
     public function setWeight($weight)
     {
         $this->weight = $weight;
+
         return $this;
     }
 
@@ -234,6 +241,7 @@ class Element
     public function setApplication(Application $application)
     {
         $this->application = $application;
+
         return $this;
     }
 
@@ -251,7 +259,7 @@ class Element
     {
         return (string) $this->id;
     }
-    
+
     public function copy(EntityManager $em)
     {
         $elm = new Element();
@@ -262,8 +270,8 @@ class Element
         $elm->region = $this->region;
         $elm->enabled = $this->enabled;
         $elm->weight = $this->weight;
+
         return $elm;
     }
 
 }
-

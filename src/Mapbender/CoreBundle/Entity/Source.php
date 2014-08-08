@@ -55,7 +55,7 @@ abstract class Source
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -65,19 +65,20 @@ abstract class Source
     /**
      * Set title
      *
-     * @param string $title
+     * @param  string $title
      * @return Source
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -87,19 +88,20 @@ abstract class Source
     /**
      * Set description
      *
-     * @param string $description
+     * @param  string $description
      * @return Source
      */
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -109,19 +111,20 @@ abstract class Source
     /**
      * Set alias
      *
-     * @param string $alias
+     * @param  string $alias
      * @return Source
      */
     public function setAlias($alias)
     {
         $this->alias = $alias;
+
         return $this;
     }
 
     /**
      * Get alias
      *
-     * @return string 
+     * @return string
      */
     public function getAlias()
     {
@@ -141,19 +144,20 @@ abstract class Source
     /**
      * Set valid
      *
-     * @param boolean $valid
+     * @param  boolean $valid
      * @return Source
      */
     public function setValid($valid)
     {
         $this->valid = $valid;
+
         return $this;
     }
 
     /**
      * Get valid
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getValid()
     {
@@ -162,7 +166,7 @@ abstract class Source
 
     /**
      * Returns a Source as String
-     * 
+     *
      * @return String Source as String
      */
     public function __toString()
@@ -175,24 +179,24 @@ abstract class Source
      *
      * @return String type
      */
-    public abstract function getType();
+    abstract public function getType();
 
     /**
-     * Returns a manager type 
+     * Returns a manager type
      *
      * @return String a manager type
      */
-    public abstract function getManagertype();
+    abstract public function getManagertype();
 
     /**
      * Creates a SourceInstance
      */
-    public abstract function createInstance();
+    abstract public function createInstance();
 
     /**
      * Remove a source from a database
      */
-    public abstract function remove(EntityManager $em);
+    abstract public function remove(EntityManager $em);
 //
 //    /**
 //     * Sets an instance collection
@@ -202,7 +206,7 @@ abstract class Source
 //
 //    /**
 //     * Sets an instance collection
-//     * 
+//     *
 //     * @param ArrayCollection $instances an instance collection
 //     */
 //    public abstract function setInstances(ArrayCollection $instances);

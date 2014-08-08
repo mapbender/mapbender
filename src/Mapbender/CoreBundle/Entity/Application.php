@@ -1,12 +1,11 @@
 <?php
+
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\Application As ApplicationComponent;
-use Mapbender\CoreBundle\Component\Element As ComponentElement;
-use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -24,6 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Application
 {
+
     const SOURCE_YAML = 1;
     const SOURCE_DB = 2;
 
@@ -125,6 +125,7 @@ class Application
     public function setSource($source)
     {
         $this->source = $source;
+
         return $this;
     }
 
@@ -156,6 +157,7 @@ class Application
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -177,6 +179,7 @@ class Application
     public function setSlug($slug)
     {
         $this->slug = $slug;
+
         return $this;
     }
 
@@ -198,6 +201,7 @@ class Application
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -219,6 +223,7 @@ class Application
     public function setTemplate($template)
     {
         $this->template = $template;
+
         return $this;
     }
 
@@ -240,6 +245,7 @@ class Application
     public function setRegionProperties(ArrayCollection $regionProperties)
     {
         $this->regionProperties = $regionProperties;
+
         return $this;
     }
 
@@ -311,6 +317,7 @@ class Application
     public function setScreenshot($screenshot)
     {
         $this->screenshot = $screenshot;
+
         return $this;
     }
 
@@ -332,6 +339,7 @@ class Application
     public function setScreenshotFile($screenshotFile)
     {
         $this->screenshotFile = $screenshotFile;
+
         return $this;
     }
 
@@ -353,6 +361,7 @@ class Application
     public function setExtraAssets(array $extra_assets)
     {
         $this->extra_assets = $extra_assets;
+
         return $this;
     }
 
@@ -374,6 +383,7 @@ class Application
     public function setPublished($published)
     {
         $this->published = $published;
+
         return $this;
     }
 
@@ -395,6 +405,7 @@ class Application
     public function setUpdated(\DateTime $updated)
     {
         $this->updated = $updated;
+
         return $this;
     }
 
@@ -423,9 +434,9 @@ class Application
 
             foreach ($this->preparedElements as $elementRegion => $elements) {
                 usort($elements,
-                    function($a, $b) {
-                        return $a->getWeight() - $b->getWeight();
-                    });
+                    function ($a, $b) {
+                    return $a->getWeight() - $b->getWeight();
+                });
             }
         }
 
@@ -444,22 +455,24 @@ class Application
     {
         return (string) $this->getId();
     }
-    
+
     public function getNamedRegionProperties()
     {
         $result = array();
         foreach ($this->getRegionProperties() as $regionProperties) {
             $result[$regionProperties->getName()] = $regionProperties;
         }
+
         return $result;
     }
-    
+
     public function getPropertiesFromRegion($regionName)
     {
         foreach ($this->getRegionProperties() as $regionProperties) {
-            if($regionProperties->getName() === $regionName)
+            if ($regionProperties->getName() === $regionName)
                 return $regionProperties;
         }
+
         return null;
     }
 
@@ -502,20 +515,19 @@ class Application
             $em->persist($app);
             $em->flush();
             $elementsMap[$element->getId()] = $copied;
-            try{
+            try {
                 $oid = ObjectIdentity::fromDomainObject($element);
                 $acl = $aclProvider->findAcl($oid);
                 $newAcl = $aclProvider->createAcl(ObjectIdentity::fromDomainObject($copied));
-                foreach($acl->getObjectAces() as $ace) {
+                foreach ($acl->getObjectAces() as $ace) {
                     $newAcl->insertObjectAce($ace->getSecurityIdentity(), $ace->getMask());
                 }
                 $aclProvider->updateAcl($newAcl);
-            } catch(\Exception $e){
+            } catch (\Exception $e) {
                 $a = 0;
             }
-            $em->persist($copied);        
+            $em->persist($copied);
             $em->flush();
-            
         }
         $applicationComponent = new ApplicationComponent($container, $this, array());
         foreach ($this->elements as $element) {
@@ -524,6 +536,7 @@ class Application
             $copied = $elemComponent->copyConfiguration($em, $app, $elementsMap, $layersetMap);
             $em->persist($copied);
         }
+
         return $app;
     }
 

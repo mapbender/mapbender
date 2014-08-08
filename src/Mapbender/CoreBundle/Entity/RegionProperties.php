@@ -61,6 +61,7 @@ class RegionProperties
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -82,6 +83,7 @@ class RegionProperties
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -103,6 +105,7 @@ class RegionProperties
     public function setApplication(Application $application)
     {
         $this->application = $application;
+
         return $this;
     }
 
@@ -124,6 +127,7 @@ class RegionProperties
     public function setProperties(array $properties = array())
     {
         $this->properties = $properties === null || !is_array($properties) ? array() : $properties;
+
         return $this;
     }
 
@@ -145,6 +149,7 @@ class RegionProperties
     public function addProperty($property)
     {
         $this->properties[] = $property;
+
         return $this;
     }
 
@@ -161,6 +166,7 @@ class RegionProperties
                 $help[] = $prop;
         }
         $this->setProperties($help);
+
         return $this;
     }
 
@@ -169,6 +175,7 @@ class RegionProperties
         $rp = new RegionProperties();
         $rp->name = $this->name;
         $rp->properties = $this->properties;
+
         return $rp;
     }
 

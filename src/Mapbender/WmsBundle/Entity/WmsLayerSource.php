@@ -4,8 +4,8 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
+use Mapbender\CoreBundle\Component\ContainsKeyword;
 use Mapbender\CoreBundle\Component\SourceItem;
-use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Component\IdentifierAuthority;
@@ -24,7 +24,7 @@ use Mapbender\CoreBundle\Component\Utils;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
  */
-class WmsLayerSource extends SourceItem
+class WmsLayerSource extends SourceItem implements ContainsKeyword
 {
     /**
      * @var integer $id
@@ -173,10 +173,11 @@ class WmsLayerSource extends SourceItem
      * @ORM\Column(type="array", nullable=true)
      */
     protected $featureListUrl;
-    // FIXME: keywords cascade remove ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
+    
     /**
-     * @var array $keywords the source keyword list
-     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist"})
+     * @var ArrayCollections A list of WMS Layer keywords
+     * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"persist","remove"})
+     * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
 
@@ -1002,29 +1003,7 @@ class WmsLayerSource extends SourceItem
     {
         return $this->keywords;
     }
-
-    /**
-     * Add keyword
-     *
-     * @param Keyword $keyword
-     * @return Source
-     */
-    public function addKeyword(Keyword $keyword)
-    {
-        $this->keywords->add($keyword);
-        return $this;
-    }
-
-    /**
-     * Remove keywords
-     *
-     * @param Mapbender\CoreBundle\Entity\Keyword $keywords
-     */
-    public function removeKeyword(\Mapbender\CoreBundle\Entity\Keyword $keywords)
-    {
-        $this->keywords->removeElement($keywords);
-    }
-
+    
     /**
      * @inheritdoc
      */

@@ -1,11 +1,13 @@
 <?php
 namespace Mapbender\WmsBundle\Component;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\WmsBundle\Entity\WmsSource;
+use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword;
 use Mapbender\WmsBundle\Component\RequestInformation;
 
 /**
@@ -81,18 +83,15 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
         $wms->setDescription($this->getValue("./wms:Abstract/text()",
                 $contextElm));
 
-        $keywordElList = $this->xpath->query("./wms:KeywordList/wms:Keyword",
-            $contextElm);
+        $keywordElList = $this->xpath->query("./wms:KeywordList/wms:Keyword", $contextElm);
+        $keywords = new ArrayCollection();
         foreach ($keywordElList as $keywordEl) {
-            $keyword = new Keyword();
+            $keyword = new WmsSourceKeyword();
             $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
-            $keyword->setSourceclass($wms->getClassname());
-            $keyword->setSourceid($wms);
-
-            // FIXME: breaks sqlite
-            //$wms->addKeyword($keyword);
+            $keyword->setReferenceObject($wms);
+            $keywords->add($keyword);
         }
-
+        $wms->setKeywords($keywords);
         $wms->setOnlineResource($this->getValue("./wms:OnlineResource/@xlink:href",
                 $contextElm));
 
@@ -277,18 +276,15 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
         $wmslayer->setAbstract($this->getValue("./wms:Abstract/text()",
                 $contextElm));
 
-        $keywordElList = $this->xpath->query("./wms:KeywordList/wms:Keyword",
-            $contextElm);
+        $keywordElList = $this->xpath->query("./wms:KeywordList/wms:Keyword", $contextElm);
+        $keywords = new ArrayCollection();
         foreach ($keywordElList as $keywordEl) {
-            $keyword = new Keyword();
+            $keyword = new WmsLayerSourceKeyword();
             $keyword->setValue(trim($this->getValue("./text()", $keywordEl)));
-            $keyword->setSourceclass($wmslayer->getClassname());
-            $keyword->setSourceid($wmslayer);
-
-            // FIXME: breaks sqlite
-            //$wmslayer->addKeyword($keyword);
+            $keyword->setReferenceObject($wmslayer);
+            $keywords->add($keyword);
         }
-
+        $wmslayer->setKeywords($keywords);
         $tempList = $this->xpath->query("./wms:CRS", $contextElm);
         if ($tempList !== null) {
             foreach ($tempList as $item) {

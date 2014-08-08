@@ -86,19 +86,20 @@ class Contact
     /**
      * Set person
      *
-     * @param string $person
+     * @param  string  $person
      * @return Contact
      */
     public function setPerson($person)
     {
         $this->person = $person;
+
         return $this;
     }
 
     /**
      * Get person
      *
-     * @return string 
+     * @return string
      */
     public function getPerson()
     {
@@ -108,19 +109,20 @@ class Contact
     /**
      * Set position
      *
-     * @param string $position
+     * @param  string  $position
      * @return Contact
      */
     public function setPosition($position)
     {
         $this->position = $position;
+
         return $this;
     }
 
     /**
      * Get position
      *
-     * @return string 
+     * @return string
      */
     public function getPosition()
     {
@@ -130,19 +132,20 @@ class Contact
     /**
      * Set organization
      *
-     * @param string $organization
+     * @param  string  $organization
      * @return Contact
      */
     public function setOrganization($organization)
     {
         $this->organization = $organization;
+
         return $this;
     }
 
     /**
      * Get organization
      *
-     * @return string 
+     * @return string
      */
     public function getOrganization()
     {
@@ -152,19 +155,20 @@ class Contact
     /**
      * Set voiceTelephone
      *
-     * @param string $voiceTelephone
+     * @param  string  $voiceTelephone
      * @return Contact
      */
     public function setVoiceTelephone($voiceTelephone)
     {
         $this->voiceTelephone = $voiceTelephone;
+
         return $this;
     }
 
     /**
      * Get voiceTelephone
      *
-     * @return string 
+     * @return string
      */
     public function getVoiceTelephone()
     {
@@ -174,19 +178,20 @@ class Contact
     /**
      * Set facsimileTelephone
      *
-     * @param string $facsimileTelephone
+     * @param  string  $facsimileTelephone
      * @return Contact
      */
     public function setFacsimileTelephone($facsimileTelephone)
     {
         $this->facsimileTelephone = $facsimileTelephone;
+
         return $this;
     }
 
     /**
      * Get facsimileTelephone
      *
-     * @return string 
+     * @return string
      */
     public function getFacsimileTelephone()
     {
@@ -196,19 +201,20 @@ class Contact
     /**
      * Set electronicMailAddress
      *
-     * @param string $electronicMailAddress
+     * @param  string  $electronicMailAddress
      * @return Contact
      */
     public function setElectronicMailAddress($electronicMailAddress)
     {
         $this->electronicMailAddress = $electronicMailAddress;
+
         return $this;
     }
 
     /**
      * Get electronicMailAddress
      *
-     * @return string 
+     * @return string
      */
     public function getElectronicMailAddress()
     {
@@ -218,19 +224,20 @@ class Contact
     /**
      * Set address
      *
-     * @param string $address
+     * @param  string  $address
      * @return Contact
      */
     public function setAddress($address)
     {
         $this->address = $address;
+
         return $this;
     }
 
     /**
      * Get address
      *
-     * @return string 
+     * @return string
      */
     public function getAddress()
     {
@@ -240,19 +247,20 @@ class Contact
     /**
      * Set addressType
      *
-     * @param string $addressType
+     * @param  string  $addressType
      * @return Contact
      */
     public function setAddressType($addressType)
     {
         $this->addressType = $addressType;
+
         return $this;
     }
 
     /**
      * Get addressType
      *
-     * @return string 
+     * @return string
      */
     public function getAddressType()
     {
@@ -262,19 +270,20 @@ class Contact
     /**
      * Set addressCity
      *
-     * @param string $addressCity
+     * @param  string  $addressCity
      * @return Contact
      */
     public function setAddressCity($addressCity)
     {
         $this->addressCity = $addressCity;
+
         return $this;
     }
 
     /**
      * Get addressCity
      *
-     * @return string 
+     * @return string
      */
     public function getAddressCity()
     {
@@ -284,19 +293,20 @@ class Contact
     /**
      * Set addressStateOrProvince
      *
-     * @param string $addressStateOrProvince
+     * @param  string  $addressStateOrProvince
      * @return Contact
      */
     public function setAddressStateOrProvince($addressStateOrProvince)
     {
         $this->addressStateOrProvince = $addressStateOrProvince;
+
         return $this;
     }
 
     /**
      * Get addressStateOrProvince
      *
-     * @return string 
+     * @return string
      */
     public function getAddressStateOrProvince()
     {
@@ -306,19 +316,20 @@ class Contact
     /**
      * Set addressPostCode
      *
-     * @param string $addressPostCode
+     * @param  string  $addressPostCode
      * @return Contact
      */
     public function setAddressPostCode($addressPostCode)
     {
         $this->addressPostCode = $addressPostCode;
+
         return $this;
     }
 
     /**
      * Get addressPostCode
      *
-     * @return string 
+     * @return string
      */
     public function getAddressPostCode()
     {
@@ -328,19 +339,20 @@ class Contact
     /**
      * Set addressCountry
      *
-     * @param string $addressCountry
+     * @param  string  $addressCountry
      * @return Contact
      */
     public function setAddressCountry($addressCountry)
     {
         $this->addressCountry = $addressCountry;
+
         return $this;
     }
 
     /**
      * Get addressCountry
      *
-     * @return string 
+     * @return string
      */
     public function getAddressCountry()
     {
@@ -350,7 +362,7 @@ class Contact
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {

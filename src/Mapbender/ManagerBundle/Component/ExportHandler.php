@@ -64,9 +64,9 @@ class ExportHandler extends ExchangeHandler
     public function makeJob()
     {
         $export = array();
-//        $export[ExchangeHandler::$CONTENT_SOURCE] = $this->exportSources();
+        $export[ExchangeHandler::$CONTENT_SOURCE] = $this->exportSources();
         $export[ExchangeHandler::$CONTENT_APP] = $this->exportApps();
-//        $export[ExchangeHandler::$CONTENT_ACL] = $this->exportAcls();
+//        # TODO  $export[ExchangeHandler::$CONTENT_ACL] = $this->exportAcls();
         return $export;
     }
 

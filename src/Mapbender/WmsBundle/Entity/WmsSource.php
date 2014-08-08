@@ -4,9 +4,10 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
+use Mapbender\CoreBundle\Component\ContainsKeyword;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -18,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source
+class WmsSource extends Source implements ContainsKeyword
 {
     /**
      * @var string An origin WMS URL
@@ -192,11 +193,10 @@ class WmsSource extends Source
      */
     protected $layers;
 
-    // FIXME: keywords cascade remove RM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
-
     /**
      * @var ArrayCollections A list of WMS keywords
-     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="WmsSourceKeyword",mappedBy="reference", cascade={"persist","remove"})
+     * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
 
@@ -855,17 +855,12 @@ class WmsSource extends Source
             }
         }
         return null;
-//        if($this->layers !== null && $this->layers->count() > 0){
-//            return $this->layers->get(0);
-//        } else {
-//            return null;
-//        }
     }
 
     /**
      * Set keywords
      *
-     * @param array $keywords
+     * @param ArrayCollection $keywords
      * @return Source
      */
     public function setKeywords($keywords)
@@ -877,42 +872,13 @@ class WmsSource extends Source
     /**
      * Get keywords
      *
-     * @return string 
+     * @return ArrayCollection 
      */
     public function getKeywords()
     {
         return $this->keywords;
     }
-//    
-//    /**
-//     * @inheritdoc
-//     */
-//    public function getInstances()
-//    {
-//        return $this->instances;
-//    }
-//
-//    /**
-//     * @inheritdoc
-//     */
-//    public function setInstances(ArrayCollection $instances)
-//    {
-//        $this->instances = $instances;
-//        return $this;
-//    }
-
-    /**
-     * Add keyword
-     *
-     * @param Keyword $keyword
-     * @return Source
-     */
-    public function addKeyword(Keyword $keyword)
-    {
-        $this->keywords->add($keyword);
-        return $this;
-    }
-
+    
     /**
      * Remove layers
      *
@@ -921,16 +887,6 @@ class WmsSource extends Source
     public function removeLayer(WmsLayerSource $layers)
     {
         $this->layers->removeElement($layers);
-    }
-
-    /**
-     * Remove keywords
-     *
-     * @param Keyword $keywords
-     */
-    public function removeKeyword(Keyword $keywords)
-    {
-        $this->keywords->removeElement($keywords);
     }
 
     public function __toString()

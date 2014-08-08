@@ -603,7 +603,7 @@ class WmsInstance extends SourceInstance
      * @param WmsSource $wmssource
      * @return WmsInstance
      */
-    public function setSource(Source $wmssource = null)
+    public function setSource($wmssource = null)
     {
         $this->source = $wmssource;
 
