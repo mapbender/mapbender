@@ -45,7 +45,8 @@ class SearchRouterAdminType extends AbstractType
             ->add($builder->create('routes', 'collection', array(
                 'type' => new SearchRouterRouteAdminType(),
                 'allow_add' => true,
-                'allow_delete' => true
+                'allow_delete' => true,
+                'auto_initialize' => false,
             ))->addViewTransformer(new SearchRouterRouteTransformer()));
     }
 

@@ -6,6 +6,7 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
+use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -32,7 +33,7 @@ class WelcomeController extends Controller {
     public function listAction() {
         $securityContext = $this->get('security.context');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-
+        $uploads_web_url = AppComponent::getUploadsUrl($this->container);
         $applications = $this->get('mapbender')->getApplicationEntities();
         $allowed_applications = array();
         foreach($applications as $application)
@@ -46,7 +47,11 @@ class WelcomeController extends Controller {
             }
         }
 
-        return array('applications' => $allowed_applications);
+        return array(
+            'applications' => $allowed_applications,
+            'uploads_web_url' => $uploads_web_url,
+            'time' => new \DateTime()
+            );
     }
 }
 

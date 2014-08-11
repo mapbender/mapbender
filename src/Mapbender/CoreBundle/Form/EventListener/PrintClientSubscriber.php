@@ -2,7 +2,7 @@
 
 namespace Mapbender\CoreBundle\Form\EventListener;
 
-use Symfony\Component\Form\Event\DataEvent;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
@@ -21,7 +21,7 @@ class PrintClientSubscriber implements EventSubscriberInterface
      * @var \Symfony\Component\Form\FormFactoryInterface 
      */
     private $factory;
-    
+
     /**
      * The application
      * 
@@ -47,93 +47,83 @@ class PrintClientSubscriber implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::PRE_BIND => 'preBind');
+            FormEvents::PRE_SUBMIT => 'preBind');
     }
 
     /**
-     * Checkt form fields by PRE_BIND DataEvent
+     * Checkt form fields by PRE_SUBMIT FormEvent
      * 
-     * @param DataEvent $event
+     * @param FormEvent $event
      */
-    public function preBind(DataEvent $event)
+    public function preBind(FormEvent $event)
     {
         $data = $event->getData();
         $form = $event->getForm();
-        if(null === $data)
-        {
+        if (null === $data) {
             return;
         }
-        if(key_exists("scales", $data) && is_string($data["scales"]))
-        {
+        if (key_exists("scales", $data) && is_string($data["scales"])) {
             $data["scales"] = preg_split("/\s?,\s?/", $data["scales"]);
             $event->setData($data);
         }
-        
-        if(key_exists("templates", $data) )
-        {
-            $form->add($this->factory->createNamed(
-                                'templates', "collection", null,
-                                array(
-                            'property_path' => '[templates]',
-                            'type' => new PrintClientTemplateAdminType(),
-                            'options' => array(
-                                ))));
-        }
-        if(key_exists("quality_levels", $data) )
-        {
-            $form->add($this->factory->createNamed(
-                                'quality_levels', "collection", null,
-                                array(
-                            'property_path' => '[quality_levels]',
-                            'type' => new PrintClientQualityAdminType(),
-                            'options' => array(
-                                ))));
-        }
 
+        if (key_exists("templates", $data)) {
+            $form->add($this->factory->createNamed(
+                    'templates', "collection", null, array(
+                    'property_path' => '[templates]',
+                    'auto_initialize' => false,
+                    'type' => new PrintClientTemplateAdminType(),
+                    'options' => array(
+            ))));
+        }
+        if (key_exists("quality_levels", $data)) {
+            $form->add($this->factory->createNamed(
+                    'quality_levels', "collection", null, array(
+                    'property_path' => '[quality_levels]',
+                    'auto_initialize' => false,
+                    'type' => new PrintClientQualityAdminType(),
+                    'options' => array(
+            ))));
+        }
     }
 
     /**
-     * Checkt form fields by PRE_SET_DATA DataEvent
+     * Checkt form fields by PRE_SET_DATA FormEvent
      * 
-     * @param DataEvent $event
+     * @param FormEvent $event
      */
-    public function preSetData(DataEvent $event)
+    public function preSetData(FormEvent $event)
     {
         $data = $event->getData();
         $form = $event->getForm();
-        if(null === $data)
-        {
+        if (null === $data) {
             return;
         }
 
-        if(key_exists("scales", $data) && is_array($data["scales"]))
-        {
+        if (key_exists("scales", $data) && is_array($data["scales"])) {
             $data["scales"] = implode(",", $data["scales"]);
             $event->setData($data);
         }
-        
-        if(key_exists("templates", $data) )
-        {
+
+        if (key_exists("templates", $data)) {
             $form->add($this->factory->createNamed(
-                                'templates', "collection", null,
-                                array(
-                            'property_path' => '[templates]',
-                            'type' => new PrintClientTemplateAdminType(),
-                            'options' => array(
-                                ))));
+                    'templates', "collection", null, array(
+                    'property_path' => '[templates]',
+                    'auto_initialize' => false,
+                    'type' => new PrintClientTemplateAdminType(),
+                    'options' => array(
+            ))));
         }
-        
-        if(key_exists("quality_levels", $data) )
-        {
+
+        if (key_exists("quality_levels", $data)) {
             $form->add($this->factory->createNamed(
-                                'quality_levels', "collection", null,
-                                array(
-                            'property_path' => '[quality_levels]',
-                            'type' => new PrintClientQualityAdminType(),
-                            'options' => array(
-                                ))));
+                    'quality_levels', "collection", null, array(
+                    'property_path' => '[quality_levels]',
+                    'auto_initialize' => false,
+                    'type' => new PrintClientQualityAdminType(),
+                    'options' => array(
+            ))));
         }
-        
     }
 
 }

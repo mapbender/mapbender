@@ -3,9 +3,9 @@ $(function() {
         connectWith: "table.elementsTable tbody",
         items: "tr:not(.dummy)",
         distance: 20,
-        stop: function( event, ui ) {
-            $(ui.item).parent().find("tr.element").each(function(idx, elm){
-                if($(elm).attr("data-href")===$(ui.item).attr("data-href")){
+        stop: function(event, ui) {
+            $(ui.item).parent().find("tr.element").each(function(idx, elm) {
+                if ($(elm).attr("data-href") === $(ui.item).attr("data-href")) {
                     $.ajax({
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
@@ -13,12 +13,12 @@ $(function() {
                             number: idx,
                             region: $(ui.item).closest('table').attr("data-region")
                         },
-                        success: function(data, textStatus, jqXHR){
-                            if(data.error && data.error !== ''){
+                        success: function(data, textStatus, jqXHR) {
+                            if (data.error && data.error !== '') {
                                 document.location.href = document.location.href;
                             }
                         },
-                        error: function(jqXHR, textStatus, errorThrown ){
+                        error: function(jqXHR, textStatus, errorThrown) {
                             document.location.href = document.location.href;
                         }
                     });
@@ -28,7 +28,7 @@ $(function() {
     });
 
     $('tr.element, tr.sourceinst').find('input[type="checkbox"]').click(function() {
-        if($(this).attr('data-href') === undefined) {
+        if ($(this).attr('data-href') === undefined) {
             return;
         }
 
@@ -38,24 +38,24 @@ $(function() {
             data: {
                 enabled: !$(this).is(":checked")
             },
-            success: function(data, textStatus, jqXHR){
-                if(data.error && data.error !== ''){
+            success: function(data, textStatus, jqXHR) {
+                if (data.error && data.error !== '') {
                     document.location.href = document.location.href;
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown ){
+            error: function(jqXHR, textStatus, errorThrown) {
                 document.location.href = document.location.href;
             }
         });
     });
 
-    $("table.layersetTable tbody" ).sortable({
+    $("table.layersetTable tbody").sortable({
         connectWith: "table.layersetTable tbody",
         items: "tr:not(.header)",
         distance: 20,
-        stop: function( event, ui ) {
-            $(ui.item).parent().find("tr").each(function(idx, elm){
-                if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
+        stop: function(event, ui) {
+            $(ui.item).parent().find("tr").each(function(idx, elm) {
+                if ($(elm).attr("data-id") === $(ui.item).attr("data-id")) {
                     $.ajax({
                         url: $(ui.item).attr("data-href"),
                         type: "POST",
@@ -69,15 +69,15 @@ $(function() {
         }
     });
 
-    $("ul.layercollection ul").each(function(){
+    $("ul.layercollection ul").each(function() {
         $(this).sortable({
             cursor: "move",
             connectWith: "ul.layercollection",
             items: "li:not(.header,.root,.dummy)",
             distance: 20,
-            stop: function( event, ui ) {
-                $(ui.item).parent().find("li").each(function(idx, elm){
-                    if($(elm).attr("data-id")===$(ui.item).attr("data-id")){
+            stop: function(event, ui) {
+                $(ui.item).parent().find("li").each(function(idx, elm) {
+                    if ($(elm).attr("data-id") === $(ui.item).attr("data-id")) {
 
                         $.ajax({
                             url: $(ui.item).attr("data-href"),
@@ -86,12 +86,12 @@ $(function() {
                                 number: idx - $("ul.layercollection li.header").length, // idx - header
                                 id: $(ui.item).attr("data-id")
                             },
-                            success: function(data, textStatus, jqXHR){
-                                if(data.error && data.error !== ''){
+                            success: function(data, textStatus, jqXHR) {
+                                if (data.error && data.error !== '') {
                                     document.location.href = document.location.href;
                                 }
                             },
-                            error: function(jqXHR, textStatus, errorThrown ){
+                            error: function(jqXHR, textStatus, errorThrown) {
                                 document.location.href = document.location.href;
                             },
                         });
@@ -101,19 +101,19 @@ $(function() {
         })
     });
 
-    $('ul.layercollection div.group button.groupon').bind("click", function(e){
+    $('ul.layercollection div.group button.groupon').bind("click", function(e) {
         var className = $(this).parent().attr('class');
-        $('ul.layercollection li span.'+className+' input[type="checkbox"]').each(function(index) {
-            if($(this).attr("disabled") !== "disabled"){
+        $('ul.layercollection li span.' + className + ' input[type="checkbox"]').each(function(index) {
+            if ($(this).attr("disabled") !== "disabled") {
                 $(this).attr("checked", true);
             }
         });
         return false;
     });
-    $('ul.layercollection div.group button.groupoff').bind("click", function(e){
+    $('ul.layercollection div.group button.groupoff').bind("click", function(e) {
         var className = $(this).parent().attr('class');
-        $('ul.layercollection li span.'+className+' input[type="checkbox"]').each(function(index) {
-            if($(this).attr("disabled") !== "disabled"){
+        $('ul.layercollection li span.' + className + ' input[type="checkbox"]').each(function(index) {
+            if ($(this).attr("disabled") !== "disabled") {
                 $(this).attr("checked", false);
             }
         });
@@ -124,7 +124,7 @@ $(function() {
     var popup;
 
     // Layout - Elements ---------------------------------------------------------------------------
-    var submitHandler = function(e){
+    var submitHandler = function(e) {
         $.ajax({
             url: $(this).attr('action'),
             data: $(this).serialize(),
@@ -156,26 +156,26 @@ $(function() {
         return false;
     };
 
-    function loadElementFormular(){
+    function loadElementFormular() {
         var url = $(this).attr("href");
-        if(url){
+        if (url) {
             $.ajax({
                 url: url,
                 type: "GET",
-                complete: function(data){
-                    if(data != undefined){
+                complete: function(data) {
+                    if (data != undefined) {
                         var pop = $(".popup");
-                        var popupContent   = $(".popupContent");
+                        var popupContent = $(".popupContent");
                         var contentWrapper = pop.find(".contentWrapper");
 
-                        if(contentWrapper.get(0) == undefined){
+                        if (contentWrapper.get(0) == undefined) {
                             popupContent.wrap('<div class="contentWrapper"></div>');
                             contentWrapper = pop.find(".contentWrapper");
                         }
                         popupContent.hide();
                         var subContent = contentWrapper.find(".popupSubContent");
 
-                        if(subContent.get(0) == undefined){
+                        if (subContent.get(0) == undefined) {
                             contentWrapper.append('<div class="popupSubContent"></div>');
                             subContent = contentWrapper.find('.popupSubContent');
                         }
@@ -193,26 +193,26 @@ $(function() {
         return false;
     }
 
-    $(".addElement").bind("click", function(){
+    $(".addElement").bind("click", function() {
         var self = $(this);
-        if(popup){
+        if (popup) {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
             title: Mapbender.trans("mb.manager.components.popup.add_element.title"),
             subtitle: " - " + Mapbender.trans(self.parent().siblings(".subTitle").text()),
             closeOnOutsideClick: true,
-            cssClass:"elementPopup",
+            cssClass: "elementPopup",
             height: 550,
             width: 550,
             content: [
                 $.ajax({
                     url: self.attr("href"),
-                    complete: function(){
-                       var curPopup = $(".popup");
+                    complete: function() {
+                        var curPopup = $(".popup");
 
-                       curPopup.find(".buttonYes, .buttonBack").hide();
-                       curPopup.find(".chooseElement").on("click", loadElementFormular);
+                        curPopup.find(".buttonYes, .buttonBack").hide();
+                        curPopup.find(".chooseElement").on("click", loadElementFormular);
                     }
                 })
             ],
@@ -230,10 +230,10 @@ $(function() {
                     label: Mapbender.trans("mb.manager.components.popup.add_element.btn.ok"),
                     cssClass: 'button buttonYes right',
                     callback: function() {
-                       $("#elementForm")
-                        .data('dirty', false)
-                        .submit();
-                       return false;
+                        $("#elementForm")
+                                .data('dirty', false)
+                                .submit();
+                        return false;
                     }
                 },
                 'back': {
@@ -256,8 +256,8 @@ $(function() {
         };
         popup.$element.on('change', onChange);
         popup.$element.on('close', function(event, token) {
-            if(true === $('#elementForm', popup.$element).data('dirty')) {
-                if(!confirm('Ignore Changes?')) {
+            if (true === $('#elementForm', popup.$element).data('dirty')) {
+                if (!confirm('Ignore Changes?')) {
                     token.cancel = true;
                 }
             }
@@ -269,20 +269,20 @@ $(function() {
     $(".editElement").bind("click", function() {
         var self = $(this);
 
-        if(popup){
+        if (popup) {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
-            title:Mapbender.trans("mb.manager.components.popup.edit_element.title"),
+            title: Mapbender.trans("mb.manager.components.popup.edit_element.title"),
             closeOnOutsideClick: true,
             height: 550,
             width: 550,
             content: [
                 $.ajax({
                     url: self.attr("data-url"),
-                    complete: function(){
+                    complete: function() {
                         $(".popupContent").removeClass("popupContent")
-                                          .addClass("popupSubContent");
+                                .addClass("popupSubContent");
                         $('.popupContent form').submit(submitHandler);
                     }
                 })
@@ -301,8 +301,8 @@ $(function() {
                     cssClass: 'button right',
                     callback: function() {
                         $("#elementForm")
-                            .data('dirty', false)
-                            .submit();
+                                .data('dirty', false)
+                                .submit();
                         window.setTimeout(function() {
                             window.location.reload();
                         }, 50);
@@ -317,8 +317,8 @@ $(function() {
         };
         popup.$element.on('change', onChange);
         popup.$element.on('close', function(event, token) {
-            if(true === $('#elementForm', popup.$element).data('dirty')) {
-                if(!confirm('Ignore Changes?')) {
+            if (true === $('#elementForm', popup.$element).data('dirty')) {
+                if (!confirm('Ignore Changes?')) {
                     token.cancel = true;
                 }
             }
@@ -329,20 +329,20 @@ $(function() {
     // Element security
     $(".secureElement").bind("click", function() {
         var self = $(this),
-            toremove = null;
+                toremove = null;
 
-        if(popup){
+        if (popup) {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
-            title:"Secure element",
+            title: "Secure element",
             closeOnOutsideClick: true,
             height: 600,
             content: [
                 $.ajax({
                     url: self.attr("data-url"),
-                    complete: function(){
-                        $('#addElmPermission').on('click', function(e){
+                    complete: function() {
+                        $('#addElmPermission').on('click', function(e) {
                             $.ajax({
                                 url: $(e.target).attr("href"),
                                 type: "GET",
@@ -352,17 +352,17 @@ $(function() {
                                     popup.addContent(data);
                                     var groupUserItem, text, me, groupUserType;
 
-                                    $("#listFilterGroupsAndUsers", popup.$element).find(".filterItem").each(function(i, e){
+                                    $("#listFilterGroupsAndUsers", popup.$element).find(".filterItem").each(function(i, e) {
 
                                         groupUserItem = $(e);
                                         groupUserType = (groupUserItem.find(".tdContentWrapper")
-                                                                      .hasClass("iconGroup") ? "iconGroup"
-                                                                                             : "iconUser");
-                                        $("#permissionsBody", popup.$element).find(".labelInput").each(function(i, e){
+                                                .hasClass("iconGroup") ? "iconGroup"
+                                                : "iconUser");
+                                        $("#permissionsBody", popup.$element).find(".labelInput").each(function(i, e) {
                                             me = $(e);
                                             text = me.text().trim();
-                                            if((groupUserItem.text().trim().toUpperCase().indexOf(text.toUpperCase()) >= 0) &&
-                                               (me.parent().hasClass(groupUserType))){
+                                            if ((groupUserItem.text().trim().toUpperCase().indexOf(text.toUpperCase()) >= 0) &&
+                                                    (me.parent().hasClass(groupUserType))) {
                                                 groupUserItem.remove();
                                             }
                                         });
@@ -371,11 +371,11 @@ $(function() {
                             });
                             return false;
                         });
-                        $("#permissionsBody", popup.$element).on("click", '.iconRemove', function(e){
+                        $("#permissionsBody", popup.$element).on("click", '.iconRemove', function(e) {
                             var self = $(e.target);
                             var parent = self.parent().parent();
                             var userGroup = ((parent.find(".iconUser").length == 1) ? "user " : "group ") + parent.find(".labelInput").text();
-                            popup.addContent(Mapbender.trans('fom.core.components.popup.delete_user_group.content',{'userGroup': userGroup}));
+                            popup.addContent(Mapbender.trans('fom.core.components.popup.delete_user_group.content', {'userGroup': userGroup}));
                             toremove = parent;
                             $(".contentItem:first,.buttonOk", popup.$element).addClass('hidden');
                             $(".buttonRemove,.buttonBack", popup.$element).removeClass('hidden');
@@ -404,32 +404,32 @@ $(function() {
                     }
                 },
                 'add': {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.add'),//Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.back"),
+                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.add'), //Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.back"),
                     cssClass: 'button right buttonAdd hidden',
-                    callback: function(){
+                    callback: function() {
                         toremove = null;
                         $(".contentItem:first", popup.$element).removeClass('hidden');
-                        if($(".contentItem", popup.$element).length > 1){
+                        if ($(".contentItem", popup.$element).length > 1) {
                             var proto = $(".contentItem:first #permissionsHead", popup.$element).attr("data-prototype");
-                            if(proto.length > 0){
-                                var body  = $(".contentItem:first #permissionsBody", popup.$element);
+                            if (proto.length > 0) {
+                                var body = $(".contentItem:first #permissionsBody", popup.$element);
                                 var count = body.find("tr").length;
                                 var text, val, parent, newEl;
-                                $("#listFilterGroupsAndUsers", popup.$element).find(".iconCheckboxActive").each(function(i, e){
-                                    parent   = $(e).parent();
-                                    text     = parent.find(".labelInput").text().trim();
-                                    val      = parent.find(".hide").text().trim();
+                                $("#listFilterGroupsAndUsers", popup.$element).find(".iconCheckboxActive").each(function(i, e) {
+                                    parent = $(e).parent();
+                                    text = parent.find(".labelInput").text().trim();
+                                    val = parent.find(".hide").text().trim();
                                     userType = parent.hasClass("iconGroup") ? "iconGroup" : "iconUser";
                                     newEl = body.prepend(proto.replace(/__name__/g, count))
-                                                .find("tr:first");
+                                            .find("tr:first");
 
                                     newEl.addClass("new").find(".labelInput").text(text);
                                     newEl.find(".input").attr("value", val);
                                     newEl.find(".view.checkWrapper").trigger("click");
                                     newEl.find(".userType")
-                                         .removeClass("iconGroup")
-                                         .removeClass("iconUser")
-                                         .addClass(userType);
+                                            .removeClass("iconGroup")
+                                            .removeClass("iconUser")
+                                            .addClass(userType);
                                     ++count;
                                 });
                             }
@@ -443,15 +443,15 @@ $(function() {
                     }
                 },
                 'remove': {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.remove'),//Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.back"),
+                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.remove'), //Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.back"),
                     cssClass: 'button right buttonRemove hidden',
-                    callback: function(){
+                    callback: function() {
                         $(".contentItem:first", popup.$element).removeClass('hidden');
-                        if(toremove !== null){
+                        if (toremove !== null) {
                             toremove.remove();
                         }
                         toremove = null;
-                        if($(".contentItem", popup.$element).length > 1){
+                        if ($(".contentItem", popup.$element).length > 1) {
                             $(".contentItem:not(.contentItem:first)", popup.$element).remove();
                         }
                         $(".buttonAdd,.buttonBack,.buttonRemove", popup.$element).addClass('hidden');
@@ -459,12 +459,12 @@ $(function() {
                     }
                 },
                 'back': {
-                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.back'),//Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.back"),
+                    label: Mapbender.trans('mb.manager.components.popup.element_acl.btn.back'), //Mapbender.trans("mb.wmc.element.wmceditor.popup.btn.back"),
                     cssClass: 'button left buttonBack hidden',
-                    callback: function(){
+                    callback: function() {
                         toremove = null;
                         $(".contentItem:first", popup.$element).removeClass('hidden');
-                        if($(".contentItem", popup.$element).length > 1){
+                        if ($(".contentItem", popup.$element).length > 1) {
                             $(".contentItem:not(.contentItem:first)", popup.$element).remove();
                         }
                         $(".buttonAdd,.buttonBack,.buttonRemove", popup.$element).addClass('hidden');
@@ -477,11 +477,11 @@ $(function() {
     });
 
     // Delete element
-    $('.removeElement').bind("click", function(){
+    $('.removeElement').bind("click", function() {
         var self = $(this);
         var content = $('<div/>').text(self.attr('title')).html();
 
-        if(popup){
+        if (popup) {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
@@ -503,7 +503,7 @@ $(function() {
                     callback: function() {
                         $.ajax({
                             url: self.attr('data-url'),
-                            data : {'id': self.attr('data-id')},
+                            data: {'id': self.attr('data-id')},
                             type: 'POST',
                             success: function(data) {
                                 window.location.reload();
@@ -517,15 +517,15 @@ $(function() {
     });
 
     // Layers --------------------------------------------------------------------------------------
-    function addOrEditLayerset(edit){
+    function addOrEditLayerset(edit) {
         var self = $(this);
 
-        if(popup){
+        if (popup) {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
             title: ((self.hasClass("editLayerset")) ? Mapbender.trans("mb.manager.components.popup.add_edit_layerset.title_edit")
-                                                    : Mapbender.trans("mb.manager.components.popup.add_edit_layerset.title_add")),
+                    : Mapbender.trans("mb.manager.components.popup.add_edit_layerset.title_add")),
             closeOnOutsideClick: true,
             content: [
                 $.ajax({url: self.attr("href")})
@@ -555,9 +555,9 @@ $(function() {
     // Edit layerset action
     $(".editLayerset").bind("click", addOrEditLayerset);
     // Delete layerset Action
-    $(".removeLayerset").bind("click", function(){
+    $(".removeLayerset").bind("click", function() {
         var self = $(this);
-        if(popup){
+        if (popup) {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
@@ -587,9 +587,9 @@ $(function() {
         return false;
     });
     // Add Instance Action
-    $(".addInstance").bind("click", function(event){
+    $(".addInstance").bind("click", function(event) {
         var self = $(this);
-        if(popup){
+        if (popup) {
             popup = popup.destroy();
         }
         popup = new Mapbender.Popup2({
@@ -613,12 +613,12 @@ $(function() {
         return false;
     });
     // Delete instance
-    $('.removeInstance').bind("click", function(){
-        var self  = $(this);
+    $('.removeInstance').bind("click", function() {
+        var self = $(this);
         var content = self.attr('title');
 
 
-        if(popup){
+        if (popup) {
             popup = popup.destroy();
         }
 
@@ -641,7 +641,7 @@ $(function() {
                     callback: function() {
                         $.ajax({
                             url: self.attr('data-url'),
-                            data : {
+                            data: {
                                 'slug': self.attr('data-slug'),
                                 'id': self.attr('data-id')
                             },
@@ -656,24 +656,78 @@ $(function() {
         });
         return false;
     });
-    $( document ).ready(function() {
+
+
+    var applicationForm = $('form[name=application]');
+    var screenShot = applicationForm.find('.screenshot_img');
+    var deleteScreenShotButton = screenShot.find('.delete');
+    var uploadButton = applicationForm.find('.upload_button');
+    var fileInput = applicationForm.find('#application_screenshotFile');
+    var validationMsgBox = applicationForm.find('span.validationMsgBox');
+
+    fileInput.on('mouseover', function() {
+        uploadButton.addClass('hover');
+    }).on('mouseout', function() {
+        uploadButton.removeClass('hover');
+    }).on('change', function(e) {
+        $('input[name="application[removeScreenShot]"]').val(0);
+        var fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
+        if (fileName.length > 20) {
+            fileName = fileName.substring(0, 20) + "...";
+        }
+        $('.upload_label').html(fileName);
+    });
+    
+  
+
+    screenShot.mouseenter('mouseover', function() {
+        deleteScreenShotButton.removeClass('hidden');
+    }).mouseleave('mouseout', function() {
+        deleteScreenShotButton.addClass('hidden');
+    });
+
+    deleteScreenShotButton.on('click', function() {
+        screenShot.find('img.screenshot').remove();
+        deleteScreenShotButton.remove();
+        screenShot.addClass('default').addClass('iconAppDefault');
+        applicationForm.find('.upload_label').html(Mapbender.trans("mb.manager.upload.label_delete"));
+        applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
+    });
+    
+    
+    fileInput.on('click',function(){
+        validationMsgBox.remove();
+    });
+    
+    
+    
+    
+    applicationForm.find('.containerBaseData div.right').on('click', function(event) {
+        if ($(event.target).hasClass('delete')) {
+            return;
+        }
+
+        fileInput.trigger('click');
+    });
+
+    $(document).ready(function() {
         $('#listFilterLayersets .checkWrapper input.checkbox, #containerLayout .checkWrapper input.checkbox').each(function() {
             var self = this;
             initCheckbox.call(this);
-            $(self).on("change", function(e){
+            $(self).on("change", function(e) {
                 $.ajax({
                     url: $(self).attr('data-url'),
                     type: 'POST',
-                    data : {
+                    data: {
                         'id': $(self).attr('data-id'),
                         'enabled': $(self).is(":checked")
                     },
                     success: function(data) {
-                        if(data.success){
-                            if(data.success.enabled.after !== $(self).is(":checked"))
+                        if (data.success) {
+                            if (data.success.enabled.after !== $(self).is(":checked"))
                                 alert("Cannot be changed!");
-                        } else if(data.error){
-                                alert(data.error);
+                        } else if (data.error) {
+                            alert(data.error);
                         }
                     }
                 });

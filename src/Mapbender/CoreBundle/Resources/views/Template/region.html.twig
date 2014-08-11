@@ -1,7 +1,6 @@
 {% if application.elements[region] is defined %}
   {% if region_props[region] is defined and region_props[region].name == region and region_props[region].properties | length > 0 %}
-    {% for property in region_props[region].properties %}
-      {% if property == 'tabs' %}
+      {% if region_props[region].properties['name'] == 'tabs' %}
         <div class="tabContainerAlt">
           <ul class="tabs">
             {%  for element in application.elements[region] %}
@@ -9,13 +8,26 @@
             {% endfor %}
           </ul>
             {%  for element in application.elements[region] %}
-              <div id="container{{loop.index}}" class="container{% if loop.first %} active{% endif %}">
+              <div id="container{{loop.index}}" class="container-tab{% if loop.first %} active{% endif %}">
                 {{ element.render() | raw }}
               </div>
             {% endfor %}
         </div>
+      {% elseif region_props[region].properties['name'] == 'accordion' %}
+        <div class="tabContainerAlt">
+          {%  for element in application.elements[region] %}
+            <div id="accordion{{loop.index}}" class="accordion{% if loop.first %} active{% endif %}">{{ element.title | trans }}</div>
+            <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}">
+                {{ element.render() | raw }}
+            </div>
+            {% endfor %}
+        </div>
+      {% else %}
+        {% for element in application.elements[region] %}
+          {{ element.render() | raw }}
+        {% endfor %}
       {% endif %}
-    {% endfor %}
+    {#% endfor %#}
   {% else %}
     {% for element in application.elements[region] %}
       {{ element.render() | raw }}

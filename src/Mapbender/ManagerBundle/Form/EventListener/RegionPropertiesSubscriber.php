@@ -1,17 +1,19 @@
 <?php
+
 namespace Mapbender\ManagerBundle\Form\EventListener;
 
-use Symfony\Component\Form\Event\DataEvent;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
-
 
 /**
  * 
  */
 class RegionPropertiesSubscriber implements EventSubscriberInterface
 {
+
     /**
      * A FormFactoryInterface 's Factory
      * 
@@ -44,15 +46,15 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::PRE_BIND => 'preBind');
+            FormEvents::PRE_SUBMIT => 'preBind');
     }
 
     /**
-     * Checks the form fields by PRE_BIND DataEvent
+     * Checks the form fields by PRE_SUBMIT FormEvent
      * 
-     * @param DataEvent $event
+     * @param FormEvent $event
      */
-    public function preBind(DataEvent $event)
+    public function preBind(FormEvent $event)
     {
         $data = $event->getData();
         $form = $event->getForm();
@@ -61,46 +63,43 @@ class RegionPropertiesSubscriber implements EventSubscriberInterface
         }
         if (key_exists("name", $data) && isset($this->options['available_properties'][$data['name']])) {
             $choices = array();
-            foreach ($this->options['available_properties'][$data['name']] as
-                    $key => $value) {
-                $choices[$key] = $key;
+            foreach ($this->options['available_properties'][$data['name']] as $key => $value) {
+                $choices[$key] = $value['label'];
             }
             $form->add($this->factory->createNamed(
-                    'properties', "choice", null,
-                    array(
+                    'properties', "choice", null, array(
                     'expanded' => true,
-                    'multiple' => true,
-                    'choices' => $choices
+//                    'multiple' => true,
+                    'choices' => $choices,
+                    'auto_initialize' => false
             )));
         }
     }
 
     /**
-     * Checks the form fields by PRE_SET_DATA DataEvent
+     * Checks the form fields by PRE_SET_DATA FormEvent
      * 
-     * @param DataEvent $event
+     * @param FormEvent $event
      */
-    public function preSetData(DataEvent $event)
+    public function preSetData(FormEvent $event)
     {
         $data = $event->getData();
         $form = $event->getForm();
         if (null === $data) {
             return;
         }
-        if ($data->getName() !== null && isset($this->options['available_properties'][$data->getName()])) {
-            $choices = array();
-            foreach ($this->options['available_properties'][$data->getName()] as
-                    $key => $value) {
-                $choices[$key] = $key;
-            }
+//        if ($data->getName() !== null && isset($this->options['available_properties'][$data->getName()])) {
+        foreach ($this->options['available_properties'] as $key => $value) {
+            $choices[$key] = $value['label'];
             $form->add($this->factory->createNamed(
-                    'properties', "choice", null,
-                    array(
+                    'properties', "choice", null, array(
                     'expanded' => true,
-                    'multiple' => true,
-                    'choices' => $choices
+//                    'multiple' => true,
+                    'choices' => $choices,
+                    'auto_initialize' => false
             )));
         }
+//        }
     }
 
 }

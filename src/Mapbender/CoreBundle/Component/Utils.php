@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Component;
 
 /**
@@ -73,10 +74,16 @@ class Utils
      */
     public static function deleteFileAndDir($path)
     {
-        $class_func = array(__CLASS__, __FUNCTION__);
-        return is_file($path) ?
-            @unlink($path) :
-            array_map($class_func, glob($path . '/*')) == @rmdir($path);
+        if (is_file($path)) {
+            return @unlink($path);
+        } else if (is_dir($path)) {
+            foreach (scandir($path) as $file) {
+                if ($file !== '.' && $file !== '..' && (is_file($path . "/" . $file) || is_dir($path . "/" . $file))) {
+                    Utils::deleteFileAndDir($path . "/" . $file);
+                }
+            }
+            return @rmdir($path);
+        }
     }
 
     /**
@@ -111,6 +118,22 @@ class Utils
             $newurl .= '?' . implode("&", $queries);
         }
         return $newurl;
+    }
+    
+    public static function copyOrderRecursive($sourceOrder, $destinationOrder)
+    {
+        $dir = opendir($sourceOrder);
+        @mkdir($destinationOrder);
+        while (false !== ( $file = readdir($dir))) {
+            if (( $file != '.' ) && ( $file != '..' )) {
+                if (is_dir($sourceOrder . '/' . $file)) {
+                    Utils::copyOrderRecursive($sourceOrder . '/' . $file, $destinationOrder . '/' . $file);
+                } else {
+                    copy($sourceOrder . '/' . $file, $destinationOrder . '/' . $file);
+                }
+            }
+        }
+        closedir($dir);
     }
 
 }

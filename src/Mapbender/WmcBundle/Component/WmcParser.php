@@ -6,9 +6,9 @@ use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\WmcBundle\Component\Exception\WmcException;
 
 /**
- * Class that Parses WMC Document 
+ * Class that Parses WMC Document
  * Parses WMC documents
- * 
+ *
  * @author Karim Malhas
  * @author Paul Schmidt
  */
@@ -27,8 +27,8 @@ abstract class WmcParser
 
     /**
      * Creates an instance
-     * 
-     * @param \DOMDocument $doc 
+     *
+     * @param \DOMDocument $doc
      */
     public function __construct(\DOMDocument $doc)
     {
@@ -38,7 +38,7 @@ abstract class WmcParser
     }
 
     /**
-     * Finds the value 
+     * Finds the value
      * @param string $xpath xpath expression
      * @param \DOMNode $contextElm the node to use as context for evaluating the
      * XPath expression.
@@ -53,6 +53,7 @@ abstract class WmcParser
             $elm = $this->xpath->query($xpath, $contextElm);
             if ($elm === null) return null;
             $elm = $elm->item(0);
+            if($elm === null) return null;
             if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
                 return $elm->value;
             } else if ($elm->nodeType == XML_TEXT_NODE) {
@@ -74,7 +75,7 @@ abstract class WmcParser
 
     /**
      * Creates a document
-     * 
+     *
      * @param string $data the string containing the XML
      * @param boolean $validate to validate of xml
      * @return \DOMDocument a WMC document
@@ -92,7 +93,7 @@ abstract class WmcParser
 
     /**
      * Checks the wmc xml
-     * 
+     *
      * @param \DOMDocument $doc the wmc xml to check
      * @param boolean $validate to validate of xml
      * @return \DOMDocument checked wmc document
@@ -120,7 +121,7 @@ abstract class WmcParser
 
     /**
      * Loads a wmc document from a file
-     * 
+     *
      * @param string $file path to wmc document
      * @param boolean $validate to validate of xml
      * @return \DOMDocument a WMC document
@@ -137,7 +138,7 @@ abstract class WmcParser
 
     /**
      * Returns a wmc parser
-     * 
+     *
      * @param \DOMDocument $doc the WMC document
      * @return \Mapbender\WmsBundle\Component\WmcParser110
      * @throws NotSupportedVersionException if a version is not supported

@@ -10,6 +10,7 @@ use Assetic\Asset\FileAsset;
 use Assetic\FilterManager;
 use Assetic\Asset\StringAsset;
 use Assetic\Factory\AssetFactory;
+use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -498,6 +499,162 @@ class Application
             }
         }
         return $this->layers;
+    }
+
+    /**
+     * Returns the public "uploads" directory. 
+     * 
+     * @param ContainerInterface $container Container
+     * @return string the path to uploads dir or null.
+     */
+    public static function getUploadsDir($container, $webRelative = false)
+    {
+        $uploads_dir = $container->get('kernel')->getRootDir() . '/../web/'
+            . $container->getParameter("mapbender.uploads_dir");
+        $ok = true;
+        if (!is_dir($uploads_dir)) {
+            $ok = mkdir($uploads_dir);
+        }
+        if ($ok) {
+            if(!$webRelative){
+                return $uploads_dir;
+            } else {
+                return $container->getParameter("mapbender.uploads_dir");
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the application's public directory. 
+     * 
+     * @param ContainerInterface $container Container
+     * @param string $slug application's slug
+     * @return boolean true if the application's directories are created or
+     * exist otherwise false.
+     */
+    public static function getAppWebDir($container, $slug)
+    {
+        if (Application::createAppWebDir($container, $slug)) {
+            return Application::getUploadsDir($container, $slug) . "/" . $slug;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Creates or checks if the application's public directory is created or exist. 
+     * 
+     * @param ContainerInterface $container Container
+     * @param string $slug application's slug
+     * @param string $old_slug the old application's slug.
+     * @return boolean true if the application's directories are created or
+     * exist otherwise false.
+     */
+    public static function createAppWebDir($container, $slug, $old_slug = null)
+    {
+        $uploads_dir = Application::getUploadsDir($container);
+        if ($uploads_dir === null) {
+            return false;
+        }
+        if ($old_slug === null) {
+            $slug_dir = $uploads_dir . "/" . $slug;
+            if (!is_dir($slug_dir)) {
+                return mkdir($slug_dir);
+            } else {
+                return true;
+            }
+        } else {
+            $old_slug_dir = $uploads_dir . "/" . $old_slug;
+            if (is_dir($old_slug_dir)) {
+                $slug_dir = $uploads_dir . "/" . $slug;
+                return rename($old_slug_dir, $slug_dir);
+            } else {
+                if (mkdir($old_slug_dir)) {
+                    $slug_dir = $uploads_dir . "/" . $slug;
+                    return rename($old_slug_dir, $slug_dir);
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes application's public directoriy.
+     * 
+     * @param ContainerInterface $container Container
+     * @param string $slug application's slug
+     * @return boolean true if the directories are removed or not exist otherwise false
+     */
+    public static function removeAppWebDir($container, $slug)
+    {
+        $uploads_dir = Application::getUploadsDir($container);
+        if (!is_dir($uploads_dir)) {
+            return true;
+        }
+        $slug_dir = $uploads_dir . "/" . $slug;
+        if (!is_dir($slug_dir)) {
+            return true;
+        } else {
+            return Utils::deleteFileAndDir($slug_dir);
+        }
+    }
+
+    /**
+     * Returns an url to application's public directory.
+     *
+     * @param ContainerInterface $container Container
+     * @param string $slug application's slug
+     * @return string a url to wmc directory or to file with "$filename"
+     */
+    public static function getAppWebUrl($container, $slug)
+    {
+        return Application::getUploadsUrl($container) . "/" . $slug;
+    }
+
+    /**
+     * Returns an url to public "uploads" directory.
+     *
+     * @param ContainerInterface $container Container
+     * @return string an url to public "uploads" directory
+     */
+    public static function getUploadsUrl($container)
+    {
+        $base_url = Application::getBaseUrl($container);
+        return $base_url . '/' . Application::getUploadsDir($container, true);
+    }
+
+    /**
+     * Returns a base url.
+     *
+     * @param ContainerInterface $container Container
+     * @return string a base url
+     */
+    public static function getBaseUrl($container)
+    {
+        $request = $container->get('request');
+        return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
+    } 
+    
+    /**
+     * Copies an application web order. 
+     * 
+     * @param ContainerInterface $container Container
+     * @param string $srcSslug source application slug
+     * @param string $destSlug destination application slug
+     * @return boolean true if the application  order has been copied otherwise false.
+     */
+    public static function copyAppWebDir($container, $srcSslug, $destSlug)
+    {
+        $src = Application::getAppWebDir($container, $srcSslug);#$this->getApplicationDir($tocopy->getSlug());
+        $dst = Application::getAppWebDir($container, $destSlug);#$this->getApplicationDir($cloned->getSlug());
+        if($src === null || $dst === null){
+            return false;
+        }
+        Utils::copyOrderRecursive($src, $dst);
+        return true;
     }
 
 }

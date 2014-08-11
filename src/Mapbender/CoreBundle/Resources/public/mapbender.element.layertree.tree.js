@@ -181,6 +181,7 @@
                 var nodeType = this._getNodeType(sourceEl, isroot);
                 li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
                 if (nodeType === this.consts.root || nodeType === this.consts.group) {
+                    $('.featureInfoWrapper:first', li).remove();
                     if (nodeType === this.consts.root) {
                         li.addClass("serviceContainer");
                     } else if (nodeType === this.consts.group) {
@@ -581,9 +582,16 @@
                         $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                     }
                 }
+                if ($.inArray("metadata", self.options.menu) !== -1 && menu.find('.layer-metadata').length > 0) {
+                    var layer = self.model.findLayer({id: sourceId}, {id: layerId});
+                    if (layer) {
+                        $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata, self));
+                    }
+                }
             }
             function removeMenu($element) {
                 $('.layer-zoom').off('click');
+                $('.layer-metadata').off('click');
                 $('#layer-menu').off('click').remove();
             }
             var $btnMenu = $(e.target);
@@ -629,7 +637,12 @@
             };
             this.model.zoomToLayer(options);
         },
-        _showMetadata: function(elm) {
+        _showMetadata: function(e) {
+            Mapbender.Metadata.call(
+                    this.options.target,
+                    {id: $(e.target).parents('div.layer-menu:first').attr("data-menuSourceId")},
+            {id: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId")}
+            );
         },
         _setSourcesCount: function() {
             var countObj = {};

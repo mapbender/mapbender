@@ -82,6 +82,10 @@
         <source>mb.core.admin.button.show_label</source>
         <target>Show label</target>
       </trans-unit>
+      <trans-unit id="de8b0c7081e586c1705003fe9fea9fc7" resname="mb.manager.admin.messagebox.only_region_elements">
+        <source>mb.manager.admin.messagebox.only_region_elements</source>
+        <target>Only for this region available elements are displayed.</target>
+      </trans-unit>
       <trans-unit id="49ead166f1617a1c075be9feb88ef264" resname="mb.core.element.be.button.show_label">
         <source>mb.core.element.be.button.show_label</source>
         <target>Show label</target>
@@ -105,6 +109,14 @@
       <trans-unit id="7d61128cc95ad7927ef6f836feb88197" resname="mb.manager.admin.filter.source">
         <source>mb.manager.admin.filter.source</source>
         <target>Filter source</target>
+      </trans-unit>
+      <trans-unit id="2baeb9ca4bc58fe89fa3284be858890d" resname="mb.manager.admin.source.valid">
+        <source>mb.manager.admin.source.valid</source>
+        <target>Source valid</target>
+      </trans-unit>
+      <trans-unit id="4dc2095208f7942a6870ad5153701bc9" resname="mb.manager.admin.source.notvalid">
+        <source>mb.manager.admin.source.notvalid</source>
+        <target>Source not valid.</target>
       </trans-unit>
       <trans-unit id="9d74c4df1bed8b409f8b88b02eebc115" resname="mb.manager.admin.source.no_source">
         <source>mb.manager.admin.source.no_source</source>
@@ -430,6 +442,30 @@
       <trans-unit id="8bf0ac9ea9e7843388def8c0416156c8" resname="mb.core.admin.about_dialog.show_label">
         <source>mb.core.admin.about_dialog.show_label</source>
         <target>Show button label</target>
+      </trans-unit>
+      <trans-unit id="fc73409cc94d703de1cf50d3801da59e" resname="mb.manager.template.region.tabs.label">
+        <source>mb.manager.template.region.tabs.label</source>
+        <target>Tabs</target>
+      </trans-unit>
+      <trans-unit id="0475b124fc415027ca6a776af40a4062" resname="mb.manager.template.region.accordion.label">
+        <source>mb.manager.template.region.accordion.label</source>
+        <target>Accordion</target>
+      </trans-unit>
+      <trans-unit id="cae4b6bbf2a2d496be9bf327a1955ab4" resname="mb.manager.admin.application.upload.button">
+        <source>mb.manager.admin.application.upload.button</source>
+        <target>Select file:</target>
+      </trans-unit>
+      <trans-unit id="fd5de98877bbdf4173112e0623ef1163" resname="mb.manager.admin.application.upload.label">
+        <source>mb.manager.admin.application.upload.label</source>
+        <target>No file selected</target>
+      </trans-unit>
+      <trans-unit id="dbd9bf9785be4d2e41fdea56c53c6219" resname="mb.manager.upload.label_delete">
+        <source>mb.manager.upload.label_delete</source>
+        <target>Screenshot removed</target>
+      </trans-unit>
+      <trans-unit id="8c8173e8ee2b47284d02906130e77bad" resname="mb.manager.admin.application.upload.tooltip">
+        <source>mb.manager.admin.application.upload.tooltip</source>
+        <target>Please click to upload a screenshot</target>
       </trans-unit>
     </body>
   </file>

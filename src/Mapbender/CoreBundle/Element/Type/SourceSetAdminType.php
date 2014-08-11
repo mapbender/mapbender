@@ -38,7 +38,10 @@ class SourceSetAdminType extends AbstractType
                 array(
                 'required' => true,
                 'property_path' => '[title]'))
-//            ->add('show', "checkbox", array('required' => false))
+            ->add('group', 'text',
+                array(
+                'required' => false,
+                'property_path' => '[group]'))
             ->add('sources', 'choice',
                 array(
                 'property_path' => '[sources]',

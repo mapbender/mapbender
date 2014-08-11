@@ -2,6 +2,14 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="it" datatype="plaintext" original="file.ext">
     <body>
+      <trans-unit id="a8f182e76ae5c79f43cc7a7ad3ca5cb8" resname="mb.wms.wmsloader.dialog.label.example">
+        <source>mb.wms.wmsloader.dialog.label.example</source>
+        <target>Esempio</target>
+      </trans-unit>
+      <trans-unit id="f57f5abcae9b2db5284f703f270bfbe4" resname="mb.wms.wmsloader.dialog.label.wmsurl">
+        <source>mb.wms.wmsloader.dialog.label.wmsurl</source>
+        <target>URL del Servizio</target>
+      </trans-unit>
       <trans-unit id="27c45a8d7df44b7de7adf685e204e80c" resname="mb.wms.wmsloader.error.url">
         <source>mb.wms.wmsloader.error.url</source>
         <target>WMSLoader: le WMS capabilities non possono essere caricate! L'URL delle capabilities non è valido.</target>
@@ -30,97 +38,9 @@
         <source>mb.wms.wmsloader.dialog.btn.load</source>
         <target>Carica</target>
       </trans-unit>
-      <trans-unit id="a8f182e76ae5c79f43cc7a7ad3ca5cb8" resname="mb.wms.wmsloader.dialog.label.example">
-        <source>mb.wms.wmsloader.dialog.label.example</source>
-        <target>Esempio</target>
-      </trans-unit>
-      <trans-unit id="f57f5abcae9b2db5284f703f270bfbe4" resname="mb.wms.wmsloader.dialog.label.wmsurl">
-        <source>mb.wms.wmsloader.dialog.label.wmsurl</source>
-        <target>URL del Servizio</target>
-      </trans-unit>
-      <trans-unit id="c6135b9db60a93807e1ce11155d4856a" resname="mb.wms.wmsloader.class.title">
-        <source>mb.wms.wmsloader.class.title</source>
-        <target>WMS loader</target>
-      </trans-unit>
-      <trans-unit id="10a9e19b4afe3b0e70d32737e00b9bb1" resname="mb.wms.wmsloader.class.description">
-        <source>mb.wms.wmsloader.class.description</source>
-        <target>Carica un WMS attraverso la getCapabilities-Request</target>
-      </trans-unit>
-      <trans-unit id="aa2a35216121de6e6cd0ac492ab73f84" resname="mb.wms.wmsloader.tag.wms">
-        <source>mb.wms.wmsloader.tag.wms</source>
-        <target>wms</target>
-      </trans-unit>
-      <trans-unit id="251b3fbc58d81e13d4f5e3d8d79868a1" resname="mb.wms.wmsloader.tag.loader">
-        <source>mb.wms.wmsloader.tag.loader</source>
-        <target>loader</target>
-      </trans-unit>
-      <trans-unit id="acde5eaaee2b87b40d3f2e1368938700" resname="mb.wms.wmsloader.repo.instancelayerform.label.layerstitle">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.layerstitle</source>
-        <target>Titolo del Layer</target>
-      </trans-unit>
-      <trans-unit id="9a9ca2c1f25fa76c9966680eed92e1cf" resname="mb.wms.wmsloader.repo.instancelayerform.label.minscale">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.minscale</source>
-        <target>Minscale</target>
-      </trans-unit>
-      <trans-unit id="d35660e5c612dffbd7cf2836e4e49321" resname="mb.wms.wmsloader.repo.instancelayerform.label.maxsclase">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.maxsclase</source>
-        <target>Maxscale</target>
-      </trans-unit>
-      <trans-unit id="2317f59b6bb880c4c03064f46d598226" resname="mb.wms.wmsloader.repo.instancelayerform.label.active">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.active</source>
-        <target>attivo</target>
-      </trans-unit>
-      <trans-unit id="8f48e1c6c2953629edc8fbbf69dc5191" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc</source>
-        <target>Permetti la Selezione nel TOC</target>
-      </trans-unit>
-      <trans-unit id="44498ccefb53822c054eb4b1814e8b03" resname="mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc</source>
-        <target>Selezionato nel TOC</target>
-      </trans-unit>
-      <trans-unit id="b3d597ef2d3847f8ceb714daec5ec3a8" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc</source>
-        <target>Permetti FeatureInfo nel TOC</target>
-      </trans-unit>
-      <trans-unit id="2a21eb0a2bd3134a5bdd8f1e1d88b3fc" resname="mb.wms.wmsloader.repo.instancelayerform.label.infotoc">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.infotoc</source>
-        <target>FeatureInfo nel TOC</target>
-      </trans-unit>
-      <trans-unit id="0be27caa38f5c86e7eb93800e9c8bee7" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc</source>
-        <target>Permetti Alterna nel TOC</target>
-      </trans-unit>
-      <trans-unit id="bf52e15cb3ed6f91042fcce68661d575" resname="mb.wms.wmsloader.repo.instancelayerform.label.toggletoc">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.toggletoc</source>
-        <target>Alterna nel TOC</target>
-      </trans-unit>
-      <trans-unit id="30c9893ce7fe6e42be698ec20bd90728" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc</source>
-        <target>Permetti Riordina nel TOC</target>
-      </trans-unit>
-      <trans-unit id="ae591fa9f76a9aeb07c6fc1f19e9737a" resname="mb.wms.wmsloader.repo.instancelayerform.label.moreinfo">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.moreinfo</source>
-        <target>Più Informazioni</target>
-      </trans-unit>
-      <trans-unit id="be533b34066247ffa2d204541497b135" resname="mb.wms.wmsloader.repo.instancelayerform.label.id">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.id</source>
-        <target>ID</target>
-      </trans-unit>
-      <trans-unit id="7cf9fa73dfd8554ef01eca5993d37de8" resname="mb.wms.wmsloader.repo.instancelayerform.label.layersname">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.layersname</source>
-        <target>Nome del Layer</target>
-      </trans-unit>
-      <trans-unit id="76215f732815d520a74a29ebd44c9f5d" resname="mb.wms.wmsloader.repo.instancelayerform.label.style">
-        <source>mb.wms.wmsloader.repo.instancelayerform.label.style</source>
-        <target>Stile</target>
-      </trans-unit>
-      <trans-unit id="0d469cad4255611a752106e9f411c964" resname="mb.wms.wmsloader.repo.preview.title.servicerepository">
-        <source>mb.wms.wmsloader.repo.preview.title.servicerepository</source>
-        <target>Repository di Servizio</target>
-      </trans-unit>
-      <trans-unit id="ea99b34c95876bc905dc36b73f36e305" resname="mb.wms.wmsloader.repo.preview.label.load">
-        <source>mb.wms.wmsloader.repo.preview.label.load</source>
-        <target>Carica</target>
+      <trans-unit id="14e320f4ad6e5b780163ba845dbf3d4e" resname="mb.wms.wmsloader.repo.macros.label.formats">
+        <source>mb.wms.wmsloader.repo.macros.label.formats</source>
+        <target>Formati</target>
       </trans-unit>
       <trans-unit id="70deb35a985577de313a08f3540a2207" resname="mb.wms.wmsloader.repo.view.title.wms">
         <source>mb.wms.wmsloader.repo.view.title.wms</source>
@@ -234,22 +154,6 @@
         <source>mb.wms.wmsloader.repo.view.message.cautionscalehint</source>
         <target>Attenzione: I calcoli per la Scala sono soggetti a una limitata risoluzione ScaleHint in WMS 1.1.1!</target>
       </trans-unit>
-      <trans-unit id="27bde47d9d0751a8a54d0ed9f2d851e8" resname="mb.wms.wmsloader.repo.instancelayer.title.servicerepository">
-        <source>mb.wms.wmsloader.repo.instancelayer.title.servicerepository</source>
-        <target>Repository del Servizio</target>
-      </trans-unit>
-      <trans-unit id="0b684c0973edd616c55a07df3a3b5346" resname="mb.wms.wmsloader.repo.instancelayer.label.wmsinstancelayers">
-        <source>mb.wms.wmsloader.repo.instancelayer.label.wmsinstancelayers</source>
-        <target>WMS Instance Layers</target>
-      </trans-unit>
-      <trans-unit id="44d89f42c777927c76abd7fddaabea40" resname="mb.wms.wmsloader.repo.instancelayer.btn.save">
-        <source>mb.wms.wmsloader.repo.instancelayer.btn.save</source>
-        <target>Salva</target>
-      </trans-unit>
-      <trans-unit id="14e320f4ad6e5b780163ba845dbf3d4e" resname="mb.wms.wmsloader.repo.macros.label.formats">
-        <source>mb.wms.wmsloader.repo.macros.label.formats</source>
-        <target>Formati</target>
-      </trans-unit>
       <trans-unit id="39b515eba273d1d0c178c167063bbd58" resname="mb.wms.wmsloader.repo.instance.title.wmsinstance">
         <source>mb.wms.wmsloader.repo.instance.title.wmsinstance</source>
         <target>istanza WMS</target>
@@ -269,6 +173,10 @@
       <trans-unit id="7f3d22d115d31bfcb6843d471a221a9e" resname="mb.wms.wmsloader.repo.instance.label.visible">
         <source>mb.wms.wmsloader.repo.instance.label.visible</source>
         <target>Visibile</target>
+      </trans-unit>
+      <trans-unit id="12c86823218d7a3fa8652b494a514cac" resname="mb.wms.wmsloader.repo.instance.label.basesource">
+        <source>mb.wms.wmsloader.repo.instance.label.basesource</source>
+        <target>BaseSource</target>
       </trans-unit>
       <trans-unit id="80da76418871853e63f9b3874790595e" resname="mb.wms.wmsloader.repo.instance.label.proxy">
         <source>mb.wms.wmsloader.repo.instance.label.proxy</source>
@@ -329,6 +237,14 @@
       <trans-unit id="7ae46884e28f8810086262bdb6b0a47c" resname="mb.wms.wmsloader.repo.instance.label.cancel2">
         <source>mb.wms.wmsloader.repo.instance.label.cancel2</source>
         <target>Cancella</target>
+      </trans-unit>
+      <trans-unit id="0d469cad4255611a752106e9f411c964" resname="mb.wms.wmsloader.repo.preview.title.servicerepository">
+        <source>mb.wms.wmsloader.repo.preview.title.servicerepository</source>
+        <target>Repository di Servizio</target>
+      </trans-unit>
+      <trans-unit id="ea99b34c95876bc905dc36b73f36e305" resname="mb.wms.wmsloader.repo.preview.label.load">
+        <source>mb.wms.wmsloader.repo.preview.label.load</source>
+        <target>Carica</target>
       </trans-unit>
       <trans-unit id="daa4bbeacc74fb05ba3963f24a4e1789" resname="mb.wms.wmsloader.repo.layer.label.name">
         <source>mb.wms.wmsloader.repo.layer.label.name</source>
@@ -458,9 +374,89 @@
         <source>mb.wms.wmsloader.repo.layer.label.featurelisturl</source>
         <target>URL della Featurelist</target>
       </trans-unit>
+      <trans-unit id="acde5eaaee2b87b40d3f2e1368938700" resname="mb.wms.wmsloader.repo.instancelayerform.label.layerstitle">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.layerstitle</source>
+        <target>Titolo del Layer</target>
+      </trans-unit>
+      <trans-unit id="9a9ca2c1f25fa76c9966680eed92e1cf" resname="mb.wms.wmsloader.repo.instancelayerform.label.minscale">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.minscale</source>
+        <target>Minscale</target>
+      </trans-unit>
+      <trans-unit id="d35660e5c612dffbd7cf2836e4e49321" resname="mb.wms.wmsloader.repo.instancelayerform.label.maxsclase">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.maxsclase</source>
+        <target>Maxscale</target>
+      </trans-unit>
+      <trans-unit id="2317f59b6bb880c4c03064f46d598226" resname="mb.wms.wmsloader.repo.instancelayerform.label.active">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.active</source>
+        <target>attivo</target>
+      </trans-unit>
+      <trans-unit id="8f48e1c6c2953629edc8fbbf69dc5191" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowselecttoc</source>
+        <target>Permetti la Selezione nel TOC</target>
+      </trans-unit>
+      <trans-unit id="44498ccefb53822c054eb4b1814e8b03" resname="mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.selectedtoc</source>
+        <target>Selezionato nel TOC</target>
+      </trans-unit>
+      <trans-unit id="b3d597ef2d3847f8ceb714daec5ec3a8" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowinfotoc</source>
+        <target>Permetti FeatureInfo nel TOC</target>
+      </trans-unit>
+      <trans-unit id="2a21eb0a2bd3134a5bdd8f1e1d88b3fc" resname="mb.wms.wmsloader.repo.instancelayerform.label.infotoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.infotoc</source>
+        <target>FeatureInfo nel TOC</target>
+      </trans-unit>
+      <trans-unit id="0be27caa38f5c86e7eb93800e9c8bee7" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowtoggletoc</source>
+        <target>Permetti Alterna nel TOC</target>
+      </trans-unit>
+      <trans-unit id="bf52e15cb3ed6f91042fcce68661d575" resname="mb.wms.wmsloader.repo.instancelayerform.label.toggletoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.toggletoc</source>
+        <target>Alterna nel TOC</target>
+      </trans-unit>
+      <trans-unit id="30c9893ce7fe6e42be698ec20bd90728" resname="mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.allowreordertoc</source>
+        <target>Permetti Riordina nel TOC</target>
+      </trans-unit>
+      <trans-unit id="ae591fa9f76a9aeb07c6fc1f19e9737a" resname="mb.wms.wmsloader.repo.instancelayerform.label.moreinfo">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.moreinfo</source>
+        <target>Più Informazioni</target>
+      </trans-unit>
+      <trans-unit id="be533b34066247ffa2d204541497b135" resname="mb.wms.wmsloader.repo.instancelayerform.label.id">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="7cf9fa73dfd8554ef01eca5993d37de8" resname="mb.wms.wmsloader.repo.instancelayerform.label.layersname">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.layersname</source>
+        <target>Nome del Layer</target>
+      </trans-unit>
+      <trans-unit id="76215f732815d520a74a29ebd44c9f5d" resname="mb.wms.wmsloader.repo.instancelayerform.label.style">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.style</source>
+        <target>Stile</target>
+      </trans-unit>
+      <trans-unit id="e4b8fffc155b1f7be8e6922e6b0d9d03" resname="mb.wms.wmsloader.repo.new.label.addservice">
+        <source>mb.wms.wmsloader.repo.new.label.addservice</source>
+        <target>Aggiungi Servizio</target>
+      </trans-unit>
+      <trans-unit id="27bde47d9d0751a8a54d0ed9f2d851e8" resname="mb.wms.wmsloader.repo.instancelayer.title.servicerepository">
+        <source>mb.wms.wmsloader.repo.instancelayer.title.servicerepository</source>
+        <target>Repository del Servizio</target>
+      </trans-unit>
+      <trans-unit id="0b684c0973edd616c55a07df3a3b5346" resname="mb.wms.wmsloader.repo.instancelayer.label.wmsinstancelayers">
+        <source>mb.wms.wmsloader.repo.instancelayer.label.wmsinstancelayers</source>
+        <target>WMS Instance Layers</target>
+      </trans-unit>
+      <trans-unit id="44d89f42c777927c76abd7fddaabea40" resname="mb.wms.wmsloader.repo.instancelayer.btn.save">
+        <source>mb.wms.wmsloader.repo.instancelayer.btn.save</source>
+        <target>Salva</target>
+      </trans-unit>
       <trans-unit id="a9e27ac67cab3186a9951d71181ff878" resname="mb.wms.wmsloader.repo.form.label.ogcwms">
         <source>mb.wms.wmsloader.repo.form.label.ogcwms</source>
         <target>OGC WMS</target>
+      </trans-unit>
+      <trans-unit id="a4cef6a675aeeecd2599ae2801c72cc0" resname="mb.wms.wmsloader.repo.form.label.onlyvalid">
+        <source>mb.wms.wmsloader.repo.form.label.onlyvalid</source>
+        <target>only valid</target>
       </trans-unit>
       <trans-unit id="62be339a16eb03f936fbf6f412dc717a" resname="mb.wms.wmsloader.repo.form.label.serviceurl">
         <source>mb.wms.wmsloader.repo.form.label.serviceurl</source>
@@ -482,21 +478,41 @@
         <source>mb.wms.wmsloader.repo.form.label.cancel</source>
         <target>Cancella</target>
       </trans-unit>
-      <trans-unit id="e4b8fffc155b1f7be8e6922e6b0d9d03" resname="mb.wms.wmsloader.repo.new.label.addservice">
-        <source>mb.wms.wmsloader.repo.new.label.addservice</source>
-        <target>Aggiungi Servizio</target>
+      <trans-unit id="c6135b9db60a93807e1ce11155d4856a" resname="mb.wms.wmsloader.class.title">
+        <source>mb.wms.wmsloader.class.title</source>
+        <target>WMS loader</target>
       </trans-unit>
-      <trans-unit id="a0b566abaccf9a7b4c3e8d7a45660c4f" resname="mb.wms.source.image_error.datails">
-        <source>mb.wms.source.image_error.datails</source>
-        <target>La mappa non può essere visualizzata.</target>
+      <trans-unit id="10a9e19b4afe3b0e70d32737e00b9bb1" resname="mb.wms.wmsloader.class.description">
+        <source>mb.wms.wmsloader.class.description</source>
+        <target>Carica un WMS attraverso la getCapabilities-Request</target>
       </trans-unit>
-      <trans-unit id="04541f44b11f3f7128ed8f4fac7874a7" resname="mb.wms.source.image_error.exception">
-        <source>mb.wms.source.image_error.exception</source>
-        <target>Eccezione: %exception%</target>
+      <trans-unit id="aa2a35216121de6e6cd0ac492ab73f84" resname="mb.wms.wmsloader.tag.wms">
+        <source>mb.wms.wmsloader.tag.wms</source>
+        <target>wms</target>
       </trans-unit>
-      <trans-unit id="e162f0ce53da6cde57332698cb2e8f4d" resname="mb.wms.source.image_error.statuscode">
-        <source>mb.wms.source.image_error.statuscode</source>
-        <target>HTTP status code</target>
+      <trans-unit id="251b3fbc58d81e13d4f5e3d8d79868a1" resname="mb.wms.wmsloader.tag.loader">
+        <source>mb.wms.wmsloader.tag.loader</source>
+        <target>loader</target>
+      </trans-unit>
+      <trans-unit id="96e9b7c327851c6e892a4d0aed27302c" resname="mb.wms.repository.parser.couldnotparse">
+        <source>mb.wms.repository.parser.couldnotparse</source>
+        <target>Could not parse CapabilitiesDocument</target>
+      </trans-unit>
+      <trans-unit id="c76ec427cfde142ec2a3f5d87c5f9454" resname="mb.wms.repository.parser.not_supported_document">
+        <source>mb.wms.repository.parser.not_supported_document</source>
+        <target>Not supported CapabilitiesDocument</target>
+      </trans-unit>
+      <trans-unit id="7ea651c787edebfab98ab66d859648b5" resname="mb.wms.repository.parser.not_supported_version">
+        <source>mb.wms.repository.parser.not_supported_version</source>
+        <target>The WMS version is not supported</target>
+      </trans-unit>
+      <trans-unit id="f098d803a9bffa45349533789e8f014c" resname="mb.wms.repository.parser.not_valid_dtd">
+        <source>mb.wms.repository.parser.not_valid_dtd</source>
+        <target>A WMS document is not valid (DTD).</target>
+      </trans-unit>
+      <trans-unit id="e2fc7117cebcbc8e35869e22e81cd7aa" resname="mb.wms.repository.parser.not_valid_xsd">
+        <source>mb.wms.repository.parser.not_valid_xsd</source>
+        <target>A WMS document is not valid (XSD).</target>
       </trans-unit>
       <trans-unit id="a3c1e614645662978d87b127212a82e1" resname="mb.wms.wmsloader.admin.label.autoopen">
         <source>mb.wms.wmsloader.admin.label.autoopen</source>
@@ -509,6 +525,18 @@
       <trans-unit id="83f8e03b200eabe5ef5297192f50f595" resname="mb.wms.wmsloader.admin.label.declarative">
         <source>mb.wms.wmsloader.admin.label.declarative</source>
         <target>Uso dichiarativo</target>
+      </trans-unit>
+      <trans-unit id="a0b566abaccf9a7b4c3e8d7a45660c4f" resname="mb.wms.source.image_error.datails">
+        <source>mb.wms.source.image_error.datails</source>
+        <target>La mappa non può essere visualizzata.</target>
+      </trans-unit>
+      <trans-unit id="04541f44b11f3f7128ed8f4fac7874a7" resname="mb.wms.source.image_error.exception">
+        <source>mb.wms.source.image_error.exception</source>
+        <target>Eccezione: %exception%</target>
+      </trans-unit>
+      <trans-unit id="e162f0ce53da6cde57332698cb2e8f4d" resname="mb.wms.source.image_error.statuscode">
+        <source>mb.wms.source.image_error.statuscode</source>
+        <target>HTTP status code</target>
       </trans-unit>
       <trans-unit id="b729aa4bd78553ddc93e54a88f74f565" resname="mb.wmc.wmsloader.class.title">
         <source>mb.wmc.wmsloader.class.title</source>
@@ -525,6 +553,122 @@
       <trans-unit id="508990e1bc263600c38cac2a878e5403" resname="mb.wmc.wmsloader.tag.loader">
         <source>mb.wmc.wmsloader.tag.loader</source>
         <target>loader</target>
+      </trans-unit>
+      <trans-unit id="3fc45286dbed3669423eea7520e5278f" resname="mb.wms.metadata.section.common">
+        <source>mb.wms.metadata.section.common</source>
+        <target>Common</target>
+      </trans-unit>
+      <trans-unit id="c92e0e2df5db11fd510a0cd23bd2a1c5" resname="mb.wms.metadata.section.common.title">
+        <source>mb.wms.metadata.section.common.title</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="7f29afe01b89b0f9806207ff2e7e6db4" resname="mb.wms.metadata.section.common.name">
+        <source>mb.wms.metadata.section.common.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="d55540e96386eeff3e2ce0071142ad56" resname="mb.wms.metadata.section.common.version">
+        <source>mb.wms.metadata.section.common.version</source>
+        <target>Version</target>
+      </trans-unit>
+      <trans-unit id="fbab2e3980dd2f1b8cf6ff8fbe06f380" resname="mb.wms.metadata.section.common.originUrl">
+        <source>mb.wms.metadata.section.common.originUrl</source>
+        <target>OriginUrl</target>
+      </trans-unit>
+      <trans-unit id="b41a13ce28a88496252ebe893e380f3b" resname="mb.wms.metadata.section.common.description">
+        <source>mb.wms.metadata.section.common.description</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="5c8371b499bb3125d15ea1842edcc671" resname="mb.wms.metadata.section.common.onlineResource">
+        <source>mb.wms.metadata.section.common.onlineResource</source>
+        <target>OnlineResource</target>
+      </trans-unit>
+      <trans-unit id="2b53b27cfc3356b9ce7f957598da62e2" resname="mb.wms.metadata.section.common.exceptionFormats">
+        <source>mb.wms.metadata.section.common.exceptionFormats</source>
+        <target>ExceptionFormats</target>
+      </trans-unit>
+      <trans-unit id="9f460e7ad44bc13df4bbbd75a9c6fe52" resname="mb.wms.metadata.section.useconditions">
+        <source>mb.wms.metadata.section.useconditions</source>
+        <target>Useconditions</target>
+      </trans-unit>
+      <trans-unit id="1af618335ebd3e9ccd2700acc8a595de" resname="mb.wms.metadata.section.useconditions.fees">
+        <source>mb.wms.metadata.section.useconditions.fees</source>
+        <target>Fees</target>
+      </trans-unit>
+      <trans-unit id="d94d43c25c59a77eb1a5aa77f790ba4e" resname="mb.wms.metadata.section.useconditions.accessconstraints">
+        <source>mb.wms.metadata.section.useconditions.accessconstraints</source>
+        <target>Accessconstraints</target>
+      </trans-unit>
+      <trans-unit id="7330961cd1002614243fe71e8a4721e7" resname="mb.wms.metadata.section.contact">
+        <source>mb.wms.metadata.section.contact</source>
+        <target>Contact</target>
+      </trans-unit>
+      <trans-unit id="1423bd6890ce94762fa8857ec0bf22c2" resname="mb.wms.metadata.section.contact.person">
+        <source>mb.wms.metadata.section.contact.person</source>
+        <target>Person</target>
+      </trans-unit>
+      <trans-unit id="cb79300f2e60f094edfef7fd4e0b83d1" resname="mb.wms.metadata.section.contact.position">
+        <source>mb.wms.metadata.section.contact.position</source>
+        <target>position</target>
+      </trans-unit>
+      <trans-unit id="77562ca4b9e57650a2210f7e4b82c8a2" resname="mb.wms.metadata.section.contact.organization">
+        <source>mb.wms.metadata.section.contact.organization</source>
+        <target>organization</target>
+      </trans-unit>
+      <trans-unit id="8956642ac6f7607fa976acf25e4a169e" resname="mb.wms.metadata.section.contact.voiceTelephone">
+        <source>mb.wms.metadata.section.contact.voiceTelephone</source>
+        <target>voiceTelephone</target>
+      </trans-unit>
+      <trans-unit id="f080825f7b3dc90404fc451a1be9c7a7" resname="mb.wms.metadata.section.contact.facsimileTelephone">
+        <source>mb.wms.metadata.section.contact.facsimileTelephone</source>
+        <target>facsimileTelephone</target>
+      </trans-unit>
+      <trans-unit id="b3993c730cdb23a6f00a03e95bf488d0" resname="mb.wms.metadata.section.contact.electronicMailAddress">
+        <source>mb.wms.metadata.section.contact.electronicMailAddress</source>
+        <target>electronicMailAddress</target>
+      </trans-unit>
+      <trans-unit id="07136ca76c45547a5c4d484686606b7e" resname="mb.wms.metadata.section.contact.address">
+        <source>mb.wms.metadata.section.contact.address</source>
+        <target>address</target>
+      </trans-unit>
+      <trans-unit id="f5a3514ee73eb0df90d07a3ba3e474f2" resname="mb.wms.metadata.section.contact.addressType">
+        <source>mb.wms.metadata.section.contact.addressType</source>
+        <target>addressType</target>
+      </trans-unit>
+      <trans-unit id="225f44d5f01e8597eae5e97d61f34269" resname="mb.wms.metadata.section.contact.addressCity">
+        <source>mb.wms.metadata.section.contact.addressCity</source>
+        <target>addressCity</target>
+      </trans-unit>
+      <trans-unit id="66035d14243b81d859906433a2af0f80" resname="mb.wms.metadata.section.contact.addressStateOrProvince">
+        <source>mb.wms.metadata.section.contact.addressStateOrProvince</source>
+        <target>addressStateOrProvince</target>
+      </trans-unit>
+      <trans-unit id="20299df7798ce2dfcfdb5a7b3a8ca476" resname="mb.wms.metadata.section.contact.addressPostCode">
+        <source>mb.wms.metadata.section.contact.addressPostCode</source>
+        <target>addressPostCode</target>
+      </trans-unit>
+      <trans-unit id="fe90bfd92d3c625a58393f077c2347e3" resname="mb.wms.metadata.section.contact.addressCountry">
+        <source>mb.wms.metadata.section.contact.addressCountry</source>
+        <target>addressCountry</target>
+      </trans-unit>
+      <trans-unit id="ae05bada29989d43f98a4c68e011e836" resname="mb.wms.metadata.section.items">
+        <source>mb.wms.metadata.section.items</source>
+        <target>Layer</target>
+      </trans-unit>
+      <trans-unit id="c47ba626b11c59d5aa93f5948b6aa5d0" resname="mb.wms.metadata.section.items.name">
+        <source>mb.wms.metadata.section.items.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="04c6ee3360025018f9116ed723ad90fc" resname="mb.wms.metadata.section.items.title">
+        <source>mb.wms.metadata.section.items.title</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="5859224a9e886b72321a69fd640009d9" resname="mb.wms.metadata.section.items.srs">
+        <source>mb.wms.metadata.section.items.srs</source>
+        <target>SRS</target>
+      </trans-unit>
+      <trans-unit id="0e67dce39ced278de46bfc872fe69bb7" resname="mb.wms.metadata.section.items.bbox">
+        <source>mb.wms.metadata.section.items.bbox</source>
+        <target>BoundingBox</target>
       </trans-unit>
     </body>
   </file>

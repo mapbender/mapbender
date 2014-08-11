@@ -20,6 +20,7 @@ use Mapbender\CoreBundle\Component\Utils;
  */
 class WmsInstanceLayer implements InstanceLayerIn
 {
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -481,8 +482,10 @@ class WmsInstanceLayer implements InstanceLayerIn
      */
     public function setPriority($priority)
     {
-        $this->priority = $priority;
-
+        if ($priority !== null)
+            $this->priority = intval($priority);
+        else
+            $this->priority = $priority;
         return $this;
     }
 
@@ -557,6 +560,7 @@ class WmsInstanceLayer implements InstanceLayerIn
     {
         $configuration = array(
             "id" => strval($this->id),
+            "priority" => $this->priority,
             "name" => $this->wmslayersource->getName() !== null ? $this->wmslayersource->getName() : "",
             "title" => $this->title,
             "queryable" => $this->getInfo(),
@@ -591,9 +595,7 @@ class WmsInstanceLayer implements InstanceLayerIn
                     "width" => intval($legendurl->getWidth()),
                     "height" => intval($legendurl->getHeight()));
             }
-        } else if ($this->wmsinstance->getSource()->getGetLegendGraphic() !== null
-            && $this->wmslayersource->getName() !== null
-            && $this->wmslayersource->getName() !== "") {
+        } else if ($this->wmsinstance->getSource()->getGetLegendGraphic() !== null && $this->wmslayersource->getName() !== null && $this->wmslayersource->getName() !== "") {
             $legend = $this->wmsinstance->getSource()->getGetLegendGraphic();
             $url = $legend->getHttpGet();
             $formats = $legend->getFormats();

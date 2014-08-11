@@ -71,10 +71,6 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
             {
                 $application->setExtraAssets($definition['extra_assets']);
             }
-            $owner = $this->container->get('doctrine')
-                    ->getRepository('FOMUserBundle:User')
-                    ->find(1);
-            $application->setOwner($owner);
 
             $application->yaml_roles = array();
             if(array_key_exists('roles', $definition))

@@ -163,4 +163,10 @@ class RegionProperties
         return $this;
     }
     
+    public function copy(){
+        $rp = new RegionProperties();
+        $rp->name = $this->name;
+        $rp->properties = $this->properties;
+        return $rp;
+    }
 }

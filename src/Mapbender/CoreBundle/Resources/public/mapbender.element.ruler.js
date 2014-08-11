@@ -54,7 +54,7 @@
                 },
                 // This, too, is part of the monkey patch - unregistered event
                 // types wont fire
-                EVENT_TYPES: OpenLayers.Control.Measure.prototype.EVENT_TYPES
+                EVENT_TYPES: OpenLayers.Events.prototype.BROWSER_EVENTS
                         .concat(['measuremodify']),
                 handlerOptions: {
                     layerOptions: {

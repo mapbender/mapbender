@@ -4,6 +4,7 @@ namespace Mapbender\WmcBundle\Component;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\Size;
 use Mapbender\CoreBundle\Component\StateHandler;
+use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\MinMax;
@@ -18,7 +19,7 @@ use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 
 /**
- * Class that Parses WMC 1.1.0 WMC Document 
+ * Class that Parses WMC 1.1.0 WMC Document
  * @package Mapbender
  * @author Paul Schmidt
  */
@@ -161,7 +162,7 @@ class WmcParser110 extends WmcParser
 
     /**
      * Parses a layer form a WMC document LayerList
-     * 
+     *
      * @param \DOMElement $layerElm layer element
      * (xpath: '/ViewContext/LayerList/Layer')
      * @param string $srs wmc srs (srs from WMC document xpath:
@@ -205,7 +206,7 @@ class WmcParser110 extends WmcParser
         foreach ($styleList as $styleElm) {
             $current = (bool) $this->getValue("./@current", $styleElm);
             if ($current) {
-                
+
             }
             $style = new Style();
             $style->setName($this->getValue("./cntxt:Name/text()", $styleElm));
@@ -363,8 +364,8 @@ class WmcParser110 extends WmcParser
     }
 
     /**
-     * Returns the BoundingBox 
-     * 
+     * Returns the BoundingBox
+     *
      * @param type $xpathStrArr
      * @param type $contextElm
      * @param type $defSrs
@@ -395,7 +396,7 @@ class WmcParser110 extends WmcParser
 
     /**
      * Returns the first found value with xpath from $xpathStrArr.
-     * 
+     *
      * @param type $xpathStrArr array with xpathes
      * @param type $contextElm context element
      * @param type $defaultValue default value
@@ -421,10 +422,10 @@ class WmcParser110 extends WmcParser
 
     /**
      * Returns the first found DOMNodeList with xpath from $xpathStrArr.
-     * 
+     *
      * @param type $xpathStrArr array with xpathes
      * @param type $contextElm context element
-     * @return \DOMNodeList 
+     * @return \DOMNodeList
      */
     private function findFirstList($xpathStrArr, $contextElm)
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -74,6 +75,7 @@ class Map extends Element
         return array(
             'js' => array(
                 'mapquery/lib/openlayers/OpenLayers.js',
+                /* 'mapquery/lib/openlayers/lib/deprecated.js', */
                 'mapquery/lib/jquery/jquery.tmpl.js',
                 'mapquery/src/jquery.mapquery.core.js',
                 'proj4js/proj4js-compressed.js',
@@ -123,8 +125,7 @@ class Map extends Element
         if (isset($configuration["otherSrs"])) {
             if (is_array($configuration["otherSrs"])) {
                 $otherSrs = $configuration["otherSrs"];
-            } else if (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"]))
-                > 0) {
+            } else if (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
                 $otherSrs = preg_split("/\s?,\s?/", $configuration["otherSrs"]);
             }
             foreach ($otherSrs as $srs) {
@@ -132,8 +133,7 @@ class Map extends Element
                     $srsHlp = preg_split("/\s?\|{1}\s?/", $srs);
                     $allsrs[] = array(
                         "name" => trim($srsHlp[0]),
-                        "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1])
-                                : '');
+                        "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
                 } else {
                     $allsrs[] = array(
                         "name" => $srs,
@@ -147,7 +147,7 @@ class Map extends Element
         if ($srs_req) {
             $exists = false;
             foreach ($allsrs as $srsItem) {
-                if(strtoupper($srsItem['name']) === strtoupper($srs_req)){
+                if (strtoupper($srsItem['name']) === strtoupper($srs_req)) {
                     $exists = true;
                     break;
                 }
@@ -156,8 +156,7 @@ class Map extends Element
                 throw new \RuntimeException('The srs: "' . $srs_req
                 . '" does not supported.');
             }
-            $configuration = array_merge($configuration,
-                array('targetsrs' => $srs_req));
+            $configuration = array_merge($configuration, array('targetsrs' => $srs_req));
         }
 
         $pois = $this->container->get('request')->get('poi');
@@ -207,8 +206,7 @@ class Map extends Element
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:map.html.twig',
-                    array(
+                ->render('MapbenderCoreBundle:Element:map.html.twig', array(
                     'id' => $this->getId()));
     }
 
@@ -230,23 +228,22 @@ class Map extends Element
 
     public function httpAction($action)
     {
-        $session = $this->container->get("session");
-
-        if ($session->get("proxyAllowed", false) !== true) {
-            throw new AccessDeniedHttpException('You are not allowed to use this proxy without a session.');
-        }
+        $response = new Response();
         switch ($action) {
             case 'loadsrs':
-                $srsList = $this->container->get('request')->get("srs", null);
-                return $this->loadSrsDefinitions($srsList);
+                $data = $this->loadSrsDefinitions();
+                $response->setContent(json_encode($data));
+                $response->headers->set('Content-Type', 'application/json');
                 break;
             default:
                 throw new NotFoundHttpException('No such action');
         }
+        return $response;
     }
-
-    protected function loadSrsDefinitions($srsList)
+    
+    protected function loadSrsDefinitions()
     {
+        $srsList = $this->container->get('request')->get("srs", null);
         $srses = preg_split("/\s?,\s?/", $srsList);
         $allsrs = array();
         foreach ($srses as $srs) {
@@ -263,14 +260,9 @@ class Map extends Element
         }
         $result = $this->getSrsDefinitions($allsrs);
         if (count($result) > 0) {
-            return new Response(json_encode(
-                    array("data" => $result)), 200,
-                array('Content-Type' => 'application/json'));
+            return array("data" => $result);
         } else {
-            return new Response(json_encode(
-                    array("error" => $this->trans("mb.core.map.srsnotfound",
-                            array('%srslist%', $srsList)))), 200,
-                array('Content-Type' => 'application/json'));
+            return array("error" => $this->trans("mb.core.map.srsnotfound", array('%srslist%', $srsList)));
         }
     }
 
@@ -282,7 +274,7 @@ class Map extends Element
             foreach ($srsNames as $srsName) {
                 $names[] = $srsName['name'];
             }
-            $em = $this->container->get("doctrine")->getEntityManager();
+            $em = $this->container->get("doctrine")->getManager();
             $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
                     . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
                 ->setParameter('name', $names);
@@ -292,8 +284,7 @@ class Map extends Element
                     if ($srsName['name'] === $srs->getName()) {
                         $result[] = array(
                             "name" => $srs->getName(),
-                            "title" => strlen($srsName["title"]) > 0 ? $srsName["title"]
-                                    : $srs->getTitle(),
+                            "title" => strlen($srsName["title"]) > 0 ? $srsName["title"] : $srs->getTitle(),
                             "definition" => $srs->getDefinition());
                         break;
                     }

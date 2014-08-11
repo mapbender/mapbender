@@ -90,6 +90,7 @@ class ApplicationYAMLMapper
         // First, create an application entity
         $application = new ApplicationEntity();
         $application
+                ->setScreenshot(key_exists("screenshot", $definition) ? $definition['screenshot'] : null)
                 ->setSlug($slug)
                 ->setTitle($definition['title'])
                 ->setDescription($definition['description'])
@@ -150,11 +151,6 @@ class ApplicationYAMLMapper
                 }
             }
         }
-
-        $owner = $this->container->get('doctrine')
-                ->getRepository('FOMUserBundle:User')
-                ->find(1);
-        $application->setOwner($owner);
 
         $application->yaml_roles = array();
         if(array_key_exists('roles', $definition)) {

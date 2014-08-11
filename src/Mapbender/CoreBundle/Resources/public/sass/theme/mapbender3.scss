@@ -12,6 +12,7 @@
 @import "modules/seperator";
 @import "modules/tabcontainer";
 @import "modules/checkbox";
+@import "modules/radiobutton";
 @import "modules/dropdown";
 
 /* ------------------------------------------------------------- MISC */
@@ -114,4 +115,31 @@
     overflow: auto;
   }
   .sidePaneTabItem{@extend .iconClose;}
+}
+
+.metadataContainer{
+  $labeText:85px;
+
+  .list, li{clear:both;}
+  .list{
+    border:dashed 1px darken(#fff, 20%);
+    margin-bottom:$space/2;
+    li{margin-left:$space;}
+
+    // no margin for labeltext lists ...
+    ul.left li{
+      margin-left:0px;
+      // ... and metatext below lists
+      .metaText{margin-left:0px;}
+    }
+  }
+  .labelText{
+    width:$labeText;
+    margin-right:$space/2;
+    display: inline-block;
+  }
+  .metaText{
+    display: inline-block;
+    word-wrap: break-word;
+  }
 }
