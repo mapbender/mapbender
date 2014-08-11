@@ -67,7 +67,8 @@ Mapbender.Model = {
             allOverlays: true,
             theme: null,
             transitionEffect: null,
-            layers: [{type: "wms", name: "FAKE", isBaseLayer: true, url: "http://localhost", visibility: false}]
+            layers: [{type: "wms", name: "FAKE", isBaseLayer: true, url: "http://localhost", visibility: false}],
+            fallThrough: true
         };
 
         if (this.mbMap.options.scales) {
