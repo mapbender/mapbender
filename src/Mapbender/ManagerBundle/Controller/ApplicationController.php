@@ -112,13 +112,13 @@ class ApplicationController extends Controller
             if ($expHandler->bindForm()) {
                 $job = $expHandler->getJob();
                 $export = $expHandler->format($expHandler->makeJob());
-                if ($job->getFormat() === ExchangeJob::$FORMAT_JSON) {
+                if ($job->getFormat() === ExchangeJob::FORMAT_JSON) {
                     return new Response($export, 200,
                         array(
                         'Content-Type' => 'application/json',
                         'Content-disposition' => 'attachment; filename=export.json'
                     ));
-                } else if ($job->getFormat() === ExchangeJob::$FORMAT_YAML) {
+                } else if ($job->getFormat() === ExchangeJob::FORMAT_YAML) {
                     return new Response($export, 200,
                         array(
                         'Content-Type' => 'text/plain',

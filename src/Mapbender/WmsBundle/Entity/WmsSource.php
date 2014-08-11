@@ -233,6 +233,7 @@ class WmsSource extends Source implements ContainsKeyword
     public function setOriginUrl($originUrl)
     {
         $this->originUrl = $originUrl;
+        $this->setIdentifier($originUrl);
         return $this;
     }
 
@@ -887,6 +888,23 @@ class WmsSource extends Source implements ContainsKeyword
     public function removeLayer(WmsLayerSource $layers)
     {
         $this->layers->removeElement($layers);
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier ? : $this->originUrl;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+        return $this;
     }
 
     public function __toString()

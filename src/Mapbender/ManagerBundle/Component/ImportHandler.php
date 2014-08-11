@@ -19,11 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ImportHandler extends ExchangeHandler
 {
-    public static $MAP_SOURCE_ITEM = 'sourceItem';
-    
-    
+
     protected $denormalizer;
-    
+
     /**
      * @inheritdoc
      */
@@ -32,7 +30,7 @@ class ImportHandler extends ExchangeHandler
         parent::__construct($container);
         $this->job = new ImportJob();
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -43,7 +41,7 @@ class ImportHandler extends ExchangeHandler
         $type = new ImportJobType();
         return $this->container->get('form.factory')->create($type, $this->job, array());
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -58,7 +56,7 @@ class ImportHandler extends ExchangeHandler
             return false;
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -66,36 +64,69 @@ class ImportHandler extends ExchangeHandler
     {
         $em = $this->container->get('doctrine')->getManager();
         $this->denormalizer = new ExchangeDenormalizer($em, $this->mapper);
-        try{
+        try {
             $em->getConnection()->beginTransaction();
             $import = $this->job->getImportContent();
-            $this->importApps($import[ExchangeHandler::$CONTENT_APP]);
-//            $this->importAcls($import[ExchangeHandler::$CONTENT_ACL]);
-//            $this->importSources($import[ExchangeHandler::$CONTENT_SOURCE]);
+            if (isset($import[self::CONTENT_SOURCE])) {
+                $this->denormalizer->setCurrentMapper(self::CONTENT_SOURCE);
+                $this->importSources($import[self::CONTENT_SOURCE]);
+            }
+            if (isset($import[self::CONTENT_APP])) {
+                $this->denormalizer->setCurrentMapper(self::CONTENT_APP);
+                $this->importApps($import[self::CONTENT_APP]);
+            }
+            if (isset($import[self::CONTENT_ACL])) {
+                $this->denormalizer->setCurrentMapper(self::CONTENT_ACL);
+                $this->importAcls($import[self::CONTENT_ACL]);
+            }
             $em->getConnection()->commit();
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             $em->getConnection()->rollback();
         }
     }
-    
+
     private function importApps($data)
     {
-        foreach ($data as $appdata){
-            $class = $appdata['__class__'][0];
-//            $appObj = new $class();
-            $appdata['slug'] = AppComponent::generateSlug($this->container, $appdata['slug']);
-            $this->denormalizer->denormalize($appdata, $class);
+        foreach ($data as $item) {
+            $class = $item['__class__'][0];
+            $item['slug'] = AppComponent::generateSlug($this->container, $item['slug']);
+            $this->denormalizer->denormalize($item, $class);
             $a = 0;
         }
     }
-    
+
     private function importAcls($data)
     {
-        
+        foreach ($data as $item) {
+            $class = $item['__class__'][0];
+            $this->denormalizer->denormalize($item, $class);
+            $a = 0;
+        }
     }
-    
+
     private function importSources($data)
     {
-        
+        foreach ($data as $item) {
+            $source = isset($item['identifier']) ? $this->findSource($item['identifier']) : null;
+            $class = $item['__class__'][0];
+            if (!$source) {
+                $this->denormalizer->denormalize($item, $class);
+                $a = 0;
+            } else {
+                $this->denormalizer->mapSource($item, $class, $source);
+                $a = 0;
+            }
+        }
     }
+
+    protected function findSource($identifier)
+    {
+        foreach ($this->getAllowedSources() as $sourceHelp) {
+            if($sourceHelp->getIdentifier() === $identifier){
+                return $sourceHelp;
+            }
+        }
+        return null;
+    }
+
 }

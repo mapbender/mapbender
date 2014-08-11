@@ -10,6 +10,8 @@ namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
+use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Utils\ClassPropertiesParser;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
@@ -19,10 +21,11 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
  */
 class ExchangeDenormalizer implements DenormalizerInterface
 {
+
     protected $em;
-    
     protected $mapper;
-    
+    protected $current;
+
     /**
      * 
      * @param \Doctrine\ORM\EntityManager $em an entity manager
@@ -33,11 +36,96 @@ class ExchangeDenormalizer implements DenormalizerInterface
         $this->em = $em;
         $this->mapper = $mapper;
     }
+    
+    public function setCurrentMapper($name)
+    {
+        $this->current = $name;
+    }
+    
+    private function addClassIntoMapper($class, $idName, $current = null){
+        if(!isset($this->mapper[$current ? : $this->current][$class])){
+            $this->mapper[$current ? : $this->current][$class] = array(
+                'primary' => $idName,
+                'map' => array()
+            );
+        }
+    }
+
+    private function addIntoMapper($class, $oldId, $newId, $current = null){
+        $this->mapper[$current ? : $this->current][$class]['map'][$oldId] = $newId;
+    }
+    
+    private function getOldId($class, $newId, $current = null){
+        foreach($this->mapper[$current ? : $this->current][$class]['map'] as $oldId_ => $newId_){
+            if($newId === $newId_){
+                return $oldId_;
+            }
+        }
+        return null;
+    }
+    
+    private function getNewId($class, $oldId, $current = null){
+        if(isset($this->mapper[$current ? : $this->current][$class]['map'][$oldId])){
+            return $this->mapper[$current ? : $this->current][$class]['map'][$oldId];
+        } else {
+            return null;
+        }
+    }
+    
+    public function mapSource($data, $class, $objectExists){
+        $reflectionClass = new \ReflectionClass($class);
+        $constructorArguments = $data['__class__'][1] ? : array();
+        $object = $reflectionClass->newInstanceArgs($constructorArguments);
+        $fields = ClassPropertiesParser::parseFields(get_class($object));
+        $idName = $this->findIdName($fields);
+        if($idName){
+            $this->addClassIntoMapper($class, $idName);
+        }
+        foreach ($fields as $fieldName => $filedProps) {
+            if (!isset($filedProps['setter'])) {
+                continue;
+            }
+            $a = 0;
+        }
+    }
+    
 
     /**
      * {@inheritdoc}
      */
     public function denormalize($data, $class, $format = null, array $context = array())
+    {
+        $reflectionClass = new \ReflectionClass($class);
+        $constructorArguments = $data['__class__'][1] ? : array();
+        $object = $reflectionClass->newInstanceArgs($constructorArguments);
+        $fields = ClassPropertiesParser::parseFields(get_class($object));
+        $idName = $this->findIdName($fields);
+        if($idName){
+            $this->addClassIntoMapper($class, $idName);
+        }
+        foreach ($fields as $fieldName => $filedProps) {
+            if (!isset($filedProps['setter'])) {
+                continue;
+            }
+            $a = 0;
+        }
+        $a = 0;
+    }
+
+    private function findIdName($fields)
+    {
+        foreach ($fields as $fieldName => $filedProps) {
+            if(isset($filedProps['Id'])){
+                return $fieldName;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalizeI($data, $class, $format = null, array $context = array())
     {
 //        if(!$this->supportsDenormalization($object, $format)){
 //            throw new \Exception("Object not supported for normalization");
@@ -72,7 +160,7 @@ class ExchangeDenormalizer implements DenormalizerInterface
                         $object->$setter($value);
                     }
                 } elseif ($arg->getClass()) {
-                    if(is_integer($value)){#id
+                    if (is_integer($value)) {#id
                         $object->$setter($value);
                     } elseif ($arg->getClass()->name === "Doctrine\Common\Collections\ArrayCollection") {
                         if ($value !== null && is_array($value)) {
@@ -89,7 +177,6 @@ class ExchangeDenormalizer implements DenormalizerInterface
                 } else {
                     $object->$setter($value);
                 }
-                
             }
         }
         return $object;

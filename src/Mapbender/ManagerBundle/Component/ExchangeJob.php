@@ -20,8 +20,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 class ExchangeJob
 {
 
-    public static $FORMAT_JSON = 'json';
-    public static $FORMAT_YAML = 'yaml';
+    const FORMAT_JSON = 'json';
+    const FORMAT_YAML = 'yaml';
     protected $addAcl;
     protected $addSources;
     protected $applications;
@@ -32,8 +32,8 @@ class ExchangeJob
         $this->applications = new ArrayCollection();
         $this->addAcl = false;
         $this->addSources = false;
-        if(ExchangeJob::$FORMAT_JSON !== $format && ExchangeJob::$FORMAT_YAML !== $format){
-            $this->format = ExchangeJob::$FORMAT_JSON;
+        if(self::FORMAT_JSON !== $format && self::FORMAT_YAML !== $format){
+            $this->format = self::FORMAT_JSON;
         } else {
             $this->format = $format;
         }

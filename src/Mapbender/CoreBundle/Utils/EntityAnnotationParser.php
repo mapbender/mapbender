@@ -8,7 +8,8 @@ namespace Mapbender\CoreBundle\Utils;
 /**
  * Description of EntityAnnotationParser
  *
- * @author Andriy Oblivantsev 
+ * @author Andriy Oblivantsev
+ * @author Paul Schmidt
  */
 class EntityAnnotationParser
 {
@@ -18,7 +19,7 @@ class EntityAnnotationParser
      *
      * @return array
      */
-    public static function parseFieldsAnnotations($className)
+    public static function parseFieldsAnnotations($className, $onlyAnnotation = true)
     {
         $reflect = new \ReflectionClass($className);
         $fields = array();
@@ -84,6 +85,32 @@ class EntityAnnotationParser
                     $annotations['name'] = strtolower($annotations["JoinColumn"]["name"]);
                 }
                 $fields[$fieldName] = $annotations;
+            } elseif (!$onlyAnnotation) {
+                $propProps = array();
+                $fieldName = $property->getName();
+                foreach ($methods as $methodName => $method) {
+                    $methodHash = ucwords($fieldName);
+                    switch ($methodName) {
+                        case 'get' . $methodHash: $propProps['getter'] = $methodName;
+                            break;
+                        case 'set' . $methodHash: $propProps['setter'] = $methodName;
+                            break;
+                        case 'has' . $methodHash: $propProps['hasMethod'] = $methodName;
+                            break;
+                        case 'is' . $methodHash: $propProps['isMethod'] = $methodName;
+                            break;
+                    }
+                }
+
+                // try to find getter if not founded before 
+                if (!isset($propProps['getter'])) {
+                    if (isset($propProps['hasMethod'])) {
+                        $annotation['getter'] = $propProps['hasMethod'];
+                    } elseif (isset($propProps['isMethod'])) {
+                        $annotation['getter'] = $propProps['isMethod'];
+                    }
+                }
+                $fields[$fieldName] = $propProps;
             }
         }
         return $fields;

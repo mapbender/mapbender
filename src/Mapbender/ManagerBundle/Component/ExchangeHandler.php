@@ -22,9 +22,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 abstract class ExchangeHandler
 {
 
-    public static $CONTENT_APP = 'aplication';
-    public static $CONTENT_ACL = 'acl';
-    public static $CONTENT_SOURCE = 'source';
+    const CONTENT_APP = 'aplication';
+    const CONTENT_ACL = 'acl';
+    const CONTENT_SOURCE = 'source';
+
     protected $securityContext;
     protected $container;
     protected $job;
@@ -34,9 +35,9 @@ abstract class ExchangeHandler
     {
         $this->container = $container;
         $this->mapper = array(
-            ExchangeHandler::$CONTENT_APP => array(),
-            ExchangeHandler::$CONTENT_ACL => array(),
-            ExchangeHandler::$CONTENT_SOURCE => array()
+            ExchangeHandler::CONTENT_APP => array(),
+            ExchangeHandler::CONTENT_ACL => array(),
+            ExchangeHandler::CONTENT_SOURCE => array()
         );
         $this->securityContext = $this->container->get('security.context');
     }

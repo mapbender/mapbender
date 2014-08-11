@@ -64,17 +64,17 @@ class ExportHandler extends ExchangeHandler
     public function makeJob()
     {
         $export = array();
-        $export[ExchangeHandler::$CONTENT_SOURCE] = $this->exportSources();
-        $export[ExchangeHandler::$CONTENT_APP] = $this->exportApps();
+        $export[self::CONTENT_SOURCE] = $this->exportSources();
+        $export[self::CONTENT_APP] = $this->exportApps();
 //        # TODO  $export[ExchangeHandler::$CONTENT_ACL] = $this->exportAcls();
         return $export;
     }
 
     public function format($scr)
     {
-        if ($this->job->getFormat() === ExchangeJob::$FORMAT_JSON) {
+        if ($this->job->getFormat() === ExchangeJob::FORMAT_JSON) {
             return json_encode($scr);
-        } else if ($this->job->getFormat() === ExchangeJob::$FORMAT_YAML) {
+        } else if ($this->job->getFormat() === ExchangeJob::FORMAT_YAML) {
             $dumper = new Dumper();
             $yaml = $dumper->dump($scr, 20);
             return $yaml;

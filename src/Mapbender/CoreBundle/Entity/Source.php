@@ -51,6 +51,11 @@ abstract class Source
      * @ORM\Column(type="text", nullable=true)
      */
     protected $description;
+    
+    /**
+     * @var string source identifier 
+     */
+    protected $identifier;
 
     /**
      * Get id
@@ -163,6 +168,21 @@ abstract class Source
     {
         return $this->valid;
     }
+    
+    /**
+     * Returns the source identifier
+     * 
+     * @return string source indetifier
+     */
+    abstract public function getIdentifier();
+    
+    /**
+     * Sets  the source identifier
+     * 
+     * @param string $identifier the source identifier
+     * @return Source the source
+     */
+    abstract public function setIdentifier($identifier);
 
     /**
      * Returns a Source as String
@@ -197,17 +217,5 @@ abstract class Source
      * Remove a source from a database
      */
     abstract public function remove(EntityManager $em);
-//
-//    /**
-//     * Sets an instance collection
-//     * @return ArrayCollection an instance collection
-//     */
-//    public abstract function getInstances();
-//
-//    /**
-//     * Sets an instance collection
-//     *
-//     * @param ArrayCollection $instances an instance collection
-//     */
-//    public abstract function setInstances(ArrayCollection $instances);
+
 }

@@ -18,7 +18,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Utils\ClassPropertiesParser;
+use Mapbender\CoreBundle\Utils\EntityAnnotationParser;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
@@ -76,7 +76,7 @@ class ExchangeNormalizer implements NormalizerInterface
     {
         $realObj = $this->createRealObject($object);
         $data = $this->createInstanceIdent($realObj);
-        $fields = ClassPropertiesParser::parseFields(get_class($object));
+        $fields = EntityAnnotationParser::parseFieldsAnnotations(get_class($object), false);
         foreach ($fields as $fieldName => $filedProps) {
             if (!isset($filedProps['getter']) ||
                 ($realObj instanceof SourceInstance && $fieldName === 'configuration')) {
