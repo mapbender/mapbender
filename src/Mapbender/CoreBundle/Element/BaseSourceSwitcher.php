@@ -86,6 +86,33 @@ class BaseSourceSwitcher extends Element
             'js' => array('mapbender.element.basesourceswitcher.js'),
             'css'=> array('@MapbenderCoreBundle/Resources/public/sass/element/basesourceswitcher.scss')
         );
+    }/**
+     * @inheritdoc
+     */
+    public function getConfiguration()
+    {
+        $configuration = $confHelp = parent::getConfiguration();
+        if(isset($configuration['sourcesets'])){
+            unset($configuration['sourcesets']);
+        }
+        $configuration['groups'] = array();
+        foreach ($confHelp['sourcesets'] as $sourceset){
+            if(isset($sourceset['group']) && $sourceset['group'] !== ''){
+                if(!isset($configuration['groups'][$sourceset['group']])){
+                    $configuration['groups'][$sourceset['group']] = array();
+                }
+                $configuration['groups'][$sourceset['group']][] = array(
+                    'title' => $sourceset['title'],
+                    'sources' => $sourceset['sources']
+                );
+            } else {
+                $configuration['groups'][$sourceset['title']] = array(
+                    'title' => $sourceset['title'],
+                    'sources' => $sourceset['sources']
+                );
+            }
+        }
+        return $configuration;
     }
 
     /**
