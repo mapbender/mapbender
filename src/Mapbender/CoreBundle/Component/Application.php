@@ -508,7 +508,7 @@ class Application
      * @param string $slug slug to check
      * @return string a valid generated slug
      */
-    public static function generateSlug($container, $slug)
+    public static function generateSlug($container, $slug, $suffix = 'copy')
     {
         $application = $container->get('mapbender')->getApplicationEntity($slug);
         if ($application === null)
@@ -516,7 +516,7 @@ class Application
         else
             $count = 0;
         do {
-            $copySlug = $slug . '_copy' . ($count > 0 ? '_' . $count : '');
+            $copySlug = $slug . "_" . $suffix . ($count > 0 ? '_' . $count : '');
             $count++;
         } while ($container->get('mapbender')->getApplicationEntity($copySlug));
         return $copySlug;

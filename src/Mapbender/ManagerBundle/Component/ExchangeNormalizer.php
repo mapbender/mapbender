@@ -9,7 +9,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\ORM\PersistentCollection;
-use Doctrine\Common\Util\ClassUtils;
+use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\CoreBundle\Component\SourceInstanceItem;
 use Mapbender\CoreBundle\Entity\Application;
@@ -18,7 +18,9 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\CoreBundle\Utils\EntityAnnotationParser;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
@@ -26,49 +28,17 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  *
  * @author Paul Schmidt
  */
-class ExchangeNormalizer implements NormalizerInterface
+class ExchangeNormalizer extends ExchangeSerializer implements NormalizerInterface
 {
-
-    private function getParentClasses($class, $parents = array())
+    /**
+     * 
+     * @param ContainerInterface $container container
+     */
+    public function __construct(ContainerInterface $container)
     {
-        $parent = get_parent_class($class);
-        if ($parent) {
-            $plist[$parent] = $parent;
-            $plist = $this->getParentClasses($parent, $plist);
-        }
+        parent::__construct($container);
     }
-
-    private function createRealObject($object)
-    {
-        $objClass = "";
-        if (is_object($object)) {
-            $objClass = ClassUtils::getClass($object);
-        } elseif (is_string($object)) {
-            $objClass = ClassUtils::getRealClass($object);
-        }
-        $reflectionClass = new \ReflectionClass($objClass);
-        if (!$reflectionClass->getConstructor()) {
-            return $reflectionClass->newInstanceArgs(array());
-        } elseif (count($reflectionClass->getConstructor()->getParameters()) === 0) {
-            return $reflectionClass->newInstanceArgs(array());
-        } else {
-            #count($reflectionClass->getConstructor()->getParameters()) > 0
-            # TODO ???
-            return $reflectionClass->newInstanceArgs(array());
-        }
-    }
-
-    private function createInstanceIdent($object, $params = array())
-    {
-        return array_merge(
-            array(
-            '__class__' => array(
-                get_class($object),
-                array())
-            ), $params
-        );
-    }
-
+    
     /**
      * {@inheritdoc}
      */
@@ -77,19 +47,23 @@ class ExchangeNormalizer implements NormalizerInterface
         $realObj = $this->createRealObject($object);
         $data = $this->createInstanceIdent($realObj);
         $fields = EntityAnnotationParser::parseFieldsAnnotations(get_class($object), false);
-        foreach ($fields as $fieldName => $filedProps) {
-            if (!isset($filedProps['getter']) ||
-                ($realObj instanceof SourceInstance && $fieldName === 'configuration')) {
+        foreach ($fields as $fieldName => $fieldProps) {
+            if (!isset($fieldProps[self::KEY_GETTER]) ||
+                ($realObj instanceof SourceInstance && $fieldName === self::KEY_CONFIGURATION)) {
                 continue;
             }
-            $reflectionMethod = new \ReflectionMethod(get_class($object), $filedProps['getter']);
+            $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_GETTER]);
             $fieldValue = $reflectionMethod->invoke($object);
             if ($fieldValue === null) {
                 $data[$fieldName] = $fieldValue;
             } else if (is_integer($fieldValue) || is_float($fieldValue) || is_string($fieldValue) || is_bool($fieldValue)) {
                 $data[$fieldName] = $fieldValue;
             } else if (is_array($fieldValue)) {
-                $data[$fieldName] = $this->handleArray($fieldName, $fieldValue, $realObj);
+                if($realObj instanceof Element && $fieldName === self::KEY_CONFIGURATION){
+                    $data[$fieldName] = $this->handleElementConfiguration($fieldName, $fieldValue, $object, $realObj);
+                } else {
+                    $data[$fieldName] = $this->handleArray($fieldName, $fieldValue, $realObj);
+                }
             } else if (is_object($fieldValue)) {
                 if ($fieldValue instanceof PersistentCollection) {
                     $data[$fieldName] = $this->handlePersistentCollection($fieldName, $fieldValue, $realObj);
@@ -210,7 +184,9 @@ class ExchangeNormalizer implements NormalizerInterface
         } elseif ($realValObj instanceof SourceInstanceItem) { # handle 
             if (strtolower($fieldName) === 'parent') {
                 return $this->createInstanceIdent($realValObj, array('id' => $fieldValue->getId()));
-            } elseif (strtolower($fieldName) !== 'sublayer') {
+            } elseif (strtolower($fieldName) === 'sublayer') {
+                return $this->normalize($fieldValue);
+            } else {
                 return $this->normalize($fieldValue);
             }
         } elseif ($realValObj instanceof SourceItem) { # handle Source
@@ -267,7 +243,7 @@ class ExchangeNormalizer implements NormalizerInterface
         } elseif ($realValObj instanceof SourceItem) {
             if (strtolower($fieldName) === 'parent') {
                 return $this->createInstanceIdent($realValObj, array('id' => $fieldValue->getId()));
-            } elseif (strtolower($fieldName) !== 'sublayer') {
+            } else {
                 return $this->normalize($fieldValue);
             }
         } else {
@@ -286,8 +262,21 @@ class ExchangeNormalizer implements NormalizerInterface
      */
     private function handlePersistentCollection($fieldName, $fieldValue, $realObj)
     {
-        if ($realObj instanceof SourceItem) { # handle no collection for SourceItem
-        } elseif ($realObj instanceof SourceInstanceItem) { # handle no collection for SourceItem
+        if ($realObj instanceof SourceItem || $realObj instanceof SourceInstanceItem) {
+            $result = array();
+            $collection = $fieldValue->toArray();
+            foreach ($collection as $collItem) {
+                $result[] = $this->createInstanceIdent($collItem, array('id' => $collItem->getId()));
+            }
+            return $result;
+        } elseif ($realObj instanceof Layerset) {
+            $result = array();
+            $collection = $fieldValue->toArray();
+            foreach ($collection as $collItem) {
+                $inst = $this->normalize($collItem);
+                $result[] = $inst;#$this->createInstanceIdent($collItem, array('id' => $collItem->getId()));
+            }
+            return $result;
         } else { # handle other
             $result = array();
             $collection = $fieldValue->toArray();
@@ -310,16 +299,43 @@ class ExchangeNormalizer implements NormalizerInterface
     private function handleArray($fieldName, $fieldValue, $realObj)
     {
         $result = array();
-        foreach ($fieldValue as $item) {
-            if (is_array($item)) {
-                $result[] = $this->handleArray($fieldName, $item, $realObj);
-            } else if (is_object($item)) {
-                $result[] = $this->normalize($item);
-            } else {
-                $result[] = $item;
+        if (ArrayUtil::isAssoc($fieldValue)) {
+            foreach ($fieldValue as $key => $item) {
+                if (is_array($item)) {
+                    $result[$key] = $this->handleArray($fieldName, $item, $realObj);
+                } else if (is_object($item)) {
+                    $result[$key] = $this->normalize($item);
+                } else {
+                    $result[$key] = $item;
+                }
+            }
+        } else {
+            foreach ($fieldValue as $item) {
+                if (is_array($item)) {
+                    $result[] = $this->handleArray($fieldName, $item, $realObj);
+                } else if (is_object($item)) {
+                    $result[] = $this->normalize($item);
+                } else {
+                    $result[] = $item;
+                }
             }
         }
         return $result;
+    }
+    
+    private function handleElementConfiguration($fieldName, $fieldValue, Element $element, $realObj)
+    {
+        $form = ElementComponent::getElementForm($this->container, $element->getApplication(), $element);
+        $configuration = $element->getConfiguration();
+        foreach ($form['form'][self::KEY_CONFIGURATION]->all() as $fieldName => $fieldValue) {
+            $norm = $fieldValue->getNormData();
+            if ($norm instanceof Element || $norm instanceof Layerset || $norm instanceof Application ||
+                $norm instanceof RegionProperties || $norm instanceof Source || $norm instanceof SourceItem ||
+                $norm instanceof SourceInstance || $norm instanceof SourceInstanceItem) {
+                $configuration[$fieldName] = $this->createInstanceIdent($norm, array('id' => $norm->getId()));
+            }
+        }
+        return $configuration;
     }
 
     /**

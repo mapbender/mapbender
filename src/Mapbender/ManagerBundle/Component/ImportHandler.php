@@ -63,34 +63,33 @@ class ImportHandler extends ExchangeHandler
     public function makeJob()
     {
         $em = $this->container->get('doctrine')->getManager();
-        $this->denormalizer = new ExchangeDenormalizer($em, $this->mapper);
+        $this->denormalizer = new ExchangeDenormalizer($this->container, $this->mapper);
         try {
             $em->getConnection()->beginTransaction();
             $import = $this->job->getImportContent();
             if (isset($import[self::CONTENT_SOURCE])) {
-                $this->denormalizer->setCurrentMapper(self::CONTENT_SOURCE);
                 $this->importSources($import[self::CONTENT_SOURCE]);
             }
             if (isset($import[self::CONTENT_APP])) {
-                $this->denormalizer->setCurrentMapper(self::CONTENT_APP);
                 $this->importApps($import[self::CONTENT_APP]);
             }
             if (isset($import[self::CONTENT_ACL])) {
-                $this->denormalizer->setCurrentMapper(self::CONTENT_ACL);
                 $this->importAcls($import[self::CONTENT_ACL]);
             }
             $em->getConnection()->commit();
         } catch (\Exception $e) {
             $em->getConnection()->rollback();
         }
+        die();
     }
 
     private function importApps($data)
     {
         foreach ($data as $item) {
-            $class = $item['__class__'][0];
-            $item['slug'] = AppComponent::generateSlug($this->container, $item['slug']);
-            $this->denormalizer->denormalize($item, $class);
+            $class = $this->denormalizer->getClassName($item);
+            $item[ExchangeSerializer::KEY_SLUG] = AppComponent::generateSlug($this->container, $item[ExchangeSerializer::KEY_SLUG], 'imp');
+            $app = $this->denormalizer->denormalize($item, $class);
+            $this->denormalizer->generateElementConfiguration($app);
             $a = 0;
         }
     }
@@ -98,7 +97,7 @@ class ImportHandler extends ExchangeHandler
     private function importAcls($data)
     {
         foreach ($data as $item) {
-            $class = $item['__class__'][0];
+            $class = $this->denormalizer->getClassName($item);
             $this->denormalizer->denormalize($item, $class);
             $a = 0;
         }
@@ -107,14 +106,12 @@ class ImportHandler extends ExchangeHandler
     private function importSources($data)
     {
         foreach ($data as $item) {
-            $source = isset($item['identifier']) ? $this->findSource($item['identifier']) : null;
-            $class = $item['__class__'][0];
+            $source = isset($item[ExchangeSerializer::KEY_IDENTIFIER]) ? $this->findSource($item[ExchangeSerializer::KEY_IDENTIFIER]) : null;
+            $class = $this->denormalizer->getClassName($item);
             if (!$source) {
                 $this->denormalizer->denormalize($item, $class);
-                $a = 0;
             } else {
                 $this->denormalizer->mapSource($item, $class, $source);
-                $a = 0;
             }
         }
     }

@@ -26,13 +26,16 @@
     {% for application in applications %}
       <li class="filterItem">
           {% if application.screenshot is not null %}
-            <div class="col1">
-                <div class="cell">
-                    <img src="{{ uploads_web_url }}/{{application.slug}}/{{application.screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}"" alt="screenshot">
-                </div>            
-            </div>
+            <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">
+                <div class="col1">
+                    <div class="cell">
+                       <img src="{{ uploads_web_url }}/{{application.slug}}/{{application.screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}"" alt="screenshot">                    </div>            
+                </div>
+            </a>
           {% else %}
-            <div class="col1 iconAppDefault"></div>
+              <a target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }} {{ application.title }}">
+                  <div class="col1 iconAppDefault"></div>
+              </a>
           {% endif %}
         <div class="col2 box">
           <a href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" class="title" title="{{ 'mb.manager.admin.application.view_this' | trans }}">

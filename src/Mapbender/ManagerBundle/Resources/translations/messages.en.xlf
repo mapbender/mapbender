@@ -451,6 +451,22 @@
         <source>mb.manager.template.region.accordion.label</source>
         <target>Accordion</target>
       </trans-unit>
+      <trans-unit id="cae4b6bbf2a2d496be9bf327a1955ab4" resname="mb.manager.admin.application.upload.button">
+        <source>mb.manager.admin.application.upload.button</source>
+        <target>Select file:</target>
+      </trans-unit>
+      <trans-unit id="fd5de98877bbdf4173112e0623ef1163" resname="mb.manager.admin.application.upload.label">
+        <source>mb.manager.admin.application.upload.label</source>
+        <target>No file selected</target>
+      </trans-unit>
+      <trans-unit id="dbd9bf9785be4d2e41fdea56c53c6219" resname="mb.manager.upload.label_delete">
+        <source>mb.manager.upload.label_delete</source>
+        <target>Screenshot removed</target>
+      </trans-unit>
+      <trans-unit id="8c8173e8ee2b47284d02906130e77bad" resname="mb.manager.admin.application.upload.tooltip">
+        <source>mb.manager.admin.application.upload.tooltip</source>
+        <target>Please click to upload a screenshot</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

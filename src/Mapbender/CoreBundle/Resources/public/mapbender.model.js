@@ -8,6 +8,7 @@ Mapbender.Model = {
     proj: null,
     srsDefs: null,
     mapMaxExtent: null,
+    mapStartExtent: null,
     layersMaxExtent: {},
     highlightLayer: null,
     baseId: 0,
@@ -34,28 +35,13 @@ Mapbender.Model = {
             extent: this.mbMap.options.extents.max ?
                     OpenLayers.Bounds.fromArray(this.mbMap.options.extents.max) : null
         };
-        var start_extent = {
+
+        this.mapStartExtent = {
             projection: this.getProj(this.mbMap.options.srs),
             extent: this.mbMap.options.extents.start ?
-                    OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start) :
-                    OpenLayers.Bounds.fromArray(this.mbMap.options.extents.max)
+                    OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start) : this.mbMap.options.extents.max
         };
-        var pois = [],
-                bbox = null;
-        if (this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
-            bbox = this.mbMap.options.extra['bbox'] ?
-                    OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']) :
-                    start_extent;
-        }
-        if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
-            $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
-                pois.push({
-                    position: new OpenLayers.LonLat(poi.x, poi.y),
-                    label: poi.label,
-                    scale: poi.scale
-                });
-            });
-        }
+
         var mapOptions = {
             maxExtent: this._transformExtent(this.mapMaxExtent, this.proj).toArray(),
             zoomToMaxExtent: false,
@@ -67,7 +53,8 @@ Mapbender.Model = {
             allOverlays: true,
             theme: null,
             transitionEffect: null,
-            layers: [{type: "wms", name: "FAKE", isBaseLayer: true, url: "http://localhost", visibility: false}]
+            layers: [{type: "wms", name: "FAKE", isBaseLayer: true, url: "http://localhost", visibility: false}],
+            fallThrough: true
         };
 
         if (this.mbMap.options.scales) {
@@ -83,6 +70,32 @@ Mapbender.Model = {
         this._addLayerMaxExtent(this.map.layersList.mapquery0);
 
         this.parseURL();
+        this.setView(true);
+    },
+
+    /**
+     * Set map view: extent from URL parameters or configuration and POIs
+     */
+    setView: function(addLayers) {
+        var self = this;
+        var start_extent = this.mapStartExtent;
+
+        var pois = [],
+            bbox = null;
+        if (this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
+            bbox = this.mbMap.options.extra['bbox'] ?
+                    OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']) :
+                    start_extent;
+        }
+        if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
+            $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
+                pois.push({
+                    position: new OpenLayers.LonLat(poi.x, poi.y),
+                    label: poi.label,
+                    scale: poi.scale
+                });
+            });
+        }
 
         var poiBox = null,
                 poiMarkerLayer = null,
@@ -144,18 +157,21 @@ Mapbender.Model = {
             }
         }
 
-        $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
-//        this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
-//        this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
 
-        this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
+        if(true === addLayers) {
+            $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
+            // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
+            // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
 
-        $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr) {
-            $.each(defArr, function(idx, layerDef) {
-                layerDef['origId'] = idx;
-                self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
+            this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
+
+            $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr) {
+                $.each(defArr, function(idx, layerDef) {
+                    layerDef['origId'] = idx;
+                    self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
+                });
             });
-        });
+        }
 
         if (poiMarkerLayer) {
             this.map.olMap.addLayer(poiMarkerLayer);
@@ -188,7 +204,7 @@ Mapbender.Model = {
     /**
      * Calculates an extent from a geometry with buffer.
      * @param {OpenLayers.Geometry} geom geometry
-     * @param {object} buffer {w: WWW,h: HHH}. WWW- buffer for x (kilometer), HHH- buffer for y (kilometer). 
+     * @param {object} buffer {w: WWW,h: HHH}. WWW- buffer for x (kilometer), HHH- buffer for y (kilometer).
      * @returns {OpenLayers.Bounds}
      */
     calculateExtent: function(geom, buffer) {

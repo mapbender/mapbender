@@ -64,7 +64,7 @@ class Application
     protected $description;
 
     /**
-     * @ORM\Column(length=1024)
+     * @ORM\Column(length=1024, nullable=false)
      */
     protected $template;
 
@@ -290,6 +290,18 @@ class Application
     }
 
     /**
+     * Set elements
+     *
+     * @param ArrayCollection $elements elements
+     * @return Application
+     */
+    public function setElements(ArrayCollection $elements)
+    {
+        $this->elements = $elements;
+        return $this;
+    }
+
+    /**
      * Add layersets
      *
      * @param Layerset $layerset
@@ -299,6 +311,18 @@ class Application
         $this->layersets[] = $layerset;
     }
 
+    /**
+     * Set layersets
+     *
+     * @param ArrayCollection $layersets layersets
+     * @return Application
+     */
+    public function setLayersets(ArrayCollection $layersets)
+    {
+        $this->layersets = $layersets;
+        return $this;
+    }
+    
     /**
      * Get layersets
      *

@@ -84,7 +84,7 @@ class ExportHandler extends ExchangeHandler
     private function exportApps()
     {
         $arr = array();
-        $normalizer = new ExchangeNormalizer();
+        $normalizer = new ExchangeNormalizer($this->container);
         foreach ($this->job->getApplications() as $app) {
             $arr_ = $normalizer->normalize($app);
             $arr[] = $arr_;
@@ -118,7 +118,7 @@ class ExportHandler extends ExchangeHandler
                 }
             }
         }
-        $normalizer = new ExchangeNormalizer();
+        $normalizer = new ExchangeNormalizer($this->container);
         foreach ($sources as $source) {
             $arr = $normalizer->normalize($source);
             $data[] = $arr;

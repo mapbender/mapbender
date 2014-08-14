@@ -12,15 +12,11 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
 use Mapbender\ManagerBundle\Component\ExchangeJob;
-use Mapbender\ManagerBundle\Component\ExportJob;
 use Mapbender\ManagerBundle\Component\ExportHandler;
-use Mapbender\ManagerBundle\Component\ImportJob;
 use Mapbender\ManagerBundle\Component\ImportHandler;
-//FIXME: make this work without an explicit import
-use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -31,6 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Yaml\Parser;
 
 class ApplicationController extends Controller
 {
@@ -156,7 +153,7 @@ class ApplicationController extends Controller
                 $time = new \DateTime('now');
                 $scFile->move(sys_get_temp_dir(), $time->getTimestamp());
                 $tmpfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $time->getTimestamp();
-                $yaml = new \Symfony\Component\Yaml\Parser();
+                $yaml = new Parser();
                 $content = $yaml->parse(file_get_contents($tmpfile));
                 unlink($tmpfile);
                 $job->setImportContent($content);
@@ -188,9 +185,13 @@ class ApplicationController extends Controller
 
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
+        
+        $screenshot_url = "";
 
         $form->bind($request);
         if ($form->isValid()) {
+            $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
+            $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
             $application->setUpdated(new \DateTime('now'));
             $em = $this->getDoctrine()->getManager();
 
@@ -200,8 +201,19 @@ class ApplicationController extends Controller
             $this->checkRegionProperties($application);
             $aclManager = $this->get('fom.acl.manager');
             $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-
-
+            
+            $scFile = $application->getScreenshotFile();
+            if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
+//                die(print_r($scFile));
+                $filename = sprintf('screenshot-%d.%s', $application->getId(), $scFile->guessExtension());
+                $scFile->move($app_directory, $filename);
+                $application->setScreenshot($filename);
+                $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+                $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
+            }
+            $em->persist($application);
+            $em->flush();
+            
             $em->getConnection()->commit();
             if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been saved.');
@@ -218,7 +230,8 @@ class ApplicationController extends Controller
         return array(
             'application' => $application,
             'form' => $form->createView(),
-            'form_name' => $form->getName());
+            'form_name' => $form->getName(),
+            'screenshot_filename'=> $screenshot_url);
     }
 
     /**

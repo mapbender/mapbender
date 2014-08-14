@@ -677,14 +677,6 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getLayerset()
-    {
-        parent::getLayerset();
-    }
-
-    /**
      * 
      * @return WmsMetadata
      */

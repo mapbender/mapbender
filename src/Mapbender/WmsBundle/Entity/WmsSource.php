@@ -880,6 +880,12 @@ class WmsSource extends Source implements ContainsKeyword
         return $this->keywords;
     }
     
+    public function addInstance(WmsInstance $instance)
+    {
+        $this->instances->add($instance);
+        return $this;
+    }
+    
     /**
      * Remove layers
      *

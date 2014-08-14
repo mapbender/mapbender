@@ -177,7 +177,7 @@ abstract class SourceInstance
      * @param  Layerset       $layerset Layerset
      * @return Sourceinstance
      */
-    public function setLayerset($layerset)
+    public function setLayerset(Layerset $layerset)
     {
         $this->layerset = $layerset;
 
@@ -190,7 +190,7 @@ abstract class SourceInstance
      */
     public function getLayerset()
     {
-        $this->layerset;
+        return $this->layerset;
     }
 
     /**
@@ -273,6 +273,11 @@ abstract class SourceInstance
      *  @param   Signer  $signer  String signer for URL protection
      */
     abstract public function getConfiguration(Signer $signer=null);
+    
+    /**
+     * Generates a configuration of a source instance
+     */
+    abstract public function generateConfiguration();
 
     /**
      * Remove a source instance from a database
