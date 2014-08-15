@@ -3,7 +3,7 @@
 
     <div class="search-forms" novalidate="novalidate">
         {% for form in element.forms %}
-            <form name="{{ form.getName() }}" autocomplete="off">
+            <form name="{{ form.vars.name }}" autocomplete="off">
                 {{ form_widget(form.createView) }}
             </form>
         {% endfor %}
