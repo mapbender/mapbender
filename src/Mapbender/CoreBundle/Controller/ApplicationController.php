@@ -17,6 +17,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Assetic\Filter\CssRewriteFilter;
+use Assetic\Asset\StringAsset;
 
 /**
  * Application controller.
@@ -80,6 +82,35 @@ class ApplicationController extends Controller
         $useTimestamp = !$this->container->getParameter('mapbender.static_assets');
         $assets = $cache->fill($slug, $useTimestamp);
 
+        // runtime rewrite which takes into account if the action was called
+        // with app.php in the URL or not.
+        if('css' === $type) {
+            // The target path assumed by the cache has been used by the
+            // cache's rewrite and all URLs in the cached assets are already
+            // rewritten for it. Now we rewrite from these normalized URLs to
+            // the final, runtime URLs and therefore the cache's target path
+            // is our source path.
+            $source = $assets->getTargetPath();
+
+            // Let's build the runtime target path
+            $request = $this->getRequest();
+            $webDir = str_replace('\\', '/',
+                realpath($this->container->get('kernel')->getRootDir() .
+                    '/../web/'));
+            $target = substr(
+                $request->getRequestUri(),
+                strlen($request->getBasePath()));
+
+            // And move everything into an StringAsset which gets added the
+            // CssRewriteFilter
+            $assets = new StringAsset($assets->dump(),
+                                 array(),
+                                 null, $source);
+            $assets->load();
+            $assets->setTargetPath($webDir . $target);
+            $assets->ensureFilter(new CssRewriteFilter());
+        }
+
         // Determine last-modified timestamp for both DB- and YAML-based apps
         $application_update_time = new \DateTime();
         $application_entity = $this->getApplication($slug)->getEntity();
@@ -104,8 +135,6 @@ class ApplicationController extends Controller
         if ($response->isNotModified($this->get('request'))) {
             return $response;
         }
-
-        /* @todo: Add per-application user CSS */
 
         // Dump assets to client
         $mimetypes = array(
@@ -226,7 +255,7 @@ class ApplicationController extends Controller
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getSource())) {
             throw new AccessDeniedException();
         }
-        
+
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$instance->getSource()->getManagertype()];
 
