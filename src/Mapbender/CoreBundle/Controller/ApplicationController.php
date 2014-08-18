@@ -82,6 +82,24 @@ class ApplicationController extends Controller
         $useTimestamp = !$this->container->getParameter('mapbender.static_assets');
         $assets = $cache->fill($slug, $useTimestamp);
 
+        // Determine last-modified timestamp for both DB- and YAML-based apps
+        $application_update_time = new \DateTime();
+        $application_entity = $this->getApplication($slug)->getEntity();
+
+        $assets_mtime = 0;
+        foreach ($assets as $asset) {
+            $assets_mtime = max($assets_mtime, $asset->getLastModified());
+        }
+        $asset_modification_time = new \DateTime();
+        $asset_modification_time->setTimestamp($assets_mtime);
+
+        if ($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
+            $updateTime = max($application->getEntity()->getUpdated(), $asset_modification_time);
+        } else {
+            $cacheUpdateTime = new \DateTime($this->container->getParameter('mapbender.cache_creation'));
+            $updateTime = max($cacheUpdateTime, $asset_modification_time);
+        }
+
         // runtime rewrite which takes into account if the action was called
         // with app.php in the URL or not.
         if('css' === $type) {
@@ -103,30 +121,13 @@ class ApplicationController extends Controller
 
             // And move everything into an StringAsset which gets added the
             // CssRewriteFilter
-            $assets = new StringAsset($assets->dump(),
+            $css = $assets->dump();
+            $assets = new StringAsset($css,
                                  array(),
                                  null, $source);
             $assets->load();
             $assets->setTargetPath($webDir . $target);
             $assets->ensureFilter(new CssRewriteFilter());
-        }
-
-        // Determine last-modified timestamp for both DB- and YAML-based apps
-        $application_update_time = new \DateTime();
-        $application_entity = $this->getApplication($slug)->getEntity();
-
-        $assets_mtime = 0;
-        foreach ($assets as $asset) {
-            $assets_mtime = max($assets_mtime, $asset->getLastModified());
-        }
-        $asset_modification_time = new \DateTime();
-        $asset_modification_time->setTimestamp($assets_mtime);
-
-        if ($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
-            $updateTime = max($application->getEntity()->getUpdated(), $asset_modification_time);
-        } else {
-            $cacheUpdateTime = new \DateTime($this->container->getParameter('mapbender.cache_creation'));
-            $updateTime = max($cacheUpdateTime, $asset_modification_time);
         }
 
         // Create HTTP 304 if possible
