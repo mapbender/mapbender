@@ -466,10 +466,14 @@
         <source>mb.manager.admin.application.upload.tooltip</source>
         <target>Bitte klicken Sie, um einen Screenshot hochzuladen</target>
       </trans-unit>
-      <!--trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
+      <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
         <source>mb.core.entity.app.screenshotfile.error</source>
-        <target>error</target>
-      </trans-unit-->
+        <target>Die Datei ist zu groß (%uploadFileSize% bytes). Die maximal zulässige Größe beträgt %maxFileSize% bytes.</target>
+      </trans-unit>
+      <trans-unit id="8b893357eea2f8e824f5e4bb613b3496" resname="mb.core.entity.app.screenshotfile.format_error">
+        <source>mb.core.entity.app.screenshotfile.format_error</source>
+        <target>__mb.core.entity.app.screenshotfile.format_error</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

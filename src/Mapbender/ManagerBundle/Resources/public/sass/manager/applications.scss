@@ -213,7 +213,7 @@
   textarea, input, .dropdown{min-width: 300px;}
   textarea{height:100px;}
   .messageBox{
-    width:270px;
+    width:300px;
     @include absolute($space $space '' '');
   }
 }

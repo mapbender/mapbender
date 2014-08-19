@@ -663,37 +663,60 @@ $(function() {
     var uploadButton = applicationForm.find('.upload_button');
     var fileInput = applicationForm.find('#application_screenshotFile');
     var validationMsgBox = applicationForm.find('span.validationMsgBox');
-
+    var maxFileSize = applicationForm.find('#application_maxFileSize').val();
+    var fileNameTmp = "";
+    
+    
     fileInput.on('mouseover', function() {
         uploadButton.addClass('hover');
     }).on('mouseout', function() {
         uploadButton.removeClass('hover');
     }).on('change', function(e) {
         $('input[name="application[removeScreenShot]"]').val(0);
-        var fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
+       
+        var file =  this.files;
+        fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
+
+        if(fileName === ""){
+            if (fileNameTmp === ""){
+                fileName = Mapbender.trans('mb.manager.admin.application.upload.label');
+            }else{
+               fileName = fileNameTmp;
+            }
+        }else{
+            fileNameTmp = fileName;
+        }
+        
         if (fileName.length > 20) {
             fileName = fileName.substring(0, 20) + "...";
         }
         
-        var file =  this.files;
         if (file && file[0]) {
             var reader = new FileReader();
-
-            if (file[0].size <= 102400){
-                screenShot.find('div.messageBox').remove();
-                validationMsgBox.remove();
-                if (screenShot.find('div.cell').length === 0 ){          
-                    screenShot.append('<div class= \"cell\"><img src= \"\" alt="Load" class="screenshot" /></div>');
+            var fileType = 
+            
+            console.log(file[0].type);
+            
+            if (file[0].type.match('image/')){
+                if (file[0].size <= 102400){
+                    screenShot.find('div.messageBox').remove();
+                    validationMsgBox.remove();
+                    if (screenShot.find('div.cell').length === 0 ){          
+                        screenShot.append('<div class= \"cell\"><img src= \"\" alt="Load" class="screenshot" /></div>');
+                    }
+                    reader.onload = function (e) {
+                        screenShot.find('img').attr('src', e.target.result);
+                    }  
+                    reader.readAsDataURL(file[0]);
+                }else{
+                    var uploadFileSize = file[0].size;
+                    $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.error',{'maxFileSize':maxFileSize, 'uploadFileSize': uploadFileSize }) +'</span>').insertAfter(fileInput);
+                    validationMsgBox = applicationForm.find('span.validationMsgBox');
                 }
-                
-                reader.onload = function (e) {
-                    screenShot.find('img').attr('src', e.target.result);
-                }  
-                reader.readAsDataURL(file[0]);
             }else{
-                $('<span class=\"validationMsgBox smallText\">'+Mapbender.trans("mb.core.entity.app.screenshotfile.error")+'</span>').insertAfter(fileInput);
-                validationMsgBox = applicationForm.find('span.validationMsgBox');
-            } 
+                 $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.format_error') +'</span>').insertAfter(fileInput);
+                  validationMsgBox = applicationForm.find('span.validationMsgBox');
+            }
         } 
        
         $('.upload_label').html(fileName);
@@ -720,14 +743,10 @@ $(function() {
         validationMsgBox.remove();
     });
     
-    
-    
-    
     applicationForm.find('.containerBaseData div.right').on('click', function(event) {
         if ($(event.target).hasClass('delete')) {
             return;
         }
-
         fileInput.trigger('click');
     });
 

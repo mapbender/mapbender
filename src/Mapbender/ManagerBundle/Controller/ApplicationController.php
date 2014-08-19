@@ -28,6 +28,8 @@ use Mapbender\CoreBundle\Entity\RegionProperties;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+use Symfony\Component\Translation\Translator;
+
 class ApplicationController extends Controller
 {
 
@@ -77,12 +79,12 @@ class ApplicationController extends Controller
     public function newAction()
     {
         $application = new Application();
-
+      
         // ACL access check
         $this->checkGranted('CREATE', $application);
 
         $form = $this->createApplicationForm($application);
-
+        
         return array(
             'application' => $application,
             'form' => $form->createView(),
@@ -99,6 +101,7 @@ class ApplicationController extends Controller
      */
     public function createAction()
     {
+        
         $application = new Application();
        
         // ACL access check
@@ -107,7 +110,7 @@ class ApplicationController extends Controller
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
         
-        $screenshot_url = "";
+        $screenshot_url = NULL;
 
         $form->bind($request);
         if ($form->isValid()) {
@@ -125,12 +128,12 @@ class ApplicationController extends Controller
             
             $scFile = $application->getScreenshotFile();
             if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
-//                die(print_r($scFile));
                 $filename = sprintf('screenshot-%d.%s', $application->getId(), $scFile->guessExtension());
                 $scFile->move($app_directory, $filename);
                 $application->setScreenshot($filename);
                 $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
                 $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
+                
             }
             $em->persist($application);
             $em->flush();
@@ -188,7 +191,6 @@ class ApplicationController extends Controller
         } else {
             $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
             $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
-//            die($screenshot_url);
         }
 
         return array(
@@ -246,7 +248,9 @@ class ApplicationController extends Controller
             try {
                 if (AppComponent::createAppWebDir($this->container, $application->getSlug(), $old_slug)) {
                     $scFile = $application->getScreenshotFile();
-                    if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
+                    $fileType = getimagesize($scFile);
+                    
+                    if ($scFile !== null && $form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
                         $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
                         $application->getScreenshotFile()->move($app_directory, $filename);
                         $application->setScreenshot($filename);
@@ -813,10 +817,11 @@ class ApplicationController extends Controller
             $templateClassName = $application->getTemplate();
             $available_properties = $templateClassName::getRegionsProperties();
         }
-
+        $maxFileSize = 102400;
         return $this->createForm(new ApplicationType(), $application, array(
                 'available_templates' => $available_templates,
-                'available_properties' => $available_properties));
+                'available_properties' => $available_properties,
+                'maxFileSize' => $maxFileSize));
     }
 
     /**

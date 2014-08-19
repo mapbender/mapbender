@@ -102,8 +102,7 @@ class Application
 
     /**
      * @Assert\File(
-     *      maxSize="102400",
-     *      maxSizeMessage="mb.core.entity.app.screenshotfile.error | trans({'%limit%':102400})"
+     *      maxSize="102400"
      * )
      */
     protected $screenshotFile;
