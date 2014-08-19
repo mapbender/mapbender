@@ -113,6 +113,15 @@ $.widget("mapbender.mbGpsPosition", {
     _deactivateTimer: function (){
         $(this.element).parent().removeClass("toolBarItemActive");
         this.interval = clearInterval(this.interval);
+
+        var olmap = this.map.map.olMap;
+        var markers;
+        var candidates = olmap.getLayersByName('Markers');
+        if (candidates.length > 0){
+            markers = candidates[0];
+            olmap.removeLayer(markers);
+            markers.destroy();
+        }
     },
     /**
      *

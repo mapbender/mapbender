@@ -88,7 +88,6 @@ class ApplicationController extends Controller
         return array(
             'application' => $application,
             'form' => $form->createView(),
-            'form_name' => $form->getName(),
             'screenshot_filename'=>  NULL);
     }
 
@@ -324,7 +323,6 @@ class ApplicationController extends Controller
                     'available_elements' => $this->getElementList(),
                     'sources' => $sources,
                     'form' => $form->createView(),
-                    'form_name' => $form->getName(),
                     'template_name' => $templateClass::getTitle(),
                     'screenshot' => $screenshot_url,
                     'screenshot_filename' => $screenshot_filename,

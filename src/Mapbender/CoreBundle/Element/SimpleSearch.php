@@ -125,7 +125,7 @@ class SimpleSearch extends Element
             'url' => $url
         );
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
-        return $this->container->get('http_kernel')->handle(
+        $response = $this->container->get('http_kernel')->handle(
                 $subRequest, HttpKernelInterface::SUB_REQUEST);
         // Dive into result JSON if needed (Solr for example 'response.docs')
         if('' !== $configuration['collection_path']) {
