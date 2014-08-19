@@ -406,6 +406,11 @@ Mapbender.Model = {
         var mqLayer = this.map.layersList[source.mqlid];
         if (result.layers.length === 0) {
             mqLayer.olLayer.setVisibility(false);
+            // Clear all previously queued tiles for this layer
+            var tileManager = this.map.olMap.tileManager;
+            if(tileManager) {
+                tileManager.clearTileQueue({object: mqLayer.olLayer});
+            }
             mqLayer.olLayer.params.LAYERS = result.layers;
             mqLayer.olLayer.queryLayers = result.infolayers;
         } else {
