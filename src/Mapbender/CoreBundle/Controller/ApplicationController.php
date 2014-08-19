@@ -108,14 +108,16 @@ class ApplicationController extends Controller
             // rewritten for it. Now we rewrite from these normalized URLs to
             // the final, runtime URLs and therefore the cache's target path
             // is our source path.
-            $source = $assets->getTargetPath();
+            $source = str_replace(array('{slug}', '{type}'),
+                                  array($slug, $type),
+                                  $assets->getTargetPath());
 
             // Let's build the runtime target path
             $request = $this->getRequest();
             $webDir = str_replace('\\', '/',
                 realpath($this->container->get('kernel')->getRootDir() .
                     '/../web/'));
-            $target = substr(
+            $target = $webDir . substr(
                 $request->getRequestUri(),
                 strlen($request->getBasePath()));
 
@@ -126,7 +128,7 @@ class ApplicationController extends Controller
                                  array(),
                                  null, $source);
             $assets->load();
-            $assets->setTargetPath($webDir . $target);
+            $assets->setTargetPath($target);
             $assets->ensureFilter(new CssRewriteFilter());
         }
 
