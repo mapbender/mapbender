@@ -8,7 +8,9 @@
 
 namespace Mapbender\ManagerBundle\Component;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
+use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
 use Mapbender\CoreBundle\Component\Element as ElementComponent;
 use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\CoreBundle\Component\SourceInstanceItem;
@@ -30,6 +32,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 class ExchangeNormalizer extends ExchangeSerializer implements NormalizerInterface
 {
+
     /**
      * 
      * @param ContainerInterface $container container
@@ -38,7 +41,7 @@ class ExchangeNormalizer extends ExchangeSerializer implements NormalizerInterfa
     {
         parent::__construct($container);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -59,8 +62,14 @@ class ExchangeNormalizer extends ExchangeSerializer implements NormalizerInterfa
             } else if (is_integer($fieldValue) || is_float($fieldValue) || is_string($fieldValue) || is_bool($fieldValue)) {
                 $data[$fieldName] = $fieldValue;
             } else if (is_array($fieldValue)) {
-                if($realObj instanceof Element && $fieldName === self::KEY_CONFIGURATION){
-                    $data[$fieldName] = $this->handleElementConfiguration($fieldName, $fieldValue, $object, $realObj);
+                if ($realObj instanceof Element && $fieldName === self::KEY_CONFIGURATION) {
+                    $form = ElementComponent::getElementForm($this->container, $object->getApplication(), $object);
+                    $configurationTmp = $object->getConfiguration();
+                    $configuration = $this->handleElmConfig($form['form'][self::KEY_CONFIGURATION]);
+                    $elmClass = $object->getClass();
+                    $applComp = new ApplicationComponent($this->container, $object->getApplication(), array());
+                    $elmComp = new $elmClass($applComp, $this->container, $object);
+                    $data[$fieldName] = $elmComp->normalizeConfiguration($configuration, $configurationTmp);
                 } else {
                     $data[$fieldName] = $this->handleArray($fieldName, $fieldValue, $realObj);
                 }
@@ -274,7 +283,7 @@ class ExchangeNormalizer extends ExchangeSerializer implements NormalizerInterfa
             $collection = $fieldValue->toArray();
             foreach ($collection as $collItem) {
                 $inst = $this->normalize($collItem);
-                $result[] = $inst;#$this->createInstanceIdent($collItem, array('id' => $collItem->getId()));
+                $result[] = $inst; #$this->createInstanceIdent($collItem, array('id' => $collItem->getId()));
             }
             return $result;
         } else { # handle other
@@ -322,20 +331,68 @@ class ExchangeNormalizer extends ExchangeSerializer implements NormalizerInterfa
         }
         return $result;
     }
-    
+
     private function handleElementConfiguration($fieldName, $fieldValue, Element $element, $realObj)
     {
         $form = ElementComponent::getElementForm($this->container, $element->getApplication(), $element);
         $configuration = $element->getConfiguration();
-        foreach ($form['form'][self::KEY_CONFIGURATION]->all() as $fieldName => $fieldValue) {
-            $norm = $fieldValue->getNormData();
+        foreach ($form['form'][self::KEY_CONFIGURATION]->all() as $key => $value) {
+            $norm = $value->getNormData();
             if ($norm instanceof Element || $norm instanceof Layerset || $norm instanceof Application ||
                 $norm instanceof RegionProperties || $norm instanceof Source || $norm instanceof SourceItem ||
                 $norm instanceof SourceInstance || $norm instanceof SourceInstanceItem) {
-                $configuration[$fieldName] = $this->createInstanceIdent($norm, array('id' => $norm->getId()));
+                $configuration[$key] = $this->createInstanceIdent($norm, array('id' => $norm->getId()));
+            } elseif (is_array($norm)) {
+                if (ArrayUtil::isAssoc($norm)) {
+                    foreach ($norm as $key_ => $value_) {
+                        $a = 0;
+                    }
+                } else {
+                    $a = 0;
+                }
             }
         }
         return $configuration;
+    }
+
+    private function handleElmConfig($form)
+    {
+        if ($form->count() > 0) {
+            $config = array();
+            foreach ($form->all() as $key => $value) {
+                $config[$key] = $this->handleElmConfig($value);
+            }
+            return $config;
+        } else {
+            $norm = $form->getNormData();
+            if ($norm instanceof Element || $norm instanceof Layerset || $norm instanceof Application ||
+                $norm instanceof RegionProperties || $norm instanceof Source || $norm instanceof SourceItem ||
+                $norm instanceof SourceInstance || $norm instanceof SourceInstanceItem) {
+                return $this->createInstanceIdent($norm, array('id' => $norm->getId()));
+            } elseif ($norm instanceof ArrayCollection) {
+                $config = array();
+                foreach ($norm as $item) {
+                    if ($item instanceof Element || $item instanceof Layerset || $item instanceof Application ||
+                        $item instanceof RegionProperties || $item instanceof Source || $item instanceof SourceItem ||
+                        $item instanceof SourceInstance || $item instanceof SourceInstanceItem) {
+                        $config[] = $this->createInstanceIdent($item, array('id' => $item->getId()));
+                    } else {
+                        $a = 0;
+                    }
+                }
+                return $config;
+            } elseif (is_array($norm)) {
+                if (ArrayUtil::isAssoc($norm)) {
+                    return $norm;
+                } else {
+                    return $norm;
+                }
+            } else if (is_object($norm)) {
+                return $norm;
+            } else {
+                return $norm;
+            }
+        }
     }
 
     /**
@@ -345,4 +402,5 @@ class ExchangeNormalizer extends ExchangeSerializer implements NormalizerInterfa
     {
         return true;
     }
+
 }

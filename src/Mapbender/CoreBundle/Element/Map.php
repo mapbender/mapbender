@@ -226,6 +226,9 @@ class Map extends Element
         return 'MapbenderManagerBundle:Element:map.html.twig';
     }
 
+    /**
+     * @inheritdoc
+     */
     public function httpAction($action)
     {
         $response = new Response();
@@ -240,7 +243,12 @@ class Map extends Element
         }
         return $response;
     }
-    
+
+    /**
+     * Returns proj4js srs definitions from a GET parameter srs
+     * 
+     * @return array srs definitions
+     */
     protected function loadSrsDefinitions()
     {
         $srsList = $this->container->get('request')->get("srs", null);
@@ -266,6 +274,12 @@ class Map extends Element
         }
     }
 
+    /**
+     * Returns proj4js srs definitions from srs names
+     * 
+     * @param array $srsNames srs names (array with "EPSG" codes)
+     * @return array proj4js srs definitions
+     */
     protected function getSrsDefinitions(array $srsNames)
     {
         $result = array();
@@ -292,6 +306,50 @@ class Map extends Element
             }
         }
         return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function normalizeConfiguration(array $configuration, array $aaa = array())
+    {
+        if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
+            $configuration['extents'] = array(
+                'start' => $configuration['extent_start'],
+                'max' => $configuration['extent_max']
+            );
+            unset($configuration['extent_start']);
+            unset($configuration['extent_max']);
+        }
+        if (is_string($configuration['otherSrs'])) {
+            $configuration['otherSrs'] = explode(',', $configuration['otherSrs']);
+        }
+        if (is_string($configuration['scales'])) {
+            $configuration['scales'] = explode(',', $configuration['scales']);
+        }
+        return $configuration;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function denormalizeConfiguration(array $configuration)
+    {
+        if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
+            $configuration['extents'] = array(
+                'start' => $configuration['extent_start'],
+                'max' => $configuration['extent_max']
+            );
+            unset($configuration['extent_start']);
+            unset($configuration['extent_max']);
+        }
+        if (is_string($configuration['otherSrs'])) {
+            $configuration['otherSrs'] = explode(',', $configuration['otherSrs']);
+        }
+        if (is_string($configuration['scales'])) {
+            $configuration['scales'] = explode(',', $configuration['scales']);
+        }
+        return $configuration;
     }
 
 }
