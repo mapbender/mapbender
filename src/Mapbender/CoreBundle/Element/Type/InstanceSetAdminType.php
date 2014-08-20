@@ -1,7 +1,7 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 /**
  * 
  */
-class SourceSetAdminType extends AbstractType
+class InstanceSetAdminType extends AbstractType
 {
 
     /**
@@ -17,7 +17,7 @@ class SourceSetAdminType extends AbstractType
      */
     public function getName()
     {
-        return 'sourcesset';
+        return 'instanceset';
     }
 
     /**
@@ -26,7 +26,7 @@ class SourceSetAdminType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'instances' => new ArrayCollection()
+            'layerset' => null
         ));
     }
 
@@ -43,13 +43,11 @@ class SourceSetAdminType extends AbstractType
                 array(
                 'required' => false,
                 'property_path' => '[group]'))
-            ->add('instances', 'entity', array(
-                'class' => 'Mapbender\\CoreBundle\\Entity\\SourceInstance',
-                'property' => 'title',
+            ->add('instances', 'layerset_instances',
+                array(
+                'layerset' => $options['layerset'],
                 'property_path' => '[instances]',
-                'group_by' => 'title',
-//                'choices' => $options['sources'],
-                'required' => true,
+                'required' => false,
                 'multiple' => true));
     }
 
