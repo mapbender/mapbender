@@ -101,7 +101,9 @@ class Application
     protected $extra_assets;
 
     /**
-     * @Assert\File(maxSize="102400")
+     * @Assert\File(
+     *      maxSize="102400"
+     * )
      */
     protected $screenshotFile;
 

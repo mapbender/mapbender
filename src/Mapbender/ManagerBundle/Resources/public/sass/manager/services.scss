@@ -125,7 +125,7 @@
   .dropdown{
     min-width:250px;
     margin-bottom:$space/2;
-  }      
+  }
   .checkWrapper, .labelCheck{
     display: inline-block;
     margin-top:8px;
@@ -137,6 +137,13 @@
     margin-bottom:$space/2;
   }
   .leftContainer .inputWrapper input{ width: 100%; }
+}
+.metaData {
+  .rightContainer {
+    > .left {
+      white-space: nowrap;
+    }
+  }
 }
 .instanceTable{
   margin-top:$space;

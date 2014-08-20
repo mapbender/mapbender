@@ -7,7 +7,7 @@
 <div class="clearContainer"></div>
 
 <div class="left">
-      {{ form_label(form.screenshotFile) }}
+    {{ form_label(form.screenshotFile) }}
 </div>
 
 <div class="screenshot_upload left"  title=" {{ 'mb.manager.admin.application.upload.tooltip' | trans }}">
@@ -23,11 +23,9 @@
             {% endif %}
         </div>
         {{ form_widget(form.screenshotFile) }}
+        {{ form_widget(form.maxFileSize) }}
     </div>
 </div>
-
-
-
 <div class="clearContainer"></div>
 
 {{ form_label(form.description) }}

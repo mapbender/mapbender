@@ -20,7 +20,8 @@ class ApplicationType extends AbstractType
     {
         $resolver->setDefaults(array(
             'available_templates' => array(),
-            'available_properties' => array()
+            'available_properties' => array(),
+            'maxFileSize' => 0
         ));
     }
 
@@ -49,11 +50,13 @@ class ApplicationType extends AbstractType
                 array('label' => 'Screenshot',
                 'attr' => array(
                     'required' => false,
-                    'accept'=>'image/jpeg,image/png,image/gif')))
+                    'accept'=>'image/*')))
             // Flag if set true, then screenshot should be 
             ->add('removeScreenShot', 'hidden',array(
-                'mapped' => false
-            ))
+                'mapped' => false))
+            ->add('maxFileSize', 'hidden',array(
+                'mapped' => false,
+                'data' => $options['maxFileSize']))
             ->add('published', 'checkbox', array(
                 'required' => false,
                 'label' => 'Published'));
