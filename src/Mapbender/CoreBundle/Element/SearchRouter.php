@@ -191,6 +191,15 @@ class SearchRouter extends Element
         return $this->forms;
     }
 
+    public function getFormViews()
+    {
+        $formViews = array();
+        for($this->getForms() as $form) {
+            $formViews[] = $form->createView();
+        }
+        return $formViews;
+    }
+
     /**
      * Set up a single form.
      *
