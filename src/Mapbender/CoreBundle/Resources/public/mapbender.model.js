@@ -146,14 +146,14 @@ Mapbender.Model = {
         $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
         this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
         this.map.olMap.events.register('movestart', this, $.proxy(this._checkOutOfBounds, this));
-        
+
         $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr){
             $.each(defArr, function(idx, layerDef){
                 layerDef['origId'] = idx;
                 self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
             });
         });
-        
+
         if(poiMarkerLayer){
             this.map.olMap.addLayer(poiMarkerLayer);
         }
@@ -171,7 +171,7 @@ Mapbender.Model = {
         for(var i = 0; i < this.srsDefs.length; i++){
             if(this.srsDefs[i].name === srscode){
                 proj = new OpenLayers.Projection(this.srsDefs[i].name);
-                if(proj.projCode === 'EPSG:4326'){
+                if(!proj.proj.units) {
                     proj.proj.units = 'degrees';
                 }
                 return proj;
@@ -185,7 +185,7 @@ Mapbender.Model = {
     /**
      * Calculates an extent from a geometry with buffer.
      * @param {OpenLayers.Geometry} geom geometry
-     * @param {object} buffer {w: WWW,h: HHH}. WWW- buffer for x (kilometer), HHH- buffer for y (kilometer). 
+     * @param {object} buffer {w: WWW,h: HHH}. WWW- buffer for x (kilometer), HHH- buffer for y (kilometer).
      * @returns {OpenLayers.Bounds}
      */
     calculateExtent: function(geom, buffer){
