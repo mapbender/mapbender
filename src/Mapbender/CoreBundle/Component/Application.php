@@ -215,6 +215,7 @@ class Application
                         if ($type === 'trans') {
                             $elementTranslations = json_decode($this->container->get('templating')->render($asset),
                                 true);
+                            if(!$elementTranslations) continue;
                             $translations = array_merge($translations,
                                 $elementTranslations);
                         } else {
