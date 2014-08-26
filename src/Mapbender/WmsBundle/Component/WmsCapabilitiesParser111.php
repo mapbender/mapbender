@@ -368,7 +368,7 @@ class WmsCapabilitiesParser111 extends WmsCapabilitiesParser
                 $dimension->setUnits($this->getValue("./@units", $dimensionEl));
                 $dimension->setUnitSymbol($this->getValue("./@unitSymbol",
                         $dimensionEl));
-                $wmslayer->addDimensionl($dimension);
+                $wmslayer->addDimension($dimension);
             }
         }
 

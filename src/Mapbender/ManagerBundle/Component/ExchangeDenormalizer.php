@@ -114,8 +114,9 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
     {
         $idAfter = $this->getIdAfter($class, $idBefore);
         if ($idAfter !== null) {
-            $prim = $this->getPrimary($class);
-            return EntityUtil::findOneBy($this->em, $class, $prim, $idAfter);
+            $criteria = array();
+            $criteria[$this->getPrimary($class)] = $idAfter;
+            return $this->em->getRepository($class)->findOneBy($criteria);
         } else {
             return null;
         }

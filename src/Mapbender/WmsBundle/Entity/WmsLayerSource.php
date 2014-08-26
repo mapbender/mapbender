@@ -852,7 +852,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      * @param Dimension $dimension
      * @return WmsLayerSource
      */
-    public function addDimensionl(Dimension $dimension)
+    public function addDimension(Dimension $dimension)
     {
         $this->dimension[] = $dimension;
         return $this;

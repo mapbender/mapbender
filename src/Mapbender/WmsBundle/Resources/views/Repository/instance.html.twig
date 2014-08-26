@@ -65,8 +65,14 @@
         </div>
         <div class="clear"></div>
       </div>
+    {#% if dimensions is not null %}
+      <div class="left rightContainer">
+        {{ dump(dimensions) }}
+      </div>
+    {% endif %#}
     </div>
 
+       
     {% set root = instance.source.getRootlayer() %}
     <table id="instanceTable" class="table instanceTable">
       <thead>

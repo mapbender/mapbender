@@ -91,10 +91,17 @@ class WmsInstance extends SourceInstance
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $tiled = false;
+    
+    /**
+     * ORM\Column(type="array", nullable=true)
+     */
+    protected $dimensions;
+    
 
     public function __construct()
     {
         $this->layers = new ArrayCollection();
+        $this->dimensions = array();
     }
 
     /**
@@ -645,7 +652,7 @@ class WmsInstance extends SourceInstance
 
     public function __toString()
     {
-        return $this->getId();
+        return (string) $this->getId();
     }
 
     /**
@@ -683,15 +690,6 @@ class WmsInstance extends SourceInstance
     public function getMetadata()
     {
         return new WmsMetadata($this);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function remove(EntityManager $em)
-    {
-        $this->removeLayerRecursive($em, $this->getRootlayer());
-        $em->remove($this);
     }
 
     /**

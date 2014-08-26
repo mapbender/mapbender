@@ -208,14 +208,4 @@ abstract class Source
      */
     abstract public function getManagertype();
 
-    /**
-     * Creates a SourceInstance
-     */
-    abstract public function createInstance();
-
-    /**
-     * Remove a source from a database
-     */
-    abstract public function remove(EntityManager $em);
-
 }

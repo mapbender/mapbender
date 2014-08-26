@@ -44,12 +44,4 @@ class EntityUtil
             return $newUniqueValue;
         }
     }
-    
-    public static function findOneBy(EntityManager $em, $entityName, $field, $fieldValue)
-    {
-        $criteria = array();
-        $criteria[$field] = $fieldValue;
-        $obj = $em->getRepository($entityName)->findOneBy($criteria);
-        return $obj;
-    }
 }

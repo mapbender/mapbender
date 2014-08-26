@@ -33,6 +33,12 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $bbox;
+    
+    /**
+     *
+     * @var type 
+     */
+    public $dimensions;
 
     /**
      * Sets a tiled

@@ -56,7 +56,7 @@ class Dimension
      * ORM\Column(type="string", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $extentValue;
+    public $extent;
 
     /**
      * Set name
@@ -206,24 +206,33 @@ class Dimension
     }
 
     /**
-     * Set extentValue
+     * Set extent
      * 
-     * @param string $value 
+     * @param DimExtent $value 
      * @return Dimension
      */
-    public function setExtentValue($value)
+    public function setExtent($value)
     {
-        $this->extentValue = $value;
+        $this->extent = $value;
     }
 
     /**
-     * Get extentValue
+     * Get extent
      * 
-     * @return string
+     * @return DimExtent
      */
-    public function getExtentValue()
+    public function getExtent()
     {
-        return $this->extentValue;
+        return $this->extent;
     }
 
+    /**
+     * Get extent
+     * 
+     * @return DimExtent
+     */
+    public function extentStr()
+    {
+        $this->extent->__toString();
+    }
 }

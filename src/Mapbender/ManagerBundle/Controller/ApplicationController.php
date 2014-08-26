@@ -11,6 +11,7 @@ namespace Mapbender\ManagerBundle\Controller;
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
@@ -814,34 +815,11 @@ class ApplicationController extends Controller
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
         $this->checkGranted('EDIT', $application);
-
-        $layerset = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:Layerset")
-            ->find($layersetId);
-
-        $source = $this->getDoctrine()
-            ->getRepository("MapbenderCoreBundle:Source")
-            ->find($sourceId);
-
-        $sourceInstance = $source->createInstance();
-        $sourceInstance->setLayerset($layerset);
-        $sourceInstance->setWeight(-1);
-
-        $layerset->addInstance($sourceInstance);
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($sourceInstance);
-        $em->persist($application);
-        $em->persist($layerset);
-        $em->flush();
-
-        $num = 0;
-        foreach ($layerset->getInstances() as $instance) {
-            $instance->setWeight($num);
-            $instance->generateConfiguration();
-            $em->persist($instance);
-            $em->flush();
-            $num++;
-        }
+        $source = EntityHandler::find($this->container, "MapbenderCoreBundle:Source", $sourceId);
+        $layerset = EntityHandler::find($this->container, "MapbenderCoreBundle:Layerset", $layersetId);
+        $eHandler = EntityHandler::createHandler($this->container, $source);
+        
+        $sourceInstance = $eHandler->createInstance($layerset);
 
         $this->get("logger")->debug('A new instance "'
             . $sourceInstance->getId() . '"has been created. Please edit it!');

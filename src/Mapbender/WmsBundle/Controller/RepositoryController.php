@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Controller;
 
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\XmlValidator;
 use Mapbender\CoreBundle\Component\Utils;
@@ -10,6 +11,7 @@ use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\WmsBundle\Component\Exception\WmsException;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
+use Mapbender\WmsBundle\Component\WmsEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -228,11 +230,12 @@ class RepositoryController extends Controller
         $aclProvider->deleteAcl($oid);
 
         foreach ($wmsinstances as $wmsinstance) {
-            $wmsinstance->remove($em);
+            $wmsinsthandler = EntityHandler::createHandler($this->container, $wmsinstance);
+            $wmsinsthandler->remove();
             $em->flush();
         }
-        $wmssource->remove($em);
-        $em->flush();
+        $wmshandler = EntityHandler::createHandler($this->container, $wmssource);
+        $wmshandler->remove();
         $em->getConnection()->commit();
         $this->get('session')->getFlashBag()->set('success', "Your WMS has been deleted");
         return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
@@ -251,7 +254,8 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
-        $instance->remove($em);
+        $insthandler = EntityHandler::createHandler($this->container, $instance);
+        $insthandler->remove();
         $em->flush();
         $em->getConnection()->commit();
         $this->get('session')->getFlashBag()->set('success', 'Your source instance has been deleted.');
@@ -302,13 +306,16 @@ class RepositoryController extends Controller
                     "instance" => $wmsinstance);
             }
         } else { // edit
+            $wmshandler = EntityHandler::createHandler($this->container, $wmsinstance);
+            $dims = $wmshandler->getSourceDimensions($wmsinstance->getSource());
             $form = $this->createForm(
                 new WmsInstanceInstanceLayersType(), $wmsinstance);
             $fv = $form->createView();
             return array(
                 "form" => $form->createView(),
                 "slug" => $slug,
-                "instance" => $wmsinstance);
+                "instance" => $wmsinstance,
+                'dimensions' => count($dims) > 0 ? $dims : null);
         }
     }
 

@@ -279,11 +279,11 @@ abstract class SourceInstance
      */
     abstract public function generateConfiguration();
 
-    /**
-     * Remove a source instance from a database
-     * @param EntityManager $em
-     */
-    abstract public function remove(EntityManager $em);
+//    /**
+//     * Remove a source instance from a database
+//     * @param EntityManager $em
+//     */
+//    abstract public function removen(EntityManager $em);
 
     /**
      * Copies a source instance
@@ -296,6 +296,7 @@ abstract class SourceInstance
      * @return SourceMetadata
      */
     abstract public function getMetadata();
+    
 
     public function __toString()
     {
