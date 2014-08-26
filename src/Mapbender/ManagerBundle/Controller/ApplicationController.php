@@ -88,7 +88,7 @@ class ApplicationController extends Controller
             'application' => $application,
             'form' => $form->createView(),
             'form_name' => $form->getName(),
-            'screenshot_filename' => NULL);
+            'screenshot_filename' => null);
     }
 
     /**
@@ -221,7 +221,7 @@ class ApplicationController extends Controller
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
         
-        $screenshot_url = "";
+        $screenshot_url = null;
 
         $form->bind($request);
         if ($form->isValid()) {
@@ -239,7 +239,6 @@ class ApplicationController extends Controller
             
             $scFile = $application->getScreenshotFile();
             if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
-//                die(print_r($scFile));
                 $filename = sprintf('screenshot-%d.%s', $application->getId(), $scFile->guessExtension());
                 $scFile->move($app_directory, $filename);
                 $application->setScreenshot($filename);
@@ -303,7 +302,6 @@ class ApplicationController extends Controller
         } else {
             $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
             $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
-//            die($screenshot_url);
         }
 
         return array(
@@ -356,15 +354,16 @@ class ApplicationController extends Controller
             }
             $em->persist($application);
             $em->flush();
-            //TODO: Fileupload Size
+                //TODO: Fileupload Size
             try {
                 if (AppComponent::createAppWebDir($this->container, $application->getSlug(), $old_slug)) {
                     $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
                     $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
                     $scFile = $application->getScreenshotFile();
-                    if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
-                        $filename = sprintf('screenshot-%d.%s', $application->getId(),
-                            $application->getScreenshotFile()->guessExtension());
+                    $fileType = getimagesize($scFile);
+                    
+                    if ($scFile !== null && $form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
+                        $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
                         $application->getScreenshotFile()->move($app_directory, $filename);
                         $application->setScreenshot($filename);
                     }
@@ -376,8 +375,7 @@ class ApplicationController extends Controller
                     $em->getConnection()->commit();
                     $this->get('session')->getFlashBag()->set('success', 'Your application has been updated.');
                 } else {
-                    $this->get('session')->getFlashBag()->set('error',
-                        "Your application has been updated but" . " the application's directories can not be created.");
+                    $this->get('session')->getFlashBag()->set('error', "Your application has been updated but" . " the application's directories can not be created.");
                     $em->getConnection()->rollback();
                     $em->close();
                 }
@@ -392,8 +390,7 @@ class ApplicationController extends Controller
             }
             $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
             return $this->redirect(
-                    $this->generateUrl('mapbender_manager_application_edit',
-                        array(
+                    $this->generateUrl('mapbender_manager_application_edit', array(
                         'slug' => $application->getSlug())));
         } else {
             //
@@ -936,11 +933,11 @@ class ApplicationController extends Controller
             $templateClassName = $application->getTemplate();
             $available_properties = $templateClassName::getRegionsProperties();
         }
-
-        return $this->createForm(new ApplicationType(), $application,
-                array(
+        $maxFileSize = 102400;
+        return $this->createForm(new ApplicationType(), $application, array(
                 'available_templates' => $available_templates,
-                'available_properties' => $available_properties));
+                'available_properties' => $available_properties,
+                'maxFileSize' => $maxFileSize));
     }
 
     /**

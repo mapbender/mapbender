@@ -7,10 +7,10 @@
   {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
   <div class="clearContainer"></div>
 
-  {#% if form.configuration.instancesets is defined %#}
+  {% if form.configuration.instancesets is defined %}
   {{ form_label(form.configuration.instancesets) }}{{ form_widget(form.configuration.instancesets) }}
   <div class="clearContainer"></div>
-  {#% else %}
+  {% else %}
   <span>{{ 'mb.core.basesourceswitcher.form.mesage'| trans }}</span>
-  {% endif %#}
+  {% endif %}
 </div>

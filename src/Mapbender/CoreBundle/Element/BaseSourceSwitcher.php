@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element;
 
 use Doctrine\ORM\EntityManager;
@@ -84,31 +85,33 @@ class BaseSourceSwitcher extends Element
     {
         return array(
             'js' => array('mapbender.element.basesourceswitcher.js'),
-            'css'=> array('@MapbenderCoreBundle/Resources/public/sass/element/basesourceswitcher.scss')
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/basesourceswitcher.scss')
         );
-    }/**
+    }
+    
+    /**
      * @inheritdoc
      */
     public function getConfiguration()
     {
         $configuration = $confHelp = parent::getConfiguration();
-        if(isset($configuration['sourcesets'])){
-            unset($configuration['sourcesets']);
+        if (isset($configuration['instancesets'])) {
+            unset($configuration['instancesets']);
         }
         $configuration['groups'] = array();
-        foreach ($confHelp['sourcesets'] as $sourceset){
-            if(isset($sourceset['group']) && $sourceset['group'] !== ''){
-                if(!isset($configuration['groups'][$sourceset['group']])){
-                    $configuration['groups'][$sourceset['group']] = array();
+        foreach ($confHelp['instancesets'] as $instanceset) {
+            if (isset($instanceset['group']) && $instanceset['group'] !== '') {
+                if (!isset($configuration['groups'][$instanceset['group']])) {
+                    $configuration['groups'][$instanceset['group']] = array();
                 }
-                $configuration['groups'][$sourceset['group']][] = array(
-                    'title' => $sourceset['title'],
-                    'sources' => $sourceset['sources']
+                $configuration['groups'][$instanceset['group']][] = array(
+                    'title' => $instanceset['title'],
+                    'sources' => $instanceset['instances']
                 );
             } else {
-                $configuration['groups'][$sourceset['title']] = array(
-                    'title' => $sourceset['title'],
-                    'sources' => $sourceset['sources']
+                $configuration['groups'][$instanceset['title']] = array(
+                    'title' => $instanceset['title'],
+                    'sources' => $instanceset['instances']
                 );
             }
         }
@@ -143,7 +146,7 @@ class BaseSourceSwitcher extends Element
             if ($fieldName === 'sourcesets') {
                 $help = array();
                 foreach ($layersetMap as $layersetId => $layerset) {
-                    foreach ($layerset['instanceMap'] as $old => $new){
+                    foreach ($layerset['instanceMap'] as $old => $new) {
                         $help[$old] = $new;
                     }
                 }

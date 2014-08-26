@@ -35,6 +35,10 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInterface
 {
 
+    /**
+     *
+     * @var array mapper entity id before import <-> entity id after import
+     */
     protected $mapper;
 
     /**
@@ -49,6 +53,12 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         $this->mapper = $mapper;
     }
 
+    /**
+     * Adds class name and primary column name into mapper.
+     * 
+     * @param string $class class name to add into mapper
+     * @param string $idName primary column name
+     */
     private function addClassToMapper($class, $idName)
     {
         if (!isset($this->mapper[$class])) {
@@ -59,41 +69,53 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         }
     }
 
-    private function addToMapper($class, $oldId, $newId)
+    /**
+     * Adds ids into mappter.
+     * 
+     * @param string $class entity class name
+     * @param int $idBefore entity id before import
+     * @param int $idAfter entity id after import
+     */
+    private function addToMapper($class, $idBefore, $idAfter)
     {
-        $this->mapper[$class][self::KEY_MAP][$oldId] = $newId;
+        $this->mapper[$class][self::KEY_MAP][$idBefore] = $idAfter;
     }
 
+    /**
+     * 
+     * @param string $class entity class name
+     * @return type
+     */
     private function getPrimary($class)
     {
         return $this->mapper[$class][self::KEY_PRIMARY];
     }
 
-    private function getOldId($class, $newId)
+    private function getOldId($class, $idAfter)
     {
-        foreach ($this->mapper[$class][self::KEY_MAP] as $oldId_ => $newId_) {
-            if ($newId === $newId_) {
-                return $oldId_;
+        foreach ($this->mapper[$class][self::KEY_MAP] as $idBefore_ => $idAfter_) {
+            if ($idAfter === $idAfter_) {
+                return $idBefore_;
             }
         }
         return null;
     }
 
-    private function getNewId($class, $oldId)
+    private function getIdAfter($class, $idBefore)
     {
-        if (isset($this->mapper[$class][self::KEY_MAP][$oldId])) {
-            return $this->mapper[$class][self::KEY_MAP][$oldId];
+        if (isset($this->mapper[$class][self::KEY_MAP][$idBefore])) {
+            return $this->mapper[$class][self::KEY_MAP][$idBefore];
         } else {
             return null;
         }
     }
 
-    private function findExistingEntity($class, $oldId)
+    private function findExistingEntity($class, $idBefore)
     {
-        $newId = $this->getNewId($class, $oldId);
-        if ($newId !== null) {
+        $idAfter = $this->getIdAfter($class, $idBefore);
+        if ($idAfter !== null) {
             $prim = $this->getPrimary($class);
-            return EntityUtil::findOneBy($this->em, $class, $prim, $newId);
+            return EntityUtil::findOneBy($this->em, $class, $prim, $idAfter);
         } else {
             return null;
         }
@@ -109,6 +131,12 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         return null;
     }
 
+    /**
+     * 
+     * @param type $data
+     * @param type $class
+     * @param \Mapbender\CoreBundle\Entity\Source $objectExists
+     */
     public function mapSource($data, $class, $objectExists)
     {
         $reflectionClass = new \ReflectionClass($class);
@@ -211,6 +239,15 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         return $object;
     }
 
+    /**
+     * Finds an existing entity or creates a new entity if an antity not exists.
+     * 
+     * @param string $class class name
+     * @param array $data data
+     * @param array $fields fileds properties
+     * @param array $fixedField ids from fixed entities
+     * @return mixed an ORM Entity object
+     */
     private function findOrCreateEntity($class, $data, $fields, &$fixedField)
     {
         $idName = $this->findIdName($fields);
@@ -263,7 +300,15 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         return $object;
     }
 
-    private function handleElement($object, $fieldName, $fieldValue, $fieldProps)
+    /**
+     * Handles an Element object.
+     * 
+     * @param Element $object an element
+     * @param string $fieldName field name
+     * @param mixed $fieldValue field value
+     * @param array $fieldProps field properties
+     */
+    private function handleElement(Element $object, $fieldName, $fieldValue, $fieldProps)
     {
         $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
         $reflectionMethod->invoke($object, $fieldValue);
@@ -271,6 +316,14 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         $this->em->flush();
     }
 
+    /**
+     * 
+     * @param type $object 
+     * @param type $newObject
+     * @param string $fieldName field name
+     * @param mixed $fieldValue field value
+     * @param array $fieldProps field properties
+     */
     private function handleCommon($object, $newObject, $fieldName, $fieldValue, $fieldProps)
     {
         $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
@@ -281,17 +334,17 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         $this->em->flush();
     }
 
-    private function handleSourceInstance($sourceInstance, $newObject, $fieldName, $fieldValue, $fieldProps)
+    private function handleSourceInstance($object, $newObject, $fieldName, $fieldValue, $fieldProps)
     {
         if ($newObject instanceof Source) {
-            $reflectionMethod = new \ReflectionMethod(get_class($sourceInstance), $fieldProps[self::KEY_SETTER]);
-            $reflectionMethod->invoke($sourceInstance, $newObject);
-            $this->em->persist($sourceInstance);
+            $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
+            $reflectionMethod->invoke($object, $newObject);
+            $this->em->persist($object);
             $this->em->flush();
         } elseif ($newObject instanceof Layerset) {
-            $reflectionMethod = new \ReflectionMethod(get_class($sourceInstance), $fieldProps[self::KEY_SETTER]);
-            $reflectionMethod->invoke($sourceInstance, $newObject);
-            $this->em->persist($sourceInstance);
+            $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
+            $reflectionMethod->invoke($object, $newObject);
+            $this->em->persist($object);
             $this->em->flush();
         } else {
             $a = 0;
@@ -330,12 +383,25 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         $this->em->flush();
     }
 
+    /**
+     * 
+     * @param type $object
+     * @param type $fieldName
+     * @param type $fieldValue
+     * @param type $fieldProps
+     */
     private function handleArray($object, $fieldName, $fieldValue, $fieldProps)
     {
         $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
         $reflectionMethod->invoke($object, $fieldValue);
     }
 
+    /**
+     * Handles a configuration item.
+     * 
+     * @param mixed $value configuration item to handle
+     * @return mixed handled item
+     */
     private function handleConfiguration($value)
     {
         if (is_array($value)) {
@@ -366,6 +432,11 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         }
     }
 
+    /**
+     *  Generates an element configuration.
+     * 
+     * @param \Mapbender\CoreBundle\Entity\Application $app
+     */
     public function generateElementConfiguration(Application $app)
     {
         foreach ($app->getElements() as $element) {
@@ -373,6 +444,10 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
             foreach ($configuration as $key => $value) {
                 $configuration[$key] = $this->handleConfiguration($value);
             }
+            $elmClass = $element->getClass();
+            $applComp = new ApplicationComponent($this->container, $element->getApplication(), array());
+            $elmComp = new $elmClass($applComp, $this->container, $element);
+            $configuration = $elmComp->denormalizeConfiguration($configuration);
             $element->setConfiguration($configuration);
             $this->em->persist($element);
             $this->em->flush();
