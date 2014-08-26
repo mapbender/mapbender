@@ -9,6 +9,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Mapbender\CoreBundle\Component\Application as AppComponent;
+use Mapbender\WmsBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Form\Type\ImportJobType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -62,64 +63,82 @@ class ImportHandler extends ExchangeHandler
      */
     public function makeJob()
     {
-        $em = $this->container->get('doctrine')->getManager();
         $this->denormalizer = new ExchangeDenormalizer($this->container, $this->mapper);
-        try {
-            $em->getConnection()->beginTransaction();
-            $import = $this->job->getImportContent();
-            if (isset($import[self::CONTENT_SOURCE])) {
-                $this->importSources($import[self::CONTENT_SOURCE]);
-            }
-            if (isset($import[self::CONTENT_APP])) {
-                $this->importApps($import[self::CONTENT_APP]);
-            }
-            if (isset($import[self::CONTENT_ACL])) {
-                $this->importAcls($import[self::CONTENT_ACL]);
-            }
-            $em->getConnection()->commit();
-        } catch (\Exception $e) {
-            $em->getConnection()->rollback();
+        $import = $this->job->getImportContent();
+        if (isset($import[self::CONTENT_SOURCE])) {
+            $this->importSources($import[self::CONTENT_SOURCE]);
         }
-        die();
+        if (isset($import[self::CONTENT_APP])) {
+            $this->importApps($import[self::CONTENT_APP]);
+        }
+        if (isset($import[self::CONTENT_ACL])) {
+            $this->importAcls($import[self::CONTENT_ACL]);
+        }
     }
 
     private function importApps($data)
     {
+        $em = $this->container->get('doctrine')->getManager();
         foreach ($data as $item) {
-            $class = $this->denormalizer->getClassName($item);
-            $item[ExchangeSerializer::KEY_SLUG] = AppComponent::generateSlug($this->container, $item[ExchangeSerializer::KEY_SLUG], 'imp');
-            $app = $this->denormalizer->denormalize($item, $class);
-            $this->denormalizer->generateElementConfiguration($app);
-            $a = 0;
+            try {
+                $em->getConnection()->beginTransaction();
+                $class = $this->denormalizer->getClassName($item);
+                $item[ExchangeSerializer::KEY_SLUG] = AppComponent::generateSlug($this->container, $item[ExchangeSerializer::KEY_SLUG], 'imp');
+                $app = $this->denormalizer->denormalize($item, $class);
+                $app->setScreenshot(null);
+                $this->denormalizer->generateElementConfiguration($app);
+                $em->getConnection()->commit();
+                $em->clear();
+            } catch (\Exception $e) {
+                $em->getConnection()->rollback();
+                throw new ImportException('mb.manager.import.application.failed');
+            }
         }
     }
 
     private function importAcls($data)
     {
-        foreach ($data as $item) {
-            $class = $this->denormalizer->getClassName($item);
-            $this->denormalizer->denormalize($item, $class);
-            $a = 0;
+        $em = $this->container->get('doctrine')->getManager();
+        try {
+            $em->getConnection()->beginTransaction();
+            foreach ($data as $item) {
+                $class = $this->denormalizer->getClassName($item);
+                $this->denormalizer->denormalize($item, $class);
+            }
+            $em->getConnection()->commit();
+            $em->clear();
+        } catch (\Exception $e) {
+            $em->getConnection()->rollback();
+            throw new ImportException('mb.manager.import.acl.failed');
         }
     }
 
     private function importSources($data)
     {
-        foreach ($data as $item) {
-            $source = isset($item[ExchangeSerializer::KEY_IDENTIFIER]) ? $this->findSource($item[ExchangeSerializer::KEY_IDENTIFIER]) : null;
-            $class = $this->denormalizer->getClassName($item);
-            if (!$source) {
-                $this->denormalizer->denormalize($item, $class);
-            } else {
-                $this->denormalizer->mapSource($item, $class, $source);
+        try {
+            $em = $this->container->get('doctrine')->getManager();
+            $em->getConnection()->beginTransaction();
+            foreach ($data as $item) {
+                $source = isset($item[ExchangeSerializer::KEY_IDENTIFIER]) ? $this->findSource($item[ExchangeSerializer::KEY_IDENTIFIER]) : null;
+                $class = $this->denormalizer->getClassName($item);
+                if (!$source) {
+                    $this->denormalizer->denormalize($item, $class);
+                } else {
+                    $this->denormalizer->mapSource($item, $class, $source);
+                }
             }
+            $em->getConnection()->commit();
+            $em->clear();
+        } catch (\Exception $e) {
+            $em->getConnection()->rollback();
+            throw new ImportException('mb.manager.import.source.failed');
         }
     }
 
     protected function findSource($identifier)
     {
         foreach ($this->getAllowedSources() as $sourceHelp) {
-            if($sourceHelp->getIdentifier() === $identifier){
+            if ($sourceHelp->getIdentifier() === $identifier) {
                 return $sourceHelp;
             }
         }

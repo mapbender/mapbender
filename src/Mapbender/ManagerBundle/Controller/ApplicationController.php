@@ -170,6 +170,41 @@ class ApplicationController extends Controller
     }
 
     /**
+     * Copies an application
+     *
+     * @ManagerRoute("/application/{slug}/copydirectly", requirements = { "slug" = "[\w-]+" })
+     * @Method("GET")
+     * @Template("MapbenderManagerBundle:Application:form-basic.html.twig")
+     */
+    public function copydirectlyAction($slug)
+    {
+        $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
+        $this->checkGranted('CREATE', $tocopy);
+        
+        $expHandler = new ExportHandler($this->container);
+        $expJob = $expHandler->getJob();
+        $expJob->getApplications()->add($tocopy);
+        $expJob->setAddSources(true);
+//        $expJob->setAddAcl(true);
+        
+//        $job = $expHandler->getJob();
+//        
+//        $export = $expHandler->format($expHandler->makeJob());
+//        
+//        die(print_r($expHandler->bindForm()));
+
+        $data = $expHandler->makeJob();
+        
+        $impHandler = new ImportHandler($this->container, $this->getDoctrine()->getManager());
+        $importJob = $impHandler->getJob();
+        $importJob->setImportContent($data);
+        $impHandler->makeJob();
+        
+        return $this->redirect(
+                $this->generateUrl('mapbender_manager_application_index'));
+    }
+
+    /**
      * Create a new application from POSTed data
      *
      * @ManagerRoute("/application")
@@ -301,7 +336,6 @@ class ApplicationController extends Controller
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
         $screenshot_url = "";
-        $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
         $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
 
         $form->bind($request);
@@ -325,6 +359,8 @@ class ApplicationController extends Controller
             //TODO: Fileupload Size
             try {
                 if (AppComponent::createAppWebDir($this->container, $application->getSlug(), $old_slug)) {
+                    $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
+                    $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
                     $scFile = $application->getScreenshotFile();
                     if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
                         $filename = sprintf('screenshot-%d.%s', $application->getId(),
@@ -475,11 +511,11 @@ class ApplicationController extends Controller
     /**
      * Copies an application
      *
-     * @ManagerRoute("/application/{slug}/copydirectly", requirements = { "slug" = "[\w-]+" })
+     * @ManagerRoute("/application/{slug}/copydirectlyII", requirements = { "slug" = "[\w-]+" })
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:form-basic.html.twig")
      */
-    public function copydirectlyAction($slug)
+    public function copydirectlyIIActionII($slug)
     {
         $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
@@ -521,8 +557,7 @@ class ApplicationController extends Controller
                 "Your application has been copied but"
                 . " the application's directories can not be created.");
         }
-        return $this->redirect(
-                $this->generateUrl('mapbender_manager_application_index'));
+        
     }
 
     /**
