@@ -251,12 +251,12 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
      */
     private function findOrCreateEntity($class, $data, $fields, &$fixedField)
     {
-        $reflectionClass = new \ReflectionClass($class);
-        $constructorArguments = $this->getClassConstructParams($data) ? : array();
         $idName = $this->findIdName($fields);
         $fixedField[] = $idName;
         $object = $this->findExistingEntity($class, $data[$idName]);
         if ($object === null) { # not found -> create
+            $reflectionClass = new \ReflectionClass($class);
+            $constructorArguments = $this->getClassConstructParams($data) ? : array();
             $object = $reflectionClass->newInstanceArgs($constructorArguments);
             foreach ($fields as $fieldName => $fieldProps) { #set not null values
                 if (!isset($fieldProps['Column']) || !key_exists($fieldName, $data)) {
@@ -413,7 +413,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
                     $idName = $this->findIdName($fields);
                     $entity = $this->findExistingEntity($className, $value[$idName]);
                     $reflectionMethod = new \ReflectionMethod($className, $fields[$idName][self::KEY_GETTER]);
-                    $val = $reflectionMethod->invoke($entity);
+                    #$val = $reflectionMethod->invoke($entity);
                     return $reflectionMethod->invoke($entity);
                 } else {
                     foreach ($value as $key => $subvalue) {

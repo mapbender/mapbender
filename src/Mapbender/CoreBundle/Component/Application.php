@@ -515,10 +515,11 @@ class Application
             return $slug;
         else
             $count = 0;
+        $rep = $container->get('doctrine')->getRepository('MapbenderCoreBundle:Application');
         do {
             $copySlug = $slug . "_" . $suffix . ($count > 0 ? '_' . $count : '');
             $count++;
-        } while ($container->get('mapbender')->getApplicationEntity($copySlug));
+        } while ($rep->findOneBySlug($copySlug));
         return $copySlug;
     }
 
