@@ -33,6 +33,8 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $bbox;
 
+    public $buffer;
+
     /**
      * Sets a tiled
      *
@@ -87,6 +89,18 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         return $this->vendor;
     }
 
+    public function setBuffer($buffer)
+    {
+        $this->buffer = $buffer;
+        return $this;
+    }
+
+    public function getBuffer()
+    {
+        return $this->buffer;
+    }
+
+
     /**
      * @inheritdoc
      */
@@ -102,10 +116,11 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "opacity" => $this->opacity,
             "tiled" => $this->tiled,
             "bbox" => $this->bbox,
-            "vendor" => $this->vendor
+            "vendor" => $this->vendor,
+            "buffer" => $this->buffer,
         );
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -144,6 +159,9 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             }
             if(isset($options["vendor"])){
                 $ico->vendor = $options["vendor"];
+            }
+            if(isset($options["buffer"])){
+                $ico->vendor = $options["buffer"];
             }
         }
         return $ico;

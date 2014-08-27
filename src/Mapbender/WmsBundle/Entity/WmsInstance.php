@@ -92,6 +92,16 @@ class WmsInstance extends SourceInstance
      */
     protected $tiled = false;
 
+    /**
+     * @ORM\Column(type="integer", options={"default" = 0})
+     */
+    protected $buffer;
+
+    /**
+     * @ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
+     */
+    protected $ratio;
+
     public function __construct()
     {
         $this->layers = new ArrayCollection();
@@ -289,7 +299,8 @@ class WmsInstance extends SourceInstance
             ->setTransparency($this->transparency)
             ->setOpacity($this->opacity / 100)
             ->setTiled($this->tiled)
-            ->setBbox($srses);
+            ->setBbox($srses)
+            ->setBuffer($this->tiled ? $this->buffer : $this->ratio);
         $wmsconf->setOptions($options);
         $wmsconf->setChildren(array($this->generateLayersConfiguration($rootlayer)));
         $this->configuration = $wmsconf->toArray();
@@ -598,6 +609,52 @@ class WmsInstance extends SourceInstance
     }
 
     /**
+     * Set ratio
+     *
+     * @param boolean $ratio
+     * @return WmsInstance
+     */
+    public function setRatio($ratio)
+    {
+        $this->ratio = $ratio;
+
+        return $this;
+    }
+
+    /**
+     * Get ratio
+     *
+     * @return boolean
+     */
+    public function getRatio()
+    {
+        return $this->ratio;
+    }
+
+    /**
+     * Set buffer
+     *
+     * @param boolean $buffer
+     * @return WmsInstance
+     */
+    public function setBuffer($buffer)
+    {
+        $this->buffer = $buffer;
+
+        return $this;
+    }
+
+    /**
+     * Get buffer
+     *
+     * @return boolean
+     */
+    public function getBuffer()
+    {
+        return $this->buffer;
+    }
+
+    /**
      * Set wmssource
      *
      * @param WmsSource $wmssource
@@ -736,6 +793,8 @@ class WmsInstance extends SourceInstance
         $inst->opacity = $this->opacity;
         $inst->proxy = $this->proxy;
         $inst->tiled = $this->tiled;
+        $inst->ratio = $this->ratio;
+        $inst->buffer = $this->buffer;
         $this->copyLayerRecursive($em, $inst, $this->getRootlayer(), NULL);
         return $inst;
     }

@@ -70,7 +70,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
         foreach (range(0, 100, 10) as $value) {
             $opacity[$value] = $value;
         }
-        $builder->add('exceptionformat', 'choice', array(
+
+        $builder
+            ->add('exceptionformat', 'choice', array(
                 'choices' => $formats_exc,
                 'required' => false))
             ->add('basesource', 'checkbox', array(
@@ -86,12 +88,16 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'required' => false))
             ->add('tiled', 'checkbox', array(
                 'required' => false))
+            ->add('ratio', 'number', array(
+                'required' => false,
+                'precision' => 2))
+            ->add('buffer', 'integer', array(
+                'required' => false))
             ->add('layers', 'collection', array(
                 'type' => new WmsInstanceLayerType(),
                 'options' => array(
                     'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
                     'num_layers' => count($wmsinstance->getLayers()))
-        ));
+            ));
     }
-
 }
