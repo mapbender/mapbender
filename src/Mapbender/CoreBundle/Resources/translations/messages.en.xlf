@@ -685,6 +685,7 @@
       <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
         <source>mb.core.admin.poi.label.usemailto</source>
         <target>Use Mailto</target>
+      </trans-unit>
       <trans-unit id="313130e9ce7f77c283bdbf630a77a026" resname="mb.core.htmlelement.class.title">
         <source>mb.core.htmlelement.class.title</source>
         <target>HTML</target>

@@ -10,10 +10,6 @@
         <source>mb.manager.admin.source.add</source>
         <target>Datenquelle hinzufügen</target>
       </trans-unit>
-      <trans-unit id="7d61128cc95ad7927ef6f836feb88197" resname="mb.manager.admin.filter.source">
-        <source>mb.manager.admin.filter.source</source>
-        <target>Filter Quelle</target>
-      </trans-unit>
       <trans-unit id="5aec7858f3dcf72aa2c22d0331a7605c" resname="mb.manager.admin.source.show_metadata">
         <source>mb.manager.admin.source.show_metadata</source>
         <target>Metadaten anzeigen</target>
@@ -21,10 +17,6 @@
       <trans-unit id="962aeb9a173b50c1f5d791131c1c1566" resname="mb.manager.admin.source.delete">
         <source>mb.manager.admin.source.delete</source>
         <target>Datenquelle entfernen</target>
-      </trans-unit>
-      <trans-unit id="9d74c4df1bed8b409f8b88b02eebc115" resname="mb.manager.admin.source.no_source">
-        <source>mb.manager.admin.source.no_source</source>
-        <target>Kein Quelle</target>
       </trans-unit>
       <trans-unit id="21eadf44846179e855227d3480ad702e" resname="mb.manager.admin.source.new.add">
         <source>mb.manager.admin.source.new.add</source>
@@ -53,10 +45,6 @@
       <trans-unit id="b1e5013a3b0d19ed28d955b11429bb06" resname="mb.manager.admin.map.start_extent">
         <source>mb.manager.admin.map.start_extent</source>
         <target>Start Extent</target>
-      </trans-unit>
-      <trans-unit id="a896f1255096f3296f5c69259b4c96df" resname="mb.manager.admin.zoombar.draggable">
-        <source>mb.manager.admin.zoombar.draggable</source>
-        <target>Verschiebbar</target>
       </trans-unit>
       <trans-unit id="7cb565a35d95af70959282faf4989642" resname="mb.manager.admin.element.delete">
         <source>mb.manager.admin.element.delete</source>

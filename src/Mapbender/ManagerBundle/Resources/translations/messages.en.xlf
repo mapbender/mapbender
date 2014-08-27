@@ -10,10 +10,6 @@
         <source>mb.manager.admin.source.add</source>
         <target>Add source</target>
       </trans-unit>
-      <trans-unit id="7d61128cc95ad7927ef6f836feb88197" resname="mb.manager.admin.filter.source">
-        <source>mb.manager.admin.filter.source</source>
-        <target>Filter source</target>
-      </trans-unit>
       <trans-unit id="5aec7858f3dcf72aa2c22d0331a7605c" resname="mb.manager.admin.source.show_metadata">
         <source>mb.manager.admin.source.show_metadata</source>
         <target>Show metadata</target>
@@ -21,10 +17,6 @@
       <trans-unit id="962aeb9a173b50c1f5d791131c1c1566" resname="mb.manager.admin.source.delete">
         <source>mb.manager.admin.source.delete</source>
         <target>Delete source</target>
-      </trans-unit>
-      <trans-unit id="9d74c4df1bed8b409f8b88b02eebc115" resname="mb.manager.admin.source.no_source">
-        <source>mb.manager.admin.source.no_source</source>
-        <target>No source available</target>
       </trans-unit>
       <trans-unit id="21eadf44846179e855227d3480ad702e" resname="mb.manager.admin.source.new.add">
         <source>mb.manager.admin.source.new.add</source>
@@ -53,10 +45,6 @@
       <trans-unit id="b1e5013a3b0d19ed28d955b11429bb06" resname="mb.manager.admin.map.start_extent">
         <source>mb.manager.admin.map.start_extent</source>
         <target>Start extent</target>
-      </trans-unit>
-      <trans-unit id="a896f1255096f3296f5c69259b4c96df" resname="mb.manager.admin.zoombar.draggable">
-        <source>mb.manager.admin.zoombar.draggable</source>
-        <target>Draggable</target>
       </trans-unit>
       <trans-unit id="7cb565a35d95af70959282faf4989642" resname="mb.manager.admin.element.delete">
         <source>mb.manager.admin.element.delete</source>
@@ -109,10 +97,6 @@
       <trans-unit id="de8b0c7081e586c1705003fe9fea9fc7" resname="mb.manager.admin.messagebox.only_region_elements">
         <source>mb.manager.admin.messagebox.only_region_elements</source>
         <target>Only for this region available elements are displayed.</target>
-      </trans-unit>
-      <trans-unit id="49ead166f1617a1c075be9feb88ef264" resname="mb.core.element.be.button.show_label">
-        <source>mb.core.element.be.button.show_label</source>
-        <target>Show label</target>
       </trans-unit>
       <trans-unit id="f610e1c65d079aaf950b5f63236d9440" resname="mb.core.admin.element.autostart">
         <source>mb.core.admin.element.autostart</source>
