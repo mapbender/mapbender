@@ -215,8 +215,9 @@ class Application
                         if ($type === 'trans') {
                             $elementTranslations = json_decode($this->container->get('templating')->render($asset),
                                 true);
-                            $translations = array_merge($translations,
-                                $elementTranslations);
+                            if(is_array($elementTranslations)){
+                                $translations = array_merge($translations,$elementTranslations);
+                            }
                         } else {
                             $this->addAsset($assets, $type,
                                 $this->getReference($element, $asset));
