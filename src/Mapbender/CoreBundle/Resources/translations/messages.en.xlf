@@ -685,6 +685,17 @@
       <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
         <source>mb.core.admin.poi.label.usemailto</source>
         <target>Use Mailto</target>
+      <trans-unit id="313130e9ce7f77c283bdbf630a77a026" resname="mb.core.htmlelement.class.title">
+        <source>mb.core.htmlelement.class.title</source>
+        <target>HTML</target>
+      </trans-unit>
+      <trans-unit id="ce2413ae706bd739dcbc0b4f9a289cef" resname="mb.core.htmlelement.class.description">
+        <source>mb.core.htmlelement.class.description</source>
+        <target>Add some HTML</target>
+      </trans-unit>
+      <trans-unit id="d39455710ac8e12021e4959d6e1c6b85" resname="mb.core.htmlelement.tag.html">
+        <source>mb.core.htmlelement.tag.html</source>
+        <target>HTML</target>
       </trans-unit>
       <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
         <source>mb.core.admin.legend.label.autoopen</source>

@@ -112,6 +112,11 @@ class Application
      */
     protected $updated;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $custom_css;
+
     public function __construct()
     {
         $this->elements = new ArrayCollection();
@@ -408,6 +413,27 @@ class Application
     public function getUpdated()
     {
         return $this->updated;
+    }
+
+    /**
+     * Set custom_css
+     *
+     * @param text $custom_css
+     */
+    public function setCustomCss($custom_css)
+    {
+        $this->custom_css = $custom_css;
+        return $this;
+    }
+
+    /**
+     * Get custom_css
+     *
+     * @return text
+     */
+    public function getCustomCss()
+    {
+        return $this->custom_css;
     }
 
     public function getElementsByRegion($region = null)
