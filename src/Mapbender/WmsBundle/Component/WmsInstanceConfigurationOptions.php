@@ -97,7 +97,10 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 
     public function getBuffer()
     {
-        return $this->buffer;
+        if(null != $this->buffer) {
+            return $this->buffer;
+        }
+        return ($this->getTiled() ? 1 : 1.2);
     }
 
 
@@ -117,7 +120,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "tiled" => $this->tiled,
             "bbox" => $this->bbox,
             "vendor" => $this->vendor,
-            "buffer" => $this->buffer,
+            "buffer" => $this->getBuffer(),
         );
     }
 
