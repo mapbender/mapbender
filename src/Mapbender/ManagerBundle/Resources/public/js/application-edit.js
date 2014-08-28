@@ -193,7 +193,7 @@ $(function() {
         return false;
     }
 
-    $(".addElement").bind("click", function() {
+    $(".addElement").bind("click", function(event) {
         var self = $(this);
         if (popup) {
             popup = popup.destroy();
@@ -656,7 +656,7 @@ $(function() {
         });
         return false;
     });
-     
+
     var applicationForm = $('form[name=application]');
     var screenShot = applicationForm.find('.screenshot_img');
     var deleteScreenShotButton = screenShot.find('.delete');
@@ -665,15 +665,15 @@ $(function() {
     var validationMsgBox = applicationForm.find('span.validationMsgBox');
     var maxFileSize = applicationForm.find('#application_maxFileSize').val();
     var fileNameTmp = "";
-    
-    
+
+
     fileInput.on('mouseover', function() {
         uploadButton.addClass('hover');
     }).on('mouseout', function() {
         uploadButton.removeClass('hover');
     }).on('change', function(e) {
         $('input[name="application[removeScreenShot]"]').val(0);
-       
+
         var file =  this.files;
         fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
 
@@ -686,27 +686,27 @@ $(function() {
         }else{
             fileNameTmp = fileName;
         }
-        
+
         if (fileName.length > 20) {
             fileName = fileName.substring(0, 20) + "...";
         }
-        
+
         if (file && file[0]) {
             var reader = new FileReader();
-            var fileType = 
-            
+            var fileType =
+
             console.log(file[0].type);
-            
+
             if (file[0].type.match('image/')){
                 if (file[0].size <= 102400){
                     screenShot.find('div.messageBox').remove();
                     validationMsgBox.remove();
-                    if (screenShot.find('div.cell').length === 0 ){          
+                    if (screenShot.find('div.cell').length === 0 ){
                         screenShot.append('<div class= \"cell\"><img src= \"\" alt="Load" class="screenshot" /></div>');
                     }
                     reader.onload = function (e) {
                         screenShot.find('img').attr('src', e.target.result);
-                    }  
+                    }
                     reader.readAsDataURL(file[0]);
                 }else{
                     var uploadFileSize = file[0].size;
@@ -717,12 +717,12 @@ $(function() {
                  $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.format_error') +'</span>').insertAfter(fileInput);
                   validationMsgBox = applicationForm.find('span.validationMsgBox');
             }
-        } 
-       
+        }
+
         $('.upload_label').html(fileName);
     });
-    
-  
+
+
 
     screenShot.mouseenter('mouseover', function() {
         deleteScreenShotButton.removeClass('hidden');
@@ -737,12 +737,12 @@ $(function() {
         applicationForm.find('.upload_label').html(Mapbender.trans("mb.manager.upload.label_delete"));
         applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
     });
-    
-    
+
+
     fileInput.on('click',function(){
         validationMsgBox.remove();
     });
-    
+
     applicationForm.find('.containerBaseData div.right').on('click', function(event) {
         if ($(event.target).hasClass('delete')) {
             return;
@@ -778,6 +778,7 @@ $(function() {
     // Custom CSS editor
     (function($) {
         var textarea = $('#application_custom_css');
+        if(!textarea.length) return;
         codeMirror = CodeMirror.fromTextArea(textarea[0], {
             mode: 'css',
             keyMap: 'sublime',
