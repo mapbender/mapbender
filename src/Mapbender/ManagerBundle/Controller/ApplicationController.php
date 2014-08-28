@@ -137,6 +137,24 @@ class ApplicationController extends Controller
             $em->persist($application);
             $em->flush();
 
+            $templateClass = $application->getTemplate();
+            $templateProps = $templateClass::getRegionsProperties();
+            foreach ($templateProps as $regionName => $regionProps) {
+                $regionProperties = new RegionProperties();
+                $application->addRegionProperties($regionProperties);
+                $regionProperties->setApplication($application);
+                $regionProperties->setName($regionName);
+                foreach ($regionProps as $propName => $propValue) {
+                    if ($propValue['state'])
+                        $regionProperties->addProperty($propName);
+                }
+                $em->persist($regionProperties);
+                $em->flush();
+            }
+            $em->persist($application);
+            $em->flush();
+            $aclManager = $this->get('fom.acl.manager');
+            $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
             $em->getConnection()->commit();
             if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been saved.');
@@ -929,6 +947,22 @@ class ApplicationController extends Controller
             }
         }
 
+    }
+
+    private function getApplicationDir($slug)
+    {
+        $uploads_dir = $this->container->get('kernel')->getRootDir() . '/../web/'
+            . $this->container->getParameter("mapbender.uploads_dir");
+        if (!is_dir($uploads_dir)) {
+            return null;
+        }
+
+        $slug_dir = $uploads_dir . "/" . $slug;
+        if (!is_dir($slug_dir)) {
+            return null;
+        } else {
+            return realpath($slug_dir);
+        }
     }
 
 }

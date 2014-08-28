@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +11,7 @@ use Mapbender\CoreBundle\Component\Element As ComponentElement;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 /**
  * Applicaton entity
@@ -24,6 +26,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Application
 {
+
     const SOURCE_YAML = 1;
     const SOURCE_DB = 2;
 
@@ -452,8 +455,8 @@ class Application
             foreach ($this->preparedElements as $elementRegion => $elements) {
                 usort($elements,
                     function($a, $b) {
-                        return $a->getWeight() - $b->getWeight();
-                    });
+                    return $a->getWeight() - $b->getWeight();
+                });
             }
         }
 
@@ -472,7 +475,7 @@ class Application
     {
         return (string) $this->getId();
     }
-    
+
     public function getNamedRegionProperties()
     {
         $result = array();
@@ -481,11 +484,11 @@ class Application
         }
         return $result;
     }
-    
+
     public function getPropertiesFromRegion($regionName)
     {
         foreach ($this->getRegionProperties() as $regionProperties) {
-            if($regionProperties->getName() === $regionName)
+            if ($regionProperties->getName() === $regionName)
                 return $regionProperties;
         }
         return null;
@@ -496,6 +499,7 @@ class Application
         $app->preparedElements = $this->preparedElements;
         $app->screenshotPath = $this->screenshotPath;
         $app->source = $this->source;
+        $app->owner = $this->owner;
         $app->screenshot = $this->screenshot;
         $app->extra_assets = $this->extra_assets;
         $app->screenshotFile = $this->screenshotFile;
@@ -541,9 +545,9 @@ class Application
             } catch(\Exception $e){
                 $a = 0;
             }
-            $em->persist($copied);        
+            $em->persist($copied);
             $em->flush();
-            
+
         }
         $applicationComponent = new ApplicationComponent($container, $this, array());
         foreach ($this->elements as $element) {
