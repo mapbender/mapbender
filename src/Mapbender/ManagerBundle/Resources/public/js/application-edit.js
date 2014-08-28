@@ -221,7 +221,6 @@ $(function() {
                     label: Mapbender.trans("mb.manager.components.popup.add_element.btn.cancel"),
                     cssClass: 'button buttonCancel critical right',
                     callback: function() {
-                        console.log("XXX");
                         $("#elementForm").data('dirty', false);
                         this.close();
                     }
@@ -282,8 +281,8 @@ $(function() {
                     url: self.attr("data-url"),
                     complete: function() {
                         $(".popupContent").removeClass("popupContent")
-                                .addClass("popupSubContent");
-                        $('.popupContent form').submit(submitHandler);
+                                .addClass("popupSubContent")
+                                .find('form').submit(submitHandler);
                     }
                 })
             ],
@@ -303,9 +302,6 @@ $(function() {
                         $("#elementForm")
                                 .data('dirty', false)
                                 .submit();
-                        window.setTimeout(function() {
-                            window.location.reload();
-                        }, 50);
                     }
                 }
             }
@@ -694,8 +690,6 @@ $(function() {
         if (file && file[0]) {
             var reader = new FileReader();
             var fileType =
-
-            console.log(file[0].type);
 
             if (file[0].type.match('image/')){
                 if (file[0].size <= 102400){
