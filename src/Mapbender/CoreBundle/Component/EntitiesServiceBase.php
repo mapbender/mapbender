@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use FOM\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\Security\Core\SecurityContext;
 
@@ -182,7 +183,7 @@ class EntitiesServiceBase extends ContainerAware
     /**
      * Get current user
      *
-     * @return mixed
+     * @return User|null
      */
     public function getCurrentUser()
     {
@@ -190,5 +191,35 @@ class EntitiesServiceBase extends ContainerAware
         $securityContext = $this->container->get('security.context');
         $token           = $securityContext->getToken();
         return $token ? $token->getUser() : null;
+    }
+
+    /**
+     * Remove entity
+     *
+     * @param mixed $entity
+     * @param bool  $flush
+     */
+    public function remove($entity, $flush = true)
+    {
+        $entityManager = $this->getEntityManager();
+        if (!$entityManager->contains($entity)) {
+            $entity = $entityManager->merge($entity);
+        }
+        $entityManager->remove($entity);
+        if ($flush) {
+            $entityManager->flush();
+        }
+    }
+
+    /**
+     * Remove by key=ID and
+     *
+     * @param    int $id
+     * @param string $keyName
+     * @return mixed
+     */
+    public function removeById($id, $keyName = 'id')
+    {
+        return $this->createQueryBuilder()->delete()->where('q.'.$keyName.' = :id')->getQuery()->execute(array('id' => intval($id)));
     }
 } 

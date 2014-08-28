@@ -403,7 +403,6 @@ class Application
             
             // preload acl in one single sql query
             $oids = array();
-            $acls;
             foreach ($this->entity->getElements() as $entity) {
                 $oids[] = ObjectIdentity::fromDomainObject($entity);
             }

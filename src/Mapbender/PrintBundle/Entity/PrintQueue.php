@@ -31,11 +31,8 @@ class PrintQueue
     /**
      * Salt is a short random string to generate queue token.
      *
-     * @ORM\Column(type="string", length=10, unique=true)
-     * @Assert\Regex(
-     *     pattern="/^[0-9\-\_a-zA-Z]+$/",
-     *     message="The salt value is wrong."
-     * )
+     * @ORM\Column(name="salt", type="string", length=10, unique=true)
+     * @Assert\Regex(pattern="/^[0-9\-\_a-zA-Z]+$/",message="The salt value is wrong.")
      * @Assert\NotBlank()
      */
     protected $idSalt;
@@ -67,7 +64,7 @@ class PrintQueue
      * Date of queue creation
      *
      * @var \DateTime
-     * @Column(type="datetime")
+     * @ORM\Column(type="datetime",nullable=true)
      */
     protected $queued;
 
@@ -75,14 +72,15 @@ class PrintQueue
      * Date of render started
      *
      * @var \DateTime
-     * @Column(type="datetime")
+     * @ORM\Column(type="datetime",nullable=true)
      */
     protected $started;
 
     /**
      * Date of render finished
+     *
      * @var \DateTime
-     * @Column(type="datetime")
+     * @ORM\Column(type="datetime",nullable=true)
      */
     protected $created;
 
@@ -123,7 +121,7 @@ class PrintQueue
      */
     public function getToken()
     {
-        return PrintQueueManager::getToken($this);
+        return $this->getIdSalt();
     }
 
     /**
@@ -186,7 +184,7 @@ class PrintQueue
      * @param User $user
      * @return $this
      */
-    public function setUser(User $user)
+    public function setUser(User $user = null )
     {
         $this->user = $user;
         return $this;

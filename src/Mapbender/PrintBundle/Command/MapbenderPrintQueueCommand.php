@@ -3,9 +3,9 @@
 namespace Mapbender\PrintBundle\Command;
 
 use Mapbender\PrintBundle\Component\PrintQueueManager;
-use Mapbender\PrintBundle\DependencyInjection\MapbenderPrintExtension;
 use Mapbender\PrintBundle\Entity\PrintQueue;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,34 +17,52 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author    Andriy Oblivantsev <eslider@gmail.com>
  * @copyright 2014 by WhereGroup GmbH & Co. KG
  */
-class MapbenderPrintQueueCommand extends ContainerAwareCommand {
+class MapbenderPrintQueueCommand extends ContainerAwareCommand
+{
+    const DESCRIPTION = 'Print queue managing';
 
-    protected function configure() {
-        $this->setDescription('Manage print queue.')
-            ->setHelp('Manage print queue.')
+    /**
+     * @inheritdoc
+     */
+    protected function configure()
+    {
+        $this->setDescription(self::DESCRIPTION)
+            ->setHelp(self::DESCRIPTION)
             ->setName('mapbender:print:queue')
-            ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'queue id for which rendering should be started')
-            ->addOption('clean', null, InputOption::VALUE_OPTIONAL, 'clean old entries and files they are older then '.$this->getContainer()->getParameter(MapbenderPrintExtension::KEY_MAX_AGE).' days');
+            ->addArgument('id', InputArgument::OPTIONAL, 'Queue ID for which rendering should be started.')
+            ->addOption('clean',
+                null,
+                InputOption::VALUE_NONE,
+                'Clean old queues and remove depended files they are older then X days.'
+            );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    /**
+     * @inheritdoc
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         /** @var PrintQueueManager $manager */
+        /** @var PrintQueue $queue */
         $manager = $this->getContainer()->get('mapbender.print.queue_manager');
-        $id      = $input->getOption('id');
         $result  = null;
 
-        if ($id) {
-            $queue = $manager->getRepository()->findOneBy(intval($id));
+        if ($input->hasOption('clean')) {
+            $output->writeln('Cleaned process started.');
+            $output->writeln(sprintf('Cleaned %s queue(s) successfully.', count($manager->clean())));
+            return;
+        } elseif ($input->hasArgument('id')) {
+            $queue = $manager->find($input->getArgument('id'));
             if ($queue) {
                 $result = $manager->render($queue);
             } else {
                 $result = PrintQueueManager::STATUS_QUEUE_NOT_EXISTS;
             }
         } else {
-            $result = $manager->renderNext();
+            $queue = $manager->renderNext();
         }
 
-        switch($result){
+        switch ($result) {
             case PrintQueueManager::STATUS_QUEUE_NOT_EXISTS:
                 $output->writeln('Queue with the given id doesn`t exists.');
                 break;
@@ -52,7 +70,8 @@ class MapbenderPrintQueueCommand extends ContainerAwareCommand {
             case PrintQueueManager::STATUS_WRONG_QUEUED:
                 $output->writeln('The queue status as if already in the rendering.
                 Maybe "started" timestamp  saved wrong.
-                Check database entries or try again later.');
+                Check database entries or try again later.'
+                );
                 break;
 
             case PrintQueueManager::STATUS_IN_PROCESS:
@@ -64,9 +83,7 @@ class MapbenderPrintQueueCommand extends ContainerAwareCommand {
                 break;
 
             default:
-                /** @var PrintQueue $entity */
-                $entity = $result;
-                $output->writeln('New PDF is rendered successfully:\n'. $manager->getPdFilePath($entity));
+                $output->writeln('New PDF is rendered successfully:\n' . $manager->getPdFilePath($queue));
         }
     }
 } 

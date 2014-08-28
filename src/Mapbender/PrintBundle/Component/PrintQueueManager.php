@@ -3,12 +3,10 @@
 namespace Mapbender\PrintBundle\Component;
 
 use Mapbender\CoreBundle\Component\EntitiesServiceBase;
-use Mapbender\CoreBundle\Component\Utils\Base62;
 use Mapbender\PrintBundle\DependencyInjection\MapbenderPrintExtension;
 use Mapbender\PrintBundle\Entity\PrintQueue;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Class PrintQueueManager
@@ -20,16 +18,16 @@ use Symfony\Component\Validator\Constraints\DateTime;
 class PrintQueueManager extends EntitiesServiceBase
 {
     /** Status if queued queue rendering started before (shouldn't happens) */
-    const STATUS_WRONG_QUEUED       = -1;
+    const STATUS_WRONG_QUEUED       = 2;
 
     /** Status of empty queue */
-    const STATUS_QUEUE_EMPTY        = -3;
+    const STATUS_QUEUE_EMPTY        = 3;
 
     /** Status if current rendering isn't finished yet. */
-    const STATUS_IN_PROCESS         = -2;
+    const STATUS_IN_PROCESS         = 4;
 
     /** Status if queued not exists */
-    const STATUS_QUEUE_NOT_EXISTS   = -4;
+    const STATUS_QUEUE_NOT_EXISTS   = 5;
 
     /** @var PriorityVoterInterface */
     private $priorityVoter;
@@ -42,7 +40,6 @@ class PrintQueueManager extends EntitiesServiceBase
     {
         parent::__construct('PrintQueue', $container);
         $this->priorityVoter = $priorityVoter;
-        $this->clean();
     }
 
     /**
@@ -84,7 +81,7 @@ class PrintQueueManager extends EntitiesServiceBase
 
         $this->persist($entity->setStarted(new \DateTime()));
         $fs->dumpFile($filePath, $service->doPrint($entity->getPayload()));
-        $this->persist($entity->setCreated(new \DateTime(filemtime($filePath))));
+        $this->persist($entity->setCreated(new \DateTime()));
 
         return $entity;
     }
@@ -98,47 +95,12 @@ class PrintQueueManager extends EntitiesServiceBase
     public function getNextQueue()
     {
         return $this->isInProcess() ? null : $this->createQueryBuilder()
-            ->where('q.created != null')
-            ->andWhere('q.started == null')
-            ->orderBy(array('priority' => 'DESC',
-                            'queued'   => 'ASC',)
-            )
+            ->where('q.created > 0')
+            ->andWhere('q.started < 1')
+            ->orderBy('q.priority', 'DESC')
+            ->addOrderBy('q.queued', 'ASC')
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * Get queue token
-     *
-     * @param PrintQueue $entity
-     * @return string
-     */
-    public static function getToken(PrintQueue $entity)
-    {
-        return Base62::encode($entity->getId().'-'.$entity->getIdSalt());
-    }
-
-    /**
-     * Get queue by token
-     *
-     * @param $token string
-     */
-    public function getByToken($token)
-    {
-        $this->getRepository()->find(self::decodeToken($token));
-    }
-
-    /**
-     * Decode token
-     *
-     * @param $token
-     * @return array of ID's
-     */
-    public static function decodeToken($token)
-    {
-        list($id, $saltId) = preg_split('/-/', Base62::decode($token));
-        return array('id'     => $id,
-                     'saltId' => $saltId);
     }
 
     /**
@@ -149,7 +111,8 @@ class PrintQueueManager extends EntitiesServiceBase
      */
     public static function genSalt($length = 10)
     {
-        return substr(str_shuffle(md5(rand() . time())), 0, $length);
+        $hash = md5(rand() . time());
+        return substr(str_shuffle($hash.strtoupper($hash)), 0, $length);
     }
 
     /**
@@ -174,34 +137,45 @@ class PrintQueueManager extends EntitiesServiceBase
      * Remove print queue and file
      *
      * @param PrintQueue $entity
-     * @param bool       $pdf remove PDF file? (default=true)
+     * @param bool       $flush Flush entity manager (default=true)
+     * @internal param bool $pdf remove PDF file? (default=true)
      * @return array
      */
-    public function remove(PrintQueue $entity, $pdf = true)
+    public function remove($entity, $flush = true)
     {
-        return array(
-            $this->delete(array('id' => $entity->getId())),
-            $pdf ? (new Filesystem())->remove($this->getPdFilePath($entity)) || true : false
-        );
+        (new Filesystem())->remove($this->getPdFilePath($entity));
+        parent::remove($entity, $flush);
     }
 
+    /**
+     * Get queue max age
+     *
+     * @return \DateTime
+     */
+    public function getMaxAge()
+    {
+        $maxAge = $this->container->hasParameter(MapbenderPrintExtension::KEY_MAX_AGE)
+            ? intval($this->container->getParameter(MapbenderPrintExtension::KEY_MAX_AGE))
+            : 3;
+        return new \DateTime("-{$maxAge} days");
+    }
 
     /**
-     * Remove entities and pdf file older then max-age parameter
+     * Removes entities and pdf files older then max-age parameter
      */
     public function clean()
     {
         /** @var PrintQueue $entity */
         $r      = array();
-        $maxAge = intval($this->container->getParameter(MapbenderPrintExtension::KEY_MAX_AGE));
-        foreach ($this->createQueryBuilder()
-                     ->setParameter("max_age", new \DateTime(strtotime("-{$maxAge} days")))
-                     ->where('q.created != null')
-                     ->andWhere('q.created < :max_age')
-                     ->getQuery()
-                     ->getArrayResult() as $entity) {
+
+        foreach ($this->createQueryBuilder('q')
+                ->select('q.id')
+                ->where('q.created < :maxAge')->setParameter('maxAge', $this->getMaxAge())
+                ->getQuery()
+                ->getResult() as $entity) {
             $r[] = $this->remove($entity);
         };
+        $this->getEntityManager()->flush();
         return $r;
     }
 
@@ -213,7 +187,7 @@ class PrintQueueManager extends EntitiesServiceBase
      */
     public function getPdFilePath(PrintQueue $entity)
     {
-        return $this->container->getParameter(MapbenderPrintExtension::KEY_STORAGE_DIR) . '/' . $entity->getToken() . ".pdf";
+        return $this->container->getParameter(MapbenderPrintExtension::KEY_STORAGE_DIR) . '/' . $entity->getIdSalt() . ".pdf";
     }
 
     /**
@@ -225,9 +199,19 @@ class PrintQueueManager extends EntitiesServiceBase
     private function isInProcess()
     {
         return !!$this->createQueryBuilder()
-            ->where('started != null')
-            ->andWhere('created == null')
+            ->where('q.started > 1')
+            ->andWhere('q.created < 1')
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * Get queue by ID
+     *
+     * @param $id
+     * @return PrintQueue
+     */
+    public function find($id){
+        return $this->getRepository()->findOneBy(array('id' =>  intval($id)));
     }
 }
