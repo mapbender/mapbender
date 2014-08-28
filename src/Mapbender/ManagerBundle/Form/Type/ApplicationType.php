@@ -5,8 +5,7 @@ namespace Mapbender\ManagerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Mapbender\ManagerBundle\Form\EventListener\RegionSubscriber;
-use Mapbender\ManagerBundle\Form\EventListener\RegionPropertiesSubscriber;
+
 
 class ApplicationType extends AbstractType
 {
@@ -56,11 +55,6 @@ class ApplicationType extends AbstractType
             ->add('maxFileSize', 'hidden',array(
                 'mapped' => false,
                 'data' => $options['maxFileSize']))
-            ->add('regionProperties', 'collection', array(
-                'type' => new RegionPropertiesType(),
-                'options' => array(
-                    'data_class' => 'Mapbender\CoreBundle\Entity\RegionProperties',
-                    'available_properties' => $options['available_properties'])))
             ->add('custom_css', 'textarea', array(
                 'required' => false))
 
@@ -69,6 +63,7 @@ class ApplicationType extends AbstractType
                 array(
                 'required' => false,
                 'label' => 'Published'));
+
         $app = $options['data'];
         foreach ($options['available_properties'] as $region => $properties) {
             $data = "";
