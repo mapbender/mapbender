@@ -361,14 +361,14 @@ class ApplicationController extends Controller
                     $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
                     $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
                     $scFile = $application->getScreenshotFile();
-                    $fileType = getimagesize($scFile);
-                    
-                    if ($scFile !== null && $form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
-                        $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
-                        $application->getScreenshotFile()->move($app_directory, $filename);
-                        $application->setScreenshot($filename);
+                    if($scFile !== null){
+                        $fileType = getimagesize($scFile);
+                        if ($form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
+                            $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
+                            $application->getScreenshotFile()->move($app_directory, $filename);
+                            $application->setScreenshot($filename);
+                        }
                     }
-
                     $em->persist($application);
                     $em->flush();
                     $aclManager = $this->get('fom.acl.manager');

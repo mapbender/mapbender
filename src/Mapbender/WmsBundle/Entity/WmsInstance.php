@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
@@ -93,7 +94,7 @@ class WmsInstance extends SourceInstance
     protected $tiled = false;
     
     /**
-     * ORM\Column(type="array", nullable=true)
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $dimensions;
     
@@ -125,7 +126,18 @@ class WmsInstance extends SourceInstance
     {
         return $this->id;
     }
+    
+    public function getDimensions()
+    {
+        return $this->dimensions;
+    }
 
+    public function setDimensions($dimensions)
+    {
+        $this->dimensions = $dimensions;
+        return $this;
+    }
+    
     /**
      * Set configuration
      *

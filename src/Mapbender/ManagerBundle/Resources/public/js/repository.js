@@ -128,6 +128,16 @@ $(function() {
             }
         });
     });
+    $('.dimensionGroup').on("click", '.on-off', function(e){
+        var $this = $(e.currentTarget);
+        if($this.hasClass('active')){
+            $this.removeClass('active');
+            $this.parent().find('#' + $this.attr('id') + '-content').addClass('hidden');
+        } else {
+            $this.addClass('active');
+            $this.parent().find('#' + $this.attr('id') + '-content').removeClass('hidden');
+        }
+    });
     $("#instanceTable").on("click", ".iconMore", showInfoBox);
     $(document).on("click", "#instanceTable .checkWrapper", toggleState);
 });

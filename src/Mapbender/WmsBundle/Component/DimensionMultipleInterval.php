@@ -3,15 +3,15 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * Identifier class.
+ * DimensionMultipleInterval extends class Dimension. The extent is represented as array of intervals.
  *
  * @author Paul Schmidt
  */
-class DimMultipleInterval extends DimExtent
+class DimensionMultipleInterval extends Dimension
 {
-    public function __toString()
+    public function extentStr()
     {
-        $array = array_merge($this->getValue());
+        $array = array_merge($this->getExtent());
         for($i = 0; $i < count($array); $i++){
             $array[$i] = implode('/', $array[$i]);
         }

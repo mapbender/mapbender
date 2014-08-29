@@ -359,14 +359,13 @@ class WmsCapabilitiesParser130 extends WmsCapabilitiesParser
                 $dimension->setUnits($this->getValue("./@units", $dimensionEl));
                 $dimension->setUnitSymbol($this->getValue("./@unitSymbol", $dimensionEl));
                 $dimension->setDefault($this->getValue("./@default", $dimensionEl));
-                $dimension->setMultipleValues($this->getValue(
-                        "./@multipleValues", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
-                $dimension->setNearestValue($this->getValue(
-                    "./@nearestValue", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
-                $dimension->setCurrent($this->getValue(
-                    "./@current", $dimensionEl) !== null ? (bool) $this->getValue("./@name", $dimensionEl) : null);
-                $extent = DimExtent::create($this->getValue("./text()", $dimensionEl));
-                $dimension->setExtent($extent);
+                $dimension->setMultipleValues($this->getValue("./@multipleValues", $dimensionEl) !== null ?
+                    (bool) $this->getValue("./@name", $dimensionEl) : null);
+                $dimension->setNearestValue($this->getValue("./@nearestValue", $dimensionEl) !== null ?
+                    (bool) $this->getValue("./@name", $dimensionEl) : null);
+                $dimension->setCurrent($this->getValue("./@current", $dimensionEl) !== null ?
+                    (bool) $this->getValue("./@name", $dimensionEl) : null);
+                $dimension->setExtent($this->getValue("./text()", $dimensionEl));
                 $wmslayer->addDimension($dimension);
             }
         }

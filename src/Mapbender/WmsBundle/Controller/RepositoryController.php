@@ -306,16 +306,12 @@ class RepositoryController extends Controller
                     "instance" => $wmsinstance);
             }
         } else { // edit
-            $wmshandler = EntityHandler::createHandler($this->container, $wmsinstance);
-            $dims = $wmshandler->getSourceDimensions($wmsinstance->getSource());
-            $form = $this->createForm(
-                new WmsInstanceInstanceLayersType(), $wmsinstance);
-            $fv = $form->createView();
+            $form = $this->createForm(new WmsInstanceInstanceLayersType(), $wmsinstance);
             return array(
                 "form" => $form->createView(),
                 "slug" => $slug,
                 "instance" => $wmsinstance,
-                'dimensions' => count($dims) > 0 ? $dims : null);
+                );
         }
     }
 

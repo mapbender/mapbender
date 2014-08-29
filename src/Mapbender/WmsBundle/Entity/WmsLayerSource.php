@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,6 +27,7 @@ use Mapbender\CoreBundle\Component\Utils;
  */
 class WmsLayerSource extends SourceItem implements ContainsKeyword
 {
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -38,7 +40,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
-    protected $source;# change this variable name together with "get" "set" functions (s. SourceItem too)
+    protected $source; # change this variable name together with "get" "set" functions (s. SourceItem too)
 
     /**
      * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="sublayer")
@@ -173,7 +175,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      * @ORM\Column(type="array", nullable=true)
      */
     protected $featureListUrl;
-    
+
     /**
      * @var ArrayCollections A list of WMS Layer keywords
      * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"persist","remove"})
@@ -849,12 +851,14 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Add dimension
      *
-     * @param Dimension $dimension
+     * @param Dimension | null $dimension
      * @return WmsLayerSource
      */
-    public function addDimension(Dimension $dimension)
+    public function addDimension($dimension)
     {
-        $this->dimension[] = $dimension;
+        if ($dimension !== null) {
+            $this->dimension[] = $dimension;
+        }
         return $this;
     }
 
@@ -1003,7 +1007,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     {
         return $this->keywords;
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -1027,7 +1031,6 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     {
         return get_class();
     }
-
 
     public function __toString()
     {
