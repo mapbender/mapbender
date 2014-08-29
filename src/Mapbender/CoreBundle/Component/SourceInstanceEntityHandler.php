@@ -8,6 +8,8 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Component\Signer;
+
 /**
  * Description of EntityHandler
  *
@@ -25,6 +27,16 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * Remove a source from a database
      */
     abstract public function remove();
+    
+    /**
+     * Returns the instance configuration with signed urls.
+     */
+    abstract public function getConfiguration(Signer $signer);
+    
+    /**
+     * Generates an instance configuration
+     */
+    abstract public function generateConfiguration();
 
 
 }

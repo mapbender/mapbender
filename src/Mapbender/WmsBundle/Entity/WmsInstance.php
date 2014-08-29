@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\LegendUrl;
 use Mapbender\WmsBundle\Component\OnlineResource;
 use Mapbender\WmsBundle\Component\Style;
@@ -154,23 +153,8 @@ class WmsInstance extends SourceInstance
      *
      * @return array $configuration
      */
-    public function getConfiguration(Signer $signer = null)
+    public function getConfiguration()
     {
-        if ($this->getSource() === null) { // from yaml
-            $this->generateYmlConfiguration();
-        } else {
-            if ($this->configuration === null) {
-                $this->generateConfiguration();
-            }
-        }
-
-        if ($signer) {
-            $this->configuration['options']['url'] = $signer->signUrl($this->configuration['options']['url']);
-            if ($this->proxy) {
-                $this->signeUrls($signer, $this->configuration['children'][0]);
-            }
-        }
-
         return $this->configuration;
     }
 
@@ -190,163 +174,6 @@ class WmsInstance extends SourceInstance
         }
     }
 
-    /**
-     * Generates a configuration from an yml file
-     */
-    public function generateYmlConfiguration()
-    {
-        $this->setSource(new WmsSource());
-        $wmsconf = new WmsInstanceConfiguration();
-        $wmsconf->setType(strtolower($this->getType()));
-        $wmsconf->setTitle($this->title);
-        $wmsconf->setIsBaseSource($this->isBasesource());
-
-        $options = new WmsInstanceConfigurationOptions();
-        $options->setUrl($this->configuration["url"])
-            ->setProxy($this->proxy)
-            ->setVisible($this->visible)
-            ->setFormat($this->getFormat())
-            ->setInfoformat($this->infoformat)
-            ->setTransparency($this->transparency)
-            ->setOpacity($this->opacity / 100)
-            ->setTiled($this->tiled);
-
-        if (isset($this->configuration["vendor"])) {
-            $options->setVendor($this->configuration["vendor"]);
-        }
-
-        $wmsconf->setOptions($options);
-
-        if (!key_exists("children", $this->configuration)) {
-            $num = 0;
-            $rootlayer = new WmsInstanceLayer();
-            $rootlayer->setTitle($this->title)
-                ->setId($this->getId() . "_" . $num)
-                ->setMinScale(!isset($this->configuration["minScale"]) ? null : $this->configuration["minScale"])
-                ->setMaxScale(!isset($this->configuration["maxScale"]) ? null : $this->configuration["maxScale"])
-                ->setSelected(!isset($this->configuration["visible"]) ? false : $this->configuration["visible"])
-                ->setPriority($num)
-                ->setSourceItem(new WmsLayerSource())
-                ->setWmsInstance($this);
-            $rootlayer->setToggle(false);
-            $rootlayer->setAllowtoggle(true);
-            $this->addLayer($rootlayer);
-            foreach ($this->configuration["layers"] as $layerDef) {
-                $num++;
-                $layer = new WmsInstanceLayer();
-                $layersource = new WmsLayerSource();
-                $layersource->setName($layerDef["name"]);
-                if (isset($layerDef["legendurl"])) {
-                    $style = new Style();
-                    $style->setName(null);
-                    $style->setTitle(null);
-                    $style->setAbstract(null);
-                    $legendUrl = new LegendUrl();
-                    $legendUrl->setWidth(null);
-                    $legendUrl->setHeight(null);
-                    $onlineResource = new OnlineResource();
-                    $onlineResource->setFormat(null);
-                    $onlineResource->setHref($layerDef["legendurl"]);
-                    $legendUrl->setOnlineResource($onlineResource);
-                    $style->setLegendUrl($legendUrl);
-                    $layersource->addStyle($style);
-                }
-                $layer->setTitle($layerDef["title"])
-                    ->setId($this->getId() . '-' . $num)
-                    ->setMinScale(!isset($layerDef["minScale"]) ? null : $layerDef["minScale"])
-                    ->setMaxScale(!isset($layerDef["maxScale"]) ? null : $layerDef["maxScale"])
-                    ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
-                    ->setInfo(!isset($layerDef["queryable"]) ? false : $layerDef["queryable"])
-                    ->setParent($rootlayer)
-                    ->setSourceItem($layersource)
-                    ->setWmsInstance($this);
-                $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo() ? true : false);
-                $rootlayer->addSublayer($layer);
-                $this->addLayer($layer);
-            }
-            $children = array($this->generateLayersConfiguration($rootlayer));
-            $wmsconf->setChildren($children);
-        } else {
-            $wmsconf->setChildren($this->configuration["children"]);
-        }
-        $this->configuration = $wmsconf->toArray();
-    }
-
-    /**
-     * Generates a configuration
-     */
-    public function generateConfiguration()
-    {
-        $rootlayer = $this->getRootlayer();
-        $llbbox = $rootlayer->getSourceItem()->getLatlonBounds();
-        $srses = array(
-            $llbbox->getSrs() => array(
-                floatval($llbbox->getMinx()),
-                floatval($llbbox->getMiny()),
-                floatval($llbbox->getMaxx()),
-                floatval($llbbox->getMaxy())
-            )
-        );
-        foreach ($rootlayer->getSourceItem()->getBoundingBoxes() as $bbox) {
-            $srses = array_merge($srses, array($bbox->getSrs() => array(
-                    floatval($bbox->getMinx()),
-                    floatval($bbox->getMiny()),
-                    floatval($bbox->getMaxx()),
-                    floatval($bbox->getMaxy()))));
-        }
-        $wmsconf = new WmsInstanceConfiguration();
-        $wmsconf->setType(strtolower($this->getType()));
-        $wmsconf->setTitle($this->title);
-        $wmsconf->setIsBaseSource($this->isBasesource());
-
-        $options = new WmsInstanceConfigurationOptions();
-        $options->setUrl($this->source->getGetMap()->getHttpGet())
-            ->setProxy($this->getProxy())
-            ->setVisible($this->getVisible())
-            ->setFormat($this->getFormat())
-            ->setInfoformat($this->getInfoformat())
-            ->setTransparency($this->transparency)
-            ->setOpacity($this->opacity / 100)
-            ->setTiled($this->tiled)
-            ->setBbox($srses);
-        $wmsconf->setOptions($options);
-        $wmsconf->setChildren(array($this->generateLayersConfiguration($rootlayer)));
-        $this->configuration = $wmsconf->toArray();
-    }
-
-    /**
-     * Generates a configuration for layers
-     *
-     * @param WmsInstanceLayer $layer
-     * @param array $configuration
-     * @return array
-     */
-    public function generateLayersConfiguration(WmsInstanceLayer $layer, $configuration = array())
-    {
-        if ($layer->getActive() === true) {
-            $children = array();
-            if ($layer->getSublayer()->count() > 0) {
-                foreach ($layer->getSublayer() as $sublayer) {
-                    $configurationTemp = $this->generateLayersConfiguration($sublayer);
-                    if (count($configurationTemp) > 0) {
-                        $children[] = $configurationTemp;
-                    }
-                }
-            }
-            $layerConf = $layer->getConfiguration();
-            $configuration = array(
-                "options" => $layerConf,
-                "state" => array(
-                    "visibility" => null,
-                    "info" => null,
-                    "outOfScale" => null,
-                    "outOfBounds" => null),);
-            if (count($children) > 0) {
-                $configuration["children"] = $children;
-            }
-        }
-        return $configuration;
-    }
 
     /**
      * Set layers

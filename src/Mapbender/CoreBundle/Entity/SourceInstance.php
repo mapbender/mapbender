@@ -269,15 +269,14 @@ abstract class SourceInstance
 
     /**
      *  Returns a configuration of a source instance
-     *
-     *  @param   Signer  $signer  String signer for URL protection
+     * @return array instance configuration
      */
-    abstract public function getConfiguration(Signer $signer=null);
-    
-    /**
-     * Generates a configuration of a source instance
-     */
-    abstract public function generateConfiguration();
+    abstract public function getConfiguration();
+//    
+//    /**
+//     * Generates a configuration of a source instance
+//     */
+//    abstract public function generateConfiguration();
 
 //    /**
 //     * Remove a source instance from a database

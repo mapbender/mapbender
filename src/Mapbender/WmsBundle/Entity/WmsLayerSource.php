@@ -164,11 +164,6 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    protected $extent;
-
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
     protected $dataUrl;
 
     /**
@@ -190,7 +185,6 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
         $this->boundingBoxes = array();
         $this->metadataUrl = array();
         $this->dimension = array();
-        $this->extent = array();
         $this->dataUrl = array();
         $this->featureListUrl = array();
         $this->styles = array();
@@ -278,17 +272,6 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
 
         return $this;
     }
-
-//
-//    /**
-//     * Remove sublayer
-//     *
-//     * @param WmsLayerSource $sublayer
-//     */
-//    public function removeSublayer(WmsLayerSource $sublayer)
-//    {
-//        $this->sublayer->removeElement($sublayer);
-//    }
 
     /**
      * Set name
@@ -883,41 +866,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     {
         return $this->dimension;
     }
-
-    /**
-     * Add extent
-     *
-     * @param Extent $extent
-     * @return WmsLayerSource
-     */
-    public function addExtent(Extent $extent)
-    {
-        $this->extent[] = $extent;
-        return $this;
-    }
-
-    /**
-     * Set extent
-     *
-     * @param array $extent
-     * @return WmsLayerSource
-     */
-    public function setExtent($extent)
-    {
-        $this->extent = $extent;
-        return $this;
-    }
-
-    /**
-     * Get extent
-     *
-     * @return array 
-     */
-    public function getExtent()
-    {
-        return $this->extent;
-    }
-
+    
     /**
      * Add dataUrl
      *

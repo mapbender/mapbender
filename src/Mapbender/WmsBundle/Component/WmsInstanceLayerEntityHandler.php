@@ -62,50 +62,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->container->get('doctrine')->getManager()->persist($entityHandler->getEntity());
             $this->container->get('doctrine')->getManager()->flush();
         }
-//        return 
-//        $this->addSublayer($this->entity, $wmslayersource, $this->entity, $num);
-//
-//        $this->entity->setWeight(-1);
-//
-//        $this->entity->getLayerset()->addInstance($this->entity);
-//        $em = $this->container->get('doctrine')->getManager();
-//        $em->persist($this->entity);
-//        $em->persist($this->entity->getLayerset()->getApplication());
-//        $em->persist($this->entity->getLayerset());
-//        $em->flush();
-//
-//        $num = 0;
-//        foreach ($this->entity->getLayerset()->getInstances() as $instance) {
-//            $this->entity->setWeight($num);
-//            $this->entity->generateConfiguration();
-//            $em->persist($instance);
-//            $em->flush();
-//            $num++;
-//        }
-//        $num++;
-//        $instsublayer = new WmsInstanceLayer();
-//        $instsublayer->setSourceInstance($instance);
-//        $instsublayer->setSourceItem($wmssublayer);
-//        $instsublayer->setTitle($wmssublayer->getTitle());
-//        // @TODO min max from scaleHint
-//        $instsublayer->setMinScale(
-//            $wmssublayer->getScaleRecursive() !== null ?
-//                $wmssublayer->getScaleRecursive()->getMin() : null);
-//        $instsublayer->setMaxScale(
-//            $wmssublayer->getScaleRecursive() !== null ?
-//                $wmssublayer->getScaleRecursive()->getMax() : null);
-//        $queryable = $wmssublayer->getQueryable();
-//        $instsublayer->setInfo(Utils::getBool($queryable));
-//        $instsublayer->setAllowinfo(Utils::getBool($queryable));
-//
-//        $instsublayer->setPriority($num);
-//        $instsublayer->setParent($instlayer);
-//        $instance->addLayer($instsublayer);
-//        if ($wmssublayer->getSublayer()->count() > 0) {
-//            $instsublayer->setToggle(false);
-//            $instsublayer->setAllowtoggle(true);
-//        }
-//        $this->addSublayer($instance, $wmssublayer, $instsublayer, $num);
     }
 
     /**
@@ -130,15 +86,39 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $this->container->get('doctrine')->getManager()->flush();
     }
 
-    public function getSourceDimensions()
+    /**
+     * Generates a configuration for layers
+     *
+     * @param array $configuration
+     * @return array
+     */
+    public function generateConfiguration()
     {
-        $dimensions = array();
-        foreach ($this->wmsinstance->getSource()->getLayers() as $layer) {
-            foreach ($layer->getDimension() as $dimension) {
-                $dimensions[] = $dimension;
+        $configuration = array();
+        if ($this->entity->getActive() === true) {
+            $children = array();
+            if ($this->entity->getSublayer()->count() > 0) {
+                foreach ($this->entity->getSublayer() as $sublayer) {
+                    $instLayHandler = self::createHandler($this->container, $sublayer);
+                    $configurationTemp = $instLayHandler->generateConfiguration();
+                    if (count($configurationTemp) > 0) {
+                        $children[] = $configurationTemp;
+                    }
+                }
+            }
+            $layerConf = $this->entity->getConfiguration();
+            $configuration = array(
+                "options" => $layerConf,
+                "state" => array(
+                    "visibility" => null,
+                    "info" => null,
+                    "outOfScale" => null,
+                    "outOfBounds" => null),);
+            if (count($children) > 0) {
+                $configuration["children"] = $children;
             }
         }
-        return $dimensions;
+        return $configuration;
     }
 
 }
