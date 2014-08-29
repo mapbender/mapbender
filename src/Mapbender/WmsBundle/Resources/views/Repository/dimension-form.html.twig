@@ -1,9 +1,0 @@
-<div id="dimension{{ num }}" class="on-off" title="units:{#{ dim.vars.data.units }}&#10;unitSymbol:{{ dim.vars.data.unitSymbol }}&#10;default:{{ dim.vars.data.default }}&#10;multipleValues:{%if dim.vars.data.multipleValues %}true{% else %}false{% endif %}&#10;nearestValue:{%if dim.vars.data.nearestValue %}true{% else %}false{% endif %}&#10;current:{%if dim.vars.data.current %}true{% else %}false{% endif %#}">
-    <div class="left">{{ form_widget(dim.use) }}<label for="{{dim.use.vars.id}}" class="labelCheck">{{ dim.vars.data.name }}</label></div>
-    <div class="clear"></div>
-</div>
-<div id="dimension{{ num }}-content" class="on-off-content hidden">
-    {#{ form_label(dim.extent) }}{{ form_widget(dim.extent) }#}
-    {{ form_rest(dim) }}
-    <div class="clear"></div>
-</div>
