@@ -145,7 +145,7 @@ class ApplicationController extends Controller
                 $regionProperties->setApplication($application);
                 $regionProperties->setName($regionName);
                 foreach ($regionProps as $propName => $propValue) {
-                    if ($propValue['state'])
+                    if (array_key_exists('state', $propValue) && $propValue['state'])
                         $regionProperties->addProperty($propName);
                 }
                 $em->persist($regionProperties);
