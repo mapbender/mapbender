@@ -44,8 +44,8 @@ class DimensionInstType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-//        $subscriber = new DimensionSubscriber($builder->getFormFactory());
-//        $builder->addEventSubscriber($subscriber);
+        $subscriber = new DimensionSubscriber($builder->getFormFactory());
+        $builder->addEventSubscriber($subscriber);
         $transformer = new ObjectArrayTransformer('Mapbender\WmsBundle\Component\DimensionInst');
         $builder->addModelTransformer($transformer);
         $builder
@@ -57,7 +57,7 @@ class DimensionInstType extends AbstractType
             ->add('multipleValues', 'hidden', array('required' => false))
             ->add('nearestValue', 'hidden', array('required' => false))
             ->add('current', 'hidden', array('required' => false))
-            ->add('extent', 'text', array('required' => true))
+//            ->add('extent', 'text', array('required' => true))
         ;
     }
 

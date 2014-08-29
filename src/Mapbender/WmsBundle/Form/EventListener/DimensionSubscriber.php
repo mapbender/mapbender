@@ -2,6 +2,7 @@
 
 namespace Mapbender\WmsBundle\Form\EventListener;
 
+use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\DimensionInterval;
 use Mapbender\WmsBundle\Component\DimensionMultiple;
 use Mapbender\WmsBundle\Component\DimensionMultipleInterval;
@@ -110,7 +111,26 @@ class DimensionSubscriber implements EventSubscriberInterface
         if (null === $data) {
             return;
         }
-        if ($data) {
+        if ($data && $data instanceof DimensionInst) {
+            $dataArr = $data->getTypedData();
+            if ($data->getType() === $data::SINGLE) {
+                $a = 0;
+            } elseif ($data->getType() === $data::INTERVAL) {
+                $form->add($this->factory->createNamed('start', 'hidden', null,
+                            array('data' => $dataArr[$data->getType()][0], "mapped" => false, 'auto_initialize' => false)))
+                    ->add($this->factory->createNamed('end', 'hidden', null,
+                            array('data' => $dataArr[$data->getType()][1], "mapped" => false, 'auto_initialize' => false)))
+                    ->add($this->factory->createNamed('interval', 'hidden', null,
+                            array('data' => $dataArr[$data->getType()][2], "mapped" => false, 'auto_initialize' => false)))
+                    ->add($this->factory->createNamed('extent', 'text', null,
+                            array('required' => true, 'auto_initialize' => false)));
+            } elseif ($data->getType() === $data::MULTIPLE) {
+                $choices = array_combine($dataArr[$data->getType()], $dataArr[$data->getType()]);
+                $form->add($this->factory->createNamed('extent', 'choice', null,
+                            array('required' => true, 'choices' => $choices, 'auto_initialize' => false)));
+            } elseif ($data->getType() === $data::MULTIPLEINTERVAL) {
+                $a = 0;
+            }
             if ($data instanceof DimensionSingle) {
 //                $form->add($this->factory->createNamed(
 //                        'dimension', new DimensionSingleType(), null,
