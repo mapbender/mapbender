@@ -5,13 +5,7 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmsBundle\Component\LegendUrl;
-use Mapbender\WmsBundle\Component\OnlineResource;
-use Mapbender\WmsBundle\Component\Style;
-use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
-use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
@@ -91,12 +85,11 @@ class WmsInstance extends SourceInstance
      * @ORM\Column(type="boolean", nullable=true)
      */
     protected $tiled = false;
-    
+
     /**
      * @ORM\Column(type="array", nullable=true)
      */
     protected $dimensions;
-    
 
     public function __construct()
     {
@@ -112,7 +105,6 @@ class WmsInstance extends SourceInstance
     public function setId($id)
     {
         $this->id = $id;
-
         return $this;
     }
 
@@ -125,7 +117,7 @@ class WmsInstance extends SourceInstance
     {
         return $this->id;
     }
-    
+
     public function getDimensions()
     {
         return $this->dimensions;
@@ -136,7 +128,7 @@ class WmsInstance extends SourceInstance
         $this->dimensions = $dimensions;
         return $this;
     }
-    
+
     /**
      * Set configuration
      *
@@ -158,23 +150,6 @@ class WmsInstance extends SourceInstance
         return $this->configuration;
     }
 
-    private function signeUrls(Signer $signer, &$layer)
-    {
-        if (isset($layer['options']['legend'])) {
-            if (isset($layer['options']['legend']['graphic'])) {
-                $layer['options']['legend']['graphic'] = $signer->signUrl($layer['options']['legend']['graphic']);
-            } else if (isset($layer['options']['legend']['url'])) {
-                $layer['options']['legend']['url'] = $signer->signUrl($layer['options']['legend']['url']);
-            }
-        }
-        if (isset($layer['children'])) {
-            foreach ($layer['children'] as &$child) {
-                $this->signeUrls($signer, $child);
-            }
-        }
-    }
-
-
     /**
      * Set layers
      *
@@ -184,7 +159,6 @@ class WmsInstance extends SourceInstance
     public function setLayers($layers)
     {
         $this->layers = $layers;
-
         return $this;
     }
 
@@ -222,7 +196,6 @@ class WmsInstance extends SourceInstance
     public function setTitle($title)
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -245,7 +218,6 @@ class WmsInstance extends SourceInstance
     public function setSrs($srs)
     {
         $this->srs = $srs;
-
         return $this;
     }
 
@@ -268,7 +240,6 @@ class WmsInstance extends SourceInstance
     public function setFormat($format)
     {
         $this->format = $format;
-
         return $this;
     }
 
@@ -291,7 +262,6 @@ class WmsInstance extends SourceInstance
     public function setInfoformat($infoformat)
     {
         $this->infoformat = $infoformat;
-
         return $this;
     }
 
@@ -314,7 +284,6 @@ class WmsInstance extends SourceInstance
     public function setExceptionformat($exceptionformat)
     {
         $this->exceptionformat = $exceptionformat;
-
         return $this;
     }
 
@@ -337,7 +306,6 @@ class WmsInstance extends SourceInstance
     public function setTransparency($transparency)
     {
         $this->transparency = $transparency;
-
         return $this;
     }
 
@@ -360,7 +328,6 @@ class WmsInstance extends SourceInstance
     public function setVisible($visible)
     {
         $this->visible = $visible;
-
         return $this;
     }
 
@@ -383,7 +350,6 @@ class WmsInstance extends SourceInstance
     public function setOpacity($opacity)
     {
         $this->opacity = $opacity;
-
         return $this;
     }
 
@@ -406,7 +372,6 @@ class WmsInstance extends SourceInstance
     public function setProxy($proxy)
     {
         $this->proxy = $proxy;
-
         return $this;
     }
 
@@ -429,7 +394,6 @@ class WmsInstance extends SourceInstance
     public function setTiled($tiled)
     {
         $this->tiled = $tiled;
-
         return $this;
     }
 
@@ -452,7 +416,6 @@ class WmsInstance extends SourceInstance
     public function setSource($wmssource = null)
     {
         $this->source = $wmssource;
-
         return $this;
     }
 
@@ -475,7 +438,6 @@ class WmsInstance extends SourceInstance
     public function addLayer(WmsInstanceLayer $layer)
     {
         $this->layers->add($layer);
-
         return $this;
     }
 
@@ -529,20 +491,6 @@ class WmsInstance extends SourceInstance
     public function getMetadata()
     {
         return new WmsMetadata($this);
-    }
-
-    /**
-     * Recursively remove a nested Layerstructure
-     * @param EntityManager $em
-     * @param WmsInstanceLayer $instLayer
-     */
-    private function removeLayerRecursive(EntityManager $em, WmsInstanceLayer $instLayer)
-    {
-        foreach ($instLayer->getSublayer() as $sublayer) {
-            $this->removeLayerRecursive($em, $sublayer);
-        }
-        $em->remove($instLayer);
-        $em->flush();
     }
 
     /**

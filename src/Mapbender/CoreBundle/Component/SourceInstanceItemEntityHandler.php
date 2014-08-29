@@ -32,6 +32,11 @@ abstract class SourceInstanceItemEntityHandler extends EntityHandler
      * Generates an item configuration
      */
     abstract public function generateConfiguration();
+    
+    /**
+     * Returns an item configuration
+     */
+    abstract public function getConfiguration();
 
 
 }

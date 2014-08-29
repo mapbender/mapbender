@@ -30,13 +30,13 @@ abstract class SourceInstanceItem
      */
     protected $sourceItem;
 
-    /**
-     * Creates the mapbender configuration.
-     * 
-     * 
-     * @return array configuration parameters
-     */
-    public abstract function getConfiguration();
+//    /**
+//     * Creates the mapbender configuration.
+//     * 
+//     * 
+//     * @return array configuration parameters
+//     */
+//    public abstract function getConfiguration();
 
     /**
      * Copies a source instance

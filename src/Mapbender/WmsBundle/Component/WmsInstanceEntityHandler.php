@@ -252,5 +252,28 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
         $this->entity->setConfiguration($wmsconf->toArray());
     }
+    
+    
+    /**
+     * Signes urls.
+     * 
+     * @param Signer $signer signer
+     * @param type $layer
+     */
+    private function signeUrls(Signer $signer, &$layer)
+    {
+        if (isset($layer['options']['legend'])) {
+            if (isset($layer['options']['legend']['graphic'])) {
+                $layer['options']['legend']['graphic'] = $signer->signUrl($layer['options']['legend']['graphic']);
+            } else if (isset($layer['options']['legend']['url'])) {
+                $layer['options']['legend']['url'] = $signer->signUrl($layer['options']['legend']['url']);
+            }
+        }
+        if (isset($layer['children'])) {
+            foreach ($layer['children'] as &$child) {
+                $this->signeUrls($signer, $child);
+            }
+        }
+    }
 
 }

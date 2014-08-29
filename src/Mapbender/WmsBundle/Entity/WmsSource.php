@@ -2,15 +2,13 @@
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\ContainsKeyword;
-use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
