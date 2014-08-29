@@ -156,7 +156,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setTitle($title)
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -179,7 +178,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setSublayer($sublayer)
     {
         $this->sublayer = $sublayer;
-
         return $this;
     }
 
@@ -192,7 +190,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function addSublayer(WmsInstanceLayer $sublayer)
     {
         $this->sublayer->add($sublayer);
-
         return $this;
     }
 
@@ -215,7 +212,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setParent($parent)
     {
         $this->parent = $parent;
-
         return $this;
     }
 
@@ -238,7 +234,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setActive($active)
     {
         $this->active = $active;
-
         return $this;
     }
 
@@ -261,7 +256,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setAllowselected($allowselected)
     {
         $this->allowselected = $allowselected;
-
         return $this;
     }
 
@@ -284,7 +278,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setSelected($selected)
     {
         $this->selected = $selected;
-
         return $this;
     }
 
@@ -307,7 +300,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setInfo($info)
     {
         $this->info = $info;
-
         return $this;
     }
 
@@ -351,7 +343,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setAllowinfo($allowinfo)
     {
         $this->allowinfo = $allowinfo;
-
         return $this;
     }
 
@@ -416,7 +407,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setMinScale($minScale)
     {
         $this->minScale = $minScale;
-
         return $this;
     }
 
@@ -439,7 +429,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setMaxScale($maxScale)
     {
         $this->maxScale = $maxScale;
-
         return $this;
     }
 
@@ -462,7 +451,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setStyle($style)
     {
         $this->style = $style;
-
         return $this;
     }
 
@@ -507,7 +495,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setSourceInstance(SourceInstance $sourceInstance = null)
     {
         $this->sourceInstance = $sourceInstance;
-
         return $this;
     }
 
@@ -534,6 +521,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setSourceItem(SourceItem $sourceItem)
     {
         $this->sourceItem = $sourceItem;
+        return $this;
     }
 
     /**

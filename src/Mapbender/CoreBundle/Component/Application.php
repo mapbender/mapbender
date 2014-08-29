@@ -3,6 +3,7 @@
 /**
  * TODO: License
  */
+
 namespace Mapbender\CoreBundle\Component;
 
 use Assetic\Asset\AssetReference;
@@ -31,6 +32,7 @@ use Symfony\Component\Security\Acl\Exception\NotAllAclsFoundException;
  */
 class Application
 {
+
     /**
      * @var ContainerInterface $container The container
      */
@@ -61,19 +63,18 @@ class Application
      * @param Entity $entity The configuration entity
      * @param array $urls Array of runtime URLs
      */
-    public function __construct(ContainerInterface $container, Entity $entity,
-        array $urls)
+    public function __construct(ContainerInterface $container, Entity $entity, array $urls)
     {
         $this->container = $container;
         $this->entity = $entity;
         $this->urls = $urls;
     }
 
-    /*************************************************************************
+    /*     * ***********************************************************************
      *                                                                       *
      *                    Configuration entity handling                      *
      *                                                                       *
-     *************************************************************************/
+     * *********************************************************************** */
 
     /**
      * Get the configuration entity.
@@ -85,11 +86,11 @@ class Application
         return $this->entity;
     }
 
-    /*************************************************************************
+    /*     * ***********************************************************************
      *                                                                       *
      *             Shortcut functions for leaner Twig templates              *
      *                                                                       *
-     *************************************************************************/
+     * *********************************************************************** */
 
     /**
      * Get the application ID
@@ -131,11 +132,11 @@ class Application
         return $this->entity->getDescription();
     }
 
-    /*************************************************************************
+    /*     * ***********************************************************************
      *                                                                       *
      *                              Frontend stuff                           *
      *                                                                       *
-     *************************************************************************/
+     * *********************************************************************** */
 
     /**
      * Render the application
@@ -146,8 +147,7 @@ class Application
      * @param boolean $js   Whether to include the JavaScript
      * @return string $html The rendered HTML
      */
-    public function render($format = 'html', $html = true, $css = true,
-        $js = true, $trans = true)
+    public function render($format = 'html', $html = true, $css = true, $js = true, $trans = true)
     {
         return $this->getTemplate()->render($format, $html, $css, $js, $trans);
     }
@@ -161,12 +161,12 @@ class Application
                 '@MapbenderCoreBundle/Resources/public/mapbender.model.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.application.wdt.js',
-                ),
+            ),
             'css' => array(
             ),
             'trans' => array(
                 '@MapbenderCoreBundle/Resources/public/mapbender.trans.js',
-            ));
+        ));
         return $assets;
     }
 
@@ -189,7 +189,7 @@ class Application
         $assets = array();
 
         $_assets = $this::listAssets();
-        foreach($_assets[$type] as $asset) {
+        foreach ($_assets[$type] as $asset) {
             $this->addAsset($assets, $type, $asset);
         }
 
@@ -198,8 +198,7 @@ class Application
 
         foreach ($this->getTemplate()->getAssets($type) as $asset) {
             if ($type === 'trans') {
-                $elementTranslations = json_decode($this->container->get('templating')->render($asset),
-                    true);
+                $elementTranslations = json_decode($this->container->get('templating')->render($asset), true);
                 $translations = array_merge($translations, $elementTranslations);
             } else {
                 $file = $this->getReference($this->template, $asset);
@@ -213,13 +212,10 @@ class Application
                 if (isset($element_assets[$type])) {
                     foreach ($element_assets[$type] as $asset) {
                         if ($type === 'trans') {
-                            $elementTranslations = json_decode($this->container->get('templating')->render($asset),
-                                true);
-                            $translations = array_merge($translations,
-                                $elementTranslations);
+                            $elementTranslations = json_decode($this->container->get('templating')->render($asset), true);
+                            $translations = array_merge($translations, $elementTranslations);
                         } else {
-                            $this->addAsset($assets, $type,
-                                $this->getReference($element, $asset));
+                            $this->addAsset($assets, $type, $this->getReference($element, $asset));
                         }
                     }
                 }
@@ -239,8 +235,7 @@ class Application
                                     true);
                             }
                         } else {
-                            $this->addAsset($assets, $type,
-                                $this->getReference($layer, $asset));
+                            $this->addAsset($assets, $type, $this->getReference($layer, $asset));
                         }
                     }
                 }
@@ -250,8 +245,7 @@ class Application
             $translations = array_merge($translations, $value);
         }
         if ($type === 'trans') {
-            $transAsset = new StringAsset('Mapbender.i18n = ' . json_encode($translations,
-                    JSON_FORCE_OBJECT) . ';');
+            $transAsset = new StringAsset('Mapbender.i18n = ' . json_encode($translations, JSON_FORCE_OBJECT) . ';');
             $this->addAsset($assets, $type, $transAsset);
         }
 
@@ -259,8 +253,7 @@ class Application
         // and layer assets for application specific styling for example
         foreach ($this->getTemplate()->getLateAssets($type) as $asset) {
             if ($type === 'trans') {
-                $elementTranslations = json_decode($this->container->get('templating')->render($asset),
-                    true);
+                $elementTranslations = json_decode($this->container->get('templating')->render($asset), true);
                 $translations = array_merge($translations, $elementTranslations);
             } else {
                 $file = $this->getReference($this->template, $asset);
@@ -317,11 +310,11 @@ class Application
             $configuration['layersets'][$layerset->getId()] = array();
             $num = 0;
             foreach ($layerset->layerObjects as $layer) {
-                $layerconf = array(
-                    $layer->getId() => array(
+                $instHandler = EntityHandler::createHandler($this->container, $layer);
+                $layerconf = array($layer->getId() => array(
                         'type' => $layer->getType(),
                         'title' => $layer->getTitle(),
-                        'configuration' => $layer->getConfiguration($this->container->get('signer'))));
+                        'configuration' => $instHandler->getConfiguration($this->container->get('signer'))));
                 $configuration['layersets'][$layerset->getId()][$num] = $layerconf;
                 $num++;
             }
@@ -399,7 +392,7 @@ class Application
         if ($this->elements === null) {
             $securityContext = $this->container->get('security.context');
             $aclProvider = $this->container->get('security.acl.provider');
-            
+
             // preload acl in one single sql query
             $oids = array();
             $acls;
@@ -407,26 +400,29 @@ class Application
                 $oids[] = ObjectIdentity::fromDomainObject($entity);
             }
             try {
-                $aclProvider->findAcls($oids);        
-            } catch(NotAllAclsFoundException $e) { 
+                $aclProvider->findAcls($oids);
+            } catch (NotAllAclsFoundException $e) {
                 $acls = $e->getPartialResult();
-            } catch(\Exception $e) {}
-            
+            } catch (\Exception $e) {
+                
+            }
+
             // Set up all elements (by region)
             $this->elements = array();
             foreach ($this->entity->getElements() as $entity) {
                 $application_entity = $this->getEntity();
-                if ($application_entity::SOURCE_DB === $application_entity->getSource()){
+                if ($application_entity::SOURCE_DB === $application_entity->getSource()) {
                     try {
                         // If no ACL exists, an exception is thrown
                         $acl = $aclProvider->findAcl(ObjectIdentity::fromDomainObject($entity));
                         // An empy ACL may exist, too
-                        if(count($acl->getObjectAces()) > 0 && !$securityContext->isGranted('VIEW', $entity)){
+                        if (count($acl->getObjectAces()) > 0 && !$securityContext->isGranted('VIEW', $entity)) {
                             continue;
                         }
-                    } catch(\Exception $e) {}
-                } else if ($application_entity::SOURCE_YAML === $application_entity->getSource()
-                    && count($entity->yaml_roles)) {
+                    } catch (\Exception $e) {
+                        
+                    }
+                } else if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($entity->yaml_roles)) {
                     $passed = false;
                     foreach ($entity->yaml_roles as $role) {
                         if ($securityContext->isGranted($role)) {
@@ -455,13 +451,13 @@ class Application
             foreach ($this->elements as $r => $elements) {
                 usort($elements,
                     function($a, $b) {
-                        $wa = $a->getEntity()->getWeight();
-                        $wb = $b->getEntity()->getWeight();
-                        if ($wa == $wb) {
-                            return 0;
-                        }
-                        return ($wa < $wb) ? -1 : 1;
-                    });
+                    $wa = $a->getEntity()->getWeight();
+                    $wb = $b->getEntity()->getWeight();
+                    if ($wa == $wb) {
+                        return 0;
+                    }
+                    return ($wa < $wb) ? -1 : 1;
+                });
             }
         }
 
@@ -481,7 +477,6 @@ class Application
     public function getLayersets()
     {
         if ($this->layers === null) {
-
             // Set up all elements (by region)
             $this->layers = array();
             foreach ($this->entity->getLayersets() as $layerset) {
@@ -500,7 +495,7 @@ class Application
         }
         return $this->layers;
     }
-    
+
     /**
      * Checks and generates a valid slug.
      * 
@@ -538,7 +533,7 @@ class Application
             $ok = mkdir($uploads_dir);
         }
         if ($ok) {
-            if(!$webRelative){
+            if (!$webRelative) {
                 return $uploads_dir;
             } else {
                 return $container->getParameter("mapbender.uploads_dir");
@@ -658,8 +653,8 @@ class Application
     {
         $request = $container->get('request');
         return $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-    } 
-    
+    }
+
     /**
      * Copies an application web order. 
      * 
@@ -670,9 +665,9 @@ class Application
      */
     public static function copyAppWebDir($container, $srcSslug, $destSlug)
     {
-        $src = Application::getAppWebDir($container, $srcSslug);#$this->getApplicationDir($tocopy->getSlug());
-        $dst = Application::getAppWebDir($container, $destSlug);#$this->getApplicationDir($cloned->getSlug());
-        if($src === null || $dst === null){
+        $src = Application::getAppWebDir($container, $srcSslug); #$this->getApplicationDir($tocopy->getSlug());
+        $dst = Application::getAppWebDir($container, $destSlug); #$this->getApplicationDir($cloned->getSlug());
+        if ($src === null || $dst === null) {
             return false;
         }
         Utils::copyOrderRecursive($src, $dst);
