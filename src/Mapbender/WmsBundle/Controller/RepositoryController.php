@@ -291,8 +291,9 @@ class RepositoryController extends Controller
                 $wmsinstance = $this->getDoctrine()
                     ->getRepository("MapbenderWmsBundle:WmsInstance")
                     ->find($wmsinstance->getId());
-                $wmsinstance->generateConfiguration();
-                $em->persist($wmsinstance);
+                $entityHandler = EntityHandler::createHandler($this->container, $wmsinstance);
+                $entityHandler->generateConfiguration();
+                $em->persist($entityHandler->getEntity());
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->set(

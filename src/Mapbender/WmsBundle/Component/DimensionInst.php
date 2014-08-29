@@ -55,8 +55,8 @@ class DimensionInst extends Dimension
     }
 
         
-    public function findType(){
-        $array = explode(",", $this->extent);
+    public static function findType($extent){
+        $array = explode(",", $extent);
         if (count($array) === 0) {
             return null;
         } elseif (count($array) === 1) {
@@ -71,16 +71,13 @@ class DimensionInst extends Dimension
             if (count($help) === 1) {
                 return self::MULTIPLE;
             } else {
-                for ($i = 0; $i < count($array); $i++) {
-                    $array[$i] = explode("/", $array[$i]);
-                }
                 return self::MULTIPLEINTERVAL;
             }
         }
     }
     
-    public function getTypedData(){
-        $array = explode(",", $this->extent);
+    public static function getTypedData($extent){
+        $array = explode(",", $extent);
         $res = array();
         if (count($array) === 0) {
             return $res;

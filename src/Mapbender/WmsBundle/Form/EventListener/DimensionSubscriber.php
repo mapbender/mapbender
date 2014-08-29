@@ -3,13 +3,9 @@
 namespace Mapbender\WmsBundle\Form\EventListener;
 
 use Mapbender\WmsBundle\Component\DimensionInst;
-use Mapbender\WmsBundle\Component\DimensionInterval;
-use Mapbender\WmsBundle\Component\DimensionMultiple;
-use Mapbender\WmsBundle\Component\DimensionMultipleInterval;
-use Mapbender\WmsBundle\Component\DimensionSingle;
-use Mapbender\WmsBundle\Form\Type\DimensionMultipleType;
-use Mapbender\WmsBundle\Form\Type\DimensionIntervalType;
-use Mapbender\WmsBundle\Form\Type\DimensionSingleType;
+//use Mapbender\WmsBundle\Component\DimensionInterval;
+//use Mapbender\WmsBundle\Component\DimensionMultiple;
+//use Mapbender\WmsBundle\Component\DimensionSingle;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -112,22 +108,41 @@ class DimensionSubscriber implements EventSubscriberInterface
             return;
         }
         if ($data && $data instanceof DimensionInst) {
-            $dataArr = $data->getTypedData();
+            $dataArr = $data->getExtent();
+            $dataOrigArr = $data->getOrigextent();
             if ($data->getType() === $data::SINGLE) {
                 $a = 0;
             } elseif ($data->getType() === $data::INTERVAL) {
-                $form->add($this->factory->createNamed('start', 'hidden', null,
-                            array('data' => $dataArr[$data->getType()][0], "mapped" => false, 'auto_initialize' => false)))
-                    ->add($this->factory->createNamed('end', 'hidden', null,
-                            array('data' => $dataArr[$data->getType()][1], "mapped" => false, 'auto_initialize' => false)))
-                    ->add($this->factory->createNamed('interval', 'hidden', null,
-                            array('data' => $dataArr[$data->getType()][2], "mapped" => false, 'auto_initialize' => false)))
-                    ->add($this->factory->createNamed('extent', 'text', null,
-                            array('required' => true, 'auto_initialize' => false)));
+                $form->add($this->factory->createNamed('start', 'text', null,
+                            array(
+                            'data' => $dataArr[0],
+                            "mapped" => false,
+                            'auto_initialize' => false)))
+                    ->add($this->factory->createNamed('end', 'text', null,
+                            array(
+                            'data' => $dataArr[1],
+                            "mapped" => false,
+                            'auto_initialize' => false)))
+                    ->add($this->factory->createNamed('interval', 'text', null,
+                            array(
+                            'data' => $dataArr[2],
+                            "mapped" => false,
+                            'auto_initialize' => false)))
+//                    ->add($this->factory->createNamed('extent', 'text', null,
+//                            array(
+//                            'required' => true,
+//                            'auto_initialize' => false)))
+                ;
             } elseif ($data->getType() === $data::MULTIPLE) {
-                $choices = array_combine($dataArr[$data->getType()], $dataArr[$data->getType()]);
+                $choices = array_combine($dataOrigArr, $dataOrigArr);
+//                $data->setExtent($dataArr[$data->getType()]);
                 $form->add($this->factory->createNamed('extent', 'choice', null,
-                            array('required' => true, 'choices' => $choices, 'auto_initialize' => false)));
+                        array(
+//                        'data' => $dataArr[$data->getType()],
+                        'required' => true,
+                        'multiple' => true,
+                        'choices' => $choices,
+                        'auto_initialize' => false)));
             } elseif ($data->getType() === $data::MULTIPLEINTERVAL) {
                 $a = 0;
             }
