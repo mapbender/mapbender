@@ -19,7 +19,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MapbenderPrintQueueCommand extends ContainerAwareCommand
 {
-    const DESCRIPTION = 'Print queue managing';
+    const DESCRIPTION       = 'Print queue managing';
+    const COLOR_OFF         = "\033[0m";
+    const WARN_COLOR        = "\033[0;33m";
+    const PASS_COLOR        = "\033[0;32m";
+    const ERROR_COLOR       = "\033[0;31m";
+    const NOTHING_DONE_TEXT = 'Nothing done.';
+
+    /** @var  OutputInterface */
+    protected $output;
 
     /**
      * @inheritdoc
@@ -34,6 +42,11 @@ class MapbenderPrintQueueCommand extends ContainerAwareCommand
                 null,
                 InputOption::VALUE_NONE,
                 'Clean old queues and remove depended files they are older then X days.'
+            )
+            ->addOption('repair',
+                null,
+                InputOption::VALUE_NONE,
+                'Fix broken queues.'
             );
     }
 
@@ -44,46 +57,92 @@ class MapbenderPrintQueueCommand extends ContainerAwareCommand
     {
         /** @var PrintQueueManager $manager */
         /** @var PrintQueue $queue */
-        $manager = $this->getContainer()->get('mapbender.print.queue_manager');
-        $result  = null;
+        $manager      = $this->getContainer()->get('mapbender.print.queue_manager');
+        $result       = null;
+        $id           = intval($input->getArgument('id'));
+        $this->output = $output;
 
-        if ($input->hasOption('clean')) {
-            $output->writeln('Cleaned process started.');
-            $output->writeln(sprintf('Cleaned %s queue(s) successfully.', count($manager->clean())));
+        if ($input->getOption('clean')) {
+            $this->pass('Cleaned process started.');
+            $this->pass(sprintf('Cleaned %s queue(s) successfully.', count($manager->clean())));
             return;
-        } elseif ($input->hasArgument('id')) {
-            $queue = $manager->find($input->getArgument('id'));
+        }
+        if ($input->getOption('repair')) {
+            $this->pass('Fixing broken queues.');
+            foreach($manager->fixBroken() as $queue){
+                $this->pass('The queue #'.$queue->getId()." fixed.");
+            }
+        }
+
+        if ($id > 0) {
+            $queue = $manager->find($id);
             if ($queue) {
+                $this->pass('The queue founded.');
+                $this->pass('Start processing.');
                 $result = $manager->render($queue);
+
             } else {
                 $result = PrintQueueManager::STATUS_QUEUE_NOT_EXISTS;
             }
         } else {
-            $queue = $manager->renderNext();
+            $renderedQueue = $manager->getProcessedQueue();
+            if($renderedQueue){
+                $this->warn('The queue #'.$renderedQueue->getId().' is not successfully rendered yet. Run this command with --repair option to fix this.');
+            }
+
+            $this->pass('Get next queue.');
+            $queue  = $manager->getNextQueue();
+            if($queue instanceof PrintQueue){
+                $this->pass('New queue #'.$queue->getId().' processing.');
+                $manager->render($queue);
+            }else{
+                $result = PrintQueueManager::STATUS_QUEUE_EMPTY;
+            }
         }
 
         switch ($result) {
             case PrintQueueManager::STATUS_QUEUE_NOT_EXISTS:
-                $output->writeln('Queue with the given id doesn`t exists.');
+                $this->error('The queue doesn`t exists.');
+                $this->warn(self::NOTHING_DONE_TEXT);
                 break;
 
             case PrintQueueManager::STATUS_WRONG_QUEUED:
-                $output->writeln('The queue status as if already in the rendering.
-                Maybe "started" timestamp  saved wrong.
-                Check database entries or try again later.'
-                );
+                $this->warn('The queue is already rendered.');
+                $this->warn(self::NOTHING_DONE_TEXT);
                 break;
 
             case PrintQueueManager::STATUS_IN_PROCESS:
-                $output->writeln('The queue is already in process. Try again later.');
+                $this->warn('The queue is already in process.');
+                $this->warn(self::NOTHING_DONE_TEXT);
                 break;
 
             case PrintQueueManager::STATUS_QUEUE_EMPTY:
-                $output->writeln('The queue is empty. Try again later.');
+                $this->pass('The queue is empty.');
+                $this->warn(self::NOTHING_DONE_TEXT);
                 break;
 
             default:
-                $output->writeln('New PDF is rendered successfully:\n' . $manager->getPdFilePath($queue));
+                $this->pass('PDF rendered successfully to: ' . self::PASS_COLOR .realpath($manager->getPdFilePath($queue)). self::COLOR_OFF);
         }
     }
-} 
+
+    protected function pass($message)
+    {
+        $this->writeMessage('PASS', self::PASS_COLOR, $message);
+    }
+
+    protected function warn($message)
+    {
+        $this->writeMessage('WARN', self::WARN_COLOR, $message);
+    }
+
+    protected function error($message)
+    {
+        $this->writeMessage('ERROR', self::ERROR_COLOR, $message);
+    }
+
+    protected function writeMessage($title, $color, $message)
+    {
+        $this->output->writeln($color . '[' . $title . ']' . self::COLOR_OFF . ' ' . $message);
+    }
+}

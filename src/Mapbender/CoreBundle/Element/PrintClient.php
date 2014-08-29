@@ -105,7 +105,8 @@ class PrintClient extends Element
                             "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))
                             ),            
             "replace_pattern" => null,
-            "file_prefix" => 'mapbender3'
+            "file_prefix" => 'mapbender3',
+            "mode" => 'queued' // or 'direct'
         );
     }
 
@@ -227,6 +228,7 @@ class PrintClient extends Element
                         $subRequest, HttpKernelInterface::SUB_REQUEST);
 
             case 'queued':
+                 // TODO: realize
 
             case 'template':
                 $response = new Response();

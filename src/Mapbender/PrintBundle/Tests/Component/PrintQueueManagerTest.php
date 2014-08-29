@@ -23,12 +23,22 @@ class PrintQueueManagerTest extends Base
     public  function testAddRemove()
     {
         $manager = $this->manager();
+
+        // check add
         $queue = $manager->add($this->getPayload());
         $id = $queue->getId();
         $this->assertGreaterThan(0, $id);
+
+        // check rendering
         $manager->render($queue);
+        $this->assertEquals(is_file($manager->getPdFilePath($queue)),true);
+
+        // check find by id
         $this->assertEquals($id, $this->manager()->find($id)->getId());
+
+        // check remove
         $this->manager()->remove($queue);
+        $this->assertEquals(!is_file($manager->getPdFilePath($queue)),true);
     }
 
     public function testRendering(){

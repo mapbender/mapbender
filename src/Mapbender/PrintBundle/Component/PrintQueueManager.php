@@ -17,11 +17,14 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class PrintQueueManager extends EntitiesServiceBase
 {
+    /** Default max age in days */
+    const DEFAULT_MAX_AGE = 3;
+
     /** Status if queued queue rendering started before (shouldn't happens) */
     const STATUS_WRONG_QUEUED       = 2;
 
     /** Status of empty queue */
-    const STATUS_QUEUE_EMPTY        = 3;
+    const STATUS_QUEUE_EMPTY        = self::DEFAULT_MAX_AGE;
 
     /** Status if current rendering isn't finished yet. */
     const STATUS_IN_PROCESS         = 4;
@@ -67,17 +70,12 @@ class PrintQueueManager extends EntitiesServiceBase
         $service  = new PrintService($this->container);
 
         if (!$fs->exists($dir) || !is_dir($dir)) {
-            $fs->mkdir($dir, 0700);
+            $fs->mkdir($dir, 0755);
         }
 
         if(!$entity->isNew()){
             return self::STATUS_WRONG_QUEUED;
         }
-
-        // prevent to start in the meantime of previous rendering
-        if($this->isInProcess()){
-            return self::STATUS_IN_PROCESS;
-        };
 
         $this->persist($entity->setStarted(new \DateTime()));
         $fs->dumpFile($filePath, $service->doPrint($entity->getPayload()));
@@ -94,11 +92,12 @@ class PrintQueueManager extends EntitiesServiceBase
      */
     public function getNextQueue()
     {
-        return $this->isInProcess() ? null : $this->createQueryBuilder()
-            ->where('q.created > 0')
-            ->andWhere('q.started < 1')
+        return $this->createQueryBuilder()
+            ->where('q.queued IS NOT NULL')
+            ->andWhere('q.started IS NULL')
             ->orderBy('q.priority', 'DESC')
             ->addOrderBy('q.queued', 'ASC')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -156,8 +155,17 @@ class PrintQueueManager extends EntitiesServiceBase
     {
         $maxAge = $this->container->hasParameter(MapbenderPrintExtension::KEY_MAX_AGE)
             ? intval($this->container->getParameter(MapbenderPrintExtension::KEY_MAX_AGE))
-            : 3;
+            : self::DEFAULT_MAX_AGE;
         return new \DateTime("-{$maxAge} days");
+    }
+
+    /**
+     * @param PrintQueue $test
+     * @return \Mapbender\PrintBundle\Entity\PrintQueue
+     */
+    public function xxx(PrintQueue $test)
+    {
+        return $test;
     }
 
     /**
@@ -167,9 +175,7 @@ class PrintQueueManager extends EntitiesServiceBase
     {
         /** @var PrintQueue $entity */
         $r      = array();
-
         foreach ($this->createQueryBuilder('q')
-                ->select('q.id')
                 ->where('q.created < :maxAge')->setParameter('maxAge', $this->getMaxAge())
                 ->getQuery()
                 ->getResult() as $entity) {
@@ -193,15 +199,17 @@ class PrintQueueManager extends EntitiesServiceBase
     /**
      * Is some queue in process?
      *
-     * @return bool
      * @throws \Doctrine\ORM\NonUniqueResultException
+     * @internal param int $test
+     * @return PrintQueue
      */
-    private function isInProcess()
+    public function getProcessedQueue()
     {
-        return !!$this->createQueryBuilder()
-            ->where('q.started > 1')
-            ->andWhere('q.created < 1')
+        return $this->createQueryBuilder()
+            ->where('q.started IS NOT NULL')
+            ->andWhere('q.created IS NULL')
             ->getQuery()
+            ->setMaxResults(1)
             ->getOneOrNullResult();
     }
 
@@ -213,5 +221,26 @@ class PrintQueueManager extends EntitiesServiceBase
      */
     public function find($id){
         return $this->getRepository()->findOneBy(array('id' =>  intval($id)));
+    }
+
+    /**
+     * Fix broken queues
+     *
+     * @return PrintQueue[]
+     */
+    public function fixBroken() {
+        /** @var PrintQueue $entity */
+        $em = $this->getEntityManager();
+        $r  = array();
+        foreach($this->createQueryBuilder()
+            ->where('q.started IS NOT NULL')
+            ->andWhere('q.created IS NULL')
+            ->getQuery()
+            ->getResult() as $entity){
+            $em->persist($entity->setStarted(null));
+            $r[] = $entity;
+        }
+        $em->flush();
+        return $r;
     }
 }
