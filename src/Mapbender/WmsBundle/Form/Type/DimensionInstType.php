@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * DimensionType class
+ * DimensionInstType class
  */
 class DimensionInstType extends AbstractType
 {
