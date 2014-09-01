@@ -95,12 +95,12 @@ class WmsInstance extends SourceInstance
     /**
      * @ORM\Column(type="integer", options={"default" = 0})
      */
-    protected $buffer;
+    protected $buffer = 0;
 
     /**
      * @ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
      */
-    protected $ratio;
+    protected $ratio = 1.25;
 
     public function __construct()
     {
@@ -742,7 +742,7 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * 
+     *
      * @return WmsMetadata
      */
     public function getMetadata()
