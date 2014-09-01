@@ -689,7 +689,6 @@ $(function() {
 
         if (file && file[0]) {
             var reader = new FileReader();
-            var fileType =
 
             if (file[0].type.match('image/')){
                 if (file[0].size <= 102400){
