@@ -99,14 +99,14 @@ class PrintClient extends Element
             "quality_levels" => array(array('dpi' => "72", 'label' => "Draft (72dpi)"),
                 array('dpi' => "288", 'label' => "Document (288dpi)")),
             "rotatable" => true,
+            'renderingMode' => 'direct',
             "optional_fields" => array(
                             "title" => array("label" => 'Title', "options" => array("required" => false)),
                             "comment1" => array("label" => 'Comment 1', "options" => array("required" => false)),
                             "comment2" => array("label" => 'Comment 2', "options" => array("required" => false))
-                            ),            
+                            ),
             "replace_pattern" => null,
-            "file_prefix" => 'mapbender3',
-            "mode" => 'queued' // or 'direct'
+            "file_prefix" => 'mapbender3'
         );
     }
 
@@ -176,6 +176,8 @@ class PrintClient extends Element
      */
     public function httpAction($action)
     {
+        $configuration = $this->getConfiguration();
+
         switch ($action) {
             case 'direct':
 
@@ -211,8 +213,11 @@ class PrintClient extends Element
                 if (isset($data['extent_feature'])){         
                         $data['extent_feature'] = json_decode($data['extent_feature'], true);                  
                 }
-                    
+
+
+                $data['renderMode'] = $configuration['renderMode'];
                 $content = json_encode($data);
+
 
                 // Forward to Printer Service URL using OWSProxy
                 $url = $this->container->get('router')->generate('mapbender_print_print_service',
@@ -224,11 +229,15 @@ class PrintClient extends Element
                     'content' => $content
                 );
                 $subRequest = $request->duplicate(array(), null, $path);
-                return $this->container->get('http_kernel')->handle(
-                        $subRequest, HttpKernelInterface::SUB_REQUEST);
+                return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
 
-            case 'queued':
-                 // TODO: realize
+//            case 'queued':
+//                 // TODO: realize
+//                $response = new Response();
+//                $response->headers->set('Content-Type', 'application/json');
+//                $request = $this->container->get('request');
+//                $data = json_decode($request->getContent(), true);
+//                break;
 
             case 'template':
                 $response = new Response();

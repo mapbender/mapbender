@@ -49,8 +49,10 @@ class PrintClientAdminType extends AbstractType
             ->add('scales', 'text', array('required' => false))
             ->add('file_prefix', 'text', array('required' => false))
             ->add('rotatable', 'checkbox',array('required' => false))
-            // TODO: radio buttons...
-            ->add('mode', 'checkbox',array('required' => false))
+            ->add('renderMode',
+                'choice',
+                array('choices' => array('direct' => 'Direct', 'queued' => 'Queued'),)
+            )
             ->add('optional_fields', new YAMLConfigurationType(), array('required' => false,'attr' => array('class' => 'code-yaml')))
             ->add('replace_pattern', new YAMLConfigurationType(),array('required' => false,'attr' => array('class' => 'code-yaml')));
     }

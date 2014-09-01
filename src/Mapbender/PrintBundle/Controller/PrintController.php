@@ -4,32 +4,40 @@ namespace Mapbender\PrintBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Mapbender\PrintBundle\Component\PrintService;
 use Mapbender\PrintBundle\Component\ImageExportService;
+use Symfony\Component\Serializer\Encoder\JsonEncode;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class PrintController extends Controller
 {
+    /** @var  Serializer */
+    protected $serializer;
+
     /**
      * @Route("/")
      */
     public function serviceAction()
     {
-        // checkout if mode=direct|queue
         $data          = $this->getDecodedRequest();
         $fileName      = empty($data['file_prefix']) ? 'mapbender_print.pdf' : $data['file_prefix'];
-        $service       = new PrintService($this->container);
         $displayInline = true;
         $r             = null;
 
-        if (!empty($data['mode']) && $data['mode'] == 'queued') {
-            $r = new JsonResponse($this->get('mapbender.print.queue_manager')->add($data));
-        } else {
-            $r = new Response($service->doPrint($data), 200,
-                array('Content-Type'        => $displayInline ? 'application/pdf' : 'application/octet-stream',
-                      'Content-Disposition' => 'attachment; filename=' . $fileName)
-            );
+        switch (empty($data['renderMode']) ? 'direct' : $data['renderMode']) {
+            case 'direct':
+                $pdfContent = $this->get('mapbender.print.engine')->doPrint($data);
+                $r          = new Response($pdfContent,
+                    200,
+                    array('Content-Type'        => $displayInline ? 'application/pdf' : 'application/octet-stream',
+                          'Content-Disposition' => 'attachment; filename=' . $fileName)
+                );
+                break;
+            case 'queued':
+                $printQueue = $this->get('mapbender.print.queue_manager')->add($data);
+                $r          = new Response($this->serialize($printQueue));
+                break;
         }
 
         return $r;
@@ -50,5 +58,17 @@ class PrintController extends Controller
     protected function getDecodedRequest()
     {
         return json_decode($this->get('request')->getContent(), true);
+    }
+
+    /**
+     * Serialize as json
+     *
+     * @param $data
+     * @return string|\Symfony\Component\Serializer\Encoder\scalar
+     */
+    public function serialize($data)
+    {
+        $this->serializer = $this->serializer ? $this->serializer : new Serializer(array(new GetSetMethodNormalizer()),array(new JsonEncode()));
+        return $this->serializer->serialize($data, 'json');
     }
 }

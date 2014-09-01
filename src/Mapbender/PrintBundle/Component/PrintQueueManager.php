@@ -2,12 +2,10 @@
 
 namespace Mapbender\PrintBundle\Component;
 
-use Guzzle\Common\Event;
 use Mapbender\CoreBundle\Component\EntitiesServiceBase;
 use Mapbender\PrintBundle\DependencyInjection\MapbenderPrintExtension;
 use Mapbender\PrintBundle\Entity\PrintQueue;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
