@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use CG\Tests\Generator\Fixture\Entity;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
@@ -48,7 +49,7 @@ class EntitiesServiceBase extends ContainerAware
     /**
      * Get doctrine repository by entity name
      *
-     * @param $name
+     * @param $name #Entity
      *
      * @return EntityRepository
      */
@@ -189,12 +190,15 @@ class EntitiesServiceBase extends ContainerAware
     /**
      * Get current user
      *
+     * if $user == 'anon.' then user = null
+     *
      * @return User|null
      */
     public function getCurrentUser()
     {
         $token = $this->container->get('security.context')->getToken();
-        return $token ? $token->getUser() : null;
+        $user  = $token ? $token->getUser() : null;
+        return is_string($user) && $user == 'anon.' ? null : $user;
     }
 
     /**
