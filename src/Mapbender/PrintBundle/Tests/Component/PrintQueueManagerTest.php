@@ -2,6 +2,7 @@
 
 namespace Mapbender\PrintBundle\Tests\Component;
 
+use Mapbender\CoreBundle\Component\Event\BaseEvent;
 use Mapbender\PrintBundle\Component\IdentityPriorityVoter;
 use Mapbender\PrintBundle\Component\PrintQueueManager;
 
@@ -28,6 +29,22 @@ class PrintQueueManagerTest extends Base
         $queue = $manager->add($this->getPayload());
         $id = $queue->getId();
         $this->assertGreaterThan(0, $id);
+
+        // check event listening
+        $manager->on(PrintQueueManager::STATUS_RENDERING_STARTED, function (BaseEvent $event){
+            echo 'rendering started!';
+        });
+
+        $manager->on(PrintQueueManager::STATUS_RENDERING_COMPLETED, function (BaseEvent $event){
+            echo 'rendering completed!';
+        });
+        $manager->on(PrintQueueManager::STATUS_RENDERING_SAVED, function (BaseEvent $event){
+            echo 'rendering saved!';
+        });
+
+        $manager->on(PrintQueueManager::STATUS_RENDERING_SAVE_ERROR, function (BaseEvent $event){
+            echo 'pdf can\'t be saved!';
+        });
 
         // check rendering
         $manager->render($queue);

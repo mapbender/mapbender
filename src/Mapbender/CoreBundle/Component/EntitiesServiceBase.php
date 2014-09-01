@@ -8,7 +8,9 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use FOM\UserBundle\Entity\User;
+use Mapbender\CoreBundle\Component\Event\BaseEvent;
 use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Security\Core\SecurityContext;
 
 /**
@@ -28,6 +30,9 @@ class EntitiesServiceBase extends ContainerAware
     /** @var string prefix name of doctrine bundle repository */
     protected $bundleName;
 
+    /**  @var EventDispatcher */
+    protected $dispatcher;
+
     /**
      * @param string $entityName doctrine repository short name
      * @param null   $container  container
@@ -37,6 +42,7 @@ class EntitiesServiceBase extends ContainerAware
         $this->setContainer($container);
         $this->bundleName = preg_replace('/[\\\]|Component[\\\].+$/s', null, get_class($this)) . ':';
         $this->entityName = $entityName;
+        $this->dispatcher = new EventDispatcher();
     }
 
     /**
@@ -221,5 +227,50 @@ class EntitiesServiceBase extends ContainerAware
     public function removeById($id, $keyName = 'id')
     {
         return $this->createQueryBuilder()->delete()->where('q.'.$keyName.' = :id')->getQuery()->execute(array('id' => intval($id)));
+    }
+
+    /**
+     * @param string $eventName Event name
+     * @param mixed  $target    BaseEvent target
+     * @return $this
+     */
+    public function dispatch($eventName, $target)
+    {
+        $this->dispatcher->dispatch($eventName, new BaseEvent($target));
+        return $this;
+    }
+
+    /**
+     * Add event listener
+     *
+     * @param string   $eventName Event name
+     * @param callable $listener  callable function
+     * @return $this
+     */
+    public function on($eventName, $listener)
+    {
+        $this->dispatcher->addListener($eventName, $listener);
+        return $this;
+    }
+
+    /**
+     * Remove   event listener
+     *
+     * @param string   $eventName Event name
+     * @param callable $listener  Callable function
+     * @return $this
+     */
+    public function off($eventName, $listener)
+    {
+        $this->dispatcher->removeListener($eventName, $listener);
+        return $this;
+    }
+
+    /**
+     * @return EventDispatcher
+     */
+    public function getDispatcher()
+    {
+        return $this->dispatcher;
     }
 } 

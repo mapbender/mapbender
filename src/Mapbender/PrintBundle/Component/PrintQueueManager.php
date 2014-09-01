@@ -2,10 +2,12 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use Guzzle\Common\Event;
 use Mapbender\CoreBundle\Component\EntitiesServiceBase;
 use Mapbender\PrintBundle\DependencyInjection\MapbenderPrintExtension;
 use Mapbender\PrintBundle\Entity\PrintQueue;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -24,7 +26,7 @@ class PrintQueueManager extends EntitiesServiceBase
     const STATUS_WRONG_QUEUED       = 2;
 
     /** Status of empty queue */
-    const STATUS_QUEUE_EMPTY        = self::DEFAULT_MAX_AGE;
+    const STATUS_QUEUE_EMPTY        = 3;
 
     /** Status if current rendering isn't finished yet. */
     const STATUS_IN_PROCESS         = 4;
@@ -32,8 +34,22 @@ class PrintQueueManager extends EntitiesServiceBase
     /** Status if queued not exists */
     const STATUS_QUEUE_NOT_EXISTS   = 5;
 
+    /** Event status rendering started */
+    const STATUS_RENDERING_STARTED  = 'mapbender.print.rendering.started';
+
+    /** Event status rendering complete */
+    const STATUS_RENDERING_COMPLETED = 'mapbender.print.rendering.complete';
+
+    /** Event status rendering saved */
+    const STATUS_RENDERING_SAVED = 'mapbender.print.rendering.saved';
+
+    /** Event status rendering save error */
+    const STATUS_RENDERING_SAVE_ERROR = 'mapbender.print.rendering.save_error';
+
     /** @var PriorityVoterInterface */
     private $priorityVoter;
+
+
 
     /**
      * @param ContainerInterface     $container
@@ -74,12 +90,24 @@ class PrintQueueManager extends EntitiesServiceBase
         }
 
         if(!$entity->isNew()){
+            $this->dispatch(self::STATUS_WRONG_QUEUED, $entity);
             return self::STATUS_WRONG_QUEUED;
         }
 
         $this->persist($entity->setStarted(new \DateTime()));
-        $fs->dumpFile($filePath, $service->doPrint($entity->getPayload()));
+        $this->dispatch(self::STATUS_RENDERING_STARTED, $entity);
+
+
+        $pdf = $service->doPrint($entity->getPayload());
         $this->persist($entity->setCreated(new \DateTime()));
+        $this->dispatch(self::STATUS_RENDERING_COMPLETED, $entity);
+
+        try {
+            $fs->dumpFile($filePath, $pdf);
+            $this->dispatch(self::STATUS_RENDERING_SAVED, $entity);
+        } catch (IOException $e) {
+            $this->dispatch(self::STATUS_RENDERING_SAVE_ERROR, $entity);
+        }
 
         return $entity;
     }
@@ -159,14 +187,6 @@ class PrintQueueManager extends EntitiesServiceBase
         return new \DateTime("-{$maxAge} days");
     }
 
-    /**
-     * @param PrintQueue $test
-     * @return \Mapbender\PrintBundle\Entity\PrintQueue
-     */
-    public function xxx(PrintQueue $test)
-    {
-        return $test;
-    }
 
     /**
      * Removes entities and pdf files older then max-age parameter
@@ -243,4 +263,5 @@ class PrintQueueManager extends EntitiesServiceBase
         $em->flush();
         return $r;
     }
+
 }
