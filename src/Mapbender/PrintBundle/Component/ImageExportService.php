@@ -13,6 +13,18 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 class ImageExportService
 {
 
+    protected $data;
+    protected $format;
+
+    /** @var  array */
+    protected $requests;
+
+    /** @var  int */
+    protected $image_height;
+
+    /** @var  int */
+    protected $image_width;
+
     public function __construct($container)
     {
         $this->container = $container;
@@ -22,12 +34,13 @@ class ImageExportService
     /**
      * Todo
      *
+     * @param $content
      */
     public function export($content)
     {
-        $this->data = json_decode($content, true);
-        $this->format = $this->data['format'];
-        $this->requests = $this->data['requests'];
+        $this->data     = $content;
+        $this->format   = $content['format'];
+        $this->requests = $content['requests'];
         $this->getImages();
     }
 
@@ -39,9 +52,9 @@ class ImageExportService
     {
         $temp_names = array();
         foreach ($this->requests as $k => $url) {
-            
-            $url = strstr($url, '&WIDTH', true);
-            $width = '&WIDTH=' . $this->data['width'];
+
+            $url    = strstr($url, '&WIDTH', true);
+            $width  = '&WIDTH=' . $this->data['width'];
             $height = '&HEIGHT=' . $this->data['height'];
             $url .= $width . $height;
             
@@ -107,22 +120,16 @@ class ImageExportService
             finfo_close($finfo);
         }
 
-        $date = date("Ymd");
-        $time = date("His");
-
-        $file = $finalimagename;
-        $image = imagecreatefrompng($file);
+        $image = imagecreatefrompng($finalimagename);
+        header("Content-type: image/" . ($this->format == 'jpg' ? 'jpeg' : $this->format));
+        header("Content-Disposition: attachment; filename=export_" . date("YmdHis") . "." . $this->format);
+        header('Content-Length: ' . filesize($finalimagename));
         if ($this->format == 'png') {
-            header("Content-type: image/png");
-            header("Content-Disposition: attachment; filename=export_" . $date . $time . ".png");
-            header('Content-Length: ' . filesize($file));
             imagepng($image);
         } else {
-            header("Content-type: image/jpeg");
-            header("Content-Disposition: attachment; filename=export_" . $date . $time . ".jpg");
-            header('Content-Length: ' . filesize($file));
             imagejpeg($image, null, 85);
         }
         unlink($finalimagename);
+        exit();
     }
 }
