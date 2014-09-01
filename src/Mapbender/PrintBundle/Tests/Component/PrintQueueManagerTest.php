@@ -80,7 +80,8 @@ class PrintQueueManagerTest extends Base
         if (!$this->manager) {
             $client        = $this->getClient();
             $payload       = array();
-            $this->manager = new PrintQueueManager($client->getContainer(), new IdentityPriorityVoter($payload));
+            $this->manager = $client->getContainer()->get('mapbender.print.queue_manager');
+//            $this->manager = new PrintQueueManager($client->getContainer(), new IdentityPriorityVoter($payload));
         }
         return $this->manager;
     }

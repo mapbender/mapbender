@@ -82,8 +82,7 @@ class PrintQueueManager extends EntitiesServiceBase
     {
         $filePath = $this->getPdFilePath($entity);
         $dir      = $this->container->getParameter(MapbenderPrintExtension::KEY_STORAGE_DIR);
-        $fs       = new Filesystem();
-        $service  = new PrintService($this->container);
+        $fs       = $this->container->get('filesystem');
 
         if (!$fs->exists($dir) || !is_dir($dir)) {
             $fs->mkdir($dir, 0755);
@@ -97,8 +96,7 @@ class PrintQueueManager extends EntitiesServiceBase
         $this->persist($entity->setStarted(new \DateTime()));
         $this->dispatch(self::STATUS_RENDERING_STARTED, $entity);
 
-
-        $pdf = $service->doPrint($entity->getPayload());
+        $pdf = $this->container->get('mapbender.print.engine')->doPrint($entity->getPayload());
         $this->persist($entity->setCreated(new \DateTime()));
         $this->dispatch(self::STATUS_RENDERING_COMPLETED, $entity);
 

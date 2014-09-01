@@ -193,9 +193,7 @@ class EntitiesServiceBase extends ContainerAware
      */
     public function getCurrentUser()
     {
-        /** @var SecurityContext $securityContext */
-        $securityContext = $this->container->get('security.context');
-        $token           = $securityContext->getToken();
+        $token = $this->container->get('security.context')->getToken();
         return $token ? $token->getUser() : null;
     }
 
