@@ -68,9 +68,10 @@ class Layerset
      */
     public function setId($id)
     {
-        if(null !== $id) {
+        if (null !== $id) {
             $this->id = $id;
         }
+
         return $this;
     }
 
@@ -92,6 +93,7 @@ class Layerset
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -113,6 +115,7 @@ class Layerset
     public function setApplication(Application $application)
     {
         $this->application = $application;
+
         return $this;
     }
 
@@ -139,13 +142,14 @@ class Layerset
     /**
      * Set instances
      *
-     * @param Doctrine\Common\Collections\Collection $instances
-     * Collection of the SourceInstances
+     * @param  Doctrine\Common\Collections\Collection $instances
+     *                                                           Collection of the SourceInstances
      * @return Layerset
      */
     public function setInstances($instances)
     {
         $this->instances = $instances;
+
         return $this;
     }
 
@@ -163,14 +167,13 @@ class Layerset
     {
         return (string) $this->getId();
     }
-    
+
     public function copy(EntityManager $em, &$instanceMap = array())
     {
         $ls = new Layerset();
         $ls->title = $this->title;
         $em->persist($ls);
-        foreach($this->instances as $instance)
-        {
+        foreach ($this->instances as $instance) {
             $cloned = $instance->copy($em);
             $cloned->setLayerset($ls);
             $em->persist($cloned);
@@ -178,8 +181,8 @@ class Layerset
             $em->persist($ls);
             $instanceMap[strval($instance->getId())] = $cloned->getId();
         }
+
         return $ls;
     }
 
 }
-

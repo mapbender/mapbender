@@ -5,7 +5,9 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityManager;
-use Mapbender\CoreBundle\Component\InstanceLayerIn;
+use Mapbender\CoreBundle\Component\SourceInstanceItem;
+use Mapbender\CoreBundle\Component\SourceItem;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\CoreBundle\Component\Utils;
@@ -18,7 +20,7 @@ use Mapbender\CoreBundle\Component\Utils;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmsinstancelayer")
  */
-class WmsInstanceLayer implements InstanceLayerIn
+class WmsInstanceLayer extends SourceInstanceItem
 {
 
     /**
@@ -33,13 +35,13 @@ class WmsInstanceLayer implements InstanceLayerIn
      * @ORM\ManyToOne(targetEntity="WmsInstance", inversedBy="layers", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmsinstance", referencedColumnName="id")
      */
-    protected $wmsinstance;
+    protected $sourceInstance;
 
     /**
      * @ORM\ManyToOne(targetEntity="WmsLayerSource", inversedBy="id", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmslayersource", referencedColumnName="id")
      */
-    protected $wmslayersource;
+    protected $sourceItem;
 
     /**
      * @ORM\ManyToOne(targetEntity="WmsInstanceLayer",inversedBy="sublayer")
@@ -500,49 +502,39 @@ class WmsInstanceLayer implements InstanceLayerIn
     }
 
     /**
-     * Set wmsinstance
-     *
-     * @param WmsInstance $wmsinstance
-     * @return WmsInstanceLayer
+     * @inheritdoc
      */
-    public function setWmsinstance(WmsInstance $wmsinstance = null)
+    public function setSourceInstance(SourceInstance $sourceInstance = null)
     {
-        $this->wmsinstance = $wmsinstance;
+        $this->sourceInstance = $sourceInstance;
 
         return $this;
     }
 
     /**
-     * Get wmsinstance
-     *
-     * @return WmsInstance
+     * @inheritdoc
      */
-    public function getWmsinstance()
+    public function getSourceInstance()
     {
-        return $this->wmsinstance;
+        return $this->sourceInstance;
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getSourceItem()
+    {
+        return $this->sourceItem;
     }
 
     /**
-     * Set wmslayersource
-     *
-     * @param WmsLayerSource $wmslayersource
-     * @return WmsInstanceLayer
+     * @inheritdoc
      */
-    public function setWmslayersource(WmsLayerSource $wmslayersource = null)
+    public function setSourceItem(SourceItem $sourceItem)
     {
-        $this->wmslayersource = $wmslayersource;
-
+        $this->sourceItem = $sourceItem;
         return $this;
-    }
-
-    /**
-     * Get wmslayersource
-     *
-     * @return WmsLayerSource
-     */
-    public function getWmslayersource()
-    {
-        return $this->wmslayersource;
     }
 
     /**
@@ -561,7 +553,7 @@ class WmsInstanceLayer implements InstanceLayerIn
         $configuration = array(
             "id" => strval($this->id),
             "priority" => $this->priority,
-            "name" => $this->wmslayersource->getName() !== null ? $this->wmslayersource->getName() : "",
+            "name" => $this->sourceItem->getName() !== null ? $this->sourceItem->getName() : "",
             "title" => $this->title,
             "queryable" => $this->getInfo(),
             "style" => $this->style,
@@ -569,7 +561,7 @@ class WmsInstanceLayer implements InstanceLayerIn
             "maxScale" => $this->maxScale !== null ? floatval($this->maxScale) : null
         );
         $srses = array();
-        $llbbox = $this->getWmslayersource()->getLatlonBounds();
+        $llbbox = $this->getSourceItem()->getLatlonBounds();
         if ($llbbox !== null) {
             $srses[$llbbox->getSrs()] = array(
                 floatval($llbbox->getMinx()),
@@ -578,7 +570,7 @@ class WmsInstanceLayer implements InstanceLayerIn
                 floatval($llbbox->getMaxy())
             );
         }
-        foreach ($this->getWmslayersource()->getBoundingBoxes() as $bbox) {
+        foreach ($this->getSourceItem()->getBoundingBoxes() as $bbox) {
             $srses[$bbox->getSrs()] = array(
                 floatval($bbox->getMinx()),
                 floatval($bbox->getMiny()),
@@ -586,8 +578,8 @@ class WmsInstanceLayer implements InstanceLayerIn
                 floatval($bbox->getMaxy()));
         }
         $configuration['bbox'] = $srses;
-        if (count($this->wmslayersource->getStyles()) > 0) {
-            $styles = $this->wmslayersource->getStyles();
+        if (count($this->sourceItem->getStyles()) > 0) {
+            $styles = $this->sourceItem->getStyles();
             $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
             if ($legendurl !== null) {
                 $configuration["legend"] = array(
@@ -595,14 +587,14 @@ class WmsInstanceLayer implements InstanceLayerIn
                     "width" => intval($legendurl->getWidth()),
                     "height" => intval($legendurl->getHeight()));
             }
-        } else if ($this->wmsinstance->getSource()->getGetLegendGraphic() !== null && $this->wmslayersource->getName() !== null && $this->wmslayersource->getName() !== "") {
-            $legend = $this->wmsinstance->getSource()->getGetLegendGraphic();
+        } else if ($this->sourceInstance->getSource()->getGetLegendGraphic() !== null && $this->sourceItem->getName() !== null && $this->sourceItem->getName() !== "") {
+            $legend = $this->sourceInstance->getSource()->getGetLegendGraphic();
             $url = $legend->getHttpGet();
             $formats = $legend->getFormats();
             $params = "service=WMS&request=GetLegendGraphic"
                 . "&version="
-                . $this->wmsinstance->getSource()->getVersion()
-                . "&layer=" . $this->wmslayersource->getName()
+                . $this->sourceInstance->getSource()->getVersion()
+                . "&layer=" . $this->sourceItem->getName()
                 . (count($formats) > 0 ? "&format=" . $formats[0] : "")
                 . "&sld_version=1.1.0";
             $legendgraphic = Utils::getHttpUrl($url, $params);
@@ -624,8 +616,8 @@ class WmsInstanceLayer implements InstanceLayerIn
     }
 
     /**
-     * 
-     * @param 
+     *
+     * @param
      */
     public function copy(EntityManager $em)
     {

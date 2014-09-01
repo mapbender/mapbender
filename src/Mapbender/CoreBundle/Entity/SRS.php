@@ -7,7 +7,6 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Layerset configuration entity
@@ -57,12 +56,13 @@ class SRS
 
     /**
      * Sets the id
-     * @param integer $id
+     * @param  integer                          $id
      * @return \Mapbender\CoreBundle\Entity\SRS
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -77,12 +77,13 @@ class SRS
 
     /**
      * Sets the srs name
-     * @param string $name
+     * @param  string                           $name
      * @return \Mapbender\CoreBundle\Entity\SRS
      */
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -97,12 +98,13 @@ class SRS
 
     /**
      * Sets the srs title
-     * @param string $title
+     * @param  string                           $title
      * @return \Mapbender\CoreBundle\Entity\SRS
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -117,12 +119,13 @@ class SRS
 
     /**
      * Sets the srs definition
-     * @param string $definition
+     * @param  string                           $definition
      * @return \Mapbender\CoreBundle\Entity\SRS
      */
     public function setDefinition($definition)
     {
         $this->definition = $definition;
+
         return $this;
     }
 

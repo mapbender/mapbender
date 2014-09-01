@@ -458,6 +458,50 @@
         <source>mb.manager.template.region.accordion.label</source>
         <target>Akkordeon</target>
       </trans-unit>
+      <trans-unit id="1f0348f8a4838a4c3eef8e5db24cc9b5" resname="mb.manager.managerbundle.import_application">
+        <source>mb.manager.managerbundle.import_application</source>
+        <target>Importieren</target>
+      </trans-unit>
+      <trans-unit id="0956c95cd7247b67ada1981fa3f484bf" resname="mb.manager.managerbundle.export_application">
+        <source>mb.manager.managerbundle.export_application</source>
+        <target>Exportieren</target>
+      </trans-unit>
+      <trans-unit id="417ef5ea406e9bb1aa8233eb78555abe" resname="mb.manager.admin.application.import.addApplications">
+        <source>mb.manager.admin.application.import.addApplications</source>
+        <target>Anwendungen</target>
+      </trans-unit>
+      <trans-unit id="b2a733728235bb0267b7c85c2432d27f" resname="mb.manager.admin.application.import.addAcl">
+        <source>mb.manager.admin.application.import.addAcl</source>
+        <target>Acls</target>
+      </trans-unit>
+      <trans-unit id="385dcbda58640a31f9bd6d5f2f099134" resname="mb.manager.admin.application.import.addSources">
+        <source>mb.manager.admin.application.import.addSources</source>
+        <target>Quellen</target>
+      </trans-unit>
+      <trans-unit id="4db8a68cd0721c0161a58a84e343ca0f" resname="mb.manager.admin.application.import.btn.import">
+        <source>mb.manager.admin.application.import.btn.import</source>
+        <target>Importieren</target>
+      </trans-unit>
+      <trans-unit id="8dc19f75927b90dc117dd7b1005f4c4a" resname="mb.manager.admin.application.import.btn.cancel">
+        <source>mb.manager.admin.application.import.btn.cancel</source>
+        <target>Abrechen</target>
+      </trans-unit>
+      <trans-unit id="8b66b94f0cac90de6e5cadab57b5e9f2" resname="mb.manager.admin.application.export.addAcl">
+        <source>mb.manager.admin.application.export.addAcl</source>
+        <target>Acls</target>
+      </trans-unit>
+      <trans-unit id="b9e306a74c87d58fa2d7ea5f15558d19" resname="mb.manager.admin.application.export.addSources">
+        <source>mb.manager.admin.application.export.addSources</source>
+        <target>Quellen</target>
+      </trans-unit>
+      <trans-unit id="f7718749231ef31d7ce17e0e9a06aa0e" resname="mb.manager.admin.application.export.btn.export">
+        <source>mb.manager.admin.application.export.btn.export</source>
+        <target>Exportieren</target>
+      </trans-unit>
+      <trans-unit id="40d50597c26f2ed1b922e8a3b57d9d63" resname="mb.manager.admin.application.export.btn.cancel">
+        <source>mb.manager.admin.application.export.btn.cancel</source>
+        <target>Abbrechen</target>
+      </trans-unit>
       <trans-unit id="cae4b6bbf2a2d496be9bf327a1955ab4" resname="mb.manager.admin.application.upload.button">
         <source>mb.manager.admin.application.upload.button</source>
         <target>Datei auswählen:</target>

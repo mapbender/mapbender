@@ -506,6 +506,28 @@ class Application
         }
         return $this->layers;
     }
+    
+    /**
+     * Checks and generates a valid slug.
+     * 
+     * @param ContainerInterface $container container
+     * @param string $slug slug to check
+     * @return string a valid generated slug
+     */
+    public static function generateSlug($container, $slug, $suffix = 'copy')
+    {
+        $application = $container->get('mapbender')->getApplicationEntity($slug);
+        if ($application === null)
+            return $slug;
+        else
+            $count = 0;
+        $rep = $container->get('doctrine')->getRepository('MapbenderCoreBundle:Application');
+        do {
+            $copySlug = $slug . "_" . $suffix . ($count > 0 ? '_' . $count : '');
+            $count++;
+        } while ($rep->findOneBySlug($copySlug));
+        return $copySlug;
+    }
 
     /**
      * Returns the public "uploads" directory. 

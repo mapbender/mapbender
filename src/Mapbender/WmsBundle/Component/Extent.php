@@ -173,5 +173,3 @@ class Extent
     }
 
 }
-
-?>

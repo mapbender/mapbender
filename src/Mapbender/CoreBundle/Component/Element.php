@@ -10,13 +10,13 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\ORM\EntityManager;
+use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\CoreBundle\Entity\Application as AppEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Mapbender\CoreBundle\Component\ExtendedCollection;
 
 /**
  * Base class for all Mapbender elements.
@@ -433,7 +433,7 @@ abstract class Element
             foreach ($subElements as $name => $value) {
                 $configuration = $copiedElm->getConfiguration();
                 $targetId = null;
-                if($value !== null){
+                if ($value !== null) {
                     $targetId = $elementsMap[$value]->getId();
                 }
                 $configuration[$name] = $targetId;
@@ -488,8 +488,7 @@ abstract class Element
         } else {
             $type = new $configurationFormType();
             $options = array('application' => $application);
-            if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !==
-                null) {
+            if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
                 $options['element'] = $element;
             }
             $formType->add('configuration', $type, $options);
@@ -522,6 +521,30 @@ abstract class Element
             ->setConfiguration($configuration);
 
         return $element;
+    }
+
+    /**
+     * Changes a element entity configuration while exporting.
+     * 
+     * @param array $configuration element entity configuration
+     * @return array a configuration
+     */
+    public function normalizeConfiguration(array $configuration)
+    {
+        return $configuration;
+    }
+
+    
+
+    /**
+     * Changes a element entity configuration while importing.
+     * 
+     * @param array $configuration element entity configuration
+     * @return array a configuration
+     */
+    public function denormalizeConfiguration(array $configuration)
+    {
+        return $configuration;
     }
 
 }
