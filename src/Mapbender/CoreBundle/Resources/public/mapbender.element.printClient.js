@@ -33,14 +33,14 @@
 
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
-            
+
             $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
                 .on('change', $.proxy(this._updateGeometry, this));
             $('input[name="scale_text"], input[name="rotation"]', this.element)
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.element)
                 .on('change', $.proxy(this._getPrintSize, this));
-            
+
             this._trigger('ready');
             this._ready();
         },
@@ -79,6 +79,7 @@
                                     cssClass: 'button right',
                                     callback: function(){
                                         self._print();
+                                        self.close();
                                     }
                                 }
                         }
@@ -208,11 +209,11 @@
                 height = this.height,
                 scale = this._getPrintScale(),
                 rotationField = $('input[name="rotation"]');
-                
+
             // remove all not numbers from input
             rotationField.val(rotationField.val().replace(/[^\d]+/,''));
-                
-                
+
+
             if (rotationField.val() === '' && this.rotateValue > '0'){
                 rotationField.val('0');
             }
@@ -506,7 +507,7 @@
             }
 
             // replace pattern
-            
+
             if (typeof this.options.replace_pattern !== 'undefined' && this.options.replace_pattern !== null){
                 for(var i = 0; i < this.options.replace_pattern.length; i++) {
                     $.merge(fields, $('<input />', {
@@ -545,7 +546,7 @@
             // invalid, we have to remove the message first
             textfield.setCustomValidity('');
                 if (!textfield.validity.valid) {
-                    textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));  
+                    textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));
                 }
             });
         },
