@@ -33,7 +33,7 @@
 
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
-            
+
             $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
                 .on('change', $.proxy(this._updateGeometry, this));
             $('input[name="scale_text"], input[name="rotation"]', this.element)
@@ -351,7 +351,7 @@
         },
 
         _printDirectly: function() {
-            var form = $('form#formats', this.element),
+            var form = $('form#formats', this.element);
             extent = this._getPrintExtent(),
             template_key = this.element.find('select[name="template"]').val(),
             format = this.options.templates[template_key].format,
@@ -521,7 +521,10 @@
             fields.appendTo(form.find('div#layers'));
 
             // Post in neuen Tab (action bei form anpassen)
-            var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
+            var url         =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
+            var queuedPrint =  this.options.renderMode && this.options.renderMode  == 'queued';
+
+
 
             form.get(0).setAttribute('action', url);
             form.attr('target', '_blank');
@@ -532,8 +535,12 @@
             }else{
                 //click hidden submit button to check requierd fields
                 this._checkFields()
-                form.find('input[type="submit"]').click();
 
+                if(queuedPrint){
+                    console.log(form.serialize());
+                }else{ // direct
+                    form.find('input[type="submit"]').click();
+                }
             }
         },
 
