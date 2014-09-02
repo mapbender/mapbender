@@ -56,8 +56,8 @@ class Dimension
      * ORM\Column(type="string", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $extentValue;
-
+    public $extent;
+    
     /**
      * Set name
      * 
@@ -206,26 +206,54 @@ class Dimension
     }
 
     /**
-     * Set extentValue
+     * Set extent
      * 
-     * @param string $value 
+     * @param DimExtent $value 
      * @return Dimension
      */
-    public function setExtentValue($value)
+    public function setExtent($value)
     {
-        $this->extentValue = $value;
+        $this->extent = $value;
     }
 
     /**
-     * Get extentValue
+     * Get extent
      * 
-     * @return string
+     * @return DimExtent
      */
-    public function getExtentValue()
+    public function getExtent()
     {
-        return $this->extentValue;
+        return $this->extent;
     }
+    
+//
+//    public function toArray()
+//    {
+//        $dimension = array(
+//            'name' => $this->name,
+//            'units' => $this->units,
+//            'unitSymbol' => $this->unitSymbol,
+//            'default' => $this->default,
+//            'multipleValues' => $this->multipleValues,
+//            'nearestValue' => $this->nearestValue,
+//            'current' => $this->current,
+//            'extent' => $this->extent
+//        );
+//        return $dimension;
+//    }
+//
+//    public static function fromArray(array $dimension)
+//    {
+//        $dim = new Dimension();
+//        $dim->name = $dimension['name'];
+//        $dim->units = $dimension['units'];
+//        $dim->unitSymbol = $dimension['unitSymbol'];
+//        $dim->default = $dimension['default'];
+//        $dim->multipleValues = $dimension['multipleValues'];
+//        $dim->nearestValue = isset($dimension['nearestValue']) ? $dimension['nearestValue'] : null;
+//        $dim->current = $dimension['current'];
+//        $dim->extent = $dimension['extent'];
+//        return $dimension;
+//    }
 
 }
-
-?>

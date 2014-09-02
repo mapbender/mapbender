@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\SourceMetadata;
-use Mapbender\CoreBundle\Component\Signer;
 
 /**
  * @author Karim Malhas
@@ -56,12 +55,10 @@ abstract class SourceInstance
     protected $basesource = true;
 
     /**
-     * Creates an instance
+     *
+     * @var Source a source
      */
-    public function __construct()
-    {
-
-    }
+    protected $source;
 
     /**
      * Returns an id
@@ -98,14 +95,14 @@ abstract class SourceInstance
      *
      * @return String type
      */
-    public abstract function getType();
+    abstract public function getType();
 
     /**
      * Returns a manager type
      *
      * @return String a manager type
      */
-    public abstract function getManagertype();
+    abstract public function getManagertype();
 
     /**
      * Returns a full class name
@@ -132,7 +129,7 @@ abstract class SourceInstance
      *
      * @return array
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array();
     }
@@ -159,6 +156,7 @@ abstract class SourceInstance
     public function setWeight($weight)
     {
         $this->weight = $weight;
+
         return $this;
     }
 
@@ -175,12 +173,13 @@ abstract class SourceInstance
     /**
      * Sets the layerset
      *
-     * @param Layerset $layerset Layerset
+     * @param  Layerset       $layerset Layerset
      * @return Sourceinstance
      */
-    public function setLayerset($layerset)
+    public function setLayerset(Layerset $layerset)
     {
         $this->layerset = $layerset;
+
         return $this;
     }
 
@@ -190,18 +189,19 @@ abstract class SourceInstance
      */
     public function getLayerset()
     {
-        $this->layerset;
+        return $this->layerset;
     }
 
     /**
      * Sets an enabled
      *
-     * @param integer $enabled
+     * @param  integer        $enabled
      * @return SourceInstance SourceInstance
      */
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+
         return $this;
     }
 
@@ -218,12 +218,13 @@ abstract class SourceInstance
     /**
      * Sets a basesource
      *
-     * @param boolean $basesource
+     * @param  boolean        $basesource
      * @return SourceInstance SourceInstance
      */
     public function setBasesource($basesource)
     {
         $this->basesource = $basesource;
+
         return $this;
     }
 
@@ -238,53 +239,55 @@ abstract class SourceInstance
     }
 
     /**
-     * Returns instance source
+     * Sets source
+     *
+     * @param Source $source Source object
+     * @return SourceInstance
+     */
+    abstract public function setSource($source);
+
+    /**
+     * Returns source
      *
      * @return Source
      */
-    public abstract function getSource();
+    abstract public function getSource();
 
     /**
      * Sets an id
      * @param integer $id id
      */
-    public abstract function setId($id);
+    abstract public function setId($id);
 
     /**
      * Sets a configuration of a source instance
      *
      * @param array $configuration configuration of a source instance
      */
-    public abstract function setConfiguration($configuration);
+    abstract public function setConfiguration($configuration);
 
     /**
      *  Returns a configuration of a source instance
      *
-     *  @param   Signer  $signer  String signer for URL protection
+     * @return array instance configuration
      */
-    public abstract function getConfiguration(Signer $signer=null);
-
-    /**
-     * Remove a source instance from a database
-     * @param EntityManager $em
-     */
-    public abstract function remove(EntityManager $em);
+    abstract public function getConfiguration();
 
     /**
      * Copies a source instance
      * @param Manager $em
      */
-    public abstract function copy(EntityManager $em);
-    
+    abstract public function copy(EntityManager $em);
+
     /**
-     * 
+     *
      * @return SourceMetadata
      */
-    public abstract function getMetadata();
+    abstract public function getMetadata();
 
 
     public function __toString()
     {
-        return $this->getId();
+        return (string) $this->getId();
     }
 }

@@ -2,14 +2,13 @@
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\Utils;
+use Mapbender\CoreBundle\Component\ContainsKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
-use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -18,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source
+class WmsSource extends Source implements ContainsKeyword
 {
     /**
      * @var string An origin WMS URL
@@ -192,11 +191,10 @@ class WmsSource extends Source
      */
     protected $layers;
 
-    // FIXME: keywords cascade remove RM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
-
     /**
      * @var ArrayCollections A list of WMS keywords
-     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="WmsSourceKeyword",mappedBy="reference", cascade={"persist","remove"})
+     * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
 
@@ -205,7 +203,7 @@ class WmsSource extends Source
      * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="source", cascade={"persist","remove"})
      * 
      */
-    protected $wmsinstance;
+    protected $instances;
 
     public function __construct()
     {
@@ -233,6 +231,7 @@ class WmsSource extends Source
     public function setOriginUrl($originUrl)
     {
         $this->originUrl = $originUrl;
+        $this->setIdentifier($originUrl);
         return $this;
     }
 
@@ -855,17 +854,12 @@ class WmsSource extends Source
             }
         }
         return null;
-//        if($this->layers !== null && $this->layers->count() > 0){
-//            return $this->layers->get(0);
-//        } else {
-//            return null;
-//        }
     }
 
     /**
      * Set keywords
      *
-     * @param array $keywords
+     * @param ArrayCollection $keywords
      * @return Source
      */
     public function setKeywords($keywords)
@@ -877,25 +871,19 @@ class WmsSource extends Source
     /**
      * Get keywords
      *
-     * @return string 
+     * @return ArrayCollection 
      */
     public function getKeywords()
     {
         return $this->keywords;
     }
-
-    /**
-     * Add keyword
-     *
-     * @param Keyword $keyword
-     * @return Source
-     */
-    public function addKeyword(Keyword $keyword)
+    
+    public function addInstance(WmsInstance $instance)
     {
-        $this->keywords->add($keyword);
+        $this->instances->add($instance);
         return $this;
     }
-
+    
     /**
      * Remove layers
      *
@@ -905,124 +893,27 @@ class WmsSource extends Source
     {
         $this->layers->removeElement($layers);
     }
-
+    
     /**
-     * Remove keywords
-     *
-     * @param Keyword $keywords
+     * @inheritdoc
      */
-    public function removeKeyword(Keyword $keywords)
+    public function getIdentifier()
     {
-        $this->keywords->removeElement($keywords);
+        return $this->identifier ? : $this->originUrl;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+        return $this;
     }
 
     public function __toString()
     {
         return (string) $this->getId();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function createInstance()
-    {
-        $instance = new WmsInstance();
-        $instance->setSource($this);
-        $instance->setTitle($this->getTitle());
-        $formats = $this->getGetMap()->getFormats();
-        $instance->setFormat(count($formats) > 0 ? $formats[0] : null);
-        $infoformats = $this->getGetFeatureInfo() !== null ?
-            $this->getGetFeatureInfo()->getFormats() : array();
-        $instance->setInfoformat(count($infoformats) > 0 ? $infoformats[0] : null);
-        $excformats = $this->getExceptionFormats();
-        $instance->setExceptionformat(count($excformats) > 0 ? $excformats[0] : null);
-//        $instance->setOpacity(100);
-        $num = 0;
-        $wmslayer_root = $this->getRootlayer();
-        $instLayer_root = new WmsInstanceLayer();
-        $instLayer_root->setWmsinstance($instance);
-        $instLayer_root->setWmslayersource($wmslayer_root);
-        $instLayer_root->setTitle($wmslayer_root->getTitle());
-        // @TODO min max from scaleHint
-        $instLayer_root->setMinScale(
-            $wmslayer_root->getScaleRecursive() !== null ?
-                $wmslayer_root->getScaleRecursive()->getMin() : null);
-        $instLayer_root->setMaxScale(
-            $wmslayer_root->getScaleRecursive() !== null ?
-                $wmslayer_root->getScaleRecursive()->getMax() : null);
-        $queryable = $wmslayer_root->getQueryable();
-        $instLayer_root->setInfo(Utils::getBool($queryable));
-        $instLayer_root->setAllowinfo(Utils::getBool($queryable));
-
-        $instLayer_root->setToggle(false);
-        $instLayer_root->setAllowtoggle(true);
-
-        $instLayer_root->setPriority($num);
-        $instance->addLayer($instLayer_root);
-        $this->addSublayer($instLayer_root, $wmslayer_root, $num, $instance);
-        return $instance;
-    }
-
-    /**
-     * Adds sublayers
-     * 
-     * @param WmsInstanceLayer $instlayer
-     * @param WmsLayerSource $wmslayer
-     * @param integer $num
-     * @param WmsIstance $instance
-     */
-    private function addSublayer($instlayer, $wmslayer, &$num, $instance)
-    {
-        foreach ($wmslayer->getSublayer() as $wmssublayer) {
-            $num++;
-            $instsublayer = new WmsInstanceLayer();
-            $instsublayer->setWmsinstance($instance);
-            $instsublayer->setWmslayersource($wmssublayer);
-            $instsublayer->setTitle($wmssublayer->getTitle());
-            // @TODO min max from scaleHint
-            $instsublayer->setMinScale(
-                $wmssublayer->getScaleRecursive() !== null ?
-                    $wmssublayer->getScaleRecursive()->getMin() : null);
-            $instsublayer->setMaxScale(
-                $wmssublayer->getScaleRecursive() !== null ?
-                    $wmssublayer->getScaleRecursive()->getMax() : null);
-            $queryable = $wmssublayer->getQueryable();
-            $instsublayer->setInfo(Utils::getBool($queryable));
-            $instsublayer->setAllowinfo(Utils::getBool($queryable));
-
-            $instsublayer->setPriority($num);
-            $instsublayer->setParent($instlayer);
-            $instance->addLayer($instsublayer);
-            if ($wmssublayer->getSublayer()->count() > 0) {
-                $instsublayer->setToggle(false);
-                $instsublayer->setAllowtoggle(true);
-            }
-            $this->addSublayer($instsublayer, $wmssublayer, $num, $instance);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function remove(EntityManager $em)
-    {
-        $this->removeSourceRecursive($em, $this->getRootlayer());
-        $em->remove($this);
-    }
-
-    /**
-     * Recursively remove a nested Layerstructure
-     * @param WmsLayerSource
-     * @param EntityManager
-     */
-    private function removeSourceRecursive(EntityManager $em,
-        WmsLayerSource $wmslayer)
-    {
-        foreach ($wmslayer->getSublayer() as $sublayer) {
-            $this->removeSourceRecursive($em, $sublayer);
-        }
-        $em->remove($wmslayer);
-        $em->flush();
     }
 
     public function update(Source $source)

@@ -57,7 +57,8 @@ class WmsInstanceInstanceLayersType extends AbstractType
         foreach ($arr as $value) {
             $formats_gfi[$value] = $value;
         }
-        $builder->add('infoformat', 'choice', array(
+        $builder->add('infoformat', 'choice',
+            array(
             'choices' => $formats_gfi,
             'required' => false));
         $arr = $wmsinstance->getSource()->getExceptionFormats() !== null ?
@@ -82,7 +83,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
             ->add('proxy', 'checkbox', array(
                 'required' => false))
             ->add('opacity', 'choice', array(
-                'choices' => $opacity, //range(0, 100),
+                'choices' => $opacity,
                 'required' => true))
             ->add('transparency', 'checkbox', array(
                 'required' => false))
@@ -93,6 +94,15 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'precision' => 2))
             ->add('buffer', 'integer', array(
                 'required' => false))
+            ->add('dimensions', 'collection',
+                array(
+                'required' => false,
+                'type' => new DimensionInstType(),
+                'auto_initialize' => false,
+//                'options' => array(
+////                    'data_class' => 'Mapbender\WmsBundle\Component\Dimension',
+//                    )
+                    ))
             ->add('layers', 'collection', array(
                 'type' => new WmsInstanceLayerType(),
                 'options' => array(

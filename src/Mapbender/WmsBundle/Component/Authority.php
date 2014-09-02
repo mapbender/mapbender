@@ -63,4 +63,5 @@ class Authority
         $this->name = $value;
         return $this;
     }
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\ManagerBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -23,10 +24,23 @@ class MapbenderManagerBundle extends MapbenderBundle
                     array('title' => $trans->trans("mb.manager.managerbundle.new_application"),
                         'route' => 'mapbender_manager_application_new',
                         'enabled' => function($securityContext) {
-                            $oid = new ObjectIdentity('class',
-                                'Mapbender\CoreBundle\Entity\Application');
-                            return $securityContext->isGranted('CREATE', $oid);
-                        })
+                        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+                        return $securityContext->isGranted('CREATE', $oid);
+                    }),
+                    array('idx' => "application-export",
+                        'title' => $trans->trans("mb.manager.managerbundle.export_application"),
+                        'route' => 'mapbender_manager_application_export',
+                        'enabled' => function($securityContext) {
+                        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+                        return $securityContext->isGranted('CREATE', $oid);
+                    }),
+                    array('idx' => "application-import",
+                        'title' => $trans->trans("mb.manager.managerbundle.import_application"),
+                        'route' => 'mapbender_manager_application_import',
+                        'enabled' => function($securityContext) {
+                        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+                        return $securityContext->isGranted('CREATE', $oid);
+                    })
                 )
             ),
             array(
@@ -40,10 +54,9 @@ class MapbenderManagerBundle extends MapbenderBundle
                     array('title' => $trans->trans("mb.manager.managerbundle.add_source"),
                         'route' => 'mapbender_manager_repository_new',
                         'enabled' => function($securityContext) {
-                            $oid = new ObjectIdentity('class',
-                                'Mapbender\CoreBundle\Entity\Source');
-                            return $securityContext->isGranted('CREATE', $oid);
-                        })
+                        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+                        return $securityContext->isGranted('CREATE', $oid);
+                    })
                 )
             ),
         );

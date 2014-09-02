@@ -5,13 +5,7 @@ namespace Mapbender\WmsBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\WmsBundle\Component\LegendUrl;
-use Mapbender\WmsBundle\Component\OnlineResource;
-use Mapbender\WmsBundle\Component\Style;
-use Mapbender\WmsBundle\Component\WmsInstanceConfiguration;
-use Mapbender\WmsBundle\Component\WmsInstanceConfigurationOptions;
 use Mapbender\WmsBundle\Component\WmsMetadata;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
@@ -35,13 +29,13 @@ class WmsInstance extends SourceInstance
     protected $configuration;
 
     /**
-     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="wmsinstance", cascade={"refresh"})
+     * @ORM\ManyToOne(targetEntity="WmsSource", inversedBy="instance", cascade={"refresh"})
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
     protected $source;
 
     /**
-     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="wmsinstance", cascade={"refresh", "persist", "remove"})
+     * @ORM\OneToMany(targetEntity="WmsInstanceLayer", mappedBy="sourceInstance", cascade={"refresh", "persist", "remove"})
      * @ORM\JoinColumn(name="layers", referencedColumnName="id")
      * @ORM\OrderBy({"priority" = "asc"})
      */
@@ -93,6 +87,11 @@ class WmsInstance extends SourceInstance
     protected $tiled = false;
 
     /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    protected $dimensions;
+
+    /**
      * @ORM\Column(type="integer", options={"default" = 0})
      */
     protected $buffer = 0;
@@ -105,6 +104,7 @@ class WmsInstance extends SourceInstance
     public function __construct()
     {
         $this->layers = new ArrayCollection();
+        $this->dimensions = array();
     }
 
     /**
@@ -115,7 +115,6 @@ class WmsInstance extends SourceInstance
     public function setId($id)
     {
         $this->id = $id;
-
         return $this;
     }
 
@@ -127,6 +126,17 @@ class WmsInstance extends SourceInstance
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getDimensions()
+    {
+        return $this->dimensions;
+    }
+
+    public function setDimensions($dimensions)
+    {
+        $this->dimensions = $dimensions;
+        return $this;
     }
 
     /**
@@ -145,199 +155,9 @@ class WmsInstance extends SourceInstance
      *
      * @return array $configuration
      */
-    public function getConfiguration(Signer $signer = null)
+    public function getConfiguration()
     {
-        if ($this->getSource() === null) { // from yaml
-            $this->generateYmlConfiguration();
-        } else {
-            if ($this->configuration === null) {
-                $this->generateConfiguration();
-            }
-        }
-
-        if ($signer) {
-            $this->configuration['options']['url'] = $signer->signUrl($this->configuration['options']['url']);
-            if ($this->proxy) {
-                $this->signeUrls($signer, $this->configuration['children'][0]);
-            }
-        }
-
         return $this->configuration;
-    }
-
-    private function signeUrls(Signer $signer, &$layer)
-    {
-        if (isset($layer['options']['legend'])) {
-            if (isset($layer['options']['legend']['graphic'])) {
-                $layer['options']['legend']['graphic'] = $signer->signUrl($layer['options']['legend']['graphic']);
-            } else if (isset($layer['options']['legend']['url'])) {
-                $layer['options']['legend']['url'] = $signer->signUrl($layer['options']['legend']['url']);
-            }
-        }
-        if (isset($layer['children'])) {
-            foreach ($layer['children'] as &$child) {
-                $this->signeUrls($signer, $child);
-            }
-        }
-    }
-
-    /**
-     * Generates a configuration from an yml file
-     */
-    public function generateYmlConfiguration()
-    {
-        $this->setSource(new WmsSource());
-        $wmsconf = new WmsInstanceConfiguration();
-        $wmsconf->setType(strtolower($this->getType()));
-        $wmsconf->setTitle($this->title);
-        $wmsconf->setIsBaseSource($this->isBasesource());
-
-        $options = new WmsInstanceConfigurationOptions();
-        $options->setUrl($this->configuration["url"])
-            ->setProxy($this->proxy)
-            ->setVisible($this->visible)
-            ->setFormat($this->getFormat())
-            ->setInfoformat($this->infoformat)
-            ->setTransparency($this->transparency)
-            ->setOpacity($this->opacity / 100)
-            ->setTiled($this->tiled);
-
-        if (isset($this->configuration["vendor"])) {
-            $options->setVendor($this->configuration["vendor"]);
-        }
-
-        $wmsconf->setOptions($options);
-
-        if (!key_exists("children", $this->configuration)) {
-            $num = 0;
-            $rootlayer = new WmsInstanceLayer();
-            $rootlayer->setTitle($this->title)
-                ->setId($this->getId() . "_" . $num)
-                ->setMinScale(!isset($this->configuration["minScale"]) ? null : $this->configuration["minScale"])
-                ->setMaxScale(!isset($this->configuration["maxScale"]) ? null : $this->configuration["maxScale"])
-                ->setSelected(!isset($this->configuration["visible"]) ? false : $this->configuration["visible"])
-                ->setPriority($num)
-                ->setWmslayersource(new WmsLayerSource())
-                ->setWmsInstance($this);
-            $rootlayer->setToggle(false);
-            $rootlayer->setAllowtoggle(true);
-            $this->addLayer($rootlayer);
-            foreach ($this->configuration["layers"] as $layerDef) {
-                $num++;
-                $layer = new WmsInstanceLayer();
-                $layersource = new WmsLayerSource();
-                $layersource->setName($layerDef["name"]);
-                if (isset($layerDef["legendurl"])) {
-                    $style = new Style();
-                    $style->setName(null);
-                    $style->setTitle(null);
-                    $style->setAbstract(null);
-                    $legendUrl = new LegendUrl();
-                    $legendUrl->setWidth(null);
-                    $legendUrl->setHeight(null);
-                    $onlineResource = new OnlineResource();
-                    $onlineResource->setFormat(null);
-                    $onlineResource->setHref($layerDef["legendurl"]);
-                    $legendUrl->setOnlineResource($onlineResource);
-                    $style->setLegendUrl($legendUrl);
-                    $layersource->addStyle($style);
-                }
-                $layer->setTitle($layerDef["title"])
-                    ->setId($this->getId() . '-' . $num)
-                    ->setMinScale(!isset($layerDef["minScale"]) ? null : $layerDef["minScale"])
-                    ->setMaxScale(!isset($layerDef["maxScale"]) ? null : $layerDef["maxScale"])
-                    ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
-                    ->setInfo(!isset($layerDef["queryable"]) ? false : $layerDef["queryable"])
-                    ->setParent($rootlayer)
-                    ->setWmslayersource($layersource)
-                    ->setWmsInstance($this);
-                $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo() ? true : false);
-                $rootlayer->addSublayer($layer);
-                $this->addLayer($layer);
-            }
-            $children = array($this->generateLayersConfiguration($rootlayer));
-            $wmsconf->setChildren($children);
-        } else {
-            $wmsconf->setChildren($this->configuration["children"]);
-        }
-        $this->configuration = $wmsconf->toArray();
-    }
-
-    /**
-     * Generates a configuration
-     */
-    public function generateConfiguration()
-    {
-        $rootlayer = $this->getRootlayer();
-        $llbbox = $rootlayer->getWmslayersource()->getLatlonBounds();
-        $srses = array(
-            $llbbox->getSrs() => array(
-                floatval($llbbox->getMinx()),
-                floatval($llbbox->getMiny()),
-                floatval($llbbox->getMaxx()),
-                floatval($llbbox->getMaxy())
-            )
-        );
-        foreach ($rootlayer->getWmslayersource()->getBoundingBoxes() as $bbox) {
-            $srses = array_merge($srses, array($bbox->getSrs() => array(
-                    floatval($bbox->getMinx()),
-                    floatval($bbox->getMiny()),
-                    floatval($bbox->getMaxx()),
-                    floatval($bbox->getMaxy()))));
-        }
-        $wmsconf = new WmsInstanceConfiguration();
-        $wmsconf->setType(strtolower($this->getType()));
-        $wmsconf->setTitle($this->title);
-        $wmsconf->setIsBaseSource($this->isBasesource());
-
-        $options = new WmsInstanceConfigurationOptions();
-        $options->setUrl($this->source->getGetMap()->getHttpGet())
-            ->setProxy($this->getProxy())
-            ->setVisible($this->getVisible())
-            ->setFormat($this->getFormat())
-            ->setInfoformat($this->getInfoformat())
-            ->setTransparency($this->transparency)
-            ->setOpacity($this->opacity / 100)
-            ->setTiled($this->tiled)
-            ->setBbox($srses)
-            ->setBuffer($this->tiled ? $this->buffer : $this->ratio);
-        $wmsconf->setOptions($options);
-        $wmsconf->setChildren(array($this->generateLayersConfiguration($rootlayer)));
-        $this->configuration = $wmsconf->toArray();
-    }
-
-    /**
-     * Generates a configuration for layers
-     *
-     * @param WmsInstanceLayer $layer
-     * @param array $configuration
-     * @return array
-     */
-    public function generateLayersConfiguration(WmsInstanceLayer $layer, $configuration = array())
-    {
-        if ($layer->getActive() === true) {
-            $children = array();
-            if ($layer->getSublayer()->count() > 0) {
-                foreach ($layer->getSublayer() as $sublayer) {
-                    $configurationTemp = $this->generateLayersConfiguration($sublayer);
-                    if (count($configurationTemp) > 0) {
-                        $children[] = $configurationTemp;
-                    }
-                }
-            }
-            $layerConf = $layer->getConfiguration();
-            $configuration = array(
-                "options" => $layerConf,
-                "state" => array(
-                    "visibility" => null,
-                    "info" => null,
-                    "outOfScale" => null,
-                    "outOfBounds" => null),);
-            if (count($children) > 0) {
-                $configuration["children"] = $children;
-            }
-        }
-        return $configuration;
     }
 
     /**
@@ -349,7 +169,6 @@ class WmsInstance extends SourceInstance
     public function setLayers($layers)
     {
         $this->layers = $layers;
-
         return $this;
     }
 
@@ -387,7 +206,6 @@ class WmsInstance extends SourceInstance
     public function setTitle($title)
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -410,7 +228,6 @@ class WmsInstance extends SourceInstance
     public function setSrs($srs)
     {
         $this->srs = $srs;
-
         return $this;
     }
 
@@ -433,7 +250,6 @@ class WmsInstance extends SourceInstance
     public function setFormat($format)
     {
         $this->format = $format;
-
         return $this;
     }
 
@@ -456,7 +272,6 @@ class WmsInstance extends SourceInstance
     public function setInfoformat($infoformat)
     {
         $this->infoformat = $infoformat;
-
         return $this;
     }
 
@@ -479,7 +294,6 @@ class WmsInstance extends SourceInstance
     public function setExceptionformat($exceptionformat)
     {
         $this->exceptionformat = $exceptionformat;
-
         return $this;
     }
 
@@ -502,7 +316,6 @@ class WmsInstance extends SourceInstance
     public function setTransparency($transparency)
     {
         $this->transparency = $transparency;
-
         return $this;
     }
 
@@ -525,7 +338,6 @@ class WmsInstance extends SourceInstance
     public function setVisible($visible)
     {
         $this->visible = $visible;
-
         return $this;
     }
 
@@ -548,7 +360,6 @@ class WmsInstance extends SourceInstance
     public function setOpacity($opacity)
     {
         $this->opacity = $opacity;
-
         return $this;
     }
 
@@ -571,7 +382,6 @@ class WmsInstance extends SourceInstance
     public function setProxy($proxy)
     {
         $this->proxy = $proxy;
-
         return $this;
     }
 
@@ -594,7 +404,6 @@ class WmsInstance extends SourceInstance
     public function setTiled($tiled)
     {
         $this->tiled = $tiled;
-
         return $this;
     }
 
@@ -660,10 +469,9 @@ class WmsInstance extends SourceInstance
      * @param WmsSource $wmssource
      * @return WmsInstance
      */
-    public function setSource(WmsSource $wmssource = null)
+    public function setSource($wmssource = null)
     {
         $this->source = $wmssource;
-
         return $this;
     }
 
@@ -686,7 +494,6 @@ class WmsInstance extends SourceInstance
     public function addLayer(WmsInstanceLayer $layer)
     {
         $this->layers->add($layer);
-
         return $this;
     }
 
@@ -702,7 +509,7 @@ class WmsInstance extends SourceInstance
 
     public function __toString()
     {
-        return $this->getId();
+        return (string) $this->getId();
     }
 
     /**
@@ -734,43 +541,11 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getLayerset()
-    {
-        parent::getLayerset();
-    }
-
-    /**
-     *
      * @return WmsMetadata
      */
     public function getMetadata()
     {
         return new WmsMetadata($this);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function remove(EntityManager $em)
-    {
-        $this->removeLayerRecursive($em, $this->getRootlayer());
-        $em->remove($this);
-    }
-
-    /**
-     * Recursively remove a nested Layerstructure
-     * @param EntityManager $em
-     * @param WmsInstanceLayer $instLayer
-     */
-    private function removeLayerRecursive(EntityManager $em, WmsInstanceLayer $instLayer)
-    {
-        foreach ($instLayer->getSublayer() as $sublayer) {
-            $this->removeLayerRecursive($em, $sublayer);
-        }
-        $em->remove($instLayer);
-        $em->flush();
     }
 
     /**
@@ -809,7 +584,7 @@ class WmsInstance extends SourceInstance
     {
         $cloned = $origin->copy($em);
         $cloned->setWmsinstance($instCloned);
-        $cloned->setWmslayersource($origin->getWmslayersource());
+        $cloned->setSourceItem($origin->getSourceItem());
         if ($clonedParent !== null) {
             $cloned->setParent($clonedParent);
             $clonedParent->addSublayer($cloned);
@@ -819,5 +594,4 @@ class WmsInstance extends SourceInstance
             $this->copyLayerRecursive($em, $instCloned, $sublayer, $cloned);
         }
     }
-
 }
