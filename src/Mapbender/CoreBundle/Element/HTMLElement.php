@@ -39,7 +39,7 @@ class HTMLElement extends Element
     {
         return array(
             'js' => array('mapbender.element.htmlelement.js'),
-            'css' => array()
+            'css' => array('sass/element/htmlelement.scss')
         );
     }
 
@@ -56,7 +56,9 @@ class HTMLElement extends Element
      */
     public static function getDefaultConfiguration()
     {
-        return array();
+        return array(
+            'classes' => 'html-element-inline'
+        );
     }
 
     /**
