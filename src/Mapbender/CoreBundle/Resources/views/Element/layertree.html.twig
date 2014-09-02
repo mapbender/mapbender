@@ -11,7 +11,7 @@
         <input class="layer-info checkbox" type="checkbox" name="info"/>
       </div>
         <span class="layer-title labelCheck"></span>
-        <span class="iconRemove layer-remove-btn right" style="display: none" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></span>
+
         {% if configuration.menu is defined and configuration.menu != null and configuration.menu | length > 0 %}
             <span class="iconMenu right layer-menu-btn">
                 <div id="layer-menu" class="layer-menu hidden">
@@ -24,13 +24,14 @@
                             <div class="layer-opacity-handle">100</div>
                         </div>
                     {% elseif item == 'zoomtolayer' %}
-                        <div class="layer-zoom span-btn inactive button buttonOk">{{ 'mb.core.layertree.label.zoomtolayer'|trans }}</div>
+                        <div class="layer-zoom span-btn inactive button">{{ 'mb.core.layertree.label.zoomtolayer'|trans }}</div>
                     {% elseif item == 'metadata' %}
-                        <div class="layer-metadata span-btn inactive button buttonOk">{{ 'mb.core.layertree.label.metadata'|trans }}</div>
+                        <div class="layer-metadata span-btn inactive button ">{{ 'mb.core.layertree.label.metadata'|trans }}</div>
                     {% else %}
                         <span class="layer span-btn labelInput inactive">Undefined</span>
                     {% endif %}
-                {% endfor %}
+                    {% endfor %}
+                    <div class="layer-remove-btn button critical">{{ 'mb.core.layertree.tooltip.removelayer'|trans }}</div>
                 </div>
             </span>
         {% endif %}
