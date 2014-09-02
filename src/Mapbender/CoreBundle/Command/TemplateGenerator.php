@@ -5,7 +5,7 @@ namespace Mapbender\CoreBundle\Command;
 use Sensio\Bundle\GeneratorBundle\Generator\Generator;
 
 class TemplateGenerator extends Generator {
-    public function create($container, $bundle, $bundleDir, $bundleNamespace, $className, $type=null) {
+    public function create($container, $bundle, $bundleDir, $bundleNamespace, $className, $type = null) {
         $files = Array();
 
         $classNameLower = strtolower($className);

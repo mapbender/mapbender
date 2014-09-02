@@ -79,12 +79,12 @@ class ApplicationController extends Controller
     public function newAction()
     {
         $application = new Application();
-      
+
         // ACL access check
         $this->checkGranted('CREATE', $application);
 
         $form = $this->createApplicationForm($application);
-        
+
         return array(
             'application' => $application,
             'form' => $form->createView(),
@@ -100,15 +100,15 @@ class ApplicationController extends Controller
      */
     public function createAction()
     {
-        
+
         $application = new Application();
-       
+
         // ACL access check
         $this->checkGranted('CREATE', $application);
 
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
-        
+
         $screenshot_url = NULL;
 
         $form->bind($request);
@@ -124,7 +124,7 @@ class ApplicationController extends Controller
             $this->checkRegionProperties($application);
             $aclManager = $this->get('fom.acl.manager');
             $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-            
+
             $scFile = $application->getScreenshotFile();
             if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
                 $filename = sprintf('screenshot-%d.%s', $application->getId(), $scFile->guessExtension());
@@ -132,11 +132,11 @@ class ApplicationController extends Controller
                 $application->setScreenshot($filename);
                 $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
                 $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
-                
+
             }
             $em->persist($application);
             $em->flush();
-            
+
             $em->getConnection()->commit();
             if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been saved.');
@@ -247,12 +247,14 @@ class ApplicationController extends Controller
             try {
                 if (AppComponent::createAppWebDir($this->container, $application->getSlug(), $old_slug)) {
                     $scFile = $application->getScreenshotFile();
-                    $fileType = getimagesize($scFile);
-                    
-                    if ($scFile !== null && $form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
-                        $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
-                        $application->getScreenshotFile()->move($app_directory, $filename);
-                        $application->setScreenshot($filename);
+                    if($scFile) {
+                        $fileType = getimagesize($scFile);
+
+                        if ($form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
+                            $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
+                            $application->getScreenshotFile()->move($app_directory, $filename);
+                            $application->setScreenshot($filename);
+                        }
                     }
 
                     $em->persist($application);
@@ -886,9 +888,9 @@ class ApplicationController extends Controller
         } while ($this->get('mapbender')->getApplicationEntity($copySlug));
         return $copySlug;
     }
-    
+
     private function setRegionProperties($application, $form){
-        
+
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
         foreach ($templateProps as $regionName => $regionProperties) {
@@ -900,7 +902,7 @@ class ApplicationController extends Controller
             }
         }
     }
-    
+
     private function checkRegionProperties($application)
     {
         $templateClass = $application->getTemplate();
@@ -926,7 +928,7 @@ class ApplicationController extends Controller
                 $em->flush();
             }
         }
-        
+
     }
 
 }

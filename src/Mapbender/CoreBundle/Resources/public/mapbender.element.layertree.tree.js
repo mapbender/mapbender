@@ -92,7 +92,6 @@
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.on('click', '.iconFolder', $.proxy(self._toggleContent, self));
             this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
-            this.element.on('click', '.iconRemove', $.proxy(self._removeSource, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
         },
         _removeEvents: function() {
@@ -101,7 +100,6 @@
             this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.off('click', '.iconFolder', $.proxy(self._toggleContent, self));
             this.element.off('click', '#delete-all', $.proxy(self._removeAllSources, self));
-            this.element.off('click', '.iconRemove', $.proxy(self._removeSource, self));
             this.element.off('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
 
         },
@@ -209,7 +207,7 @@
                     li.find('.layer-menu-btn').remove();
                 }
                 if (!this.options.layerRemove)
-                    li.find('.iconRemove').remove();
+                    li.find('.layer-remove-btn').remove();
                 if (!this.options.layerInfo)
                     li.find('.iconInfo').remove();
                 if (sourceEl.children) {
@@ -263,7 +261,7 @@
                         li.find('.layer-menu-btn').remove();
                     }
                     if (!this.options.layerRemove)
-                        li.find('.iconRemove').remove();
+                        li.find('.layer-remove-btn').remove();
                     if (sourceEl.children) {
                         li.find('ul:first').attr('id', 'list-' + sourceEl.options.id);
                         if (config.toggle) {
@@ -548,26 +546,59 @@
             tochange.options.children[li.attr('data-id')] = {options: {treeOptions: {info: $(e.target).is(':checked')}}};
             this.model.changeSource({change: tochange});
         },
+
+        currentMenu: null,
+        closeMenu: function(menu){
+            //menu.find('.layer-zoom').off('click');
+            //menu.find('.layer-metadata').off('click');
+            menu.off('click').remove();
+        },
         _toggleMenu: function(e) {
             var self = this;
             function createMenu($element, sourceId, layerId) {
                 var source = self.model.findSource({id: sourceId})[0];
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId", sourceId));
-                if ($element.parents('li:first').attr('data-type') === self.consts.root) {
-                } else {
+                var exitButton = menu.find('.exit-button');
+                var removeButton = menu.find('.layer-remove-btn');
+                var previousMenu = self.currentMenu;
+
+                if(self.currentMenu == menu){
+                    return;
+                }
+
+                self.currentMenu = menu;
+
+                if(previousMenu){
+                    self.closeMenu(previousMenu);
+                }
+
+                exitButton.on('click', function(e){
+                    self.closeMenu(menu)
+                });
+
+                removeButton.on('click', $.proxy(self._removeSource, self));
+
+                if ($element.parents('li:first').attr('data-type') !== self.consts.root) {
                     menu.find('#layer-opacity').remove();
                     menu.find('#layer-opacity-title').remove();
                 }
+
                 menu.removeClass('hidden');
                 $element.append(menu);
                 $(menu).on('click mousedown mousemove', function(e) {
                     e.stopPropagation();
                 });
+
                 if ($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0) {
+
+
+                    $('.layer-opacity-handle').attr('unselectable','on');
+
                     new Dragdealer('layer-opacity', {
                         x: source.configuration.options.opacity,
                         horizontal: true,
                         vertical: false,
+                        speed: 1,
                         steps: 100,
                         handleClass: "layer-opacity-handle",
                         animationCallback: function(x, y) {
@@ -589,17 +620,13 @@
                     }
                 }
             }
-            function removeMenu($element) {
-                $('.layer-zoom').off('click');
-                $('.layer-metadata').off('click');
-                $('#layer-menu').off('click').remove();
-            }
+
             var $btnMenu = $(e.target);
             var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
             var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
             if ($('#layer-menu').length !== 0) {
                 var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
-                removeMenu($('#layer-menu'));
+                //removeMenu($('#layer-menu'));
                 if (layerIdMenu !== currentLayerId) {
                     createMenu($btnMenu, currentSourceId, currentLayerId);
                 }
@@ -612,17 +639,22 @@
             this.model.setOpacity(source, opacity);
         },
         _removeSource: function(e) {
-            var layer_type = $(e.target).parents("li:first").attr("data-type");
-            var sourceId = $(e.target).parents('li[data-sourceid]:first').attr('data-sourceid');
-            if (sourceId && layer_type && this.consts.root === layer_type) {
-                this.model.removeSource({remove: {sourceIdx: {id: sourceId}}});
-            } else if (sourceId && layer_type && this.consts.group === layer_type) {
-                var layer_id = $(e.target).parents("li:first").attr("data-id");
-                this.model.changeSource({change: {layerRemove: {sourceIdx: {id: sourceId}, layer: {options: {id: layer_id}}}}});
-            } else if (sourceId && layer_type && this.consts.simple === layer_type) {
-                var layer_id = $(e.target).parents("li:first").attr("data-id");
-                this.model.changeSource({change: {layerRemove: {sourceIdx: {id: sourceId}, layer: {options: {id: layer_id}}}}});
+            var layer = $(e.currentTarget).closest("li").data();
+            var types = this.consts;
+            var model = this.model;
+
+            if(layer.sourceid && layer.type){
+                switch (layer.type){
+                    case types.root:
+                        model.removeSource({remove: {sourceIdx: {id: layer.sourceid}}});
+                        break;
+                    case types.group:
+                    case types.simple:
+                        model.changeSource({change: {layerRemove: {sourceIdx: {id: layer.sourceid}, layer: {options: {id:layer.id}}}}});
+                        break;
+                }
             }
+
             this._setSourcesCount();
         },
         _showLegend: function(elm) {
