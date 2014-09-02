@@ -670,6 +670,14 @@
         <source>mb.wms.metadata.section.items.bbox</source>
         <target>BoundingBox</target>
       </trans-unit>
+      <trans-unit id="1eec62862c805bb073beebbee0e0891b" resname="mb.wms.wmsloader.repo.instance.label.ratio">
+        <source>mb.wms.wmsloader.repo.instance.label.ratio</source>
+        <target>BBOX factor</target>
+      </trans-unit>
+      <trans-unit id="e80c0741d80e32fb80f40c9a17bc8610" resname="mb.wms.wmsloader.repo.instance.label.buffer">
+        <source>mb.wms.wmsloader.repo.instance.label.buffer</source>
+        <target>Tile buffer</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
