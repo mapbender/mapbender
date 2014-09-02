@@ -254,6 +254,7 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
+        $instance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
         $insthandler = EntityHandler::createHandler($this->container, $instance);
         $insthandler->remove();
         $em->flush();
@@ -286,6 +287,7 @@ class RepositoryController extends Controller
                     $em->refresh($layer);
                 }
                 $em->persist($wmsinstance);
+                $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
                 $em->flush();
                 $em->getConnection()->commit();
                 $wmsinstance = $this->getDoctrine()
@@ -405,6 +407,7 @@ class RepositoryController extends Controller
             $wmsinstance->setEnabled($enabled);
             $em = $this->getDoctrine()->getManager();
             $em->persist($wmsinstance);
+            $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
             $em->flush();
             return new Response(json_encode(array(
                     'success' => array(
@@ -415,7 +418,7 @@ class RepositoryController extends Controller
                             'after' => $enabled)))), 200, array('Content-Type' => 'application/json'));
         }
     }
-    
+
     /**
      * Get Metadata for a wms service
      *
