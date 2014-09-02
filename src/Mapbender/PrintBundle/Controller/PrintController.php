@@ -36,7 +36,7 @@ class PrintController extends Controller
                 break;
             case 'queued':
                 $printQueue = $this->get('mapbender.print.queue_manager')->add($data);
-                $r          = new Response($this->serialize($printQueue));
+                $r          = new Response($this->serialize($printQueue->getToken()));
                 break;
         }
 
