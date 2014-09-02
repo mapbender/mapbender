@@ -156,7 +156,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setTitle($title)
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -179,7 +178,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setSublayer($sublayer)
     {
         $this->sublayer = $sublayer;
-
         return $this;
     }
 
@@ -192,7 +190,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function addSublayer(WmsInstanceLayer $sublayer)
     {
         $this->sublayer->add($sublayer);
-
         return $this;
     }
 
@@ -215,7 +212,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setParent($parent)
     {
         $this->parent = $parent;
-
         return $this;
     }
 
@@ -238,7 +234,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setActive($active)
     {
         $this->active = $active;
-
         return $this;
     }
 
@@ -261,7 +256,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setAllowselected($allowselected)
     {
         $this->allowselected = $allowselected;
-
         return $this;
     }
 
@@ -284,7 +278,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setSelected($selected)
     {
         $this->selected = $selected;
-
         return $this;
     }
 
@@ -307,7 +300,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setInfo($info)
     {
         $this->info = $info;
-
         return $this;
     }
 
@@ -351,7 +343,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setAllowinfo($allowinfo)
     {
         $this->allowinfo = $allowinfo;
-
         return $this;
     }
 
@@ -416,7 +407,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setMinScale($minScale)
     {
         $this->minScale = $minScale;
-
         return $this;
     }
 
@@ -439,7 +429,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setMaxScale($maxScale)
     {
         $this->maxScale = $maxScale;
-
         return $this;
     }
 
@@ -462,7 +451,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setStyle($style)
     {
         $this->style = $style;
-
         return $this;
     }
 
@@ -507,7 +495,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     public function setSourceInstance(SourceInstance $sourceInstance = null)
     {
         $this->sourceInstance = $sourceInstance;
-
         return $this;
     }
 
@@ -546,78 +533,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getConfiguration()
-    {
-        $configuration = array(
-            "id" => strval($this->id),
-            "priority" => $this->priority,
-            "name" => $this->sourceItem->getName() !== null ? $this->sourceItem->getName() : "",
-            "title" => $this->title,
-            "queryable" => $this->getInfo(),
-            "style" => $this->style,
-            "minScale" => $this->minScale !== null ? floatval($this->minScale) : null,
-            "maxScale" => $this->maxScale !== null ? floatval($this->maxScale) : null
-        );
-        $srses = array();
-        $llbbox = $this->getSourceItem()->getLatlonBounds();
-        if ($llbbox !== null) {
-            $srses[$llbbox->getSrs()] = array(
-                floatval($llbbox->getMinx()),
-                floatval($llbbox->getMiny()),
-                floatval($llbbox->getMaxx()),
-                floatval($llbbox->getMaxy())
-            );
-        }
-        foreach ($this->getSourceItem()->getBoundingBoxes() as $bbox) {
-            $srses[$bbox->getSrs()] = array(
-                floatval($bbox->getMinx()),
-                floatval($bbox->getMiny()),
-                floatval($bbox->getMaxx()),
-                floatval($bbox->getMaxy()));
-        }
-        $configuration['bbox'] = $srses;
-        if (count($this->sourceItem->getStyles()) > 0) {
-            $styles = $this->sourceItem->getStyles();
-            $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
-            if ($legendurl !== null) {
-                $configuration["legend"] = array(
-                    "url" => $legendurl->getOnlineResource()->getHref(),
-                    "width" => intval($legendurl->getWidth()),
-                    "height" => intval($legendurl->getHeight()));
-            }
-        } else if ($this->sourceInstance->getSource()->getGetLegendGraphic() !== null && $this->sourceItem->getName() !== null && $this->sourceItem->getName() !== "") {
-            $legend = $this->sourceInstance->getSource()->getGetLegendGraphic();
-            $url = $legend->getHttpGet();
-            $formats = $legend->getFormats();
-            $params = "service=WMS&request=GetLegendGraphic"
-                . "&version="
-                . $this->sourceInstance->getSource()->getVersion()
-                . "&layer=" . $this->sourceItem->getName()
-                . (count($formats) > 0 ? "&format=" . $formats[0] : "")
-                . "&sld_version=1.1.0";
-            $legendgraphic = Utils::getHttpUrl($url, $params);
-            $configuration["legend"] = array(
-                "graphic" => $legendgraphic);
-        }
-        $configuration["treeOptions"] = array(
-            "info" => $this->info,
-            "selected" => $this->selected,
-            "toggle" => $this->toggle,
-            "allow" => array(
-                "info" => $this->allowinfo,
-                "selected" => $this->allowselected,
-                "toggle" => $this->allowtoggle,
-                "reorder" => $this->allowreorder,
-            )
-        );
-        return $configuration;
-    }
-
-    /**
-     *
-     * @param
      */
     public function copy(EntityManager $em)
     {

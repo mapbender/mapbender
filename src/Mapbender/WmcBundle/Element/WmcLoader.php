@@ -281,7 +281,7 @@ class WmcLoader extends Element
                     $file = $wmc->getXml();
                     $path = $file->getPathname();
                     $doc = WmcParser::loadDocument($path);
-                    $parser = WmcParser::getParser($doc);
+                    $parser = WmcParser::getParser($this->container, $doc);
                     $wmc = $parser->parse();
                     if (file_exists($file->getPathname())) {
                         unlink($file->getPathname());

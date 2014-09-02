@@ -62,50 +62,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->container->get('doctrine')->getManager()->persist($entityHandler->getEntity());
             $this->container->get('doctrine')->getManager()->flush();
         }
-//        return 
-//        $this->addSublayer($this->entity, $wmslayersource, $this->entity, $num);
-//
-//        $this->entity->setWeight(-1);
-//
-//        $this->entity->getLayerset()->addInstance($this->entity);
-//        $em = $this->container->get('doctrine')->getManager();
-//        $em->persist($this->entity);
-//        $em->persist($this->entity->getLayerset()->getApplication());
-//        $em->persist($this->entity->getLayerset());
-//        $em->flush();
-//
-//        $num = 0;
-//        foreach ($this->entity->getLayerset()->getInstances() as $instance) {
-//            $this->entity->setWeight($num);
-//            $this->entity->generateConfiguration();
-//            $em->persist($instance);
-//            $em->flush();
-//            $num++;
-//        }
-//        $num++;
-//        $instsublayer = new WmsInstanceLayer();
-//        $instsublayer->setSourceInstance($instance);
-//        $instsublayer->setSourceItem($wmssublayer);
-//        $instsublayer->setTitle($wmssublayer->getTitle());
-//        // @TODO min max from scaleHint
-//        $instsublayer->setMinScale(
-//            $wmssublayer->getScaleRecursive() !== null ?
-//                $wmssublayer->getScaleRecursive()->getMin() : null);
-//        $instsublayer->setMaxScale(
-//            $wmssublayer->getScaleRecursive() !== null ?
-//                $wmssublayer->getScaleRecursive()->getMax() : null);
-//        $queryable = $wmssublayer->getQueryable();
-//        $instsublayer->setInfo(Utils::getBool($queryable));
-//        $instsublayer->setAllowinfo(Utils::getBool($queryable));
-//
-//        $instsublayer->setPriority($num);
-//        $instsublayer->setParent($instlayer);
-//        $instance->addLayer($instsublayer);
-//        if ($wmssublayer->getSublayer()->count() > 0) {
-//            $instsublayer->setToggle(false);
-//            $instsublayer->setAllowtoggle(true);
-//        }
-//        $this->addSublayer($instance, $wmssublayer, $instsublayer, $num);
     }
 
     /**
@@ -130,15 +86,111 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $this->container->get('doctrine')->getManager()->flush();
     }
 
-    public function getSourceDimensions()
+    /**
+     * Generates a configuration for layers
+     *
+     * @param array $configuration
+     * @return array
+     */
+    public function generateConfiguration()
     {
-        $dimensions = array();
-        foreach ($this->wmsinstance->getSource()->getLayers() as $layer) {
-            foreach ($layer->getDimension() as $dimension) {
-                $dimensions[] = $dimension;
+        $configuration = array();
+        if ($this->entity->getActive() === true) {
+            $children = array();
+            if ($this->entity->getSublayer()->count() > 0) {
+                foreach ($this->entity->getSublayer() as $sublayer) {
+                    $instLayHandler = self::createHandler($this->container, $sublayer);
+                    $configurationTemp = $instLayHandler->generateConfiguration();
+                    if (count($configurationTemp) > 0) {
+                        $children[] = $configurationTemp;
+                    }
+                }
+            }
+            $layerConf = $this->getConfiguration();
+            $configuration = array(
+                "options" => $layerConf,
+                "state" => array(
+                    "visibility" => null,
+                    "info" => null,
+                    "outOfScale" => null,
+                    "outOfBounds" => null),);
+            if (count($children) > 0) {
+                $configuration["children"] = $children;
             }
         }
-        return $dimensions;
+        return $configuration;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getConfiguration()
+    {
+        $configuration = array(
+            "id" => strval($this->entity->getId()),
+            "priority" => $this->entity->getPriority(),
+            "name" => $this->entity->getSourceItem()->getName() !== null ? $this->entity->getSourceItem()->getName() : "",
+            "title" => $this->entity->getTitle(),
+            "queryable" => $this->entity->getInfo(),
+            "style" => $this->entity->getStyle(),
+            "minScale" => $this->entity->getMinScale() !== null ? floatval($this->entity->getMinScale()) : null,
+            "maxScale" => $this->entity->getMaxScale() !== null ? floatval($this->entity->getMaxScale()) : null
+        );
+        $srses = array();
+        $llbbox = $this->entity->getSourceItem()->getLatlonBounds();
+        if ($llbbox !== null) {
+            $srses[$llbbox->getSrs()] = array(
+                floatval($llbbox->getMinx()),
+                floatval($llbbox->getMiny()),
+                floatval($llbbox->getMaxx()),
+                floatval($llbbox->getMaxy())
+            );
+        }
+        foreach ($this->entity->getSourceItem()->getBoundingBoxes() as $bbox) {
+            $srses[$bbox->getSrs()] = array(
+                floatval($bbox->getMinx()),
+                floatval($bbox->getMiny()),
+                floatval($bbox->getMaxx()),
+                floatval($bbox->getMaxy()));
+        }
+        $configuration['bbox'] = $srses;
+        if (count($this->entity->getSourceItem()->getStyles()) > 0) {
+            $styles = $this->entity->getSourceItem()->getStyles();
+            $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
+            if ($legendurl !== null) {
+                $configuration["legend"] = array(
+                    "url" => $legendurl->getOnlineResource()->getHref(),
+                    "width" => intval($legendurl->getWidth()),
+                    "height" => intval($legendurl->getHeight()));
+            }
+        } else if ($this->entity->getSourceInstance()->getSource()->getGetLegendGraphic() !== null &&
+            $this->entity->getSourceItem()->getName() !== null &&
+            $this->entity->getSourceItem()->getName() !== "") {
+            $legend = $this->entity->getSourceInstance()->getSource()->getGetLegendGraphic();
+            $url = $legend->getHttpGet();
+            $formats = $legend->getFormats();
+            $params = "service=WMS&request=GetLegendGraphic"
+                . "&version="
+                . $this->entity->getSourceInstance()->getSource()->getVersion()
+                . "&layer=" . $this->entity->getSourceItem()->getName()
+                . (count($formats) > 0 ? "&format=" . $formats[0] : "")
+                . "&sld_version=1.1.0";
+            $legendgraphic = Utils::getHttpUrl($url, $params);
+            $configuration["legend"] = array(
+                "graphic" => $legendgraphic);
+        }
+        $configuration["treeOptions"] = array(
+            "info" => $this->entity->getInfo(),
+            "selected" => $this->entity->getSelected(),
+            "toggle" => $this->entity->getToggle(),
+            "allow" => array(
+                "info" => $this->entity->getAllowinfo(),
+                "selected" => $this->entity->getAllowselected(),
+                "toggle" => $this->entity->getAllowtoggle(),
+                "reorder" => $this->entity->getAllowreorder(),
+            )
+        );
+        return $configuration;
     }
 
 }

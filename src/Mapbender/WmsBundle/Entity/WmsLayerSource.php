@@ -13,7 +13,6 @@ use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Dimension;
-use Mapbender\WmsBundle\Component\Extent;
 use Mapbender\WmsBundle\Component\Identifier;
 use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\MinMax;
@@ -269,7 +268,6 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     public function addSublayer(WmsLayerSource $sublayer)
     {
         $this->sublayer->add($sublayer);
-
         return $this;
     }
 

@@ -291,8 +291,9 @@ class RepositoryController extends Controller
                 $wmsinstance = $this->getDoctrine()
                     ->getRepository("MapbenderWmsBundle:WmsInstance")
                     ->find($wmsinstance->getId());
-                $wmsinstance->generateConfiguration();
-                $em->persist($wmsinstance);
+                $entityHandler = EntityHandler::createHandler($this->container, $wmsinstance);
+                $entityHandler->generateConfiguration();
+                $em->persist($entityHandler->getEntity());
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->set(
@@ -427,8 +428,8 @@ class RepositoryController extends Controller
         $instance = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
         $securityContext = $this->get('security.context');
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getSource())) {
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
         $layerName = $this->container->get('request')->get("layerName", null);

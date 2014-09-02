@@ -269,7 +269,7 @@ abstract class SourceInstance
     /**
      *  Returns a configuration of a source instance
      *
-     *  @param   Signer  $signer  String signer for URL protection
+     * @return array instance configuration
      */
     abstract public function getConfiguration();
 

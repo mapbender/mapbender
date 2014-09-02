@@ -17,7 +17,7 @@ use Mapbender\CoreBundle\Component\SourceItem;
  */
 abstract class SourceInstanceItemEntityHandler extends EntityHandler
 {
-        
+
     /**
      * Creates a SourceInstanceItem
      */
@@ -27,6 +27,16 @@ abstract class SourceInstanceItemEntityHandler extends EntityHandler
      * Remove a SourceInstanceItem
      */
     abstract public function remove();
+    
+    /**
+     * Generates an item configuration
+     */
+    abstract public function generateConfiguration();
+    
+    /**
+     * Returns an item configuration
+     */
+    abstract public function getConfiguration();
 
 
 }

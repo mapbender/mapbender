@@ -3,6 +3,7 @@
 namespace Mapbender\WmcBundle\Component;
 
 use Mapbender\CoreBundle\Component\BoundingBox;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\Size;
 use Mapbender\CoreBundle\Component\StateHandler;
 use Mapbender\CoreBundle\Entity\Contact;
@@ -18,6 +19,7 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class that Parses WMC 1.1.0 WMC Document
@@ -30,9 +32,9 @@ class WmcParser110 extends WmcParser
     /**
      * @inheritdoc
      */
-    public function __construct(\DOMDocument $doc)
+    public function __construct(ContainerInterface $contatiner, \DOMDocument $doc)
     {
-        parent::__construct($doc);
+        parent::__construct($contatiner, $doc);
         $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
         $this->xpath->registerNamespace("cntxt", "http://www.opengis.net/context");
         $this->xpath->registerNamespace("sld", "http://www.opengis.net/sld");
@@ -270,7 +272,7 @@ class WmcParser110 extends WmcParser
             ->setId($wmsinst->getId() . "_" . $num)
             ->setPriority($num)
             ->setSourceItem(new WmsLayerSource())
-            ->setWmsInstance($wmsinst);
+            ->setSourceInstance($wmsinst);
         $rootInst->setToggle(false);
         $rootInst->setAllowtoggle(true);
         if ($layerList === null) {
@@ -285,11 +287,12 @@ class WmcParser110 extends WmcParser
                     ->setId($wmsinst->getId() . "_" . $num)
                     ->setPriority($num)
                     ->setSourceItem($layersource)
-                    ->setWmsInstance($wmsinst);
+                    ->setSourceInstance($wmsinst);
                 $rootInst->addSublayer($layerInst);
                 $wmsinst->addLayer($layerInst);
             }
-            $children = array($wmsinst->generateLayersConfiguration($rootInst));
+            $rootLayHandler = EntityHandler::createHandler($this->container, $rootInst);
+            $children = array($rootLayHandler->generateConfiguration());
             $wmsconf->setChildren($children);
             return array(
                 'type' => $wmsinst->getType(),
@@ -333,7 +336,8 @@ class WmcParser110 extends WmcParser
                 $rootInst->addSublayer($layerInst);
                 $wmsinst->addLayer($layerInst);
             }
-            $children = array($wmsinst->generateLayersConfiguration($rootInst));
+            $rootLayHandler = EntityHandler::createHandler($this->container, $rootInst);
+            $children = array($rootLayHandler->generateConfiguration());
             $wmsconf->setChildren($children);
             return array(
                 'type' => $wmsinst->getType(),
