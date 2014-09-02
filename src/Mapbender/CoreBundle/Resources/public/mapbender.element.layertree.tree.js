@@ -564,10 +564,12 @@
                     e.stopPropagation();
                 });
                 if ($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0) {
+                    $('.layer-opacity-handle').attr('unselectable','on');
                     new Dragdealer('layer-opacity', {
                         x: source.configuration.options.opacity,
                         horizontal: true,
                         vertical: false,
+                        speed: 1,
                         steps: 100,
                         handleClass: "layer-opacity-handle",
                         animationCallback: function(x, y) {
