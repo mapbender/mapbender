@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="710cfe4cacf662f4262c7cc34ee86101" resname="Only for this region available elements are displayed.">
         <source>Only for this region available elements are displayed.</source>
-        <target>__Only for this region available elements are displayed.</target>
+        <target>Nur Elemente für diese Region werden angezeigt.</target>
       </trans-unit>
       <trans-unit id="20bbe30e6fcefd2ab10c780590b458af" resname="mb.core.admin.button.show_label">
         <source>mb.core.admin.button.show_label</source>
@@ -524,7 +524,7 @@
       </trans-unit>
       <trans-unit id="8b893357eea2f8e824f5e4bb613b3496" resname="mb.core.entity.app.screenshotfile.format_error">
         <source>mb.core.entity.app.screenshotfile.format_error</source>
-        <target>__mb.core.entity.app.screenshotfile.format_error</target>
+        <target>Nicht unterstütztes Format</target>
       </trans-unit>
     </body>
   </file>
