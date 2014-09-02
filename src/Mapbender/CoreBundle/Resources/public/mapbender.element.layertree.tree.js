@@ -548,13 +548,36 @@
             tochange.options.children[li.attr('data-id')] = {options: {treeOptions: {info: $(e.target).is(':checked')}}};
             this.model.changeSource({change: tochange});
         },
+
+        currentMenu: null,
+        closeMenu: function(menu){
+            //menu.find('.layer-zoom').off('click');
+            //menu.find('.layer-metadata').off('click');
+            menu.off('click').remove();
+        },
         _toggleMenu: function(e) {
             var self = this;
             function createMenu($element, sourceId, layerId) {
                 var source = self.model.findSource({id: sourceId})[0];
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId", sourceId));
-                if ($element.parents('li:first').attr('data-type') === self.consts.root) {
-                } else {
+                var exitButton = menu.find('.exit-button');
+                var previousMenu = self.currentMenu;
+
+                if(self.currentMenu == menu){
+                    return;
+                }
+
+                self.currentMenu = menu;
+
+                if(previousMenu){
+                    self.closeMenu(previousMenu);
+                }
+
+                exitButton.on('click', function(e){
+                    self.closeMenu(menu)
+                });
+
+                if ($element.parents('li:first').attr('data-type') !== self.consts.root) {
                     menu.find('#layer-opacity').remove();
                     menu.find('#layer-opacity-title').remove();
                 }
@@ -591,17 +614,13 @@
                     }
                 }
             }
-            function removeMenu($element) {
-                $('.layer-zoom').off('click');
-                $('.layer-metadata').off('click');
-                $('#layer-menu').off('click').remove();
-            }
+
             var $btnMenu = $(e.target);
             var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
             var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
             if ($('#layer-menu').length !== 0) {
                 var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
-                removeMenu($('#layer-menu'));
+                //removeMenu($('#layer-menu'));
                 if (layerIdMenu !== currentLayerId) {
                     createMenu($btnMenu, currentSourceId, currentLayerId);
                 }

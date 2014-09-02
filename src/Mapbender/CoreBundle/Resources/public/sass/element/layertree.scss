@@ -100,11 +100,22 @@ $layer-opacity-bar-height: 5px;
   min-width: 120px;
   max-width: 200px;
   border: solid 1px $thirdColor;
-  @include noUserSelect();
   @include border-radius($radius);
 
 
-  // icon
+  & *{
+    @include noUserSelect();
+  }
+
+
+  .exit-button{
+    position: absolute;
+    right: 4px;
+    top: 0px;
+    display: block;
+  }
+
+  // arrow icon
   &:before {
     content: '';
     display: block;
