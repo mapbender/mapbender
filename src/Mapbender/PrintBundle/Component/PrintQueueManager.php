@@ -2,6 +2,7 @@
 
 namespace Mapbender\PrintBundle\Component;
 
+use FOM\UserBundle\Entity\User;
 use Mapbender\CoreBundle\Component\EntitiesServiceBase;
 use Mapbender\PrintBundle\DependencyInjection\MapbenderPrintExtension;
 use Mapbender\PrintBundle\Entity\PrintQueue;
@@ -147,9 +148,12 @@ class PrintQueueManager extends EntitiesServiceBase
      */
     public function add(array $payload)
     {
+        // try to detect user...
+        $user = isset($payload['userId'])? $this->getUserById($payload['userId']):null;
+
         return $this->persist(
             (new PrintQueue())->setIdSalt(self::genSalt())
-                ->setUser($this->getCurrentUser())
+                ->setUser($user)
                 ->setQueued(new \DateTime())
                 ->setPayload($payload)
                 ->setPriority($this->priorityVoter->getPriority($payload))
@@ -237,6 +241,20 @@ class PrintQueueManager extends EntitiesServiceBase
      */
     public function find($id){
         return $this->getRepository()->findOneBy(array('id' =>  intval($id)));
+    }
+
+    /**
+     * Get User by ID
+     *
+     * @param $id
+     * @internal param array $payload
+     * @return User
+     */
+    private function getUserById($id)
+    {
+        return $this->container->get('doctrine')
+            ->getRepository('FOMUserBundle:User')
+            ->findOneBy(array('id' => $id));
     }
 
     /**

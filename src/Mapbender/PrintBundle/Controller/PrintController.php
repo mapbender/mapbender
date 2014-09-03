@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\PrintBundle\Controller;
 
+use Mapbender\PrintBundle\Element\Token\SignerToken;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -20,23 +21,22 @@ class PrintController extends Controller
      */
     public function serviceAction()
     {
-        $data          = $this->getDecodedRequest();
+        /** @var $token SignerToken */
+        $data          = $this->decodeTransitRequest();
         $fileName      = empty($data['file_prefix']) ? 'mapbender_print.pdf' : $data['file_prefix'];
         $displayInline = true;
         $r             = null;
 
         switch (empty($data['renderMode']) ? 'direct' : $data['renderMode']) {
             case 'direct':
-                $pdfContent = $this->get('mapbender.print.engine')->doPrint($data);
-                $r          = new Response($pdfContent,
+                $r = new Response($this->get('mapbender.print.engine')->doPrint($data),
                     200,
-                    array('Content-Type'        => $displayInline ? 'application/pdf' : 'application/octet-stream',
+                    array('Content-Type' => $displayInline ? 'application/pdf' : 'application/octet-stream',
                           'Content-Disposition' => 'attachment; filename=' . $fileName)
                 );
                 break;
             case 'queued':
-                $printQueue = $this->get('mapbender.print.queue_manager')->add($data);
-                $r          = new Response($this->serialize($printQueue->getToken()));
+                $r = new Response($this->serialize($this->get('mapbender.print.queue_manager')->add($data)->getToken()));
                 break;
         }
 
@@ -49,15 +49,17 @@ class PrintController extends Controller
     public function exportAction()
     {
         $service = new ImageExportService($this->container);
-        $service->export($this->getDecodedRequest());
+        $service->export(json_decode($this->getRequest()->getContent()));
     }
 
     /**
      * @return array
      */
-    protected function getDecodedRequest()
+    protected function decodeTransitRequest()
     {
-        return json_decode($this->get('request')->getContent(), true);
+        /** @var SignerToken $token */
+        $token = $this->container->get('signer')->load($this->getRequest()->getContent(),'Mapbender\PrintBundle\Element\Token\SignerToken');
+        return $token && $token instanceof SignerToken? $token->getData(): null;
     }
 
     /**

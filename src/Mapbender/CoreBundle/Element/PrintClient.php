@@ -2,7 +2,11 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use FOM\UserBundle\Entity\User;
+use JMS\Serializer\SerializerBuilder;
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\PrintBundle\Element\Token\SignerToken;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Mapbender\PrintBundle\Component\OdgParser;
@@ -214,30 +218,12 @@ class PrintClient extends Element
                         $data['extent_feature'] = json_decode($data['extent_feature'], true);                  
                 }
 
-
                 $data['renderMode'] = $configuration['renderMode'];
-                $content = json_encode($data);
-
+                $data['userId']     = $this->getCurrentUserId();
 
                 // Forward to Printer Service URL using OWSProxy
-                $url = $this->container->get('router')->generate('mapbender_print_print_service',
-                    array(), true);
+                return $this->forwardRequest($request, $data, $this->container->get('router')->generate('mapbender_print_print_service',array(),true));
 
-                $path = array(
-                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-                    'url' => $url,
-                    'content' => $content
-                );
-                $subRequest = $request->duplicate(array(), null, $path);
-                return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-
-//            case 'queued':
-//                 // TODO: realize
-//                $response = new Response();
-//                $response->headers->set('Content-Type', 'application/json');
-//                $request = $this->container->get('request');
-//                $data = json_decode($request->getContent(), true);
-//                break;
 
             case 'template':
                 $response = new Response();
@@ -250,6 +236,41 @@ class PrintClient extends Element
                 $response->setContent($size->getContent());
                 return $response;
         }
+    }
+
+    /**
+     * Get current user
+     *
+     * if $user == 'anon.', then user = null
+     *
+     * @return int
+     */
+    public function getCurrentUserId()
+    {
+        $token = $this->container->get('security.context')->getToken();
+        $user  = $token ? $token->getUser() : null;
+        return $user && $user instanceof User ? $user->getId() : null;
+    }
+
+    /**
+     * Generate sub request
+     *
+     * @param Request $request
+     * @param array $data Data to send
+     * @param string $url Request URL
+     * @throws \Exception
+     * @return Response
+     */
+    protected function forwardRequest(Request $request, $data, $url)
+    {
+        return $this->container->get('http_kernel')->handle($request->duplicate(array(),
+                null,
+                array('_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
+                      'url'         => $url,
+                      'content'     => $this->container->get('signer')->dump(new SignerToken($data)))
+            ),
+            HttpKernelInterface::SUB_REQUEST
+        );
     }
 
 }

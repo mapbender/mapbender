@@ -198,7 +198,7 @@ class EntitiesServiceBase extends ContainerAware
     {
         $token = $this->container->get('security.context')->getToken();
         $user  = $token ? $token->getUser() : null;
-        return is_string($user) && $user == 'anon.' ? null : $user;
+        return $user && $user instanceof User ? $user : null;
     }
 
     /**

@@ -41,7 +41,7 @@ class PrintQueue
      * User ID or if anonymous then null
      *
      * @var User
-     * @ORM\OneToOne(targetEntity="FOM\UserBundle\Entity\User", cascade={"persist","remove"})
+     * @ORM\ManyToOne(targetEntity="FOM\UserBundle\Entity\User", cascade={"persist","remove"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     protected $user;
