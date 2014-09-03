@@ -291,4 +291,17 @@ class PrintQueueManager extends EntitiesServiceBase
         return $r;
     }
 
+    /**
+     * Get opened queues count
+     *
+     * @return int
+     */
+    public function countOpenedQueues()
+    {
+        return $this->createQueryBuilder()->select('count(q.id)')
+            ->where('q.started IS NULL')
+            ->andWhere('q.created IS NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

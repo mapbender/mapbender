@@ -123,6 +123,7 @@ class MapbenderPrintQueueCommand extends ContainerAwareCommand
 
             default:
                 $this->pass('PDF rendered successfully to: ' . self::PASS_COLOR .realpath($manager->getPdfPath($queue)). self::COLOR_OFF);
+                $this->pass('Opened queues: '.$manager->countOpenedQueues());
         }
     }
 
