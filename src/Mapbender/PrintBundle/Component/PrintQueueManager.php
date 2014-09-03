@@ -75,11 +75,12 @@ class PrintQueueManager extends EntitiesServiceBase
      * Render PDF
      *
      * @param PrintQueue $entity
-     * @return PrintQueue|int|PrintQueueManager::STATUS_*
+     * @param bool       $force Force start rendering
+     * @return PrintQueue|int|PrintQueueManager::STATUS_
      */
-    public function render(PrintQueue $entity)
+    public function render(PrintQueue $entity, $force = false)
     {
-        $filePath = $this->getPdFilePath($entity);
+        $filePath = $this->getPdfPath($entity);
         $dir      = $this->container->getParameter(MapbenderPrintExtension::KEY_STORAGE_DIR);
         $fs       = $this->container->get('filesystem');
 
@@ -87,7 +88,7 @@ class PrintQueueManager extends EntitiesServiceBase
             $fs->mkdir($dir, 0755);
         }
 
-        if(!$entity->isNew()){
+        if(!$force && !$entity->isNew()){
             $this->dispatch(self::STATUS_WRONG_QUEUED, $entity);
             return self::STATUS_WRONG_QUEUED;
         }
@@ -170,7 +171,7 @@ class PrintQueueManager extends EntitiesServiceBase
      */
     public function remove($entity, $flush = true)
     {
-        (new Filesystem())->remove($this->getPdFilePath($entity));
+        (new Filesystem())->remove($this->getPdfPath($entity));
         parent::remove($entity, $flush);
     }
 
@@ -211,10 +212,22 @@ class PrintQueueManager extends EntitiesServiceBase
      * @param PrintQueue $entity
      * @return string
      */
-    public function getPdFilePath(PrintQueue $entity)
+    public function getPdfPath(PrintQueue $entity)
     {
         return $this->container->getParameter(MapbenderPrintExtension::KEY_STORAGE_DIR) . '/' . $entity->getIdSalt() . ".pdf";
     }
+
+    /**
+     * Get PDF Parameter
+     *
+     * @param PrintQueue $entity
+     * @return string
+     */
+    public function getPdfUri(PrintQueue $entity)
+    {
+        return preg_replace('/^.*..\/web\//', '', $this->getPdfPath($entity));
+    }
+
 
     /**
      * Is some queue in process?

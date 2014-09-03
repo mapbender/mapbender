@@ -79,7 +79,7 @@ class MapbenderPrintQueueCommand extends ContainerAwareCommand
             if ($queue) {
                 $this->pass('The queue founded.');
                 $this->pass('Start processing.');
-                $result = $manager->render($queue);
+                $result = $manager->render($queue,true);
 
             } else {
                 $result = PrintQueueManager::STATUS_QUEUE_NOT_EXISTS;
@@ -122,7 +122,7 @@ class MapbenderPrintQueueCommand extends ContainerAwareCommand
                 break;
 
             default:
-                $this->pass('PDF rendered successfully to: ' . self::PASS_COLOR .realpath($manager->getPdFilePath($queue)). self::COLOR_OFF);
+                $this->pass('PDF rendered successfully to: ' . self::PASS_COLOR .realpath($manager->getPdfPath($queue)). self::COLOR_OFF);
         }
     }
 

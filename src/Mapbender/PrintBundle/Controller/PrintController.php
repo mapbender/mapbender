@@ -27,7 +27,7 @@ class PrintController extends Controller
         $displayInline = true;
         $r             = null;
 
-        switch (empty($data['renderMode']) ? 'direct' : $data['renderMode']) {
+        switch ( $data['renderMode']) {
             case 'direct':
                 $r = new Response($this->get('mapbender.print.engine')->doPrint($data),
                     200,
@@ -36,7 +36,12 @@ class PrintController extends Controller
                 );
                 break;
             case 'queued':
-                $r = new Response($this->serialize($this->get('mapbender.print.queue_manager')->add($data)->getToken()));
+                $queueManager = $this->get('mapbender.print.queue_manager');
+                $queue        = $queueManager->add($data);
+                $uri          = $queueManager->getPdfUri($queue);
+                $r            = new Response( $this->serialize(array('link' => $this->get('templating.helper.assets')->getUrl($uri),
+                                                                     'id'   => $queue->getId()))
+                );
                 break;
         }
 
