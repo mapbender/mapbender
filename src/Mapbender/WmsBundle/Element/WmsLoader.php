@@ -142,6 +142,7 @@ class WmsLoader extends Element
                     array(
                     'id' => $this->getId(),
                     "title" => $this->getTitle(),
+                    'example_url' => $this->container->getParameter('wmsloader.example_url'),
                     'configuration' => $this->getConfiguration()));
     }
 
