@@ -91,15 +91,14 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $diminst = new DimensionInst();
         $diminst->setCurrent($dim->getCurrent());
         $diminst->setDefault($dim->getDefault());
-        $diminst->setExtent($dim->getExtent());
         $diminst->setMultipleValues($dim->getMultipleValues());
         $diminst->setName($dim->getName());
         $diminst->setNearestValue($dim->getNearestValue());
-        $diminst->setOrigextent($dim->getExtent());
         $diminst->setUnitSymbol($dim->getUnitSymbol());
         $diminst->setUnits($dim->getUnits());
-        $diminst->setUse(false);
-        $diminst->setType($diminst->findType());
+        $diminst->setActive(false);
+        $diminst->setOrigextent($dim->getExtent());
+        $diminst->setExtent($dim->getExtent());
         return $diminst;
     }
 

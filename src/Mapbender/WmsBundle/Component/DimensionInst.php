@@ -10,17 +10,27 @@ namespace Mapbender\WmsBundle\Component;
 class DimensionInst extends Dimension
 {
 
-    const SINGLE = 'single';
-    const INTERVAL = 'interval';
-    const MULTIPLE = 'multiple';
-    const MULTIPLEINTERVAL = 'multipleinterval';
-
-    public $type;
+    const TYPE_SINGLE = 'single';
+    const TYPE_INTERVAL = 'interval';
+    const TYPE_MULTIPLE = 'multiple';
+    const TYPE_MULTIPLEINTERVAL = 'multipleinterval';
     
-    public $origextent;
+    public $origextent = null;
     
-    public $use;
+    public $active;
+    
+    public function getCreater()
+    {
+        return $this->creater;
+    }
 
+    public function setCreater($creater)
+    {
+        $this->creater = $creater;
+        return $this;
+    }
+
+    
     public function getOrigextent()
     {
         return $this->origextent;
@@ -32,74 +42,60 @@ class DimensionInst extends Dimension
         return $this;
     }
 
-    public function getUse()
+    public function getActive()
     {
-        return $this->use;
+        return $this->active;
     }
 
-    public function setUse($use)
+    public function setActive($active)
     {
-        $this->use = $use;
+        $this->active = $active;
         return $this;
     }
 
-    public function getType()
+    public static function getType($extent)
     {
-        return $this->type;
-    }
-
-    public function setType($type)
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-        
-    public function findType(){
-        $array = explode(",", $this->extent);
+        $array = explode(",", $extent);
         if (count($array) === 0) {
             return null;
         } elseif (count($array) === 1) {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
-                return self::SINGLE;
+                return self::TYPE_SINGLE;
             } else {
-                return self::INTERVAL;
+                return self::TYPE_INTERVAL;
             }
         } else {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
-                return self::MULTIPLE;
+                return self::TYPE_MULTIPLE;
             } else {
-                for ($i = 0; $i < count($array); $i++) {
-                    $array[$i] = explode("/", $array[$i]);
-                }
-                return self::MULTIPLEINTERVAL;
+                return self::TYPE_MULTIPLEINTERVAL;
             }
         }
     }
     
-    public function getTypedData(){
-        $array = explode(",", $this->extent);
+    public static function getTypedData($extent){
+        $array = explode(",", $extent);
         $res = array();
         if (count($array) === 0) {
             return $res;
         } elseif (count($array) === 1) {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
-                $res[self::SINGLE] = $array[0];
+                $res[self::TYPE_SINGLE] = $array[0];
             } else {
-                $res[self::INTERVAL] = $help;
+                $res[self::TYPE_INTERVAL] = $help;
             }
         } else {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
-                $res[self::MULTIPLE] = $array;
+                $res[self::TYPE_MULTIPLE] = $array;
             } else {
                 for ($i = 0; $i < count($array); $i++) {
                     $array[$i] = explode("/", $array[$i]);
                 }
-                $res[self::MULTIPLEINTERVAL] = $array;
+                $res[self::TYPE_MULTIPLEINTERVAL] = $array;
             }
         }
         return $res;
