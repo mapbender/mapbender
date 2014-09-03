@@ -1,7 +1,6 @@
 <?php
 namespace Mapbender\PrintBundle\Component;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -16,24 +15,8 @@ use Mapbender\PrintBundle\Component\PDF_ImageAlpha;
  */
 class PrintService
 {
-    protected static $formats = array('a0' => array(841, 1189),
-                                      'a1' => array(594, 841),
-                                      'a2' => array(420, 594),);
-    /** @var  data */
-    protected $data;
-    protected $conf;
-    protected $orientation;
-    protected $x_ul;
-    protected $y_ul;
-    protected $width;
-    protected $height;
-    protected $image_width;
-    protected $image_height;
-    protected $finalimagename;
-    protected $pdf;
-    protected $container;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct($container)
     {
         $this->container = $container;
         $this->tempdir = sys_get_temp_dir();
@@ -41,14 +24,11 @@ class PrintService
 
     /**
      * The main print function.
-     * Generates PDF binary string.
      *
-     * @param string $request PDF payload request
-     * @return string Binary
      */
-    public function doPrint(array $request)
+    public function doPrint($content)
     {   
-        $this->data = $request;
+        $this->data = $content;
         $template = $this->data['template'];
 
         $this->getTemplateConf($template);
@@ -448,9 +428,23 @@ class PrintService
     private function buildPdf()
     {
         require_once('PDF_ImageAlpha.php');
-        $tempdir      = $this->tempdir;
+        $tempdir = $this->tempdir;
         $resource_dir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
-        $this->pdf    = new PDF_ImageAlpha($this->orientation, 'mm', self::$formats[$this->data['format']]);
+        $format = $this->data['format'];
+
+        if ($format == 'a2') {
+            $format = array(420, 594);
+        }
+
+        if ($format == 'a1') {
+            $format = array(594, 841);
+        }
+
+        if ($format == 'a0') {
+            $format = array(841, 1189);
+        }
+
+        $this->pdf = new PDF_ImageAlpha($this->orientation, 'mm', $format);
         //$this->pdf = new FPDF_FPDI($this->orientation,'mm',$format);
         $pdf = $this->pdf;
         $template = $this->data['template'];
@@ -693,8 +687,7 @@ class PrintService
             $upperright[0] = round($upperright[0]);
             $upperright[1] = round($upperright[1]);
 
-            $red = ImageColorAllocate($image,255,0,0);
-
+            $red = ImageColorAllocate($image,255,0,0); 
             imageline ( $image, $lowerleft[0], $upperright[1], $upperright[0], $upperright[1], $red);
             imageline ( $image, $upperright[0], $upperright[1], $upperright[0], $lowerleft[1], $red);
             imageline ( $image, $upperright[0], $lowerleft[1], $lowerleft[0], $lowerleft[1], $red);
@@ -849,16 +842,16 @@ class PrintService
         $minY = $centery - $map_height * 0.5;
         $maxX = $centerx + $map_width * 0.5;
         $maxY = $centery + $map_height * 0.5;
-
-        $extentx = $maxX - $minX;
-        $extenty = $maxY - $minY;
-
-        $pixPos_x = (($rw_x - $minX) / $extentx) * round($this->conf['map']['width'] / 2.54 * $quality);
-        $pixPos_y = (($maxY - $rw_y) / $extenty) * round($this->conf['map']['height'] / 2.54 * $quality);
-
+        
+        $extentx = $maxX - $minX ; 
+	$extenty = $maxY - $minY ;
+        
+        $pixPos_x = (($rw_x - $minX)/$extentx) * round($this->conf['map']['width']  / 2.54 * $quality) ;
+	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['map']['height']  / 2.54 * $quality);
+        
         $pixPos = array($pixPos_x, $pixPos_y);
-
-        return $pixPos;
+	   
+	return $pixPos;
     }
     
     private function realWorld2ovMapPos($ov_width, $ov_height, $rw_x,$rw_y)
@@ -871,16 +864,16 @@ class PrintService
         $minY = $centery - $ov_height * 0.5;
         $maxX = $centerx + $ov_width * 0.5;
         $maxY = $centery + $ov_height * 0.5;
-
-        $extentx = $maxX - $minX;
-        $extenty = $maxY - $minY;
-
-        $pixPos_x = (($rw_x - $minX) / $extentx) * round($this->conf['overview']['width'] / 2.54 * $quality);
-        $pixPos_y = (($maxY - $rw_y) / $extenty) * round($this->conf['overview']['height'] / 2.54 * $quality);
+        
+        $extentx = $maxX - $minX ; 
+	$extenty = $maxY - $minY ;      
+        
+        $pixPos_x = (($rw_x - $minX)/$extentx) * round($this->conf['overview']['width'] / 2.54 * $quality) ;
+	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['overview']['height'] / 2.54 * $quality); 
 
         $pixPos = array($pixPos_x, $pixPos_y);
-
-        return $pixPos;
+	   
+	return $pixPos;
     }
     
     private function realWorld2rotatedMapPos($rw_x,$rw_y)
@@ -907,16 +900,16 @@ class PrintService
             abs(cos(deg2rad($rotation)) * $this->image_width));
         $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->image_width) +
             abs(cos(deg2rad($rotation)) * $this->image_height));
-
-        $extentx = $maxX - $minX;
-        $extenty = $maxY - $minY;
-
-        $pixPos_x = (($rw_x - $minX) / $extentx) * round($neededImageWidth);
-        $pixPos_y = (($maxY - $rw_y) / $extenty) * round($neededImageHeight);
+        
+        $extentx = $maxX - $minX ; 
+	$extenty = $maxY - $minY ;      
+        
+        $pixPos_x = (($rw_x - $minX)/$extentx) * round($neededImageWidth) ;
+	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($neededImageHeight); 
 
         $pixPos = array($pixPos_x, $pixPos_y);
-
-        return $pixPos;
+	   
+	return $pixPos;
     }
     
 }
