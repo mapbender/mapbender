@@ -1,5 +1,5 @@
 # Changelog
-* **v3.0.4.0** - Work in progress
+* **v3.0.4.0**
     - fixed element saving bug
     - use degrees as unit fallback when none are provided by SRS definition
     - added screenshot management to application editing
