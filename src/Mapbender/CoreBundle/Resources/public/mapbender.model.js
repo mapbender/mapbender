@@ -647,6 +647,10 @@ Mapbender.Model = {
                     if (mqLayer.olLayer instanceof OpenLayers.Layer.Grid) {
                         mqLayer.olLayer.clearGrid();
                     }
+                    var tileManager = this.map.olMap.tileManager;
+                    if(tileManager) {
+                        tileManager.clearTileQueue({object: mqLayer.olLayer});
+                    }
                     var removedMq = mqLayer.remove();
                     if (removedMq) {
                         this._removeLayerMaxExtent(mqLayer);

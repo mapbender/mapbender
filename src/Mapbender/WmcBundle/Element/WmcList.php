@@ -74,7 +74,8 @@ class WmcList extends Element
     static public function listAssets()
     {
         $js = array(
-            'mapbender.element.wmclist.js'
+            'mapbender.element.wmclist.js',
+            '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
         );
         return array(
             'js' => $js,
@@ -110,8 +111,8 @@ class WmcList extends Element
 
     /**
      * Returns a html encoded list of all wmc documents
-     * 
-     * @return \Symfony\Component\HttpFoundation\Response 
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function getWmcList()
     {
