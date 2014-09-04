@@ -128,6 +128,7 @@
                     modal: false,
                     closeButton: false,
                     closeOnESC: false,
+                    cssClass: 'mb-element-suggestmap-popup',
                     content: [$.ajax({
                             url: self.elementUrl + 'content',
                             complete: function(data){
