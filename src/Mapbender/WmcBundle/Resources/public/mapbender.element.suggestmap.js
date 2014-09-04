@@ -181,7 +181,7 @@
         },
         _suggestMap: function(e){
             var self = this;
-            var type = $(e.target).attr('id');
+            var type = $(e.delegateTarget).attr('id');
             if(type === 'suggestmap-email'){
                 this._suggestState($.proxy(self._suggestEmail, self));
             }else if(type === 'suggestmap-facebook'){
