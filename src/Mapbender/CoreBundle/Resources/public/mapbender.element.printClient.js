@@ -40,7 +40,7 @@
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.element)
                 .on('change', $.proxy(this._getPrintSize, this));
-
+            $('#formats input[required]').on('change invalid', this._checkFieldValidity);
             this._trigger('ready');
             this._ready();
         },
@@ -79,7 +79,6 @@
                                     cssClass: 'button right',
                                     callback: function(){
                                         self._print();
-                                        self.close();
                                     }
                                 }
                         }
@@ -532,23 +531,33 @@
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
             }else{
                 //click hidden submit button to check requierd fields
-                this._checkFields()
+                var valid = this._checkFields();
                 form.find('input[type="submit"]').click();
-
+                if(valid) this.close();
             }
         },
 
         _checkFields: function(){
-            $('#formats input[required]').on('change invalid', function() {
+            var valid = true;
+            var self = this;
+            $('#formats input[required]').each(function() {
+                valid = valid && self._checkFieldValidity.apply(this);
+            });
+            return valid;
+        },
+
+        _checkFieldValidity: function() {
+            var valid = true;
             var textfield = $(this).get(0);
             // 'setCustomValidity not only sets the message, but also marks
             // the field as invalid. In order to see whether the field really is
             // invalid, we have to remove the message first
             textfield.setCustomValidity('');
-                if (!textfield.validity.valid) {
-                    textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));
-                }
-            });
+            if (!textfield.validity.valid) {
+                //textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));
+                valid = false;
+            }
+            return valid;
         },
 
         _getPrintSize: function() {
