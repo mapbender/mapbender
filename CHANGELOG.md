@@ -1,5 +1,6 @@
 # Changelog
 * **v3.0.4.0**
+    - Switched to MIT license
     - fixed element saving bug
     - use degrees as unit fallback when none are provided by SRS definition
     - added screenshot management to application editing
