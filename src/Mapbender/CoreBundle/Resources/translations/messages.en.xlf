@@ -268,7 +268,7 @@
       </trans-unit>
       <trans-unit id="befc1f8d20bbd1ba5f26e124d8b94f1a" resname="mb.core.activityindicator.class.title">
         <source>mb.core.activityindicator.class.title</source>
-        <target>Activitiy indicator</target>
+        <target>Activity indicator</target>
       </trans-unit>
       <trans-unit id="4c68bd109de1a07d8c03455e938af4d9" resname="mb.core.activityindicator.class.description">
         <source>mb.core.activityindicator.class.description</source>
