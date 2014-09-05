@@ -118,12 +118,23 @@ class WmsInstance extends SourceInstance
         return $this->id;
     }
 
+    /**
+     * Returns dimensions
+     * 
+     * @return array of DimensionIst
+     */
     public function getDimensions()
     {
-        return $this->dimensions;
+        return $this->dimensions ? : array();
     }
 
-    public function setDimensions($dimensions)
+    /**
+     * Sets dimensions
+     * 
+     * @param array $dimensions array of DimensionIst
+     * @return \Mapbender\WmsBundle\Entity\WmsInstance
+     */
+    public function setDimensions(array $dimensions)
     {
         $this->dimensions = $dimensions;
         return $this;

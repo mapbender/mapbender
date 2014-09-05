@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmcBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -74,7 +75,8 @@ class WmcList extends Element
     static public function listAssets()
     {
         $js = array(
-            'mapbender.element.wmclist.js'
+            'mapbender.element.wmclist.js',
+            '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'
         );
         return array(
             'js' => $js,
@@ -122,8 +124,7 @@ class WmcList extends Element
         foreach ($wmclist as $wmc) {
             $wmces[$wmc->getId()] = $wmc->getState()->getTitle();
         }
-        return new Response(json_encode(array("success" => $wmces)), 200,
-            array('Content-Type' => 'application/json'));
+        return new Response(json_encode(array("success" => $wmces)), 200, array('Content-Type' => 'application/json'));
     }
 
 }

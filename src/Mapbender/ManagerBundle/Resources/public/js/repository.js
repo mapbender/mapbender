@@ -101,10 +101,10 @@ $(function() {
                     if (item.next().length > 0 && $(item.next().get(0)).attr("data-parent") === $(item.prev().get(0)).attr("data-id")) {
                         return false;
                     }
-                    if(children.length > 0){
+                    if (children.length > 0) {
                         var elm = item;
-                        $.each(children, function(idx, item){
-                            var mel = $('#'+item).remove();
+                        $.each(children, function(idx, item) {
+                            var mel = $('#' + item).remove();
                             mel.insertAfter(elm);
                             elm = mel;
                         });
@@ -112,10 +112,10 @@ $(function() {
                     resetLayerPriority();
                     return true;
                 } else if (item.next().length > 0 && $(item.next().get(0)).attr("data-parent") === item.attr("data-parent")) {
-                    if(children.length > 0){
+                    if (children.length > 0) {
                         var elm = item;
-                        $.each(children, function(idx, item){
-                            var mel = $('#'+item).remove();
+                        $.each(children, function(idx, item) {
+                            var mel = $('#' + item).remove();
                             mel.insertAfter(elm);
                             elm = mel;
                         });
@@ -128,14 +128,23 @@ $(function() {
             }
         });
     });
-    $('.dimensionGroup').on("click", '.on-off', function(e){
-        var $this = $(e.currentTarget);
-        if($this.hasClass('active')){
+    $('.dimensionGroup').on("click", '.on-off', function(e) {
+        var $this = $(e.target);
+        if ($this.hasClass('active')) {
             $this.removeClass('active');
             $this.parent().find('#' + $this.attr('id') + '-content').addClass('hidden');
         } else {
             $this.addClass('active');
             $this.parent().find('#' + $this.attr('id') + '-content').removeClass('hidden');
+        }
+    });
+    $('.dimensionGroup select').each(function() {
+        if ($(this).attr('name').indexOf('[extentEdit]') > 0){
+            $(this).on('change', function(e) {
+                var item = $(e.target);
+                var extentId = item.attr('id').substr(0, item.attr('id').indexOf('extentEdit')) + 'extent';
+                $('.dimensionGroup #' + extentId).val(item.val());
+            });
         }
     });
     $("#instanceTable").on("click", ".iconMore", showInfoBox);

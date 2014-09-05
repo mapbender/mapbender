@@ -5,11 +5,7 @@ namespace Mapbender\WmsBundle\Form\EventListener;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\DimensionInterval;
 use Mapbender\WmsBundle\Component\DimensionMultiple;
-use Mapbender\WmsBundle\Component\DimensionMultipleInterval;
 use Mapbender\WmsBundle\Component\DimensionSingle;
-use Mapbender\WmsBundle\Form\Type\DimensionMultipleType;
-use Mapbender\WmsBundle\Form\Type\DimensionIntervalType;
-use Mapbender\WmsBundle\Form\Type\DimensionSingleType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -64,36 +60,15 @@ class DimensionSubscriber implements EventSubscriberInterface
         }
 
         if ($data) {
-            $norm = $form->getNormData();
-            if ($norm instanceof DimensionSingle) {
-                
-            } elseif ($norm instanceof DimensionInterval) {
-////                $data->getDimension()->setExtent($data->getDimension()->extentStr());
-//                $extent = $data->getDimension()->getExtent();
-//                $form->add($this->factory->createNamed(
-//                        'dimension', new DimensionIntervalType(), null,
-//                        array(
-//                        'data_class' => 'Mapbender\WmsBundle\Component\DimensionInterval',
-//                        'start' => $data['start'],
-//                        'end' => $data['end'],
-//                        'interval' =>  $data['interval'],
-//                        "required" => false,
-//                        'auto_initialize' => false)));
-            } elseif ($norm instanceof DimensionMultiple) {
-////                $norm->getDimension()->setExtent($data['dimension']['extent']);
-////                $norm->setUse($data['use']);
-////                $a = 0;
-//                $origExtent = $norm->getOrigExtent();
-//                $choices = array_combine($origExtent, $origExtent);
-//                $form->add($this->factory->createNamed(
-//                        'dimension', new DimensionMultipleType(), null,
-//                        array(
-//                        'data_class' => 'Mapbender\WmsBundle\Component\DimensionMultiple',
-//                        'origExtent' => $choices,
-//                        'auto_initialize' => false)));
-            } else {
-                # TODO not supported yet
-            }
+//            $type = $data['type'];
+//            if ($type === DimensionInst::TYPE_INTERVAL && isset($data['extent']) && is_array($data['extent'])) {
+//                $data['extent'] = implode("/", $data['extent']);
+//                $event->setData($data);
+//            } else
+//            if ($type === DimensionInst::TYPE_MULTIPLE && isset($data['extent']) && is_array($data['extent'])) {
+//                $data['extent'] = implode(",", $data['extent']);
+//                $event->setData($data);
+//            }
         }
     }
 
@@ -112,64 +87,96 @@ class DimensionSubscriber implements EventSubscriberInterface
             return;
         }
         if ($data && $data instanceof DimensionInst) {
-//            $dataArr = $data->getTypedData();
-            if ($data->getType() === $data::SINGLE) {
-                $a = 0;
-            } elseif ($data->getType() === $data::INTERVAL) {
-//                $form->add($this->factory->createNamed('start', 'hidden', null,
-//                            array('data' => $dataArr[$data->getType()][0], "mapped" => false, 'auto_initialize' => false)))
-//                    ->add($this->factory->createNamed('end', 'hidden', null,
-//                            array('data' => $dataArr[$data->getType()][1], "mapped" => false, 'auto_initialize' => false)))
-//                    ->add($this->factory->createNamed('interval', 'hidden', null,
-//                            array('data' => $dataArr[$data->getType()][2], "mapped" => false, 'auto_initialize' => false)))
-//                    ->add($this->factory->createNamed('extent', 'text', null,
-//                            array('required' => true, 'auto_initialize' => false)));
-            } elseif ($data->getType() === $data::MULTIPLE) {
-                $choices = array_combine($data->getOrigextent(), $data->getOrigextent());
-                $form->add($this->factory->createNamed('extent', 'choice', null,
-                            array('required' => true, 'choices' => $choices, 'multiple' => true, 'auto_initialize' => false)));
-            } elseif ($data->getType() === $data::MULTIPLEINTERVAL) {
-                $a = 0;
-            }
-            if ($data instanceof DimensionSingle) {
-//                $form->add($this->factory->createNamed(
-//                        'dimension', new DimensionSingleType(), null,
-//                        array(
-//                        'data_class' => 'Mapbender\WmsBundle\Component\DimensionInterval',
-//                        "required" => false,
-//                        'auto_initialize' => false)));
-            } elseif ($data instanceof DimensionInterval) {
-//                $form->add($this->factory->createNamed(
-//                        'extent', new DimensionIntervalType(), null,
-//                        array(
-//                        'data_class' => 'Mapbender\WmsBundle\Component\DimensionInterval',
-//                        'start' => $extent[0],
-//                        'end' => $extent[1],
-//                        'interval' => $extent[2],
-//                        "required" => false,
-//                        'auto_initialize' => false)));
-//                $data->setExtent($data->extentStr());
-//                $extent = $data->getExtent();
-//                $form->add($this->factory->createNamed(
-//                        'dimension', new DimensionIntervalType(), null,
-//                        array(
-//                        'data_class' => 'Mapbender\WmsBundle\Component\DimensionInterval',
-//                        'start' => $extent[0],
-//                        'end' => $extent[1],
-//                        'interval' => $extent[2],
-//                        "required" => false,
-//                        'auto_initialize' => false)));
-            } elseif ($data instanceof DimensionMultiple) {
-//                $origExtent = $data->getOrigExtent();
-//                $choices = array_combine($origExtent, $origExtent);
-//                $form->add($this->factory->createNamed(
-//                        'dimension', new DimensionMultipleType(), null,
-//                        array(
-//                        'data_class' => 'Mapbender\WmsBundle\Component\DimensionMultiple',
-//                        'origExtent' => $choices,
-//                        'auto_initialize' => false)));
-            } else {
-                # TODO not supported yet
+            $this->addFields($form, $data, $event);
+        }
+    }
+
+    private function addFields($form, $data, $event)
+    {
+        $isVordefined = $data->getOrigextent() !== null;
+        $form->add($this->factory->createNamed('creator', 'hidden', null,
+                    array(
+                    'auto_initialize' => false,
+                    'read_only' => $isVordefined,
+                    'required' => true)))
+            ->add($this->factory->createNamed('type', 'hidden', null,
+                    array(
+                    'auto_initialize' => false,
+                    'read_only' => $isVordefined,
+                    'required' => true)))
+            ->add($this->factory->createNamed('name', 'text', null,
+                    array(
+                    'auto_initialize' => false,
+                    'read_only' => $isVordefined,
+                    'required' => true)))
+            ->add($this->factory->createNamed('units', 'text', null,
+                    array(
+                    'auto_initialize' => false,
+                    'read_only' => $isVordefined,
+                    'required' => false)))
+            ->add($this->factory->createNamed('unitSymbol', 'text', null,
+                    array(
+                    'auto_initialize' => false,
+                    'read_only' => $isVordefined,
+                    'required' => false)))
+            ->add($this->factory->createNamed('multipleValues', 'checkbox', null,
+                    array(
+                    'auto_initialize' => false,
+                    'disabled' => $isVordefined,
+                    'required' => false)))
+            ->add($this->factory->createNamed('nearestValue', 'checkbox', null,
+                    array(
+                    'auto_initialize' => false,
+                    'disabled' => $isVordefined,
+                    'required' => false)))
+            ->add($this->factory->createNamed('current', 'checkbox', null,
+                    array(
+                    'auto_initialize' => false,
+                    'disabled' => $isVordefined,
+                    'required' => false)))
+            ->add($this->factory->createNamed('extent', 'hidden', null,
+                    array(
+                    'required' => true,
+                    'auto_initialize' => false)))
+            ->add($this->factory->createNamed('origextent', 'hidden', null,
+                    array(
+                    'required' => true,
+                    'auto_initialize' => false)));
+        if ($isVordefined) {
+            $dataArr = $data->getData($data->getExtent());
+            $dataOrigArr = $data->getData($data->getOrigextent());
+            if ($data->getType() === $data::TYPE_SINGLE) {
+                $form->add($this->factory->createNamed('extentEdit', 'text', null,
+                            array(
+                            'required' => true,
+                            'auto_initialize' => false)));
+            } elseif ($data->getType() === $data::TYPE_MULTIPLE) {
+                $choices = array_combine($dataOrigArr, $dataOrigArr);
+                $form->add($this->factory->createNamed('extentEdit', 'choice', null,
+                            array(
+                            'data' => $dataArr,
+                            'mapped' => false,
+                            'choices' => $choices,
+                            'auto_initialize' => false,
+                            'multiple' => true,
+                            'required' => true)))
+                    ->add($this->factory->createNamed('default', 'choice', null,
+                            array(
+                            'choices' => $choices,
+                            'auto_initialize' => false,)));
+            } elseif ($data->getType() === $data::TYPE_INTERVAL) {
+                $form->add($this->factory->createNamed('extentEdit', 'text', null,
+                            array(
+                            'required' => true,
+                            'auto_initialize' => false)));
+//                $form->add($this->factory->createNamed('extent', 'hidden', null,
+//                            array(
+//                            'required' => true,
+//                            'auto_initialize' => false)))
+//                    ->add($this->factory->createNamed('origextent', 'hidden', null,
+//                            array(
+//                            'required' => true,
+//                            'auto_initialize' => false)));
             }
         }
     }

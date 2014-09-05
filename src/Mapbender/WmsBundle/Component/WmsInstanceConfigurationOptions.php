@@ -35,9 +35,9 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     public $bbox;
     
     /**
-     *
-     * @var type 
+     * ORM\Column(type="array", nullable=true)
      */
+    //@TODO Doctrine bug: "protected" replaced with "public"
     public $dimensions;
 
     /**
@@ -93,7 +93,19 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     {
         return $this->vendor;
     }
+    
+    public function getDimensions()
+    {
+        return $this->dimensions;
+    }
 
+    public function setDimensions(array $dimensions)
+    {
+        $this->dimensions = $dimensions;
+        return $this;
+    }
+
+    
     /**
      * @inheritdoc
      */
@@ -109,7 +121,8 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "opacity" => $this->opacity,
             "tiled" => $this->tiled,
             "bbox" => $this->bbox,
-            "vendor" => $this->vendor
+            "vendor" => $this->vendor,
+            "dimensions" => $this->dimensions
         );
     }
 

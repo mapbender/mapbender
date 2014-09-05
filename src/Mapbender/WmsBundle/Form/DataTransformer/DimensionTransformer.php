@@ -1,10 +1,10 @@
 <?php
 namespace Mapbender\WmsBundle\Form\DataTransformer;
 
-use Mapbender\WmsBundle\Component\Dimension;
-use Symfony\Component\Form\DataTransformerInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
+use Mapbender\CoreBundle\Utils\ArrayObject;
+use Mapbender\WmsBundle\Component\DimensionInst;
+use Symfony\Component\Form\DataTransformerInterface;
 
 /**
  * Class ObjectIdTransformer transforms a value between different representations
@@ -37,50 +37,34 @@ class DimensionTransformer implements DataTransformerInterface
     }
 
     /**
-     * Transforms id/ids to an object/objects.
+     * Transforms an object to an array.
      *
-     * @param mixed $data id(string) | array with ids
-     * @return mixed ArrayCollection | Entity object
+     * @param mixed $data object | array
+     * @return array a transformed object
      */
     public function transform($data)
     {
         if (!$data) {
             return null;
         }
-        if (is_array($data)) {
-            return Dimension::fromArray($data);
-//            $repository = $this->om->getRepository($this->classname);
-//            $qb = $repository->createQueryBuilder('obj');
-//            $qb->select('obj')->where($qb->expr()->in('obj.id', $data));
-//            $result = $qb->getQuery()->getResult();
-//            return new ArrayCollection($result);
-        } else {
-            return $data->toArray();
-//            $result = $this->om->getRepository($this->classname)->findOneBy(array('id' => $data));
-//            return $result;
-        }
-//        return $data;
+        return ArrayObject::objectToArray($data);
     }
 
     /**
-     * Transforms a object to id/ids.
+     * Transforms an array into an object
      *
-     * @param  mixed $data object to reverse transform ArrayCollection | array | Entity object
-     * @return mixed string | array id/ids from $data
+     * @param array $data array with data for an object of the 'classname'
+     * @return object of the 'classname'
      */
     public function reverseTransform($data)
     {
         if (null === $data) {
             return "";
         }
-        if (is_array($data)) {
-            return Dimension::fromArray($data);
-//            return $data;
-        } else {
-            return $data->toArray();
-//            return (string) $data->getId();
+        if(isset($data['extent']) && is_array($data['extent']) && $data['type'] === DimensionInst::TYPE_MULTIPLE){
+            $data['extent'] = implode(",", $data['extent']);
         }
-//        return $data;
+        return ArrayObject::arrayToObject("Mapbender\WmsBundle\Component\DimensionInst", $data);
     }
 
 }

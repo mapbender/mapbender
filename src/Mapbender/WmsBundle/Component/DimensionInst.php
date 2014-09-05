@@ -10,17 +10,29 @@ namespace Mapbender\WmsBundle\Component;
 class DimensionInst extends Dimension
 {
 
-    const SINGLE = 'single';
-    const INTERVAL = 'interval';
-    const MULTIPLE = 'multiple';
-    const MULTIPLEINTERVAL = 'multipleinterval';
-
+    const TYPE_SINGLE = 'single';
+    const TYPE_INTERVAL = 'interval';
+    const TYPE_MULTIPLE = 'multiple';
+    const TYPE_MULTIPLEINTERVAL = 'multipleinterval';
+    
+    public $origextent = null;
+    
+    public $active;
+    
     public $type;
     
-    public $origextent;
-    
-    public $use;
+    public function getCreater()
+    {
+        return $this->creater;
+    }
 
+    public function setCreater($creater)
+    {
+        $this->creater = $creater;
+        return $this;
+    }
+
+    
     public function getOrigextent()
     {
         return $this->origextent;
@@ -32,14 +44,14 @@ class DimensionInst extends Dimension
         return $this;
     }
 
-    public function getUse()
+    public function getActive()
     {
-        return $this->use;
+        return $this->active;
     }
 
-    public function setUse($use)
+    public function setActive($active)
     {
-        $this->use = $use;
+        $this->active = $active;
         return $this;
     }
 
@@ -55,51 +67,66 @@ class DimensionInst extends Dimension
     }
 
         
-    public static function findType($extent){
+    public static function findType($extent)
+    {
         $array = explode(",", $extent);
         if (count($array) === 0) {
             return null;
         } elseif (count($array) === 1) {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
-                return self::SINGLE;
+                return self::TYPE_SINGLE;
             } else {
-                return self::INTERVAL;
+                return self::TYPE_INTERVAL;
             }
         } else {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
-                return self::MULTIPLE;
+                return self::TYPE_MULTIPLE;
             } else {
-                return self::MULTIPLEINTERVAL;
+                return self::TYPE_MULTIPLEINTERVAL;
             }
         }
     }
     
-    public static function getTypedData($extent){
-        $array = explode(",", $extent);
+    public static function getData($extent){
+        $array = is_string($extent) ? explode(",", $extent) : $extent;
         $res = array();
-        if (count($array) === 0) {
-            return $res;
-        } elseif (count($array) === 1) {
+        if (count($array) === 1) {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
-                $res[self::SINGLE] = $array[0];
+                $res = self::getValidValue($array[0]);
             } else {
-                $res[self::INTERVAL] = $help;
+                foreach ($help as $value) {
+                    $res[] = self::getValidValue($value);
+                }
             }
         } else {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
-                $res[self::MULTIPLE] = $array;
+                foreach ($array as $value) {
+                    $res[] = self::getValidValue($value);
+                }
             } else {
                 for ($i = 0; $i < count($array); $i++) {
-                    $array[$i] = explode("/", $array[$i]);
+                    $res[$i] = array();
+                    foreach (explode("/", $array[$i]) as $value) {
+                        $res[$i][] = self::getValidValue($value);
+                    }
                 }
-                $res[self::MULTIPLEINTERVAL] = $array;
             }
         }
         return $res;
+    }
+    
+    private static function getValidValue($value){
+        if(is_numeric($value) && floatval($value) === floatval(intval($value))){
+            return intval($value);
+        } elseif(is_numeric($value)){
+            return floatval($value);
+        } else {
+            return $value;
+        }
     }
     
 }

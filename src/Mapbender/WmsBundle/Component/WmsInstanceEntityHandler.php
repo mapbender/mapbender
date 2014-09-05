@@ -96,12 +96,10 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $diminst->setNearestValue($dim->getNearestValue());
         $diminst->setUnitSymbol($dim->getUnitSymbol());
         $diminst->setUnits($dim->getUnits());
-        $diminst->setUse(false);
-        $type = $diminst->findType($dim->getExtent());
-        $typedExtent = $diminst->getTypedData($dim->getExtent());
-        $diminst->setOrigextent($typedExtent[$type]);
-        $diminst->setExtent($typedExtent[$type]);
-        $diminst->setType($type);
+        $diminst->setActive(false);
+        $diminst->setOrigextent($dim->getExtent());
+        $diminst->setExtent($dim->getExtent());
+        $diminst->setType($diminst->findType($dim->getExtent()));
         return $diminst;
     }
 
@@ -156,6 +154,25 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $wmsconf->setIsBaseSource($this->entity->isBasesource());
 
         $options = new WmsInstanceConfigurationOptions();
+        $dimensions = array();
+        foreach($this->entity->getDimensions() as $dimension){
+            if($dimension->getActive()){
+                $name = $dimension->getName();
+                $dimensions[] = array(
+                    'current' => $dimension->getCurrent(),
+                    'default' => $dimension->getDefault(),
+                    'multipleValues' => $dimension->getMultipleValues(),
+                    'name' => $dimension->getName(),
+                    '__name' => $name === 'time' || $name === 'elevation' ? : "dim_" . $name,
+                    'nearestValue' => $dimension->getNearestValue(),
+                    'unitSymbol' => $dimension->getUnitSymbol(),
+                    'units' => $dimension->getUnits(),
+                    'extent' => $dimension->getData($dimension->getExtent()),
+                    'type' => $dimension->getType(),
+                );
+            }
+        }
+        
         $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet())
             ->setProxy($this->entity->getProxy())
             ->setVisible($this->entity->getVisible())
@@ -164,10 +181,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setTransparency($this->entity->getTransparency())
             ->setOpacity($this->entity->getOpacity() / 100)
             ->setTiled($this->entity->getTiled())
-            ->setBbox($srses);
+            ->setBbox($srses)
+            ->setDimensions($dimensions);
         $wmsconf->setOptions($options);
         $entityHandler = self::createHandler($this->container, $rootlayer);
         $wmsconf->setChildren(array($entityHandler->generateConfiguration()));
+        
         $this->entity->setConfiguration($wmsconf->toArray());
     }
     

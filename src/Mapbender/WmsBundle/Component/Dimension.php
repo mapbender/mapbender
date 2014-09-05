@@ -208,7 +208,7 @@ class Dimension
     /**
      * Set extent
      * 
-     * @param DimExtent $value 
+     * @param string $value 
      * @return Dimension
      */
     public function setExtent($value)
@@ -219,41 +219,11 @@ class Dimension
     /**
      * Get extent
      * 
-     * @return DimExtent
+     * @return Dimension
      */
     public function getExtent()
     {
         return $this->extent;
     }
-    
-//
-//    public function toArray()
-//    {
-//        $dimension = array(
-//            'name' => $this->name,
-//            'units' => $this->units,
-//            'unitSymbol' => $this->unitSymbol,
-//            'default' => $this->default,
-//            'multipleValues' => $this->multipleValues,
-//            'nearestValue' => $this->nearestValue,
-//            'current' => $this->current,
-//            'extent' => $this->extent
-//        );
-//        return $dimension;
-//    }
-//
-//    public static function fromArray(array $dimension)
-//    {
-//        $dim = new Dimension();
-//        $dim->name = $dimension['name'];
-//        $dim->units = $dimension['units'];
-//        $dim->unitSymbol = $dimension['unitSymbol'];
-//        $dim->default = $dimension['default'];
-//        $dim->multipleValues = $dimension['multipleValues'];
-//        $dim->nearestValue = isset($dimension['nearestValue']) ? $dimension['nearestValue'] : null;
-//        $dim->current = $dimension['current'];
-//        $dim->extent = $dimension['extent'];
-//        return $dimension;
-//    }
 
 }

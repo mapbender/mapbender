@@ -9,12 +9,10 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\PersistentCollection;
 use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
-use Mapbender\CoreBundle\Component\Element as ElementComponent;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SourceInstanceItem;
-use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Contact;
@@ -162,7 +160,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
                 if ($fieldValue instanceof PersistentCollection &&
                     isset($data[$fieldName]) && is_array($data[$fieldName]) && $objectExists instanceof Source) {
                     $collection = $fieldValue->toArray();
-                    for ($i = 0; $i < count($data[$fieldName]); $i++) {
+                    for ($i = 0; $i < count($data[$fieldName]) && count($data[$fieldName]) === count($collection); $i++) {
                         $this->mapSource($data[$fieldName][$i], $this->getClassName($data[$fieldName][$i]),
                             $collection[$i]);
                     }
@@ -369,9 +367,9 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
                 $newObject = $this->denormalize($item, $newclassName);
                 $this->em->persist($newObject);
                 if ($object instanceof Layerset && $newObject instanceof SourceInstance) {
-                    $newObject->generateConfiguration();
+//                    EntityHandler::createHandler($this->container, $newObject)->generateConfiguration();
                     $this->em->persist($newObject);
-                }
+                } 
                 $this->em->flush();
                 $collection->add($newObject);
             } else {

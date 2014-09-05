@@ -48,6 +48,14 @@
     .leaveContainer{
       margin-left:-6px;
       margin-top:1px; // Fix for Firefox
+      .layer-menu-btn{
+        margin-left: 4px;
+        position: relative !important;
+        &:before{
+          content: '\f0c9';
+          font-family: 'FontAwesome';
+        }
+      }
     }
   }
   .checkWrapper{position: relative;}
@@ -71,56 +79,71 @@
     }
   }
 }
-.layer-menu-btn{
-  position: relative !important;
-}
-.layer-menu-btn:before{
-  content: '\f0c9';
-  font-family: 'FontAwesome';
-}
-.layer-menu{
+
+$layer-slider-bar-height: 5px;
+.layer-menu {
   position: absolute;
+  right: -5px;
   background-color: white;
   padding: $space/2;
+  padding-top: 20px;
   margin-top: $space/2;
   margin-left: -5px;
   z-index: 20;
   min-width: 120px;
   max-width: 200px;
-  border:solid 1px $thirdColor;
+  border: solid 1px $thirdColor;
   @include border-radius($radius);
-
-  &:before{
+  & *{
+    @include noUserSelect();
+  }
+  .labelInput {
+    display: block;
+    position: relative;
+    margin-top: -20px;
+    white-space: nowrap;
+  }
+  .exit-button{
+    position: absolute;
+    right: 4px;
+    top: 0px;
+    display: block;
+  }
+  // arrow icon
+  &:before {
     content: '';
     display: block;
     width: 0;
     height: 0;
-    border-bottom:10px solid $firstColor;
-    border-left:10px solid transparent;
-    border-right:10px solid transparent;
-    @include absolute(-$space/2 '' '' 0);
+    border-bottom: 10px solid $firstColor;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    position: absolute;
+    right: 0;
+    top: -10px;
+  }
+  .layer-slider-bar {
+    position: relative;
+    color: $lightFontColor;
+    height: $layer-slider-bar-height;
+    background-color: $thirdColor;
+    width: 100px;
+    margin-bottom: $space;
+    @include border-radius(2px);
+    .layer-slider-handle {
+      position: absolute;
+      top: -$layer-slider-bar-height;
+      left: 0;
+      cursor: pointer;
+      width: 30px;
+      height: 16px;
+      line-height: 16px;
+      background-color: #6fb536;
+      font-size: 12px;
+      text-align: center;
+      @include border-radius(4px);
+    }
   }
 }
-$layer-opacity-bar-height: 5px;
-.layer-opacity-bar{
-  position: relative;
-  color:$lightFontColor;
-  height: $layer-opacity-bar-height;
-  background-color: $thirdColor;
-  width: 100px;
-  margin-bottom: $space;
-  @include border-radius(2px);
-}
-.layer-opacity-handle{
-  position: absolute;
-  top: -$layer-opacity-bar-height;
-  left: 0;
-  cursor: pointer;
-  width: 30px;
-  height: 16px;
-  line-height: 16px;
-  background-color:#6fb536;
-  font-size: 12px;
-  text-align:center;
-  @include border-radius(4px);
-}
+
+
