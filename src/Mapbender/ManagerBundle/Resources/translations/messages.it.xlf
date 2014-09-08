@@ -450,6 +450,78 @@
         <source>mb.manager.template.region.accordion.label</source>
         <target>Accordion</target>
       </trans-unit>
+      <trans-unit id="1f0348f8a4838a4c3eef8e5db24cc9b5" resname="mb.manager.managerbundle.import_application">
+        <source>mb.manager.managerbundle.import_application</source>
+        <target>__mb.manager.managerbundle.import_application</target>
+      </trans-unit>
+      <trans-unit id="0956c95cd7247b67ada1981fa3f484bf" resname="mb.manager.managerbundle.export_application">
+        <source>mb.manager.managerbundle.export_application</source>
+        <target>__mb.manager.managerbundle.export_application</target>
+      </trans-unit>
+      <trans-unit id="8c8173e8ee2b47284d02906130e77bad" resname="mb.manager.admin.application.upload.tooltip">
+        <source>mb.manager.admin.application.upload.tooltip</source>
+        <target>__mb.manager.admin.application.upload.tooltip</target>
+      </trans-unit>
+      <trans-unit id="cae4b6bbf2a2d496be9bf327a1955ab4" resname="mb.manager.admin.application.upload.button">
+        <source>mb.manager.admin.application.upload.button</source>
+        <target>__mb.manager.admin.application.upload.button</target>
+      </trans-unit>
+      <trans-unit id="fd5de98877bbdf4173112e0623ef1163" resname="mb.manager.admin.application.upload.label">
+        <source>mb.manager.admin.application.upload.label</source>
+        <target>__mb.manager.admin.application.upload.label</target>
+      </trans-unit>
+      <trans-unit id="3eb549dcde4852c63589588868847c17" resname="mb.manager.admin.application.custom_css">
+        <source>mb.manager.admin.application.custom_css</source>
+        <target>__mb.manager.admin.application.custom_css</target>
+      </trans-unit>
+      <trans-unit id="417ef5ea406e9bb1aa8233eb78555abe" resname="mb.manager.admin.application.import.addApplications">
+        <source>mb.manager.admin.application.import.addApplications</source>
+        <target>__mb.manager.admin.application.import.addApplications</target>
+      </trans-unit>
+      <trans-unit id="b2a733728235bb0267b7c85c2432d27f" resname="mb.manager.admin.application.import.addAcl">
+        <source>mb.manager.admin.application.import.addAcl</source>
+        <target>__mb.manager.admin.application.import.addAcl</target>
+      </trans-unit>
+      <trans-unit id="385dcbda58640a31f9bd6d5f2f099134" resname="mb.manager.admin.application.import.addSources">
+        <source>mb.manager.admin.application.import.addSources</source>
+        <target>__mb.manager.admin.application.import.addSources</target>
+      </trans-unit>
+      <trans-unit id="4db8a68cd0721c0161a58a84e343ca0f" resname="mb.manager.admin.application.import.btn.import">
+        <source>mb.manager.admin.application.import.btn.import</source>
+        <target>__mb.manager.admin.application.import.btn.import</target>
+      </trans-unit>
+      <trans-unit id="8dc19f75927b90dc117dd7b1005f4c4a" resname="mb.manager.admin.application.import.btn.cancel">
+        <source>mb.manager.admin.application.import.btn.cancel</source>
+        <target>__mb.manager.admin.application.import.btn.cancel</target>
+      </trans-unit>
+      <trans-unit id="8b66b94f0cac90de6e5cadab57b5e9f2" resname="mb.manager.admin.application.export.addAcl">
+        <source>mb.manager.admin.application.export.addAcl</source>
+        <target>__mb.manager.admin.application.export.addAcl</target>
+      </trans-unit>
+      <trans-unit id="b9e306a74c87d58fa2d7ea5f15558d19" resname="mb.manager.admin.application.export.addSources">
+        <source>mb.manager.admin.application.export.addSources</source>
+        <target>__mb.manager.admin.application.export.addSources</target>
+      </trans-unit>
+      <trans-unit id="f7718749231ef31d7ce17e0e9a06aa0e" resname="mb.manager.admin.application.export.btn.export">
+        <source>mb.manager.admin.application.export.btn.export</source>
+        <target>__mb.manager.admin.application.export.btn.export</target>
+      </trans-unit>
+      <trans-unit id="40d50597c26f2ed1b922e8a3b57d9d63" resname="mb.manager.admin.application.export.btn.cancel">
+        <source>mb.manager.admin.application.export.btn.cancel</source>
+        <target>__mb.manager.admin.application.export.btn.cancel</target>
+      </trans-unit>
+      <trans-unit id="dbd9bf9785be4d2e41fdea56c53c6219" resname="mb.manager.upload.label_delete">
+        <source>mb.manager.upload.label_delete</source>
+        <target>__mb.manager.upload.label_delete</target>
+      </trans-unit>
+      <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
+        <source>mb.core.entity.app.screenshotfile.error</source>
+        <target>__mb.core.entity.app.screenshotfile.error</target>
+      </trans-unit>
+      <trans-unit id="8b893357eea2f8e824f5e4bb613b3496" resname="mb.core.entity.app.screenshotfile.format_error">
+        <source>mb.core.entity.app.screenshotfile.format_error</source>
+        <target>__mb.core.entity.app.screenshotfile.format_error</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
