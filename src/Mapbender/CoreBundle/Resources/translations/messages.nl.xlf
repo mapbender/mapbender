@@ -898,6 +898,34 @@
         <source>You can use the following snippet in an email to send the POI.</source>
         <target>You can use the following snippet in an email to send the POI.</target>
       </trans-unit>
+      <trans-unit id="7676545c9153a0ed87dc96296d665c5a" resname="mb.core.metadata.popup.title">
+        <source>mb.core.metadata.popup.title</source>
+        <target>Titel</target>
+      </trans-unit>
+      <trans-unit id="4be1f8a2c784e24713e63c07ed4b5f49" resname="mb.core.metadata.popup.btn.ok">
+        <source>mb.core.metadata.popup.btn.ok</source>
+        <target>OK</target>
+      </trans-unit>
+      <trans-unit id="a091e836228a240d137f28d1f7e99f5e" resname="mb.core.searchrouter.no_results">
+        <source>mb.core.searchrouter.no_results</source>
+        <target>Geen resultaten</target>
+      </trans-unit>
+      <trans-unit id="f518bb2f60b3deb2e5b973e00e8088f2" resname="mb.core.searchrouter.result_counter">
+        <source>mb.core.searchrouter.result_counter</source>
+        <target>Resultaat teller</target>
+      </trans-unit>
+      <trans-unit id="035305154a06c6bd1851f8680663ddf8" resname="mb.core.layertree.tooltip.menu.close">
+        <source>mb.core.layertree.tooltip.menu.close</source>
+        <target>Dicht menu</target>
+      </trans-unit>
+      <trans-unit id="788796392812fe40c46f1cad215833f2" resname="mb.core.printclient.popup.btn.queues">
+        <source>mb.core.printclient.popup.btn.queues</source>
+        <target>Afdruktaak</target>
+      </trans-unit>
+      <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
+        <source>mb.core.entity.app.screenshotfile.error</source>
+        <target>Screenshot fout</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -770,6 +770,18 @@
         <source>mb.core.metadata.popup.btn.ok</source>
         <target>Close</target>
       </trans-unit>
+      <trans-unit id="035305154a06c6bd1851f8680663ddf8" resname="mb.core.layertree.tooltip.menu.close">
+        <source>mb.core.layertree.tooltip.menu.close</source>
+        <target>Close</target>
+      </trans-unit>
+      <trans-unit id="788796392812fe40c46f1cad215833f2" resname="mb.core.printclient.popup.btn.queues">
+        <source>mb.core.printclient.popup.btn.queues</source>
+        <target>Print job</target>
+      </trans-unit>
+      <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
+        <source>mb.core.entity.app.screenshotfile.error</source>
+        <target>Screenshot file error</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
