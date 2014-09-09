@@ -68,7 +68,6 @@
         <div class="metadataContainer">
         {% for section in metadata.sections %}
             {% set vt=prefix~section.title %}
-            {{ dump(section) }}
             <div>{{ vt | trans}}</div>
             <div>
             {% if section.title == 'item' %}
