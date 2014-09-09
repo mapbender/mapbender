@@ -42,6 +42,30 @@
         <source>mb.print.imageexport.chooseformat</source>
         <target>Escoger formato para exportar</target>
       </trans-unit>
+      <trans-unit id="ce987fd821b0f00e695f97f3b0a73664" resname="mb.print.queue.table.head.id">
+        <source>mb.print.queue.table.head.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="af430ffa268e839d0c26a7938c8df57f" resname="mb.print.queue.table.head.created">
+        <source>mb.print.queue.table.head.created</source>
+        <target>Creado</target>
+      </trans-unit>
+      <trans-unit id="8ac4ffaa86e97e559a8b1f873a16a26d" resname="mb.print.queue.table.head.rendered">
+        <source>mb.print.queue.table.head.rendered</source>
+        <target>Estado</target>
+      </trans-unit>
+      <trans-unit id="8631113f1add8f0c5faf76acae655d58" resname="mb.print.queue.table.head.user">
+        <source>mb.print.queue.table.head.user</source>
+        <target>Usuario</target>
+      </trans-unit>
+      <trans-unit id="38145f48e75a20b0dcb6de660abb68ad" resname="mb.print.queue.table.head.link">
+        <source>mb.print.queue.table.head.link</source>
+        <target></target>
+      </trans-unit>
+      <trans-unit id="83e1b59305263e2db974ea529a5150be" resname="mb.print.queue.table.head.action">
+        <source>mb.print.queue.table.head.action</source>
+        <target></target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
