@@ -54,11 +54,12 @@ class PrintClient extends Element
      */
     static public function listAssets()
     {
-        return array('js' => array('mapbender.element.printClient.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/printclient.scss'),
-            'trans' => array('MapbenderCoreBundle:Element:printclient.json.twig'));
+        return array('js'    => array('vendor/jquery.dataTables.min.js',
+                                      'mapbender.element.printClient.js',
+                                      '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                                      '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
+                     'css'   => array('@MapbenderCoreBundle/Resources/public/sass/element/printclient.scss'),
+                     'trans' => array('MapbenderCoreBundle:Element:printclient.json.twig'));
     }
 
     /**
@@ -235,6 +236,15 @@ class PrintClient extends Element
                 $size = $odgParser->getMapSize($data['template']);
                 $response->setContent($size->getContent());
                 return $response;
+
+            default: // redirect requests
+                $request = $this->container->get('request');
+                return $this->forwardRequest($request,
+                    array('userId'  => $this->getCurrentUserId(),
+                          'element' => $configuration,
+                          'request' => $request->request->all()),
+                    $this->container->get('router')->generate('mapbender_print_print_'.$action, array(), true)
+                );
         }
     }
 

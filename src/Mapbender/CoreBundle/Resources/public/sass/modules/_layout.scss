@@ -4,5 +4,6 @@
 .clear{clear:both;}
 .clearContainer{
   height:0px;
+  visibility: hidden;
   @extend .clear;
 }

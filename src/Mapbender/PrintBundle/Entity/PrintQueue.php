@@ -41,7 +41,7 @@ class PrintQueue
      * User ID or if anonymous then null
      *
      * @var User
-     * @ORM\ManyToOne(targetEntity="FOM\UserBundle\Entity\User", cascade={"persist","remove"})
+     * @ORM\ManyToOne(targetEntity="FOM\UserBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     protected $user;
@@ -50,7 +50,7 @@ class PrintQueue
      * The element configuration
      *
      * @var array
-     * @ORM\Column(type="array",nullable=true)
+     * @ORM\Column(type="json_array",nullable=true)
      */
     protected $payload;
 

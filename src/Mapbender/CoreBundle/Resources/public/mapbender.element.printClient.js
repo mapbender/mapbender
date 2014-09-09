@@ -39,8 +39,12 @@
             $('input[name="scale_text"], input[name="rotation"]', this.element)
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.element)
-                .on('change', $.proxy(this._getPrintSize, this));
-            
+                .on('change', $.proxy(this._getPrintSize, this))
+
+            this.element.bind('queueCreated',function (e, queueInfo) {
+                //console.log(queueInfo);
+            });
+
             this._trigger('ready');
             this._ready();
         },
@@ -53,6 +57,8 @@
             this.callback = callback ? callback : null;
             var self = this;
             var me = $(this.element);
+            var tabContainer;
+
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
             if(!this.popup || !this.popup.$element){
                 this.popup = new Mapbender.Popup2({
@@ -64,26 +70,78 @@
                         closeOnESC: false,
                         content: self.element,
                         width: 360,
-                        height: 370,
+                        height: 390,
                         cssClass: 'customPrintDialog',
                         buttons: {
-                                'cancel': {
-                                    label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
-                                    cssClass: 'button buttonCancel critical right',
-                                    callback: function(){
-                                        self.close();
-                                    }
-                                },
-                                'ok': {
-                                    label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
-                                    cssClass: 'button right',
-                                    callback: function(){
-                                        self._print();
-                                    }
+                            'cancel': {
+                                label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
+                                cssClass: 'button buttonCancel critical right',
+                                callback: function(){
+                                    self.close();
                                 }
+                            },
+                            'ok': {
+                                label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
+                                cssClass: 'button right',
+                                callback: function(){
+                                    self.print();
+                                    tabContainer.tabs({active:   1});
+                                }
+                            }
                         }
                     });
                 this.popup.$element.on('close', $.proxy(this.close, this));
+
+                tabContainer = this.popup.$element.find('.tab-container');
+                tabContainer.tabs({
+                    active:   0,
+                    activate: function (event, ui) {
+
+                        var panel = ui.newPanel;
+                        var table;
+
+                        if(tabContainer.data('currentReloadInterval')){
+                            clearInterval(tabContainer.data('currentReloadInterval'));
+                            tabContainer.data('currentReloadInterval',null);
+                        }
+
+                        if(panel.hasClass('print-form')) {
+                            return;
+                        }
+
+                        // restore table
+                        if(panel.data('table')){
+                            table = panel.data('table');
+                        }else{
+                            table = panel.find('> table');
+                            panel.data('table',table);
+                        }
+
+                        // table exists?
+                        if(!table.size()) {
+                            return;
+
+                            // try to find initialized table
+                            table = panel.find('table.dataTable');
+                            if(!table.size()){
+                                return;
+                            }
+                        }
+
+                        var fields = [];
+                        var dataTable;
+                        if(panel.hasClass('own-queues')) {
+                            fields = ['id', 'created', 'status', 'uri'];
+                        } else if(panel.hasClass('all-queues')) {
+                            fields = ['id', 'created', 'username', 'status', 'uri'];
+                        }
+
+                        dataTable = self.openQueueList(fields, table);
+                        tabContainer.data('currentReloadInterval',setInterval(function(){
+                            dataTable.ajax.reload();
+                        }, 3000));
+                    }
+                });
              } else {
                  if (this.popupIsOpen === false){
                     this.popup.open(self.element);
@@ -108,6 +166,103 @@
                 this.popup = null;
             }
             this.callback ? this.callback.call() : this.callback = null;
+        },
+
+        openQueueList: function (fields, table,request) {
+            var self = this;
+            var assetPath = Mapbender.configuration.application.urls.asset;
+            var removeTitle = Mapbender.trans('mb.core.printclient.popup.remove.queue');
+            var openTitle = Mapbender.trans('mb.core.printclient.popup.open.pdf');
+            var dataTable;
+
+            if(!request){
+                request = {};
+            }
+
+            if( !table.data('firstInit')){
+                var columns = [];
+
+                table.data('firstInit',true);
+                $.each(fields, function (i, name) {
+                    var column = {
+                        targets:   i,
+                        className: name,
+                        data:      name
+                    };
+
+                    switch (name) {
+                        case 'uri':
+                            column.sortable = false;
+                            column.searchable = false;
+                            column.render = function (val, type, row, meta) {
+                                if(type !== 'display') {
+                                    return val;
+                                }
+                                var link = '';
+                                if(row.status == 'ready') {
+                                    link += '<a href="' + assetPath + val + '" class="button pdf" target="' + val + '" title="' + openTitle + '"></a>';
+                                }else{
+                                    link += '<i class="progress"></i>';
+                                }
+                                link += '<a href="#" data-id="' + row.id + '" class="button critical remove" title=' + removeTitle + '"></a>'
+                                return link;
+                            }
+                            break;
+                        case 'created':
+                            column.render = function (val, type, row, meta) {
+                                if(type !== 'display') {
+                                    return val;
+                                }
+                                var date = new Date(val * 1000);
+                                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                            }
+                            break;
+                    }
+
+                    columns[i] = column;
+                })
+
+                function onButtonClick(e) {
+                    var button = $(e.currentTarget);
+                    if (button.hasClass('remove')) {
+                        var tr = button.closest('tr');
+                        tr.addClass('remove');
+                        button.closest('a').animate({height: "0px"},0);
+                        $.ajax({
+                            url: self.getBaseUrl() + '/remove',
+                            type: 'POST',
+                            data: {id: button.data('id')},
+                            success:function(response){
+                                tr.hide(0,function(){
+                                    dataTable.ajax.reload();
+                                });
+                            }
+                        })
+                    }
+                }
+
+                dataTable = table.DataTable({
+                    ajax: {
+                        url: self.getBaseUrl() + '/queuelist',
+                        data: function (data) {
+                            return $.extend({}, data, request);
+                        },
+                        type: "POST"
+                    },
+                    paging:     false,
+                    searching:  false,
+                    info:       false,
+                    autoWidth:  false,
+                    order:      [0, 'desc'],
+                    columnDefs: columns
+                }).on('draw.dt', function () {
+                    table.find(' > tbody > tr > td > a').on('click', onButtonClick);
+                });
+            }else{
+                dataTable = table.DataTable();
+            }
+
+            return dataTable;
         },
 
         _loadPrintFormats: function() {
@@ -182,16 +337,19 @@
                        span = '<span class="required">*</span>';
                     }
 
-                    extra_fields.append($('<label></label>', {
+                    var formElement = $('<div/>').addClass('form-element');
+                    formElement.append($('<label/>', {
                         'html': opt_fields[field].label+span,
                         'class': 'labelInput'
                     }));
-                    extra_fields.append($('<input></input>', {
+                    formElement.append($('<input/>', {
                         'type': 'text',
                         'class': 'input validationInput',
-                        'name': 'extra['+field+']',
-                        'style': 'margin-left: 3px'
+                        'name': 'extra['+field+']'
                     }));
+
+                    extra_fields.append(formElement);
+
                     if(opt_fields[field].options.required === true){
                         $('input[name="extra['+field+']"]').attr("required", "required");
                     }
@@ -332,9 +490,6 @@
             return $('select[name="scale_select"],input[name="scale_text"]').val();
         },
 
-        _print: function() {
-            this._printDirectly();
-        },
 
         _getPrintExtent: function() {
             var data = {
@@ -350,8 +505,8 @@
             return data;
         },
 
-        _printDirectly: function() {
-            var form = $('form#formats', this.element);
+        print: function() {
+            var form = $('form#formats', this.element),
             extent = this._getPrintExtent(),
             template_key = this.element.find('select[name="template"]').val(),
             format = this.options.templates[template_key].format,
@@ -395,6 +550,7 @@
                 name: 'file_prefix',
                 value: file_prefix
             }));
+
 
             // koordinaten fuer extent feature mitschicken
             var feature_coords = new Array();
@@ -506,7 +662,7 @@
             }
 
             // replace pattern
-            
+
             if (typeof this.options.replace_pattern !== 'undefined' && this.options.replace_pattern !== null){
                 for(var i = 0; i < this.options.replace_pattern.length; i++) {
                     $.merge(fields, $('<input />', {
@@ -521,27 +677,50 @@
             fields.appendTo(form.find('div#layers'));
 
             // Post in neuen Tab (action bei form anpassen)
-            var url         =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
-            var queuedPrint =  this.options.renderMode && this.options.renderMode  == 'queued';
-
-
-
-            form.get(0).setAttribute('action', url);
-            form.attr('target', '_blank');
-            form.attr('method', 'post');
-
             if (lyrCount === 0){
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
-            }else{
-                //click hidden submit button to check requierd fields
-                this._checkFields()
-
-                if(queuedPrint){
-                    console.log(form.serialize());
-                }else{ // direct
-                    form.find('input[type="submit"]').click();
-                }
+                return;
             }
+
+            this._checkFields();
+
+            switch (this.options.renderMode){
+                case 'queued':
+                    return this._printQueued(form);
+                case 'direct':
+                    return this._printDirect(form);
+            }
+
+        },
+
+        _printDirect: function (form) {
+            form.get(0).setAttribute('action', this.getPrintUrl());
+            form.attr('target', '_blank');
+            form.attr('method', 'post');
+            form.find('input[type="submit"]').click();
+            return form;
+        },
+
+        _printQueued: function (form) {
+            var el = this.element;
+            return $.ajax({
+                url: this.getPrintUrl(),
+                type: 'POST',
+                dataType: "json",
+                data: form.serialize(),
+                success: function(queueInfo) {
+                    el.trigger('queueCreated', queueInfo);
+                }
+            });
+        },
+
+        getPrintUrl: function(){
+            return this.getBaseUrl()+'/direct';
+        },
+
+
+        getBaseUrl: function(){
+            return Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') ;
         },
 
         _checkFields: function(){

@@ -5,6 +5,7 @@ use Mapbender\PrintBundle\Element\Token\SignerToken;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Mapbender\PrintBundle\Component\ImageExportService;
 use Symfony\Component\Serializer\Encoder\JsonEncode;
@@ -22,7 +23,7 @@ class PrintController extends Controller
     public function serviceAction()
     {
         /** @var $token SignerToken */
-        $data          = $this->decodeTransitRequest();
+        $data          = $this->decodeToken();
         $fileName      = empty($data['file_prefix']) ? 'mapbender_print.pdf' : $data['file_prefix'];
         $displayInline = true;
         $r             = null;
@@ -49,18 +50,60 @@ class PrintController extends Controller
     }
 
     /**
+     * @Route("/queues")
+     * @Template()
+     */
+    public function queuesAction()
+    {
+        return array();
+    }
+
+    /**
+     * Secured element API method
+     *
+     * @Route("/queuelist")
+     */
+    public function queueListAction()
+    {
+        $printQueues = $this->get('mapbender.print.queue_manager')->getUserQueueInfos($this->decodeToken()['userId']);
+        return new JsonResponse(array(
+                'data' => $printQueues
+            ));
+    }
+
+    /**
+     * Remove queue
+     *
+     * @Route("/remove")
+     */
+    public function removeAction()
+    {
+        $token   = $this->decodeToken();
+        $manager = $this->get('mapbender.print.queue_manager');
+        $queue   = $manager->find($token['request']['id']);
+        return new JsonResponse($manager->remove($queue));
+    }
+
+    /**
+     * @Route("/test")
+     */
+    public function testAction()
+    {
+        return new Response("test");
+    }
+
+    /**
      * @Route("/export")
      */
     public function exportAction()
     {
-        $service = new ImageExportService($this->container);
-        $service->export(json_decode($this->getRequest()->getContent()));
+        return (new ImageExportService($this->container))->export($this->get('request')->getContent());
     }
 
     /**
      * @return array
      */
-    protected function decodeTransitRequest()
+    protected function decodeToken()
     {
         /** @var SignerToken $token */
         $token = $this->container->get('signer')->load($this->getRequest()->getContent(),'Mapbender\PrintBundle\Element\Token\SignerToken');
@@ -70,7 +113,7 @@ class PrintController extends Controller
     /**
      * Serialize as json
      *
-     * @param $data
+     * @param $data array(userId,element,data)
      * @return string|\Symfony\Component\Serializer\Encoder\scalar
      */
     public function serialize($data)

@@ -8,6 +8,7 @@ use Mapbender\PrintBundle\DependencyInjection\MapbenderPrintExtension;
 use Mapbender\PrintBundle\Entity\PrintQueue;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Class PrintQueueManager
@@ -214,20 +215,43 @@ class PrintQueueManager extends EntitiesServiceBase
      */
     public function getPdfPath(PrintQueue $entity)
     {
-        return $this->container->getParameter(MapbenderPrintExtension::KEY_STORAGE_DIR) . '/' . $entity->getIdSalt() . ".pdf";
+        return $this->getPdfPathBySalt($entity->getIdSalt());
     }
 
     /**
      * Get PDF Parameter
+     *
+     * @param string $salt
+     * @internal string PrintQueue $entity
+     * @return string
+     */
+    public function getPdfPathBySalt($salt)
+    {
+        return $this->container->getParameter(MapbenderPrintExtension::KEY_STORAGE_DIR) . '/' . $salt . ".pdf";
+    }
+
+    /**
+     * Get PDF URI by entity
      *
      * @param PrintQueue $entity
      * @return string
      */
     public function getPdfUri(PrintQueue $entity)
     {
-        return preg_replace('/^.*..\/web\//', '', $this->getPdfPath($entity));
+        return $this->getPdfUriBySalt($entity->getIdSalt());
     }
 
+    /**
+     * Get PDF URI by salt
+     *
+     * @param $salt
+     * @internal param PrintQueue $entity
+     * @return string
+     */
+    public function getPdfUriBySalt($salt)
+    {
+        return preg_replace('/^.*..\/web\//', '', $this->getPdfPathBySalt($salt));
+    }
 
     /**
      * Is some queue in process?
@@ -303,5 +327,51 @@ class PrintQueueManager extends EntitiesServiceBase
             ->andWhere('q.created IS NULL')
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    /**
+     * @param $userId
+     *
+     * @return PrintQueue[]
+     */
+    public function getUserQueueInfos($userId = null) {
+
+        $dateFields    = array('queued', 'created', 'started');
+        $queryBuilder = $this->createQueryBuilder()
+            ->select('q.id, q.queued, q.created, q.started, q.priority, q.idSalt')
+            ->orderBy('q.priority', 'DESC')
+            ->addOrderBy('q.queued', 'ASC');
+
+        if ($userId) {
+            /** @var User $user */
+            $user = $this->getUserById($userId);
+            $queryBuilder
+                ->where('q.user = :user')
+                ->setParameter('user', $user);
+        }
+
+        $queueInfoList = $queryBuilder->getQuery()->getResult();
+        foreach ($queueInfoList as &$queueInfo) {
+            $queueInfo['uri'] = $this->getPdfUriBySalt($queueInfo['idSalt']);
+            foreach ($dateFields as $name) {
+                $queueInfo[$name] = self::dateTimeToTimestamp($queueInfo[$name]);
+            }
+            $queueInfo['username'] = $userId && $user ? $user->getUsername() : '';
+            $queueInfo['status']   = $queueInfo['created'] ? 'ready' : ($queueInfo['started'] ? 'rendering' : 'queued');
+
+        }
+
+        return $queueInfoList;
+    }
+
+    /**
+     * Get timestamp by datetime object
+     *
+     * @param $date
+     * @return int|null
+     */
+    public static function dateTimeToTimestamp($date)
+    {
+        return $date instanceof \DateTime ? $date->getTimestamp() : null;
     }
 }
