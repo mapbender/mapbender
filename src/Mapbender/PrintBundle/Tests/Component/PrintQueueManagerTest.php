@@ -5,7 +5,9 @@ namespace Mapbender\PrintBundle\Tests\Component;
 use Mapbender\CoreBundle\Component\Event\BaseEvent;
 use Mapbender\PrintBundle\Component\IdentityPriorityVoter;
 use Mapbender\PrintBundle\Component\PrintQueueManager;
-
+use Satooshi\Bundle\CoverallsBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Tests\Functional\app\AppKernel;
+use Symfony\Component\Console\Input\ArrayInput;
 
 /**
  * Class PrintQueueManagerTest
@@ -16,10 +18,19 @@ use Mapbender\PrintBundle\Component\PrintQueueManager;
  */
 class PrintQueueManagerTest extends Base
 {
-    /**
-     * @var PrintQueueManager
-     */
+    /** @var PrintQueueManager */
     protected $manager;
+
+    public function  testHeavyLoad()
+    {
+        for($i = 0; $i < 1000; $i++ ){
+            $this->manager()->add($this->getPayload());
+        }
+    }
+
+    public function testGetQueues(){
+        $queues = $this->manager()->getUserQueueInfos(1);
+    }
 
     public  function testAddRemove()
     {
@@ -48,14 +59,14 @@ class PrintQueueManagerTest extends Base
 
         // check rendering
         $manager->render($queue);
-        $this->assertEquals(is_file($manager->getPdFilePath($queue)),true);
+        $this->assertEquals(is_file($manager->getPdfPath($queue)),true);
 
         // check find by id
         $this->assertEquals($id, $this->manager()->find($id)->getId());
 
         // check remove
         $this->manager()->remove($queue);
-        $this->assertEquals(!is_file($manager->getPdFilePath($queue)),true);
+        $this->assertEquals(!is_file($manager->getPdfPath($queue)),true);
     }
 
     public function testRendering(){

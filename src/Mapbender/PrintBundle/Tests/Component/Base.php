@@ -6,6 +6,9 @@ use Symfony\Component\BrowserKit\Cookie;
 use Doctrine\DBAL\Portability\Connection;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class Base
@@ -58,9 +61,7 @@ class Base extends WebTestCase
      */
     protected function db()
     {
-        return $this->connection ? $this->connection : $this->connection = $this->getClient()->getContainer(
-        )->get('doctrine'
-        )->getConnection();
+        return $this->connection ? $this->connection : $this->connection = $this->getContainer()->get('doctrine')->getConnection();
     }
 
     /**
@@ -85,4 +86,25 @@ class Base extends WebTestCase
         return $this->testString;
     }
 
+    /**
+     * @param Application $application
+     * @param string      $command
+     * @param array       $options
+     * @return mixed
+     */
+    protected function runConsole($application, $command, array $options = array())
+    {
+        return $application->run(new ArrayInput(array_merge($options,
+            array('command' => $command,
+                  '-e'      => "test",
+                  '-q'      => null,))));
+    }
+
+    /**
+     * @return ContainerInterface
+     */
+    protected function getContainer()
+    {
+        return $this->getClient()->getContainer();
+    }
 }
