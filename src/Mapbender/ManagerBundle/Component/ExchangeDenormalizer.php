@@ -411,7 +411,6 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
                     $idName = $this->findIdName($fields);
                     $entity = $this->findExistingEntity($className, $value[$idName]);
                     $reflectionMethod = new \ReflectionMethod($className, $fields[$idName][self::KEY_GETTER]);
-                    #$val = $reflectionMethod->invoke($entity);
                     return $reflectionMethod->invoke($entity);
                 } else {
                     foreach ($value as $key => $subvalue) {

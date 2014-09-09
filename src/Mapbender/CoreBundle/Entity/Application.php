@@ -390,7 +390,7 @@ class Application
      *
      * @param array $extra_assets
      */
-    public function setExtraAssets(array $extra_assets)
+    public function setExtraAssets(array $extra_assets = null)
     {
         $this->extra_assets = $extra_assets;
 

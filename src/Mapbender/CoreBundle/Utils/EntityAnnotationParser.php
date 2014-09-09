@@ -51,13 +51,17 @@ class EntityAnnotationParser
                         ) : true;
                 }
             }
+            
+            $fieldName  = $property->getName();
+            $methodHash = "";
+            foreach(preg_split("/_/", $fieldName) as $chunk){
+                $chunk = ucwords($chunk);
+                $methodHash .= $chunk;
+            }
 
             // exclude not annotated fields
             if (count($annotations)) {
-                $fieldName = $property->getName();
-
                 foreach ($methods as $methodName => $method) {
-                    $methodHash = ucwords($fieldName);
                     switch ($methodName) {
                         case 'get' . $methodHash: $annotations['getter'] = $methodName;
                             break;
@@ -86,31 +90,30 @@ class EntityAnnotationParser
                 }
                 $fields[$fieldName] = $annotations;
             } elseif (!$onlyAnnotation) {
-                $propProps = array();
-                $fieldName = $property->getName();
+                $fieldProperties = array();
+
                 foreach ($methods as $methodName => $method) {
-                    $methodHash = ucwords($fieldName);
                     switch ($methodName) {
-                        case 'get' . $methodHash: $propProps['getter'] = $methodName;
+                        case 'get' . $methodHash: $fieldProperties['getter'] = $methodName;
                             break;
-                        case 'set' . $methodHash: $propProps['setter'] = $methodName;
+                        case 'set' . $methodHash: $fieldProperties['setter'] = $methodName;
                             break;
-                        case 'has' . $methodHash: $propProps['hasMethod'] = $methodName;
+                        case 'has' . $methodHash: $fieldProperties['hasMethod'] = $methodName;
                             break;
-                        case 'is' . $methodHash: $propProps['isMethod'] = $methodName;
+                        case 'is' . $methodHash: $fieldProperties['isMethod'] = $methodName;
                             break;
                     }
                 }
 
                 // try to find getter if not founded before 
-                if (!isset($propProps['getter'])) {
-                    if (isset($propProps['hasMethod'])) {
-                        $annotation['getter'] = $propProps['hasMethod'];
-                    } elseif (isset($propProps['isMethod'])) {
-                        $annotation['getter'] = $propProps['isMethod'];
+                if (!isset($fieldProperties['getter'])) {
+                    if (isset($fieldProperties['hasMethod'])) {
+                        $annotation['getter'] = $fieldProperties['hasMethod'];
+                    } elseif (isset($fieldProperties['isMethod'])) {
+                        $annotation['getter'] = $fieldProperties['isMethod'];
                     }
                 }
-                $fields[$fieldName] = $propProps;
+                $fields[$fieldName] = $fieldProperties;
             }
         }
         return $fields;

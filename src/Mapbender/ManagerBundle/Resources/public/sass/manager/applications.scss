@@ -232,9 +232,8 @@
     display: block;
     margin-bottom: $space/2;
   }
-  label {
-    margin-right: 10px;
-  }
+  label{margin-right: 10px;}
+  select{min-width: 300px;}
   .dropdown{min-width: 300px;}
   .messageBox{
     width:270px;

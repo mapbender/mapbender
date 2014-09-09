@@ -1,9 +1,9 @@
 <form action="{{ path('mapbender_manager_application_export') }}" method="post" id="exportForm" name="exportForm" {{ form_enctype(form)}}  novalidate="novalidate" target="_blank">
   <div class="defaultForm elementForm">
-    <div class="left">
+    <!--div class="left">
         {{ form_widget(form.addAcl) }}<label for="{{form.addAcl.vars.id}}" class="labelCheck">{{"mb.manager.admin.application.export.addAcl"|trans}}</label>
     </div>
-    <div class="clearContainer"></div>
+    <div class="clearContainer"></div-->
     <div class="left">
         {{ form_widget(form.addSources) }}<label for="{{form.addSources.vars.id}}" class="labelCheck">{{"mb.manager.admin.application.export.addSources"|trans}}</label>
     </div>
@@ -20,5 +20,5 @@
   </div>
   <div class="clearContainer"></div>
   {{ form_row(form._token) }}
-  {{ form_rest(form) }}
+  {#{ form_rest(form) }#}
 </form>
