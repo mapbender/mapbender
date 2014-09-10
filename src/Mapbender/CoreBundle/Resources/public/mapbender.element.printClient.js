@@ -20,6 +20,7 @@
         height: null,
         popupIsOpen: true,
         rotateValue: 0,
+        queueRefreshDelay: 3000,
 
         _create: function() {
             if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
@@ -92,7 +93,7 @@
                     });
                 this.popup.$element.on('close', $.proxy(this.close, this));
 
-                tabContainer = this.popup.$element.find('.tab-container');
+                self.tabContainer = tabContainer = this.popup.$element.find('.tab-container');
                 tabContainer.tabs({
                     active:   0,
                     activate: function (event, ui) {
@@ -100,10 +101,7 @@
                         var panel = ui.newPanel;
                         var table;
 
-                        if(tabContainer.data('currentReloadInterval')){
-                            clearInterval(tabContainer.data('currentReloadInterval'));
-                            tabContainer.data('currentReloadInterval',null);
-                        }
+                        self.stopUpdateQueues();
 
                         if(panel.hasClass('print-form')) {
                             return;
@@ -130,16 +128,19 @@
 
                         var fields = [];
                         var dataTable;
+                        var request = {};
                         if(panel.hasClass('own-queues')) {
                             fields = ['id', 'created', 'status', 'uri'];
+                            request.type = 'own';
                         } else if(panel.hasClass('all-queues')) {
                             fields = ['id', 'created', 'username', 'status', 'uri'];
+                            request.type = 'all';
                         }
 
-                        dataTable = self.openQueueList(fields, table);
+                        dataTable = self.openQueueList(fields, table,request);
                         tabContainer.data('currentReloadInterval',setInterval(function(){
                             dataTable.ajax.reload();
-                        }, 3000));
+                        }, self.queueRefreshDelay));
                     }
                 });
              } else {
@@ -155,11 +156,23 @@
             this._updateGeometry(true);
         },
 
+        /**
+         * Stop update queue list
+         */
+        stopUpdateQueues: function () {
+            var tabContainer = this.tabContainer;
+            if(tabContainer.data('currentReloadInterval')) {
+                clearInterval(tabContainer.data('currentReloadInterval'));
+                tabContainer.data('currentReloadInterval', null);
+            }
+        },
+
         close: function() {
             if(this.popup){
                 this.element.hide().appendTo($('body'));
                 this.popupIsOpen = false;
                 this._updateElements();
+                this.stopUpdateQueues();
                 if(this.popup.$element){
                     this.popup.destroy();
                 }
@@ -168,14 +181,14 @@
             this.callback ? this.callback.call() : this.callback = null;
         },
 
-        openQueueList: function (fields, table,request) {
+        openQueueList: function (fields, table, request) {
             var self = this;
             var assetPath = Mapbender.configuration.application.urls.asset;
             var removeTitle = Mapbender.trans('mb.core.printclient.popup.remove.queue');
             var openTitle = Mapbender.trans('mb.core.printclient.popup.open.pdf');
             var dataTable;
 
-            if(!request){
+            if(!request) {
                 request = {};
             }
 
