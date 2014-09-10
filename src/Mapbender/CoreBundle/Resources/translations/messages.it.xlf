@@ -766,6 +766,38 @@
         <source>mb.core.entity.app.screenshotfile.error</source>
         <target>Errore di screenshot</target>
       </trans-unit>
+      <trans-unit id="a87548e0e7218ad7fec67e3be50477bd" resname="mb.core.printclient.label.settings">
+        <source>mb.core.printclient.label.settings</source>
+        <target>Impostazioni</target>
+      </trans-unit>
+      <trans-unit id="29978e41237e69b0fb994f152708deb1" resname="mb.core.printclient.label.queues">
+        <source>mb.core.printclient.label.queues</source>
+        <target>Code</target>
+      </trans-unit>
+      <trans-unit id="d856c35bdd8561d093b89cbe4fe72abc" resname="mb.core.printclient.label.global_queues">
+        <source>mb.core.printclient.label.global_queues</source>
+        <target>Code globali</target>
+      </trans-unit>
+      <trans-unit id="ce987fd821b0f00e695f97f3b0a73664" resname="mb.print.queue.table.head.id">
+        <source>mb.print.queue.table.head.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="af430ffa268e839d0c26a7938c8df57f" resname="mb.print.queue.table.head.created">
+        <source>mb.print.queue.table.head.created</source>
+        <target>Creato</target>
+      </trans-unit>
+      <trans-unit id="8ac4ffaa86e97e559a8b1f873a16a26d" resname="mb.print.queue.table.head.rendered">
+        <source>mb.print.queue.table.head.rendered</source>
+        <target>Stato/target>
+      </trans-unit>
+      <trans-unit id="38145f48e75a20b0dcb6de660abb68ad" resname="mb.print.queue.table.head.link">
+        <source>mb.print.queue.table.head.link</source>
+        <target></target>
+      </trans-unit>
+      <trans-unit id="8631113f1add8f0c5faf76acae655d58" resname="mb.print.queue.table.head.user">
+        <source>mb.print.queue.table.head.user</source>
+        <target>Utente</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
