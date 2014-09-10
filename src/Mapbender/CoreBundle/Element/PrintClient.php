@@ -135,6 +135,9 @@ class PrintClient extends Element
             }
             $config["quality_levels"] = $levels;
         }
+
+        $user                       = $this->container->get('mapbender.print.queue_manager')->getCurrentUser();
+        $config["displayAllQueues"] = $user ? $user->isAdmin() : false;
         return $config;
     }
 
@@ -219,8 +222,9 @@ class PrintClient extends Element
                         $data['extent_feature'] = json_decode($data['extent_feature'], true);                  
                 }
 
-                $data['renderMode'] = $configuration['renderMode'];
-                $data['userId']     = $this->getCurrentUserId();
+                $user = $this->container->get('mapbender.print.queue_manager')->getCurrentUser();
+                $data['renderMode']       = $configuration['renderMode'];
+                $data['userId']           = $user ? $user->getId() : null;
 
                 // Forward to Printer Service URL using OWSProxy
                 return $this->forwardRequest($request, $data, $this->container->get('router')->generate('mapbender_print_print_service',array(),true));

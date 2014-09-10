@@ -202,6 +202,20 @@ class EntitiesServiceBase extends ContainerAware
     }
 
     /**
+     * Get User by ID
+     *
+     * @param $id
+     * @internal param array $payload
+     * @return User
+     */
+    public function getUserById($id)
+    {
+        return $this->container->get('doctrine')
+            ->getRepository('FOMUserBundle:User')
+            ->findOneBy(array('id' => $id));
+    }
+
+    /**
      * Remove entity
      *
      * @param mixed $entity

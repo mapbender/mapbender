@@ -281,20 +281,6 @@ class PrintQueueManager extends EntitiesServiceBase
     }
 
     /**
-     * Get User by ID
-     *
-     * @param $id
-     * @internal param array $payload
-     * @return User
-     */
-    private function getUserById($id)
-    {
-        return $this->container->get('doctrine')
-            ->getRepository('FOMUserBundle:User')
-            ->findOneBy(array('id' => $id));
-    }
-
-    /**
      * Fix broken queues
      *
      * @return PrintQueue[]
@@ -338,7 +324,8 @@ class PrintQueueManager extends EntitiesServiceBase
 
         $dateFields    = array('queued', 'created', 'started');
         $queryBuilder = $this->createQueryBuilder()
-            ->select('q.id, q.queued, q.created, q.started, q.priority, q.idSalt')
+            ->select('q.id, q.queued, q.created, q.started, q.priority, q.idSalt, u.username')
+            ->innerJoin('q.user', 'u')
             ->orderBy('q.priority', 'DESC')
             ->addOrderBy('q.queued', 'ASC');
 
@@ -356,13 +343,13 @@ class PrintQueueManager extends EntitiesServiceBase
             foreach ($dateFields as $name) {
                 $queueInfo[$name] = self::dateTimeToTimestamp($queueInfo[$name]);
             }
-            $queueInfo['username'] = $userId && $user ? $user->getUsername() : '';
             $queueInfo['status']   = $queueInfo['created'] ? 'ready' : ($queueInfo['started'] ? 'rendering' : 'queued');
 
         }
 
         return $queueInfoList;
     }
+
 
     /**
      * Get timestamp by datetime object

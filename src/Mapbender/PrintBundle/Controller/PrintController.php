@@ -11,6 +11,7 @@ use Mapbender\PrintBundle\Component\ImageExportService;
 use Symfony\Component\Serializer\Encoder\JsonEncode;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use FOM\UserBundle\Security\User;
 
 class PrintController extends Controller
 {
@@ -65,10 +66,24 @@ class PrintController extends Controller
      */
     public function queueListAction()
     {
-        $printQueues = $this->get('mapbender.print.queue_manager')->getUserQueueInfos($this->decodeToken()['userId']);
-        return new JsonResponse(array(
-                'data' => $printQueues
-            ));
+        $token   = $this->decodeToken();
+        $type    = $token['request']['type'];
+        $userId  = $token['userId'];
+        $manager = $this->get('mapbender.print.queue_manager');
+        $user    = $manager->getUserById($userId);
+        $queues  = array();
+
+        if ($type == 'own') {
+            if ($user) {
+                $queues = $manager->getUserQueueInfos($user->getId());
+            }
+        } else {
+            if ($user && $user->isAdmin()) {
+                $queues = $manager->getUserQueueInfos();
+            }
+        }
+
+        return new JsonResponse(array('data' => $queues));
     }
 
     /**
@@ -89,7 +104,7 @@ class PrintController extends Controller
      */
     public function testAction()
     {
-        return new Response("test");
+        return new JsonResponse($this->get('mapbender.print.queue_manager')->getUserQueueInfos());
     }
 
     /**

@@ -43,7 +43,6 @@
                 .on('change', $.proxy(this._getPrintSize, this))
 
             this.element.bind('queueCreated',function (e, queueInfo) {
-                //console.log(queueInfo);
             });
 
             this._trigger('ready');
@@ -94,6 +93,12 @@
                 this.popup.$element.on('close', $.proxy(this.close, this));
 
                 self.tabContainer = tabContainer = this.popup.$element.find('.tab-container');
+                console.log(this.options);
+                if(!this.options.displayAllQueues) {
+                    tabContainer.find('li > a.all-queues').remove();
+                    tabContainer.find('> div.all-queues').remove();
+                }
+
                 tabContainer.tabs({
                     active:   0,
                     activate: function (event, ui) {
@@ -143,6 +148,9 @@
                         }, self.queueRefreshDelay));
                     }
                 });
+
+
+
              } else {
                  if (this.popupIsOpen === false){
                     this.popup.open(self.element);
@@ -219,16 +227,21 @@
                                 }
                                 link += '<a href="#" data-id="' + row.id + '" class="button critical remove" title=' + removeTitle + '"></a>'
                                 return link;
-                            }
+                            };
                             break;
                         case 'created':
                             column.render = function (val, type, row, meta) {
                                 if(type !== 'display') {
                                     return val;
                                 }
+
+                                if(row.status != 'ready'){
+                                    val = row.queued;
+                                }
+
                                 var date = new Date(val * 1000);
                                 return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-                            }
+                            };
                             break;
                     }
 
@@ -696,7 +709,6 @@
             }
 
             this._checkFields();
-
             switch (this.options.renderMode){
                 case 'queued':
                     return this._printQueued(form);
