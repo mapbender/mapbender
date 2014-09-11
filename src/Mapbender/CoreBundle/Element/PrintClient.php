@@ -240,5 +240,27 @@ class PrintClient extends Element
                 return $response;
         }
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function normalizeConfiguration(array $configuration, array $aaa = array())
+    {
+        if (is_string($configuration['scales'])) {
+            $configuration['scales'] = explode(',', $configuration['scales']);
+        }
+        return $configuration;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function denormalizeConfiguration(array $configuration)
+    {
+        if (is_string($configuration['scales'])) {
+            $configuration['scales'] = explode(',', $configuration['scales']);
+        }
+        return $configuration;
+    }
 
 }
