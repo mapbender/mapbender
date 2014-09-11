@@ -42,13 +42,6 @@ abstract class ExchangeHandler
         $this->securityContext = $this->container->get('security.context');
     }
 
-    protected function isGrantedCreate()
-    {
-        $application = new Application();
-        // ACL access check
-        $this->checkGranted('CREATE', $application);
-    }
-
     protected function getAllowedAppllications()
     {
         $applications = $this->getContainer()->get('mapbender')->getApplicationEntities();
@@ -133,12 +126,13 @@ abstract class ExchangeHandler
 
     /**
      * Checks the grant for an action and an object
-     *
+     * 
      * @param \Object $object the object 
      * @throws AccessDeniedException
      */
     public function checkGranted($action, $object)
     {
+        $gr = $this->securityContext->isGranted($action, $object);
         if ($action === "CREATE") {
             $oid = new ObjectIdentity('class', get_class($object));
             if (false === $this->securityContext->isGranted($action, $oid)) {

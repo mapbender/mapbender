@@ -527,6 +527,18 @@
         <source>mb.manager.admin.application.import.btn.cancel</source>
         <target>Cancel</target>
       </trans-unit>
+      <trans-unit id="8831631476c3e9b5b0428bf0c075b980" resname="mb.manager.import.application.failed">
+        <source>mb.manager.import.application.failed</source>
+        <target>Application cannot be imported.</target>
+      </trans-unit>
+      <trans-unit id="9aef31f26d2f42c82d7b936c0386fe3e" resname="mb.manager.import.acl.failed">
+        <source>mb.manager.import.acl.failed</source>
+        <target>Acls cannot be imported.</target>
+      </trans-unit>
+      <trans-unit id="9c0cce2c5e9cf4ee90fbc62f697167ac" resname="mb.manager.import.source.failed">
+        <source>mb.manager.import.source.failed</source>
+        <target>Sources cannot be imported.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

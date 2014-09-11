@@ -26,7 +26,7 @@ class RequestInformation
      * ORM\Column(type="array", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $formats;
+    public $formats = array();
 
     /**
      * Get httpGet

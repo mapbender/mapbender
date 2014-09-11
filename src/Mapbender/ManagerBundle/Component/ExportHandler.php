@@ -9,6 +9,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\ExchangeNormalizer;
 use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Form\Type\ExportJobType;
@@ -37,7 +38,7 @@ class ExportHandler extends ExchangeHandler
      */
     public function createForm()
     {
-        $this->isGrantedCreate();
+        $this->checkGranted('EDIT', new Application());
         $allowed_apps = $this->getAllowedAppllications();
         $type = new ExportJobType();
         return $this->container->get('form.factory')->create($type, $this->job, array('applications' => $allowed_apps));

@@ -1,5 +1,5 @@
 <?php
-namespace Mapbender\WmsBundle\Component\Exception;
+namespace Mapbender\ManagerBundle\Component\Exception;
 
 /**
  * The WmsException

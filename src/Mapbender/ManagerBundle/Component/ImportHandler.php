@@ -8,8 +8,9 @@
 
 namespace Mapbender\ManagerBundle\Component;
 
+use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Component\Application as AppComponent;
-use Mapbender\WmsBundle\Component\Exception\ImportException;
+use Mapbender\ManagerBundle\Component\Exception\ImportException;
 use Mapbender\ManagerBundle\Form\Type\ImportJobType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -37,7 +38,7 @@ class ImportHandler extends ExchangeHandler
      */
     public function createForm()
     {
-        $this->isGrantedCreate();
+        $this->checkGranted('CREATE', new Application());
 //        $allowed_apps = $this->getAllowedAppllications();
         $type = new ImportJobType();
         return $this->container->get('form.factory')->create($type, $this->job, array());
@@ -83,7 +84,8 @@ class ImportHandler extends ExchangeHandler
             try {
                 $em->getConnection()->beginTransaction();
                 $class = $this->denormalizer->getClassName($item);
-                $item[ExchangeSerializer::KEY_SLUG] = AppComponent::generateSlug($this->container, $item[ExchangeSerializer::KEY_SLUG], 'imp');
+                $item[ExchangeSerializer::KEY_SLUG] = AppComponent::generateSlug($this->container,
+                        $item[ExchangeSerializer::KEY_SLUG], 'imp');
                 $app = $this->denormalizer->denormalize($item, $class);
                 $app->setScreenshot(null);
                 $this->denormalizer->generateElementConfiguration($app);
@@ -91,7 +93,8 @@ class ImportHandler extends ExchangeHandler
                 $em->clear();
             } catch (\Exception $e) {
                 $em->getConnection()->rollback();
-                throw new ImportException('mb.manager.import.application.failed');
+                throw new ImportException($this->container->get('translator')->trans(
+                    'mb.manager.import.application.failed', array()) . " -> " . $e->getMessage());
             }
         }
     }
@@ -109,20 +112,24 @@ class ImportHandler extends ExchangeHandler
             $em->clear();
         } catch (\Exception $e) {
             $em->getConnection()->rollback();
-            throw new ImportException('mb.manager.import.acl.failed');
+            throw new ImportException($this->container->get('translator')->trans(
+                'mb.manager.import.acl.failed', array()) . " -> " . $e->getMessage());
         }
     }
 
     private function importSources($data)
     {
+        $em = $this->container->get('doctrine')->getManager();
         try {
-            $em = $this->container->get('doctrine')->getManager();
             $em->getConnection()->beginTransaction();
             foreach ($data as $item) {
-                $source = isset($item[ExchangeSerializer::KEY_IDENTIFIER]) ? $this->findSource($item[ExchangeSerializer::KEY_IDENTIFIER]) : null;
+                $source = isset($item[ExchangeSerializer::KEY_IDENTIFIER]) ?
+                    $this->findSource($item[ExchangeSerializer::KEY_IDENTIFIER]) : null;
                 $class = $this->denormalizer->getClassName($item);
                 if (!$source) {
-                    $this->denormalizer->denormalize($item, $class);
+                    $source = $this->denormalizer->denormalize($item, $class);
+                    $em->persist($source);
+                    $em->flush();
                 } else {
                     $this->denormalizer->mapSource($item, $class, $source);
                 }
@@ -131,7 +138,8 @@ class ImportHandler extends ExchangeHandler
             $em->clear();
         } catch (\Exception $e) {
             $em->getConnection()->rollback();
-            throw new ImportException('mb.manager.import.source.failed');
+            throw new ImportException($this->container->get('translator')->trans(
+                'mb.manager.import.source.failed', array()) . " -> " . $e->getMessage());
         }
     }
 
