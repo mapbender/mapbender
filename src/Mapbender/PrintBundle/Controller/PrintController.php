@@ -28,8 +28,20 @@ class PrintController extends Controller
         $fileName      = empty($data['file_prefix']) ? 'mapbender_print.pdf' : $data['file_prefix'];
         $displayInline = true;
         $r             = null;
-
+        
         switch ( $data['renderMode']) {
+
+            case 'queued':
+                if( !$data['anonymous']){
+                    $queueManager = $this->get('mapbender.print.queue_manager');
+                    $queue        = $queueManager->add($data);
+                    $uri          = $queueManager->getPdfUri($queue);
+                    $r            = new Response( $this->serialize(array('link' => $this->get('templating.helper.assets')->getUrl($uri),
+                                                                         'id'   => $queue->getId()))
+                    );
+                    break;
+                }
+
             case 'direct':
                 $r = new Response($this->get('mapbender.print.engine')->doPrint($data),
                     200,
@@ -37,14 +49,7 @@ class PrintController extends Controller
                           'Content-Disposition' => 'attachment; filename=' . $fileName)
                 );
                 break;
-            case 'queued':
-                $queueManager = $this->get('mapbender.print.queue_manager');
-                $queue        = $queueManager->add($data);
-                $uri          = $queueManager->getPdfUri($queue);
-                $r            = new Response( $this->serialize(array('link' => $this->get('templating.helper.assets')->getUrl($uri),
-                                                                     'id'   => $queue->getId()))
-                );
-                break;
+
         }
 
         return $r;

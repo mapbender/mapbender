@@ -138,6 +138,7 @@ class PrintClient extends Element
 
         $user                       = $this->container->get('mapbender.print.queue_manager')->getCurrentUser();
         $config["displayAllQueues"] = $user ? $user->isAdmin() : false;
+        $config["anonymous"]        = !$user;
         return $config;
     }
 
@@ -225,6 +226,8 @@ class PrintClient extends Element
                 $user = $this->container->get('mapbender.print.queue_manager')->getCurrentUser();
                 $data['renderMode']       = $configuration['renderMode'];
                 $data['userId']           = $user ? $user->getId() : null;
+                $data['anonymous']        = $configuration['anonymous'];
+
 
                 // Forward to Printer Service URL using OWSProxy
                 return $this->forwardRequest($request, $data, $this->container->get('router')->generate('mapbender_print_print_service',array(),true));

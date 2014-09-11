@@ -1,29 +1,29 @@
-(function($) {
+(function ($) {
 
-    $.widget("mapbender.mbPrintClient",  {
-        options: {
+    $.widget("mapbender.mbPrintClient", {
+        options:           {
             style: {
                 fillColor:     '#ffffff',
                 fillOpacity:   0.5,
                 strokeColor:   '#000000',
                 strokeOpacity: 1.0,
-                strokeWidth:    2
+                strokeWidth:   2
             }
         },
-        map: null,
-        layer: null,
-        control: null,
-        feature: null,
-        lastScale: null,
-        lastRotation: null,
-        width: null,
-        height: null,
-        popupIsOpen: true,
-        rotateValue: 0,
+        map:               null,
+        layer:             null,
+        control:           null,
+        feature:           null,
+        lastScale:         null,
+        lastRotation:      null,
+        width:             null,
+        height:            null,
+        popupIsOpen:       true,
+        rotateValue:       0,
         queueRefreshDelay: 3000,
 
-        _create: function() {
-            if(!Mapbender.checkTarget("mbPrintClient", this.options.target)){
+        _create: function () {
+            if(!Mapbender.checkTarget("mbPrintClient", this.options.target)) {
                 return;
             }
             var self = this;
@@ -32,71 +32,75 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
 
-        _setup: function(){
+        _setup: function () {
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
 
-            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
-                .on('change', $.proxy(this._updateGeometry, this));
-            $('input[name="scale_text"], input[name="rotation"]', this.element)
-                .on('keyup', $.proxy(this._updateGeometry, this));
-            $('select[name="template"]', this.element)
-                .on('change', $.proxy(this._getPrintSize, this))
+            $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element).on('change', $.proxy(this._updateGeometry, this));
+            $('input[name="scale_text"], input[name="rotation"]', this.element).on('keyup', $.proxy(this._updateGeometry, this));
+            $('select[name="template"]', this.element).on('change', $.proxy(this._getPrintSize, this))
 
-            this.element.bind('queueCreated',function (e, queueInfo) {
+            this.element.bind('queueCreated', function (e, queueInfo) {
             });
 
             this._trigger('ready');
             this._ready();
         },
 
-        defaultAction: function(callback) {
+        defaultAction: function (callback) {
             this.open(callback);
         },
 
-        open: function(callback){
+        open: function (callback) {
             this.callback = callback ? callback : null;
             var self = this;
             var me = $(this.element);
             var tabContainer;
 
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
-            if(!this.popup || !this.popup.$element){
+            if(!this.popup || !this.popup.$element) {
                 this.popup = new Mapbender.Popup2({
-                        title: self.element.attr('title'),
-                        draggable: true,
-                        header: true,
-                        modal: false,
-                        closeButton: false,
-                        closeOnESC: false,
-                        content: self.element,
-                        width: 360,
-                        height: 390,
-                        cssClass: 'customPrintDialog',
-                        buttons: {
-                            'cancel': {
-                                label: Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
-                                cssClass: 'button buttonCancel critical right',
-                                callback: function(){
-                                    self.close();
-                                }
-                            },
-                            'ok': {
-                                label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
-                                cssClass: 'button right',
-                                callback: function(){
-                                    self.print();
-                                    tabContainer.tabs({active:   1});
+                    title:       self.element.attr('title'),
+                    draggable:   true,
+                    header:      true,
+                    modal:       false,
+                    closeButton: false,
+                    closeOnESC:  false,
+                    content:     self.element,
+                    width:       360,
+                    height:      390,
+                    cssClass:    'customPrintDialog',
+                    buttons:     {
+                        'cancel': {
+                            label:    Mapbender.trans('mb.core.printclient.popup.btn.cancel'),
+                            cssClass: 'button buttonCancel critical right',
+                            callback: function () {
+                                self.close();
+                            }
+                        },
+                        'ok':     {
+                            label:    Mapbender.trans('mb.core.printclient.popup.btn.ok'),
+                            cssClass: 'button right',
+                            callback: function () {
+                                self.print();
+                                if(self._isQueueMode()) {
+                                    tabContainer.tabs({active: 1});
+                                    tabContainer.data('dataTable').ajax.reload();
                                 }
                             }
                         }
-                    });
+                    }
+                });
                 this.popup.$element.on('close', $.proxy(this.close, this));
 
                 self.tabContainer = tabContainer = this.popup.$element.find('.tab-container');
-                console.log(this.options);
                 if(!this.options.displayAllQueues) {
-                    tabContainer.find('li > a.all-queues').remove();
-                    tabContainer.find('> div.all-queues').remove();
+                    // remove global queue list and tab
+                    tabContainer.find('li > a.all-queues, > div.all-queues').remove();
+                }
+
+                if(this.options.anonymous) {
+                    // remove tabs and not print-form
+                    tabContainer.find('.tabs, > div:not([class="print-form"])').remove();
                 }
 
                 tabContainer.tabs({
@@ -113,11 +117,11 @@
                         }
 
                         // restore table
-                        if(panel.data('table')){
+                        if(panel.data('table')) {
                             table = panel.data('table');
-                        }else{
+                        } else {
                             table = panel.find('> table');
-                            panel.data('table',table);
+                            panel.data('table', table);
                         }
 
                         // table exists?
@@ -126,7 +130,7 @@
 
                             // try to find initialized table
                             table = panel.find('table.dataTable');
-                            if(!table.size()){
+                            if(!table.size()) {
                                 return;
                             }
                         }
@@ -142,19 +146,18 @@
                             request.type = 'all';
                         }
 
-                        dataTable = self.openQueueList(fields, table,request);
-                        tabContainer.data('currentReloadInterval',setInterval(function(){
+                        dataTable = self.openQueueList(fields, table, request);
+                        tabContainer.data('dataTable',dataTable);
+                        tabContainer.data('currentReloadInterval', setInterval(function () {
                             dataTable.ajax.reload();
                         }, self.queueRefreshDelay));
                     }
                 });
 
-
-
-             } else {
-                 if (this.popupIsOpen === false){
+            } else {
+                if(this.popupIsOpen === false) {
                     this.popup.open(self.element);
-                 }
+                }
             }
             me.show();
             this.popupIsOpen = true;
@@ -175,13 +178,13 @@
             }
         },
 
-        close: function() {
-            if(this.popup){
+        close: function () {
+            if(this.popup) {
                 this.element.hide().appendTo($('body'));
                 this.popupIsOpen = false;
                 this._updateElements();
                 this.stopUpdateQueues();
-                if(this.popup.$element){
+                if(this.popup.$element) {
                     this.popup.destroy();
                 }
                 this.popup = null;
@@ -191,7 +194,7 @@
 
         openQueueList: function (fields, table, request) {
             var self = this;
-            var assetPath = Mapbender.configuration.application.urls.asset;
+            var assetBasePath = Mapbender.configuration.application.urls.asset;
             var removeTitle = Mapbender.trans('mb.core.printclient.popup.remove.queue');
             var openTitle = Mapbender.trans('mb.core.printclient.popup.open.pdf');
             var dataTable;
@@ -200,10 +203,10 @@
                 request = {};
             }
 
-            if( !table.data('firstInit')){
+            if(!table.data('firstInit')) {
                 var columns = [];
 
-                table.data('firstInit',true);
+                table.data('firstInit', true);
                 $.each(fields, function (i, name) {
                     var column = {
                         targets:   i,
@@ -221,8 +224,8 @@
                                 }
                                 var link = '';
                                 if(row.status == 'ready') {
-                                    link += '<a href="' + assetPath + val + '" class="button pdf" target="' + val + '" title="' + openTitle + '"></a>';
-                                }else{
+                                    link += '<a href="' + assetBasePath + val + '" class="button pdf" target="' + val + '" title="' + openTitle + '"></a>';
+                                } else {
                                     link += '<i class="progress"></i>';
                                 }
                                 link += '<a href="#" data-id="' + row.id + '" class="button critical remove" title=' + removeTitle + '"></a>'
@@ -235,7 +238,7 @@
                                     return val;
                                 }
 
-                                if(row.status != 'ready'){
+                                if(row.status != 'ready') {
                                     val = row.queued;
                                 }
 
@@ -250,25 +253,23 @@
 
                 function onButtonClick(e) {
                     var button = $(e.currentTarget);
-                    if (button.hasClass('remove')) {
+                    if(button.hasClass('remove')) {
                         var tr = button.closest('tr');
                         tr.addClass('remove');
-                        button.closest('a').animate({height: "0px"},0);
-                        $.ajax({
-                            url: self.getBaseUrl() + '/remove',
-                            type: 'POST',
-                            data: {id: button.data('id')},
-                            success:function(response){
-                                tr.hide(0,function(){
-                                    dataTable.ajax.reload();
-                                });
-                            }
+                        button.closest('a').animate({height: "0px"}, 0);
+                        //self.stopUpdateQueues();
+                        tr.fadeOut(200, function () {
+                            self.removeQueue(button.data('id')).done(function(response){
+                                dataTable.ajax.reload();
+                            });
                         })
+
+
                     }
                 }
 
                 dataTable = table.DataTable({
-                    ajax: {
+                    ajax:       {
                         url: self.getBaseUrl() + '/queuelist',
                         data: function (data) {
                             return $.extend({}, data, request);
@@ -284,18 +285,32 @@
                 }).on('draw.dt', function () {
                     table.find(' > tbody > tr > td > a').on('click', onButtonClick);
                 });
-            }else{
+            } else {
                 dataTable = table.DataTable();
             }
 
             return dataTable;
         },
 
-        _loadPrintFormats: function() {
+        /**
+         * Remove print queue
+         *
+         * @param id
+         * @param onSuccess
+         * @returns jqXHR
+         */
+        removeQueue: function (id, onSuccess) {
+            return $.ajax({
+                url: this.getBaseUrl() + '/remove',
+                type: 'POST',
+                data: {id: id}
+            });
+        },
+
+        _loadPrintFormats: function () {
             var self = this;
 
-            var scale_text = $('input[name="scale_text"]', this.element),
-            scale_select = $('select[name="scale_select"]', this.element);
+            var scale_text = $('input[name="scale_text"]', this.element), scale_select = $('select[name="scale_select"]', this.element);
             var list = scale_select.siblings(".dropdownList");
             list.empty();
             var valueContainer = scale_select.siblings(".dropdownValue");
@@ -307,7 +322,7 @@
             } else {
                 scale_text.val('').parent().hide();
                 scale_select.empty();
-                for(key in this.options.scales) {
+                for (key in this.options.scales) {
                     var scale = this.options.scales[key];
                     scale_select.append($('<option></option>', {
                         'value': scale,
@@ -318,7 +333,7 @@
                         'html': '1:' + scale,
                         'class': "item-" + count
                     }));
-                    if(count == 0){
+                    if(count == 0) {
                         valueContainer.text('1:' + scale);
                     }
                     ++count;
@@ -328,21 +343,21 @@
 
             var rotation = $('input[name="rotation"]', this.element);
             var sliderDiv = $('#slider', this.element);
-            if(true === this.options.rotatable){
+            if(true === this.options.rotatable) {
                 rotation.val(0).parent().show();
                 var slider = sliderDiv.slider({
-                    min: 0,
-                    max: 360,
+                    min:   0,
+                    max:   360,
                     range: "min",
-                    step: 5,
+                    step:  5,
                     value: rotation.val(),
-                    slide: function( event, ui ) {
+                    slide: function (event, ui) {
                         rotation.val(ui.value);
                         self._updateGeometry(false);
                     }
                 });
-                $(rotation).keyup(function() {
-                    slider.slider( "value", this.value );
+                $(rotation).keyup(function () {
+                    slider.slider("value", this.value);
                 });
             } else {
                 rotation.parent().hide();
@@ -350,54 +365,49 @@
             // Copy extra fields
             var opt_fields = this.options.optional_fields;
             var hasAttr = false;
-            for(field in opt_fields){
+            for (field in opt_fields) {
                 hasAttr = true;
                 break;
             }
             if(hasAttr) {
                 var extra_fields = $('#extra_fields', this.element).empty();
 
-                for(var field in opt_fields){
+                for (var field in opt_fields) {
                     var span = '';
-                    if(opt_fields[field].options.required === true){
-                       span = '<span class="required">*</span>';
+                    if(opt_fields[field].options.required === true) {
+                        span = '<span class="required">*</span>';
                     }
 
                     var formElement = $('<div/>').addClass('form-element');
                     formElement.append($('<label/>', {
-                        'html': opt_fields[field].label+span,
+                        'html': opt_fields[field].label + span,
                         'class': 'labelInput'
                     }));
                     formElement.append($('<input/>', {
-                        'type': 'text',
+                        'type':  'text',
                         'class': 'input validationInput',
-                        'name': 'extra['+field+']'
+                        'name': 'extra[' + field + ']'
                     }));
 
                     extra_fields.append(formElement);
 
-                    if(opt_fields[field].options.required === true){
-                        $('input[name="extra['+field+']"]').attr("required", "required");
+                    if(opt_fields[field].options.required === true) {
+                        $('input[name="extra[' + field + ']"]').attr("required", "required");
                     }
                 }
-            }else{
+            } else {
                 //$('#extra_fields').hide();
             }
 
         },
 
-        _updateGeometry: function(reset) {
-            var template = this.element.find('select[name="template"]').val(),
-                width = this.width,
-                height = this.height,
-                scale = this._getPrintScale(),
-                rotationField = $('input[name="rotation"]');
-                
+        _updateGeometry: function (reset) {
+            var template = this.element.find('select[name="template"]').val(), width = this.width, height = this.height, scale = this._getPrintScale(), rotationField = $('input[name="rotation"]');
+
             // remove all not numbers from input
-            rotationField.val(rotationField.val().replace(/[^\d]+/,''));
-                
-                
-            if (rotationField.val() === '' && this.rotateValue > '0'){
+            rotationField.val(rotationField.val().replace(/[^\d]+/, ''));
+
+            if(rotationField.val() === '' && this.rotateValue > '0') {
                 rotationField.val('0');
             }
             var rotation = $('input[name="rotation"]').val();
@@ -405,7 +415,7 @@
 
             if(!(!isNaN(parseFloat(scale)) && isFinite(scale) && scale > 0)) {
                 if(null !== this.lastScale) {
-                //$('input[name="scale_text"]').val(this.lastScale).change();
+                    //$('input[name="scale_text"]').val(this.lastScale).change();
                 }
                 return;
             }
@@ -417,7 +427,7 @@
                 }
                 //return;
             }
-            rotation= parseInt(-rotation);
+            rotation = parseInt(-rotation);
 
             this.lastScale = scale;
 
@@ -426,29 +436,23 @@
                 y: height * scale / 100
             };
 
-            var center = (reset === true || !this.feature) ?
-            this.map.map.olMap.getCenter() :
-            this.feature.geometry.getBounds().getCenterLonLat();
+            var center = (reset === true || !this.feature) ? this.map.map.olMap.getCenter() : this.feature.geometry.getBounds().getCenterLonLat();
 
             if(this.feature) {
                 this.layer.removeAllFeatures();
                 this.feature = null;
             }
 
-            this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
-                center.lon - 0.5 * world_size.x,
-                center.lat - 0.5 * world_size.y,
-                center.lon + 0.5 * world_size.x,
-                center.lat + 0.5 * world_size.y).toGeometry(), {});
+            this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(center.lon - 0.5 * world_size.x, center.lat - 0.5 * world_size.y, center.lon + 0.5 * world_size.x, center.lat + 0.5 * world_size.y).toGeometry(), {});
             this.feature.world_size = world_size;
 
             if(this.map.map.olMap.units === 'degrees' || this.map.map.olMap.units === 'dd') {
                 var centroid = this.feature.geometry.getCentroid();
-                var centroid_lonlat = new OpenLayers.LonLat(centroid.x,centroid.y);
+                var centroid_lonlat = new OpenLayers.LonLat(centroid.x, centroid.y);
                 var centroid_pixel = this.map.map.olMap.getViewPortPxFromLonLat(centroid_lonlat);
                 var centroid_geodesSize = this.map.map.olMap.getGeodesicPixelSize(centroid_pixel);
 
-                var geodes_diag = Math.sqrt(centroid_geodesSize.w*centroid_geodesSize.w + centroid_geodesSize.h*centroid_geodesSize.h) / Math.sqrt(2) * 100000;
+                var geodes_diag = Math.sqrt(centroid_geodesSize.w * centroid_geodesSize.w + centroid_geodesSize.h * centroid_geodesSize.h) / Math.sqrt(2) * 100000;
 
                 var geodes_width = width * scale / (geodes_diag);
                 var geodes_height = height * scale / (geodes_diag);
@@ -456,17 +460,13 @@
                 var ll_pixel_x = centroid_pixel.x - (geodes_width) / 2;
                 var ll_pixel_y = centroid_pixel.y + (geodes_height) / 2;
                 var ur_pixel_x = centroid_pixel.x + (geodes_width) / 2;
-                var ur_pixel_y = centroid_pixel.y - (geodes_height) /2 ;
+                var ur_pixel_y = centroid_pixel.y - (geodes_height) / 2;
                 var ll_pixel = new OpenLayers.Pixel(ll_pixel_x, ll_pixel_y);
                 var ur_pixel = new OpenLayers.Pixel(ur_pixel_x, ur_pixel_y);
                 var ll_lonlat = this.map.map.olMap.getLonLatFromPixel(ll_pixel);
                 var ur_lonlat = this.map.map.olMap.getLonLatFromPixel(ur_pixel);
 
-                this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(
-                    ll_lonlat.lon,
-                    ur_lonlat.lat,
-                    ur_lonlat.lon,
-                    ll_lonlat.lat).toGeometry(), {});
+                this.feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(ll_lonlat.lon, ur_lonlat.lat, ur_lonlat.lon, ll_lonlat.lat).toGeometry(), {});
                 this.feature.world_size = {
                     x: ur_lonlat.lon - ll_lonlat.lon,
                     y: ur_lonlat.lat - ll_lonlat.lat
@@ -478,10 +478,10 @@
             this.layer.redraw();
         },
 
-        _updateElements: function() {
+        _updateElements: function () {
             var self = this;
 
-            if(true === this.popupIsOpen){
+            if(true === this.popupIsOpen) {
                 if(null === this.layer) {
                     this.layer = new OpenLayers.Layer.Vector("Print", {
                         styleMap: new OpenLayers.StyleMap({
@@ -490,8 +490,8 @@
                     });
                 }
                 if(null === this.control) {
-                    this.control = new OpenLayers.Control.DragFeature(this.layer,  {
-                        onComplete: function() {
+                    this.control = new OpenLayers.Control.DragFeature(this.layer, {
+                        onComplete: function () {
                             self._updateGeometry(false);
                         }
                     });
@@ -512,12 +512,11 @@
             }
         },
 
-        _getPrintScale: function() {
+        _getPrintScale: function () {
             return $('select[name="scale_select"],input[name="scale_text"]').val();
         },
 
-
-        _getPrintExtent: function() {
+        _getPrintExtent: function () {
             var data = {
                 extent: {},
                 center: {}
@@ -531,65 +530,60 @@
             return data;
         },
 
-        print: function() {
-            var form = $('form#formats', this.element),
-            extent = this._getPrintExtent(),
-            template_key = this.element.find('select[name="template"]').val(),
-            format = this.options.templates[template_key].format,
-            file_prefix = this.options.file_prefix;
+        print: function () {
+            var form = $('form#formats', this.element), extent = this._getPrintExtent(), template_key = this.element.find('select[name="template"]').val(), format = this.options.templates[template_key].format, file_prefix = this.options.file_prefix;
 
             // Felder für extent, center und layer dynamisch einbauen
             var fields = $();
 
             $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'format',
+                type:  'hidden',
+                name:  'format',
                 value: format
             }));
 
             $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'extent[width]',
+                type:  'hidden',
+                name:  'extent[width]',
                 value: extent.extent.width
             }));
 
             $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'extent[height]',
+                type:  'hidden',
+                name:  'extent[height]',
                 value: extent.extent.height
             }));
 
             $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'center[x]',
+                type:  'hidden',
+                name:  'center[x]',
                 value: extent.center.x
             }));
 
             $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'center[y]',
+                type:  'hidden',
+                name:  'center[y]',
                 value: extent.center.y
             }));
 
             $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'file_prefix',
+                type:  'hidden',
+                name:  'file_prefix',
                 value: file_prefix
             }));
-
 
             // koordinaten fuer extent feature mitschicken
             var feature_coords = new Array();
             var feature_comp = this.feature.geometry.components[0].components;
-            for(var i = 0; i < feature_comp.length-1; i++) {
+            for (var i = 0; i < feature_comp.length - 1; i++) {
                 feature_coords[i] = new Object();
                 feature_coords[i]['x'] = feature_comp[i].x;
                 feature_coords[i]['y'] = feature_comp[i].y;
             }
 
             $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'extent_feature',
+                type:  'hidden',
+                name:  'extent_feature',
                 value: JSON.stringify(feature_coords)
             }));
             var schalter = 0;
@@ -597,28 +591,28 @@
             var sources = this.map.getSourceTree(), lyrCount = 0;
 
             for (var i = 0; i < sources.length; i++) {
-                var layer = this.map.map.layersList[sources[i].mqlid],
-                type = layer.olLayer.CLASS_NAME;
+                var layer = this.map.map.layersList[sources[i].mqlid], type = layer.olLayer.CLASS_NAME;
 
-                if (schalter === 1 && layer.olLayer.params.LAYERS.length === 0){
+                if(schalter === 1 && layer.olLayer.params.LAYERS.length === 0) {
                     continue;
                 }
 
-                if (0 !== type.indexOf('OpenLayers.Layer.')) {
+                if(0 !== type.indexOf('OpenLayers.Layer.')) {
                     continue;
                 }
 
-                if (layer.olLayer.type === 'vector') {
+                if(layer.olLayer.type === 'vector') {
                     // Vector layers are all the same:
                     //   * Get all features as GeoJSON
                     //   * TODO: Get Styles...
                     // TODO: Implement this thing
-                } else if (Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
-                    var source = sources[i],
-                            scale = this._getPrintScale(),
-                            toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: source.mqlid}};
+                } else if(Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
+                    var source = sources[i], scale = this._getPrintScale(), toChangeOpts = {
+                        options:   {children: {}},
+                        sourceIdx: {mqlid: source.mqlid}
+                    };
                     var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
-                    if (visLayers.layers.length > 0){
+                    if(visLayers.layers.length > 0) {
                         var prevLayers = layer.olLayer.params.LAYERS;
                         layer.olLayer.params.LAYERS = visLayers.layers;
 
@@ -627,7 +621,7 @@
                         lyrConf.opacity = opacity;
 
                         $.merge(fields, $('<input />', {
-                            type: 'hidden',
+                            type:  'hidden',
                             name: 'layers[' + lyrCount + ']',
                             value: JSON.stringify(lyrConf)
                         }));
@@ -638,17 +632,16 @@
             }
 
             // overview map
-            var ovMap = this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap')[0],
-            count = 0;
-            if (undefined !== ovMap){
-                for(var i = 0; i < ovMap.layers.length; i++) {
+            var ovMap = this.map.map.olMap.getControlsByClass('OpenLayers.Control.OverviewMap')[0], count = 0;
+            if(undefined !== ovMap) {
+                for (var i = 0; i < ovMap.layers.length; i++) {
                     var url = ovMap.layers[i].getURL(ovMap.map.getExtent());
                     var extent = ovMap.map.getExtent();
                     var mwidth = extent.getWidth();
                     var size = ovMap.size;
                     var width = size.w;
                     var res = mwidth / width;
-                    var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
+                    var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res, 'm'));
                     var scale_deg = Math.round(OpenLayers.Util.getScaleFromResolution(res));
 
                     var overview = {};
@@ -656,7 +649,7 @@
                     overview.scale = scale;
 
                     $.merge(fields, $('<input />', {
-                        type: 'hidden',
+                        type:  'hidden',
                         name: 'overview[' + count + ']',
                         value: JSON.stringify(overview)
                     }));
@@ -667,9 +660,9 @@
             // feature from vector layer
             var feature_list = this._extractFeaturesFromMap(this.map.map.olMap);
             var c = 0;
-            for(var i = 0; i < feature_list.length; i++) {
+            for (var i = 0; i < feature_list.length; i++) {
                 var point_array = new Array();
-                for(var j = 0; j < feature_list[i].geom.length; j++){
+                for (var j = 0; j < feature_list[i].geom.length; j++) {
                     point_array[j] = new Object();
                     point_array[j]['x'] = feature_list[i].geom[j].x;
                     point_array[j]['y'] = feature_list[i].geom[j].y;
@@ -680,19 +673,19 @@
                 feature.type = feature_list[i].type;
 
                 $.merge(fields, $('<input />', {
-                        type: 'hidden',
-                        name: 'features[' + c + ']',
-                        value: JSON.stringify(feature)
-                    }));
+                    type:  'hidden',
+                    name: 'features[' + c + ']',
+                    value: JSON.stringify(feature)
+                }));
                 c++;
             }
 
             // replace pattern
 
-            if (typeof this.options.replace_pattern !== 'undefined' && this.options.replace_pattern !== null){
-                for(var i = 0; i < this.options.replace_pattern.length; i++) {
+            if(typeof this.options.replace_pattern !== 'undefined' && this.options.replace_pattern !== null) {
+                for (var i = 0; i < this.options.replace_pattern.length; i++) {
                     $.merge(fields, $('<input />', {
-                        type: 'hidden',
+                        type:  'hidden',
                         name: 'replace_pattern[' + i + ']',
                         value: JSON.stringify(this.options.replace_pattern[i])
                     }));
@@ -703,19 +696,17 @@
             fields.appendTo(form.find('div#layers'));
 
             // Post in neuen Tab (action bei form anpassen)
-            if (lyrCount === 0){
+            if(lyrCount === 0) {
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
                 return;
             }
 
             this._checkFields();
-            switch (this.options.renderMode){
-                case 'queued':
-                    return this._printQueued(form);
-                case 'direct':
-                    return this._printDirect(form);
-            }
+            return this._isQueueMode() ? this._printQueued(form) : this._printDirect(form);
+        },
 
+        _isQueueMode: function () {
+            return !this.options.anonymous && this.options.renderMode == 'queued';
         },
 
         _printDirect: function (form) {
@@ -729,52 +720,50 @@
         _printQueued: function (form) {
             var el = this.element;
             return $.ajax({
-                url: this.getPrintUrl(),
-                type: 'POST',
+                url:      this.getPrintUrl(),
+                type:     'POST',
                 dataType: "json",
-                data: form.serialize(),
-                success: function(queueInfo) {
+                data:     form.serialize(),
+                success:  function (queueInfo) {
                     el.trigger('queueCreated', queueInfo);
                 }
             });
         },
 
-        getPrintUrl: function(){
-            return this.getBaseUrl()+'/direct';
+        getPrintUrl: function () {
+            return this.getBaseUrl() + '/direct';
         },
 
-
-        getBaseUrl: function(){
-            return Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') ;
+        getBaseUrl: function () {
+            return Mapbender.configuration.application.urls.element + '/' + this.element.attr('id');
         },
 
-        _checkFields: function(){
-            $('#formats input[required]').on('change invalid', function() {
-            var textfield = $(this).get(0);
-            // 'setCustomValidity not only sets the message, but also marks
-            // the field as invalid. In order to see whether the field really is
-            // invalid, we have to remove the message first
-            textfield.setCustomValidity('');
-                if (!textfield.validity.valid) {
-                    textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));  
+        _checkFields: function () {
+            $('#formats input[required]').on('change invalid', function () {
+                var textfield = $(this).get(0);
+                // 'setCustomValidity not only sets the message, but also marks
+                // the field as invalid. In order to see whether the field really is
+                // invalid, we have to remove the message first
+                textfield.setCustomValidity('');
+                if(!textfield.validity.valid) {
+                    textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));
                 }
             });
         },
 
-        _getPrintSize: function() {
+        _getPrintSize: function () {
             var self = this;
-            var template = $('select[name="template"]', this.element).val(),
-            data = {
+            var template = $('select[name="template"]', this.element).val(), data = {
                 template: template
             };
-            var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/template';
+            var url = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/template';
             $.ajax({
-                url: url,
-                type: 'POST',
+                url:         url,
+                type:        'POST',
                 contentType: "application/json",
-                dataType: "json",
-                data: JSON.stringify(data),
-                success: function(data) {
+                dataType:    "json",
+                data:        JSON.stringify(data),
+                success:     function (data) {
                     self.width = data['width'];
                     self.height = data['height'];
                     self._updateGeometry();
@@ -782,32 +771,31 @@
             });
         },
 
-        _extractGeometriesFromFeature: function(feature) {
-            var coords = [],
-                type;
+        _extractGeometriesFromFeature: function (feature) {
+            var coords = [], type;
             if(!$.isArray(feature)) {
                 feature = [feature];
             }
             var onScreen = true;
-            $.each(feature, function(k, v){
-                if(v.onScreen() === true){
+            $.each(feature, function (k, v) {
+                if(v.onScreen() === true) {
                     var verts = v.geometry.getVertices();
                     if(v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
                         //verts.push(verts[0]);
                         type = 'polygon';
                     }
-                    if (v.geometry.CLASS_NAME === 'OpenLayers.Geometry.LineString' || v.geometry.CLASS_NAME === 'OpenLayers.Geometry.MultiLineString'){
+                    if(v.geometry.CLASS_NAME === 'OpenLayers.Geometry.LineString' || v.geometry.CLASS_NAME === 'OpenLayers.Geometry.MultiLineString') {
                         type = 'line';
                     }
-                    if (v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point'){
+                    if(v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point') {
                         type = 'point';
                     }
                     coords.push(verts);
-                }else{
+                } else {
                     onScreen = false;
                 }
             });
-            if (onScreen === false){
+            if(onScreen === false) {
                 return;
             }
             var feature = {};
@@ -817,17 +805,17 @@
             return feature;
         },
 
-        _extractGeometriesFromLayer: function(layer) {
+        _extractGeometriesFromLayer: function (layer) {
             var self = this;
-            if (layer.options.name === 'rulerlayer'){
+            if(layer.options.name === 'rulerlayer') {
                 return self._extractGeometriesFromFeature(layer.features[0]);
             }
             return $.map(layer.features, self._extractGeometriesFromFeature);
         },
 
-        _extractFeaturesFromMap: function(map) {
+        _extractFeaturesFromMap: function (map) {
             var self = this;
-            var layers = $.grep(map.layers, function(lay) {
+            var layers = $.grep(map.layers, function (lay) {
                 return lay.name !== 'Print' && lay.CLASS_NAME === 'OpenLayers.Layer.Vector';
             });
             return $.map(layers, $.proxy(self._extractGeometriesFromLayer, this));
@@ -836,7 +824,7 @@
         /**
          *
          */
-        ready: function(callback) {
+        ready:  function (callback) {
             if(this.readyState === true) {
                 callback();
             } else {
@@ -846,8 +834,8 @@
         /**
          *
          */
-        _ready: function() {
-            for(callback in this.readyCallbacks) {
+        _ready: function () {
+            for (callback in this.readyCallbacks) {
                 callback();
                 delete(this.readyCallbacks[callback]);
             }
