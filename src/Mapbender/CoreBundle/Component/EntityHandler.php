@@ -8,9 +8,9 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
 
 //use 
 
@@ -124,6 +124,23 @@ class EntityHandler
         } catch (\Exception $e) {
             return false;
         }
+    }
+    
+    public static function findAll(ContainerInterface $container, $entityClass, $criteria = array(), $accessControl = null)
+    {
+        $em = $container->get('doctrine')->getManager();
+        $result = $em->getRepository($entityClass)->findAll($criteria);
+        if($accessControl){
+            $securityContext = $container->get('security.context');
+            $tmp = new ArrayCollection();
+            foreach ($result as $obj) {
+                if(true === $securityContext->isGranted($accessControl, $obj)) {
+                    $tmp->add($obj);
+                }
+            }
+            return $tmp;
+        }
+        return $result;
     }
 
 }

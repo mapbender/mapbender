@@ -9,7 +9,6 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\ManagerBundle\Component\ExchangeNormalizer;
 use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Form\Type\ExportJobType;
@@ -38,10 +37,11 @@ class ExportHandler extends ExchangeHandler
      */
     public function createForm()
     {
-        $this->checkGranted('EDIT', new Application());
-        $allowed_apps = $this->getAllowedAppllications();
+        $allowedApps = $this->getAllowedAppllications();
+        $this->job->setApplications($allowedApps);
         $type = new ExportJobType();
-        return $this->container->get('form.factory')->create($type, $this->job, array('applications' => $allowed_apps));
+        return $this->container->get('form.factory')->create(
+                $type, $this->job, array('applications' => $this->job->getApplications()));
     }
 
     /**
@@ -108,12 +108,11 @@ class ExportHandler extends ExchangeHandler
         $sources = new ArrayCollection();
         if ($this->job->getAddSources()) {
             $sources = $this->getAllowedSources();
-            
         } else {
             foreach ($this->job->getApplications() as $app) {
                 $help = $this->getAllowedApplicationSources($app);
-                foreach ($help as $src){
-                    if($src->getId() && !$sources->contains($src)){
+                foreach ($help as $src) {
+                    if ($src->getId() && !$sources->contains($src)) {
                         $sources->add($src);
                     }
                 }
