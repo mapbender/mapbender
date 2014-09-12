@@ -31,7 +31,7 @@ class MapbenderManagerBundle extends MapbenderBundle
                         'route' => 'mapbender_manager_application_export',
                         'enabled' => function($securityContext) {
                         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-                        return $securityContext->isGranted('EDIT', $oid);
+                        return $securityContext->isGranted('CREATE', $oid);
                     }),
                     array('idx' => "application-import",
                         'title' => $trans->trans("mb.manager.managerbundle.import_application"),

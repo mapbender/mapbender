@@ -50,7 +50,6 @@ abstract class ExchangeHandler
         return $allowed_apps;
     }
 
-//
     protected function getAllowedApplicationSources(Application $app, $action = 'EDIT')
     {
         $sources = new ArrayCollection();
@@ -72,7 +71,7 @@ abstract class ExchangeHandler
         $allowed_sources = new ArrayCollection();
         if ($this->isGranted("EDIT", "Mapbender\CoreBundle\Entity\Source")) {
             $allowed_sources = EntityHandler::findAll(
-                    $this->container, "Mapbender\CoreBundle\Entity\Source", array());
+                    $this->container, "Mapbender\CoreBundle\Entity\Source", array(), "EDIT");
         }
         return $allowed_sources;
     }
