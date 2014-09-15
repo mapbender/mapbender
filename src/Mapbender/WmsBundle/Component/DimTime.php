@@ -7,7 +7,7 @@ namespace Mapbender\WmsBundle\Component;
  *
  * @author Paul Schmidt
  */
-class Dimension
+class DimTime extends Dimension
 {
 
     /**
