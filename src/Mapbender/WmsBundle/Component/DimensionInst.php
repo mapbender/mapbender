@@ -19,6 +19,8 @@ class DimensionInst extends Dimension
     
     public $active;
     
+    public $type;
+    
     public function getCreater()
     {
         return $this->creater;
@@ -53,7 +55,19 @@ class DimensionInst extends Dimension
         return $this;
     }
 
-    public static function getType($extent)
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+        
+    public static function findType($extent)
     {
         $array = explode(",", $extent);
         if (count($array) === 0) {
@@ -75,30 +89,44 @@ class DimensionInst extends Dimension
         }
     }
     
-    public static function getTypedData($extent){
-        $array = explode(",", $extent);
+    public static function getData($extent){
+        $array = is_string($extent) ? explode(",", $extent) : $extent;
         $res = array();
-        if (count($array) === 0) {
-            return $res;
-        } elseif (count($array) === 1) {
+        if (count($array) === 1) {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
-                $res[self::TYPE_SINGLE] = $array[0];
+                $res = self::getValidValue($array[0]);
             } else {
-                $res[self::TYPE_INTERVAL] = $help;
+                foreach ($help as $value) {
+                    $res[] = self::getValidValue($value);
+                }
             }
         } else {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
-                $res[self::TYPE_MULTIPLE] = $array;
+                foreach ($array as $value) {
+                    $res[] = self::getValidValue($value);
+                }
             } else {
                 for ($i = 0; $i < count($array); $i++) {
-                    $array[$i] = explode("/", $array[$i]);
+                    $res[$i] = array();
+                    foreach (explode("/", $array[$i]) as $value) {
+                        $res[$i][] = self::getValidValue($value);
+                    }
                 }
-                $res[self::TYPE_MULTIPLEINTERVAL] = $array;
             }
         }
         return $res;
+    }
+    
+    private static function getValidValue($value){
+        if(is_numeric($value) && floatval($value) === floatval(intval($value))){
+            return intval($value);
+        } elseif(is_numeric($value)){
+            return floatval($value);
+        } else {
+            return $value;
+        }
     }
     
 }

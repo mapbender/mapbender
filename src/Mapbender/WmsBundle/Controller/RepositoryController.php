@@ -6,20 +6,10 @@ use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\XmlValidator;
-use Mapbender\CoreBundle\Component\Utils;
-use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
-use Mapbender\WmsBundle\Component\Exception\WmsException;
-use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
-use Mapbender\WmsBundle\Component\WmsEntityHandler;
-use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
-use Mapbender\WmsBundle\Form\Type\WmsSourceType;
-use Mapbender\WmsBundle\Form\Type\WmsInstanceType;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -281,7 +271,7 @@ class RepositoryController extends Controller
             if ($form->isValid()) { //save
                 $em = $this->getDoctrine()->getManager();
                 $em->getConnection()->beginTransaction();
-                foreach ($wmsinstance->getLayers() as $layer){
+                foreach ($wmsinstance->getLayers() as $layer) {
                     $em->persist($layer);
                     $em->flush();
                     $em->refresh($layer);
@@ -432,7 +422,8 @@ class RepositoryController extends Controller
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
         $securityContext = $this->get('security.context');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW',
+                $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
         $layerName = $this->container->get('request')->get("layerName", null);
@@ -444,6 +435,23 @@ class RepositoryController extends Controller
         $response->setContent($content);
         $response->headers->set('Content-Type', 'text/html');
         return $response;
+    }
+
+    private function getErrorMessages(\Symfony\Component\Form\Form $form)
+    {
+        $errors = array();
+
+        foreach ($form->getErrors() as $key => $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        foreach ($form->all() as $child) {
+            if (!$child->isValid()) {
+                $errors[$child->getName()] = $this->getErrorMessages($child);
+            }
+        }
+
+        return $errors;
     }
 
 }

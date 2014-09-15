@@ -380,10 +380,10 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
             if ($newclassName) {
                 $newObject = $this->denormalize($item, $newclassName);
                 $this->em->persist($newObject);
-//                if ($object instanceof Layerset && $newObject instanceof SourceInstance) {
+                if ($object instanceof Layerset && $newObject instanceof SourceInstance) {
 //                    EntityHandler::createHandler($this->container, $newObject)->generateConfiguration();
-//                    $this->em->persist($newObject);
-//                } 
+                    $this->em->persist($newObject);
+                } 
                 $this->em->flush();
                 $collection->add($newObject);
             } else {

@@ -38,19 +38,19 @@ class Dimension
      * ORM\Column(type="boolean", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $multipleValues;
+    public $multipleValues = false;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $nearestValue;
+    public $nearestValue = false;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $current;
+    public $current = false;
 
     /**
      * ORM\Column(type="string", nullable=true)
@@ -129,7 +129,11 @@ class Dimension
      */
     public function setDefault($value)
     {
-        $this->default = $value;
+        if (is_bool($value)) {
+            $this->default = $value;
+        } else {
+            $this->default = (boolean) $value;
+        }
     }
 
     /**
@@ -150,7 +154,11 @@ class Dimension
      */
     public function setMultipleValues($value)
     {
-        $this->multipleValues = $value;
+        if (is_bool($value)) {
+            $this->multipleValues = $value;
+        } else {
+            $this->multipleValues = (boolean) $value;
+        }
     }
 
     /**
@@ -171,7 +179,11 @@ class Dimension
      */
     public function setNearestValue($value)
     {
-        $this->nearestValue = $value;
+        if (is_bool($value)) {
+            $this->nearestValue = $value;
+        } else {
+            $this->nearestValue = (boolean) $value;
+        }
     }
 
     /**
@@ -192,7 +204,11 @@ class Dimension
      */
     public function setCurrent($value)
     {
-        $this->current = $value;
+        if (is_bool($value)) {
+            $this->current = $value;
+        } else {
+            $this->current = (boolean) $value;
+        }
     }
 
     /**
@@ -208,7 +224,7 @@ class Dimension
     /**
      * Set extent
      * 
-     * @param DimExtent $value 
+     * @param string $value 
      * @return Dimension
      */
     public function setExtent($value)
@@ -219,41 +235,11 @@ class Dimension
     /**
      * Get extent
      * 
-     * @return DimExtent
+     * @return Dimension
      */
     public function getExtent()
     {
         return $this->extent;
     }
-    
-//
-//    public function toArray()
-//    {
-//        $dimension = array(
-//            'name' => $this->name,
-//            'units' => $this->units,
-//            'unitSymbol' => $this->unitSymbol,
-//            'default' => $this->default,
-//            'multipleValues' => $this->multipleValues,
-//            'nearestValue' => $this->nearestValue,
-//            'current' => $this->current,
-//            'extent' => $this->extent
-//        );
-//        return $dimension;
-//    }
-//
-//    public static function fromArray(array $dimension)
-//    {
-//        $dim = new Dimension();
-//        $dim->name = $dimension['name'];
-//        $dim->units = $dimension['units'];
-//        $dim->unitSymbol = $dimension['unitSymbol'];
-//        $dim->default = $dimension['default'];
-//        $dim->multipleValues = $dimension['multipleValues'];
-//        $dim->nearestValue = isset($dimension['nearestValue']) ? $dimension['nearestValue'] : null;
-//        $dim->current = $dimension['current'];
-//        $dim->extent = $dimension['extent'];
-//        return $dimension;
-//    }
 
 }
