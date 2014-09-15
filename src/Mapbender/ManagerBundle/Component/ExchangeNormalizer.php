@@ -16,6 +16,7 @@ use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\CoreBundle\Component\SourceInstanceItem;
 use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
+use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Entity\Source;
@@ -95,6 +96,8 @@ class ExchangeNormalizer extends ExchangeSerializer implements NormalizerInterfa
                         $data[$fieldName] = $this->handleElement($fieldName, $fieldValue, $realObj, $realValObj);
                     } elseif ($realObj instanceof RegionProperties) {
                         $data[$fieldName] = $this->handleRegionProperties($fieldName, $fieldValue, $realObj, $realValObj);
+                    } elseif ($realObj instanceof Keyword) {
+                        $data[$fieldName] = $this->handleElement($fieldName, $fieldValue, $realObj, $realValObj);
                     } elseif ($realObj instanceof \DateTime) {
                         return null;
                     } else {
@@ -275,7 +278,11 @@ class ExchangeNormalizer extends ExchangeSerializer implements NormalizerInterfa
             $result = array();
             $collection = $fieldValue->toArray();
             foreach ($collection as $collItem) {
-                $result[] = $this->createInstanceIdent($collItem, array('id' => $collItem->getId()));
+                if ($collItem instanceof Keyword) {
+                    $result[] = $this->normalize($collItem);
+                } else {
+                    $result[] = $this->createInstanceIdent($collItem, array('id' => $collItem->getId()));
+                }
             }
             return $result;
         } elseif ($realObj instanceof Layerset) {

@@ -747,7 +747,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param RequestInformation $putStyles
      * @return WmsSource
      */
-    public function setPutStyles(RequestInformation $putStyles)
+    public function setPutStyles(RequestInformation $putStyles = null)
     {
         $this->putStyles = $putStyles;
         return $this;

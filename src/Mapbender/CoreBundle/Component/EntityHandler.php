@@ -8,12 +8,8 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
-use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
-use Mapbender\WmsBundle\Component\WmsInstanceEntityHandler;
-use Mapbender\WmsBundle\Entity\WmsSource;
-use Mapbender\WmsBundle\Entity\WmsInstance;
-//use Mapbender\WmsBundle\MapbenderWmsBundle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 //use 
@@ -115,6 +111,36 @@ class EntityHandler
             } while ($em->getRepository($entityName)->findOneBy($criteria));
             return $newUniqueValue;
         }
+    }
+
+    public static function isEntity(ContainerInterface $container, $entity)
+    {
+        $className = is_string($entity) ? $entity : is_object($entity) ? ClassUtils::getClass($entity) : '';
+        try {
+            $em = $container->get('doctrine')->getManager();
+            $meta = $em->getMetadataFactory()->getMetadataFor($className);
+            $is = isset($meta->isMappedSuperclass) && $meta->isMappedSuperclass === false;
+            return $is;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+    
+    public static function findAll(ContainerInterface $container, $entityClass, $criteria = array(), $accessControl = null)
+    {
+        $em = $container->get('doctrine')->getManager();
+        $result = $em->getRepository($entityClass)->findAll($criteria);
+        if($accessControl){
+            $securityContext = $container->get('security.context');
+            $tmp = new ArrayCollection();
+            foreach ($result as $obj) {
+                if(true === $securityContext->isGranted($accessControl, $obj)) {
+                    $tmp->add($obj);
+                }
+            }
+            return $tmp;
+        }
+        return $result;
     }
 
 }

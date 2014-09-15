@@ -222,9 +222,9 @@
         <source>mb.core.layertree.label.featureinfo_onoff</source>
         <target>__mb.core.layertree.label.featureinfo_onoff</target>
       </trans-unit>
-      <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
-        <source>mb.core.layertree.label.transparency</source>
-        <target>__mb.core.layertree.label.transparency</target>
+      <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.opacity">
+        <source>mb.core.layertree.label.opacity</source>
+        <target>Opacity</target>
       </trans-unit>
       <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
         <source>mb.core.layertree.label.zoomtolayer</source>

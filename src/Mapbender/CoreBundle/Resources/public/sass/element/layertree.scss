@@ -93,6 +93,8 @@ $layer-slider-bar-height: 5px;
   min-width: 120px;
   max-width: 200px;
   border: solid 1px $thirdColor;
+  text-align: right;
+  cursor: default;
   @include border-radius($radius);
   & *{
     @include noUserSelect();
@@ -128,7 +130,9 @@ $layer-slider-bar-height: 5px;
     height: $layer-slider-bar-height;
     background-color: $thirdColor;
     width: 100px;
-    margin-bottom: $space;
+    margin-top: $space/3;
+    margin-bottom: $space/2;
+    cursor: pointer;
     @include border-radius(2px);
     .layer-slider-handle {
       position: absolute;

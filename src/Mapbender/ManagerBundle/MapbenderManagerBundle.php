@@ -2,7 +2,6 @@
 
 namespace Mapbender\ManagerBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 

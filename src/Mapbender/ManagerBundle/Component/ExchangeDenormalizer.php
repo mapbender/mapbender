@@ -178,9 +178,20 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
     {
         $fields = ClassPropertiesParser::parseFields($class);
         $fixedField = array();
-        $object = $this->findOrCreateEntity($class, $data, $fields, $fixedField);
+        $idName = $this->findIdName($fields);
+        $object = null;
+        if($idName === null){
+            $reflectionClass = new \ReflectionClass($class);
+            $constructorArguments = $this->getClassConstructParams($data) ? : array();
+            $object = $reflectionClass->newInstanceArgs($constructorArguments);
+        } else {
+            $object = $this->findOrCreateEntity($class, $data, $fields, $idName, $fixedField);
+        }
         if ($object !== null) {
             foreach ($fields as $fieldName => $fieldProps) {
+                if($object instanceof Source && ($fieldName === 'title' || $fieldName === 'description')){
+                    $a = 0;
+                }
                 if (!isset($fieldProps[self::KEY_SETTER]) || !isset($fieldProps[self::KEY_GETTER]) ||
                     in_array($fieldName, $fixedField) || !key_exists($fieldName, $data)) {
                     continue;
@@ -247,9 +258,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
      * @param array $fixedField ids from fixed entities
      * @return mixed an ORM Entity object
      */
-    private function findOrCreateEntity($class, $data, $fields, &$fixedField)
+    private function findOrCreateEntity($class, $data, $fields, $idName, &$fixedField)
     {
-        $idName = $this->findIdName($fields);
         $fixedField[] = $idName;
         $object = $this->findExistingEntity($class, $data[$idName]);
         if ($object === null) { # not found -> create
@@ -326,11 +336,15 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
     private function handleCommon($object, $newObject, $fieldName, $fieldValue, $fieldProps)
     {
         $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
-        $this->em->persist($newObject);
-        $this->em->flush();
+        if(EntityHandler::isEntity($this->container, $newObject)){
+            $this->em->persist($newObject);
+            $this->em->flush();
+        }
         $reflectionMethod->invoke($object, $newObject);
-        $this->em->persist($object);
-        $this->em->flush();
+        if(EntityHandler::isEntity($this->container, $object)){
+            $this->em->persist($object);
+            $this->em->flush();
+        }
     }
 
     private function handleSourceInstance($object, $newObject, $fieldName, $fieldValue, $fieldProps)
@@ -392,7 +406,16 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
     private function handleArray($object, $fieldName, $fieldValue, $fieldProps)
     {
         $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
-        $reflectionMethod->invoke($object, $fieldValue);
+        $newArr = array();
+        foreach($fieldValue as $item){
+            $newclassName = $this->getClassName($item);
+            if ($newclassName) {
+                $newArr[] = $this->denormalize($item, $newclassName);
+            } else {
+                $newArr[] = $item;
+            }
+        }
+        $reflectionMethod->invoke($object, $newArr);
     }
 
     /**
@@ -411,7 +434,6 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
                     $idName = $this->findIdName($fields);
                     $entity = $this->findExistingEntity($className, $value[$idName]);
                     $reflectionMethod = new \ReflectionMethod($className, $fields[$idName][self::KEY_GETTER]);
-                    #$val = $reflectionMethod->invoke($entity);
                     return $reflectionMethod->invoke($entity);
                 } else {
                     foreach ($value as $key => $subvalue) {

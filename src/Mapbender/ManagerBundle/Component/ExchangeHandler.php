@@ -9,6 +9,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Application;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -42,33 +43,23 @@ abstract class ExchangeHandler
         $this->securityContext = $this->container->get('security.context');
     }
 
-    protected function isGrantedCreate()
-    {
-        $application = new Application();
-        // ACL access check
-        $this->checkGranted('CREATE', $application);
-    }
-
     protected function getAllowedAppllications()
     {
-        $applications = $this->getContainer()->get('mapbender')->getApplicationEntities();
-        $allowed_apps = new ArrayCollection();
-        foreach ($applications as $application) {
-            if ($this->isGranted('EDIT', $application)) {
-                $allowed_apps->add($application);
-            }
-        }
+        $allowed_apps = EntityHandler::findAll(
+                $this->container, "Mapbender\CoreBundle\Entity\Application", array(), "EDIT");
         return $allowed_apps;
     }
 
-    protected function getAllowedApplicationSources(Application $app)
+    protected function getAllowedApplicationSources(Application $app, $action = 'EDIT')
     {
         $sources = new ArrayCollection();
-        foreach ($app->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance) {
-                $source = $instance->getSource();
-                if ($this->isGranted('EDIT', $source)) {
-                    $sources->add($source);
+        if (true === $this->isGranted($action, $app)) {
+            foreach ($app->getLayersets() as $layerset) {
+                foreach ($layerset->getInstances() as $instance) {
+                    $source = $instance->getSource();
+                    if ($this->isGranted('EDIT', $source)) {
+                        $sources->add($source);
+                    }
                 }
             }
         }
@@ -77,12 +68,10 @@ abstract class ExchangeHandler
 
     protected function getAllowedSources()
     {
-        $sources = $this->container->get('doctrine')->getRepository("MapbenderCoreBundle:Source")->findAll();
         $allowed_sources = new ArrayCollection();
-        foreach ($sources as $source) {
-            if ($this->isGranted('EDIT', $source)) {
-                $allowed_sources->add($source);
-            }
+        if ($this->isGranted("EDIT", "Mapbender\CoreBundle\Entity\Source")) {
+            $allowed_sources = EntityHandler::findAll(
+                    $this->container, "Mapbender\CoreBundle\Entity\Source", array(), "EDIT");
         }
         return $allowed_sources;
     }
@@ -95,18 +84,6 @@ abstract class ExchangeHandler
     public function getContainer()
     {
         return $this->container;
-    }
-
-    public function setSecurityContext($securityContext)
-    {
-        $this->securityContext = $securityContext;
-        return $this;
-    }
-
-    public function setContainer($container)
-    {
-        $this->container = $container;
-        return $this;
     }
 
     public function getJob()
@@ -133,12 +110,13 @@ abstract class ExchangeHandler
 
     /**
      * Checks the grant for an action and an object
-     *
+     * 
      * @param \Object $object the object 
      * @throws AccessDeniedException
      */
     public function checkGranted($action, $object)
     {
+        $gr = $this->securityContext->isGranted($action, $object);
         if ($action === "CREATE") {
             $oid = new ObjectIdentity('class', get_class($object));
             if (false === $this->securityContext->isGranted($action, $oid)) {

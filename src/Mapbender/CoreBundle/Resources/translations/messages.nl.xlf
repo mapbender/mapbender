@@ -206,9 +206,9 @@
         <source>mb.core.layertree.label.featureinfo_onoff</source>
         <target>eigenschap aan/uit</target>
       </trans-unit>
-      <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
-        <source>mb.core.layertree.label.transparency</source>
-        <target>__mb.core.layertree.label.transparency</target>
+      <trans-unit id="64a09f242bd5e7d1a0f5622a11f5cff2" resname="mb.core.layertree.label.opacity">
+        <source>mb.core.layertree.label.opacity</source>
+        <target>Opacity</target>
       </trans-unit>
       <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
         <source>mb.core.layertree.label.zoomtolayer</source>
@@ -897,6 +897,42 @@
       <trans-unit id="a59c799972d58d925b7ace1269bd43d7" resname="You can use the following snippet in an email to send the POI.">
         <source>You can use the following snippet in an email to send the POI.</source>
         <target>You can use the following snippet in an email to send the POI.</target>
+      </trans-unit>
+      <trans-unit id="7676545c9153a0ed87dc96296d665c5a" resname="mb.core.metadata.popup.title">
+        <source>mb.core.metadata.popup.title</source>
+        <target>__mb.core.metadata.popup.title</target>
+      </trans-unit>
+      <trans-unit id="4be1f8a2c784e24713e63c07ed4b5f49" resname="mb.core.metadata.popup.btn.ok">
+        <source>mb.core.metadata.popup.btn.ok</source>
+        <target>__mb.core.metadata.popup.btn.ok</target>
+      </trans-unit>
+      <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
+        <source>mb.core.entity.app.screenshotfile.error</source>
+        <target>__mb.core.entity.app.screenshotfile.error</target>
+      </trans-unit>
+      <trans-unit id="a091e836228a240d137f28d1f7e99f5e" resname="mb.core.searchrouter.no_results">
+        <source>mb.core.searchrouter.no_results</source>
+        <target>__mb.core.searchrouter.no_results</target>
+      </trans-unit>
+      <trans-unit id="f518bb2f60b3deb2e5b973e00e8088f2" resname="mb.core.searchrouter.result_counter">
+        <source>mb.core.searchrouter.result_counter</source>
+        <target>__mb.core.searchrouter.result_counter</target>
+      </trans-unit>
+      <trans-unit id="035305154a06c6bd1851f8680663ddf8" resname="mb.core.layertree.tooltip.menu.close">
+        <source>mb.core.layertree.tooltip.menu.close</source>
+        <target>__mb.core.layertree.tooltip.menu.close</target>
+      </trans-unit>
+      <trans-unit id="313130e9ce7f77c283bdbf630a77a026" resname="mb.core.htmlelement.class.title">
+        <source>mb.core.htmlelement.class.title</source>
+        <target>__mb.core.htmlelement.class.title</target>
+      </trans-unit>
+      <trans-unit id="ce2413ae706bd739dcbc0b4f9a289cef" resname="mb.core.htmlelement.class.description">
+        <source>mb.core.htmlelement.class.description</source>
+        <target>__mb.core.htmlelement.class.description</target>
+      </trans-unit>
+      <trans-unit id="d39455710ac8e12021e4959d6e1c6b85" resname="mb.core.htmlelement.tag.html">
+        <source>mb.core.htmlelement.tag.html</source>
+        <target>__mb.core.htmlelement.tag.html</target>
       </trans-unit>
     </body>
   </file>

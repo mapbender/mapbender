@@ -218,9 +218,9 @@
         <source>mb.core.layertree.label.featureinfo_onoff</source>
         <target>Information an/aus</target>
       </trans-unit>
-      <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
-        <source>mb.core.layertree.label.transparency</source>
-        <target>Transparenz</target>
+      <trans-unit id="64a09f242bd5e7d1a0f5622a11f5cff2" resname="mb.core.layertree.label.opacity">
+        <source>mb.core.layertree.label.opacity</source>
+        <target>Deckkraft</target>
       </trans-unit>
       <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
         <source>mb.core.layertree.label.zoomtolayer</source>

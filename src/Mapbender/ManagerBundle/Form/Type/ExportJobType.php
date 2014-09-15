@@ -42,7 +42,9 @@ class ExportJobType extends AbstractType
                 'property' => 'title',
                 'multiple' => true,
                 'empty_value' => 'All applications',
-                'empty_data' => null))
+                'empty_data' => null,
+                'choices' => $options['applications']
+            ))
             ->add('addSources', 'checkbox', array('required' => false))
             ->add('addAcl', 'checkbox', array('required' => false))
             ->add('format', 'choice',
