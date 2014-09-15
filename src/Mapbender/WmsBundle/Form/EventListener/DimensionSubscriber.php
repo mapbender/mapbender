@@ -147,9 +147,9 @@ class DimensionSubscriber implements EventSubscriberInterface
             $dataOrigArr = $data->getData($data->getOrigextent());
             if ($data->getType() === $data::TYPE_SINGLE) {
                 $form->add($this->factory->createNamed('extentEdit', 'text', null,
-                            array(
-                            'required' => true,
-                            'auto_initialize' => false)));
+                        array(
+                        'required' => true,
+                        'auto_initialize' => false)));
             } elseif ($data->getType() === $data::TYPE_MULTIPLE) {
                 $choices = array_combine($dataOrigArr, $dataOrigArr);
                 $form->add($this->factory->createNamed('extentEdit', 'choice', null,
@@ -168,7 +168,12 @@ class DimensionSubscriber implements EventSubscriberInterface
                 $form->add($this->factory->createNamed('extentEdit', 'text', null,
                             array(
                             'required' => true,
-                            'auto_initialize' => false)));
+                            'auto_initialize' => false)))
+                    ->add($this->factory->createNamed('default', 'text', null,
+                            array(
+                            'auto_initialize' => false,
+                            'read_only' => $isVordefined,
+                            'required' => false)));
 //                $form->add($this->factory->createNamed('extent', 'hidden', null,
 //                            array(
 //                            'required' => true,

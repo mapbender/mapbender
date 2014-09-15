@@ -129,11 +129,7 @@ class Dimension
      */
     public function setDefault($value)
     {
-        if (is_bool($value)) {
-            $this->default = $value;
-        } else {
-            $this->default = (boolean) $value;
-        }
+        $this->default = $value;
     }
 
     /**
