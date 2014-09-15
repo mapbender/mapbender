@@ -4,7 +4,8 @@
 
 {% block css %}
     {{parent()}}
-    <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/codemirror2/lib/codemirror.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/codemirror/lib/codemirror.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/codemirror/theme/neo.css') }}"/>
     {% stylesheets filter="compass,cssrewrite"
     "bundles/mapbendermanager/sass/manager/applications.scss"
     "bundles/fomuser/sass/user/user_control.scss"
@@ -31,51 +32,60 @@
 {% endblock %}
 
 {% block js %}
-    {{parent()}}
-    <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
+  {{parent()}}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/lib/codemirror.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/mode/css/css.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/keymap/sublime.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/codemirror/addon/selection/active-line.js') }}"></script>
+
+  <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-edit.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
-    <a class="iconView iconBig right" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}"></a>
-    <form action="{{ path('mapbender_manager_application_update', { 'slug': application.slug }) }}" method="post" name="{{ form.vars.name }}" {{ form_enctype(form)}}  novalidate="novalidate">
-        <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
-            <ul class="tabs">
-                <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.edit.base_data" | trans }}</li>
-                <li id="tabLayout" class="tab">{{"mb.manager.admin.application.layouts" | trans }}</li>
-                <li id="tabLayers" class="tab">{{"mb.manager.admin.application.layersets" | trans }}</li>
-                <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security" | trans }}</li>
-            </ul>
-            <div id="containerBaseData" class="container active containerBaseData">
-                <div class="left">{% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}</div>
-                {% if screenshot is empty %} 
-                    <div class="right screenshot_img default iconAppDefault"></div> 
-                {% else %}
-                    <div class="right screenshot_img">
-                         <div class="cell">
-                           <div class="delete button critical hidden">Delete</div>
-                           <img src="{{screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}" alt="Load" class="screenshot" />
-                         </div>
-                    </div>
-                {% endif %}
-                <div class="clearContainer"></div>
+  <a class="iconView iconBig right" target="_blank" href="{{ path('mapbender_core_application_application', {'slug': application.slug}) }}" title="{{ 'mb.manager.admin.application.view' | trans }}"></a>
+  <form action="{{ path('mapbender_manager_application_update', { 'slug': application.slug }) }}" method="post" name="{{ form_name }}" {{ form_enctype(form)}}  novalidate="novalidate">
+    <div id="applicationTabContainer" class="tabContainer applicationTabContainer">
+      <ul class="tabs">
+        <li id="tabBaseData" class="tab active">{{"mb.manager.admin.application.edit.base_data" | trans }}</li>
+        <li id="tabLayout" class="tab">{{"mb.manager.admin.application.layouts" | trans }}</li>
+        <li id="tabLayers" class="tab">{{"mb.manager.admin.application.layersets" | trans }}</li>
+        <li id="tabCustomCss" class="tab">{{"mb.manager.admin.application.custom_css" | trans }}</li>
+        <li id="tabSecurity" class="tab">{{"mb.manager.admin.application.security" | trans }}</li>
+      </ul>
+      <div id="containerBaseData" class="container active containerBaseData">
+        <div class="left">{% include 'MapbenderManagerBundle:Application:form-basic.html.twig' %}</div>
+        {% if screenshot is empty %}
+        <div class="right screenshot_img default iconAppDefault"></div>
+        {% else %}
+        <div class="right screenshot_img">
+          <div class="cell">
+            <div class="delete button critical hidden">Delete</div>
+              <img src="{{screenshot}}?t={% if time != null %}{{ time | date('d.m.Y-H:i:s') }}{% endif %}" alt="Load" class="screenshot" />
             </div>
-            <div id="containerLayout" class="container containerLayout">
-                {% include 'MapbenderManagerBundle:Application:form-elements.html.twig' %}
-            </div>
-            <div id="containerLayers" class="container containerLayers">
-                {% include 'MapbenderManagerBundle:Application:form-layersets.html.twig' %}
-            </div>
-            <div id="containerSecurity" class="container containerSecurity">
-                {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
-            </div>
-        </div>
-
+          </div>
+        {% endif %}
         <div class="clearContainer"></div>
-        <div class="right">
-            <input type="submit" value="{{ 'mb.manager.admin.application.save' | trans }}" class="button"/>
-            <a href="{{ url('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.cancel' | trans}}</a>
-        </div>
-        <div class="clearContainer"></div>
-        {{ form_row(form._token) }}
-    </form>
+      </div>
+      <div id="containerLayout" class="container containerLayout">
+        {% include 'MapbenderManagerBundle:Application:form-elements.html.twig' %}
+      </div>
+      <div id="containerLayers" class="container containerLayers">
+        {% include 'MapbenderManagerBundle:Application:form-layersets.html.twig' %}
+      </div>
+      <div id="containerCustomCss" class="container containerCustomCss">
+        {% include 'MapbenderManagerBundle:Application:form-css.html.twig' %}
+      </div>
+      <div id="containerSecurity" class="container containerSecurity">
+        {% include 'MapbenderManagerBundle:Application:form-security.html.twig' %}
+      </div>
+    </div>
+    <div class="clearContainer"></div>
+    <div class="right">
+        <input type="submit" value="{{ 'mb.manager.admin.application.save' | trans }}" class="button"/>
+        <a href="{{ url('mapbender_manager_application_index') }}" class="button critical">{{ 'mb.manager.admin.application.cancel' | trans}}</a>
+    </div>
+    <div class="clearContainer"></div>
+    {{ form_row(form._token) }}
+  </form>
 {% endblock %}

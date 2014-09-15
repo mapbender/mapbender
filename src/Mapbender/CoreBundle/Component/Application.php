@@ -270,6 +270,11 @@ class Application
             }
         }
 
+        $application_entity = $this->getEntity();
+        if('css' === $type && $application_entity::SOURCE_DB === $application_entity->getSource()) {
+            $assets[] = new StringAsset($application_entity->getCustomCss());
+        }
+
         return $assets;
     }
 
@@ -404,7 +409,7 @@ class Application
             } catch (NotAllAclsFoundException $e) {
                 $acls = $e->getPartialResult();
             } catch (\Exception $e) {
-                
+
             }
             // Set up all elements (by region)
             $this->elements = array();
@@ -419,7 +424,7 @@ class Application
                             continue;
                         }
                     } catch (\Exception $e) {
-                        
+
                     }
                 } else if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($entity->yaml_roles)) {
                     $passed = false;
@@ -497,7 +502,7 @@ class Application
 
     /**
      * Checks and generates a valid slug.
-     * 
+     *
      * @param ContainerInterface $container container
      * @param string $slug slug to check
      * @return string a valid generated slug
@@ -518,8 +523,8 @@ class Application
     }
 
     /**
-     * Returns the public "uploads" directory. 
-     * 
+     * Returns the public "uploads" directory.
+     *
      * @param ContainerInterface $container Container
      * @return string the path to uploads dir or null.
      */
@@ -543,8 +548,8 @@ class Application
     }
 
     /**
-     * Returns the application's public directory. 
-     * 
+     * Returns the application's public directory.
+     *
      * @param ContainerInterface $container Container
      * @param string $slug application's slug
      * @return boolean true if the application's directories are created or
@@ -560,8 +565,8 @@ class Application
     }
 
     /**
-     * Creates or checks if the application's public directory is created or exist. 
-     * 
+     * Creates or checks if the application's public directory is created or exist.
+     *
      * @param ContainerInterface $container Container
      * @param string $slug application's slug
      * @param string $old_slug the old application's slug.
@@ -599,7 +604,7 @@ class Application
 
     /**
      * Removes application's public directoriy.
-     * 
+     *
      * @param ContainerInterface $container Container
      * @param string $slug application's slug
      * @return boolean true if the directories are removed or not exist otherwise false
@@ -655,8 +660,8 @@ class Application
     }
 
     /**
-     * Copies an application web order. 
-     * 
+     * Copies an application web order.
+     *
      * @param ContainerInterface $container Container
      * @param string $srcSslug source application slug
      * @param string $destSlug destination application slug

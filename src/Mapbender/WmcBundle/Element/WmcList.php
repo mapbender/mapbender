@@ -112,8 +112,8 @@ class WmcList extends Element
 
     /**
      * Returns a html encoded list of all wmc documents
-     * 
-     * @return \Symfony\Component\HttpFoundation\Response 
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function getWmcList()
     {

@@ -88,6 +88,11 @@ class WmsInstanceInstanceLayersType extends AbstractType
                 'required' => false))
             ->add('tiled', 'checkbox', array(
                 'required' => false))
+            ->add('ratio', 'number', array(
+                'required' => false,
+                'precision' => 2))
+            ->add('buffer', 'integer', array(
+                'required' => false))
             ->add('dimensions', 'collection',
                 array(
                 'required' => false,

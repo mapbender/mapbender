@@ -78,6 +78,8 @@ abstract class WmsCapabilitiesParser
                 return $elm->wholeText;
             } else if ($elm->nodeType == XML_ELEMENT_NODE) {
                 return $elm;
+            } else if ($elm->nodeType == XML_CDATA_SECTION_NODE) {
+                return $elm->wholeText;
             } else {
                 return null;
             }

@@ -5,7 +5,6 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\SourceMetadata;
-use Mapbender\CoreBundle\Component\Signer;
 
 /**
  * @author Karim Malhas
@@ -241,7 +240,7 @@ abstract class SourceInstance
 
     /**
      * Sets source
-     * 
+     *
      * @param Source $source Source object
      * @return SourceInstance
      */
@@ -269,20 +268,10 @@ abstract class SourceInstance
 
     /**
      *  Returns a configuration of a source instance
+     *
      * @return array instance configuration
      */
     abstract public function getConfiguration();
-//    
-//    /**
-//     * Generates a configuration of a source instance
-//     */
-//    abstract public function generateConfiguration();
-
-//    /**
-//     * Remove a source instance from a database
-//     * @param EntityManager $em
-//     */
-//    abstract public function removen(EntityManager $em);
 
     /**
      * Copies a source instance
@@ -295,7 +284,7 @@ abstract class SourceInstance
      * @return SourceMetadata
      */
     abstract public function getMetadata();
-    
+
 
     public function __toString()
     {

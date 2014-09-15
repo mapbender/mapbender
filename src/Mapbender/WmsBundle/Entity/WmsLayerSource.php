@@ -195,7 +195,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -234,7 +234,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get parent
      *
-     * @return Object 
+     * @return Object
      */
     public function getParent()
     {
@@ -242,7 +242,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     }
 
     /**
-     * 
+     *
      * @return ArrayCollection
      */
     public function getSublayer()
@@ -251,7 +251,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     }
 
     /**
-     * 
+     *
      * @return ArrayCollection
      */
     public function setSublayer($sublayer)
@@ -286,7 +286,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -308,7 +308,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -330,7 +330,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get abstract
      *
-     * @return string 
+     * @return string
      */
     public function getAbstract()
     {
@@ -352,7 +352,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get queryable
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getQueryable()
     {
@@ -374,7 +374,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get cascaded
      *
-     * @return integer 
+     * @return integer
      */
     public function getCascaded()
     {
@@ -396,7 +396,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get opaque
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getOpaque()
     {
@@ -418,7 +418,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get noSubset
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getNoSubset()
     {
@@ -440,7 +440,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get fixedWidth
      *
-     * @return integer 
+     * @return integer
      */
     public function getFixedWidth()
     {
@@ -462,7 +462,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get fixedHeight
      *
-     * @return integer 
+     * @return integer
      */
     public function getFixedHeight()
     {
@@ -484,7 +484,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get latlonBounds
      *
-     * @return Object 
+     * @return Object
      */
     public function getLatlonBounds()
     {
@@ -524,7 +524,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get boundingBoxes
      *
-     * @return array 
+     * @return array
      */
     public function getBoundingBoxes()
     {
@@ -562,10 +562,10 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     }
 
     /**
-     * Get srs incl. from parent WmsLayerSource (OGC WMS 
+     * Get srs incl. from parent WmsLayerSource (OGC WMS
      * Implemantation Specification)
      *
-     * @return array 
+     * @return array
      */
     public function getSrs()
     {
@@ -603,10 +603,10 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     }
 
     /**
-     * Get styles incl. from parent WmsLayerSource (OGC WMS 
+     * Get styles incl. from parent WmsLayerSource (OGC WMS
      * Implemantation Specification)
      *
-     * @return array 
+     * @return array
      */
     public function getStyles()
     {
@@ -633,7 +633,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get scale
      *
-     * @return MinMax 
+     * @return MinMax
      */
     public function getScale()
     {
@@ -643,7 +643,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get scale
      *
-     * @return MinMax 
+     * @return MinMax
      */
     public function getScaleRecursive()
     {
@@ -669,7 +669,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get scaleHint
      *
-     * @return MinMax 
+     * @return MinMax
      */
     public function getScaleHint()
     {
@@ -691,7 +691,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get attribution
      *
-     * @return Object 
+     * @return Object
      */
     public function getAttribution()
     {
@@ -725,7 +725,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get identifier
      *
-     * @return Identifier 
+     * @return Identifier
      */
     public function getIdentifier()
     {
@@ -735,7 +735,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get identifier
      *
-     * @return array 
+     * @return array
      */
     public function getIdentifierAuthority()
     {
@@ -822,7 +822,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get metadataUrl
      *
-     * @return array 
+     * @return array
      */
     public function getMetadataUrl()
     {
@@ -858,13 +858,13 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get dimension
      *
-     * @return array 
+     * @return array
      */
     public function getDimension()
     {
         return $this->dimension;
     }
-    
+
     /**
      * Add dataUrl
      *
@@ -892,7 +892,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get dataUrl
      *
-     * @return array 
+     * @return array
      */
     public function getDataUrl()
     {
@@ -926,7 +926,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get featureListUrl
      *
-     * @return array 
+     * @return array
      */
     public function getFeatureListUrl()
     {
@@ -948,7 +948,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
     /**
      * Get keywords
      *
-     * @return string 
+     * @return string
      */
     public function getKeywords()
     {

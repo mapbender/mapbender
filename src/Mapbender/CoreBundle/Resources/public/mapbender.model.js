@@ -189,7 +189,7 @@ Mapbender.Model = {
         for (var i = 0; i < this.srsDefs.length; i++) {
             if (this.srsDefs[i].name === srscode) {
                 proj = new OpenLayers.Projection(this.srsDefs[i].name);
-                if (proj.projCode === 'EPSG:4326') {
+                if(!proj.proj.units) {
                     proj.proj.units = 'degrees';
                 }
                 return proj;
@@ -672,6 +672,10 @@ Mapbender.Model = {
                 if (mqLayer) {
                     if (mqLayer.olLayer instanceof OpenLayers.Layer.Grid) {
                         mqLayer.olLayer.clearGrid();
+                    }
+                    var tileManager = this.map.olMap.tileManager;
+                    if(tileManager) {
+                        tileManager.clearTileQueue({object: mqLayer.olLayer});
                     }
                     var removedMq = mqLayer.remove();
                     if (removedMq) {

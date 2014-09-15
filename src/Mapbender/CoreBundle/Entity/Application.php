@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
 /**
  * Applicaton entity
  *
@@ -111,6 +112,11 @@ class Application
      * @ORM\Column(type="datetime")
      */
     protected $updated;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $custom_css;
 
     public function __construct()
     {
@@ -324,7 +330,7 @@ class Application
         $this->layersets = $layersets;
         return $this;
     }
-    
+
     /**
      * Get layersets
      *
@@ -445,6 +451,27 @@ class Application
         return $this->updated;
     }
 
+    /**
+     * Set custom_css
+     *
+     * @param text $custom_css
+     */
+    public function setCustomCss($custom_css)
+    {
+        $this->custom_css = $custom_css;
+        return $this;
+    }
+
+    /**
+     * Get custom_css
+     *
+     * @return text
+     */
+    public function getCustomCss()
+    {
+        return $this->custom_css;
+    }
+
     public function getElementsByRegion($region = null)
     {
         if ($this->preparedElements === null) {
@@ -459,8 +486,7 @@ class Application
             }
 
             foreach ($this->preparedElements as $elementRegion => $elements) {
-                usort($elements,
-                    function ($a, $b) {
+                usort($elements, function($a, $b) {
                     return $a->getWeight() - $b->getWeight();
                 });
             }
@@ -507,6 +533,7 @@ class Application
         $app->preparedElements = $this->preparedElements;
         $app->screenshotPath = $this->screenshotPath;
         $app->source = $this->source;
+        $app->owner = $this->owner;
         $app->screenshot = $this->screenshot;
         $app->extra_assets = $this->extra_assets;
         $app->screenshotFile = $this->screenshotFile;
@@ -565,5 +592,4 @@ class Application
 
         return $app;
     }
-
 }

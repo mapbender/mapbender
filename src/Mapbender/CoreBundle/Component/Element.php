@@ -75,11 +75,11 @@ abstract class Element
         $this->entity = $entity;
     }
 
-    /*     * ***********************************************************************
+    /*************************************************************************
      *                                                                       *
      *                              Class metadata                           *
      *                                                                       *
-     * *********************************************************************** */
+     *************************************************************************/
 
     /**
      * Returns the element class title
@@ -132,11 +132,11 @@ abstract class Element
         return array();
     }
 
-    /*     * ***********************************************************************
+    /*************************************************************************
      *                                                                       *
      *                    Configuration entity handling                      *
      *                                                                       *
-     * *********************************************************************** */
+     *************************************************************************/
 
     /**
      * Get a configuration value by path.
@@ -177,11 +177,11 @@ abstract class Element
         return $this->entity;
     }
 
-    /*     * ***********************************************************************
+    /*************************************************************************
      *                                                                       *
      *             Shortcut functions for leaner Twig templates              *
      *                                                                       *
-     * *********************************************************************** */
+     *************************************************************************/
 
     /**
      * Get the element ID
@@ -213,11 +213,11 @@ abstract class Element
         return $this->entity->getDescription();
     }
 
-    /*     * ***********************************************************************
+    /*************************************************************************
      *                                                                       *
      *                              Frontend stuff                           *
      *                                                                       *
-     * *********************************************************************** */
+     *************************************************************************/
 
     /**
      * Render the element HTML fragment.
@@ -312,11 +312,11 @@ abstract class Element
         return $this->container->get('translator')->trans($key, $parameters);
     }
 
-    /*     * ***********************************************************************
+    /*************************************************************************
      *                                                                       *
      *                          Backend stuff                                *
      *                                                                       *
-     * *********************************************************************** */
+     *************************************************************************/
 
     /**
      * Get the element configuration form type.
@@ -391,12 +391,12 @@ abstract class Element
      */
     public function postSave()
     {
-        
+
     }
 
     /**
      * Creates a copy of the Element Entity configuration and updates it.
-     * 
+     *
      * @param \Doctrine\ORM\EntityManager $em EntitiyManager
      * @param \Mapbender\CoreBundle\Entity\Application $copiedApp copied application entity
      * @param array $elementsMap list with all copied elements
@@ -408,7 +408,7 @@ abstract class Element
         $subElements = array();
         $toOverwrite = array();
         $form = Element::getElementForm($this->container, $this->application->getEntity(), $this->entity);
-        // overwrite 
+        // overwrite
         foreach ($form['form']['configuration']->all() as $fieldName => $fieldValue) {
             $norm = $fieldValue->getNormData();
             if ($norm instanceof Entity) { // Element only target ???
@@ -480,11 +480,11 @@ abstract class Element
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
             $formAssets = array(
                 'js' => array(
-                    'bundles/mapbendermanager/codemirror2/lib/codemirror.js',
-                    'bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js',
+                    'bundles/mapbendermanager/codemirror/lib/codemirror.js',
+                    'bundles/mapbendermanager/codemirror/mode/yaml/yaml.js',
                     'bundles/mapbendermanager/js/form-yaml.js'),
                 'css' => array(
-                    'bundles/mapbendermanager/codemirror2/lib/codemirror.css'));
+                    'bundles/mapbendermanager/codemirror/lib/codemirror.css'));
         } else {
             $type = new $configurationFormType();
             $options = array('application' => $application);

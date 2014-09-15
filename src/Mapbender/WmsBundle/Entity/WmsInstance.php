@@ -91,6 +91,16 @@ class WmsInstance extends SourceInstance
      */
     protected $dimensions;
 
+    /**
+     * @ORM\Column(type="integer", options={"default" = 0})
+     */
+    protected $buffer = 0;
+
+    /**
+     * @ORM\Column(type="decimal", scale=2, options={"default" = 1.25})
+     */
+    protected $ratio = 1.25;
+
     public function __construct()
     {
         $this->layers = new ArrayCollection();
@@ -419,6 +429,52 @@ class WmsInstance extends SourceInstance
     }
 
     /**
+     * Set ratio
+     *
+     * @param boolean $ratio
+     * @return WmsInstance
+     */
+    public function setRatio($ratio)
+    {
+        $this->ratio = $ratio;
+
+        return $this;
+    }
+
+    /**
+     * Get ratio
+     *
+     * @return boolean
+     */
+    public function getRatio()
+    {
+        return $this->ratio;
+    }
+
+    /**
+     * Set buffer
+     *
+     * @param boolean $buffer
+     * @return WmsInstance
+     */
+    public function setBuffer($buffer)
+    {
+        $this->buffer = $buffer;
+
+        return $this;
+    }
+
+    /**
+     * Get buffer
+     *
+     * @return boolean
+     */
+    public function getBuffer()
+    {
+        return $this->buffer;
+    }
+
+    /**
      * Set wmssource
      *
      * @param WmsSource $wmssource
@@ -496,7 +552,6 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * 
      * @return WmsMetadata
      */
     public function getMetadata()
@@ -524,6 +579,8 @@ class WmsInstance extends SourceInstance
         $inst->opacity = $this->opacity;
         $inst->proxy = $this->proxy;
         $inst->tiled = $this->tiled;
+        $inst->ratio = $this->ratio;
+        $inst->buffer = $this->buffer;
         $this->copyLayerRecursive($em, $inst, $this->getRootlayer(), NULL);
         return $inst;
     }
@@ -548,5 +605,4 @@ class WmsInstance extends SourceInstance
             $this->copyLayerRecursive($em, $instCloned, $sublayer, $cloned);
         }
     }
-
 }

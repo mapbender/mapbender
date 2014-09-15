@@ -181,26 +181,26 @@ class ApplicationController extends Controller
     {
         $tocopy = $this->get('mapbender')->getApplicationEntity($slug);
         $this->checkGranted('CREATE', $tocopy);
-        
+
         $expHandler = new ExportHandler($this->container);
         $expJob = $expHandler->getJob();
         $expJob->getApplications()->add($tocopy);
         $expJob->setAddSources(true);
 //        $expJob->setAddAcl(true);
-        
+
 //        $job = $expHandler->getJob();
-//        
+//
 //        $export = $expHandler->format($expHandler->makeJob());
-//        
+//
 //        die(print_r($expHandler->bindForm()));
 
         $data = $expHandler->makeJob();
-        
+
         $impHandler = new ImportHandler($this->container, $this->getDoctrine()->getManager());
         $importJob = $impHandler->getJob();
         $importJob->setImportContent($data);
         $impHandler->makeJob();
-        
+
         return $this->redirect(
                 $this->generateUrl('mapbender_manager_application_index'));
     }
@@ -221,7 +221,7 @@ class ApplicationController extends Controller
 
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
-        
+
         $screenshot_url = null;
 
         $form->bind($request);
@@ -237,7 +237,7 @@ class ApplicationController extends Controller
             $this->checkRegionProperties($application);
             $aclManager = $this->get('fom.acl.manager');
             $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
-            
+
             $scFile = $application->getScreenshotFile();
             if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
                 $filename = sprintf('screenshot-%d.%s', $application->getId(), $scFile->guessExtension());
@@ -248,7 +248,25 @@ class ApplicationController extends Controller
             }
             $em->persist($application);
             $em->flush();
-            
+
+            $templateClass = $application->getTemplate();
+            $templateProps = $templateClass::getRegionsProperties();
+            foreach ($templateProps as $regionName => $regionProps) {
+                $regionProperties = new RegionProperties();
+                $application->addRegionProperties($regionProperties);
+                $regionProperties->setApplication($application);
+                $regionProperties->setName($regionName);
+                foreach ($regionProps as $propName => $propValue) {
+                    if (array_key_exists('state', $propValue) && $propValue['state'])
+                        $regionProperties->addProperty($propName);
+                }
+                $em->persist($regionProperties);
+                $em->flush();
+            }
+            $em->persist($application);
+            $em->flush();
+            $aclManager = $this->get('fom.acl.manager');
+            $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
             $em->getConnection()->commit();
             if (AppComponent::createAppWebDir($this->container, $application->getSlug())) {
                 $this->get('session')->getFlashBag()->set('success', 'Your application has been saved.');
@@ -361,7 +379,7 @@ class ApplicationController extends Controller
                     $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
                     $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
                     $scFile = $application->getScreenshotFile();
-                    if($scFile !== null){
+                    if($scFile) {
                         $fileType = getimagesize($scFile);
                         if ($form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
                             $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
@@ -555,7 +573,7 @@ class ApplicationController extends Controller
                 "Your application has been copied but"
                 . " the application's directories can not be created.");
         }
-        
+
     }
 
     /**
@@ -853,7 +871,7 @@ class ApplicationController extends Controller
         $source = EntityHandler::find($this->container, "MapbenderCoreBundle:Source", $sourceId);
         $layerset = EntityHandler::find($this->container, "MapbenderCoreBundle:Layerset", $layersetId);
         $eHandler = EntityHandler::createHandler($this->container, $source);
-        
+
         $sourceInstance = $eHandler->createInstance($layerset);
 
         $this->get("logger")->debug('A new instance "'
@@ -971,7 +989,6 @@ class ApplicationController extends Controller
 
     private function setRegionProperties($application, $form)
     {
-
         $templateClass = $application->getTemplate();
         $templateProps = $templateClass::getRegionsProperties();
         foreach ($templateProps as $regionName => $regionProperties) {
@@ -1011,4 +1028,19 @@ class ApplicationController extends Controller
         }
     }
 
+    private function getApplicationDir($slug)
+    {
+        $uploads_dir = $this->container->get('kernel')->getRootDir() . '/../web/'
+            . $this->container->getParameter("mapbender.uploads_dir");
+        if (!is_dir($uploads_dir)) {
+            return null;
+        }
+
+        $slug_dir = $uploads_dir . "/" . $slug;
+        if (!is_dir($slug_dir)) {
+            return null;
+        } else {
+            return realpath($slug_dir);
+        }
+    }
 }

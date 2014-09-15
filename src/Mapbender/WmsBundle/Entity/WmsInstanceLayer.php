@@ -505,8 +505,8 @@ class WmsInstanceLayer extends SourceInstanceItem
     {
         return $this->sourceInstance;
     }
-    
-    
+
+
     /**
      * @inheritdoc
      */
@@ -533,8 +533,6 @@ class WmsInstanceLayer extends SourceInstanceItem
     }
 
     /**
-     * 
-     * @param 
      */
     public function copy(EntityManager $em)
     {

@@ -163,7 +163,7 @@
                             label: Mapbender.trans('mb.core.sketch.circle.form.button.yes'),
                             cssClass: 'button buttonYes right',
                             callback: function(){
-                                var radius = parseInt($('#inputCircleRadius', self.popup.$element).val());
+                                var radius = parseFloat($('#inputCircleRadius', self.popup.$element).val());
                                 if(isNaN(radius)){
                                     Mapbender.error(Mapbender.trans('mb.core.sketch.circle.radius.error'));
                                 }else{

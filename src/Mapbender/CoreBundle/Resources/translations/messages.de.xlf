@@ -682,6 +682,18 @@
         <source>mb.core.admin.legend.label.autoopen</source>
         <target>Automatisches Öffnen</target>
       </trans-unit>
+      <trans-unit id="313130e9ce7f77c283bdbf630a77a026" resname="mb.core.htmlelement.class.title">
+        <source>mb.core.htmlelement.class.title</source>
+        <target>HTML</target>
+      </trans-unit>
+      <trans-unit id="ce2413ae706bd739dcbc0b4f9a289cef" resname="mb.core.htmlelement.class.description">
+        <source>mb.core.htmlelement.class.description</source>
+        <target>HTML hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="d39455710ac8e12021e4959d6e1c6b85" resname="mb.core.htmlelement.tag.html">
+        <source>mb.core.htmlelement.tag.html</source>
+        <target>HTML</target>
+      </trans-unit>
       <trans-unit id="a68b07cd84e92c05aa0182899bccc4c0" resname="mb.core.admin.legend.label.hideemptylayers">
         <source>mb.core.admin.legend.label.hideemptylayers</source>
         <target>Ebenen ohne Objekte ausblenden</target>

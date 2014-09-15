@@ -2,9 +2,9 @@
     {{ form_widget(element.getRouteSelectForm.route) }}
 
     <div class="search-forms" novalidate="novalidate">
-        {% for form in element.forms %}
+        {% for form in element.formViews %}
             <form name="{{ form.vars.name }}" autocomplete="off">
-                {{ form_widget(form.createView) }}
+                {{ form_widget(form) }}
             </form>
         {% endfor %}
     </div>

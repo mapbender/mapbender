@@ -3,18 +3,9 @@ namespace Mapbender\WmcBundle\Component;
 
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\StateHandler;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\State;
-use Mapbender\CoreBundle\Form\Type\StateType;
-use Mapbender\WmsBundle\Component\LegendUrl;
-use Mapbender\WmsBundle\Component\OnlineResource;
-use Mapbender\WmcBundle\Component\WmcParser;
 use Mapbender\WmcBundle\Entity\Wmc;
-use Mapbender\WmcBundle\Form\Type\WmcLoadType;
-use Mapbender\WmcBundle\Form\Type\WmcType;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class WmcHandler
 {
@@ -25,7 +16,7 @@ class WmcHandler
 
     /**
      * Creates a wmc handler
-     * 
+     *
      * @param Element $element
      */
     public function __construct(Element $element, $application, $container)
@@ -37,7 +28,7 @@ class WmcHandler
 
     /**
      * Returns a state from a state id
-     * 
+     *
      * @return Mapbender\CoreBundle\Entity\State or null.
      */
     public function findState($stateid)
@@ -53,7 +44,7 @@ class WmcHandler
 
     /**
      * Saves and returns a saved state
-     * 
+     *
      * @param array $jsonState a mapbender state
      * @return \Mapbender\CoreBundle\Entity\State or null
      */
@@ -77,7 +68,7 @@ class WmcHandler
     /**
      * Returns a wmc.
      * @param integer $wmcid a Wmc id
-     * 
+     *
      * @return Wmc or null.
      */
     public function getWmc($wmcid, $onlyPublic = TRUE)
@@ -87,10 +78,11 @@ class WmcHandler
                 . " JOIN wmc.state s Where"
 //		. " s.slug IN (:slug) AND"
                 . " wmc.id=:wmcid"
-                . ($onlyPublic === TRUE ? " AND wmc.public = 'true'" : "")
+                . ($onlyPublic === TRUE ? " AND wmc.public = :public" : "")
                 . " ORDER BY wmc.id ASC")
 //	    ->setParameter('slug', array($this->application->getSlug()))
             ->setParameter('wmcid', $wmcid);
+        if($onlyPublic) $query->setParameter('public', true);
         $wmc = $query->getResult();
         if ($wmc && count($wmc) === 1) {
             $wmc_signed = $wmc[0];
@@ -103,23 +95,24 @@ class WmcHandler
 
     /**
      * Returns a wmc list
-     * 
-     * @return \Symfony\Component\HttpFoundation\Response 
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function getWmcList($onlyPublic = true)
     {
         $query = $this->container->get('doctrine')->getManager()
             ->createQuery("SELECT wmc FROM MapbenderWmcBundle:Wmc wmc"
                 . " JOIN wmc.state s Where s.slug IN (:slug)"
-                . ($onlyPublic === TRUE ? " AND wmc.public='true'" : "")
+                . ($onlyPublic === TRUE ? " AND wmc.public=:public" : "")
                 . " ORDER BY wmc.id ASC")
             ->setParameter('slug', array($this->application->getSlug()));
+        if($onlyPublic) $query->setParameter('public', true);
         return $query->getResult();
     }
 
     /**
      * Gets a base url
-     * 
+     *
      * @return string a base url
      */
     public function getBaseUrl()
@@ -131,9 +124,9 @@ class WmcHandler
 
     /**
      * Gets a url to wmc directory or to file with "$filename
-     * 
+     *
      * @param string $filename
-     * @return string a url to wmc directory or to file with "$filename" 
+     * @return string a url to wmc directory or to file with "$filename"
      */
     public function getWmcUrl($filename = null)
     {
@@ -148,7 +141,7 @@ class WmcHandler
 
     /**
      * Gets a path to wmc directory
-     * 
+     *
      * @return string|null path to wmc directory or null
      */
     public function getWmcDir()
@@ -165,7 +158,7 @@ class WmcHandler
             return $wmc_dir;
         }
     }
-    
+
     public function unSignUrls(State $state){
         $json = json_decode($state->getJson(), true);
         if ($json && isset($json['sources']) && is_array($json['sources'])) {
@@ -178,7 +171,7 @@ class WmcHandler
         $state->setJson(json_encode($json));
         return $state;
     }
-    
+
     public function signUrls(State $state){
         $state->getId();
         $json = json_decode($state->getJson(), true);

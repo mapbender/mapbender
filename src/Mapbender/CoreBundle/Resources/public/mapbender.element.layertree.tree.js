@@ -546,6 +546,7 @@
             tochange.options.children[li.attr('data-id')] = {options: {treeOptions: {info: $(e.target).is(':checked')}}};
             this.model.changeSource({change: tochange});
         },
+
         currentMenu: null,
         closeMenu: function(menu) {
             //menu.find('.layer-zoom').off('click');
@@ -584,9 +585,10 @@
 
                 menu.removeClass('hidden');
                 $element.append(menu);
-                $(menu).on('mousedown mousemove', function(e) {//('click mousedown mousemove', function(e) {
+                $(menu).on('click mousedown mousemove', function(e) {
                     e.stopPropagation();
                 });
+
                 if ($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0) {
                     $('.layer-opacity-handle').attr('unselectable', 'on');
                     new Dragdealer('layer-opacity', {

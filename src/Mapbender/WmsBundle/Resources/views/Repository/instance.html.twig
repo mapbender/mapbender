@@ -64,14 +64,19 @@
         {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.tiled"|trans}}</label>
         </div>
         <div class="clear"></div>
+
+        {{ form_widget(form.ratio) }} <label for="{{form.ratio.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.ratio"|trans}}</label>
+        <div class="clear"></div>
+        {{ form_widget(form.buffer) }} <label for="{{form.buffer.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.buffer"|trans}}</label>
+        <div class="clear"></div>
       </div>
       {% if form.dimensions is not null and form.dimensions | length > 0 %}
       <div class="dimensionGroup">
-          <div id="dimension" class="on-off">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
-          <div id="dimension-content" class="on-off-content hidden">
-        {% for dim in form.dimensions %}
-        {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
-        {% endfor %}
+        <div id="dimension" class="on-off">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
+        <div id="dimension-content" class="on-off-content hidden">
+          {% for dim in form.dimensions %}
+            {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
+          {% endfor %}
         </div>
       </div>
       {% endif %}

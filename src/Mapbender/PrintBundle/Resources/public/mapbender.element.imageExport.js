@@ -50,6 +50,7 @@
                             cssClass: 'button right',
                             callback: function(){
                                 self._exportImage();
+                                self.close();
                             }
                         }
                     }
@@ -127,6 +128,7 @@
                 var form = $('<form method="POST" action="' + url + '"  />');
                 $('<input></input>').attr('type', 'hidden').attr('name', 'data').val(JSON.stringify(data)).appendTo(form);
                 form.appendTo($('body'));
+                form.attr('target', '_blank');
                 form.submit();
                 form.remove();
             }

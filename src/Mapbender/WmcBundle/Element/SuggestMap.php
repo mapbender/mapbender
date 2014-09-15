@@ -80,7 +80,8 @@ class SuggestMap extends Element
         );
         return array(
             'js' => $js,
-            'css' => array(),
+            'css' => array(
+                'sass/element/suggestmap.scss'),
             'trans' => array(
                 'MapbenderWmcBundle:Element:suggestmap.json.twig',
                 'MapbenderWmcBundle:Element:wmchandler.json.twig')
@@ -157,7 +158,7 @@ class SuggestMap extends Element
 
     /**
      * Returns a json encoded state
-     * 
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function loadState($stateid)
@@ -177,7 +178,7 @@ class SuggestMap extends Element
 
     /**
      * Saves the mapbender state.
-     * 
+     *
      * @return \Symfony\Component\HttpFoundation\Response a json encoded result.
      */
     protected function saveState()

@@ -100,8 +100,7 @@ class RepositoryController extends Controller
                             "mapbender_manager_repository_new", array(), true));
             }
             $proxy_config = $this->container->getParameter("owsproxy.proxy");
-            $proxy_query = ProxyQuery::createFromUrl(trim($wmssource_req->getOriginUrl()),
-                    $wmssource_req->getUsername(), $wmssource_req->getPassword());
+            $proxy_query = ProxyQuery::createFromUrl(trim($wmssource_req->getOriginUrl()), $wmssource_req->getUsername(), $wmssource_req->getPassword());
             if ($proxy_query->getGetPostParamValue("request", true) === null) {
                 $proxy_query->addQueryParameter("request", "GetCapabilities");
             }
@@ -147,8 +146,7 @@ class RepositoryController extends Controller
             if (!$wmssource) {
                 $this->get("logger")->err('Could not parse data for url "'
                     . $wmssource_req->getOriginUrl() . '"');
-                $this->get('session')->getFlashBag()->set('error',
-                    'Could not parse data for url "'
+                $this->get('session')->getFlashBag()->set('error', 'Could not parse data for url "'
                     . $wmssource_req->getOriginUrl() . '"');
                 return $this->redirect($this->generateUrl(
                             "mapbender_manager_repository_new", array(), true));
@@ -183,8 +181,7 @@ class RepositoryController extends Controller
 
             $this->get('session')->getFlashBag()->set('success', "Your WMS has been created");
             return $this->redirect($this->generateUrl(
-                        "mapbender_manager_repository_view",
-                        array(
+                        "mapbender_manager_repository_view", array(
                         "sourceId" => $wmssource->getId()), true));
         }
 
@@ -247,6 +244,7 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
+        $instance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
         $insthandler = EntityHandler::createHandler($this->container, $instance);
         $insthandler->remove();
         $em->flush();
@@ -279,6 +277,7 @@ class RepositoryController extends Controller
                     $em->refresh($layer);
                 }
                 $em->persist($wmsinstance);
+                $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
                 $em->flush();
                 $em->getConnection()->commit();
                 $wmsinstance = $this->getDoctrine()
@@ -294,8 +293,6 @@ class RepositoryController extends Controller
                 return $this->redirect($this->generateUrl(
                             'mapbender_manager_application_edit', array("slug" => $slug)) . '#layersets');
             } else { // edit
-                $err = $this->getErrorMessages($form);
-//                die(print_r($err, 1));
                 return array(
                     "form" => $form->createView(),
                     "slug" => $slug,
@@ -307,7 +304,7 @@ class RepositoryController extends Controller
                 "form" => $form->createView(),
                 "slug" => $slug,
                 "instance" => $wmsinstance,
-            );
+                );
         }
     }
 
@@ -393,14 +390,14 @@ class RepositoryController extends Controller
             ->find($instanceId);
         if (!$wmsinstance) {
             return new Response(json_encode(array(
-                    'error' => 'The wms instance with the id "' . $instanceId . '" does not exist.')), 200,
-                array('Content-Type' => 'application/json'));
+                    'error' => 'The wms instance with the id "' . $instanceId . '" does not exist.')), 200, array('Content-Type' => 'application/json'));
         } else {
             $enabled_before = $wmsinstance->getEnabled();
             $enabled = $enabled === "true" ? true : false;
             $wmsinstance->setEnabled($enabled);
             $em = $this->getDoctrine()->getManager();
             $em->persist($wmsinstance);
+            $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
             $em->flush();
             return new Response(json_encode(array(
                     'success' => array(
