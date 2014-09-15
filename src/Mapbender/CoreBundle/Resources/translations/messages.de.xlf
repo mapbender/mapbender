@@ -762,10 +762,6 @@
         <source>mb.core.layertree.label.kmlexport</source>
         <target>KML Export</target>
       </trans-unit>
-      <trans-unit id="13348442cc6a27032d2b4aa28b75a5d3" resname="Search">
-        <source>Search</source>
-        <target>Suchen</target>
-      </trans-unit>
       <trans-unit id="7676545c9153a0ed87dc96296d665c5a" resname="mb.core.metadata.popup.title">
         <source>mb.core.metadata.popup.title</source>
         <target>Metadaten</target>
@@ -793,6 +789,18 @@
       <trans-unit id="1ba8a41ca928ff7029a817b972ef07eb" resname="mb.core.layertree.label.dimensions">
         <source>mb.core.layertree.label.dimensions</source>
         <target>Dimensions</target>
+      </trans-unit>
+      <trans-unit id="aa93e59d2e2f14448358909c80467abe" resname="mb.core.layertree.label.dimension_onoff">
+        <source>mb.core.layertree.label.dimension_onoff</source>
+        <target>An/Aus Dimension</target>
+      </trans-unit>
+      <trans-unit id="ac75383716ace39d7ca992ce8422ce5d" resname="mb.core.layertree.label.dimension.current_value">
+        <source>mb.core.layertree.label.dimension.current_value</source>
+        <target>Aktueller Wert</target>
+      </trans-unit>
+      <trans-unit id="44b1db86684ccd813cfea5e5d92461cb" resname="mb.core.layertree.label.dimension">
+        <source>mb.core.layertree.label.dimension</source>
+        <target>Dimension</target>
       </trans-unit>
     </body>
   </file>

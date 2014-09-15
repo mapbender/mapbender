@@ -72,6 +72,7 @@ Mapbender.Model = {
         this.parseURL();
         this.setView(true);
     },
+
     /**
      * Set map view: extent from URL parameters or configuration and POIs
      */
@@ -80,7 +81,7 @@ Mapbender.Model = {
         var start_extent = this.mapStartExtent;
 
         var pois = [],
-                bbox = null;
+            bbox = null;
         if (this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
             bbox = this.mbMap.options.extra['bbox'] ?
                     OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']) :

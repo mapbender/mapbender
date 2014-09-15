@@ -772,23 +772,35 @@
       </trans-unit>
       <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
         <source>mb.core.entity.app.screenshotfile.error</source>
-        <target>__mb.core.entity.app.screenshotfile.error</target>
+        <target>Screenshotfile error</target>
       </trans-unit>
       <trans-unit id="035305154a06c6bd1851f8680663ddf8" resname="mb.core.layertree.tooltip.menu.close">
         <source>mb.core.layertree.tooltip.menu.close</source>
-        <target>__mb.core.layertree.tooltip.menu.close</target>
+        <target>Close</target>
       </trans-unit>
       <trans-unit id="313130e9ce7f77c283bdbf630a77a026" resname="mb.core.htmlelement.class.title">
         <source>mb.core.htmlelement.class.title</source>
-        <target>__mb.core.htmlelement.class.title</target>
+        <target>Title</target>
       </trans-unit>
       <trans-unit id="ce2413ae706bd739dcbc0b4f9a289cef" resname="mb.core.htmlelement.class.description">
         <source>mb.core.htmlelement.class.description</source>
-        <target>__mb.core.htmlelement.class.description</target>
+        <target>Description</target>
       </trans-unit>
       <trans-unit id="d39455710ac8e12021e4959d6e1c6b85" resname="mb.core.htmlelement.tag.html">
         <source>mb.core.htmlelement.tag.html</source>
-        <target>__mb.core.htmlelement.tag.html</target>
+        <target>html</target>
+      </trans-unit>
+      <trans-unit id="aa93e59d2e2f14448358909c80467abe" resname="mb.core.layertree.label.dimension_onoff">
+        <source>mb.core.layertree.label.dimension_onoff</source>
+        <target>On/Off Dimension</target>
+      </trans-unit>
+      <trans-unit id="ac75383716ace39d7ca992ce8422ce5d" resname="mb.core.layertree.label.dimension.current_value">
+        <source>mb.core.layertree.label.dimension.current_value</source>
+        <target>Current value</target>
+      </trans-unit>
+      <trans-unit id="44b1db86684ccd813cfea5e5d92461cb" resname="mb.core.layertree.label.dimension">
+        <source>mb.core.layertree.label.dimension</source>
+        <target>Dimension</target>
       </trans-unit>
     </body>
   </file>
