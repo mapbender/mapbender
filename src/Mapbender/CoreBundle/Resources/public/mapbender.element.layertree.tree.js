@@ -548,7 +548,7 @@
         },
 
         currentMenu: null,
-        closeMenu: function(menu){
+        closeMenu: function(menu) {
             //menu.find('.layer-zoom').off('click');
             //menu.find('.layer-metadata').off('click');
             menu.off('click').remove();
@@ -562,17 +562,17 @@
                 var removeButton = menu.find('.layer-remove-btn');
                 var previousMenu = self.currentMenu;
 
-                if(self.currentMenu == menu){
+                if (self.currentMenu == menu) {
                     return;
                 }
 
                 self.currentMenu = menu;
 
-                if(previousMenu){
+                if (previousMenu) {
                     self.closeMenu(previousMenu);
                 }
 
-                exitButton.on('click', function(e){
+                exitButton.on('click', function(e) {
                     self.closeMenu(menu)
                 });
 
@@ -585,15 +585,12 @@
 
                 menu.removeClass('hidden');
                 $element.append(menu);
-                $(menu).on('click mousedown mousemove', function(e) {
+                $(menu).on('mousedown mousemove', function(e) {
                     e.stopPropagation();
                 });
 
                 if ($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0) {
-
-
-                    $('.layer-opacity-handle').attr('unselectable','on');
-
+                    $('.layer-opacity-handle').attr('unselectable', 'on');
                     new Dragdealer('layer-opacity', {
                         x: source.configuration.options.opacity,
                         horizontal: true,
@@ -643,14 +640,14 @@
             var types = this.consts;
             var model = this.model;
 
-            if(layer.sourceid && layer.type){
-                switch (layer.type){
+            if (layer.sourceid && layer.type) {
+                switch (layer.type) {
                     case types.root:
                         model.removeSource({remove: {sourceIdx: {id: layer.sourceid}}});
                         break;
                     case types.group:
                     case types.simple:
-                        model.changeSource({change: {layerRemove: {sourceIdx: {id: layer.sourceid}, layer: {options: {id:layer.id}}}}});
+                        model.changeSource({change: {layerRemove: {sourceIdx: {id: layer.sourceid}, layer: {options: {id: layer.id}}}}});
                         break;
                 }
             }

@@ -786,6 +786,22 @@
         <source>mb.core.layertree.tooltip.menu.close</source>
         <target>Schließen</target>
       </trans-unit>
+      <trans-unit id="1ba8a41ca928ff7029a817b972ef07eb" resname="mb.core.layertree.label.dimensions">
+        <source>mb.core.layertree.label.dimensions</source>
+        <target>Dimensions</target>
+      </trans-unit>
+      <trans-unit id="aa93e59d2e2f14448358909c80467abe" resname="mb.core.layertree.label.dimension_onoff">
+        <source>mb.core.layertree.label.dimension_onoff</source>
+        <target>An/Aus Dimension</target>
+      </trans-unit>
+      <trans-unit id="ac75383716ace39d7ca992ce8422ce5d" resname="mb.core.layertree.label.dimension.current_value">
+        <source>mb.core.layertree.label.dimension.current_value</source>
+        <target>Aktueller Wert</target>
+      </trans-unit>
+      <trans-unit id="44b1db86684ccd813cfea5e5d92461cb" resname="mb.core.layertree.label.dimension">
+        <source>mb.core.layertree.label.dimension</source>
+        <target>Dimension</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

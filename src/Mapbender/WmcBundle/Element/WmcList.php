@@ -76,7 +76,7 @@ class WmcList extends Element
     {
         $js = array(
             'mapbender.element.wmclist.js',
-            '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
+            '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'
         );
         return array(
             'js' => $js,

@@ -158,7 +158,7 @@ Mapbender.Model = {
         }
 
 
-        if(true === addLayers) {
+        if (true === addLayers) {
             $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
             // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
             // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
@@ -313,6 +313,33 @@ Mapbender.Model = {
         }
         return null;
     },
+    resetSourceUrl: function(source, options, reload) {
+        var params = OpenLayers.Util.getParameters(source.configuration.options.url);
+        var url;
+        if (options.add) {
+            for (name in options.add) {
+                params[name] = options.add[name];
+            }
+            url = OpenLayers.Util.urlAppend(source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
+        } else if (options.remove) {
+            for (name in options.remove) {
+                if (params[name]) {
+                    delete(params[name]);
+                }
+            }
+            url = OpenLayers.Util.urlAppend(source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
+        }
+        if (url) {
+            source.configuration.options.url = url;
+            var mqLayer = this.map.layersList[source.mqlid];
+            if (mqLayer.olLayer.getVisibility()) {
+                mqLayer.olLayer.url = url;
+                if (reload) {
+                    mqLayer.olLayer.redraw();
+                }
+            }
+        }
+    },
     findSource: function(options) {
         var sources = [];
         var findSource = function(object, options) {
@@ -340,9 +367,9 @@ Mapbender.Model = {
         }
         return sources;
     },
-    findLayer: function(sourceOptions, layerOptions){
+    findLayer: function(sourceOptions, layerOptions) {
         var source = this.findSource(sourceOptions);
-        if(source.length === 1){
+        if (source.length === 1) {
             return Mapbender.source[source[0].type].findLayer(source[0], layerOptions);
         } else {
             return null;
@@ -408,7 +435,7 @@ Mapbender.Model = {
             mqLayer.olLayer.setVisibility(false);
             // Clear all previously queued tiles for this layer
             var tileManager = this.map.olMap.tileManager;
-            if(tileManager) {
+            if (tileManager) {
                 tileManager.clearTileQueue({object: mqLayer.olLayer});
             }
             mqLayer.olLayer.params.LAYERS = result.layers;
@@ -470,7 +497,7 @@ Mapbender.Model = {
 //        var src = this.getSource({ollid: e.element.id});
 //        var mqLayer = this.map.layersList[src.mqlid];
 //        if (mqLayer.olLayer.getVisibility()) {
-            this.mbMap.fireModelEvent({name: 'sourceloadend', value: {source: this.getSource({ollid: e.element.id})}});
+        this.mbMap.fireModelEvent({name: 'sourceloadend', value: {source: this.getSource({ollid: e.element.id})}});
 //        }
     },
     /**

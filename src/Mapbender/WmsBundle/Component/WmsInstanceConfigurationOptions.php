@@ -121,7 +121,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         return ($this->getTiled() ? 1 : 1.2);
     }
 
-
+    
     /**
      * @inheritdoc
      */
