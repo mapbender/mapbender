@@ -7,7 +7,7 @@ namespace Mapbender\WmsBundle\Component;
  *
  * @author Paul Schmidt
  */
-class Dimension
+class DimTime extends Dimension
 {
 
     /**
@@ -56,8 +56,8 @@ class Dimension
      * ORM\Column(type="string", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $extent;
-    
+    public $extentValue;
+
     /**
      * Set name
      * 
@@ -222,24 +222,24 @@ class Dimension
     }
 
     /**
-     * Set extent
+     * Set extentValue
      * 
      * @param string $value 
      * @return Dimension
      */
-    public function setExtent($value)
+    public function setExtentValue($value)
     {
-        $this->extent = $value;
+        $this->extentValue = $value;
     }
 
     /**
-     * Get extent
+     * Get extentValue
      * 
-     * @return Dimension
+     * @return string
      */
-    public function getExtent()
+    public function getExtentValue()
     {
-        return $this->extent;
+        return $this->extentValue;
     }
 
 }
