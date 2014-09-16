@@ -162,17 +162,29 @@ class Map extends Element
         $pois = $this->container->get('request')->get('poi');
         if ($pois) {
             $extra['pois'] = array();
-            if (array_key_exists('point', $pois)) {
+            if(array_key_exists('point', $pois)) {
                 $pois = array($pois);
             }
-            foreach ($pois as $poi) {
-                $point = explode(',', $poi['point']);
-                $extra['pois'][] = array(
-                    'x' => floatval($point[0]),
-                    'y' => floatval($point[1]),
-                    'label' => isset($poi['label']) ? $poi['label'] : null,
-                    'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
-                );
+            if (array_key_exists('x', $pois)) {
+                $pois = array($pois);
+                foreach ($pois as $poi) {
+                    $extra['pois'][] = array(
+                        'x' => floatval($poi['x']),
+                        'y' => floatval($poi['y']),
+                        'label' => isset($poi['label']) ? $poi['label'] : null,
+                        'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
+                    );
+                }
+            } else {
+                foreach ($pois as $poi) {
+                    $point = explode(',', $poi['point']);
+                    $extra['pois'][] = array(
+                        'x' => floatval($point[0]),
+                        'y' => floatval($point[1]),
+                        'label' => isset($poi['label']) ? $poi['label'] : null,
+                        'scale' => isset($poi['scale']) ? intval($poi['scale']) : null
+                    );
+                }
             }
         }
 
@@ -240,7 +252,7 @@ class Map extends Element
         }
         return $response;
     }
-    
+
     protected function loadSrsDefinitions()
     {
         $srsList = $this->container->get('request')->get("srs", null);
