@@ -163,7 +163,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                     'default' => $dimension->getDefault(),
                     'multipleValues' => $dimension->getMultipleValues(),
                     'name' => $dimension->getName(),
-                    '__name' => $name === 'time' || $name === 'elevation' ? : "dim_" . $name,
+                    '__name' => $name === 'time' || $name === 'elevation' ? $name : "dim_" . $name,
                     'nearestValue' => $dimension->getNearestValue(),
                     'unitSymbol' => $dimension->getUnitSymbol(),
                     'units' => $dimension->getUnits(),
