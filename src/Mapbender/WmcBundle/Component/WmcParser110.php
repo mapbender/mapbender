@@ -29,9 +29,9 @@ class WmcParser110 extends WmcParser
     /**
      * @inheritdoc
      */
-    public function __construct(\DOMDocument $doc)
+    public function __construct(\DOMDocument $doc, $container = null)
     {
-        parent::__construct($doc);
+        parent::__construct($doc, $container);
         $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
         $this->xpath->registerNamespace("cntxt",
             "http://www.opengis.net/context");
@@ -249,9 +249,15 @@ class WmcParser110 extends WmcParser
         $wmsconf->setTitle($wmsinst->getTitle());
         $wmsconf->setIsBaseSource(false);
         $options = new WmsInstanceConfigurationOptions();
-        $options->setUrl($wms->getGetMap()->getHttpGet())
-            ->setVisible($wmsinst->getVisible())
-            ->setFormat($wmsinst->getFormat());
+        $url = $wms->getGetMap()->getHttpGet();
+        if($this->container) {
+            $signer = $this->container->get('signer');
+            $url = $signer->signUrl($url);
+        }
+
+        $options->setUrl($url)
+                ->setVisible($wmsinst->getVisible())
+                ->setFormat($wmsinst->getFormat());
 
         $extensionEl = $this->getValue("./cntxt:Extension", $layerElm);
         $layerList = null;

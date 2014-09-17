@@ -25,14 +25,17 @@ abstract class WmcParser
      */
     protected $xpath;
 
+    protected $container;
+
     /**
      * Creates an instance
      *
      * @param \DOMDocument $doc
      */
-    public function __construct(\DOMDocument $doc)
+    public function __construct(\DOMDocument $doc, $container = null)
     {
         $this->doc = $doc;
+        $this->container = $container;
         $this->xpath = new \DOMXPath($doc);
         $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
     }
@@ -143,12 +146,12 @@ abstract class WmcParser
      * @return \Mapbender\WmsBundle\Component\WmcParser110
      * @throws NotSupportedVersionException if a version is not supported
      */
-    public static function getParser(\DOMDocument $doc)
+    public static function getParser(\DOMDocument $doc, $container = null)
     {
         $version = $doc->documentElement->getAttribute("version");
         switch ($version) {
             case "1.1.0":
-                return new WmcParser110($doc);
+                return new WmcParser110($doc, $container);
             default:
                 throw new NotSupportedVersionException("Could not determine WMC Version");
                 break;

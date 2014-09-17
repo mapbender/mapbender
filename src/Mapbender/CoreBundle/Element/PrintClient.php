@@ -10,9 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Mapbender\PrintBundle\Component\OdgParser;
+use Mapbender\PrintBundle\Component\PrintService;
 
 /**
- * 
+ *
  */
 class PrintClient extends Element
 {
@@ -200,27 +201,27 @@ class PrintClient extends Element
                 foreach ($data['layers'] as $idx => $layer) {
                     $data['layers'][$idx] = json_decode($layer, true);
                 }
-                
+
                 if (isset($data['overview'])){
                     foreach ($data['overview'] as $idx => $layer) {
                         $data['overview'][$idx] = json_decode($layer, true);
                     }
                 }
-                
+
                 if (isset($data['features'])){
                     foreach ($data['features'] as $idx => $value) {
                         $data['features'][$idx] = json_decode($value, true);
                     }
                 }
-                
+
                 if (isset($data['replace_pattern'])){
                     foreach ($data['replace_pattern'] as $idx => $value) {
                         $data['replace_pattern'][$idx] = json_decode($value, true);
                     }
                 }
-                
-                if (isset($data['extent_feature'])){         
-                        $data['extent_feature'] = json_decode($data['extent_feature'], true);                  
+
+                if (isset($data['extent_feature'])){
+                        $data['extent_feature'] = json_decode($data['extent_feature'], true);
                 }
 
                 $user = $this->container->get('mapbender.print.queue_manager')->getCurrentUser();
@@ -228,9 +229,18 @@ class PrintClient extends Element
                 $data['userId']           = $user ? $user->getId() : null;
                 $data['anonymous']        = $configuration['anonymous'];
 
-
+                $ps = new PrintService($this->container);
+                $response = $ps->doPrint($data);
+                $res = new Response();
+                $res->headers->set('Content-Type', 'application/pdf');
+                $res->setContent($response);
+                return $res;
+                // Currently not forwarding because no external print
+                // service is supported anyway. Also note that
+                // message/content based authentication methods such
+                // as NTLM will fail if done this way.
                 // Forward to Printer Service URL using OWSProxy
-                return $this->forwardRequest($request, $data, $this->container->get('router')->generate('mapbender_print_print_service',array(),true));
+                /* return $this->forwardRequest($request, $data, $this->container->get('router')->generate('mapbender_print_print_service',array(),true)); */
 
 
             case 'template':
@@ -280,14 +290,20 @@ class PrintClient extends Element
      */
     protected function forwardRequest(Request $request, $data, $url)
     {
-        return $this->container->get('http_kernel')->handle($request->duplicate(array(),
-                null,
-                array('_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-                      'url'         => $url,
-                      'content'     => $this->container->get('signer')->dump(new SignerToken($data)))
-            ),
+        $duplicate = $request->duplicate
+            (array(),
+            null,
+            array('_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
+            'url'         => $url,
+            'content'     => $this->container->get('signer')->dump(new SignerToken($data)))
+        );
+
+        $response = $this->container->get('http_kernel')->handle
+            ($duplicate,
             HttpKernelInterface::SUB_REQUEST
         );
+
+        return $response;
     }
 
 }
