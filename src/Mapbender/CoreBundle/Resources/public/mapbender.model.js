@@ -403,6 +403,7 @@ Mapbender.Model = {
     _checkAndRedrawSource: function(toChangeOpts) {
         var source = this.getSource(toChangeOpts.sourceIdx);
         var result = Mapbender.source[source.type].changeOptions(source, this.map.olMap.getScale(), toChangeOpts);
+
         var mqLayer = this.map.layersList[source.mqlid];
         if (result.layers.length === 0) {
             mqLayer.olLayer.setVisibility(false);
@@ -417,7 +418,7 @@ Mapbender.Model = {
             mqLayer.olLayer.params.LAYERS = result.layers;
             mqLayer.olLayer.queryLayers = result.infolayers;
             mqLayer.olLayer.setVisibility(true);
-            mqLayer.olLayer.redraw();
+            mqLayer.olLayer.redraw(true);
         }
         return result.changed;
     },
@@ -425,6 +426,7 @@ Mapbender.Model = {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
             var result = Mapbender.source[source.type].changeOptions(source, self.map.olMap.getScale(), {sourceIdx: {id: source.id}, options: {children: {}}});
+
             var mqLayer = self.map.layersList[source.mqlid];
             if (result.layers.length === 0) {
                 mqLayer.olLayer.setVisibility(false);
@@ -436,6 +438,7 @@ Mapbender.Model = {
                 mqLayer.olLayer.queryLayers = result.infolayers;
                 mqLayer.olLayer.setVisibility(true);
                 mqLayer.visible(true);
+                mqLayer.olLayer.redraw(true);
             }
             for (child in result.changed.children) {
                 if (result.changed.children[child].state && typeof result.changed.children[child].state.outOfScale !== 'undefined') {
