@@ -136,6 +136,10 @@ class PrintService
         $ll_y = $centery - $map_height * 0.5;
         $ur_x = $centerx + $map_width * 0.5;
         $ur_y = $centery + $map_height * 0.5;
+        $this->left = $ll_x;
+        $this->right = $ur_x;
+        $this->top = $ur_y;
+        $this->bottom = $ll_y;
 
         $bbox = '&BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
 
@@ -461,30 +465,50 @@ class PrintService
             $pdf->SetXY($this->conf['fields'][$k]['x'] * 10,
                 $this->conf['fields'][$k]['y'] * 10);
             switch ($k) {
-                case 'date' :
-                    $date = new \DateTime;
-                    $pdf->Cell($this->conf['fields']['date']['width'] * 10,
-                        $this->conf['fields']['date']['height'] * 10,
-                        $date->format('d.m.Y'));
-                    break;
-                case 'scale' :
-                    if (isset($this->data['scale_select'])) {
-                        $pdf->Cell($this->conf['fields']['scale']['width'] * 10,
-                            $this->conf['fields']['scale']['height'] * 10,
-                            '1 : ' . $this->data['scale_select']);
-                    } else {
-                        $pdf->Cell($this->conf['fields']['scale']['width'] * 10,
-                            $this->conf['fields']['scale']['height'] * 10,
-                            '1 : ' . $this->data['scale_text']);
-                    }
-                    break;
-                default:
-                    if (isset($this->data['extra'][$k])) {
-                        $pdf->MultiCell($this->conf['fields'][$k]['width'] * 10,
-                            $this->conf['fields'][$k]['height'] * 10,
-                            utf8_decode($this->data['extra'][$k]));
-                    }
-                    break;
+            case 'date' :
+                $date = new \DateTime;
+                $pdf->Cell($this->conf['fields']['date']['width'] * 10,
+                $this->conf['fields']['date']['height'] * 10,
+                $date->format('d.m.Y'));
+                break;
+            case 'scale' :
+                if (isset($this->data['scale_select'])) {
+                    $pdf->Cell($this->conf['fields']['scale']['width'] * 10,
+                    $this->conf['fields']['scale']['height'] * 10,
+                    '1 : ' . $this->data['scale_select']);
+                } else {
+                    $pdf->Cell($this->conf['fields']['scale']['width'] * 10,
+                    $this->conf['fields']['scale']['height'] * 10,
+                    '1 : ' . $this->data['scale_text']);
+                }
+                break;
+            case 'left':
+                $pdf->MultiCell($this->conf['fields']['left']['width'] * 10,
+                $this->conf['fields']['left']['height'] * 10,
+                utf8_decode($this->left));
+                break;
+            case 'right':
+                $pdf->MultiCell($this->conf['fields']['right']['width'] * 10,
+                $this->conf['fields']['right']['height'] * 10,
+                utf8_decode($this->right));
+                break;
+            case 'top':
+                $pdf->MultiCell($this->conf['fields']['top']['width'] * 10,
+                $this->conf['fields']['top']['height'] * 10,
+                utf8_decode($this->top));
+                break;
+            case 'bottom':
+                $pdf->MultiCell($this->conf['fields']['bottom']['width'] * 10,
+                $this->conf['fields']['bottom']['height'] * 10,
+                utf8_decode($this->bottom));
+                break;
+            default:
+                if (isset($this->data['extra'][$k])) {
+                    $pdf->MultiCell($this->conf['fields'][$k]['width'] * 10,
+                    $this->conf['fields'][$k]['height'] * 10,
+                    utf8_decode($this->data['extra'][$k]));
+                }
+                break;
             }
         }
 
