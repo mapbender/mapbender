@@ -266,14 +266,6 @@
         <source>mb.core.aboutdialog.tag.about</source>
         <target>acerca de</target>
       </trans-unit>
-      <trans-unit id="befc1f8d20bbd1ba5f26e124d8b94f1a" resname="mb.core.activityindicator.class.title">
-        <source>mb.core.activityindicator.class.title</source>
-        <target>Indicador de actividad</target>
-      </trans-unit>
-      <trans-unit id="4c68bd109de1a07d8c03455e938af4d9" resname="mb.core.activityindicator.class.description">
-        <source>mb.core.activityindicator.class.description</source>
-        <target>Mostrar actividad HTTP</target>
-      </trans-unit>
       <trans-unit id="fd918578edd7d0cca263c511c5aa5d1e" resname="mb.core.activityindicator.tag.activity">
         <source>mb.core.activityindicator.tag.activity</source>
         <target>actividad</target>
@@ -813,14 +805,6 @@
       <trans-unit id="8631113f1add8f0c5faf76acae655d58" resname="mb.print.queue.table.head.user">
         <source>mb.print.queue.table.head.user</source>
         <target>Usuario</target>
-      </trans-unit>
-      <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
-        <source>mb.core.entity.app.screenshotfile.error</source>
-        <target>Screenshotfile error</target>
-      </trans-unit>
-      <trans-unit id="035305154a06c6bd1851f8680663ddf8" resname="mb.core.layertree.tooltip.menu.close">
-        <source>mb.core.layertree.tooltip.menu.close</source>
-        <target>Close</target>
       </trans-unit>
       <trans-unit id="313130e9ce7f77c283bdbf630a77a026" resname="mb.core.htmlelement.class.title">
         <source>mb.core.htmlelement.class.title</source>
