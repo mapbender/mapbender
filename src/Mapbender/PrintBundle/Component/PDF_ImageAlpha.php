@@ -288,5 +288,3 @@ function _parsepng($file)
 }
 
 }
-
-?>

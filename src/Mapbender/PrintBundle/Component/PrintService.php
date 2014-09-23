@@ -27,7 +27,7 @@ class PrintService
      *
      */
     public function doPrint($content)
-    {   
+    {
         $this->data = $content;
         $template = $this->data['template'];
 
@@ -69,17 +69,17 @@ class PrintService
             $this->layerOpacity[$i] = $this->data['layers'][$i]['opacity']*100;
         }
     }
-    
+
     private function addReplacePattern()
     {
         if(!isset($this->data['replace_pattern'])){
             return;
         }
-        
+
         $quality = $this->data['quality'];
         $default = '';
         foreach ($this->layer_urls as $k => $url) {
-            foreach ($this->data['replace_pattern'] as $rKey => $pattern) {  
+            foreach ($this->data['replace_pattern'] as $rKey => $pattern) {
                 if(isset($pattern['default'])){
                     if(isset($pattern['default'][$quality])){
                         $default = $pattern['default'][$quality];
@@ -97,13 +97,13 @@ class PrintService
                         continue 2;
                     }
                 }
-                
+
             }
-           $url .= $default; 
+           $url .= $default;
            $this->layer_urls[$k] = $url;
         }
     }
-    
+
     /**
      * Todo
      *
@@ -136,6 +136,10 @@ class PrintService
         $ll_y = $centery - $map_height * 0.5;
         $ur_x = $centerx + $map_width * 0.5;
         $ur_y = $centery + $map_height * 0.5;
+        $this->left = $ll_x;
+        $this->right = $ur_x;
+        $this->top = $ur_y;
+        $this->bottom = $ll_y;
 
         $bbox = '&BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
 
@@ -201,12 +205,12 @@ class PrintService
                     $this->container->get("logger")->debug("Unknown mimetype " . trim($response->headers->get('content-type')));
                     continue;
             }
-            
+
             if ($om !== null) {
                 // Make sure input image is truecolor with alpha, regardless of input mode!
                 $im = imagecreatetruecolor($this->image_width, $this->image_height);
                 imagealphablending($im, false);
-                imagesavealpha($im, true);            
+                imagesavealpha($im, true);
                 imagecopyresampled($im, $om, 0, 0, 0, 0, $this->image_width, $this->image_height, $this->image_width, $this->image_height);
 
 
@@ -218,7 +222,7 @@ class PrintService
                     for ($x = 0; $x < $width; $x++) {
                         for ($y = 0; $y < $height; $y++) {
                             $colorIn = imagecolorsforindex($im, imagecolorat($im, $x, $y));
-                            $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;                                
+                            $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
 
                             $colorOut = imagecolorallocatealpha(
                                 $im,
@@ -337,7 +341,7 @@ class PrintService
                 // Make sure input image is truecolor with alpha, regardless of input mode!
                 $im = imagecreatetruecolor($neededImageWidth, $neededImageHeight);
                 imagealphablending($im, false);
-                imagesavealpha($im, true);            
+                imagesavealpha($im, true);
                 imagecopyresampled($im, $om, 0, 0, 0, 0, $neededImageWidth, $neededImageHeight, $neededImageWidth, $neededImageHeight);
 
                 // Taking the painful way to alpha blending. Stupid PHP-GD
@@ -348,7 +352,7 @@ class PrintService
                     for ($x = 0; $x < $width; $x++) {
                         for ($y = 0; $y < $height; $y++) {
                             $colorIn = imagecolorsforindex($im, imagecolorat($im, $x, $y));
-                            $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;                                
+                            $alphaOut = 127 - (127 - $colorIn['alpha']) * $opacity;
 
                             $colorOut = imagecolorallocatealpha(
                                 $im,
@@ -364,8 +368,8 @@ class PrintService
 
                 imagepng($im, $imagename);
             }
-            
-            
+
+
         }
 
         // create temp merged image
@@ -396,7 +400,7 @@ class PrintService
         $rotatedImage = imagerotate($tempimg, $rotation, $transColor);
         imagealphablending($rotatedImage, false);
         imagesavealpha($rotatedImage, true);
-        
+
         $rotatimagename = tempnam($tempdir, 'mb_printrotated');
         imagepng($rotatedImage, $rotatimagename);
 
@@ -461,38 +465,58 @@ class PrintService
             $pdf->SetXY($this->conf['fields'][$k]['x'] * 10,
                 $this->conf['fields'][$k]['y'] * 10);
             switch ($k) {
-                case 'date' :
-                    $date = new \DateTime;
-                    $pdf->Cell($this->conf['fields']['date']['width'] * 10,
-                        $this->conf['fields']['date']['height'] * 10,
-                        $date->format('d.m.Y'));
-                    break;
-                case 'scale' :
-                    if (isset($this->data['scale_select'])) {
-                        $pdf->Cell($this->conf['fields']['scale']['width'] * 10,
-                            $this->conf['fields']['scale']['height'] * 10,
-                            '1 : ' . $this->data['scale_select']);
-                    } else {
-                        $pdf->Cell($this->conf['fields']['scale']['width'] * 10,
-                            $this->conf['fields']['scale']['height'] * 10,
-                            '1 : ' . $this->data['scale_text']);
-                    }
-                    break;
-                default:
-                    if (isset($this->data['extra'][$k])) {
-                        $pdf->MultiCell($this->conf['fields'][$k]['width'] * 10,
-                            $this->conf['fields'][$k]['height'] * 10,
-                            utf8_decode($this->data['extra'][$k]));
-                    }
-                    break;
+            case 'date' :
+                $date = new \DateTime;
+                $pdf->Cell($this->conf['fields']['date']['width'] * 10,
+                $this->conf['fields']['date']['height'] * 10,
+                $date->format('d.m.Y'));
+                break;
+            case 'scale' :
+                if (isset($this->data['scale_select'])) {
+                    $pdf->Cell($this->conf['fields']['scale']['width'] * 10,
+                    $this->conf['fields']['scale']['height'] * 10,
+                    '1 : ' . $this->data['scale_select']);
+                } else {
+                    $pdf->Cell($this->conf['fields']['scale']['width'] * 10,
+                    $this->conf['fields']['scale']['height'] * 10,
+                    '1 : ' . $this->data['scale_text']);
+                }
+                break;
+            case 'left':
+                $pdf->MultiCell($this->conf['fields']['left']['width'] * 10,
+                $this->conf['fields']['left']['height'] * 10,
+                utf8_decode($this->left));
+                break;
+            case 'right':
+                $pdf->MultiCell($this->conf['fields']['right']['width'] * 10,
+                $this->conf['fields']['right']['height'] * 10,
+                utf8_decode($this->right));
+                break;
+            case 'top':
+                $pdf->MultiCell($this->conf['fields']['top']['width'] * 10,
+                $this->conf['fields']['top']['height'] * 10,
+                utf8_decode($this->top));
+                break;
+            case 'bottom':
+                $pdf->MultiCell($this->conf['fields']['bottom']['width'] * 10,
+                $this->conf['fields']['bottom']['height'] * 10,
+                utf8_decode($this->bottom));
+                break;
+            default:
+                if (isset($this->data['extra'][$k])) {
+                    $pdf->MultiCell($this->conf['fields'][$k]['width'] * 10,
+                    $this->conf['fields'][$k]['height'] * 10,
+                    utf8_decode($this->data['extra'][$k]));
+                }
+                break;
             }
         }
-        
+
         // draw features
         if ($this->data['rotation'] == 0 && isset($this->data['features'])) {
             $this->drawFeatures();
         }
-        
+
         if ($this->data['rotation'] == 0) {
 
             $pdf->Image($this->finalimagename, $this->x_ul,
@@ -516,19 +540,19 @@ class PrintService
                 $this->rotateNorthArrow();
             }
         }
-        
-        // add overview map 
+
+        // add overview map
         if (isset($this->data['overview']) && isset($this->conf['overview']) ) {
             $this->getOverviewMap();
         }
-        
-        // add scalebar    
+
+        // add scalebar
         if (isset($this->conf['scalebar']) ) {
             $this->drawScaleBar();
         }
-        
+
         unlink($this->finalimagename);
-        
+
         return $pdf->Output(null, 'S');
     }
 
@@ -543,7 +567,7 @@ class PrintService
         $rotation = $this->data['rotation'];
         $northarrow = $resource_dir . '/images/northarrow.png';
         $im = imagecreatefrompng($northarrow);
-        $transColor = imagecolorallocatealpha($im, 255, 255, 255, 127);
+        $transColor = imagecolorallocatealpha($im, 255, 255, 255, 0);
         $rotated = imagerotate($im, $rotation, $transColor);
         $imagename = tempnam($tempdir, 'mb_northarrow');
         imagepng($rotated, $imagename);
@@ -569,16 +593,16 @@ class PrintService
                             'png');
         unlink($imagename);
     }
-    
+
     private function getOverviewMap()
     {
         $temp_names = array();
         foreach ($this->data['overview'] as $i => $layer) {
-            $url = strstr($this->data['overview'][$i]['url'], 'BBOX', true);           
-            
+            $url = strstr($this->data['overview'][$i]['url'], 'BBOX', true);
+
             $ov_width = $this->conf['overview']['width'] * $this->data['overview'][0]['scale'] / 100;
             $ov_height = $this->conf['overview']['height'] * $this->data['overview'][0]['scale'] / 100;
-            
+
             $centerx = $this->data['center']['x'];
             $centery = $this->data['center']['y'];
 
@@ -586,23 +610,23 @@ class PrintService
             $ll_y = $centery - $ov_height * 0.5;
             $ur_x = $centerx + $ov_width * 0.5;
             $ur_y = $centery + $ov_height * 0.5;
-            
-            
+
+
             $bbox = 'BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
             $url .= $bbox;
-            
+
             // image size
             $conf = $this->conf;
-            $quality = $this->data['quality'];      
+            $quality = $this->data['quality'];
             $ov_image_width = round($conf['overview']['width'] / 2.54 * $quality);
-            $ov_image_height = round($conf['overview']['height'] / 2.54 * $quality);            
-            
+            $ov_image_height = round($conf['overview']['height'] / 2.54 * $quality);
+
             $width = '&WIDTH=' . $ov_image_width;
             $height = '&HEIGHT=' . $ov_image_height;
             $url .= $width . $height;
-            
-            $this->overview_urls[$i] = $url;           
-            
+
+            $this->overview_urls[$i] = $url;
+
             // get image
             $this->container->get("logger")->debug("Print Overview Request Nr.: " . $i . ' ' . $url);
             $attributes = array();
@@ -638,9 +662,9 @@ class PrintService
                 imagesavealpha($im, true);
                 imagepng($im, $imagename);
             }
-                
+
         }
-        
+
         // create final merged image
         $finalimagename = tempnam($tempdir, 'mb_print_merged');
         $finalImage = imagecreatetruecolor($ov_image_width,
@@ -661,13 +685,13 @@ class PrintService
                 imagepng($dest, $finalimagename);
             }
             unlink($temp_name);
-        }       
-        
-        $image = imagecreatefrompng($finalimagename);             
-        
-        // ohne rotation      
+        }
+
+        $image = imagecreatefrompng($finalimagename);
+
+        // ohne rotation
         if ($this->data['rotation'] == 0) {
-        
+
             $map_width = $this->data['extent']['width'];
             $map_height = $this->data['extent']['height'];
             $centerx = $this->data['center']['x'];
@@ -687,74 +711,74 @@ class PrintService
             $upperright[0] = round($upperright[0]);
             $upperright[1] = round($upperright[1]);
 
-            $red = ImageColorAllocate($image,255,0,0); 
+            $red = ImageColorAllocate($image,255,0,0);
             imageline ( $image, $lowerleft[0], $upperright[1], $upperright[0], $upperright[1], $red);
             imageline ( $image, $upperright[0], $upperright[1], $upperright[0], $lowerleft[1], $red);
             imageline ( $image, $upperright[0], $lowerleft[1], $lowerleft[0], $lowerleft[1], $red);
             imageline ( $image, $lowerleft[0], $lowerleft[1], $lowerleft[0], $upperright[1], $red);
-        
-        }else{// mit rotation                    
 
-            $ll_x = $this->data['extent_feature'][3]['x'];           
+        }else{// mit rotation
+
+            $ll_x = $this->data['extent_feature'][3]['x'];
             $ll_y = $this->data['extent_feature'][3]['y'];
             $ul_x = $this->data['extent_feature'][0]['x'];
             $ul_y = $this->data['extent_feature'][0]['y'];
-            
+
             $lr_x = $this->data['extent_feature'][2]['x'];
-            $lr_y = $this->data['extent_feature'][2]['y'];       
+            $lr_y = $this->data['extent_feature'][2]['y'];
             $ur_x = $this->data['extent_feature'][1]['x'];
             $ur_y = $this->data['extent_feature'][1]['y'];
-            
-            
+
+
             $p1 = $this->realWorld2ovMapPos($ov_width, $ov_height, $ll_x, $ll_y);
             $p2 = $this->realWorld2ovMapPos($ov_width, $ov_height, $ul_x, $ul_y);
             $p3 = $this->realWorld2ovMapPos($ov_width, $ov_height, $ur_x, $ur_y);
             $p4 = $this->realWorld2ovMapPos($ov_width, $ov_height, $lr_x, $lr_y);
-            
-            
-            $red = ImageColorAllocate($image,255,0,0); 
+
+
+            $red = ImageColorAllocate($image,255,0,0);
             imageline ( $image, $p1[0], $p1[1], $p2[0], $p2[1], $red);
             imageline ( $image, $p2[0], $p2[1], $p3[0], $p3[1], $red);
             imageline ( $image, $p3[0], $p3[1], $p4[0], $p4[1], $red);
             imageline ( $image, $p4[0], $p4[1], $p1[0], $p1[1], $red);
         }
-               
+
         imagepng($image, $finalimagename);
-        
+
         $this->pdf->Image($finalimagename,
                     $this->conf['overview']['x'] * 10,
                     $this->conf['overview']['y'] * 10,
                     $this->conf['overview']['width'] * 10,
                     $this->conf['overview']['height'] * 10,
                     'png');
-        
+
         $this->pdf->Rect($this->conf['overview']['x'] * 10,
                          $this->conf['overview']['y'] * 10,
                          $this->conf['overview']['width'] * 10,
-                         $this->conf['overview']['height'] * 10);    
+                         $this->conf['overview']['height'] * 10);
 
         unlink($finalimagename);
     }
-    
+
     private function drawScaleBar(){
         // temp scale bar
-        
+
         $pdf = $this->pdf;
         // Linienbreite einstellen, 0.5 mm
         $pdf->SetLineWidth(0.1);
-        // Rahmenfarbe 
+        // Rahmenfarbe
         $pdf->SetDrawColor(0, 0, 0);
-        // Füllung 
+        // Füllung
         $pdf->SetFillColor(0,0,0);
         // Schriftart definieren
         $pdf->SetFont('arial', '', 10 );
-        
+
         $length = 0.01 * $this->data['scale_select'] * 5;
         $suffix = 'm';
-        
+
         $pdf->Text( $this->conf['scalebar']['x'] * 10 -1 , $this->conf['scalebar']['y'] * 10 - 1 , '0' );
         $pdf->Text( $this->conf['scalebar']['x'] * 10 + 46, $this->conf['scalebar']['y'] * 10 - 1 , $length . '' . $suffix);
-        
+
         $pdf->Rect($this->conf['scalebar']['x'] * 10 , $this->conf['scalebar']['y'] * 10, 10, 2, 'FD');
         $pdf->SetFillColor(255, 255, 255);
         $pdf->Rect($this->conf['scalebar']['x'] * 10 + 10 , $this->conf['scalebar']['y'] * 10, 10, 2, 'FD');
@@ -765,19 +789,19 @@ class PrintService
         $pdf->SetFillColor(0,0,0);
         $pdf->Rect($this->conf['scalebar']['x'] * 10 + 40  , $this->conf['scalebar']['y'] * 10, 10, 2, 'FD');
     }
-    
+
     private function drawFeatures()
-    {      
-        $image = imagecreatefrompng($this->finalimagename);              
-        
+    {
+        $image = imagecreatefrompng($this->finalimagename);
+
         foreach ($this->data['features'] as $fKey => $feature){
-            $points = array();        
+            $points = array();
             foreach ($feature['geom'] as $vKey => $vVal){
                 $points[$vKey] = $this->realWorld2mapPos($feature['geom'][$vKey]['x'],$feature['geom'][$vKey]['y']);
-            }     
+            }
 
             if($feature['type'] === 'line'){
-                $red = ImageColorAllocate($image,255,0,0); 
+                $red = ImageColorAllocate($image,255,0,0);
                 imagesetthickness($image, 2);
                 $keys = array_keys($points);
                 $last_key = end($keys);
@@ -790,7 +814,7 @@ class PrintService
                 }
             }
             if($feature['type'] === 'point'){
-                $red = ImageColorAllocate($image,255,0,0); 
+                $red = ImageColorAllocate($image,255,0,0);
                 imagefilledellipse ($image , $points[0][0], $points[0][1] , 5 , 5 , $red );
             }
             if($feature['type'] === 'polygon'){
@@ -803,21 +827,21 @@ class PrintService
                 imagepolygon($image, $values, count($points), $red);
             }
         }
-        
+
         imagepng($image, $this->finalimagename);
     }
-    
+
     private function drawRotatedFeatures($image)
-    {              
+    {
         $feature = $this->data['features'][0];
-        
-        $points;        
+
+        $points;
         foreach ($feature as $k => $v){
             $points[$k] = $this->realWorld2rotatedMapPos($feature[$k]['x'],$feature[$k]['y']);
-        }     
+        }
 
-        $red = ImageColorAllocate($image,255,0,0); 
-        
+        $red = ImageColorAllocate($image,255,0,0);
+
         $keys = array_keys($points);
         $last_key = end($keys);
         foreach ($points as $k => $v){
@@ -827,9 +851,9 @@ class PrintService
                 imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
             }
         }
-        
-    }      
-    
+
+    }
+
     private function realWorld2mapPos($rw_x,$rw_y)
     {
         $quality = $this->data['quality'];
@@ -842,21 +866,21 @@ class PrintService
         $minY = $centery - $map_height * 0.5;
         $maxX = $centerx + $map_width * 0.5;
         $maxY = $centery + $map_height * 0.5;
-        
-        $extentx = $maxX - $minX ; 
+
+        $extentx = $maxX - $minX ;
 	$extenty = $maxY - $minY ;
-        
+
         $pixPos_x = (($rw_x - $minX)/$extentx) * round($this->conf['map']['width']  / 2.54 * $quality) ;
 	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['map']['height']  / 2.54 * $quality);
-        
+
         $pixPos = array($pixPos_x, $pixPos_y);
-	   
+
 	return $pixPos;
     }
-    
+
     private function realWorld2ovMapPos($ov_width, $ov_height, $rw_x,$rw_y)
     {
-        $quality = $this->data['quality'];     
+        $quality = $this->data['quality'];
         $centerx = $this->data['center']['x'];
         $centery = $this->data['center']['y'];
 
@@ -864,18 +888,18 @@ class PrintService
         $minY = $centery - $ov_height * 0.5;
         $maxX = $centerx + $ov_width * 0.5;
         $maxY = $centery + $ov_height * 0.5;
-        
-        $extentx = $maxX - $minX ; 
-	$extenty = $maxY - $minY ;      
-        
+
+        $extentx = $maxX - $minX ;
+	$extenty = $maxY - $minY ;
+
         $pixPos_x = (($rw_x - $minX)/$extentx) * round($this->conf['overview']['width'] / 2.54 * $quality) ;
-	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['overview']['height'] / 2.54 * $quality); 
+	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($this->conf['overview']['height'] / 2.54 * $quality);
 
         $pixPos = array($pixPos_x, $pixPos_y);
-	   
+
 	return $pixPos;
     }
-    
+
     private function realWorld2rotatedMapPos($rw_x,$rw_y)
     {
         $rotation = $this->data['rotation'];
@@ -900,16 +924,16 @@ class PrintService
             abs(cos(deg2rad($rotation)) * $this->image_width));
         $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->image_width) +
             abs(cos(deg2rad($rotation)) * $this->image_height));
-        
-        $extentx = $maxX - $minX ; 
-	$extenty = $maxY - $minY ;      
-        
+
+        $extentx = $maxX - $minX ;
+	$extenty = $maxY - $minY ;
+
         $pixPos_x = (($rw_x - $minX)/$extentx) * round($neededImageWidth) ;
-	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($neededImageHeight); 
+	$pixPos_y = (($maxY - $rw_y)/$extenty) * round($neededImageHeight);
 
         $pixPos = array($pixPos_x, $pixPos_y);
-	   
+
 	return $pixPos;
     }
-    
+
 }

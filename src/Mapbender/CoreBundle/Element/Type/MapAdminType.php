@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -38,7 +39,6 @@ class MapAdminType extends AbstractType
     {
         $subscriber = new MapFieldSubscriber($builder->getFormFactory());
         $builder->addEventSubscriber($subscriber);
-        $app = $options['application'];
         $builder
             ->add('layerset', 'app_layerset',
                 array(
@@ -70,11 +70,9 @@ class MapAdminType extends AbstractType
                 array(
                 'label' => 'Scales (csv)',
                 'required' => true))
-            ->add('maxResolution', 'text',
-                array(
+            ->add('maxResolution', 'text', array(
                 'label' => 'Max. resolution'))
-            ->add('imgPath', 'text',
-                array(
+            ->add('imgPath', 'text', array(
                 'label' => 'OL image path'))
             ->add('otherSrs', 'text',
                 array(

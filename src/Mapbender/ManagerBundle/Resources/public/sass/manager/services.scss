@@ -123,7 +123,7 @@
     display: inline-block;
   }
   .dropdown{
-    min-width:250px;
+    min-width:200px;
     margin-bottom:$space/2;
   }
   .checkWrapper, .labelCheck{
@@ -133,17 +133,37 @@
   }
   .leftContainer{margin-right:$space;}
   .leftContainer .inputWrapper{
-    min-width:250px;
+    min-width:200px;
     margin-bottom:$space/2;
   }
   .leftContainer .inputWrapper input{ width: 100%; }
+  .dimensionGroup{
+    width: 320px;
+    position:absolute;
+    right:0px;
+    font-size:12px;
+    border:solid 1px $thirdColor;
+    .on-off{
+      background-color:darken($contentColor,20%);
+      border: solid 1px darken($contentColor,40%);
+    }
+    .on-off:hover,.on-off.active{
+      background-color:darken($contentColor,40%);
+      border: solid 1px darken($contentColor,60%);
+    }
+    .on-off-content{
+      background-color:$contentColor;
+    }
+  }
 }
 .metaData {
+  position: relative;
   .rightContainer {
     > .left {
       white-space: nowrap;
     }
   }
+  
 }
 .instanceTable{
   margin-top:$space;

@@ -1,7 +1,7 @@
 <?php
+
 namespace Mapbender\WmcBundle\Element\Type;
 
-use FOM\UserBundle\Form\DataTransformer\GroupIdTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -55,4 +55,3 @@ class WmcEditorAdminType extends AbstractType
     }
 
 }
-?>

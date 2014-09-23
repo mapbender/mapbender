@@ -38,9 +38,15 @@
                             for(var i = 0; i < layers.layers.length; i++){
                                 ls += layers.layers[i].options.name !== "" ? "," + layers.layers[i].options.name : "";
                             }
+
+                            // Add proxy if needed
+                            var url = layerDef.configuration.options.url;
+                            if(layerDef.configuration.options.proxy) {
+                                url = OpenLayers.ProxyHost + encodeURIComponent(url);
+                            }
                             layers_overview.push(new OpenLayers.Layer.WMS(
                                 layerDef.title,
-                                layerDef.configuration.options.url,
+                                url,
                                 {
                                     layers: ls.substring(1),
                                     format: layerDef.configuration.options.format,

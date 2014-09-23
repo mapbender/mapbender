@@ -1,15 +1,18 @@
 <?php
+
 namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
-use Mapbender\CoreBundle\Entity\Keyword;
+use Mapbender\CoreBundle\Component\ContainsKeyword;
+use Mapbender\CoreBundle\Component\SourceItem;
+use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
 use Mapbender\WmsBundle\Component\Dimension;
-use Mapbender\WmsBundle\Component\Extent;
 use Mapbender\WmsBundle\Component\Identifier;
 use Mapbender\WmsBundle\Component\MetadataUrl;
 use Mapbender\WmsBundle\Component\MinMax;
@@ -21,8 +24,9 @@ use Mapbender\CoreBundle\Component\Utils;
  * @ORM\Entity
  * @ORM\Table(name="mb_wms_wmslayersource")
  */
-class WmsLayerSource
+class WmsLayerSource extends SourceItem implements ContainsKeyword
 {
+
     /**
      * @var integer $id
      * @ORM\Id
@@ -35,7 +39,7 @@ class WmsLayerSource
      * @ORM\ManyToOne(targetEntity="WmsSource",inversedBy="layers")
      * @ORM\JoinColumn(name="wmssource", referencedColumnName="id")
      */
-    protected $source;
+    protected $source; # change this variable name together with "get" "set" functions (s. SourceItem too)
 
     /**
      * @ORM\ManyToOne(targetEntity="WmsLayerSource",inversedBy="sublayer")
@@ -159,21 +163,17 @@ class WmsLayerSource
     /**
      * @ORM\Column(type="array", nullable=true)
      */
-    protected $extent;
-
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
     protected $dataUrl;
 
     /**
      * @ORM\Column(type="array", nullable=true)
      */
     protected $featureListUrl;
-    // FIXME: keywords cascade remove ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist","remove"})
+
     /**
-     * @var array $keywords the source keyword list
-     * @ORM\OneToMany(targetEntity="Mapbender\CoreBundle\Entity\Keyword",mappedBy="id", cascade={"persist"})
+     * @var ArrayCollections A list of WMS Layer keywords
+     * @ORM\OneToMany(targetEntity="WmsLayerSourceKeyword",mappedBy="reference", cascade={"persist","remove"})
+     * @ORM\OrderBy({"value" = "asc"})
      */
     protected $keywords;
 
@@ -184,7 +184,6 @@ class WmsLayerSource
         $this->boundingBoxes = array();
         $this->metadataUrl = array();
         $this->dimension = array();
-        $this->extent = array();
         $this->dataUrl = array();
         $this->featureListUrl = array();
         $this->styles = array();
@@ -196,7 +195,7 @@ class WmsLayerSource
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -204,20 +203,16 @@ class WmsLayerSource
     }
 
     /**
-     * Set wmssource
-     * @param $wmssource
-     * @return WmsSource 
+     * @inheritdoc
      */
-    public function setSource(WmsSource $wmssource)
+    public function setSource(Source $wmssource)
     {
         $this->source = $wmssource;
         return $this;
     }
 
     /**
-     * Get wmssource
-     *
-     * @return WmsSource 
+     * @inheritdoc
      */
     public function getSource()
     {
@@ -230,7 +225,7 @@ class WmsLayerSource
      * @param Object $parent
      * @return WmsLayerSource
      */
-    public function setParent(WmsLayerSource $parent)
+    public function setParent(WmsLayerSource $parent = null)
     {
         $this->parent = $parent;
         return $this;
@@ -239,7 +234,7 @@ class WmsLayerSource
     /**
      * Get parent
      *
-     * @return Object 
+     * @return Object
      */
     public function getParent()
     {
@@ -247,7 +242,7 @@ class WmsLayerSource
     }
 
     /**
-     * 
+     *
      * @return ArrayCollection
      */
     public function getSublayer()
@@ -256,7 +251,7 @@ class WmsLayerSource
     }
 
     /**
-     * 
+     *
      * @return ArrayCollection
      */
     public function setSublayer($sublayer)
@@ -273,20 +268,8 @@ class WmsLayerSource
     public function addSublayer(WmsLayerSource $sublayer)
     {
         $this->sublayer->add($sublayer);
-
         return $this;
     }
-
-//
-//    /**
-//     * Remove sublayer
-//     *
-//     * @param WmsLayerSource $sublayer
-//     */
-//    public function removeSublayer(WmsLayerSource $sublayer)
-//    {
-//        $this->sublayer->removeElement($sublayer);
-//    }
 
     /**
      * Set name
@@ -294,7 +277,7 @@ class WmsLayerSource
      * @param string $name
      * @return WmsLayerSource
      */
-    public function setName($name)
+    public function setName($name = null)
     {
         $this->name = $name;
         return $this;
@@ -303,7 +286,7 @@ class WmsLayerSource
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -316,7 +299,7 @@ class WmsLayerSource
      * @param string $title
      * @return WmsLayerSource
      */
-    public function setTitle($title)
+    public function setTitle($title = null)
     {
         $this->title = $title;
         return $this;
@@ -325,7 +308,7 @@ class WmsLayerSource
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -338,7 +321,7 @@ class WmsLayerSource
      * @param string $abstract
      * @return WmsLayerSource
      */
-    public function setAbstract($abstract)
+    public function setAbstract($abstract = null)
     {
         $this->abstract = $abstract;
         return $this;
@@ -347,7 +330,7 @@ class WmsLayerSource
     /**
      * Get abstract
      *
-     * @return string 
+     * @return string
      */
     public function getAbstract()
     {
@@ -369,7 +352,7 @@ class WmsLayerSource
     /**
      * Get queryable
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getQueryable()
     {
@@ -391,7 +374,7 @@ class WmsLayerSource
     /**
      * Get cascaded
      *
-     * @return integer 
+     * @return integer
      */
     public function getCascaded()
     {
@@ -413,7 +396,7 @@ class WmsLayerSource
     /**
      * Get opaque
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getOpaque()
     {
@@ -435,7 +418,7 @@ class WmsLayerSource
     /**
      * Get noSubset
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getNoSubset()
     {
@@ -448,7 +431,7 @@ class WmsLayerSource
      * @param integer $fixedWidth
      * @return WmsLayerSource
      */
-    public function setFixedWidth($fixedWidth)
+    public function setFixedWidth($fixedWidth = null)
     {
         $this->fixedWidth = $fixedWidth;
         return $this;
@@ -457,7 +440,7 @@ class WmsLayerSource
     /**
      * Get fixedWidth
      *
-     * @return integer 
+     * @return integer
      */
     public function getFixedWidth()
     {
@@ -470,7 +453,7 @@ class WmsLayerSource
      * @param integer $fixedHeight
      * @return WmsLayerSource
      */
-    public function setFixedHeight($fixedHeight)
+    public function setFixedHeight($fixedHeight = null)
     {
         $this->fixedHeight = $fixedHeight;
         return $this;
@@ -479,7 +462,7 @@ class WmsLayerSource
     /**
      * Get fixedHeight
      *
-     * @return integer 
+     * @return integer
      */
     public function getFixedHeight()
     {
@@ -492,7 +475,7 @@ class WmsLayerSource
      * @param BoundingBox $latlonBounds
      * @return WmsLayerSource
      */
-    public function setLatlonBounds(BoundingBox $latlonBounds)
+    public function setLatlonBounds(BoundingBox $latlonBounds = null)
     {
         $this->latlonBounds = $latlonBounds;
         return $this;
@@ -501,7 +484,7 @@ class WmsLayerSource
     /**
      * Get latlonBounds
      *
-     * @return Object 
+     * @return Object
      */
     public function getLatlonBounds()
     {
@@ -534,14 +517,14 @@ class WmsLayerSource
      */
     public function setBoundingBoxes($boundingBoxes)
     {
-        $this->boundingBoxes = $boundingBoxes;
+        $this->boundingBoxes = $boundingBoxes ? $boundingBoxes : array();
         return $this;
     }
 
     /**
      * Get boundingBoxes
      *
-     * @return array 
+     * @return array
      */
     public function getBoundingBoxes()
     {
@@ -562,7 +545,7 @@ class WmsLayerSource
      */
     public function setSrs($srs)
     {
-        $this->srs = $srs;
+        $this->srs = $srs ? $srs : array();
         return $this;
     }
 
@@ -579,10 +562,10 @@ class WmsLayerSource
     }
 
     /**
-     * Get srs incl. from parent WmsLayerSource (OGC WMS 
+     * Get srs incl. from parent WmsLayerSource (OGC WMS
      * Implemantation Specification)
      *
-     * @return array 
+     * @return array
      */
     public function getSrs()
     {
@@ -601,7 +584,7 @@ class WmsLayerSource
      * @param Style $style
      * @return WmsLayerSource
      */
-    public function addStyle(Style $style)
+    public function addStyle(Style $style = null)
     {
         $this->styles[] = $style;
         return $this;
@@ -615,15 +598,15 @@ class WmsLayerSource
      */
     public function setStyles($styles)
     {
-        $this->styles = $styles;
+        $this->styles = $styles ? $styles : array();
         return $this;
     }
 
     /**
-     * Get styles incl. from parent WmsLayerSource (OGC WMS 
+     * Get styles incl. from parent WmsLayerSource (OGC WMS
      * Implemantation Specification)
      *
-     * @return array 
+     * @return array
      */
     public function getStyles()
     {
@@ -641,7 +624,7 @@ class WmsLayerSource
      * @param MinMax $scale
      * @return WmsLayerSource
      */
-    public function setScale(MinMax $scale)
+    public function setScale(MinMax $scale = null)
     {
         $this->scale = $scale;
         return $this;
@@ -650,7 +633,7 @@ class WmsLayerSource
     /**
      * Get scale
      *
-     * @return MinMax 
+     * @return MinMax
      */
     public function getScale()
     {
@@ -660,7 +643,7 @@ class WmsLayerSource
     /**
      * Get scale
      *
-     * @return MinMax 
+     * @return MinMax
      */
     public function getScaleRecursive()
     {
@@ -677,7 +660,7 @@ class WmsLayerSource
      * @param MinMax $scaleHint
      * @return WmsLayerSource
      */
-    public function setScaleHint(MinMax $scaleHint)
+    public function setScaleHint(MinMax $scaleHint = null)
     {
         $this->scaleHint = $scaleHint;
         return $this;
@@ -686,7 +669,7 @@ class WmsLayerSource
     /**
      * Get scaleHint
      *
-     * @return MinMax 
+     * @return MinMax
      */
     public function getScaleHint()
     {
@@ -699,7 +682,7 @@ class WmsLayerSource
      * @param Attribution $attribution
      * @return WmsLayerSource
      */
-    public function setAttribution(Attribution $attribution)
+    public function setAttribution(Attribution $attribution = null)
     {
         $this->attribution = $attribution;
         return $this;
@@ -708,7 +691,7 @@ class WmsLayerSource
     /**
      * Get attribution
      *
-     * @return Object 
+     * @return Object
      */
     public function getAttribution()
     {
@@ -721,7 +704,7 @@ class WmsLayerSource
      * @param Identifier $identifier
      * @return WmsLayerSource
      */
-    public function addIdentifier(Identifier $identifier)
+    public function addIdentifier(Identifier $identifier = null)
     {
         $this->identifier[] = $identifier;
         return $this;
@@ -735,14 +718,14 @@ class WmsLayerSource
      */
     public function setIdentifier($identifier)
     {
-        $this->identifier = $identifier;
+        $this->identifier = $identifier ? $identifier : array();
         return $this;
     }
 
     /**
      * Get identifier
      *
-     * @return Identifier 
+     * @return Identifier
      */
     public function getIdentifier()
     {
@@ -752,7 +735,7 @@ class WmsLayerSource
     /**
      * Get identifier
      *
-     * @return array 
+     * @return array
      */
     public function getIdentifierAuthority()
     {
@@ -793,7 +776,7 @@ class WmsLayerSource
      */
     public function setAuthority($authority)
     {
-        $this->authority = $authority;
+        $this->authority = $authority ? $authority : array();
         return $this;
     }
 
@@ -804,7 +787,7 @@ class WmsLayerSource
      */
     public function getAuthority()
     {
-        if ($this->getParent() !== null) { // add crses from parent
+        if ($this->getParent() !== null && $this->getParent()->getAuthority() !== null) { // add crses from parent
             return array_merge(
                 $this->getParent()->getAuthority(), $this->authority);
         } else {
@@ -832,14 +815,14 @@ class WmsLayerSource
      */
     public function setMetadataUrl($metadataUrl)
     {
-        $this->metadataUrl = $metadataUrl;
+        $this->metadataUrl = $metadataUrl ? $metadataUrl : array();
         return $this;
     }
 
     /**
      * Get metadataUrl
      *
-     * @return array 
+     * @return array
      */
     public function getMetadataUrl()
     {
@@ -849,12 +832,14 @@ class WmsLayerSource
     /**
      * Add dimension
      *
-     * @param Dimension $dimension
+     * @param Dimension | null $dimension
      * @return WmsLayerSource
      */
-    public function addDimensionl(Dimension $dimension)
+    public function addDimension($dimension)
     {
-        $this->dimension[] = $dimension;
+        if ($dimension !== null) {
+            $this->dimension[] = $dimension;
+        }
         return $this;
     }
 
@@ -866,52 +851,18 @@ class WmsLayerSource
      */
     public function setDimension($dimension)
     {
-        $this->dimension = $dimension;
+        $this->dimension = $dimension ? $dimension : array();
         return $this;
     }
 
     /**
      * Get dimension
      *
-     * @return array 
+     * @return array
      */
     public function getDimension()
     {
         return $this->dimension;
-    }
-
-    /**
-     * Add extent
-     *
-     * @param Extent $extent
-     * @return WmsLayerSource
-     */
-    public function addExtent(Extent $extent)
-    {
-        $this->extent[] = $extent;
-        return $this;
-    }
-
-    /**
-     * Set extent
-     *
-     * @param array $extent
-     * @return WmsLayerSource
-     */
-    public function setExtent($extent)
-    {
-        $this->extent = $extent;
-        return $this;
-    }
-
-    /**
-     * Get extent
-     *
-     * @return array 
-     */
-    public function getExtent()
-    {
-        return $this->extent;
     }
 
     /**
@@ -920,7 +871,7 @@ class WmsLayerSource
      * @param array $dataUrl
      * @return WmsLayerSource
      */
-    public function addDataUrl(OnlineResource $dataUrl)
+    public function addDataUrl(OnlineResource $dataUrl = null)
     {
         $this->dataUrl[] = $dataUrl;
         return $this;
@@ -941,7 +892,7 @@ class WmsLayerSource
     /**
      * Get dataUrl
      *
-     * @return array 
+     * @return array
      */
     public function getDataUrl()
     {
@@ -968,14 +919,14 @@ class WmsLayerSource
      */
     public function setFeatureListUrl($featureListUrl)
     {
-        $this->featureListUrl = $featureListUrl;
+        $this->featureListUrl = $featureListUrl ? $featureListUrl : array();
         return $this;
     }
 
     /**
      * Get featureListUrl
      *
-     * @return array 
+     * @return array
      */
     public function getFeatureListUrl()
     {
@@ -997,33 +948,11 @@ class WmsLayerSource
     /**
      * Get keywords
      *
-     * @return string 
+     * @return string
      */
     public function getKeywords()
     {
         return $this->keywords;
-    }
-
-    /**
-     * Add keyword
-     *
-     * @param Keyword $keyword
-     * @return Source
-     */
-    public function addKeyword(Keyword $keyword)
-    {
-        $this->keywords->add($keyword);
-        return $this;
-    }
-
-    /**
-     * Remove keywords
-     *
-     * @param Mapbender\CoreBundle\Entity\Keyword $keywords
-     */
-    public function removeKeyword(\Mapbender\CoreBundle\Entity\Keyword $keywords)
-    {
-        $this->keywords->removeElement($keywords);
     }
 
     /**
@@ -1050,9 +979,6 @@ class WmsLayerSource
         return get_class();
     }
 
-    /**
-     * @inheritdoc
-     */
     public function __toString()
     {
         return (string) $this->id;

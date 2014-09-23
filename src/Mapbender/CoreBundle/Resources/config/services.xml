@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter id="version">3.0.2</parameter>
         <parameter key="signer.class">Mapbender\CoreBundle\Component\Signer</parameter>
@@ -26,13 +26,17 @@
             <tag name="form.type" alias="app_layerset"/>
         </service>
         
-        <service id="layerset_sources" class="Mapbender\CoreBundle\Element\Type\LayersetSourcesAdminType">
+        <service id="layerset_instances" class="Mapbender\CoreBundle\Element\Type\LayersetInstancesAdminType">
             <argument type="service" id="service_container" />
-            <tag name="form.type" alias="layerset_sources"/>
+            <tag name="form.type" alias="layerset_instances"/>
         </service>
 
         <service id="signer" class="%signer.class%">
             <argument>%secret%</argument>
+        </service>
+        
+        <service id="get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer">
+            <tag name="serializer.normalizer" />
         </service>
     </services>
 </container>

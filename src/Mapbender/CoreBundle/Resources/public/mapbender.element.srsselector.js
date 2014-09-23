@@ -45,7 +45,7 @@
         },
         _switchSrs: function(evt){
             var dest = new OpenLayers.Projection(this.getSelectedSrs());
-            if(dest.projCode === 'EPSG:4326'){
+            if(!dest.proj.units){
                 dest.proj.units = 'degrees';
             }
             this._trigger('srsSwitched', null, {projection: dest});

@@ -39,8 +39,7 @@ abstract class Source
      * @ORM\Column(type="string", length=128, nullable=true)
      */
     protected $alias = "";
-    
-    
+
     /**
      * @var boolean $valid is a source valid
      * @ORM\Column(type="boolean", nullable=true)
@@ -52,11 +51,16 @@ abstract class Source
      * @ORM\Column(type="text", nullable=true)
      */
     protected $description;
+    
+    /**
+     * @var string source identifier 
+     */
+    protected $identifier;
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -66,19 +70,20 @@ abstract class Source
     /**
      * Set title
      *
-     * @param string $title
+     * @param  string $title
      * @return Source
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -88,19 +93,20 @@ abstract class Source
     /**
      * Set description
      *
-     * @param string $description
+     * @param  string $description
      * @return Source
      */
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -110,19 +116,20 @@ abstract class Source
     /**
      * Set alias
      *
-     * @param string $alias
+     * @param  string $alias
      * @return Source
      */
     public function setAlias($alias)
     {
         $this->alias = $alias;
+
         return $this;
     }
 
     /**
      * Get alias
      *
-     * @return string 
+     * @return string
      */
     public function getAlias()
     {
@@ -142,28 +149,44 @@ abstract class Source
     /**
      * Set valid
      *
-     * @param boolean $valid
+     * @param  boolean $valid
      * @return Source
      */
     public function setValid($valid)
     {
         $this->valid = $valid;
+
         return $this;
     }
 
     /**
      * Get valid
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getValid()
     {
         return $this->valid;
     }
+    
+    /**
+     * Returns the source identifier
+     * 
+     * @return string source indetifier
+     */
+    abstract public function getIdentifier();
+    
+    /**
+     * Sets  the source identifier
+     * 
+     * @param string $identifier the source identifier
+     * @return Source the source
+     */
+    abstract public function setIdentifier($identifier);
 
     /**
      * Returns a Source as String
-     * 
+     *
      * @return String Source as String
      */
     public function __toString()
@@ -176,22 +199,13 @@ abstract class Source
      *
      * @return String type
      */
-    public abstract function getType();
+    abstract public function getType();
 
     /**
-     * Returns a manager type 
+     * Returns a manager type
      *
      * @return String a manager type
      */
-    public abstract function getManagertype();
+    abstract public function getManagertype();
 
-    /**
-     * Creates a SourceInstance
-     */
-    public abstract function createInstance();
-
-    /**
-     * Remove a source from a database
-     */
-    public abstract function remove(EntityManager $em);
 }

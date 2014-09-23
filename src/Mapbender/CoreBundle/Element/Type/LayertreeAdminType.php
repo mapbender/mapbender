@@ -38,9 +38,9 @@ class LayertreeAdminType extends AbstractType
             "opacity" => "Opacity",
             "zoomtolayer" => "Zoom to layer",
             "metadata" => "Metadata",
-            "metadata" => "Metadata",
-            "legend" => "Legend",
-            "kmlexport" => "KML export",
+//            "legend" => "Legend",
+//            "kmlexport" => "KML export",
+            "dimension" => "Dimension",
         );
         $builder->add('target', 'target_element',
                 array(
@@ -75,14 +75,7 @@ class LayertreeAdminType extends AbstractType
                 array(
                 'required' => false,
                 "multiple" => true,
-                'choices' => array(
-                    "" => " ",
-                    "opacity" => "Opacity",
-                    "zoomtolayer" => "Zoom to layer",
-                    "metadata" => "Metadata",
-//                    "legend" => "Legend",
-//                    "kmlexport" => "KML export"
-        )));
+                'choices' => $menuComponents));
     }
 
 }

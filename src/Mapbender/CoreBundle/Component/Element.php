@@ -6,16 +6,17 @@
  *       constructor and throw an exception. The application then should catch
  *       the exception and handle it.
  */
+
 namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\ORM\EntityManager;
+use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Mapbender\CoreBundle\Entity\Element as Entity;
 use Mapbender\CoreBundle\Entity\Application as AppEntity;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Mapbender\CoreBundle\Component\ExtendedCollection;
 
 /**
  * Base class for all Mapbender elements.
@@ -27,6 +28,7 @@ use Mapbender\CoreBundle\Component\ExtendedCollection;
  */
 abstract class Element
 {
+
     /**
      * Extended API. The ext_api defins, if an element can be used as a target
      * element.
@@ -66,19 +68,18 @@ abstract class Element
      * @param Application $application The application object
      * @param ContainerInterface $container The container object
      */
-    public function __construct(Application $application,
-        ContainerInterface $container, Entity $entity)
+    public function __construct(Application $application, ContainerInterface $container, Entity $entity)
     {
         $this->application = $application;
         $this->container = $container;
         $this->entity = $entity;
     }
 
-    /*     * ***********************************************************************
+    /*************************************************************************
      *                                                                       *
      *                              Class metadata                           *
      *                                                                       *
-     * *********************************************************************** */
+     *************************************************************************/
 
     /**
      * Returns the element class title
@@ -131,11 +132,11 @@ abstract class Element
         return array();
     }
 
-    /*     * ***********************************************************************
+    /*************************************************************************
      *                                                                       *
      *                    Configuration entity handling                      *
      *                                                                       *
-     * *********************************************************************** */
+     *************************************************************************/
 
     /**
      * Get a configuration value by path.
@@ -176,11 +177,11 @@ abstract class Element
         return $this->entity;
     }
 
-    /*     * ***********************************************************************
+    /*************************************************************************
      *                                                                       *
      *             Shortcut functions for leaner Twig templates              *
      *                                                                       *
-     * *********************************************************************** */
+     *************************************************************************/
 
     /**
      * Get the element ID
@@ -212,11 +213,11 @@ abstract class Element
         return $this->entity->getDescription();
     }
 
-    /*     * ***********************************************************************
+    /*************************************************************************
      *                                                                       *
      *                              Frontend stuff                           *
      *                                                                       *
-     * *********************************************************************** */
+     *************************************************************************/
 
     /**
      * Render the element HTML fragment.
@@ -306,17 +307,16 @@ abstract class Element
         throw new NotFoundHttpException('This element has no Ajax handler.');
     }
 
-    public function trans($key, array $parameters = array(), $domain = null,
-        $locale = null)
+    public function trans($key, array $parameters = array(), $domain = null, $locale = null)
     {
         return $this->container->get('translator')->trans($key, $parameters);
     }
 
-    /*     * ***********************************************************************
+    /*************************************************************************
      *                                                                       *
      *                          Backend stuff                                *
      *                                                                       *
-     * *********************************************************************** */
+     *************************************************************************/
 
     /**
      * Get the element configuration form type.
@@ -368,8 +368,7 @@ abstract class Element
                 $result[$key] = null;
             } else if (is_array($value)) {
                 if (isset($default[$key])) {
-                    $result[$key] = Element::mergeArrays($default[$key],
-                            $main[$key], array());
+                    $result[$key] = Element::mergeArrays($default[$key], $main[$key], array());
                 } else {
                     $result[$key] = $main[$key];
                 }
@@ -379,10 +378,7 @@ abstract class Element
         }
         if ($default !== null && is_array($default)) {
             foreach ($default as $key => $value) {
-                if (!isset($result[$key])
-                    || (isset($result[$key])
-                    && $result[$key] === null
-                    && $value !== null)) {
+                if (!isset($result[$key]) || (isset($result[$key]) && $result[$key] === null && $value !== null)) {
                     $result[$key] = $value;
                 }
             }
@@ -395,12 +391,12 @@ abstract class Element
      */
     public function postSave()
     {
-        
+
     }
-    
+
     /**
      * Creates a copy of the Element Entity configuration and updates it.
-     * 
+     *
      * @param \Doctrine\ORM\EntityManager $em EntitiyManager
      * @param \Mapbender\CoreBundle\Entity\Application $copiedApp copied application entity
      * @param array $elementsMap list with all copied elements
@@ -412,7 +408,7 @@ abstract class Element
         $subElements = array();
         $toOverwrite = array();
         $form = Element::getElementForm($this->container, $this->application->getEntity(), $this->entity);
-        // overwrite 
+        // overwrite
         foreach ($form['form']['configuration']->all() as $fieldName => $fieldValue) {
             $norm = $fieldValue->getNormData();
             if ($norm instanceof Entity) { // Element only target ???
@@ -437,7 +433,7 @@ abstract class Element
             foreach ($subElements as $name => $value) {
                 $configuration = $copiedElm->getConfiguration();
                 $targetId = null;
-                if($value !== null){
+                if ($value !== null) {
                     $targetId = $elementsMap[$value]->getId();
                 }
                 $configuration[$name] = $targetId;
@@ -453,14 +449,12 @@ abstract class Element
      * @param string $class
      * @return dsd
      */
-    public static function getElementForm($container, $application,
-        Entity $element, $onlyAcl = false)
+    public static function getElementForm($container, $application, Entity $element, $onlyAcl = false)
     {
         $class = $element->getClass();
 
         // Create base form shared by all elements
-        $formType = $container->get('form.factory')->createBuilder('form',
-            $element, array());
+        $formType = $container->get('form.factory')->createBuilder('form', $element, array());
         if (!$onlyAcl) {
             $formType->add('title', 'text')
                 ->add('class', 'hidden')
@@ -472,7 +466,7 @@ abstract class Element
             'data' => $element,
             'create_standard_permissions' => false,
             'permissions' => array(
-                    1 => 'View'))
+                1 => 'View'))
         );
 
         // Get configuration form, either basic YAML one or special form
@@ -486,16 +480,15 @@ abstract class Element
             $formTheme = 'MapbenderManagerBundle:Element:yaml-form.html.twig';
             $formAssets = array(
                 'js' => array(
-                    'bundles/mapbendermanager/codemirror2/lib/codemirror.js',
-                    'bundles/mapbendermanager/codemirror2/mode/yaml/yaml.js',
+                    'bundles/mapbendermanager/codemirror/lib/codemirror.js',
+                    'bundles/mapbendermanager/codemirror/mode/yaml/yaml.js',
                     'bundles/mapbendermanager/js/form-yaml.js'),
                 'css' => array(
-                    'bundles/mapbendermanager/codemirror2/lib/codemirror.css'));
+                    'bundles/mapbendermanager/codemirror/lib/codemirror.css'));
         } else {
             $type = new $configurationFormType();
             $options = array('application' => $application);
-            if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !==
-                null) {
+            if ($type instanceof ExtendedCollection && $element !== null && $element->getId() !== null) {
                 $options['element'] = $element;
             }
             $formType->add('configuration', $type, $options);
@@ -528,6 +521,30 @@ abstract class Element
             ->setConfiguration($configuration);
 
         return $element;
+    }
+
+    /**
+     * Changes a element entity configuration while exporting.
+     * 
+     * @param array $configuration element entity configuration
+     * @return array a configuration
+     */
+    public function normalizeConfiguration(array $configuration)
+    {
+        return $configuration;
+    }
+
+    
+
+    /**
+     * Changes a element entity configuration while importing.
+     * 
+     * @param array $configuration element entity configuration
+     * @return array a configuration
+     */
+    public function denormalizeConfiguration(array $configuration)
+    {
+        return $configuration;
     }
 
 }

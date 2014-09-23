@@ -38,26 +38,26 @@ class Dimension
      * ORM\Column(type="boolean", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $multipleValues;
+    public $multipleValues = false;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $nearestValue;
+    public $nearestValue = false;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $current;
+    public $current = false;
 
     /**
      * ORM\Column(type="string", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $extentValue;
-
+    public $extent;
+    
     /**
      * Set name
      * 
@@ -150,7 +150,11 @@ class Dimension
      */
     public function setMultipleValues($value)
     {
-        $this->multipleValues = $value;
+        if (is_bool($value)) {
+            $this->multipleValues = $value;
+        } else {
+            $this->multipleValues = (boolean) $value;
+        }
     }
 
     /**
@@ -171,7 +175,11 @@ class Dimension
      */
     public function setNearestValue($value)
     {
-        $this->nearestValue = $value;
+        if (is_bool($value)) {
+            $this->nearestValue = $value;
+        } else {
+            $this->nearestValue = (boolean) $value;
+        }
     }
 
     /**
@@ -192,7 +200,11 @@ class Dimension
      */
     public function setCurrent($value)
     {
-        $this->current = $value;
+        if (is_bool($value)) {
+            $this->current = $value;
+        } else {
+            $this->current = (boolean) $value;
+        }
     }
 
     /**
@@ -206,26 +218,24 @@ class Dimension
     }
 
     /**
-     * Set extentValue
+     * Set extent
      * 
      * @param string $value 
      * @return Dimension
      */
-    public function setExtentValue($value)
+    public function setExtent($value)
     {
-        $this->extentValue = $value;
+        $this->extent = $value;
     }
 
     /**
-     * Get extentValue
+     * Get extent
      * 
-     * @return string
+     * @return Dimension
      */
-    public function getExtentValue()
+    public function getExtent()
     {
-        return $this->extentValue;
+        return $this->extent;
     }
 
 }
-
-?>

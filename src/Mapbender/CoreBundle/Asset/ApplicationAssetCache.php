@@ -43,8 +43,11 @@ class ApplicationAssetCache
         $cache = new FilesystemCache($static_assets_cache_path);
         $devCache = new FilesystemCache($static_assets_cache_path . '/.dev-cache');
 
+        $stringAssetCounter = 0;
+
         foreach($this->inputs as $input) {
             if($input instanceof StringAsset) {
+                $name = 'stringasset_' . $stringAssetCounter++;
                 $manager->set($name, $input);
                 continue;
             }

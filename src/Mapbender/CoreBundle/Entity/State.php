@@ -4,7 +4,6 @@ namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\Signer;
-//use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Source entity
@@ -42,7 +41,7 @@ class State
      * @ORM\Column(type="string", length=128, nullable=true)
      */
     protected $slug;
-    
+
     /**
      * @var string $json The json
      * @ORM\Column(type="text", nullable=true)
@@ -51,25 +50,26 @@ class State
 
     public function __construct()
     {
-        
+
     }
 
     /**
      * Set id
      *
-     * @param integer $id
+     * @param  integer $id
      * @return State
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -79,19 +79,20 @@ class State
     /**
      * Set title
      *
-     * @param string $title
+     * @param  string $title
      * @return State
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -101,19 +102,20 @@ class State
     /**
      * Set serverurl
      *
-     * @param string $serverurl
+     * @param  string $serverurl
      * @return State
      */
     public function setServerurl($serverurl)
     {
         $this->serverurl = $serverurl;
+
         return $this;
     }
 
     /**
      * Get serverurl
      *
-     * @return string serverurl 
+     * @return string serverurl
      */
     public function getServerurl()
     {
@@ -123,53 +125,54 @@ class State
     /**
      * Set slug
      *
-     * @param string $slug
+     * @param  string $slug
      * @return State
      */
     public function setSlug($slug)
     {
         $this->slug = $slug;
+
         return $this;
     }
 
     /**
      * Get slug
      *
-     * @return string 
+     * @return string
      */
     public function getSlug()
     {
         return $this->slug;
     }
-    
-    
 
     /**
      * Set json
      *
-     * @param string $json
+     * @param  string $json
      * @return State
      */
     public function setJson($json)
     {
         $this->json = $json;
+
         return $this;
     }
 
     /**
      * Get json
      *
-     * @return string 
+     * @return string
      */
     public function getJson()
     {
         return $this->json;
     }
-    
-    public function signSources(Signer $signer){
+
+    public function signSources(Signer $signer)
+    {
         $json = json_decode($this->getJson(), true);
-        if($json && isset($json['sources']) && is_array($json['sources'])){
-            foreach($json['sources'] as $source){
+        if ($json && isset($json['sources']) && is_array($json['sources'])) {
+            foreach ($json['sources'] as $source) {
                 $source['configuration']['options']['url'] = $signer->signUrl($source['configuration']['options']['url']);
             }
         }

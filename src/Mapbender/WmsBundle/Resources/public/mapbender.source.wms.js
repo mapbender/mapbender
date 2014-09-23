@@ -63,7 +63,10 @@ $.extend(true, Mapbender, {
                     singleTile: !layerDef.configuration.options.tiled,
                     attribution: layerDef.configuration.options.attribution, // attribution add !!!
                     minScale: rootLayer.minScale,
-                    maxScale: rootLayer.maxScale
+                    maxScale: rootLayer.maxScale,
+                    transitionEffect: 'resize',
+                    buffer: layerDef.configuration.options.tiled ? layerDef.configuration.options.buffer : null,
+                    ratio: !layerDef.configuration.options.tiled ? layerDef.configuration.options.buffer : null
                 };
                 $.extend(mqLayerDef, Mapbender.source.wms.defaultMqLayer);
                 return mqLayerDef;
@@ -73,7 +76,7 @@ $.extend(true, Mapbender, {
             },
             _removeProxy: function(url){
                 if(url.indexOf(OpenLayers.ProxyHost) === 0){
-                    return url.substring(OpenLayers.ProxyHost.length);
+                    return decodeURIComponent(url.substring(OpenLayers.ProxyHost.length));
                 }
                 return url;
             },

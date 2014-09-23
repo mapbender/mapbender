@@ -27,7 +27,7 @@ class Utils
 
     /**
      * Generats an URL from base url and GET parameters
-     * 
+     *
      * @param string $baseUrl A base URL
      * @param string $parameters GET Parameters as array or as string
      * @return generated Url
@@ -68,7 +68,7 @@ class Utils
 
     /**
      * Removes a file or directory (recursive)
-     * 
+     *
      * @param string $path tha path of file/directory
      * @return boolean true if the file/directory is removed.
      */
@@ -88,9 +88,9 @@ class Utils
 
     /**
      * Validates an URL
-     * 
+     *
      * @param string $url URL
-     * @param array $paramsToRemove  array of lower case parameter names to 
+     * @param array $paramsToRemove  array of lower case parameter names to
      * remove from url
      * @return string URL without parameter $paramName
      */
@@ -119,7 +119,7 @@ class Utils
         }
         return $newurl;
     }
-    
+
     public static function copyOrderRecursive($sourceOrder, $destinationOrder)
     {
         $dir = opendir($sourceOrder);
@@ -135,5 +135,4 @@ class Utils
         }
         closedir($dir);
     }
-
 }

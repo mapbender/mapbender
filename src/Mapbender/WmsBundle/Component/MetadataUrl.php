@@ -29,12 +29,10 @@ class MetadataUrl
     public static function create($parameters)
     {
         $obj = new MetadataUrl();
-        if(isset($parameters["type"]))
-        {
+        if (isset($parameters["type"])) {
             $this->type = $parameters["type"];
         }
-        if(isset($parameters["url"]))
-        {
+        if (isset($parameters["url"])) {
             $this->url = $parameters["url"];
         }
         return $obj;
@@ -80,19 +78,6 @@ class MetadataUrl
     {
         $this->onlineResource = $onlineResource;
         return $this;
-    }
-
-    /**
-     * Get object as array
-     * 
-     * @return array
-     */
-    public function toArray()
-    {
-        return array(
-            "url" => $this->url,
-            "type" => $this->type
-        );
     }
 
 }

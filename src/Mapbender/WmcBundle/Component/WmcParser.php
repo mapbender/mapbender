@@ -4,6 +4,7 @@ namespace Mapbender\WmcBundle\Component;
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
 use Mapbender\WmcBundle\Component\Exception\WmcException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class that Parses WMC Document
@@ -14,6 +15,8 @@ use Mapbender\WmcBundle\Component\Exception\WmcException;
  */
 abstract class WmcParser
 {
+
+    protected $container;
     /**
      * The XML representation of the Capabilites Document
      * @var DOMDocument
@@ -25,17 +28,15 @@ abstract class WmcParser
      */
     protected $xpath;
 
-    protected $container;
-
     /**
      * Creates an instance
      *
      * @param \DOMDocument $doc
      */
-    public function __construct(\DOMDocument $doc, $container = null)
+    public function __construct(ContainerInterface $container, \DOMDocument $doc)
     {
-        $this->doc = $doc;
         $this->container = $container;
+        $this->doc = $doc;
         $this->xpath = new \DOMXPath($doc);
         $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
     }
@@ -146,12 +147,12 @@ abstract class WmcParser
      * @return \Mapbender\WmsBundle\Component\WmcParser110
      * @throws NotSupportedVersionException if a version is not supported
      */
-    public static function getParser(\DOMDocument $doc, $container = null)
+    public static function getParser(ContainerInterface $container, \DOMDocument $doc)
     {
         $version = $doc->documentElement->getAttribute("version");
         switch ($version) {
             case "1.1.0":
-                return new WmcParser110($doc, $container);
+                return new WmcParser110($container, $doc);
             default:
                 throw new NotSupportedVersionException("Could not determine WMC Version");
                 break;

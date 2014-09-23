@@ -26,44 +26,7 @@ class RequestInformation
      * ORM\Column(type="array", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $formats;
-
-    /**
-     * Creates a RequestInformation object from parameters
-     * @param array $parameters
-     */
-    public static function create(array $parameters)
-    {
-        if(is_array($parameters))
-        {
-            $rqi = new RequestInformation();
-            if(isset($parameters["httpPost"]))
-            {
-                $rqi->setHttpPost($parameters["httpPost"]);
-            }
-            if(isset($parameters["httpGet"]))
-            {
-                $rqi->setHttpGet($parameters["httpGet"]);
-            }
-            if(isset($parameters["formats"]))
-            {
-                $rqi->setFormats($parameters["formats"]);
-            }
-            if($this->getHttpGet() || $this->getHttpPost())
-            {
-                return $rqi;
-            }
-        }
-        return null;
-    }
-
-    public function __construct($httpGet = null, $httpPost = null,
-            $formats = array())
-    {
-        $this->httpGet = $httpGet;
-        $this->httpPost = $httpPost;
-        $this->formats = $formats;
-    }
+    public $formats = array();
 
     /**
      * Get httpGet
@@ -133,20 +96,6 @@ class RequestInformation
     {
         $this->formats[] = $value;
         return $this;
-    }
-
-    /**
-     * Get object as array
-     * 
-     * @return array
-     */
-    public function toArray()
-    {
-        return array(
-            "httpGet" => $this->httpGet,
-            "httpPost" => $this->httpPost,
-            "formats" => $this->formats
-        );
     }
 
 }

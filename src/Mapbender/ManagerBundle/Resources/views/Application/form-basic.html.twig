@@ -10,10 +10,8 @@
     {{ form_label(form.screenshotFile) }}
 </div>
 
-
 <div class="screenshot_upload left"  title=" {{ 'mb.manager.admin.application.upload.tooltip' | trans }}">
     <div class="upload left">
-       
         <div class="label left upload_button">
             {{ 'mb.manager.admin.application.upload.button' | trans }}
         </div>
@@ -24,15 +22,10 @@
                 {{ 'mb.manager.admin.application.upload.label' | trans }}
             {% endif %}
         </div>
-       
         {{ form_widget(form.screenshotFile) }}
         {{ form_widget(form.maxFileSize) }}
     </div>
 </div>
-
-
-
-
 <div class="clearContainer"></div>
 
 {{ form_label(form.description) }}

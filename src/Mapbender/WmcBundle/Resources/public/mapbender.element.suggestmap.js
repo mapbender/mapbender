@@ -128,6 +128,7 @@
                     modal: false,
                     closeButton: false,
                     closeOnESC: false,
+                    cssClass: 'mb-element-suggestmap-popup',
                     content: [$.ajax({
                             url: self.elementUrl + 'content',
                             complete: function(data){
@@ -180,7 +181,7 @@
         },
         _suggestMap: function(e){
             var self = this;
-            var type = $(e.target).attr('id');
+            var type = $(e.delegateTarget).attr('id');
             if(type === 'suggestmap-email'){
                 this._suggestState($.proxy(self._suggestEmail, self));
             }else if(type === 'suggestmap-facebook'){

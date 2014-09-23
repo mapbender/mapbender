@@ -7,4 +7,15 @@
   {% endif %}
     {% include 'MapbenderManagerBundle:Element:form-basic.html.twig' %}
   </form>
+  <script src="{{ asset('bundles/mapbendermanager/js/element-edit.js') }}"></script>
+  <script>
+    var elementAssets = {'css': [], 'js': []};
+    {% if assets.css %}{% for asset_name in assets.css %}
+    elementAssets.css.push('{{ asset(asset_name) }}');
+    {% endfor %}{% endif %}
+    {% if assets.js %}{% for asset_name in assets.js %}
+    elementAssets.js.push('{{ asset(asset_name) }}');
+    {% endfor %}{% endif %}
+    ElementAssetLoader(elementAssets);
+  </script>
 {% endblock %}

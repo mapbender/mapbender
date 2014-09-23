@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Element\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -61,4 +62,3 @@ class WmsLoaderAdminType extends AbstractType
     }
 
 }
-?>
