@@ -797,6 +797,7 @@
       <trans-unit id="8631113f1add8f0c5faf76acae655d58" resname="mb.print.queue.table.head.user">
         <source>mb.print.queue.table.head.user</source>
         <target>Utente</target>
+      </trans-unit>
       <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
         <source>mb.core.entity.app.screenshotfile.error</source>
         <target>__mb.core.entity.app.screenshotfile.error</target>

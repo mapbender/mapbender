@@ -821,6 +821,7 @@
       <trans-unit id="8631113f1add8f0c5faf76acae655d58" resname="mb.print.queue.table.head.user">
         <source>mb.print.queue.table.head.user</source>
         <target>Benutzer</target>
+      </trans-unit>
       <trans-unit id="1ba8a41ca928ff7029a817b972ef07eb" resname="mb.core.layertree.label.dimensions">
         <source>mb.core.layertree.label.dimensions</source>
         <target>Dimensions</target>
