@@ -464,6 +464,15 @@ class PrintService
             $pdf->SetFont('Arial', '', $this->conf['fields'][$k]['fontsize']);
             $pdf->SetXY($this->conf['fields'][$k]['x'] * 10,
                 $this->conf['fields'][$k]['y'] * 10);
+
+            if(array_key_exists('rotation', $this->conf['fields'][$k])) {
+                $angle = $this->conf['fields'][$k]['rotation'];
+                $angle = $angle * 180 / M_PI;
+                $pdf->rotate($angle, $this->conf['fields'][$k]['x'] * 10, $this->conf['fields'][$k]['y'] * 10);
+            } else {
+                $pdf->rotate(0);
+            }
+
             switch ($k) {
             case 'date' :
                 $date = new \DateTime;
@@ -511,6 +520,8 @@ class PrintService
                 break;
             }
         }
+
+        $pdf->rotate(0);
 
         // draw features
         if ($this->data['rotation'] == 0 && isset($this->data['features'])) {

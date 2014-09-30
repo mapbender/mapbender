@@ -20,6 +20,8 @@ class PDF_ImageAlpha extends FPDF_FPDI{
 //Private properties
 var $tmpFiles = array();
 
+public $angle = 0;
+
 /*******************************************************************************
 *                                                                              *
 *                               Public methods                                 *
@@ -285,6 +287,29 @@ function _parsepng($file)
 		$this->Error('Missing palette in '.$file);
 	fclose($f);
 	return array('w'=>$w,'h'=>$h,'cs'=>$colspace,'bpc'=>$bpc,'f'=>'FlateDecode','parms'=>$parms,'pal'=>$pal,'trns'=>$trns,'data'=>$data);
+}
+
+public function rotate($angle, $x = -1, $y = -1) {
+    if($x == -1) {
+        $x = $this->x;
+    }
+    if($y == -1) {
+        $y = $this->y;
+    }
+
+    if($this->angle != 0) {
+        $this->_out('Q');
+    }
+    $this->angle = $angle;
+    if($angle != 0) {
+        $angle *= M_PI / 180;
+        $c = cos($angle);
+        $s = sin($angle);
+        $cx = $x * $this->k;
+        $cy = ($this->h - $y) * $this->k;
+
+        $this->_out(sprintf('q %.5f %.5f %.5f %.5f %.2f %.2f cm 1 0 0 1 %.2f %.2f cm', $c, $s, -$s, $c, $cx, $cy, -$cx, -$cy));
+    }
 }
 
 }

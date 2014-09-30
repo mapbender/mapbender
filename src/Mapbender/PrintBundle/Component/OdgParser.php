@@ -110,6 +110,15 @@ class OdgParser
                 $font = $stylenode->item(0)->getAttribute('fo:font-family');
                 $data['fields'][$name]['fontsize'] = $fontsize;
                 $data['fields'][$name]['font'] = $font;
+                $trans = $node->getAttribute('draw:transform');
+                if($trans) {
+                    $matches = array();
+                    if(preg_match('/rotate.[(]([^)]+)[)].translate.[(]([0-9.]+)cm.([0-9.]+)cm[)]/', $trans, $matches) === 1) {
+                        $data['fields'][$name]['rotation'] = $matches[1];
+                        $data['fields'][$name]['x'] = $matches[2];
+                        $data['fields'][$name]['y'] = $matches[3];
+                    }
+                }
             }
         }
         return $data;
