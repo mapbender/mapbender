@@ -133,7 +133,7 @@ $.extend(true, Mapbender, {
 
 
                 // this clever shit was taken from $.ajax
-                var requestUrl = this._removeProxy(layer.options.url);
+                var requestUrl = this._removeProxy(layer.olLayer.url);
 
                 requestUrl += (/\?/.test(layer.options.url) ? '&' : '?') + params;
 
