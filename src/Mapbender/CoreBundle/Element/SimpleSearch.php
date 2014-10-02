@@ -76,6 +76,7 @@ class SimpleSearch extends Element
             'query_url' => 'http://',
             'query_key' => 'q',
             'query_format' => '%s',
+            'token_regex' => '[^a-zA-Z0-9äöüÄÖÜß]',
             'token_regex_in' => '([a-zA-Z]{3,})',
             'token_regex_out' => '$1*',
             'collection_path' => '',
