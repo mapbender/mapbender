@@ -52,6 +52,8 @@ class DigitizerToolbar extends Element
     static public function listAssets()
     {
         return array('js' => array( 'mapbender.element.digitizerToolbar.js',
+                                    'vendor/javascript.util.js',
+                                    'vendor/jsts.js',
                                     '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                                     '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
                     'css' => array('sass/element/digitizertoolbar.scss'),

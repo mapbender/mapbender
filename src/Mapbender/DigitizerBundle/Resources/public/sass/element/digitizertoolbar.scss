@@ -2,3 +2,44 @@
 @import "libs/mixins";
 
 
+/* context menu */
+.mb-digitizer-contextmenu {
+    background-color: white;
+    color: black;
+    height: 150px;
+    width: 100px;
+    z-index: 1000;
+
+    -moz-box-shadow:    2px 2px 1px 0px #ccc;
+    -webkit-box-shadow: 2px 2px 1px 0px #ccc;
+    box-shadow:         2px 2px 1px 0px #ccc;
+
+    border: 1px solid #ccc;
+
+    position: absolute;
+}
+
+.mb-digitizer-menucontent {
+    width: auto;
+    height: auto;
+    
+    li{
+        cursor: pointer;
+        padding: 3px 15px;
+    }
+    
+    hr{
+        border: none;
+        height: 1px;
+        background: #ccc;
+        margin: 2px 10px;
+    }
+}
+
+.olHandlerBoxSelectFeature {
+    background-color: white;
+    border: 2px solid blue;
+    font-size: 1px;
+    opacity: 0.5;
+    position: absolute;
+}
