@@ -1,8 +1,8 @@
 <?php
+
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
-
 
 /*
  * To change this template, choose Tools | Templates
@@ -16,6 +16,7 @@ use Mapbender\CoreBundle\Component\InstanceConfigurationOptions;
  */
 class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
 {
+
     /**
      * ORM\Column(type="string", nullable=true)
      */
@@ -32,6 +33,14 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $bbox;
+    
+    /**
+     * ORM\Column(type="array", nullable=true)
+     */
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $dimensions;
+
+    public $buffer;
 
     /**
      * Sets a tiled
@@ -86,7 +95,33 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     {
         return $this->vendor;
     }
+    
+    public function getDimensions()
+    {
+        return $this->dimensions;
+    }
 
+    public function setDimensions(array $dimensions)
+    {
+        $this->dimensions = $dimensions;
+        return $this;
+    }
+
+    public function setBuffer($buffer)
+    {
+        $this->buffer = $buffer;
+        return $this;
+    }
+
+    public function getBuffer()
+    {
+        if(null != $this->buffer) {
+            return $this->buffer;
+        }
+        return ($this->getTiled() ? 1 : 1.2);
+    }
+
+    
     /**
      * @inheritdoc
      */
@@ -102,52 +137,55 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "opacity" => $this->opacity,
             "tiled" => $this->tiled,
             "bbox" => $this->bbox,
-            "vendor" => $this->vendor
+            "vendor" => $this->vendor,
+            "dimensions" => $this->dimensions,
+            "buffer" => $this->getBuffer(),
         );
     }
-    
+
     /**
      * @inheritdoc
      */
     public static function fromArray($options)
     {
         $ico = null;
-        if($options && is_array($options))
-        {
+        if ($options && is_array($options)) {
             $ico = new WmsInstanceConfigurationOptions();
-            if(isset($options["url"])){
+            if (isset($options["url"])) {
                 $ico->url = $options["url"];
             }
-            if(isset($options["proxy"])){
+            if (isset($options["proxy"])) {
                 $ico->proxy = $options["proxy"];
             }
-            if(isset($options["visible"])){
+            if (isset($options["visible"])) {
                 $ico->visible = $options["visible"];
             }
-            if(isset($options["format"])){
+            if (isset($options["format"])) {
                 $ico->format = $options["format"];
             }
-            if(isset($options["info_format"])){
+            if (isset($options["info_format"])) {
                 $ico->infoformat = $options["info_format"];
             }
-            if(isset($options["transparent"])){
+            if (isset($options["transparent"])) {
                 $ico->transparency = $options["transparent"];
             }
-            if(isset($options["opacity"])){
+            if (isset($options["opacity"])) {
                 $ico->opacity = $options["opacity"];
             }
-            if(isset($options["tiled"])){
+            if (isset($options["tiled"])) {
                 $ico->tiled = $options["tiled"];
             }
-            if(isset($options["bbox"])){
+            if (isset($options["bbox"])) {
                 $ico->bbox = $options["bbox"];
             }
-            if(isset($options["vendor"])){
+            if (isset($options["vendor"])) {
                 $ico->vendor = $options["vendor"];
+            }
+            if(isset($options["buffer"])){
+                $ico->vendor = $options["buffer"];
             }
         }
         return $ico;
     }
 
 }
-?>

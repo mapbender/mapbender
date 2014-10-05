@@ -5,8 +5,7 @@ namespace Mapbender\ManagerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Mapbender\ManagerBundle\Form\EventListener\RegionSubscriber;
-use Mapbender\ManagerBundle\Form\EventListener\RegionPropertiesSubscriber;
+
 
 class ApplicationType extends AbstractType
 {
@@ -26,7 +25,7 @@ class ApplicationType extends AbstractType
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
-    {   
+    {
         $builder
             // Base data
             ->add('title', 'text', array(
@@ -46,20 +45,25 @@ class ApplicationType extends AbstractType
                 'choices' => $options['available_templates'],
                 'attr' => array(
                     'title' => 'The HTML template used for this application.')))
-            ->add('screenshotFile', 'file',
-                array('label' => 'Screenshot',
+            ->add('screenshotFile', 'file', array(
+                'label' => 'Screenshot',
                 'attr' => array(
                     'required' => false,
                     'accept'=>'image/*')))
-            // Flag if set true, then screenshot should be 
             ->add('removeScreenShot', 'hidden',array(
                 'mapped' => false))
             ->add('maxFileSize', 'hidden',array(
                 'mapped' => false,
                 'data' => $options['maxFileSize']))
-            ->add('published', 'checkbox', array(
+            ->add('custom_css', 'textarea', array(
+                'required' => false))
+
+            // Security
+            ->add('published', 'checkbox',
+                array(
                 'required' => false,
                 'label' => 'Published'));
+
         $app = $options['data'];
         foreach ($options['available_properties'] as $region => $properties) {
             $data = "";

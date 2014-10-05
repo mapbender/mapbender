@@ -68,7 +68,7 @@
 .iconWarningSmpl, .iconEmail, .iconTwitter,
 .iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu,
 .iconOverview, .iconGpsTarget, .iconClock, .iconFile,
-.iconBolt, .iconStarO, .iconBars {
+.iconBolt, .iconStarO, .iconBars, .iconFileText {
   &:before{font-family: FontAwesome;}
 }
 
@@ -135,6 +135,8 @@
 .iconBolt:before {content: "\f0e7";}
 .iconStarO:before{content:"\f006";}
 .iconBars:before{content:"\f0c9";}
+.iconFileText:before{content:"\f0f6";}
+.iconCancel:before{ content: "\f05c";}
 
 // only backend
 .iconGroup:before{content: "\f0c0";}
@@ -145,7 +147,6 @@
 .iconPublish:before{content:"\f070" !important;} // the active checkbox in application edit, need to be overwritten
 .iconPublishActive:before{content:"\f06e" !important;}
 .iconAppDefault:before{content:"\f03e";}
-.iconCancel:before{ content: "\f05c"; }
 .iconThumbsUp:before{content:"\f087";}
 .iconThumbsDown:before{content:"\f088";}
 .iconGroup:before{content:"\f0c0";}

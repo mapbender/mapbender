@@ -40,7 +40,7 @@ class Attribution
 
     /**
      * Set title
-     * @param string $value 
+     * @param string $value
      */
     public function setTitle($value)
     {
@@ -85,4 +85,5 @@ class Attribution
         $this->logoUrl = $value;
         return $this;
     }
+
 }

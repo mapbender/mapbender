@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\InstanceConfiguration;
@@ -81,19 +82,18 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     public static function fromArray($options)
     {
         $ic = null;
-        if($options && is_array($options))
-        {
+        if ($options && is_array($options)) {
             $ic = new WmsInstanceConfiguration();
-            if(isset($options['type'])){
+            if (isset($options['type'])) {
                 $ic->type = $options['type'];
             }
-            if(isset($options['title'])){
+            if (isset($options['title'])) {
                 $ic->title = $options['title'];
             }
-            if(isset($options['isBaseSource'])){
+            if (isset($options['isBaseSource'])) {
                 $ic->isBaseSource = $options['isBaseSource'];
             }
-            if(isset($options['options'])){
+            if (isset($options['options'])) {
                 $ic->options = WmsInstanceConfigurationOptions::fromArray($options['options']);
             }
         }
@@ -101,4 +101,3 @@ class WmsInstanceConfiguration extends InstanceConfiguration
     }
 
 }
-?>

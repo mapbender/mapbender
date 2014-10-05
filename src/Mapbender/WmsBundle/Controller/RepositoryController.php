@@ -3,21 +3,13 @@
 namespace Mapbender\WmsBundle\Controller;
 
 use FOM\ManagerBundle\Configuration\Route as ManagerRoute;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SourceMetadata;
 use Mapbender\CoreBundle\Component\XmlValidator;
-use Mapbender\CoreBundle\Component\Utils;
-use Mapbender\CoreBundle\Component\Exception\NotSupportedVersionException;
-use Mapbender\WmsBundle\Component\Exception\WmsException;
-use Mapbender\CoreBundle\Component\Exception\XmlParseException;
 use Mapbender\WmsBundle\Component\WmsCapabilitiesParser;
-use Mapbender\WmsBundle\Entity\WmsInstance;
-use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Form\Type\WmsInstanceInstanceLayersType;
 use Mapbender\WmsBundle\Form\Type\WmsSourceSimpleType;
-use Mapbender\WmsBundle\Form\Type\WmsSourceType;
-use Mapbender\WmsBundle\Form\Type\WmsInstanceType;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -228,11 +220,12 @@ class RepositoryController extends Controller
         $aclProvider->deleteAcl($oid);
 
         foreach ($wmsinstances as $wmsinstance) {
-            $wmsinstance->remove($em);
+            $wmsinsthandler = EntityHandler::createHandler($this->container, $wmsinstance);
+            $wmsinsthandler->remove();
             $em->flush();
         }
-        $wmssource->remove($em);
-        $em->flush();
+        $wmshandler = EntityHandler::createHandler($this->container, $wmssource);
+        $wmshandler->remove();
         $em->getConnection()->commit();
         $this->get('session')->getFlashBag()->set('success', "Your WMS has been deleted");
         return $this->redirect($this->generateUrl("mapbender_manager_repository_index"));
@@ -251,7 +244,9 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $em = $this->getDoctrine()->getManager();
         $em->getConnection()->beginTransaction();
-        $instance->remove($em);
+        $instance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
+        $insthandler = EntityHandler::createHandler($this->container, $instance);
+        $insthandler->remove();
         $em->flush();
         $em->getConnection()->commit();
         $this->get('session')->getFlashBag()->set('success', 'Your source instance has been deleted.');
@@ -276,19 +271,21 @@ class RepositoryController extends Controller
             if ($form->isValid()) { //save
                 $em = $this->getDoctrine()->getManager();
                 $em->getConnection()->beginTransaction();
-                foreach ($wmsinstance->getLayers() as $layer){
+                foreach ($wmsinstance->getLayers() as $layer) {
                     $em->persist($layer);
                     $em->flush();
                     $em->refresh($layer);
                 }
                 $em->persist($wmsinstance);
+                $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
                 $em->flush();
                 $em->getConnection()->commit();
                 $wmsinstance = $this->getDoctrine()
                     ->getRepository("MapbenderWmsBundle:WmsInstance")
                     ->find($wmsinstance->getId());
-                $wmsinstance->generateConfiguration();
-                $em->persist($wmsinstance);
+                $entityHandler = EntityHandler::createHandler($this->container, $wmsinstance);
+                $entityHandler->generateConfiguration();
+                $em->persist($entityHandler->getEntity());
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->set(
@@ -302,13 +299,12 @@ class RepositoryController extends Controller
                     "instance" => $wmsinstance);
             }
         } else { // edit
-            $form = $this->createForm(
-                new WmsInstanceInstanceLayersType(), $wmsinstance);
-            $fv = $form->createView();
+            $form = $this->createForm(new WmsInstanceInstanceLayersType(), $wmsinstance);
             return array(
                 "form" => $form->createView(),
                 "slug" => $slug,
-                "instance" => $wmsinstance);
+                "instance" => $wmsinstance,
+                );
         }
     }
 
@@ -401,6 +397,7 @@ class RepositoryController extends Controller
             $wmsinstance->setEnabled($enabled);
             $em = $this->getDoctrine()->getManager();
             $em->persist($wmsinstance);
+            $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
             $em->flush();
             return new Response(json_encode(array(
                     'success' => array(
@@ -411,7 +408,7 @@ class RepositoryController extends Controller
                             'after' => $enabled)))), 200, array('Content-Type' => 'application/json'));
         }
     }
-    
+
     /**
      * Get Metadata for a wms service
      *
@@ -424,8 +421,9 @@ class RepositoryController extends Controller
         $instance = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
         $securityContext = $this->get('security.context');
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getSource())) {
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW',
+                $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
         $layerName = $this->container->get('request')->get("layerName", null);
@@ -437,6 +435,23 @@ class RepositoryController extends Controller
         $response->setContent($content);
         $response->headers->set('Content-Type', 'text/html');
         return $response;
+    }
+
+    private function getErrorMessages(\Symfony\Component\Form\Form $form)
+    {
+        $errors = array();
+
+        foreach ($form->getErrors() as $key => $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        foreach ($form->all() as $child) {
+            if (!$child->isValid()) {
+                $errors[$child->getName()] = $this->getErrorMessages($child);
+            }
+        }
+
+        return $errors;
     }
 
 }

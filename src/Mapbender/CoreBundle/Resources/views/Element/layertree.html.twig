@@ -1,4 +1,4 @@
-<div id="{{ id }}" class="mb-element mb-element-layertree hidden" title="{{ title |trans }}">
+<div id="{{ id }}" class="mb-element mb-element-layertree hidden">
   <li class="hidden leave showLeaves" data-state="" data-title="">
     <div class="leaveContainer">
       <span class="layer-spinner"></span>
@@ -10,30 +10,26 @@
       <div class="checkWrapper left iconInfo featureInfoWrapper" title="{{ 'mb.core.layertree.label.featureinfo_onoff' | trans  }}">
         <input class="layer-info checkbox" type="checkbox" name="info"/>
       </div>
-        <span class="layer-title labelCheck"></span>
-
-        {% if configuration.menu is defined and configuration.menu != null and configuration.menu | length > 0 %}
-            <span class="iconMenu right layer-menu-btn">
-                <div id="layer-menu" class="layer-menu hidden">
-                    <span class="iconRemove exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"></span>
-                    {% for item in configuration.menu %}
-                    {% if item == 'opacity' %}
-                        <span id="layer-opacity-title" class="labelInput">{{ "mb.core.layertree.label.transparency"|trans }}:</span>
-                        <div id="layer-opacity" class="layer-opacity-bar">
-                            <div class="layer-opacity-handle">100</div>
-                        </div>
-                    {% elseif item == 'zoomtolayer' %}
-                        <div class="layer-zoom span-btn inactive button">{{ 'mb.core.layertree.label.zoomtolayer'|trans }}</div>
-                    {% elseif item == 'metadata' %}
-                        <div class="layer-metadata span-btn inactive button ">{{ 'mb.core.layertree.label.metadata'|trans }}</div>
-                    {% else %}
-                        <span class="layer span-btn labelInput inactive">Undefined</span>
-                    {% endif %}
-                    {% endfor %}
-                    <div class="layer-remove-btn button critical">{{ 'mb.core.layertree.tooltip.removelayer'|trans }}</div>
-                </div>
-            </span>
-        {% endif %}
+      <span class="layer-title labelCheck"></span>
+      {% if configuration.menu is defined and configuration.menu != null and configuration.menu | length > 0 %}
+      <span class="iconMenu right layer-menu-btn">
+        <div id="layer-menu" class="layer-menu hidden">
+          <span class="iconCancel exit-button" title="{{ 'mb.core.layertree.tooltip.menu.close'|trans }}"></span>
+          {% if 'opacity' in configuration.menu %}
+          <div id="layer-opacity" class="layer-opacity-bar layer-slider-bar" title="{{ "mb.core.layertree.label.opacity"|trans }}">
+            <div class="layer-opacity-handle  layer-slider-handle">100</div>
+          </div>
+          {% endif %}
+          {% if 'zoomtolayer' in configuration.menu %}
+          <div class="layer-zoom iconSearch iconSmall" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></div>
+          {% endif %}
+          {% if 'metadata' in configuration.menu %}
+          <div class="layer-metadata iconFileText iconSmall" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></div>
+          {% endif %}
+          <div class="layer-remove-btn iconRemove iconSmall" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></div>
+        </div>
+      </span>
+      {% endif %}
     </div>
     <ul id="list-first" class="layers"></ul>
   </li>

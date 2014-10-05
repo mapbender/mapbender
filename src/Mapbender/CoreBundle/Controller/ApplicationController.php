@@ -252,11 +252,11 @@ class ApplicationController extends Controller
         $securityContext = $this->get('security.context');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $sourceId = $this->container->get('request')->get("sourceId", null);
-        $layerName = $this->container->get('request')->get("layerName", null);
         $instance = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getSource())) {
-            throw new AccessDeniedException();
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
+             throw new AccessDeniedException();
         }
 
         $managers = $this->get('mapbender')->getRepositoryManagers();

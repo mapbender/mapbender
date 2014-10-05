@@ -46,10 +46,8 @@
       }
     }
     .leaveContainer{
-
       margin-left:-6px;
       margin-top:1px; // Fix for Firefox
-
       .layer-menu-btn{
         margin-left: 4px;
         position: relative !important;
@@ -82,9 +80,7 @@
   }
 }
 
-
-$layer-opacity-bar-height: 5px;
-
+$layer-slider-bar-height: 5px;
 .layer-menu {
   position: absolute;
   right: -5px;
@@ -97,26 +93,24 @@ $layer-opacity-bar-height: 5px;
   min-width: 120px;
   max-width: 200px;
   border: solid 1px $thirdColor;
+  text-align: right;
+  cursor: default;
   @include border-radius($radius);
-
   & *{
     @include noUserSelect();
   }
-
   .labelInput {
     display: block;
     position: relative;
     margin-top: -20px;
     white-space: nowrap;
   }
-
   .exit-button{
     position: absolute;
     right: 4px;
     top: 0px;
     display: block;
   }
-
   // arrow icon
   &:before {
     content: '';
@@ -129,21 +123,20 @@ $layer-opacity-bar-height: 5px;
     position: absolute;
     right: 0;
     top: -10px;
-
   }
-
-  .layer-opacity-bar {
+  .layer-slider-bar {
     position: relative;
     color: $lightFontColor;
-    height: $layer-opacity-bar-height;
+    height: $layer-slider-bar-height;
     background-color: $thirdColor;
     width: 100px;
-    margin-bottom: $space;
+    margin-top: $space/3;
+    margin-bottom: $space/2;
+    cursor: pointer;
     @include border-radius(2px);
-
-    .layer-opacity-handle {
+    .layer-slider-handle {
       position: absolute;
-      top: -$layer-opacity-bar-height;
+      top: -$layer-slider-bar-height;
       left: 0;
       cursor: pointer;
       width: 30px;

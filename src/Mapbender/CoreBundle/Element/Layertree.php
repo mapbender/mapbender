@@ -1,10 +1,8 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\ElementInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -65,7 +63,8 @@ class Layertree extends Element
                 '@FOMCoreBundle/Resources/public/js/dragdealer.min.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
-                '@FOMCoreBundle/Resources/public/js/dragdealer.min.js',
+                '@MapbenderCoreBundle/Resources/public/vendor/joii.min.js',
+                '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
                 'mapbender.element.layertree.tree.js',
                 'mapbender.metadata.js'),
             'css' => array(
@@ -74,6 +73,16 @@ class Layertree extends Element
                 'MapbenderCoreBundle:Element:layertree.json.twig')
         );
         return $assets;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getConfiguration()
+    {
+        $configuration = parent::getConfiguration();
+        $configuration['menu'] = array_values($configuration['menu']);
+        return $configuration;
     }
 
     /**

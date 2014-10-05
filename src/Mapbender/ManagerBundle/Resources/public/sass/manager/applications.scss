@@ -221,6 +221,26 @@
   .iconCheckbox{@extend .iconPublish}
   .iconCheckboxActive{@extend .iconPublishActive}
 }
+
+.containerExchange {
+  border: 1px solid #c0c0c0;
+  background-color: #f9f9f9;
+  padding: 20px;
+  .labelInput{
+    width:80px;
+    float:left;
+    display: block;
+    margin-bottom: $space/2;
+  }
+  label{margin-right: 10px;}
+  select{min-width: 300px;}
+  .dropdown{min-width: 300px;}
+  .messageBox{
+    width:270px;
+    @include absolute($space $space '' '');
+  }
+}
+
 .popup{
   .popupSubContent{
     overflow: visible;
@@ -291,4 +311,10 @@
   .idColumn{width:3%;}
   .typeColumn{width:7%;} // very ugly, but fixing the scale behaviour
   .titleColumn{width: 70%;}
+}
+
+.containerCustomCss {
+  .inputWrapper {
+    width: 100%;
+  }
 }

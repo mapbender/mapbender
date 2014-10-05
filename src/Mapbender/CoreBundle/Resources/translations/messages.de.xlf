@@ -218,9 +218,9 @@
         <source>mb.core.layertree.label.featureinfo_onoff</source>
         <target>Information an/aus</target>
       </trans-unit>
-      <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
-        <source>mb.core.layertree.label.transparency</source>
-        <target>Transparenz</target>
+      <trans-unit id="64a09f242bd5e7d1a0f5622a11f5cff2" resname="mb.core.layertree.label.opacity">
+        <source>mb.core.layertree.label.opacity</source>
+        <target>Deckkraft</target>
       </trans-unit>
       <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
         <source>mb.core.layertree.label.zoomtolayer</source>
@@ -682,6 +682,18 @@
         <source>mb.core.admin.legend.label.autoopen</source>
         <target>Automatisches Öffnen</target>
       </trans-unit>
+      <trans-unit id="313130e9ce7f77c283bdbf630a77a026" resname="mb.core.htmlelement.class.title">
+        <source>mb.core.htmlelement.class.title</source>
+        <target>HTML</target>
+      </trans-unit>
+      <trans-unit id="ce2413ae706bd739dcbc0b4f9a289cef" resname="mb.core.htmlelement.class.description">
+        <source>mb.core.htmlelement.class.description</source>
+        <target>HTML hinzufügen</target>
+      </trans-unit>
+      <trans-unit id="d39455710ac8e12021e4959d6e1c6b85" resname="mb.core.htmlelement.tag.html">
+        <source>mb.core.htmlelement.tag.html</source>
+        <target>HTML</target>
+      </trans-unit>
       <trans-unit id="a68b07cd84e92c05aa0182899bccc4c0" resname="mb.core.admin.legend.label.hideemptylayers">
         <source>mb.core.admin.legend.label.hideemptylayers</source>
         <target>Ebenen ohne Objekte ausblenden</target>
@@ -750,10 +762,6 @@
         <source>mb.core.layertree.label.kmlexport</source>
         <target>KML Export</target>
       </trans-unit>
-      <trans-unit id="13348442cc6a27032d2b4aa28b75a5d3" resname="Search">
-        <source>Search</source>
-        <target>Suchen</target>
-      </trans-unit>
       <trans-unit id="7676545c9153a0ed87dc96296d665c5a" resname="mb.core.metadata.popup.title">
         <source>mb.core.metadata.popup.title</source>
         <target>Metadaten</target>
@@ -773,6 +781,26 @@
       <trans-unit id="aebe23501117e9bbab635579b16ced39" resname="mb.core.entity.app.screenshotfile.error">
         <source>mb.core.entity.app.screenshotfile.error</source>
         <target>Die Datei ist zu groß. Die maximal zulässige Größe beträgt %limit% bytes.</target>
+      </trans-unit>
+      <trans-unit id="035305154a06c6bd1851f8680663ddf8" resname="mb.core.layertree.tooltip.menu.close">
+        <source>mb.core.layertree.tooltip.menu.close</source>
+        <target>Schließen</target>
+      </trans-unit>
+      <trans-unit id="1ba8a41ca928ff7029a817b972ef07eb" resname="mb.core.layertree.label.dimensions">
+        <source>mb.core.layertree.label.dimensions</source>
+        <target>Dimensions</target>
+      </trans-unit>
+      <trans-unit id="aa93e59d2e2f14448358909c80467abe" resname="mb.core.layertree.label.dimension_onoff">
+        <source>mb.core.layertree.label.dimension_onoff</source>
+        <target>An/Aus Dimension</target>
+      </trans-unit>
+      <trans-unit id="ac75383716ace39d7ca992ce8422ce5d" resname="mb.core.layertree.label.dimension.current_value">
+        <source>mb.core.layertree.label.dimension.current_value</source>
+        <target>Aktueller Wert</target>
+      </trans-unit>
+      <trans-unit id="44b1db86684ccd813cfea5e5d92461cb" resname="mb.core.layertree.label.dimension">
+        <source>mb.core.layertree.label.dimension</source>
+        <target>Dimension</target>
       </trans-unit>
     </body>
   </file>

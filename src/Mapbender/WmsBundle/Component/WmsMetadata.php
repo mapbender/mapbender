@@ -72,7 +72,7 @@ class WmsMetadata extends SourceMetadata
         if ($this->getUseItems() && $itemName !== '') {
             $layer = null;
             foreach ($this->instance->getLayers() as $layerH) {
-                if ($layerH->getWmslayersource()->getName() === $itemName) {
+                if ($layerH->getSourceItem()->getName() === $itemName) {
                     $layer = $layerH;
                     break;
                 }
@@ -88,13 +88,13 @@ class WmsMetadata extends SourceMetadata
     private function prepareLayers($layer)
     {
         $layer_items = array();
-        $layer_items[] = array("name" => SourceMetadata::getNotNull($layer->getWmslayersource()->getName()));
+        $layer_items[] = array("name" => SourceMetadata::getNotNull($layer->getSourceItem()->getName()));
         $layer_items[] = array("title" => SourceMetadata::getNotNull($layer->getTitle()));
-        $bbox = $layer->getWmslayersource()->getLatlonBounds();
+        $bbox = $layer->getSourceItem()->getLatlonBounds();
         $layer_items[] = array("bbox" => SourceMetadata::getNotNull($bbox->getSrs() . " " .
                 $bbox->getMinx() . "," . $bbox->getMiny() . "," . $bbox->getMaxx() . "," . $bbox->getMaxy()));
         $layer_items[] = array(
-            "srs" => SourceMetadata::getNotNull(implode(', ', $layer->getWmslayersource()->getSrs())));
+            "srs" => SourceMetadata::getNotNull(implode(', ', $layer->getSourceItem()->getSrs())));
         if($layer->getSublayer()->count() > 0){
             $sublayers = array();
             foreach($layer->getSublayer() as $sublayer){

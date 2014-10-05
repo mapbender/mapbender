@@ -63,4 +63,5 @@ class Identifier
         $this->value = $value;
         return $this;
     }
+
 }

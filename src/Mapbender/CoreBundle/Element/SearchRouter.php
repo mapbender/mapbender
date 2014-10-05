@@ -231,4 +231,52 @@ class SearchRouter extends Element
         return 'MapbenderCoreBundle:ElementAdmin:search_router.html.twig';
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function normalizeConfiguration(array $configuration, array $aaa = array())
+    {
+        if (key_exists('dialog', $configuration)) {
+            $configuration['asDialog'] = $configuration['dialog'];
+            unset($configuration['dialog']);
+        }
+        if (key_exists('timeout', $configuration)) {
+            $configuration['timeoutFactor'] = $configuration['timeout'];
+            unset($configuration['timeout']);
+        }
+        foreach ($configuration['routes'] as $routekey => $routevalue) {
+            if (key_exists('configuration', $routevalue)) {
+                foreach ($configuration['routes'][$routekey]['configuration'] as $key => $value) {
+                    $configuration['routes'][$routekey][$key] = $value;
+                }
+                unset($configuration['routes'][$routekey]['configuration']);
+            }
+        }
+        return $configuration;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function denormalizeConfiguration(array $configuration)
+    {
+        if (key_exists('dialog', $configuration)) {
+            $configuration['asDialog'] = $configuration['dialog'];
+            unset($configuration['dialog']);
+        }
+        if (key_exists('timeout', $configuration)) {
+            $configuration['timeoutFactor'] = $configuration['timeout'];
+            unset($configuration['timeout']);
+        }
+        foreach ($configuration['routes'] as $routekey => $routevalue) {
+            if (key_exists('configuration', $routevalue)) {
+                foreach ($configuration['routes'][$routekey]['configuration'] as $key => $value) {
+                    $configuration['routes'][$routekey][$key] = $value;
+                }
+                unset($configuration['routes'][$routekey]['configuration']);
+            }
+        }
+        return $configuration;
+    }
+
 }

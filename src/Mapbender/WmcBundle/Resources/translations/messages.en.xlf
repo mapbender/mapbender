@@ -196,7 +196,7 @@
       </trans-unit>
       <trans-unit id="e909afa8127513f6f090d29866ce35f3" resname="mb.wmc.element.wmclist.select.def_option">
         <source>mb.wmc.element.wmclist.select.def_option</source>
-        <target>Pleace select</target>
+        <target>Please select</target>
       </trans-unit>
       <trans-unit id="8878f357789b5b60da961e080ea2ee58" resname="mb.wmc.admin.wmclist.label">
         <source>mb.wmc.admin.wmclist.label</source>

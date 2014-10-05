@@ -132,13 +132,14 @@
     cursor: text;
 }
 
-.mb-element-layertree .layer-opacity {
+.mb-element-layertree .layer-slider-bar {
     width: 100%;
 }
 
+/*
 .mb-element-layertree .layer-opacity-slider {
     margin: 0.8em 0.5em;
     width: 90%;
     z-index: 11;
-}
+}*/
 

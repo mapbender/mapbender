@@ -18,6 +18,11 @@
             this.open();
             return false;
         },
+
+        defaultAction: function() {
+            return this.open();
+        },
+
         open: function(){
             var self = this;
             if(!this.popup || !this.popup.$element){

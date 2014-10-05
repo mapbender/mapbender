@@ -1,0 +1,33 @@
+# Changelog
+* **v3.0.4.0**
+    - Switched to MIT license
+    - fixed element saving bug
+    - use degrees as unit fallback when none are provided by SRS definition
+    - added screenshot management to application editing
+    - enhanced CSS URL rewrite to be more dynamic depending on apps URL rewriting
+    - patched OpenLayers with unreleased upstream fixes
+    - enhanced GPS position element (remove marker on disable, position averaging)
+    - properly remove proxy from WMS URLs before printing
+    - display WMS metadata valdiation results
+    - fixed application copy bugs
+    - region properties added (normal/tabs/accordion)
+    - Symfony 2.3 upgrade
+    - patched OpenLayers 2.13 with fixes for proper IE8-10 behavior
+    - prevent unsaved element forms to be closed accidentally
+    - added CSS editing to application editing
+    - added generic HTML element
+    - Codemirror updated
+    - workaround weird fileinfo behavior during print
+    - added scalebar to print
+    - enhanced SimpleSearch preprocessing with regex and sensible Solr defaults
+    - travis-ci.org integration for automated testing
+    - SearchRouter enhancements (z-index, results counter)
+    - GPS position can make the map follow it's position
+    - More WMS metadata validation, handling and displaying
+    - FeatureInfo can have custom data handlers
+    - configurable buffer/ratio property for WMS instances
+    - print using layer opacity
+    - SearchRouter feature styles can be configured
+    - Spanish translatiosn
+    - SearchRouter: autocomplete enhancements, feature garbage collection, more configration options
+    - responsive application templates

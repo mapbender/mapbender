@@ -142,6 +142,7 @@ class WmsLoader extends Element
                     array(
                     'id' => $this->getId(),
                     "title" => $this->getTitle(),
+                    'example_url' => $this->container->getParameter('wmsloader.example_url'),
                     'configuration' => $this->getConfiguration()));
     }
 
@@ -197,8 +198,8 @@ class WmsLoader extends Element
         $gc_url = urldecode($this->container->get('request')->get("url", null));
         $signer = $this->container->get('signer');
         $signedUrl = $signer->signUrl($gc_url);
-        return new Response(json_encode(array("success" => $signedUrl)), 200,
-            array('Content-Type' => 'application/json'));
+        return new Response(json_encode(array("success" => $signedUrl)),
+                200, array('Content-Type' => 'application/json'));
     }
 
     /**
@@ -208,13 +209,13 @@ class WmsLoader extends Element
      */
     protected function signeSources()
     {
-        $sources = json_decode($this->container->get('request')->get("sources", "[]"), true);
+        $sources = json_decode($this->container->get('request')->get("sources", "[]"),true);
         $signer = $this->container->get('signer');
         foreach ($sources as &$source) {
             $source['configuration']['options']['url'] = $signer->signUrl($source['configuration']['options']['url']);
         }
-        return new Response(json_encode(array("success" => json_encode($sources))), 200,
-            array('Content-Type' => 'application/json'));
+        return new Response(json_encode(array("success" => json_encode($sources))),
+                200, array('Content-Type' => 'application/json'));
     }
 
 }

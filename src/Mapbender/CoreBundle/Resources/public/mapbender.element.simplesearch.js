@@ -119,6 +119,11 @@ $.widget('mapbender.mbSimpleSearch', {
     _tokenize: function(string) {
         if('' == this.options.token_regex_in || '' == this.options.token_regex_out) return string;
 
+        if (this.options.token_regex != "") {
+            var regexp = new RegExp(this.options.token_regex, 'g');
+            string = string.replace(regexp, " ");
+        }
+
         var tokens = string.split(' ');
         var regex = new RegExp(this.options.token_regex_in);
         for(var i = 0; i < tokens.length; i++) {

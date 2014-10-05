@@ -205,14 +205,14 @@
   {% endif %}
   {% if layer.dimension is defined and layer.dimension|length > 0 %}
   <li>
-    <span class="labelText">{{ "mb.wms.wmsloader.repo.layer.label.dimension" | trans }}:</span>
-    <ul>
+    <span class="labelText left">{{ "mb.wms.wmsloader.repo.layer.label.dimension" | trans }}:</span>
+    <ul class="">
     {% for dimension in layer.dimension %}
       <li>
         <span class="metaText">
-          {{ dimension.name }} {{ dimension.units }} {{ dimension.unitSymbol }}
-          {{ dimension.default }} {{ dimension.multipleValues }} {{ dimension.nearestValue }}
-          {{ dimension.current }} {{ dimension.extentValue }}
+          name:'{{ dimension.name }}', units:'{{ dimension.units }}', unitSymbol:'{{ dimension.unitSymbol }}', 
+          default:'{{ dimension.default }}', multipleValues:'{{ dimension.multipleValues }}', nearestValue:'{{ dimension.nearestValue }}',
+          current:'{{ dimension.current }}', extent:'{{ dimension.extent }}'
         <span>
       </li>
     {% endfor %}
@@ -227,7 +227,7 @@
         <li>
           <span class="metaText">
             {{ extent.name }} {{ extent.default }} {{ extent.multipleValues }}
-            {{ extent.nearestValue }} {{ extent.current }} {{ extent.extentValue }}
+            {#{ extent.nearestValue }} {{ extent.current }} {{ extent.extentValue }#}
           <span>
         </li>
       {% endfor %}

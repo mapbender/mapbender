@@ -7,7 +7,6 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -28,7 +27,7 @@ class RegionProperties
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
+
     /**
      * @var Application The configuration entity for the application
      * @ORM\ManyToOne(targetEntity="Application", inversedBy="regionProperties")
@@ -41,17 +40,19 @@ class RegionProperties
      * @Assert\NotBlank()
      */
     protected $name;
+
     /**
      * @var array $properties The region properties
      * @ORM\Column(type="array", nullable=true)
      * @Assert\NotBlank()
      */
     public $properties;
-    
+
     public function __construct()
     {
         $this->properties = array();
     }
+
     /**
      * Set id. DANGER
      *
@@ -60,6 +61,7 @@ class RegionProperties
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -81,6 +83,7 @@ class RegionProperties
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -99,9 +102,10 @@ class RegionProperties
      *
      * @param Application $application
      */
-    public function setApplication($application)
+    public function setApplication(Application $application)
     {
         $this->application = $application;
+
         return $this;
     }
 
@@ -114,15 +118,16 @@ class RegionProperties
     {
         return $this->application;
     }
-    
+
     /**
      * Set properties
      *
      * @param array $properties
      */
-    public function setProperties($properties)
+    public function setProperties(array $properties = array())
     {
         $this->properties = $properties === null || !is_array($properties) ? array() : $properties;
+
         return $this;
     }
 
@@ -135,7 +140,7 @@ class RegionProperties
     {
         return $this->properties;
     }
-    
+
     /**
      * Get properties
      *
@@ -144,9 +149,10 @@ class RegionProperties
     public function addProperty($property)
     {
         $this->properties[] = $property;
+
         return $this;
     }
-    
+
     /**
      * Get properties
      *
@@ -155,18 +161,22 @@ class RegionProperties
     public function removeProperty($property)
     {
         $help = array();
-        foreach($this->properties as $prop){
-            if($prop !== $property)
+        foreach ($this->properties as $prop) {
+            if ($prop !== $property)
                 $help[] = $prop;
         }
         $this->setProperties($help);
+
         return $this;
     }
-    
-    public function copy(){
+
+    public function copy()
+    {
         $rp = new RegionProperties();
         $rp->name = $this->name;
         $rp->properties = $this->properties;
+
         return $rp;
     }
+
 }

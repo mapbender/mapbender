@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
@@ -11,6 +12,7 @@ use Mapbender\CoreBundle\Entity\Element;
  */
 class ElementIdTransformer implements DataTransformerInterface
 {
+
     /**
      * @var ObjectManager
      */
@@ -30,7 +32,7 @@ class ElementIdTransformer implements DataTransformerInterface
      * @param  Element|null $element
      * @return string
      */
-        public function transform($id)
+    public function transform($id)
     {
         if (!$id) {
             return null;
@@ -56,4 +58,5 @@ class ElementIdTransformer implements DataTransformerInterface
         }
         return (string) $element->getId();
     }
+
 }
