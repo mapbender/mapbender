@@ -17,6 +17,7 @@ use Mapbender\CoreBundle\Entity\Application;
 use Mapbender\CoreBundle\Entity\Element;
 use Mapbender\CoreBundle\Entity\Contact;
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
@@ -180,7 +181,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         $fixedField = array();
         $idName = $this->findIdName($fields);
         $object = null;
-        if($idName === null){
+        if ($idName === null) {
             $reflectionClass = new \ReflectionClass($class);
             $constructorArguments = $this->getClassConstructParams($data) ? : array();
             $object = $reflectionClass->newInstanceArgs($constructorArguments);
@@ -189,9 +190,6 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         }
         if ($object !== null) {
             foreach ($fields as $fieldName => $fieldProps) {
-                if($object instanceof Source && ($fieldName === 'title' || $fieldName === 'description')){
-                    $a = 0;
-                }
                 if (!isset($fieldProps[self::KEY_SETTER]) || !isset($fieldProps[self::KEY_GETTER]) ||
                     in_array($fieldName, $fixedField) || !key_exists($fieldName, $data)) {
                     continue;
@@ -220,6 +218,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
                             unset($subObjectClassName);
                         } elseif ($object instanceof Element) {
                             $this->handleElement($object, $fieldName, $fieldValue, $fieldProps);
+                        } elseif ($object instanceof RegionProperties) {
+                            $this->handleArray($object, $fieldName, $fieldValue, $fieldProps);
                         } else {
                             $a = 0;
                         }
@@ -336,12 +336,12 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
     private function handleCommon($object, $newObject, $fieldName, $fieldValue, $fieldProps)
     {
         $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
-        if(EntityHandler::isEntity($this->container, $newObject)){
+        if (EntityHandler::isEntity($this->container, $newObject)) {
             $this->em->persist($newObject);
             $this->em->flush();
         }
         $reflectionMethod->invoke($object, $newObject);
-        if(EntityHandler::isEntity($this->container, $object)){
+        if (EntityHandler::isEntity($this->container, $object)) {
             $this->em->persist($object);
             $this->em->flush();
         }
@@ -383,7 +383,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
                 if ($object instanceof Layerset && $newObject instanceof SourceInstance) {
 //                    EntityHandler::createHandler($this->container, $newObject)->generateConfiguration();
                     $this->em->persist($newObject);
-                } 
+                }
                 $this->em->flush();
                 $collection->add($newObject);
             } else {
@@ -407,12 +407,23 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
     {
         $reflectionMethod = new \ReflectionMethod(get_class($object), $fieldProps[self::KEY_SETTER]);
         $newArr = array();
-        foreach($fieldValue as $item){
-            $newclassName = $this->getClassName($item);
-            if ($newclassName) {
-                $newArr[] = $this->denormalize($item, $newclassName);
-            } else {
-                $newArr[] = $item;
+        if (ArrayUtil::isAssoc($fieldValue)) {
+            foreach ($fieldValue as $key => $value) {
+                $newclassName = $this->getClassName($value);
+                if ($newclassName) {
+                    $newArr[$key] = $this->denormalize($value, $newclassName);
+                } else {
+                    $newArr[$key] = $value;
+                }
+            }
+        } else {
+            foreach ($fieldValue as $item) {
+                $newclassName = $this->getClassName($item);
+                if ($newclassName) {
+                    $newArr[] = $this->denormalize($item, $newclassName);
+                } else {
+                    $newArr[] = $item;
+                }
             }
         }
         $reflectionMethod->invoke($object, $newArr);

@@ -3,9 +3,6 @@
 namespace Mapbender\WmsBundle\Form\EventListener;
 
 use Mapbender\WmsBundle\Component\DimensionInst;
-use Mapbender\WmsBundle\Component\DimensionInterval;
-use Mapbender\WmsBundle\Component\DimensionMultiple;
-use Mapbender\WmsBundle\Component\DimensionSingle;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
