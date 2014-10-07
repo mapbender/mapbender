@@ -23,12 +23,12 @@ class ExchangeJob
     const FORMAT_YAML = 'yaml';
     protected $addAcl;
     protected $addSources;
-//    protected $applications;
+    protected $applications;
     protected $format;
 
     public function __construct($format = 'json')
     {
-//        $this->applications = new ArrayCollection();
+        $this->applications = new ArrayCollection();
         $this->addAcl = false;
         $this->addSources = false;
         if(self::FORMAT_JSON !== $format && self::FORMAT_YAML !== $format){
