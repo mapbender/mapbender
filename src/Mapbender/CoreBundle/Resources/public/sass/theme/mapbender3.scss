@@ -117,6 +117,19 @@
   .sidePaneTabItem{@extend .iconClose;}
 }
 
+.metadataDialog{
+  .popupContent {
+    margin-bottom: 0px;
+    height: 100%;
+    .contentItem {
+      height: 100%;
+    }
+  }
+}
+.metadataDialog .popupContent .contentItem {
+  height: 100%;
+}
+
 .metadataContainer{
   $labeText:85px;
 

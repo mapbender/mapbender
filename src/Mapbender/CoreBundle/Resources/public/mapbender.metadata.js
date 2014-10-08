@@ -29,6 +29,7 @@ Mapbender.Metadata.call = function(mapElementId, sourceOptions, layerOptions) {
                     draggable: true,
                     closeButton: true,
                     closeOnESC: false,
+                    cssClass: 'metadataDialog',
                     content: [
                         $.ajax({
                             type: "POST",

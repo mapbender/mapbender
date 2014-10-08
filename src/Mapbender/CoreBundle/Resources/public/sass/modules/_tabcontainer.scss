@@ -49,6 +49,9 @@
 }
 
 .tabContainerAlt{
+  width: 100%;
+  height: 100%;
+  display: table;
   .tab{
     display: inline-block;
     @extend .button;
@@ -87,8 +90,11 @@
     padding:$space;
     z-index:20;
     position:relative;
+    overflow: auto;
+    height: 100%;
 
-    &.active{display:block;
-    overflow: auto;}
+    &.active{display: table-row;}
+    
+    .mb-element-layertree>ul{padding-left: 6px;}
   }
 }
