@@ -52,6 +52,9 @@
   width: 100%;
   height: 100%;
   display: table;
+  &.noActive{
+  display: block;
+  }
   .tab{
     display: inline-block;
     @extend .button;
