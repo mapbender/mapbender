@@ -3,16 +3,16 @@
 @import "modules/button";
 @import "modules/text";
 
-$searchRouterInputWidth:290px;
+$searchRouterInputWidth:100%;
 .mb-element-searchrouter{
-  display: none;
+  display: block;
 
   .labelInput{
     width:90px;
-    float:left;
+    /*float:left;*/
   }
   .dropdown, .input{
-    float:left;
+    /*float:left;*/
     width:$searchRouterInputWidth;
     margin-bottom: $space;
   }
@@ -33,6 +33,7 @@ $searchRouterInputWidth:290px;
   .result-counter {
     text-align: right;
   }
+  .inputWrapper {width:$searchRouterInputWidth;}
 }
 // dublicate ! > components
 .ui-autocomplete{
