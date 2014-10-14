@@ -103,7 +103,7 @@ class Application
 
     /**
      * @Assert\File(
-     *      maxSize="102400"
+     *      maxSize="500000"
      * )
      */
     protected $screenshotFile;
@@ -471,7 +471,67 @@ class Application
     {
         return $this->custom_css;
     }
+    
+    //***************************
+    public function upload() {
+        if (null === $this->getScreenshotFile()) {
+            return;
+        }
 
+        $fileExtension = strtolower($this->getScreenshotFile()->guessExtension());
+        $filePath = $this->getUploadRootDir() . '/' . $this->path;
+        $fileSize = 500;
+
+        $this->getScreenshotFile()->move($this->getUploadRootDir(), $this->path);
+
+        switch ($fileExtension) {
+            case 'png':
+                $image = $this->resizeImage(ImageCreateFromPng($filePath), $fileSize, $fileSize, 0);
+                imagepng($image, $filePath);
+                break;
+            case 'gif':
+                $image = $this->resizeImage(ImageCreateFromGif($filePath), $fileSize, $fileSize, 0);
+                imagegif($image, $filePath);
+                break;
+            case 'jpeg':
+            case 'jpg':
+                $image = $this->resizeImage(ImageCreateFromJpeg($filePath), $fileSize, $fileSize, 0);
+                imagejpeg($image, $filePath);
+                break;
+        }
+
+        // check if we have an old image
+        if (isset($this->temp)) {
+            // delete the old image
+            unlink($this->getUploadRootDir() . '/' . $this->temp);
+            // clear the temp image path
+            $this->temp = null;
+        }
+
+        $this->file = null;
+    }
+
+    private function resizeImage($source_image, $destination_width, $destination_height) {
+        $width = imagesx($source_image);
+        $height = imagesy($source_image);
+
+        if ($height > $width) {
+            $ratio = $destination_height / $height;
+            $newheight = $destination_height;
+            $newwidth = $width * $ratio;
+        } else {
+            $ratio = $destination_width / $width;
+            $newwidth = $destination_width;
+            $newheight = $height * $ratio;
+        }
+
+        $destination_image = imagecreatetruecolor($newwidth, $newheight);
+        imagecopyresized($destination_image, $source_image, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+
+        return $destination_image;
+    }
+
+    //***************************
     public function getElementsByRegion($region = null)
     {
         if ($this->preparedElements === null) {
