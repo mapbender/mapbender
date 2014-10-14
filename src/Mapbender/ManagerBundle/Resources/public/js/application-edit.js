@@ -684,6 +684,7 @@ $(function() {
         }
 
         if (fileName.length > 20) {
+                                console.log("dasdasdasdasdas");
             fileName = fileName.substring(0, 20) + "...";
         }
 
@@ -692,9 +693,11 @@ $(function() {
 
             if (file[0].type.match('image/')){
                 if (file[0].size <= 102400){
+                    console.log("dasdasdasdasdas");
                     screenShot.find('div.messageBox').remove();
                     validationMsgBox.remove();
                     if (screenShot.find('div.cell').length === 0 ){
+                        screenShot.removeClass('default iconAppDefault');
                         screenShot.append('<div class= \"cell\"><img src= \"\" alt="Load" class="screenshot" /></div>');
                     }
                     reader.onload = function (e) {
