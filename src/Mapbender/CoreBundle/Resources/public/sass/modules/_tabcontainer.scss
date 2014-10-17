@@ -49,12 +49,6 @@
 }
 
 .tabContainerAlt{
-  width: 100%;
-  height: 100%;
-  display: table;
-  &.noActive{
-  display: block;
-  }
   .tab{
     display: inline-block;
     @extend .button;
@@ -65,39 +59,60 @@
       color:$lightFontColor;
     }
   }
-  .accordion{
-    display: block;
-    @extend .button;
+  .container{
+    border-top:dashed 1px $thirdColor;
+    margin-top:$space;
+    clear:left;
+    display:none;
+    padding: 0px;
+    padding-top:$space;
+    padding-bottom:$space;
+    z-index:20;
+    position:relative;
 
+    &.active{display:block;}
+  }
+}
+
+.accordionContainer {
+  display: table;
+  height: 100%;
+  width: 100%;
+    
+  .accordion{
+    display: table-row;
+    >div{
+      display: table-cell;
+      @extend .button;
+    }
     &.active{
       cursor:default;
       background-color:darken(#6fb536, 10%);
       color:$lightFontColor;
     }
   }
-  .container-tab{
-    border-top:dashed 1px $thirdColor;
-    margin-top:$space;
-    clear:left;
-    display:none;
-    padding:$space;
-    z-index:20;
-    position:relative;
-    overflow: auto;
-
-    &.active{display:block;}
-  }
   .container-accordion{
-    clear:left;
-    display:none;
-    padding:$space;
-    z-index:20;
-    position:relative;
-    overflow: auto;
-    height: 100%;
-
-    &.active{display: table-row;}
-    
-    .mb-element-layertree>ul{padding-left: 6px;}
+    display: none;
+    &.active{
+      display: table-row;
+      .accordion-cell {
+        display: table-cell;
+        height: 100%;
+        .accordion-wrapper{
+          height: 100%;
+          display:block; 
+          position: relative;
+          >.mb-element,>div{
+            display:block;
+            position: absolute;
+            bottom:0;
+            top:0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            width:100%;
+          }
+        }
+      }
+    }
   }
 }

@@ -8,17 +8,21 @@
             {% endfor %}
           </ul>
             {%  for element in application.elements[region] %}
-              <div id="container{{loop.index}}" class="container-tab{% if loop.first %} active{% endif %}">
+              <div id="container{{loop.index}}" class="container{% if loop.first %} active{% endif %}">
                 {{ element.render() | raw }}
               </div>
             {% endfor %}
         </div>
       {% elseif region_props[region].properties['name'] == 'accordion' %}
-        <div class="tabContainerAlt">
+        <div class="accordionContainer">
           {%  for element in application.elements[region] %}
-            <div id="accordion{{loop.index}}" class="accordion{% if loop.first %} active{% endif %}">{{ element.title | trans }}</div>
+            <div id="accordion{{loop.index}}" class="accordion{% if loop.first %} active{% endif %}"><div class="tablecell">{{ element.title | trans }}</div></div>
             <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}">
-                {{ element.render() | raw }}
+                <div class="accordion-cell">
+                    <div class="accordion-wrapper">
+                    {{ element.render() | raw }}
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>
