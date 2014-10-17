@@ -89,6 +89,7 @@
       cursor:default;
       background-color:darken(#6fb536, 10%);
       color:$lightFontColor;
+      >div{background-color:darken(#6fb536, 10%);}          
     }
   }
   .container-accordion{
