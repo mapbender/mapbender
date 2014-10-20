@@ -135,4 +135,8 @@ class Utils
         }
         closedir($dir);
     }
+
+    public static function valueOrNull($scaleRecursive, $trueValue, $nullValue = null) {
+        return $scaleRecursive !== null ? $trueValue: $nullValue;
+    }
 }
