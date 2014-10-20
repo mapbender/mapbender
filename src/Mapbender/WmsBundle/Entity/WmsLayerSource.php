@@ -8,7 +8,6 @@ use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\ContainsKeyword;
 use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\WmsBundle\Component\IdentifierAuthority;
 use Mapbender\WmsBundle\Component\Attribution;
 use Mapbender\WmsBundle\Component\Authority;
@@ -26,7 +25,6 @@ use Mapbender\CoreBundle\Component\Utils;
  */
 class WmsLayerSource extends SourceItem implements ContainsKeyword
 {
-
     /**
      * @var integer $id
      * @ORM\Id
@@ -606,7 +604,7 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      * Get styles incl. from parent WmsLayerSource (OGC WMS
      * Implemantation Specification)
      *
-     * @return array
+     * @return Style[]
      */
     public function getStyles()
     {
