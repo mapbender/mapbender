@@ -15,6 +15,7 @@ use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
+use Mapbender\CoreBundle\Utils\ClassPropertiesParser;
 use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ImportHandler;
@@ -241,15 +242,8 @@ class ApplicationController extends Controller
 
             $scFile = $application->getScreenshotFile();
             if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
-//                $filename = sprintf('screenshot-%d.%s', $application->getId(), $scFile->guessExtension());
                 
-               $uploadScreenshot->upload($app_directory,$scFile,$application);
-                /**
-                 * foo
-                 */
-                
-                //$scFile->move($app_directory, $filename);
-//                $application->setScreenshot($filename);
+                $uploadScreenshot->upload($app_directory,$scFile,$application);
                 $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
                 $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
             }
@@ -390,9 +384,8 @@ class ApplicationController extends Controller
                     if($scFile) {
                         $fileType = getimagesize($scFile);
                         if ($form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
-//                             = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
-//                            $application->getScreenshotFile()->move($app_directory, $filename);
-                         $uploadScreenshot->upload($app_directory,$scFile,$application);
+
+                            $uploadScreenshot->upload($app_directory,$scFile,$application);
                             
                         }
                     }
@@ -926,7 +919,7 @@ class ApplicationController extends Controller
     /**
      * Create the application form, set extra options needed
      */
-    private function createApplicationForm($application)
+    private function createApplicationForm(Application $application)
     {
         $available_templates = array();
         foreach ($this->get('mapbender')->getTemplates() as $templateClassName) {
@@ -938,7 +931,11 @@ class ApplicationController extends Controller
             $templateClassName = $application->getTemplate();
             $available_properties = $templateClassName::getRegionsProperties();
         }
+        $fields = ClassPropertiesParser::parseFields(get_class($application), false);
         $maxFileSize = 2097152;
+        if(isset($fields['screenshotFile']) && isset($fields['screenshotFile']['File']) && isset($fields['screenshotFile']['File']['maxSize'])){
+            $maxFileSize = intval($fields['screenshotFile']['File']['maxSize']);
+        }
         return $this->createForm(new ApplicationType(), $application, array(
                 'available_templates' => $available_templates,
                 'available_properties' => $available_properties,
