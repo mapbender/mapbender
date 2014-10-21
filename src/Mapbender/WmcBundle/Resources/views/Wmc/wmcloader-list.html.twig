@@ -6,9 +6,9 @@
     <thead>
         <tr>
             <th>{{ 'mb.wmc.wmcloader.id' | trans }}</th>
-            <th class="type">{{ 'mb.wmc.wmcloader.title' | trans }}</th>
-            <th class="type">{{ 'mb.wmc.wmcloader.description' | trans }}</th>
-            <th class="iconColumn"></th>
+            <th>{{ 'mb.wmc.wmcloader.title' | trans }}</th>
+            <th>{{ 'mb.wmc.wmcloader.description' | trans }}</th>
+            <th class="iconColumn right"></th>
         </tr>
     </thead>
     <tbody>
@@ -17,9 +17,9 @@
         {% if wmc.public %}
         <tr class="element" data-id="{{wmc.id}}">
             <td class="titleColumn description">{{ wmc.id }}</td>
-            <td class="typeColumn description">{{ wmc.state.title }}</td>
-            <td class="typeColumn description">{{ wmc.abstract }}</td>
-            <td class="iconColumn">
+            <td class="description">{{ wmc.state.title }}</td>
+            <td class="description">{{ wmc.abstract }}</td>
+            <td class="iconColumn right">
                 <span class="iconView iconSmall loadWmcId" title="{{"mb.wmc.wmcloader.view_wmc"|trans}}  {{wmc.state.title}}" data-id="{{ wmc.id }}"></span>
             </td>
         </tr>

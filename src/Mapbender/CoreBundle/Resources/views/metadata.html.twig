@@ -31,7 +31,7 @@
             {% endfor %}
             </ul>
             {% for section in metadata.sections %}
-            <div id="container{{loop.index}}" class="container-tab{% if loop.first %} active{% endif %}">
+            <div id="container{{loop.index}}" class="container{% if loop.first %} active{% endif %}">
             {% for item in section.items %}
                 {% for key,val in item %}
                 {% set vt=prefix~section.title~'.'~key %}
@@ -44,23 +44,29 @@
             {% endfor %}        
         </div>
         {% elseif metadata.container == 'accordion' %}
-        <div class="tabContainerAlt metadataContainer">
+        <div class="accordionContainer metadataContainer">
         {% for section in metadata.sections %}
             {% set vt=prefix~section.title %}
-            <div id="accordion{{loop.index}}" class="accordion{% if loop.first %} active{% endif %}">{{ vt | trans}}</div>
+            <div id="accordion{{loop.index}}" class="accordion{% if loop.first %} active{% endif %}"><div class="tablecell">{{ vt | trans}}</div></div>
             <div id="container{{loop.index}}" class="container-accordion{% if loop.first %} active{% endif %}">
-            {% if section.title == 'items' %}
-                {% include "MapbenderCoreBundle::metadata_item.html.twig"  with {'items': section.items, 'itemLevel': 1 }%}
-            {% else %}
-            {% for item in section.items %}
-                {% for key,val in item %}
-                {% set vt=prefix~section.title~'.'~key %}
-                <div class="labelText">{{ vt | trans}}:</div>
-                <div class="metaText">{{val}}</div>
-                <div class="clearContainer"></div>
-                {% endfor %}
-            {% endfor %}
-            {% endif %}
+                <div class="accordion-cell">
+                    <div class="accordion-wrapper">
+                        <div>
+                    {% if section.title == 'items' %}
+                        {% include "MapbenderCoreBundle::metadata_item.html.twig"  with {'items': section.items, 'itemLevel': 1 }%}
+                    {% else %}
+                    {% for item in section.items %}
+                        {% for key,val in item %}
+                        {% set vt=prefix~section.title~'.'~key %}
+                        <div class="labelText">{{ vt | trans}}:</div>
+                        <div class="metaText">{{val}}</div>
+                        <div class="clearContainer"></div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% endif %}
+                        </div>
+                    </div> 
+                </div> 
             </div>   
         {% endfor %}        
         </div>

@@ -58,13 +58,14 @@
                 this.popup = new Mapbender.Popup2({
                         title: self.element.attr('title'),
                         draggable: true,
+                        resizable: true,
                         header: true,
                         modal: false,
                         closeButton: false,
                         closeOnESC: false,
                         content: self.element,
-                        width: 360,
-                        height: 370,
+                        width: 400,
+                        height: 460,
                         cssClass: 'customPrintDialog',
                         buttons: {
                                 'cancel': {
@@ -181,17 +182,18 @@
                     if(opt_fields[field].options.required === true){
                        span = '<span class="required">*</span>';
                     }
-
-                    extra_fields.append($('<label></label>', {
+                    var wrapper = $('<div></div>');
+                    wrapper.append($('<label></label>', {
                         'html': opt_fields[field].label+span,
                         'class': 'labelInput'
                     }));
-                    extra_fields.append($('<input></input>', {
+                    wrapper.append($('<input></input>', {
                         'type': 'text',
                         'class': 'input validationInput',
                         'name': 'extra['+field+']',
                         'style': 'margin-left: 3px'
                     }));
+                    extra_fields.append(wrapper);
                     if(opt_fields[field].options.required === true){
                         $('input[name="extra['+field+']"]').attr("required", "required");
                     }

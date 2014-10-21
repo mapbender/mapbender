@@ -135,4 +135,46 @@ class Utils
         }
         closedir($dir);
     }
+
+    /**
+     * If value is null, return first value, else return second value
+     *
+     * @param      $scaleRecursive
+     * @param      $trueValue
+     * @param null $nullValue
+     * @return null
+     */
+    public static function valueOrNull($scaleRecursive, $trueValue, $nullValue = null)
+    {
+        return $scaleRecursive !== null ? $trueValue : $nullValue;
+    }
+
+
+    /**
+     * Has a value?
+     *
+     * @param $data
+     * @param $key
+     * @param $value
+     * @return bool
+     */
+    public static function hasValue(&$data, $key, $value)
+    {
+        return isset($data[$key]) && strtolower($data[$key]) == $value;
+    }
+
+    /**
+     * Replace array key
+     *
+     * @param array $data
+     * @param       $keyFrom
+     * @param       $keyTo
+     */
+    public static function replaceKey(array &$data, $keyFrom, $keyTo )
+    {
+        if (isset($data[$keyFrom])) {
+            $data[$keyTo] = &$data[$keyFrom];
+            unset($data[$keyFrom]);
+        }
+    }
 }
