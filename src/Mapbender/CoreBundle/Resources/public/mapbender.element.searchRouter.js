@@ -222,6 +222,9 @@
                 delay: input.data('autocomplete-delay') || 500,
                 minLength: input.data('autocomplete-minlength') || 3,
                 search: $.proxy(this._autocompleteSearch, this),
+                open: function( event, ui ) {
+                    $(".ui-autocomplete").outerWidth(input.outerWidth());
+                },
                 source: function(request, response){
                     self._autocompleteSource(input, request, response);
                 },
