@@ -546,7 +546,6 @@
             tochange.options.children[li.attr('data-id')] = {options: {treeOptions: {info: $(e.target).is(':checked')}}};
             this.model.changeSource({change: tochange});
         },
-
         currentMenu: null,
         closeMenu: function(menu) {
             //menu.find('.layer-zoom').off('click');
@@ -623,13 +622,21 @@
             var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
             if ($('#layer-menu').length !== 0) {
                 var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
-                //removeMenu($('#layer-menu'));
                 if (layerIdMenu !== currentLayerId) {
                     createMenu($btnMenu, currentSourceId, currentLayerId);
+                    console.log(self.element.offset().top, self.element.innerHeight(), self.element.offset().top + self.element.innerHeight());
+                    console.log($('.layer-menu').offset().top, $('.layer-menu').innerHeight(), $('.layer-menu').offset().top + $('.layer-menu').innerHeight());
+                    if ((self.element.offset().top + self.element.innerHeight()) < ($('.layer-menu').offset().top + $('.layer-menu').innerHeight())) {
+                        $('#layer-menu').addClass('placeSouth');
+                    }
                 }
-
             } else {
                 createMenu($btnMenu, currentSourceId, currentLayerId);
+                console.log(self.element.offset().top, self.element.innerHeight(), self.element.offset().top + self.element.innerHeight());
+                console.log($('.layer-menu').offset().top, $('.layer-menu').innerHeight(), $('.layer-menu').offset().top + $('.layer-menu').innerHeight());
+                if ((self.element.offset().top + self.element.innerHeight()) < ($('.layer-menu').offset().top + $('.layer-menu').innerHeight())) {
+                    $('#layer-menu').addClass('placeSouth');
+                }
             }
         },
         _setOpacity: function(source, opacity) {

@@ -78,16 +78,17 @@
       @include absolute('' $space*2 '' '');
     }
   }
+  >ul{padding-left: 6px;}
 }
 
 $layer-slider-bar-height: 5px;
-.layer-menu {
+.layer-menu, .layer-menu.positionSource {
   position: absolute;
-  right: -5px;
+  right: 0px;
   background-color: white;
   padding: $space/2;
   padding-top: 20px;
-  margin-top: $space/2;
+  margin-top: 0px;
   margin-left: -5px;
   z-index: 20;
   min-width: 120px;
@@ -117,12 +118,15 @@ $layer-slider-bar-height: 5px;
     display: block;
     width: 0;
     height: 0;
-    border-bottom: 10px solid $firstColor;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
+    border-bottom: 5px solid $firstColor;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
     position: absolute;
     right: 0;
-    top: -10px;
+    top: -5px;
+  }
+  &:after {
+    display: none;
   }
   .layer-slider-bar {
     position: relative;
@@ -150,4 +154,23 @@ $layer-slider-bar-height: 5px;
   }
 }
 
+.layer-menu.positionNorth {
+  position: absolute;
+  bottom: 22px;
+  &:before {
+    display: none;
+  }
+  &:after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 5px solid $firstColor;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    position: absolute;
+    right: 0;
+    bottom: -5px;
+  }
+}
 

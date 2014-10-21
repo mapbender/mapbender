@@ -54,9 +54,11 @@
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
                     draggable: true,
+                    resizable: true,
                     modal: false,
                     closeButton: false,
                     closeOnESC: false,
+                    cssClass: 'mb-wmcEditor',
                     content: [$.ajax({
                             url: self.elementUrl + 'list',
                             complete: function(data){
@@ -64,7 +66,7 @@
                                 $('.loadWmcXml', self.popup.$element).on("click", $.proxy(self._loadForm, self));
                             }})],
                     destroyOnClose: true,
-                    width: 400,
+                    width: 480,
                     buttons: {
                         'cancel': {
                             label: Mapbender.trans("mb.wmc.element.wmcloader.popup.btn.cancel"),
