@@ -692,7 +692,7 @@ $(function() {
             var reader = new FileReader();
 
             if (file[0].type.match('image/')){
-                if (file[0].size <= 500000){
+                if (file[0].size <= 2097152){
                     screenShot.find('div.messageBox').remove();
                     validationMsgBox.remove();
                     if (screenShot.find('div.cell').length === 0 ){

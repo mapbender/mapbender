@@ -18,6 +18,7 @@ use Mapbender\CoreBundle\Form\Type\LayersetType;
 use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ImportHandler;
+use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -215,7 +216,7 @@ class ApplicationController extends Controller
     public function createAction()
     {
         $application = new Application();
-
+        $uploadScreenshot = new UploadScreenshot();
         // ACL access check
         $this->checkGranted('CREATE', $application);
 
@@ -240,9 +241,15 @@ class ApplicationController extends Controller
 
             $scFile = $application->getScreenshotFile();
             if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
-                $filename = sprintf('screenshot-%d.%s', $application->getId(), $scFile->guessExtension());
-                $scFile->move($app_directory, $filename);
-                $application->setScreenshot($filename);
+//                $filename = sprintf('screenshot-%d.%s', $application->getId(), $scFile->guessExtension());
+                
+               $uploadScreenshot->upload($app_directory,$scFile,$application);
+                /**
+                 * foo
+                 */
+                
+                //$scFile->move($app_directory, $filename);
+//                $application->setScreenshot($filename);
                 $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
                 $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
             }
@@ -345,6 +352,7 @@ class ApplicationController extends Controller
      */
     public function updateAction($slug)
     {
+        $uploadScreenshot = new UploadScreenshot();
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         $old_slug = $application->getSlug();
         // ACL access check
@@ -382,9 +390,10 @@ class ApplicationController extends Controller
                     if($scFile) {
                         $fileType = getimagesize($scFile);
                         if ($form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
-                            $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
-                            $application->getScreenshotFile()->move($app_directory, $filename);
-                            $application->setScreenshot($filename);
+//                             = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
+//                            $application->getScreenshotFile()->move($app_directory, $filename);
+                         $uploadScreenshot->upload($app_directory,$scFile,$application);
+                            
                         }
                     }
                     $em->persist($application);
@@ -929,7 +938,7 @@ class ApplicationController extends Controller
             $templateClassName = $application->getTemplate();
             $available_properties = $templateClassName::getRegionsProperties();
         }
-        $maxFileSize = 102400;
+        $maxFileSize = 2097152;
         return $this->createForm(new ApplicationType(), $application, array(
                 'available_templates' => $available_templates,
                 'available_properties' => $available_properties,
@@ -1043,4 +1052,6 @@ class ApplicationController extends Controller
             return realpath($slug_dir);
         }
     }
+
+
 }
