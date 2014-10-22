@@ -40,22 +40,20 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $queryable = $wmslayersource->getQueryable();
         $this->entity->setInfo(Utils::getBool($queryable));
         $this->entity->setAllowinfo(Utils::getBool($queryable));
-
-        $this->entity->setToggle(false);
-        $this->entity->setAllowtoggle(true);
-
         $this->entity->setPriority($num);
-        $num++;
         $instance->addLayer($this->entity);
         if ($wmslayersource->getSublayer()->count() > 0) {
             $this->entity->setToggle(false);
             $this->entity->setAllowtoggle(true);
+        } else {
+            $this->entity->setToggle(null);
+            $this->entity->setAllowtoggle(null);
         }
         $this->container->get('doctrine')->getManager()->persist($this->entity);
         $this->container->get('doctrine')->getManager()->flush();
         foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
             $entityHandler = self::createHandler($this->container, new WmsInstanceLayer());
-            $entityHandler->create($instance, $wmslayersourceSub, $num);
+            $entityHandler->create($instance, $wmslayersourceSub, $num + 1);
             $entityHandler->getEntity()->setParent($this->entity);
             $this->entity->addSublayer($entityHandler->getEntity());
             $this->container->get('doctrine')->getManager()->persist($this->entity);
