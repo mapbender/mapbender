@@ -168,8 +168,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $url = $legend->getHttpGet();
             $formats = $legend->getFormats();
             $params = "service=WMS&request=GetLegendGraphic"
-                . "&version="
-                . $this->entity->getSourceInstance()->getSource()->getVersion()
+                . "&version=" . $this->entity->getSourceInstance()->getSource()->getVersion()
                 . "&layer=" . $this->entity->getSourceItem()->getName()
                 . (count($formats) > 0 ? "&format=" . $formats[0] : "")
                 . "&sld_version=1.1.0";
@@ -180,11 +179,11 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $configuration["treeOptions"] = array(
             "info" => $this->entity->getInfo(),
             "selected" => $this->entity->getSelected(),
-            "toggle" => $this->entity->getToggle(),
+            "toggle" => $this->entity->getSublayer()->count() > 0 ? $this->entity->getToggle() : null,
             "allow" => array(
                 "info" => $this->entity->getAllowinfo(),
                 "selected" => $this->entity->getAllowselected(),
-                "toggle" => $this->entity->getAllowtoggle(),
+                "toggle" => $this->entity->getSublayer()->count() > 0 ? $this->entity->getAllowtoggle() : null,
                 "reorder" => $this->entity->getAllowreorder(),
             )
         );
