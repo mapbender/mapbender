@@ -581,7 +581,7 @@
                     e.stopPropagation();
                 });
                 
-                if ($.inArray("layerRemove", self.options.menu) !== -1){
+                if ($.inArray("layerremove", self.options.menu) !== -1){
                     menu.find('.layer-remove-btn').on('click', $.proxy(self._removeSource, self));
                 } else {
                     menu.find('.layer-remove-btn').remove();

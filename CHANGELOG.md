@@ -1,4 +1,10 @@
 # Changelog
+* **v3.0.4.1**
+    - option 'removelayer' added into layertree menu
+    - parameter 'layerRemove' removed from layertree configuration
+    - container accordion structure changed
+    - import / export from applications added (without acls)
+    - display layer metadata
 * **v3.0.4.0**
     - Switched to MIT license
     - fixed element saving bug
