@@ -102,9 +102,7 @@ class Application
     protected $extra_assets;
 
     /**
-     * @Assert\File(
-     *      maxSize="102400"
-     * )
+     * @Assert\File(maxSize="2097152")
      */
     protected $screenshotFile;
 
@@ -471,7 +469,7 @@ class Application
     {
         return $this->custom_css;
     }
-
+    
     public function getElementsByRegion($region = null)
     {
         if ($this->preparedElements === null) {

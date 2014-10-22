@@ -15,9 +15,11 @@ use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
+use Mapbender\CoreBundle\Utils\ClassPropertiesParser;
 use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ImportHandler;
+use Mapbender\ManagerBundle\Component\UploadScreenshot;
 use Mapbender\ManagerBundle\Form\Type\ApplicationCopyType;
 use Mapbender\ManagerBundle\Form\Type\ApplicationType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -215,7 +217,7 @@ class ApplicationController extends Controller
     public function createAction()
     {
         $application = new Application();
-
+        $uploadScreenshot = new UploadScreenshot();
         // ACL access check
         $this->checkGranted('CREATE', $application);
 
@@ -240,9 +242,8 @@ class ApplicationController extends Controller
 
             $scFile = $application->getScreenshotFile();
             if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
-                $filename = sprintf('screenshot-%d.%s', $application->getId(), $scFile->guessExtension());
-                $scFile->move($app_directory, $filename);
-                $application->setScreenshot($filename);
+                
+                $uploadScreenshot->upload($app_directory,$scFile,$application);
                 $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
                 $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
             }
@@ -345,6 +346,7 @@ class ApplicationController extends Controller
      */
     public function updateAction($slug)
     {
+        $uploadScreenshot = new UploadScreenshot();
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         $old_slug = $application->getSlug();
         // ACL access check
@@ -382,9 +384,9 @@ class ApplicationController extends Controller
                     if($scFile) {
                         $fileType = getimagesize($scFile);
                         if ($form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
-                            $filename = sprintf('screenshot-%d.%s', $application->getId(), $application->getScreenshotFile()->guessExtension());
-                            $application->getScreenshotFile()->move($app_directory, $filename);
-                            $application->setScreenshot($filename);
+
+                            $uploadScreenshot->upload($app_directory,$scFile,$application);
+                            
                         }
                     }
                     $em->persist($application);
@@ -917,7 +919,7 @@ class ApplicationController extends Controller
     /**
      * Create the application form, set extra options needed
      */
-    private function createApplicationForm($application)
+    private function createApplicationForm(Application $application)
     {
         $available_templates = array();
         foreach ($this->get('mapbender')->getTemplates() as $templateClassName) {
@@ -929,7 +931,11 @@ class ApplicationController extends Controller
             $templateClassName = $application->getTemplate();
             $available_properties = $templateClassName::getRegionsProperties();
         }
-        $maxFileSize = 102400;
+        $fields = ClassPropertiesParser::parseFields(get_class($application), false);
+        $maxFileSize = 2097152;
+        if(isset($fields['screenshotFile']) && isset($fields['screenshotFile']['File']) && isset($fields['screenshotFile']['File']['maxSize'])){
+            $maxFileSize = intval($fields['screenshotFile']['File']['maxSize']);
+        }
         return $this->createForm(new ApplicationType(), $application, array(
                 'available_templates' => $available_templates,
                 'available_properties' => $available_properties,
@@ -1043,4 +1049,6 @@ class ApplicationController extends Controller
             return realpath($slug_dir);
         }
     }
+
+
 }

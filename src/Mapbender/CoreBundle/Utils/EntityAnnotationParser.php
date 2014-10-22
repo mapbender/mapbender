@@ -42,7 +42,7 @@ class EntityAnnotationParser
             foreach (self::getAnnotations($property->getDocComment()) as $annotation) {
 
                 // match only orm annotations only
-                if (preg_match('/^ORM\\\(.+)/s', $annotation, $matches)) {
+                if (preg_match('/^ORM\\\(.+)/s', $annotation, $matches) || preg_match('/^Assert\\\(.+)/s', $annotation, $matches)) {
                     $matches = preg_split('/\(/', $matches[1]);
                     $key = $matches[0];
                     // if matched annotation has some values, parse and add to value array
