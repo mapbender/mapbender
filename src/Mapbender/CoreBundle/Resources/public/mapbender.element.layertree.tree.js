@@ -609,7 +609,9 @@
                         $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                     }
                 }
-                if ($.inArray("metadata", self.options.menu) !== -1 && menu.find('.layer-metadata').length > 0) {
+                if ($.inArray("metadata", self.options.menu) === -1 || menu.find('.layer-metadata').length === 0 || isNaN(parseInt(source.origId))) {
+                    $('.layer-metadata', menu).remove();
+                } else {
                     var layer = self.model.findLayer({id: sourceId}, {id: layerId});
                     if (layer) {
                         $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata, self));
@@ -624,16 +626,12 @@
                 var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
                 if (layerIdMenu !== currentLayerId) {
                     createMenu($btnMenu, currentSourceId, currentLayerId);
-                    console.log(self.element.offset().top, self.element.innerHeight(), self.element.offset().top + self.element.innerHeight());
-                    console.log($('.layer-menu').offset().top, $('.layer-menu').innerHeight(), $('.layer-menu').offset().top + $('.layer-menu').innerHeight());
                     if ((self.element.offset().top + self.element.innerHeight()) < ($('.layer-menu').offset().top + $('.layer-menu').innerHeight())) {
                         $('#layer-menu').addClass('placeSouth');
                     }
                 }
             } else {
                 createMenu($btnMenu, currentSourceId, currentLayerId);
-                console.log(self.element.offset().top, self.element.innerHeight(), self.element.offset().top + self.element.innerHeight());
-                console.log($('.layer-menu').offset().top, $('.layer-menu').innerHeight(), $('.layer-menu').offset().top + $('.layer-menu').innerHeight());
                 if ((self.element.offset().top + self.element.innerHeight()) < ($('.layer-menu').offset().top + $('.layer-menu').innerHeight())) {
                     $('#layer-menu').addClass('placeSouth');
                 }
