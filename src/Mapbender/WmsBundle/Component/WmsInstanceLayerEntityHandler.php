@@ -40,22 +40,20 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $queryable = $wmslayersource->getQueryable();
         $this->entity->setInfo(Utils::getBool($queryable));
         $this->entity->setAllowinfo(Utils::getBool($queryable));
-
-        $this->entity->setToggle(false);
-        $this->entity->setAllowtoggle(true);
-
         $this->entity->setPriority($num);
-        $num++;
         $instance->addLayer($this->entity);
         if ($wmslayersource->getSublayer()->count() > 0) {
             $this->entity->setToggle(false);
             $this->entity->setAllowtoggle(true);
+        } else {
+            $this->entity->setToggle(null);
+            $this->entity->setAllowtoggle(null);
         }
         $this->container->get('doctrine')->getManager()->persist($this->entity);
         $this->container->get('doctrine')->getManager()->flush();
         foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
             $entityHandler = self::createHandler($this->container, new WmsInstanceLayer());
-            $entityHandler->create($instance, $wmslayersourceSub, $num);
+            $entityHandler->create($instance, $wmslayersourceSub, $num + 1);
             $entityHandler->getEntity()->setParent($this->entity);
             $this->entity->addSublayer($entityHandler->getEntity());
             $this->container->get('doctrine')->getManager()->persist($this->entity);
@@ -170,8 +168,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $url = $legend->getHttpGet();
             $formats = $legend->getFormats();
             $params = "service=WMS&request=GetLegendGraphic"
-                . "&version="
-                . $this->entity->getSourceInstance()->getSource()->getVersion()
+                . "&version=" . $this->entity->getSourceInstance()->getSource()->getVersion()
                 . "&layer=" . $this->entity->getSourceItem()->getName()
                 . (count($formats) > 0 ? "&format=" . $formats[0] : "")
                 . "&sld_version=1.1.0";
@@ -182,11 +179,11 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $configuration["treeOptions"] = array(
             "info" => $this->entity->getInfo(),
             "selected" => $this->entity->getSelected(),
-            "toggle" => $this->entity->getToggle(),
+            "toggle" => $this->entity->getSublayer()->count() > 0 ? $this->entity->getToggle() : null,
             "allow" => array(
                 "info" => $this->entity->getAllowinfo(),
                 "selected" => $this->entity->getAllowselected(),
-                "toggle" => $this->entity->getAllowtoggle(),
+                "toggle" => $this->entity->getSublayer()->count() > 0 ? $this->entity->getAllowtoggle() : null,
                 "reorder" => $this->entity->getAllowreorder(),
             )
         );
