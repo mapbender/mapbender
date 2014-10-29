@@ -38,6 +38,10 @@
         <service id="get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer">
             <tag name="serializer.normalizer" />
         </service>
+        
+        <service id="twig.extension.stringloader" class="Twig_Extension_StringLoader">
+            <tag name="twig.extension" />
+        </service>
     </services>
 </container>
 
