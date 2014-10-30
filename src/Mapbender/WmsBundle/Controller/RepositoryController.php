@@ -107,7 +107,6 @@ class RepositoryController extends Controller
             if ($proxy_query->getGetPostParamValue("service", true) === null) {
                 $proxy_query->addQueryParameter("service", "WMS");
             }
-            $wmssource_req->setOriginUrl($proxy_query->getGetUrl());
             $proxy = new CommonProxy($proxy_config, $proxy_query);
 
             $wmssource = null;
@@ -161,6 +160,8 @@ class RepositoryController extends Controller
             }
 
             $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
+            $wmssource->setUsername($wmssource_req->getUsername());
+            $wmssource->setPassword($wmssource_req->getPassword());
             $rootlayer = $wmssource->getLayers()->get(0);
             $this->getDoctrine()->getManager()->persist($rootlayer);
             $this->saveLayer($this->getDoctrine()->getManager(), $rootlayer);
