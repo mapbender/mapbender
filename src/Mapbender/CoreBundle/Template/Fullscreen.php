@@ -47,7 +47,9 @@ class Fullscreen extends Template
                 '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
             'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
-                '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js'),
+                '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
+                '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js'
+            ),
             'trans' => array()
         );
         return $assets;

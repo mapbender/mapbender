@@ -1,8 +1,8 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-
 
 class HTMLElement extends Element
 {
@@ -77,7 +77,9 @@ class HTMLElement extends Element
         return $this->container->get('templating')
                 ->render('MapbenderCoreBundle:Element:htmlelement.html.twig',
                     array(
-                    'id' => $this->getId(),
+                    'id'            => $this->getId(),
+                    'entity'        => $this->entity,
+                    'application'   => $this->application,
                     'configuration' => $this->getConfiguration()));
     }
 
@@ -98,11 +100,12 @@ class HTMLElement extends Element
                 'bundles/mapbendermanager/codemirror/keymap/sublime.js',
                 'bundles/mapbendermanager/codemirror/addon/selection/active-line.js',
                 'bundles/mapbendercore/mapbender.admin.htmlelement.js',
-                ),
+            ),
             'css' => array(
                 'bundles/mapbendermanager/codemirror/lib/codemirror.css',
                 'bundles/mapbendermanager/codemirror/theme/neo.css',
-                )
+            )
         );
     }
+
 }
