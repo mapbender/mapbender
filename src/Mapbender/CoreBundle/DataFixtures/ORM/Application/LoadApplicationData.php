@@ -32,7 +32,7 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
     /**
      * @inheritdoc
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = NULL)
     {
         $this->container = $container;
     }

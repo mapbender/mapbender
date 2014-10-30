@@ -492,7 +492,7 @@ class WmsInstanceLayer extends SourceInstanceItem
     /**
      * @inheritdoc
      */
-    public function setSourceInstance(SourceInstance $sourceInstance = null)
+    public function setSourceInstance(SourceInstance $sourceInstance = NULL)
     {
         $this->sourceInstance = $sourceInstance;
         return $this;

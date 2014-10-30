@@ -143,7 +143,7 @@ class Style
      * @param OnlineResource $styleSheetUrl
      * @return Style
      */
-    public function setStyleSheetUrl(OnlineResource $styleSheetUrl = null)
+    public function setStyleSheetUrl(OnlineResource $styleSheetUrl = NULL)
     {
         $this->styleSheetUrl = $styleSheetUrl;
 
