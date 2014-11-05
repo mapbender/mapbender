@@ -77,11 +77,11 @@ class ApplicationAssetCache
             // cache.
             //
             // All other assets get passed trough.
-            //
-            // If end=debug, then compile SCSS files new (ever!), to get development faster.
-            $isDebugEnv     = $this->container->get('kernel')->isDebug();
-            $isDevPlus      = $isDebugEnv || $this->container->getParameter('mapbender.sass_assets');
-            $needsCompiling = pathinfo($file, PATHINFO_EXTENSION) == 'scss';
+            $isDevPlus = $this->container->get('kernel')->isDebug() && $this->container->getParameter('mapbender.sass_assets');
+            $needsCompiling = false;
+
+            // SASS things need to be compiled.
+            if('scss' === pathinfo($file, PATHINFO_EXTENSION)) $needsCompiling = true;
 
             if($needsCompiling) {
                 if($isDevPlus) {
