@@ -139,7 +139,7 @@ $(function() {
         }
     });
     $('.dimensionGroup select').each(function() {
-        if ($(this).attr('name').indexOf('[extentEdit]') > 0){
+        if ($(this).attr('name').indexOf('[extentEdit]') > 0) {
             $(this).on('change', function(e) {
                 var item = $(e.target);
                 var extentId = item.attr('id').substr(0, item.attr('id').indexOf('extentEdit')) + 'extent';
@@ -147,6 +147,41 @@ $(function() {
             });
         }
     });
+    $('.on-off-content[data-json]').each(function(idx, item) {
+        var $this = $(item);
+        var dimension = $this.data('json');
+        if (dimension['type'] === 'interval') {
+            var dimensionOrig = jQuery.extend(true, {}, dimension);
+            dimensionOrig['extent'] = dimensionOrig['origextent'];
+            var dimHandler = Mapbender.Dimension(dimension);
+            var dimHandlerOrig = Mapbender.Dimension(dimensionOrig);
+            var rangeMin = dimHandlerOrig.partFromValue(dimHandler.valueFromStart());// * 100;
+            var rangeMax = dimHandlerOrig.partFromValue(dimHandler.valueFromEnd());// * 100;
+            var inputEdit = $('input[name*="\[extentEdit\]"]', $this);
+            var inputExtent = $('input[name*="\[extent\]"]', $this);
+            var inputDefault = $('input[name*="\[default\]"]', $this);
+            function intoInput(first, second, third){
+                inputExtent.val(first + '/'  + second + '/' + third);
+                inputEdit.val(inputExtent.val());
+                dimension['extent'] = [first, second, third];
+                dimHandler = Mapbender.Dimension(dimension);
+                var def = dimHandler.partFromValue(inputDefault.val());// * 100;
+                inputDefault.val(def >= 1 ? second : def <= 0 ? first: inputDefault.val());
+            }
+            intoInput(dimHandlerOrig.valueFromPart(rangeMin), dimHandlerOrig.valueFromPart(rangeMax), dimension['extent'][2]);
+            $(".extent-slider", $this).slider({
+                range: true,
+                min: 0,
+                max: 100,
+                steps: dimHandlerOrig.getStepsNum(),
+                values: [rangeMin * 100, rangeMax * 100],
+                slide: function(event, ui) {
+                    intoInput(dimHandlerOrig.valueFromPart(ui.values[0] / 100), dimHandlerOrig.valueFromPart(ui.values[1] / 100), dimension['extent'][2]);
+                }
+            });
+        }
+    });
+
     $("#instanceTable").on("click", ".iconMore", showInfoBox);
     $(document).on("click", "#instanceTable .checkWrapper", toggleState);
 });

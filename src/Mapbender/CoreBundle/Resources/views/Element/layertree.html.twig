@@ -20,6 +20,16 @@
             <div class="layer-opacity-handle  layer-slider-handle">100</div>
           </div>
           {% endif %}
+          {% if 'dimension' in configuration.menu %}
+          <div class="layer-dimension-checkbox checkWrapper left iconCheckbox" title="{{ 'mb.core.layertree.label.dimension_onoff' | trans  }}">
+            <input type="checkbox" class="checkbox"/>
+          </div>
+          <span id="layer-dimension-value-" class="layer-dimension-title labelCheck" title="{{ "mb.core.layertree.label.dimension.current_value" |trans }}"></span>
+          <div id="layer-dimension-" class="layer-dimension-bar layer-slider-bar" title="{{ "mb.core.layertree.label.dimension" |trans }}">
+            <div class="layer-dimension-handle layer-slider-handle"></div>
+          </div>
+          <input type="text" class="layer-dimension-textfield inputText" name="dimension-extent" title="{{ "mb.core.layertree.label.dimension" |trans }}"/>
+          {% endif %}
           {% if 'zoomtolayer' in configuration.menu %}
           <div class="layer-zoom iconSearch iconSmall" title="{{ 'mb.core.layertree.label.zoomtolayer'|trans }}"></div>
           {% endif %}
