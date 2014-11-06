@@ -3,13 +3,12 @@
 {% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} - {{ form.vars.value.title }}{% endblock %}
 
 {% block css %}
+    <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/regional/vendor/jquery/jquery-ui-1.11.1.custom/jquery-ui.min.css') }}" type="text/javascript" />
   {{parent()}}
   {% stylesheets filter="compass,cssrewrite"
     "bundles/mapbendermanager/sass/manager/services.scss"
   %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-    <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/regional/vendor/jquery/jquery-ui-1.11.1.custom/jquery-ui.min.css') }}" type="text/javascript" />
-  {% endstylesheets %}
+    <link rel="stylesheet" href="{{ asset_url }}" />{% endstylesheets %}
 {% endblock %}
 
 {% block js %}
