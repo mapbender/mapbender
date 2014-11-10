@@ -2,6 +2,7 @@
 @import "libs/mixins";
 @import "libs/icons";
 @import "modules/text";
+@import "element/mbslider";
 
 // ------------------------------------------------------------- SERVICES
 .listFilterInput{
@@ -138,7 +139,7 @@
   }
   .leftContainer .inputWrapper input{ width: 100%; }
   .dimensionGroup{
-    width: 320px;
+    width: 326px;
     position:absolute;
     right:0px;
     font-size:12px;
@@ -173,7 +174,7 @@
       margin: 0px;
       height: auto;
     }
-    .extent-slider{
+    .mb-slider{
       margin-top: $space/2;
     }
   }
@@ -264,91 +265,4 @@
     display:inline-block;
   }
   .dropdown{min-width:130px !important;}
-}
-
-/* JQuery-UI Component containers OVERWRITING
-----------------------------------------------*/
-.ui-widget {
-	font-family: $fontFamily;
-	font-size: $fontSize;
-}
-.ui-widget .ui-widget {
-	font-size: $fontSize;
-}
-.ui-widget input,
-.ui-widget select,
-.ui-widget textarea,
-.ui-widget button {
-	font-family: $fontFamily;
-	font-size: $fontSize;
-}
-.ui-widget-content {
-	border: 1px solid $thirdColor;
-	background: $contentColor url("images/ui-bg_highlight-soft_100_eeeeee_1x100.png") 50% top repeat-x;
-	color: $darkFontColor;
-}
-.ui-widget-content a {
-	color: $darkFontColor;
-}
-.ui-widget-header {
-	border: 1px solid $ciColor;
-	background: lighten($ciColor, 40%) url("images/ui-bg_gloss-wave_35_f6a828_500x100.png") 50% 50% repeat-x;
-	color: $lightFontColor;
-	font-weight: bold;
-}
-.ui-widget-header a {
-	color: $lightFontColor;
-}
-
-/* JQuery-UI Interaction states OVERWRITING
---------------------------------------------*/
-.ui-state-default,
-.ui-widget-content .ui-state-default,
-.ui-widget-header .ui-state-default {
-	border: 1px solid $thirdColor;
-	background: lighten($ciColor, 40%) url("images/ui-bg_glass_100_f6f6f6_1x400.png") 50% 50% repeat-x;
-	font-weight: bold;
-	color: $middleFontColor;
-}
-.ui-state-default a,
-.ui-state-default a:link,
-.ui-state-default a:visited {
-	color: $middleFontColor;
-	text-decoration: none;
-}
-.ui-state-hover,
-.ui-widget-content .ui-state-hover,
-.ui-widget-header .ui-state-hover,
-.ui-state-focus,
-.ui-widget-content .ui-state-focus,
-.ui-widget-header .ui-state-focus {
-	border: 1px solid $thirdColor;
-	background: $ciColor url("images/ui-bg_glass_100_fdf5ce_1x400.png") 50% 50% repeat-x;
-	font-weight: bold;
-	color: $middleFontColor;
-}
-.ui-state-hover a,
-.ui-state-hover a:hover,
-.ui-state-hover a:link,
-.ui-state-hover a:visited,
-.ui-state-focus a,
-.ui-state-focus a:hover,
-.ui-state-focus a:link,
-.ui-state-focus a:visited {
-	color: $middleFontColor;
-	text-decoration: none;
-}
-.ui-state-active,
-.ui-widget-content .ui-state-active,
-.ui-widget-header .ui-state-active {
-	border: 1px solid $thirdColor;
-	background: lighten($ciColor, 40%) url("images/ui-bg_glass_65_ffffff_1x400.png") 50% 50% repeat-x;
-	font-weight: bold;
-	color: $middleFontColor;
-}
-.ui-state-active a,
-.ui-state-active a:link,
-.ui-state-active a:visited {
-	color: $middleFontColor;
-	text-decoration: none;
 }

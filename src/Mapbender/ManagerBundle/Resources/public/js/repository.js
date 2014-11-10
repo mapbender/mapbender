@@ -169,7 +169,7 @@ $(function() {
                 inputDefault.val(def >= 1 ? second : def <= 0 ? first: inputDefault.val());
             }
             intoInput(dimHandlerOrig.valueFromPart(rangeMin), dimHandlerOrig.valueFromPart(rangeMax), dimension['extent'][2]);
-            $(".extent-slider", $this).slider({
+            $(".mb-slider", $this).slider({
                 range: true,
                 min: 0,
                 max: 100,
