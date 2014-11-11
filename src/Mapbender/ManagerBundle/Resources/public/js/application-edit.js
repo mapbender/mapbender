@@ -655,22 +655,73 @@ $(function() {
 
     var applicationForm = $('form[name=application]');
     var screenShot = applicationForm.find('.screenshot_img');
-    var deleteScreenShotButton = screenShot.find('.delete');
+    var screenShotCell = applicationForm.find('div.cell_edit');
+    var screenShotImg = screenShotCell.find('img');
     var uploadButton = applicationForm.find('.upload_button');
     var fileInput = applicationForm.find('#application_screenshotFile');
     var validationMsgBox = applicationForm.find('span.validationMsgBox');
     var maxFileSize = applicationForm.find('#application_maxFileSize').val();
-    var fileNameTmp = "";
+    var minWidth = applicationForm.find('#application_screenshotWidth').val();
+    var minHeight = applicationForm.find('#application_screenshotHeight').val();
+    var uploadScreenShot = applicationForm.find('#application_uploadScreenShot');
 
-
+    
     fileInput.on('mouseover', function() {
         uploadButton.addClass('hover');
     }).on('mouseout', function() {
         uploadButton.removeClass('hover');
     }).on('change', function(e) {
-        $('input[name="application[removeScreenShot]"]').val(0);
-
-        var file =  this.files;
+        setUploadFilename(e);  
+        uploadScreenshotFile(this.files);
+        
+        
+    });
+    
+    var uploadScreenshotFile = function(files){
+        var file = files;
+         if (file && file[0]) {
+            if (file[0].type.match('image/')){
+                if (file[0].size <= 2097152){
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                       
+                        var img = new Image();
+                        img.onload = function(){}
+                        img.src = e.target.result;
+                        
+                        if (img.height >= minHeight && img.height >= minWidth){
+                            screenShotImg.attr('src', e.target.result);
+                            screenShotImg.removeClass('hidden');
+                            screenShot.find('div.messageBox').remove();
+                            validationMsgBox.remove();
+                            screenShotImg.before('<div class="delete button critical hidden">X</div>');
+                            deleteScreenShotButtonInit();
+                            screenShot.removeClass('default iconAppDefault');
+                            applicationForm.find('input[name="application[removeScreenShot]"]').val(0);
+                            uploadScreenShot.val(0);
+                        }else{
+                            uploadScreenShot.val(1);
+                            $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.resolution.error',
+                            {'screenshotWidth':minWidth, 'screenshotHeight':minHeight ,'uploadWidth': img.width, 'uploadHeighth': img.height }) +'</span>').insertAfter(fileInput);
+                            validationMsgBox = applicationForm.find('span.validationMsgBox');
+                        }
+                    }
+                    reader.readAsDataURL(file[0]);
+                }else{
+                    var uploadFileSize = file[0].size;
+                    $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.error',{'maxFileSize':maxFileSize, 'uploadFileSize': uploadFileSize }) +'</span>').insertAfter(fileInput);
+                    validationMsgBox = applicationForm.find('span.validationMsgBox');
+                }
+            }else{
+                 $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.format_error') +'</span>').insertAfter(fileInput);
+                  validationMsgBox = applicationForm.find('span.validationMsgBox');
+            }
+        }
+    }
+//    var renderScreenShot = function(){
+//         
+//    }
+    var setUploadFilename = function(e){
         fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
 
         if(fileName === ""){
@@ -684,66 +735,45 @@ $(function() {
         }
 
         if (fileName.length > 20) {
-                                console.log("dasdasdasdasdas");
             fileName = fileName.substring(0, 20) + "...";
         }
-
-        if (file && file[0]) {
-            var reader = new FileReader();
-
-            if (file[0].type.match('image/')){
-                if (file[0].size <= 2097152){
-                    screenShot.find('div.messageBox').remove();
-                    validationMsgBox.remove();
-                    if (screenShot.find('div.cell').length === 0 ){
-                        screenShot.removeClass('default iconAppDefault');
-                        screenShot.append('<div class= \"cell\"><img src= \"\" alt="Load" class="screenshot" /></div>');
-                    }
-                    reader.onload = function (e) {
-                        screenShot.find('img').attr('src', e.target.result);
-                    }
-                    reader.readAsDataURL(file[0]);
-                }else{
-                    var uploadFileSize = file[0].size;
-                    $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.error',{'maxFileSize':maxFileSize, 'uploadFileSize': uploadFileSize }) +'</span>').insertAfter(fileInput);
-                    validationMsgBox = applicationForm.find('span.validationMsgBox');
-                }
-            }else{
-                 $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.format_error') +'</span>').insertAfter(fileInput);
-                  validationMsgBox = applicationForm.find('span.validationMsgBox');
-            }
-        }
-
         $('.upload_label').html(fileName);
-    });
+    }
+    
+    var deleteScreenShotButtonInit = function() {
+           
+        var deleteButton = screenShot.find('.delete');
+        screenShot.mouseenter('mouseover', function() {
+            deleteButton.removeClass('hidden');
+        }).mouseleave('mouseout', function() {
+            deleteButton.addClass('hidden');
+        });
 
-
-
-    screenShot.mouseenter('mouseover', function() {
-        deleteScreenShotButton.removeClass('hidden');
-    }).mouseleave('mouseout', function() {
-        deleteScreenShotButton.addClass('hidden');
-    });
-
-    deleteScreenShotButton.on('click', function() {
-        screenShot.find('img.screenshot').remove();
-        deleteScreenShotButton.remove();
-        screenShot.addClass('default').addClass('iconAppDefault');
-        applicationForm.find('.upload_label').html(Mapbender.trans("mb.manager.upload.label_delete"));
-        applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
-    });
+        deleteButton.on('click', function() {
+            screenShotImg.addClass('hidden');
+            deleteButton.remove();
+            screenShotImg.attr('src',"");
+            screenShot.addClass('default').addClass('iconAppDefault');
+            applicationForm.find('.upload_label').html(Mapbender.trans("mb.manager.upload.label_delete"));
+            applicationForm.find('input[name="application[removeScreenShot]"]').val(1);
+        });
+        return deleteButton;
+    };
+    
+    deleteScreenShotButtonInit();
+    
 
 
     fileInput.on('click',function(){
         validationMsgBox.remove();
     });
 
-    applicationForm.find('.containerBaseData div.right').on('click', function(event) {
-        if ($(event.target).hasClass('delete')) {
-            return;
-        }
-        fileInput.trigger('click');
-    });
+//    applicationForm.find('.containerBaseData div.right').on('click', function(event) {
+//        if ($(event.target).hasClass('delete')) {
+//            return;
+//        }
+//        fileInput.trigger('click');
+//    });
 
     $(document).ready(function() {
         $('#listFilterLayersets .checkWrapper input.checkbox, #containerLayout .checkWrapper input.checkbox').each(function() {
