@@ -672,41 +672,44 @@ $(function() {
         uploadButton.removeClass('hover');
     }).on('change', function(e) {
         setUploadFilename(e);  
-        uploadScreenshotFile(this.files);
+//        uploadScreenshotFile(this.files);
+
+        var file = this.files;
+        var reader = new FileReader();
+        var img = new Image();
+        var src = "";
         
-        
-    });
+        img.onload = function() {
+            if (img.width >= minWidth && img.height >= minHeight) {
+               
+                screenShotImg.attr('src', src);
+                screenShotImg.removeClass('hidden');
+                screenShot.find('div.messageBox').remove();
+                validationMsgBox.remove();
+                screenShotImg.before('<div class="delete button critical hidden">X</div>');
+                deleteScreenShotButtonInit();
+                screenShot.removeClass('default iconAppDefault');
+                applicationForm.find('input[name="application[removeScreenShot]"]').val(0);
+                uploadScreenShot.val(0);
+            } else {
+                uploadScreenShot.val(1);
+                $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.resolution.error',
+                {'screenshotWidth':minWidth, 'screenshotHeight':minHeight ,'uploadWidth': img.width, 'uploadHeighth': img.height }) +'</span>').insertAfter(fileInput);
+                validationMsgBox = applicationForm.find('span.validationMsgBox');
+            }
+        }
     
-    var uploadScreenshotFile = function(files){
-        var file = files;
+        
          if (file && file[0]) {
             if (file[0].type.match('image/')){
-                if (file[0].size <= 2097152){
-                    var reader = new FileReader();
+                if (file[0].size <= 2097152) {
+                   
                     reader.onload = function (e) {
-                       
-                        var img = new Image();
-                        img.onload = function(){}
-                        img.src = e.target.result;
-                        
-                        if (img.height >= minHeight && img.height >= minWidth){
-                            screenShotImg.attr('src', e.target.result);
-                            screenShotImg.removeClass('hidden');
-                            screenShot.find('div.messageBox').remove();
-                            validationMsgBox.remove();
-                            screenShotImg.before('<div class="delete button critical hidden">X</div>');
-                            deleteScreenShotButtonInit();
-                            screenShot.removeClass('default iconAppDefault');
-                            applicationForm.find('input[name="application[removeScreenShot]"]').val(0);
-                            uploadScreenShot.val(0);
-                        }else{
-                            uploadScreenShot.val(1);
-                            $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.resolution.error',
-                            {'screenshotWidth':minWidth, 'screenshotHeight':minHeight ,'uploadWidth': img.width, 'uploadHeighth': img.height }) +'</span>').insertAfter(fileInput);
-                            validationMsgBox = applicationForm.find('span.validationMsgBox');
-                        }
+                        img.src = src = e.target.result;
                     }
+
                     reader.readAsDataURL(file[0]);
+                    
                 }else{
                     var uploadFileSize = file[0].size;
                     $('<span class=\"validationMsgBox smallText\">'+ Mapbender.trans('mb.core.entity.app.screenshotfile.error',{'maxFileSize':maxFileSize, 'uploadFileSize': uploadFileSize }) +'</span>').insertAfter(fileInput);
@@ -717,10 +720,9 @@ $(function() {
                   validationMsgBox = applicationForm.find('span.validationMsgBox');
             }
         }
-    }
-//    var renderScreenShot = function(){
-//         
-//    }
+        
+    });
+   
     var setUploadFilename = function(e){
         fileName = $(e.currentTarget).val().replace(/^.+(\\)/, '');
 
