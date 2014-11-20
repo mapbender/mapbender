@@ -30,6 +30,7 @@ $.extend(true, Mapbender, {
 
                 function _setProperties(layer, parent, id, num, proxy){
                     /* set unic id for a layer */
+                    layer.options.origId = layer.options.id;
                     layer.options.id = parent ? parent.options.id + "_" + num : id + "_" + num;
                     if(proxy && layer.options.legend){
                         if(layer.options.legend.graphic){
