@@ -670,6 +670,14 @@
         <source>mb.wms.repo.instance.label.dimensions</source>
         <target>Dimensionen</target>
       </trans-unit>
+      <trans-unit id="faa24b2b54af0b29925959f303d1c3b9" resname="mb.wms.wmsloader.dialog.label.wmsuser">
+        <source>mb.wms.wmsloader.dialog.label.wmsuser</source>
+        <target>Benutzername</target>
+      </trans-unit>
+      <trans-unit id="d09c1cc15b61d76f9cab5bfc56c848ba" resname="mb.wms.wmsloader.dialog.label.wmspass">
+        <source>mb.wms.wmsloader.dialog.label.wmspass</source>
+        <target>Password</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

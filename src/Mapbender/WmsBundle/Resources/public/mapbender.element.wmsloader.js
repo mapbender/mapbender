@@ -58,6 +58,7 @@
                     content: self.element,
                     destroyOnClose: true,
                     width: 500,
+                    height: 320,
                     buttons: {
                         'cancel': {
                             label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.cancel'),
