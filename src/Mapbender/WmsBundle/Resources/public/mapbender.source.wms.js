@@ -222,6 +222,9 @@ $.extend(true, Mapbender, {
                         infoformat = options.global.defInfoformat;
                     }
                     //@TODO srs list, srs by layer -> parent layer srs + layer srs
+                    var getmap = new Mapbender.Util.Url(capabilities.capability.request.getmap.get.href);
+                    getmap.username = options.gcurl.username;
+                    getmap.password = options.gcurl.password;
                     var def = {
                         type: 'wms',
                         title: capabilities.service.title,
@@ -235,7 +238,7 @@ $.extend(true, Mapbender, {
                                 proxy: false,
                                 tiled: false,
                                 transparent: true,
-                                url: capabilities.capability.request.getmap.get.href,
+                                url: getmap.asString(),
                                 visible: true
                             }
                         }

@@ -6,9 +6,12 @@
 
 namespace Mapbender\CoreBundle\Controller;
 
+use Assetic\Asset\StringAsset;
+use Assetic\Filter\CssRewriteFilter;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -17,8 +20,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Assetic\Filter\CssRewriteFilter;
-use Assetic\Asset\StringAsset;
 
 /**
  * Application controller.
@@ -38,13 +39,13 @@ class ApplicationController extends Controller
     {
         $base_url = $this->get('request')->getBaseUrl();
         $element_url = $this->get('router')
-            ->generate('mapbender_core_application_element', array('slug' => $slug));
+                ->generate('mapbender_core_application_element', array('slug' => $slug));
         $translation_url = $this->get('router')
-            ->generate('mapbender_core_translation_trans');
+                ->generate('mapbender_core_translation_trans');
         $proxy_url = $this->get('router')
-            ->generate('owsproxy3_core_owsproxy_entrypoint');
+                ->generate('owsproxy3_core_owsproxy_entrypoint');
         $metadata_url = $this->get('router')
-            ->generate('mapbender_core_application_metadata', array('slug' => $slug));
+                ->generate('mapbender_core_application_metadata', array('slug' => $slug));
 
         // hack to get proper urls when embedded in drupal
         $drupal_mark = function_exists('mapbender_menu') ? '?q=mapbender' : 'mapbender';
@@ -102,31 +103,26 @@ class ApplicationController extends Controller
 
         // runtime rewrite which takes into account if the action was called
         // with app.php in the URL or not.
-        if('css' === $type) {
+        if ('css' === $type) {
             // The target path assumed by the cache has been used by the
             // cache's rewrite and all URLs in the cached assets are already
             // rewritten for it. Now we rewrite from these normalized URLs to
             // the final, runtime URLs and therefore the cache's target path
             // is our source path.
-            $source = str_replace(array('{slug}', '{type}'),
-                                  array($slug, $type),
-                                  $assets->getTargetPath());
+            $source = str_replace(array('{slug}', '{type}'), array($slug, $type), $assets->getTargetPath());
 
             // Let's build the runtime target path
             $request = $this->getRequest();
             $webDir = str_replace('\\', '/',
-                realpath($this->container->get('kernel')->getRootDir() .
-                    '/../web/'));
+                                  realpath($this->container->get('kernel')->getRootDir() .
+                            '/../web/'));
             $target = $webDir . substr(
-                $request->getRequestUri(),
-                strlen($request->getBasePath()));
+                            $request->getRequestUri(), strlen($request->getBasePath()));
 
             // And move everything into an StringAsset which gets added the
             // CssRewriteFilter
             $css = $assets->dump();
-            $assets = new StringAsset($css,
-                                 array(),
-                                 null, $source);
+            $assets = new StringAsset($css, array(), null, $source);
             $assets->load();
             $assets->setTargetPath($target);
             $assets->ensureFilter(new CssRewriteFilter());
@@ -194,7 +190,7 @@ class ApplicationController extends Controller
     private function getApplication($slug)
     {
         $application = $this->get('mapbender')
-            ->getApplication($slug, $this->getUrls($slug));
+                ->getApplication($slug, $this->getUrls($slug));
 
         if ($application === null) {
             throw new NotFoundHttpException(
@@ -253,10 +249,11 @@ class ApplicationController extends Controller
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $sourceId = $this->container->get('request')->get("sourceId", null);
         $instance = $this->container->get("doctrine")
-                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
+                        ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
-             throw new AccessDeniedException();
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW',
+                                                                                       $instance->getLayerset()->getApplication())) {
+            throw new AccessDeniedException();
         }
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
@@ -265,7 +262,35 @@ class ApplicationController extends Controller
         $path = array('_controller' => $manager['bundle'] . ":" . "Repository:metadata");
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
         return $this->container->get('http_kernel')->handle(
-                $subRequest, HttpKernelInterface::SUB_REQUEST);
+                        $subRequest, HttpKernelInterface::SUB_REQUEST);
+    }
+
+    /**
+     * Get SourceInstances via HTTP Basic Authentication
+     *
+     * @Route("/application/{slug}/instance/{instanceId}/basicAuth")
+     */
+    public function instanceBasicAuthAction($slug, $instanceId)
+    {
+        $instance = $this->container->get("doctrine")
+                        ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getSource())) {
+            throw new AccessDeniedException();
+        }
+        $params = $this->getRequest()->getMethod() == 'POST' ? $this->get("request")->request->all() : $this->get("request")->query->all();
+        
+        $proxy_config = $this->container->getParameter("owsproxy.proxy");
+        $proxy_query = \OwsProxy3\CoreBundle\Component\ProxyQuery::createFromUrl(
+                $instance->getSource()->getGetMap()->getHttpGet(),
+                $instance->getSource()->getUsername(),
+                $instance->getSource()->getPassword(), array(), $params);
+        $proxy = new \OwsProxy3\CoreBundle\Component\CommonProxy($proxy_config, $proxy_query);
+        $browserResponse = $proxy->handle();
+        $response = new Response();
+        $response->setContent($browserResponse->getContent());
+        return $response;
     }
 
 }

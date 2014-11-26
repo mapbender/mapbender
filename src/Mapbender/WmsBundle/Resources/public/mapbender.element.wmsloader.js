@@ -71,13 +71,16 @@
                             label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.load'),
                             cssClass: 'button right',
                             callback: function(){
-                                var url = $('#' + $(self.element).attr('id') + ' input[name="loadWmsUrl"]').val();
+                                var url = $('input[name="loadWmsUrl"]', self.element).val();
                                 if(url === ''){
-                                    $('#' + $(self.element).attr('id') + ' input[name="loadWmsUrl"]').focus();
+                                    $('input[name="loadWmsUrl"]', self.element).focus();
                                     return false;
                                 }
+                                var urlObj = new Mapbender.Util.Url(url);
+                                urlObj.username = $('input[name="loadWmsUser"]', self.element).val();
+                                urlObj.password = $('input[name="loadWmsPass"]', self.element).val();
                                 var options = {
-                                    'gcurl': url,
+                                    'gcurl': urlObj,
                                     'type': 'url',
                                     'layers': {},
                                     'global': {
@@ -110,7 +113,7 @@
         loadDeclarativeWms: function(elm){
             var self = this;
             var options = {
-                'gcurl': elm.attr('mb-url') ? elm.attr('mb-url') : elm.attr('href'),
+                'gcurl': new Mapbender.Util.Url(elm.attr('mb-url') ? elm.attr('mb-url') : elm.attr('href')),
                 'type': 'declarative',
                 'layers': {},
                 'global': {
@@ -135,7 +138,7 @@
                 for(var i = 0; i < sources.length; i++){
                     var source = sources[i];
                     var url_source = Mapbender.source.wms.removeSignature(source.configuration.options.url.toLowerCase());
-                    if(decodeURIComponent(options.gcurl.toLowerCase()).indexOf(decodeURIComponent(url_source)) === 0){
+                    if(decodeURIComponent(options.gcurl.asString().toLowerCase()).indexOf(decodeURIComponent(url_source)) === 0){
                         // source exists
                         mbMap.model.changeLayerState({id: source.id}, options, options.global.options.treeOptions.selected, options.global.mergeLayers);
                         return false;
@@ -149,22 +152,13 @@
         },
         loadWms: function(options){
             var self = this;
-            if(!options.gcurl || options.gcurl === '' ||
-                (options.gcurl.toLowerCase().indexOf("http://") !== 0 && options.gcurl.toLowerCase().indexOf("https://") !== 0)){
+            if(!options.gcurl.isValid()){
                 Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.url'));
                 return;
             }
-            var params = OpenLayers.Util.getParameters(options.gcurl);
-            var version = null, request = null, service = null;
-            for(param in params){
-                if(param.toUpperCase() === "VERSION"){
-                    version = params[param];
-                }else if(param.toUpperCase() === "REQUEST"){
-                    request = params[param];
-                }else if(param.toUpperCase() === "SERVICE"){
-                    service = params[param];
-                }
-            }
+            var version = options.gcurl.getParameter('version', true);
+            var request = options.gcurl.getParameter('request', true);
+            var service = options.gcurl.getParameter('service', true);
             if(request === null || service === null){
                 Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.url'));
                 return;
@@ -183,7 +177,7 @@
             $.ajax({
                 url: self.elementUrl + 'getCapabilities',
                 data: {
-                    url: options.gcurl
+                    url: options.gcurl.asString()
                 },
                 dataType: 'text',
                 success: function(data, textStatus, jqXHR){

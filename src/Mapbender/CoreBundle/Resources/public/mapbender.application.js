@@ -5,22 +5,20 @@ Mapbender.ElementRegistry = function() {
     this.readyCallbacks = {};
 
     this.onElementReady = function(targetId, callback) {
-        if(true === callback) {
+        if (true === callback) {
             // Register as ready
             this.readyElements[targetId] = true;
-
             // Execute all callbacks registered so far
-            if('undefined' !== typeof this.readyCallbacks[targetId]) {
-                for(var idx in this.readyCallbacks[targetId]) {
+            if ('undefined' !== typeof this.readyCallbacks[targetId]) {
+                for (var idx in this.readyCallbacks[targetId]) {
                     this.readyCallbacks[targetId][idx]();
                 }
-
                 // Finally, remove readyCallback list, so they may be garbage
                 // collected if no one else is keeping them
                 delete this.readyCallbacks[targetId];
             }
-        } else if('function' === typeof callback) {
-            if(true === this.readyElements[targetId]) {
+        } else if ('function' === typeof callback) {
+            if (true === this.readyElements[targetId]) {
                 // If target is ready already, execute callback right away
                 callback();
             } else {
@@ -33,12 +31,12 @@ Mapbender.ElementRegistry = function() {
         }
     };
 
-    this.listWidgets = function () {
+    this.listWidgets = function() {
         var list = {};
         var elements = $(".mb-element");
-        $.each(elements, function (idx, el) {
+        $.each(elements, function(idx, el) {
             var data = $(el).data();
-            if(!data ){
+            if (!data) {
                 return;
             }
             for (var id in data) {
@@ -60,11 +58,11 @@ Mapbender.setup = function() {
         // Register for ready event to operate ElementRegistry
         var readyEvent = widget[1].toLowerCase() + 'ready';
         $('#' + id).one(readyEvent, function(event) {
-            for(var i in Mapbender.configuration.elements) {
+            for (var i in Mapbender.configuration.elements) {
                 var conf = Mapbender.configuration.elements[i],
-                widget = conf.init.split('.'),
-                readyEvent = widget[1].toLowerCase() + 'ready';
-                if(readyEvent === event.type) {
+                        widget = conf.init.split('.'),
+                        readyEvent = widget[1].toLowerCase() + 'ready';
+                if (readyEvent === event.type) {
                     Mapbender.elementRegistry.onElementReady(i, true);
                 }
             }
@@ -82,22 +80,22 @@ Mapbender.setup = function() {
     $(document).trigger('mapbender.setupfinished');
 };
 
-Mapbender.error = function(message){
+Mapbender.error = function(message) {
     alert(message);
 };
 
-Mapbender.info = function(message){
+Mapbender.info = function(message) {
     alert(message);
 };
-Mapbender.confirm = function(message){
+Mapbender.confirm = function(message) {
     var res = confirm(message);
     return res;
 };
 
-Mapbender.checkTarget = function(widgetName, target, targetname){
-    if(target === null || typeof(target) === 'undefined'
-        || new String(target).replace(/^\s+|\s+$/g, '') === ""
-        || $('#' + target).length === 0){
+Mapbender.checkTarget = function(widgetName, target, targetname) {
+    if (target === null || typeof (target) === 'undefined'
+            || new String(target).replace(/^\s+|\s+$/g, '') === ""
+            || $('#' + target).length === 0) {
         Mapbender.error(widgetName + ': a target element ' + (targetname ? '"' + targetname + '"' : '') + ' is not defined.');
         return false;
     } else {
@@ -105,19 +103,87 @@ Mapbender.checkTarget = function(widgetName, target, targetname){
     }
 };
 
-Mapbender.urlParam = function(key) {
-    var results = new RegExp('[\\?&]' + key + '=([^&#]*)').exec(window.location.href) || [];
-    return results[1] || undefined;
-};
+Mapbender.Util = Mapbender.Util || {};
 
-Mapbender.UUID = function(){
+Mapbender.Util.UUID = function() {
     var d = new Date().getTime();
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = (d + Math.random()*16)%16 | 0;
-        d = Math.floor(d/16);
-        return (c=='x' ? r : (r&0x7|0x8)).toString(16);
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
     });
     return uuid;
+};
+/* deprecated */
+Mapbender.urlParam = function(key) {
+    window.console && console.warn(
+            'The function "Mapbender.urlParam" is deprecated, use instead it the "new Mapbender.Util.Url().getParameter(key)"');
+    return new Mapbender.Util.Url(window.location.href).getParameter(key);
+};
+
+/* deprecated */
+Mapbender.UUID = function() {
+    window.console && console.warn(
+            'The function "Mapbender.UUID" is deprecated, use instead it the "Mapbender.Util.UUID"');
+    return Mapbender.Util.UUID();
+}
+
+/**
+ * Creates an url object from a giving url string
+ * @param {String} urlString
+ */
+Mapbender.Util.Url = function(urlString) {
+    if (!urlString.trim())
+        return;
+    var self = this;
+    var tmp = document.createElement("a");
+    tmp.href = urlString;
+    this.protocol = tmp.protocol;
+    this.username = tmp.username;
+    this.password = tmp.password;
+    this.host = tmp.host;
+    this.port = tmp.port;
+    this.pathname = tmp.pathname;
+    this.parameters = OpenLayers.Util.getParameters(urlString);
+    this.hash = tmp.hash;
+    /**
+     * Checks if a url object is valid.
+     * @returns {Boolean} true if url valid
+     */
+    this.isValid = function() {
+        return  !(!self.host || !self.protocol);// TODO ?
+    };
+    /**
+     * Gets an url object as string.
+     * @returns {String} url as string
+     */
+    this.asString = function(withoutUser) {
+        var str = self.protocol + (self.protocol === 'http:' || self.protocol === 'https:' || self.protocol === 'ftp:'
+                ? '//' : (self.protocol === 'file:' ? '///' : ''));// TODO for other protocols
+        str += (!withoutUser && self.username ? self.username + ':' + (self.password ? self.password : '') + '@' : '');
+        str += self.host + (self.port ? ':' + self.port : '') + self.pathname;
+        var params = '';
+        if (typeof (self.parameters) === 'object') {
+            for (key in self.parameters) {
+                params += '&' + key + '=' + self.parameters[key];
+            }
+        }
+        return str + (params.length ? '?' + params.substr(1) : '') + (self.hash ? self.hash : '');
+    };
+    /**
+     * Gets a GET parameter value from a giving parameter name.
+     * @param {String} name parameter name
+     * @param {Boolean} ignoreCase 
+     * @returns parameter value or null
+     */
+    this.getParameter = function(name, ignoreCase) {
+        for (key in self.parameters) {
+            if (key === name || (ignoreCase && key.toLowerCase() === name.toLowerCase())) {
+                return self.parameters[key];
+            }
+        }
+        return null;
+    };
 };
 
 // This calls on document.ready and won't be called when inserted dynamically
