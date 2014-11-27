@@ -223,6 +223,7 @@ class ApplicationController extends Controller
 
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
+        $parameters = $request->request->get('application');
 
         $screenshot_url = null;
 
@@ -241,7 +242,8 @@ class ApplicationController extends Controller
             $aclManager->setObjectACLFromForm($application, $form->get('acl'), 'object');
 
             $scFile = $application->getScreenshotFile();
-            if ($scFile !== null && $form->get('removeScreenShot') !== '1') {
+
+            if ($scFile !== null && $parameters['removeScreenShot'] !== '1' && $parameters['uploadScreenShot'] !== '1') {
                 
                 $uploadScreenshot->upload($app_directory,$scFile,$application);
                 $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
@@ -354,6 +356,7 @@ class ApplicationController extends Controller
         $templateClassOld = $application->getTemplate();
         $form = $this->createApplicationForm($application);
         $request = $this->getRequest();
+        $parameters = $request->request->get('application');
         $screenshot_url = "";
         $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
 
@@ -375,7 +378,7 @@ class ApplicationController extends Controller
             }
             $em->persist($application);
             $em->flush();
-                //TODO: Fileupload Size
+
             try {
                 if (AppComponent::createAppWebDir($this->container, $application->getSlug(), $old_slug)) {
                     $app_directory = AppComponent::getAppWebDir($this->container, $application->getSlug());
@@ -383,10 +386,8 @@ class ApplicationController extends Controller
                     $scFile = $application->getScreenshotFile();
                     if($scFile) {
                         $fileType = getimagesize($scFile);
-                        if ($form->get('removeScreenShot') !== '1' && strpos($fileType['mime'],'image') !== false) {
-
-                            $uploadScreenshot->upload($app_directory,$scFile,$application);
-                            
+                        if ($parameters['removeScreenShot'] !== '1' && $parameters['uploadScreenShot'] !== '1' && strpos($fileType['mime'],'image') !== false) {
+                         $uploadScreenshot->upload($app_directory,$scFile,$application);
                         }
                     }
                     $em->persist($application);
@@ -933,13 +934,14 @@ class ApplicationController extends Controller
         }
         $fields = ClassPropertiesParser::parseFields(get_class($application), false);
         $maxFileSize = 2097152;
-        if(isset($fields['screenshotFile']) && isset($fields['screenshotFile']['File']) && isset($fields['screenshotFile']['File']['maxSize'])){
-            $maxFileSize = intval($fields['screenshotFile']['File']['maxSize']);
-        }
+        $screenshotWidth = 200;
+        $screenshotHeight = 200;
         return $this->createForm(new ApplicationType(), $application, array(
                 'available_templates' => $available_templates,
                 'available_properties' => $available_properties,
-                'maxFileSize' => $maxFileSize));
+                'maxFileSize' => $maxFileSize, 
+                'screenshotWidth'=>$screenshotWidth,
+                'screenshotHeight'=>$screenshotHeight));
     }
 
     /**

@@ -1,5 +1,4 @@
 <?php
-
 namespace Mapbender\ManagerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -20,15 +19,15 @@ class ApplicationType extends AbstractType
         $resolver->setDefaults(array(
             'available_templates' => array(),
             'available_properties' => array(),
-            'maxFileSize' => 0
+            'maxFileSize' => 0,
+            'screenshotHeight' => 0,
+            'screenshotWidth' => 0
         ));
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            // Base data
-            ->add('title', 'text', array(
+        $builder->add('title', 'text', array(
                 'attr' => array(
                     'title' => 'The application title, as shown in the browser '
                     . 'title bar and in lists.')))
@@ -52,9 +51,17 @@ class ApplicationType extends AbstractType
                     'accept'=>'image/*')))
             ->add('removeScreenShot', 'hidden',array(
                 'mapped' => false))
+            ->add('uploadScreenShot', 'hidden',array(
+                'mapped' => false))
             ->add('maxFileSize', 'hidden',array(
                 'mapped' => false,
                 'data' => $options['maxFileSize']))
+            ->add('screenshotWidth', 'hidden',array(
+                'mapped' => false,
+                'data' => $options['screenshotWidth']))
+            ->add('screenshotHeight', 'hidden',array(
+                'mapped' => false,
+                'data' => $options['screenshotHeight']))
             ->add('custom_css', 'textarea', array(
                 'required' => false))
 

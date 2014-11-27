@@ -150,15 +150,19 @@
   }
 }
 .containerBaseData{
-  $height: 215px;
-  $width: 300px;
+  $height: 200px;
+  $width: 200px;
 
   // screen shot holder
   .screenshot_img{
-    width:300px;
+    width:200px;
+    height:200px;
+    margin-right: 50px;
+    
     border: 1px solid #c0c0c0;
     background-color: #f9f9f9;
     display: table;
+
     overflow: hidden;
 
     &.default{
@@ -167,9 +171,9 @@
     }
 
     &.iconAppDefault{
-      font-size: 120px;
+      font-size: 60px;
       padding-top: 50px;
-      padding-left: 85px;
+      padding-left: 65px;
       padding-bottom: 0px;
       display: block;
       line-height: 110px;
@@ -179,29 +183,27 @@
 
     .delete{
       position: absolute;
-      /*display: none;*/
       right: 20px;
-      z-index: 20;
+      margin-right: 50px;
     }
+    
+    div.cell_edit{
+        display: table-cell;
+        vertical-align:middle;
+        text-align: center;
+        padding: 0;
+        margin:0;
+        height: 200px;
+        width: 200px;
 
-    div.cell{
-      display: table-cell;
-      vertical-align:middle;
-      text-align: center;
-      padding: 0;
-      margin:0;
-      height: $height;
-      max-width: $width;
-            
-      img{
-        max-height: 100%;
-        max-width: 100%;
-        width: auto;
-        height: auto;
-        display: block;
-        margin: 0 auto;
-      }
-    }
+        img{
+         max-height: 100%;
+         max-width: 100%;
+         width: inherit;
+         display: block;
+         margin: 0 auto;
+        }
+      }    
   }
 
   .labelInput{

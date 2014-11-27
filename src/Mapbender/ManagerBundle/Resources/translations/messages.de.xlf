@@ -76,7 +76,7 @@
       </trans-unit>
       <trans-unit id="66daa81c3ff5b18311b1228c51816803" resname="mb.manager.element.yaml.message">
         <source>mb.manager.element.yaml.message</source>
-        <target>Benutzen Sie das &lt;a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&amp;language=%locale%"&gt;YAML&lt;/a&gt; Format, um die Elementkonfiguration zu beschreiben.</target>
+        <target><![CDATA[Benutzen Sie das <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> Format, um die Elementkonfiguration zu beschreiben.]]></target>
       </trans-unit>
       <trans-unit id="0ab9a494321db8a216193321471a0dca" resname="mb.manager.managerbundle.add_user_group">
         <source>mb.manager.managerbundle.add_user_group</source>
@@ -200,11 +200,11 @@
       </trans-unit>
       <trans-unit id="1e8cb174046a6e4cf13d68d18c70d8f9" resname="mb.manager.admin.layerset.delete.confirm">
         <source>mb.manager.admin.layerset.delete.confirm</source>
-        <target>Wollen Sie wirklich das Layerset &lt;span class="italic"&gt;%layerset_title%&lt;/span&gt; löschen?</target>
+        <target><![CDATA[Wollen Sie wirklich das Layerset <span class="italic">%layerset_title%</span> löschen?]]></target>
       </trans-unit>
       <trans-unit id="154a2657aaa83a07817e8912d27526d1" resname="mb.manager.admin.instance.delete.confirm">
         <source>mb.manager.admin.instance.delete.confirm</source>
-        <target>Wollen Sie wirklich die Instanz &lt;span class="italic"&gt;%instance_title%&lt;/span&gt; entfernen?</target>
+        <target><![CDATA[Wollen Sie wirklich die Instanz <span class="italic">%instance_title%</span> entfernen?]]></target>
       </trans-unit>
       <trans-unit id="65b1b8ec796958dee755f045045ec4c5" resname="mb.manager.admin.template">
         <source>mb.manager.admin.template</source>
@@ -537,6 +537,10 @@
       <trans-unit id="9c0cce2c5e9cf4ee90fbc62f697167ac" resname="mb.manager.import.source.failed">
         <source>mb.manager.import.source.failed</source>
         <target>Quelle kann nicht importiert werden.</target>
+      </trans-unit>
+      <trans-unit id="16f74a89b0e7be78f76edfe1108dc053" resname="mb.core.entity.app.screenshotfile.resolution.error">
+        <source>mb.core.entity.app.screenshotfile.resolution.error</source>
+        <target>Es können nur Dateien mit %screenshotHeight% x %screenshotWidth% Pixel oder größer hochgeladen werden. Ihre Datei hat %uploadWidth% x %uploadHeighth% Pixel.</target>
       </trans-unit>
     </body>
   </file>
