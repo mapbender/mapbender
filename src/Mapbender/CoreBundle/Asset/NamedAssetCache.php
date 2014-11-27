@@ -30,18 +30,18 @@ class NamedAssetCache extends AssetCache
         parent::__construct($asset, $cache);
     }
 
-    public function isCached(FilterInterface $additionalFilter = null)
+    public function isCached(FilterInterface $additionalFilter = NULL)
     {
         $cacheKey = $this->getKey($additionalFilter);
         return !$this->force && $this->cache->has($cacheKey);
     }
 
-    public function getKey(FilterInterface $additionalFilter = null)
+    public function getKey(FilterInterface $additionalFilter = NULL)
     {
         return self::getCacheKey2($this->name, $this->asset, $additionalFilter, '', $this->suffix, $this->useTimestamp);
     }
 
-    public function load(FilterInterface $additionalFilter = null)
+    public function load(FilterInterface $additionalFilter = NULL)
     {
         $cacheKey = $this->getKey($additionalFilter);
         if ($this->isCached($additionalFilter)) {
@@ -53,7 +53,7 @@ class NamedAssetCache extends AssetCache
         $this->cache->set($cacheKey, $this->asset->getContent());
     }
 
-    public function dump(FilterInterface $additionalFilter = null)
+    public function dump(FilterInterface $additionalFilter = NULL)
     {
         $cacheKey = $this->getKey($additionalFilter);
         if($this->isCached()) {
@@ -69,7 +69,7 @@ class NamedAssetCache extends AssetCache
     /**
      * Stupid naming for stupid PHP 5.3 which has stupid overloading
      */
-    private static function getCacheKey2($name, AssetInterface $asset, FilterInterface $additionalFilter = null, $salt = '', $suffix, $useTimestamp= false)
+    private static function getCacheKey2($name, AssetInterface $asset, FilterInterface $additionalFilter = NULL, $salt = '', $suffix, $useTimestamp= false)
     {
         if(!$useTimestamp) {
             // Return early for no hash at all

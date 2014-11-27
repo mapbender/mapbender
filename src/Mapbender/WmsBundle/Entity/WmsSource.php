@@ -549,7 +549,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param boolean $remoteWfs
      * @return WmsSource
      */
-    public function setRemoteWfs($remoteWfs)
+    public function setRemoteWfs($remoteWfs = null)
     {
         $this->remoteWfs = $remoteWfs;
         return $this;
@@ -571,7 +571,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param boolean $inlineFeature
      * @return WmsSource
      */
-    public function setInlineFeature($inlineFeature)
+    public function setInlineFeature($inlineFeature = null)
     {
         $this->inlineFeature = $inlineFeature;
         return $this;
@@ -615,7 +615,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param Object $getCapabilities
      * @return WmsSource
      */
-    public function setGetCapabilities(RequestInformation $getCapabilities)
+    public function setGetCapabilities(RequestInformation $getCapabilities = NULL)
     {
         $this->getCapabilities = $getCapabilities;
         return $this;
@@ -637,7 +637,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param RequestInformation $getMap
      * @return WmsSource
      */
-    public function setGetMap(RequestInformation $getMap)
+    public function setGetMap(RequestInformation $getMap = NULL)
     {
         $this->getMap = $getMap;
         return $this;
@@ -659,7 +659,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param RequestInformation $getFeatureInfo
      * @return WmsSource
      */
-    public function setGetFeatureInfo(RequestInformation $getFeatureInfo)
+    public function setGetFeatureInfo(RequestInformation $getFeatureInfo = NULL)
     {
         $this->getFeatureInfo = $getFeatureInfo;
         return $this;
@@ -681,7 +681,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param RequestInformation $describeLayer
      * @return WmsSource
      */
-    public function setDescribeLayer(RequestInformation $describeLayer)
+    public function setDescribeLayer(RequestInformation $describeLayer = NULL)
     {
         $this->describeLayer = $describeLayer;
         return $this;
@@ -703,7 +703,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param RequestInformation $getLegendGraphic
      * @return WmsSource
      */
-    public function setGetLegendGraphic(RequestInformation $getLegendGraphic)
+    public function setGetLegendGraphic(RequestInformation $getLegendGraphic = NULL)
     {
         $this->getLegendGraphic = $getLegendGraphic;
         return $this;
@@ -725,7 +725,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param RequestInformation $getStyles
      * @return WmsSource
      */
-    public function setGetStyles(RequestInformation $getStyles)
+    public function setGetStyles(RequestInformation $getStyles = NULL)
     {
         $this->getStyles = $getStyles;
         return $this;
@@ -747,7 +747,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param RequestInformation $putStyles
      * @return WmsSource
      */
-    public function setPutStyles(RequestInformation $putStyles = null)
+    public function setPutStyles(RequestInformation $putStyles = NULL)
     {
         $this->putStyles = $putStyles;
         return $this;

@@ -15,6 +15,7 @@ use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\RegionProperties;
 use Mapbender\CoreBundle\Form\Type\LayersetType;
+use Mapbender\CoreBundle\Utils\ClassPropertiesParser;
 use Mapbender\ManagerBundle\Component\ExchangeJob;
 use Mapbender\ManagerBundle\Component\ExportHandler;
 use Mapbender\ManagerBundle\Component\ImportHandler;
@@ -244,10 +245,9 @@ class ApplicationController extends Controller
 
             if ($scFile !== null && $parameters['removeScreenShot'] !== '1' && $parameters['uploadScreenShot'] !== '1') {
                 
-               $uploadScreenshot->upload($app_directory,$scFile,$application);
-               
-               $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
-               $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
+                $uploadScreenshot->upload($app_directory,$scFile,$application);
+                $app_web_url = AppComponent::getAppWebUrl($this->container, $application->getSlug());
+                $screenshot_url = $app_web_url . "/" . $application->getScreenshot();
             }
             $em->persist($application);
             $em->flush();
@@ -920,7 +920,7 @@ class ApplicationController extends Controller
     /**
      * Create the application form, set extra options needed
      */
-    private function createApplicationForm($application)
+    private function createApplicationForm(Application $application)
     {
         $available_templates = array();
         foreach ($this->get('mapbender')->getTemplates() as $templateClassName) {
@@ -932,6 +932,7 @@ class ApplicationController extends Controller
             $templateClassName = $application->getTemplate();
             $available_properties = $templateClassName::getRegionsProperties();
         }
+        $fields = ClassPropertiesParser::parseFields(get_class($application), false);
         $maxFileSize = 2097152;
         $screenshotWidth = 200;
         $screenshotHeight = 200;

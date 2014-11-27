@@ -106,7 +106,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     /**
      * @inheritdoc
      */
-    public function getConfiguration(Signer $signer = null)
+    public function getConfiguration(Signer $signer = NULL)
     {
         if ($this->entity->getSource() === null) { // from yaml
             $this->generateYmlConfiguration();

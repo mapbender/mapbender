@@ -31,7 +31,23 @@ Mapbender.ElementRegistry = function() {
         } else {
             throw 'ElementRegistry.onElementReady callback must be function or undefined!';
         }
-    }
+    };
+
+    this.listWidgets = function () {
+        var list = {};
+        var elements = $(".mb-element");
+        $.each(elements, function (idx, el) {
+            var data = $(el).data();
+            if(!data ){
+                return;
+            }
+            for (var id in data) {
+                list[id] = data[id];
+            }
+        });
+        return list;
+    };
+
 };
 Mapbender.elementRegistry = new Mapbender.ElementRegistry();
 

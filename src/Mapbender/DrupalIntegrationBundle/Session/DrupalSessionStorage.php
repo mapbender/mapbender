@@ -82,7 +82,7 @@ class DrupalSessionStorage implements SessionStorageInterface
      * @param object      $handler SessionHandlerInterface.
      * @param MetadataBag $metaBag MetadataBag.
      */
-    public function __construct(array $options = array(), $handler = null, MetadataBag $metaBag = null)
+    public function __construct(array $options = array(), $handler = null, MetadataBag $metaBag = NULL)
     {
         ini_set('session.cache_limiter', ''); // disable by default because it's managed by HeaderBag (if used)
         ini_set('session.use_cookies', 1);
@@ -237,7 +237,7 @@ class DrupalSessionStorage implements SessionStorageInterface
      *
      * @param MetadataBag $metaBag
      */
-    public function setMetadataBag(MetadataBag $metaBag = null)
+    public function setMetadataBag(MetadataBag $metaBag = NULL)
     {
         if (null === $metaBag) {
             $metaBag = new MetadataBag();

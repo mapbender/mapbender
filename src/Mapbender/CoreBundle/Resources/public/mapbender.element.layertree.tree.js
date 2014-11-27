@@ -203,11 +203,9 @@
                 li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                 if (config.toggleable)
                     li.addClass('toggleable');
-                if (this.options.menu.length === 0) {
+                if (this.options.menu.length === 0 || (this.options.menu.length === 1 && $.inArray("opacity", this.options.menu) !== -1 && nodeType === this.consts.simple)){
                     li.find('.layer-menu-btn').remove();
                 }
-                if (!this.options.layerRemove)
-                    li.find('.layer-remove-btn').remove();
                 if (!this.options.layerInfo)
                     li.find('.iconInfo').remove();
                 if (sourceEl.children) {
@@ -257,11 +255,9 @@
                     li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(sourceEl.options.title));
                     if (config.toggleable)
                         li.addClass('toggleable');
-                    if (this.options.menu.length === 0) {
+                    if (this.options.menu.length === 0 || (this.options.menu.length === 1 && $.inArray("opacity", this.options.menu) !== -1 && nodeType === this.consts.simple)){
                         li.find('.layer-menu-btn').remove();
                     }
-                    if (!this.options.layerRemove)
-                        li.find('.layer-remove-btn').remove();
                     if (sourceEl.children) {
                         li.find('ul:first').attr('id', 'list-' + sourceEl.options.id);
                         if (config.toggle) {
@@ -558,7 +554,6 @@
                 var source = self.model.findSource({id: sourceId})[0];
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId", sourceId));
                 var exitButton = menu.find('.exit-button');
-                var removeButton = menu.find('.layer-remove-btn');
                 var previousMenu = self.currentMenu;
 
                 if (self.currentMenu == menu) {
@@ -575,8 +570,6 @@
                     self.closeMenu(menu)
                 });
 
-                removeButton.on('click', $.proxy(self._removeSource, self));
-
                 if ($element.parents('li:first').attr('data-type') !== self.consts.root) {
                     menu.find('#layer-opacity').remove();
                     menu.find('#layer-opacity-title').remove();
@@ -587,7 +580,12 @@
                 $(menu).on('mousedown mousemove', function(e) {
                     e.stopPropagation();
                 });
-
+                
+                if ($.inArray("layerremove", self.options.menu) !== -1){
+                    menu.find('.layer-remove-btn').on('click', $.proxy(self._removeSource, self));
+                } else {
+                    menu.find('.layer-remove-btn').remove();
+                }
                 if ($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0) {
                     $('.layer-opacity-handle').attr('unselectable', 'on');
                     new Dragdealer('layer-opacity', {
@@ -609,7 +607,9 @@
                         $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                     }
                 }
-                if ($.inArray("metadata", self.options.menu) !== -1 && menu.find('.layer-metadata').length > 0) {
+                if ($.inArray("metadata", self.options.menu) === -1 || menu.find('.layer-metadata').length === 0 || isNaN(parseInt(source.origId))) {
+                    $('.layer-metadata', menu).remove();
+                } else {
                     var layer = self.model.findLayer({id: sourceId}, {id: layerId});
                     if (layer) {
                         $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata, self));
@@ -624,16 +624,12 @@
                 var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
                 if (layerIdMenu !== currentLayerId) {
                     createMenu($btnMenu, currentSourceId, currentLayerId);
-                    console.log(self.element.offset().top, self.element.innerHeight(), self.element.offset().top + self.element.innerHeight());
-                    console.log($('.layer-menu').offset().top, $('.layer-menu').innerHeight(), $('.layer-menu').offset().top + $('.layer-menu').innerHeight());
                     if ((self.element.offset().top + self.element.innerHeight()) < ($('.layer-menu').offset().top + $('.layer-menu').innerHeight())) {
                         $('#layer-menu').addClass('placeSouth');
                     }
                 }
             } else {
                 createMenu($btnMenu, currentSourceId, currentLayerId);
-                console.log(self.element.offset().top, self.element.innerHeight(), self.element.offset().top + self.element.innerHeight());
-                console.log($('.layer-menu').offset().top, $('.layer-menu').innerHeight(), $('.layer-menu').offset().top + $('.layer-menu').innerHeight());
                 if ((self.element.offset().top + self.element.innerHeight()) < ($('.layer-menu').offset().top + $('.layer-menu').innerHeight())) {
                     $('#layer-menu').addClass('placeSouth');
                 }

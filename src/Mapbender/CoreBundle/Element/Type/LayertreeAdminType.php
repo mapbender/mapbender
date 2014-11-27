@@ -35,6 +35,7 @@ class LayertreeAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $menuComponents = array(
+            "layerremove" => "Remove layer",
             "opacity" => "Opacity",
             "zoomtolayer" => "Zoom to layer",
             "metadata" => "Metadata",
@@ -63,9 +64,6 @@ class LayertreeAdminType extends AbstractType
                 'choices' => array('tree' => 'Tree')))
             ->add('titlemaxlength', 'text', array('required' => true))
             ->add('showBaseSource', 'checkbox',
-                array(
-                'required' => false))
-            ->add('layerRemove', 'checkbox',
                 array(
                 'required' => false))
             ->add('showHeader', 'checkbox',

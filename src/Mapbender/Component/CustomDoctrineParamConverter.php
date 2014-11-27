@@ -22,7 +22,7 @@ class CustomDoctrineParamConverter implements ParamConverterInterface {
 
     protected $configuration = null;
 
-    public function __construct(\Doctrine\Bundle\DoctrineBundle\Registry $registry = null)
+    public function __construct(\Doctrine\Bundle\DoctrineBundle\Registry $registry = NULL)
     {
         if (is_null($registry)) {
             return;
