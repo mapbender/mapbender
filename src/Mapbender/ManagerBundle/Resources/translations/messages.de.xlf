@@ -540,7 +540,7 @@
       </trans-unit>
       <trans-unit id="16f74a89b0e7be78f76edfe1108dc053" resname="mb.core.entity.app.screenshotfile.resolution.error">
         <source>mb.core.entity.app.screenshotfile.resolution.error</source>
-        <target>Es können nur PNG Bilder Dateien mit der %screenshotHeight% x %screenshotWidth% (%uploadWidth% x %uploadHeighth%) oder einen höheren Auflösung ausgewählt werden.</target>
+        <target>Es können nur Dateien mit %screenshotHeight% x %screenshotWidth% Pixel oder größer hochgeladen werden. Ihre Datei hat %uploadWidth% x %uploadHeighth% Pixel.</target>
       </trans-unit>
     </body>
   </file>

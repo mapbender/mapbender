@@ -541,7 +541,7 @@
       </trans-unit>
       <trans-unit id="16f74a89b0e7be78f76edfe1108dc053" resname="mb.core.entity.app.screenshotfile.resolution.error">
         <source>mb.core.entity.app.screenshotfile.resolution.error</source>
-        <target>Only PNG images files with %screenshotHeight% x %screenshotWidth% (%uploadWidth% x %uploadHeighth%) resolution or higher can be selected</target>
+        <target>Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.</target>
       </trans-unit>
     </body>
   </file>
