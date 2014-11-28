@@ -98,9 +98,11 @@ class FieldSubscriber implements EventSubscriberInterface
                     'auto_initialize' => false)));
         }
         $arrStyles = $data->getSourceItem()->getStyles();
-        $styleOpt = array("" => "");
+        $styleOpt = array("" => " ");
         foreach ($arrStyles as $style) {
-            $styleOpt[$style->getName()] = $style->getTitle();
+            if(strtolower($style->getName()) !== 'default'){ // accords with WMS Implementation Specification
+                $styleOpt[$style->getName()] = $style->getTitle();
+            }
         }
 
         $form->remove('style');
