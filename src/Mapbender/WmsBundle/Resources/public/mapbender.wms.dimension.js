@@ -26,7 +26,7 @@ Mapbender.DimensionScalar = Class({implements: Mapbender.IDimension}, {
     __stepsNum: -1,
     __construct: function(options) {
         this.__options = options;
-        this.__value = options.default === null ? options.extent[0] : options.default;
+        this.__value = options['default'] === null ? options.extent[0] : options['default'];
     },
     getOptions: function() {
         return this.__options;
@@ -71,7 +71,7 @@ Mapbender.DimensionScalar = Class({implements: Mapbender.IDimension}, {
     }
 });
 
-Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, extends: Mapbender.DimensionScalar}, {
+Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Mapbender.DimensionScalar}, {
     __start: null,
     __startTst: null,
     __end: null,
@@ -80,7 +80,7 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, extends: Mapb
     __stepTst: null,
     __asc: true,
     __construct: function(options) {
-        this.super('__construct', options);
+        this['super']('__construct', options);
         var hasZ = options.extent[0].indexOf('Z') !== -1;
         this.__start = new TimeISO8601(options.extent[0]);
         this.__startTst = this.__start.time.getTime();

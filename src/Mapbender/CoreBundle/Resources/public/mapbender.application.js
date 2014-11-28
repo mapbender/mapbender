@@ -133,7 +133,7 @@ Mapbender.UUID = function() {
  * @param {String} urlString
  */
 Mapbender.Util.Url = function(urlString) {
-    if (!urlString.trim())
+    if (!urlString.replace(/^\s+|\s+$/g, ''))// trim
         return;
     var self = this;
     var tmp = document.createElement("a");

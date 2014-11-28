@@ -8,6 +8,8 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Assetic\Asset\StringAsset;
 use Assetic\Filter\CssRewriteFilter;
+use OwsProxy3\CoreBundle\Component\CommonProxy;
+use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
@@ -39,13 +41,13 @@ class ApplicationController extends Controller
     {
         $base_url = $this->get('request')->getBaseUrl();
         $element_url = $this->get('router')
-                ->generate('mapbender_core_application_element', array('slug' => $slug));
+            ->generate('mapbender_core_application_element', array('slug' => $slug));
         $translation_url = $this->get('router')
-                ->generate('mapbender_core_translation_trans');
+            ->generate('mapbender_core_translation_trans');
         $proxy_url = $this->get('router')
-                ->generate('owsproxy3_core_owsproxy_entrypoint');
+            ->generate('owsproxy3_core_owsproxy_entrypoint');
         $metadata_url = $this->get('router')
-                ->generate('mapbender_core_application_metadata', array('slug' => $slug));
+            ->generate('mapbender_core_application_metadata', array('slug' => $slug));
 
         // hack to get proper urls when embedded in drupal
         $drupal_mark = function_exists('mapbender_menu') ? '?q=mapbender' : 'mapbender';
@@ -115,9 +117,9 @@ class ApplicationController extends Controller
             $request = $this->getRequest();
             $webDir = str_replace('\\', '/',
                                   realpath($this->container->get('kernel')->getRootDir() .
-                            '/../web/'));
+                    '/../web/'));
             $target = $webDir . substr(
-                            $request->getRequestUri(), strlen($request->getBasePath()));
+                    $request->getRequestUri(), strlen($request->getBasePath()));
 
             // And move everything into an StringAsset which gets added the
             // CssRewriteFilter
@@ -190,7 +192,7 @@ class ApplicationController extends Controller
     private function getApplication($slug)
     {
         $application = $this->get('mapbender')
-                ->getApplication($slug, $this->getUrls($slug));
+            ->getApplication($slug, $this->getUrls($slug));
 
         if ($application === null) {
             throw new NotFoundHttpException(
@@ -246,15 +248,18 @@ class ApplicationController extends Controller
     public function metadataAction($slug)
     {
         $securityContext = $this->get('security.context');
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
         $sourceId = $this->container->get('request')->get("sourceId", null);
         $instance = $this->container->get("doctrine")
-                        ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW',
-                                                                                       $instance->getLayerset()->getApplication())) {
+                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($sourceId);
+        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
+            && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
+// TODO source access ?
+//        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'))
+//            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
+//            throw new AccessDeniedException();
+//        }
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$instance->getSource()->getManagertype()];
@@ -262,7 +267,7 @@ class ApplicationController extends Controller
         $path = array('_controller' => $manager['bundle'] . ":" . "Repository:metadata");
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
         return $this->container->get('http_kernel')->handle(
-                        $subRequest, HttpKernelInterface::SUB_REQUEST);
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
     }
 
     /**
@@ -273,20 +278,26 @@ class ApplicationController extends Controller
     public function instanceBasicAuthAction($slug, $instanceId)
     {
         $instance = $this->container->get("doctrine")
-                        ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
+                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
         $securityContext = $this->get('security.context');
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('VIEW', $instance->getSource())) {
+
+        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
+            && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
             throw new AccessDeniedException();
         }
-        $params = $this->getRequest()->getMethod() == 'POST' ? $this->get("request")->request->all() : $this->get("request")->query->all();
-        
+// TODO source access ?
+//        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'))
+//            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
+//            throw new AccessDeniedException();
+//        }
+        $params = $this->getRequest()->getMethod() == 'POST' ?
+            $this->get("request")->request->all() : $this->get("request")->query->all();
+
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
-        $proxy_query = \OwsProxy3\CoreBundle\Component\ProxyQuery::createFromUrl(
-                $instance->getSource()->getGetMap()->getHttpGet(),
-                $instance->getSource()->getUsername(),
+        $proxy_query = ProxyQuery::createFromUrl(
+                $instance->getSource()->getGetMap()->getHttpGet(), $instance->getSource()->getUsername(),
                 $instance->getSource()->getPassword(), array(), $params);
-        $proxy = new \OwsProxy3\CoreBundle\Component\CommonProxy($proxy_config, $proxy_query);
+        $proxy = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
         $response = new Response();
         $response->setContent($browserResponse->getContent());
