@@ -34,7 +34,7 @@
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
 
             this.layerTitle = this.options.showLayerTitle ? "" : "notshow";
-            this.sourceTitle = this.options.showLayerTitle ? "" : "notshow";
+            this.sourceTitle = this.options.showSourceTitle ? "" : "notshow";
             this.grouppedTitle = this.options.showGrouppedTitle ? "" : "notshow";
             this.hiddeEmpty = this.options.hideEmptyLayers ? "notshow" : "";
 
@@ -244,7 +244,7 @@
             return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + this.grouppedTitle + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
         },
         _createTitleLine: function(layer, hide){
-            return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + (hide ? this.hiddeEmpty : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
+            return '<li class="ebene' + layer.level + ' ' + layer.visible  + ' ' + this.layerTitle + ' ' + (hide ? this.hiddeEmpty : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
         },
         _createImageLine: function(layer){
             return '<li class="ebene' + layer.level + ' ' + layer.visible + ' image" data-id="' + layer.id + '"><img src="' + layer.legend.url + '"></img></li>';
