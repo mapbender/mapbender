@@ -138,6 +138,10 @@
         <source>mb.manager.admin.filter.layerset</source>
         <target>Filtrar conjunto de capas</target>
       </trans-unit>
+      <trans-unit id="03c37885863a75b058bceeae4e0d1c4c" resname="mb.manager.admin.layerset.id">
+        <source>mb.manager.admin.layerset.id</source>
+        <target>Id</target>
+      </trans-unit>
       <trans-unit id="912129d1d1dd160436f31fd4aed3f1df" resname="mb.manager.admin.layerset.title">
         <source>mb.manager.admin.layerset.title</source>
         <target>Título</target>
@@ -532,15 +536,7 @@
       </trans-unit>
       <trans-unit id="16f74a89b0e7be78f76edfe1108dc053" resname="mb.core.entity.app.screenshotfile.resolution.error">
         <source>mb.core.entity.app.screenshotfile.resolution.error</source>
-        <target>Error</target>
-      </trans-unit>
-      <trans-unit id="3b026dc345fecbb0cdeb1e1e66273bb5" resname="mb.manager.admin.layerset.id_description">
-        <source>mb.manager.admin.layerset.id_description</source>
-        <target>Id in the form of SourceId/InstanceId</target>
-      </trans-unit>
-      <trans-unit id="03c37885863a75b058bceeae4e0d1c4c" resname="mb.manager.admin.layerset.id">
-        <source>mb.manager.admin.layerset.id</source>
-        <target>Id</target>
+        <target>Es posible solamente subir archivos/fotos de %screenshotHeight% x %screenshotWidth% pixeles o de un tamano mayor. Su archivo es de %uploadWidth% x %uploadHeighth% pixeles.</target>
       </trans-unit>
     </body>
   </file>
