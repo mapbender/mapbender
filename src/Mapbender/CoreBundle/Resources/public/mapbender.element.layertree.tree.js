@@ -603,7 +603,7 @@
                     });
                 }
                 if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0) {
-                    if (self.model.getLayerExtents({sourceId: sourceId, layerId: layerId, inherit: true})) {
+                    if (self.model.getLayerExtents({sourceId: sourceId, layerId: layerId})) {
                         $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                     }
                 }
@@ -664,8 +664,7 @@
         _zoomToLayer: function(e) {
             var options = {
                 sourceId: $(e.target).parents('div.layer-menu:first').attr("data-menuSourceId"),
-                layerId: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId"),
-                inherit: true
+                layerId: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId")
             };
             this.model.zoomToLayer(options);
         },
