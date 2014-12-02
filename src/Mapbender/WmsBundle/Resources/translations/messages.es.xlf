@@ -672,15 +672,19 @@
       </trans-unit>
       <trans-unit id="1eec62862c805bb073beebbee0e0891b" resname="mb.wms.wmsloader.repo.instance.label.ratio">
         <source>mb.wms.wmsloader.repo.instance.label.ratio</source>
-        <target>__mb.wms.wmsloader.repo.instance.label.ratio</target>
+        <target>BBOX factor</target>
       </trans-unit>
       <trans-unit id="e80c0741d80e32fb80f40c9a17bc8610" resname="mb.wms.wmsloader.repo.instance.label.buffer">
         <source>mb.wms.wmsloader.repo.instance.label.buffer</source>
-        <target>__mb.wms.wmsloader.repo.instance.label.buffer</target>
+        <target>Tile buffer</target>
       </trans-unit>
       <trans-unit id="08f84450da093c2a4eef8cca79b21030" resname="mb.wms.repo.instance.label.dimensions">
         <source>mb.wms.repo.instance.label.dimensions</source>
-        <target>__mb.wms.repo.instance.label.dimensions</target>
+        <target>Dimensions</target>
+      </trans-unit>
+      <trans-unit id="539f26e0b34aa694b45f69692cad5d64" resname="mb.wms.wmsloader.repo.instancelayerform.label.id.description">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.id.description</source>
+        <target>Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId</target>
       </trans-unit>
       <trans-unit id="faa24b2b54af0b29925959f303d1c3b9" resname="mb.wms.wmsloader.dialog.label.wmsuser">
         <source>mb.wms.wmsloader.dialog.label.wmsuser</source>

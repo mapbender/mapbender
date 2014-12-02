@@ -680,7 +680,11 @@
       </trans-unit>
       <trans-unit id="08f84450da093c2a4eef8cca79b21030" resname="mb.wms.repo.instance.label.dimensions">
         <source>mb.wms.repo.instance.label.dimensions</source>
-        <target>dimensions</target>
+        <target>Dimensions</target>
+      </trans-unit>
+      <trans-unit id="539f26e0b34aa694b45f69692cad5d64" resname="mb.wms.wmsloader.repo.instancelayerform.label.id.description">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.id.description</source>
+        <target>Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId</target>
       </trans-unit>
       <trans-unit id="faa24b2b54af0b29925959f303d1c3b9" resname="mb.wms.wmsloader.dialog.label.wmsuser">
         <source>mb.wms.wmsloader.dialog.label.wmsuser</source>
