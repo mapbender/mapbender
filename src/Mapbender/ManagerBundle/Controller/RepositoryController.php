@@ -5,6 +5,7 @@
  *
  * @author Christian Wygoda <christian.wygoda@wheregroup.com>
  */
+
 namespace Mapbender\ManagerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -79,7 +80,7 @@ class RepositoryController extends Controller
             'managers' => $managers
         );
     }
-    
+
     /**
      * Renders a list of importers
      *
@@ -98,7 +99,7 @@ class RepositoryController extends Controller
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$managertype];
-        
+
         $path = array('_controller' => $manager['bundle'] . ":" . "Repository:create");
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
         return $this->container->get('http_kernel')->handle(
@@ -177,6 +178,32 @@ class RepositoryController extends Controller
     }
 
     /**
+     * Updates a Source
+     *
+     * @ManagerRoute("/source/{sourceId}/update")
+     * @Template
+     */
+    public function updateAction($sourceId)
+    {
+        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
+            throw new AccessDeniedException();
+        }
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$source->getManagertype()];
+
+        $path = array(
+            '_controller' => $manager['bundle'] . ":" . "Repository:update",
+            "sourceId" => $source->getId()
+        );
+        $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
+        return $this->container->get('http_kernel')->handle(
+                $subRequest, HttpKernelInterface::SUB_REQUEST);
+    }
+
+    /**
      *
      * @ManagerRoute("/application/{slug}/instance/{instanceId}")
      */
@@ -192,14 +219,13 @@ class RepositoryController extends Controller
 
         $securityContext = $this->get('security.context');
         $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
-        if (!($securityContext->isGranted('EDIT', $sourceInst->getSource()) ||
-              $securityContext->isGranted('EDIT', $oid))) {
+        if (!($securityContext->isGranted('EDIT', $sourceInst->getSource()) || $securityContext->isGranted('EDIT', $oid))) {
             throw new AccessDeniedHttpException();
         }
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
-        
+
         $path = array(
             '_controller' => $manager['bundle'] . ":" . "Repository:instance",
             "slug" => $slug,
@@ -230,8 +256,7 @@ class RepositoryController extends Controller
         if (intval($number) === $instance->getWeight() && $layersetId === $layersetId_new) {
             return new Response(json_encode(array(
                     'error' => '',
-                    'result' => 'ok')), 200,
-                array('Content-Type' => 'application/json'));
+                    'result' => 'ok')), 200, array('Content-Type' => 'application/json'));
         }
 
         if ($layersetId === $layersetId_new) {
@@ -324,8 +349,7 @@ class RepositoryController extends Controller
 
         return new Response(json_encode(array(
                 'error' => '',
-                'result' => 'ok')), 200,
-            array(
+                'result' => 'ok')), 200, array(
             'Content-Type' => 'application/json'));
     }
 
@@ -364,7 +388,7 @@ class RepositoryController extends Controller
             ->find($instanceId);
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$sourceInst->getManagertype()];
-        
+
         $path = array(
             '_controller' => $manager['bundle'] . ":" . "Repository:instancelayerpriority",
             "slug" => $slug,

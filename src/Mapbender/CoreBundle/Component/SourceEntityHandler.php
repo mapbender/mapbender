@@ -9,6 +9,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\Layerset;
+use Mapbender\CoreBundle\Entity\Source;
 
 /**
  * Description of EntityHandler
@@ -25,6 +26,7 @@ abstract class SourceEntityHandler extends EntityHandler
         
     /**
      * Creates a SourceInstance
+     * @param Layerset $layerset a Layerset object
      */
     abstract public function createInstance(Layerset $layerset);
     
@@ -32,6 +34,18 @@ abstract class SourceEntityHandler extends EntityHandler
      * Remove a source from a database
      */
     abstract public function remove();
+    
+    /**
+     * Remove a source from a database
+     * @param Source $source a Source object
+     */
+    abstract public function updateFromSource(Source $source);
+
+    /**
+     * Remove a source from a database
+     * @param Source $source a Source object
+     */
+    abstract public function updateInstances();
 
 
 }
