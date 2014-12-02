@@ -10,7 +10,7 @@
         <table class="tableCore layersetTable" data-id="{{ layerset.id }}">
           <thead>
             <tr>
-              <th>{{ 'mb.manager.admin.layerset.id' | trans }}</th>
+              <th title="{{ 'mb.manager.admin.layerset.id_description' | trans }}">{{ 'mb.manager.admin.layerset.id' | trans }}</th>
               <th>{{ 'mb.manager.admin.layerset.title' | trans }}</th>
               <th>{{ 'mb.manager.admin.layerset.type' | trans }}</th>
               <th class="iconColumn">
@@ -23,7 +23,7 @@
           <tbody>
             {% for instance in layerset.instances %}
               <tr class="sourceinst" data-id="{{ instance.id }}" data-href="{{ path('mapbender_manager_repository_instanceweight', {'slug': application.slug,'layersetId': layerset.id, 'instanceId': instance.id})}}">
-                <td class="idColumn description">{{ instance.source.id }}</td>
+                <td class="idColumn description" title="{{ 'mb.manager.admin.layerset.id_description' | trans }}">{{ instance.source.id }}/{{ instance.id }}</td>
                 <td class="titleColumn description">{{ instance.title }} ({{ instance.source.title }})</td>
                 <td class="typeColumn description">{{ instance.source.type }}</td>
                 <td class="iconColumn">
