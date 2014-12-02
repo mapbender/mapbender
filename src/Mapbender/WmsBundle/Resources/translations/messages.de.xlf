@@ -670,6 +670,10 @@
         <source>mb.wms.repo.instance.label.dimensions</source>
         <target>Dimensionen</target>
       </trans-unit>
+      <trans-unit id="539f26e0b34aa694b45f69692cad5d64" resname="mb.wms.wmsloader.repo.instancelayerform.label.id.description">
+        <source>mb.wms.wmsloader.repo.instancelayerform.label.id.description</source>
+        <target>Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

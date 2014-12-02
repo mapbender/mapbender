@@ -154,10 +154,6 @@
         <source>mb.manager.admin.filter.layerset</source>
         <target>Layerset Filter</target>
       </trans-unit>
-      <trans-unit id="03c37885863a75b058bceeae4e0d1c4c" resname="mb.manager.admin.layerset.id">
-        <source>mb.manager.admin.layerset.id</source>
-        <target>Id</target>
-      </trans-unit>
       <trans-unit id="912129d1d1dd160436f31fd4aed3f1df" resname="mb.manager.admin.layerset.title">
         <source>mb.manager.admin.layerset.title</source>
         <target>Titel</target>
@@ -541,6 +537,22 @@
       <trans-unit id="16f74a89b0e7be78f76edfe1108dc053" resname="mb.core.entity.app.screenshotfile.resolution.error">
         <source>mb.core.entity.app.screenshotfile.resolution.error</source>
         <target>Es können nur Dateien mit %screenshotHeight% x %screenshotWidth% Pixel oder größer hochgeladen werden. Ihre Datei hat %uploadWidth% x %uploadHeighth% Pixel.</target>
+      </trans-unit>
+      <trans-unit id="125a31a47822adb9af164aaa01684089" resname="mb.manager.admin.layerset.sourceid">
+        <source>mb.manager.admin.layerset.sourceid</source>
+        <target>SourceId</target>
+      </trans-unit>
+      <trans-unit id="fe0d627fc8adb8717402d8fcdb90039f" resname="mb.manager.admin.layerset.instanceid">
+        <source>mb.manager.admin.layerset.instanceid</source>
+        <target>InstanceId</target>
+      </trans-unit>
+      <trans-unit id="03c37885863a75b058bceeae4e0d1c4c" resname="mb.manager.admin.layerset.id">
+        <source>mb.manager.admin.layerset.id</source>
+        <target>Id</target>
+      </trans-unit>
+      <trans-unit id="3b026dc345fecbb0cdeb1e1e66273bb5" resname="mb.manager.admin.layerset.id_description">
+        <source>mb.manager.admin.layerset.id_description</source>
+        <target>Id in Form: SourceId/InstanceId</target>
       </trans-unit>
     </body>
   </file>
