@@ -65,19 +65,29 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         $this->entity->setAccessConstraints($source->getAccessConstraints());
         $this->entity->setGetCapabilities($source->getGetCapabilities());
         $this->entity->setGetFeatureInfo($source->getGetFeatureInfo());
+        $this->entity->setGetLegendGraphic($source->getGetLegendGraphic());
+        $this->entity->setGetStyles($source->getGetStyles());
         $this->entity->setGetMap($source->getGetMap());
-        
+        # TODO other attributes
         $rootHandler = self::createHandler($this->container, $this->entity->getRootlayer());
         $rootHandler->updateFromSourceItem($source->getRootlayer());
 //        $this->refreshLayer($this->entity->getLayers()->get(0), $wmsFresh->getLayers()->get(0));
+        foreach ($this->getInstances() as $instance) {
+            $instHandler = self::createHandler($this->container, $instance);
+            $instHandler->generateConfiguration();
+        }
     }
 
     /**
      * @inheritdoc
      */
-    public function updateInstances()
+    public function getInstances()
     {
-        // TODO
+        $query = $this->container->get('doctrine')->getManager()->createQuery(
+            "SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.source=:sid");
+        $query->setParameters(array("sid" => $this->entity->getId()));
+        $instList = $query->getResult();
+        return $instList;
     }
 
 }

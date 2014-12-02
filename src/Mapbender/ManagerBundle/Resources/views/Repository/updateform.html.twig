@@ -12,10 +12,6 @@
 {% endblock %}
 
 {% block manager_content %}
-
-{% for manager in managers %}
-  {% render controller(manager.updateAction) %}
+  {% render controller(manager.updateformAction, {'sourceId': source.id}) %}
   <div class="clearContainer"></div>
-{% endfor %}
-
 {% endblock %}

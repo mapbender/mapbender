@@ -178,9 +178,33 @@ class RepositoryController extends Controller
     }
 
     /**
+     * Returns a Source update form.
+     *
+     * @ManagerRoute("/source/{sourceId}/updateform")
+     * @Method({"GET"})
+     * @Template
+     */
+    public function updateformAction($sourceId)
+    {
+        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
+            throw new AccessDeniedException();
+        }
+        $managers = $this->get('mapbender')->getRepositoryManagers();
+        $manager = $managers[$source->getManagertype()];
+        return array(
+            'manager' => $manager,
+            'source' => $source
+        );
+    }
+
+    /**
      * Updates a Source
      *
      * @ManagerRoute("/source/{sourceId}/update")
+     * @Method({"POST"})
      * @Template
      */
     public function updateAction($sourceId)
@@ -191,8 +215,13 @@ class RepositoryController extends Controller
         if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
             throw new AccessDeniedException();
         }
+
         $managers = $this->get('mapbender')->getRepositoryManagers();
         $manager = $managers[$source->getManagertype()];
+//        return array(
+//            'manager' => $manager,
+//            'source' => $source
+//        );
 
         $path = array(
             '_controller' => $manager['bundle'] . ":" . "Repository:update",

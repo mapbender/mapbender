@@ -196,6 +196,26 @@ class RepositoryController extends Controller
 
     /**
      * Updates a WMS Source
+     * @ManagerRoute("/{sourceId}/updateform")
+     * @Template("MapbenderWmsBundle:Repository:updateform.html.twig")
+     */
+    public function updateformAction($sourceId)
+    {
+        $source = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
+        $securityContext = $this->get('security.context');
+        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+        if (!$securityContext->isGranted('VIEW', $oid) && !$securityContext->isGranted('EDIT', $source)) {
+            throw new AccessDeniedException();
+        }
+
+        $form = $this->get("form.factory")->create(new WmsSourceSimpleType(), $source);
+        return array(
+            "form" => $form->createView()
+        );
+    }
+
+    /**
+     * Updates a WMS Source
      * @ManagerRoute("/{sourceId}/update")
      * @Template("MapbenderWmsBundle:Repository:updateform.html.twig")
      */
@@ -244,14 +264,14 @@ class RepositoryController extends Controller
                 if (!$wmssource) {
                     $this->get("logger")->debug('Could not parse data for url "' . $wmssource_req->getOriginUrl() . '"');
                     $this->get('session')->getFlashBag()->set('error',
-                                                    'Could not parse data for url "' . $wmssource_req->getOriginUrl() . '"');
+                                                              'Could not parse data for url "' . $wmssource_req->getOriginUrl() . '"');
                     return $this->redirect($this->generateUrl("mapbender_manager_repository_index", array(), true));
                 }
-                $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
+                $wmsOrig->setOriginUrl($wmssource_req->getOriginUrl());
 
                 $wmssourcehandler = EntityHandler::createHandler($this->container, $wmsOrig);
                 $wmssourcehandler->updateFromSource($wmssource);
-                
+
                 $this->getDoctrine()->getEntityManager()->persist($wmsOrig);
                 $this->getDoctrine()->getEntityManager()->flush();
                 $this->getDoctrine()->getEntityManager()->getConnection()->commit();
@@ -272,140 +292,6 @@ class RepositoryController extends Controller
         }
     }
 
-//
-//    /**
-//     * Calls a wms source from origin wms url.
-//     * 
-//     * @param WmsSource $wmsOrig origin wms
-//     * @return WmsSource a new wms
-//     */
-//    private function getActualSource($url, $user, )
-//    {
-//        $requestUrl = $this->getGetUrl($wmsOrig->getOriginUrl());
-//
-//        $proxy_config = $this->container->getParameter("owsproxy.proxy");
-//        $proxy_query = ProxyQuery::createFromUrl(trim($requestUrl), $wmsOrig->getUsername(), $wmsOrig->getPassword());
-//        if ($proxy_query->getGetPostParamValue("request", true) === null) {
-//            $proxy_query->addQueryParameter("request", "GetCapabilities");
-//        }
-//        if ($proxy_query->getGetPostParamValue("service", true) === null) {
-//            $proxy_query->addQueryParameter("service", "WMS");
-//        }
-//        $proxy = new CommonProxy($proxy_config, $proxy_query);
-//
-//        $wmssource = null;
-//        try {
-//            $browserResponse = $proxy->handle();
-//            $content = $browserResponse->getContent();
-//            $doc = WmsCapabilitiesParser::createDocument($content);
-//            $wmsParser = WmsCapabilitiesParser::getParser($doc);
-//            $wmssource = $wmsParser->parse();
-//        } catch (\Exception $e) {
-//            $this->get("logger")->debug($e->getMessage());
-//            $this->get('session')->setFlash('error', $e->getMessage());
-//            return $this->redirect($this->generateUrl(
-//                        "mapbender_manager_repository_index", array(), true));
-//        }
-//
-//        if (!$wmssource) {
-//            $this->get("logger")->debug('Could not parse data for url "' . $wmsOrig->getOriginUrl() . '"');
-//            $this->get('session')->setFlash('error', 'Could not parse data for url "' . $wmsOrig->getOriginUrl() . '"');
-//            return $this->redirect($this->generateUrl("mapbender_manager_repository_index", array(), true));
-//        }
-//        $wmssource->setOriginUrl($requestUrl);
-//        return $wmssource;
-//    }
-//
-//    /**
-//     * Refreshes a origin wms.
-//     * @param WmsSource $wmsOrig wms origin
-//     * @param WmsSource $wmsFresh
-//     */
-//    private function refreshSource(WmsSource $wmsOrig, WmsSource $wmsFresh)
-//    {
-//        $wmsOrig->setTitle($wmsFresh->getTitle());
-//        $wmsOrig->setName($wmsFresh->getName());
-//        $wmsOrig->setVersion($wmsFresh->getVersion());
-//        $wmsOrig->setDescription($wmsFresh->getDescription());
-//        $wmsOrig->setOnlineResource($wmsFresh->getOnlineResource());
-//        $wmsOrig->setExceptionFormats($wmsFresh->getExceptionFormats());
-//        $wmsOrig->setFees($wmsFresh->getFees());
-//        $wmsOrig->setAccessConstraints($wmsFresh->getAccessConstraints());
-//        $wmsOrig->setGetCapabilities($wmsFresh->getGetCapabilities());
-//        $wmsOrig->setGetFeatureInfo($wmsFresh->getGetFeatureInfo());
-//        $wmsOrig->setGetMap($wmsFresh->getGetMap());
-//        $this->refreshLayer($wmsOrig->getLayers()->get(0), $wmsFresh->getLayers()->get(0));
-//    }
-//
-//    /**
-//     * Udates a layer metadata
-//     * @param WmsLayerSource $layerOrig wms layer origin
-//     * @param WmsLayerSource $layerFresh wms layer
-//     */
-//    private function refreshLayer(WmsLayerSource $layerOrig, WmsLayerSource $layerFresh)
-//    {
-//        foreach ($layerOrig->getSublayer() as $layerOrigSublayer) {
-//            foreach ($layerFresh->getSublayer() as $layerFreshSublayer) {
-//                if ($layerOrigSublayer->getName() === $layerFreshSublayer->getName()) {
-//                    $this->refreshLayer($layerOrigSublayer, $layerFreshSublayer);
-//                    break;
-//                }
-//            }
-//        }
-//        $layerOrig->setName($layerFresh->getName());
-//        $layerOrig->setTitle($layerFresh->getTitle());
-//        $layerOrig->setLatlonBounds($layerFresh->getLatlonBounds());
-//        $layerOrig->setSrs($layerFresh->getSrs());
-//        $layerOrig->setAbstract($layerFresh->getAbstract());
-//        $this->getDoctrine()->getEntityManager()->persist($layerOrig);
-//        $this->getDoctrine()->getEntityManager()->flush();
-//    }
-//
-//    /**
-//     * Validates an url.
-//     * @param string $url an origin url 
-//     * @return string a valid url
-//     */
-//    private function getGetUrl($url)
-//    {
-//        $purl = parse_url($url);
-//        if (!isset($purl['scheme']) || !isset($purl['host'])) {
-//            $this->get("logger")->debug("The url is not valid.");
-//            $this->get('session')->setFlash('error', "The url is not valid.");
-//            return $this->redirect($this->generateUrl(
-//                        "mapbender_manager_repository_index", array(), true));
-//        }
-//        $getParamsHelp = array();
-//        if (isset($purl["query"])) {
-//            parse_str($purl["query"], $getParamsHelp);
-//            unset($purl["query"]);
-//        }
-//        $found = false;
-//        foreach ($getParamsHelp as $key => $value) {
-//            if (strtolower($key) === "version") {
-//                $getParamsHelp[$key] = '1.3.0';
-//                $found = true;
-//                break;
-//            }
-//        }
-//        if (!$found) {
-//            $getParamsHelp["version"] = '1.3.0';
-//        }
-//        $scheme = empty($purl["scheme"]) ? "http://" : $purl["scheme"] . "://";
-//
-//        $hostName = $this->container->get('request')->get("hostname", null);
-//        $host = $hostName === null ? $purl["host"] : trim($hostName);
-//        $port = empty($purl["port"]) ? "" : ":" . $purl["port"];
-//
-//        $path = empty($purl["path"]) ? "" : $purl["path"];
-//
-//        $urlquery = "";
-//        if (count($getParamsHelp) > 0) {
-//            $urlquery = "?" . http_build_query($getParamsHelp);
-//        }
-//        return $scheme . $host . $port . $path . $urlquery;
-//    }
-//
     private function saveLayer($em, $layer)
     {
         foreach ($layer->getSublayer() as $sublayer) {
