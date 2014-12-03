@@ -234,7 +234,7 @@ class RepositoryController extends Controller
             $form->bind($request);
             if ($form->isValid()) {
                 $wmsOrig = $this->getDoctrine()->getRepository("MapbenderCoreBundle:Source")->find($sourceId);
-                $this->getDoctrine()->getEntityManager()->getConnection()->beginTransaction();
+                $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
                 $proxy_config = $this->container->getParameter("owsproxy.proxy");
                 $proxy_query = ProxyQuery::createFromUrl(trim($wmssource_req->getOriginUrl()),
                                                               $wmssource_req->getUsername(),
@@ -272,9 +272,9 @@ class RepositoryController extends Controller
                 $wmssourcehandler = EntityHandler::createHandler($this->container, $wmsOrig);
                 $wmssourcehandler->updateFromSource($wmssource);
 
-                $this->getDoctrine()->getEntityManager()->persist($wmsOrig);
-                $this->getDoctrine()->getEntityManager()->flush();
-                $this->getDoctrine()->getEntityManager()->getConnection()->commit();
+                $this->getDoctrine()->getManager()->persist($wmsOrig);
+                $this->getDoctrine()->getManager()->flush();
+                $this->getDoctrine()->getManager()->getConnection()->commit();
                 $managers = $this->get('mapbender')->getRepositoryManagers();
                 $manager = $managers[$wmsOrig->getManagertype()];
                 $this->get('session')->getFlashBag()->set('success', 'Your wms source has been updated.');
