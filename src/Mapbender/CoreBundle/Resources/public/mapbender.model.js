@@ -157,6 +157,9 @@ Mapbender.Model = {
             }
         }
 
+        if(!centered && this.mbMap.options['center']){
+            this.map.olMap.setCenter(new OpenLayers.LonLat(this.mbMap.options['center']));
+        }
 
         if (true === addLayers) {
             $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
