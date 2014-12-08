@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\WmcBundle\Component;
 
 use Mapbender\CoreBundle\Component\Exception\XmlParseException;
@@ -15,8 +16,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class WmcParser
 {
-    
+
     protected $container;
+
     /**
      * The XML representation of the Capabilites Document
      * @var DOMDocument
@@ -36,8 +38,8 @@ abstract class WmcParser
     public function __construct(ContainerInterface $container, \DOMDocument $doc)
     {
         $this->container = $container;
-        $this->doc = $doc;
-        $this->xpath = new \DOMXPath($doc);
+        $this->doc       = $doc;
+        $this->xpath     = new \DOMXPath($doc);
         $this->xpath->registerNamespace("xlink", "http://www.w3.org/1999/xlink");
     }
 
@@ -55,9 +57,11 @@ abstract class WmcParser
         }
         try {
             $elm = $this->xpath->query($xpath, $contextElm);
-            if ($elm === null) return null;
+            if ($elm === null)
+                return null;
             $elm = $elm->item(0);
-            if($elm === null) return null;
+            if ($elm === null)
+                return null;
             if ($elm->nodeType == XML_ATTRIBUTE_NODE) {
                 return $elm->value;
             } else if ($elm->nodeType == XML_TEXT_NODE) {
@@ -104,8 +108,7 @@ abstract class WmcParser
      * @throws WmcException if a xml is not a wmc document.
      * @throws NotSupportedVersionException if a wmc version is not supported
      */
-    private static function checkWmcDocument(\DOMDocument $doc,
-        $validate = false)
+    private static function checkWmcDocument(\DOMDocument $doc, $validate = false)
     {
         if ($doc->documentElement->tagName !== "ViewContext") {
             throw new WmcException("Not supported Wmc Document");
@@ -117,8 +120,7 @@ abstract class WmcParser
 
         $version = $doc->documentElement->getAttribute("version");
         if ($version !== "1.1.0") {
-            throw new NotSupportedVersionException('The WMC version "'
-            . $version . '" is not supported.');
+            throw new NotSupportedVersionException('The WMC version "' . $version . '" is not supported.');
         }
         return $doc;
     }
