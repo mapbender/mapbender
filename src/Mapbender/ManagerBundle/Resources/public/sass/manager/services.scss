@@ -2,6 +2,7 @@
 @import "libs/mixins";
 @import "libs/icons";
 @import "modules/text";
+@import "element/mbslider";
 
 // ------------------------------------------------------------- SERVICES
 .listFilterInput{
@@ -137,7 +138,7 @@
   }
   .leftContainer .inputWrapper input{ width: 100%; }
   .dimensionGroup{
-    width: 320px;
+    width: 326px;
     position:absolute;
     right:0px;
     font-size:12px;
@@ -152,6 +153,28 @@
     }
     .on-off-content{
       background-color:$contentColor;
+    }
+    .on-off-content .on-off-content{
+      padding: 0 $space/2 $space/2 $space/2;
+    }
+    .labelCheck{
+      display: inline-block;
+      margin: 0  $space  0  $space/2;
+      height: auto;
+    }
+    .on-off-title {
+      padding: 0 $space/2 0 $space/2;
+      .checkWrapper {
+        margin-left: $space;
+      }
+    }
+    .checkWrapper{
+      display: inline-block;
+      margin: 0px;
+      height: auto;
+    }
+    .mb-slider{
+      margin-top: $space/2;
     }
   }
 }

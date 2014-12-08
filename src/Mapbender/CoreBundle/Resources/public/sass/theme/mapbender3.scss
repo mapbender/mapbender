@@ -97,7 +97,7 @@
   background-image: url($contentPatternUrl);
   border-top:1px solid darken(white, 30%);
   border-bottom:1px solid darken(white, 30%);
-  @include transition(all 0.4s ease-in-out);
+//  @include transition(all 0.4s ease-in-out);
 
   // style for the left side pane
   &.left{border-right:1px solid darken(white, 30%);}
