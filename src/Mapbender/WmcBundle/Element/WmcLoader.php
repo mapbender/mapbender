@@ -7,6 +7,8 @@ use Mapbender\WmcBundle\Component\WmcHandler;
 use Mapbender\WmcBundle\Component\WmcParser;
 use Mapbender\WmcBundle\Entity\Wmc;
 use Mapbender\WmcBundle\Form\Type\WmcLoadType;
+use OwsProxy3\CoreBundle\Component\CommonProxy;
+use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -304,13 +306,14 @@ class WmcLoader extends Element
     protected function getWmcFromUrl($url)
     {
         $config = $this->getConfiguration();
-        if (in_array("wmcurlloader", $config['components'])) {
-            $wmcurlHelp = $this->container->get('request')->get("_url", null);
-
+        if (in_array("wmcurlloader", $config['components']) && $this->container->get('request')->get("_url", null)) {
+            $wmcurlHelp = $this->container->get('request')->get("_url");
+            $rawUrl = parse_url($wmcurlHelp);
             $proxy_config = $this->container->getParameter("owsproxy.proxy");
-            $proxy_query = ProxyQuery::createFromUrl($wmcurl, $user, $pass);
+            $proxy_query = ProxyQuery::createFromUrl(
+                    $wmcurlHelp, isset($rawUrl['user']) ? $rawUrl['user'] : null,
+                                       isset($rawUrl['pass']) ? $rawUrl['pass'] : null);
             $proxy = new CommonProxy($proxy_config, $proxy_query);
-
             $wmc = null;
             try {
                 $browserResponse = $proxy->handle();
