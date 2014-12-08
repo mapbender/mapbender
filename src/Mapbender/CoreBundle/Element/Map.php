@@ -189,6 +189,12 @@ class Map extends Element
             }
         }
 
+        $center = $this->container->get('request')->get('center');
+        $centerArr = $center !== null ? explode(',', $center) : null;
+        if($center !== null && is_array($centerArr) && count($centerArr) === 2){
+            $configuration["center"] = $center;
+        }
+
         $configuration['extra'] = $extra;
 
         if (!isset($configuration['scales'])) {
