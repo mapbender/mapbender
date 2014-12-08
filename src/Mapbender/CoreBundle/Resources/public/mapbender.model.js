@@ -69,8 +69,8 @@ Mapbender.Model = {
         this.map.olMap.setBaseLayer(this.map.layersList.mapquery0);
         this._addLayerMaxExtent(this.map.layersList.mapquery0);
 
-        this.parseURL();
         this.setView(true);
+        this.parseURL();
     },
 
     /**
@@ -1159,14 +1159,15 @@ Mapbender.Model = {
     parseURL: function() {
         var self = this;
         var ids = Mapbender.urlParam('visiblelayers');
-        ids = ids ? ids.split(',') : [];
+        ids = ids ? decodeURIComponent(ids).split(',') : [];
         if (ids.length) {
             $.each(ids, function(idx, id) {
                 var id = id.split('/');
                 var options = {};
                 if (1 < id.length) {
+                    var layer = self.findLayer({origId: id[0]}, {origId: id[1]});
                     options.layers = {};
-                    options.layers[id[1]] = {
+                    options.layers[layer.layer.options.id] = {
                         options: {
                             treeOptions: {
                                 selected: true

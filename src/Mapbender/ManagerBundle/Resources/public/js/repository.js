@@ -1,28 +1,30 @@
 $(function() {
-    var showInfoBox = function() {
+    var showInfoBox = function(e) {
         var me = $(this);
-        var infoBox = me.find(".infoMsgBox");
-
-        if (infoBox.hasClass("hide")) {
-            $(".infoMsgBox").addClass("hide");
-            infoBox.removeClass("hide");
-        } else {
-            infoBox.addClass("hide");
+        if (e.currentTarget == e.target) {
+            var infoBox = me.find(".infoMsgBox");
+            if (infoBox.hasClass("hide")) {
+                $(".infoMsgBox").addClass("hide");
+                infoBox.removeClass("hide");
+            } else {
+                infoBox.addClass("hide");
+            }
+            e.stopPropagation();
+            return false;
         }
-        return false;
-    }
+    };
 
     function setRootState(className) {
         var root = $("#" + className);
-        var column = $("#instanceTableCheckBody").find("[data-check-identifier=" + className + "]")
+        var column = $("#instanceTableCheckBody").find("[data-check-identifier=" + className + "]");
         var rowCount = column.find(".checkWrapper:not(.checkboxDisabled)").length;
         var checkedCount = column.find(".iconCheckboxActive").length;
 
         root.removeClass("iconCheckboxActive").removeClass("iconCheckboxHalf");
 
-        if (rowCount == checkedCount) {
+        if (rowCount === checkedCount) {
             root.addClass("iconCheckboxActive");
-        } else if (checkedCount == 0) {
+        } else if (checkedCount === 0) {
             // do nothing!
         } else {
             root.addClass("iconCheckboxHalf");
@@ -57,7 +59,7 @@ $(function() {
             setRootState($(this).attr("id"));
             $(this).bind("click", toggleAllStates);
         });
-    }
+    };
     $("#instanceTableCheckHead").one("load", initRootState).load();
 
     // toggle permission Event

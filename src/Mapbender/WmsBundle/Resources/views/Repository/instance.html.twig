@@ -1,6 +1,6 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} - {{ form.vars.value.title }}{% endblock %}
+{% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} ({{instance.source.id}}/{{ instance.id }}) - {{ form.vars.value.title }}{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/regional/vendor/jquery/jquery-ui-1.11.1.custom/jquery-ui.min.css') }}" type="text/javascript" />

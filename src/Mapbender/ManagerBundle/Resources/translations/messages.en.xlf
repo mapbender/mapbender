@@ -154,10 +154,6 @@
         <source>mb.manager.admin.filter.layerset</source>
         <target>Filter layerset</target>
       </trans-unit>
-      <trans-unit id="03c37885863a75b058bceeae4e0d1c4c" resname="mb.manager.admin.layerset.id">
-        <source>mb.manager.admin.layerset.id</source>
-        <target>Id</target>
-      </trans-unit>
       <trans-unit id="912129d1d1dd160436f31fd4aed3f1df" resname="mb.manager.admin.layerset.title">
         <source>mb.manager.admin.layerset.title</source>
         <target>Title</target>
@@ -543,7 +539,14 @@
         <source>mb.core.entity.app.screenshotfile.resolution.error</source>
         <target>Only image files with %screenshotHeight% x %screenshotWidth% pixel or higher can be selected. Your file is %uploadWidth% x %uploadHeighth% pixel.</target>
       </trans-unit>
+      <trans-unit id="3b026dc345fecbb0cdeb1e1e66273bb5" resname="mb.manager.admin.layerset.id_description">
+        <source>mb.manager.admin.layerset.id_description</source>
+        <target>Id in the form of SourceId/InstanceId</target>
+      </trans-unit>
+      <trans-unit id="03c37885863a75b058bceeae4e0d1c4c" resname="mb.manager.admin.layerset.id">
+        <source>mb.manager.admin.layerset.id</source>
+        <target>Id</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
-
