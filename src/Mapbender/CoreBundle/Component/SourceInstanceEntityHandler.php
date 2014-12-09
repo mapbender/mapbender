@@ -21,7 +21,7 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     /**
      * Creates a SourceInstance
      */
-    abstract public function create();
+    abstract public function create($persist = true);
     
     /**
      * Remove a source from a database

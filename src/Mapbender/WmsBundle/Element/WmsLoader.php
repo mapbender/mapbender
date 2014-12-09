@@ -5,6 +5,10 @@ namespace Mapbender\WmsBundle\Element;
 use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Mapbender\CoreBundle\Component\EntityHandler;
+use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
+use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
  * WmsLoader
@@ -84,8 +88,8 @@ class WmsLoader extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        $wms_url = $this->container->get('request')->get('wms_url');
-        if ($wms_url) {
+        if ($this->container->get('request')->get('wms_url')) {
+            $wms_url = $this->container->get('request')->get('wms_url');
             $all = $this->container->get('request')->query->all();
             foreach ($all as $key => $value) {
                 if (strtolower($key) === "version" && stripos($wms_url, "version") === false) {
@@ -97,6 +101,10 @@ class WmsLoader extends Element
                 }
             }
             $configuration['wms_url'] = urldecode($wms_url);
+        }
+        if ($this->container->get('request')->get('wms_id')) {
+            $wmsId = $this->container->get('request')->get('wms_id');
+            $configuration['wms_id'] = $wmsId;
         }
         return $configuration;
     }
@@ -139,7 +147,7 @@ class WmsLoader extends Element
     {
         return $this->container->get('templating')
                 ->render('MapbenderWmsBundle:Element:wmsloader.html.twig',
-                    array(
+                         array(
                     'id' => $this->getId(),
                     "title" => $this->getTitle(),
                     'example_url' => $this->container->getParameter('wmsloader.example_url'),
@@ -153,15 +161,14 @@ class WmsLoader extends Element
     {
         //TODO ACL ACCESS
         switch ($action) {
+            case 'getInstances':
+                return $this->getInstances();
             case 'getCapabilities':
                 return $this->getCapabilities();
-                break;
             case 'signeUrl':
                 return $this->signeUrl();
-                break;
             case 'signeSources':
                 return $this->signeSources();
-                break;
             default:
                 throw new NotFoundHttpException('No such action');
         }
@@ -198,8 +205,8 @@ class WmsLoader extends Element
         $gc_url = urldecode($this->container->get('request')->get("url", null));
         $signer = $this->container->get('signer');
         $signedUrl = $signer->signUrl($gc_url);
-        return new Response(json_encode(array("success" => $signedUrl)),
-                200, array('Content-Type' => 'application/json'));
+        return new Response(json_encode(array("success" => $signedUrl)), 200,
+                                        array('Content-Type' => 'application/json'));
     }
 
     /**
@@ -209,13 +216,42 @@ class WmsLoader extends Element
      */
     protected function signeSources()
     {
-        $sources = json_decode($this->container->get('request')->get("sources", "[]"),true);
+        $sources = json_decode($this->container->get('request')->get("sources", "[]"), true);
         $signer = $this->container->get('signer');
         foreach ($sources as &$source) {
             $source['configuration']['options']['url'] = $signer->signUrl($source['configuration']['options']['url']);
         }
-        return new Response(json_encode(array("success" => json_encode($sources))),
-                200, array('Content-Type' => 'application/json'));
+        return new Response(json_encode(array("success" => json_encode($sources))), 200,
+                                                                       array('Content-Type' => 'application/json'));
+    }
+
+    /**
+     * Creates Instances from sources.
+     * @return array Instance configurations
+     */
+    protected function getInstances()
+    {
+        $wmsId = $this->container->get('request')->get("sources", null);
+        $instances = array();
+        $sourcesIds = explode(',', $wmsId);
+        foreach ($sourcesIds as $sourceid) {
+            $source = $this->container->get('doctrine')->getRepository("MapbenderWmsBundle:WmsSource")->find($sourceid);
+            $securityContext = $this->container->get('security.context');
+            $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
+            if (false !== $securityContext->isGranted('VIEW', $oid)) {
+                $instance = new WmsInstance();
+                $instance->setSource($source);
+                $entityHandler = EntityHandler::createHandler($this->container, $instance);
+                $entityHandler->create(false);
+                $instConfig = array(
+                        'type' => $entityHandler->getEntity()->getType(),
+                        'title' => $entityHandler->getEntity()->getTitle(),
+                        'configuration' => $entityHandler->getConfiguration($this->container->get('signer')));
+                $instances[] = $instConfig;
+            }
+        }
+        return new Response(json_encode(array("success" => json_encode($instances))), 200,
+                                                                       array('Content-Type' => 'application/json'));
     }
 
 }

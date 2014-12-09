@@ -27,7 +27,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     /**
      * @inheritdoc
      */
-    public function create()
+    public function create($persist = true)
     {
         $this->entity->setTitle($this->entity->getSource()->getTitle());
         $formats = $this->entity->getSource()->getGetMap()->getFormats();
@@ -50,25 +50,16 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->setDimensions($dimensions);
 
         $this->entity->setWeight(-1);
-
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
-        $this->container->get('doctrine')->getManager()->flush();
-
+        if ($persist) {
+            $this->container->get('doctrine')->getManager()->persist($this->entity);
+            $this->container->get('doctrine')->getManager()->flush();
+        }
         $wmslayer_root = $this->entity->getSource()->getRootlayer();
 
         $instLayer = new WmsInstanceLayer();
 
         $entityHandler = self::createHandler($this->container, $instLayer);
-        $entityHandler->create($this->entity, $wmslayer_root);
-        $num = 0;
-        foreach ($this->entity->getLayerset()->getInstances() as $instance) {
-            $instHandler = self::createHandler($this->container, $instance);
-            $instHandler->getEntity()->setWeight($num);
-            $instHandler->generateConfiguration();
-            $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
-            $this->container->get('doctrine')->getManager()->flush();
-            $num++;
-        }
+        $entityHandler->create($this->entity, $wmslayer_root, 0, $persist);
     }
 
     /**
@@ -124,8 +115,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
         return $configuration;
     }
-    
-    
+
     /**
      * @inheritdoc
      */
@@ -142,7 +132,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             )
         );
         foreach ($rootlayer->getSourceItem()->getBoundingBoxes() as $bbox) {
-            $srses = array_merge($srses, array($bbox->getSrs() => array(
+            $srses = array_merge($srses,
+                                 array($bbox->getSrs() => array(
                     floatval($bbox->getMinx()),
                     floatval($bbox->getMiny()),
                     floatval($bbox->getMaxx()),
@@ -155,8 +146,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
         $options = new WmsInstanceConfigurationOptions();
         $dimensions = array();
-        foreach($this->entity->getDimensions() as $dimension){
-            if($dimension->getActive()){
+        foreach ($this->entity->getDimensions() as $dimension) {
+            if ($dimension->getActive()) {
                 $name = $dimension->getName();
                 $dimensions[] = array(
                     'current' => $dimension->getCurrent(),
@@ -172,7 +163,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 );
             }
         }
-        
+
         $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet())
             ->setProxy($this->entity->getProxy())
             ->setVisible($this->entity->getVisible())
@@ -186,10 +177,10 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $wmsconf->setOptions($options);
         $entityHandler = self::createHandler($this->container, $rootlayer);
         $wmsconf->setChildren(array($entityHandler->generateConfiguration()));
-        
+
         $this->entity->setConfiguration($wmsconf->toArray());
     }
-    
+
     /**
      * Generates a configuration from an yml file
      */
@@ -273,8 +264,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
         $this->entity->setConfiguration($wmsconf->toArray());
     }
-    
-    
+
     /**
      * Signes urls.
      * 
