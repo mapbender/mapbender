@@ -1,4 +1,4 @@
-(function($){
+(function($) {
 
     $.widget("mapbender.mbWmsloader", {
         options: {
@@ -8,23 +8,23 @@
             wms_url: null
         },
         elementUrl: null,
-        _create: function(){
+        _create: function() {
             var self = this;
-            if(!Mapbender.checkTarget("mbWmsloader", this.options.target)){
+            if (!Mapbender.checkTarget("mbWmsloader", this.options.target)) {
                 return;
             }
 
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
-        _setup: function(){
+        _setup: function() {
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.element.hide();
-            if(Mapbender.declarative){
+            if (Mapbender.declarative) {
                 Mapbender.declarative['source.add.wms'] = $.proxy(this.loadDeclarativeWms, this);
-            }else{
+            } else {
                 Mapbender['declarative'] = {'source.add.wms': $.proxy(this.loadDeclarativeWms, this)};
             }
-            if(this.options.wms_url && this.options.wms_url !== ''){
+            if (this.options.wms_url && this.options.wms_url !== '') {
                 var options = {
                     'gcurl': this.options.wms_url,
                     'type': 'url',
@@ -37,16 +37,30 @@
                 };
                 this.loadWms(options);
             }
+
+            if (this.options.wms_id && this.options.wms_id !== '') {
+                var options = {
+                    'gcurl': '',
+                    'type': 'id',
+                    'layers': {},
+                    'global': {
+                        'mergeSource': false,
+                        'splitLayers': this.options.splitLayers,
+                        'options': {'treeOptions': {'selected': true}}
+                    }
+                };
+                this._getInstances(this.options.wms_id, options);
+            }
             this._trigger('ready');
             this._ready();
         },
-        defaultAction: function(callback){
+        defaultAction: function(callback) {
             this.open(callback);
         },
-        open: function(callback){
+        open: function(callback) {
             this.callback = callback ? callback : null;
             var self = this;
-            if(!this.popup || !this.popup.$element){
+            if (!this.popup || !this.popup.$element) {
                 this.element.show();
                 this.popup = new Mapbender.Popup2({
                     title: self.element.attr('title'),
@@ -62,16 +76,16 @@
                         'cancel': {
                             label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.cancel'),
                             cssClass: 'button buttonCancel critical right',
-                            callback: function(){
+                            callback: function() {
                                 self.close();
                             }
                         },
                         'ok': {
                             label: Mapbender.trans('mb.wms.wmsloader.dialog.btn.load'),
                             cssClass: 'button right',
-                            callback: function(){
+                            callback: function() {
                                 var url = $('#' + $(self.element).attr('id') + ' input[name="loadWmsUrl"]').val();
-                                if(url === ''){
+                                if (url === '') {
                                     $('#' + $(self.element).attr('id') + ' input[name="loadWmsUrl"]').focus();
                                     return false;
                                 }
@@ -93,20 +107,20 @@
                     }
                 });
                 this.popup.$element.on('close', $.proxy(this.close, this));
-            }else{
+            } else {
                 this.popup.open();
             }
         },
-        close: function(){
-            if(this.popup){
+        close: function() {
+            if (this.popup) {
                 this.element.hide().appendTo($('body'));
-                if(this.popup.$element)
+                if (this.popup.$element)
                     this.popup.destroy();
                 this.popup = null;
             }
             this.callback ? this.callback.call() : this.callback = null;
         },
-        loadDeclarativeWms: function(elm){
+        loadDeclarativeWms: function(elm) {
             var self = this;
             var options = {
                 'gcurl': elm.attr('mb-url') ? elm.attr('mb-url') : elm.attr('href'),
@@ -119,63 +133,63 @@
                     'options': {'treeOptions': {'selected': false}}
                 }
             };
-            if(elm.attr('mb-wms-layers') && elm.attr('mb-wms-layers') === '_all'){
+            if (elm.attr('mb-wms-layers') && elm.attr('mb-wms-layers') === '_all') {
                 options.global.options.treeOptions.selected = true;
-            }else if(elm.attr('mb-wms-layers')){
+            } else if (elm.attr('mb-wms-layers')) {
                 var layers = {};
-                $.each(elm.attr('mb-wms-layers').split(','), function(idx, item){
+                $.each(elm.attr('mb-wms-layers').split(','), function(idx, item) {
                     layers[item] = {options: {treeOptions: {selected: true}}};
                 });
                 options.layers = layers;
             }
-            if(options.global.mergeSource){
+            if (options.global.mergeSource) {
                 var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
                 var sources = mbMap.model.getSources();
-                for(var i = 0; i < sources.length; i++){
+                for (var i = 0; i < sources.length; i++) {
                     var source = sources[i];
                     var url_source = Mapbender.source.wms.removeSignature(source.configuration.options.url.toLowerCase());
-                    if(decodeURIComponent(options.gcurl.toLowerCase()).indexOf(decodeURIComponent(url_source)) === 0){
+                    if (decodeURIComponent(options.gcurl.toLowerCase()).indexOf(decodeURIComponent(url_source)) === 0) {
                         // source exists
                         mbMap.model.changeLayerState({id: source.id}, options, options.global.options.treeOptions.selected, options.global.mergeLayers);
                         return false;
                     }
                 }
                 this.loadWms(options);
-            }else{
+            } else {
                 this.loadWms(options);
             }
             return false;
         },
-        loadWms: function(options){
+        loadWms: function(options) {
             var self = this;
-            if(!options.gcurl || options.gcurl === '' ||
-                (options.gcurl.toLowerCase().indexOf("http://") !== 0 && options.gcurl.toLowerCase().indexOf("https://") !== 0)){
+            if (!options.gcurl || options.gcurl === '' ||
+                    (options.gcurl.toLowerCase().indexOf("http://") !== 0 && options.gcurl.toLowerCase().indexOf("https://") !== 0)) {
                 Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.url'));
                 return;
             }
             var params = OpenLayers.Util.getParameters(options.gcurl);
             var version = null, request = null, service = null;
-            for(param in params){
-                if(param.toUpperCase() === "VERSION"){
+            for (param in params) {
+                if (param.toUpperCase() === "VERSION") {
                     version = params[param];
-                }else if(param.toUpperCase() === "REQUEST"){
+                } else if (param.toUpperCase() === "REQUEST") {
                     request = params[param];
-                }else if(param.toUpperCase() === "SERVICE"){
+                } else if (param.toUpperCase() === "SERVICE") {
                     service = params[param];
                 }
             }
-            if(request === null || service === null){
+            if (request === null || service === null) {
                 Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.url'));
                 return;
             }
 
-            if(service.toUpperCase() !== "WMS"){
+            if (service.toUpperCase() !== "WMS") {
                 Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.service', {"service": service}));
                 return false;
-            }else if(request.toUpperCase() !== "GETCAPABILITIES" && request.toUpperCase() !== 'CAPABILITIES'){
-                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.operation', {"operation": request }));
+            } else if (request.toUpperCase() !== "GETCAPABILITIES" && request.toUpperCase() !== 'CAPABILITIES') {
+                Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.operation', {"operation": request}));
                 return false;
-            }else if(version && !(version.toUpperCase() === "1.1.0" || version.toUpperCase() === "1.1.1" || version.toUpperCase() === "1.3.0")){
+            } else if (version && !(version.toUpperCase() === "1.1.0" || version.toUpperCase() === "1.1.1" || version.toUpperCase() === "1.3.0")) {
                 Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.version', {"version": version}));
                 return false;
             }
@@ -185,17 +199,17 @@
                     url: options.gcurl
                 },
                 dataType: 'text',
-                success: function(data, textStatus, jqXHR){
+                success: function(data, textStatus, jqXHR) {
                     self._getCapabilitiesUrlSuccess(data, options);
                     // Maybe to much, need to be scoped!
 //                    $(".checkbox").trigger("change");
                 },
-                error: function(jqXHR, textStatus, errorThrown){
+                error: function(jqXHR, textStatus, errorThrown) {
                     self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
                 }
             });
         },
-        _getCapabilitiesUrlSuccess: function(xml, sourceOpts){
+        _getCapabilitiesUrlSuccess: function(xml, sourceOpts) {
             var self = this;
             var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
             sourceOpts['global']['defaultFormat'] = this.options.defaultFormat;
@@ -209,45 +223,70 @@
                 },
                 type: 'POST',
                 dataType: 'json',
-                success: function(response){
-                    if(response.success){
+                success: function(response) {
+                    if (response.success) {
                         var sources = $.parseJSON(response.success);
                         self._addSources(sources, sourceOpts);
-                    }else if(response.error){
+                    } else if (response.error) {
                         Mapbender.error(response.error);
                     }
                 },
-                error: function(jqXHR, textStatus, errorThrown){
+                error: function(jqXHR, textStatus, errorThrown) {
                     self._getCapabilitiesUrlError(jqXHR, textStatus, errorThrown);
                 }
             });
         },
-
-        _addSources: function(sourceDefs, sourceOpts){
+        _getInstances: function(scvIds, sourceOpts) {
             var self = this;
             var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
-            $.each(sourceDefs, function(idx, sourceDef){
+            sourceOpts['global']['defaultFormat'] = this.options.defaultFormat;
+            sourceOpts['global']['defaultInfoFormat'] = this.options.defaultInfoFormat;
+            sourceOpts['model'] = mbMap.model;
+            $.ajax({
+                url: self.elementUrl + 'getInstances',
+                data: {
+                    sources: scvIds
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        var sources = $.parseJSON(response.success);
+                        self._addSources(sources, sourceOpts);
+                    } else if (response.error) {
+                        Mapbender.error(response.error);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
+                }
+            });
+        },
+        _addSources: function(sourceDefs, sourceOpts) {
+            var self = this;
+            var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
+            $.each(sourceDefs, function(idx, sourceDef) {
                 var opts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
-                if(!sourceOpts.global.mergeSource){
+                if (!sourceOpts.global.mergeSource) {
                     mbMap.addSource(sourceDef, null, null);
-                }else if(mbMap.model.findSource(opts).length === 0){
+                } else if (mbMap.model.findSource(opts).length === 0) {
                     mbMap.addSource(sourceDef, null, null);
                 }
 
             });
         },
-        _getCapabilitiesUrlError: function(xml, textStatus, jqXHR){
+        _getCapabilitiesUrlError: function(xml, textStatus, jqXHR) {
             Mapbender.error(Mapbender.trans('mb.wms.wmsloader.error.load'));
         },
-        ready: function(callback){
-            if(this.readyState === true){
+        ready: function(callback) {
+            if (this.readyState === true) {
                 callback();
-            }else{
+            } else {
                 this.readyCallbacks.push(callback);
             }
         },
-        _ready: function(){
-            for(callback in this.readyCallbacks){
+        _ready: function() {
+            for (callback in this.readyCallbacks) {
                 callback();
                 delete(this.readyCallbacks[callback]);
             }
