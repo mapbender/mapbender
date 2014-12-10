@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Utils\UrlUtil;
+
 /**
  * The class with utility functions.
  *
@@ -87,6 +89,7 @@ class Utils
     }
 
     /**
+     * DEPRECATED, use Mapbender\CoreBundle\Utils\UrlUtil::validateUrl()
      * Validates an URL
      *
      * @param string $url URL
@@ -96,28 +99,7 @@ class Utils
      */
     public static function validateUrl($url, $paramsToRemove)
     {
-        $rowUrl = parse_url($url);
-        $newurl = $rowUrl["scheme"] . "://" . $rowUrl['host'];
-        if (isset($rowUrl['port']) && intval($rowUrl['port']) !== 80) {
-            $newurl .= ':' . $rowUrl['port'];
-        }
-        if (isset($rowUrl['path']) && strlen($rowUrl['path']) > 0) {
-            $newurl .= $rowUrl['path'];
-        }
-        $queries = array();
-        $getParams = array();
-        if (isset($rowUrl["query"])) {
-            parse_str($rowUrl["query"], $getParams);
-        }
-        foreach ($getParams as $key => $value) {
-            if (!in_array(strtolower($key), $paramsToRemove)) {
-                $queries[] = $key . "=" . $value;
-            }
-        }
-        if (count($queries) > 0) {
-            $newurl .= '?' . implode("&", $queries);
-        }
-        return $newurl;
+        return UrlUtil::validateUrl($url, array(), $paramsToRemove);
     }
 
     public static function copyOrderRecursive($sourceOrder, $destinationOrder)

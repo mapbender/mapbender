@@ -10,6 +10,7 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
@@ -146,26 +147,30 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
         $options = new WmsInstanceConfigurationOptions();
         $dimensions = array();
+        $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet());
         foreach ($this->entity->getDimensions() as $dimension) {
             if ($dimension->getActive()) {
-                $name = $dimension->getName();
                 $dimensions[] = array(
                     'current' => $dimension->getCurrent(),
                     'default' => $dimension->getDefault(),
                     'multipleValues' => $dimension->getMultipleValues(),
                     'name' => $dimension->getName(),
-                    '__name' => $name === 'time' || $name === 'elevation' ? $name : "dim_" . $name,
+                    '__name' => $dimension->getParameterName(),
                     'nearestValue' => $dimension->getNearestValue(),
                     'unitSymbol' => $dimension->getUnitSymbol(),
                     'units' => $dimension->getUnits(),
                     'extent' => $dimension->getData($dimension->getExtent()),
                     'type' => $dimension->getType(),
                 );
+                if ($dimension->getDefault()) {
+                    $options->setUrl(
+                        UrlUtil::validateUrl($options->getUrl(), array(),
+                                             array($dimension->getParameterName() => $dimension->getDefault())));
+                }
             }
         }
 
-        $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet())
-            ->setProxy($this->entity->getProxy())
+        $options->setProxy($this->entity->getProxy())
             ->setVisible($this->entity->getVisible())
             ->setFormat($this->entity->getFormat())
             ->setInfoformat($this->entity->getInfoformat())
