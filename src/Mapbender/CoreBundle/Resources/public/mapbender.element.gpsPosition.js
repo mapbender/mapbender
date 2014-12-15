@@ -1,9 +1,12 @@
 (function($) {
-
+var firstPosition = true;
 $.widget("mapbender.mbGpsPosition", {
     options: {
         follow: false,
-        average: 1
+        average: 1,
+        zoomToAccuracy: true,
+        centerOnFirstPosition: true,
+        zoomOnFirstPosition: true
     },
 
     map: null,
@@ -72,6 +75,8 @@ $.widget("mapbender.mbGpsPosition", {
 
                 self._createMarker(p);
                 self._centerMap(p);
+                
+                if(firstPosition) firstPosition = false;
 
             }, function error(msg) {}, { enableHighAccuracy: true, maximumAge: 0 });
         } else {
@@ -98,10 +103,24 @@ $.widget("mapbender.mbGpsPosition", {
     _centerMap: function (point){
         var olmap = this.map.map.olMap;
         var extent = olmap.getExtent();
-        if (extent.containsLonLat(point) === false || true === this.options.follow || true)
-        {
+        if (extent.containsLonLat(point) === false || true === this.options.follow) {
+            olmap.panTo(point);
+        } else if(firstPosition && this.options.centerOnFirstPosition) {
             olmap.panTo(point);
         }
+    },
+    
+    _zoomMap: function(accuracy){
+        if(!accuracy) return; // no accurancy
+        if(!zoomToAccuracy) return;
+        if(!this.options.zoomToAccuracy || !(firstPosition && this.options.zoomOnFirstPosition)) return;
+        
+        var olmap = this.map.map.olMap;
+        var mpis = [1764.218, 352.843, 176.422, 35.284, 17.642, 8.821, 3.528, 2.646, 1.764, 0.882, 0.353, 0.176]; // meters per pixel in corresponding zoomLevel
+        var resolution = olmap.getSize();
+        var zoomLevel = 11;
+        while (zoomLevel >= 0 && mpis[zoomLevel] * resolution.w < accuracy && mpis[zoomLevel] * resolution.h < accuracy) zoomLevel--;
+        olmap.zoomTo(zoomLevel);
     },
 
     _activateTimer: function (){
