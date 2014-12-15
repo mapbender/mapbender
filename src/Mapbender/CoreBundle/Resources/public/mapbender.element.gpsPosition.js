@@ -2,7 +2,7 @@
 var firstPosition = true;
 var accurancyStyle = {
     fillColor: '#000',
-    fillOpacity: 0.1,
+    fillOpacity: 1,
     strokeWidth: 1,
     strokeColor: '#000'
 };
@@ -107,28 +107,31 @@ $.widget("mapbender.mbGpsPosition", {
         markers.addMarker(new OpenLayers.Marker(position,icon));
 
         // Accurancy
+        if(!accuracy) return;
+        var candidates = olmap.getLayersByName('Accuracy');
+        if (candidates.length > 0){
+            olmap.removeLayer(candidates[0]);
+            candidates[0].destroy();
+        }
+        var vector = new OpenLayers.Layer.Vector( "Accuracy" );
+        olmap.addLayer(vector);
+        console.warn(window.g = olmap);
         var circle = new OpenLayers.Feature.Vector(
             OpenLayers.Geometry.Polygon.createRegularPolygon(
-                position,
-                accuracy/2,
+                olmap.getCenter(),//position,
+                100,//accuracy/2,
                 40,
                 0
             ),
             {},
             accurancyStyle
         );
-        
-        
-        
+        console.log(circle);
+console.log("Radius in m:", accuracy/2);
+        vector.addFeatures([circle]);
+        vector.drawFeature(circle);
+console.log("draw", circle);
         return;
-        markers.addFeatures([
-            new OpenLayers.Feature.Vector(
-                
-            )
-        ]);
-        var size = new OpenLayers.Size(20,20);
-        var icon = new OpenLayers.Icon(Mapbender.configuration.application.urls.asset + 'bundles/mapbendercore/image/marker_fett.gif', size);
-        markers.addMarker(new OpenLayers.Marker(position,icon))
     },
 
     _centerMap: function (point){
