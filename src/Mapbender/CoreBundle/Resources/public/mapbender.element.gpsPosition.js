@@ -1,10 +1,16 @@
 (function($) {
 var firstPosition = true;
+var accurancyStyle = {
+    fillColor: '#000',
+    fillOpacity: 0.1,
+    strokeWidth: 1,
+    strokeColor: '#000'
+};
 $.widget("mapbender.mbGpsPosition", {
     options: {
         follow: false,
         average: 1,
-        zoomToAccuracy: true,
+        zoomToAccuracy: false,
         centerOnFirstPosition: true,
         zoomOnFirstPosition: true
     },
@@ -73,8 +79,9 @@ $.widget("mapbender.mbGpsPosition", {
                     return memo;
                 }, new OpenLayers.LonLat(0, 0));
 
-                self._createMarker(p);
+                self._createMarker(p, position.coords.accuracy);
                 self._centerMap(p);
+                self._zoomMap(p, position.coords.accuracy);
                 
                 if(firstPosition) firstPosition = false;
 
@@ -84,7 +91,7 @@ $.widget("mapbender.mbGpsPosition", {
         }
     },
 
-    _createMarker: function (position) {
+    _createMarker: function (position, accuracy) {
         var olmap = this.map.map.olMap;
         var markers;
         var candidates = olmap.getLayersByName('Markers');
@@ -98,6 +105,27 @@ $.widget("mapbender.mbGpsPosition", {
         var size = new OpenLayers.Size(20,20);
         var icon = new OpenLayers.Icon(Mapbender.configuration.application.urls.asset + 'bundles/mapbendercore/image/marker_fett.gif', size);
         markers.addMarker(new OpenLayers.Marker(position,icon));
+
+        // Accurancy
+        var circle = new OpenLayers.Feature.Vector(
+            OpenLayers.Geometry.Polygon.createRegularPolygon(
+                position,
+                accuracy/2,
+                40,
+                0
+            ),
+            {},
+            accurancyStyle
+        );
+        return;
+        markers.addFeatures([
+            new OpenLayers.Feature.Vector(
+                
+            )
+        ]);
+        var size = new OpenLayers.Size(20,20);
+        var icon = new OpenLayers.Icon(Mapbender.configuration.application.urls.asset + 'bundles/mapbendercore/image/marker_fett.gif', size);
+        markers.addMarker(new OpenLayers.Marker(position,icon))
     },
 
     _centerMap: function (point){
@@ -110,17 +138,19 @@ $.widget("mapbender.mbGpsPosition", {
         }
     },
     
-    _zoomMap: function(accuracy){
+    _zoomMap: function(point, accuracy){
         if(!accuracy) return; // no accurancy
-        if(!zoomToAccuracy) return;
-        if(!this.options.zoomToAccuracy || !(firstPosition && this.options.zoomOnFirstPosition)) return;
-        
+        if(!this.options.zoomToAccuracy && !(this.options.zoomOnFirstPosition && firstPosition)) return;
+
         var olmap = this.map.map.olMap;
-        var mpis = [1764.218, 352.843, 176.422, 35.284, 17.642, 8.821, 3.528, 2.646, 1.764, 0.882, 0.353, 0.176]; // meters per pixel in corresponding zoomLevel
-        var resolution = olmap.getSize();
-        var zoomLevel = 11;
-        while (zoomLevel >= 0 && mpis[zoomLevel] * resolution.w < accuracy && mpis[zoomLevel] * resolution.h < accuracy) zoomLevel--;
-        olmap.zoomTo(zoomLevel);
+
+        var metersProj = new OpenLayers.Projection("EPSG:900913");
+        var currentProj = olmap.getProjectionObject();
+        var pointInMeters = point.transform(currentProj, metersProj);
+        var min = new OpenLayers.LonLat(pointInMeters.lon-(accuracy/2),pointInMeters.lat-(accuracy/2)).transform(metersProj, currentProj);
+        var max = new OpenLayers.LonLat(pointInMeters.lon+(accuracy/2),pointInMeters.lat+(accuracy/2)).transform(metersProj, currentProj);
+        console.log(min.lon, min.lat, max.lon, max.lat);
+        olmap.zoomToExtent(new OpenLayers.Bounds(min.lon, min.lat, max.lon, max.lat));
     },
 
     _activateTimer: function (){
@@ -141,6 +171,7 @@ $.widget("mapbender.mbGpsPosition", {
             olmap.removeLayer(markers);
             markers.destroy();
         }
+        firstPosition = true;
     },
     /**
      *
