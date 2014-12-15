@@ -190,14 +190,6 @@ class DimensionSubscriber implements EventSubscriberInterface
                                     'auto_initialize' => false,
                                     'read_only' => $isVordefined,
                                     'required' => false)));
-//                $form->add($this->factory->createNamed('extent', 'hidden', null,
-//                            array(
-//                            'required' => true,
-//                            'auto_initialize' => false)))
-//                    ->add($this->factory->createNamed('origextent', 'hidden', null,
-//                            array(
-//                            'required' => true,
-//                            'auto_initialize' => false)));
             }
         }
     }

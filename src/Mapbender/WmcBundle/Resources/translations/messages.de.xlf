@@ -224,7 +224,7 @@
       </trans-unit>
       <trans-unit id="b516d036d029316adb16f384d744ee3e" resname="mb.wmc.wmc.delete_confirm">
         <source>mb.wmc.wmc.delete_confirm</source>
-        <target>Möchten Sie wirklich die Konfiguration mit dem Titel &lt;em&gt;%wmc_title%&lt;/em&gt; und der ID &lt;em&gt;%wmc_id%&lt;/em&gt; löschen?</target>
+        <target><![CDATA[Möchten Sie wirklich die Konfiguration mit dem Titel <em>%wmc_title%</em> und der ID <em>%wmc_id%</em> löschen?]]></target>
       </trans-unit>
       <trans-unit id="cd08999d47cf93c1e3e552de4fdb5aec" resname="mb.wmc.wmceditor.list.id">
         <source>mb.wmc.wmceditor.list.id</source>

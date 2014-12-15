@@ -156,7 +156,7 @@
       </trans-unit>
       <trans-unit id="b516d036d029316adb16f384d744ee3e" resname="mb.wmc.wmc.delete_confirm">
         <source>mb.wmc.wmc.delete_confirm</source>
-        <target>¿Realmente quieres remover el WMC con el titulo &lt;em&gt;%wmc_title%&lt;/em&gt; y el id &lt;em&gt;%wmc_id%&lt;/em&gt;?</target>
+        <target><![CDATA[¿Realmente quieres remover el WMC con el titulo <em>%wmc_title%</em> y el id <em>%wmc_id%</em>?]]></target>
       </trans-unit>
       <trans-unit id="cd08999d47cf93c1e3e552de4fdb5aec" resname="mb.wmc.wmceditor.list.id">
         <source>mb.wmc.wmceditor.list.id</source>

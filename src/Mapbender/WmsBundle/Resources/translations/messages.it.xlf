@@ -686,6 +686,22 @@
         <source>mb.wms.wmsloader.repo.instancelayerform.label.id.description</source>
         <target>Instance Layer Id in the from of: SourceId-SourceLayerId/InstanceId-InstanceLayerId</target>
       </trans-unit>
+      <trans-unit id="f10e8560b3828ce53198437e5676c72f" resname="mb.wms.dimhandler.class.title">
+        <source>mb.wms.dimhandler.class.title</source>
+        <target>Dimensions handler</target>
+      </trans-unit>
+      <trans-unit id="42ebea14b3e8f8d6104b48330209866a" resname="mb.wms.dimhandler.class.description">
+        <source>mb.wms.dimhandler.class.description</source>
+        <target>DimensionsHandler groups and calls the dimension supported instances at the map</target>
+      </trans-unit>
+      <trans-unit id="f488bc9686cf461f1f1799c055f4d70d" resname="mb.wms.dimhandler.tag.dimension">
+        <source>mb.wms.dimhandler.tag.dimension</source>
+        <target>dimension</target>
+      </trans-unit>
+      <trans-unit id="5080c4d4ef665793e3628e2d61471406" resname="mb.wms.dimhandler.tag.handler">
+        <source>mb.wms.dimhandler.tag.handler</source>
+        <target>handler</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
