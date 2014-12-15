@@ -117,6 +117,9 @@ $.widget("mapbender.mbGpsPosition", {
             {},
             accurancyStyle
         );
+        
+        
+        
         return;
         markers.addFeatures([
             new OpenLayers.Feature.Vector(
@@ -149,7 +152,6 @@ $.widget("mapbender.mbGpsPosition", {
         var pointInMeters = point.transform(currentProj, metersProj);
         var min = new OpenLayers.LonLat(pointInMeters.lon-(accuracy/2),pointInMeters.lat-(accuracy/2)).transform(metersProj, currentProj);
         var max = new OpenLayers.LonLat(pointInMeters.lon+(accuracy/2),pointInMeters.lat+(accuracy/2)).transform(metersProj, currentProj);
-        console.log(min.lon, min.lat, max.lon, max.lat);
         olmap.zoomToExtent(new OpenLayers.Bounds(min.lon, min.lat, max.lon, max.lat));
     },
 
