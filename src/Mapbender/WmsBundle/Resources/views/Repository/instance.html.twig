@@ -13,7 +13,6 @@
 
 {% block js %}
   <script type="text/javascript" src="{{ asset('bundles/mapbendercore/vendor/joii.min.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/mapbender.wms.dimension.js') }}"></script>
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script>
 {% endblock %}
@@ -72,16 +71,6 @@
         {{ form_widget(form.buffer) }} <label for="{{form.buffer.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.buffer"|trans}}</label>
         <div class="clear"></div>
       </div>
-      {% if form.dimensions is not null and form.dimensions | length > 0 %}
-      <div class="dimensionGroup">
-        <div id="dimension" class="on-off on-off-title">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
-        <div id="dimension-content" class="on-off-content hidden">
-          {% for dim in form.dimensions %}
-            {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
-          {% endfor %}
-        </div>
-      </div>
-      {% endif %}
     </div>
     {% set root = instance.source.getRootlayer() %}
     <table id="instanceTable" class="table instanceTable">
