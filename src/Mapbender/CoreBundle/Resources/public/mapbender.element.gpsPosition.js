@@ -1,18 +1,18 @@
 (function($) {
 var firstPosition = true;
-var accurancyStyle = {
-    fillColor: '#FFF',
-    fillOpacity: 0.5,
-    strokeWidth: 1,
-    strokeColor: '#FFF'
-};
 $.widget("mapbender.mbGpsPosition", {
     options: {
         follow: false,
         average: 1,
         zoomToAccuracy: false,
         centerOnFirstPosition: true,
-        zoomOnFirstPosition: true
+        zoomToAccuratyOnFirstPosition: true,
+        accurancyStyle: {
+            fillColor: '#FFF',
+            fillOpacity: 0.5,
+            strokeWidth: 1,
+            strokeColor: '#FFF'
+        }
     },
 
     map: null,
@@ -136,7 +136,7 @@ $.widget("mapbender.mbGpsPosition", {
                 0
             ),
             {},
-            accurancyStyle
+            self.options.accurancyStyle
         );
         vector.addFeatures([circle]);
     },
@@ -153,7 +153,7 @@ $.widget("mapbender.mbGpsPosition", {
     
     _zoomMap: function(point, accuracy){
         if(!accuracy) return; // no accurancy
-        if(!this.options.zoomToAccuracy && !(this.options.zoomOnFirstPosition && firstPosition)) return;
+        if(!this.options.zoomToAccuracy && !(this.options.zoomToAccuratyOnFirstPosition && firstPosition)) return;
 
         var olmap = this.map.map.olMap;
 
