@@ -6,7 +6,7 @@ $.widget("mapbender.mbGpsPosition", {
         average: 1,
         zoomToAccuracy: false,
         centerOnFirstPosition: true,
-        zoomToAccuratyOnFirstPosition: true,
+        zoomToAccuracyOnFirstPosition: true,
         accurancyStyle: {
             fillColor: '#FFF',
             fillOpacity: 0.5,
@@ -154,7 +154,7 @@ $.widget("mapbender.mbGpsPosition", {
     
     _zoomMap: function(point, accuracy){
         if(!accuracy) return; // no accurancy
-        if(!this.options.zoomToAccuracy && !(this.options.zoomToAccuratyOnFirstPosition && firstPosition)) return;
+        if(!this.options.zoomToAccuracy && !(this.options.zoomToAccuracyOnFirstPosition && firstPosition)) return;
 
         var olmap = this.map.map.olMap;
 
@@ -202,7 +202,7 @@ $.widget("mapbender.mbGpsPosition", {
     _ready: function() {
         for(callback in this.readyCallbacks) {
             callback();
-            delete(this.readyCallbacks[callback]);
+            delete(this.readyCallbacks[callback]); // TODO: delete on an array! Do we really want to do this?
         }
         this.readyState = true;
     }
