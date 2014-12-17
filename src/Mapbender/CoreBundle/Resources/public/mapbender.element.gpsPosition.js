@@ -132,7 +132,7 @@ $.widget("mapbender.mbGpsPosition", {
             OpenLayers.Geometry.Polygon.createRegularPolygon(
                 
                 new OpenLayers.Geometry.Point(position.lon, position.lat),
-                differance, //0.1,//accuracy/2,
+                differance,
                 40,
                 0
             ),
