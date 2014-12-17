@@ -92,6 +92,7 @@ $.widget("mapbender.mbGpsPosition", {
     },
 
     _createMarker: function (position, accuracy) {
+        var self = this;
         var olmap = this.map.map.olMap;
         var markers;
         var candidates = olmap.getLayersByName('Markers');

@@ -52,7 +52,17 @@ class GpsPositionAdminType extends AbstractType
                 'property_path' => '[average]'
                 ))
             ->add('follow', 'checkbox', array(
-                'property_path' => '[follow]'));
+                'required' => false,
+                'property_path' => '[follow]'))
+            ->add('centerOnFirstPosition', 'checkbox', array(
+                'required' => false,
+                'property_path' => '[centerOnFirstPosition]'))
+            ->add('zoomToAccuracy', 'checkbox', array(
+                'required' => false,
+                'property_path' => '[zoomToAccuracy]'))
+            ->add('zoomToAccuracyonFirstPosition', 'checkbox', array(
+                'required' => false,
+                'property_path' => '[zoomToAccuracyonFirstPosition]'));
     }
 
 }
