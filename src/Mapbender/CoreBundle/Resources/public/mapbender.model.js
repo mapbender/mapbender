@@ -71,8 +71,10 @@ Mapbender.Model = {
 
         this.setView(true);
         this.parseURL();
+        if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+            this.changeProjection({projection: this.getProj(this.mbMap.options.targetsrs)});
+        }
     },
-
     /**
      * Set map view: extent from URL parameters or configuration and POIs
      */
@@ -81,7 +83,7 @@ Mapbender.Model = {
         var start_extent = this.mapStartExtent;
 
         var pois = [],
-            bbox = null;
+                bbox = null;
         if (this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
             bbox = this.mbMap.options.extra['bbox'] ?
                     OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']) :
@@ -193,7 +195,7 @@ Mapbender.Model = {
         for (var i = 0; i < this.srsDefs.length; i++) {
             if (this.srsDefs[i].name === srscode) {
                 proj = new OpenLayers.Projection(this.srsDefs[i].name);
-                if(!proj.proj.units) {
+                if (!proj.proj.units) {
                     proj.proj.units = 'degrees';
                 }
                 return proj;
@@ -678,7 +680,7 @@ Mapbender.Model = {
                         mqLayer.olLayer.clearGrid();
                     }
                     var tileManager = this.map.olMap.tileManager;
-                    if(tileManager) {
+                    if (tileManager) {
                         tileManager.clearTileQueue({object: mqLayer.olLayer});
                     }
                     var removedMq = mqLayer.remove();
