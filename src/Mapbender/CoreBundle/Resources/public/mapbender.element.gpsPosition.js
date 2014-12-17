@@ -184,7 +184,24 @@ $.widget("mapbender.mbGpsPosition", {
             olmap.removeLayer(markers);
             markers.destroy();
         }
+
+        var vector;
+        var candidates = olmap.getLayersByName('Accuracy');
+        if (candidates.length > 0){
+            vector = candidates[0];
+            olmap.removeLayer(vector);
+            vector.destroy();
+        }
         firstPosition = true;
+    },
+    toggleTracking: function(){
+      this._timerGeolocation();
+    },
+    activate: function(){
+      this._activateTimer();
+    },
+    deactivate: function(){
+      this._activateTimer();
     },
     /**
      *
