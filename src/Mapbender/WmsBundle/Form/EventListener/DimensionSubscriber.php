@@ -91,105 +91,93 @@ class DimensionSubscriber implements EventSubscriberInterface
     private function addFields($form, $data, $event)
     {
         $name = $data->getName();
-        $dimJs = array(
-            'current' => $data->getCurrent(),
-            'default' => $data->getDefault(),
-            'multipleValues' => $data->getMultipleValues(),
-            'name' => $data->getName(),
-            '__name' => $name === 'time' || $name === 'elevation' ? $name : "dim_" . $name,
-            'nearestValue' => $data->getNearestValue(),
-            'unitSymbol' => $data->getUnitSymbol(),
-            'units' => $data->getUnits(),
-            'extent' => $data->getData($data->getExtent()),
-            'origextent' => $data->getData($data->getOrigextent()),
-            'type' => $data->getType(),
-        );
+        $dimJs = $data->getConfiguration();
         $isVordefined = $data->getOrigextent() !== null;
         $form->add($this->factory->createNamed('creator', 'hidden', null,
                                                array(
-                            'auto_initialize' => false,
-                            'read_only' => $isVordefined,
-                            'required' => true)))
-                ->add($this->factory->createNamed('type', 'hidden', null,
-                                                  array(
-                            'auto_initialize' => false,
-                            'read_only' => $isVordefined,
-                            'required' => true)))
-                ->add($this->factory->createNamed('name', 'text', null,
-                                                  array(
-                            'auto_initialize' => false,
-                            'read_only' => $isVordefined,
-                            'required' => true)))
-                ->add($this->factory->createNamed('units', 'text', null,
-                                                  array(
-                            'auto_initialize' => false,
-                            'read_only' => $isVordefined,
-                            'required' => false)))
-                ->add($this->factory->createNamed('unitSymbol', 'text', null,
-                                                  array(
-                            'auto_initialize' => false,
-                            'read_only' => $isVordefined,
-                            'required' => false)))
-                ->add($this->factory->createNamed('multipleValues', 'checkbox', null,
-                                                  array(
-                            'auto_initialize' => false,
-                            'disabled' => $isVordefined,
-                            'required' => false)))
-                ->add($this->factory->createNamed('nearestValue', 'checkbox', null,
-                                                  array(
-                            'auto_initialize' => false,
-                            'disabled' => $isVordefined,
-                            'required' => false)))
-                ->add($this->factory->createNamed('current', 'checkbox', null,
-                                                  array(
-                            'auto_initialize' => false,
-                            'disabled' => $isVordefined,
-                            'required' => false)))
-                ->add($this->factory->createNamed('extent', 'hidden', null,
-                                                  array(
-                            'required' => true,
-                            'auto_initialize' => false)))
-                ->add($this->factory->createNamed('origextent', 'hidden', null,
-                                                  array(
-                            'required' => true,
-                            'auto_initialize' => false)))
-                ->add($this->factory->createNamed('json', 'hidden', null,
-                                                  array(
-                            'required' => true,
-                            'data' => json_encode($dimJs),
-                            'auto_initialize' => false)));
+                    'auto_initialize' => false,
+                    'read_only' => $isVordefined,
+                    'required' => true)))
+            ->add($this->factory->createNamed('type', 'hidden', null,
+                                              array(
+                    'auto_initialize' => false,
+                    'read_only' => $isVordefined,
+                    'required' => true)))
+            ->add($this->factory->createNamed('name', 'text', null,
+                                              array(
+                    'auto_initialize' => false,
+                    'read_only' => $isVordefined,
+                    'required' => true)))
+            ->add($this->factory->createNamed('units', 'text', null,
+                                              array(
+                    'auto_initialize' => false,
+                    'read_only' => $isVordefined,
+                    'required' => false)))
+            ->add($this->factory->createNamed('unitSymbol', 'text', null,
+                                              array(
+                    'auto_initialize' => false,
+                    'read_only' => $isVordefined,
+                    'required' => false)))
+            ->add($this->factory->createNamed('multipleValues', 'checkbox', null,
+                                              array(
+                    'auto_initialize' => false,
+                    'disabled' => $isVordefined,
+                    'required' => false)))
+            ->add($this->factory->createNamed('nearestValue', 'checkbox', null,
+                                              array(
+                    'auto_initialize' => false,
+                    'disabled' => $isVordefined,
+                    'required' => false)))
+            ->add($this->factory->createNamed('current', 'checkbox', null,
+                                              array(
+                    'auto_initialize' => false,
+                    'disabled' => $isVordefined,
+                    'required' => false)))
+            ->add($this->factory->createNamed('extent', 'hidden', null,
+                                              array(
+                    'required' => true,
+                    'auto_initialize' => false)))
+            ->add($this->factory->createNamed('origextent', 'hidden', null,
+                                              array(
+                    'required' => true,
+                    'auto_initialize' => false)))
+            ->add($this->factory->createNamed('json', 'hidden', null,
+                                              array(
+                    'required' => true,
+                    'data' => json_encode($dimJs),
+                    'auto_initialize' => false)));
         if ($isVordefined) {
             $dataArr = $data->getData($data->getExtent());
             $dataOrigArr = $data->getData($data->getOrigextent());
             if ($data->getType() === $data::TYPE_SINGLE) {
                 $form->add($this->factory->createNamed('extentEdit', 'text', null,
                                                        array(
-                            'required' => true,
-                            'auto_initialize' => false)));
+                        'required' => true,
+                        'auto_initialize' => false)));
             } elseif ($data->getType() === $data::TYPE_MULTIPLE) {
                 $choices = array_combine($dataOrigArr, $dataOrigArr);
                 $form->add($this->factory->createNamed('extentEdit', 'choice', null,
                                                        array(
-                                    'data' => $dataArr,
-                                    'mapped' => false,
-                                    'choices' => $choices,
-                                    'auto_initialize' => false,
-                                    'multiple' => true,
-                                    'required' => true)))
-                        ->add($this->factory->createNamed('default', 'choice', null,
-                                                          array(
-                                    'choices' => $choices,
-                                    'auto_initialize' => false,)));
+                            'data' => $dataArr,
+                            'mapped' => false,
+                            'choices' => $choices,
+                            'auto_initialize' => false,
+                            'multiple' => true,
+                            'required' => true)))
+                    ->add($this->factory->createNamed('default', 'choice', null,
+                                                      array(
+                            'choices' => $choices,
+                            'auto_initialize' => false,)));
             } elseif ($data->getType() === $data::TYPE_INTERVAL) {
                 $form->add($this->factory->createNamed('extentEdit', 'text', null,
                                                        array(
-                                    'required' => true,
-                                    'auto_initialize' => false)))
-                        ->add($this->factory->createNamed('default', 'text', null,
-                                                          array(
-                                    'auto_initialize' => false,
-                                    'read_only' => $isVordefined,
-                                    'required' => false)));
+                            'required' => true,
+                            'auto_initialize' => false)))
+                    ->add($this->factory->createNamed('default', 'text', null,
+                                                      array(
+                            'auto_initialize' => false,
+                            'read_only' => $isVordefined,
+                            'required' => false)));
             }
         }
     }

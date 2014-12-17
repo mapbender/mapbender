@@ -9,7 +9,8 @@ Mapbender.IDimension = Interface({
     stepFromValue: 'function',
     valueFromPart: 'function',
     valueFromStart: 'function',
-    valueFromEnd: 'function'
+    valueFromEnd: 'function',
+    join: 'function'
 });
 Mapbender.Dimension = function(options) {
     if (options.type === 'interval' && options.name === 'time') {
@@ -77,10 +78,11 @@ Mapbender.DimensionScalar = Class({implements: Mapbender.IDimension}, {
     valueFromEnd: function() {
         return this.options.extent[this.options.extent.length - 1];
     },
-    merge: function(another) {
+    join: function(another) {
         if (this.asc !== another.asc) {
             return null;
         }
+        //TODO
     }
 });
 
@@ -238,12 +240,22 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
             return absolut ? Math.abs(endMonth - startMonth) : endMonth - startMonth;
         }
     },
-    joined: function(another) {
+    join: function(another) {
         if (this.asc !== another.asc || !this.step.equals(another.step)) {
             return null;
         }
         var start, end;
         var options = $.extend(true, {}, this.options);
+        function joinOptions(opts, one, two, startStr, endStr){
+            opts.origextent = opts.extent = [startStr, endStr, one.step.toString()];
+            opts.default = opts.extent[0];
+            opts.current = one.options.current === two.options.current ? one.options.current : null;
+            opts.multipleValues = one.options.multipleValues === two.options.multipleValues ? one.options.multipleValues : false;
+            opts.nearestValue = one.options.nearestValue === two.options.nearestValue ? one.options.nearestValue : false;
+            opts.unitSymbol = one.options.unitSymbol === two.options.unitSymbol ? one.options.unitSymbol : null;
+            opts.units = one.options.units === two.options.units ? one.options.units : null;
+            return opts;
+        }
         if (this.step.getType() === 'msec') {
             var testMin = Math.abs(this.start.time.getTime() - another.start.time.getTime()) / this.step.asMsec();
             var testMax = Math.abs(this.end.time.getTime() - another.end.time.getTime()) / this.step.asMsec();
@@ -257,7 +269,7 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
                 start = this.start.time.getTime() <= another.start.time.getTime() ? this.start : another.start;
                 end = this.end.time.getTime() >= another.end.time.getTime() ? this.end : another.end;
             }
-            options.extent = start.toString() + '/' + end.toString() + '/' + this.step.toString();
+            options = joinOptions(options, this, another, start.toString(), end.toString());
             var joined = Mapbender.Dimension(options);
             return joined;
         } else if (this.step.getType() === 'month') {
@@ -280,12 +292,12 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
                 start = this.start.time.getTime() <= another.start.time.getTime() ? this.start : another.start;
                 end = this.end.time.getTime() >= another.end.time.getTime() ? this.end : another.end;
             }
-            options.extent = start.toString() + '/' + end.toString() + '/' + this.step.toString();
+            options = joinOptions(options, this, another, start.toString(), end.toString());
             var joined = Mapbender.Dimension(options);
             return joined;
         } else if (this.step.getType() === 'date') {
+            var joinStart, joinEnd;
             if (this.asc) {
-                var joinStart, joinEnd;
                 if (this.start.time.getTime() >= another.start.time.getTime()) {
                     joinStart = this.start;
                     start = another.start;
@@ -300,37 +312,57 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
                     joinEnd = this.end;
                     end = another.end;
                 }
-                var endtime = end.time.getTime();
-                var joinStartTime = joinStart.time.getTime();
-                var joinEndTime = joinEnd.time.getTime();
-                var stepTime = start;
-                var startOk = false;
-                var endOk = false;
-                var stepSt;
-                var stepsNum = 0;
-                while (true) {
-                    stepSt = stepTime.time.getTime()
-                    if (stepSt > endtime || (start === true && end === true)) {
+            } else {
+                if (this.start.time.getTime() >= another.start.time.getTime()) {
+                    joinStart = another.start;
+                    start = this.start;
+                } else {
+                    joinStart = this.start;
+                    start = another.start;
+                }
+                if (this.end.time.getTime() >= another.end.time.getTime()) {
+                    joinEnd = this.end;
+                    end = another.end;
+                } else {
+                    joinEnd = another.end;
+                    end = this.end;
+                }
+            }
+            var endtime = end.time.getTime();
+            var joinStartTime = joinStart.time.getTime();
+            var joinEndTime = joinEnd.time.getTime();
+            var stepTime = start;
+            var startOk = false;
+            var endOk = false;
+            var stepSt;
+            var stepsNum = 0;
+            while (true) {
+                stepSt = stepTime.time.getTime();
+                if (stepSt === joinStartTime) {
+                    startOk = true;
+                }
+                if (stepSt === joinEndTime) {
+                    endOk = true;
+                }
+                if (this.asc) {
+                    if (stepSt >= joinEndTime || (startOk === true && endOk === true)) {
                         break;
                     }
-                    if (stepSt === joinStartTime) {
-                        start = true;
-                    }
-                    if (stepSt === joinEndTime) {
-                        end = true;
-                    }
                     stepTime.add(this.step);
-                    stepsNum++;
+                } else {
+                    if (stepSt <= joinEndTime || (startOk === true && endOk === true)) {
+                        break;
+                    }
+                    stepTime.substract(this.step);
                 }
-                if (start !== true || end !== true || stepsNum === 0) {
-                    return null;
-                }
-                options.extent = joinStart.toString() + '/' + joinEnd.toString() + '/' + this.step.toString();
-                var joined = Mapbender.Dimension(options);
-                return joined;
-            } else {
-                // TODO
+                stepsNum++;
             }
+            if (startOk !== true || endOk !== true || stepsNum === 0) {
+                return null;
+            }
+            options = joinOptions(options, this, another, start.toString(), end.toString());
+            var joined = Mapbender.Dimension(options);
+            return joined;
         }
     }
 });
@@ -663,7 +695,7 @@ PeriodISO8601 = Class({
         var date = this.years > 0 ? this.years + 'Y' : '';
         date += this.months > 0 ? this.months + 'M' : '';
         date += this.days > 0 ? this.days + 'D' : '';
-        return (date.length + time.lengt) > 0 ? 'P' + (date + time) : '';
+        return (date.length + time.length) > 0 ? 'P' + (date + time) : '';
     },
     equals: function(period) {
         if (this.years !== period.years || this.months !== period.months || this.days !== period.days || this.hours !== period.hours || this.mins !== period.mins || this.secs !== period.secs) {

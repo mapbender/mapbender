@@ -9,10 +9,8 @@ $(function() {
     function initSlider($select, $last) {
         var $div = $select.parents('.collectionItem:first').find('input[data-extent="group-dimension-extent"]').parent();
         if ($select.val() && $select.val().length > 0) {
-            $div.addClass('sliderDiv').addClass('mb-slider');
             var dims = JSON.parse($select.attr('data-dimension-group'));
             var grouped = {};
-//            var check = {asc: [], desc: []};
             var last = {};
             var current = null;
             for (inst in dims) {
@@ -43,25 +41,50 @@ $(function() {
                     }
                 }
             }
-            console.log(grouped);
+            $('input[data-name="extent"]', $div).val(JSON.stringify(current.options.extent));
+            $('input[data-name="origextent"]', $div).val(JSON.stringify(current.options.origextent));
+            $('input[data-name="type"]', $div).val(JSON.stringify(current.options.type));
+            $('input[data-name="current"]', $div).val(JSON.stringify(current.options.current));
+            $('input[data-name="nearestValue"]', $div).val(JSON.stringify(current.options.nearestValue));
+            $('input[data-name="multipleValues"]', $div).val(JSON.stringify(current.options.multipleValues));
+            $('input[data-name="default"]', $div).val(JSON.stringify(current.options.default));
+            $('input[data-name="unitSymbol"]', $div).val(JSON.stringify(current.options.unitSymbol));
+            $('input[data-name="units"]', $div).val(JSON.stringify(current.options.units));
+            $('input[data-name="name"]', $div).val(JSON.stringify(current.options.name));
+            $div.addClass('sliderDiv').addClass('mb-slider');
+            var rangeMinVal = new TimeStr(current.valueFromStart()).toISOString();
+            var rangeMaxVal = new TimeStr(current.valueFromEnd()).toISOString();
+            var rangeMin = current.partFromValue(rangeMinVal);// * 100;
+            var rangeMax = current.partFromValue(rangeMaxVal);// * 10
+            
+            $div.slider({
+                range: true,
+                min: 0,
+                max: 100,
+                steps: current.getStepsNum(),
+                values: [rangeMin * 100, rangeMax * 100], // [0,100],
+                slide: function(event, ui) {
+                    console.log(current.valueFromPart(ui.values[0] / 100), current.valueFromPart(ui.values[1] / 100));
+                }
+            });
         } else {
+            
+            $('input[data-name="extent"]', $div).val("");
+            $('input[data-name="origextent"]', $div).val("");
+            $('input[data-name="type"]', $div).val("");
+            $('input[data-name="current"]', $div).val("");
+            $('input[data-name="nearestValue"]', $div).val("");
+            $('input[data-name="multipleValues"]', $div).val("");
+            $('input[data-name="default"]', $div).val("");
+            $('input[data-name="unitSymbol"]', $div).val("");
+            $('input[data-name="units"]', $div).val("");
+            $('input[data-name="name"]', $div).val("");
+            if ($div.hasClass('mb-slider')) {
+                $div.slider("destroy");
+            }
             $div.removeClass('sliderDiv').removeClass('mb-slider');
             //destroy
         }
-//        if (!$context.parent().hasClass('sliderDiv')) {
-//            var sliderdiv = $context.parent();
-//            sliderdiv.addClass('sliderDiv').addClass('mb-slider');
-//            sliderdiv.slider({
-//                range: true,
-//                min: 0,
-//                max: 100,
-//                steps: 100,
-//                values: [0, 1000],
-//                slide: function(event, ui) {
-////                    intoInput(dimHandlerOrig.valueFromPart(ui.values[0] / 100), dimHandlerOrig.valueFromPart(ui.values[1] / 100), dimension['extent'][2]);
-//                }
-//            });
-//        }
     }
 
     function otherOptions($opt, disable) {

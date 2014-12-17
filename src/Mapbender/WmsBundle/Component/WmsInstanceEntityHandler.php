@@ -150,18 +150,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet());
         foreach ($this->entity->getDimensions() as $dimension) {
             if ($dimension->getActive()) {
-                $dimensions[] = array(
-                    'current' => $dimension->getCurrent(),
-                    'default' => $dimension->getDefault(),
-                    'multipleValues' => $dimension->getMultipleValues(),
-                    'name' => $dimension->getName(),
-                    '__name' => $dimension->getParameterName(),
-                    'nearestValue' => $dimension->getNearestValue(),
-                    'unitSymbol' => $dimension->getUnitSymbol(),
-                    'units' => $dimension->getUnits(),
-                    'extent' => $dimension->getData($dimension->getExtent()),
-                    'type' => $dimension->getType(),
-                );
+                $dimensions[] = $dimension->getConfiguration();
                 if ($dimension->getDefault()) {
                     $options->setUrl(
                         UrlUtil::validateUrl($options->getUrl(), array(),

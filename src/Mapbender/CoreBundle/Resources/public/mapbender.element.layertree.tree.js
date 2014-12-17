@@ -609,7 +609,10 @@
                         $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                     }
                 }
-                if ($.inArray("metadata", self.options.menu) !== -1 && menu.find('.layer-metadata').length > 0) {
+                
+                if ($.inArray("metadata", self.options.menu) === -1 || menu.find('.layer-metadata').length === 0 || isNaN(parseInt(source.origId))) {
+                    $('.layer-metadata', menu).remove();
+                } else {
                     var layer = self.model.findLayer({id: sourceId}, {id: layerId});
                     if (layer) {
                         $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata, self));

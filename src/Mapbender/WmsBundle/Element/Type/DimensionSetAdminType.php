@@ -36,9 +36,12 @@ class DimensionSetAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $dimChioces = array();
+        $dimJson = array();
         foreach ($options['dimensions'] as $instId => $dims) {
+            $dimJson[$instId] = array();
             foreach ($dims as $dim) {
                 $dimChioces[$instId . "-" . $dim->getName() . "-" . $dim->getType()] = $instId . "-" . $dim->getName() . "-" . $dim->getType();
+                $dimJson[$instId][] = $dim->getConfiguration();
             }
         }
         $builder->add('title', 'text',
@@ -52,7 +55,7 @@ class DimensionSetAdminType extends AbstractType
                 'multiple' => true,
                 'mapped' => false,
                 'attr' => array(
-                    'data-dimension-group' => json_encode($options['dimensions']))))
+                    'data-dimension-group' => json_encode($dimJson))))
             ->add('dimension', new DimensionInstElmType(), array(
                 'required' => false,));
     }

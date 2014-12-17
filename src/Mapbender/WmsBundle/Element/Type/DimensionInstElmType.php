@@ -3,8 +3,8 @@
 namespace Mapbender\WmsBundle\Element\Type;
 
 //use Mapbender\CoreBundle\Form\DataTransformer\ObjectArrayTransformer;
-use Mapbender\WmsBundle\Form\DataTransformer\DimensionTransformer;
-use Mapbender\WmsBundle\Form\EventListener\DimensionSubscriber;
+//use Mapbender\WmsBundle\Form\DataTransformer\DimensionTransformer;
+//use Mapbender\WmsBundle\Form\EventListener\DimensionSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -38,18 +38,19 @@ class DimensionInstElmType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('extent', 'hidden', array('attr' => array('data-extent' => 'group-dimension-extent')))
-            ->add('name', 'hidden')
-            ->add('units', 'hidden')
-            ->add('unitSymbol', 'hidden')
-            ->add('default', 'hidden')
-            ->add('multipleValues', 'hidden')
-            ->add('nearestValue', 'hidden')
-            ->add('current', 'hidden')
-            ->add('type', 'hidden')
-            ->add('active', 'hidden')
-            ->add('origextent', 'hidden')
-            ;
+        $builder->add('extent', 'hidden',
+                      array('attr' => array('data-extent' => 'group-dimension-extent', 'data-name' => 'extent')))
+            ->add('name', 'hidden', array('attr' => array('data-name' => 'name')))
+            ->add('units', 'hidden', array('attr' => array('data-name' => 'units')))
+            ->add('unitSymbol', 'hidden', array('attr' => array('data-name' => 'unitSymbol')))
+            ->add('default', 'hidden', array('attr' => array('data-name' => 'default')))
+            ->add('multipleValues', 'hidden', array('attr' => array('data-name' => 'multipleValues')))
+            ->add('nearestValue', 'hidden', array('attr' => array('data-name' => 'nearestValue')))
+            ->add('current', 'hidden', array('attr' => array('data-name' => 'current')))
+            ->add('type', 'hidden', array('attr' => array('data-name' => 'type')))
+            ->add('active', 'hidden', array('attr' => array('data-name' => 'active')))
+            ->add('origextent', 'hidden', array('attr' => array('data-name' => 'origextent')))
+        ;
     }
 
 }
