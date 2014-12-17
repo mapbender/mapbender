@@ -1,10 +1,10 @@
 (function($) {
 var firstPosition = true;
 var accurancyStyle = {
-    fillColor: '#000',
-    fillOpacity: 1,
+    fillColor: '#FFF',
+    fillOpacity: 0.5,
     strokeWidth: 1,
-    strokeColor: '#000'
+    strokeColor: '#FFF'
 };
 $.widget("mapbender.mbGpsPosition", {
     options: {
@@ -115,23 +115,30 @@ $.widget("mapbender.mbGpsPosition", {
         }
         var vector = new OpenLayers.Layer.Vector( "Accuracy" );
         olmap.addLayer(vector);
-        console.warn(window.g = olmap);
+        
+        var metersProj = new OpenLayers.Projection("EPSG:900913");
+        var currentProj = olmap.getProjectionObject();
+
+        var originInMeters = new OpenLayers.LonLat(position.lon, position.lat);
+        originInMeters.transform(currentProj, metersProj);
+
+        var accuracyPoint = new OpenLayers.LonLat(originInMeters.lon + (accuracy/2), originInMeters.lat + (accuracy/2));
+        accuracyPoint.transform(metersProj, currentProj);
+
+        var differance = accuracyPoint.lon - position.lon;
+
         var circle = new OpenLayers.Feature.Vector(
             OpenLayers.Geometry.Polygon.createRegularPolygon(
-                olmap.getCenter(),//position,
-                100,//accuracy/2,
+                
+                new OpenLayers.Geometry.Point(position.lon, position.lat),
+                differance, //0.1,//accuracy/2,
                 40,
                 0
             ),
             {},
             accurancyStyle
         );
-        console.log(circle);
-console.log("Radius in m:", accuracy/2);
         vector.addFeatures([circle]);
-        vector.drawFeature(circle);
-console.log("draw", circle);
-        return;
     },
 
     _centerMap: function (point){
