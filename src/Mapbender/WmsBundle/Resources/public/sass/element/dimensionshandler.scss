@@ -1,1 +1,17 @@
+@import "libs/variables";
+@import "libs/mixins";
+@import "modules/text";
+@import "modules/input";
 
+.mb-element-dimensionshandler{
+    .dimensionset{
+        position: relative;
+        padding: 0 $space/4 0 $space/4;
+    }
+/*    .dimensionset-title{ }*/
+    .dimensionset-value{
+        position: absolute;
+        padding-right: $space/4;
+        right: 0px;
+    }
+}

@@ -38,35 +38,7 @@ class DimensionSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::PRE_SUBMIT => 'preSubmit');
-    }
-
-    /**
-     * Checkt form fields by PRE_SUBMIT FormEvent
-     * 
-     * @param FormEvent $event
-     */
-    public function preSubmit(FormEvent $event)
-    {
-        $data = $event->getData();
-        $form = $event->getForm();
-
-        if (null === $data) {
-            return;
-        }
-
-        if ($data) {
-//            $type = $data['type'];
-//            if ($type === DimensionInst::TYPE_INTERVAL && isset($data['extent']) && is_array($data['extent'])) {
-//                $data['extent'] = implode("/", $data['extent']);
-//                $event->setData($data);
-//            } else
-//            if ($type === DimensionInst::TYPE_MULTIPLE && isset($data['extent']) && is_array($data['extent'])) {
-//                $data['extent'] = implode(",", $data['extent']);
-//                $event->setData($data);
-//            }
-        }
+        return array(FormEvents::PRE_SET_DATA => 'preSetData');
     }
 
     /**

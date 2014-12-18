@@ -1,3 +1,6 @@
+@import "libs/variables";
+@import "libs/mixins";
+
 /* UI Mapbender slider */
 .mb-slider.ui-slider{
     font-family: $fontFamily;

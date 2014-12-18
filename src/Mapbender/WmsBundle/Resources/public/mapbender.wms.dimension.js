@@ -1,8 +1,8 @@
 var Mapbender = Mapbender || {};
 Mapbender.IDimension = Interface({
     getOptions: 'function',
-    getValue: 'function',
-    setValue: 'function',
+    getDefault: 'function',
+    setDefault: 'function',
     getStepsNum: 'function',
     partFromValue: 'function',
     stepFromPart: 'function',
@@ -10,9 +10,10 @@ Mapbender.IDimension = Interface({
     valueFromPart: 'function',
     valueFromStart: 'function',
     valueFromEnd: 'function',
-    join: 'function'
+    innerJoin: 'function',
+    getInRange: 'function'
 });
-Mapbender.Dimension = function(options) {
+Mapbender.Dimension = function (options) {
     if (options.type === 'interval' && options.name === 'time') {
         return new Mapbender.DimensionTime(options);
     } else if (options.type === 'interval') {
@@ -25,22 +26,25 @@ Mapbender.Dimension = function(options) {
 };
 Mapbender.DimensionScalar = Class({implements: Mapbender.IDimension}, {
     options: {},
-    value: null,
+    default_: null,
     stepsNum: -1,
-    __construct: function(options) {
-        this.options = options;
-        this.value = options['default'] === null ? options.extent[0] : options['default'];
+    __construct: function (options, initDefault) {
+            this.options = options;
+        if (initDefault) {
+            this.setValue(this.getInRange(this.valueFromPart(0), this.valueFromPart(1),
+                    this.options['default'] === null ? options.extent[0] : options['default']));
+        }
     },
-    getOptions: function() {
+    getOptions: function () {
         return this.options;
     },
-    getValue: function() {
-        return this.value;
+    getDefault: function () {
+        return this.default_;
     },
-    setValue: function(val) {
-        this.value = val;
+    setDefault: function (val) {
+        this.default_ = val;
     },
-    getStepsNum: function() {
+    getStepsNum: function () {
         if (this.stepsNum !== -1) {
             return this.stepsNum;
         } else if (this.options.type === 'interval') {
@@ -49,7 +53,7 @@ Mapbender.DimensionScalar = Class({implements: Mapbender.IDimension}, {
             return this.options.extent.length;
         }
     },
-    partFromValue: function(val) {
+    partFromValue: function (val) {
         if (this.options.type === 'interval') {
             return Math.abs(val - this.options.extent[0]) / Math.abs(this.options.extent[1] - this.options.extent[0]);
         } else if (this.options.type === 'multiple') {
@@ -61,32 +65,40 @@ Mapbender.DimensionScalar = Class({implements: Mapbender.IDimension}, {
             return 0;
         }
     },
-    stepFromPart: function(part) {
+    stepFromPart: function (part) {
         return Math.round(part * (this.getStepsNum()));
     },
-    stepFromValue: function(val) {
+    stepFromValue: function (val) {
         return this.stepFromPart(this.partFromValue(val));
     },
-    valueFromPart: function(part) {
+    valueFromPart: function (part) {
         var step = this.stepFromPart(part);
-        this.value = this.options.extent[step];
-        return this.value;
+        return this.options.extent[step];
     },
-    valueFromStart: function() {
+    valueFromStart: function () {
         return this.options.extent[0];
     },
-    valueFromEnd: function() {
+    valueFromEnd: function () {
         return this.options.extent[this.options.extent.length - 1];
     },
-    join: function(another) {
+    innerJoin: function (another) {
         if (this.asc !== another.asc) {
             return null;
         }
         //TODO
+    },
+    getInRange: function (min, max, value) {
+        var partMin = this.partFromValue(min);
+        var partMax = this.partFromValue(max);
+        if (partMin < 0 || partMax > 1) {
+            return null;
+        }
+        var partValue = this.partFromValue(value);
+        return this.valueFromPart(partValue <= partMin ? partMin : partValue >= partMax ? partMax : partValue);
     }
 });
 
-Mapbender.DimensionFormat = function(value, numDig) {
+Mapbender.DimensionFormat = function (value, numDig) {
     var d = numDig - ('' + value).length;
     while (d > 0) {
         value = '0' + value;
@@ -99,14 +111,16 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
     end: null,
     step: null,
     asc: true,
-    __construct: function(options) {
-        this['super']('__construct', options);
+    __construct: function (options) {
+        this['super']('__construct', options, false);
         this.start = new TimeISO8601(options.extent[0]);
         this.end = new TimeISO8601(options.extent[1]);
         this.step = new PeriodISO8601(options.extent[2]);
         this.asc = this.end.time.getTime() > this.start.time.getTime();
+        this.setDefault(this.getInRange(this.valueFromPart(0), this.valueFromPart(1),
+                this.options['default'] === null ? options.extent[0] : options['default']));
     },
-    getStepsNum: function() {
+    getStepsNum: function () {
         if (this.stepsNum !== -1) {
             return this.stepsNum;
         } else {
@@ -138,7 +152,7 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
             return this.stepsNum;
         }
     },
-    partFromValue: function(isoDate) {
+    partFromValue: function (isoDate) {
         var givenTime = new TimeISO8601(isoDate);
         if (this.step.getType() === 'msec') {
             var part = (givenTime.time.getTime() - this.start.time.getTime()) / (this.end.time.getTime() - this.start.time.getTime());
@@ -168,7 +182,7 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
             return stepsNum / this.stepsNum;
         }
     },
-    stepFromPart: function(part) {
+    stepFromPart: function (part) {
         if (this.step.getType() === 'msec') {
             return Math.round(part * (this.getStepsNum()));
         } else if (this.step.getType() === 'month') {
@@ -177,7 +191,7 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
             return Math.round(part * (this.getStepsNum()));/* ??? */
         }
     },
-    stepFromValue: function(value) {
+    stepFromValue: function (value) {
         if (this.step.getType() === 'msec') {
             return this.stepFromPart(this.partFromValue(value));
         } else if (this.step.getType() === 'month') {
@@ -186,7 +200,7 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
             return this.stepFromPart(this.partFromValue(value));/* ??? */
         }
     },
-    valueFromPart: function(part) {
+    valueFromPart: function (part) {
         var step = this.stepFromPart(part);
         var time;
         if (this.step.getType() === 'msec') {
@@ -227,28 +241,28 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
             return stepTime.toString();
         }
     },
-    valueFromStart: function() {
+    valueFromStart: function () {
         return this.start.time.toJSON();
     },
-    valueFromEnd: function() {
+    valueFromEnd: function () {
         return this.end.time.toJSON();
     },
-    intervalAsMonth: function(absolut) {
+    intervalAsMonth: function (absolut) {
         if (this.step.getType() === 'month') {
             var startMonth = this.start.getYear() * 12 + this.start.getMonth();
             var endMonth = this.end.getYear() * 12 + this.end.getMonth();
             return absolut ? Math.abs(endMonth - startMonth) : endMonth - startMonth;
         }
     },
-    join: function(another) {
+    innerJoin: function (another) {
         if (this.asc !== another.asc || !this.step.equals(another.step)) {
             return null;
         }
         var start, end;
         var options = $.extend(true, {}, this.options);
-        function joinOptions(opts, one, two, startStr, endStr){
-            opts.origextent = opts.extent = [startStr, endStr, one.step.toString()];
-            opts.default = opts.extent[0];
+        function joinOptions(opts, one, two, startStr, endStr) {
+            opts.extent = [startStr, endStr, one.step.toString()];
+            opts.origextent = opts.extent;
             opts.current = one.options.current === two.options.current ? one.options.current : null;
             opts.multipleValues = one.options.multipleValues === two.options.multipleValues ? one.options.multipleValues : false;
             opts.nearestValue = one.options.nearestValue === two.options.nearestValue ? one.options.nearestValue : false;
@@ -377,7 +391,7 @@ TimeStr = Class({
     msecs: null,
     vC: false,
     utc: false,
-    __construct: function(datetimeStr) {
+    __construct: function (datetimeStr) {
         this.years = null;
         this.months = null;
         this.days = null;
@@ -436,7 +450,7 @@ TimeStr = Class({
         } catch (e) {
         }
     },
-    toISOString: function() {
+    toISOString: function () {
         var res = (this.vC ? "-" : "") + this.years;
         res += "-" + (this.months ? this.months : "01");
         res += "-" + (this.days ? this.days : "01") + "T";
@@ -452,7 +466,7 @@ TimeISO8601 = Class({
     utc: false,
     time: null,
     timeStr: null,
-    __construct: function(date) {
+    __construct: function (date) {
         function convertDateFromISO(s) {
             s = s.split(/\D/);
             return new Date(Date.UTC(s[0], --s[1] || '', s[2] || '', s[3] || '', s[4] || '', s[5] || '', s[6] || ''))
@@ -485,31 +499,31 @@ TimeISO8601 = Class({
             this.time = null;
         }
     },
-    getYear: function() {
+    getYear: function () {
         return this.time.getFullYear();
     },
-    getMonth: function() {
+    getMonth: function () {
         return this.time.getMonth();
     },
-    getDate: function() {
+    getDate: function () {
         return this.time.getDate();
     },
-    getHours: function() {
+    getHours: function () {
         return this.time.getHours();
     },
-    getMinutes: function() {
+    getMinutes: function () {
         return this.time.getMinutes();
     },
-    getSeconds: function() {
+    getSeconds: function () {
         return this.time.getSeconds();
     },
-    getMilliseconds: function() {
+    getMilliseconds: function () {
         return this.time.getMilliseconds();
     },
-    isValid: function() {
+    isValid: function () {
         return !isNaN(this.time.getFullYear());
     },
-    add: function(period) {
+    add: function (period) {
         if (period.msecs) {
             this.time.setMilliseconds(this.time.getMilliseconds() + period.msecs);
         }
@@ -532,7 +546,7 @@ TimeISO8601 = Class({
             this.time.setFullYear(this.time.getFullYear() + period.y);
         }
     },
-    substract: function(period) {
+    substract: function (period) {
         if (period.msecs) {
             this.time.setMilliseconds(this.time.getMilliseconds() - period.msecs);
         }
@@ -555,7 +569,7 @@ TimeISO8601 = Class({
             this.time.setFullYear(this.time.getFullYear() - period.y);
         }
     },
-    toString: function() {
+    toString: function () {
         var value = this.timeStr.vC ? '-' : '';
         value += this.timeStr.years ? Mapbender.DimensionFormat(this.getYear(), 4) : '';
         value += this.timeStr.months ? ('-' + Mapbender.DimensionFormat(this.getMonth() + 1, 2)) : '';
@@ -579,7 +593,7 @@ PeriodISO8601 = Class({
     hours: null,
     mins: null,
     secs: null,
-    __construct: function(datetimeStr) {
+    __construct: function (datetimeStr) {
         this.years = null;
         this.months = null;
         this.days = null;
@@ -628,7 +642,7 @@ PeriodISO8601 = Class({
             }
         }
     },
-    getType: function() {
+    getType: function () {
         if (this.years === null && this.months === null) {
             return 'msec';
         } else if (this.days === null && this.hours === null && this.mins === null && this.secs === null) {
@@ -637,7 +651,7 @@ PeriodISO8601 = Class({
             return 'date';
         }
     },
-    added: function(period) {
+    added: function (period) {
         var newPeriod = new PeriodISO8601(this.toString());
         if (period.secs) {
             newPeriod.secs = (newPeriod.secs ? newPeriod.secs : 0) + period.secs;
@@ -687,7 +701,7 @@ PeriodISO8601 = Class({
         }
         return newPeriod;
     },
-    toString: function() {
+    toString: function () {
         var time = this.hours > 0 ? this.hours + 'H' : '';
         time += this.mins > 0 ? this.mins + 'M' : '';
         time += this.secs > 0 ? this.secs + 'S' : '';
@@ -697,14 +711,14 @@ PeriodISO8601 = Class({
         date += this.days > 0 ? this.days + 'D' : '';
         return (date.length + time.length) > 0 ? 'P' + (date + time) : '';
     },
-    equals: function(period) {
+    equals: function (period) {
         if (this.years !== period.years || this.months !== period.months || this.days !== period.days || this.hours !== period.hours || this.mins !== period.mins || this.secs !== period.secs) {
             return false;
         } else {
             return true;
         }
     },
-    asMsec: function() {
+    asMsec: function () {
         if (this.getType() === 'msec') {
             var stepTst = this.secs ? this.secs : 0;// secs
             stepTst += this.mins ? this.mins * 60 : 0;// secs
@@ -715,7 +729,7 @@ PeriodISO8601 = Class({
             return null;
         }
     },
-    asMonth: function(timeStart, timeEnd) {
+    asMonth: function (timeStart, timeEnd) {
         if (this.getType() === 'month') {
             return this.years * 12 + this.months;
         } else {

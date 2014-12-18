@@ -53,9 +53,15 @@ class DimensionSetAdminType extends AbstractType
                 'required' => true,
                 'choices' => $dimChioces,
                 'multiple' => true,
-                'mapped' => false,
                 'attr' => array(
                     'data-dimension-group' => json_encode($dimJson))))
+            ->add('Extent', 'text',
+                      array(
+                'required' => false,
+                'mapped' => false,
+                'property_path' => '[display]',
+                'read_only' => true,
+                'attr' => array('data-name' => 'display', )))
             ->add('dimension', new DimensionInstElmType(), array(
                 'required' => false,));
     }

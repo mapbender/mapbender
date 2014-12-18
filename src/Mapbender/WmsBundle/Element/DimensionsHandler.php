@@ -63,10 +63,13 @@ class DimensionsHandler extends Element
     {
         $files = array(
             'js' => array(
+                '@MapbenderCoreBundle/Resources/public/vendor/joii.min.js',
                 'mapbender.wms.dimension.js',
                 'mapbender.element.dimensionshandler.js',
                 ),
-            'css' => array('@MapbenderWmsBundle/Resources/public/sass/element/dimensionshandler.scss'),
+            'css' => array(
+                '@MapbenderWmsBundle/Resources/public/sass/element/dimensionshandler.scss',
+                '@MapbenderCoreBundle/Resources/public/sass/element/mbslider.scss'),
             'trans' => array('MapbenderWmsBundle:Element:dimensionshandler.json.twig'));
         return $files;
     }
@@ -99,5 +102,24 @@ class DimensionsHandler extends Element
                     "title" => $this->getTitle(),
                     'configuration' => $this->getConfiguration()
             ));
+    }
+    
+    public function getConfiguration()
+    {
+        $configuration = parent::getConfiguration();
+        foreach ($configuration['dimensionsets'] as $key => &$value) {
+            $value['dimension'] = $value['dimension']->getConfiguration();
+//            $a = 0;
+        }
+//        $config = $this->entity->getConfiguration();
+//        //@TODO merge recursive $this->entity->getConfiguration() and $this->getDefaultConfiguration()
+//        $def_configuration = $this->getDefaultConfiguration();
+//        $configuration = array();
+//        foreach ($def_configuration as $key => $val) {
+//            if(isset($config[$key])){
+//                $configuration[$key] = $config[$key];
+//            }
+//        }
+        return $configuration;
     }
 }

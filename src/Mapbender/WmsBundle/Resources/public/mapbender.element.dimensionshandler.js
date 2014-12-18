@@ -1,33 +1,56 @@
-(function($) {
-
+(function ($) {
     $.widget("mapbender.mbDimensionsHandler", {
         options: {
-            
         },
         elementUrl: null,
-        _create: function() {
+        model: null,
+        _create: function () {
             var self = this;
             if (!Mapbender.checkTarget("mbDimensionsHandler", this.options.target)) {
                 return;
             }
-
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
-        _setup: function() {
+        _setup: function () {
+            var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
-            
+            this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
+            for (key in this.options.dimensionsets) {
+                var dimensionset = this.options.dimensionsets[key];
+                var dimension = Mapbender.Dimension(dimensionset['dimension']);
+                var def = dimension.partFromValue(dimension.getDefault());// * 100;
+                var valarea = $('#' + key + ' .dimensionset-value', this.element);
+                valarea.text(dimension.getDefault());
+                $('#' + key + ' .mb-slider', this.element).slider({
+                    min: 0,
+                    max: 100,
+                    value: def * 100, //[rangeMin * 100, rangeMax * 100], // 
+                    slide: function (event, ui) {
+                        valarea.text(dimension.valueFromPart(ui.value / 100));
+                    },
+                    stop: function (event, ui) {
+                        $.each(dimensionset.group, function(idx, item){
+                            var sources = self.model.findSource({ origId: item.split('-')[0]});
+                            if(sources.length > 0){
+                                var params = {};
+                                params[dimension.options.__name] = dimension.valueFromPart(ui.value / 100);
+                                self.model.resetSourceUrl(sources[0], {'add': params}, true);
+                            }
+                        });
+                    }
+                });
+            }
             this._trigger('ready');
             this._ready();
         },
-        
-        ready: function(callback) {
+        ready: function (callback) {
             if (this.readyState === true) {
                 callback();
             } else {
                 this.readyCallbacks.push(callback);
             }
         },
-        _ready: function() {
+        _ready: function () {
             for (callback in this.readyCallbacks) {
                 callback();
                 delete(this.readyCallbacks[callback]);
