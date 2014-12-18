@@ -690,6 +690,10 @@
         <source>mb.wms.dimhandler.tag.handler</source>
         <target>Handler</target>
       </trans-unit>
+      <trans-unit id="f56702f4f808c0e89daddb78b7f51993" resname="mb.wms.dimensionsets.no_dimension">
+        <source>mb.wms.dimensionsets.no_dimension</source>
+        <target>Keine Dimension vorhanden.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
