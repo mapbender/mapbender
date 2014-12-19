@@ -24,10 +24,12 @@
             }
             $("#" + $(this.element).attr('id') + " select").html(options);
             this.op_sel = "#" + $(this.element).attr('id') + " select option";
-            $("#" + $(this.element).attr('id') + " select").val(mbMap.map.olMap.getProjection());
-            $("#" + $(this.element).attr('id') + " select").change($.proxy(self._switchSrs, self));
-            $(document).bind('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
-            $(document).bind('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
+            $(this.op_sel + '[value="'+mbMap.map.olMap.getProjection()+'"]').prop("selected", true);
+            $(this.op_sel + '[value="'+mbMap.map.olMap.getProjection()+'"]').click();
+            $("#" + $(this.element).attr('id') + " select").on('change', $.proxy(self._switchSrs, self));
+            $(document).on('mbmapsrschanged', $.proxy(self._onSrsChanged, self));
+            $(document).on('mbmapsrsadded', $.proxy(self._onSrsAdded, self));
+            
             this._trigger('ready');
             this._ready();
         },

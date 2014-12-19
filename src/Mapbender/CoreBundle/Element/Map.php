@@ -156,7 +156,7 @@ class Map extends Element
                 throw new \RuntimeException('The srs: "' . $srs_req
                 . '" does not supported.');
             }
-            $configuration = array_merge($configuration, array('targetsrs' => $srs_req));
+            $configuration = array_merge($configuration, array('targetsrs' => strtoupper($srs_req)));
         }
 
         $pois = $this->container->get('request')->get('poi');
