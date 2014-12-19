@@ -40,7 +40,7 @@ class DimensionSubscriber implements EventSubscriberInterface
     {
         return array(FormEvents::PRE_SET_DATA => 'preSetData');
     }
-    
+
     /**
      * Presets a form data
      * 
@@ -62,8 +62,12 @@ class DimensionSubscriber implements EventSubscriberInterface
 
     private function addFields($form, $data, $event)
     {
-        $data->setExtent(json_encode($data->getData($data->getExtent())));
-        $data->setOrigextent(json_encode($data->getData($data->getOrigextent())));
+        if ($data->getExtent()) {
+            $data->setExtent(json_encode($data->getData($data->getExtent())));
+        }
+        if ($data->getOrigextent()) {
+            $data->setOrigextent(json_encode($data->getData($data->getOrigextent())));
+        }
         $form
             ->add($this->factory->createNamed('extent', 'hidden', null,
                     array('auto_initialize' => false, 'attr' => array('data-extent' => 'group-dimension-extent', 'data-name' => 'extent'))))

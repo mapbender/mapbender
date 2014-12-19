@@ -128,6 +128,20 @@ $(function () {
         $sel.data("selected", $sel.val());
         return false;
     });
+    $(document).on('click', '.collectionAdd', function (event) {
+        var $plus = $(event.target);
+        var $parent = $plus.parent();
+        var $new = $('.collectionItem select[data-dimension-group]:last', $parent);
+        if($('.collectionItem', $parent).length > 1){
+            $('.collectionItem select[data-dimension-group]:first option', $parent).each(function(idx, item){
+                var $opt = $(item);
+                if($opt.prop('disabled') || $opt.prop('selected')){
+                    $('option[value="' + $opt.val() + '"]', $new).prop('disabled', true);
+                }
+            });
+        }
+        dimHandler.initSlider($new, null);
+    });
     $('.collectionItem select[data-dimension-group]', $('.collectionAdd').parent()).each(function (idx, item) {
         dimHandler.initSlider($(item), null);
     });

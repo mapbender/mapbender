@@ -134,7 +134,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         );
         foreach ($rootlayer->getSourceItem()->getBoundingBoxes() as $bbox) {
             $srses = array_merge($srses,
-                                 array($bbox->getSrs() => array(
+                array($bbox->getSrs() => array(
                     floatval($bbox->getMinx()),
                     floatval($bbox->getMiny()),
                     floatval($bbox->getMaxx()),
@@ -154,7 +154,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 if ($dimension->getDefault()) {
                     $options->setUrl(
                         UrlUtil::validateUrl($options->getUrl(), array(),
-                                             array($dimension->getParameterName() => $dimension->getDefault())));
+                            array($dimension->getParameterName() => $dimension->getDefault())));
                 }
             }
         }
@@ -279,6 +279,24 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 $this->signeUrls($signer, $child);
             }
         }
+    }
+
+    public function mergeDimension($dimension, $persist = false)
+    {
+        $dimensions = $this->entity->getDimensions();
+        foreach ($dimensions as $dim) {
+            if($dim->getType() === $dimension->getType()){
+                $dim->setExtent($dimension->getExtent());
+                $dim->setDefault($dimension->getDefault());
+            }
+        }
+        $this->entity->setDimensions($dimensions);
+        if ($persist) {
+            $this->container->get('doctrine')->getManager()->persist($this->entity);
+            $this->container->get('doctrine')->getManager()->flush();
+        }
+//        $dimensions = $this->entity->getDimensions();
+//        $a = 0;
     }
 
 }

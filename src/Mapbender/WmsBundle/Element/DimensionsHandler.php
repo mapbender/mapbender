@@ -3,6 +3,7 @@
 namespace Mapbender\WmsBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Component\EntityHandler;
 
 /**
  * Dimensions handler
@@ -104,22 +105,38 @@ class DimensionsHandler extends Element
             ));
     }
     
+    /**
+     * @inheritdoc
+     */
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
         foreach ($configuration['dimensionsets'] as $key => &$value) {
             $value['dimension'] = $value['dimension']->getConfiguration();
-//            $a = 0;
         }
-//        $config = $this->entity->getConfiguration();
-//        //@TODO merge recursive $this->entity->getConfiguration() and $this->getDefaultConfiguration()
-//        $def_configuration = $this->getDefaultConfiguration();
-//        $configuration = array();
-//        foreach ($def_configuration as $key => $val) {
-//            if(isset($config[$key])){
-//                $configuration[$key] = $config[$key];
-//            }
-//        }
         return $configuration;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function postSave()
+    {
+        $configuration = parent::getConfiguration();
+        $instances = array();
+        foreach ($configuration['dimensionsets'] as $key => $value) {
+            for($i = 0; isset($value['group']) && count($value['group']) > $i; $i++){
+                $item = explode("-", $value['group'][$i]);
+                $instances[$item[0]] = $value['dimension'];
+            }
+        }
+        foreach ($this->application->getEntity()->getLayersets() as $layerset) {
+            foreach ($layerset->getInstances() as $instance){
+                if (key_exists($instance->getId(), $instances)){
+                    $handler = EntityHandler::createHandler($this->container, $instance);
+                    $handler->mergeDimension($instances[$instance->getId()], true);
+                }
+            }
+        }
     }
 }
