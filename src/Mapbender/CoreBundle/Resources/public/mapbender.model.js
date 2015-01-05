@@ -577,7 +577,7 @@ Mapbender.Model = {
     zoomToLayer: function(options) {
         var sources = this.findSource({id: options.sourceId});
         if (sources.length === 1) {
-            var extents = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId, options.inherit);
+            var extents = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
             var proj = this.map.olMap.getProjectionObject();
             if (extents && extents[proj.projCode]) {
                 this.mbMap.zoomToExtent(OpenLayers.Bounds.fromArray(extents[proj.projCode]), true);
@@ -602,7 +602,7 @@ Mapbender.Model = {
     getLayerExtents: function(options) {
         var sources = this.findSource({id: options.sourceId});
         if (sources.length === 1) {
-            return Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId, options.inherit);
+            return Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
         }
         return null;
     },
@@ -1158,7 +1158,7 @@ Mapbender.Model = {
     },
     parseURL: function() {
         var self = this;
-        var ids = Mapbender.urlParam('visiblelayers');
+        var ids = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
         ids = ids ? decodeURIComponent(ids).split(',') : [];
         if (ids.length) {
             $.each(ids, function(idx, id) {

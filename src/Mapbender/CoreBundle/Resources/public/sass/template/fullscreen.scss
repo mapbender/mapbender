@@ -20,6 +20,7 @@
 /* ---------------------------------------------------------- CONTENT */
 .templateWrapper{
   margin:0 auto;
+  overflow: hidden;
   @include absolute(0 0 0 0);
 }
 .contentPane{

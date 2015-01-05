@@ -222,6 +222,9 @@ $.extend(true, Mapbender, {
                         infoformat = options.global.defInfoformat;
                     }
                     //@TODO srs list, srs by layer -> parent layer srs + layer srs
+                    var getmap = new Mapbender.Util.Url(capabilities.capability.request.getmap.get.href);
+                    getmap.username = options.gcurl.username;
+                    getmap.password = options.gcurl.password;
                     var def = {
                         type: 'wms',
                         title: capabilities.service.title,
@@ -235,7 +238,7 @@ $.extend(true, Mapbender, {
                                 proxy: false,
                                 tiled: false,
                                 transparent: true,
-                                url: capabilities.capability.request.getmap.get.href,
+                                url: getmap.asString(),
                                 visible: true
                             }
                         }
@@ -787,23 +790,23 @@ $.extend(true, Mapbender, {
              * @param {object} changeOptions options in form of:
              * @returns {object} extent of form {projectionCode: OpenLayers.Bounds.toArray, ...}
              */
-            getLayerExtents: function(source, layerId, inherit){
-                function _layerExtent(layer, extents, toFindLayerId, inherit){
+            getLayerExtents: function(source, layerId){
+                function _layerExtent(layer, toFindLayerId){
                     if(layer.options.id === toFindLayerId){
-                        if(layer.options.bbox)
-                            extents = layer.options.bbox;
-                        return;
+                        return layer.options.bbox ? layer.options.bbox : null;
                     }
                     if(layer.children){
                         for(var j = 0; j < layer.children.length; j++){
-                            var exts = inherit ? (layer.options.bbox ? layer.options.bbox : extents) : null;
-                            _layerExtent(layer.children[j], layer.options.bbox ? layer.options.bbox : extents, toFindLayerId, inherit);
+                            var temp = _layerExtent(layer.children[j], toFindLayerId);
+                            if(temp){
+                                return temp;
+                            }
                         }
                     }
+                    return null;
                 }
-                var extents = inherit ? source.configuration.options.bbox : null;
-                _layerExtent(source.configuration.children[0], extents, layerId, inherit);
-                return extents;
+                var extent = _layerExtent(source.configuration.children[0], layerId);
+                return extent ? extent : source.configuration.options.bbox;
             }
         }
     }

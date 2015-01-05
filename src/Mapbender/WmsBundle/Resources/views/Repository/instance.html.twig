@@ -3,15 +3,16 @@
 {% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} ({{instance.source.id}}/{{ instance.id }}) - {{ form.vars.value.title }}{% endblock %}
 
 {% block css %}
+    <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/regional/vendor/jquery/jquery-ui-1.11.1.custom/jquery-ui.min.css') }}" type="text/javascript" />
   {{parent()}}
   {% stylesheets filter="compass,cssrewrite"
     "bundles/mapbendermanager/sass/manager/services.scss"
   %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-  {% endstylesheets %}
+    <link rel="stylesheet" href="{{ asset_url }}" />{% endstylesheets %}
 {% endblock %}
 
 {% block js %}
+  <script type="text/javascript" src="{{ asset('bundles/mapbendercore/vendor/joii.min.js') }}"></script>
   {{parent()}}
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script>
 {% endblock %}
@@ -64,14 +65,13 @@
         {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.tiled"|trans}}</label>
         </div>
         <div class="clear"></div>
-        {{ form_widget(form.ratio) }} <label for="{{form.ratio.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.ratio"|trans}}</label>
+
+        {{ form_widget(form.ratio) }} <label for="{{form.ratio.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.ratio"|trans}}</label>
         <div class="clear"></div>
-        {{ form_widget(form.buffer) }} <label for="{{form.buffer.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.buffer"|trans}}</label>
+        {{ form_widget(form.buffer) }} <label for="{{form.buffer.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.buffer"|trans}}</label>
         <div class="clear"></div>
       </div>
     </div>
-
-       
     {% set root = instance.source.getRootlayer() %}
     <table id="instanceTable" class="table instanceTable">
       <thead>
