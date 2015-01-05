@@ -6,12 +6,13 @@
  *
  * @return {Boolean} Whether the layer is in range or not
  */
-OpenLayers.Layer.WMS.prototype.calculateInRange = function() {
-    if(!this.params.LAYERS || 0 === this.params.LAYERS.length) {
+OpenLayers.Layer.WMS.prototype.calculateInRange = function(){
+    if(!this.params.LAYERS || 0 === this.params.LAYERS.length){
         // explicitely hide DOM element for this layer
         this.display(false);
         return false;
-    };
+    }
+    ;
     return OpenLayers.Layer.prototype.calculateInRange.apply(this, arguments);
 }
 
@@ -35,7 +36,7 @@ $.extend(true, Mapbender, {
                     if(proxy && layer.options.legend){
                         if(layer.options.legend.graphic){
                             layer.options.legend.graphic = self._addProxy(layer.options.legend.graphic);
-                        } else if(layer.options.legend.url){
+                        }else if(layer.options.legend.url){
                             layer.options.legend.url = self._addProxy(layer.options.legend.url);
                         }
                     }
@@ -118,17 +119,17 @@ $.extend(true, Mapbender, {
                     QUERY_LAYERS: layer.olLayer.queryLayers.join(',')
                 };
                 var contentType_ = "";
-                if(typeof(layer.source.configuration.options.info_format)
-                    !== 'undefined'){
+                if(typeof (layer.source.configuration.options.info_format)
+                        !== 'undefined'){
                     param_tmp["INFO_FORMAT"] =
-                        layer.source.configuration.options.info_format;
+                            layer.source.configuration.options.info_format;
                     //                contentType_ +=
                     //                    layer.options.configuration.configuration.info_format;
                 }
-                if(typeof(layer.source.configuration.options.info_charset)
-                    !== 'undefined'){
+                if(typeof (layer.source.configuration.options.info_charset)
+                        !== 'undefined'){
                     contentType_ += contentType_.length > 0 ? ";" : "" +
-                        layer.source.configuration.options.info_charset;
+                            layer.source.configuration.options.info_charset;
                 }
                 var params = $.param(param_tmp);
 
@@ -148,14 +149,14 @@ $.extend(true, Mapbender, {
                     }
                 });
 
-                request.done(function(data, textStatus, jqXHR) {
+                request.done(function(data, textStatus, jqXHR){
                     callback({
                         layerId: layer.id,
                         response: data
                     }, jqXHR);
                 });
 
-                request.fail(function(jqXHR, textStatus, errorThrown) {
+                request.fail(function(jqXHR, textStatus, errorThrown){
                     callback({
                         layerId: layer.id,
                         response: textStatus
@@ -164,15 +165,15 @@ $.extend(true, Mapbender, {
             },
             loadFromUrl: function(url){
                 var dlg = $('<div></div>').attr('id', 'loadfromurl-wms'),
-                    spinner = $('<img />')
-                    .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/images/spinner.gif')
-                    .appendTo(dlg);
+                        spinner = $('<img />')
+                        .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/images/spinner.gif')
+                        .appendTo(dlg);
                 dlg.appendTo($('body'));
 
                 $('<script></type')
-                    .attr('type', 'text/javascript')
-                    .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/mapbender.source.wms.loadfromurl.js')
-                    .appendTo($('body'));
+                        .attr('type', 'text/javascript')
+                        .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/mapbender.source.wms.loadfromurl.js')
+                        .appendTo($('body'));
             },
             createSourceDefinitions: function(xml, options){
                 if(!options.global.defFormat){
@@ -182,9 +183,9 @@ $.extend(true, Mapbender, {
                     options.global.defInfoformat = "text/html";
                 }
                 var parser = new OpenLayers.Format.WMSCapabilities(),
-                    capabilities = parser.read(xml);
+                        capabilities = parser.read(xml);
 
-                if(typeof(capabilities.capability) !== 'undefined'){
+                if(typeof (capabilities.capability) !== 'undefined'){
                     var rootlayer = capabilities.capability.nestedLayers[0];
                     var bboxOb = {}, bboxSrs = null, bboxBounds = null;
                     for(bbox in rootlayer.bbox){
@@ -203,8 +204,10 @@ $.extend(true, Mapbender, {
                     var format;
                     var formats = capabilities.capability.request.getmap.formats;
                     for(var i = 0; i < formats.length; i++){
-                        if(formats[i].toLowerCase().indexOf(options.global.defFormat) !== -1)
+                        if(formats[i].toLowerCase() === options.global.defFormat.toLowerCase()){
                             format = formats[i];
+                            break;
+                        }
                     }
                     if(!format)
                         format = formats[0];
@@ -213,8 +216,10 @@ $.extend(true, Mapbender, {
                     var gfi = capabilities.capability.request.getfeatureinfo;
                     if(gfi && gfi.formats && gfi.formats.length > 0){
                         for(var i = 0; i < gfi.formats.length; i++){
-                            if(gfi.formats[i].toLowerCase().indexOf(options.global.defInfoformat) !== -1)
+                            if(gfi.formats[i].toLowerCase() === options.global.defInfoformat.toLowerCase()){
                                 infoformat = gfi.formats[i];
+                                break;
+                            }
                         }
                         if(!infoformat)
                             infoformat = gfi.formats[0];
@@ -331,7 +336,7 @@ $.extend(true, Mapbender, {
                 }
             },
             getPrintConfig: function(layer, bounds, isProxy){
-                var printConfig =  {
+                var printConfig = {
                     type: 'wms',
                     url: isProxy ? this._removeProxy(layer.getURL(bounds)) : layer.getURL(bounds)
                 };
@@ -345,14 +350,14 @@ $.extend(true, Mapbender, {
                     async: false,
                     url: Mapbender.configuration.application.urls.proxy + "?url=" + encodeURIComponent(self._removeProxy(imgEl.attr('src'))),
                     success: function(message, text, response){
-                        if(typeof(response.responseText) === "string"){
+                        if(typeof (response.responseText) === "string"){
                             var details = Mapbender.trans("mb.wms.source.image_error.datails");
                             var layerTree;
                             try{
                                 layerTree = new OpenLayers.Format.WMSCapabilities().read(response.responseText);
                             }catch(e){
                                 layerTree = null;
-                                details += ".\n" + Mapbender.trans("mb.wms.source.image_error.exception",{'exception': e.toString()});
+                                details += ".\n" + Mapbender.trans("mb.wms.source.image_error.exception", {'exception': e.toString()});
                             }
                             if(layerTree && layerTree.error){
                                 if(layerTree.error.exceptionReport && layerTree.error.exceptionReport.exceptions){
@@ -379,7 +384,7 @@ $.extend(true, Mapbender, {
                                 capabilities = new OpenLayers.Format.WMSCapabilities().read(err.responseText);
                             }catch(e){
                                 capabilities = null;
-                                details += ".\n" + Mapbender.trans("mb.wms.source.image_error.exception",{'exception': e.toString()});
+                                details += ".\n" + Mapbender.trans("mb.wms.source.image_error.exception", {'exception': e.toString()});
                             }
                             if(capabilities && capabilities.error){
                                 if(capabilities.error.exceptionReport && capabilities.error.exceptionReport.exceptions){
@@ -622,7 +627,7 @@ $.extend(true, Mapbender, {
                 return result;
                 function _changeOptions(layer, scale, parentState, toChangeOpts, result){
                     var layerChanged,
-                        elchanged = false;
+                            elchanged = false;
                     if(toChangeOpts.options.children[layer.options.id]){
                         layerChanged = toChangeOpts.options.children[layer.options.id];
                         layerChanged.state = {
@@ -668,9 +673,9 @@ $.extend(true, Mapbender, {
                     /* @TODO outOfBounds for layers ?  */
                     if(layer.children){
                         if(parentState.state.visibility
-                            && layer.options.treeOptions.selected
-                            && !layer.state.outOfScale
-                            && !layer.state.outOfBounds){
+                                && layer.options.treeOptions.selected
+                                && !layer.state.outOfScale
+                                && !layer.state.outOfBounds){
                             layer.state.visibility = true;
                         }else{
                             layer.state.visibility = false;
@@ -689,10 +694,10 @@ $.extend(true, Mapbender, {
                         }
                     }else{
                         if(parentState.state.visibility
-                            && layer.options.treeOptions.selected
-                            && !layer.state.outOfScale
-                            && !layer.state.outOfBounds
-                            && layer.options.name.length > 0){
+                                && layer.options.treeOptions.selected
+                                && !layer.state.outOfScale
+                                && !layer.state.outOfBounds
+                                && layer.options.name.length > 0){
                             layer.state.visibility = true;
                             result.layers.push(layer.options.name);
                             if(layer.options.treeOptions.info === true){
@@ -742,7 +747,7 @@ $.extend(true, Mapbender, {
                             var child = layer.children[i];
                             setSelected(child, layer, optionsToChange, toChange, selectedOther, merge);
                             if((!toChange[child.options.id] && child.options.treeOptions.selected)
-                                || (toChange[child.options.id] && toChange[child.options.id].options.treeOptions.selected)){
+                                    || (toChange[child.options.id] && toChange[child.options.id].options.treeOptions.selected)){
                                 childAsSelected = true;
                             }
                         }
