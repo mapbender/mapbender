@@ -102,6 +102,11 @@ class Utils
         return UrlUtil::validateUrl($url, array(), $paramsToRemove);
     }
 
+    /**
+     * Copies an order recursively.
+     * @param string $sourceOrder path to source order
+     * @param string $destinationOrder path to destination order
+     */
     public static function copyOrderRecursive($sourceOrder, $destinationOrder)
     {
         $dir = opendir($sourceOrder);
@@ -130,7 +135,6 @@ class Utils
     {
         return $scaleRecursive !== null ? $trueValue : $nullValue;
     }
-
 
     /**
      * Has a value?

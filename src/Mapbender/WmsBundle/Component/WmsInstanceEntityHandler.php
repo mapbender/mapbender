@@ -16,6 +16,7 @@ use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Description of WmsSourceHandler

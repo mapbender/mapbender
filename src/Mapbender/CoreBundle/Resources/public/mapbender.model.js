@@ -1158,7 +1158,7 @@ Mapbender.Model = {
     },
     parseURL: function() {
         var self = this;
-        var ids = Mapbender.urlParam('visiblelayers');
+        var ids = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
         ids = ids ? decodeURIComponent(ids).split(',') : [];
         if (ids.length) {
             $.each(ids, function(idx, id) {
