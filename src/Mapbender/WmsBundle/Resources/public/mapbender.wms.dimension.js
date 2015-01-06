@@ -112,6 +112,8 @@ Mapbender.DimensionTime = Class({implements: Mapbender.IDimension, 'extends': Ma
     step: null,
     asc: true,
     __construct: function (options) {
+        options.extent[0] = '' + options.extent[0];
+        options.extent[1] = '' + options.extent[1];
         this['super']('__construct', options, false);
         this.start = new TimeISO8601(options.extent[0]);
         this.end = new TimeISO8601(options.extent[1]);
@@ -410,7 +412,9 @@ TimeStr = Class({
         var help = dtStr.split('T');
         var ymd = [];
         var hmsm = [];
-        if (help.length === 2) {
+        if (help.length === 1) {
+            ymd = help;
+        } else if (help.length === 2) {
             ymd = help[0].split('-');
             hmsm = help[1].split(':');
         } else if (help[0].indexOf('-') !== -1) {

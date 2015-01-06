@@ -1,6 +1,6 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} ({{instance.source.id}}/{{ instance.id }}) - {{ form.vars.value.title }}{% endblock %}
+{% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} ({{instance.source.id}}/{{ instance.id }}) - {{ instance.source.title }}{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/regional/vendor/jquery/jquery-ui-1.11.1.custom/jquery-ui.min.css') }}" type="text/javascript" />
@@ -76,7 +76,6 @@
         <div class="clear"></div>
       </div>
       {% if form.dimensions is not null and form.dimensions | length > 0 %}
-      <script src="{{ asset('bundles/mapbenderwms/backend/instance-dimension.js') }}"></script>
       <div class="dimensionGroup">
         <div id="dimension" class="on-off on-off-title">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
         <div id="dimension-content" class="on-off-content hidden">
