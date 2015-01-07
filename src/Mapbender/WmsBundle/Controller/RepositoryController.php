@@ -107,7 +107,7 @@ class RepositoryController extends Controller
             if ($proxy_query->getGetPostParamValue("service", true) === null) {
                 $proxy_query->addQueryParameter("service", "WMS");
             }
-            $proxy = new CommonProxy($proxy_config, $proxy_query);
+            $proxy = new CommonProxy($proxy_config, $proxy_query, $this->get("logger"));
 
             $wmssource = null;
             try {
