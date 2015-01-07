@@ -95,14 +95,14 @@
                             callback: function(){
                                 $(".popupSubContent").remove();
                                 $(".popupSubTitle").text("");
-                                $(".popup").find(".buttonYes, .buttonBack").hide();
-                                $(".popupContent").show();
+                                $(".popup", self.popup.$element).find(".buttonYes, .buttonBack").hide();
+                                $(".popupContent", self.popup.$element).show();
                             }
                         }
                     }
                 });
                 this.popup.$element.on('close', $.proxy(this.close, this));
-                $(".popup").find(".buttonYes, .buttonBack").hide();
+                $(".popup", self.popup.$element).find(".buttonYes, .buttonBack").hide();
             }else{
                 this.popup.open($.ajax({url: self.elementUrl + 'list'}));
             }
@@ -154,7 +154,7 @@
 
                                 var subTitle = subContent.find("form").attr('title');
                                 $(".popupSubTitle").text(" - " + subTitle);
-                                $(".popup").find(".buttonYes, .buttonBack").show();
+                                $(".popup", self.popup.$element).find(".buttonYes, .buttonBack").show();
                                 self._ajaxForm();
                             }
                         }

@@ -92,7 +92,7 @@
                     }
                 });
                 this.popup.$element.on('close', $.proxy(this.close, this));
-                $(".popup").find(".buttonYes, .buttonBack").hide();
+                $(".popup", self.popup.$element).find(".buttonYes, .buttonBack").hide();
             }else{
                 $(".popupContent", self.popup.$element).empty();
                 this.popup.open($.ajax({url: self.elementUrl + 'list'}));
@@ -135,7 +135,7 @@
                         success: function(data){
                             if($('.contentWrapper', self.popup.$element).length === 0)
                                 $(".popupContent", self.popup.$element).wrap('<div class="contentWrapper"></div>');
-                            $(".popupContent").hide();
+                            $(".popupContent", self.popup.$element).hide();
                             if($('.popupSubContent', self.popup.$element).length === 0)
                                 $(".contentWrapper", self.popup.$element).append('<div class="popupSubContent"></div>');
                             $(".popupSubContent", self.popup.$element).html(data);
@@ -163,7 +163,7 @@
                         success: function(data){
                             if($('.contentWrapper', self.popup.$element).length === 0)
                                 $(".popupContent", self.popup.$element).wrap('<div class="contentWrapper"></div>');
-                            $(".popupContent").hide();
+                            $(".popupContent", self.popup.$element).hide();
                             if($('.popupSubContent', self.popup.$element).length === 0)
                                 $(".contentWrapper", self.popup.$element).append('<div class="popupSubContent"></div>');
                             $(".popupSubContent").html(data);
@@ -227,7 +227,7 @@
                         success: function(data){
                             if($('.contentWrapper', self.popup.$element).length === 0)
                                 $(".popupContent", self.popup.$element).wrap('<div class="contentWrapper"></div>');
-                            $(".popupContent").hide();
+                            $(".popupContent", self.popup.$element).hide();
                             if($('.popupSubContent', self.popup.$element).length === 0)
                                 $(".contentWrapper", self.popup.$element).append('<div class="popupSubContent"></div>');
                             $(".popupSubContent").html(data);

@@ -34,7 +34,7 @@
             this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
 
             this.layerTitle = this.options.showLayerTitle ? "" : "notshow";
-            this.sourceTitle = this.options.showLayerTitle ? "" : "notshow";
+            this.sourceTitle = this.options.showSourceTitle ? "" : "notshow";
             this.grouppedTitle = this.options.showGrouppedTitle ? "" : "notshow";
             this.hiddeEmpty = this.options.hideEmptyLayers ? "notshow" : "";
 
@@ -132,6 +132,13 @@
                     $('li[data-id="' + layerid + '"]', context).remove();
                 });
             }
+            var source = this.model.getSource(options.changed.sourceIdx);
+            var root = source ? source.configuration.children[0] : null;
+            if(root && root.state.visibility === true){
+                $('li[data-id="' + root.options.id + '"]', context).removeClass('notvisible');
+            }else if(root && root.state.visibility !== true){
+                $('li[data-id="' + root.options.id + '"]', context).addClass('notvisible');
+            }
 
         },
         _onSourceRemoved: function(event, removed){
@@ -194,13 +201,21 @@
             return allLayers;
         },
         _getSource: function(source, layer, level){
+            var children_ = this._getSublayers(source, layer, level + 1, []);
+            var childrenLeg = false;
+            for(var i = 0; i < children_.length; i++){
+                if(children_[i].childrenLegend){
+                    childrenLeg = true;
+                }
+            }
             return {
                 sourceId: source.id,
                 id: layer.options.id,
                 visible: layer.state.visibility ? '' : 'notvisible',
                 title: layer.options.title,
                 level: level,
-                children: this._getSublayers(source, layer, level + 1, [])
+                children: children_,
+                childrenLegend: childrenLeg
             };
         },
         _getSublayers: function(source, layer, level, children){
@@ -221,30 +236,43 @@
                 level: level,
                 isNode: sublayer.children && sublayer.children.length > 0 ? true : false
             };
-            if(sublayer.options.legend){
-                sublayerLeg["legend"] = sublayer.options.legend;
-                if(!sublayerLeg.legend.url && this.options.generateLegendGraphicUrl && sublayerLeg.legend.graphic){
-                    sublayerLeg.legend.url = sublayerLeg.legend.graphic;
+            function getLegend(layer, generate){
+                var legendObj = null;
+                if(layer.options.legend){
+                    legendObj = layer.options.legend;
+                    if(!legendObj.url && generate && legendObj.graphic){
+                        legendObj['url'] = legendObj.graphic;
+                    }
                 }
-
+                return legendObj;
             }
+            sublayerLeg["legend"] = getLegend(sublayer, this.options.generateLegendGraphicUrl);
             if(!sublayerLeg.isNode)
                 children.push(sublayerLeg);
             if(sublayer.children){
+                if(this.options.showGrouppedTitle){
+                    children.push(sublayerLeg);
+                }
+                var childrenLegend = false;
                 for(var i = (sublayer.children.length - 1); i > -1; i--){
+                    var layleg = getLegend(sublayer.children[i], this.options.generateLegendGraphicUrl);
+                    if(layleg && layleg.url){
+                        childrenLegend = true;
+                    }
                     children = children.concat(this._getSublayer(source, sublayer.children[i], type, level, []));//children
                 }
+                sublayerLeg['childrenLegend'] = childrenLegend;
             }
             return children;
         },
         _createSourceTitleLine: function(layer){
-            return '<li class="ebene' + layer.level + ' ' + this.sourceTitle + ' title" data-sourceid="' + layer.sourceId + '" data-id="' + layer.id + '">' + layer.title + '</li>';
+            return '<li class="ebene' + layer.level + ' ' + this.sourceTitle + (!layer.childrenLegend ? ' notshow' : '') +' title" data-sourceid="' + layer.sourceId + '" data-id="' + layer.id + '">' + layer.title + '</li>';
         },
         _createNodeTitleLine: function(layer){
-            return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + this.grouppedTitle + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
+            return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + this.grouppedTitle  + (!layer.childrenLegend ? ' notshow' : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
         },
         _createTitleLine: function(layer, hide){
-            return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + (hide ? this.hiddeEmpty : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
+            return '<li class="ebene' + layer.level + ' ' + layer.visible + ' ' + this.layerTitle + ' ' + (hide ? this.hiddeEmpty : '') + ' subTitle" data-id="' + layer.id + '">' + layer.title + '</li>';
         },
         _createImageLine: function(layer){
             return '<li class="ebene' + layer.level + ' ' + layer.visible + ' image" data-id="' + layer.id + '"><img src="' + layer.legend.url + '"></img></li>';
