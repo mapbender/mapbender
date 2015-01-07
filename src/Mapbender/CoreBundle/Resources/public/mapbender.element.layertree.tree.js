@@ -546,7 +546,6 @@
             tochange.options.children[li.attr('data-id')] = {options: {treeOptions: {info: $(e.target).is(':checked')}}};
             this.model.changeSource({change: tochange});
         },
-
         currentMenu: null,
         closeMenu: function(menu) {
             //menu.find('.layer-zoom').off('click');
@@ -628,26 +627,30 @@
                     var dimBar = $('.layer-dimension-bar', menu).remove();
                     var dimTextfield = $('.layer-dimension-textfield', menu).remove();
                     $.each(dimensions, function(idx, item) {
-                        var chkbox = dimCheckbox.clone();
                         var title = dimTitle.clone();
-                        lastItem.after(chkbox);
-                        var inpchkbox = chkbox.find('.checkbox');
-                        inpchkbox.data('dimension', item);
-                        inpchkbox.on('change', function(e) {
-                            self._callDimension(source, $(e.target));
-                        });
-                        initCheckbox.call(inpchkbox);
                         title.attr('title', title.attr('title') + ' ' + item.name);
                         title.attr('id', title.attr('id') + item.name);
-                        chkbox.after(title);
                         if (item.type === 'single') {
+                            var chkbox = dimCheckbox.clone();
+                            lastItem.after(chkbox);
+                            var inpchkbox = chkbox.find('.checkbox');
+                            inpchkbox.attr('data-value', item.extent);
+                            inpchkbox.attr('data-dimname', item['__name']);
+                            inpchkbox.on('change', function(e) {
+                                var chb = $(e.target);
+                                self._callDimension(source, chb.attr('data-dimname'), chb.attr('data-value'));
+                            });
+                            initCheckbox.call(inpchkbox);
+                            chkbox.after(title);
                             var textf = dimTextfield.clone();
                             title.after(textf);
                             textf.val(item.extent);
-                            inpchkbox.attr('data-value', item.extent);
                             lastItem = textf;
-                        } else if (item.type === 'multiple'|| item.type === 'interval'){
+                        } else if (item.type === 'multiple' || item.type === 'interval') {
+                            lastItem.after(title);
                             var bar = dimBar.clone();
+                            bar.attr('data-value', item.extent);
+                            bar.attr('data-dimname', item['__name']);
                             title.after(bar);
                             bar.removeClass('layer-dimension-bar');
                             bar.attr('id', bar.attr('id') + item.name);
@@ -656,19 +659,19 @@
                             var dimHandler = Mapbender.Dimension(item);
                             var label = $('#layer-dimension-value-' + item.name, menu);
                             new Dragdealer('layer-dimension-' + item.name, {
-                                x: dimHandler.partFromValue(dimHandler.getValue()),
+                                x: dimHandler.partFromValue(dimHandler.getDefault()),
                                 horizontal: true,
                                 vertical: false,
                                 speed: 1,
                                 steps: dimHandler.getStepsNum(),
                                 handleClass: 'layer-dimension-' + item.name + '-handle',
                                 callback: function(x, y) {
-                                    self._callDimension(source, inpchkbox);
+                                    self._callDimension(source, bar.attr('data-dimname'), bar.attr('data-value'));
                                 },
                                 animationCallback: function(x, y) {
                                     var value = dimHandler.valueFromPart(x);
                                     label.text(value);
-                                    inpchkbox.attr('data-value', value);
+                                    bar.attr('data-value', value);
                                 }
                             });
                         } else {
@@ -698,15 +701,10 @@
                 createMenu($btnMenu, currentSourceId, currentLayerId);
             }
         },
-        _callDimension: function(source, chkbox) {
-            var dimension = chkbox.data('dimension');
+        _callDimension: function(source, dimname, value) {
             var params = {};
-            params[dimension['__name']] = chkbox.attr('data-value');
-            if (chkbox.is(':checked')) {
-                this.model.resetSourceUrl(source, {'add': params}, true);
-            } else if (params[dimension['__name']]) {
-                this.model.resetSourceUrl(source, {'remove': params}, true);
-            }
+            params[dimname] = value;
+            this.model.resetSourceUrl(source, {'add': params}, true);
             return true;
         },
         _setOpacity: function(source, opacity) {
@@ -716,7 +714,6 @@
             var layer = $(e.currentTarget).closest("li").data();
             var types = this.consts;
             var model = this.model;
-
             if (layer.sourceid && layer.type) {
                 switch (layer.type) {
                     case types.root:
@@ -728,7 +725,6 @@
                         break;
                 }
             }
-
             this._setSourcesCount();
         },
         _showLegend: function(elm) {

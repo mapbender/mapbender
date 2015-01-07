@@ -9,7 +9,11 @@
   }
   .input{width:100%}
   .dropdown{min-width:70%;}
-  .inputWrapper, select{width:70%;}
+  .inputWrapper, .sliderDiv, select{width:70%;}
+  .sliderDiv{
+    margin-top: 10px;
+    float: left;
+  }
 }
 .defaultForm{
   $label:70px;

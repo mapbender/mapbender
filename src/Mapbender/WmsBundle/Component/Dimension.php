@@ -10,6 +10,10 @@ namespace Mapbender\WmsBundle\Component;
 class Dimension
 {
 
+    const NAME_TIME = 'time';
+    const NAME_ELEVATION = 'elevation';
+    const NAME_PREFIX = 'dim_';
+
     /**
      * ORM\Column(type="string", nullable=false)
      */
@@ -57,7 +61,7 @@ class Dimension
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
     public $extent;
-    
+
     /**
      * Set name
      * 
@@ -236,6 +240,21 @@ class Dimension
     public function getExtent()
     {
         return $this->extent;
+    }
+
+    /**
+     * Generates a GET parameter name for this dimension.
+     * @return string parameter name
+     */
+    public function getParameterName()
+    {
+        if (strtolower($this->name) === self::NAME_TIME) {
+            return self::NAME_TIME;
+        } elseif (strtolower($this->name) === self::NAME_ELEVATION) {
+            return self::NAME_ELEVATION;
+        } else {
+            return self::NAME_PREFIX . $this->name;
+        }
     }
 
 }
