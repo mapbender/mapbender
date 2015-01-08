@@ -106,6 +106,8 @@
                 context = this.element;
             }else if(this.options.elementType === "dialog" && this.popup && this.popup.$element){
                 context = this.popup.$element;
+            } else {
+                return;
             }
             if(options.changed && options.changed.options){
 
@@ -147,6 +149,8 @@
                 context = this.element;
             }else if(this.options.elementType === "dialog" && this.popup && this.popup.$element){
                 context = this.popup.$element;
+            } else {
+                return;
             }
             if(context && removed && removed.source && removed.source.id){
                 $('ul[data-sourceid="' + removed.source.id + '"]', context).remove();
