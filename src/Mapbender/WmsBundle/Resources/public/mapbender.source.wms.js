@@ -736,45 +736,43 @@ $.extend(true, Mapbender, {
              * @param {object} source wms source
              * @param {object} changeOptions options in form of:
              * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
-             * @param {boolean} merge
+             * @param {boolean} mergeSelected
              * @returns {object} changes
              */
-            createOptionsLayerState: function(source, changeOptions, selectedOther, merge){
-                function setSelected(layer, parent, optionsToChange, toChange, selectedOther, merge){
+            createOptionsLayerState: function(source, changeOptions, defaultSelected, mergeSelected){
+                function setSelected(layer, parent, toChange){
                     if(layer.children){
-                        var childAsSelected = false;
+                        var childSelected = false;
                         for(var i = 0; i < layer.children.length; i++){
                             var child = layer.children[i];
-                            setSelected(child, layer, optionsToChange, toChange, selectedOther, merge);
+                            setSelected(child, layer, toChange);
                             if((!toChange[child.options.id] && child.options.treeOptions.selected)
                                     || (toChange[child.options.id] && toChange[child.options.id].options.treeOptions.selected)){
-                                childAsSelected = true;
+                                childSelected = true;
                             }
                         }
-                        if(childAsSelected && !layer.options.treeOptions.selected){
+                        var layerOpts = changeOptions.layers[layer.options.name] || changeOptions.layers[layer.options.id];
+                        if(layerOpts && layerOpts.options.treeOptions.selected !== layer.options.treeOptions.selected){// change it
+                            toChange[layer.options.id] = {options: {treeOptions: {selected: layerOpts.options.treeOptions.selected}}};
+                            if(layer.options.treeOptions.allow.info){
+                                toChange[layer.options.id].options.treeOptions['info'] = layerOpts.options.treeOptions.selected;
+                            }
+                        }
+                        if(childSelected && !layerOpts && !layer.options.treeOptions.selected){
                             toChange[layer.options.id] = {options: {treeOptions: {selected: true}}};
-                            if(layer.options.treeOptions.allow.info)
+                            if(layer.options.treeOptions.allow.info){
                                 toChange[layer.options.id].options.treeOptions['info'] = true;
-                        }else if(!childAsSelected && layer.options.treeOptions.selected){
-                            toChange[layer.options.id] = {options: {treeOptions: {selected: false}}};
-                            if(layer.options.treeOptions.allow.info)
-                                toChange[layer.options.id].options.treeOptions['info'] = false;
+                            }
                         }
                     }else{
-                        var sel = false;
-                        if(!merge){
-                            var sel = optionsToChange.layers[layer.options.name] ? optionsToChange.layers[layer.options.name].options.treeOptions.selected : selectedOther;
-                            if(sel !== layer.options.treeOptions.selected){
-                                toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
-                            }
-                        }else{
-                            var help = optionsToChange.layers[layer.options.name] ? optionsToChange.layers[layer.options.name].options.treeOptions.selected : selectedOther;
-                            var sel = help || layer.options.treeOptions.selected;
-                            if(sel !== layer.options.treeOptions.selected){
-                                toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
-                            }
+                        var layerOpts = changeOptions.layers[layer.options.name] || changeOptions.layers[layer.options.id];
+                        var sel = layerOpts ? layerOpts.options.treeOptions.selected : defaultSelected;
+                        if(mergeSelected){
+                            sel = sel || layer.options.treeOptions.selected;
                         }
-
+                        if(sel !== layer.options.treeOptions.selected){
+                            toChange[layer.options.id] = {options: {treeOptions: {selected: sel}}};
+                        }
                         if(sel && layer.options.treeOptions.allow.info){
                             if(toChange[layer.options.id]){
                                 toChange[layer.options.id].options.treeOptions['info'] = true;
@@ -785,9 +783,9 @@ $.extend(true, Mapbender, {
                     }
                 }
                 ;
-                var tochange = {sourceIdx: {id: source.id}, options: {children: {}, type: 'selected'}};
-                setSelected(source.configuration.children[0], null, changeOptions, tochange.options.children, selectedOther, merge);
-                return {change: tochange};
+                var changed = {sourceIdx: {id: source.id}, options: {children: {}, type: 'selected'}};
+                setSelected(source.configuration.children[0], null, changed.options.children);
+                return {change: changed};
             },
             /**
              * Gets a layer extent or an extent from layer parents
