@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Map extends Element
 {
-
+    
     /**
      * @inheritdoc
      */
@@ -46,7 +46,7 @@ class Map extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'layerset' => null,
+            'layerset' => array(),
             'dpi' => 72,
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),

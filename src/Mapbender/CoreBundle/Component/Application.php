@@ -70,12 +70,6 @@ class Application
         $this->urls = $urls;
     }
 
-    /*************************************************************************
-     *                                                                       *
-     *                    Configuration entity handling                      *
-     *                                                                       *
-     *************************************************************************/
-
     /**
      * Get the configuration entity.
      *
@@ -85,12 +79,6 @@ class Application
     {
         return $this->entity;
     }
-
-    /*************************************************************************
-     *                                                                       *
-     *             Shortcut functions for leaner Twig templates              *
-     *                                                                       *
-     *************************************************************************/
 
     /**
      * Get the application ID
@@ -131,12 +119,6 @@ class Application
     {
         return $this->entity->getDescription();
     }
-
-    /*************************************************************************
-     *                                                                       *
-     *                              Frontend stuff                           *
-     *                                                                       *
-     *************************************************************************/
 
     /**
      * Render the application
@@ -232,7 +214,7 @@ class Application
                         if ($type === 'trans') {
                             if (!isset($layerTranslations[$asset])) {
                                 $layerTranslations[$asset] = json_decode($this->container->get('templating')->render($asset),
-                                    true);
+                                                                                                                     true);
                             }
                         } else {
                             $this->addAsset($assets, $type, $this->getReference($layer, $asset));
@@ -271,7 +253,7 @@ class Application
         }
 
         $application_entity = $this->getEntity();
-        if('css' === $type && $application_entity::SOURCE_DB === $application_entity->getSource()) {
+        if ('css' === $type && $application_entity::SOURCE_DB === $application_entity->getSource()) {
             $assets[] = new StringAsset($application_entity->getCustomCss());
         }
 
@@ -311,8 +293,10 @@ class Application
 
         // Get all layer configurations
         $configuration['layersets'] = array();
+        $configuration['layersetmap'] = array();
         foreach ($this->getLayersets() as $layerset) {
             $configuration['layersets'][$layerset->getId()] = array();
+            $configuration['layersetmap'][$layerset->getId()] = $layerset->getTitle() ? $layerset->getTitle() : $layerset->getId();
             $num = 0;
             foreach ($layerset->layerObjects as $layer) {
                 $instHandler = EntityHandler::createHandler($this->container, $layer);
@@ -409,7 +393,7 @@ class Application
             } catch (NotAllAclsFoundException $e) {
                 $acls = $e->getPartialResult();
             } catch (\Exception $e) {
-
+                
             }
             // Set up all elements (by region)
             $this->elements = array();
@@ -424,7 +408,7 @@ class Application
                             continue;
                         }
                     } catch (\Exception $e) {
-
+                        
                     }
                 } else if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($entity->yaml_roles)) {
                     $passed = false;
@@ -454,7 +438,7 @@ class Application
             // Sort each region element's by weight
             foreach ($this->elements as $r => $elements) {
                 usort($elements,
-                    function($a, $b) {
+                      function($a, $b) {
                     $wa = $a->getEntity()->getWeight();
                     $wb = $b->getEntity()->getWeight();
                     if ($wa == $wb) {
@@ -467,7 +451,7 @@ class Application
 
         if ($region) {
             return array_key_exists($region, $this->elements) ?
-                $this->elements[$region] : array();
+                    $this->elements[$region] : array();
         } else {
             return $this->elements;
         }
@@ -531,7 +515,7 @@ class Application
     public static function getUploadsDir($container, $webRelative = false)
     {
         $uploads_dir = $container->get('kernel')->getRootDir() . '/../web/'
-            . $container->getParameter("mapbender.uploads_dir");
+                . $container->getParameter("mapbender.uploads_dir");
         $ok = true;
         if (!is_dir($uploads_dir)) {
             $ok = mkdir($uploads_dir);
