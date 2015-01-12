@@ -786,6 +786,10 @@
         <source>mb.core.layertree.label.dimension</source>
         <target>Dimension</target>
       </trans-unit>
+      <trans-unit id="3973ffff84e82a5b904cca85555b9c21" resname="mb.core.admin.layertree.label.usetheme">
+        <source>mb.core.admin.layertree.label.usetheme</source>
+        <target>Use Theme</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

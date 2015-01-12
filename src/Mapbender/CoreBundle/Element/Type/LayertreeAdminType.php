@@ -53,9 +53,12 @@ class LayertreeAdminType extends AbstractType
                 array(
                 'required' => true,
                 'choices' => array(
-                    'dialog' => 'Dialog',
-                    'element' => 'Element')))
+                    'element' => 'Element',
+                    'dialog' => 'Dialog')))
             ->add('autoOpen', 'checkbox',
+                array(
+                'required' => false))
+            ->add('useTheme', 'checkbox',
                 array(
                 'required' => false))
             ->add('displaytype', 'choice',

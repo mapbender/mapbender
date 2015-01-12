@@ -70,19 +70,19 @@ class MapFieldSubscriber implements EventSubscriberInterface
             $event->setData($data);
         }
         $form = $event->getForm();
-        if (key_exists("layerset", $data) && is_array($data["layerset"])) {
-            $form->remove('layerset');
+        if (key_exists("layersets", $data) && is_array($data["layersets"])) {
+            $form->remove('layersets');
             $event->setData($data);
-            $choices = $this->getChoicesLayersets($data['layerset']);
-            $form->add($this->factory->createNamed('layerset', 'choice', null,
+            $choices = $this->getChoicesLayersets($data['layersets']);
+            $form->add($this->factory->createNamed('layersets', 'choice', null,
                                                    array(
-                    'choices' => $choices,
-                    'required' => true,
-                    'multiple' => true,
-                    'expanded' => true,
-                    'data' => $data["layerset"],
-                    'auto_initialize' => false,
-                    'attr' => array('data-sortable' => 'choiceExpandedSortable'))));
+                        'choices' => $choices,
+                        'required' => true,
+                        'multiple' => true,
+                        'expanded' => true,
+                        'data' => $data["layersets"],
+                        'auto_initialize' => false,
+                        'attr' => array('data-sortable' => 'choiceExpandedSortable'))));
             $event->setData($data);
         }
     }
@@ -109,18 +109,17 @@ class MapFieldSubscriber implements EventSubscriberInterface
             $event->setData($data);
         }
 
-        if (key_exists("layerset", $data) && is_array($data["layerset"])) {
-            $form->add($this->factory->createNamed('layerset', 'choice', null,
+        if (key_exists("layersets", $data) && is_array($data["layersets"])) {
+            $form->add($this->factory->createNamed('layersets', 'choice', null,
                                                    array(
-                    'choices' => $this->getChoicesLayersets($data['layerset']),
-                    'required' => true,
-                    'multiple' => true,
-                    'expanded' => true,
-                    'auto_initialize' => false,
-                    'attr' => array('data-sortable' => 'choiceExpandedSortable'))));
+                        'choices' => $this->getChoicesLayersets($data['layersets']),
+                        'required' => true,
+                        'multiple' => true,
+                        'expanded' => true,
+                        'auto_initialize' => false,
+                        'attr' => array('data-sortable' => 'choiceExpandedSortable'))));
         }
     }
-
 
     private function getChoicesLayersets(array $selected = array())
     {
@@ -144,5 +143,5 @@ class MapFieldSubscriber implements EventSubscriberInterface
             return $layersets;
         }
     }
-    
+
 }

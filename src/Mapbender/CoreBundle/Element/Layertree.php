@@ -92,6 +92,7 @@ class Layertree extends Element
     {
         return array(
             "target" => null,
+            "useTheme" => false,
             "type" => null,
             "displaytype" => null,
             "useAccordion" => false,
