@@ -63,7 +63,6 @@
                     if(this.options.displaytype === "tree") {
                         var li_s = this._createSourceTree(sources[i], sources[i], this.model.getScale());
                         this._addNode(li_s, sources[i]);
-//                        $("ul.layers:first", this.element).append(li_s);
                     } else {
                         return;
                     }
@@ -86,7 +85,8 @@
         _addNode: function($toAdd, source){
             if(this.options.useTheme) {
                 var layerset = this.model.findLayerset({source: {origId: source.origId}});
-                $("ul.layers:first", this.element).append($toAdd);
+                var $layersetEl = this._createThemeNode(layerset);
+                $("ul.layers:first", $layersetEl).append($toAdd);
             } else {
                 $("ul.layers:first", this.element).append($toAdd);
             }
@@ -136,6 +136,39 @@
         },
         _unSortable: function(){
         },
+        _sortTheme: function(elm){
+            $('ul.layers:first > li', elm).each(function(){
+                var that = this;
+                console.log(that);
+                // TODO
+            });
+        },
+        _sortSource: function(elm){
+            var before = null, after = null, toMove = null;
+            if(elm.prev().length !== 0) {
+                var beforeEl = $(elm.prev()[0]);
+                var bid = $(beforeEl).attr('data-sourceid');
+                if(!bid)
+                    bid = $(beforeEl).parents('li[data-sourceid]:first').attr('data-sourceid');
+                before = {sourceIdx: {id: bid}, layerIdx: {id: $(beforeEl).attr("data-id")}};
+            }
+            if(elm.next().length !== 0) {
+                var afterEl = $(elm.next()[0]);
+                var aid = $(afterEl).attr('data-sourceid');
+                if(!aid)
+                    aid = $(afterEl).parents('li[data-sourceid]:first').attr('data-sourceid');
+                after = {sourceIdx: {id: aid}, layerIdx: {id: $(afterEl).attr("data-id")}};
+            }
+            var id = $(elm).attr('data-sourceid');
+            if(!id)
+                id = $(elm).parents('li[data-sourceid]:first').attr('data-sourceid');
+            toMove = {sourceIdx: {id: id}};
+            if(elm.attr("data-type") !== this.consts.root) {
+                toMove['layerIdx'] = {id: elm.attr("data-id")};
+            }
+            /* "before" at layerTree is "after" at model.sourceTree */
+            this.model.changeSource({change: {move: {tomove: toMove, before: after, after: before}}});
+        },
         _createSortable: function(){
             var self = this;
             $("ul.layers", this.element).each(function(){
@@ -147,38 +180,41 @@
                     cursor: "move",
                     update: function(event, ui){
                         var elm = $(ui.item), before = null, after = null, toMove = null;
-                        if(elm.prev().length !== 0) {
-                            var beforeEl = $(elm.prev()[0]);
-                            var bid = $(beforeEl).attr('data-sourceid');
-                            if(!bid)
-                                bid = $(beforeEl).parents('li[data-sourceid]:first').attr('data-sourceid');
-                            before = {sourceIdx: {id: bid}, layerIdx: {id: $(beforeEl).attr("data-id")}};
+                        if(elm.hasClass('themeContainer')){
+                            self._sortTheme(elm);
+                        } else {
+                            self._sortSource(elm);
                         }
-                        if(elm.next().length !== 0) {
-                            var afterEl = $(elm.next()[0]);
-                            var aid = $(afterEl).attr('data-sourceid');
-                            if(!aid)
-                                aid = $(afterEl).parents('li[data-sourceid]:first').attr('data-sourceid');
-                            after = {sourceIdx: {id: aid}, layerIdx: {id: $(afterEl).attr("data-id")}};
-                        }
-                        var id = $(elm).attr('data-sourceid');
-                        if(!id)
-                            id = $(elm).parents('li[data-sourceid]:first').attr('data-sourceid');
-                        toMove = {sourceIdx: {id: id}};
-                        if($(ui.item).attr("data-type") !== self.consts.root) {
-                            toMove['layerIdx'] = {id: $(ui.item).attr("data-id")};
-                        }
-                        /* "before" at layerTree is "after" at model.sourceTree */
-                        self.model.changeSource({change: {move: {tomove: toMove, before: after, after: before}}});
                     }
                 });
             });
         },
+        _createThemeNode: function(layerset){
+            var $li = $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
+            if($li.length === 1) {
+                return $li;
+            } else {
+                $li = this.template.clone();
+            }
+            $('ul.layers:first', this.element).append($li);
+            $li.removeClass('hide-elm').addClass('toggleable');
+            $li.attr('data-layersetid', layerset.id);
+            $li.removeAttr('data-id');
+            $li.removeAttr('data-sourceid');
+            $li.attr('data-type', this.consts.theme).attr('data-title', layerset.title);
+            $li.addClass("themeContainer").addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
+            $('span.layer-title:first', $li).text(layerset.title);
+            $('span.layer-spinner:first', $li).remove();
+            $('span.layer-state:first', $li).remove();
+            $('div.checkWrapper', $li).remove();
+            return $li;
+        },
         _createNode: function(source, sourceEl, config, isroot){
             var li = this.template.clone();
             li.removeClass('hide-elm');
-            li.attr('data-id', sourceEl.options.id);
-            li.attr('data-sourceid', source.id);
+            li.attr('data-id', sourceEl.options.id); // ???
+            li.attr('data-sourceid',
+                    source.id); // isroot ? li.attr('data-sourceid', source.id) : li.removeAttr('data-sourceid');
             var nodeType = this._getNodeType(sourceEl, isroot);
             li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
             if(nodeType === this.consts.root || nodeType === this.consts.group) {
@@ -220,7 +256,8 @@
                 var li = "";
                 sourceEl.layers = [];
                 for(var i = 0; i < sourceEl.configuration.children.length; i++) {
-                    li = this._createSourceTree(source, sourceEl.configuration.children[i], scale, sourceEl.type, true);
+                    li = this._createSourceTree(source, sourceEl.configuration.children[i], scale, sourceEl.type,
+                            true);
                 }
             } else {
                 var config = this._getNodeProporties(sourceEl);
@@ -251,35 +288,7 @@
                 if(layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found) {
                     found = true;
                     var config = this._getNodeProporties(sourceEl);
-                    var li = this.template.clone();
-                    li.removeClass('hide-elm');
-                    li.attr('data-id', sourceEl.options.id);
-                    isroot ? li.attr('data-sourceid', source.id) : li.removeAttr('data-sourceid');
-                    var nodeType = this._getNodeType(sourceEl, isroot);
-                    li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
-
-                    if(nodeType === this.consts.root) {
-                        li.addClass("serviceContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
-                    } else if(nodeType === this.consts.group) {
-                        li.addClass("groupContainer showLeaves").find(".iconFolder").addClass("iconFolderActive");
-                    }
-                    li.addClass(config.reorder);
-                    li.find('.layer-state').attr('title', config.visibility.tooltip);
-                    li.find('input.layer-selected').prop('checked', config.selected ? true : false);
-                    if(!config.selectable)
-                        li.find('input.layer-selected').prop('disabled', true);
-                    li.find('input.layer-info').prop('checked', config.info ? true : false);
-                    if(!config.infoable)
-                        li.find('input.layer-info').prop('disabled', true);
-                    li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(
-                            sourceEl.options.title));
-                    if(config.toggleable)
-                        li.addClass('toggleable');
-                    if(this.options.menu.length === 0) {
-                        li.find('.layer-menu-btn').remove();
-                    }
-                    if(!this.options.layerRemove)
-                        li.find('.layer-remove-btn').remove();
+                    var li = this._createNode(source, sourceEl, config, isroot);
                     if(sourceEl.children) {
                         li.find('ul:first').attr('id', 'list-' + sourceEl.options.id);
                         if(config.toggle) {

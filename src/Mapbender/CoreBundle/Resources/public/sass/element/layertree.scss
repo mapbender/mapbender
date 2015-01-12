@@ -17,6 +17,34 @@
     &.iconCheckboxActive{@extend .iconInfoActive}
   }
   .leave.invisible{@include opacity(.7);} //for .serviceContainer too
+  .themeContainer{
+    border-left:dotted 1px black;
+    margin-bottom:1px; // Fix for Firefox
+
+    // elements with childrens
+    & > .leaveContainer{
+      position: relative;
+      .iconFolder{display:block;}
+      .layer-title{@extend .subTitle;}
+    }
+    .leave{
+      margin-left:20px;
+      position: relative;
+/*
+      &:before{
+        content:'';
+        display: block;
+        height:5px;
+        width:5px;
+        border-top:dotted 1px black;
+        @include absolute(10px '' '' -15px);
+      }*/
+    }
+    .leaveContainer{
+      margin-left:-6px;
+      margin-top:1px; // Fix for Firefox
+    }
+  }
   .serviceContainer, .groupContainer{
     border-left:dotted 1px black;
     margin-bottom:1px; // Fix for Firefox
