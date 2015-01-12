@@ -72,6 +72,7 @@ Mapbender.Model = {
         this.setView(true);
         this.parseURL();
     },
+
     /**
      * Set map view: extent from URL parameters or configuration and POIs
      */
@@ -796,16 +797,15 @@ Mapbender.Model = {
      * @param {Object} options in form of:
      * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
      */
-    changeLayerState: function(sourceIdObject, options, selectedOther, merge){
-        if(typeof merge === 'undefined')
-            merge = false;
-        if(typeof selectedOther === 'undefined')
-            selectedOther = false;
+    changeLayerState: function(sourceIdObject, options, defaultSelected, mergeSelected){
+        if(typeof mergeSelected === 'undefined')
+            mergeSelected = false;
+        if(typeof defaultSelected === 'undefined')
+            defaultSelected = false;
         var source = this.getSource(sourceIdObject);
-        if(source !== null) {
-            var tochange = Mapbender.source[source.type].createOptionsLayerState(source, options, selectedOther,
-                    merge);
-            this.changeSource(tochange);
+        if(source !== null){
+            var toChangeOptions = Mapbender.source[source.type].createOptionsLayerState(source, options, defaultSelected, mergeSelected);
+            this.changeSource(toChangeOptions);
         }
 
     },
