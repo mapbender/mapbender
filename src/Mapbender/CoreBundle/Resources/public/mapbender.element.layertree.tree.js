@@ -36,16 +36,15 @@
             this.transConst.outOfBounds = Mapbender.trans("mb.core.layertree.const.outofbounds");
             this.transConst.parentInvisible = Mapbender.trans("mb.core.layertree.const.parentinvisible");
             this.options.titlemaxlength = parseInt(this.options.titlemaxlength);
-            var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.template = $('li', this.element).remove();
             this.template.removeClass('hidden');
             this.menuTemplate = $('#layer-menu', this.template).remove();
 
-            this.model = $("#" + self.options.target).data("mapbenderMbMap").getModel();
+            this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
             if(this.options.type === 'element') {
                 this._createTree();
-            } else if(this.options.type === 'dialog' && new Boolean(self.options.autoOpen).valueOf() === true) {
+            } else if(this.options.type === 'dialog' && new Boolean(this.options.autoOpen).valueOf() === true) {
                 this.open();
             }
             this.element.removeClass('hidden');
@@ -136,38 +135,56 @@
         },
         _unSortable: function(){
         },
-        _sortTheme: function(elm){
-            $('ul.layers:first > li', elm).each(function(){
-                var that = this;
-                console.log(that);
-                // TODO
+        _sortItem: function($toMoveItem, $beforeItem, $afterItem){
+            var before = null, after = null, toMove = null;
+            if($beforeItem) {
+                if($beforeItem.hasClass('themeContainer')) {
+                    var $beforeSEl = $beforeItem.find('ul.layers:first li[data-type="root"]:last');
+                    var bid = $beforeSEl.attr('data-sourceid');
+                    before = {sourceIdx: {id: bid}, layerIdx: {id: $beforeSEl.attr("data-id")}};
+                } else  {
+                    var bid = $beforeItem.attr('data-sourceid');
+                    bid = bid ? bid : $beforeItem.parents('li[data-sourceid]:first').attr('data-sourceid');
+                    before = {sourceIdx: {id: bid}, layerIdx: {id: $beforeItem.attr("data-id")}};
+                }
+            }
+            if($afterItem) {
+                if($afterItem.hasClass('themeContainer')) {
+                    var $afterSEl = $afterItem.find('ul.layers:first li[data-type="root"]:first');
+                    var bid = $afterSEl.attr('data-sourceid');
+                    after = {sourceIdx: {id: bid}, layerIdx: {id: $afterSEl.attr("data-id")}};
+                } else {
+                    var bid = $afterItem.attr('data-sourceid');
+                    bid = bid ? bid : $afterItem.parents('li[data-sourceid]:first').attr('data-sourceid');
+                    after = {sourceIdx: {id: bid}, layerIdx: {id: $afterItem.attr("data-id")}};
+                }
+            }
+            var id = $toMoveItem.attr('data-sourceid');
+            id = id ? id : $toMoveItem.parents('li[data-sourceid]:first').attr('data-sourceid');
+            toMove = {sourceIdx: {id: id}};
+            if($toMoveItem.attr("data-type") !== this.consts.root) {
+                toMove['layerIdx'] = {id: $toMoveItem.attr("data-id")};
+            }
+            this.model.changeSource({change: {move: {tomove: toMove, before: after, after: before}}});
+        },
+        _sortTheme: function($theme){
+            var self = this;
+            var $beforeEl = $theme.prev().length !== 0 ? $($theme.prev()[0]) : null;
+            var $afterEl = $theme.next().length !== 0 ? $($theme.next()[0]) : null;
+            var $last = null;
+            $('ul.layers:first li[data-type="root"]', $theme).each(function(idx, item){
+                var $item = $(item);
+                if($last) {
+                    $beforeEl = $last;
+                }
+                self._sortItem($item, $beforeEl, $afterEl);
+                $last = $item;
             });
         },
-        _sortSource: function(elm){
-            var before = null, after = null, toMove = null;
-            if(elm.prev().length !== 0) {
-                var beforeEl = $(elm.prev()[0]);
-                var bid = $(beforeEl).attr('data-sourceid');
-                if(!bid)
-                    bid = $(beforeEl).parents('li[data-sourceid]:first').attr('data-sourceid');
-                before = {sourceIdx: {id: bid}, layerIdx: {id: $(beforeEl).attr("data-id")}};
-            }
-            if(elm.next().length !== 0) {
-                var afterEl = $(elm.next()[0]);
-                var aid = $(afterEl).attr('data-sourceid');
-                if(!aid)
-                    aid = $(afterEl).parents('li[data-sourceid]:first').attr('data-sourceid');
-                after = {sourceIdx: {id: aid}, layerIdx: {id: $(afterEl).attr("data-id")}};
-            }
-            var id = $(elm).attr('data-sourceid');
-            if(!id)
-                id = $(elm).parents('li[data-sourceid]:first').attr('data-sourceid');
-            toMove = {sourceIdx: {id: id}};
-            if(elm.attr("data-type") !== this.consts.root) {
-                toMove['layerIdx'] = {id: elm.attr("data-id")};
-            }
-            /* "before" at layerTree is "after" at model.sourceTree */
-            this.model.changeSource({change: {move: {tomove: toMove, before: after, after: before}}});
+        _sortSource: function($item){
+            var $beforeEl = $item.prev().length !== 0 ? $($item.prev()[0]) : null;
+            var $afterEl = $item.next().length !== 0 ? $($item.next()[0]) : null;
+            this._sortItem($item, $beforeEl, $afterEl);
         },
         _createSortable: function(){
             var self = this;
@@ -179,11 +196,11 @@
                     distance: 6,
                     cursor: "move",
                     update: function(event, ui){
-                        var elm = $(ui.item), before = null, after = null, toMove = null;
-                        if(elm.hasClass('themeContainer')){
-                            self._sortTheme(elm);
+                        var $elm = $(ui.item);
+                        if($elm.hasClass('themeContainer')) {
+                            self._sortTheme($elm);
                         } else {
-                            self._sortSource(elm);
+                            self._sortSource($elm);
                         }
                     }
                 });
@@ -525,17 +542,18 @@
             return conf;
         },
         _toggleContent: function(e){
-            var me = $(e.target);
-            if(!me.parents('li:first').hasClass('toggleable'))
+            var $me = $(e.target);
+            var $parent = $me.parents('li:first');
+            if(!$parent.hasClass('toggleable'))
                 return false;
-            if(me.hasClass("iconFolderActive")) {
-                me.removeClass("iconFolderActive");
-                me.parents('li:first').removeClass("showLeaves");
+            if($me.hasClass("iconFolderActive")) {
+                $me.removeClass("iconFolderActive");
+                $parent.removeClass("showLeaves");
             } else {
-                me.addClass("iconFolderActive");
-                me.parents('li:first').addClass("showLeaves");
+                $me.addClass("iconFolderActive");
+                $parent.addClass("showLeaves");
             }
-            var li = me.parents('li:first[data-sourceid]');
+            var li = $me.parents('li:first[data-sourceid]');
             if(li.length > 0) {
                 this._resetSourceAtTree(this.model.getSource({id: li.attr('data-sourceid')}));
             }
@@ -772,6 +790,9 @@
             {id: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId")}
             );
         },
+        /**
+         * Sets a count of sources from layer tree to counter element
+         */
         _setSourcesCount: function(){
             var countObj = {};
             $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm){
@@ -782,6 +803,9 @@
                 num++;
             $(this.element).find('#counter').text(num);
         },
+        /**
+         * Removes all sources from layertree.
+         */
         _removeAllSources: function(e){
             var self = this;
             if(Mapbender.confirm(Mapbender.trans("mb.core.layertree.confirm.allremove"))) {

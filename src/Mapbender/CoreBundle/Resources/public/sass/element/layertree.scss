@@ -44,6 +44,8 @@
       margin-left:-6px;
       margin-top:1px; // Fix for Firefox
     }
+    .layers{display:none;}
+    &.showLeaves > .layers{display:block;}
   }
   .serviceContainer, .groupContainer{
     border-left:dotted 1px black;
