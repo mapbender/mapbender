@@ -1,6 +1,6 @@
 <?php
-    namespace Mapbender\Component;
-    
+	namespace Mapbender\Component;
+	
 	/**
 	 * Copyright (C) 2011 Wheregroup
 	 *
@@ -26,12 +26,15 @@
 		private $error = null;
 		private $protocol_version;
 		
-		public function __construct($server, $port, $protocol_version) {
-            $this->protocol_version = $protocol_version;
+		public function __construct($server, $port, $protocol_version, $username, $password) {
+			$this->protocol_version = $protocol_version;
+			$this->username = $username;
+			$this->password = $password;
 			
 			$this->conn = ldap_connect($server, $port);
-			if($this->conn) {
-				return true;
+			if($this->conn) { // Be careful, this is always true!
+				return $this->bind($username, $password);
+				//return true;
 			}
 			
 			$this->error = "The LDAP server is not reachable.";
@@ -42,12 +45,11 @@
 			if(!$this->conn) return false;
 			
 			ldap_set_option($this->conn, LDAP_OPT_PROTOCOL_VERSION, $this->protocol_version);
+			ldap_set_option($this->conn, LDAP_OPT_DEBUG_LEVEL, 7);
 			
 			if(ldap_bind($this->conn, $username, $password)) {
-				 
 				return true;
 			}
-			
 			$this->error = "Cannot bind to the LDAP server.";
 			return false;
 		}
@@ -56,9 +58,9 @@
 			if(!$this->conn) return false;
 
 			return ldap_get_entries(
-                $this->conn, 
-                ldap_search($this->conn, $base_dn, $filter)
-            );
+				$this->conn, 
+				ldap_search($this->conn, $base_dn, $filter)
+			);
 		}
 		
 		
