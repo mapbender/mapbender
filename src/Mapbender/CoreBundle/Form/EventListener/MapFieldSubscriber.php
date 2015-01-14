@@ -108,7 +108,10 @@ class MapFieldSubscriber implements EventSubscriberInterface
             $data["scales"] = implode(",", $data["scales"]);
             $event->setData($data);
         }
-
+        if (key_exists("layerset", $data) && !key_exists("layersets", $data)) {# "layerset" deprecated start
+            $data["layersets"] = array($data["layerset"]);
+            $event->setData($data);
+        } # "layerset" deprecated end
         if (key_exists("layersets", $data) && is_array($data["layersets"])) {
             $form->add($this->factory->createNamed('layersets', 'choice', null,
                                                    array(

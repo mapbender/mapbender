@@ -197,6 +197,9 @@ class Map extends Element
             $configuration['scales'] = preg_split(
                 "/\s?,\s?/", $configuration['scales']);
         }
+        if(!isset($configuration['layersets']) && isset($configuration['layerset'])){# "layerset" deprecated start
+            $configuration['layersets'] = array($configuration['layerset']);
+        }# "layerset" deprecated end
         return $configuration;
     }
 
