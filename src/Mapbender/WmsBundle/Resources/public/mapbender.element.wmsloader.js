@@ -25,8 +25,9 @@
                 Mapbender['declarative'] = {'source.add.wms': $.proxy(this.loadDeclarativeWms, this)};
             }
             if(this.options.wms_url && this.options.wms_url !== ''){
+                var urlObj = new Mapbender.Util.Url(this.options.wms_url);
                 var options = {
-                    'gcurl': this.options.wms_url,
+                    'gcurl': urlObj,
                     'type': 'url',
                     'layers': {},
                     'global': {
@@ -240,7 +241,7 @@
             $.ajax({
                 url: self.elementUrl + 'getInstances',
                 data: {
-                    sources: scvIds
+                    instances: scvIds
                 },
                 type: 'POST',
                 dataType: 'json',
