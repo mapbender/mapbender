@@ -7,8 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Mapbender\CoreBundle\Component\EntityHandler;
-use Mapbender\WmsBundle\Component\WmsSourceEntityHandler;
-use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
  * WmsLoader
@@ -231,16 +229,14 @@ class WmsLoader extends Element
      */
     protected function getInstances()
     {
-        $wmsId = $this->container->get('request')->get("sources", null);
+        $instancesId = $this->container->get('request')->get("instances", null);
         $instances = array();
-        $sourcesIds = explode(',', $wmsId);
-        foreach ($sourcesIds as $sourceid) {
-            $source = $this->container->get('doctrine')->getRepository("MapbenderWmsBundle:WmsSource")->find($sourceid);
+        $instancesIds = explode(',', $instancesId);
+        foreach ($instancesIds as $instanceid) {
             $securityContext = $this->container->get('security.context');
             $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source');
             if (false !== $securityContext->isGranted('VIEW', $oid)) {
-                $instance = new WmsInstance();
-                $instance->setSource($source);
+                $instance = $this->container->get('doctrine')->getRepository("MapbenderWmsBundle:WmsInstance")->find($instanceid);
                 $entityHandler = EntityHandler::createHandler($this->container, $instance);
                 $entityHandler->create(false);
                 $instConfig = array(

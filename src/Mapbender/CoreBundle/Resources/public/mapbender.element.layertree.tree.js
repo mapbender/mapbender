@@ -539,6 +539,7 @@
             }
             tochange.options['type'] = 'selected';
             this.model.changeSource({change: tochange});
+            return false;
         },
         _toggleInfo: function(e) {
             var li = $(e.target).parents('li:first');
@@ -551,6 +552,7 @@
             //menu.find('.layer-zoom').off('click');
             //menu.find('.layer-metadata').off('click');
             menu.off('click').remove();
+            return false;
         },
         _toggleMenu: function(e) {
             var self = this;
@@ -700,6 +702,7 @@
             } else {
                 createMenu($btnMenu, currentSourceId, currentLayerId);
             }
+            return false;
         },
         _callDimension: function(source, dimname, value) {
             var params = {};
