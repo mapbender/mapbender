@@ -812,7 +812,7 @@
       </trans-unit>
       <trans-unit id="db777bdf84282626ab0204dc86f1dfcd" resname="mb.core.admin.layertree.label.theme.opened">
         <source>mb.core.admin.layertree.label.theme.opened</source>
-        <target>Aufgeklappt</target>
+        <target>Geöffnet</target>
       </trans-unit>
     </body>
   </file>
