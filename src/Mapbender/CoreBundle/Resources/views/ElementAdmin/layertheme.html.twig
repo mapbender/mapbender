@@ -1,0 +1,9 @@
+<div id="{{form.configuration.themes.vars.id}}" class="collectionItem">
+    {{ form_widget(theme.id) }}
+    <div class="collectionItemProperty">
+        <label class="labelInput">{{ theme.vars.data.title }}</label>{{ form_widget(theme.title) }}
+    </div>
+    <div class="collectionItemProperty">
+        {{ form_widget(theme.opened) }}<label for="{{theme.opened.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.theme.opened"|trans}}</label>
+    </div>
+</div>

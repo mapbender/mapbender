@@ -92,7 +92,6 @@ class Layertree extends Element
     {
         return array(
             "target" => null,
-            "useTheme" => false,
             "type" => null,
             "displaytype" => null,
             "useAccordion" => false,
@@ -100,7 +99,9 @@ class Layertree extends Element
             "autoOpen" => false,
             "showBaseSource" => true,
             "showHeader" => false,
-            "menu" => array()
+            "menu" => array(),
+            "useTheme" => false,
+            'themes' => array()
         );
     }
 

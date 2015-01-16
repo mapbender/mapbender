@@ -2,14 +2,51 @@
 @import "libs/mixins";
 
 .elementForm{
+  $label:100px;
   .labelInput{margin-bottom:$space/2;}
   textarea{
     height:150px;
     resize: none;
   }
+  select{
+    font-size:12px;
+    padding-left: 5px;
+  }
   .input{width:100%}
   .dropdown{min-width:70%;}
-  .inputWrapper, select, .choiceExpandedSortable{width:70%;}
+  .inputWrapper, select, .choiceExpandedSortable, .collectionContainer{
+    width:70%;
+    color: $secondColor;
+  }
+  .collectionContainer{
+      position:relative;
+      display:table;
+      border:solid 1px lighten($thirdColor, 15%);
+      background-color: $contentColor;
+      padding-left: 5px;
+      .collectionItem {
+        position:relative;
+        display:table-row;
+        float: none;
+        clear: both;
+        width: 100%;
+        .checkWrapper, label{
+          color: $secondColor;
+          margin-bottom: 0px;
+          line-height: $lineHeight;
+          display: inline;
+        }
+        label{
+          margin-left: 5px;
+          float:none;
+        }
+        .labelInput{
+          margin-left: 0px;
+          width: $label;
+        }
+        div{display:table-cell;}
+      }
+  }
   .choiceExpandedSortable {
       position:relative;
       display:inline-block;

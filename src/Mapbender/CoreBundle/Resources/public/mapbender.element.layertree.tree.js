@@ -84,7 +84,12 @@
         _addNode: function($toAdd, source){
             if(this.options.useTheme) {
                 var layerset = this.model.findLayerset({source: {origId: source.origId}});
-                var $layersetEl = this._createThemeNode(layerset);
+                var theme = {};
+                $.each(this.options.themes, function(idx, item){
+                    if(item.id === layerset.id)
+                        theme = item;
+                })
+                var $layersetEl = this._createThemeNode(layerset, theme);
                 $("ul.layers:first", $layersetEl).append($toAdd);
             } else {
                 $("ul.layers:first", this.element).append($toAdd);
@@ -142,7 +147,7 @@
                     var $beforeSEl = $beforeItem.find('ul.layers:first li[data-type="root"]:last');
                     var bid = $beforeSEl.attr('data-sourceid');
                     before = {sourceIdx: {id: bid}, layerIdx: {id: $beforeSEl.attr("data-id")}};
-                } else  {
+                } else {
                     var bid = $beforeItem.attr('data-sourceid');
                     bid = bid ? bid : $beforeItem.parents('li[data-sourceid]:first').attr('data-sourceid');
                     before = {sourceIdx: {id: bid}, layerIdx: {id: $beforeItem.attr("data-id")}};
@@ -206,7 +211,7 @@
                 });
             });
         },
-        _createThemeNode: function(layerset){
+        _createThemeNode: function(layerset, theme){
             var $li = $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
             if($li.length === 1) {
                 return $li;
@@ -219,7 +224,11 @@
             $li.removeAttr('data-id');
             $li.removeAttr('data-sourceid');
             $li.attr('data-type', this.consts.theme).attr('data-title', layerset.title);
-            $li.addClass("themeContainer").addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
+            $li.addClass("themeContainer");
+            if(theme.opened)
+                $li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
+            else
+                $li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");
             $('span.layer-title:first', $li).text(layerset.title);
             $('span.layer-spinner:first', $li).remove();
             $('span.layer-state:first', $li).remove();
@@ -227,46 +236,45 @@
             return $li;
         },
         _createNode: function(source, sourceEl, config, isroot){
-            var li = this.template.clone();
-            li.removeClass('hide-elm');
-            li.attr('data-id', sourceEl.options.id); // ???
-            li.attr('data-sourceid',
-                    source.id); // isroot ? li.attr('data-sourceid', source.id) : li.removeAttr('data-sourceid');
+            var $li = this.template.clone();
+            $li.removeClass('hide-elm');
+            $li.attr('data-id', sourceEl.options.id);
+            $li.attr('data-sourceid', source.id);
             var nodeType = this._getNodeType(sourceEl, isroot);
-            li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
+            $li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
             if(nodeType === this.consts.root || nodeType === this.consts.group) {
-                $('.featureInfoWrapper:first', li).remove();
+                $('.featureInfoWrapper:first', $li).remove();
                 if(nodeType === this.consts.root) {
-                    li.addClass("serviceContainer");
+                    $li.addClass("serviceContainer");
                 } else if(nodeType === this.consts.group) {
-                    li.addClass("groupContainer");
+                    $li.addClass("groupContainer");
                 }
-                li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
+                $li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
                 if(config.toggle === true)
-                    li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
+                    $li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
                 else
-                    li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");
+                    $li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");
             }
-            li.addClass(config.reorder);
-            li.find('.layer-state').attr('title', config.visibility.tooltip);
-            li.find('input.layer-selected').prop('checked', config.selected ? true : false);
+            $li.addClass(config.reorder);
+            $li.find('.layer-state').attr('title', config.visibility.tooltip);
+            $li.find('input.layer-selected').prop('checked', config.selected ? true : false);
             if(!config.selectable)
-                li.find('input.layer-selected').prop('disabled', true);
-            li.find('input.layer-info').prop('checked', config.info ? true : false);
+                $li.find('input.layer-selected').prop('disabled', true);
+            $li.find('input.layer-info').prop('checked', config.info ? true : false);
             if(!config.infoable)
-                li.find('input.layer-info').prop('disabled', true);
-            li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(
+                $li.find('input.layer-info').prop('disabled', true);
+            $li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(
                     sourceEl.options.title));
             if(config.toggleable)
-                li.addClass('toggleable');
+                $li.addClass('toggleable');
             if(this.options.menu.length === 0) {
-                li.find('.layer-menu-btn').remove();
+                $li.find('.layer-menu-btn').remove();
             }
             if(!this.options.layerRemove)
-                li.find('.layer-remove-btn').remove();
+                $li.find('.layer-remove-btn').remove();
             if(!this.options.layerInfo)
-                li.find('.iconInfo').remove();
-            return li;
+                $li.find('.iconInfo').remove();
+            return $li;
         },
         _createSourceTree: function(source, sourceEl, scale, type, isroot){
             if(sourceEl.type) {

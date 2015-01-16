@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\CoreBundle\Element\EventListener\LayertreeSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -34,6 +35,8 @@ class LayertreeAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $subscriber = new LayertreeSubscriber($builder->getFormFactory(), $options['application']);
+        $builder->addEventSubscriber($subscriber);
         $menuComponents = array(
             "layerremove" => "Remove layer",
             "opacity" => "Opacity",

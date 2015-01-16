@@ -948,7 +948,15 @@
       </trans-unit>
       <trans-unit id="3973ffff84e82a5b904cca85555b9c21" resname="mb.core.admin.layertree.label.usetheme">
         <source>mb.core.admin.layertree.label.usetheme</source>
-        <target>Use Theme</target>
+        <target>Thematic layer</target>
+      </trans-unit>
+      <trans-unit id="2c6f6a4b1fb50d114014cf535b03bda1" resname="mb.core.admin.layertree.label.themes">
+        <source>mb.core.admin.layertree.label.themes</source>
+        <target>Themes</target>
+      </trans-unit>
+      <trans-unit id="db777bdf84282626ab0204dc86f1dfcd" resname="mb.core.admin.layertree.label.theme.opened">
+        <source>mb.core.admin.layertree.label.theme.opened</source>
+        <target>opened</target>
       </trans-unit>
     </body>
   </file>
