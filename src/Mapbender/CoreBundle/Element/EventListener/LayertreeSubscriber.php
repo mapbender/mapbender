@@ -93,13 +93,22 @@ class LayertreeSubscriber implements EventSubscriberInterface
         $themesData = isset($data["themes"]) && count($data["themes"]) > 0 ? $data["themes"] : array();
         $data["themes"] = $themesActual;
         $event->setData($data);
-        $form->add($this->factory->createNamed('themes', 'collection', null,
-                                               array(
-                    'data' => $themesData,
-                    'required' => false,
-                    'type' => new LayerThemeType(),
-                    'auto_initialize' => false,
-        )));
+        if (count($themesData) === 0) {
+            $form->add($this->factory->createNamed('themes', 'collection', null,
+                                                   array(
+                        'required' => false,
+                        'type' => new LayerThemeType(),
+                        'auto_initialize' => false,
+            )));
+        } else {
+            $form->add($this->factory->createNamed('themes', 'collection', null,
+                                                   array(
+                        'data' => $themesData,
+                        'required' => false,
+                        'type' => new LayerThemeType(),
+                        'auto_initialize' => false,
+            )));
+        }
     }
 
     private function getThemes($data)
