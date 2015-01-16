@@ -233,6 +233,7 @@
             $('span.layer-spinner:first', $li).remove();
             $('span.layer-state:first', $li).remove();
             $('div.checkWrapper', $li).remove();
+            $('.layer-menu-btn', $li).remove();
             return $li;
         },
         _createNode: function(source, sourceEl, config, isroot){
