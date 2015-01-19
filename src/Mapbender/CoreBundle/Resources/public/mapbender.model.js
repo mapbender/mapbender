@@ -1158,23 +1158,25 @@ Mapbender.Model = {
     },
     parseURL: function() {
         var self = this;
-        var ids = Mapbender.urlParam('visiblelayers');
+        var ids = new Mapbender.Util.Url(window.location.href).getParameter('visiblelayers');
         ids = ids ? decodeURIComponent(ids).split(',') : [];
         if (ids.length) {
             $.each(ids, function(idx, id) {
                 var id = id.split('/');
-                var options = {};
-                if (1 < id.length) {
+                if(1 < id.length){
                     var layer = self.findLayer({origId: id[0]}, {origId: id[1]});
-                    options.layers = {};
-                    options.layers[layer.layer.options.id] = {
-                        options: {
-                            treeOptions: {
-                                selected: true
+                    if(layer){
+                        var options = {};
+                        options.layers = {};
+                        options.layers[layer.layer.options.id] = {
+                            options: {
+                                treeOptions: {
+                                    selected: true
+                                }
                             }
-                        }
-                    };
-                    self.changeLayerState({origId: id[0]}, options, false, true);
+                        };
+                        self.changeLayerState({origId: id[0]}, options, false, true);
+                    }
                 }
             });
         }
