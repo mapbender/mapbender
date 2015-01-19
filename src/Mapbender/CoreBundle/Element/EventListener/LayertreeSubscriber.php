@@ -123,14 +123,16 @@ class LayertreeSubscriber implements EventSubscriberInterface
                 break;
             }
         }
-        $config = $mapEl->getConfiguration();
         $themes = array();
-        foreach ($this->application->getLayersets() as $layerset) {
-            if (in_array($layerset->getId(), $config['layersets'])) {
-                $themes[] = array(
-                    'id' => $layerset->getId(),
-                    'opened' => false,
-                    'title' => $layerset->getTitle());
+        if ($mapEl) {
+            $config = $mapEl->getConfiguration();
+            foreach ($this->application->getLayersets() as $layerset) {
+                if (in_array($layerset->getId(), $config['layersets'])) {
+                    $themes[] = array(
+                        'id' => $layerset->getId(),
+                        'opened' => false,
+                        'title' => $layerset->getTitle());
+                }
             }
         }
         return $themes;
