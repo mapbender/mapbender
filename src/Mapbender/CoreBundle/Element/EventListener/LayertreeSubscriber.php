@@ -89,9 +89,10 @@ class LayertreeSubscriber implements EventSubscriberInterface
             return;
         }
         $form = $event->getForm();
-        $themesActual = isset($data["target"]) && $data["target"] !== null ? $this->getThemes($data) : array();
-        $themesData = isset($data["themes"]) && count($data["themes"]) > 0 ? $data["themes"] : array();
-        $data["themes"] = $themesActual;
+        $themesAll = isset($data["target"]) && $data["target"] !== null ? $this->getThemes($data) : array();
+        $themesData = $this->checkDataThemes(
+                $themesAll, isset($data["themes"]) && count($data["themes"]) > 0 ? $data["themes"] : array());
+        $data["themes"] = $themesAll;
         $event->setData($data);
         if (count($themesData) === 0) {
             $form->add($this->factory->createNamed('themes', 'collection', null,
@@ -132,6 +133,24 @@ class LayertreeSubscriber implements EventSubscriberInterface
                         'id' => $layerset->getId(),
                         'opened' => false,
                         'title' => $layerset->getTitle());
+                }
+            }
+        }
+        return $themes;
+    }
+
+    private function checkDataThemes($themesAll, $themesData)
+    {
+        $themes = array();
+        if (count($themesAll) === 0 || count($themesData) === 0) {
+            return $themes;
+        } else {
+            for ($i = 0; $i < count($themesAll); $i++) {
+                for ($j = 0; $j < count($themesData); $j++) {
+                    if($themesAll[$i]['id'] === $themesData[$j]['id']){
+                        $themes = $themesData[$j];
+                        break;
+                    }
                 }
             }
         }
