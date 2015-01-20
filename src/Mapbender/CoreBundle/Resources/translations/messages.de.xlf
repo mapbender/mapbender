@@ -814,6 +814,62 @@
         <source>mb.core.admin.layertree.label.theme.opened</source>
         <target>Geöffnet</target>
       </trans-unit>
+      <trans-unit id="403fb1af574e44f9fe64fd65c8622a30" resname="mb.core.redlining.dialog.btn.cancel">
+        <source>mb.core.redlining.dialog.btn.cancel</source>
+        <target>Schließen</target>
+      </trans-unit>
+      <trans-unit id="b4784e7cc4c33d0899a0a0a11a2f69ab" resname="mb.core.redlining.class.title">
+        <source>mb.core.redlining.class.title</source>
+        <target>Redlining</target>
+      </trans-unit>
+      <trans-unit id="d960dbce5b253406c2ed289fdcafd273" resname="mb.core.redlining.class.description">
+        <source>mb.core.redlining.class.description</source>
+        <target>Redlining Werkzeug</target>
+      </trans-unit>
+      <trans-unit id="15b5f2d8a1892f2f133b5da92896f230" resname="mb.core.redlining.tag.redlining">
+        <source>mb.core.redlining.tag.redlining</source>
+        <target>redlining</target>
+      </trans-unit>
+      <trans-unit id="0561206ab04fdb6a5d43b828edafadd2" resname="mb.core.redlining.tag.geometry">
+        <source>mb.core.redlining.tag.geometry</source>
+        <target>geometrie</target>
+      </trans-unit>
+      <trans-unit id="23c457112644bfcfed3864ffe9f5082a" resname="mb.core.redlining.geometrytype.point">
+        <source>mb.core.redlining.geometrytype.point</source>
+        <target>Punkt</target>
+      </trans-unit>
+      <trans-unit id="6a0f86ba63eae1dff8fb6744ef6c2e55" resname="mb.core.redlining.geometrytype.line">
+        <source>mb.core.redlining.geometrytype.line</source>
+        <target>Linie</target>
+      </trans-unit>
+      <trans-unit id="5541291a2a8778b492748eaa467845f5" resname="mb.core.redlining.geometrytype.polygon">
+        <source>mb.core.redlining.geometrytype.polygon</source>
+        <target>Polygon</target>
+      </trans-unit>
+      <trans-unit id="559d2c6711affc5637400c98a98a57c2" resname="mb.core.redlining.geometrytype.rectangle">
+        <source>mb.core.redlining.geometrytype.rectangle</source>
+        <target>Rechteck</target>
+      </trans-unit>
+      <trans-unit id="ec534f6f6bdbefd454d70b3fe5c7f582" resname="mb.core.redlining.geometrytype.text">
+        <source>mb.core.redlining.geometrytype.text</source>
+        <target>Text</target>
+      </trans-unit>
+      <trans-unit id="7bfdb38a998a282470bee1644ffaaa21" resname="mb.core.redlining.geometry.action.remove">
+        <source>mb.core.redlining.geometry.action.remove</source>
+        <target>Entfernen der Geometrie</target>
+      </trans-unit>
+      <trans-unit id="e08dd8632af42c56f03af8eadff0839f" resname="mb.core.redlining.geometry.action.edit">
+        <source>mb.core.redlining.geometry.action.edit</source>
+        <target>Editieren der Geometrie</target>
+      </trans-unit>
+      <trans-unit id="277124be4d6c4424f6f86f92cb07fb8d" resname="mb.core.redlining.geometry.action.zoom">
+        <source>mb.core.redlining.geometry.action.zoom</source>
+        <target>Zoom auf die Geometrie</target>
+      </trans-unit>
+      <trans-unit id="86260724aded581b31d37875b4c83c1f" resname="mb.core.redlining.geometrytype.text.label">
+        <source>mb.core.redlining.geometrytype.text.label</source>
+        <target>Text</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
