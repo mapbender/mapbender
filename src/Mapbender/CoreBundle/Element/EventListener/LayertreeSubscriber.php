@@ -147,8 +147,8 @@ class LayertreeSubscriber implements EventSubscriberInterface
         } else {
             for ($i = 0; $i < count($themesAll); $i++) {
                 for ($j = 0; $j < count($themesData); $j++) {
-                    if($themesAll[$i]['id'] === $themesData[$j]['id']){
-                        $themes = $themesData[$j];
+                    if(strval($themesAll[$i]['id']) === strval($themesData[$j]['id'])){
+                        $themes[] = $themesData[$j];
                         break;
                     }
                 }
