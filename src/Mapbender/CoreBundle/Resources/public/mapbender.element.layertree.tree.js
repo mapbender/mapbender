@@ -232,7 +232,10 @@
             $('span.layer-title:first', $li).text(layerset.title);
             $('span.layer-spinner:first', $li).remove();
             $('span.layer-state:first', $li).remove();
-            $('div.checkWrapper', $li).remove();
+            if(!theme.activate) {
+                $('div.checkWrapper', $li).remove();
+            }
+            $('div.featureInfoWrapper', $li).remove();
             $('.layer-menu-btn', $li).remove();
             return $li;
         },
@@ -569,17 +572,33 @@
             return false;
         },
         _toggleSelected: function(e){
-            var li = $(e.target).parents('li:first');
-            var tochange = {sourceIdx: {id: li.attr('data-sourceid')}, options: {}};
-            if(li.attr('data-type') === this.consts.root) {
-                tochange.options = {configuration: {options: {visibility: $(e.target).is(':checked')}}};
+            var $li = $(e.target).parents('li:first');
+            if($li.attr('data-type') === this.consts.theme) {
+                var chk_selected = $('input[name="selected"]:first', $li);
+                if(chk_selected.prop('checked')) {
+                    var self = this;
+                    $('li[data-type="'+this.consts.root+'"]', $li).each(function(idx, item){
+                        var $item = $(item);
+                        var options = {layers:{}};
+                        $('li', $item).each(function(idx_, item_){
+                            var $item_ = $(item_);
+                            options.layers[$item_.attr('data-id')] = {options: {treeOptions: {selected: true}}};
+                        });
+                        self.model.changeLayerState({id: $item.attr('data-sourceid')}, options, false, true);
+                    });
+                }
             } else {
-                tochange.options = {children: {}};
-                tochange.options.children[li.attr('data-id')] = {options: {treeOptions: {selected: $(e.target).is(
-                                    ':checked')}}};
+                var tochange = {sourceIdx: {id: $li.attr('data-sourceid')}, options: {}};
+                if($li.attr('data-type') === this.consts.root) {
+                    tochange.options = {configuration: {options: {visibility: $(e.target).is(':checked')}}};
+                } else {
+                    tochange.options = {children: {}};
+                    tochange.options.children[$li.attr('data-id')] = {options: {treeOptions: {selected: $(e.target).is(
+                                        ':checked')}}};
+                }
+                tochange.options['type'] = 'selected';
+                this.model.changeSource({change: tochange});
             }
-            tochange.options['type'] = 'selected';
-            this.model.changeSource({change: tochange});
             return false;
         },
         _toggleInfo: function(e){

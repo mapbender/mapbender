@@ -25,7 +25,8 @@ class LayerThemeType extends AbstractType
         $resolver->setDefaults(array(
             'id' => null,
             'title' => '',
-            'opened' => true
+            'opened' => true,
+            'activate' => false,
         ));
     }
 
@@ -34,10 +35,19 @@ class LayerThemeType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        
+
         $builder->add('id', 'hidden', array('required' => true, 'property_path' => '[id]'))
                 ->add('title', 'hidden', array('required' => false, 'property_path' => '[title]'))
-                ->add('opened', 'checkbox', array('required' => false, 'property_path' => '[opened]'));
+                ->add('opened', 'checkbox',
+                      array(
+                    'required' => false, 'property_path' => '[opened]',
+//                    'attr' => array('data-name' => 'opened')
+                ))
+                ->add('activate', 'checkbox',
+                      array(
+                    'required' => false, 'property_path' => '[activate]',
+//                    'attr' => array('data-name' => 'activate')
+        ));
     }
 
 }
