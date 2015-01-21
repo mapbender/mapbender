@@ -64,6 +64,7 @@ class LayertreeSubscriber implements EventSubscriberInterface
             $form->remove('themes');
             foreach ($data['themes'] as &$theme) {
                 $theme['opened'] = isset($theme['opened']) ? (bool) ($theme['opened']) : false;
+                $theme['activate'] = isset($theme['activate']) ? (bool) ($theme['activate']) : false;
                 $theme['id'] = intval($theme['id']);
             }
             $event->setData($data);
@@ -132,6 +133,7 @@ class LayertreeSubscriber implements EventSubscriberInterface
                     $themes[] = array(
                         'id' => $layerset->getId(),
                         'opened' => false,
+                        'activate' => false,
                         'title' => $layerset->getTitle());
                 }
             }
