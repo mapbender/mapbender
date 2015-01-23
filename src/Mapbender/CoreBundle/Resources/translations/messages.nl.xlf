@@ -946,6 +946,14 @@
         <source>mb.core.layertree.label.dimension</source>
         <target>Dimension</target>
       </trans-unit>
+      <trans-unit id="b99c3c9b8d4f75669761bcc882f6b06a" resname="mb.core.admin.featureinfo.label.showoriginal">
+        <source>mb.core.admin.featureinfo.label.showoriginal</source>
+        <target>Show original</target>
+      </trans-unit>
+      <trans-unit id="87bb95e7b202bb8aa890dac11956fa67" resname="mb.core.admin.featureinfo.label.onlyvalid">
+        <source>mb.core.admin.featureinfo.label.onlyvalid</source>
+        <target>Only valid</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
