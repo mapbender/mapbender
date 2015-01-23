@@ -874,6 +874,14 @@
         <source>mb.core.redlining.geometrytype.text.label</source>
         <target>Text</target>
       </trans-unit>
+      <trans-unit id="b99c3c9b8d4f75669761bcc882f6b06a" resname="mb.core.admin.featureinfo.label.showoriginal">
+        <source>mb.core.admin.featureinfo.label.showoriginal</source>
+        <target>Original Zeigen</target>
+      </trans-unit>
+      <trans-unit id="87bb95e7b202bb8aa890dac11956fa67" resname="mb.core.admin.featureinfo.label.onlyvalid">
+        <source>mb.core.admin.featureinfo.label.onlyvalid</source>
+        <target>Nur valide zeigen</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
