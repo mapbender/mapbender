@@ -39,9 +39,16 @@ class FeatureInfoAdminType extends AbstractType
                 array(
                 'required' => true,
                 'choices' => array('dialog' => 'Dialog', 'element' => 'Element')))
-            ->add('autoOpen', 'checkbox', array('required' => false))
+            ->add('displayType', 'choice',
+                array(
+                'required' => true,
+                'empty_data'  => '',
+                'choices' => array('' => 'Flow', 'tabs' => 'Tabs', 'accordion' => 'Accordion')))
+            ->add('autoActivate', 'checkbox', array('required' => false))
             ->add('printResult', 'checkbox', array('required' => false))    
             ->add('deactivateOnClose', 'checkbox', array('required' => false))
+            ->add('showOriginal', 'checkbox', array('required' => false))    
+            ->add('onlyValid', 'checkbox', array('required' => false))    
             ->add('target', 'target_element',
                 array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
