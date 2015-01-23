@@ -42,8 +42,7 @@ class FeatureInfoAdminType extends AbstractType
             ->add('displayType', 'choice',
                 array(
                 'required' => true,
-                'empty_data'  => '',
-                'choices' => array('' => 'Flow', 'tabs' => 'Tabs', 'accordion' => 'Accordion')))
+                'choices' => array('tabs' => 'Tabs', 'accordion' => 'Accordion')))
             ->add('autoActivate', 'checkbox', array('required' => false))
             ->add('printResult', 'checkbox', array('required' => false))    
             ->add('deactivateOnClose', 'checkbox', array('required' => false))

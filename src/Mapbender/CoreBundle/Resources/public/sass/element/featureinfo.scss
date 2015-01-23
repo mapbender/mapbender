@@ -9,4 +9,7 @@
     width: 100%;
     border-width: 0px;
   }
+  .accordionContainer > .container{display:none}
+  .accordionContainer > .container.active{display:block}
+  
 }

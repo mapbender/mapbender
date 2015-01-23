@@ -65,10 +65,9 @@
             this._trigger('featureinfo', null, {action: "clicked", title: this.element.attr('title'),
                 id: this.element.attr('id')});
             var self = this, x = e.xy.x, y = e.xy.y, num = 0;
-            var queries = [];
-            if(!self.options.onlyValid) {
-                this._setContentEmpty();
-            }
+            var called = false;
+            this._setContentEmpty();
+            $('#js-error-featureinfo').addClass('hidden');
             $.each(this.target.getModel().getSources(), function(idx, src){
                 var mqLayer = self.target.getModel().map.layersList[src.mqlid];
                 if(Mapbender.source[src.type]) {
@@ -77,17 +76,18 @@
                         if(!self.options.onlyValid) {
                             self._addContent(mqLayer, 'wird geladen');
                         }
-                        queries[mqLayer.id] = num++;
+                        called = true;
                         if(self.options.showOriginal && !self.options.onlyValid) {
-                            self._addContent(mqLayer, self._getIframeDeclaration(null, url));
+                            self._addContent(mqLayer, self._getIframeDeclaration(Mapbender.Util.UUID(), url));
                         } else {
                             self._setInfo(mqLayer, url);
                         }
                     }
                 }
             });
-//            var content = (fi_exist) ? tabContainer : '<p class="description">' + Mapbender.trans('mb.core.featureinfo.error.nolayer') + '</p>';
-            
+            if(!called){
+                $('#js-error-featureinfo').removeClass('hidden');
+            }
         },
         _getIframeDeclaration: function(uuid, url){
             var id = uuid ? (' id="' + uuid + '"') : '';
@@ -293,16 +293,8 @@
             }
             $(this._selectorSelfAndSub(manager.contentId(mqLayer.id), manager.contentContentSel), $context)
                     .empty().append(content);
-            if(this.options.displayType === 'tabs') {
-                $(".tabContainer", $context).off('click', '.tab');
-                $(".tabContainer", $context).on('click', '.tab', function(){
-                    var me = $(this);
-                    me.parents('.tabContainer').find(".active").removeClass("active");
-                    me.addClass("active");
-                    $("#" + me.attr("id").replace("tab", "container")).addClass("active");
-                });
-                $('.tabContainer .tab:first', $context).addClass("active");
-                $('.tabContainer .container:first', $context).addClass("active");
+            if(this.options.displayType === 'tabs' || this.options.displayType === 'accordion') {
+                initTabContainer($context);
                 $header.click();
             } else if(this.options.displayType === 'tabs') {
 
@@ -316,9 +308,17 @@
             }
         },
         _printContent: function(){
+            var $context = this._getContext();
             var w = window.open("", "title", "attributes");
-            var c = $('#featureInfoTabContainer').find('div.active').html();
-            w.document.write(c);
+            var el = $('.js-content-content.active,.active .js-content-content', $context);
+            var printContent = "";
+            if($('> iframe', el).length === 1){
+                var a = document.getElementById($('iframe', el).attr('id'));
+                printContent = a.contentWindow.document.documentElement.innerHTML;
+            } else {
+                printContent = el.html();
+            }
+            w.document.write(printContent);
             w.setTimeout(function(){
                 w.print();
             }, 1000);
