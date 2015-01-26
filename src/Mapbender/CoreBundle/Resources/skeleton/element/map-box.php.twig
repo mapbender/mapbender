@@ -8,11 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class {{ className }} extends Element {
     public static function getClassTitle() {
-        return "Please give me a title";
+        return "{{ className }} - please give me a title";
     }
 
     public static function getClassDescription() {
-        return "Please give me a description";
+        return "{{ className }} - please give me a description";
     }
 
     public static function getClassTags() {
@@ -31,8 +31,16 @@ class {{ className }} extends Element {
 
     public static function getDefaultConfiguration() {
         return array(
-            'title' => 'map box tool',
-            'target' => null);
+            'title' => '{{ className }} - map box tool',
+            'target' => null,
+            'label' => true,
+            'icon' => 'iconAreaRuler',
+            'target' => null,
+            'click' => null,
+            'group' => null,
+            'action' => null,
+            'deactivate' => null
+        );
     }
 
     public function getWidgetName() {
