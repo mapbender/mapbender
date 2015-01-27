@@ -17,6 +17,7 @@
         popup: null,
         context: null,
         queries: [],
+        state: null,
         contentManager: null,
         _create: function(){
             if(!Mapbender.checkTarget("mbFeatureInfo", this.options.target)) {
@@ -57,6 +58,16 @@
             this.mapClickHandler.deactivate();
             this.callback ? this.callback.call() : this.callback = null;
         },
+        _isVisible: function(){
+            if(this.options.type === 'dialog'){// visible for dialog
+                if(this.state && this.state === 'opened'){
+                    return true;
+                } else
+                    return false;
+            } else { // TODO visible for element ?
+                return true;
+            }
+        },
         /**
          * Trigger the Feature Info call for each layer.
          * Also set up feature info dialog if needed.
@@ -66,7 +77,9 @@
                 id: this.element.attr('id')});
             var self = this, x = e.xy.x, y = e.xy.y, num = 0;
             var called = false;
-            this._setContentEmpty();
+            if(!self.options.onlyValid || (self.options.onlyValid && this._isVisible())) {
+                this._setContentEmpty();
+            }
             $('#js-error-featureinfo').addClass('hidden');
             $.each(this.target.getModel().getSources(), function(idx, src){
                 var mqLayer = self.target.getModel().map.layersList[src.mqlid];
@@ -85,7 +98,7 @@
                     }
                 }
             });
-            if(!called){
+            if(!called) {
                 $('#js-error-featureinfo').removeClass('hidden');
             }
         },
@@ -122,9 +135,9 @@
         _isDataValid: function(data, mimetype){
             switch(mimetype.toLowerCase()) {
                 case 'text/html':
-                    var $test = $(data).find('body');
-                    if($test.length !== 0) {
-                        return $test.html().trim() === '';
+                    var found = (/<body>(.+?)<\/body>/gi).exec(data.replace(/\r|\n/g,""));
+                    if(found && $.isArray(found) && found[1] && found[1].trim() !== ''){
+                        return true;
                     } else {
                         return false;
                     }
@@ -138,8 +151,7 @@
             /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
             switch(mimetype.toLowerCase()) {
                 case 'text/html':
-                    var $html = data ? $.parseHTML(data, document, true) : null;
-                    if($html && $html.length > 0 && this.options.onlyValid) { // !onlyValid s. _triggerFeatureInfo
+                    if(this.options.onlyValid && this._isDataValid(data, mimetype)) { // !onlyValid s. _triggerFeatureInfo
                         /* add a blank iframe and replace it's content */
                         var uuid = Mapbender.Util.UUID();
                         this._addContent(mqLayer, this._getIframeDeclaration(uuid, null));
@@ -151,7 +163,7 @@
                     break;
                 case 'text/plain':
                 default:
-                    if(this.options.onlyValid && data) {
+                    if(this.options.onlyValid && this._isDataValid(data, mimetype)) {
                         this._addContent(mqLayer, '<pre>' + data + '</pre>');
                     }
                     break;
@@ -161,13 +173,13 @@
             switch(mimetype.toLowerCase()) {
                 case 'text/html':
                     data = this._cleanHtml(data);
-                    if(!this.options.onlyValid || (this.options.onlyValid && data)) {
+                    if(!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
                         this._addContent(mqLayer, data);
                     }
                     break;
                 case 'text/plain':
                 default:
-                    if(!this.options.onlyValid || (this.options.onlyValid && data)) {
+                    if(!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
                         this._addContent(mqLayer, '<pre>' + data + '</pre>');
                     }
                     break;
@@ -177,7 +189,7 @@
             try {
                 if(data.search('<link') > -1 || data.search('<style') > -1) {
                     return data.replace(/document.writeln[^;]*;/g, '')
-                            .replace(/\n/g, '')
+                            .replace(/\n|\r/g, '')
                             .replace(/<link[^>]*>/gi, '')
                             .replace(/<meta[^>]*>/gi, '')
                             .replace(/<title>*(?:[^<]*<\/title>)/gi, '')
@@ -240,9 +252,13 @@
                         }
                     });
                     this.popup.$element.on('close', function(){
+                        self.state = 'closed';
                         if(self.options.deactivateOnClose) {
                             self.deactivate();
                         }
+                    });
+                    this.popup.$element.on('open', function(){
+                        self.state = 'opened';
                     });
                     if(this.options.printResult === true) {
                         this.popup.addButtons({
@@ -312,7 +328,7 @@
             var w = window.open("", "title", "attributes");
             var el = $('.js-content-content.active,.active .js-content-content', $context);
             var printContent = "";
-            if($('> iframe', el).length === 1){
+            if($('> iframe', el).length === 1) {
                 var a = document.getElementById($('iframe', el).attr('id'));
                 printContent = a.contentWindow.document.documentElement.innerHTML;
             } else {
