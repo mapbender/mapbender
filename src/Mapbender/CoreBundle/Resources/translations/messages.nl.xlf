@@ -964,7 +964,7 @@
       </trans-unit>
       <trans-unit id="affc05e9d63b6355f5fa94327aef2372" resname="mb.core.admin.layertree.label.hideselect">
         <source>mb.core.admin.layertree.label.hideselect</source>
-        <target>Hide visibility</target>
+        <target>Hide visibility by folders</target>
       </trans-unit>
       <trans-unit id="8177411950647ca4ef6f115a44eda789" resname="mb.core.admin.layertree.label.hideinfo">
         <source>mb.core.admin.layertree.label.hideinfo</source>

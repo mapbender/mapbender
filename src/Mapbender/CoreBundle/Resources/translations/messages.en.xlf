@@ -820,7 +820,7 @@
       </trans-unit>
       <trans-unit id="012324b93835eb976d2a88819cd609ee" resname="mb.core.admin.layertree.label.hideselect">
         <source>mb.core.admin.layertree.label.hideselect</source>
-        <target>Hide visibility</target>
+        <target>Hide visibility by folders</target>
       </trans-unit>
       <trans-unit id="d1368f78e4f1bdc29f696297a211fd1f" resname="mb.core.admin.layertree.label.hideinfo">
         <source>mb.core.admin.layertree.label.hideinfo</source>
@@ -832,23 +832,23 @@
       </trans-unit>
       <trans-unit id="90675349c781bc0f026bca337fce8218" resname="mb.core.admin.legend.label.showsourcetitle">
         <source>mb.core.admin.legend.label.showsourcetitle</source>
-        <target>__mb.core.admin.legend.label.showsourcetitle</target>
+        <target>Show source title</target>
       </trans-unit>
       <trans-unit id="0ca2080280477b91ee0130c78044e3e6" resname="mb.core.admin.legend.label.showlayertitle">
         <source>mb.core.admin.legend.label.showlayertitle</source>
-        <target>__mb.core.admin.legend.label.showlayertitle</target>
+        <target>Show layer title</target>
       </trans-unit>
       <trans-unit id="7dc9941d3994c6bcf1410b0b4ae5400d" resname="mb.core.admin.legend.label.showgroupedlayertitle">
         <source>mb.core.admin.legend.label.showgroupedlayertitle</source>
-        <target>__mb.core.admin.legend.label.showgroupedlayertitle</target>
+        <target>Show grouped layer title</target>
       </trans-unit>
       <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
         <source>mb.core.admin.layertree.label.showbasesources</source>
-        <target>__mb.core.admin.layertree.label.showbasesources</target>
+        <target>Show base sources</target>
       </trans-unit>
       <trans-unit id="855cb022f4ce41f697c2d2a4674b8509" resname="mb.core.admin.layertree.label.showheader">
         <source>mb.core.admin.layertree.label.showheader</source>
-        <target>__mb.core.admin.layertree.label.showheader</target>
+        <target>Show header</target>
       </trans-unit>
     </body>
   </file>
