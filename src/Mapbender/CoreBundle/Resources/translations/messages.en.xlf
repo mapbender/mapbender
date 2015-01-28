@@ -890,6 +890,10 @@
         <source>mb.core.admin.layertree.label.hideinfo</source>
         <target>Hide info</target>
       </trans-unit>
+      <trans-unit id="0a5fe4c7ced865711f3ffcfe5d0e141a" resname="mb.core.admin.layertree.label.theme.activate">
+        <source>mb.core.admin.layertree.label.theme.activate</source>
+        <target>__mb.core.admin.layertree.label.theme.activate</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
