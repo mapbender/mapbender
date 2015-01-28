@@ -284,14 +284,14 @@
                 infoHidden = true;
                 $('input[name="info"]', $li).parents('.checkWrapper:first').remove();
             }
-            var sekectHidden = false;
-            if(this.options.hideSelect){
-                sekectHidden = true;
+            var selectHidden = false;
+            if(this.options.hideSelect && (nodeType === this.consts.root || nodeType === this.consts.group)){
+                selectHidden = true;
                 $('input[name="selected"]', $li).parents('.checkWrapper:first').remove();
             }
             if(config.toggleable === false && this.options.hideNotToggleable) {
                 var $folder = $li.find('.iconFolder');
-                if(sekectHidden && infoHidden){
+                if(selectHidden && infoHidden){
                     $folder.addClass('placeholder')
                 }
                 $folder.removeClass('iconFolder');

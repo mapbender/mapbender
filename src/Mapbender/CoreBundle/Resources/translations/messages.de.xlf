@@ -888,7 +888,7 @@
       </trans-unit>
       <trans-unit id="012324b93835eb976d2a88819cd609ee" resname="mb.core.admin.layertree.label.hideselect">
         <source>mb.core.admin.layertree.label.hideselect</source>
-        <target>Visibility ausblenden</target>
+        <target>Visibility bei Ordnern asublenden</target>
       </trans-unit>
       <trans-unit id="d1368f78e4f1bdc29f696297a211fd1f" resname="mb.core.admin.layertree.label.hideinfo">
         <source>mb.core.admin.layertree.label.hideinfo</source>
