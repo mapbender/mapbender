@@ -1022,6 +1022,22 @@
         <source>mb.core.admin.featureinfo.label.onlyvalid</source>
         <target>Only valid</target>
       </trans-unit>
+      <trans-unit id="636a7d9646b9dd42ac8fda315e57d8f2" resname="mb.core.admin.layertree.label.hidenottoggleable">
+        <source>mb.core.admin.layertree.label.hidenottoggleable</source>
+        <target>Hide not toggleable</target>
+      </trans-unit>
+      <trans-unit id="affc05e9d63b6355f5fa94327aef2372" resname="mb.core.admin.layertree.label.hideselect">
+        <source>mb.core.admin.layertree.label.hideselect</source>
+        <target>Hide visibility</target>
+      </trans-unit>
+      <trans-unit id="8177411950647ca4ef6f115a44eda789" resname="mb.core.admin.layertree.label.hideinfo">
+        <source>mb.core.admin.layertree.label.hideinfo</source>
+        <target>Hide info</target>
+      </trans-unit>
+      <trans-unit id="0a5fe4c7ced865711f3ffcfe5d0e141a" resname="mb.core.admin.layertree.label.theme.activate">
+        <source>mb.core.admin.layertree.label.theme.activate</source>
+        <target>Add activate</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

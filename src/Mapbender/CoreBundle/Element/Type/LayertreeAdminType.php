@@ -75,6 +75,15 @@ class LayertreeAdminType extends AbstractType
             ->add('showHeader', 'checkbox',
                 array(
                 'required' => false))
+            ->add('hideInfo', 'checkbox',
+                array(
+                'required' => false))
+            ->add('hideNotToggleable', 'checkbox',
+                array(
+                'required' => false))
+            ->add('hideSelect', 'checkbox',
+                array(
+                'required' => false))
             ->add('menu', 'choice',
                 array(
                 'required' => false,
