@@ -10,9 +10,9 @@
             layerInfo: true, //!!!
             showBaseSource: true,
             showHeader: false,
-            hideNotToggleable: true,
+            hideNotToggleable: false,
             hideSelect: false,
-            hideInfo: true,
+            hideInfo: false,
             themes: null,
             menu: []
         },
@@ -486,11 +486,11 @@
                 this._setSourcesCount();
             }
         },
-        _onSourceLoadStart: function(event, option){
-            if(option.source && this.sourceAtTree[option.source.id ]) {
-                this.loadStarted[option.source.id ] = true;
-                var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
-                if($('input.layer-selected:first', source_li).is(':checked') && !source_li.hasClass('invisible')) {
+        _onSourceLoadStart: function(event, options){
+            if(options.source && this.sourceAtTree[options.source.id ]) {
+                this.loadStarted[options.source.id ] = true;
+                var source_li = $('li[data-sourceid="' + options.source.id + '"][data-type="root"]', this.element);
+                if(options.source.configuration.children[0].options.treeOptions.selected && !source_li.hasClass('invisible')) {
                     source_li.attr('data-state', 'loading').find('span.layer-state:first').attr("title",
                             source_li.attr('data-title'));
                 }
