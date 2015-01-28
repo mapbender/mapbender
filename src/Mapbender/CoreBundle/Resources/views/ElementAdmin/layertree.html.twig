@@ -22,6 +22,16 @@
     {{ form_label(form.configuration.menu) }}{{ form_widget(form.configuration.menu) }}
     <div class="clearContainer"></div>
     <div class="left">
+        {{ form_widget(form.configuration.hideNotToggleable) }}<label for="{{form.configuration.hideNotToggleable.vars.id}}" class="labelCheck">{{"mb.core.admin.layertree.label.hidenottoggleable"|trans}}</label>
+    </div>
+    <div class="left">
+        {{ form_widget(form.configuration.hideSelect) }}<label for="{{form.configuration.hideSelect.vars.id}}" class="labelCheck">{{"mb.core.admin.layertree.label.hideselect"|trans}}</label>
+    </div>
+    <div class="left">
+        {{ form_widget(form.configuration.hideInfo) }}<label for="{{form.configuration.hideInfo.vars.id}}" class="labelCheck">{{"mb.core.admin.layertree.label.hideinfo"|trans}}</label>
+    </div>
+    <div class="clearContainer"></div>
+    <div class="left">
         {{ form_widget(form.configuration.useTheme) }}<label for="{{form.configuration.useTheme.vars.id}}" class="labelCheck">{{"mb.core.admin.layertree.label.usetheme"|trans}}</label>
     </div>
     <div class="clearContainer"></div>

@@ -1,10 +1,19 @@
 (function($){
     $.widget("mapbender.mbLayertree", {
         options: {
+            type: 'element',
+            displaytype: 'tree',
             autoOpen: false,
             useTheme: false,
             target: null,
-            layerInfo: true,
+            titlemaxlength: 20,
+            layerInfo: true, //!!!
+            showBaseSource: true,
+            showHeader: false,
+            hideNotToggleable: true,
+            hideSelect: false,
+            hideInfo: true,
+            themes: null,
             menu: []
         },
         model: null,
@@ -253,11 +262,14 @@
                 } else if(nodeType === this.consts.group) {
                     $li.addClass("groupContainer");
                 }
-                $li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
-                if(config.toggle === true)
+                if(config.toggle === true) {
                     $li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
-                else
+                } else {
                     $li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");
+                }
+                if(config.toggleable) {
+                    $li.addClass('toggleable');
+                }
             }
             $li.addClass(config.reorder);
             $li.find('.layer-state').attr('title', config.visibility.tooltip);
@@ -267,17 +279,28 @@
             $li.find('input.layer-info').prop('checked', config.info ? true : false);
             if(!config.infoable)
                 $li.find('input.layer-info').prop('disabled', true);
+            var infoHidden = false;
+            if(this.options.hideInfo){
+                infoHidden = true;
+                $('input[name="info"]', $li).parents('.checkWrapper:first').remove();
+            }
+            var sekectHidden = false;
+            if(this.options.hideSelect){
+                sekectHidden = true;
+                $('input[name="selected"]', $li).parents('.checkWrapper:first').remove();
+            }
+            if(config.toggleable === false && this.options.hideNotToggleable) {
+                var $folder = $li.find('.iconFolder');
+                if(sekectHidden && infoHidden){
+                    $folder.addClass('placeholder')
+                }
+                $folder.removeClass('iconFolder');
+            }
             $li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(
                     sourceEl.options.title));
-            if(config.toggleable)
-                $li.addClass('toggleable');
             if(this.options.menu.length === 0) {
                 $li.find('.layer-menu-btn').remove();
             }
-            if(!this.options.layerRemove)
-                $li.find('.layer-remove-btn').remove();
-            if(!this.options.layerInfo)
-                $li.find('.iconInfo').remove();
             return $li;
         },
         _createSourceTree: function(source, sourceEl, scale, type, isroot){
@@ -577,9 +600,9 @@
                 var chk_selected = $('input[name="selected"]:first', $li);
                 if(chk_selected.prop('checked')) {
                     var self = this;
-                    $('li[data-type="'+this.consts.root+'"]', $li).each(function(idx, item){
+                    $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item){
                         var $item = $(item);
-                        var options = {layers:{}};
+                        var options = {layers: {}};
                         $('li', $item).each(function(idx_, item_){
                             var $item_ = $(item_);
                             options.layers[$item_.attr('data-id')] = {options: {treeOptions: {selected: true}}};
@@ -622,7 +645,6 @@
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
                         sourceId));
                 var exitButton = menu.find('.exit-button');
-                var removeButton = menu.find('.layer-remove-btn');
                 var previousMenu = self.currentMenu;
 
                 if(self.currentMenu == menu) {
@@ -636,9 +658,10 @@
                 }
 
                 exitButton.on('click', function(e){
-                    self.closeMenu(menu)
+                    self.closeMenu(menu);
                 });
 
+                var removeButton = menu.find('.layer-remove-btn');
                 removeButton.on('click', $.proxy(self._removeSource, self));
 
                 if($element.parents('li:first').attr('data-type') !== self.consts.root) {
