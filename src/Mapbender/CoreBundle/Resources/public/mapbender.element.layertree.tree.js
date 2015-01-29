@@ -280,18 +280,19 @@
             if(!config.infoable)
                 $li.find('input.layer-info').prop('disabled', true);
             var infoHidden = false;
-            if(this.options.hideInfo){
+            if(this.options.hideInfo) {
                 infoHidden = true;
                 $('input[name="info"]', $li).parents('.checkWrapper:first').remove();
             }
             var selectHidden = false;
-            if(this.options.hideSelect && (nodeType === this.consts.root || nodeType === this.consts.group)){
+            if(this.options.hideSelect && config.selected && !config.selectable &&
+                    (nodeType === this.consts.root || nodeType === this.consts.group)) {
                 selectHidden = true;
                 $('input[name="selected"]', $li).parents('.checkWrapper:first').remove();
             }
             if(config.toggleable === false && this.options.hideNotToggleable) {
                 var $folder = $li.find('.iconFolder');
-                if(selectHidden && infoHidden){
+                if(selectHidden && infoHidden) {
                     $folder.addClass('placeholder')
                 }
                 $folder.removeClass('iconFolder');
@@ -490,7 +491,8 @@
             if(options.source && this.sourceAtTree[options.source.id ]) {
                 this.loadStarted[options.source.id ] = true;
                 var source_li = $('li[data-sourceid="' + options.source.id + '"][data-type="root"]', this.element);
-                if(options.source.configuration.children[0].options.treeOptions.selected && !source_li.hasClass('invisible')) {
+                if(options.source.configuration.children[0].options.treeOptions.selected && !source_li.hasClass(
+                        'invisible')) {
                     source_li.attr('data-state', 'loading').find('span.layer-state:first').attr("title",
                             source_li.attr('data-title'));
                 }
