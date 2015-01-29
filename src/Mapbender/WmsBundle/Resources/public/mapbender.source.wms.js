@@ -588,16 +588,19 @@ $.extend(true, Mapbender, {
                 var rootLayer = source.configuration.children[0];
                 _changeOptions(rootLayer, scale, {state: {visibility: true}}, toChangeOpts, result);
                 return result;
+                function _createState(layer){
+                    return {
+                        outOfScale: layer.state.outOfScale,
+                        outOfBounds: layer.state.outOfBounds,
+                        visibility: layer.state.visibility
+                    };
+                }
                 function _changeOptions(layer, scale, parentState, toChangeOpts, result){
                     var layerChanged,
                             elchanged = false;
                     if(toChangeOpts.options.children[layer.options.id]) {
                         layerChanged = toChangeOpts.options.children[layer.options.id];
-                        layerChanged.state = {
-                            outOfScale: layer.state.outOfScale,
-                            outOfBounds: layer.state.outOfBounds,
-                            visibility: layer.state.visibility
-                        };
+                        layerChanged.state = _createState(layer);
                         if(typeof layerChanged.options.treeOptions !== 'undefined') {
                             var treeOptions = layerChanged.options.treeOptions;
                             if(typeof treeOptions.selected !== 'undefined') {
@@ -624,16 +627,10 @@ $.extend(true, Mapbender, {
                             }
                         }
                     } else {
-                        layerChanged = {
-                            state: {
-                                outOfScale: layer.state.outOfScale,
-                                outOfBounds: layer.state.outOfBounds,
-                                visibility: layer.state.visibility
-                            }
-                        };
+                        layerChanged = {state: _createState(layer)};
                     }
-                    layer.state.outOfScale = (layer.options.minScale ? layer.options.minScale <= scale
-                            : true) && (layer.options.maxScale ? layer.options.maxScale > scale : true) ? false : true;
+                    layer.state.outOfScale = !Mapbender.Util.isInScale(scale, layer.options.minScale,
+                            layer.options.maxScale);
                     /* @TODO outOfBounds for layers ?  */
                     if(layer.children) {
                         if(parentState.state.visibility
