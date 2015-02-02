@@ -86,12 +86,12 @@ class AssetFactory
 
     protected function squashImports($content)
     {
-        preg_match_all('/\@import.*?;/s', $content, $imports, PREG_SET_ORDER);
+        preg_match_all('/\@import\s*\".*?;/s', $content, $imports, PREG_SET_ORDER);
         $imports = array_map(function($item) {
             return $item[0];
         }, $imports);
         $imports = array_unique($imports);
-        $content = preg_replace('/\@import.*?;/s', '', $content);
+        $content = preg_replace('/\@import\s*\".*?;/s', '', $content);
 
         return implode($imports, "\n") . "\n" . $content;
     }
