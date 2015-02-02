@@ -93,7 +93,7 @@ EOT
         }
         $output->writeln('');
         $output->writeln('<comment>Follow up actions</comment>');
-        $output->writeln('Read about adapting your bare-bone element at <info>http://mapbender.org/3/cookbook/element-from-skeleton</info>');
+        $output->writeln('Read about adapting your bare-bone element at <info>http://doc.mapbender3.org/en/book/development/element_generate.html</info>');
     }
 }
 
