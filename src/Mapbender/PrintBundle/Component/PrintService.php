@@ -30,7 +30,10 @@ class PrintService
     {
         $this->data = $content;
         $template = $this->data['template'];
-
+//        print "<pre>";
+//        print_r($this->data);
+//        print "</pre>";
+//        die();
         $this->getTemplateConf($template);
         $this->createUrlArray();
         $this->addReplacePattern();
@@ -63,6 +66,9 @@ class PrintService
     private function createUrlArray()
     {
         foreach ($this->data['layers'] as $i => $layer) {
+            if($layer['type'] != 'wms') {
+                continue;
+            }
             $url = strstr($this->data['layers'][$i]['url'], '&BBOX', true);
             $this->layer_urls[$i] = $url;
             //opacity
@@ -270,10 +276,10 @@ class PrintService
         $centery = $this->data['center']['y'];
 
         //set needed extent
-        $neededExtentWidth = round(abs(sin(deg2rad($rotation)) * $map_height) +
-            abs(cos(deg2rad($rotation)) * $map_width));
-        $neededExtentHeight = round(abs(sin(deg2rad($rotation)) * $map_width) +
-            abs(cos(deg2rad($rotation)) * $map_height));
+        $neededExtentWidth = abs(sin(deg2rad($rotation)) * $map_height) +
+            abs(cos(deg2rad($rotation)) * $map_width);
+        $neededExtentHeight = abs(sin(deg2rad($rotation)) * $map_width) +
+            abs(cos(deg2rad($rotation)) * $map_height);
 
         $ll_x = $centerx - $neededExtentWidth * 0.5;
         $ll_y = $centery - $neededExtentHeight * 0.5;
@@ -283,10 +289,10 @@ class PrintService
         $bbox = '&BBOX=' . $ll_x . ',' . $ll_y . ',' . $ur_x . ',' . $ur_y;
 
         //set needed image size
-        $neededImageWidth = round(abs(sin(deg2rad($rotation)) * $this->image_height) +
-            abs(cos(deg2rad($rotation)) * $this->image_width));
-        $neededImageHeight = round(abs(sin(deg2rad($rotation)) * $this->image_width) +
-            abs(cos(deg2rad($rotation)) * $this->image_height));
+        $neededImageWidth = abs(sin(deg2rad($rotation)) * $this->image_height) +
+            abs(cos(deg2rad($rotation)) * $this->image_width);
+        $neededImageHeight = abs(sin(deg2rad($rotation)) * $this->image_width) +
+            abs(cos(deg2rad($rotation)) * $this->image_height);
 
         $w = '&WIDTH=' . $neededImageWidth;
         $h = '&HEIGHT=' . $neededImageHeight;
@@ -390,6 +396,9 @@ class PrintService
             }
         }
 
+        //draw features
+        //$this->drawFeatures();
+
         //rotate image
         $tempimg = imagecreatefrompng($tempimagename);
         $transColor = imagecolorallocatealpha($tempimg, 255, 255, 255, 127);
@@ -489,7 +498,7 @@ class PrintService
         }
 
         // draw features
-        if ($this->data['rotation'] == 0 && isset($this->data['features'])) {
+        if ($this->data['rotation'] == 0) {
             $this->drawFeatures();
         }
 
@@ -766,68 +775,148 @@ class PrintService
         $pdf->Rect($this->conf['scalebar']['x'] * 10 + 40  , $this->conf['scalebar']['y'] * 10, 10, 2, 'FD');
     }
 
+    private function getColor($color, $alpha, $image)
+    {
+        list($r, $g, $b) = CSSColorParser::parse($color);
+
+        if(0 == $alpha) {
+            return ImageColorAllocate($image, $r, $g, $b);
+        } else {
+            $a = (1 - $alpha) * 127.0;
+            return imagecolorallocatealpha($image, $r, $g, $b, $a);
+        }
+    }
+
+    private function drawPolygon($geometry, $image)
+    {
+        foreach($geometry['coordinates'] as $ring) {
+            if(count($ring) < 3) {
+                continue;
+            }
+
+            $points = array();
+            foreach($ring as $c) {
+                if($this->data['rotation'] === 0){
+                    $p = $this->realWorld2mapPos($c[0], $c[1]);
+                }else{
+                    $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+                }
+                $points[] = floatval($p[0]);
+                $points[] = floatval($p[1]);
+            }
+
+            // Filled area
+            $color = $this->getColor(
+                $geometry['style']['fillColor'],
+                $geometry['style']['fillOpacity'],
+                $image);
+            imagefilledpolygon($image, $points, count($ring), $color);
+
+            // Border
+            $color = $this->getColor(
+                $geometry['style']['strokeColor'],
+                $geometry['style']['strokeOpacity'],
+                $image);
+            imagesetthickness($image, $geometry['style']['strokeWidth']);
+            imagepolygon($image, $points, count($ring), $color);
+        }
+        // reset image thickness !!
+        imagesetthickness($image, 0);
+    }
+
+    private function drawLineString($geometry, $image)
+    {
+        $color = $this->getColor(
+            $geometry['style']['strokeColor'],
+            $geometry['style']['strokeOpacity'],
+            $image);
+        imagesetthickness($image, $geometry['style']['strokeWidth']);
+
+        for($i = 1; $i < count($geometry['coordinates']); $i++) {
+
+            if($this->data['rotation'] === 0){
+                $from = $this->realWorld2mapPos(
+                    $geometry['coordinates'][$i - 1][0],
+                    $geometry['coordinates'][$i - 1][1]);
+                $to = $this->realWorld2mapPos(
+                    $geometry['coordinates'][$i][0],
+                    $geometry['coordinates'][$i][1]);
+            }else{
+                $from = $this->realWorld2rotatedMapPos(
+                    $geometry['coordinates'][$i - 1][0],
+                    $geometry['coordinates'][$i - 1][1]);
+                $to = $this->realWorld2rotatedMapPos(
+                    $geometry['coordinates'][$i][0],
+                    $geometry['coordinates'][$i][1]);
+            }
+
+            imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
+        }
+
+        // reset image thickness !!
+        imagesetthickness($image, 0);
+    }
+
+    private function drawPoint($geometry, $image)
+    {
+        $c = $geometry['coordinates'];
+
+        if($this->data['rotation'] === 0){
+            $p = $this->realWorld2mapPos($c[0], $c[1]);
+        }else{
+            $p = $this->realWorld2rotatedMapPos($c[0], $c[1]);
+        }
+
+        if(isset($geometry['style']['label'])){
+            $color = $this->getColor(
+                '#ff0000',
+                1,
+                $image);
+            $fontPath = $this->container->get('kernel')->getRootDir().'/Resources/MapbenderPrintBundle/fonts/';
+            imagettftext($image, 14, 0, $p[0], $p[1], $color, $fontPath.'Trebuchet_MS.ttf', $geometry['style']['label']);
+            return;
+        }
+
+
+        $radius = $geometry['style']['pointRadius'];
+        // Filled circle
+        $color = $this->getColor(
+            $geometry['style']['fillColor'],
+            $geometry['style']['fillOpacity'],
+            $image);
+
+        imagefilledellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+
+        // Circle border
+        $color = $this->getColor(
+            $geometry['style']['strokeColor'],
+            $geometry['style']['strokeOpacity'],
+            $image);
+        imageellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+    }
+
     private function drawFeatures()
     {
         $image = imagecreatefrompng($this->finalimagename);
+        imagesavealpha($image, true);
+        imagealphablending($image, true);
 
-        foreach ($this->data['features'] as $fKey => $feature){
-            $points = array();
-            foreach ($feature['geom'] as $vKey => $vVal){
-                $points[$vKey] = $this->realWorld2mapPos($feature['geom'][$vKey]['x'],$feature['geom'][$vKey]['y']);
+        foreach($this->data['layers'] as $idx => $layer) {
+            if('GeoJSON+Style' !== $layer['type']) {
+                continue;
             }
 
-            if($feature['type'] === 'line'){
-                $red = ImageColorAllocate($image,255,0,0);
-                imagesetthickness($image, 2);
-                $keys = array_keys($points);
-                $last_key = end($keys);
-                foreach ($points as $k => $v){
-                    if ($k == $last_key) {
-                        break;
-                    }else{
-                        imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
-                    }
+            foreach($layer['geometries'] as $geometry) {
+                $renderMethodName = 'draw' . $geometry['type'];
+
+                if(!method_exists($this, $renderMethodName)) {
+                    throw new \RuntimeException('Can not draw geometries of type "' . $geometry['type'] . '".');
                 }
-            }
-            if($feature['type'] === 'point'){
-                $red = ImageColorAllocate($image,255,0,0);
-                imagefilledellipse ($image , $points[0][0], $points[0][1] , 5 , 5 , $red );
-            }
-            if($feature['type'] === 'polygon'){
-                $red = ImageColorAllocate($image,255,0,0);
-                $values = array();
-                foreach ($points as $k => $v){
-                    array_push($values, $points[$k][0], $points[$k][1]);
-                }
-                imagesetthickness($image, 2);
-                imagepolygon($image, $values, count($points), $red);
+
+                $this->$renderMethodName($geometry, $image);
             }
         }
-
         imagepng($image, $this->finalimagename);
-    }
-
-    private function drawRotatedFeatures($image)
-    {
-        $feature = $this->data['features'][0];
-
-        $points;
-        foreach ($feature as $k => $v){
-            $points[$k] = $this->realWorld2rotatedMapPos($feature[$k]['x'],$feature[$k]['y']);
-        }
-
-        $red = ImageColorAllocate($image,255,0,0);
-
-        $keys = array_keys($points);
-        $last_key = end($keys);
-        foreach ($points as $k => $v){
-            if ($k == $last_key) {
-                break;
-            }else{
-                imageline ( $image, $points[$k][0], $points[$k][1], $points[$k+1][0], $points[$k+1][1], $red);
-            }
-        }
-
     }
 
     private function realWorld2mapPos($rw_x,$rw_y)
