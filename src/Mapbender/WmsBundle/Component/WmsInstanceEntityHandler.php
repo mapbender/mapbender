@@ -13,6 +13,7 @@ use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
+use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
@@ -115,6 +116,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 $this->signeUrls($signer, $configuration['children'][0]);
             }
         }
+        
+//        foreach ($this->entity->getVendorspecifics() as $vendorspec){
+//            if($vendorspec->getVctype() === VendorSpecific::TYPE_VS_USERNAME){
+////                this
+//            }
+//        }
+        
         return $configuration;
     }
 

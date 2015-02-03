@@ -303,5 +303,45 @@ class ApplicationController extends Controller
         $response->setContent($browserResponse->getContent());
         return $response;
     }
+    
+    /**
+     * Get SourceInstances with vendor specific parameter
+     *
+     * @Route("/application/{slug}/instance/{instanceId}/vendorspecific")
+     */
+    public function vendorSpecificAction($slug, $instanceId)
+    {
+        $securityContext = $this->get('security.context');
+        $instance = $this->container->get("doctrine")
+                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
+        $securityContext = $this->get('security.context');
+
+        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
+            && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
+            throw new AccessDeniedException();
+        }
+// TODO source access ?
+//        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'))
+//            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
+//            throw new AccessDeniedException();
+//        }
+        
+        
+        $user = $securityContext->getToken()->getUser();
+        
+        
+        $params = $this->getRequest()->getMethod() == 'POST' ?
+            $this->get("request")->request->all() : $this->get("request")->query->all();
+
+        $proxy_config = $this->container->getParameter("owsproxy.proxy");
+//        $proxy_query = ProxyQuery::createFromUrl(
+//                $instance->getSource()->getGetMap()->getHttpGet(), $instance->getSource()->getUsername(),
+//                $instance->getSource()->getPassword(), array(), $params);
+        $proxy = new CommonProxy($proxy_config, $proxy_query);
+        $browserResponse = $proxy->handle();
+        $response = new Response();
+        $response->setContent($browserResponse->getContent());
+        return $response;
+    }
 
 }

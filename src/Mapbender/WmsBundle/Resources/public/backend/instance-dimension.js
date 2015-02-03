@@ -1,5 +1,5 @@
 $(function() {
-    $('.dimensionGroup').on("click", '.on-off', function(e) {
+    $('.extendedGroup').on("click", '.on-off', function(e) {
         var $this = $(e.target);
         if ($this.hasClass('active')) {
             $this.removeClass('active');
@@ -9,12 +9,12 @@ $(function() {
             $this.parent().find('#' + $this.attr('id') + '-content').removeClass('hidden');
         }
     });
-    $('.dimensionGroup select').each(function() {
+    $('.extendedGroup select').each(function() {
         if ($(this).attr('name').indexOf('[extentEdit]') > 0) {
             $(this).on('change', function(e) {
                 var item = $(e.target);
                 var extentId = item.attr('id').substr(0, item.attr('id').indexOf('extentEdit')) + 'extent';
-                $('.dimensionGroup #' + extentId).val(item.val());
+                $('.extendedGroup #' + extentId).val(item.val());
             });
         }
     });
