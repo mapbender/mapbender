@@ -72,15 +72,20 @@ class AssetFactory
     {
         $filters = array();
         $isDebug = $this->container->get('kernel')->isDebug();
+        $content = $this->getAssetCollection()->dump();
+
         if('css' === $this->type) {
             $sass = clone $this->container->get('mapbender.assetic.filter.sass');
             $sass->setStyle($isDebug ? 'nested' : 'compressed');
             $filters[] = $sass;
+            $filters[] = $this->container->get("assetic.filter.cssrewrite");
+            $content = $this->squashImports($content);
         }
-
-        $content = $this->squashImports($this->getAssetCollection()->dump());
-        $assets = new StringAsset($content, $filters);
-
+        // Web source path
+        $sourcePath = dirname($this->container->getParameter('kernel.root_dir')) . '/web';
+        $sourcePath = '/';
+        $assets = new StringAsset($content, $filters, null, $sourcePath);
+        $assets->setTargetPath($this->targetPath);
         return $assets->dump();
     }
 

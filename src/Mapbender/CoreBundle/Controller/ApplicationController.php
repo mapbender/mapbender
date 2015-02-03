@@ -79,7 +79,9 @@ class ApplicationController extends Controller
         $request = $this->getRequest();
         $route = $this->container->get('router')->getRouteCollection()->get($request->get('_route'));
         $targetPath = $request->server->get('SCRIPT_FILENAME') . $route->getPattern();
+
         $targetPath = str_replace('{slug}', $slug, $targetPath);
+        $targetPath = $request->server->get('REQUEST_URI');
 
         // Collect all assets into one
         $application = $this->getApplication($slug);
