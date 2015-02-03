@@ -83,8 +83,8 @@ class AssetFactory
         }
         // Web source path
         $sourcePath = dirname($this->container->getParameter('kernel.root_dir')) . '/web';
-        $sourcePath = '/';
-        $assets = new StringAsset($content, $filters, null, $sourcePath);
+        $sourcePath = '.';
+        $assets = new StringAsset($content, $filters, '/', $sourcePath);
         $assets->setTargetPath($this->targetPath);
         return $assets->dump();
     }

@@ -170,7 +170,7 @@ class ApplicationController extends Controller
             // And move everything into an StringAsset which gets added the
             // CssRewriteFilter
             $css = $assets->dump();
-            $assets = new StringAsset($css, array(), null, $source);
+            $assets = new StringAsset($css, array(), '', $source);
             $assets->load();
             $assets->setTargetPath($target);
             $assets->ensureFilter(new CssRewriteFilter());
