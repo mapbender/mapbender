@@ -20,7 +20,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
     /**
      * ORM\Column(type="array", nullable=true)
      */
-    protected $vendorspecific;
+    protected $vendorspecifics;
 
     /**
      * ORM\Column(type="string", nullable=true)
@@ -86,14 +86,14 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
         return $this->bbox;
     }
 
-    public function setVendorspecific($val)
+    public function setVendorspecifics(array $vendorspecifics)
     {
-        $this->vendorspecific = $val;
+        $this->vendorspecifics = $vendorspecifics;
     }
 
-    public function getVendorspecific()
+    public function getVendorspecifics()
     {
-        return $this->vendorspecific;
+        return $this->vendorspecifics;
     }
     
     public function getDimensions()
@@ -137,7 +137,7 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             "opacity" => $this->opacity,
             "tiled" => $this->tiled,
             "bbox" => $this->bbox,
-            "vendorspecific" => $this->vendorspecific,
+            "vendorspecifics" => $this->vendorspecifics,
             "dimensions" => $this->dimensions,
             "buffer" => $this->getBuffer(),
         );
@@ -178,8 +178,8 @@ class WmsInstanceConfigurationOptions extends InstanceConfigurationOptions
             if (isset($options["bbox"])) {
                 $ico->bbox = $options["bbox"];
             }
-            if (isset($options["vendorspecific"])) {
-                $ico->vendor = $options["vendorspecific"];
+            if (isset($options["vendorspecifics"])) {
+                $ico->vendor = $options["vendorspecifics"];
             }
             if(isset($options["buffer"])){
                 $ico->vendor = $options["buffer"];

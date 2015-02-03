@@ -10,6 +10,8 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
+use Mapbender\CoreBundle\Utils\ClassPropertiesParser;
+use Mapbender\CoreBundle\Utils\EntityAnnotationParser;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
@@ -18,6 +20,7 @@ use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
 use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * Description of WmsSourceHandler
@@ -110,19 +113,27 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             }
         }
         $configuration = $this->entity->getConfiguration();
-        if ($signer) {
+        $vctunnel = false;
+        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
+            if ($vendorspec->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE) {
+                $vctunnel = true;
+                break;
+            }
+        }
+        if ($this->entity->getSource()->getUsername() || $vctunnel) {
+            $url = $this->container->get('router')->generate(
+                'mapbender_core_application_instancetunnel',
+                array(
+                'slug' => $this->entity->getLayerset()->getApplication()->getSlug(),
+                'instanceId' => $this->entity->getId()
+                ), UrlGeneratorInterface::ABSOLUTE_URL);
+            $configuration['options']['url'] = $url;
+        } elseif ($signer) {
             $configuration['options']['url'] = $signer->signUrl($configuration['options']['url']);
             if ($this->entity->getProxy()) {
                 $this->signeUrls($signer, $configuration['children'][0]);
             }
         }
-        
-//        foreach ($this->entity->getVendorspecifics() as $vendorspec){
-//            if($vendorspec->getVctype() === VendorSpecific::TYPE_VS_USERNAME){
-////                this
-//            }
-//        }
-        
         return $configuration;
     }
 
@@ -143,7 +154,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         );
         foreach ($rootlayer->getSourceItem()->getBoundingBoxes() as $bbox) {
             $srses = array_merge($srses,
-                array($bbox->getSrs() => array(
+                                 array($bbox->getSrs() => array(
                     floatval($bbox->getMinx()),
                     floatval($bbox->getMiny()),
                     floatval($bbox->getMaxx()),
@@ -155,19 +166,29 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $wmsconf->setIsBaseSource($this->entity->isBasesource());
 
         $options = new WmsInstanceConfigurationOptions();
-        $dimensions = array();
         $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet());
+        $dimensions = array();
         foreach ($this->entity->getDimensions() as $dimension) {
             if ($dimension->getActive()) {
                 $dimensions[] = $dimension->getConfiguration();
                 if ($dimension->getDefault()) {
                     $options->setUrl(
                         UrlUtil::validateUrl($options->getUrl(), array(),
-                            array($dimension->getParameterName() => $dimension->getDefault())));
+                                             array($dimension->getParameterName() => $dimension->getDefault())));
                 }
             }
         }
-
+        $vendorsecifics = array();
+        foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE || !$vendorspec->getUsetunnel()) {
+                $vendorsecifics[] = $vendorspec->getConfiguration();
+                if ($vendorspec->getDefault()) {
+                    $options->setUrl(UrlUtil::validateUrl(
+                            $options->getUrl(), array(),
+                            array($vendorspec->getParameterName() => $vendorspec->getDefault())));
+                }
+            }
+        }
         $options->setProxy($this->entity->getProxy())
             ->setVisible($this->entity->getVisible())
             ->setFormat($this->entity->getFormat())
@@ -176,7 +197,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setOpacity($this->entity->getOpacity() / 100)
             ->setTiled($this->entity->getTiled())
             ->setBbox($srses)
-            ->setDimensions($dimensions);
+            ->setDimensions($dimensions)
+            ->setVendorspecifics($vendorsecifics);
         $wmsconf->setOptions($options);
         $entityHandler = self::createHandler($this->container, $rootlayer);
         $wmsconf->setChildren(array($entityHandler->generateConfiguration()));
@@ -290,11 +312,62 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getSensitiveVendorSpecific()
+    {
+        $vsarr = array();
+        $match = '/\$.+\$/';
+        $securityContext = $this->container->get('security.context');
+        $user = $securityContext->getToken()->getUser();
+        if ($user instanceof AdvancedUserInterface) {
+            foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
+                if ($vendorspec->getVstype() && $vendorspec->getVstype() === VendorSpecific::TYPE_VS_USERNAME) {
+                    $value = $this->getVendorSpecificValue($vendorspec, $user);
+                    if ($value) {
+                        $vsarr[$vendorspec->getParameterName()] = $value;
+                    }
+                } elseif ($vendorspec->getVstype() && $vendorspec->getVstype() === VendorSpecific::TYPE_VS_GROUPNAME) {
+                    $groups = array();
+                    foreach ($user->getGroups() as $group) {
+                        $value = $this->getVendorSpecificValue($vendorspec, $group);
+                        if ($value) {
+                            $vsarr[$vendorspec->getParameterName()] = $value;
+                        }
+                    }
+                    if (count($groups)) {
+                        $vsarr[$vendorspec->getParameterName()] = implode(',', $groups);
+                    }
+                }
+            }
+        }
+        return $vsarr;
+    }
+
+    private function getVendorSpecificValue(VendorSpecific $vendorspec, $object)
+    {
+        $value = $vendorspec->getDefault() ? $vendorspec->getDefault() : $vendorspec->getExtent();
+        $length = strlen($value);
+        if ($length > 2 && strpos($value, '$', 0) === 0 && strpos($value, '$', $length - 2) === $length - 1) {
+            $value = str_replace('$', '', $value);
+            $fields = ClassPropertiesParser::parseFields(get_class($object));
+            if (isset($fields[$value]) && isset($fields[$value][EntityAnnotationParser::GETTER])) {
+                $reflectionMethod = new \ReflectionMethod(get_class($object), $fields[$value][EntityAnnotationParser::GETTER]);
+                $fieldValue = $reflectionMethod->invoke($object);
+                return $reflectionMethod->invoke($object);
+            }
+        } else {
+            return $value;
+        }
+        return null;
+    }
+
     public function mergeDimension($dimension, $persist = false)
     {
         $dimensions = $this->entity->getDimensions();
         foreach ($dimensions as $dim) {
-            if($dim->getType() === $dimension->getType()){
+            if ($dim->getType() === $dimension->getType()) {
                 $dim->setExtent($dimension->getExtent());
                 $dim->setDefault($dimension->getDefault());
             }
@@ -304,8 +377,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->container->get('doctrine')->getManager()->persist($this->entity);
             $this->container->get('doctrine')->getManager()->flush();
         }
-//        $dimensions = $this->entity->getDimensions();
-//        $a = 0;
     }
 
 }

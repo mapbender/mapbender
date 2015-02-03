@@ -8,12 +8,13 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Assetic\Asset\StringAsset;
 use Assetic\Filter\CssRewriteFilter;
-use OwsProxy3\CoreBundle\Component\CommonProxy;
-use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Component\Application;
-use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\Utils;
+use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
+use OwsProxy3\CoreBundle\Component\CommonProxy;
+use OwsProxy3\CoreBundle\Component\ProxyQuery;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -273,9 +274,9 @@ class ApplicationController extends Controller
     /**
      * Get SourceInstances via HTTP Basic Authentication
      *
-     * @Route("/application/{slug}/instance/{instanceId}/basicAuth")
+     * @Route("/application/{slug}/instance/{instanceId}/tunnel")
      */
-    public function instanceBasicAuthAction($slug, $instanceId)
+    public function instanceTunnelAction($slug, $instanceId)
     {
         $instance = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
@@ -290,53 +291,25 @@ class ApplicationController extends Controller
 //            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
 //            throw new AccessDeniedException();
 //        }
-        $params = $this->getRequest()->getMethod() == 'POST' ?
-            $this->get("request")->request->all() : $this->get("request")->query->all();
-
+//        $params = $this->getRequest()->getMethod() == 'POST' ?
+//            $this->get("request")->request->all() : $this->get("request")->query->all();
+        $headers = array();
+        $postParams = $this->get("request")->request->all();
+        $getParams = $this->get("request")->query->all();
+        $user = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
+        $password = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
+        $instHandler = EntityHandler::createHandler($this->container, $instance);
+        foreach ($instHandler->getSensitiveVendorSpecific() as $key => $value) {
+            if (count($getParams)) {
+                $getParams[$key] = $value;
+            }
+            if (count($postParams)) {
+                $postParams[$key] = $value;
+            }
+        }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
         $proxy_query = ProxyQuery::createFromUrl(
-                $instance->getSource()->getGetMap()->getHttpGet(), $instance->getSource()->getUsername(),
-                $instance->getSource()->getPassword(), array(), $params);
-        $proxy = new CommonProxy($proxy_config, $proxy_query);
-        $browserResponse = $proxy->handle();
-        $response = new Response();
-        $response->setContent($browserResponse->getContent());
-        return $response;
-    }
-    
-    /**
-     * Get SourceInstances with vendor specific parameter
-     *
-     * @Route("/application/{slug}/instance/{instanceId}/vendorspecific")
-     */
-    public function vendorSpecificAction($slug, $instanceId)
-    {
-        $securityContext = $this->get('security.context');
-        $instance = $this->container->get("doctrine")
-                ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
-        $securityContext = $this->get('security.context');
-
-        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application'))
-            && !$securityContext->isGranted('VIEW', $instance->getLayerset()->getApplication())) {
-            throw new AccessDeniedException();
-        }
-// TODO source access ?
-//        if (!$securityContext->isGranted('VIEW', new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Source'))
-//            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
-//            throw new AccessDeniedException();
-//        }
-        
-        
-        $user = $securityContext->getToken()->getUser();
-        
-        
-        $params = $this->getRequest()->getMethod() == 'POST' ?
-            $this->get("request")->request->all() : $this->get("request")->query->all();
-
-        $proxy_config = $this->container->getParameter("owsproxy.proxy");
-//        $proxy_query = ProxyQuery::createFromUrl(
-//                $instance->getSource()->getGetMap()->getHttpGet(), $instance->getSource()->getUsername(),
-//                $instance->getSource()->getPassword(), array(), $params);
+                $instance->getSource()->getGetMap()->getHttpGet(), $user, $password, $headers, $getParams, $postParams);
         $proxy = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
         $response = new Response();

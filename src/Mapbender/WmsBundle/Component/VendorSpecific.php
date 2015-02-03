@@ -24,7 +24,7 @@ class VendorSpecific extends DimensionInst
      * ORM\Column(type="string", nullable=false)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $useTunnel = false;
+    public $usetunnel = false;
 
     public function getVstype()
     {
@@ -37,14 +37,28 @@ class VendorSpecific extends DimensionInst
         return $this;
     }
 
-    public function getUseTunnel()
+    public function getUsetunnel()
     {
-        return $this->useTunnel;
+        return $this->usetunnel;
+    }
+    
+    public function setExtent($extent)
+    {
+        $this->extent = $this->origextentextent = $extent;
+        return $this;
+    }
+    
+    public function getOrigextent()
+    {
+        if(!$this->origextentextent){
+            $this->origextentextent = $this->extent;
+        }
+        return $this->origextentextent;
     }
 
-    public function setUseTunnel($useTunnel)
+    public function setUsetunnel($usetunnel)
     {
-        $this->useTunnel = $useTunnel;
+        $this->usetunnel = $usetunnel;
         return $this;
     }
 
@@ -55,6 +69,14 @@ class VendorSpecific extends DimensionInst
     public function getParameterName()
     {
         return $this->name;
+    }
+
+    public function getConfiguration()
+    {
+        $array = parent::getConfiguration();
+        $array['usetunnel'] = $this->getUsetunnel();
+        $array['vstype'] = $this->getVstype();
+        return $array;
     }
 
 }

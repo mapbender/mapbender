@@ -52,23 +52,23 @@ class ClassPropertiesParser
             foreach ($methods as $methodName => $method) {
                 $methodHash = ucwords($fieldName);
                 switch ($methodName) {
-                    case 'get' . $methodHash: $propProps['getter'] = $methodName;
+                    case EntityAnnotationParser::GET . $methodHash: $propProps[EntityAnnotationParser::GETTER] = $methodName;
                         break;
-                    case 'set' . $methodHash: $propProps['setter'] = $methodName;
+                    case EntityAnnotationParser::SET . $methodHash: $propProps[EntityAnnotationParser::SETTER] = $methodName;
                         break;
-                    case 'has' . $methodHash: $propProps['hasMethod'] = $methodName;
+                    case EntityAnnotationParser::HAS . $methodHash: $propProps[EntityAnnotationParser::HASMETHOD] = $methodName;
                         break;
-                    case 'is' . $methodHash: $propProps['isMethod'] = $methodName;
+                    case EntityAnnotationParser::IS . $methodHash: $propProps[EntityAnnotationParser::ISMETHOD] = $methodName;
                         break;
                 }
             }
 
             // try to find getter if not founded before 
-            if (!isset($propProps['getter'])) {
-                if (isset($propProps['hasMethod'])) {
-                    $annotation['getter'] = $propProps['hasMethod'];
-                } elseif (isset($propProps['isMethod'])) {
-                    $annotation['getter'] = $propProps['isMethod'];
+            if (!isset($propProps[EntityAnnotationParser::GETTER])) {
+                if (isset($propProps[EntityAnnotationParser::HASMETHOD])) {
+                    $annotation[EntityAnnotationParser::GETTER] = $propProps[EntityAnnotationParser::HASMETHOD];
+                } elseif (isset($propProps[EntityAnnotationParser::ISMETHOD])) {
+                    $annotation[EntityAnnotationParser::GETTER] = $propProps[EntityAnnotationParser::ISMETHOD];
                 }
             }
             $fields[$fieldName] = $propProps;
