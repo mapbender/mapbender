@@ -82,11 +82,12 @@ class ApplicationController extends Controller
 
         $targetPath = str_replace('{slug}', $slug, $targetPath);
         $targetPath = $request->server->get('REQUEST_URI');
+        $sourcePath = $request->getBasePath();
 
         // Collect all assets into one
         $application = $this->getApplication($slug);
         $refs = array_unique($application->getAssets('css'));
-        $factory = new AssetFactory($this->container, $refs, 'css', $targetPath);
+        $factory = new AssetFactory($this->container, $refs, 'css', $targetPath, $sourcePath);
         $assets = $factory->getAssetCollection();
 
         // Get last modified timestamp from assets as well as application (DB) or Symfony's cache creation (YAML)

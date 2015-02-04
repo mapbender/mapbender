@@ -17,9 +17,11 @@ class AssetFactory
     protected $type;
     protected $targetPath;
     protected $collection;
+    protected $sourcePath;
 
-    public function __construct(ContainerInterface $container, array $inputs, $type, $targetPath)
+    public function __construct(ContainerInterface $container, array $inputs, $type, $targetPath, $sourcePath)
     {
+        $this->sourcePath = $sourcePath;
         $this->container = $container;
         $this->inputs = $inputs;
         $this->type = $type;
@@ -34,6 +36,7 @@ class AssetFactory
             $this->collection->setTargetPath($this->targetPath);
             $locator = $this->container->get('file_locator');
             $manager = new AssetManager();
+            $stringAssetCounter = 0;
 
             foreach($this->inputs as $input) {
                 // GUI declared CSS
@@ -82,9 +85,7 @@ class AssetFactory
             $content = $this->squashImports($content);
         }
         // Web source path
-        $sourcePath = dirname($this->container->getParameter('kernel.root_dir')) . '/web';
-        $sourcePath = '.';
-        $assets = new StringAsset($content, $filters, '/', $sourcePath);
+        $assets = new StringAsset($content, $filters, '/', $this->sourcePath);
         $assets->setTargetPath($this->targetPath);
         return $assets->dump();
     }
