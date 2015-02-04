@@ -13,7 +13,6 @@ namespace Mapbender\CoreBundle\Utils;
  */
 class EntityAnnotationParser
 {
-
     const GET = 'get';
     const SET = 'set';
     const HAS = 'has';
