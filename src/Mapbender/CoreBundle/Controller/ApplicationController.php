@@ -84,6 +84,10 @@ class ApplicationController extends Controller
         $targetPath = $request->server->get('REQUEST_URI');
         $sourcePath = $request->getBasePath();
 
+		if(empty($sourcePath)){
+			$sourcePath = ".";
+		}
+
         // Collect all assets into one
         $application = $this->getApplication($slug);
         $refs = array_unique($application->getAssets('css'));
