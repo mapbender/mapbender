@@ -75,4 +75,5 @@ class ClassPropertiesParser
         }
         return $fields;
     }
+
 }
