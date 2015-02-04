@@ -28,8 +28,8 @@ class ArrayObject
             $reflClass = new \ReflectionClass($classname);
             $object = $reflClass->newInstanceArgs(array());
             foreach($fields as $fieldname => $fieldProps){
-                if (isset($fieldProps['setter']) && isset($data[$fieldname])) {
-                    $reflMethod = new \ReflectionMethod($classname, $fieldProps['setter']);
+                if (isset($fieldProps[EntityAnnotationParser::SETTER]) && isset($data[$fieldname])) {
+                    $reflMethod = new \ReflectionMethod($classname, $fieldProps[EntityAnnotationParser::SETTER]);
                     $reflMethod->invoke($object, $data[$fieldname]);
                 }
             }
@@ -55,8 +55,8 @@ class ArrayObject
             $fields = EntityAnnotationParser::parseFieldsAnnotations(get_class($data), false);
             $array = array();
             foreach($fields as $fieldname => $fieldProps){
-                if (isset($fieldProps['getter'])) {
-                    $reflMethod = new \ReflectionMethod(get_class($data), $fieldProps['getter']);
+                if (isset($fieldProps[EntityAnnotationParser::GETTER])) {
+                    $reflMethod = new \ReflectionMethod(get_class($data), $fieldProps[EntityAnnotationParser::GETTER]);
                     $array[$fieldname] = self::objectToArray($reflMethod->invoke($data)); // TODO array with objects ??
                 }
             }

@@ -52,27 +52,30 @@ class ClassPropertiesParser
             foreach ($methods as $methodName => $method) {
                 $methodHash = ucwords($fieldName);
                 switch ($methodName) {
-                    case 'get' . $methodHash: $propProps['getter'] = $methodName;
+                    case EntityAnnotationParser::GET . $methodHash: $annotations[EntityAnnotationParser::GETTER] = $methodName;
                         break;
-                    case 'set' . $methodHash: $propProps['setter'] = $methodName;
+                    case EntityAnnotationParser::SET . $methodHash: $annotations[EntityAnnotationParser::SETTER] = $methodName;
                         break;
-                    case 'has' . $methodHash: $propProps['hasMethod'] = $methodName;
+                    case EntityAnnotationParser::HAS . $methodHash: $annotations[EntityAnnotationParser::HAS_METHOD] = $methodName;
                         break;
-                    case 'is' . $methodHash: $propProps['isMethod'] = $methodName;
+                    case EntityAnnotationParser::IS . $methodHash: $annotations[EntityAnnotationParser::IS_METHOD] = $methodName;
                         break;
                 }
             }
 
             // try to find getter if not founded before 
-            if (!isset($propProps['getter'])) {
-                if (isset($propProps['hasMethod'])) {
-                    $annotation['getter'] = $propProps['hasMethod'];
-                } elseif (isset($propProps['isMethod'])) {
-                    $annotation['getter'] = $propProps['isMethod'];
+                if (!isset($annotations[EntityAnnotationParser::GETTER])) {
+                    if (isset($annotations[EntityAnnotationParser::HAS_METHOD])) {
+                        $annotations[EntityAnnotationParser::GETTER] = $annotations[EntityAnnotationParser::HAS_METHOD];
+                    } elseif (isset($annotations[EntityAnnotationParser::IS_METHOD])) {
+                        $annotations[EntityAnnotationParser::GETTER] = $annotations[EntityAnnotationParser::IS_METHOD];
+                    }
                 }
-            }
+            
+            
             $fields[$fieldName] = $propProps;
         }
         return $fields;
     }
+
 }
