@@ -12,6 +12,7 @@ use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Utils\ClassPropertiesParser;
 use Mapbender\CoreBundle\Utils\EntityAnnotationParser;
+use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
@@ -318,7 +319,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function getSensitiveVendorSpecific()
     {
         $vsarr = array();
-        $match = '/\$.+\$/';
         $securityContext = $this->container->get('security.context');
         $user = $securityContext->getToken()->getUser();
         if ($user instanceof AdvancedUserInterface) {
@@ -350,13 +350,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $value = $vendorspec->getDefault() ? $vendorspec->getDefault() : $vendorspec->getExtent();
         $length = strlen($value);
         if ($length > 2 && strpos($value, '$', 0) === 0 && strpos($value, '$', $length - 2) === $length - 1) {
-            $value = str_replace('$', '', $value);
-            $fields = ClassPropertiesParser::parseFields(get_class($object));
-            if (isset($fields[$value]) && isset($fields[$value][EntityAnnotationParser::GETTER])) {
-                $reflectionMethod = new \ReflectionMethod(get_class($object), $fields[$value][EntityAnnotationParser::GETTER]);
-                $fieldValue = $reflectionMethod->invoke($object);
-                return $reflectionMethod->invoke($object);
-            }
+            return EntityUtil::getValueFromGetter($object, str_replace('$', '', $value));
         } else {
             return $value;
         }
