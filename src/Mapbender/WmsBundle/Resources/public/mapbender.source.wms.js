@@ -137,11 +137,8 @@ $.extend(true, Mapbender, {
                 var proxy = layer.source.configuration.options.proxy;
 
                 var request = $.ajax({
-                    url: Mapbender.configuration.application.urls.proxy,
-                    contentType: contentType_,
-                    data: {
-                        url: proxy ? requestUrl : encodeURIComponent(requestUrl)
-                    }
+                    url: requestUrl,
+                    contentType: contentType_
                 });
 
                 request.done(function(data, textStatus, jqXHR) {
