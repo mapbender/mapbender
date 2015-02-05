@@ -444,38 +444,22 @@ Mapbender.Model = {
         var source = this.getSource(toChangeOpts.sourceIdx);
         var result = Mapbender.source[source.type].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
-        if (result.layers.length === 0) {
-            mqLayer.olLayer.setVisibility(false);
-            // Clear all previously queued tiles for this layer
-            var tileManager = this.map.olMap.tileManager;
-            if (tileManager) {
-                tileManager.clearTileQueue({object: mqLayer.olLayer});
-            }
-            mqLayer.olLayer.params.LAYERS = result.layers;
-            mqLayer.olLayer.queryLayers = result.infolayers;
-        } else {
-            mqLayer.olLayer.params.LAYERS = result.layers;
-            mqLayer.olLayer.queryLayers = result.infolayers;
-            mqLayer.olLayer.setVisibility(true);
+        if(this._resetSourceVisibility(mqLayer, result.layers, result.infolayers)){
             mqLayer.olLayer.redraw();
         }
         return result.changed;
     },
-    _checkChanges: function(e) {
+    _checkChangesEvt: function(e) {
+        this._checkChanges();
+    },
+    _checkChanges: function() {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
-            var result = Mapbender.source[source.type].changeOptions(source, self.getScale(), {sourceIdx: {id: source.id}, options: {children: {}}});
+            var result = Mapbender.source[source.type].changeOptions(
+                source, self.getScale(), {sourceIdx: {id: source.id}, options: {children: {}}});
             var mqLayer = self.map.layersList[source.mqlid];
-            if (result.layers.length === 0) {
-                mqLayer.olLayer.setVisibility(false);
-                mqLayer.visible(false);
-                mqLayer.olLayer.params.LAYERS = result.layers;
-                mqLayer.olLayer.queryLayers = result.infolayers;
-            } else {
-                mqLayer.olLayer.params.LAYERS = result.layers;
-                mqLayer.olLayer.queryLayers = result.infolayers;
-                mqLayer.olLayer.setVisibility(true);
-                mqLayer.visible(true);
+            if(self._resetSourceVisibility(mqLayer, result.layers, result.infolayers)){
+                mqLayer.olLayer.redraw();
             }
             for (child in result.changed.children) {
                 if (result.changed.children[child].state && typeof result.changed.children[child].state.outOfScale !== 'undefined') {
@@ -486,6 +470,21 @@ Mapbender.Model = {
             }
 
         });
+    },
+    _resetSourceVisibility: function(mqLayer, layers, infolayers) {
+        if (layers.length === 0) {
+            mqLayer.olLayer.setVisibility(false);
+            mqLayer.visible(false);
+            mqLayer.olLayer.params.LAYERS = layers;
+            mqLayer.olLayer.queryLayers = infolayers;
+            return false;
+        } else {
+            mqLayer.olLayer.params.LAYERS = layers;
+            mqLayer.olLayer.queryLayers = infolayers;
+            mqLayer.olLayer.setVisibility(true);
+            mqLayer.visible(true);
+            return true;
+        }
     },
     /**
      *
@@ -1088,6 +1087,7 @@ Mapbender.Model = {
      * Changes the map's projection.
      */
     _changeProjection: function(event, srs) {
+        this._checkChanges();
         this.changeProjection(srs);
     },
     /*
