@@ -215,11 +215,11 @@ Mapbender.Model = {
                 buffer_bounds = {w: (bounds.right - bounds.left) / 2, h: (bounds.top - bounds.bottom) / 2},
         k, w, h;
         if (proj.proj.units === 'degrees' || proj.proj.units === 'dd') {
-            var point_lonlat = new OpenLayers.LonLat(centroid.x, centroid.y);
-            var point_pixel = this.map.olMap.getViewPortPxFromLonLat(point_lonlat);
-            var point_geodesSize = this.map.olMap.getGeodesicPixelSize(point_pixel);
-            var lb = new OpenLayers.Pixel(point_pixel.x - buffer.w / point_geodesSize.w, point_pixel.y - buffer.h / point_geodesSize.h);
-            var rt = new OpenLayers.Pixel(point_pixel.x + buffer.w / point_geodesSize.w, point_pixel.y + buffer.h / point_geodesSize.h);
+            var pnt_ll = new OpenLayers.LonLat(centroid.x, centroid.y);
+            var pnt_pxl = this.map.olMap.getViewPortPxFromLonLat(pnt_ll);
+            var pnt_geodSz = this.map.olMap.getGeodesicPixelSize(pnt_pxl);
+            var lb = new OpenLayers.Pixel(pnt_pxl.x - buffer.w / pnt_geodSz.w, pnt_pxl.y - buffer.h / pnt_geodSz.h);
+            var rt = new OpenLayers.Pixel(pnt_pxl.x + buffer.w / pnt_geodSz.w, pnt_pxl.y + buffer.h / pnt_geodSz.h);
             var lb_lonlat = this.map.olMap.getLonLatFromLayerPx(lb);
             var rt_lonlat = this.map.olMap.getLonLatFromLayerPx(rt);
             return new OpenLayers.Bounds(
@@ -321,14 +321,16 @@ Mapbender.Model = {
             for (name in options.add) {
                 params[name] = options.add[name];
             }
-            url = OpenLayers.Util.urlAppend(source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
+            url = OpenLayers.Util.urlAppend(
+                source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
         } else if (options.remove) {
             for (name in options.remove) {
                 if (params[name]) {
                     delete(params[name]);
                 }
             }
-            url = OpenLayers.Util.urlAppend(source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
+            url = OpenLayers.Util.urlAppend(
+                source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
         }
         if (url) {
             source.configuration.options.url = url;
@@ -449,10 +451,7 @@ Mapbender.Model = {
         }
         return result.changed;
     },
-    _checkChangesEvt: function(e) {
-        this._checkChanges();
-    },
-    _checkChanges: function() {
+    _checkChanges: function(e) {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
             var result = Mapbender.source[source.type].changeOptions(
@@ -462,7 +461,8 @@ Mapbender.Model = {
                 mqLayer.olLayer.redraw();
             }
             for (child in result.changed.children) {
-                if (result.changed.children[child].state && typeof result.changed.children[child].state.outOfScale !== 'undefined') {
+                if (result.changed.children[child].state
+                    && typeof result.changed.children[child].state.outOfScale !== 'undefined') {
                     var changed = {changed: {children: result.changed.children, sourceIdx: result.changed.sourceIdx}};
                     self.mbMap.fireModelEvent({name: 'sourceChanged', value: changed});//{options: result}});
                     break;
@@ -1087,7 +1087,6 @@ Mapbender.Model = {
      * Changes the map's projection.
      */
     _changeProjection: function(event, srs) {
-        this._checkChanges();
         this.changeProjection(srs);
     },
     /*
