@@ -10,9 +10,6 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
-use Mapbender\CoreBundle\Utils\ClassPropertiesParser;
-use Mapbender\CoreBundle\Utils\EntityAnnotationParser;
-use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
@@ -114,22 +111,30 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             }
         }
         $configuration = $this->entity->getConfiguration();
-        $vctunnel = false;
+        $hide = false;
+        $params = array();
+        $user = $this->container->get('security.context')->getToken()->getUser();
         foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-            if ($vendorspec->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE) {
-                $vctunnel = true;
-                break;
+            $handler = new VendorSpecificHandler($vendorspec);
+            if ($handler->isVendorSpecificValueValid()) {
+                if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE
+                    || ($vendorspec->getVstype() !== VendorSpecific::TYPE_VS_SIMPLE && !$vendorspec->getHidden())) {
+                    $params = array_merge($params, $handler->getKvpConfiguration($user));
+                } else {
+                    $hide = true;
+                }
             }
         }
-        if ($this->entity->getSource()->getUsername() || $vctunnel) {
+        if ($hide) {
             $url = $this->container->get('router')->generate(
                 'mapbender_core_application_instancetunnel',
                 array(
                 'slug' => $this->entity->getLayerset()->getApplication()->getSlug(),
                 'instanceId' => $this->entity->getId()
                 ), UrlGeneratorInterface::ABSOLUTE_URL);
-            $configuration['options']['url'] = $url;
+            $configuration['options']['url'] = UrlUtil::validateUrl($url, $params, array());
         } elseif ($signer) {
+            $configuration['options']['url'] = UrlUtil::validateUrl($configuration['options']['url'], $params, array());
             $configuration['options']['url'] = $signer->signUrl($configuration['options']['url']);
             if ($this->entity->getProxy()) {
                 $this->signeUrls($signer, $configuration['children'][0]);
@@ -173,21 +178,19 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             if ($dimension->getActive()) {
                 $dimensions[] = $dimension->getConfiguration();
                 if ($dimension->getDefault()) {
-                    $options->setUrl(
-                        UrlUtil::validateUrl($options->getUrl(), array(),
-                                             array($dimension->getParameterName() => $dimension->getDefault())));
+                    $options->setUrl(UrlUtil::validateUrl(
+                            $options->getUrl(), array($dimension->getParameterName() => $dimension->getDefault()),
+                            array()));
                 }
             }
         }
         $vendorsecifics = array();
         foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE || !$vendorspec->getUsetunnel()) {
-                $vendorsecifics[] = $vendorspec->getConfiguration();
-                if ($vendorspec->getDefault()) {
-                    $options->setUrl(UrlUtil::validateUrl(
-                            $options->getUrl(), array(),
-                            array($vendorspec->getParameterName() => $vendorspec->getDefault())));
-                }
+            $handler = new VendorSpecificHandler($vendorspec);
+            /* add to url only simple vendor specific with valid default value */
+            if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE && $handler->isVendorSpecificValueValid()) {
+                $vendorsecifics[] = $handler->getConfiguration();
+                $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $handler->getKvpConfiguration(null), array()));
             }
         }
         $options->setProxy($this->entity->getProxy())
@@ -319,19 +322,19 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function getSensitiveVendorSpecific()
     {
         $vsarr = array();
-        $securityContext = $this->container->get('security.context');
-        $user = $securityContext->getToken()->getUser();
+        $user = $this->container->get('security.context')->getToken()->getUser();
         if ($user instanceof AdvancedUserInterface) {
             foreach ($this->entity->getVendorspecifics() as $key => $vendorspec) {
-                if ($vendorspec->getVstype() && $vendorspec->getVstype() === VendorSpecific::TYPE_VS_USERNAME) {
-                    $value = $this->getVendorSpecificValue($vendorspec, $user);
+                $handler = new VendorSpecificHandler($vendorspec);
+                if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_USER) {
+                    $value = $handler->getVendorSpecificValue($user);
                     if ($value) {
                         $vsarr[$vendorspec->getParameterName()] = $value;
                     }
-                } elseif ($vendorspec->getVstype() && $vendorspec->getVstype() === VendorSpecific::TYPE_VS_GROUPNAME) {
+                } elseif ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_GROUP) {
                     $groups = array();
                     foreach ($user->getGroups() as $group) {
-                        $value = $this->getVendorSpecificValue($vendorspec, $group);
+                        $value = $handler->getVendorSpecificValue($group);
                         if ($value) {
                             $vsarr[$vendorspec->getParameterName()] = $value;
                         }
@@ -342,19 +345,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 }
             }
         }
-        return $vsarr;
-    }
-
-    private function getVendorSpecificValue(VendorSpecific $vendorspec, $object)
-    {
-        $value = $vendorspec->getDefault() ? $vendorspec->getDefault() : $vendorspec->getExtent();
-        $length = strlen($value);
-        if ($length > 2 && strpos($value, '$', 0) === 0 && strpos($value, '$', $length - 2) === $length - 1) {
-            return EntityUtil::getValueFromGetter($object, str_replace('$', '', $value));
-        } else {
-            return $value;
+        if ($vendorspec->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
+            $value = $handler->getVendorSpecificValue(null);
+            if ($value) {
+                $vsarr[$vendorspec->getParameterName()] = $value;
+            }
         }
-        return null;
+        return $vsarr;
     }
 
     public function mergeDimension($dimension, $persist = false)

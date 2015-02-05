@@ -32,7 +32,7 @@ class VendorSpecificType extends AbstractType
             'name' => '',
             'extent' => '',
             'vstype' => VS::TYPE_VS_SIMPLE,
-            'usetunnel' => false,
+            'hidden' => false,
         ));
     }
 
@@ -59,9 +59,9 @@ class VendorSpecificType extends AbstractType
                 'required' => true,
                 'choices' => array(
                     VS::TYPE_VS_SIMPLE => VS::TYPE_VS_SIMPLE,
-                    VS::TYPE_VS_USERNAME => VS::TYPE_VS_USERNAME,
-                    VS::TYPE_VS_GROUPNAME => VS::TYPE_VS_GROUPNAME)))
-            ->add('usetunnel', 'checkbox',
+                    VS::TYPE_VS_USER => VS::TYPE_VS_USER,
+                    VS::TYPE_VS_GROUP => VS::TYPE_VS_GROUP)))
+            ->add('hidden', 'checkbox',
                   array(
                 'required' => false))
             ->addModelTransformer(new VendorSpecificTransformer());

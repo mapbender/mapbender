@@ -299,13 +299,13 @@ class ApplicationController extends Controller
         $user = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
         $password = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
         $instHandler = EntityHandler::createHandler($this->container, $instance);
-        foreach ($instHandler->getSensitiveVendorSpecific() as $key => $value) {
-            if (count($getParams)) {
-                $getParams[$key] = $value;
-            }
-            if (count($postParams)) {
-                $postParams[$key] = $value;
-            }
+        $vendorspec = $instHandler->getSensitiveVendorSpecific();
+        /* overwrite vendorspecific parameters from handler with get/post parameters */
+        if (count($getParams)) {
+            $getParams = array_merge($vendorspec, $getParams); 
+        }
+        if (count($postParams)) {
+            $postParams = array_merge($vendorspec, $postParams);
         }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
         $proxy_query = ProxyQuery::createFromUrl(

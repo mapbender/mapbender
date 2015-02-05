@@ -11,8 +11,8 @@ class VendorSpecific extends DimensionInst
 {
 
     const TYPE_VS_SIMPLE = 'simple';
-    const TYPE_VS_USERNAME = 'username';
-    const TYPE_VS_GROUPNAME = 'groupname';
+    const TYPE_VS_USER = 'user';
+    const TYPE_VS_GROUP = 'group';
 
     /**
      * ORM\Column(type="string", nullable=false)
@@ -24,7 +24,7 @@ class VendorSpecific extends DimensionInst
      * ORM\Column(type="string", nullable=false)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $usetunnel = false;
+    public $hidden = false;
 
     public function getVstype()
     {
@@ -37,9 +37,9 @@ class VendorSpecific extends DimensionInst
         return $this;
     }
 
-    public function getUsetunnel()
+    public function getHidden()
     {
-        return $this->usetunnel;
+        return $this->hidden;
     }
     
     public function setExtent($extent)
@@ -56,9 +56,9 @@ class VendorSpecific extends DimensionInst
         return $this->origextentextent;
     }
 
-    public function setUsetunnel($usetunnel)
+    public function setHidden($hidden)
     {
-        $this->usetunnel = $usetunnel;
+        $this->hidden = $hidden;
         return $this;
     }
 
@@ -70,11 +70,11 @@ class VendorSpecific extends DimensionInst
     {
         return $this->name;
     }
-
+    
     public function getConfiguration()
     {
         $array = parent::getConfiguration();
-        $array['usetunnel'] = $this->getUsetunnel();
+        $array['hidden'] = $this->getHidden();
         $array['vstype'] = $this->getVstype();
         return $array;
     }
