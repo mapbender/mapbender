@@ -35,16 +35,12 @@ class ClassPropertiesParser
         $reflect = new \ReflectionClass($className);
         $fields = array();
         $methods = array();
-
-//        $method = new \ReflectionMethod($methods, $name);
-
         /**
          * @var $method \ReflectionMethod
          */
         foreach ($reflect->getMethods() as $method) {
             $methods[$method->getName()] = $method;
         }
-
         // get all properties
         foreach ($reflect->getProperties() as $property) {
             $propProps = array();
@@ -56,19 +52,19 @@ class ClassPropertiesParser
                         break;
                     case EntityAnnotationParser::SET . $methodHash: $propProps[EntityAnnotationParser::SETTER] = $methodName;
                         break;
-                    case EntityAnnotationParser::HAS . $methodHash: $propProps[EntityAnnotationParser::HASMETHOD] = $methodName;
+                    case EntityAnnotationParser::HAS . $methodHash: $propProps[EntityAnnotationParser::HAS_METHOD] = $methodName;
                         break;
-                    case EntityAnnotationParser::IS . $methodHash: $propProps[EntityAnnotationParser::ISMETHOD] = $methodName;
+                    case EntityAnnotationParser::IS . $methodHash: $propProps[EntityAnnotationParser::IS_METHOD] = $methodName;
                         break;
                 }
             }
 
             // try to find getter if not founded before 
             if (!isset($propProps[EntityAnnotationParser::GETTER])) {
-                if (isset($propProps[EntityAnnotationParser::HASMETHOD])) {
-                    $annotation[EntityAnnotationParser::GETTER] = $propProps[EntityAnnotationParser::HASMETHOD];
-                } elseif (isset($propProps[EntityAnnotationParser::ISMETHOD])) {
-                    $annotation[EntityAnnotationParser::GETTER] = $propProps[EntityAnnotationParser::ISMETHOD];
+                if (isset($propProps[EntityAnnotationParser::HAS_METHOD])) {
+                    $annotation[EntityAnnotationParser::GETTER] = $propProps[EntityAnnotationParser::HAS_METHOD];
+                } elseif (isset($propProps[EntityAnnotationParser::IS_METHOD])) {
+                    $annotation[EntityAnnotationParser::GETTER] = $propProps[EntityAnnotationParser::IS_METHOD];
                 }
             }
             $fields[$fieldName] = $propProps;
