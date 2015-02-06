@@ -50,7 +50,7 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
     _mapClickHandler: function(event) {
         var x = event.pageX - this.map.offset().left,
             y = event.pageY - this.map.offset().top,
-            olMap = this.map.data('mbMap').map.olMap,
+            olMap = this.map.data('mapbenderMbMap').map.olMap,
             ll = olMap.getLonLatFromPixel(new OpenLayers.Pixel(x, y)),
             coordinates = {
                 pixel: {
