@@ -14,7 +14,7 @@ use Mapbender\CoreBundle\Component\Template;
 
 class ManagerTemplate extends Template
 {
-    protected static $translations = array('@MapbenderCoreBundle/Resources/public/mapbender.trans.js');
+    protected static $translations = array();
     protected static $cssList      = array('@MapbenderManagerBundle/Resources/public/sass/manager/applications.scss',
                                     '@MapbenderManagerBundle/Resources/public/sass/manager/manager.scss',
                                     "@FOMUserBundle/Resources/public/sass/user/user_control.scss",
@@ -44,7 +44,8 @@ class ManagerTemplate extends Template
                                        '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
                                        '@FOMCoreBundle/Resources/public/js/widgets/radiobuttonExtended.js',
                                        '@FOMCoreBundle/Resources/public/js/components.js',
-                                       '@FOMCoreBundle/Resources/public/js/widgets/collection.js');
+                                       '@FOMCoreBundle/Resources/public/js/widgets/collection.js',
+                                       '@MapbenderCoreBundle/Resources/public/mapbender.trans.js');
 
     static public function listAssets()
     {

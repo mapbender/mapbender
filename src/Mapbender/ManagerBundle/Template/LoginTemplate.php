@@ -11,7 +11,8 @@ class LoginTemplate extends ManagerTemplate
 {
     static public function listAssets()
     {
-        return array('css'   => array('@FOMUserBundle/Resources/public/sass/user/login.scss'),
+        return array('css'   => array('@FOMUserBundle/Resources/public/sass/user/login.scss',
+            '@FOMUserBundle/Resources/public/sass/user/user_control.scss'),
                      'js'    => self::$jscripts,
                      'trans' => self::$translations);
     }
