@@ -11,5 +11,5 @@ parameters:
         mb3-login:
             title: Mapbender Login
             template:  Mapbender\ManagerBundle\Template\LoginTemplate
-            excludeFromList: false
+            excludeFromList: true
             published: true
