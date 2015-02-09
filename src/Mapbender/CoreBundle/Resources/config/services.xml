@@ -25,7 +25,7 @@
             <argument type="service" id="service_container" />
             <tag name="form.type" alias="app_layerset"/>
         </service>
-        
+
         <service id="layerset_instances" class="Mapbender\CoreBundle\Element\Type\LayersetInstancesAdminType">
             <argument type="service" id="service_container" />
             <tag name="form.type" alias="layerset_instances"/>
@@ -34,13 +34,28 @@
         <service id="signer" class="%signer.class%">
             <argument>%secret%</argument>
         </service>
-        
+
         <service id="get_set_method_normalizer" class="Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer">
             <tag name="serializer.normalizer" />
         </service>
-        
+
         <service id="twig.extension.stringloader" class="Twig_Extension_StringLoader">
             <tag name="twig.extension" />
+        </service>
+
+        <service id="mapbender.assetic.filter.sass" class="%assetic.filter.sass.class%">
+            <tag name="assetic.filter" alias="sass" />
+            <argument>%assetic.filter.sass.bin%</argument>
+            <argument>%assetic.ruby.bin%</argument>
+            <call method="setTimeout"><argument>%assetic.filter.sass.timeout%</argument></call>
+            <call method="setStyle"><argument>%assetic.filter.sass.style%</argument></call>
+            <call method="setCompass"><argument>%assetic.filter.sass.compass%</argument></call>
+			
+			<!-- default option for SASSC -->
+			<call method="setCacheLocation"><argument>false</argument></call>
+			<call method="setScss"><argument>false</argument></call>
+            <call method="addLoadPath"><argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/public/sass</argument></call>
+            <call method="addLoadPath"><argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/compass-mixins/lib</argument></call>
         </service>
     </services>
 </container>
