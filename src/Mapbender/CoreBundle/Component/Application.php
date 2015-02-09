@@ -70,6 +70,12 @@ class Application
         $this->urls = $urls;
     }
 
+    /*************************************************************************
+     *                                                                       *
+     *                    Configuration entity handling                      *
+     *                                                                       *
+     *************************************************************************/
+
     /**
      * Get the configuration entity.
      *
@@ -79,6 +85,12 @@ class Application
     {
         return $this->entity;
     }
+
+    /*************************************************************************
+     *                                                                       *
+     *             Shortcut functions for leaner Twig templates              *
+     *                                                                       *
+     *************************************************************************/
 
     /**
      * Get the application ID
@@ -119,6 +131,12 @@ class Application
     {
         return $this->entity->getDescription();
     }
+
+    /*************************************************************************
+     *                                                                       *
+     *                              Frontend stuff                           *
+     *                                                                       *
+     *************************************************************************/
 
     /**
      * Render the application
@@ -214,7 +232,7 @@ class Application
                         if ($type === 'trans') {
                             if (!isset($layerTranslations[$asset])) {
                                 $layerTranslations[$asset] = json_decode($this->container->get('templating')->render($asset),
-                                                                                                                     true);
+                                    true);
                             }
                         } else {
                             $this->addAsset($assets, $type, $this->getReference($layer, $asset));
@@ -253,7 +271,8 @@ class Application
         }
 
         $application_entity = $this->getEntity();
-        if ('css' === $type && $application_entity::SOURCE_DB === $application_entity->getSource()) {
+        if('css' === $type && $application_entity::SOURCE_DB === $application_entity->getSource()
+            && $application_entity->getCustomCss()) {
             $assets[] = new StringAsset($application_entity->getCustomCss());
         }
 
@@ -394,7 +413,7 @@ class Application
             } catch (NotAllAclsFoundException $e) {
                 $acls = $e->getPartialResult();
             } catch (\Exception $e) {
-                
+
             }
             // Set up all elements (by region)
             $this->elements = array();
@@ -409,7 +428,7 @@ class Application
                             continue;
                         }
                     } catch (\Exception $e) {
-                        
+
                     }
                 } else if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($entity->yaml_roles)) {
                     $passed = false;
@@ -439,7 +458,7 @@ class Application
             // Sort each region element's by weight
             foreach ($this->elements as $r => $elements) {
                 usort($elements,
-                      function($a, $b) {
+                    function($a, $b) {
                     $wa = $a->getEntity()->getWeight();
                     $wb = $b->getEntity()->getWeight();
                     if ($wa == $wb) {
