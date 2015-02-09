@@ -87,9 +87,10 @@ class ApplicationYAMLMapper
         $application
                 ->setScreenshot(key_exists("screenshot", $definition) ? $definition['screenshot'] : null)
                 ->setSlug($slug)
-                ->setTitle($definition['title'])
-                ->setDescription($definition['description'])
+                ->setTitle(isset($definition['title'])?$definition['title']:'')
+                ->setDescription(isset($definition['description'])?$definition['description']:'')
                 ->setTemplate($definition['template'])
+                ->setExcludeFromList(isset($definition['excludeFromList'])?$definition['excludeFromList']:false)
                 ->setPublished($definition['published']);
 
         if (array_key_exists('extra_assets', $definition)) {
@@ -102,6 +103,10 @@ class ApplicationYAMLMapper
                 $regionProperties->setProperties($regProps['properties']);
                 $application->addRegionProperties($regionProperties);
             }
+        }
+
+        if(!isset($definition['elements'])){
+            $definition['elements'] = array();
         }
 
         // Then create elements
@@ -154,6 +159,10 @@ class ApplicationYAMLMapper
         $application->yaml_roles = array();
         if (array_key_exists('roles', $definition)) {
             $application->yaml_roles = $definition['roles'];
+        }
+
+        if(!isset($definition['layersets'])){
+            $definition['layersets'] = array();
         }
 
         // TODO: Add roles, entity needs work first

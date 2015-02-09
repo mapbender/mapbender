@@ -39,7 +39,7 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
     activate: function() {
         this._super('activate');
         if(this.map.length !== 0) {
-            this.map.data('mbMap').map.olMap.addControl(this.boxControl);
+            this.map.data('mapbenderMbMap').map.olMap.addControl(this.boxControl);
             this.boxControl.activate();
         }
     },
@@ -51,7 +51,7 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
         this._super('deactivate');
         if(this.map.length !== 0) {
             this.boxControl.deactivate();
-            this.map.data('mbMap').map.olMap.removeControl(this.boxControl);
+            this.map.data('mapbenderMbMap').map.olMap.removeControl(this.boxControl);
         }
     },
 
@@ -81,11 +81,11 @@ $.widget('mapbender.mb{{ widgetName }}', $.mapbender.mbButton, {
             };
         }
 
-        var ll = this.map.data('mbMap').map.olMap.
+        var ll = this.map.data('mapbenderMbMap').map.olMap.
             getLonLatFromPixel(new OpenLayers.Pixel(
                 extent.pixel.xmin,
                 extent.pixel.ymin));
-        var ur = this.map.data('mbMap').map.olMap.
+        var ur = this.map.data('mapbenderMbMap').map.olMap.
             getLonLatFromPixel(new OpenLayers.Pixel(
                 extent.pixel.xmax,
                 extent.pixel.ymax));

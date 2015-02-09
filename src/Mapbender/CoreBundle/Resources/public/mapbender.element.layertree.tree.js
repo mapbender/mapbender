@@ -784,7 +784,7 @@
                 if (!this.popup || !this.popup.$element) {
                     this._createTree();
                     this.popup = new Mapbender.Popup2({
-                        title: self.element.attr('title'),
+                        title: self.element.attr('data-title'),
                         modal: false,
                         resizable: true,
                         draggable: true,
