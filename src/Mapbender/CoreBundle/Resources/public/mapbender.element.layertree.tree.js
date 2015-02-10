@@ -643,6 +643,7 @@
         _toggleMenu: function(e){
             var self = this;
             function createMenu($element, sourceId, layerId){
+                console.log(self.menuTemplate.clone().html());
                 var source = self.model.findSource({id: sourceId})[0];
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
                         sourceId));

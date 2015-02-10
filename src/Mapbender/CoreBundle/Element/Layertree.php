@@ -112,6 +112,14 @@ class Layertree extends Element
      */
     public function render()
     {
+        $html = $this->container->get('templating')->render(
+                'MapbenderCoreBundle:Element:layertree.html.twig',
+                array(
+                'id' => $this->getId(),
+                'configuration' => $this->getConfiguration(),
+                'title' => $this->getTitle()
+                )
+        );
         return $this->container->get('templating')->render(
                 'MapbenderCoreBundle:Element:layertree.html.twig',
                 array(
