@@ -471,7 +471,7 @@ class Application
 
         if ($region) {
             return array_key_exists($region, $this->elements) ?
-                    $this->elements[$region] : array();
+                $this->elements[$region] : array();
         } else {
             return $this->elements;
         }
@@ -498,7 +498,7 @@ class Application
                         }
                     }
                 }
-                $this->layers[''.$layerset->getId()] = $layerset;
+                $this->layers[$layerset->getId()] = $layerset;
             }
         }
         return $this->layers;
@@ -535,7 +535,7 @@ class Application
     public static function getUploadsDir($container, $webRelative = false)
     {
         $uploads_dir = $container->get('kernel')->getRootDir() . '/../web/'
-                . $container->getParameter("mapbender.uploads_dir");
+            . $container->getParameter("mapbender.uploads_dir");
         $ok = true;
         if (!is_dir($uploads_dir)) {
             $ok = mkdir($uploads_dir);
