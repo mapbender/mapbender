@@ -9,6 +9,7 @@
 namespace Mapbender\ManagerBundle\Component;
 
 use Doctrine\Common\Util\ClassUtils;
+use Mapbender\CoreBundle\Utils\EntityAnnotationParser as EAP;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,9 +23,9 @@ abstract class ExchangeSerializer
     const KEY_CLASS = '__class__';
     const KEY_SLUG = 'slug';
     const KEY_IDENTIFIER = 'identifier';
-    const KEY_GETTER = 'getter';
-    const KEY_SETTER = 'setter';
-    const KEY_COLUMN = 'Column';
+    const KEY_GETTER = EAP::GETTER;
+    const KEY_SETTER = EAP::SETTER;
+    const KEY_COLUMN = EAP::COLUMN;
     const KEY_UNIQUE = 'unique';
     const KEY_MAP = 'map';
     const KEY_PRIMARY = 'primary';

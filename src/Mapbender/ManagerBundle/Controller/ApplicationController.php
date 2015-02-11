@@ -45,17 +45,19 @@ class ApplicationController extends Controller
      */
     public function indexAction()
     {
-        $securityContext = $this->get('security.context');
-        $oid = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
-
-        $applications = $this->get('mapbender')->getApplicationEntities();
-
-        $uploads_web_url = AppComponent::getUploadsUrl($this->container);
-
-
+        /** @var Application $application */
+        $securityContext      = $this->get('security.context');
+        $oid                  = new ObjectIdentity('class', 'Mapbender\CoreBundle\Entity\Application');
+        $applications         = $this->get('mapbender')->getApplicationEntities();
+        $uploads_web_url      = AppComponent::getUploadsUrl($this->container);
         $allowed_applications = array();
         foreach ($applications as $application) {
+            if($application->isExcludedFromList()){
+                continue;
+            }
+
             if ($securityContext->isGranted('VIEW', $application)) {
+
                 if (!$application->isPublished() && !$securityContext->isGranted('OWNER', $application)) {
                     continue;
                 }

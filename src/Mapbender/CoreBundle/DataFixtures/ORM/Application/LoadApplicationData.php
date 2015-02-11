@@ -43,44 +43,40 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
     public function load(ObjectManager $manager)
     {
         $definitions = $this->container->getParameter('applications');
-        foreach($definitions as $slug => $definition)
-        {
+        foreach ($definitions as $slug => $definition) {
+            if (isset($definition['excludeFromList']) && $definition['excludeFromList']) {
+                continue;
+            }
             $timestamp = round((microtime(true) * 1000));
-            if(!key_exists('title', $definition))
-            {
+            if (!key_exists('title', $definition)) {
                 $definition['title'] = "TITLE " . $timestamp;
             }
 
-            if(!key_exists('published', $definition))
-            {
+            if (!key_exists('published', $definition)) {
                 $definition['published'] = false;
-            } else
-            {
+            } else {
                 $definition['published'] = (boolean) $definition['published'];
             }
             // First, create an application entity
             $application = new ApplicationEntity();
             $application
-                    ->setSlug($timestamp . "_" . $slug)
-                    ->setTitle($timestamp . " " . $definition['title'])
-                    ->setDescription($definition['description'])
-                    ->setTemplate($definition['template'])
-                    ->setPublished($definition['published'])
-                    ->setUpdated(new \DateTime('now'));
-            if(array_key_exists('extra_assets', $definition))
-            {
+                ->setSlug($timestamp . "_" . $slug)
+                ->setTitle($timestamp . " " . (isset($definition['title']) ? $definition['title'] : ''))
+                ->setDescription(isset($definition['description']) ? $definition['description'] : '')
+                ->setTemplate($definition['template'])
+                ->setPublished(isset($definition['published']) ? $definition['published'] : false)
+                ->setUpdated(new \DateTime('now'));
+            if (array_key_exists('extra_assets', $definition)) {
                 $application->setExtraAssets($definition['extra_assets']);
             }
 
             $application->yaml_roles = array();
-            if(array_key_exists('roles', $definition))
-            {
+            if (array_key_exists('roles', $definition)) {
                 $application->yaml_roles = $definition['roles'];
             }
             $manager->persist($application);
             $layersets_map = array();
-            foreach($definition['layersets'] as $layersetName => $layersetDef)
-            {
+            foreach ($definition['layersets'] as $layersetName => $layersetDef) {
                 $layerset = new Layerset();
                 $layerset->setTitle($layersetName);
                 $layerset->setApplication($application);
@@ -93,7 +89,7 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
 
             // Set inital ACL
             $aces = array();
-            $aces[] = array (
+            $aces[] = array(
                 'sid' => new RoleSecurityIdentity('IS_AUTHENTICATED_ANONYMOUSLY'),
                 'mask' => MaskBuilder::MASK_VIEW);
 
@@ -102,28 +98,24 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
 
             $elements_map = array();
             // Then create elements
-            foreach($definition['elements'] as $region => $elementsDefinition)
-            {
-                if($elementsDefinition !== null)
-                {
+            foreach ($definition['elements'] as $region => $elementsDefinition) {
+                if ($elementsDefinition !== null) {
                     $weight = 0;
-                    foreach($elementsDefinition as $element_yml_id =>
-                                $elementDefinition)
-                    {
+                    foreach ($elementsDefinition as $element_yml_id => $elementDefinition) {
                         $class = $elementDefinition['class'];
                         $title = array_key_exists('title', $elementDefinition)
-                                && $elementDefinition['title'] !== null ?
-                                $elementDefinition['title'] :
-                                $class::getClassTitle();
+                            && $elementDefinition['title'] !== null ?
+                            $elementDefinition['title'] :
+                            $class::getClassTitle();
 
                         $element = new Element();
 
                         $element->setClass($elementDefinition['class'])
-                                ->setTitle($title)
-                                ->setConfiguration($elementDefinition)
-                                ->setRegion($region)
-                                ->setWeight($weight++)
-                                ->setApplication($application);
+                            ->setTitle($title)
+                            ->setConfiguration($elementDefinition)
+                            ->setRegion($region)
+                            ->setWeight($weight++)
+                            ->setApplication($application);
                         //TODO: Roles
                         $application->addElements($element);
                         $manager->persist($element);
@@ -133,8 +125,7 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 }
             }
             // Then merge default configuration and elements configuration
-            foreach($application->getElements() as $element)
-            {
+            foreach ($application->getElements() as $element) {
                 $configuration_yml = $element->getConfiguration();
                 $entity_class = $configuration_yml['class'];
                 $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
@@ -143,26 +134,23 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 unset($configuration_yml['title']);
 
                 $configuration = ElementComponent::mergeArrays(
-                                $elComp->getDefaultConfiguration(),
-                                $configuration_yml, array());
+                        $elComp->getDefaultConfiguration(), $configuration_yml, array());
 
-                if(key_exists("target", $configuration)
-                        && $configuration["target"] !== null
-                        && key_exists($configuration["target"], $elements_map))
-                {
+                if (key_exists("target", $configuration)
+                    && $configuration["target"] !== null
+                    && key_exists($configuration["target"], $elements_map)) {
                     $configuration["target"] = $elements_map[$configuration["target"]];
                 }
-                if(key_exists("layerset", $configuration_yml)
-                        && $configuration["layerset"] !== null
-                        && key_exists($configuration["layerset"], $layersets_map))
-                {
+                if (key_exists("layerset", $configuration_yml)
+                    && $configuration["layerset"] !== null
+                    && key_exists($configuration["layerset"], $layersets_map)) {
                     $configuration["layerset"] = $layersets_map[$configuration["layerset"]];
                 }
 
                 $class = $elementDefinition['class'];
                 $title = array_key_exists('title', $elementDefinition) ?
-                        $elementDefinition['title'] :
-                        $class::getClassTitle();
+                    $elementDefinition['title'] :
+                    $class::getClassTitle();
                 $element->setConfiguration($configuration);
                 $manager->persist($element);
             }
