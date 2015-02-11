@@ -36,7 +36,9 @@
           {% if 'metadata' in configuration.menu %}
           <div class="layer-metadata iconFileText iconSmall" title="{{ 'mb.core.layertree.label.metadata'|trans }}"></div>
           {% endif %}
+          {% if 'layerremove' in configuration.menu %}
           <div class="layer-remove-btn iconRemove iconSmall" title="{{ 'mb.core.layertree.tooltip.removelayer'|trans }}"></div>
+          {% endif %}
         </div>
       </span>
       {% endif %}

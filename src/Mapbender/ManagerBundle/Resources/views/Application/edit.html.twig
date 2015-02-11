@@ -6,30 +6,6 @@
     {{parent()}}
     <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/codemirror/lib/codemirror.css') }}"/>
     <link rel="stylesheet" href="{{ asset('bundles/mapbendermanager/codemirror/theme/neo.css') }}"/>
-    {% stylesheets filter="compass,cssrewrite"
-    "bundles/mapbendermanager/sass/manager/applications.scss"
-    "bundles/fomuser/sass/user/user_control.scss"
-    "bundles/mapbendermanager/sass/element/form.scss"
-    "bundles/mapbendermanager/sass/element/yaml.scss"
-    "bundles/mapbendermanager/sass/element/button.scss"
-    "bundles/mapbendermanager/sass/element/activityindicator.scss"
-    "bundles/mapbendermanager/sass/element/copyright.scss"
-    "bundles/mapbendermanager/sass/element/featureinfo.scss"
-    "bundles/mapbendermanager/sass/element/gpsposition.scss"
-    "bundles/mapbendermanager/sass/element/layertree.scss"
-    "bundles/mapbendermanager/sass/element/legend.scss"
-    "bundles/mapbendermanager/sass/element/map.scss"
-    "bundles/mapbendermanager/sass/element/overview.scss"
-    "bundles/mapbendermanager/sass/element/printclient.scss"
-    "bundles/mapbendermanager/sass/element/scalebar.scss"
-    "bundles/mapbendermanager/sass/element/search_router.scss"
-    "bundles/mapbendermanager/sass/element/zoombar.scss"
-    "bundles/mapbendermanager/sass/element/basesourceswitcher.scss"
-    "bundles/mapbendermanager/sass/element/simplesearch.scss"
-    "bundles/mapbendercore/sass/element/mbslider.scss"
-    %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-    {% endstylesheets %}
 {% endblock %}
 
 {% block js %}
@@ -41,11 +17,6 @@
 
   <script type="text/javascript" src="{{ asset('bundles/fomuser/js/acl-form.js') }}"></script>
   <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/application-edit.js') }}"></script>
-  
-  
-  <script type="text/javascript" src="{{ asset('bundles/mapbendercore/vendor/joii.min.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/mapbender.wms.dimension.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/backend/dimensionshandler.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
