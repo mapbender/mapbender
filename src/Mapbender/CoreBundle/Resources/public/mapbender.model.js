@@ -164,15 +164,15 @@ Mapbender.Model = {
             this.map.olMap.setCenter(new OpenLayers.LonLat(this.mbMap.options['center']));
         }
 
-        if(true === addLayers){
+        if (true === addLayers) {
             $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
             // this.map.olMap.events.register('zoomend', this, $.proxy(this._checkOutOfScale, this));
             // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
 
             this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
 
-            $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr){
-                $.each(defArr, function(idx, layerDef){
+            $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr) {
+                $.each(defArr, function(idx, layerDef) {
                     layerDef['origId'] = idx;
                     self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
                 });
@@ -326,14 +326,16 @@ Mapbender.Model = {
             for (name in options.add) {
                 params[name] = options.add[name];
             }
-            url = OpenLayers.Util.urlAppend(source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
+            url = OpenLayers.Util.urlAppend(
+                source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
         } else if (options.remove) {
             for (name in options.remove) {
                 if (params[name]) {
                     delete(params[name]);
                 }
             }
-            url = OpenLayers.Util.urlAppend(source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
+            url = OpenLayers.Util.urlAppend(
+                source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
         }
         if (url) {
             source.configuration.options.url = url;
