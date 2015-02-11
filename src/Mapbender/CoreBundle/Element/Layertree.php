@@ -81,7 +81,7 @@ class Layertree extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        $configuration['menu'] = array_values($configuration['menu']);
+        $configuration['menu'] = isset($configuration['menu']) ? array_values($configuration['menu']) : array();
         return $configuration;
     }
 
