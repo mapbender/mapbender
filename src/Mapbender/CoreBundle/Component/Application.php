@@ -271,7 +271,8 @@ class Application
         }
 
         $application_entity = $this->getEntity();
-        if('css' === $type && $application_entity::SOURCE_DB === $application_entity->getSource()) {
+        if('css' === $type && $application_entity::SOURCE_DB === $application_entity->getSource()
+            && $application_entity->getCustomCss()) {
             $assets[] = new StringAsset($application_entity->getCustomCss());
         }
 

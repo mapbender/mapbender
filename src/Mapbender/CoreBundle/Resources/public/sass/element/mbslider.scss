@@ -1,3 +1,8 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+$fontFamily: "Calluna Sans", "Gill Sans", Calibri, "Trebuchet MS", sans-serif;
+
 /* UI Mapbender slider */
 .mb-slider.ui-slider{
     font-family: $fontFamily;
