@@ -87,7 +87,6 @@
   }
   .checkWrapper{
     position: relative;
-    &:before{background-color: $lightFontColor;}
   }
 
   [data-state="loading"]{
