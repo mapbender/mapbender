@@ -833,7 +833,7 @@ class ApplicationController extends Controller
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:list-source.html.twig")
      */
-    public function listInstanceAction($slug, $layersetId, Request $request)
+    public function listSourcesAction($slug, $layersetId, Request $request)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
@@ -876,9 +876,10 @@ class ApplicationController extends Controller
         $source = EntityHandler::find($this->container, "MapbenderCoreBundle:Source", $sourceId);
         $layerset = EntityHandler::find($this->container, "MapbenderCoreBundle:Layerset", $layersetId);
         $eHandler = EntityHandler::createHandler($this->container, $source);
-
+        $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
         $sourceInstance = $eHandler->createInstance($layerset);
-
+        $this->getDoctrine()->getManager()->flush();
+        $this->getDoctrine()->getManager()->getConnection()->commit();
         $this->get("logger")->debug('A new instance "'
             . $sourceInstance->getId() . '"has been created. Please edit it!');
         $this->get('session')->getFlashBag()->set('success', 'A new instance has been created. Please edit it!');
