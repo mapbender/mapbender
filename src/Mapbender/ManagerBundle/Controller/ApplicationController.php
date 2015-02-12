@@ -833,7 +833,7 @@ class ApplicationController extends Controller
      * @Method("GET")
      * @Template("MapbenderManagerBundle:Application:list-source.html.twig")
      */
-    public function listInstanceAction($slug, $layersetId, Request $request)
+    public function listSourcesAction($slug, $layersetId, Request $request)
     {
         $application = $this->get('mapbender')->getApplicationEntity($slug);
         // ACL access check
