@@ -44,7 +44,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                 if ($persist) {
                     $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
                     $this->container->get('doctrine')->getManager()->flush();
-    }
+                }
                 $num++;
             }
         }
