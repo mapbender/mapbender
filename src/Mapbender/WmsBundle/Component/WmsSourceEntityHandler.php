@@ -19,7 +19,7 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
  */
 class WmsSourceEntityHandler extends SourceEntityHandler
 {
-
+    
     public function create($persist = true)
     {
         ;
