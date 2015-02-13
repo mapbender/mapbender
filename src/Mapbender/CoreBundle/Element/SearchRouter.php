@@ -234,31 +234,31 @@ class SearchRouter extends Element
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $configuration, array $aaa = array())
+    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
     {
-        if (key_exists('dialog', $configuration)) {
-            $configuration['asDialog'] = $configuration['dialog'];
-            unset($configuration['dialog']);
+        if (key_exists('dialog', $formConfiguration)) {
+            $formConfiguration['asDialog'] = $formConfiguration['dialog'];
+            unset($formConfiguration['dialog']);
         }
-        if (key_exists('timeout', $configuration)) {
-            $configuration['timeoutFactor'] = $configuration['timeout'];
-            unset($configuration['timeout']);
+        if (key_exists('timeout', $formConfiguration)) {
+            $formConfiguration['timeoutFactor'] = $formConfiguration['timeout'];
+            unset($formConfiguration['timeout']);
         }
-        foreach ($configuration['routes'] as $routekey => $routevalue) {
+        foreach ($formConfiguration['routes'] as $routekey => $routevalue) {
             if (key_exists('configuration', $routevalue)) {
-                foreach ($configuration['routes'][$routekey]['configuration'] as $key => $value) {
-                    $configuration['routes'][$routekey][$key] = $value;
+                foreach ($formConfiguration['routes'][$routekey]['configuration'] as $key => $value) {
+                    $formConfiguration['routes'][$routekey][$key] = $value;
                 }
-                unset($configuration['routes'][$routekey]['configuration']);
+                unset($formConfiguration['routes'][$routekey]['configuration']);
             }
         }
-        return $configuration;
+        return $formConfiguration;
     }
 
     /**
      * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration)
+    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
     {
         if (key_exists('dialog', $configuration)) {
             $configuration['asDialog'] = $configuration['dialog'];

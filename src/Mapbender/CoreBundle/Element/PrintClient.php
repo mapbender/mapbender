@@ -244,18 +244,18 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $configuration, array $aaa = array())
+    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
     {
-        if (is_string($configuration['scales'])) {
-            $configuration['scales'] = explode(',', $configuration['scales']);
+        if (is_string($formConfiguration['scales'])) {
+            $formConfiguration['scales'] = explode(',', $formConfiguration['scales']);
         }
-        return $configuration;
+        return $formConfiguration;
     }
 
     /**
      * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration)
+    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
     {
         if (is_string($configuration['scales'])) {
             $configuration['scales'] = explode(',', $configuration['scales']);

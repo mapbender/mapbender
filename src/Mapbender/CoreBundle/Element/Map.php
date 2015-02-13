@@ -314,29 +314,15 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $configuration, array $aaa = array())
+    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
     {
-        if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
-            $configuration['extents'] = array(
-                'start' => $configuration['extent_start'],
-                'max' => $configuration['extent_max']
-            );
-            unset($configuration['extent_start']);
-            unset($configuration['extent_max']);
-        }
-        if (is_string($configuration['otherSrs'])) {
-            $configuration['otherSrs'] = explode(',', $configuration['otherSrs']);
-        }
-        if (is_string($configuration['scales'])) {
-            $configuration['scales'] = explode(',', $configuration['scales']);
-        }
-        return $configuration;
+        return $entityConfiguration;
     }
 
     /**
      * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration)
+    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
     {
         if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
             $configuration['extents'] = array(
@@ -351,6 +337,13 @@ class Map extends Element
         }
         if (is_string($configuration['scales'])) {
             $configuration['scales'] = explode(',', $configuration['scales']);
+        }
+        $lsClassName = 'Mapbender\CoreBundle\Entity\Layerset';
+        if (key_exists('layersets', $configuration) && key_exists($lsClassName, $idMapper)) {
+            $mapper = $idMapper[$lsClassName];
+            foreach ($configuration['layersets'] as &$layerset){
+                $layerset = isset($mapper['map'][$layerset]) ? $mapper['map'][$layerset] : $layerset;
+            }
         }
         return $configuration;
     }
