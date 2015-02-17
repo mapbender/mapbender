@@ -69,7 +69,8 @@
 .iconWarningSmpl, .iconEmail, .iconTwitter,
 .iconFacebook, .iconGooglePlus, .iconSketch, .iconMenu,
 .iconOverview, .iconGpsTarget, .iconClock, .iconFile,
-.iconBolt, .iconStarO, .iconBars, .iconFileText {
+.iconBolt, .iconStarO, .iconBars, .iconFileText,
+.iconCopyright {
   &:before{font-family: FontAwesome;}
 }
 
@@ -138,6 +139,7 @@
 .iconBars:before{content:"\f0c9";}
 .iconFileText:before{content:"\f0f6";}
 .iconCancel:before{ content: "\f05c";}
+.iconCopyright:before{ content: "\f1f9";}
 
 // only backend
 .iconGroup:before{content: "\f0c0";}

@@ -39,6 +39,12 @@ class InstanceSetAdminType extends AbstractType
                 array(
                 'required' => true,
                 'property_path' => '[title]'))
+            ->add('cprTitle', 'text',
+                array('required' => false,
+                'property_path' => '[cprTitle]'))
+            ->add('cprUrl', 'text',
+                array('required' => false,
+                'property_path' => '[cprUrl]'))
             ->add('group', 'text',
                 array(
                 'required' => false,
