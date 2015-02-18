@@ -27,22 +27,30 @@ class ElementGenerator extends Generator {
             throw new \RuntimeException($msg);
         }
 
-        $this->renderFile(__DIR__ . '/../Resources/skeleton/element',
-            $type . '.php.twig', $classFile, array(
-            'bundleNamespace' => $bundleNamespace,
-            'className' => $className,
-            'classNameLower' => $classNameLower,
-            'bundle' => $bundle));
+        $this->setSkeletonDirs(__DIR__ . '/../Resources/skeleton/element');
+
+        $this->renderFile(
+            $type . '.php.twig',
+            $classFile,
+            array(
+                'bundleNamespace' => $bundleNamespace,
+                'className' => $className,
+                'classNameLower' => $classNameLower,
+                'bundle' => $bundle));
         $files['PHP class'] = $classFile;
 
-        $this->renderFile(__DIR__ . '/../Resources/skeleton/element',
-            $type . '.js.twig', $widgetFile, array(
+        $this->renderFile(
+            $type . '.js.twig',
+            $widgetFile,
+            array(
                 'widgetName' => $className));
         $files['jQuery widget'] = $widgetFile;
 
         if($type === 'general') {
-            $this->renderFile(__DIR__ . '/../Resources/skeleton/element',
-                $type . '.html.twig', $twigFile, array(
+            $this->renderFile(
+                $type . '.html.twig',
+                $twigFile,
+                array(
                     'classNameLower' => $classNameLower));
             $files['Twig template'] = $twigFile;
         }

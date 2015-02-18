@@ -1,16 +1,7 @@
+{% set application = {'slug': 'manager'} %}
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
 {% block title %}{{ "mb.manager.admin.application.new" | trans}}{% endblock %}
-
-{% block css %}
-  {{parent()}}
-  {% stylesheets filter="compass,cssrewrite"
-    "bundles/mapbendermanager/sass/manager/applications.scss"
-    "bundles/fomuser/sass/user/user_control.scss"
-  %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-  {% endstylesheets %}
-{% endblock %}
 
 {% block js %}
   {{parent()}}

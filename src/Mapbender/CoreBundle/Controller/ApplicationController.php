@@ -22,6 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Mapbender\CoreBundle\Asset\AssetFactory;
 
 /**
  * Application controller.
@@ -65,6 +66,66 @@ class ApplicationController extends Controller
             'trans' => $translation_url,
             'proxy' => $proxy_url,
             'metadata' => $metadata_url);
+    }
+
+    /**
+     * Compiling SASS/CSS controller.
+     *
+     * @Route("/application/{slug}/assets/css")
+     */
+    public function ccssAction($slug)
+    {
+        // Create virtual file system path required for url rewriting inside CSS files
+        $request = $this->getRequest();
+        $route = $this->container->get('router')->getRouteCollection()->get($request->get('_route'));
+        $targetPath = $request->server->get('SCRIPT_FILENAME') . $route->getPattern();
+
+        $targetPath = str_replace('{slug}', $slug, $targetPath);
+        $targetPath = $request->server->get('REQUEST_URI');
+        $sourcePath = $request->getBasePath();
+
+        if(empty($sourcePath)){
+                $sourcePath = ".";
+        }
+
+        // Collect all assets into one
+        $application = $this->getApplication($slug);
+        $refs = array();
+
+        foreach($application->getAssets('css') as $cssFile){
+            // TODO: why by getAssets() method objects are returned in the same was as "SCSS" declaration strings
+            // This exclusion is just work around and should be removed if fix above is done
+            if(is_object($cssFile)){
+               continue;
+            }
+            $refs[$cssFile] = $cssFile;
+        }
+        $refs = array_values($refs);
+        $factory = new AssetFactory($this->container, $refs, 'css', $targetPath, $sourcePath);
+        $assets = $factory->getAssetCollection();
+
+        // Get last modified timestamp from assets as well as application (DB) or Symfony's cache creation (YAML)
+        $lastModified = \DateTime::createFromFormat('U', $assets->getLastModified());
+        if ($application->getEntity()->getSource() === ApplicationEntity::SOURCE_DB) {
+            $lastModified = max($application->getEntity()->getUpdated(), $lastModified);
+        } else {
+            $cacheUpdateTime = new \DateTime($this->container->getParameter('mapbender.cache_creation'));
+            $lastModified = max($cacheUpdateTime, $lastModified);
+        }
+
+        // Cut short if possible by returning an 304 if nothing has changed
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/css');
+        $response->setLastModified($lastModified);
+        $response->headers->set('X-Asset-Modification-Time', $lastModified->format('c'));
+        if ($response->isNotModified($this->get('request'))) {
+            return $response;
+        }
+
+        // Compile the collection with SASS
+        $response->setContent($factory->compile());
+
+        return $response;
     }
 
     /**
@@ -124,7 +185,7 @@ class ApplicationController extends Controller
             // And move everything into an StringAsset which gets added the
             // CssRewriteFilter
             $css = $assets->dump();
-            $assets = new StringAsset($css, array(), null, $source);
+            $assets = new StringAsset($css, array(), '', $source);
             $assets->load();
             $assets->setTargetPath($target);
             $assets->ensureFilter(new CssRewriteFilter());
