@@ -4,6 +4,8 @@
         options: {
         },
         scalebar: null,
+        readyState: false,
+        readyCallbacks: [],
         _create: function() {
             if (!Mapbender.checkTarget("mbBaseSourceSwitcher", this.options.target)) {
                 return;
@@ -26,11 +28,26 @@
             });
             this._hideSources();
             this._showActive();
+            self._trigger('ready');
+            this._ready();
         },
         getCpr: function() {
+            var me = $(this.element);
+            var element = me.find('.basesourcesetswitch[data-state="active"]');
+            var index = element.index();
+            var i = 0;
+            for (gridx in this.options.groups) {
+                if (i === index) {
+                    var gr = this.options.groups[gridx];
+                    var cprTitle = gr.cprTitle;
+                    var cprUrl = gr.cprUrl;
+                    break;
+                }
+                i++;
+            }
             return {
-                name: "",
-                url: ""
+                name: cprTitle,
+                url: cprUrl
             }
         },
         _hideSources: function() {
@@ -107,7 +124,7 @@
                     }
                 }
             });
-            this._trigger("", null, eventOptions);
+//            this._trigger("", null, eventOptions);
         },
         _toggleMapset: function(event) {
             var me = $(this.element),
@@ -135,7 +152,6 @@
                 grHref[i] = gr.cprUrl;
                 grTitle[i] = gr.cprTitle;
                 i++;
-                var a = 0;
 
             }
 
@@ -146,7 +162,7 @@
             };
             this._trigger('groupactivate', null, optionsBs);
             this._showActive();
-       
+
             return false;
         },
         /**
