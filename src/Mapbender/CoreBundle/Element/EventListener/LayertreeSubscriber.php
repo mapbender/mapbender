@@ -63,17 +63,21 @@ class LayertreeSubscriber implements EventSubscriberInterface
         if (key_exists("themes", $data)) {
             $form->remove('themes');
             foreach ($data['themes'] as &$theme) {
+                $theme['useTheme'] = isset($theme['useTheme']) ? (bool) ($theme['useTheme']) : false;
                 $theme['opened'] = isset($theme['opened']) ? (bool) ($theme['opened']) : false;
-                $theme['activate'] = isset($theme['activate']) ? (bool) ($theme['activate']) : false;
+                $theme['sourceVisibility'] = isset($theme['sourceVisibility']) ?
+                    (bool) ($theme['sourceVisibility']) : false;
+                $theme['allSelected'] = isset($theme['allSelected']) ?
+                    (bool) ($theme['allSelected']) : false;
                 $theme['id'] = intval($theme['id']);
             }
             $event->setData($data);
             $form->add($this->factory->createNamed('themes', 'collection', null,
                                                    array(
-                        'data' => $data["themes"],
-                        'required' => false,
-                        'type' => new LayerThemeType(),
-                        'auto_initialize' => false,
+                    'data' => $data["themes"],
+                    'required' => false,
+                    'type' => new LayerThemeType(),
+                    'auto_initialize' => false,
             )));
         }
     }
@@ -92,23 +96,23 @@ class LayertreeSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
         $themesAll = isset($data["target"]) && $data["target"] !== null ? $this->getThemes($data) : array();
         $themesData = $this->checkDataThemes(
-                $themesAll, isset($data["themes"]) && count($data["themes"]) > 0 ? $data["themes"] : array());
+            $themesAll, isset($data["themes"]) && count($data["themes"]) > 0 ? $data["themes"] : array());
         $data["themes"] = $themesAll;
         $event->setData($data);
         if (count($themesData) === 0) {
             $form->add($this->factory->createNamed('themes', 'collection', null,
                                                    array(
-                        'required' => false,
-                        'type' => new LayerThemeType(),
-                        'auto_initialize' => false,
+                    'required' => false,
+                    'type' => new LayerThemeType(),
+                    'auto_initialize' => false,
             )));
         } else {
             $form->add($this->factory->createNamed('themes', 'collection', null,
                                                    array(
-                        'data' => $themesData,
-                        'required' => false,
-                        'type' => new LayerThemeType(),
-                        'auto_initialize' => false,
+                    'data' => $themesData,
+                    'required' => false,
+                    'type' => new LayerThemeType(),
+                    'auto_initialize' => false,
             )));
         }
     }
@@ -133,8 +137,10 @@ class LayertreeSubscriber implements EventSubscriberInterface
                     $themes[] = array(
                         'id' => $layerset->getId(),
                         'opened' => false,
-                        'activate' => false,
-                        'title' => $layerset->getTitle());
+                        'title' => $layerset->getTitle(),
+                        'useTheme' => true,
+                        'sourceVisibility' => false,
+                        'allSelected' => false);
                 }
             }
         }

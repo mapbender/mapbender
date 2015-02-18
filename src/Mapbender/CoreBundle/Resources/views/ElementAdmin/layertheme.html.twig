@@ -3,10 +3,16 @@
     <div class="collectionItemProperty">
         <label class="labelInput">{{ theme.vars.data.title }}</label>{{ form_widget(theme.title) }}
     </div>
+    <div class="collectionItemProperty item-activate" title="{{"mb.core.admin.layertree.label.theme.useTheme"|trans}}">
+        {{ form_widget(theme.useTheme) }}<!--label for="{{theme.useTheme.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.theme.useTheme"|trans}}</label-->
+    </div>
     <div class="collectionItemProperty item-opened" title="{{"mb.core.admin.layertree.label.theme.opened"|trans}}">
         {{ form_widget(theme.opened) }}<!--label for="{{theme.opened.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.theme.opened"|trans}}</label-->
     </div>
-    <div class="collectionItemProperty item-activate" title="{{"mb.core.admin.layertree.label.theme.activate"|trans}}">
-        {{ form_widget(theme.activate) }}<!--label for="{{theme.activate.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.theme.activate"|trans}}</label-->
+    <div class="collectionItemProperty item-activate" title="{{"mb.core.admin.layertree.label.theme.sourceVisibility"|trans}}">
+        {{ form_widget(theme.sourceVisibility) }}<!--label for="{{theme.sourceVisibility.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.theme.sourceVisibility"|trans}}</label-->
+    </div>
+    <div class="collectionItemProperty item-activate" title="{{"mb.core.admin.layertree.label.theme.allSelected"|trans}}">
+        {{ form_widget(theme.allSelected) }}<!--label for="{{theme.allSelected.vars.id}}" class="labelInput">{{"mb.core.admin.layertree.label.theme.allSelected"|trans}}</label-->
     </div>
 </div>

@@ -1,4 +1,4 @@
-(function($){
+(function($) {
     $.widget("mapbender.mbLayertree", {
         options: {
             type: 'element',
@@ -32,15 +32,19 @@
             group: "group",
             simple: "simple"
         },
-        transConst: {outOfScale: '', outOfBounds: '', parentInvisible: ''},
-        _create: function(){
-            if(!Mapbender.checkTarget("mbLayertree", this.options.target)) {
+        transConst: {
+            outOfScale: '',
+            outOfBounds: '',
+            parentInvisible: ''
+        },
+        _create: function() {
+            if (!Mapbender.checkTarget("mbLayertree", this.options.target)) {
                 return;
             }
             var self = this;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
-        _setup: function(){
+        _setup: function() {
             this.transConst.outOfScale = Mapbender.trans("mb.core.layertree.const.outofscale");
             this.transConst.outOfBounds = Mapbender.trans("mb.core.layertree.const.outofbounds");
             this.transConst.parentInvisible = Mapbender.trans("mb.core.layertree.const.parentinvisible");
@@ -51,30 +55,32 @@
             this.menuTemplate = $('#layer-menu', this.template).remove();
 
             this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
-            if(this.options.type === 'element') {
+            if (this.options.type === 'element') {
                 this._createTree();
-            } else if(this.options.type === 'dialog' && new Boolean(this.options.autoOpen).valueOf() === true) {
+            } else if (this.options.type === 'dialog' && new Boolean(this.options.autoOpen).valueOf() === true) {
                 this.open();
             }
             this.element.removeClass('hidden');
             this._trigger('ready');
             this._ready();
         },
-        _createTree: function(){
+        _createTree: function() {
             var self = this;
             var sources = this.model.getSources();
-            if(this.created)
+            if (this.created)
                 this._unSortable();
-            for(var i = (sources.length - 1); i > -1; i--) {
-                if(!sources[i].configuration.isBaseSource
-                        || (sources[i].configuration.isBaseSource && this.options.showBaseSource)) {
-                    if(this.options.displaytype === "tree") {
+            for (var i = (sources.length - 1); i > -1; i--) {
+                if (!sources[i].configuration.isBaseSource
+                    || (sources[i].configuration.isBaseSource && this.options.showBaseSource)) {
+                    if (this.options.displaytype === "tree") {
                         var li_s = this._createSourceTree(sources[i], sources[i], this.model.getScale());
                         this._addNode(li_s, sources[i]);
                     } else {
                         return;
                     }
-                    this.sourceAtTree[sources[i].id ] = {id: sources[i].id};
+                    this.sourceAtTree[sources[i].id ] = {
+                        id: sources[i].id
+                    };
                     this._resetSourceAtTree(sources[i]);
                 }
             }
@@ -90,27 +96,35 @@
 
             this.created = true;
         },
-        _addNode: function($toAdd, source){
-            if(this.options.useTheme) {
-                var layerset = this.model.findLayerset({source: {origId: source.origId}});
+        _addNode: function($toAdd, source) {
+            if (this.options.useTheme) {
+                var layerset = this.model.findLayerset({
+                    source: {
+                        origId: source.origId
+                    }
+                });
                 var theme = {};
-                $.each(this.options.themes, function(idx, item){
-                    if(item.id === layerset.id)
+                $.each(this.options.themes, function(idx, item) {
+                    if (item.id === layerset.id)
                         theme = item;
                 })
-                var $layersetEl = this._createThemeNode(layerset, theme);
-                $("ul.layers:first", $layersetEl).append($toAdd);
+                if (theme.useTheme) {
+                    var $layersetEl = this._createThemeNode(layerset, theme);
+                    $("ul.layers:first", $layersetEl).append($toAdd);
+                } else {
+                    $("ul.layers:first", this.element).append($toAdd);
+                }
             } else {
                 $("ul.layers:first", this.element).append($toAdd);
             }
         },
-        _reset: function(){
+        _reset: function() {
             this._resetEvents();
             this._resetSortable();
             this._resetCheckboxes();
             this._setSourcesCount();
         },
-        _createEvents: function(){
+        _createEvents: function() {
             var self = this;
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
@@ -118,7 +132,7 @@
             this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
         },
-        _removeEvents: function(){
+        _removeEvents: function() {
             var self = this;
             this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
@@ -127,91 +141,135 @@
             this.element.off('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
 
         },
-        _resetEvents: function(){
+        _resetEvents: function() {
             this._removeEvents();
             this._createEvents();
         },
-        _resetCheckboxes: function(){
+        _resetCheckboxes: function() {
             var self = this;
             this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
-            if(initCheckbox) {
-                $('.checkbox', self.element).each(function(){
+            if (initCheckbox) {
+                $('.checkbox', self.element).each(function() {
                     initCheckbox.call(this);
                 });
             }
         },
-        _resetSortable: function(){
+        _resetSortable: function() {
             this._unSortable();
             this._createSortable();
         },
-        _unSortable: function(){
+        _unSortable: function() {
         },
-        _sortItem: function($toMoveItem, $beforeItem, $afterItem){
-            var before = null, after = null, toMove = null;
-            if($beforeItem) {
-                if($beforeItem.hasClass('themeContainer')) {
+        _sortItem: function($toMoveItem, $beforeItem, $afterItem) {
+            var before = null;
+            var after = null;
+            var toMove = null;
+            if ($beforeItem) {
+                if ($beforeItem.hasClass('themeContainer')) {
                     var $beforeSEl = $beforeItem.find('ul.layers:first li[data-type="root"]:last');
                     var bid = $beforeSEl.attr('data-sourceid');
-                    before = {sourceIdx: {id: bid}, layerIdx: {id: $beforeSEl.attr("data-id")}};
+                    before = {
+                        sourceIdx: {
+                            id: bid
+                        },
+                        layerIdx: {
+                            id: $beforeSEl.attr("data-id")
+                        }
+                    };
                 } else {
                     var bid = $beforeItem.attr('data-sourceid');
                     bid = bid ? bid : $beforeItem.parents('li[data-sourceid]:first').attr('data-sourceid');
-                    before = {sourceIdx: {id: bid}, layerIdx: {id: $beforeItem.attr("data-id")}};
+                    before = {
+                        sourceIdx: {
+                            id: bid
+                        },
+                        layerIdx: {
+                            id: $beforeItem.attr("data-id")
+                        }
+                    };
                 }
             }
-            if($afterItem) {
-                if($afterItem.hasClass('themeContainer')) {
+            if ($afterItem) {
+                if ($afterItem.hasClass('themeContainer')) {
                     var $afterSEl = $afterItem.find('ul.layers:first li[data-type="root"]:first');
                     var bid = $afterSEl.attr('data-sourceid');
-                    after = {sourceIdx: {id: bid}, layerIdx: {id: $afterSEl.attr("data-id")}};
+                    after = {
+                        sourceIdx: {
+                            id: bid
+                        },
+                        layerIdx: {
+                            id: $afterSEl.attr("data-id")
+                        }
+                    };
                 } else {
                     var bid = $afterItem.attr('data-sourceid');
                     bid = bid ? bid : $afterItem.parents('li[data-sourceid]:first').attr('data-sourceid');
-                    after = {sourceIdx: {id: bid}, layerIdx: {id: $afterItem.attr("data-id")}};
+                    after = {
+                        sourceIdx: {
+                            id: bid
+                        },
+                        layerIdx: {
+                            id: $afterItem.attr("data-id")
+                        }
+                    };
                 }
             }
             var id = $toMoveItem.attr('data-sourceid');
             id = id ? id : $toMoveItem.parents('li[data-sourceid]:first').attr('data-sourceid');
-            toMove = {sourceIdx: {id: id}};
-            if($toMoveItem.attr("data-type") !== this.consts.root) {
-                toMove['layerIdx'] = {id: $toMoveItem.attr("data-id")};
+            toMove = {
+                sourceIdx: {
+                    id: id
+                }
+            };
+            if ($toMoveItem.attr("data-type") !== this.consts.root) {
+                toMove['layerIdx'] = {
+                    id: $toMoveItem.attr("data-id")
+                };
             }
-            this.model.changeSource({change: {move: {tomove: toMove, before: after, after: before}}});
+            this.model.changeSource({
+                change: {
+                    move: {
+                        tomove: toMove,
+                        before: after,
+                        after: before
+                    }
+                }
+            });
         },
-        _sortTheme: function($theme){
+        _sortTheme: function($theme) {
             var self = this;
             var $beforeEl = $theme.prev().length !== 0 ? $($theme.prev()[0]) : null;
             var $afterEl = $theme.next().length !== 0 ? $($theme.next()[0]) : null;
             var $last = null;
-            $('ul.layers:first li[data-type="root"]', $theme).each(function(idx, item){
+            $('ul.layers:first li[data-type="root"]', $theme).each(function(idx, item) {
                 var $item = $(item);
-                if($last) {
+                if ($last) {
                     $beforeEl = $last;
                 }
                 self._sortItem($item, $beforeEl, $afterEl);
                 $last = $item;
             });
         },
-        _sortSource: function($item){
+        _sortSource: function($item) {
             var $beforeEl = $item.prev().length !== 0 ? $($item.prev()[0]) : null;
             var $afterEl = $item.next().length !== 0 ? $($item.next()[0]) : null;
             this._sortItem($item, $beforeEl, $afterEl);
         },
-        _createSortable: function(){
+        _createSortable: function() {
             var self = this;
-            $("ul.layers", this.element).each(function(){
+            $("ul.layers", this.element).each(function() {
                 var that = this;
                 $(that).sortable({
                     axis: 'y',
                     items: "> li:not(.notreorder)",
                     distance: 6,
                     cursor: "move",
-                    update: function(event, ui){
+                    update: function(event, ui) {
                         var $elm = $(ui.item);
-                        if($elm.hasClass('themeContainer')) {
+                        if ($elm.hasClass('themeContainer')) {
                             self._sortTheme($elm);
                         } else {
                             self._sortSource($elm);
@@ -220,9 +278,9 @@
                 });
             });
         },
-        _createThemeNode: function(layerset, theme){
+        _createThemeNode: function(layerset, theme) {
             var $li = $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
-            if($li.length === 1) {
+            if ($li.length === 1) {
                 return $li;
             } else {
                 $li = this.template.clone();
@@ -234,95 +292,104 @@
             $li.removeAttr('data-sourceid');
             $li.attr('data-type', this.consts.theme).attr('data-title', layerset.title);
             $li.addClass("themeContainer");
-            if(theme.opened)
+            if (theme.opened)
                 $li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
             else
                 $li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");
             $('span.layer-title:first', $li).text(layerset.title);
             $('span.layer-spinner:first', $li).remove();
             $('span.layer-state:first', $li).remove();
-            if(!theme.activate) {
-                $('div.checkWrapper', $li).remove();
-            }
             $('div.featureInfoWrapper', $li).remove();
+
+            var sourceVisibililty = $('div.checkWrapper', $li);
+            if (theme.sourceVisibility) {
+                var allSelected = sourceVisibililty.clone();
+                $('input', allSelected).attr('name', 'allSelected');
+                sourceVisibililty.after(allSelected);
+            }
+            if (!theme.sourceVisibility) {
+                sourceVisibililty.remove();
+            } else {
+                $('input', sourceVisibililty).attr('name', 'sourceVisibility');
+            }
             $('.layer-menu-btn', $li).remove();
             return $li;
         },
-        _createNode: function(source, sourceEl, config, isroot){
+        _createNode: function(source, sourceEl, config, isroot) {
             var $li = this.template.clone();
             $li.removeClass('hide-elm');
             $li.attr('data-id', sourceEl.options.id);
             $li.attr('data-sourceid', source.id);
             var nodeType = this._getNodeType(sourceEl, isroot);
             $li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
-            if(nodeType === this.consts.root || nodeType === this.consts.group) {
+            if (nodeType === this.consts.root || nodeType === this.consts.group) {
                 $('.featureInfoWrapper:first', $li).remove();
-                if(nodeType === this.consts.root) {
+                if (nodeType === this.consts.root) {
                     $li.addClass("serviceContainer");
-                } else if(nodeType === this.consts.group) {
+                } else if (nodeType === this.consts.group) {
                     $li.addClass("groupContainer");
                 }
-                if(config.toggle === true) {
+                if (config.toggle === true) {
                     $li.addClass("showLeaves").find(".iconFolder").addClass("iconFolderActive");
                 } else {
                     $li.removeClass("showLeaves").find(".iconFolder").removeClass("iconFolderActive");
                 }
-                if(config.toggleable) {
+                if (config.toggleable) {
                     $li.addClass('toggleable');
                 }
             }
             $li.addClass(config.reorder);
             $li.find('.layer-state').attr('title', config.visibility.tooltip);
             $li.find('input.layer-selected').prop('checked', config.selected ? true : false);
-            if(!config.selectable)
+            if (!config.selectable)
                 $li.find('input.layer-selected').prop('disabled', true);
             $li.find('input.layer-info').prop('checked', config.info ? true : false);
-            if(!config.infoable)
+            if (!config.infoable)
                 $li.find('input.layer-info').prop('disabled', true);
             var infoHidden = false;
-            if(this.options.hideInfo) {
+            if (this.options.hideInfo) {
                 infoHidden = true;
                 $('input[name="info"]', $li).parents('.checkWrapper:first').remove();
             }
             var selectHidden = false;
-            if(this.options.hideSelect && config.selected && !config.selectable &&
-                    (nodeType === this.consts.root || nodeType === this.consts.group)) {
+            if (this.options.hideSelect && config.selected && !config.selectable &&
+                (nodeType === this.consts.root || nodeType === this.consts.group)) {
                 selectHidden = true;
                 $('input[name="selected"]', $li).parents('.checkWrapper:first').remove();
             }
-            if(config.toggleable === false && this.options.hideNotToggleable) {
+            if (config.toggleable === false && this.options.hideNotToggleable) {
                 var $folder = $li.find('.iconFolder');
-                if(selectHidden && infoHidden) {
+                if (selectHidden && infoHidden) {
                     $folder.addClass('placeholder')
                 }
                 $folder.removeClass('iconFolder');
             }
             $li.find('.layer-title:first').attr('title', sourceEl.options.title).text(this._subStringText(
-                    sourceEl.options.title));
-            if(this.options.menu.length === 0) {
+                sourceEl.options.title));
+            if (this.options.menu.length === 0) {
                 $li.find('.layer-menu-btn').remove();
             }
             return $li;
         },
-        _createSourceTree: function(source, sourceEl, scale, type, isroot){
-            if(sourceEl.type) {
+        _createSourceTree: function(source, sourceEl, scale, type, isroot) {
+            if (sourceEl.type) {
                 var li = "";
                 sourceEl.layers = [];
-                for(var i = 0; i < sourceEl.configuration.children.length; i++) {
+                for (var i = 0; i < sourceEl.configuration.children.length; i++) {
                     li = this._createSourceTree(source, sourceEl.configuration.children[i], scale, sourceEl.type,
-                            true);
+                        true);
                 }
             } else {
                 var config = this._getNodeProporties(sourceEl);
                 var li = this._createNode(source, sourceEl, config, isroot);
-                if(sourceEl.children) {
+                if (sourceEl.children) {
                     li.find('ul:first').attr('id', 'list-' + sourceEl.options.id);
-                    if(config.toggle) {
+                    if (config.toggle) {
                         li.find('ul:first').addClass("closed");
                     }
-                    for(var j = sourceEl.children.length; j > 0; j--) {
+                    for (var j = sourceEl.children.length; j > 0; j--) {
                         li.find('ul:first').append(this._createSourceTree(source, sourceEl.children[j - 1], scale,
-                                type, false));
+                            type, false));
                     }
                 } else {
                     li.find('ul:first').remove();
@@ -330,26 +397,26 @@
             }
             return li;
         },
-        _createTreeNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found){
-            if(sourceEl.type) {
+        _createTreeNode: function(source, sourceEl, scale, layerToAdd, parent, type, isroot, found) {
+            if (sourceEl.type) {
                 var li = "";
-                for(var i = 0; i < sourceEl.configuration.children.length; i++) {
+                for (var i = 0; i < sourceEl.configuration.children.length; i++) {
                     li = this._createTreeNode(source, sourceEl.configuration.children[i], scale, layerToAdd, parent,
-                            sourceEl.type, true, false);
+                        sourceEl.type, true, false);
                 }
             } else {
-                if(layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found) {
+                if (layerToAdd.options.id.toString() === sourceEl.options.id.toString() || found) {
                     found = true;
                     var config = this._getNodeProporties(sourceEl);
                     var li = this._createNode(source, sourceEl, config, isroot);
-                    if(sourceEl.children) {
+                    if (sourceEl.children) {
                         li.find('ul:first').attr('id', 'list-' + sourceEl.options.id);
-                        if(config.toggle) {
+                        if (config.toggle) {
                             li.find('ul:first').addClass("closed");
                         }
-                        for(var j = 0; j < sourceEl.children.length; j++) {
+                        for (var j = 0; j < sourceEl.children.length; j++) {
                             li.find('ul:first').append(this._createTreeNode(source, sourceEl.children[j], scale,
-                                    layerToAdd, parent, type, false, found));
+                                layerToAdd, parent, type, false, found));
                         }
                     } else {
                         li.find('ul').remove();
@@ -357,20 +424,20 @@
                     found = false;
                     return li;
                 }
-                if(sourceEl.children) {
+                if (sourceEl.children) {
                     parent = parent.find('li[data-id="' + sourceEl.options.id + '"]:first');
-                    for(var j = 0; j < sourceEl.children.length; j++) {
+                    for (var j = 0; j < sourceEl.children.length; j++) {
                         var li = this._createTreeNode(source, sourceEl.children[j], scale, layerToAdd, parent, type,
-                                false, found);
-                        if(li !== null) {
-                            if(sourceEl.children.length === 1) {
+                            false, found);
+                        if (li !== null) {
+                            if (sourceEl.children.length === 1) {
                                 parent.add(li);
-                            } else if(j === 0) {
+                            } else if (j === 0) {
                                 parent.find('li[data-id="' + sourceEl.children[j + 1].options.id + '"]:first').after(
-                                        li);
+                                    li);
                             } else {
                                 parent.find('li[data-id="' + sourceEl.children[j - 1].options.id + '"]:first').before(
-                                        li);
+                                    li);
                             }
                         }
                     }
@@ -378,24 +445,25 @@
             }
             return null;
         },
-        _onSourceAdded: function(event, options){
-            if(!this.created || !options.added)
+        _onSourceAdded: function(event, options) {
+            if (!this.created || !options.added)
                 return;
             var added = options.added;
-            var before = added.after, after = added.before;
-            if(added.source.configuration.baseSource && !this.options.showBaseSource) {
+//            var before = added.after;
+//            var after = added.before;
+            if (added.source.configuration.baseSource && !this.options.showBaseSource) {
                 return;
             }
-            if(this.options.displaytype === "tree") {
+            if (this.options.displaytype === "tree") {
                 var hasChildren = false;
-                for(layerid in added.children) {
+                for (layerid in added.children) {
                     this._createTreeNode(added.source, added.source, this.model.getScale(), added.children[layerid], $(
-                            this.element).find('ul.layers:first'));
+                        this.element).find('ul.layers:first'));
                 }
-                if(!hasChildren) {
+                if (!hasChildren) {
                     var li_s = this._createSourceTree(added.source, added.source, this.model.getScale());
                     var first_li = $(this.element).find('ul.layers:first li:first');
-                    if(first_li && first_li.length !== 0) {
+                    if (first_li && first_li.length !== 0) {
                         first_li.before(li_s);
                     } else {
                         $(this.element).find('ul.layers:first').append($(li_s));
@@ -404,50 +472,52 @@
             } else {
                 return;
             }
-            this.sourceAtTree[added.source.id ] = {id: added.source.id};
+            this.sourceAtTree[added.source.id ] = {
+                id: added.source.id
+            };
             this._reset();
         },
-        _onSourceChanged: function(event, options){
-            if(options.changed && options.changed.children) {
+        _onSourceChanged: function(event, options) {
+            if (options.changed && options.changed.children) {
                 this._changeChildren(options.changed);
-            } else if(options.changed && options.changed.childRemoved) {
+            } else if (options.changed && options.changed.childRemoved) {
                 this._removeChild(options.changed);
             }
         },
-        _resetNodeOutOfScale: function($li, layerDef){
-            if(layerDef.state.outOfScale) {
+        _resetNodeOutOfScale: function($li, layerDef) {
+            if (layerDef.state.outOfScale) {
                 $li.addClass("invisible").find('span.layer-state').attr("title", "out of scale");
-            } else if(!layerDef.state.outOfScale) {
+            } else if (!layerDef.state.outOfScale) {
                 $li.removeClass("invisible").find('span.layer-state').attr("title", "");
             }
         },
-        _resetNodeSelected: function($li, layerOptions){
+        _resetNodeSelected: function($li, layerOptions) {
             var chk_selected = $('input[name="selected"]:first', $li);
             chk_selected.prop('checked', layerOptions.treeOptions.selected);
             initCheckbox.call(chk_selected);
         },
-        _resetNodeInfo: function($li, layerOptions){
+        _resetNodeInfo: function($li, layerOptions) {
             var chk_info = $('input[name="info"]:first', $li);
             chk_info.prop('checked', layerOptions.treeOptions.info);
-            chk_info.each(function(k, v){
+            chk_info.each(function(k, v) {
                 initCheckbox.call(v);
             });
         },
-        _resetNodeVisible: function($li, layerDef){
-            if(layerDef.state.visibility) {
+        _resetNodeVisible: function($li, layerDef) {
+            if (layerDef.state.visibility) {
                 $li.removeClass("invisible").find('span.layer-state:first').attr("title", "");
             }
             this._resetNodeOutOfScale($li, layerDef);
         },
-        _resetSourceAtTree: function(source){
+        _resetSourceAtTree: function(source) {
             var self = this;
-            function resetSourceAtTree(layer, parent){
+            function resetSourceAtTree(layer, parent) {
                 var $li = $('li[data-id="' + layer.options.id + '"]', self.element);
                 self._resetNodeSelected($li, layer.options);
                 self._resetNodeInfo($li, layer.options);
                 self._resetNodeVisible($li, layer);
-                if(layer.children) {
-                    for(var i = 0; i < layer.children.length; i++) {
+                if (layer.children) {
+                    for (var i = 0; i < layer.children.length; i++) {
                         resetSourceAtTree(layer.children[i], layer);
                     }
                 }
@@ -455,91 +525,91 @@
             ;
             resetSourceAtTree(source.configuration.children[0], null);
         },
-        _changeChildren: function(changed){
-            if(changed.children) {
-                for(var layerId in changed.children) {
+        _changeChildren: function(changed) {
+            if (changed.children) {
+                for (var layerId in changed.children) {
                     var $li = $('li[data-id="' + layerId + '"]', this.element);
-                    if($li.length !== 0) {
-                        if(changed.children[layerId].options) {
+                    if ($li.length !== 0) {
+                        if (changed.children[layerId].options) {
                             this._resetNodeSelected($li, changed.children[layerId].options);
                             this._resetNodeInfo($li, changed.children[layerId].options);
-                            if(changed.children[layerId].options.state) {
+                            if (changed.children[layerId].options.state) {
                                 this._resetNodeVisible($li, changed.children[layerId].options);
                             }
-                        } else if(changed.children[layerId].state) {
+                        } else if (changed.children[layerId].state) {
                             this._resetNodeOutOfScale($li, changed.children[layerId]);
                         }
                     }
                 }
             }
         },
-        _removeChild: function(changed){
+        _removeChild: function(changed) {
             var self = this;
-            if(changed && changed.sourceIdx && changed.childRemoved) {
+            if (changed && changed.sourceIdx && changed.childRemoved) {
                 var source = this.model.getSource(changed.sourceIdx);
                 $('ul.layers:first li[data-id="' + changed.childRemoved.layer.options.id + '"]', self.element)
-                        .remove();
+                    .remove();
             }
         },
-        _onSourceRemoved: function(event, removed){
-            if(removed && removed.source && removed.source.id) {
+        _onSourceRemoved: function(event, removed) {
+            if (removed && removed.source && removed.source.id) {
                 $('ul.layers:first li[data-sourceid="' + removed.source.id + '"]', this.element).remove();
                 this._setSourcesCount();
             }
         },
-        _onSourceLoadStart: function(event, options){
-            if(options.source && this.sourceAtTree[options.source.id ]) {
+        _onSourceLoadStart: function(event, options) {
+            if (options.source && this.sourceAtTree[options.source.id ]) {
                 this.loadStarted[options.source.id ] = true;
                 var source_li = $('li[data-sourceid="' + options.source.id + '"][data-type="root"]', this.element);
-                if(options.source.configuration.children[0].options.treeOptions.selected && !source_li.hasClass(
-                        'invisible')) {
+                if (options.source.configuration.children[0].options.treeOptions.selected && !source_li.hasClass(
+                    'invisible')) {
                     source_li.attr('data-state', 'loading').find('span.layer-state:first').attr("title",
-                            source_li.attr('data-title'));
+                        source_li.attr('data-title'));
                 }
             }
         },
-        _onSourceLoadEnd: function(event, option){
-            if(option.source && this.sourceAtTree[option.source.id ] && this.loadStarted[option.source.id]) {
+        _onSourceLoadEnd: function(event, option) {
+            if (option.source && this.sourceAtTree[option.source.id ] && this.loadStarted[option.source.id]) {
                 this.loadStarted[option.source.id] = false;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
                 source_li.attr('data-state', '');
                 this._resetSourceAtTree(option.source);
             }
         },
-        _onSourceLoadError: function(event, option){
-            if(option.source && this.sourceAtTree[option.source.id ] && this.loadStarted[option.source.id]) {
+        _onSourceLoadError: function(event, option) {
+            if (option.source && this.sourceAtTree[option.source.id ] && this.loadStarted[option.source.id]) {
                 this.loadStarted[option.source.id] = false;
                 var source_li = $('li[data-sourceid="' + option.source.id + '"][data-type="root"]', this.element);
                 source_li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
-                        option.error.details);
+                    option.error.details);
             }
         },
-        _subStringText: function(text){
-            if(text.length <= this.options.titlemaxlength) {
+        _subStringText: function(text) {
+            if (text.length <= this.options.titlemaxlength) {
                 return text;
             } else {
-                for(var i = this.options.titlemaxlength; i > 0; i--) {
-                    if(text[i] === " ") {
+                for (var i = this.options.titlemaxlength; i > 0; i--) {
+                    if (text[i] === " ") {
                         text = text.substring(0, i) + "...";
                         break;
                     }
                 }
-                if(text.length < 2 || text.length > this.options.titlemaxlength + 3)
+                if (text.length < 2 || text.length > this.options.titlemaxlength + 3)
                     return text.substring(0, this.options.titlemaxlength) + "...";
                 else
                     return text;
             }
         },
-        _getNodeType: function(node, isroot){
-            if(isroot) {
+        _getNodeType: function(node, isroot) {
+            if (isroot) {
                 return this.consts.root;
-            } else if(node.children) {
+            } else if (node.children) {
                 return this.consts.group;
             } else {
                 return this.consts.simple;
             }
         },
-        _getNodeProporties: function(nodeConfig){
+        _getNodeProporties: function(nodeConfig) {
             var conf = {
                 selected: nodeConfig.options.treeOptions.selected,
                 selectable: nodeConfig.options.treeOptions.allow.selected,
@@ -547,7 +617,7 @@
                 infoable: nodeConfig.options.treeOptions.allow.info,
                 reorderable: nodeConfig.options.treeOptions.allow.reorder
             };
-            if(nodeConfig.children) {
+            if (nodeConfig.children) {
                 conf["toggle"] = nodeConfig.options.treeOptions.toggle;
                 conf["toggleable"] = nodeConfig.options.treeOptions.allow.toggle;
             } else {
@@ -555,17 +625,17 @@
                 conf["toggleable"] = null;
             }
 
-            if(nodeConfig.state.outOfScale) {
+            if (nodeConfig.state.outOfScale) {
                 conf["visibility"] = {
                     state: "invisible",
                     tooltip: this.transConst.outOfScale
                 };
-            } else if(nodeConfig.state.outOfBounds) {
+            } else if (nodeConfig.state.outOfBounds) {
                 conf["visibility"] = {
                     state: "invisible",
                     tooltip: this.transConst.outOfBounds
                 };
-            } else if(!nodeConfig.state.visibility) {
+            } else if (!nodeConfig.state.visibility) {
                 conf["visibility"] = {
                     state: "invisible",
                     tooltip: this.transConst.parentinvisible
@@ -578,12 +648,12 @@
             }
             return conf;
         },
-        _toggleContent: function(e){
+        _toggleContent: function(e) {
             var $me = $(e.target);
             var $parent = $me.parents('li:first');
-            if(!$parent.hasClass('toggleable'))
+            if (!$parent.hasClass('toggleable'))
                 return false;
-            if($me.hasClass("iconFolderActive")) {
+            if ($me.hasClass("iconFolderActive")) {
                 $me.removeClass("iconFolderActive");
                 $parent.removeClass("showLeaves");
             } else {
@@ -591,94 +661,149 @@
                 $parent.addClass("showLeaves");
             }
             var li = $me.parents('li:first[data-sourceid]');
-            if(li.length > 0) {
-                this._resetSourceAtTree(this.model.getSource({id: li.attr('data-sourceid')}));
+            if (li.length > 0) {
+                this._resetSourceAtTree(this.model.getSource({
+                    id: li.attr(
+                        'data-sourceid')
+                }));
             }
             return false;
         },
-        _toggleSelected: function(e){
+        _toggleSelected: function(e) {
             var $li = $(e.target).parents('li:first');
-            if($li.attr('data-type') === this.consts.theme) {
+            if ($li.attr('data-type') === this.consts.theme) {
                 var chk_selected = $('input[name="selected"]:first', $li);
-                if(chk_selected.prop('checked')) {
+                if (chk_selected.prop('checked')) {
                     var self = this;
-                    $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item){
+                    $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item) {
                         var $item = $(item);
-                        var options = {layers: {}};
-                        $('li', $item).each(function(idx_, item_){
+                        var options = {
+                            layers: {}
+                        };
+                        $('li', $item).each(function(idx_, item_) {
                             var $item_ = $(item_);
-                            options.layers[$item_.attr('data-id')] = {options: {treeOptions: {selected: true}}};
+                            options.layers[$item_.attr('data-id')] = {
+                                options: {
+                                    treeOptions: {
+                                        selected: true
+                                    }
+                                }
+                            };
                         });
-                        self.model.changeLayerState({id: $item.attr('data-sourceid')}, options, false, true);
+                        self.model.changeLayerState({
+                            id: $item.attr('data-sourceid')
+                        },
+                        options, false, true);
                     });
                 }
             } else {
-                var tochange = {sourceIdx: {id: $li.attr('data-sourceid')}, options: {}};
-                if($li.attr('data-type') === this.consts.root) {
-                    tochange.options = {configuration: {options: {visibility: $(e.target).is(':checked')}}};
+                var tochange = {
+                    sourceIdx: {
+                        id: $li.attr('data-sourceid')
+                    },
+                    options: {}
+                };
+                if ($li.attr('data-type') === this.consts.root) {
+                    tochange.options = {
+                        configuration: {
+                            options: {
+                                visibility: $(e.target).is(':checked')
+                            }
+                        }
+                    };
                 } else {
-                    tochange.options = {children: {}};
-                    tochange.options.children[$li.attr('data-id')] = {options: {treeOptions: {selected: $(e.target).is(
-                                        ':checked')}}};
+                    tochange.options = {
+                        children: {}
+                    };
+                    tochange.options.children[$li.attr('data-id')] = {
+                        options: {
+                            treeOptions: {
+                                selected: $(e.target).is(':checked')
+                            }
+                        }
+                    };
                 }
                 tochange.options['type'] = 'selected';
-                this.model.changeSource({change: tochange});
+                this.model.changeSource({
+                    change: tochange
+                });
             }
             return false;
         },
-        _toggleInfo: function(e){
+        _toggleInfo: function(e) {
             var li = $(e.target).parents('li:first');
-            var tochange = {sourceIdx: {id: li.attr('data-sourceid')}, options: {children: {}, type: 'info'}};
-            tochange.options.children[li.attr('data-id')] = {options: {treeOptions: {info: $(e.target).is(':checked')}}
+            var tochange = {
+                sourceIdx: {
+                    id: li.attr(
+                        'data-sourceid')
+                },
+                options: {
+                    children: {},
+                    type: 'info'
+                }
             };
-            this.model.changeSource({change: tochange});
+            tochange.options.children[li.attr('data-id')] = {
+                options: {
+                    treeOptions: {
+                        info: $(
+                            e.target).
+                            is(
+                                ':checked')
+                    }
+                }
+            };
+            this.model.changeSource({
+                change: tochange
+            });
         },
         currentMenu: null,
-        closeMenu: function(menu){
+        closeMenu: function(menu) {
             //menu.find('.layer-zoom').off('click');
             //menu.find('.layer-metadata').off('click');
             menu.off('click').remove();
             return false;
         },
-        _toggleMenu: function(e){
+        _toggleMenu: function(e) {
             var self = this;
-            function createMenu($element, sourceId, layerId){
+            function createMenu($element, sourceId, layerId) {
                 console.log(self.menuTemplate.clone().html());
-                var source = self.model.findSource({id: sourceId})[0];
+                var source = self.model.findSource({
+                    id: sourceId
+                })[0];
                 var menu = $(self.menuTemplate.clone().attr("data-menuLayerId", layerId).attr("data-menuSourceId",
-                        sourceId));
+                    sourceId));
                 var exitButton = menu.find('.exit-button');
                 var previousMenu = self.currentMenu;
 
-                if(self.currentMenu == menu) {
+                if (self.currentMenu == menu) {
                     return;
                 }
 
                 self.currentMenu = menu;
 
-                if(previousMenu) {
+                if (previousMenu) {
                     self.closeMenu(previousMenu);
                 }
 
-                exitButton.on('click', function(e){
+                exitButton.on('click', function(e) {
                     self.closeMenu(menu);
                 });
 
                 var removeButton = menu.find('.layer-remove-btn');
                 removeButton.on('click', $.proxy(self._removeSource, self));
 
-                if($element.parents('li:first').attr('data-type') !== self.consts.root) {
+                if ($element.parents('li:first').attr('data-type') !== self.consts.root) {
                     menu.find('#layer-opacity').remove();
                     menu.find('#layer-opacity-title').remove();
                 }
 
                 menu.removeClass('hidden');
                 $element.append(menu);
-                $(menu).on('mousedown mousemove', function(e){
+                $(menu).on('mousedown mousemove', function(e) {
                     e.stopPropagation();
                 });
 
-                if($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0) {
+                if ($.inArray("opacity", self.options.menu) !== -1 && menu.find('#layer-opacity').length > 0) {
                     $('.layer-opacity-handle').attr('unselectable', 'on');
                     new Dragdealer('layer-opacity', {
                         x: source.configuration.options.opacity,
@@ -687,64 +812,75 @@
                         speed: 1,
                         steps: 100,
                         handleClass: "layer-opacity-handle",
-                        animationCallback: function(x, y){
+                        animationCallback: function(x, y) {
                             var percentage = Math.round(x * 100);
                             $("#layer-opacity").find(".layer-opacity-handle").text(percentage);
-                            self._setOpacity(self.model.findSource({id: sourceId})[0], percentage / 100.0);
+                            self._setOpacity(self.model.findSource({
+                                id: sourceId
+                            })[0],
+                                percentage / 100.0);
                         }
                     });
                 }
-                if($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0) {
-                    if(self.model.getLayerExtents({sourceId: sourceId, layerId: layerId})) {
+                if ($.inArray("zoomtolayer", self.options.menu) !== -1 && menu.find('.layer-zoom').length > 0) {
+                    if (self.model.getLayerExtents({
+                        sourceId: sourceId,
+                        layerId: layerId
+                    })) {
                         $('.layer-zoom', menu).removeClass('inactive').on('click', $.proxy(self._zoomToLayer, self));
                     }
                 }
 
-                if($.inArray("metadata", self.options.menu) === -1 || menu.find(
-                        '.layer-metadata').length === 0 || isNaN(parseInt(source.origId))) {
+                if ($.inArray("metadata", self.options.menu) === -1 || menu.find(
+                    '.layer-metadata').length === 0 || isNaN(parseInt(source.origId))) {
                     $('.layer-metadata', menu).remove();
                 } else {
-                    var layer = self.model.findLayer({id: sourceId}, {id: layerId});
-                    if(layer) {
+                    var layer = self.model.findLayer({
+                        id: sourceId
+                    },
+                    {
+                        id: layerId
+                    });
+                    if (layer) {
                         $('.layer-metadata', menu).removeClass('inactive').on('click', $.proxy(self._showMetadata,
-                                self));
+                            self));
                     }
                 }
                 var dimensions = source.configuration.options.dimensions ? source.configuration.options.dimensions : [
                 ];
-                if($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'
-                        && source.configuration.children[0].options.id === layerId && dimensions.length > 0) {
+                if ($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'
+                    && source.configuration.children[0].options.id === layerId && dimensions.length > 0) {
                     var lastItem = $('.layer-dimension-checkbox', menu).prev();
                     var dimCheckbox = $('.layer-dimension-checkbox', menu).remove();
                     var dimTitle = $('.layer-dimension-title', menu).remove();
                     var dimBar = $('.layer-dimension-bar', menu).remove();
                     var dimTextfield = $('.layer-dimension-textfield', menu).remove();
-                    $.each(dimensions, function(idx, item){
+                    $.each(dimensions, function(idx, item) {
                         var chkbox = dimCheckbox.clone();
                         var title = dimTitle.clone();
                         lastItem.after(chkbox);
                         var inpchkbox = chkbox.find('.checkbox');
                         inpchkbox.data('dimension', item);
-                        inpchkbox.on('change', function(e){
+                        inpchkbox.on('change', function(e) {
                             self._callDimension(source, $(e.target));
                         });
                         initCheckbox.call(inpchkbox);
                         title.attr('title', title.attr('title') + ' ' + item.name);
                         title.attr('id', title.attr('id') + item.name);
                         chkbox.after(title);
-                        if(item.type === 'single') {
+                        if (item.type === 'single') {
                             var textf = dimTextfield.clone();
                             title.after(textf);
                             textf.val(item.extent);
                             inpchkbox.attr('data-value', item.extent);
                             lastItem = textf;
-                        } else if(item.type === 'multiple' || item.type === 'interval') {
+                        } else if (item.type === 'multiple' || item.type === 'interval') {
                             var bar = dimBar.clone();
                             title.after(bar);
                             bar.removeClass('layer-dimension-bar');
                             bar.attr('id', bar.attr('id') + item.name);
                             bar.find('.layer-dimension-handle').removeClass('layer-dimension-handle').addClass(
-                                    'layer-dimension-' + item.name + '-handle').attr('unselectable', 'on');
+                                'layer-dimension-' + item.name + '-handle').attr('unselectable', 'on');
                             lastItem = bar;
                             var dimHandler = Mapbender.Dimension(item);
                             var label = $('#layer-dimension-value-' + item.name, menu);
@@ -755,10 +891,10 @@
                                 speed: 1,
                                 steps: dimHandler.getStepsNum(),
                                 handleClass: 'layer-dimension-' + item.name + '-handle',
-                                callback: function(x, y){
+                                callback: function(x, y) {
                                     self._callDimension(source, inpchkbox);
                                 },
-                                animationCallback: function(x, y){
+                                animationCallback: function(x, y) {
                                     var value = dimHandler.valueFromPart(x);
                                     label.text(value);
                                     inpchkbox.attr('data-value', value);
@@ -780,10 +916,10 @@
             var $btnMenu = $(e.target);
             var currentLayerId = $btnMenu.parents('li:first').attr("data-id");
             var currentSourceId = $btnMenu.parents('li[data-sourceid]:first').attr("data-sourceid");
-            if($('#layer-menu').length !== 0) {
+            if ($('#layer-menu').length !== 0) {
                 var layerIdMenu = $('#layer-menu').attr("data-menuLayerId");
                 //removeMenu($('#layer-menu'));
-                if(layerIdMenu !== currentLayerId) {
+                if (layerIdMenu !== currentLayerId) {
                     createMenu($btnMenu, currentSourceId, currentLayerId);
                 }
 
@@ -792,80 +928,124 @@
             }
             return false;
         },
-        _callDimension: function(source, chkbox){
+        _callDimension: function(source, chkbox) {
             var dimension = chkbox.data('dimension');
             var params = {};
             params[dimension['__name']] = chkbox.attr('data-value');
-            if(chkbox.is(':checked')) {
-                this.model.resetSourceUrl(source, {'add': params}, true);
-            } else if(params[dimension['__name']]) {
-                this.model.resetSourceUrl(source, {'remove': params}, true);
+            if (chkbox.is(':checked')) {
+                this.model.resetSourceUrl(source, {
+                    'add': params
+                },
+                true);
+            } else if (params[dimension['__name']]) {
+                this.model.resetSourceUrl(source, {
+                    'remove': params
+                },
+                true);
             }
             return true;
         },
-        _setOpacity: function(source, opacity){
+        _setOpacity: function(source, opacity) {
             this.model.setOpacity(source, opacity);
         },
-        _removeSource: function(e){
+        _removeSource: function(e) {
             var layer = $(e.currentTarget).closest("li").data();
             var types = this.consts;
             var model = this.model;
 
-            if(layer.sourceid && layer.type) {
-                switch(layer.type) {
+            if (layer.sourceid && layer.type) {
+                switch (layer.type) {
                     case types.root:
-                        model.removeSource({remove: {sourceIdx: {id: layer.sourceid}}});
+                        model.removeSource({
+                            remove: {
+                                sourceIdx: {
+                                    id: layer.sourceid
+                                }
+                            }
+                        });
                         break;
                     case types.group:
                     case types.simple:
-                        model.changeSource({change: {layerRemove: {sourceIdx: {id: layer.sourceid}, layer: {options: {
-                                            id: layer.id}}}}});
+                        model.changeSource({
+                            change: {
+                                layerRemove: {
+                                    sourceIdx: {
+                                        id: layer.sourceid
+                                    },
+                                    layer: {
+                                        options: {
+                                            id: layer.id
+                                        }
+                                    }
+                                }
+                            }
+                        });
                         break;
                 }
             }
 
             this._setSourcesCount();
         },
-        _showLegend: function(elm){
+        _showLegend: function(elm) {
         },
-        _exportKml: function(elm){
+        _exportKml: function(elm) {
         },
-        _zoomToLayer: function(e){
+        _zoomToLayer: function(e) {
             var options = {
                 sourceId: $(e.target).parents('div.layer-menu:first').attr("data-menuSourceId"),
                 layerId: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId")
             };
             this.model.zoomToLayer(options);
         },
-        _showMetadata: function(e){
+        _showMetadata: function(e) {
             Mapbender.Metadata.call(
-                    this.options.target,
-                    {id: $(e.target).parents('div.layer-menu:first').attr("data-menuSourceId")},
-            {id: $(e.target).parents('div.layer-menu:first').attr("data-menuLayerId")}
+                this.options.target,
+                {
+                    id: $(
+                        e.target).
+                        parents(
+                            'div.layer-menu:first').
+                        attr(
+                            "data-menuSourceId")
+                },
+            {
+                id: $(
+                    e.target).
+                    parents(
+                        'div.layer-menu:first').
+                    attr(
+                        "data-menuLayerId")
+            }
             );
         },
         /**
          * Sets a count of sources from layer tree to counter element
          */
-        _setSourcesCount: function(){
+        _setSourcesCount: function() {
             var countObj = {};
-            $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm){
+            $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm) {
                 countObj[$(elm).attr('data-sourceid')] = true;
             });
             var num = 0;
-            for(s in countObj)
+            for (s in countObj)
                 num++;
             $(this.element).find('#counter').text(num);
         },
         /**
          * Removes all sources from layertree.
          */
-        _removeAllSources: function(e){
+        _removeAllSources: function(e) {
             var self = this;
-            if(Mapbender.confirm(Mapbender.trans("mb.core.layertree.confirm.allremove"))) {
-                $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm){
+            if (Mapbender.confirm(Mapbender.trans("mb.core.layertree.confirm.allremove"))) {
+                $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm) {
                     var sourceId = $(elm).attr('data-sourceid');
-                    self.model.removeSource({remove: {sourceIdx: {id: sourceId}}});
+                    self.model.removeSource({
+                        remove: {
+                            sourceIdx: {
+                                id: sourceId
+                            }
+                        }
+                    });
                 });
             }
             this._setSourcesCount();
@@ -873,17 +1053,17 @@
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(callback){
+        defaultAction: function(callback) {
             this.open(callback);
         },
         /**
          * Opens a dialog with a layertree (if options.type == 'dialog')
          */
-        open: function(callback){
+        open: function(callback) {
             this.callback = callback ? callback : null;
-            if(this.options.type === 'dialog') {
+            if (this.options.type === 'dialog') {
                 var self = this;
-                if(!this.popup || !this.popup.$element) {
+                if (!this.popup || !this.popup.$element) {
                     this._createTree();
                     this.popup = new Mapbender.Popup2({
                         title: self.element.attr('data-title'),
@@ -901,7 +1081,7 @@
                             'ok': {
                                 label: Mapbender.trans("mb.core.layertree.popup.btn.ok"),
                                 cssClass: 'button right',
-                                callback: function(){
+                                callback: function() {
                                     self.close();
                                 }
                             }
@@ -918,14 +1098,14 @@
         /**
          * closes a dialog with a layertree (if options.type == 'dialog')
          */
-        close: function(){
-            if(this.options.type === 'dialog') {
-                if(this.popup) {
+        close: function() {
+            if (this.options.type === 'dialog') {
+                if (this.popup) {
                     $("ul.layers:first", this.element).empty();
                     $(this.element).hide().appendTo("body");
                     this._unSortable();
                     this.created = false;
-                    if(this.popup.$element) {
+                    if (this.popup.$element) {
                         this.popup.destroy();
                     }
                     this.popup = null;
@@ -936,8 +1116,8 @@
         /**
          *
          */
-        ready: function(callback){
-            if(this.readyState === true) {
+        ready: function(callback) {
+            if (this.readyState === true) {
                 callback();
             } else {
                 this.readyCallbacks.push(callback);
@@ -946,8 +1126,8 @@
         /**
          *
          */
-        _ready: function(){
-            for(callback in this.readyCallbacks) {
+        _ready: function() {
+            for (callback in this.readyCallbacks) {
                 callback();
                 delete(this.readyCallbacks[callback]);
             }
