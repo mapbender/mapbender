@@ -130,7 +130,6 @@
             var me = $(this.element),
                 map = $('#' + this.options.target).data('mapbenderMbMap'),
                 a = $(event.currentTarget);
-            var position = a.index();
             this._hideSources();
             me.find('.basesourcesetswitch,.basesourcegroup').not(a).attr('data-state', '');
             a.attr('data-state', 'active');
@@ -140,29 +139,9 @@
             if (a.hasClass('notgroup')) {
                 $('.basesourcesubswitcher', me).addClass('hidden');
             }
-
-            //TradeCpr-function
-            var i = 0;
-            var grHref = [],
-                grTitle = [];
-
-            for (gridx in this.options.groups) {
-
-                var gr = this.options.groups[gridx];
-                grHref[i] = gr.cprUrl;
-                grTitle[i] = gr.cprTitle;
-                i++;
-
-            }
-
-            var optionsBs = {
-                name: grTitle,
-                href: grHref,
-                position: position
-            };
-            this._trigger('groupactivate', null, optionsBs);
+            this._trigger('groupactivate', null);
             this._showActive();
-
+            
             return false;
         },
         /**
