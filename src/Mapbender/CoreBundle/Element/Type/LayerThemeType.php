@@ -2,11 +2,8 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
-use Mapbender\CoreBundle\Element\DataTransformer\LayertreeThemeTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-//use Symfony\Component\Form\FormView;
-//use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class LayerThemeType extends AbstractType
@@ -25,8 +22,10 @@ class LayerThemeType extends AbstractType
         $resolver->setDefaults(array(
             'id' => null,
             'title' => '',
+            'useTheme' => true,
             'opened' => true,
-            'activate' => false,
+            'sourceVisibility' => false,
+            'allSelected' => false,
         ));
     }
 
@@ -35,19 +34,12 @@ class LayerThemeType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
         $builder->add('id', 'hidden', array('required' => true, 'property_path' => '[id]'))
-                ->add('title', 'hidden', array('required' => false, 'property_path' => '[title]'))
-                ->add('opened', 'checkbox',
-                      array(
-                    'required' => false, 'property_path' => '[opened]',
-//                    'attr' => array('data-name' => 'opened')
-                ))
-                ->add('activate', 'checkbox',
-                      array(
-                    'required' => false, 'property_path' => '[activate]',
-//                    'attr' => array('data-name' => 'activate')
-        ));
+            ->add('title', 'hidden', array('required' => false, 'property_path' => '[title]'))
+            ->add('useTheme', 'checkbox', array('required' => false, 'property_path' => '[useTheme]'))
+            ->add('opened', 'checkbox', array('required' => false, 'property_path' => '[opened]'))
+            ->add('sourceVisibility', 'checkbox', array('required' => false, 'property_path' => '[sourceVisibility]'))
+            ->add('allSelected', 'checkbox', array('required' => false, 'property_path' => '[allSelected]'));
     }
 
 }
