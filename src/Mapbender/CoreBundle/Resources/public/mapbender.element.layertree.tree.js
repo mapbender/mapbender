@@ -93,7 +93,6 @@
             $(document).bind('mbmapsourceadded', $.proxy(self._onSourceAdded, self));
             $(document).bind('mbmapsourcechanged', $.proxy(self._onSourceChanged, self));
             $(document).bind('mbmapsourceremoved', $.proxy(self._onSourceRemoved, self));
-
             this.created = true;
         },
         _addNode: function($toAdd, source) {
@@ -126,19 +125,23 @@
         },
         _createEvents: function() {
             var self = this;
+            this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.on('click', '.iconFolder', $.proxy(self._toggleContent, self));
             this.element.on('click', '#delete-all', $.proxy(self._removeAllSources, self));
             this.element.on('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
+            this.element.on('click', '.selectAll', $.proxy(self._selectAll, self));
         },
         _removeEvents: function() {
             var self = this;
+            this.element.off('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
             this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             this.element.off('click', '.iconFolder', $.proxy(self._toggleContent, self));
             this.element.off('click', '#delete-all', $.proxy(self._removeAllSources, self));
             this.element.off('click', '.layer-menu-btn', $.proxy(self._toggleMenu, self));
+            this.element.off('click', '.selectAll', $.proxy(self._selectAll, self));
 
         },
         _resetEvents: function() {
@@ -147,8 +150,10 @@
         },
         _resetCheckboxes: function() {
             var self = this;
+            this.element.off('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
             this.element.off('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.off('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
+            this.element.on('change', 'input[name="sourceVisibility"]', $.proxy(self._toggleSourceVisibility, self));
             this.element.on('change', 'input[name="selected"]', $.proxy(self._toggleSelected, self));
             this.element.on('change', 'input[name="info"]', $.proxy(self._toggleInfo, self));
             if (initCheckbox) {
@@ -300,17 +305,12 @@
             $('span.layer-spinner:first', $li).remove();
             $('span.layer-state:first', $li).remove();
             $('div.featureInfoWrapper', $li).remove();
-
-            var sourceVisibililty = $('div.checkWrapper', $li);
-            if (theme.sourceVisibility) {
-                var allSelected = sourceVisibililty.clone();
-                $('input', allSelected).attr('name', 'allSelected');
-                sourceVisibililty.after(allSelected);
+            $('div.selectedWrapper', $li).remove();
+            if (!theme.allSelected) {
+                $('div.selectAll', $li).remove();
             }
             if (!theme.sourceVisibility) {
-                sourceVisibililty.remove();
-            } else {
-                $('input', sourceVisibililty).attr('name', 'sourceVisibility');
+                $('div.sourceVisibilityWrapper', $li).remove();
             }
             $('.layer-menu-btn', $li).remove();
             return $li;
@@ -321,6 +321,8 @@
             $li.attr('data-id', sourceEl.options.id);
             $li.attr('data-sourceid', source.id);
             var nodeType = this._getNodeType(sourceEl, isroot);
+            $('div.selectAll', $li).remove();
+            $('div.sourceVisibilityWrapper', $li).remove();
             $li.attr('data-type', nodeType).attr('data-title', sourceEl.options.title);
             if (nodeType === this.consts.root || nodeType === this.consts.group) {
                 $('.featureInfoWrapper:first', $li).remove();
@@ -449,8 +451,6 @@
             if (!this.created || !options.added)
                 return;
             var added = options.added;
-//            var before = added.after;
-//            var after = added.before;
             if (added.source.configuration.baseSource && !this.options.showBaseSource) {
                 return;
             }
@@ -547,8 +547,8 @@
             var self = this;
             if (changed && changed.sourceIdx && changed.childRemoved) {
                 var source = this.model.getSource(changed.sourceIdx);
-                $('ul.layers:first li[data-id="' + changed.childRemoved.layer.options.id + '"]', self.element)
-                    .remove();
+                $('ul.layers:first li[data-id="' + changed.childRemoved.layer.options.id + '"]', self.element).
+                    remove();
             }
         },
         _onSourceRemoved: function(event, removed) {
@@ -669,65 +669,103 @@
             }
             return false;
         },
+        _toggleSourceVisibility: function(e) {
+            var self = this;
+            var $sourceVsbl = $(e.target);
+            var $li = $sourceVsbl.parents('li:first');
+            $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item) {
+                var $item = $(item);
+                var source = {
+                    id: $item.data('sourceid')
+                };
+                var options = {
+                    layers: {}
+                };
+                var value = {
+                    options: {
+                        treeOptions: {
+                            selected: true
+                        }
+                    }
+                };
+                var chk_selected = $('input[name="selected"]:first', $item);
+                if ($sourceVsbl.prop('checked')) {
+                    $item.data('rootstate', chk_selected.prop('checked'));
+                    if (!chk_selected.prop('checked')) {
+                        options.layers[$item.attr('data-id')] = value;
+                        self.model.changeLayerState(source, options, false, true);
+                    }
+                } else {
+                    if (!$item.data('rootstate') && chk_selected.prop('checked')) {
+                        value.options.treeOptions.selected = false;
+                        options.layers[$item.attr('data-id')] = value;
+                        self.model.changeLayerState(source, options, false, true);
+                    }
+                }
+            });
+            return false;
+        },
+        _selectAll: function(e) {
+            var self = this;
+            var $sourceVsbl = $(e.target);
+            var $li = $sourceVsbl.parents('li:first');
+            $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, srcLi) {
+                var $srcLi = $(srcLi);
+                var source = {
+                    id: $srcLi.data('sourceid')
+                };
+                var options = {
+                    layers: {}
+                };
+                var value = {
+                    options: {
+                        treeOptions: {
+                            selected: true
+                        }
+                    }
+                };
+                $('li', $srcLi).each(function(idx, layerLi) {
+                    var $layerLi = $(layerLi);
+                    if (!$('input[name="selected"]:first', $layerLi).prop('checked')) {
+                        options.layers[$layerLi.attr('data-id')] = value;
+                    }
+                });
+                self.model.changeLayerState(source, options, false, true);
+            });
+            return false;
+        },
         _toggleSelected: function(e) {
             var $li = $(e.target).parents('li:first');
-            if ($li.attr('data-type') === this.consts.theme) {
-                var chk_selected = $('input[name="selected"]:first', $li);
-                if (chk_selected.prop('checked')) {
-                    var self = this;
-                    $('li[data-type="' + this.consts.root + '"]', $li).each(function(idx, item) {
-                        var $item = $(item);
-                        var options = {
-                            layers: {}
-                        };
-                        $('li', $item).each(function(idx_, item_) {
-                            var $item_ = $(item_);
-                            options.layers[$item_.attr('data-id')] = {
-                                options: {
-                                    treeOptions: {
-                                        selected: true
-                                    }
-                                }
-                            };
-                        });
-                        self.model.changeLayerState({
-                            id: $item.attr('data-sourceid')
-                        },
-                        options, false, true);
-                    });
-                }
-            } else {
-                var tochange = {
-                    sourceIdx: {
-                        id: $li.attr('data-sourceid')
-                    },
-                    options: {}
-                };
-                if ($li.attr('data-type') === this.consts.root) {
-                    tochange.options = {
-                        configuration: {
-                            options: {
-                                visibility: $(e.target).is(':checked')
-                            }
-                        }
-                    };
-                } else {
-                    tochange.options = {
-                        children: {}
-                    };
-                    tochange.options.children[$li.attr('data-id')] = {
+            var tochange = {
+                sourceIdx: {
+                    id: $li.attr('data-sourceid')
+                },
+                options: {}
+            };
+            if ($li.attr('data-type') === this.consts.root) {
+                tochange.options = {
+                    configuration: {
                         options: {
-                            treeOptions: {
-                                selected: $(e.target).is(':checked')
-                            }
+                            visibility: $(e.target).is(':checked')
                         }
-                    };
-                }
-                tochange.options['type'] = 'selected';
-                this.model.changeSource({
-                    change: tochange
-                });
+                    }
+                };
+            } else {
+                tochange.options = {
+                    children: {}
+                };
+                tochange.options.children[$li.attr('data-id')] = {
+                    options: {
+                        treeOptions: {
+                            selected: $(e.target).is(':checked')
+                        }
+                    }
+                };
             }
+            tochange.options['type'] = 'selected';
+            this.model.changeSource({
+                change: tochange
+            });
             return false;
         },
         _toggleInfo: function(e) {
@@ -775,7 +813,7 @@
                 var exitButton = menu.find('.exit-button');
                 var previousMenu = self.currentMenu;
 
-                if (self.currentMenu == menu) {
+                if (self.currentMenu === menu) {
                     return;
                 }
 
@@ -817,8 +855,7 @@
                             $("#layer-opacity").find(".layer-opacity-handle").text(percentage);
                             self._setOpacity(self.model.findSource({
                                 id: sourceId
-                            })[0],
-                                percentage / 100.0);
+                            })[0], percentage / 100.0);
                         }
                     });
                 }
@@ -846,16 +883,15 @@
                             self));
                     }
                 }
-                var dimensions = source.configuration.options.dimensions ? source.configuration.options.dimensions : [
-                ];
+                var dims = source.configuration.options.dimensions ? source.configuration.options.dimensions : [];
                 if ($.inArray("dimension", self.options.menu) !== -1 && source.type === 'wms'
-                    && source.configuration.children[0].options.id === layerId && dimensions.length > 0) {
+                    && source.configuration.children[0].options.id === layerId && dims.length > 0) {
                     var lastItem = $('.layer-dimension-checkbox', menu).prev();
                     var dimCheckbox = $('.layer-dimension-checkbox', menu).remove();
                     var dimTitle = $('.layer-dimension-title', menu).remove();
                     var dimBar = $('.layer-dimension-bar', menu).remove();
                     var dimTextfield = $('.layer-dimension-textfield', menu).remove();
-                    $.each(dimensions, function(idx, item) {
+                    $.each(dims, function(idx, item) {
                         var chkbox = dimCheckbox.clone();
                         var title = dimTitle.clone();
                         lastItem.after(chkbox);
@@ -879,8 +915,8 @@
                             title.after(bar);
                             bar.removeClass('layer-dimension-bar');
                             bar.attr('id', bar.attr('id') + item.name);
-                            bar.find('.layer-dimension-handle').removeClass('layer-dimension-handle').addClass(
-                                'layer-dimension-' + item.name + '-handle').attr('unselectable', 'on');
+                            bar.find('.layer-dimension-handle').removeClass('layer-dimension-handle').
+                                addClass('layer-dimension-' + item.name + '-handle').attr('unselectable', 'on');
                             lastItem = bar;
                             var dimHandler = Mapbender.Dimension(item);
                             var label = $('#layer-dimension-value-' + item.name, menu);
@@ -922,7 +958,6 @@
                 if (layerIdMenu !== currentLayerId) {
                     createMenu($btnMenu, currentSourceId, currentLayerId);
                 }
-
             } else {
                 createMenu($btnMenu, currentSourceId, currentLayerId);
             }

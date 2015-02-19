@@ -88,7 +88,14 @@
   .checkWrapper{
     position: relative;
   }
-
+  .checkWrapper.sourceVisibilityWrapper:before{
+    content: "\f10c";
+    font-family: 'FontAwesome';
+  }
+  .checkWrapper.sourceVisibilityWrapper.iconCheckboxActive:before{
+    content: "\f05d" !important;
+    font-family: 'FontAwesome';
+  }
   [data-state="loading"]{
     @include opacity(.7);
     @extend .iconActivity;
