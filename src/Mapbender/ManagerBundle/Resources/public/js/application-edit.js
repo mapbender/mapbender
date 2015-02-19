@@ -146,7 +146,8 @@ $(function() {
                 205: function() {
                     popup.close();
                     window.setTimeout(function() {
-                        window.location.reload();
+                        var now = new Date();
+                        window.location.search = now.getTime();
                     }, 10);
                 }
             }
