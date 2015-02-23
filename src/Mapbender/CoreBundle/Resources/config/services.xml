@@ -75,6 +75,12 @@
                 <argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/compass-mixins/lib</argument>
             </call>
         </service>
+
+        <!-- User management -->
+        <service id="security.context" class="Mapbender\CoreBundle\Component\SecurityContext">
+            <argument type="service" id="security.authentication.manager" />
+            <argument type="service" id="security.access.decision_manager" />
+        </service>
     </services>
 </container>
 
