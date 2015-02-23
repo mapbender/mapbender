@@ -15,8 +15,23 @@
         },
         _setup: function() {
             var self = this;
+
+            //TOMY_setWidth
+            var widthLi = [];
+            var count = $(".mb-element-basesourceswitcher li").size();
+            while (count > 0) {
+                widthLi[count - 1] = $(".mb-element-basesourceswitcher li").eq(count - 1).width()+15;
+                count--;
+            }
+            var largest = Math.max.apply(Math, widthLi) + 15 + "px";
+            $(".mb-element-basesourceswitcher li").css("width", largest);
+
+
+
             $('.basesourcesetswitch', this.element).click($.proxy(self._toggleMapset, self));
+            $('.mb-element-basesourceswitcher').mouseenter($.proxy(self._hoverBaseSourceSwitcher, self));
             $('.basesourcegroup', this.element).click(function(e) {
+
                 var bsswtch = $('.basesourcesubswitcher', $(e.currentTarget));
                 var substate = bsswtch.hasClass('hidden');
                 $('.basesourcesubswitcher', $(self.element)).addClass('hidden');
@@ -24,12 +39,21 @@
                     $('.basesourcesubswitcher', $(this)).removeClass('hidden');
                 } else {
                     $('.basesourcesubswitcher', $(this)).addClass('hidden');
+
                 }
             });
             this._hideSources();
             this._showActive();
             self._trigger('ready');
             this._ready();
+            this.setHeight();
+        },
+        _hoverBaseSourceSwitcher: function() {
+            $('.basesourcesetswitch[data-state=""]').css("display", "block");
+            $('.mb-element-basesourceswitcher').mouseleave(function() {
+                $('.basesourcesetswitch[data-state=""]').css("display", "none");
+            });
+
         },
         getCpr: function() {
             var me = $(this.element);
@@ -126,22 +150,66 @@
             });
 //            this._trigger("", null, eventOptions);
         },
+        setHeight: function() {
+            $('.basesourcesetswitch[data-state="active"]').addClass("iconLegend");
+            var dis = $('.basesourcesetswitch[data-state="active"]').offset().top;
+            var heightLi = $('.basesourcesetswitch[data-state="active"]').height();
+            var size = $('.mb-element-basesourceswitcher li').size();
+            for (var i = 1; i < size; i++) {
+                if ($('.mb-element-basesourceswitcher li').eq(i).attr("data-state") === "") {
+                    $('.mb-element-basesourceswitcher li').eq(i).css("top", dis + 1.5 * heightLi + "px");
+                }
+                if (i === 1) {
+                    var konst = heightLi;
+                }
+                heightLi = heightLi + konst;
+            }
+            heightLi = 0;
+
+
+
+
+        },
         _toggleMapset: function(event) {
+
             var me = $(this.element),
-                map = $('#' + this.options.target).data('mapbenderMbMap'),
                 a = $(event.currentTarget);
             this._hideSources();
+
+            //setHeight
+            var dis = $('.basesourcesetswitch[data-state="active"]').offset().top;
+            var heightLi = $(a).height();
+            var size = $('.basesourcesetswitch').size();
+
             me.find('.basesourcesetswitch,.basesourcegroup').not(a).attr('data-state', '');
             a.attr('data-state', 'active');
             a.parents('.basesourcegroup:first').attr('data-state', 'active').addClass('hidden');
             a.parents('.basesourcesubswitcher:first').addClass('hidden');
+           
+            //setHeight
+             $('.mb-element-basesourceswitcher li').css("top", 0);
+            for (var i = 0; i < size; i++) {
+                if ($('.mb-element-basesourceswitcher li').eq(i).attr("data-state") === "") {
+                    $('.mb-element-basesourceswitcher li').eq(i).css("top", dis + 1.5 * heightLi + "px");
+
+                    if ($(a).height()=== heightLi ) {
+                        var konst = heightLi;
+                    }
+                
+                heightLi = heightLi + konst;
+                }
+            }
+            $('.basesourcesetswitch[data-state="active"]').css("top", 0);
+            $('.basesourcesetswitch[data-state=""]').css("display", "none").removeClass("iconLegend");
+            $('.basesourcesetswitch[data-state="active"]').addClass("iconLegend");
 
             if (a.hasClass('notgroup')) {
                 $('.basesourcesubswitcher', me).addClass('hidden');
             }
             this._trigger('groupactivate', null);
             this._showActive();
-            
+
+
             return false;
         },
         /**
