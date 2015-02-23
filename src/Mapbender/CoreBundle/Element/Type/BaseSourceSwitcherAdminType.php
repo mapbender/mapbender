@@ -85,3 +85,4 @@ class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollec
     }
 
 }
+ 
