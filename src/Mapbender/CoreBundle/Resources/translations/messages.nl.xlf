@@ -946,6 +946,34 @@
         <source>mb.core.layertree.label.dimension</source>
         <target>Dimension</target>
       </trans-unit>
+      <trans-unit id="3973ffff84e82a5b904cca85555b9c21" resname="mb.core.admin.layertree.label.usetheme">
+        <source>mb.core.admin.layertree.label.usetheme</source>
+        <target>Thematic layer</target>
+      </trans-unit>
+      <trans-unit id="2c6f6a4b1fb50d114014cf535b03bda1" resname="mb.core.admin.layertree.label.themes">
+        <source>mb.core.admin.layertree.label.themes</source>
+        <target>Themes</target>
+      </trans-unit>
+      <trans-unit id="db777bdf84282626ab0204dc86f1dfcd" resname="mb.core.admin.layertree.label.theme.opened">
+        <source>mb.core.admin.layertree.label.theme.opened</source>
+        <target>opened</target>
+      </trans-unit>
+      <trans-unit id="636a7d9646b9dd42ac8fda315e57d8f2" resname="mb.core.admin.layertree.label.hidenottoggleable">
+        <source>mb.core.admin.layertree.label.hidenottoggleable</source>
+        <target>Hide not toggleable</target>
+      </trans-unit>
+      <trans-unit id="affc05e9d63b6355f5fa94327aef2372" resname="mb.core.admin.layertree.label.hideselect">
+        <source>mb.core.admin.layertree.label.hideselect</source>
+        <target>Hide visibility by folders</target>
+      </trans-unit>
+      <trans-unit id="8177411950647ca4ef6f115a44eda789" resname="mb.core.admin.layertree.label.hideinfo">
+        <source>mb.core.admin.layertree.label.hideinfo</source>
+        <target>Hide info</target>
+      </trans-unit>
+      <trans-unit id="0a5fe4c7ced865711f3ffcfe5d0e141a" resname="mb.core.admin.layertree.label.theme.activate">
+        <source>mb.core.admin.layertree.label.theme.activate</source>
+        <target>Add activate</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

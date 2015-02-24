@@ -9,7 +9,14 @@
     display:none;
     margin-right:5px;
   }
-
+  .placeholder{
+    display:block;
+    &:before{
+      content: "\f096";
+      font-family: 'FontAwesome';
+      visibility: hidden;
+    }
+  }
   // needed for the feature info icon
   .featureInfoWrapper{
     width:$space;
@@ -17,6 +24,26 @@
     &.iconCheckboxActive{@extend .iconInfoActive}
   }
   .leave.invisible{@include opacity(.7);} //for .serviceContainer too
+  .themeContainer{
+    border-left:dotted 1px black;
+    margin-bottom:1px; // Fix for Firefox
+    // elements with childrens
+    & > .leaveContainer{
+      position: relative;
+      .iconFolder{display:block;}
+      .layer-title{@extend .subTitle;}
+    }
+    .leave{
+      margin-left:20px;
+      position: relative;
+    }
+    .leaveContainer{
+      margin-left:-6px;
+      margin-top:1px; // Fix for Firefox
+    }
+    .layers{display:none;}
+    &.showLeaves > .layers{display:block;}
+  }
   .serviceContainer, .groupContainer{
     border-left:dotted 1px black;
     margin-bottom:1px; // Fix for Firefox
@@ -58,8 +85,17 @@
       }
     }
   }
-  .checkWrapper{position: relative;}
-
+  .checkWrapper{
+    position: relative;
+  }
+  .checkWrapper.sourceVisibilityWrapper:before{
+    content: "\f10c";
+    font-family: 'FontAwesome';
+  }
+  .checkWrapper.sourceVisibilityWrapper.iconCheckboxActive:before{
+    content: "\f05d" !important;
+    font-family: 'FontAwesome';
+  }
   [data-state="loading"]{
     @include opacity(.7);
     @extend .iconActivity;
@@ -67,7 +103,7 @@
       -webkit-animation:spin 1s linear infinite;
       -moz-animation:spin 1s linear infinite;
       animation:spin 1s linear infinite;
-      @include absolute('' $space*2 '' '');
+      @include absolute('' $space '' '');
     }
   }
   [data-state="error"]{
@@ -75,7 +111,7 @@
     .layer-title{color:$errorColor !important;}// if error, overwrite the title color
     &:before{
       color:$errorColor;
-      @include absolute('' $space*2 '' '');
+      @include absolute('' $space '' '');
     }
   }
   >ul{padding-left: 6px;}
@@ -146,7 +182,7 @@ $layer-slider-bar-height: 5px;
       width: 30px;
       height: 16px;
       line-height: 16px;
-      background-color: #6fb536;
+      background-color: $ciColor;
       font-size: 12px;
       text-align: center;
       @include border-radius(4px);

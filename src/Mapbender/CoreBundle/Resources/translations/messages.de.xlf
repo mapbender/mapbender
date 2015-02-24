@@ -802,6 +802,34 @@
         <source>mb.core.layertree.label.dimension</source>
         <target>Dimension</target>
       </trans-unit>
+      <trans-unit id="3973ffff84e82a5b904cca85555b9c21" resname="mb.core.admin.layertree.label.usetheme">
+        <source>mb.core.admin.layertree.label.usetheme</source>
+        <target>Thematischer Layer</target>
+      </trans-unit>
+      <trans-unit id="2c6f6a4b1fb50d114014cf535b03bda1" resname="mb.core.admin.layertree.label.themes">
+        <source>mb.core.admin.layertree.label.themes</source>
+        <target>Themen</target>
+      </trans-unit>
+      <trans-unit id="db777bdf84282626ab0204dc86f1dfcd" resname="mb.core.admin.layertree.label.theme.opened">
+        <source>mb.core.admin.layertree.label.theme.opened</source>
+        <target>Thema geöffnet/geschlossen</target>
+      </trans-unit>
+      <trans-unit id="0a5fe4c7ced865711f3ffcfe5d0e141a" resname="mb.core.admin.layertree.label.theme.activate">
+        <source>mb.core.admin.layertree.label.theme.activate</source>
+        <target>Aktivieren von Layers hinzufügen/entfernen</target>
+      </trans-unit>
+      <trans-unit id="05f6e660c816d83676722100aa7ca0fb" resname="mb.core.admin.layertree.label.hidenottoggleable">
+        <source>mb.core.admin.layertree.label.hidenottoggleable</source>
+        <target>Nicht aufklappbare Ordner ausblenden</target>
+      </trans-unit>
+      <trans-unit id="012324b93835eb976d2a88819cd609ee" resname="mb.core.admin.layertree.label.hideselect">
+        <source>mb.core.admin.layertree.label.hideselect</source>
+        <target>Visibility bei Ordnern asublenden</target>
+      </trans-unit>
+      <trans-unit id="d1368f78e4f1bdc29f696297a211fd1f" resname="mb.core.admin.layertree.label.hideinfo">
+        <source>mb.core.admin.layertree.label.hideinfo</source>
+        <target>Info ausblenden</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,6 +1,7 @@
 <?php
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Mapbender\CoreBundle\Element\EventListener\LayertreeSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -34,6 +35,8 @@ class LayertreeAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $subscriber = new LayertreeSubscriber($builder->getFormFactory(), $options['application']);
+        $builder->addEventSubscriber($subscriber);
         $menuComponents = array(
             "layerremove" => "Remove layer",
             "opacity" => "Opacity",
@@ -53,9 +56,12 @@ class LayertreeAdminType extends AbstractType
                 array(
                 'required' => true,
                 'choices' => array(
-                    'dialog' => 'Dialog',
-                    'element' => 'Element')))
+                    'element' => 'Element',
+                    'dialog' => 'Dialog')))
             ->add('autoOpen', 'checkbox',
+                array(
+                'required' => false))
+            ->add('useTheme', 'checkbox',
                 array(
                 'required' => false))
             ->add('displaytype', 'choice',
@@ -67,6 +73,15 @@ class LayertreeAdminType extends AbstractType
                 array(
                 'required' => false))
             ->add('showHeader', 'checkbox',
+                array(
+                'required' => false))
+            ->add('hideInfo', 'checkbox',
+                array(
+                'required' => false))
+            ->add('hideNotToggleable', 'checkbox',
+                array(
+                'required' => false))
+            ->add('hideSelect', 'checkbox',
                 array(
                 'required' => false))
             ->add('menu', 'choice',
