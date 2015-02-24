@@ -6,6 +6,7 @@
  */
 namespace Mapbender\CoreBundle\Component;
 
+use FOM\UserBundle\Component\User\UserEntityInterface;
 use FOM\UserBundle\Entity\User;
 
 /**
@@ -20,7 +21,7 @@ class SecurityContext extends \Symfony\Component\Security\Core\SecurityContext
     /**
      * Get current logged user by the token
      *
-     * @return User
+     * @return UserEntityInterface
      */
     public function getUser()
     {
