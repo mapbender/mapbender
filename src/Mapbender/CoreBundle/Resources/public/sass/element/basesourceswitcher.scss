@@ -3,6 +3,12 @@
 
 .mb-element-basesourceswitcher{
   li{
+    //TOMY
+    text-align:center;
+    display:block;
+    border-radius:3px;
+    vertical-align:middle;
+    
     padding:5px 7px;
     background-color: #b5b5b5;
     display:inline-block;
@@ -21,8 +27,24 @@
     &:hover, &[data-state="active"]{
       color:$firstColor;
       background-color: $contentColor;
+      opacity:1;
     }
+    &[data-state="active"]:after{
+      content:"\f107";
+      float:right;
+      
+    }
+    &[data-state="active"]:before{
+        content:""
+    }
+    &[data-state=""]{
+        display:none;
+        position:absolute;
+        
+    }
+  
   }
+  
   li ul{
     position: absolute;
     text-align: right;
