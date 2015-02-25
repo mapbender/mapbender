@@ -217,7 +217,6 @@
                 }
             }
             else {
-                console.log("works");
                 this._hideSources();
                 me.find('.basesourcesetswitch,.basesourcegroup').not(a).attr('data-state', '');
                 a.attr('data-state', 'active');
@@ -227,7 +226,7 @@
                     $('.basesourcesubswitcher', me).addClass('hidden');
                 }
                 this._showActive();
-                //this._trigger('groupactivate', null);
+                this._trigger('groupactivate', null);
 
                 return false;
             }
