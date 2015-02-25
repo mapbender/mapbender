@@ -87,20 +87,13 @@ class ApplicationController extends Controller
         if(empty($sourcePath)){
                 $sourcePath = ".";
         }
-
         // Collect all assets into one
         $application = $this->getApplication($slug);
-        $refs = array();
-
-        foreach($application->getAssets('css') as $cssFile){
-            // TODO: why by getAssets() method objects are returned in the same was as "SCSS" declaration strings
-            // This exclusion is just work around and should be removed if fix above is done
-            if(is_object($cssFile)){
-               continue;
-            }
-            $refs[$cssFile] = $cssFile;
+        $refs = array_unique($application->getAssets('css'));
+        $custom = $application->getCustomCssAsset();
+        if($custom){
+            $refs[] = $custom;
         }
-        $refs = array_values($refs);
         $factory = new AssetFactory($this->container, $refs, 'css', $targetPath, $sourcePath);
         $assets = $factory->getAssetCollection();
 
