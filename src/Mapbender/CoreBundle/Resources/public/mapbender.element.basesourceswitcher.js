@@ -16,20 +16,23 @@
         _setup: function() {
             var self = this;
 
-            //TOMY_setWidth
+            //TOMY_setWidth/display
+            var display = this.options.display;
+
             var widthLi = [];
             var count = $(".mb-element-basesourceswitcher li").size();
             while (count > 0) {
-                widthLi[count - 1] = $(".mb-element-basesourceswitcher li").eq(count - 1).width()+15;
+                widthLi[count - 1] = $(".mb-element-basesourceswitcher li").eq(count - 1).width() + 15;
                 count--;
             }
-            var largest = Math.max.apply(Math, widthLi) + 15 + "px";
+            var largest = Math.max.apply(Math, widthLi) + 20 + "px";
             $(".mb-element-basesourceswitcher li").css("width", largest);
+            if (display === "dropdown") {
+                $('.mb-element-basesourceswitcher').addClass("dropdownbs");
 
-
+            }
 
             $('.basesourcesetswitch', this.element).click($.proxy(self._toggleMapset, self));
-            $('.mb-element-basesourceswitcher').mouseenter($.proxy(self._hoverBaseSourceSwitcher, self));
             $('.basesourcegroup', this.element).click(function(e) {
 
                 var bsswtch = $('.basesourcesubswitcher', $(e.currentTarget));
@@ -46,14 +49,9 @@
             this._showActive();
             self._trigger('ready');
             this._ready();
-            this.setHeight();
-        },
-        _hoverBaseSourceSwitcher: function() {
-            $('.basesourcesetswitch[data-state=""]').css("display", "block");
-            $('.mb-element-basesourceswitcher').mouseleave(function() {
-                $('.basesourcesetswitch[data-state=""]').css("display", "none");
-            });
-
+            if (display === "dropdown") {
+                this.setHeight();
+            }
         },
         getCpr: function() {
             var me = $(this.element);
@@ -166,51 +164,72 @@
             }
             heightLi = 0;
 
-
-
-
         },
         _toggleMapset: function(event) {
-
             var me = $(this.element),
                 a = $(event.currentTarget);
-            this._hideSources();
+            var display = this.options.display;
 
-            //setHeight
-            var dis = $('.basesourcesetswitch[data-state="active"]').offset().top;
-            var heightLi = $(a).height();
-            var size = $('.basesourcesetswitch').size();
+            if (display === "dropdown") {
+                if (a.attr("data-state") === "active") {
+                    $('.basesourcesetswitch[data-state=""]').css("display", "block");
+                    $('.mb-element-basesourceswitcher').mouseleave(function() {
+                        $('.basesourcesetswitch[data-state=""]').slideUp();
+                    });
+                }
+                else {
+                    a = $(event.currentTarget);
+                    this._hideSources();
+                    //setHeight
+                    var dis = $('.basesourcesetswitch[data-state="active"]').offset().top;
+                    var heightLi = $(a).height();
+                    var size = $('.basesourcesetswitch').size();
+                    me.find('.basesourcesetswitch,.basesourcegroup').not(a).attr('data-state', '');
+                    a.attr('data-state', 'active');
+                    a.parents('.basesourcegroup:first').attr('data-state', 'active').addClass('hidden');
+                    a.parents('.basesourcesubswitcher:first').addClass('hidden');
 
-            me.find('.basesourcesetswitch,.basesourcegroup').not(a).attr('data-state', '');
-            a.attr('data-state', 'active');
-            a.parents('.basesourcegroup:first').attr('data-state', 'active').addClass('hidden');
-            a.parents('.basesourcesubswitcher:first').addClass('hidden');
-           
-            //setHeight
-             $('.mb-element-basesourceswitcher li').css("top", 0);
-            for (var i = 0; i < size; i++) {
-                if ($('.mb-element-basesourceswitcher li').eq(i).attr("data-state") === "") {
-                    $('.mb-element-basesourceswitcher li').eq(i).css("top", dis + 1.5 * heightLi + "px");
+                    //setHeight
+                    $('.mb-element-basesourceswitcher li').css("top", 0);
+                    for (var i = 0; i < size; i++) {
+                        if ($('.mb-element-basesourceswitcher li').eq(i).attr("data-state") === "") {
+                            $('.mb-element-basesourceswitcher li').eq(i).css("top", dis + 1.5 * heightLi + "px");
 
-                    if ($(a).height()=== heightLi ) {
-                        var konst = heightLi;
+                            if ($(a).height() === heightLi) {
+                                var konst = heightLi;
+                            }
+
+                            heightLi = heightLi + konst;
+                        }
                     }
-                
-                heightLi = heightLi + konst;
+                    $('.basesourcesetswitch[data-state="active"]').css("top", 0);
+                    $('.basesourcesetswitch[data-state=""]').css("display", "none").removeClass("iconLegend");
+                    $('.basesourcesetswitch[data-state="active"]').addClass("iconLegend");
+
+                    if (a.hasClass('notgroup')) {
+                        $('.basesourcesubswitcher', me).addClass('hidden');
+                    }
+                    this._trigger('groupactivate', null);
+                    this._showActive();
+
+
+
                 }
             }
-            $('.basesourcesetswitch[data-state="active"]').css("top", 0);
-            $('.basesourcesetswitch[data-state=""]').css("display", "none").removeClass("iconLegend");
-            $('.basesourcesetswitch[data-state="active"]').addClass("iconLegend");
+            else {
+                this._hideSources();
+                me.find('.basesourcesetswitch,.basesourcegroup').not(a).attr('data-state', '');
+                a.attr('data-state', 'active');
+                a.parents('.basesourcegroup:first').attr('data-state', 'active').addClass('hidden');
+                a.parents('.basesourcesubswitcher:first').addClass('hidden');
+                if (a.hasClass('notgroup')) {
+                    $('.basesourcesubswitcher', me).addClass('hidden');
+                }
+                this._showActive();
+                this._trigger('groupactivate', null);
 
-            if (a.hasClass('notgroup')) {
-                $('.basesourcesubswitcher', me).addClass('hidden');
+                return false;
             }
-            this._trigger('groupactivate', null);
-            this._showActive();
-
-
-            return false;
         },
         /**
          *
