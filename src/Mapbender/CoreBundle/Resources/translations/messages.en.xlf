@@ -320,7 +320,7 @@
       </trans-unit>
       <trans-unit id="cee2d354d34004657e8a450d251585dc" resname="mb.core.coordinatesdisplay.class.description">
         <source>mb.core.coordinatesdisplay.class.description</source>
-        <target>The coordinates display hides your mouse position in map coordinates.</target>
+        <target>The coordinates display shows your mouse position in map coordinates.</target>
       </trans-unit>
       <trans-unit id="eab1a6ab1b72d1da761177f459e3f5ed" resname="mb.core.coordinatesdisplay.tag.coordinates">
         <source>mb.core.coordinatesdisplay.tag.coordinates</source>
@@ -384,7 +384,7 @@
       </trans-unit>
       <trans-unit id="1ad088a7f936e3e8a90a2c668adb0393" resname="mb.core.gpsposition.class.description">
         <source>mb.core.gpsposition.class.description</source>
-        <target>Renders a button to hide the GPS Position</target>
+        <target>Renders a button to show the GPS Position</target>
       </trans-unit>
       <trans-unit id="63927352ea1d9602ea2d39950657b022" resname="mb.core.gpsposition.tag.gpsposition">
         <source>mb.core.gpsposition.tag.gpsposition</source>
@@ -428,7 +428,7 @@
       </trans-unit>
       <trans-unit id="c6b4222c59ccebdcc9c399ed4e0a8169" resname="mb.core.legend.class.description">
         <source>mb.core.legend.class.description</source>
-        <target>The legend hides the legend of the map's layers</target>
+        <target>The legend shows the legend of the map's layers</target>
       </trans-unit>
       <trans-unit id="bc4dbd2f4a17fa2486f8c153b2785959" resname="mb.core.legend.tag.layer">
         <source>mb.core.legend.tag.layer</source>
@@ -710,16 +710,16 @@
         <source>mb.core.admin.legend.label.generatelegendurl</source>
         <target>Generate legend url</target>
       </trans-unit>
-      <trans-unit id="cf557696c890ca6e4e29ca91bdbd5550" resname="mb.core.admin.legend.label.hidesourcetitle">
-        <source>mb.core.admin.legend.label.hidesourcetitle</source>
+      <trans-unit id="90675349c781bc0f026bca337fce8218" resname="mb.core.admin.legend.label.showsourcetitle">
+        <source>mb.core.admin.legend.label.showsourcetitle</source>
         <target>Show source title</target>
       </trans-unit>
-      <trans-unit id="cbc3866b44b059cd23d7419e24466e9a" resname="mb.core.admin.legend.label.hidelayertitle">
-        <source>mb.core.admin.legend.label.hidelayertitle</source>
+      <trans-unit id="0ca2080280477b91ee0130c78044e3e6" resname="mb.core.admin.legend.label.showlayertitle">
+        <source>mb.core.admin.legend.label.showlayertitle</source>
         <target>Show layer title</target>
       </trans-unit>
-      <trans-unit id="07287c258bf62163c3142c26e557ba3d" resname="mb.core.admin.legend.label.hidegroupedlayertitle">
-        <source>mb.core.admin.legend.label.hidegroupedlayertitle</source>
+      <trans-unit id="7dc9941d3994c6bcf1410b0b4ae5400d" resname="mb.core.admin.legend.label.showgroupedlayertitle">
+        <source>mb.core.admin.legend.label.showgroupedlayertitle</source>
         <target>Show grouped layer title</target>
       </trans-unit>
       <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
@@ -746,20 +746,20 @@
         <source>mb.core.basesourceswitcher.form.mesage</source>
         <target>No basesource set is defined.</target>
       </trans-unit>
-      <trans-unit id="f94c3892df5fc53eef190747dfc22d88" resname="mb.core.admin.layertree.label.hidebasesources">
-        <source>mb.core.admin.layertree.label.hidebasesources</source>
+      <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
+        <source>mb.core.admin.layertree.label.showbasesources</source>
         <target>Show base sources</target>
       </trans-unit>
       <trans-unit id="71b752f5f8f9465c2dd33581a4d5e797" resname="mb.core.admin.layertree.label.autoopen">
         <source>mb.core.admin.layertree.label.autoopen</source>
         <target>Autoopen</target>
       </trans-unit>
-      <trans-unit id="9d1e4653da7ff1768af3c6be948fb1db" resname="mb.core.admin.layertree.label.hideheader">
-        <source>mb.core.admin.layertree.label.hideheader</source>
+      <trans-unit id="855cb022f4ce41f697c2d2a4674b8509" resname="mb.core.admin.layertree.label.showheader">
+        <source>mb.core.admin.layertree.label.showheader</source>
         <target>Show header</target>
       </trans-unit>
-      <trans-unit id="9dfe8aeb3295e5bb2d2090d3a26f664e" resname="mb.core.admin.layertree.label.hidelayerremove">
-        <source>mb.core.admin.layertree.label.hidelayerremove</source>
+      <trans-unit id="b9e1e1bd4fe12c68c958110c5a3f24aa" resname="mb.core.admin.layertree.label.showlayerremove">
+        <source>mb.core.admin.layertree.label.showlayerremove</source>
         <target>Show layer remove</target>
       </trans-unit>
       <trans-unit id="46b75948336bd4019bbaee9324151ecc" resname="mb.core.poi.label.text">
@@ -814,6 +814,70 @@
         <source>mb.core.admin.layertree.label.theme.opened</source>
         <target>opened</target>
       </trans-unit>
+      <trans-unit id="23c457112644bfcfed3864ffe9f5082a" resname="mb.core.redlining.geometrytype.point">
+        <source>mb.core.redlining.geometrytype.point</source>
+        <target>Point</target>
+      </trans-unit>
+      <trans-unit id="6a0f86ba63eae1dff8fb6744ef6c2e55" resname="mb.core.redlining.geometrytype.line">
+        <source>mb.core.redlining.geometrytype.line</source>
+        <target>Line</target>
+      </trans-unit>
+      <trans-unit id="5541291a2a8778b492748eaa467845f5" resname="mb.core.redlining.geometrytype.polygon">
+        <source>mb.core.redlining.geometrytype.polygon</source>
+        <target>Polygon</target>
+      </trans-unit>
+      <trans-unit id="559d2c6711affc5637400c98a98a57c2" resname="mb.core.redlining.geometrytype.rectangle">
+        <source>mb.core.redlining.geometrytype.rectangle</source>
+        <target>Rectangle</target>
+      </trans-unit>
+      <trans-unit id="ec534f6f6bdbefd454d70b3fe5c7f582" resname="mb.core.redlining.geometrytype.text">
+        <source>mb.core.redlining.geometrytype.text</source>
+        <target>Text</target>
+      </trans-unit>
+      <trans-unit id="86260724aded581b31d37875b4c83c1f" resname="mb.core.redlining.geometrytype.text.label">
+        <source>mb.core.redlining.geometrytype.text.label</source>
+        <target>Text</target>
+      </trans-unit>
+      <trans-unit id="7bfdb38a998a282470bee1644ffaaa21" resname="mb.core.redlining.geometry.action.remove">
+        <source>mb.core.redlining.geometry.action.remove</source>
+        <target>Remove geometry</target>
+      </trans-unit>
+      <trans-unit id="e08dd8632af42c56f03af8eadff0839f" resname="mb.core.redlining.geometry.action.edit">
+        <source>mb.core.redlining.geometry.action.edit</source>
+        <target>Edit geometry</target>
+      </trans-unit>
+      <trans-unit id="277124be4d6c4424f6f86f92cb07fb8d" resname="mb.core.redlining.geometry.action.zoom">
+        <source>mb.core.redlining.geometry.action.zoom</source>
+        <target>Zoom to geometryoom</target>
+      </trans-unit>
+      <trans-unit id="403fb1af574e44f9fe64fd65c8622a30" resname="mb.core.redlining.dialog.btn.cancel">
+        <source>mb.core.redlining.dialog.btn.cancel</source>
+        <target>Close</target>
+      </trans-unit>
+      <trans-unit id="b4784e7cc4c33d0899a0a0a11a2f69ab" resname="mb.core.redlining.class.title">
+        <source>mb.core.redlining.class.title</source>
+        <target>Redlining</target>
+      </trans-unit>
+      <trans-unit id="d960dbce5b253406c2ed289fdcafd273" resname="mb.core.redlining.class.description">
+        <source>mb.core.redlining.class.description</source>
+        <target>Redlining tool</target>
+      </trans-unit>
+      <trans-unit id="15b5f2d8a1892f2f133b5da92896f230" resname="mb.core.redlining.tag.redlining">
+        <source>mb.core.redlining.tag.redlining</source>
+        <target>redlining</target>
+      </trans-unit>
+      <trans-unit id="0561206ab04fdb6a5d43b828edafadd2" resname="mb.core.redlining.tag.geometry">
+        <source>mb.core.redlining.tag.geometry</source>
+        <target>geometry</target>
+      </trans-unit>
+      <trans-unit id="b99c3c9b8d4f75669761bcc882f6b06a" resname="mb.core.admin.featureinfo.label.showoriginal">
+        <source>mb.core.admin.featureinfo.label.showoriginal</source>
+        <target>Show original</target>
+      </trans-unit>
+      <trans-unit id="87bb95e7b202bb8aa890dac11956fa67" resname="mb.core.admin.featureinfo.label.onlyvalid">
+        <source>mb.core.admin.featureinfo.label.onlyvalid</source>
+        <target>Only valid</target>
+      </trans-unit>
       <trans-unit id="05f6e660c816d83676722100aa7ca0fb" resname="mb.core.admin.layertree.label.hidenottoggleable">
         <source>mb.core.admin.layertree.label.hidenottoggleable</source>
         <target>Hide not toggleable</target>
@@ -828,27 +892,7 @@
       </trans-unit>
       <trans-unit id="0a5fe4c7ced865711f3ffcfe5d0e141a" resname="mb.core.admin.layertree.label.theme.activate">
         <source>mb.core.admin.layertree.label.theme.activate</source>
-        <target>Add activate</target>
-      </trans-unit>
-      <trans-unit id="90675349c781bc0f026bca337fce8218" resname="mb.core.admin.legend.label.showsourcetitle">
-        <source>mb.core.admin.legend.label.showsourcetitle</source>
-        <target>Show source title</target>
-      </trans-unit>
-      <trans-unit id="0ca2080280477b91ee0130c78044e3e6" resname="mb.core.admin.legend.label.showlayertitle">
-        <source>mb.core.admin.legend.label.showlayertitle</source>
-        <target>Show layer title</target>
-      </trans-unit>
-      <trans-unit id="7dc9941d3994c6bcf1410b0b4ae5400d" resname="mb.core.admin.legend.label.showgroupedlayertitle">
-        <source>mb.core.admin.legend.label.showgroupedlayertitle</source>
-        <target>Show grouped layer title</target>
-      </trans-unit>
-      <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
-        <source>mb.core.admin.layertree.label.showbasesources</source>
-        <target>Show base sources</target>
-      </trans-unit>
-      <trans-unit id="855cb022f4ce41f697c2d2a4674b8509" resname="mb.core.admin.layertree.label.showheader">
-        <source>mb.core.admin.layertree.label.showheader</source>
-        <target>Show header</target>
+        <target>__mb.core.admin.layertree.label.theme.activate</target>
       </trans-unit>
     </body>
   </file>
