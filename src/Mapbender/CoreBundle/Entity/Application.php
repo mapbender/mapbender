@@ -116,6 +116,8 @@ class Application
      */
     protected $custom_css;
 
+    protected $publicOptions = array();
+
     public function __construct()
     {
         $this->elements = new ArrayCollection();
@@ -558,4 +560,21 @@ class Application
     {
         return $this->excludeFromList;
     }
+
+    /**
+     * @return array
+     */
+    public function getPublicOptions()
+    {
+        return $this->publicOptions;
+    }
+
+    /**
+     * @param array $publicOptions
+     */
+    public function setPublicOptions($publicOptions)
+    {
+        $this->publicOptions = $publicOptions;
+    }
+
 }
