@@ -82,7 +82,7 @@ class ApplicationYAMLMapper
         if(!key_exists('published', $definition))
         {
             $definition['published'] = false;
-        } else 
+        } else
         {
             $definition['published'] = (boolean) $definition['published'];
         }
@@ -95,6 +95,10 @@ class ApplicationYAMLMapper
                 ->setDescription($definition['description'])
                 ->setTemplate($definition['template'])
                 ->setPublished($definition['published']);
+
+        if(isset($definition['publicOptions'])){
+            $application->setPublicOptions($definition['publicOptions']);
+        }
 
         if(array_key_exists('extra_assets', $definition))
         {
@@ -114,17 +118,17 @@ class ApplicationYAMLMapper
                     unset($configuration_['title']);
                     $entity_class = $elementDefinition['class'];
                     $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
-                    if(!class_exists($entity_class)) {                        
+                    if(!class_exists($entity_class)) {
                         throw new \RuntimeException('Unknown Element class ' . $entity_class);
                     }
-                    $elComp = new $entity_class($appl, $this->container, new \Mapbender\CoreBundle\Entity\Element());                 
-                    
+                    $elComp = new $entity_class($appl, $this->container, new \Mapbender\CoreBundle\Entity\Element());
+
                     $elm_class = get_class($elComp);
                     if($elm_class::$merge_configurations){
                         $configuration = ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_, array());
                     }else{
                         $configuration = $configuration_;
-                    }            
+                    }
 
                     $class = $elementDefinition['class'];
                     $title = array_key_exists('title', $elementDefinition) ?
@@ -132,7 +136,7 @@ class ApplicationYAMLMapper
                             $class::getClassTitle();
 
                     $element = new Element();
-                   
+
                     $element->setId($id)
                             ->setClass($elementDefinition['class'])
                             ->setTitle($title)
@@ -140,7 +144,7 @@ class ApplicationYAMLMapper
                             ->setRegion($region)
                             ->setWeight($weight++)
                             ->setApplication($application);
-                    
+
                     // set Roles
                     $element->yaml_roles = array();
                     if(array_key_exists('roles', $elementDefinition)) {
@@ -160,7 +164,7 @@ class ApplicationYAMLMapper
         if(array_key_exists('roles', $definition)) {
             $application->yaml_roles = $definition['roles'];
         }
-        
+
         // TODO: Add roles, entity needs work first
         // Create layersets and layers
         foreach($definition['layersets'] as $id => $layerDefinitions)
@@ -171,7 +175,7 @@ class ApplicationYAMLMapper
                     ->setTitle('YAML - ' . $id)
                     ->setApplication($application);
 
-            $weight = 0;            
+            $weight = 0;
             foreach($layerDefinitions as $id => $layerDefinition)
             {
                 $class = $layerDefinition['class'];
@@ -200,4 +204,3 @@ class ApplicationYAMLMapper
     }
 
 }
-

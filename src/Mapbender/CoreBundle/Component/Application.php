@@ -320,6 +320,7 @@ class Application
         $configuration['application'] = array(
             'title' => $this->entity->getTitle(),
             'urls' => $this->urls,
+            'publicOptions' => $this->entity->getPublicOptions(),
             'slug' => $this->getSlug());
 
         // Get all element configurations

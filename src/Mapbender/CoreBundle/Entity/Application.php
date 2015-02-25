@@ -113,6 +113,8 @@ class Application
      */
     protected $updated;
 
+    protected $publicOptions = array();
+
     public function __construct()
     {
         $this->elements = new ArrayCollection();
@@ -446,7 +448,7 @@ class Application
     {
         return (string) $this->getId();
     }
-    
+
     public function getNamedRegionProperties()
     {
         $result = array();
@@ -455,7 +457,7 @@ class Application
         }
         return $result;
     }
-    
+
     public function getPropertiesFromRegion($regionName)
     {
         foreach ($this->getRegionProperties() as $regionProperties) {
@@ -577,6 +579,22 @@ class Application
             $this->copyElements($container, $em, $clonedApp, $clonedElmts,
                 $layersetMap);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getPublicOptions()
+    {
+        return $this->publicOptions;
+    }
+
+    /**
+     * @param array $publicOptions
+     */
+    public function setPublicOptions($publicOptions)
+    {
+        $this->publicOptions = $publicOptions;
     }
 
 }
