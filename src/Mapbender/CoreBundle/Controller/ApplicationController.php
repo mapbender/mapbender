@@ -88,10 +88,13 @@ class ApplicationController extends Controller
         if(empty($sourcePath)){
                 $sourcePath = ".";
         }
-
         // Collect all assets into one
         $application = $this->getApplication($slug);
         $refs = array_unique($application->getAssets('css'));
+        $custom = $application->getCustomCssAsset();
+        if($custom){
+            $refs[] = $custom;
+        }
         $factory = new AssetFactory($this->container, $refs, 'css', $targetPath, $sourcePath);
         $assets = $factory->getAssetCollection();
 

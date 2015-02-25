@@ -19,12 +19,12 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
  */
 class WmsSourceEntityHandler extends SourceEntityHandler
 {
-
+    
     public function create($persist = true)
     {
         ;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -33,12 +33,12 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         $instance = new WmsInstance();
         $instance->setSource($this->entity);
         $instance->setLayerset($layerset);
-        $entityHandler = self::createHandler($this->container, $instance);
-        $entityHandler->create();
-        if ($instance->getLayerset()) {
+        $instanceHandler = self::createHandler($this->container, $instance);
+        $instanceHandler->create();
+        if ($instanceHandler->getEntity()->getLayerset()) {
             $num = 0;
-            foreach ($instance->getLayerset()->getInstances() as $instance) {
-                $instHandler = self::createHandler($this->container, $instance);
+            foreach ($instanceHandler->getEntity()->getLayerset()->getInstances() as $instanceAtLayerset) {
+                $instHandler = self::createHandler($this->container, $instanceAtLayerset);
                 $instHandler->getEntity()->setWeight($num);
                 $instHandler->generateConfiguration();
                 if ($persist) {
@@ -48,7 +48,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                 $num++;
             }
         }
-        return $instance;
+        return $instanceHandler->getEntity();
     }
 
     /**
