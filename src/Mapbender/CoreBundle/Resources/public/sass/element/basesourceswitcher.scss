@@ -1,13 +1,26 @@
 @import "libs/variables";
 @import "libs/mixins";
 
-.mb-element-basesourceswitcher{
-  li{
-    //TOMY
+.dropdownbs li {
     text-align:center;
     display:block;
     border-radius:3px;
     vertical-align:middle;
+    &[data-state=""]{
+        display:none;
+        position:absolute;   
+    }
+    &[data-state="active"]:after{
+      content:"\f107";
+      float:right;   
+    }
+    
+}
+
+.mb-element-basesourceswitcher{
+  li{
+    //TOMY
+    text-align:center;
     
     padding:5px 7px;
     background-color: #b5b5b5;
@@ -29,19 +42,11 @@
       background-color: $contentColor;
       opacity:1;
     }
-    &[data-state="active"]:after{
-      content:"\f107";
-      float:right;
-      
-    }
+    
     &[data-state="active"]:before{
         content:""
     }
-    &[data-state=""]{
-        display:none;
-        position:absolute;
-        
-    }
+    
   
   }
   
