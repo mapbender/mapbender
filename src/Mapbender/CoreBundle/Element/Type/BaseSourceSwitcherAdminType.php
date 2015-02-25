@@ -2,6 +2,7 @@
 
 namespace Mapbender\CoreBundle\Element\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Mapbender\CoreBundle\Component\ExtendedCollection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -46,16 +47,22 @@ class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollec
     {
         $application = $options["application"];
         $element = $options["element"];
-        $layerset = null;
+        $instances = array();
         if ($element !== null && $element->getId() !== null) {
             foreach ($application->getElements() as $appl_element) {
                 $configuration = $element->getConfiguration();
                 if ($appl_element->getId() === intval($configuration["target"])) {
                     $mapconfig = $appl_element->getConfiguration();
                     foreach ($application->getLayersets() as $layerset_) {
-                        if (intval($mapconfig['layerset']) === $layerset_->getId()) {
-                            $layerset = $layerset_;
-                            break;
+                        if ((isset($mapconfig['layerset'])
+                            && strval($mapconfig['layerset']) === strval($layerset_->getId()))
+                            || (isset($mapconfig['layersets'])
+                            && in_array($layerset_->getId(), $mapconfig['layersets']))) {
+                            foreach ($layerset_->getInstances() as $instance) {
+                                if ($instance->isBasesource() && $instance->getEnabled()) {
+                                    $instances[strval($instance->getId())] = $instance->getTitle();
+                                }
+                            }
                         }
                     }
                     break;
@@ -66,23 +73,22 @@ class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollec
             ->add('title', 'text', array('required' => true))
             ->add('tooltip', 'text', array('required' => false))
             ->add('target', 'target_element',
-                array(
+                  array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $application,
                 'property_path' => '[target]',
                 'required' => false));
-        if ($layerset !== null) {
+        if (count($instances) > 0) {
             $builder->add('instancesets', "collection",
-                array(
+                          array(
                 'property_path' => '[instancesets]',
                 'type' => new InstanceSetAdminType(),
                 'allow_add' => true,
                 'allow_delete' => true,
                 'auto_initialize' => false,
-                'options' => array('layerset' => $layerset)
+                'options' => array('instances' => $instances)
             ));
         }
     }
 
 }
- 
