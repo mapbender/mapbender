@@ -577,4 +577,20 @@ class Application
         $this->publicOptions = $publicOptions;
     }
 
+    /**
+     * @return array
+     */
+    public function getPublicOptions()
+    {
+        return $this->publicOptions;
+    }
+
+    /**
+     * @param array $publicOptions
+     */
+    public function setPublicOptions($publicOptions)
+    {
+        $this->publicOptions = $publicOptions;
+    }
+
 }
