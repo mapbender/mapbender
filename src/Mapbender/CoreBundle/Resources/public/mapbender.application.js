@@ -95,7 +95,7 @@ Mapbender.info = function(infoObject){
         message = JSON.stringify(infoObject);
     }
     $.notify(message,'info');
-    console.error("Mapbender Info: ",infoObject);
+    console.log("Mapbender Info: ",infoObject);
 };
 Mapbender.confirm = function(message){
     var res = confirm(message);
