@@ -159,3 +159,16 @@
     word-wrap: break-word;
   }
 }
+
+
+/*
+Mapbender info and error styling
+*/
+div.notifyjs-container > div.notifyjs-bootstrap-base > span{
+    display: block;
+    white-space: normal;
+    max-width: 800px;
+    max-height: 600px;
+    overflow: auto;
+    word-wrap: break-word;
+}
