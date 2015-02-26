@@ -81,11 +81,11 @@ Mapbender.setup = function(){
 };
 
 Mapbender.error = function(message){
-    alert(message);
+    $.notify(message,'error');
 };
 
 Mapbender.info = function(message){
-    alert(message);
+    $.notify(message,'info');
 };
 Mapbender.confirm = function(message){
     var res = confirm(message);
