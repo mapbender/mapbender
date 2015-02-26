@@ -38,6 +38,10 @@ class WelcomeController extends Controller {
         $allowed_applications = array();
         foreach($applications as $application)
         {
+            if($application->isExcludedFromList()){
+                continue;
+            }
+
             if($securityContext->isGranted('VIEW', $application))
             {
                 if(!$application->isPublished() && !$securityContext->isGranted('EDIT', $application)) {

@@ -21,7 +21,7 @@ use Mapbender\CoreBundle\Entity\Source;
 class WmsSourceEntityHandler extends SourceEntityHandler
 {
     
-    public function create()
+    public function create($persist = true)
     {
 
     }
@@ -29,14 +29,27 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     /**
      * @inheritdoc
      */
-    public function createInstance(Layerset $layerset)
+    public function createInstance(Layerset $layerset = NULL, $persist = true)
     {
         $instance = new WmsInstance();
         $instance->setSource($this->entity);
         $instance->setLayerset($layerset);
-        $entityHandler = self::createHandler($this->container, $instance);
-        $entityHandler->create();
-        return $instance;
+        $instanceHandler = self::createHandler($this->container, $instance);
+        $instanceHandler->create();
+        if ($instanceHandler->getEntity()->getLayerset()) {
+            $num = 0;
+            foreach ($instanceHandler->getEntity()->getLayerset()->getInstances() as $instanceAtLayerset) {
+                $instHandler = self::createHandler($this->container, $instanceAtLayerset);
+                $instHandler->getEntity()->setWeight($num);
+                $instHandler->generateConfiguration();
+                if ($persist) {
+                    $this->container->get('doctrine')->getManager()->persist($instHandler->getEntity());
+                    $this->container->get('doctrine')->getManager()->flush();
+                }
+                $num++;
+            }
+        }
+        return $instanceHandler->getEntity();
     }
 
     /**

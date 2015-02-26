@@ -50,7 +50,8 @@ $.widget('mapbender.mbPOI', {
     _mapClickHandler: function(event) {
         var x = event.pageX - this.map.offset().left,
             y = event.pageY - this.map.offset().top,
-            olMap = this.map.data('mapbenderMbMap').map.olMap,
+            mbMap = this.map.data('mapbenderMbMap'),
+            olMap = mbMap.map.olMap,
             ll = olMap.getLonLatFromPixel(new OpenLayers.Pixel(x, y)),
             coordinates = {
                 pixel: {
@@ -80,10 +81,10 @@ $.widget('mapbender.mbPOI', {
         this.poiMarkerLayer.addMarker(poiMarker);
 
         this.popup.subtitle(
-            '<b>' + Math.round(coordinates.world.x,0) + ',' +Math.round(coordinates.world.y,0) + ' @ 1:' + olMap.getScale() + '</b>');
+            '<b>' + Math.round(coordinates.world.x,0) + ',' +Math.round(coordinates.world.y,0) + ' @ 1:' + mbMap.model.getScale() + '</b>');
         this.poi = {
             point: Math.round(coordinates.world.x,0) + ',' + Math.round(coordinates.world.y,0),
-            scale: olMap.getScale()
+            scale: mbMap.model.getScale()
         };
     },
 

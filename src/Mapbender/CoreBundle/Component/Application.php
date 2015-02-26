@@ -270,12 +270,17 @@ class Application
             }
         }
 
-        $application_entity = $this->getEntity();
-        if('css' === $type && $application_entity::SOURCE_DB === $application_entity->getSource()) {
-            $assets[] = new StringAsset($application_entity->getCustomCss());
-        }
-
         return $assets;
+    }
+    
+    public function getCustomCssAsset()
+    {
+        $entity = $this->getEntity();
+        if ($entity::SOURCE_DB === $entity->getSource() && $entity->getCustomCss()) {
+            return new StringAsset($entity->getCustomCss());
+        } else {
+            return null;
+        }
     }
 
     private function addAsset(&$manager, $type, $reference)
