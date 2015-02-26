@@ -197,6 +197,7 @@ Mapbender.Model = {
                 return proj;
             }
         }
+        Mapbender.error("CRS: " + srscode + " is not defined.");
         return proj;
     },
     getAllSrs: function() {

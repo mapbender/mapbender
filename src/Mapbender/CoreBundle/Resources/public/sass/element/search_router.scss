@@ -14,7 +14,7 @@ $searchRouterInputWidth:100%;
   .dropdown, .input{
     /*float:left;*/
     width:$searchRouterInputWidth;
-    margin-bottom: $space;
+    margin-bottom: $space/2;
   }
   .dropdown{min-width:$searchRouterInputWidth;}
   .ui-helper-hidden-accessible{display: none;}

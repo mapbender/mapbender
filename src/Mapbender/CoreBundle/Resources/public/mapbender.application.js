@@ -80,12 +80,22 @@ Mapbender.setup = function(){
     $(document).trigger('mapbender.setupfinished');
 };
 
-Mapbender.error = function(message){
-    alert(message);
+Mapbender.error = function(errorObject,delayTimeout){
+    var errorMessage = errorObject; 
+    if(typeof errorObject != "string"){
+        errorMessage = JSON.stringify(errorObject);
+    }
+    $.notify(errorMessage,{autoHideDelay: delayTimeout?delayTimeout:5000}, 'error');
+    console.error("Mapbender Error: ",errorObject);
 };
 
-Mapbender.info = function(message){
-    alert(message);
+Mapbender.info = function(infoObject,delayTimeout){
+    var message = infoObject; 
+    if(typeof infoObject != "string"){
+        message = JSON.stringify(infoObject);
+    }
+    $.notify(message,{autoHideDelay: delayTimeout?delayTimeout:5000,className: 'info'});
+    console.log("Mapbender Info: ",infoObject);
 };
 Mapbender.confirm = function(message){
     var res = confirm(message);
