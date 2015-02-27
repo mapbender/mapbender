@@ -9,10 +9,10 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceInstanceItemEntityHandler;
+use Mapbender\CoreBundle\Component\SourceItem;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
-use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Component\SourceItem;
 
 /**
  * Description of WmsSourceHandler
@@ -60,6 +60,14 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $this->container->get('doctrine')->getManager()->persist($entityHandler->getEntity());
             $this->container->get('doctrine')->getManager()->flush();
         }
+    }
+    /**
+     * @inheritdoc
+     */
+    public function update(SourceItem $layer){
+//        if($this->entity->get === $layer->getName()){
+//            
+//        }
     }
 
     /**

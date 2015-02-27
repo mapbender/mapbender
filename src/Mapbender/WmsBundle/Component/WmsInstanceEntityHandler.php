@@ -10,6 +10,7 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
@@ -70,6 +71,16 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->container->get('doctrine')->getManager()->flush();
             $num++;
         }
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function update(Source $source)
+    {
+        $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
+        $layerHandler->update($source->getRootlayer());
+//        $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
     /**

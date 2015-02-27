@@ -8,6 +8,7 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Component\Signer;
 
 /**
@@ -22,6 +23,11 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * Creates a SourceInstance
      */
     abstract public function create();
+    
+    /**
+     * Update instance parameters
+     */
+    abstract public function update(Source $source);
     
     /**
      * Remove a source from a database

@@ -32,6 +32,6 @@ abstract class SourceItemEntityHandler extends EntityHandler
      * Updates a SourceItem from another SourceItem
      * @param SourceItem $sourceItem a SourceItemobject
      */
-    abstract function updateFromSourceItem(SourceItem $sourceItem);
+    abstract function update(SourceItem $sourceItem);
 
 }

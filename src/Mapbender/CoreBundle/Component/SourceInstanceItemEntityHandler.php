@@ -37,6 +37,11 @@ abstract class SourceInstanceItemEntityHandler extends EntityHandler
      * Returns an item configuration
      */
     abstract public function getConfiguration();
+    
+    /**
+     * Update instance item parameters
+     */
+    abstract public function update(SourceItem $layer);
 
 
 }

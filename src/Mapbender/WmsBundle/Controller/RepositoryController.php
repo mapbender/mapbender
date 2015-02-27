@@ -270,7 +270,7 @@ class RepositoryController extends Controller
                 $wmsOrig->setOriginUrl($wmssource_req->getOriginUrl());
 
                 $wmssourcehandler = EntityHandler::createHandler($this->container, $wmsOrig);
-                $wmssourcehandler->updateFromSource($wmssource);
+                $wmssourcehandler->update($wmssource);
 
                 $this->getDoctrine()->getManager()->persist($wmsOrig);
                 $this->getDoctrine()->getManager()->flush();

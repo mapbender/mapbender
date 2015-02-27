@@ -66,7 +66,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     /**
      * @inheritdoc
      */
-    public function updateFromSource(Source $source)
+    public function update(Source $source)
     {
         $this->entity->setTitle($source->getTitle());
         $this->entity->setName($source->getName());
@@ -83,10 +83,11 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         $this->entity->setGetMap($source->getGetMap());
         # TODO other attributes
         $rootHandler = self::createHandler($this->container, $this->entity->getRootlayer());
-        $rootHandler->updateFromSourceItem($source->getRootlayer());
+        $rootHandler->update($source->getRootlayer());
 //        $this->refreshLayer($this->entity->getLayers()->get(0), $wmsFresh->getLayers()->get(0));
         foreach ($this->getInstances() as $instance) {
             $instHandler = self::createHandler($this->container, $instance);
+            $instHandler->update($source);
             $instHandler->generateConfiguration();
         }
     }

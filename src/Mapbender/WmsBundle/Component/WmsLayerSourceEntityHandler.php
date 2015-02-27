@@ -8,6 +8,7 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use Mapbender\CoreBundle\Component\Exception\NotUpdateableException;
 use Mapbender\CoreBundle\Component\SourceItemEntityHandler;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 use Mapbender\CoreBundle\Component\SourceItem;
@@ -19,7 +20,7 @@ use Mapbender\CoreBundle\Component\SourceItem;
  */
 class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
 {
-    
+
     public function create()
     {
         
@@ -50,14 +51,23 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
     /**
      * @inheritdoc
      */
-    public function updateFromSourceItem(SourceItem $sourceItem)
+    public function update(SourceItem $sourceItem)
     {
+        if ($sourceItem->getName() !== $this->entity->getName()) {
+            throw new NotUpdateableException("WMS Layer: " . $this->entity->getName()
+            . "(" . $this->entity->getName() . ") can't be updated.");
+        }
         foreach ($this->entity->getSublayer() as $layerOrigSublayer) {
-            foreach ($sourceItem->getSublayer() as $layerFreshSublayer) {
-                if ($layerOrigSublayer->getName() === $layerFreshSublayer->getName()) {
+            $num = 0;
+            foreach ($sourceItem->getSublayer() as $layerSublayer) {
+                if ($layerOrigSublayer->getName() === $layerSublayer->getName()) {
+                    $num++;
+                    if ($num > 1) {
+                        throw new NotUpdateableException("WMS Layer: " . $layerOrigSublayer->getName()
+                            . "(" . $layerOrigSublayer->getName() . ") can't be updated.");
+                    }
                     $handler = self::createHandler($this->container, $layerOrigSublayer);
-                    $handler->updateFromSourceItem($layerFreshSublayer);
-                    break;
+                    $handler->update($layerSublayer);
                 }
             }
         }
@@ -66,6 +76,7 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
         $this->entity->setLatlonBounds($sourceItem->getLatlonBounds());
         $this->entity->setSrs($sourceItem->getSrs());
         $this->entity->setAbstract($sourceItem->getAbstract());
+        $this->entity->setStyles($sourceItem->getStyles());
         $this->container->get('doctrine')->getManager()->persist($this->entity);
         $this->container->get('doctrine')->getManager()->flush();
     }
