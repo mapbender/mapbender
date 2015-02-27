@@ -100,6 +100,7 @@
     @include opacity(.7);
     @extend .iconActivity;
     &:before{
+      font-family: 'FontAwesome';
       -webkit-animation:spin 1s linear infinite;
       -moz-animation:spin 1s linear infinite;
       animation:spin 1s linear infinite;
@@ -110,6 +111,7 @@
     @extend .iconWarning;
     .layer-title{color:$errorColor !important;}// if error, overwrite the title color
     &:before{
+      font-family: 'FontAwesome';
       color:$errorColor;
       @include absolute('' $space '' '');
     }
