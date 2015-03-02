@@ -5,56 +5,80 @@
   &.iconMove:before{
     @include absolute(-$space 0 '' '');
   }
-}
-.pan{
-  height: 49px;
-  width: 49px;
-  position:relative;
-  @include border-radius(50%,50%);
-  @include frontendContainerStyle();
+  /**
+  * Map navigation buttons
+  */
+  .pan{
+    height: 49px;
+    width: 49px;
+    position:relative;
+    @include border-radius(50%,50%);
+    @include frontendContainerStyle();
 
-  .iconTop{@include absolute(1px '' '' 18px);}
-  .iconRight{@include absolute(15px 6px '' '');}
-  .iconDown{@include absolute('' '' 1px 18px);}
-  .iconLeft{@include absolute(15px '' '' 7px);}
-}
-.toolPane{
-  margin:$space/2 5px 0px 5px;
-  padding:5px 0px;
-  @include border-radius($radius);
-  @include frontendContainerStyle();
+    .iconTop{@include absolute(1px '' '' 18px);}
+    .iconRight{@include absolute(15px 6px '' '');}
+    .iconDown{@include absolute('' '' 1px 18px);}
+    .iconLeft{@include absolute(15px '' '' 7px);}
+  }
+  /**
+  * Map tools
+  */
+  .toolPane{
+    margin:$space/2 5px 0px 5px;
+    padding:5px 0px;
+    @include border-radius($radius);
+    @include frontendContainerStyle();
 
-  & > li{margin:3px 0;}
-}
-.historyPrev, .historyNext{margin-left:5px;}
-.zoomBox{
-  text-align:center;
-  &.activeZoomIcon{
-    .iconZoom{@include opacity(1);}
+    & > li{margin:3px 0;}
+    
+    .iconBig{
+        padding-left: 31px;
+    }
+    
+  }
+  .historyPrev, .historyNext{margin-left:5px;}
+  .zoomBox{
+    text-align:center;
+    &.activeZoomIcon{
+      .iconZoom{@include opacity(1);}
+    }
+  }
+  .zoomWorld, .zoomSlider{text-align:center;}
+  .zoomSliderLevels{margin:0px;}
+  .iconZoomLevel{
+    font-size:10px;
+    line-height:10px;
+    margin-top:5px;
+    margin-bottom:10px;
+    display: block !important;
+  }
+  
+  .iconZoomOut{
+      position: relative;
+      display:block;
+      height: 17px;
+      padding-left: 35px !important;
+      margin-top: -3px;
+  }
+  
+  .iconZoomLevel{
+    position: relative;
+    display:block;
+    margin-top: 2px;
+    margin-bottom: 7px;
+    &:not(:first-child):after{
+      content:'';
+      height:7px;
+      border-left:dotted 1px white;
+      @include absolute(-8px '' '' 19px);
+      top: -8px;
+    }
   }
 }
-.zoomWorld, .zoomSlider{text-align:center;}
-.zoomSliderLevels{margin:0px;}
-.iconZoomLevel{
-  font-size:10px;
-  line-height:10px;
-  margin-top:5px;
-  margin-bottom:10px;
-  display: block !important;
-}
-.iconZoomOut, .iconZoomLevel{
-  position: relative;
-  display:block;
-}
-.iconZoomLevel{
-  &:not(:first-child):after{
-    content:'';
-    height:7px;
-    border-left:dotted 1px white;
-    @include absolute(-8px '' '' 19px);
-  }
-}
 
+/**
+* TODO: this is a wrong place for this declaration!
+*/
 .olMapViewport{
   &.MapbenderControlZoomBoxActive{cursor: crosshair;}
   .olHandlerBoxZoomBox {
