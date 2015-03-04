@@ -26,6 +26,15 @@ class ImageExportService
     public function export($content)
     {
         $this->data = json_decode($content, true);
+
+        foreach ($this->data['vectorLayers'] as $idx => $layer){
+            $this->data['vectorLayers'][$idx] = json_decode($this->data['vectorLayers'][$idx], true);
+        }
+        
+//        print "<pre>";
+//        print_r($this->data);
+//        print "</pre>";
+//        die();
         $this->format = $this->data['format'];
         $this->requests = $this->data['requests'];
         $this->getImages();
@@ -110,7 +119,13 @@ class ImageExportService
         $date = date("Ymd");
         $time = date("His");
 
-        $file = $finalimagename;
+        $this->finalimagename = $finalimagename;
+
+        if (sizeof($this->data['vectorLayers']) > 0) {
+            $this->drawFeatures();
+        }
+
+        $file = $this->finalimagename;
         $image = imagecreatefrompng($file);
         if ($this->format == 'png') {
             header("Content-type: image/png");
@@ -123,6 +138,161 @@ class ImageExportService
             header('Content-Length: ' . filesize($file));
             imagejpeg($image, null, 85);
         }
-        unlink($finalimagename);
+        unlink($this->finalimagename);
+    }
+
+    private function drawFeatures()
+    {
+        $image = imagecreatefrompng($this->finalimagename);
+        imagesavealpha($image, true);
+        imagealphablending($image, true);
+
+        foreach($this->data['vectorLayers'] as $idx => $layer) {
+            foreach($layer['geometries'] as $geometry) {
+                $renderMethodName = 'draw' . $geometry['type'];
+
+                if(!method_exists($this, $renderMethodName)) {
+                    continue;
+                    //throw new \RuntimeException('Can not draw geometries of type "' . $geometry['type'] . '".');
+                }
+
+                $this->$renderMethodName($geometry, $image);
+            }
+        }
+        imagepng($image, $this->finalimagename);
+    }
+
+    private function getColor($color, $alpha, $image)
+    {
+        list($r, $g, $b) = CSSColorParser::parse($color);
+
+        if(0 == $alpha) {
+            return ImageColorAllocate($image, $r, $g, $b);
+        } else {
+            $a = (1 - $alpha) * 127.0;
+            return imagecolorallocatealpha($image, $r, $g, $b, $a);
+        }
+    }
+
+    private function drawPolygon($geometry, $image)
+    {
+        foreach($geometry['coordinates'] as $ring) {
+            if(count($ring) < 3) {
+                continue;
+            }
+
+            $points = array();
+            foreach($ring as $c) {
+                $p = $this->realWorld2mapPos($c[0], $c[1]);
+
+                $points[] = floatval($p[0]);
+                $points[] = floatval($p[1]);
+            }
+
+            // Filled area
+            $color = $this->getColor(
+                $geometry['style']['fillColor'],
+                $geometry['style']['fillOpacity'],
+                $image);
+            imagefilledpolygon($image, $points, count($ring), $color);
+
+            // Border
+            $color = $this->getColor(
+                $geometry['style']['strokeColor'],
+                $geometry['style']['strokeOpacity'],
+                $image);
+            imagesetthickness($image, $geometry['style']['strokeWidth']);
+            imagepolygon($image, $points, count($ring), $color);
+        }
+        // reset image thickness !!
+        imagesetthickness($image, 0);
+    }
+
+    private function drawLineString($geometry, $image)
+    {
+        $color = $this->getColor(
+            $geometry['style']['strokeColor'],
+            $geometry['style']['strokeOpacity'],
+            $image);
+        imagesetthickness($image, $geometry['style']['strokeWidth']);
+
+        for($i = 1; $i < count($geometry['coordinates']); $i++) {
+
+            $from = $this->realWorld2mapPos(
+                $geometry['coordinates'][$i - 1][0],
+                $geometry['coordinates'][$i - 1][1]);
+            $to = $this->realWorld2mapPos(
+                $geometry['coordinates'][$i][0],
+                $geometry['coordinates'][$i][1]);
+
+            imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
+        }
+
+        // reset image thickness !!
+        imagesetthickness($image, 0);
+    }
+
+    private function drawPoint($geometry, $image)
+    {
+        $c = $geometry['coordinates'];
+
+        $p = $this->realWorld2mapPos($c[0], $c[1]);
+
+        if(isset($geometry['style']['label'])){
+            $color = $this->getColor(
+                '#ff0000',
+                1,
+                $image);
+            $fontPath = $this->container->get('kernel')->getRootDir().'/Resources/MapbenderPrintBundle/fonts/';
+            imagettftext($image, 14, 0, $p[0], $p[1], $color, $fontPath.'Trebuchet_MS.ttf', $geometry['style']['label']);
+            return;
+        }
+
+        $radius = $geometry['style']['pointRadius'];
+        // Filled circle
+        $color = $this->getColor(
+            $geometry['style']['fillColor'],
+            $geometry['style']['fillOpacity'],
+            $image);
+
+        imagefilledellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+
+        // Circle border
+        $color = $this->getColor(
+            $geometry['style']['strokeColor'],
+            $geometry['style']['strokeOpacity'],
+            $image);
+        imagesetthickness($image, $geometry['style']['strokeWidth']);
+        imageellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+
+        // reset image thickness !!
+        imagesetthickness($image, 0);
+    }
+
+    private function realWorld2mapPos($rw_x,$rw_y)
+    {
+        $quality = 72;
+        $map_width = $this->data['extentwidth'];
+        $map_height = $this->data['extentheight'];
+        $centerx = $this->data['centerx'];
+        $centery = $this->data['centery'];
+
+        $height = $this->data['height'];
+        $width = $this->data['width'];
+
+        $minX = $centerx - $map_width * 0.5;
+        $minY = $centery - $map_height * 0.5;
+        $maxX = $centerx + $map_width * 0.5;
+        $maxY = $centery + $map_height * 0.5;
+
+        $extentx = $maxX - $minX ;
+	$extenty = $maxY - $minY ;
+
+        $pixPos_x = (($rw_x - $minX)/$extentx) * $width;
+	$pixPos_y = (($maxY - $rw_y)/$extenty) * $height;
+
+        $pixPos = array($pixPos_x, $pixPos_y);
+
+	return $pixPos;
     }
 }
