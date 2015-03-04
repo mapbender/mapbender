@@ -27,10 +27,11 @@ class ImageExportService
     {
         $this->data = json_decode($content, true);
 
-        foreach ($this->data['vectorLayers'] as $idx => $layer){
-            $this->data['vectorLayers'][$idx] = json_decode($this->data['vectorLayers'][$idx], true);
+        if(isset($this->data['vectorLayers'])){
+            foreach ($this->data['vectorLayers'] as $idx => $layer){
+                $this->data['vectorLayers'][$idx] = json_decode($this->data['vectorLayers'][$idx], true);
+            }
         }
-        
 //        print "<pre>";
 //        print_r($this->data);
 //        print "</pre>";
@@ -121,7 +122,7 @@ class ImageExportService
 
         $this->finalimagename = $finalimagename;
 
-        if (sizeof($this->data['vectorLayers']) > 0) {
+        if (isset($this->data['vectorLayers'])) {
             $this->drawFeatures();
         }
 
