@@ -412,19 +412,36 @@
                 name: 'extent_feature',
                 value: JSON.stringify(feature_coords)
             }));
-            var schalter = 0;
+
             // layer auslesen
             var sources = this.map.getSourceTree(), lyrCount = 0;
 
             var geojsonFormat = new OpenLayers.Format.GeoJSON();
 
+            function _getLegends(layer) {
+                var legend = null;
+                if (layer.options.legend && layer.options.legend.url) {
+                    legend = {};
+                    legend[layer.options.title] = layer.options.legend.url;
+                }
+                if (layer.children) {
+                    for (var i = 0; i < layer.children.length; i++) {
+                        var help = _getLegends(layer.children[i]);
+                        if (help) {
+                            legend = legend ? legend : {};
+                            for (key in help) {
+                                legend[key] = help[key];
+                            }
+                        }
+                    }
+                }
+                return legend;
+            } 
+            var legends = [];
+
             for (var i = 0; i < sources.length; i++) {
                 var layer = this.map.map.layersList[sources[i].mqlid],
-                type = layer.olLayer.CLASS_NAME;
-
-                if (schalter === 1 && layer.olLayer.params.LAYERS.length === 0){
-                    continue;
-                }
+                        type = layer.olLayer.CLASS_NAME;
 
                 if (0 !== type.indexOf('OpenLayers.Layer.')) {
                     continue;
@@ -435,7 +452,7 @@
                             scale = this._getPrintScale(),
                             toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: source.mqlid}};
                     var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
-                    if (visLayers.layers.length > 0){
+                    if (visLayers.layers.length > 0) {
                         var prevLayers = layer.olLayer.params.LAYERS;
                         layer.olLayer.params.LAYERS = visLayers.layers;
 
@@ -451,10 +468,25 @@
                         }));
                         layer.olLayer.params.LAYERS = prevLayers;
                         lyrCount++;
+
+                        if (sources[i].type === 'wms') {
+                            var ll = _getLegends(sources[i].configuration.children[0]);
+                            if (ll) {
+                                legends.push(ll);
+                            }
+                        }
                     }
                 }
             }
 
+            //legend
+            $.merge(fields, $('<input />', {
+                type: 'hidden',
+                name: 'legends',
+                value: JSON.stringify(legends)
+            }));
+            
+            
             // Iterating over all vector layers, not only the ones known to MapQuery
             for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
                 var layer = this.map.map.olMap.layers[i];
@@ -466,14 +498,17 @@
                 for(var idx = 0; idx < layer.features.length; idx++) {
                     var feature = layer.features[idx];
                     if (!feature.onScreen(true)) continue
-                    var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
                     
-                    if(feature.style !== null){
-                        geometry.style = feature.style;
-                    }else{
-                        geometry.style = layer.styleMap.createSymbolizer(feature);
+                    if(this.feature.geometry.intersects(feature.geometry)){
+                        var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
+
+                        if(feature.style !== null){
+                            geometry.style = feature.style;
+                        }else{
+                            geometry.style = layer.styleMap.createSymbolizer(feature);
+                        }
+                        geometries.push(geometry);
                     }
-                    geometries.push(geometry);
                 }
 
                 var lyrConf = {

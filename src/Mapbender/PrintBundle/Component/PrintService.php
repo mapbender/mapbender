@@ -536,6 +536,10 @@ class PrintService
             $this->drawScaleBar();
         }
 
+        if (isset($this->data['legends'])){
+            $this->createLegend();
+        }
+
         unlink($this->finalimagename);
 
         return $pdf->Output(null, 'S');
@@ -999,6 +1003,79 @@ class PrintService
         $pixPos = array($pixPos_x, $pixPos_y);
 
 	return $pixPos;
+    }
+
+    private function createLegend()
+    {
+        if(empty($this->data['legends'])){
+            return false;
+        }
+
+        $this->pdf->addPage('P');
+        $this->pdf->SetFont('Arial', 'B', 14);
+        $x = 5;
+        $y = 10;
+
+        foreach ($this->data['legends'] as $idx => $legendArray) {
+            foreach ($legendArray as $title => $legendUrl) {
+
+                $image = $this->getLegendImage($legendUrl);
+
+                $size = getimagesize($image);
+                $tempY = round($size[1] * 25.4 / 72) + 10;
+
+                if($idx > 0){
+                    if($y + $tempY > ($this->pdf->h)){
+                        $x += 105;
+                        $y = 10;
+                        if($x > ($this->pdf->w)-30){
+                            $this->pdf->addPage('P');
+                            $x = 5;
+                            $y = 10;
+                        }
+                    }
+                }
+
+                $this->pdf->setXY($x,$y);
+                $this->pdf->Cell(0,0,  utf8_decode($title));
+
+                $this->pdf->Image($image, $x, $y + 5, 0, 0, 'png', '', false, 0);
+
+                $y += round($size[1] * 25.4 / 72) + 10;
+
+                if($y > ($this->pdf->h)-30){
+                    $x += 105;
+                    $y = 10;
+                }
+                if($x > ($this->pdf->w)-30){
+                    $this->pdf->addPage('P');
+                    $x = 5;
+                    $y = 10;
+                }
+
+                unlink($image);
+            }
+        }
+    }
+
+    private function getLegendImage($unsignedUrl)
+    {
+        $signer = $this->container->get('signer');
+        $url = $signer->signUrl($unsignedUrl);
+
+        $attributes = array();
+        $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
+        $subRequest = new Request(array(
+            'url' => $url
+            ), array(), $attributes, array(), array(), array(), '');
+        $response = $this->container->get('http_kernel')->handle($subRequest,
+            HttpKernelInterface::SUB_REQUEST);
+
+        $imagename = tempnam($this->tempdir, 'mb_printlegend');
+
+        file_put_contents($imagename, $response->getContent());
+
+        return $imagename;
     }
 
 }
