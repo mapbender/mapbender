@@ -77,7 +77,9 @@
                 id: this.element.attr('id')});
             var self = this, x = e.xy.x, y = e.xy.y, num = 0;
             var called = false;
-            if(!self.options.onlyValid || (self.options.onlyValid && this._isVisible())) {
+            if(!self.options.onlyValid ) {
+                this._setContentEmpty();
+            } else if(self.options.onlyValid && this._isVisible()){
                 this._setContentEmpty();
             }
             $('#js-error-featureinfo').addClass('hidden');
@@ -159,12 +161,16 @@
                         doc.open();
                         doc.write(data);
                         doc.close();
+                    } else {
+                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
                 case 'text/plain':
                 default:
                     if(this.options.onlyValid && this._isDataValid(data, mimetype)) {
                         this._addContent(mqLayer, '<pre>' + data + '</pre>');
+                    } else {
+                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
             }
@@ -175,12 +181,16 @@
                     data = this._cleanHtml(data);
                     if(!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
                         this._addContent(mqLayer, data);
+                    } else {
+                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
                 case 'text/plain':
                 default:
                     if(!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
                         this._addContent(mqLayer, '<pre>' + data + '</pre>');
+                    } else {
+                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
                     }
                     break;
             }
@@ -314,13 +324,6 @@
                 $header.click();
             } else if(this.options.displayType === 'tabs') {
 
-            }
-        },
-        _show: function(){
-            if(this.options.type === 'dialog') {
-
-            } else if(this.options.type === 'element') {
-                this.element.append(content);
             }
         },
         _printContent: function(){
