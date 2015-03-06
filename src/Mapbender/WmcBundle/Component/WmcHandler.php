@@ -3,7 +3,7 @@ namespace Mapbender\WmcBundle\Component;
 
 use Mapbender\CoreBundle\Component\Application;
 use Mapbender\CoreBundle\Component\Element;
-use Mapbender\CoreBundle\Component\Utils;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\CoreBundle\Entity\State;
 use Mapbender\WmcBundle\Entity\Wmc;
 
@@ -163,7 +163,7 @@ class WmcHandler
         $json = json_decode($state->getJson(), true);
         if ($json && isset($json['sources']) && is_array($json['sources'])) {
             foreach ($json['sources'] as &$source) {
-                $url = Utils::validateUrl($source['configuration']['options']['url'],
+                $url = UrlUtil::validateUrl($source['configuration']['options']['url'],
                         array(strtolower('_signature')));
                 $source['configuration']['options']['url'] = $url;
             }
@@ -178,7 +178,7 @@ class WmcHandler
         if($json && isset($json['sources']) && is_array($json['sources'])){
             $signer = $this->container->get('signer');
             foreach($json['sources'] as &$source){
-                $url = Utils::validateUrl($source['configuration']['options']['url'], array(strtolower('_signature')));
+                $url = UrlUtil::validateUrl($source['configuration']['options']['url'], array(strtolower('_signature')));
                 $source['configuration']['options']['url'] = $signer->signUrl($url);
             }
         }

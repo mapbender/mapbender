@@ -2,6 +2,8 @@
 
 namespace Mapbender\CoreBundle\Component;
 
+use Mapbender\CoreBundle\Utils\UrlUtil;
+
 /**
  * The class with utility functions.
  *
@@ -87,37 +89,17 @@ class Utils
     }
 
     /**
+     * DEPRECATED, use Mapbender\CoreBundle\Utils\UrlUtil::validateUrl()
      * Validates an URL
      *
-     * @param mixed $url URL url string or array (in form s. php function "parse_url")
+     * @param string $url URL
      * @param array $paramsToRemove  array of lower case parameter names to
      * remove from url
      * @return string URL without parameter $paramName
      */
-    public static function validateUrl($url, $paramsToRemove = array())
+    public static function validateUrl($url, $paramsToRemove)
     {
-        $rowUrl = is_array($url) ? $url : parse_url($url);
-        $newurl = $rowUrl["scheme"] . "://";
-        if(isset($rowUrl['user'])){
-            $newurl .= $rowUrl['user'] . ":" . (isset($rowUrl['pass']) ? $rowUrl['pass'] : '') . '@';
-        }
-        $newurl .= $rowUrl['host'];
-        $newurl .= isset($rowUrl['port']) && intval($rowUrl['port']) !== 80 ? ':' . $rowUrl['port'] : '';
-        $newurl .= isset($rowUrl['path']) && strlen($rowUrl['path']) > 0 ? $rowUrl['path'] : '';
-        $queries = array();
-        $getParams = array();
-        if (isset($rowUrl["query"])) {
-            parse_str($rowUrl["query"], $getParams);
-        }
-        foreach ($getParams as $key => $value) {
-            if (!in_array(strtolower($key), $paramsToRemove)) {
-                $queries[] = $key . "=" . $value;
-            }
-        }
-        if (count($queries) > 0) {
-            $newurl .= '?' . implode("&", $queries);
-        }
-        return $newurl;
+        return UrlUtil::validateUrl($url, array(), $paramsToRemove);
     }
 
     /**

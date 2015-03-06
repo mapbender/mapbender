@@ -71,6 +71,9 @@ Mapbender.Model = {
 
         this.setView(true);
         this.parseURL();
+        if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+            this.changeProjection({projection: this.getProj(this.mbMap.options.targetsrs)});
+        }
     },
 
     /**
@@ -157,6 +160,9 @@ Mapbender.Model = {
             }
         }
 
+        if(!centered && this.mbMap.options['center']){
+            this.map.olMap.setCenter(new OpenLayers.LonLat(this.mbMap.options['center']));
+        }
 
         if (true === addLayers) {
             $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));

@@ -1,9 +1,9 @@
 <?php
 
-namespace Mapbender\WmsBundle\Form\Type;
+namespace Mapbender\WmsBundle\Element\Type;
 
-use Mapbender\WmsBundle\Form\DataTransformer\DimensionTransformer;
-use Mapbender\WmsBundle\Form\EventListener\DimensionSubscriber;
+use Mapbender\WmsBundle\Element\DataTransformer\DimensionTransformer;
+use Mapbender\WmsBundle\Element\EventListener\DimensionSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 /**
  * DimensionInstType class
  */
-class DimensionInstType extends AbstractType
+class DimensionInstElmType extends AbstractType
 {
 
     /**
@@ -19,7 +19,7 @@ class DimensionInstType extends AbstractType
      */
     public function getName()
     {
-        return "dimension";
+        return "dimensioninstelm";
     }
 
     /**
@@ -39,7 +39,6 @@ class DimensionInstType extends AbstractType
         $builder->addEventSubscriber($subscriber);
         $transformer = new DimensionTransformer();
         $builder->addModelTransformer($transformer);
-        $builder->add('active', 'checkbox', array('required' => true, ));
     }
 
 }
