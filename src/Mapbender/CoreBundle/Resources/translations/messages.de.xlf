@@ -852,7 +852,7 @@
       </trans-unit>
       <trans-unit id="e7fc5ac247221c68263af27adf77755f" resname="mb.core.admin.layertree.label.theme.label">
         <source>mb.core.admin.layertree.label.theme.label</source>
-        <target>Themennamel</target>
+        <target>Themenname</target>
       </trans-unit>
     </body>
   </file>
