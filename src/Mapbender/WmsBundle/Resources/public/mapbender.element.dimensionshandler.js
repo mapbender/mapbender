@@ -1,17 +1,17 @@
-(function ($) {
+(function($) {
     $.widget("mapbender.mbDimensionsHandler", {
         options: {
         },
         elementUrl: null,
         model: null,
-        _create: function () {
+        _create: function() {
             var self = this;
             if (!Mapbender.checkTarget("mbDimensionsHandler", this.options.target)) {
                 return;
             }
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
-        _setup: function () {
+        _setup: function() {
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
             for (dimId in this.options.dimensionsets) {
@@ -19,8 +19,9 @@
             }
             this._trigger('ready');
             this._ready();
+            this.styleDimensionshandler();
         },
-        _setupGroup: function (key) {
+        _setupGroup: function(key) {
             var self = this;
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.model = $("#" + this.options.target).data("mapbenderMbMap").getModel();
@@ -28,8 +29,10 @@
             var dimension = Mapbender.Dimension(dimensionset['dimension']);
             var def = dimension.partFromValue(dimension.getDefault());// * 100;
             var valarea = $('#' + key + ' .dimensionset-value', this.element);
-            $.each(dimensionset.group, function (idx, item) {
-                var temp = self.model.findSource({origId: item.split('-')[0]});
+            $.each(dimensionset.group, function(idx, item) {
+                var temp = self.model.findSource({
+                    origId: item.split('-')[0]
+                });
                 if (temp.length > 0 && temp[0].configuration.options.dimensions) {
                     temp[0].configuration.options.dimensions = [];
                 }
@@ -39,29 +42,47 @@
                 min: 0,
                 max: 100,
                 value: def * 100,
-                slide: function (event, ui) {
+                slide: function(event, ui) {
                     valarea.text(dimension.valueFromPart(ui.value / 100));
                 },
-                stop: function (event, ui) {
-                    $.each(dimensionset.group, function (idx, item) {
-                        var sources = self.model.findSource({origId: item.split('-')[0]});
+                stop: function(event, ui) {
+                    $.each(dimensionset.group, function(idx, item) {
+                        var sources = self.model.findSource({
+                            origId: item.split('-')[0]
+                        });
                         if (sources.length > 0) {
                             var params = {};
                             params[dimension.options.__name] = dimension.valueFromPart(ui.value / 100);
-                            self.model.resetSourceUrl(sources[0], {'add': params}, true);
+                            self.model.resetSourceUrl(sources[0], {
+                                'add': params
+                            },
+                            true);
                         }
                     });
                 }
             });
         },
-        ready: function (callback) {
+        styleDimensionshandler: function() {
+            var li = $(".mb-element-dimensionshandler").closest("li");
+            if (li.closest("ul").hasClass("top") === true) {
+                $(".mb-element-dimensionshandler").css("height", "30px").css("line-height", "20px");
+                $(".dimensionset span").css("font-size", "10px");
+            }
+            else if (li.closest("ul").hasClass("bottom") === true) {
+                $(".mb-element-dimensionshandler").css("height", "30px").css("line-height", "20px");
+                $(".dimensionset span").css("font-size", "10px");
+            }
+            else {
+            }
+        },
+        ready: function(callback) {
             if (this.readyState === true) {
                 callback();
             } else {
                 this.readyCallbacks.push(callback);
             }
         },
-        _ready: function () {
+        _ready: function() {
             for (callback in this.readyCallbacks) {
                 callback();
                 delete(this.readyCallbacks[callback]);
