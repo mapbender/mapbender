@@ -1038,6 +1038,10 @@
         <source>mb.core.admin.layertree.label.theme.activate</source>
         <target>Add activate</target>
       </trans-unit>
+      <trans-unit id="c15a053d4e20aee70d58215582648da6" resname="mb.core.featureinfo.error.noresult">
+        <source>mb.core.featureinfo.error.noresult</source>
+        <target>no result</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
