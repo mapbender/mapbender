@@ -648,7 +648,8 @@ $.extend(true, Mapbender, {
                         layerChanged.state = _createState(layer);
                         if(typeof layerChanged.options.treeOptions !== 'undefined') {
                             var treeOptions = layerChanged.options.treeOptions;
-                            if(typeof treeOptions.selected !== 'undefined') {
+                            if(typeof treeOptions.selected !== 'undefined'
+                                && layer.options.treeOptions.allow.selected === true) {
                                 if(layer.options.treeOptions.selected === treeOptions.selected)
                                     delete(treeOptions.selected);
                                 else {
@@ -656,7 +657,8 @@ $.extend(true, Mapbender, {
                                     elchanged = true;
                                 }
                             }
-                            if(typeof treeOptions.info !== 'undefined') {
+                            if(typeof treeOptions.info !== 'undefined'
+                                && layer.options.treeOptions.allow.info === true) {
                                 if(layer.options.treeOptions.info === treeOptions.info)
                                     delete(treeOptions.info);
                                 else {

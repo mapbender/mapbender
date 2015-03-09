@@ -286,6 +286,10 @@
         <source>mb.wmc.element.wmchandler.error_srs</source>
         <target>SRS "%state.extent.srs%" no es soportado por esta aplicación.</target>
       </trans-unit>
+      <trans-unit id="7550c8b5c4bee4a01882941e2553c8ea" resname="mb.wmc.error.wmcurlloader_notallowed">
+        <source>mb.wmc.error.wmcurlloader_notallowed</source>
+        <target>el cargador WMC URL no es permitido.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

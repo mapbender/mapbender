@@ -156,7 +156,7 @@ class Map extends Element
                 throw new \RuntimeException('The srs: "' . $srs_req
                 . '" does not supported.');
             }
-            $configuration = array_merge($configuration, array('targetsrs' => $srs_req));
+            $configuration = array_merge($configuration, array('targetsrs' => strtoupper($srs_req)));
         }
 
         $pois = $this->container->get('request')->get('poi');
@@ -187,6 +187,12 @@ class Map extends Element
                     floatval($bbox[3])
                 );
             }
+        }
+
+        $center = $this->container->get('request')->get('center');
+        $centerArr = $center !== null ? explode(',', $center) : null;
+        if($center !== null && is_array($centerArr) && count($centerArr) === 2){
+            $configuration["center"] = $centerArr;
         }
 
         $configuration['extra'] = $extra;
