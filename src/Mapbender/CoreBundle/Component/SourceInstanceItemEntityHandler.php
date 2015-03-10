@@ -21,7 +21,7 @@ abstract class SourceInstanceItemEntityHandler extends EntityHandler
     /**
      * Creates a SourceInstanceItem
      */
-    abstract public function create(SourceInstance $instance, SourceItem $item, $num = 0);
+    abstract public function create(SourceInstance $instance, SourceItem $item, $num = 0, $persist = true);
     
     /**
      * Remove a SourceInstanceItem

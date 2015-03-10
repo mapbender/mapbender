@@ -1,5 +1,6 @@
 # Changelog
 * **v3.0.4.1**
+    - center the map from GET paramter 'center added
     - option 'removelayer' added into layertree menu
     - parameter 'layerRemove' removed from layertree configuration
     - container accordion structure changed

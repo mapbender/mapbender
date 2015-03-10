@@ -16,7 +16,8 @@ class MapbenderWmsBundle
     public function getElements()
     {
         return array(
-            'Mapbender\WmsBundle\Element\WmsLoader'
+            'Mapbender\WmsBundle\Element\WmsLoader',
+            'Mapbender\WmsBundle\Element\DimensionsHandler'
             );
     }
 

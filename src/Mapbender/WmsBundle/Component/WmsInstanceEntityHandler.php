@@ -11,6 +11,7 @@ namespace Mapbender\WmsBundle\Component;
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
 use Mapbender\CoreBundle\Entity\Source;
+use Mapbender\CoreBundle\Utils\UrlUtil;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
@@ -29,13 +30,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     /**
      * @inheritdoc
      */
-    public function create()
+    public function create($persist = true)
     {
         $this->entity->setTitle($this->entity->getSource()->getTitle());
         $formats = $this->entity->getSource()->getGetMap()->getFormats();
         $this->entity->setFormat(count($formats) > 0 ? $formats[0] : null);
         $infoformats = $this->entity->getSource()->getGetFeatureInfo() !== null ?
-                $this->entity->getSource()->getGetFeatureInfo()->getFormats() : array();
+            $this->entity->getSource()->getGetFeatureInfo()->getFormats() : array();
         $this->entity->setInfoformat(count($infoformats) > 0 ? $infoformats[0] : null);
         $excformats = $this->entity->getSource()->getExceptionFormats();
         $this->entity->setExceptionformat(count($excformats) > 0 ? $excformats[0] : null);
@@ -52,10 +53,10 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->setDimensions($dimensions);
 
         $this->entity->setWeight(-1);
-
-        $this->container->get('doctrine')->getManager()->persist($this->entity);
-        $this->container->get('doctrine')->getManager()->flush();
-
+        if ($persist) {
+            $this->container->get('doctrine')->getManager()->persist($this->entity);
+            $this->container->get('doctrine')->getManager()->flush();
+        }
         $wmslayer_root = $this->entity->getSource()->getRootlayer();
 
         $instLayer = new WmsInstanceLayer();
@@ -162,7 +163,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         );
         foreach ($rootlayer->getSourceItem()->getBoundingBoxes() as $bbox) {
             $srses = array_merge($srses,
-                                 array($bbox->getSrs() => array(
+                array($bbox->getSrs() => array(
                     floatval($bbox->getMinx()),
                     floatval($bbox->getMiny()),
                     floatval($bbox->getMaxx()),
@@ -224,13 +225,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $options = new WmsInstanceConfigurationOptions();
         $configuration = $this->entity->getConfiguration();
         $options->setUrl($configuration["url"])
-                ->setProxy($this->entity->getProxy())
-                ->setVisible($this->entity->getVisible())
-                ->setFormat($this->entity->getFormat())
-                ->setInfoformat($this->entity->getInfoformat())
-                ->setTransparency($this->entity->getTransparency())
-                ->setOpacity($this->entity->getOpacity() / 100)
-                ->setTiled($this->entity->getTiled());
+            ->setProxy($this->entity->getProxy())
+            ->setVisible($this->entity->getVisible())
+            ->setFormat($this->entity->getFormat())
+            ->setInfoformat($this->entity->getInfoformat())
+            ->setTransparency($this->entity->getTransparency())
+            ->setOpacity($this->entity->getOpacity() / 100)
+            ->setTiled($this->entity->getTiled());
 
         if (isset($configuration["vendor"])) {
             $options->setVendor($configuration["vendor"]);
@@ -242,13 +243,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $num = 0;
             $rootlayer = new WmsInstanceLayer();
             $rootlayer->setTitle($this->entity->getTitle())
-                    ->setId($this->entity->getId() . "_" . $num)
-                    ->setMinScale(!isset($configuration["minScale"]) ? null : $configuration["minScale"])
-                    ->setMaxScale(!isset($configuration["maxScale"]) ? null : $configuration["maxScale"])
-                    ->setSelected(!isset($configuration["visible"]) ? false : $configuration["visible"])
-                    ->setPriority($num)
-                    ->setSourceItem(new WmsLayerSource())
-                    ->setSourceInstance($this->entity);
+                ->setId($this->entity->getId() . "_" . $num)
+                ->setMinScale(!isset($configuration["minScale"]) ? null : $configuration["minScale"])
+                ->setMaxScale(!isset($configuration["maxScale"]) ? null : $configuration["maxScale"])
+                ->setSelected(!isset($configuration["visible"]) ? false : $configuration["visible"])
+                ->setPriority($num)
+                ->setSourceItem(new WmsLayerSource())
+                ->setSourceInstance($this->entity);
             $rootlayer->setToggle(false);
             $rootlayer->setAllowtoggle(true);
             $this->entity->addLayer($rootlayer);
@@ -273,14 +274,14 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                     $layersource->addStyle($style);
                 }
                 $layer->setTitle($layerDef["title"])
-                        ->setId($this->entity->getId() . '-' . $num)
-                        ->setMinScale(!isset($layerDef["minScale"]) ? null : $layerDef["minScale"])
-                        ->setMaxScale(!isset($layerDef["maxScale"]) ? null : $layerDef["maxScale"])
-                        ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
-                        ->setInfo(!isset($layerDef["queryable"]) ? false : $layerDef["queryable"])
-                        ->setParent($rootlayer)
-                        ->setSourceItem($layersource)
-                        ->setSourceInstance($this->entity);
+                    ->setId($this->entity->getId() . '-' . $num)
+                    ->setMinScale(!isset($layerDef["minScale"]) ? null : $layerDef["minScale"])
+                    ->setMaxScale(!isset($layerDef["maxScale"]) ? null : $layerDef["maxScale"])
+                    ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
+                    ->setInfo(!isset($layerDef["queryable"]) ? false : $layerDef["queryable"])
+                    ->setParent($rootlayer)
+                    ->setSourceItem($layersource)
+                    ->setSourceInstance($this->entity);
                 $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo() ? true : false);
                 $rootlayer->addSublayer($layer);
                 $this->entity->addLayer($layer);
@@ -314,6 +315,24 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 $this->signeUrls($signer, $child);
             }
         }
+    }
+
+    public function mergeDimension($dimension, $persist = false)
+    {
+        $dimensions = $this->entity->getDimensions();
+        foreach ($dimensions as $dim) {
+            if($dim->getType() === $dimension->getType()){
+                $dim->setExtent($dimension->getExtent());
+                $dim->setDefault($dimension->getDefault());
+            }
+        }
+        $this->entity->setDimensions($dimensions);
+        if ($persist) {
+            $this->container->get('doctrine')->getManager()->persist($this->entity);
+            $this->container->get('doctrine')->getManager()->flush();
+        }
+//        $dimensions = $this->entity->getDimensions();
+//        $a = 0;
     }
 
 }

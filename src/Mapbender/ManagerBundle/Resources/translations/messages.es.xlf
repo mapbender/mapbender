@@ -20,7 +20,7 @@
       </trans-unit>
       <trans-unit id="66daa81c3ff5b18311b1228c51816803" resname="mb.manager.element.yaml.message">
         <source>mb.manager.element.yaml.message</source>
-        <target>Use the &lt;a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&amp;language=%locale%"&gt;YAML&lt;/a&gt; format to describe the element's configuration.</target>
+        <target><![CDATA[Use the <a class="linkButton" href="http://www.wikipedia.org/search-redirect.php?search=yaml&language=%locale%">YAML</a> format to describe the element's configuration.]]></target>
       </trans-unit>
       <trans-unit id="7249e0628d1a1e31cb2d44305a1c91ab" resname="mb.core.admin.corrdsdisplay.label">
         <source>mb.core.admin.corrdsdisplay.label</source>
@@ -300,11 +300,11 @@
       </trans-unit>
       <trans-unit id="1e8cb174046a6e4cf13d68d18c70d8f9" resname="mb.manager.admin.layerset.delete.confirm">
         <source>mb.manager.admin.layerset.delete.confirm</source>
-        <target>¿Realmente quieres remover el conjunto de capas con el título &lt;span class="italic"&gt;%layerset_title%&lt;/span&gt;?</target>
+        <target><![CDATA[¿Realmente quieres remover el conjunto de capas con el título <span class="italic">%layerset_title%</span>?]]></target>
       </trans-unit>
       <trans-unit id="154a2657aaa83a07817e8912d27526d1" resname="mb.manager.admin.instance.delete.confirm">
         <source>mb.manager.admin.instance.delete.confirm</source>
-        <target>¿Realmente quieres quitar la instancia de título &lt;span class="italic"&gt;%instance_title%&lt;/span&gt;?</target>
+        <target><![CDATA[¿Realmente quieres quitar la instancia de título <span class="italic">%instance_title%</span>?]]></target>
       </trans-unit>
       <trans-unit id="250f49cd91268cd451c0416f0289ca5c" resname="mb.manager.admin.sources">
         <source>mb.manager.admin.sources</source>
