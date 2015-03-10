@@ -286,6 +286,10 @@
         <source>mb.wmc.wmcloader.state.load</source>
         <target>Load</target>
       </trans-unit>
+      <trans-unit id="7550c8b5c4bee4a01882941e2553c8ea" resname="mb.wmc.error.wmcurlloader_notallowed">
+        <source>mb.wmc.error.wmcurlloader_notallowed</source>
+        <target>WMC url loader is not allowed.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

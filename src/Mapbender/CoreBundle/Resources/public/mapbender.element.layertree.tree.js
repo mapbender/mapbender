@@ -1053,9 +1053,6 @@
             }
             );
         },
-        /**
-         * Sets a count of sources from layer tree to counter element
-         */
         _setSourcesCount: function() {
             var countObj = {};
             $(this.element).find("#list-root li[data-sourceid]").each(function(idx, elm) {
@@ -1066,9 +1063,6 @@
                 num++;
             $(this.element).find('#counter').text(num);
         },
-        /**
-         * Removes all sources from layertree.
-         */
         _removeAllSources: function(e) {
             var self = this;
             if (Mapbender.confirm(Mapbender.trans("mb.core.layertree.confirm.allremove"))) {
