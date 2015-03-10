@@ -43,7 +43,7 @@ class Style
      * ORM\Column(type="object", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $styleUrl;
+    public $styleUlr;
 
     /**
      * Set name
