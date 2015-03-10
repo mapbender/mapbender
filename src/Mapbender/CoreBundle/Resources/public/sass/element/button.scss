@@ -4,3 +4,6 @@
 @import "modules/text";
 
 .sideContent .mb-button, {@extend .button;}
+.mb-button {
+    vertical-align:middle;
+}

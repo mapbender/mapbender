@@ -26,12 +26,14 @@ class WmsInstanceInstanceLayersType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'available_templates' => array(),
-            'gfg' => function(FormInterface $form) {
-            $data = $form->getData()->getWmssourcelayer();
-            return true;
-        }));
+        $resolver->setDefaults(
+            array(
+                'available_templates' => array(),
+                'gfg' => function(FormInterface $form) {
+                $data = $form->getData()->getWmssourcelayer();
+                return true;
+            })
+        );
     }
 
     /**
@@ -58,7 +60,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
             $formats_gfi[$value] = $value;
         }
         $builder->add('infoformat', 'choice',
-            array(
+                      array(
             'choices' => $formats_gfi,
             'required' => false));
         $arr = $wmsinstance->getSource()->getExceptionFormats() !== null ?
@@ -72,7 +74,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
             $opacity[$value] = $value;
         }
         $builder->add('exceptionformat', 'choice',
-                array(
+                      array(
                 'choices' => $formats_exc,
                 'required' => false))
             ->add('basesource', 'checkbox', array(
@@ -94,14 +96,14 @@ class WmsInstanceInstanceLayersType extends AbstractType
             ->add('buffer', 'integer', array(
                 'required' => false))
             ->add('dimensions', 'collection',
-                array(
+                  array(
                 'required' => false,
                 'type' => new DimensionInstType(),
                 'auto_initialize' => false,
                 'allow_add' => true,
                 'allow_delete' => true,))
             ->add('layers', 'collection',
-                array(
+                  array(
                 'type' => new WmsInstanceLayerType(),
                 'options' => array(
                     'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
