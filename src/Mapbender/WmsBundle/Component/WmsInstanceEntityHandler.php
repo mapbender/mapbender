@@ -77,11 +77,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     /**
      * @inheritdoc
      */
-    public function update(Source $source)
+    public function update()
     {
-        $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
-        $layerHandler->update($source->getRootlayer());
-//        $this->container->get('doctrine')->getManager()->remove($this->entity);
+//        $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
+//        $layerHandler->update($source->getRootlayer());
+////        $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
     /**

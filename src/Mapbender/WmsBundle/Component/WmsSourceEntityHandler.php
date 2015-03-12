@@ -38,6 +38,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function save()
     {
+        if ($this->entity->getRootlayer()) {
+            self::createHandler($this->container, $this->entity->getRootlayer())->save();
+        }
         $this->container->get('doctrine')->getManager()->persist($this->entity);
         $this->container->get('doctrine')->getManager()->flush();
     }
@@ -85,9 +88,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function update(Source $sourceNew)
     {
-        if (!$this->container->get('doctrine')->getManager()->getConnection()->isTransactionActive()) {
-            throw new NotUpdateableException('WMS "' . $this->entity->getTitle()
-            . '(' . $this->entity->getId() . ')" can\'t be updated: DB transaction is not active.');
+        $transaction = $this->container->get('doctrine')->getManager()->getConnection()->isTransactionActive();
+        if (!$transaction) {
+            $this->container->get('doctrine')->getManager()->getConnection()->beginTransaction();
         }
         $updater = new WmsUpdater($this->entity);
         /* Update source attributes */
@@ -115,6 +118,18 @@ class WmsSourceEntityHandler extends SourceEntityHandler
 
         $rootHandler = self::createHandler($this->container, $this->entity->getRootlayer());
         $rootHandler->update($sourceNew->getRootlayer());
+
+        $this->updateInstances();
+
+        if (!$transaction) {
+            $this->container->get('doctrine')->getManager()->getConnection()->commit();
+        }
+    }
+
+    private function updateInstances(){
+        foreach($this->getInstances() as $instance){
+            self::createHandler($this->container, $instance)->update();
+        }
     }
 
     /**

@@ -27,7 +27,7 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     /**
      * Update instance parameters
      */
-    abstract public function update(Source $source);
+    abstract public function update();
     
     /**
      * Remove a source from a database
