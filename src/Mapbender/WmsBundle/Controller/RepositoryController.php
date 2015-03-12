@@ -159,15 +159,13 @@ class RepositoryController extends Controller
             if (count($wmsWithSameTitle) > 0) {
                 $wmssource->setAlias(count($wmsWithSameTitle));
             }
+            $this->getDoctrine()->getManager()->getConnection()->beginTransaction();
 
             $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
             $wmssource->setUsername($wmssource_req->getUsername());
             $wmssource->setPassword($wmssource_req->getPassword());
-            $wmslayerhandler = EntityHandler::createHandler($this->container, $wmssource->getLayers()->get(0));
-            $wmslayerhandler->save(); // save recursively
-            $this->getDoctrine()->getManager()->persist($wmssource);
-            $this->getDoctrine()->getManager()->flush();
-
+            
+            EntityHandler::createHandler($this->container, $wmssource)->save();
             // ACL
             $aclProvider    = $this->get('security.acl.provider');
             $objectIdentity = ObjectIdentity::fromDomainObject($wmssource);
@@ -179,7 +177,8 @@ class RepositoryController extends Controller
 
             $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
             $aclProvider->updateAcl($acl);
-
+            
+            $this->getDoctrine()->getManager()->getConnection()->commit();
             $this->get('session')->getFlashBag()->set('success', "Your WMS has been created");
             return $this->redirect($this->generateUrl(
                         "mapbender_manager_repository_view",
@@ -290,10 +289,9 @@ class RepositoryController extends Controller
                 $wmsOrig->setUsername($wmssource_req->getUsername());
                 $wmsOrig->setPassword($wmssource_req->getPassword());
 
-                $this->getDoctrine()->getManager()->persist($wmsOrig);
-                $this->getDoctrine()->getManager()->flush();
+                EntityHandler::createHandler($this->container, $wmsOrig)->save();
                 $this->getDoctrine()->getManager()->getConnection()->commit();
-                $managers = $this->get('mapbender')->getRepositoryManagers();
+                
                 $this->get('session')->getFlashBag()->set('success', 'Your wms source has been updated.');
                 return $this->redirect($this->generateUrl("mapbender_manager_repository_view",
                             array("sourceId" => $wmsOrig->getId()), true));
@@ -309,14 +307,6 @@ class RepositoryController extends Controller
             );
         }
     }
-//
-//    private function saveLayer($em, $layer)
-//    {
-//        foreach ($layer->getSublayer() as $sublayer) {
-//            $em->persist($sublayer);
-//            $this->saveLayer($em, $sublayer);
-//        }
-//    }
 
     /**
      * Removes a WmsSource
@@ -524,10 +514,9 @@ class RepositoryController extends Controller
             $enabled_before = $wmsinstance->getEnabled();
             $enabled        = $enabled === "true" ? true : false;
             $wmsinstance->setEnabled($enabled);
-            $em             = $this->getDoctrine()->getManager();
-            $em->persist($wmsinstance);
             $wmsinstance->getLayerSet()->getApplication()->setUpdated(new \DateTime());
-            $em->flush();
+            $this->getDoctrine()->getManager()->persist($wmsinstance);
+            $this->getDoctrine()->getManager()->flush();
             return new Response(json_encode(array(
                     'success' => array(
                         "id" => $wmsinstance->getId(),
@@ -565,43 +554,26 @@ class RepositoryController extends Controller
         $response->headers->set('Content-Type', 'text/html');
         return $response;
     }
-
-    /**
-     * Get Metadata for a wms service
-     *
-     * @ManagerRoute("/instance/wmsupdate")
-     * @Method({ "GET" })
-     */
-    public function wmsupdateAction()
-    {
-//        $sourceId = $this->container->get('request')->get("sourceId", null);
-        $src           = $this->container->get("doctrine")
-                ->getRepository('Mapbender\WmsBundle\Entity\WmsSource')->find(14);
-        $target        = $this->container->get("doctrine")
-                ->getRepository('Mapbender\WmsBundle\Entity\WmsSource')->find(14);
-        $entityHandler = EntityHandler::createHandler($this->container, $src);
-        $entityHandler->update($target);
-
-//        $reflect = new \ReflectionClass($source);
-//        $props   = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
-//        $methods = $reflect->getMethods(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
-//        $a = 0;
-    }
-
-    private function getErrorMessages(\Symfony\Component\Form\Form $form)
-    {
-        $errors = array();
-
-        foreach ($form->getErrors() as $key => $error) {
-            $errors[] = $error->getMessage();
-        }
-
-        foreach ($form->all() as $child) {
-            if (!$child->isValid()) {
-                $errors[$child->getName()] = $this->getErrorMessages($child);
-            }
-        }
-
-        return $errors;
-    }
+//
+//    /**
+//     * Get Metadata for a wms service
+//     *
+//     * @ManagerRoute("/instance/wmsupdate")
+//     * @Method({ "GET" })
+//     */
+//    public function wmsupdateAction()
+//    {
+////        $sourceId = $this->container->get('request')->get("sourceId", null);
+//        $src           = $this->container->get("doctrine")
+//                ->getRepository('Mapbender\WmsBundle\Entity\WmsSource')->find(14);
+//        $target        = $this->container->get("doctrine")
+//                ->getRepository('Mapbender\WmsBundle\Entity\WmsSource')->find(14);
+//        $entityHandler = EntityHandler::createHandler($this->container, $src);
+//        $entityHandler->update($target);
+//
+////        $reflect = new \ReflectionClass($source);
+////        $props   = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
+////        $methods = $reflect->getMethods(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
+////        $a = 0;
+//    }
 }

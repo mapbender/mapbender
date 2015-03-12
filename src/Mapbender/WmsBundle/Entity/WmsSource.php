@@ -187,7 +187,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * @var ArrayCollections A list of WMS layers
      * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="source", cascade={"persist","remove"})
-     * @ORM\OrderBy({"id" = "asc"})
+     * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $layers;
 
@@ -201,7 +201,6 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * @var ArrayCollections A list of WMS instances
      * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="source", cascade={"persist","remove"})
-     * 
      */
     protected $instances;
 

@@ -73,7 +73,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function remove()
     {
-        self::createHandler($this->container, $this->entity->getRootlayer())->remove();
+        if ($this->entity->getRootlayer()) {
+            self::createHandler($this->container, $this->entity->getRootlayer())->remove();
+        }
         $this->container->get('doctrine')->getManager()->remove($this->entity);
         $this->container->get('doctrine')->getManager()->flush();
     }

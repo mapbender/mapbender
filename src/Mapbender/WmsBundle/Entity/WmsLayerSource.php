@@ -48,7 +48,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
 
     /**
      * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="parent")
-     * @ORM\OrderBy({"id" = "asc"})
+     * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $sublayer;
 
