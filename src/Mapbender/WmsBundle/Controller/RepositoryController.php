@@ -163,9 +163,8 @@ class RepositoryController extends Controller
             $wmssource->setOriginUrl($wmssource_req->getOriginUrl());
             $wmssource->setUsername($wmssource_req->getUsername());
             $wmssource->setPassword($wmssource_req->getPassword());
-            $rootlayer = $wmssource->getLayers()->get(0);
-            $this->getDoctrine()->getManager()->persist($rootlayer);
-            $this->saveLayer($this->getDoctrine()->getManager(), $rootlayer);
+            $wmslayerhandler = EntityHandler::createHandler($this->container, $wmssource->getLayers()->get(0));
+            $wmslayerhandler->save(); // save recursively
             $this->getDoctrine()->getManager()->persist($wmssource);
             $this->getDoctrine()->getManager()->flush();
 
@@ -310,14 +309,14 @@ class RepositoryController extends Controller
             );
         }
     }
-
-    private function saveLayer($em, $layer)
-    {
-        foreach ($layer->getSublayer() as $sublayer) {
-            $em->persist($sublayer);
-            $this->saveLayer($em, $sublayer);
-        }
-    }
+//
+//    private function saveLayer($em, $layer)
+//    {
+//        foreach ($layer->getSublayer() as $sublayer) {
+//            $em->persist($sublayer);
+//            $this->saveLayer($em, $sublayer);
+//        }
+//    }
 
     /**
      * Removes a WmsSource

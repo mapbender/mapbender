@@ -27,7 +27,12 @@ abstract class SourceItemEntityHandler extends EntityHandler
      * Removes a SourceItem
      */
     abstract public function remove();
-    
+
+    /**
+     * Saves a entity
+     */
+    abstract public function save();
+
     /**
      * Updates a SourceItem from another SourceItem
      * @param SourceItem $sourceItem a SourceItemobject

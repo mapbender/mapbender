@@ -21,6 +21,9 @@ use Mapbender\CoreBundle\Component\SourceItem;
 class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
 {
 
+    /**
+     * @inheritdoc
+     */
     public function create()
     {
         
@@ -29,99 +32,90 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
     /**
      * @inheritdoc
      */
-    public function remove()
+    public function save()
     {
-        $this->removeRecursively($this->entity);
-    }
-
-    /**
-     * Recursively remove a nested Layerstructure
-     * @param WmsLayerSource
-     * @param EntityManager
-     */
-    private function removeRecursively(WmsLayerSource $wmslayer)
-    {
-        foreach ($wmslayer->getSublayer() as $sublayer) {
-            $this->removeRecursively($sublayer);
-        }
-        $this->container->get('doctrine')->getManager()->remove($wmslayer);
-        $this->container->get('doctrine')->getManager()->flush();
-    }
-
-    public function update(SourceItem $sourceItemNew, WmsUpdater $updater = NULL)
-    {
-        $updater = $updater ? $updater : new WmsUpdater($this->entity);
-        $mapper  = $updater->getMapper();
-        /* handle sublayer */
-        foreach ($this->entity->getSublayer() as $layerOrigSublayer) {
-            $layerSublayer = $updater->findLayer($layerOrigSublayer, $sourceItemNew->getSublayer());
-            if ($layerSublayer) {
-                $handler = self::createHandler($this->container, $layerOrigSublayer);
-                $handler->update($layerSublayer, $updater);
-            } else {
-                $this->removeRecursively($layerOrigSublayer);
-            }
-        }
-        $new_entity = clone $this->entity;
-        $this->container->get('doctrine')->getManager()->detach($new_entity);
-//        foreach ($sourceItem->getSublayer() as $layerSublayer) {
-//            $layer = $updater->findLayer($layerSublayer, $this->entity->getSublayer());
-//            $new_entity = clone $layerSublayer;
-////            if (!$layer) {
-////                $handler = self::createHandler($this->container, $layerOrigSublayer);
-////                $handler->update($layerSublayer, $reflectionHandler);
-////            }
-//        }
-        /* handle keywords */
-        $updater->updateKeywords($this->entity, WmsLayerSource, $this->container->get('doctrine')->getManager(),
-            'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword');
-
-        /* handle other properties */
-
-        foreach ($mapper as $propertyName => $properties) {
-            if ($propertyName === 'sublayer' || $propertyName === 'id' || $propertyName === 'parent' || $propertyName === 'source'
-                || $propertyName === 'keywords') {
-                continue;
-            } else {
-                $getter      = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::GETTER]);
-                $value       = $getter->invoke($sourceItemNew);
-                $tosetMethod = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::TOSET]);
-                $tosetMethod->invoke($this->entity, $value);
-            }
-        }
         $this->container->get('doctrine')->getManager()->persist($this->entity);
-        $this->container->get('doctrine')->getManager()->flush();
+        foreach ($this->entity->getSublayer() as $sublayer) {
+            self::createHandler($this->container, $sublayer)->save();
+        }
     }
 
     /**
      * @inheritdoc
      */
-    public function updateII(SourceItem $sourceItem)
+    public function remove()
     {
-        if ($sourceItem->getName() !== $this->entity->getName()) {
-            throw new NotUpdateableException("WMS Layer: ".$this->entity->getName()
-            ."(".$this->entity->getName().") can't be updated.");
+        foreach ($this->entity->getSublayer() as $sublayer) {
+            self::createHandler($this->container, $sublayer)->remove();
         }
-        foreach ($this->entity->getSublayer() as $layerOrigSublayer) {
-            $num = 0;
-            foreach ($sourceItem->getSublayer() as $layerSublayer) {
-                if ($layerOrigSublayer->getName() === $layerSublayer->getName()) {
-                    $num++;
-                    if ($num > 1) {
-                        throw new NotUpdateableException("WMS Layer: ".$layerOrigSublayer->getName()
-                        ."(".$layerOrigSublayer->getName().") can't be updated.");
+        $this->container->get('doctrine')->getManager()->remove($this->entity);
+        $this->container->get('doctrine')->getManager()->flush();
+    }
+
+    public function update(SourceItem $itemNew, WmsLayerUpdater $updater = NULL)
+    {
+        $updater = $updater ? $updater : new WmsLayerUpdater($this->entity);
+        $mapper  = $updater->getMapper();
+        /* handle simple properties */
+        foreach ($mapper as $propertyName => $properties) {
+            if ($propertyName === 'sublayer' || $propertyName === 'id' || $propertyName === 'parent' ||
+                $propertyName === 'source' || $propertyName === 'keywords') {
+                continue;
+            } else {
+                $getter    = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::GETTER]);
+                $value     = $getter->invoke($itemNew);
+                $refMethod = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::TOSET]);
+                if (is_object($value)) {
+                    $valueNew = clone $value;
+                    $this->container->get('doctrine')->getManager()->detach($valueNew);
+                    $refMethod->invoke($this->entity, $valueNew);
+                }
+                $refMethod->invoke($this->entity, $value);
+            }
+        }
+        /* handle sublayer- layer name is a unique identifier for a wms layer. */
+        /* remove missed layers */
+        foreach ($this->entity->getSublayer() as $layerOldSub) {
+            $layerSublayer = $updater->findLayer($layerOldSub, $itemNew->getSublayer());
+            if (count($layerSublayer) !== 1) {
+                self::createHandler($this->container, $layerOldSub)->remove();
+            }
+        }
+        /* update founded layers, add new layers */
+        foreach ($itemNew->getSublayer() as $subItemNew) {
+            $subItemsOld = $updater->findLayer($subItemNew, $this->entity->getSublayer());
+            if ($subItemNew->getName() === null) { # remove all old layers with name===null and add $subItemNew
+                foreach ($subItemsOld as $layerToRemove) {
+                    self::createHandler($this->container, $layerToRemove)->remove();
+                }
+                $this->container->get('doctrine')->getManager()->merge($this->entity);
+                $this->entity->addSubLayer($updater->cloneLayer($this->getSource(), $subItemNew, $this->entity,
+                        $this->container->get('doctrine')->getManager()));
+                $this->container->get('doctrine')->getManager()->merge($this->entity);
+            } else {
+                if (count($subItemsOld) === 0) { # add a new layer
+                    $this->entity->addSubLayer($updater->cloneLayer($this->getSource(), $subItemNew, $this->entity,
+                            $this->container->get('doctrine')->getManager()));
+                    $this->container->get('doctrine')->getManager()->merge($this->entity);
+                } elseif (count($subItemsOld) === 1) { # update a layer
+                    $subItemsOld[0]->setPriority($subItemNew->getPriority());
+                    self::createHandler($this->container, $subItemsOld[0])->update($subItemNew, $updater);
+                } else { # remove all old layers and add a new layer
+                    foreach ($subItemsOld as $layerToRemove) {
+                        self::createHandler($this->container, $layerToRemove)->remove();
                     }
-                    $handler = self::createHandler($this->container, $layerOrigSublayer);
-                    $handler->update($layerSublayer);
+                    $this->container->get('doctrine')->getManager()->merge($this->entity);
+                    $this->entity->addSubLayer($updater->cloneLayer($this->getSource(), $subItemNew, $this->entity,
+                            $this->container->get('doctrine')->getManager()));
+                    $this->container->get('doctrine')->getManager()->merge($this->entity);
                 }
             }
         }
-        $this->entity->setName($sourceItem->getName());
-        $this->entity->setTitle($sourceItem->getTitle());
-        $this->entity->setLatlonBounds($sourceItem->getLatlonBounds());
-        $this->entity->setSrs($sourceItem->getSrs());
-        $this->entity->setAbstract($sourceItem->getAbstract());
-        $this->entity->setStyles($sourceItem->getStyles());
+
+        /* handle keywords */
+        $updater->updateKeywords($this->entity, $itemNew, $this->container->get('doctrine')->getManager(),
+            'Mapbender\WmsBundle\Entity\WmsLayerSourceKeyword');
+
         $this->container->get('doctrine')->getManager()->persist($this->entity);
         $this->container->get('doctrine')->getManager()->flush();
     }

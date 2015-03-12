@@ -36,6 +36,13 @@ abstract class SourceEntityHandler extends EntityHandler
      * Remove a source from a database
      */
     abstract public function remove();
+
+
+
+    /**
+     * Saves an entity
+     */
+    abstract public function save();
     
     /**
      * Update a source from a new source

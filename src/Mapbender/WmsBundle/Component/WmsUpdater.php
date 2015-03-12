@@ -18,24 +18,6 @@ use Mapbender\CoreBundle\Component\ReflectionHandler;
 class WmsUpdater extends ReflectionHandler
 {
 
-    public function findLayer($layer, $layerList)
-    {
-        $founded = null;
-        $num     = 0;
-        foreach ($layerList as $layerTmp) {
-            if ($layer->getName() === $layerTmp->getName()) {
-                $founded = $layerTmp;
-                $num++;
-            }
-        }
-        if ($num > 1) {
-            # not found or $layerOrig name is null and more as one layer from $layerList with name is null
-            throw new NotUpdateableException("WMS Layer: ".$layerOrigSublayer->getName()
-            ."(".$layerOrigSublayer->getName().") can't be updated.");
-        }
-        return $founded;
-    }
-
     public function keywordExists($keyword, $keywordList)
     {
         foreach ($keywordList as $keywordTemp) {

@@ -7,8 +7,8 @@
 
 namespace Mapbender\WmsBundle\Component;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\PersistentCollection;
+//use Doctrine\Common\Collections\ArrayCollection;
+//use Doctrine\ORM\PersistentCollection;
 //use Mapbender\CoreBundle\Component\ReflectionHandler;
 use Mapbender\CoreBundle\Component\Exception\NotUpdateableException;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
@@ -25,9 +25,21 @@ use Mapbender\WmsBundle\Entity\WmsInstance;
 class WmsSourceEntityHandler extends SourceEntityHandler
 {
 
+    /**
+     * @inheritdoc
+     */
     public function create($persist = true)
     {
         
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save()
+    {
+        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        $this->container->get('doctrine')->getManager()->flush();
     }
 
     /**
@@ -61,8 +73,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function remove()
     {
-        $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
-        $layerHandler->remove();
+        self::createHandler($this->container, $this->entity->getRootlayer())->remove();
         $this->container->get('doctrine')->getManager()->remove($this->entity);
         $this->container->get('doctrine')->getManager()->flush();
     }
@@ -72,10 +83,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
      */
     public function update(Source $sourceNew)
     {
-        $a = \Doctrine\Common\Util\ClassUtils::getClass($this->container->get('doctrine')->getManager());
         if (!$this->container->get('doctrine')->getManager()->getConnection()->isTransactionActive()) {
-            throw new NotUpdateableException('WMS "'.$this->entity->getTitle()
-            .'('.$this->entity->getId().')" can\'t be updated: DB transaction is not active.');
+            throw new NotUpdateableException('WMS "' . $this->entity->getTitle()
+            . '(' . $this->entity->getId() . ')" can\'t be updated: DB transaction is not active.');
         }
         $updater = new WmsUpdater($this->entity);
         /* Update source attributes */
@@ -100,6 +110,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         }
         $updater->updateKeywords($this->entity, $sourceNew, $this->container->get('doctrine')->getManager(),
             'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
+
+        $rootHandler = self::createHandler($this->container, $this->entity->getRootlayer());
+        $rootHandler->update($sourceNew->getRootlayer());
     }
 
     /**
