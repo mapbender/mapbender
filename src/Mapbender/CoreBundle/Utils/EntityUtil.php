@@ -10,6 +10,9 @@ namespace Mapbender\CoreBundle\Utils;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Util\ClassUtils;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionProperty;
 
 /**
  * Description of EntityUtils
@@ -18,6 +21,16 @@ use Doctrine\Common\Util\ClassUtils;
  */
 class EntityUtil
 {
+    const GET = 'get';
+    const SET = 'set';
+    const HAS = 'has';
+    const IS = 'is';
+    const GETTER = 'getter';
+    const SETTER = 'setter';
+    const TOSET = 'toset';
+    const HAS_METHOD = 'hasMethod';
+    const IS_METHOD = 'isMethod';
+    
     /**
      * Returns an unique value for an unique field.
      * 
@@ -76,7 +89,7 @@ class EntityUtil
                 return $method;
             }
         }
-        return '';
+        return null;
     }
     
     /**
@@ -87,7 +100,7 @@ class EntityUtil
      */
     public static function getValueFromGetter($entity, $property)
     {
-        $reflMeth = new \ReflectionMethod(self::getRealClass($entity), self::getGetter($entity, $property));
+        $reflMeth = new ReflectionMethod(self::getRealClass($entity), self::getGetter($entity, $property));
         return $reflMeth->invoke($entity);
     }
     
@@ -105,6 +118,14 @@ class EntityUtil
                 return $method;
             }
         }
-        return '';
+        return null;
+    }
+    
+    public static function getProperties($entity, $filter = null)
+    {
+        $filter = $filter === null ? ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED : $filter;
+        $refClass =  new ReflectionClass(self::getRealClass($entity));
+        $props = $refClass->getProperties($filter);
+        return $props;
     }
 }
