@@ -1,5 +1,4 @@
 <?php
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -10,8 +9,7 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
-use Mapbender\CoreBundle\Entity\Source;
-use Mapbender\CoreBundle\Utils\UrlUtil;
+use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
@@ -33,23 +31,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function create($persist = true)
     {
         $this->entity->setTitle($this->entity->getSource()->getTitle());
-        $formats = $this->entity->getSource()->getGetMap()->getFormats();
-        $this->entity->setFormat(count($formats) > 0 ? $formats[0] : null);
-        $infoformats = $this->entity->getSource()->getGetFeatureInfo() !== null ?
-            $this->entity->getSource()->getGetFeatureInfo()->getFormats() : array();
-        $this->entity->setInfoformat(count($infoformats) > 0 ? $infoformats[0] : null);
-        $excformats = $this->entity->getSource()->getExceptionFormats();
-        $this->entity->setExceptionformat(count($excformats) > 0 ? $excformats[0] : null);
+        $source = $this->entity->getSource();
+        $this->entity->setFormat(ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), null, 0));
+        $this->entity->setInfoformat(ArrayUtil::getValueFromArray(
+                $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(), null, 0));
+        $this->entity->setExceptionformat(ArrayUtil::getValueFromArray($source->getExceptionFormats(), null, 0));
 
-        $dimensions = array();
-        foreach ($this->entity->getSource()->getLayers() as $layer) {
-            foreach ($layer->getDimension() as $dimension) {
-                $dim = $this->createDimensionInst($dimension);
-                if (!in_array($dim, $dimensions)) {
-                    $dimensions[] = $dim;
-                }
-            }
-        }
+        $dimensions = $this->getDimensionInst();
         $this->entity->setDimensions($dimensions);
 
         $this->entity->setWeight(-1);
@@ -59,10 +47,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
         $wmslayer_root = $this->entity->getSource()->getRootlayer();
 
-        $instLayer = new WmsInstanceLayer();
+        self::createHandler($this->container, new WmsInstanceLayer())->create($this->entity, $wmslayer_root);
 
-        $entityHandler = self::createHandler($this->container, $instLayer);
-        $entityHandler->create($this->entity, $wmslayer_root);
         $num = 0;
         foreach ($this->entity->getLayerset()->getInstances() as $instance) {
             $instHandler = self::createHandler($this->container, $instance);
@@ -73,16 +59,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $num++;
         }
     }
-    
-    /**
-     * @inheritdoc
-     */
-    public function update()
-    {
-//        $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
-//        $layerHandler->update($source->getRootlayer());
-////        $this->container->get('doctrine')->getManager()->remove($this->entity);
-    }
 
     /**
      * @inheritdoc
@@ -92,6 +68,31 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $layerHandler = self::createHandler($this->container, $this->entity->getRootlayer());
         $layerHandler->remove();
         $this->container->get('doctrine')->getManager()->remove($this->entity);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function update()
+    {
+        $source     = $this->entity->getSource();
+        $this->entity->setFormat(
+            ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), $this->entity->getFormat(), 0));
+        $this->entity->setInfoformat(ArrayUtil::getValueFromArray(
+                $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(),
+                $this->entity->getInfoformat(), 0));
+        $this->entity->setExceptionformat(ArrayUtil::getValueFromArray(
+                $source->getExceptionFormats(), $this->entity->getExceptionformat(), 0));
+        $dimensions = $this->updateDimension($this->entity->getDimensions(), $this->getDimensionInst());
+        $this->entity->setDimensions($dimensions);
+
+        # TODO vendorspecific ?
+        self::createHandler($this->container, $this->entity->getRootlayer())->update(
+            $this->entity, $this->entity->getSource()->getRootlayer());
+
+        $this->generateConfiguration();
+        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        $this->container->get('doctrine')->getManager()->flush();
     }
 
     /**
@@ -130,12 +131,12 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
         $configuration = $this->entity->getConfiguration();
         if ($this->entity->getSource()->getUsername()) {
-            $url = $this->container->get('router')->generate('mapbender_core_application_instancebasicauth',
-                                                             array(
+            $url                             = $this->container->get('router')->generate('mapbender_core_application_instancebasicauth',
+                array(
                 'slug' => $this->entity->getLayerset()->getApplication()->getSlug(),
                 'instanceId' => $this->entity->getId()
 //                , 'url' => $configuration['options']['url']
-                    ), UrlGeneratorInterface::ABSOLUTE_URL);
+                ), UrlGeneratorInterface::ABSOLUTE_URL);
             $configuration['options']['url'] = $url;
         } elseif ($signer) {
             $configuration['options']['url'] = $signer->signUrl($configuration['options']['url']);
@@ -152,8 +153,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     public function generateConfiguration()
     {
         $rootlayer = $this->entity->getRootlayer();
-        $llbbox = $rootlayer->getSourceItem()->getLatlonBounds();
-        $srses = array(
+        $llbbox    = $rootlayer->getSourceItem()->getLatlonBounds();
+        $srses     = array(
             $llbbox->getSrs() => array(
                 floatval($llbbox->getMinx()),
                 floatval($llbbox->getMiny()),
@@ -174,11 +175,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $wmsconf->setTitle($this->entity->getTitle());
         $wmsconf->setIsBaseSource($this->entity->isBasesource());
 
-        $options = new WmsInstanceConfigurationOptions();
+        $options    = new WmsInstanceConfigurationOptions();
         $dimensions = array();
         foreach ($this->entity->getDimensions() as $dimension) {
             if ($dimension->getActive()) {
-                $name = $dimension->getName();
+                $name         = $dimension->getName();
                 $dimensions[] = array(
                     'current' => $dimension->getCurrent(),
                     'default' => $dimension->getDefault(),
@@ -195,15 +196,15 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
 
         $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet())
-                ->setProxy($this->entity->getProxy())
-                ->setVisible($this->entity->getVisible())
-                ->setFormat($this->entity->getFormat())
-                ->setInfoformat($this->entity->getInfoformat())
-                ->setTransparency($this->entity->getTransparency())
-                ->setOpacity($this->entity->getOpacity() / 100)
-                ->setTiled($this->entity->getTiled())
-                ->setBbox($srses)
-                ->setDimensions($dimensions);
+            ->setProxy($this->entity->getProxy())
+            ->setVisible($this->entity->getVisible())
+            ->setFormat($this->entity->getFormat())
+            ->setInfoformat($this->entity->getInfoformat())
+            ->setTransparency($this->entity->getTransparency())
+            ->setOpacity($this->entity->getOpacity() / 100)
+            ->setTiled($this->entity->getTiled())
+            ->setBbox($srses)
+            ->setDimensions($dimensions);
         $wmsconf->setOptions($options);
         $entityHandler = self::createHandler($this->container, $rootlayer);
         $wmsconf->setChildren(array($entityHandler->generateConfiguration()));
@@ -222,7 +223,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $wmsconf->setTitle($this->entity->getTitle());
         $wmsconf->setIsBaseSource($this->entity->isBasesource());
 
-        $options = new WmsInstanceConfigurationOptions();
+        $options       = new WmsInstanceConfigurationOptions();
         $configuration = $this->entity->getConfiguration();
         $options->setUrl($configuration["url"])
             ->setProxy($this->entity->getProxy())
@@ -240,7 +241,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $wmsconf->setOptions($options);
 
         if (!key_exists("children", $configuration)) {
-            $num = 0;
+            $num       = 0;
             $rootlayer = new WmsInstanceLayer();
             $rootlayer->setTitle($this->entity->getTitle())
                 ->setId($this->entity->getId() . "_" . $num)
@@ -255,15 +256,15 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->entity->addLayer($rootlayer);
             foreach ($configuration["layers"] as $layerDef) {
                 $num++;
-                $layer = new WmsInstanceLayer();
+                $layer       = new WmsInstanceLayer();
                 $layersource = new WmsLayerSource();
                 $layersource->setName($layerDef["name"]);
                 if (isset($layerDef["legendurl"])) {
-                    $style = new Style();
+                    $style          = new Style();
                     $style->setName(null);
                     $style->setTitle(null);
                     $style->setAbstract(null);
-                    $legendUrl = new LegendUrl();
+                    $legendUrl      = new LegendUrl();
                     $legendUrl->setWidth(null);
                     $legendUrl->setHeight(null);
                     $onlineResource = new OnlineResource();
@@ -287,7 +288,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 $this->entity->addLayer($layer);
             }
             $instLayHandler = self::createHandler($this->container, $rootlayer);
-            $children = array($instLayHandler->generateConfiguration());
+            $children       = array($instLayHandler->generateConfiguration());
             $wmsconf->setChildren($children);
         } else {
             $wmsconf->setChildren($configuration["children"]);
@@ -321,7 +322,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     {
         $dimensions = $this->entity->getDimensions();
         foreach ($dimensions as $dim) {
-            if($dim->getType() === $dimension->getType()){
+            if ($dim->getType() === $dimension->getType()) {
                 $dim->setExtent($dimension->getExtent());
                 $dim->setDefault($dimension->getDefault());
             }
@@ -331,8 +332,48 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             $this->container->get('doctrine')->getManager()->persist($this->entity);
             $this->container->get('doctrine')->getManager()->flush();
         }
-//        $dimensions = $this->entity->getDimensions();
-//        $a = 0;
     }
 
+    private function getDimensionInst()
+    {
+        $dimensions = array();
+        foreach ($this->entity->getSource()->getLayers() as $layer) {
+            foreach ($layer->getDimension() as $dimension) {
+                $dim = $this->createDimensionInst($dimension);
+                if (!in_array($dim, $dimensions)) {
+                    $dimensions[] = $dim;
+                }
+            }
+        }
+        return $dimensions;
+    }
+
+    private function findDimension(DimensionInst $dimension, $dimensionList)
+    {
+        foreach($dimensionList as $help){
+            /* check if dimensions equals (check only origextent) */
+            if($help->getOrigextent() === $dimension->getOrigextent() &&
+                $help->getName() === $dimension->getName() &&
+                $help->getUnits() === $dimension->getUnits()){
+                return $help;
+            }
+        }
+        return null;
+    }
+
+    private function updateDimension(array $dimensionsOld, array $dimensionsNew)
+    {
+        $dimensions = array();
+        foreach($dimensionsNew as $dimNew){
+            $dimension = $this->findDimension($dimNew, $dimensionsOld);
+            $dimension = $dimension ? clone $dimension : clone $dimNew;
+            /* replace attribute values */
+            $dimension->setUnitSymbol($dimNew->getUnitSymbol());
+            $dimension->setNearestValue($dimNew->getNearestValue());
+            $dimension->setCurrent($dimNew->getCurrent());
+            $dimension->setMultipleValues($dimNew->getMultipleValues());
+            $dimensions[] = $dimension;
+        }
+        return $dimensions;
+    }
 }

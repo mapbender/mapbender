@@ -89,13 +89,13 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
                     self::createHandler($this->container, $layerToRemove)->remove();
                 }
                 $this->container->get('doctrine')->getManager()->merge($this->entity);
-                $this->entity->addSubLayer($updater->cloneLayer($this->getSource(), $subItemNew, $this->entity,
+                $this->entity->addSubLayer($updater->cloneLayer($this->entity->getSource(), $subItemNew, $this->entity,
                         $this->container->get('doctrine')->getManager()));
                 $this->container->get('doctrine')->getManager()->merge($this->entity);
             } else {
                 if (count($subItemsOld) === 0) { # add a new layer
-                    $this->entity->addSubLayer($updater->cloneLayer($this->getSource(), $subItemNew, $this->entity,
-                            $this->container->get('doctrine')->getManager()));
+                    $this->entity->addSubLayer($updater->cloneLayer($this->entity->getSource(), $subItemNew,
+                            $this->entity, $this->container->get('doctrine')->getManager()));
                     $this->container->get('doctrine')->getManager()->merge($this->entity);
                 } elseif (count($subItemsOld) === 1) { # update a layer
                     $subItemsOld[0]->setPriority($subItemNew->getPriority());
@@ -105,8 +105,8 @@ class WmsLayerSourceEntityHandler extends SourceItemEntityHandler
                         self::createHandler($this->container, $layerToRemove)->remove();
                     }
                     $this->container->get('doctrine')->getManager()->merge($this->entity);
-                    $this->entity->addSubLayer($updater->cloneLayer($this->getSource(), $subItemNew, $this->entity,
-                            $this->container->get('doctrine')->getManager()));
+                    $this->entity->addSubLayer($updater->cloneLayer($this->entity->getSource(), $subItemNew,
+                            $this->entity, $this->container->get('doctrine')->getManager()));
                     $this->container->get('doctrine')->getManager()->merge($this->entity);
                 }
             }

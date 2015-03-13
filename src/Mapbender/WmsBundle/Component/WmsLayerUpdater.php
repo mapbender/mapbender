@@ -8,6 +8,7 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
@@ -29,14 +30,14 @@ class WmsLayerUpdater extends WmsUpdater
         return $founded;
     }
 
-    public function cloneLayer(WmsSource $wms, WmsLayerSource $toClone, WmsLayerSource $clonedParent = NULL,
+    public function cloneLayer(WmsSource $wms, WmsLayerSource $toClone, WmsLayerSource $parentForCloned = NULL,
                                $entityManager)
     {
-        $cloned = clone $toclone;
+        $cloned = clone $toClone;
         $entityManager->detach($cloned);
         $cloned->setId(null);
-        $cloned->setParent($clonedParent);
-        $cloned->setPriority($parentForCloned !== null ? $parentForCloned->getPriority : null);
+        $cloned->setParent($parentForCloned);
+        $cloned->setPriority($parentForCloned !== null ? $parentForCloned->getPriority() : null);
         $cloned->setSource($wms);
         if ($cloned->getSublayer()->count() > 0) {
             $children = new ArrayCollection();

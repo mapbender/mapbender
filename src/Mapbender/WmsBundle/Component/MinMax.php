@@ -9,18 +9,28 @@ namespace Mapbender\WmsBundle\Component;
  */
 class MinMax
 {
+    /**
+     * ORM\Column(type="float", nullable=true)
+     */
+    //@TODO Doctrine bug: "protected" replaced with "public"
+    public $min = null;
 
     /**
      * ORM\Column(type="float", nullable=true)
      */
     //@TODO Doctrine bug: "protected" replaced with "public"
-    public $min;
+    public $max = null;
 
     /**
-     * ORM\Column(type="float", nullable=true)
+     *
+     * @param float | null $min min value
+     * @param float | null $max max value
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $max;
+    public function __construct($min = null, $max = null)
+    {
+        $this->min = $min;
+        $this->max = $max;
+    }
 
     /**
      * Get min
@@ -64,4 +74,26 @@ class MinMax
         return $this;
     }
 
+    public function getInRange($value)
+    {
+        $value_ = $value;
+        $value_ = $this->getMin() ? ($value_ && $value_ < $this->getMin() ? $this->getMin() : $value_) : $value_;
+        $value_ = $this->getMax() ? ($value_ && $value_ > $this->getMax() ? $this->getMax() : $value_) : $value_;
+        return $value_;
+    }
+
+    public static function create($value1, $value2)
+    {
+        if (null === $value1) {
+            return new MinMax(null, $value2);
+        } elseif (null === $value2) {
+            return new MinMax(null, $value1);
+        } elseif ($value2 > $value1) {
+            return new MinMax($value1, $value2);
+        } elseif ($value2 < $value1) {
+            return new MinMax($value2, $value1);
+        } else {
+            return new MinMax(null, null);
+        }
+    }
 }

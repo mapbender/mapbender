@@ -3,7 +3,7 @@
 namespace Mapbender\WmsBundle\Component;
 
 /**
- * Identifier class.
+ * Dimension class.
  *
  * @author Paul Schmidt
  */

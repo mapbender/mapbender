@@ -197,6 +197,17 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     }
 
     /**
+     * Sets an id
+     * 
+     * @param integer $id
+     * @return WmsLayerSource
+     */
+    public function setId($id)
+    {
+        return $this->id;
+    }
+
+    /**
      * Get id
      *
      * @return integer
