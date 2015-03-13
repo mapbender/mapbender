@@ -73,7 +73,10 @@ class GpsPosition extends Element
             'icon' => null,
             'refreshinterval' => '5000',
             'average' => 1,
-            'follow' => false);
+            'follow' => false,
+            'centerOnFirstPosition' => true,
+            'zoomToAccuracy' => false,
+            'zoomToAccuracyOnFirstPosition' => true);
     }
 
     /**

@@ -24,7 +24,7 @@ class PrintController extends Controller
         if(array_key_exists('file_prefix', $data) &&
             null !== $data['file_prefix'] &&
             '' !== $data['file_prefix']) {
-            $filename = $data['file_prefix'];
+            $filename = $data['file_prefix'] . '_' . date("YmdHis") . '.pdf';
         }
 
         $container = $this->container;

@@ -50,6 +50,7 @@ class BaseSourceSwitcher extends Element
         return array(
             'tooltip' => "BaseSourceSwitcher",
             'target' => null,
+            'display'  => null,
             'instancesets' => array()
         );
     }
@@ -106,12 +107,16 @@ class BaseSourceSwitcher extends Element
                 }
                 $configuration['groups'][$instanceset['group']][] = array(
                     'title' => $instanceset['title'],
-                    'sources' => $instanceset['instances']
+                    'sources' => $instanceset['instances'],
+                    'cprTitle' => $instanceset['cprTitle'],
+                    'cprUrl' => $instanceset['cprUrl']
                 );
             } else {
                 $configuration['groups'][$instanceset['title']] = array(
                     'title' => $instanceset['title'],
-                    'sources' => $instanceset['instances']
+                    'sources' => $instanceset['instances'],
+                    'cprTitle' => $instanceset['cprTitle'],
+                    'cprUrl' => $instanceset['cprUrl']
                 );
             }
         }

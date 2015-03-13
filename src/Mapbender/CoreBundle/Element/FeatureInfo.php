@@ -1,4 +1,5 @@
 <?php
+
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
@@ -49,9 +50,12 @@ class FeatureInfo extends Element
         return array(
             'tooltip' => 'Feature Info Dialog',
             'type' => 'dialog',
-            "autoOpen" => false,
+            "autoActivate" => false,
             "deactivateOnClose" => true,
             "printResult" => false,
+            "showOriginal" => false,
+            "onlyValid" => false,
+            "displayType" => 'tabs',
             "target" => null);
     }
 
@@ -80,7 +84,9 @@ class FeatureInfo extends Element
             'js' => array(
                 'mapbender.element.featureInfo.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),
-            'css' => array(),
+            'css' => array(
+                '@MapbenderCoreBundle/Resources/public/sass/element/featureinfo.scss'
+            ),
             'trans' => array('MapbenderCoreBundle:Element:featureinfo.json.twig')
         );
     }
@@ -92,11 +98,11 @@ class FeatureInfo extends Element
     {
         $configuration = parent::getConfiguration();
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:featureinfo.html.twig',
-                    array(
-                    'id' => $this->getId(),
-                    'configuration' => $configuration,
-                    'title' => $this->getTitle()));
+                        ->render('MapbenderCoreBundle:Element:featureinfo.html.twig',
+                                 array(
+                            'id' => $this->getId(),
+                            'configuration' => $configuration,
+                            'title' => $this->getTitle()));
     }
 
     /**
