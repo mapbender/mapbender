@@ -231,9 +231,6 @@ class ElementController extends Controller
             $elComp->postSave();
             $this->get('session')->getFlashBag()->set('success',
                 'Your element has been saved.');
-            
-//            $response = new Response('', 205);
-//            $response->headers->set('Content-Type', 'text/html');
 
             return new Response('', 205);
         } else {
