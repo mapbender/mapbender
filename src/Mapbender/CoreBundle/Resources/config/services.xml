@@ -72,6 +72,7 @@
                 <argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/public/sass</argument>
             </call>
             <call method="addLoadPath">
+                <!--<argument>%kernel.root_dir%/../vendor/igosuki/compass-mixins/lib</argument>-->
                 <argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/compass-mixins/lib</argument>
             </call>
         </service>
