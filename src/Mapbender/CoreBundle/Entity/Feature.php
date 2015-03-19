@@ -96,9 +96,22 @@ class Feature
     }
 
     /**
-     * @param string|array $data
+     * @param $args
+     * @internal param array|string $data
      */
-    public function __construct($data){
+    public function __construct($args){
+
+        // init $methods by $args
+        if (is_array($args)) {
+            $methods = get_class_methods(get_class($this));
+            foreach ($args as $key => $value) {
+                $keyMethod = "set" . ucwords($key);
+                if (in_array($keyMethod, $methods)) {
+                    $this->$keyMethod($value);
+                }
+            }
+        }
+
         if(!self::$geoConverter){
             self::$geoConverter = new GeoConverterComponent();
         }
