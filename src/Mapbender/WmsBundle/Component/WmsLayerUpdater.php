@@ -30,9 +30,12 @@ class WmsLayerUpdater extends WmsUpdater
         return $founded;
     }
 
-    public function cloneLayer(WmsSource $wms, WmsLayerSource $toClone, WmsLayerSource $parentForCloned = NULL,
-                               $entityManager)
-    {
+    public function cloneLayer(
+        WmsSource $wms,
+        WmsLayerSource $toClone,
+        $entityManager,
+        WmsLayerSource $parentForCloned = null
+    ) {
         $cloned = clone $toClone;
         $entityManager->detach($cloned);
         $cloned->setId(null);
@@ -42,9 +45,9 @@ class WmsLayerUpdater extends WmsUpdater
         if ($cloned->getSublayer()->count() > 0) {
             $children = new ArrayCollection();
             foreach ($cloned->getSublayer() as $subToClone) {
-                $children->add($this->cloneLayer($wms, $subToClone, $cloned, $entityManager));
+                $children->add($this->cloneLayer($wms, $subToClone, $entityManager, $cloned));
             }
-            $cloned->setSublayer($sublayer);
+            $cloned->setSublayer($children);
         }
         return $cloned;
     }

@@ -13,23 +13,23 @@ class IdentifierAuthority
 
     /**
      * Identifier
-     * 
-     * @var Identifier 
+     *
+     * @var Identifier
      */
     protected $identifier;
 
     /**
      * Authority
-     * 
+     *
      * @var Authority
      */
     protected $authority;
 
     /**
      * Set authority
-     * 
+     *
      * @param Authority $authority
-     * @return IdentifierAuthority 
+     * @return IdentifierAuthority
      */
     public function setAuthority(Authority $authority)
     {
@@ -39,7 +39,7 @@ class IdentifierAuthority
 
     /**
      * Get authority
-     * 
+     *
      * @return Authority
      */
     public function getAuthority()
@@ -49,9 +49,9 @@ class IdentifierAuthority
 
     /**
      * Set identifier
-     * 
+     *
      * @param Identifier $identifier
-     * @return IdentifierAuthority 
+     * @return IdentifierAuthority
      */
     public function setIdentifier(Identifier $identifier)
     {
@@ -61,12 +61,11 @@ class IdentifierAuthority
 
     /**
      * Get identifier
-     * 
+     *
      * @return Identifier
      */
     public function getIdentifier()
     {
         return $this->identifier;
     }
-
 }
