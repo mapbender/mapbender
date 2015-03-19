@@ -166,7 +166,7 @@ class Style
      * @param OnlineResource $styleUlr
      * @return Style
      */
-    public function setStyleUlr(OnlineResource $styleUlr)
+    public function setStyleUlr(OnlineResource $styleUlr = NULL)
     {
         $this->styleUlr = $styleUlr;
 
