@@ -21,6 +21,7 @@ class FeatureType extends ContainerAware
 {
     const ORACLE_PLATFORM     = 'oracle';
     const POSTGRESQL_PLATFORM = 'postgresql';
+    const SQLITE_PLATFORM     = 'sqlite';
 
     /**
      *  Default max results by search
@@ -75,10 +76,6 @@ class FeatureType extends ContainerAware
                     $this->$keyMethod($value);
                 }
             }
-        }
-
-        if(!$this->srid){
-            $this->srid = $this->findSrid();
         }
     }
 
@@ -207,7 +204,7 @@ class FeatureType extends ContainerAware
 
         // If $featureData is string, posible is an JSON, so try to convert it
         if (is_string($featureData)) {
-            $featureData = new Feature($featureData, $this->srid, $this->uniqueId, $this->geomField);
+            $featureData = $this->create($featureData);
         }
 
         // If $featureData is object, so collect data as array
@@ -221,8 +218,8 @@ class FeatureType extends ContainerAware
 
             if ($feature->hasGeom()) {
                 //$wkb = \geoPHP::load($feature->getGeom(), 'wkt')->out('wkb');
-                if ($this->srid) {
-                    $featureData['geom'] = "SRID=" . $this->srid . ";" . $feature->getGeom();
+                if ($this->getSrid()) {
+                    $featureData['geom'] = "SRID=" . $this->getSrid() . ";" . $feature->getGeom();
                 } else {
                     $featureData['geom'] = $this->srid . ";" . $feature->getGeom();
                 }
@@ -269,8 +266,7 @@ class FeatureType extends ContainerAware
             $connection->update($this->tableName, $data, array($this->uniqueId => $id));
         }
 
-        $feature = new Feature($data, $this->srid, $this->uniqueId, $this->geomField);
-        return $feature;
+        return $this->create($data);
     }
 
     /**
@@ -324,7 +320,7 @@ class FeatureType extends ContainerAware
         // add GEOM where condition
         if (!empty($intersectGeometry)) {
             $geometry = self::roundGeometry($intersectGeometry);
-            $queryBuilder->andWhere(self::genIntersectCondition($this->getPlatformName(), $intersectGeometry, $this->geomField, $this->srid));
+            $queryBuilder->andWhere(self::genIntersectCondition($this->getPlatformName(), $intersectGeometry, $this->geomField, $this->getSrid()));
         }
 
         $queryBuilder->setMaxResults($maxResults);
@@ -483,7 +479,7 @@ class FeatureType extends ContainerAware
         }
 
         foreach ($rows as $key => &$row) {
-            $row = new Feature($row, $this->srid, $this->getUniqueId(), $this->getGeomField());
+            $row = $this->create($row);
         }
 
         return $rows;
@@ -497,7 +493,7 @@ class FeatureType extends ContainerAware
     public function getSelectQueryBuilder()
     {
         $connection         = $this->getConnection();
-        $geomFieldCondition = self::getGeomAttribute($this->getPlatformName(), $this->geomField, $this->srid);
+        $geomFieldCondition = self::getGeomAttribute($this->getPlatformName(), $this->geomField, $this->getSrid());
         $spatialFields      = array($this->uniqueId, $geomFieldCondition);
         $attributes         = array_merge($spatialFields, $this->fields);
         $queryBuilder       = $connection->createQueryBuilder()->select($attributes)->from($this->tableName, 't');
@@ -511,36 +507,31 @@ class FeatureType extends ContainerAware
      * @return Feature
      */
     public function create($args) {
-        return new Feature($args, $this->srid, $this->uniqueId, $this->geomField);
+        return new Feature($args, $this->getSrid(), $this->getUniqueId(), $this->getGeomField());
     }
 
     /**
-     * @return bool|string
-     * @throws \Doctrine\DBAL\DBALException
+     * Get SRID
+     *
+     * @return int
      */
-    public function findSrid()
+    public function getSrid()
     {
-        $srid       = null;
-        $connection = $this->getConnection();
-        switch ($this->getPlatformName()) {
-            case self::POSTGRESQL_PLATFORM:
-                $srid = $connection->executeQuery("SELECT Find_SRID(concat(current_schema()), '$this->tableName', '$this->geomField')")->fetchColumn();
-                break;
+        if(!$this->srid){
+            $connection = $this->getConnection();
+            switch ($this->getPlatformName()) {
+                case self::POSTGRESQL_PLATFORM:
+                    $this->srid = $connection->executeQuery("SELECT Find_SRID(concat(current_schema()), '$this->tableName', '$this->geomField')")->fetchColumn();
+                    break;
                 // TODO: not tested
-            case self::ORACLE_PLATFORM:
-                $srid = $connection->executeQuery("SELECT {$this->tableName}.{$this->geomField}.SDO_SRID FROM TABLE {$this->tableName}")->fetchColumn();
-                break;
+                case self::ORACLE_PLATFORM:
+                    $this->srid = $connection->executeQuery("SELECT {$this->tableName}.{$this->geomField}.SDO_SRID FROM TABLE {$this->tableName}")->fetchColumn();
+                    //                $str = "SELECT ST_SRID('$wkt')";
+                    //                var_dump($str );
+                    //                $srid = $this->getConnection()->executeQuery($str )->fetchColumn();  ;
+                    break;
+            }
         }
-        return $srid;
+        return $this->srid;
     }
-
-//    public function findSridByWkt($wkt){
-//        switch($this->getPlatformName()){
-//            case self::POSTGRESQL_PLATFORM:
-//                $str = "SELECT ST_SRID('$wkt')";
-//                var_dump($str );
-//                $srid = $this->getConnection()->executeQuery($str )->fetchColumn();  ;
-//        }
-//        return $srid;
-//    }
 }

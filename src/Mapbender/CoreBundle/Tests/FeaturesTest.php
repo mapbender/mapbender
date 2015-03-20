@@ -134,7 +134,7 @@ class FeaturesTest extends WebTestCase
     public function testJson()
     {
         $feature = $this->getRandomFeature();
-        $srid    = self::$featureType->findSrid();
+        $srid    = self::$featureType->getSrid();
         //        var_dump($feature->getGeom());
         $json     = $feature . "";
         $feature1 = self::$featureType->create($json);
