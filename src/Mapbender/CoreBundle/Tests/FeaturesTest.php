@@ -106,16 +106,17 @@ class FeaturesTest extends WebTestCase
         $this->assertGreaterThan(0, $featureType->remove(array(self::$fieldName => "testSaveArray")));
         $this->assertGreaterThan(0, $featureType->remove(array(self::$fieldName => "testSaveObject")));
 
-//        $feature = $this->getRandomFeature();
-//        $this->assertGreaterThan(0, $featureType->remove($feature));
-//        $this->assertFalse($featureType->getById($feature->getId()));
-//        $feature = $featureType->save($feature, false);
-//        $restoredFeature = $featureType->getById($feature->getId());
-//        $this->assertTrue($restoredFeature instanceof Feature);
-//        $this->assertTrue($restoredFeature->getId() == $feature->getId());
+        //        $feature = $this->getRandomFeature();
+        //        $this->assertGreaterThan(0, $featureType->remove($feature));
+        //        $this->assertFalse($featureType->getById($feature->getId()));
+        //        $feature = $featureType->save($feature, false);
+        //        $restoredFeature = $featureType->getById($feature->getId());
+        //        $this->assertTrue($restoredFeature instanceof Feature);
+        //        $this->assertTrue($restoredFeature->getId() == $feature->getId());
     }
 
-    public function testUpdate(){
+    public function testUpdate()
+    {
         $originFeature = $this->getRandomFeature();
         self::$featureType->save($originFeature);
     }
@@ -130,11 +131,13 @@ class FeaturesTest extends WebTestCase
         return $originFeature;
     }
 
-    public function testJson(){
+    public function testJson()
+    {
         $feature = $this->getRandomFeature();
-//        var_dump($feature->getGeom());
-        $json = $feature."";
+        $srid    = self::$featureType->findSrid();
+        //        var_dump($feature->getGeom());
+        $json     = $feature . "";
         $feature1 = self::$featureType->create($json);
-//        var_dump($feature1->getGeom());
+        //        var_dump($feature1->getGeom());
     }
 }

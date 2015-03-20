@@ -50,7 +50,7 @@ class FeatureType extends ContainerAware
     /**
      * @var int SRID to get geometry converted to
      */
-    protected $srid = 31467;
+    protected $srid = null;
 
     /**
      * @var array Dield to select from the table
@@ -75,6 +75,10 @@ class FeatureType extends ContainerAware
                     $this->$keyMethod($value);
                 }
             }
+        }
+
+        if(!$this->srid){
+            $this->srid = $this->findSrid();
         }
     }
 
@@ -509,4 +513,32 @@ class FeatureType extends ContainerAware
     public function create($args) {
         return new Feature($args, $this->srid, $this->uniqueId, $this->geomField);
     }
+
+    /**
+     * @return bool|string
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function findSrid()
+    {
+        $srid       = null;
+        $connection = $this->getConnection();
+        switch ($this->getPlatformName()) {
+            case self::POSTGRESQL_PLATFORM:
+                $srid = $connection->executeQuery("SELECT Find_SRID(concat(current_schema()), '$this->tableName', '$this->geomField')")->fetchColumn();
+            // TODO: not tested
+            case self::ORACLE_PLATFORM:
+                $srid = $connection->executeQuery("SELECT {$this->tableName}.{$this->geomField}.SDO_SRID FROM TABLE {$this->tableName}")->fetchColumn();
+        }
+        return $srid;
+    }
+
+//    public function findSridByWkt($wkt){
+//        switch($this->getPlatformName()){
+//            case self::POSTGRESQL_PLATFORM:
+//                $str = "SELECT ST_SRID('$wkt')";
+//                var_dump($str );
+//                $srid = $this->getConnection()->executeQuery($str )->fetchColumn();  ;
+//        }
+//        return $srid;
+//    }
 }
