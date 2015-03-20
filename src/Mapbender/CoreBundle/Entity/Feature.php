@@ -2,14 +2,12 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOM\CoreBundle\Component\GeoConverterComponent;
 
 /**
  * Class Feature
  *
  * @package   Mapbender\CoreBundle\Entity
  * @author    Andriy Oblivantsev <eslider@gmail.com>
- * @ORM\Entity
  */
 class Feature
 {
@@ -25,15 +23,15 @@ class Feature
      */
     protected $geom;
 
+    /**
+     * @var
+     */
     protected $srid;
 
-    protected $attributes;
-
-
     /**
-     * @var GeoConverterComponent
+     * @var
      */
-    public static $geoConverter;
+    protected $attributes;
 
     /**
      * Get id
@@ -96,25 +94,43 @@ class Feature
     }
 
     /**
-     * @param $args
-     * @internal param array|string $data
+     * @param mixed $args JSON or array(
+     * @param int $srid
+     * @param string $uniqueIdField ID field name
+     * @param string $geomField GEOM field name
      */
-    public function __construct($args){
-
-        // init $methods by $args
-        if (is_array($args)) {
-            $methods = get_class_methods(get_class($this));
-            foreach ($args as $key => $value) {
-                $keyMethod = "set" . ucwords($key);
-                if (in_array($keyMethod, $methods)) {
-                    $this->$keyMethod($value);
-                }
-            }
+    public function __construct($args = null, $srid = null, $uniqueIdField = 'id', $geomField = "geom")
+    {
+        // decode JSON
+        if (is_string($args)) {
+            $args = json_decode($args, true);
         }
 
-        if(!self::$geoConverter){
-            self::$geoConverter = new GeoConverterComponent();
+        // set GEOM
+        if (isset($args[$geomField])) {
+            $this->setGeom($args[$geomField]);
+            unset($args[$geomField]);
         }
+
+        if (isset($args["geom"])) {
+            $this->setGeom($args["geom"]);
+            unset($args["geom"]);
+        }
+
+        // set ID
+        if (isset($args[$uniqueIdField])) {
+            $this->setId($args[$uniqueIdField]);
+            unset($args[$uniqueIdField]);
+        }
+
+        if (isset($args['id'])) {
+            $this->setId($args['id']);
+            unset($args['id']);
+        }
+
+        // set attributes
+        $this->setAttributes($args);
+        $this->setSrid($srid);
     }
 
     /**
@@ -126,15 +142,33 @@ class Feature
     {
         return array('type'       => 'Feature',
                      'properties' => $this->getAttributes(),
-                     'geometry'   => $this->getGeom());
+                     'geometry'   => \geoPHP::load($this->getGeom(), 'wkt')->out('json'),
+                     'srid'       => $this->getSrid());
     }
 
     /**
+     * Return GeoJSON string
+     *
      * @return string
      */
     public function __toString()
     {
-        $data = $this->toGeoJson();
-        return json_encode(self::$geoConverter->wktToGeoJson($data));
+        return json_encode($this->toGeoJson());
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    public function hasId(){
+        return !is_null($this->id);
+    }
+
+    public function hasGeom(){
+        return !is_null($this->geom);
     }
 }
