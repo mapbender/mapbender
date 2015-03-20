@@ -10,9 +10,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Exception\Exception;
 
 /**
- * Class FeatureType
- * select UpdateGeometrySRID('public', 'bauteil', 'geom', 31467)
+ * Class FeatureType handles Feature objects.
  *
+ * Main goal of the handler is, to get manage GeoJSON Features
+ * for communication between OpenLayers and databases
+ * with spatial abilities like Oracle or PostgreSQL.
+ *
+ *
+ * @link      https://troubadix.wheregroup.com/wiki/index.php/Mapbender3_Digitalisierung#Schema
  * @package   Mapbender\CoreBundle\Entity
  * @author    Andriy Oblivantsev <eslider@gmail.com>
  * @copyright 2015 by WhereGroup GmbH & Co. KG
