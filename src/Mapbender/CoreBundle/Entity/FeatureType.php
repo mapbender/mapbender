@@ -525,9 +525,11 @@ class FeatureType extends ContainerAware
         switch ($this->getPlatformName()) {
             case self::POSTGRESQL_PLATFORM:
                 $srid = $connection->executeQuery("SELECT Find_SRID(concat(current_schema()), '$this->tableName', '$this->geomField')")->fetchColumn();
-            // TODO: not tested
+                break;
+                // TODO: not tested
             case self::ORACLE_PLATFORM:
                 $srid = $connection->executeQuery("SELECT {$this->tableName}.{$this->geomField}.SDO_SRID FROM TABLE {$this->tableName}")->fetchColumn();
+                break;
         }
         return $srid;
     }
