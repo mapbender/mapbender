@@ -500,4 +500,13 @@ class FeatureType extends ContainerAware
         return $queryBuilder;
     }
 
+    /**
+     * Create feature
+     *
+     * @param $args
+     * @return Feature
+     */
+    public function create($args) {
+        return new Feature($args, $this->srid, $this->uniqueId, $this->geomField);
+    }
 }

@@ -117,7 +117,6 @@ class FeaturesTest extends WebTestCase
 
     public function testUpdate(){
         $originFeature = $this->getRandomFeature();
-        var_dump($originFeature->getId());
         self::$featureType->save($originFeature);
     }
 
@@ -129,5 +128,13 @@ class FeaturesTest extends WebTestCase
         $features      = self::$featureType->search(array('maxResults' => $maxResults));
         $originFeature = $features[rand(1, count($features)) - 1];
         return $originFeature;
+    }
+
+    public function testJson(){
+        $feature = $this->getRandomFeature();
+//        var_dump($feature->getGeom());
+        $json = $feature."";
+        $feature1 = self::$featureType->create($json);
+//        var_dump($feature1->getGeom());
     }
 }
