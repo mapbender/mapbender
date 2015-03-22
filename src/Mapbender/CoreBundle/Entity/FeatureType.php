@@ -173,7 +173,21 @@ class FeatureType extends ContainerAware
     {
         static $r;
         if (is_null($r)) {
-            $r = $this->getPlatformName() == 'oracle';
+            $r = $this->getPlatformName() == self::ORACLE_PLATFORM;
+        }
+        return $r;
+    }
+
+    /**
+     * Is SQLite platform
+     *
+     * @return bool
+     */
+    public function isSqlite()
+    {
+        static $r;
+        if (is_null($r)) {
+            $r = $this->getPlatformName() == self::SQLITE_PLATFORM;
         }
         return $r;
     }
@@ -187,7 +201,7 @@ class FeatureType extends ContainerAware
     {
         static $r;
         if (is_null($r)) {
-            $r = $this->getPlatformName() == 'postgresql';
+            $r = $this->getPlatformName() == self::POSTGRESQL_PLATFORM;
         }
         return $r;
     }
