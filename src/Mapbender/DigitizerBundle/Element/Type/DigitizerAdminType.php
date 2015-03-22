@@ -2,10 +2,10 @@
 
 namespace Mapbender\DigitizerBundle\Element\Type;
 
+use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Mapbender\ManagerBundle\Form\Type\YAMLConfigurationType;
 
 /**
  * 
