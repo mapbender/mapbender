@@ -314,19 +314,19 @@
         
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
-            
+
             var self = this;
             var element = $(self.element);
-            var toolset = $("<div/>");
-            var selector = self.selector = $("<select/>");
+            var toolset = $(".tool-set", element);
+            var selector = self.selector =  $("select.selector", element);
 
             var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["default"], {
-                'strokeWidth': 2,
+                'strokeWidth': 2
 //                'strokeColor': '#FF0000',
 //                'fillColor':  '#FF0000'
             }));
             var selectStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["select"], {
-                strokeWidth: 2,
+                strokeWidth: 2
 //                strokeColor: '#FFFF00',
 //                fillColor: '#0000FF'
             }));
@@ -361,8 +361,8 @@
             selector.on('change',onSelectorChange);
             
             // render selector
-            element.append(selector);
-            element.append(toolset);
+            //element.append(selector);
+            //element.append(toolset);
             
             onSelectorChange();
                     
