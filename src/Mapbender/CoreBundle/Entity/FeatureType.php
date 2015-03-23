@@ -321,7 +321,8 @@ class FeatureType extends ContainerAware
         // $queryBuilder->setParameters($params);
         $statement  = $queryBuilder->execute();
         $rows       = $statement->fetchAll();
-        $hasResults = count($rows) > 1;
+        $hasResults = count($rows) > 0;
+
 
         // Convert to Feature object
         if ($hasResults) {
