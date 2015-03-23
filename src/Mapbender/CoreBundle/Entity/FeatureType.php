@@ -221,9 +221,6 @@ class FeatureType extends ContainerAware
         }
 
         /** @var Feature $feature */
-        $connection = $this->getConnection();
-        $data       = array();
-        $id         = null;
         $feature    = $this->create($featureData);
         // Insert if no ID given
         if (!$autoUpdate || !$feature->hasId()) {
