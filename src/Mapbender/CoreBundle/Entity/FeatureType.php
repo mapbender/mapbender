@@ -291,35 +291,13 @@ class FeatureType extends ContainerAware
     /**
      * Remove feature
      *
-     * @param Feature|array|int $feature
+     * @param  Feature|array|int $featureData
      * @return int
      * @throws Exception
      */
-    public function remove($feature)
+    public function remove($featureData)
     {
-        /** @var Feature $feature */
-        $id = null;
-        if (is_array($feature)) {
-            if (isset($feature[$this->uniqueId])) {
-                $id = $feature[$this->uniqueId];
-            } elseif (isset($feature['id'])) {
-                $id = $feature['id'];
-            }
-        } elseif (is_numeric($feature)) {
-            $id = intval($feature);
-        } elseif (is_object($feature) && $feature instanceof Feature) {
-            $id = $feature->getId();
-        }
-
-        if (!is_null($id)) {
-            $criteria = array($this->uniqueId => $id);
-        } elseif (is_array($feature)) {
-            $criteria = $feature;
-        } else {
-            throw new Exception("Remove of feature with no criteria");
-        }
-
-        return $this->getConnection()->delete($this->tableName, $criteria);
+        return $this->getConnection()->delete($this->tableName, array($this->uniqueId => $this->create($featureData)->getId()));
     }
 
 
@@ -531,13 +509,24 @@ class FeatureType extends ContainerAware
     }
 
     /**
-     * Create feature
+     * Cast feature by $args
      *
      * @param $args
      * @return Feature
      */
-    public function create($args) {
-        return new Feature($args, $this->getSrid(), $this->getUniqueId(), $this->getGeomField());
+    public function create($args)
+    {
+        $feature = null;
+        if (is_object($args)) {
+            if ($args instanceof Feature) {
+                $feature = $args;
+            } else {
+                $args = get_object_vars($args);
+            }
+        } elseif (is_numeric($args)) {
+            $args = array($this->getUniqueId() => intval($args));
+        }
+        return $feature ? $feature : new Feature($args, $this->getSrid(), $this->getUniqueId(), $this->getGeomField());
     }
 
     /**
