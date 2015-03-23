@@ -286,7 +286,9 @@ class FeatureType extends ContainerAware
      */
     public function remove($featureData)
     {
-        return $this->getConnection()->delete($this->tableName, array($this->uniqueId => $this->create($featureData)->getId()));
+        $feature = $this->create($featureData);
+        $this->getConnection()->delete($this->tableName, array($this->uniqueId => $feature->getId()));
+        return $feature;
     }
 
 
