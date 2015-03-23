@@ -361,8 +361,8 @@
             selector.on('change',onSelectorChange);
             
             // render selector
-            //element.append(selector);
-            //element.append(toolset);
+            element.append(selector);
+            element.append(toolset);
             
             onSelectorChange();
                     
