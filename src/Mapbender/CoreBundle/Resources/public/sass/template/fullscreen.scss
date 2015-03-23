@@ -58,7 +58,7 @@ $tabSize:32px;
   width: $tabSize;
   height: $tabSize;
   @include absolute(40% '' '' '');
-  @include transition(all 0.3s ease-in-out);
+  /*@include transition(all 0.3s ease-in-out);*/
 }
 .sidePane{
   width:10px;

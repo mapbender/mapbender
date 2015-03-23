@@ -210,6 +210,10 @@ class PrintClient extends Element
                 if (isset($data['extent_feature'])){         
                         $data['extent_feature'] = json_decode($data['extent_feature'], true);                  
                 }
+
+                if (isset($data['legends'])){
+                        $data['legends'] = json_decode($data['legends'], true);
+                }
                     
                 $content = json_encode($data);
 
@@ -244,18 +248,18 @@ class PrintClient extends Element
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $configuration, array $aaa = array())
+    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
     {
-        if (is_string($configuration['scales'])) {
-            $configuration['scales'] = explode(',', $configuration['scales']);
+        if (is_string($formConfiguration['scales'])) {
+            $formConfiguration['scales'] = explode(',', $formConfiguration['scales']);
         }
-        return $configuration;
+        return $formConfiguration;
     }
 
     /**
      * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration)
+    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
     {
         if (is_string($configuration['scales'])) {
             $configuration['scales'] = explode(',', $configuration['scales']);

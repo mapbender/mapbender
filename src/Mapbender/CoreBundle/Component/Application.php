@@ -316,8 +316,11 @@ class Application
 
         // Get all layer configurations
         $configuration['layersets'] = array();
+        $configuration['layersetmap'] = array();
         foreach ($this->getLayersets() as $layerset) {
-            $configuration['layersets'][$layerset->getId()] = array();
+            $idStr = '' . $layerset->getId();
+            $configuration['layersets'][$idStr] = array();
+            $configuration['layersetmap'][$idStr] = $layerset->getTitle() ? $layerset->getTitle() : $idStr;
             $num = 0;
             foreach ($layerset->layerObjects as $layer) {
                 $instHandler = EntityHandler::createHandler($this->container, $layer);
@@ -325,7 +328,7 @@ class Application
                         'type' => $layer->getType(),
                         'title' => $layer->getTitle(),
                         'configuration' => $instHandler->getConfiguration($this->container->get('signer'))));
-                $configuration['layersets'][$layerset->getId()][$num] = $layerconf;
+                $configuration['layersets'][$idStr][$num] = $layerconf;
                 $num++;
             }
         }

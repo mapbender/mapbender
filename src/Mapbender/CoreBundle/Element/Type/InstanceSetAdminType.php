@@ -26,7 +26,7 @@ class InstanceSetAdminType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'layerset' => null
+            'instances' => null
         ));
     }
 
@@ -36,17 +36,24 @@ class InstanceSetAdminType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('title', 'text',
-                array(
+                      array(
                 'required' => true,
                 'property_path' => '[title]'))
+            ->add('cprTitle', 'text',
+                  array(
+                'required' => false,
+                'property_path' => '[cprTitle]'))
+            ->add('cprUrl', 'text',
+                  array(
+                'required' => false,
+                'property_path' => '[cprUrl]'))
             ->add('group', 'text',
-                array(
+                  array(
                 'required' => false,
                 'property_path' => '[group]'))
-            ->add('instances', 'layerset_instances',
-                array(
-                'layerset' => $options['layerset'],
-                'property_path' => '[instances]',
+            ->add('instances', 'choice',
+                  array(
+                'choices' => $options['instances'],
                 'required' => false,
                 'multiple' => true));
     }

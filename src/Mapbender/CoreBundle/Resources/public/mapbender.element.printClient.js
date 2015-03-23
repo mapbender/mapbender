@@ -411,33 +411,47 @@
                 name: 'extent_feature',
                 value: JSON.stringify(feature_coords)
             }));
-            var schalter = 0;
+
             // layer auslesen
             var sources = this.map.getSourceTree(), lyrCount = 0;
 
+            var geojsonFormat = new OpenLayers.Format.GeoJSON();
+
+            function _getLegends(layer) {
+                var legend = null;
+                if (layer.options.legend && layer.options.legend.url) {
+                    legend = {};
+                    legend[layer.options.title] = layer.options.legend.url;
+                }
+                if (layer.children) {
+                    for (var i = 0; i < layer.children.length; i++) {
+                        var help = _getLegends(layer.children[i]);
+                        if (help) {
+                            legend = legend ? legend : {};
+                            for (key in help) {
+                                legend[key] = help[key];
+                            }
+                        }
+                    }
+                }
+                return legend;
+            } 
+            var legends = [];
+
             for (var i = 0; i < sources.length; i++) {
                 var layer = this.map.map.layersList[sources[i].mqlid],
-                type = layer.olLayer.CLASS_NAME;
-
-                if (schalter === 1 && layer.olLayer.params.LAYERS.length === 0){
-                    continue;
-                }
+                        type = layer.olLayer.CLASS_NAME;
 
                 if (0 !== type.indexOf('OpenLayers.Layer.')) {
                     continue;
                 }
 
-                if (layer.olLayer.type === 'vector') {
-                    // Vector layers are all the same:
-                    //   * Get all features as GeoJSON
-                    //   * TODO: Get Styles...
-                    // TODO: Implement this thing
-                } else if (Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
+                if (Mapbender.source[sources[i].type] && typeof Mapbender.source[sources[i].type].getPrintConfig === 'function') {
                     var source = sources[i],
                             scale = this._getPrintScale(),
                             toChangeOpts = {options: {children: {}}, sourceIdx: {mqlid: source.mqlid}};
                     var visLayers = Mapbender.source[source.type].changeOptions(source, scale, toChangeOpts);
-                    if (visLayers.layers.length > 0){
+                    if (visLayers.layers.length > 0) {
                         var prevLayers = layer.olLayer.params.LAYERS;
                         layer.olLayer.params.LAYERS = visLayers.layers;
 
@@ -448,12 +462,66 @@
                         $.merge(fields, $('<input />', {
                             type: 'hidden',
                             name: 'layers[' + lyrCount + ']',
-                            value: JSON.stringify(lyrConf)
+                            value: JSON.stringify(lyrConf),
+                            weight: this.map.map.olMap.getLayerIndex(layer.olLayer)
                         }));
                         layer.olLayer.params.LAYERS = prevLayers;
                         lyrCount++;
+
+                        if (sources[i].type === 'wms') {
+                            var ll = _getLegends(sources[i].configuration.children[0]);
+                            if (ll) {
+                                legends.push(ll);
+                            }
+                        }
                     }
                 }
+            }
+
+            //legend
+            $.merge(fields, $('<input />', {
+                type: 'hidden',
+                name: 'legends',
+                value: JSON.stringify(legends)
+            }));
+            
+            
+            // Iterating over all vector layers, not only the ones known to MapQuery
+            for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
+                var layer = this.map.map.olMap.layers[i];
+                if('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || this.layer === layer) {
+                    continue;
+                }
+
+                var geometries = [];
+                for(var idx = 0; idx < layer.features.length; idx++) {
+                    var feature = layer.features[idx];
+                    if (!feature.onScreen(true)) continue
+                    
+                    if(this.feature.geometry.intersects(feature.geometry)){
+                        var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
+
+                        if(feature.style !== null){
+                            geometry.style = feature.style;
+                        }else{
+                            geometry.style = layer.styleMap.createSymbolizer(feature);
+                        }
+                        geometries.push(geometry);
+                    }
+                }
+
+                var lyrConf = {
+                    type: 'GeoJSON+Style',
+                    opacity: 1,
+                    geometries: geometries
+                };
+
+                $.merge(fields, $('<input />', {
+                    type: 'hidden',
+                    name: 'layers[' + (lyrCount + i) + ']',
+                    value: JSON.stringify(lyrConf),
+                    weight: this.map.map.olMap.getLayerIndex(layer)
+                }));
             }
 
             // overview map
@@ -481,29 +549,6 @@
                     }));
                     count++;
                 }
-            }
-
-            // feature from vector layer
-            var feature_list = this._extractFeaturesFromMap(this.map.map.olMap);
-            var c = 0;
-            for(var i = 0; i < feature_list.length; i++) {
-                var point_array = new Array();
-                for(var j = 0; j < feature_list[i].geom.length; j++){
-                    point_array[j] = new Object();
-                    point_array[j]['x'] = feature_list[i].geom[j].x;
-                    point_array[j]['y'] = feature_list[i].geom[j].y;
-                }
-
-                var feature = {};
-                feature.geom = point_array;
-                feature.type = feature_list[i].type;
-
-                $.merge(fields, $('<input />', {
-                        type: 'hidden',
-                        name: 'features[' + c + ']',
-                        value: JSON.stringify(feature)
-                    }));
-                c++;
             }
 
             // replace pattern
@@ -580,57 +625,6 @@
                     self._updateGeometry();
                 }
             });
-        },
-
-        _extractGeometriesFromFeature: function(feature) {
-            var coords = [],
-                type;
-            if(!$.isArray(feature)) {
-                feature = [feature];
-            }
-            var onScreen = true;
-            $.each(feature, function(k, v){
-                if(v.onScreen() === true){
-                    var verts = v.geometry.getVertices();
-                    if(v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Polygon') {
-                        //verts.push(verts[0]);
-                        type = 'polygon';
-                    }
-                    if (v.geometry.CLASS_NAME === 'OpenLayers.Geometry.LineString' || v.geometry.CLASS_NAME === 'OpenLayers.Geometry.MultiLineString'){
-                        type = 'line';
-                    }
-                    if (v.geometry.CLASS_NAME === 'OpenLayers.Geometry.Point'){
-                        type = 'point';
-                    }
-                    coords.push(verts);
-                }else{
-                    onScreen = false;
-                }
-            });
-            if (onScreen === false){
-                return;
-            }
-            var feature = {};
-            feature.geom = coords[0];
-            feature.type = type;
-
-            return feature;
-        },
-
-        _extractGeometriesFromLayer: function(layer) {
-            var self = this;
-            if (layer.options.name === 'rulerlayer'){
-                return self._extractGeometriesFromFeature(layer.features[0]);
-            }
-            return $.map(layer.features, self._extractGeometriesFromFeature);
-        },
-
-        _extractFeaturesFromMap: function(map) {
-            var self = this;
-            var layers = $.grep(map.layers, function(lay) {
-                return lay.name !== 'Print' && lay.CLASS_NAME === 'OpenLayers.Layer.Vector';
-            });
-            return $.map(layers, $.proxy(self._extractGeometriesFromLayer, this));
         },
 
         /**

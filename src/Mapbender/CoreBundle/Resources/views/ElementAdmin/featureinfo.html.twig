@@ -1,10 +1,13 @@
 <div class="elementFormFeatureInfo elementForm">
     <div class="left">
-        {{ form_widget(form.configuration.autoOpen) }}<label for="{{form.configuration.autoOpen.vars.id}}" class="labelCheck">{{ "mb.core.admin.featureinfo.label.autoopen"|trans }}</label>
+        {{ form_widget(form.configuration.autoActivate) }}<label for="{{form.configuration.autoActivate.vars.id}}" class="labelCheck">{{ "mb.core.admin.featureinfo.label.autoopen"|trans }}</label>
     </div>
+    <div class="left">
     {{ form_widget(form.configuration.deactivateOnClose) }}<label for="{{form.configuration.deactivateOnClose.vars.id}}" class="labelCheck">{{"mb.core.admin.featureinfo.label.deactivateonclose"|trans}}</label>
-    <div class="clearContainer"></div>
+    </div>
+    <div class="left">
     {{ form_widget(form.configuration.printResult) }}<label for="{{form.configuration.printResult.vars.id}}" class="labelCheck">print Result</label>
+    </div>
     <div class="clearContainer"></div>
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
@@ -13,5 +16,14 @@
     {{ form_label(form.configuration.target) }}{{ form_widget(form.configuration.target) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.type) }}{{ form_widget(form.configuration.type) }}
+    <div class="clearContainer"></div>
+    {{ form_label(form.configuration.displayType) }}{{ form_widget(form.configuration.displayType) }}
+    <div class="clearContainer"></div>
+    <div class="left">
+        {{ form_widget(form.configuration.showOriginal) }}<label for="{{form.configuration.showOriginal.vars.id}}" class="labelCheck">{{ "mb.core.admin.featureinfo.label.showoriginal"|trans }}</label>
+    </div>
+    <div class="left">
+        {{ form_widget(form.configuration.onlyValid) }}<label for="{{form.configuration.onlyValid.vars.id}}" class="labelCheck">{{ "mb.core.admin.featureinfo.label.onlyvalid"|trans }}</label>
+    </div>
     <div class="clearContainer"></div>
 </div>

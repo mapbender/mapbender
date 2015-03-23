@@ -130,10 +130,12 @@
             } else if(context && options.changed && options.changed.children) {
                 for(layerName in options.changed.children) {
                     var layer = options.changed.children[layerName];
-                    if(layer.state.visibility) {
-                        $('li[data-id="' + layerName + '"]', context).removeClass('notvisible');
-                    } else {
-                        $('li[data-id="' + layerName + '"]', context).addClass('notvisible');
+                    if(layer.state) {
+                        if(layer.state.visibility) {
+                            $('li[data-id="' + layerName + '"]', context).removeClass('notvisible');
+                        } else {
+                            $('li[data-id="' + layerName + '"]', context).addClass('notvisible');
+                        }
                     }
                 }
             } else if(context && options.changed && options.changed.childRemoved) {
@@ -153,7 +155,8 @@
             var source = this.model.getSource(options.changed.sourceIdx);
             var root = source ? source.configuration.children[0] : null;
             if(root) {
-                if($('ul[data-id="' + root.options.id + '"] li', context).not('.notshow').not('.notvisible').length === 0) {
+                if($('ul[data-id="' + root.options.id + '"] li', context).not('.notshow').not(
+                        '.notvisible').length === 0) {
                     $('li[data-id="' + root.options.id + '"]', context).addClass('notvisible');
                 } else {
                     $('li[data-id="' + root.options.id + '"]', context).removeClass('notvisible');
@@ -188,13 +191,14 @@
                 elm = self.element;
             }
             function checkLayers(layer, parent){
-                var $li = $('li[data-id="' + layer.options.id + '"]', elm);
-                if(layer.state.visibility) {
-                    $li.removeClass('notvisible');
-                } else {
-                    $li.addClass('notvisible');
+                if(layer.state) {
+                    var $li = $('li[data-id="' + layer.options.id + '"]', elm);
+                    if(layer.state.visibility) {
+                        $li.removeClass('notvisible');
+                    } else {
+                        $li.addClass('notvisible');
+                    }
                 }
-
                 if(layer.children) {
                     for(var i = 0; i < layer.children.length; i++) {
                         checkLayers(layer.children[i], layer);

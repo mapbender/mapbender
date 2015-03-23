@@ -158,12 +158,11 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
                     $this->addToMapper($class, $data[$idName], $fieldValue);
                 }
             } elseif (is_object($fieldValue)) {
-                if ($fieldValue instanceof PersistentCollection &&
-                    isset($data[$fieldName]) && is_array($data[$fieldName]) && $objectExists instanceof Source) {
-                    $collection = $fieldValue->toArray();
-                    for ($i = 0; $i < count($data[$fieldName]) && count($data[$fieldName]) === count($collection); $i++) {
-                        $this->mapSource($data[$fieldName][$i], $this->getClassName($data[$fieldName][$i]),
-                            $collection[$i]);
+                if ($fieldValue instanceof PersistentCollection && isset($data[$fieldName])
+                    && is_array($data[$fieldName]) && $objectExists instanceof Source) {
+                    $coll = $fieldValue->toArray();
+                    for ($i = 0; $i < count($data[$fieldName]) && count($data[$fieldName]) === count($coll); $i++) {
+                        $this->mapSource($data[$fieldName][$i], $this->getClassName($data[$fieldName][$i]), $coll[$i]);
                     }
                 } elseif ($fieldValue instanceof Contact) {
                     $this->mapSource($data[$fieldName], $this->getClassName($data[$fieldName]), $fieldValue);
@@ -190,18 +189,12 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
         }
         if ($object !== null) {
             foreach ($fields as $fieldName => $fieldProps) {
-                if (!isset($fieldProps[self::KEY_SETTER]) || !isset($fieldProps[self::KEY_GETTER]) ||
-                    in_array($fieldName, $fixedField) || !key_exists($fieldName, $data)) {
+                if (!isset($fieldProps[self::KEY_SETTER]) || !isset($fieldProps[self::KEY_GETTER])
+                    || in_array($fieldName, $fixedField) || !key_exists($fieldName, $data)) {
                     continue;
                 }
                 $fieldValue = $data[$fieldName];
-                if ($fieldValue === null) {
-                    $reflectionMethod = new \ReflectionMethod($class, $fieldProps[self::KEY_SETTER]);
-                    $reflectionMethod->invoke($object, null);
-                } else if (is_integer($fieldValue) || is_float($fieldValue) || is_string($fieldValue) || is_bool($fieldValue)) {
-                    $reflectionMethod = new \ReflectionMethod($class, $fieldProps[self::KEY_SETTER]);
-                    $reflectionMethod->invoke($object, $fieldValue);
-                } else if (is_array($fieldValue)) {
+                if (is_array($fieldValue)) {
                     if (ArrayUtil::isAssoc($fieldValue)) {
                         $subObjectClassName = $this->getClassName($fieldValue);
                         if ($subObjectClassName) {
@@ -210,7 +203,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
                                 $this->handleSourceInstance($object, $subObject, $fieldName, $fieldValue, $fieldProps);
                             } elseif ($object instanceof SourceInstanceItem) {
                                 $this->handleSourceInstanceItem($object, $subObject, $fieldName, $fieldValue,
-                                    $fieldProps);
+                                                                $fieldProps);
                             } else {
                                 $this->handleCommon($object, $subObject, $fieldName, $fieldValue, $fieldProps);
                             }
@@ -242,7 +235,8 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
                         }
                     }
                 } else {
-                    $a = 0;
+                    $reflectionMethod = new \ReflectionMethod($class, $fieldProps[self::KEY_SETTER]);
+                    $reflectionMethod->invoke($object, $fieldValue);
                 }
             }
         }
@@ -479,7 +473,7 @@ class ExchangeDenormalizer extends ExchangeSerializer implements DenormalizerInt
             $elmClass = $element->getClass();
             $applComp = new ApplicationComponent($this->container, $element->getApplication(), array());
             $elmComp = new $elmClass($applComp, $this->container, $element);
-            $configuration = $elmComp->denormalizeConfiguration($configuration);
+            $configuration = $elmComp->denormalizeConfiguration($configuration, $this->mapper);
             $element->setConfiguration($configuration);
             $this->em->persist($element);
             $this->em->flush();
