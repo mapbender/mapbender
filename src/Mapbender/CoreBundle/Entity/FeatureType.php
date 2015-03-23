@@ -216,51 +216,32 @@ class FeatureType extends ContainerAware
      */
     public function save($featureData, $autoUpdate = true)
     {
-        /** @var Feature $feature */
-        $connection = $this->getConnection();
-        $data       = array();
-        $id         = null;
-
-        // If $featureData is string, posible is an JSON, so try to convert it
-        if (is_string($featureData)) {
-            $featureData = $this->create($featureData);
-        }
-
-        // If $featureData is object, so collect data as array
-        if (is_object($featureData) && $featureData instanceof Feature) {
-            $feature     = $featureData;
-            $featureData = $feature->getAttributes();
-
-            if ($feature->hasId()) {
-                $featureData['id'] = $feature->getId();
-            }
-
-            if ($feature->hasGeom()) {
-                //$wkb = \geoPHP::load($feature->getGeom(), 'wkt')->out('wkb');
-                if ($this->getSrid()) {
-                    $featureData['geom'] = "SRID=" . $this->getSrid() . ";" . $feature->getGeom();
-                } else {
-                    $featureData['geom'] = $this->srid . ";" . $feature->getGeom();
-                }
-            }
-        }
-
-        if (!is_array($featureData)) {
+        if (!is_array($featureData) || !is_object($featureData)) {
             throw new \Exception("Feature data given isn't compatible to save into the table: " . $this->getTableName());
         }
 
-        // collect input data for the table
-        if (isset($featureData[$this->getUniqueId()])) {
-            $id = $featureData[$this->getUniqueId()];
-        } elseif (isset($featureData['id'])) {
-            $id = $featureData['id'];
+        /** @var Feature $feature */
+        $connection  = $this->getConnection();
+        $data        = array();
+        $id          = null;
+        $feature     = $this->create($featureData);
+        $featureData = $feature->getAttributes();
+        $hasId       = !$feature->hasId();
+
+
+        if ($feature->hasGeom()) {
+            //$wkb = \geoPHP::load($feature->getGeom(), 'wkt')->out('wkb');
+            if ($this->getSrid()) {
+                $featureData['geom'] = "SRID=" . $this->getSrid() . ";" . $feature->getGeom();
+            } else {
+                $featureData['geom'] = $this->srid . ";" . $feature->getGeom();
+            }
         }
 
         if (isset($featureData[$this->getGeomField()])) {
             $data[$this->getGeomField()] = $featureData[$this->getGeomField()];
-        } elseif (isset($featureData['geom'])) {
-            $data[$this->getGeomField()] = $featureData['geom'];
         }
+
         foreach ($this->getFields() as $fieldName) {
             if (isset($featureData[$fieldName])) {
                 $data[$fieldName] = $featureData[$fieldName];
@@ -272,17 +253,15 @@ class FeatureType extends ContainerAware
         }
 
         // Insert if no ID given
-        if (!$autoUpdate || is_null($id)) {
-
+        if (!$autoUpdate || $hasId ) {
             if (!$autoUpdate) {
                 $data[$this->uniqueId] = $id;
             }
-
             $connection->insert($this->tableName, $data);
             $data['id'] = $connection->lastInsertId();
         } // Replace if has ID
         else {
-            $connection->update($this->tableName, $data, array($this->uniqueId => $id));
+            $connection->update($this->tableName, $data, array($this->uniqueId => $featureData[$this->getUniqueId()]));
         }
 
         return $this->create($data);
@@ -305,7 +284,6 @@ class FeatureType extends ContainerAware
      * Search feature by criteria
      *
      * @param array  $criteria
-     * @param string $returnType FeatureCollection or WKT Array
      * @return Feature[]
      */
     public function search(array $criteria = array())
