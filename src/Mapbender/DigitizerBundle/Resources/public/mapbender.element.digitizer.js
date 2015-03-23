@@ -457,7 +457,7 @@
                 left: extent.left,
                 top: extent.top,
                 right: extent.right,
-                maxResults: 10
+                maxResults: 5
             };
 
             self.query('select', data).done(function(response) {

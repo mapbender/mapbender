@@ -538,7 +538,7 @@ class FeatureType extends ContainerAware
      * @param Feature[] $rows
      * @return array FeatureCollection
      */
-    private function toFeatureCollection($rows)
+    public function toFeatureCollection($rows)
     {
         /** @var Feature $feature */
         foreach ($rows as $k => $feature) {

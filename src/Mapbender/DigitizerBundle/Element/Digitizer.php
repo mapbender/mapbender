@@ -122,11 +122,30 @@ class Digitizer extends Element
             case 'select':
                 $defaultCriteria = array('returnType' => 'FeatureCollection',
                                          'maxResults' => 2);
-                $queryCriteria   = array_merge($request, $defaultCriteria);
-                $results         = $featureType->search($queryCriteria);
+                $results         = $featureType->search(array_merge($defaultCriteria, $request));
                 break;
 
             case 'save':
+                // save once
+                if(isset($request['feature'])){
+                    $request['features'] = array($featureType->save($request['feature']));
+                }
+
+                // save collection
+                if(isset($request['features']) && is_array($request['features'])){
+                    foreach ($request['features'] as $feature) {
+                        $results[] = $featureType->save($feature);
+                    }
+                }
+                $results = $featureType->toFeatureCollection($results);
+                break;
+
+            case 'remove':
+                // remove once
+                if(isset($request['feature'])){
+                    $results[] =  array($featureType->remove($request['feature']));
+                }
+                $results = $featureType->toFeatureCollection($results);
                 break;
         }
 
