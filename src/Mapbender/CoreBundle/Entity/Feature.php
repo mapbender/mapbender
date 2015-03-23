@@ -199,6 +199,8 @@ class Feature
 
         if (!$this->hasId()) {
             unset($data[$this->uniqueIdField]);
+        }else{
+            $data[$this->uniqueIdField] = $this->getId();
         }
 
         return $data;

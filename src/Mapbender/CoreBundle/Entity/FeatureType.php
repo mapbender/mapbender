@@ -225,10 +225,8 @@ class FeatureType extends ContainerAware
         $data       = array();
         $id         = null;
         $feature    = $this->create($featureData);
-        $hasId      = !$feature->hasId();
-
         // Insert if no ID given
-        if (!$autoUpdate || $hasId) {
+        if (!$autoUpdate || !$feature->hasId()) {
             $result = $this->insert($feature);
         } // Replace if has ID
         else {
@@ -250,10 +248,9 @@ class FeatureType extends ContainerAware
         $feature    = $this->create($featureData);
         $data       = $this->cleanFeatureData($feature->toArray());
         $connection = $this->getConnection();
-
-        $connection->insert($this->tableName, $data);
-
-        $feature->setId($connection->lastInsertId());
+        $result     = $connection->insert($this->tableName, $data);
+        $lastId     = $connection->lastInsertId();
+        $feature->setId($lastId);
         return $feature;
     }
 
@@ -272,7 +269,7 @@ class FeatureType extends ContainerAware
         $data       = $this->cleanFeatureData($feature->toArray());
         $connection = $this->getConnection();
 
-        if (empty($criteria)) {
+        if (empty($data)) {
             throw new \Exception("Feature can't be updated without criteria");
         }
 

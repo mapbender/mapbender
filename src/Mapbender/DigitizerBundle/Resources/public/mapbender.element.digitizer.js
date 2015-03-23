@@ -396,7 +396,7 @@
             var wkt = new OpenLayers.Format.WKT().write(feature);
             var jsonFeature = {
                 feature: {
-                    properties: {name: 'test'},
+                    properties: feature.attributes,
                     geometry:   wkt
                 }
             };
@@ -466,7 +466,7 @@
                 intersect: {
                     geometry: extent.toGeometry().toString()
                 },
-                maxResults: 5
+                maxResults: 100
             };
 
             self.query('select', request).done(function(response) {
