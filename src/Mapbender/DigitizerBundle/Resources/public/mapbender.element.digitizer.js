@@ -452,32 +452,45 @@
             extent.transform(proj, newProj);
 
             var data = {
-                schemaName: self.activeSchemaName,
                 clientSrid: proj.proj.srsProjNumber,
                 bottom: extent.bottom,
                 left: extent.left,
                 top: extent.top,
-                right: extent.right
+                right: extent.right,
+                maxResults: 10
             };
 
-            $.ajax({
-                url: this.elementUrl + 'select',
-                type: 'POST',
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify(data),
-                success: function(response){
-                    console.log(response);
-                    if(response){
-                        self.activeLayer.removeAllFeatures();
-                        var geojson_format = new OpenLayers.Format.GeoJSON();
-                        var features = geojson_format.read(response);
-                        self.activeLayer.addFeatures(features);
-                    }
+            self.query('select', data).done(function(response) {
+                if(response) {
+                    self.activeLayer.removeAllFeatures();
+                    var geojson_format = new OpenLayers.Format.GeoJSON();
+                    var features = geojson_format.read(response);
+                    self.activeLayer.addFeatures(features);
                 }
             });
         },
-        
+
+        /**
+         * Element controller XHR query
+         *
+         * @param uri
+         * @param request
+         * @return {*}
+         */
+        query: function(uri, request) {
+            var widget = this;
+            request.schema = this.activeSchemaName;
+            return $.ajax({
+                url:         widget.elementUrl + uri,
+                type:        'POST',
+                contentType: "application/json; charset=utf-8",
+                dataType:    "json",
+                data:        JSON.stringify(request),
+            }).error(function(xhr) {
+                $.notify("XHR error:" + JSON.stringify(xhr.responseText));
+                console.log("XHR Error:", xhr);
+            });
+        }
     });
 
 })(jQuery);

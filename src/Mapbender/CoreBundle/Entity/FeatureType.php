@@ -326,20 +326,25 @@ class FeatureType extends ContainerAware
     /**
      * Search feature by criteria
      *
-     * @param array $criteria
+     * @param array  $criteria
+     * @param string $returnType FeatureCollection or WKT Array
      * @return Feature[]
      */
     public function search(array $criteria = array())
     {
         /** @var Statement $statement */
-        $queryBuilder      = $this->getSelectQueryBuilder();
-        $maxResults        = isset($criteria['maxResults']) ? intval($criteria['maxResults']) : self::MAX_RESULTS;
-        $intersectGeometry = isset($criteria['intersectGeometry']) ? $criteria['intersectGeometry'] : null;
+        /** @var Feature $feature */
+        $maxResults   = isset($criteria['maxResults']) ? intval($criteria['maxResults']) : self::MAX_RESULTS;
+        $intersect    = isset($criteria['intersect']) ? $criteria['intersect'] : null;
+        $returnType   = isset($criteria['returnType']) ? $criteria['returnType'] : null;
+
+        $queryBuilder = $this->getSelectQueryBuilder();
 
         // add GEOM where condition
-        if (!empty($intersectGeometry)) {
-            $geometry = self::roundGeometry($intersectGeometry);
-            $queryBuilder->andWhere(self::genIntersectCondition($this->getPlatformName(), $intersectGeometry, $this->geomField, $this->getSrid()));
+        if (is_array($intersect) && isset($intersect['geometry'])) {
+            $geometry = self::roundGeometry($intersect['geometry']);
+            $srid     = isset($intersect['srid']) ? $intersect['srid'] : $this->getSrid();
+            $queryBuilder->andWhere(self::genIntersectCondition($this->getPlatformName(), $geometry, $this->geomField, $srid));
         }
 
         $queryBuilder->setMaxResults($maxResults);
@@ -351,6 +356,10 @@ class FeatureType extends ContainerAware
         // Convert to Feature object
         if ($hasResults) {
             $this->prepareResults($rows);
+        }
+
+        if ($returnType == "FeatureCollection") {
+            $rows = $this->toFeatureCollection($rows);
         }
 
         return $rows;
@@ -426,21 +435,23 @@ class FeatureType extends ContainerAware
     }
 
     /**
+     * Generate intersect where condition
+     *
      * @param $platformName
      * @param $geometry
      * @param $geometryAttribute
-     * @param $sridTo
+     * @param $srid
      * @return null|string
      */
-    public static function genIntersectCondition($platformName, $geometry, $geometryAttribute, $sridTo)
+    public static function genIntersectCondition($platformName, $geometry, $geometryAttribute, $srid)
     {
         $sql = null;
         switch ($platformName) {
             case self::POSTGRESQL_PLATFORM:
-                $sql = "ST_INTERSECTS(ST_GEOMFROMTEXT('$geometry',$sridTo),$geometryAttribute)";
+                $sql = "ST_INTERSECTS(ST_GEOMFROMTEXT('$geometry',$srid),$geometryAttribute)";
                 break;
             case self::ORACLE_PLATFORM:
-                $sql = "SDO_RELATE( $geometryAttribute ,SDO_GEOMETRY('$geometry',$sridTo), 'mask=ANYINTERACT querytype=WINDOW') = 'TRUE'";
+                $sql = "SDO_RELATE( $geometryAttribute ,SDO_GEOMETRY('$geometry',$srid), 'mask=ANYINTERACT querytype=WINDOW') = 'TRUE'";
                 break;
         }
         return $sql;
@@ -487,8 +498,8 @@ class FeatureType extends ContainerAware
     /**
      * Convert results to Feature objects
      *
-     * @param $rows
-     * @return array
+     * @param Feature[] $rows
+     * @return Feature[]
      */
     public function prepareResults(&$rows)
     {
@@ -552,5 +563,21 @@ class FeatureType extends ContainerAware
             }
         }
         return $this->srid;
+    }
+
+    /**
+     * Convert Features[] to FeatureCollection
+     *
+     * @param Feature[] $rows
+     * @return array FeatureCollection
+     */
+    private function toFeatureCollection($rows)
+    {
+        /** @var Feature $feature */
+        foreach ($rows as $k => $feature) {
+            $rows[$k] = $feature->toGeoJson(true);
+        }
+        return array("type"     => "FeatureCollection",
+                     "features" => $rows);;
     }
 }

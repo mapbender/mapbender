@@ -110,8 +110,27 @@ class Digitizer extends Element
      */
     public function httpAction($action)
     {
-        $request = $this->container->get('request');
         $configuration = $this->getConfiguration();
+        $request       = json_decode($this->container->get('request')->getContent(), true);
+        $schemas       = $configuration["schemes"];
+        $schema        = $schemas[$request["schema"]];
+        $features      = $this->container->get('features');
+        $featureType   = $features->get($schema["featureType"]);
+        $results       = array();
+
+        switch ($action) {
+            case 'select':
+                $defaultCriteria = array('returnType' => 'FeatureCollection',
+                                         'maxResults' => 2);
+                $queryCriteria   = array_merge($request, $defaultCriteria);
+                $results         = $featureType->search($queryCriteria);
+                break;
+
+            case 'save':
+                break;
+        }
+
+        return new JsonResponse($results);
 
         if ('select' === $action) {
             $data = json_decode($request->getContent(), true);
