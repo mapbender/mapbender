@@ -1,6 +1,7 @@
 <?php
 
 namespace Mapbender\CoreBundle\Utils;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -25,14 +26,14 @@ class UrlUtil
      */
     public static function validateUrl($url, $paramsToAdd = array(), $paramsToRemove = array())
     {
-        $rawUrl = parse_url($url);
+        $rawUrl      = parse_url($url);
         $schemelower = strtolower($rawUrl["scheme"]);
-        $newurl = "";
-        if($schemelower === 'http' || $schemelower === 'https' || $schemelower === 'ftp'){
+        $newurl      = "";
+        if ($schemelower === 'http' || $schemelower === 'https' || $schemelower === 'ftp') {
             $newurl = $rawUrl["scheme"] . "://" . $rawUrl['host'];
-        } elseif($schemelower === 'file'){
+        } elseif ($schemelower === 'file') {
             $newurl = $rawUrl["scheme"] . ":///";
-        } else{
+        } else {
             $newurl = $rawUrl["scheme"] . ":";
         }
         if (isset($rawUrl['user'])) {
@@ -44,23 +45,27 @@ class UrlUtil
         if (isset($rawUrl['path']) && strlen($rawUrl['path']) > 0) {
             $newurl .= $rawUrl['path'];
         }
-        $queries = array();
+        $queries   = array();
         $getParams = array();
         if (isset($rawUrl["query"])) {
-            parse_str($rawUrl["query"], $paramsToAdd);
+            parse_str($rawUrl["query"], $queries);
         }
         foreach ($getParams as $key => $value) {
-            if (!in_array(strtolower($key), $paramsToRemove)) {
-                $queries[] = $key . "=" . $value;
-            }
+            $queries[$key] = $value;
         }
         foreach ($paramsToAdd as $key => $value) {
-            if (!in_array(strtolower($key), $paramsToRemove)) {
-                $queries[] = $key . "=" . $value;
+            $queries[$key] = $value;
+        }
+        $help = array();
+        foreach ($queries as $key => $value) {
+            if (in_array(strtolower($key), $paramsToRemove)) {
+                unset($queries[$key]);
+            } else {
+                $help[] = $key . "=" . $value;
             }
         }
         if (count($queries) > 0) {
-            $newurl .= '?' . implode("&", $queries);
+            $newurl .= '?' . implode("&", $help);
         }
         return $newurl;
     }

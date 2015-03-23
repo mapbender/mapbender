@@ -12,7 +12,7 @@ class VendorSpecific extends DimensionInst
 
     const TYPE_VS_SIMPLE = 'simple';
     const TYPE_VS_USER = 'user';
-    const TYPE_VS_GROUP = 'group';
+    const TYPE_VS_GROUP = 'groups';
 
     /**
      * ORM\Column(type="string", nullable=false)

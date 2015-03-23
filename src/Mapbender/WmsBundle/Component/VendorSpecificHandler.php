@@ -2,6 +2,8 @@
 
 namespace Mapbender\WmsBundle\Component;
 
+use Doctrine\ORM\PersistentCollection;
+use FOM\UserBundle\Entity\Group;
 use Mapbender\CoreBundle\Utils\EntityUtil;
 
 /**
@@ -11,7 +13,6 @@ use Mapbender\CoreBundle\Utils\EntityUtil;
  */
 class VendorSpecificHandler
 {
-
     protected $vendorspecific;
 
     public function __construct(VendorSpecific $vendorspecific)
@@ -25,7 +26,7 @@ class VendorSpecificHandler
     }
 
     /**
-     * 
+     * Sets a vendor specific
      * @param type $vendorspecific
      * @return \Mapbender\WmsBundle\Component\VendorSpecificHandler
      */
@@ -36,7 +37,7 @@ class VendorSpecificHandler
     }
 
     /**
-     * Checks if a value is dynamic. A "dynamic value" begins and ends with a '$'. A value of a "dynamic value" is 
+     * Checks if a value is dynamic. A "dynamic value" begins and ends with a '$'. A value of a "dynamic value" is
      * a keyword for an method.
      * @param string $value a string value
      * @return boolean true if a value is dynamic.
@@ -48,7 +49,7 @@ class VendorSpecificHandler
     }
 
     /**
-     * Checks if a value is dynamic. A "dynamic value" begins and ends with a '$'. A value of a "dynamic value" is 
+     * Checks if a value is dynamic. A "dynamic value" begins and ends with a '$'. A value of a "dynamic value" is
      * a keyword for an method.
      * @param string $value a string value
      * @return boolean true if a value is dynamic.
@@ -59,7 +60,7 @@ class VendorSpecificHandler
     }
 
     /**
-     * 
+     * Reterns a vendor specific value
      * @param mixed $object
      * @return type
      */
@@ -69,7 +70,18 @@ class VendorSpecificHandler
         if ($value) {
             $length = strlen($value);
             if ($length > 2 && strpos($value, '$', 0) === 0 && strpos($value, '$', $length - 2) === $length - 1) {
-                return $object ? EntityUtil::getValueFromGetter($object, str_replace('$', '', $value)) : null;
+                $paramVal = $object ? EntityUtil::getValueFromGetter($object, str_replace('$', '', $value)) : null;
+                if ($paramVal instanceof PersistentCollection) {
+                    $help = array();
+                    foreach ($paramVal as $item) {
+                        if ($item instanceof Group) {
+                            $help[] = $item->getTitle();
+                        }
+                    }
+                    return implode(',', $help);
+                } else {
+                    return $paramVal;
+                }
             } else {
                 return $value;
             }
@@ -86,11 +98,11 @@ class VendorSpecificHandler
     {
         if ($this->vendorspecific->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
             return array($this->vendorspecific->getParameterName() => $this->vendorspecific->getDefault());
-        } elseif ($this->vendorspecific->getVstype() === VendorSpecific::TYPE_VS_USER
-            && !$this->vendorspecific->getHidden() && $object) {
+        } elseif ($this->vendorspecific->getVstype() === VendorSpecific::TYPE_VS_USER && !$this->vendorspecific->getHidden()
+            && $object) {
             return array($this->vendorspecific->getParameterName() => $this->getVendorSpecificValue($object));
-        } elseif ($this->vendorspecific->getVstype() === VendorSpecific::TYPE_VS_GROUP
-            && !$this->vendorspecific->getHidden() && $object) {
+        } elseif ($this->vendorspecific->getVstype() === VendorSpecific::TYPE_VS_GROUP && !$this->vendorspecific->getHidden()
+            && $object) {
             return array($this->vendorspecific->getParameterName() => $this->getVendorSpecificValue($object));
         }
         return null;
@@ -104,5 +116,4 @@ class VendorSpecificHandler
             return false;
         }
     }
-
 }
