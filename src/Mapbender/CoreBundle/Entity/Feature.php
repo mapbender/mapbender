@@ -84,6 +84,8 @@ class Feature
     }
 
     /**
+     * Get attributes (parameters)
+     *
      * @return mixed
      */
     public function getAttributes()
@@ -214,10 +216,20 @@ class Feature
         $this->id = $id;
     }
 
+    /**
+     * Is id set
+     *
+     * @return bool
+     */
     public function hasId(){
         return !is_null($this->id);
     }
 
+    /**
+     * Has geom data
+     *
+     * @return bool
+     */
     public function hasGeom(){
         return !is_null($this->geom);
     }
