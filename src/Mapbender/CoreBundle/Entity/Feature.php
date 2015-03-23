@@ -168,6 +168,31 @@ class Feature
     }
 
     /**
+     * Return array
+     *
+     * @return mixed
+     */
+    public function toArray()
+    {
+        $data = $this->getAttributes();
+
+        if ($this->hasGeom()) {
+            //$wkb = \geoPHP::load($feature->getGeom(), 'wkt')->out('wkb');
+            if ($this->getSrid()) {
+                $data[$this->geomField] = "SRID=" . $this->getSrid() . ";" . $this->getGeom();
+            } else {
+                $data[$this->geomField] = $this->srid . ";" . $this->getGeom();
+            }
+        }
+
+        if (!$this->hasId()) {
+            unset($data[$this->uniqueIdField]);
+        }
+
+        return $data;
+    }
+
+    /**
      * @param mixed $id
      */
     public function setId($id)
