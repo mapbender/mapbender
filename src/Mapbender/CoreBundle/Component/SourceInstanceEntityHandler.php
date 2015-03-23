@@ -24,11 +24,6 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     abstract public function create($persist = true);
     
     /**
-     * Remove a source from a database
-     */
-    abstract public function remove();
-    
-    /**
      * Returns the instance configuration with signed urls.
      */
     abstract public function getConfiguration(Signer $signer);
@@ -49,5 +44,4 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * Returns an array with sensitive vendor specific parameters
      */
     abstract public function getSensitiveVendorSpecific();
-
 }
