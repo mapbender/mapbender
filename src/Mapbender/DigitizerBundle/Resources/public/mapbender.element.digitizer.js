@@ -372,7 +372,7 @@
         },
         
         _mapClick: function(evt) {
-            var self = this;
+            var widget = this;
             var x = evt.pageX;
             var y = evt.pageY;
             
@@ -390,11 +390,22 @@
                 console.log('no features');
                 return;
             }
-            
-            $.notify('feature clicked: ' + features[0].id,'info')
-            console.log(features[0]);
+
+            var feature = features[0];
+            $.notify('feature clicked: ' + feature.id,'info');
+            var wkt = new OpenLayers.Format.WKT().write(feature);
+            var jsonFeature = {
+                feature: {
+                    properties: {name: 'test'},
+                    geometry:   wkt
+                }
+            };
+
             //TODO open form popup
-            
+            widget.query('save',jsonFeature).done(function(featureCollection){
+                $.notify('features saved: ' +  JSON.stringify(featureCollection),'info');
+            });
+
         },
         
         _getFeaturesFromEvent: function(x, y) {       
@@ -483,7 +494,7 @@
                 type:        'POST',
                 contentType: "application/json; charset=utf-8",
                 dataType:    "json",
-                data:        JSON.stringify(request),
+                data:        JSON.stringify(request)
             }).error(function(xhr) {
                 $.notify("XHR error:" + JSON.stringify(xhr.responseText));
                 console.log("XHR Error:", xhr);

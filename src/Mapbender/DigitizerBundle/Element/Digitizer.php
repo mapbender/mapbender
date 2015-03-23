@@ -116,7 +116,7 @@ class Digitizer extends Element
         $schema        = $schemas[$request["schema"]];
         $features      = $this->container->get('features');
         $featureType   = $features->get($schema['featureType']);
-
+        $results       = array();
 
         switch ($action) {
             case 'select':
@@ -128,9 +128,8 @@ class Digitizer extends Element
             case 'save':
                 // save once
                 if(isset($request['feature'])){
-                    $request['features'] = array($featureType->save($request['feature']));
+                    $request['features'] = array($request['feature']);
                 }
-
                 // save collection
                 if(isset($request['features']) && is_array($request['features'])){
                     foreach ($request['features'] as $feature) {

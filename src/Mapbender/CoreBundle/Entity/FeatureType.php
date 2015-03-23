@@ -216,7 +216,7 @@ class FeatureType extends ContainerAware
      */
     public function save($featureData, $autoUpdate = true)
     {
-        if (!is_array($featureData) || !is_object($featureData)) {
+        if (!is_array($featureData) && !is_object($featureData)) {
             throw new \Exception("Feature data given isn't compatible to save into the table: " . $this->getTableName());
         }
 
@@ -227,10 +227,6 @@ class FeatureType extends ContainerAware
         $feature    = $this->create($featureData);
         $hasId      = !$feature->hasId();
 
-        if (!count($data)) {
-            throw new \Exception("Feature data given is empty");
-        }
-
         // Insert if no ID given
         if (!$autoUpdate || $hasId) {
             $result = $this->insert($feature);
@@ -239,14 +235,14 @@ class FeatureType extends ContainerAware
             $result = $this->update($feature);
         }
 
-        return $result['feature'];
+        return $result;
     }
 
     /**
      * Insert
      *
      * @param $featureData
-     * @return array
+     * @return Feature
      */
     public function insert($featureData)
     {
@@ -255,16 +251,17 @@ class FeatureType extends ContainerAware
         $data       = $this->cleanFeatureData($feature->toArray());
         $connection = $this->getConnection();
 
-        return array('result'  => $connection->insert($this->tableName, $data),
-                     'id'      => $connection->lastInsertId(),
-                     'feature' => $feature);
+        $connection->insert($this->tableName, $data);
+
+        $feature->setId($connection->lastInsertId());
+        return $feature;
     }
 
     /**
      * Update
      *
      * @param $featureData
-     * @return array
+     * @return Feature
      * @throws \Exception
      * @internal param array $criteria
      */
@@ -279,9 +276,8 @@ class FeatureType extends ContainerAware
             throw new \Exception("Feature can't be updated without criteria");
         }
 
-        return array('result'  => $connection->update($this->tableName, $data, array($this->uniqueId => $feature->getId())),
-                     'id'      => $connection->lastInsertId(),
-                     'feature' => $feature);
+        $connection->update($this->tableName, $data, array($this->uniqueId => $feature->getId()));
+        return $feature;
     }
 
     /**
@@ -305,6 +301,7 @@ class FeatureType extends ContainerAware
      */
     public function search(array $criteria = array())
     {
+
         /** @var Statement $statement */
         /** @var Feature $feature */
         $maxResults   = isset($criteria['maxResults']) ? intval($criteria['maxResults']) : self::MAX_RESULTS;

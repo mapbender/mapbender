@@ -116,6 +116,18 @@ class Feature
             }
         }
 
+        // Is JSON feature array?
+        if (is_array($args) && isset($args["geometry"]) && isset($args['properties'])) {
+            $properties             = $args["properties"];
+            $geom                   = $args["geometry"];
+            $properties[$geomField] = $geom;
+            if (isset($args['id'])) {
+                $properties[$uniqueIdField] = $args['id'];
+            }
+
+            $args = $properties;
+        }
+
         // set GEOM
         if (isset($args[$geomField])) {
             $this->setGeom($args[$geomField]);
