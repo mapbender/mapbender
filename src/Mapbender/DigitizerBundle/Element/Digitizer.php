@@ -115,8 +115,8 @@ class Digitizer extends Element
         $schemas       = $configuration["schemes"];
         $schema        = $schemas[$request["schema"]];
         $features      = $this->container->get('features');
-        $featureType   = $features->get($schema["featureType"]);
-        $results       = array();
+        $featureType   = $features->get($schema['featureType']);
+
 
         switch ($action) {
             case 'select':

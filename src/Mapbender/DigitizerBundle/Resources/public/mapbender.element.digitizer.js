@@ -450,17 +450,15 @@
             var newProj = new OpenLayers.Projection("EPSG:"+self.activeSchema.srid);
             var extent = this.map.getExtent();
             extent.transform(proj, newProj);
-
-            var data = {
+            var request = {
                 clientSrid: proj.proj.srsProjNumber,
-                bottom: extent.bottom,
-                left: extent.left,
-                top: extent.top,
-                right: extent.right,
+                intersect: {
+                    geometry: extent.toGeometry().toString()
+                },
                 maxResults: 5
             };
 
-            self.query('select', data).done(function(response) {
+            self.query('select', request).done(function(response) {
                 if(response) {
                     self.activeLayer.removeAllFeatures();
                     var geojson_format = new OpenLayers.Format.GeoJSON();
