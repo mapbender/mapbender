@@ -221,50 +221,67 @@ class FeatureType extends ContainerAware
         }
 
         /** @var Feature $feature */
-        $connection  = $this->getConnection();
-        $data        = array();
-        $id          = null;
-        $feature     = $this->create($featureData);
-        $featureData = $feature->getAttributes();
-        $hasId       = !$feature->hasId();
-
-
-        if ($feature->hasGeom()) {
-            //$wkb = \geoPHP::load($feature->getGeom(), 'wkt')->out('wkb');
-            if ($this->getSrid()) {
-                $featureData['geom'] = "SRID=" . $this->getSrid() . ";" . $feature->getGeom();
-            } else {
-                $featureData['geom'] = $this->srid . ";" . $feature->getGeom();
-            }
-        }
-
-        if (isset($featureData[$this->getGeomField()])) {
-            $data[$this->getGeomField()] = $featureData[$this->getGeomField()];
-        }
-
-        foreach ($this->getFields() as $fieldName) {
-            if (isset($featureData[$fieldName])) {
-                $data[$fieldName] = $featureData[$fieldName];
-            }
-        }
+        $connection = $this->getConnection();
+        $data       = array();
+        $id         = null;
+        $feature    = $this->create($featureData);
+        $hasId      = !$feature->hasId();
 
         if (!count($data)) {
             throw new \Exception("Feature data given is empty");
         }
 
         // Insert if no ID given
-        if (!$autoUpdate || $hasId ) {
-            if (!$autoUpdate) {
-                $data[$this->uniqueId] = $id;
-            }
-            $connection->insert($this->tableName, $data);
-            $data['id'] = $connection->lastInsertId();
+        if (!$autoUpdate || $hasId) {
+            $result = $this->insert($feature);
         } // Replace if has ID
         else {
-            $connection->update($this->tableName, $data, array($this->uniqueId => $featureData[$this->getUniqueId()]));
+            $result = $this->update($feature);
         }
 
-        return $this->create($data);
+        return $result['feature'];
+    }
+
+    /**
+     * Insert
+     *
+     * @param $featureData
+     * @return array
+     */
+    public function insert($featureData)
+    {
+        /** @var Feature $feature */
+        $feature    = $this->create($featureData);
+        $data       = $this->cleanFeatureData($feature->toArray());
+        $connection = $this->getConnection();
+
+        return array('result'  => $connection->insert($this->tableName, $data),
+                     'id'      => $connection->lastInsertId(),
+                     'feature' => $feature);
+    }
+
+    /**
+     * Update
+     *
+     * @param $featureData
+     * @return array
+     * @throws \Exception
+     * @internal param array $criteria
+     */
+    public function update($featureData)
+    {
+        /** @var Feature $feature */
+        $feature    = $this->create($featureData);
+        $data       = $this->cleanFeatureData($feature->toArray());
+        $connection = $this->getConnection();
+
+        if (empty($criteria)) {
+            throw new \Exception("Feature can't be updated without criteria");
+        }
+
+        return array('result'  => $connection->update($this->tableName, $data, array($this->uniqueId => $feature->getId())),
+                     'id'      => $connection->lastInsertId(),
+                     'feature' => $feature);
     }
 
     /**
@@ -546,5 +563,22 @@ class FeatureType extends ContainerAware
         }
         return array("type"     => "FeatureCollection",
                      "features" => $rows);;
+    }
+
+    /**
+     * @param $data
+     * @return mixed
+     */
+    private function cleanFeatureData($data)
+    {
+        $fields = array_merge($this->getFields(), array($this->getUniqueId(), $this->getGeomField()));
+
+        // clean data from feature
+        foreach ($data as $fieldName => $value) {
+            if (isset($fields[$fieldName])) {
+                unset($data[$fieldName]);
+            }
+        }
+        return $data;
     }
 }
