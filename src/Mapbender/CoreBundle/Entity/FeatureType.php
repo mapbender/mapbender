@@ -237,9 +237,9 @@ class FeatureType extends ContainerAware
     }
 
     /**
-     * Insert
+     * Insert feature
      *
-     * @param $featureData
+     * @param array|Feature $featureData
      * @return Feature
      */
     public function insert($featureData)
@@ -557,12 +557,14 @@ class FeatureType extends ContainerAware
             $rows[$k] = $feature->toGeoJson(true);
         }
         return array("type"     => "FeatureCollection",
-                     "features" => $rows);;
+                     "features" => $rows);
     }
 
     /**
-     * @param $data
-     * @return mixed
+     * Clean data this can't be saved into db table from data array
+     *
+     * @param array $data
+     * @return array
      */
     private function cleanFeatureData($data)
     {
