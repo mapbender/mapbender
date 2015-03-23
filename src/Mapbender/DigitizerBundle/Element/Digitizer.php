@@ -149,50 +149,5 @@ class Digitizer extends Element
         }
 
         return new JsonResponse($results);
-
-        if ('select' === $action) {
-            $data = json_decode($request->getContent(), true);
-            $schema = $configuration['schemes'][$data['schemaName']];
-
-            $sql = "SELECT *, ST_AsGeoJSON(ST_Transform(" . $schema['geomColumn'] . ", :clientSrs)) as geom"
-                . " FROM ". $schema['table']
-                . " WHERE " . $schema['geomColumn'] . " && ST_MakeEnvelope(:left,:bottom,:right,:top, :dbSrs)";
-
-            $conn = $this->container->get('doctrine.dbal.' . $schema['connection'] . '_connection');
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue('clientSrs', $data['clientSrid']);
-            $stmt->bindValue('dbSrs', $schema['srid']);
-            $stmt->bindValue('left', $data['left']);
-            $stmt->bindValue('bottom', $data['bottom']);
-            $stmt->bindValue('right', $data['right']);
-            $stmt->bindValue('top', $data['top']);
-            $stmt->execute();
-
-            $geoJson = array('type' => 'FeatureCollection',
-               'features' => array()
-            );
-
-            $c = 1;
-            while ($row = $stmt->fetch()) {
-                foreach ($row as $key => $value) {
-                    if (isset($schema['columns'][$key]['tab'])) {
-                        if($schema['columns'][$key]['tab'] === true){
-                            $tableData[$c][$key] = $value;
-                        }
-                    }
-                }
-
-                $tempData = $row;
-                unset($tempData[$schema['geomColumn']]);
-                $geoJson['features'][] = array(
-                    'type' => 'Feature',
-                    'geometry' => json_decode($row['geom']),
-                    'properties' => $tempData
-                );
-                $c++;
-            }
-
-            return new JsonResponse($geoJson);
-        }
     }
 }
