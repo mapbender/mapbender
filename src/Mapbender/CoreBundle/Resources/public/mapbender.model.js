@@ -71,6 +71,9 @@ Mapbender.Model = {
 
         this.setView(true);
         this.parseURL();
+        if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+            this.changeProjection({projection: this.getProj(this.mbMap.options.targetsrs)});
+        }
     },
 
     /**
@@ -157,6 +160,9 @@ Mapbender.Model = {
             }
         }
 
+        if(!centered && this.mbMap.options['center']){
+            this.map.olMap.setCenter(new OpenLayers.LonLat(this.mbMap.options['center']));
+        }
 
         if (true === addLayers) {
             $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
@@ -164,11 +170,12 @@ Mapbender.Model = {
             // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
 
             this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
-
-            $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr) {
-                $.each(defArr, function(idx, layerDef) {
-                    layerDef['origId'] = idx;
-                    self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
+            $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId){
+                $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr){
+                    $.each(defArr, function(idx, layerDef){
+                        layerDef['origId'] = idx;
+                        self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
+                    });
                 });
             });
         }
@@ -377,6 +384,18 @@ Mapbender.Model = {
         } else {
             return null;
         }
+    },
+    findLayerset: function(options){
+        for(layersetId in Mapbender.configuration.layersets){
+            var layerset = Mapbender.configuration.layersets[layersetId];
+            for(var i = 0; i < layerset.length; i++){
+                if(options.source && layerset[i][options.source.origId]){
+                    return {id: layersetId, title: Mapbender.configuration.layersetmap[layersetId]};
+                }
+            }
+            
+        }
+        return null;
     },
     /**
      * Returns the source's position

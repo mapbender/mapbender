@@ -484,10 +484,10 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      *
      * @return Object
      */
-    public function getLatlonBounds()
+    public function getLatlonBounds($inherit = TRUE)
     {
 //        //@TODO check layer inheritance if layer->latlonBounds === null
-        if ($this->latlonBounds === null && $this->getParent() !== null) {
+        if ($inherit && $this->latlonBounds === null && $this->getParent() !== null) {
             return $this->getParent()->getLatlonBounds();
         } else {
             return $this->latlonBounds;
@@ -565,10 +565,10 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      *
      * @return array
      */
-    public function getSrs()
+    public function getSrs($inherit = TRUE)
     {
 //        return $this->srs;
-        if ($this->getParent() !== null) { // add crses from parent
+        if ($inherit && $this->getParent() !== null) { // add crses from parent
             return array_merge(
                 $this->getParent()->getSrs(), $this->srs);
         } else {
@@ -606,9 +606,9 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      *
      * @return Style[]
      */
-    public function getStyles()
+    public function getStyles($inherit = TRUE)
     {
-        if ($this->getParent() !== null) { // add styles from parent
+        if ($inherit && $this->getParent() !== null) { // add styles from parent
             return array_merge(
                 $this->getParent()->getStyles(), $this->styles);
         } else {
@@ -783,9 +783,9 @@ class WmsLayerSource extends SourceItem implements ContainsKeyword
      *
      * @return Authority
      */
-    public function getAuthority()
+    public function getAuthority($inherit = TRUE)
     {
-        if ($this->getParent() !== null && $this->getParent()->getAuthority() !== null) { // add crses from parent
+        if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) { 
             return array_merge(
                 $this->getParent()->getAuthority(), $this->authority);
         } else {

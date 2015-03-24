@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Map extends Element
 {
-
+    
     /**
      * @inheritdoc
      */
@@ -46,7 +46,7 @@ class Map extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'layerset' => null,
+            'layersets' => array(),
             'dpi' => 72,
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
@@ -156,7 +156,7 @@ class Map extends Element
                 throw new \RuntimeException('The srs: "' . $srs_req
                 . '" does not supported.');
             }
-            $configuration = array_merge($configuration, array('targetsrs' => $srs_req));
+            $configuration = array_merge($configuration, array('targetsrs' => strtoupper($srs_req)));
         }
 
         $pois = $this->container->get('request')->get('poi');
@@ -189,6 +189,12 @@ class Map extends Element
             }
         }
 
+        $center = $this->container->get('request')->get('center');
+        $centerArr = $center !== null ? explode(',', $center) : null;
+        if($center !== null && is_array($centerArr) && count($centerArr) === 2){
+            $configuration["center"] = $centerArr;
+        }
+
         $configuration['extra'] = $extra;
 
         if (!isset($configuration['scales'])) {
@@ -197,6 +203,9 @@ class Map extends Element
             $configuration['scales'] = preg_split(
                 "/\s?,\s?/", $configuration['scales']);
         }
+        if(!isset($configuration['layersets']) && isset($configuration['layerset'])){# "layerset" deprecated start
+            $configuration['layersets'] = array($configuration['layerset']);
+        }# "layerset" deprecated end
         return $configuration;
     }
 
@@ -311,29 +320,15 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    public function normalizeConfiguration(array $configuration, array $aaa = array())
+    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
     {
-        if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
-            $configuration['extents'] = array(
-                'start' => $configuration['extent_start'],
-                'max' => $configuration['extent_max']
-            );
-            unset($configuration['extent_start']);
-            unset($configuration['extent_max']);
-        }
-        if (is_string($configuration['otherSrs'])) {
-            $configuration['otherSrs'] = explode(',', $configuration['otherSrs']);
-        }
-        if (is_string($configuration['scales'])) {
-            $configuration['scales'] = explode(',', $configuration['scales']);
-        }
-        return $configuration;
+        return $entityConfiguration;
     }
 
     /**
      * @inheritdoc
      */
-    public function denormalizeConfiguration(array $configuration)
+    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
     {
         if (key_exists('extent_start', $configuration) && key_exists('extent_start', $configuration)) {
             $configuration['extents'] = array(
@@ -348,6 +343,13 @@ class Map extends Element
         }
         if (is_string($configuration['scales'])) {
             $configuration['scales'] = explode(',', $configuration['scales']);
+        }
+        $lsClassName = 'Mapbender\CoreBundle\Entity\Layerset';
+        if (key_exists('layersets', $configuration) && key_exists($lsClassName, $idMapper)) {
+            $mapper = $idMapper[$lsClassName];
+            foreach ($configuration['layersets'] as &$layerset){
+                $layerset = isset($mapper['map'][$layerset]) ? $mapper['map'][$layerset] : $layerset;
+            }
         }
         return $configuration;
     }

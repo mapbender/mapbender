@@ -14,7 +14,20 @@ Mapbender.WmcHandler = function(mapWidget, options){
             contetnType: 'json',
             context: this,
             success: this._loadFromIdSuccess,
-            error: this._loadFromIdError
+            error: this._loadError
+        });
+        return false;
+    };
+    this.loadFromUrl = function(url, wmcurl){
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {_url: wmcurl},
+            dataType: 'json',
+            contetnType: 'json',
+            context: this,
+            success: this._loadFromUrlSuccess,
+            error: this._loadError
         });
         return false;
     };
@@ -30,8 +43,17 @@ Mapbender.WmcHandler = function(mapWidget, options){
             Mapbender.error(response.error);
         }
     };
-    this._loadFromIdError = function(response){
-        Mapbender.error(response);
+    this._loadFromUrlSuccess = function(response, textStatus, jqXHR){
+        if(response.success){
+            for(stateid in response.success){
+                this.addToMap(stateid, response.success[stateid]);
+            }
+        }else if(response.error){
+            Mapbender.error(response.error);
+        }
+    };
+    this._loadError = function(error){
+        Mapbender.error(error);
     };
     this.addToMap = function(wmcid, state){
         var model = this.mapWidget.getModel();
