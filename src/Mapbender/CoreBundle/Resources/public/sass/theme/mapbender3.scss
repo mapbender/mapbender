@@ -32,6 +32,8 @@
     padding:$space/4 $space/2 $space/4 $space/2;
     .toolBarItem{
       display:inline-block;
+      text-wrap: avoid;
+      white-space: nowrap;
       padding:5px;
     }
     border-bottom:solid 1px darken($contentColor, 20%);
@@ -48,6 +50,8 @@
       font-size:80%;
       padding:5px;
       display: inline-block;
+      text-wrap: avoid;
+      white-space: nowrap;
     }
 
     .dropdownList{
