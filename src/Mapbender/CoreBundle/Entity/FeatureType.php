@@ -265,6 +265,8 @@ class FeatureType extends ContainerAware
         $feature    = $this->create($featureData);
         $data       = $this->cleanFeatureData($feature->toArray());
         $connection = $this->getConnection();
+        
+        unset($data[$this->getUniqueId()]);
 
         if (empty($data)) {
             throw new \Exception("Feature can't be updated without criteria");
@@ -326,7 +328,7 @@ class FeatureType extends ContainerAware
 
         // Convert to Feature object
         if ($hasResults) {
-            $this->prepareResults($rows);
+            $this->prepareResults($rows,$srid);
         }
 
         if ($returnType == "FeatureCollection") {
@@ -472,7 +474,7 @@ class FeatureType extends ContainerAware
      * @param Feature[] $rows
      * @return Feature[]
      */
-    public function prepareResults(&$rows)
+    public function prepareResults(&$rows,$srid = null)
     {
         // Transform Oracle result column names from upper to lower case
         if ($this->isOracle()) {
@@ -480,7 +482,7 @@ class FeatureType extends ContainerAware
         }
 
         foreach ($rows as $key => &$row) {
-            $row = $this->create($row);
+            $row = $this->create($row,$srid);
         }
 
         return $rows;

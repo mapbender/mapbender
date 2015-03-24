@@ -117,14 +117,21 @@ class Feature
                 $args["geom"] = \geoPHP::load($args["geometry"], 'json')->out('wkt');
             }
         }
+        
+        $this->setSrid($srid);
 
         // Is JSON feature array?
         if (is_array($args) && isset($args["geometry"]) && isset($args['properties'])) {
             $properties             = $args["properties"];
             $geom                   = $args["geometry"];
             $properties[$geomField] = $geom;
+            
             if (isset($args['id'])) {
                 $properties[$uniqueIdField] = $args['id'];
+            }
+
+            if (isset($args['srid'])) {
+               $this->setSrid($srid);
             }
 
             $args = $properties;
@@ -144,7 +151,7 @@ class Feature
 
         // set attributes
         $this->setAttributes($args);
-        $this->setSrid($srid);
+
 
         $this->uniqueIdField = $uniqueIdField;
         $this->geomField = $geomField;

@@ -395,15 +395,18 @@
             var feature = features[0];
             $.notify('feature clicked: ' + feature.id,'info');
             var wkt = new OpenLayers.Format.WKT().write(feature);
-            var jsonFeature = {
-                feature: {
-                    properties: feature.attributes,
-                    geometry:   wkt
-                }
-            };
+
+            var srid = this.map.getProjectionObject().proj.srsProjNumber;
+            var extent = this.map.getExtent();
 
             //TODO open form popup
-            widget.query('save',jsonFeature).done(function(featureCollection){
+            widget.query('save',{
+                feature: {
+                    properties: feature.attributes,
+                    geometry:   wkt,
+                    srid: srid
+                }
+            }).done(function(featureCollection){
                 $.notify('features saved: ' +  JSON.stringify(featureCollection),'info');
             });
 
