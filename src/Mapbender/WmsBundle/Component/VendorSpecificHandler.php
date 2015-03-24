@@ -71,11 +71,11 @@ class VendorSpecificHandler
             $length = strlen($value);
             if ($length > 2 && strpos($value, '$', 0) === 0 && strpos($value, '$', $length - 2) === $length - 1) {
                 $paramVal = $object ? EntityUtil::getValueFromGetter($object, str_replace('$', '', $value)) : null;
-                if ($paramVal instanceof PersistentCollection) {
+                if ($paramVal instanceof PersistentCollection) { # groups
                     $help = array();
                     foreach ($paramVal as $item) {
                         if ($item instanceof Group) {
-                            $help[] = $item->getTitle();
+                            $help[] = $item->getId();
                         }
                     }
                     return implode(',', $help);
@@ -98,11 +98,11 @@ class VendorSpecificHandler
     {
         if ($this->vendorspecific->getVstype() === VendorSpecific::TYPE_VS_SIMPLE) {
             return array($this->vendorspecific->getParameterName() => $this->vendorspecific->getDefault());
-        } elseif ($this->vendorspecific->getVstype() === VendorSpecific::TYPE_VS_USER && !$this->vendorspecific->getHidden()
-            && $object) {
+        } elseif ($this->vendorspecific->getVstype() === VendorSpecific::TYPE_VS_USER &&
+            !$this->vendorspecific->getHidden() && $object) {
             return array($this->vendorspecific->getParameterName() => $this->getVendorSpecificValue($object));
-        } elseif ($this->vendorspecific->getVstype() === VendorSpecific::TYPE_VS_GROUP && !$this->vendorspecific->getHidden()
-            && $object) {
+        } elseif ($this->vendorspecific->getVstype() === VendorSpecific::TYPE_VS_GROUP &&
+            !$this->vendorspecific->getHidden() && $object) {
             return array($this->vendorspecific->getParameterName() => $this->getVendorSpecificValue($object));
         }
         return null;
