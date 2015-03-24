@@ -353,6 +353,7 @@
                 self.activeSchema = settings;
                 self.activeLayer = settings.layer;
 
+
                 $(toolset).mbDigitizerToolset({items: self.toolsets[settings.geomType], layer: settings.layer});
                 
                 self._getData();
@@ -451,11 +452,6 @@
         
         _getData: function(){
             var self = this;
-            
-            // develop
-            if(self.activeSchemaName !== 'table1'){
-                return;
-            }
             
             var proj = this.map.getProjectionObject();
             var newProj = new OpenLayers.Projection("EPSG:"+self.activeSchema.srid);
