@@ -526,12 +526,13 @@ abstract class Element
     /**
      * Changes a element entity configuration while exporting.
      * 
-     * @param array $configuration element entity configuration
+     * @param array $formConfiguration element entity configuration
+     * @param array $formConfiguration element entity configuration
      * @return array a configuration
      */
-    public function normalizeConfiguration(array $configuration)
+    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
     {
-        return $configuration;
+        return $formConfiguration;
     }
 
     
@@ -540,9 +541,10 @@ abstract class Element
      * Changes a element entity configuration while importing.
      * 
      * @param array $configuration element entity configuration
+     * @param array $idMapper array with ids before denormalize and after denormalize.
      * @return array a configuration
      */
-    public function denormalizeConfiguration(array $configuration)
+    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
     {
         return $configuration;
     }

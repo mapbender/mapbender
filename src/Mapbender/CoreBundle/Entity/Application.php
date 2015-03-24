@@ -5,11 +5,11 @@ namespace Mapbender\CoreBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Query\AST\Functions\IdentityFunction;
 use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Validator\Constraints as Assert;
-
 
 /**
  * Applicaton entity
@@ -28,6 +28,10 @@ class Application
     const SOURCE_YAML = 1;
     const SOURCE_DB = 2;
 
+    /**
+     * @var Exclude form application menu list
+     */
+    protected $excludeFromList = false;
     private $preparedElements;
     private $screenshotPath;
 
@@ -435,7 +439,6 @@ class Application
     public function setUpdated(\DateTime $updated)
     {
         $this->updated = $updated;
-
         return $this;
     }
 
@@ -469,7 +472,7 @@ class Application
     {
         return $this->custom_css;
     }
-    
+
     public function getElementsByRegion($region = null)
     {
         if ($this->preparedElements === null) {
@@ -484,7 +487,8 @@ class Application
             }
 
             foreach ($this->preparedElements as $elementRegion => $elements) {
-                usort($elements, function($a, $b) {
+                usort($elements,
+                      function($a, $b) {
                     return $a->getWeight() - $b->getWeight();
                 });
             }
@@ -590,4 +594,25 @@ class Application
 
         return $app;
     }
+
+    /**
+     * Hide application from menu list
+     *
+     * @param $exclude
+     * @return $this
+     */
+    public function setExcludeFromList($exclude)
+    {
+        $this->excludeFromList = $exclude;
+        return $this;
+    }
+
+    /**
+     * @return Exclude
+     */
+    public function isExcludedFromList()
+    {
+        return $this->excludeFromList;
+    }
+
 }

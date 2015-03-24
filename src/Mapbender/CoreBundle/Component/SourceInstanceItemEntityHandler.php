@@ -10,6 +10,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Component\SourceItem;
+
 /**
  * Description of EntityHandler
  *
@@ -21,12 +22,7 @@ abstract class SourceInstanceItemEntityHandler extends EntityHandler
     /**
      * Creates a SourceInstanceItem
      */
-    abstract public function create(SourceInstance $instance, SourceItem $item, $num = 0);
-    
-    /**
-     * Remove a SourceInstanceItem
-     */
-    abstract public function remove();
+    abstract public function create(SourceInstance $instance, SourceItem $item, $num = 0, $persist = true);
     
     /**
      * Generates an item configuration
@@ -37,6 +33,4 @@ abstract class SourceInstanceItemEntityHandler extends EntityHandler
      * Returns an item configuration
      */
     abstract public function getConfiguration();
-
-
 }

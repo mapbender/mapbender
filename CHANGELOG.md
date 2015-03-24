@@ -1,5 +1,8 @@
 # Changelog
+* **v3.0.4.?**
+    - a map parameter "layerset" is renamed into "layersets" and represets a list of layersets
 * **v3.0.4.1**
+    - center the map from GET paramter 'center added
     - option 'removelayer' added into layertree menu
     - parameter 'layerRemove' removed from layertree configuration
     - container accordion structure changed

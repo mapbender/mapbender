@@ -224,7 +224,7 @@
       </trans-unit>
       <trans-unit id="b516d036d029316adb16f384d744ee3e" resname="mb.wmc.wmc.delete_confirm">
         <source>mb.wmc.wmc.delete_confirm</source>
-        <target>Möchten Sie wirklich die Konfiguration mit dem Titel &lt;em&gt;%wmc_title%&lt;/em&gt; und der ID &lt;em&gt;%wmc_id%&lt;/em&gt; löschen?</target>
+        <target><![CDATA[Möchten Sie wirklich die Konfiguration mit dem Titel <em>%wmc_title%</em> und der ID <em>%wmc_id%</em> löschen?]]></target>
       </trans-unit>
       <trans-unit id="cd08999d47cf93c1e3e552de4fdb5aec" resname="mb.wmc.wmceditor.list.id">
         <source>mb.wmc.wmceditor.list.id</source>
@@ -285,6 +285,10 @@
       <trans-unit id="f9e25e70a7d907096e58ee21775675d3" resname="mb.wmc.wmcloader.state.load">
         <source>mb.wmc.wmcloader.state.load</source>
         <target>WMC Laden</target>
+      </trans-unit>
+      <trans-unit id="7550c8b5c4bee4a01882941e2553c8ea" resname="mb.wmc.error.wmcurlloader_notallowed">
+        <source>mb.wmc.error.wmcurlloader_notallowed</source>
+        <target>WMC-URL laden ist nicht erlaubt.</target>
       </trans-unit>
     </body>
   </file>

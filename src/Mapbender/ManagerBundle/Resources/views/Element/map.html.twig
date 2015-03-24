@@ -1,7 +1,7 @@
 <div class="elementFormMap elementForm">
     {{ form_label(form.title) }}{{ form_widget(form.title) }}
     <div class="clearContainer"></div>
-    {{ form_label(form.configuration.layerset) }}{{ form_widget(form.configuration.layerset) }}
+    {{ form_label(form.configuration.layersets) }}{{ form_widget(form.configuration.layersets) }}
     <div class="clearContainer"></div>
     {{ form_label(form.configuration.dpi) }}{{ form_widget(form.configuration.dpi) }}
     <div class="clearContainer"></div>
@@ -50,3 +50,8 @@
     <div class="clearContainer"></div>
     <div class="clearContainer"></div>
 </div>
+<script type="text/javascript">
+$('.elementFormMap .choiceExpandedSortable').sortable({
+axis: "y"
+});
+</script>

@@ -71,6 +71,9 @@ Mapbender.Model = {
 
         this.setView(true);
         this.parseURL();
+        if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+            this.changeProjection({projection: this.getProj(this.mbMap.options.targetsrs)});
+        }
     },
 
     /**
@@ -157,6 +160,9 @@ Mapbender.Model = {
             }
         }
 
+        if(!centered && this.mbMap.options['center']){
+            this.map.olMap.setCenter(new OpenLayers.LonLat(this.mbMap.options['center']));
+        }
 
         if (true === addLayers) {
             $(document).bind('mbsrsselectorsrsswitched', $.proxy(self._changeProjection, self));
@@ -164,11 +170,12 @@ Mapbender.Model = {
             // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
 
             this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
-
-            $.each(Mapbender.configuration.layersets[this.mbMap.options.layerset].reverse(), function(lsidx, defArr) {
-                $.each(defArr, function(idx, layerDef) {
-                    layerDef['origId'] = idx;
-                    self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
+            $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId){
+                $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr){
+                    $.each(defArr, function(idx, layerDef){
+                        layerDef['origId'] = idx;
+                        self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
+                    });
                 });
             });
         }
@@ -196,6 +203,7 @@ Mapbender.Model = {
                 return proj;
             }
         }
+        Mapbender.error("CRS: " + srscode + " is not defined.");
         return proj;
     },
     getAllSrs: function() {
@@ -214,11 +222,11 @@ Mapbender.Model = {
                 buffer_bounds = {w: (bounds.right - bounds.left) / 2, h: (bounds.top - bounds.bottom) / 2},
         k, w, h;
         if (proj.proj.units === 'degrees' || proj.proj.units === 'dd') {
-            var point_lonlat = new OpenLayers.LonLat(centroid.x, centroid.y);
-            var point_pixel = this.map.olMap.getViewPortPxFromLonLat(point_lonlat);
-            var point_geodesSize = this.map.olMap.getGeodesicPixelSize(point_pixel);
-            var lb = new OpenLayers.Pixel(point_pixel.x - buffer.w / point_geodesSize.w, point_pixel.y - buffer.h / point_geodesSize.h);
-            var rt = new OpenLayers.Pixel(point_pixel.x + buffer.w / point_geodesSize.w, point_pixel.y + buffer.h / point_geodesSize.h);
+            var pnt_ll = new OpenLayers.LonLat(centroid.x, centroid.y);
+            var pnt_pxl = this.map.olMap.getViewPortPxFromLonLat(pnt_ll);
+            var pnt_geodSz = this.map.olMap.getGeodesicPixelSize(pnt_pxl);
+            var lb = new OpenLayers.Pixel(pnt_pxl.x - buffer.w / pnt_geodSz.w, pnt_pxl.y - buffer.h / pnt_geodSz.h);
+            var rt = new OpenLayers.Pixel(pnt_pxl.x + buffer.w / pnt_geodSz.w, pnt_pxl.y + buffer.h / pnt_geodSz.h);
             var lb_lonlat = this.map.olMap.getLonLatFromLayerPx(lb);
             var rt_lonlat = this.map.olMap.getLonLatFromLayerPx(rt);
             return new OpenLayers.Bounds(
@@ -320,14 +328,16 @@ Mapbender.Model = {
             for (name in options.add) {
                 params[name] = options.add[name];
             }
-            url = OpenLayers.Util.urlAppend(source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
+            url = OpenLayers.Util.urlAppend(
+                source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
         } else if (options.remove) {
             for (name in options.remove) {
                 if (params[name]) {
                     delete(params[name]);
                 }
             }
-            url = OpenLayers.Util.urlAppend(source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
+            url = OpenLayers.Util.urlAppend(
+                source.configuration.options.url.split('?')[0], OpenLayers.Util.getParameterString(params));
         }
         if (url) {
             source.configuration.options.url = url;
@@ -374,6 +384,18 @@ Mapbender.Model = {
         } else {
             return null;
         }
+    },
+    findLayerset: function(options){
+        for(layersetId in Mapbender.configuration.layersets){
+            var layerset = Mapbender.configuration.layersets[layersetId];
+            for(var i = 0; i < layerset.length; i++){
+                if(options.source && layerset[i][options.source.origId]){
+                    return {id: layersetId, title: Mapbender.configuration.layersetmap[layersetId]};
+                }
+            }
+            
+        }
+        return null;
     },
     /**
      * Returns the source's position
@@ -422,28 +444,16 @@ Mapbender.Model = {
      * Returns the current map's scale
      */
     getScale: function() {
-        return this.map.olMap.getScale();
+        return Math.round(this.map.olMap.getScale());
     },
     /**
      * Checks the source changes and returns the source changes.
      */
     _checkAndRedrawSource: function(toChangeOpts) {
         var source = this.getSource(toChangeOpts.sourceIdx);
-        var result = Mapbender.source[source.type].changeOptions(source, this.map.olMap.getScale(), toChangeOpts);
+        var result = Mapbender.source[source.type].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
-        if (result.layers.length === 0) {
-            mqLayer.olLayer.setVisibility(false);
-            // Clear all previously queued tiles for this layer
-            var tileManager = this.map.olMap.tileManager;
-            if (tileManager) {
-                tileManager.clearTileQueue({object: mqLayer.olLayer});
-            }
-            mqLayer.olLayer.params.LAYERS = result.layers;
-            mqLayer.olLayer.queryLayers = result.infolayers;
-        } else {
-            mqLayer.olLayer.params.LAYERS = result.layers;
-            mqLayer.olLayer.queryLayers = result.infolayers;
-            mqLayer.olLayer.setVisibility(true);
+        if(this._resetSourceVisibility(mqLayer, result.layers, result.infolayers)){
             mqLayer.olLayer.redraw();
         }
         return result.changed;
@@ -451,21 +461,15 @@ Mapbender.Model = {
     _checkChanges: function(e) {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
-            var result = Mapbender.source[source.type].changeOptions(source, self.map.olMap.getScale(), {sourceIdx: {id: source.id}, options: {children: {}}});
+            var result = Mapbender.source[source.type].changeOptions(
+                source, self.getScale(), {sourceIdx: {id: source.id}, options: {children: {}}});
             var mqLayer = self.map.layersList[source.mqlid];
-            if (result.layers.length === 0) {
-                mqLayer.olLayer.setVisibility(false);
-                mqLayer.visible(false);
-                mqLayer.olLayer.params.LAYERS = result.layers;
-                mqLayer.olLayer.queryLayers = result.infolayers;
-            } else {
-                mqLayer.olLayer.params.LAYERS = result.layers;
-                mqLayer.olLayer.queryLayers = result.infolayers;
-                mqLayer.olLayer.setVisibility(true);
-                mqLayer.visible(true);
+            if(self._resetSourceVisibility(mqLayer, result.layers, result.infolayers)){
+                mqLayer.olLayer.redraw();
             }
             for (child in result.changed.children) {
-                if (result.changed.children[child].state && typeof result.changed.children[child].state.outOfScale !== 'undefined') {
+                if (result.changed.children[child].state
+                    && typeof result.changed.children[child].state.outOfScale !== 'undefined') {
                     var changed = {changed: {children: result.changed.children, sourceIdx: result.changed.sourceIdx}};
                     self.mbMap.fireModelEvent({name: 'sourceChanged', value: changed});//{options: result}});
                     break;
@@ -473,6 +477,21 @@ Mapbender.Model = {
             }
 
         });
+    },
+    _resetSourceVisibility: function(mqLayer, layers, infolayers) {
+        if (layers.length === 0) {
+            mqLayer.olLayer.setVisibility(false);
+            mqLayer.visible(false);
+            mqLayer.olLayer.params.LAYERS = layers;
+            mqLayer.olLayer.queryLayers = infolayers;
+            return false;
+        } else {
+            mqLayer.olLayer.params.LAYERS = layers;
+            mqLayer.olLayer.queryLayers = infolayers;
+            mqLayer.olLayer.setVisibility(true);
+            mqLayer.visible(true);
+            return true;
+        }
     },
     /**
      *
@@ -730,7 +749,7 @@ Mapbender.Model = {
                 if (changeOpts.options.type === 'info') {
                     var result = {infolayers: [], changed: {sourceIdx: {id: sourceToChange.id}, children: {}}};
                     result = Mapbender.source[sourceToChange.type].checkInfoLayers(sourceToChange,
-                            this.map.olMap.getScale(), changeOpts, result);
+                            this.getScale(), changeOpts, result);
                     this.map.layersList[sourceToChange.mqlid].olLayer.queryLayers = result.infolayers;
                     this.mbMap.fireModelEvent({name: 'sourceChanged', value: result});//{options: result}});
                 }
@@ -773,15 +792,15 @@ Mapbender.Model = {
      * @param {Object} options in form of:
      * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
      */
-    changeLayerState: function(sourceIdObject, options, selectedOther, merge) {
-        if (typeof merge === 'undefined')
-            merge = false;
-        if (typeof selectedOther === 'undefined')
-            selectedOther = false;
+    changeLayerState: function(sourceIdObject, options, defaultSelected, mergeSelected){
+        if(typeof mergeSelected === 'undefined')
+            mergeSelected = false;
+        if(typeof defaultSelected === 'undefined')
+            defaultSelected = false;
         var source = this.getSource(sourceIdObject);
-        if (source !== null) {
-            var tochange = Mapbender.source[source.type].createOptionsLayerState(source, options, selectedOther, merge);
-            this.changeSource(tochange);
+        if(source !== null){
+            var toChangeOptions = Mapbender.source[source.type].createOptionsLayerState(source, options, defaultSelected, mergeSelected);
+            this.changeSource(toChangeOptions);
         }
 
     },
