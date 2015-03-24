@@ -21,12 +21,7 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
     /**
      * Creates a SourceInstance
      */
-    abstract public function create();
-    
-    /**
-     * Remove a source from a database
-     */
-    abstract public function remove();
+    abstract public function create($persist = true);
     
     /**
      * Returns the instance configuration with signed urls.
@@ -37,6 +32,11 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * Generates an instance configuration
      */
     abstract public function generateConfiguration();
-
-
+    
+    /**
+     * Merges a fiving dimension with an existing.
+     * @param Dimension $dimension a diemsion
+     * @param boolean $persist Description
+     */
+    abstract public function mergeDimension($dimension, $persist = false);
 }

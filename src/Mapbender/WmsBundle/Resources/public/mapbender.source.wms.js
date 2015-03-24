@@ -97,85 +97,37 @@ $.extend(true, Mapbender, {
                 }
                 return url;
             },
-            featureInfo: function(layer, x, y, callback){
-                if(layer.olLayer.queryLayers.length === 0) {
-                    return;
+            featureInfoUrl: function(mqLayer, x, y, callback){
+                if(!mqLayer.visible() || mqLayer.olLayer.queryLayers.length === 0) {
+                    return false;
                 }
                 var param_tmp = {
                     SERVICE: 'WMS',
                     REQUEST: 'GetFeatureInfo',
-                    VERSION: layer.olLayer.params.VERSION,
+                    VERSION: mqLayer.olLayer.params.VERSION,
                     EXCEPTIONS: "application/vnd.ogc.se_xml",
-                    FORMAT: layer.olLayer.params.FORMAT,
-                    INFO_FORMAT: layer.source.configuration.options.info_format || "text/plain",
-                    FEATURE_COUNT: layer.source.configuration.options.feature_count || 100,
-                    SRS: layer.olLayer.params.SRS,
-                    BBOX: layer.map.center().box.join(','),
-                    WIDTH: $(layer.map.element).width(),
-                    HEIGHT: $(layer.map.element).height(),
+                    FORMAT: mqLayer.olLayer.params.FORMAT,
+                    INFO_FORMAT: mqLayer.source.configuration.options.info_format || "text/plain",
+                    FEATURE_COUNT: mqLayer.source.configuration.options.feature_count || 100,
+                    SRS: mqLayer.olLayer.params.SRS,
+                    BBOX: mqLayer.map.center().box.join(','),
+                    WIDTH: $(mqLayer.map.element).width(),
+                    HEIGHT: $(mqLayer.map.element).height(),
                     X: x,
                     Y: y,
-                    LAYERS: layer.olLayer.queryLayers.join(','),
-                    QUERY_LAYERS: layer.olLayer.queryLayers.join(',')
+                    LAYERS: mqLayer.olLayer.queryLayers.join(','),
+                    QUERY_LAYERS: mqLayer.olLayer.queryLayers.join(',')
                 };
-                var contentType_ = "";
-                if(typeof (layer.source.configuration.options.info_format)
-                        !== 'undefined') {
-                    param_tmp["INFO_FORMAT"] =
-                            layer.source.configuration.options.info_format;
-                    //                contentType_ +=
-                    //                    layer.options.configuration.configuration.info_format;
-                }
-                if(typeof (layer.source.configuration.options.info_charset)
-                        !== 'undefined') {
-                    contentType_ += contentType_.length > 0 ? ";" : "" +
-                            layer.source.configuration.options.info_charset;
+                if(typeof (mqLayer.source.configuration.options.info_format) !== 'undefined') {
+                    param_tmp["INFO_FORMAT"] = mqLayer.source.configuration.options.info_format;
                 }
                 var params = $.param(param_tmp);
-
-
                 // this clever shit was taken from $.ajax
-                var requestUrl = this._removeProxy(layer.olLayer.url);
-
-                requestUrl += (/\?/.test(layer.options.url) ? '&' : '?') + params;
-
-                var proxy = layer.source.configuration.options.proxy;
-
-                var request = $.ajax({
-                    url: Mapbender.configuration.application.urls.proxy,
-                    contentType: contentType_,
-                    data: {
-                        url: proxy ? requestUrl : encodeURIComponent(requestUrl)
-                    }
-                });
-
-                request.done(function(data, textStatus, jqXHR){
-                    callback({
-                        layerId: layer.id,
-                        response: data
-                    }, jqXHR);
-                });
-
-                request.fail(function(jqXHR, textStatus, errorThrown){
-                    callback({
-                        layerId: layer.id,
-                        response: textStatus
-                    }, jqXHR);
-                });
+                var requestUrl = this._removeProxy(mqLayer.olLayer.url);
+                requestUrl += (/\?/.test(mqLayer.options.url) ? '&' : '?') + params;
+                return requestUrl;
             },
-            loadFromUrl: function(url){
-                var dlg = $('<div></div>').attr('id', 'loadfromurl-wms'),
-                        spinner = $('<img />')
-                        .attr('src', Mapbender.configuration.assetPath + 'bundles/mapbenderwms/images/spinner.gif')
-                        .appendTo(dlg);
-                dlg.appendTo($('body'));
-
-                $('<script></type')
-                        .attr('type', 'text/javascript')
-                        .attr('src',
-                                Mapbender.configuration.assetPath + 'bundles/mapbenderwms/mapbender.source.wms.loadfromurl.js')
-                        .appendTo($('body'));
-            },
+            
             createSourceDefinitions: function(xml, options){
                 if(!options.global.defFormat) {
                     options.global.defFormat = "image/png";
@@ -651,7 +603,8 @@ $.extend(true, Mapbender, {
                         layerChanged.state = _createState(layer);
                         if(typeof layerChanged.options.treeOptions !== 'undefined') {
                             var treeOptions = layerChanged.options.treeOptions;
-                            if(typeof treeOptions.selected !== 'undefined') {
+                            if(typeof treeOptions.selected !== 'undefined'
+                                && layer.options.treeOptions.allow.selected === true) {
                                 if(layer.options.treeOptions.selected === treeOptions.selected)
                                     delete(treeOptions.selected);
                                 else {
@@ -659,7 +612,8 @@ $.extend(true, Mapbender, {
                                     elchanged = true;
                                 }
                             }
-                            if(typeof treeOptions.info !== 'undefined') {
+                            if(typeof treeOptions.info !== 'undefined'
+                                && layer.options.treeOptions.allow.info === true) {
                                 if(layer.options.treeOptions.info === treeOptions.info)
                                     delete(treeOptions.info);
                                 else {

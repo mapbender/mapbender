@@ -183,7 +183,7 @@ class WmcParser110 extends WmcParser
         }
         $wms->setVersion($this->getValue("./cntxt:Server/@version", $layerElm));
         $getMap = new RequestInformation();
-        $getMap->setHttpGet($this->getValue("./cntxt:Server/cntxt:OnlineResource/@xlink:href"))
+        $getMap->setHttpGet($this->getValue("./cntxt:Server/cntxt:OnlineResource/@xlink:href", $layerElm))
             ->setHttpPost(null)->setFormats($formats);
         $wms->setGetMap($getMap);
         $serverTitle = $this->getValue("./cntxt:Server/@xtitle", $layerElm);

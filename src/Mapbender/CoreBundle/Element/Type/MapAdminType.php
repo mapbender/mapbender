@@ -37,20 +37,15 @@ class MapAdminType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $subscriber = new MapFieldSubscriber($builder->getFormFactory());
+        $subscriber = new MapFieldSubscriber($builder->getFormFactory(), $options['application']);
         $builder->addEventSubscriber($subscriber);
         $builder
-            ->add('layerset', 'app_layerset',
-                array(
-                'application' => $options['application'],
-                'property_path' => '[layerset]',
-                'required' => true))
             ->add('dpi', 'text', array(
                 'label' => 'DPI'))
             ->add('srs', 'text', array(
                 'label' => 'SRS'))
             ->add('units', 'choice',
-                array(
+                  array(
                 'label' => 'Map units',
                 'choices' => array(
                     'degrees' => 'Degrees',
@@ -59,15 +54,15 @@ class MapAdminType extends AbstractType
                     'mi' => 'Miles',
                     'inches' => 'Inches')))
             ->add('extent_max', new ExtentType(),
-                array(
+                  array(
                 'label' => 'Max. extent',
                 'property_path' => '[extents][max]'))
             ->add('extent_start', new ExtentType(),
-                array(
+                  array(
                 'label' => 'Start. extent',
                 'property_path' => '[extents][start]'))
             ->add('scales', 'text',
-                array(
+                  array(
                 'label' => 'Scales (csv)',
                 'required' => true))
             ->add('maxResolution', 'text', array(
@@ -75,7 +70,7 @@ class MapAdminType extends AbstractType
             ->add('imgPath', 'text', array(
                 'label' => 'OL image path'))
             ->add('otherSrs', 'text',
-                array(
+                  array(
                 'label' => 'Other SRS',
                 'required' => false));
     }
