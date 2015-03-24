@@ -5,6 +5,11 @@
 @import "../regional/vendor/normalize.3.0.1";
 @import "../regional/vendor/bootstrap/3.2.0/css/bootstrap_base";
 
+@import "element/popup_dialog";
+@import "element/tab_navigator";
+@import "element/result_table";
+
+
 /*
   Override bootstrap standard declaration
 */
