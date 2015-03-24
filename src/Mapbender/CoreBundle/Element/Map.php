@@ -12,11 +12,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Map extends Element
 {
-    
+
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.map.class.title";
     }
@@ -24,7 +24,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.mapabs.class.description";
     }
@@ -32,7 +32,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.map.tag.map",
@@ -70,7 +70,7 @@ class Map extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array(
             'js' => array(
@@ -94,30 +94,27 @@ class Map extends Element
             $scales = array();
             if (is_string($configuration["scales"])) { // from database
                 $scales = preg_split("/\s?[\,\;]\s?/", $configuration["scales"]);
-            } else if (is_array($configuration["scales"])) { // from twig
+            } elseif (is_array($configuration["scales"])) { // from twig
                 $scales = $configuration["scales"];
             }
             // sort scales high to low
-            $scales = array_map(
-                create_function('$value', 'return (int)$value;'), $scales);
+            $scales                  = array_map(create_function('$value', 'return (int)$value;'), $scales);
             arsort($scales, SORT_NUMERIC);
             $configuration["scales"] = $scales;
         }
-
         $extra = array();
-
         // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
-        $allsrs = array();
+        $allsrs        = array();
         if (is_int(stripos($configuration["srs"], "|"))) {
-            $srsHlp = preg_split("/\s?\|{1}\s?/", $configuration["srs"]);
+            $srsHlp               = preg_split("/\s?\|{1}\s?/", $configuration["srs"]);
             $configuration["srs"] = trim($srsHlp[0]);
-            $allsrs[] = array(
+            $allsrs[]             = array(
                 "name" => trim($srsHlp[0]),
                 "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
         } else {
             $configuration["srs"] = trim($configuration["srs"]);
-            $allsrs[] = array(
+            $allsrs[]             = array(
                 "name" => $configuration["srs"],
                 "title" => '');
         }
@@ -125,12 +122,12 @@ class Map extends Element
         if (isset($configuration["otherSrs"])) {
             if (is_array($configuration["otherSrs"])) {
                 $otherSrs = $configuration["otherSrs"];
-            } else if (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
+            } elseif (is_string($configuration["otherSrs"]) && strlen(trim($configuration["otherSrs"])) > 0) {
                 $otherSrs = preg_split("/\s?,\s?/", $configuration["otherSrs"]);
             }
             foreach ($otherSrs as $srs) {
                 if (is_int(stripos($srs, "|"))) {
-                    $srsHlp = preg_split("/\s?\|{1}\s?/", $srs);
+                    $srsHlp   = preg_split("/\s?\|{1}\s?/", $srs);
                     $allsrs[] = array(
                         "name" => trim($srsHlp[0]),
                         "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
@@ -143,7 +140,7 @@ class Map extends Element
         }
 
         $configuration["srsDefs"] = $this->getSrsDefinitions($allsrs);
-        $srs_req = $this->container->get('request')->get('srs');
+        $srs_req                  = $this->container->get('request')->get('srs');
         if ($srs_req) {
             $exists = false;
             foreach ($allsrs as $srsItem) {
@@ -166,7 +163,7 @@ class Map extends Element
                 $pois = array($pois);
             }
             foreach ($pois as $poi) {
-                $point = explode(',', $poi['point']);
+                $point           = explode(',', $poi['point']);
                 $extra['pois'][] = array(
                     'x' => floatval($point[0]),
                     'y' => floatval($point[1]),
@@ -189,9 +186,9 @@ class Map extends Element
             }
         }
 
-        $center = $this->container->get('request')->get('center');
+        $center    = $this->container->get('request')->get('center');
         $centerArr = $center !== null ? explode(',', $center) : null;
-        if($center !== null && is_array($centerArr) && count($centerArr) === 2){
+        if ($center !== null && is_array($centerArr) && count($centerArr) === 2) {
             $configuration["center"] = $centerArr;
         }
 
@@ -199,13 +196,32 @@ class Map extends Element
 
         if (!isset($configuration['scales'])) {
             throw new \RuntimeException('The scales does not defined.');
-        } else if (is_string($configuration['scales'])) {
-            $configuration['scales'] = preg_split(
-                "/\s?,\s?/", $configuration['scales']);
+        } elseif (is_string($configuration['scales'])) {
+            $configuration['scales'] = preg_split("/\s?,\s?/", $configuration['scales']);
         }
-        if(!isset($configuration['layersets']) && isset($configuration['layerset'])){# "layerset" deprecated start
+        if (!isset($configuration['layersets']) && isset($configuration['layerset'])) {# "layerset" deprecated start
             $configuration['layersets'] = array($configuration['layerset']);
         }# "layerset" deprecated end
+        if ($scale = $this->container->get('request')->get('scale')) {
+            $scale  = intval($scale);
+            $scales = $configuration['scales'];
+            if ($scale > $scales[0]) {
+                $scale = $scales[0];
+            } elseif ($scale < $scales[count($scales) - 1]) {
+                $scale = $scales[count($scales) - 1];
+            } else {
+                $tmp = null;
+                for ($idx = count($scales) - 2; ($idx >= 0 && count($scales) > 1); $idx--) {
+                    if ($scale >= $scales[$idx + 1] && $scale <= $scales[$idx]) {
+                        $tmp = (($scales[$idx] - $scales[$idx + 1]) / 2 >= $scale - $scales[$idx + 1]) ?
+                            $scales[$idx + 1] : $scales[$idx];
+                    }
+                }
+                $scale = $tmp ? $tmp : $scales[0];
+            }
+            $configuration['targetscale'] = $scale;
+        }
+
         return $configuration;
     }
 
@@ -255,17 +271,16 @@ class Map extends Element
 
     /**
      * Returns proj4js srs definitions from a GET parameter srs
-     * 
      * @return array srs definitions
      */
     protected function loadSrsDefinitions()
     {
         $srsList = $this->container->get('request')->get("srs", null);
-        $srses = preg_split("/\s?,\s?/", $srsList);
-        $allsrs = array();
+        $srses   = preg_split("/\s?,\s?/", $srsList);
+        $allsrs  = array();
         foreach ($srses as $srs) {
             if (is_int(stripos($srs, "|"))) {
-                $srsHlp = preg_split("/\s?\|{1}\s?/", $srs);
+                $srsHlp   = preg_split("/\s?\|{1}\s?/", $srs);
                 $allsrs[] = array(
                     "name" => trim($srsHlp[0]),
                     "title" => strlen(trim($srsHlp[1])) > 0 ? trim($srsHlp[1]) : '');
@@ -285,7 +300,6 @@ class Map extends Element
 
     /**
      * Returns proj4js srs definitions from srs names
-     * 
      * @param array $srsNames srs names (array with "EPSG" codes)
      * @return array proj4js srs definitions
      */
@@ -297,7 +311,7 @@ class Map extends Element
             foreach ($srsNames as $srsName) {
                 $names[] = $srsName['name'];
             }
-            $em = $this->container->get("doctrine")->getManager();
+            $em    = $this->container->get("doctrine")->getManager();
             $query = $em->createQuery("SELECT srs FROM MapbenderCoreBundle:SRS srs"
                     . " Where srs.name IN (:name)  ORDER BY srs.id ASC")
                 ->setParameter('name', $names);
@@ -347,11 +361,10 @@ class Map extends Element
         $lsClassName = 'Mapbender\CoreBundle\Entity\Layerset';
         if (key_exists('layersets', $configuration) && key_exists($lsClassName, $idMapper)) {
             $mapper = $idMapper[$lsClassName];
-            foreach ($configuration['layersets'] as &$layerset){
+            foreach ($configuration['layersets'] as &$layerset) {
                 $layerset = isset($mapper['map'][$layerset]) ? $mapper['map'][$layerset] : $layerset;
             }
         }
         return $configuration;
     }
-
 }
