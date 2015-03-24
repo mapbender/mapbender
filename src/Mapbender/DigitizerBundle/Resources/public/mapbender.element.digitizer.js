@@ -454,14 +454,11 @@
             var self = this;
             
             var proj = this.map.getProjectionObject();
-            var newProj = new OpenLayers.Projection("EPSG:"+self.activeSchema.srid);
             var extent = this.map.getExtent();
-            extent.transform(proj, newProj);
+
             var request = {
-                clientSrid: proj.proj.srsProjNumber,
-                intersect: {
-                    geometry: extent.toGeometry().toString()
-                },
+                srid: proj.proj.srsProjNumber,
+                intersectGeometry: extent.toGeometry().toString(),
                 maxResults: 100
             };
 
