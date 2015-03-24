@@ -245,10 +245,19 @@ class FeatureType extends ContainerAware
         $feature    = $this->create($featureData);
         $data       = $this->cleanFeatureData($feature->toArray());
         $connection = $this->getConnection();
+        $data[$this->getGeomField()] = $this->transformEwkt($data[$this->getGeomField()], $this->getSrid());
+        
         $result     = $connection->insert($this->tableName, $data);
         $lastId     = $connection->lastInsertId();
         $feature->setId($lastId);
         return $feature;
+    }
+
+    // TODO: oracle and posgresql switch
+    public function transformEwkt($geom,$srid=null)
+    {
+        $srid = $srid?$srid:$this->getSrid();
+        return $this->connection->executeQuery("SELECT ST_TRANSFORM(ST_GEOMFROMTEXT('$geom'),".$this->getSrid() .")")->fetchColumn();
     }
 
     /**
@@ -265,6 +274,7 @@ class FeatureType extends ContainerAware
         $feature    = $this->create($featureData);
         $data       = $this->cleanFeatureData($feature->toArray());
         $connection = $this->getConnection();
+        $data[$this->getGeomField()] = $this->transformEwkt($data[$this->getGeomField()], $this->getSrid());
         
         unset($data[$this->getUniqueId()]);
 
