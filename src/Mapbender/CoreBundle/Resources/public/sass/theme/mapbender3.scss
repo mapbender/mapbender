@@ -1,7 +1,7 @@
 @import "libs/variables";
 @import "libs/mixins";
-@import "libs/normalize";
-@import "libs/icons";
+//@ import "libs/normalize";
+//@ import "libs/icons";
 
 @import "modules/base";
 @import "modules/layout";
@@ -32,6 +32,8 @@
     padding:$space/4 $space/2 $space/4 $space/2;
     .toolBarItem{
       display:inline-block;
+      text-wrap: avoid;
+      white-space: nowrap;
       padding:5px;
     }
     border-bottom:solid 1px darken($contentColor, 20%);
@@ -39,12 +41,17 @@
   &.bottom{
     [class^="icon"]:before,[class*=" icon"]:before{font-size: 14px;}
     padding:$space/4 $space/2 $space/4 $space/2;
+    margin-bottom: 0;
     .toolBarItem{
-      height:30px;
-      line-height:30px;
-      font-size:90%;
+//      height:30px;
+//      line-height:30px;
+//      font-size:90%;
+      vertical-align: middle;
+      font-size:80%;
       padding:5px;
       display: inline-block;
+      text-wrap: avoid;
+      white-space: nowrap;
     }
 
     .dropdownList{
@@ -81,7 +88,7 @@
   $buttonFirstColor:#6fb536;
   $buttonSecondColor:#5fa229;
 
-  display: block;
+  display: block !important;
   padding:($space/4) ($space/2);
   margin-bottom:5px;
   color:$lightFontColor;

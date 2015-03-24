@@ -491,32 +491,6 @@
 .info-icon:before {
   content: "\f05a";
 }
-body{
-//  overflow: hidden;
-}
-
-*{
-  box-sizing: border-box;
-  ms-box-sizing: border-box;
-}
-
-html,body{
-  height: 100%;
-}
-.side-pane {
-
-}
-.navigation{
-  font-size: 0;
-  padding-left: 0;
-  list-style: none;
-  display: block;
-  margin: 2px;
-}
-.navigation li{
-  margin-right: 3px;
-  display: inline-block;
-}
 
 .map {
   background: #c0c0c0;
@@ -531,51 +505,236 @@ html,body{
 }
 
 /** Regions standard template */
-.regions {
-  position: relative;
-  height: 100%;
+html, body {
   width: 100%;
-  margin: 0;
+  height: 100%;
   padding: 0;
-  border: none;
-  border-collapse: collapse;
-  empty-cells: hide;
-  > tbody > tr{
-    .region {
-      vertical-align: top;
-      overflow: hidden;
+  margin: 0;
+  overflow: hidden;
+  > .regions {
+    height: 100%;
+    > .center, > .east, > .west, > .north, > .south {
+      text-align: center;
+      display: inline-block;
+    }
+    > .west, > .east {
+      width: 300px;
+    }
+    > .north, > .south {
+      height: 40px;
+    }
+  }
+}
 
-      > .content{
-        position: relative;
-        overflow: auto;
-        height: 100%;
-        color: #fff0f0;
-      }
+/* Accordion */
+ul.accordion{
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  height: 100%;
+  > li{
+    > a{
 
-      &.top,
-      &.bottom {
-        height: 30px;
-      }
+      font-family: "Source Sans Pro", "Arial";
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
 
-      &.right,
-      &.left,
-      &.center {
+      &.btn{
+        display: block;
+        text-align: left;
+        background-color: #58584a;
+        color: #fff;
+        border-radius: 0;
+        border-bottom: 2px solid #fff;
 
-      }
+        &:last-child{
+          border-bottom: none;
+        }
 
-      &.right,
-      &.left {
-        width: 200px;
-        > .content {
+        // icon
+        &::before{
+          font-weight: normal;
+          margin-left: 0px;
+          margin-right: 16px;
         }
       }
 
-      &.center{
-        height: 100%;
+      &.ui-state-active,
+      &:focus,
+      &:hover{
+        border-left: 2px solid #ffcc00;
+      }
+
+      &.ui-state-active{
+        background-color: #417d3f;
+      }
+    }
+    > .content{
+      font-family: "Source Sans Pro", "Arial";
+      background-color: #f6f7e9;
+      color: #343434;
+      &.ui-accordion-content-active{
+        overflow-x: hidden !important;
+      }
+    }
+  }
+}
+
+// BKG
+
+body > .regions {
+
+  > .west {
+    width: 265px;
+  }
+
+  > .north {
+    height: 41px;
+
+    .navbar-nav{
+      margin-top: 2px;
+      .dropdown-toggle{
+        padding-top: 8px;
+        padding-bottom: 8px;
+        color: #ffffff;
+        background-color: #424242;
+      }
+      .dropdown-menu{
+        li a{
+          &:before{
+            margin-left: 0;
+          }
+          &.flaticon-ruler4:before{
+            font-size: 24px;
+          }
+          &.flaticon-compass56:before{
+            font-size: 24px;
+          }
+          &.flaticon-square23:before{
+            font-size: 48px;
+            margin-top: -29px;
+            margin-right: -2px;
+            margin-bottom: -24px;
+            margin-left: -21px;
+            position: relative;
+            display: inline-block;
+            height: 13px;
+            line-height: 21px;
+            vertical-align: middle;
+          }
+          &.flaticon-constellation:before{
+            font-size: 20px;
+            margin: -38px 14px -24px -9px;
+            position: relative;
+            display: inline-block;
+            height: 13px;
+            line-height: 21px;
+            vertical-align: middle;
+          }
+          &.flaticon-selection7:before{
+            font-size: 27px;
+            margin: -38px 11px -24px -13px;
+            position: relative;
+            display: inline-block;
+            height: 13px;
+            line-height: 21px;
+            vertical-align: middle;
+          }
+          &.flaticon-db2:before{
+            font-size: 33px;
+            margin-top: -39px;
+            margin-right: 5px;
+            margin-bottom: -24px;
+            margin-left: -17px;
+            position: relative;
+            display: inline-block;
+            height: 13px;
+            line-height: 21px;
+            vertical-align: middle;
+          }
+
+          &.flaticon-selected3:before{
+            font-size: 17px;
+            position: relative;
+            display: inline-block;
+            height: 13px;
+            line-height: 21px;
+            vertical-align: middle;
+            margin: -35px 11px -24px -10px;
+          }
+        }
+      }
+    }
+
+
+    .navigation {
+      font-size: 0;
+      padding-left: 0;
+      list-style: none;
+      display: inline-block;
+      margin: 0;
+      li {
+        margin-top: 2px;
+        margin-right: 3px;
+        display: inline-block;
+        a {
+          color: #fff0f0;
+          &:hover,
+          &:focus{
+            background-color: #417d3f;
+            border-bottom: 3px solid #ffcc00;
+          }
+        }
+      }
+
+      > li > a{
+        &:before{
+          margin-left: 0;
+        }
+
+        &.flaticon-ruler4:before{
+          font-size: 24px;
+        }
+        &.flaticon-compass56:before{
+          font-size: 24px;
+        }
+        &.flaticon-square23:before{
+          font-size: 47px;
+          margin-top: 20px;
+          margin-left: -4px;
+        }
+        &.flaticon-constellation:before{
+          font-size: 22px;
+        }
+        &.flaticon-selection7:before{
+          font-size: 28px;
+        }
+        &.flaticon-db2:before{
+          font-size: 28px;
+        }
+
+        &.flaticon-selected3:before{
+          font-size: 18px;
+          margin-left: 3px;
+        }
       }
     }
   }
 
+  > .center{
+    // drop inner shadow
+    -moz-box-shadow:    inset 0 0 10px #000;
+    -webkit-box-shadow: inset 0 0 10px #000;
+    box-shadow:         inset 0 0 10px #000;
+
+    /** map box container */
+    .contentPane{
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
 
 
@@ -586,13 +745,68 @@ html,body{
   bottom: 0;
   top: 0;
   height: 44px;
-  right: -14px;
+  left: 0px;
   width: 14px;
-  z-index: 1;
+  text-decoration: none;
+  border-radius: 0;
+  padding: 0;
+  z-index: 2;
+  &:hover{
+    background-color: #417d3f;
+  }
   &:before{
     margin: 0;
     font-size: 14px;
     line-height: 44px;
     vertical-align: middle;
+    color: #fff;
   }
+}
+
+// PopUp dialog
+.modal-content{
+  background-color: #f6f7e9;
+  border-radius: 0;
+  behavior: url('../../vendor/PIE.1.0.0.htc');
+  z-index: 3;
+
+  .modal-header{
+    background-color: #417d3f;
+    border-bottom: 2px solid #ffcc00;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    .modal-title{
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+      font-family: "Source Sans Pro", "Arial";
+      text-transform: uppercase;
+      user-select: none;
+      cursor: default;
+    }
+    .close{
+      margin-top: 1px;
+    }
+  }
+  .modal-footer{
+    button.btn{
+      font-family: "Source Sans Pro", "Arial";
+      text-transform: uppercase;
+      font-size: 14px;
+      color: #fff;
+      background-color: #343434;
+      border-radius: 0;
+      border-bottom: 2px solid #343434;
+      padding-top: 4px;
+      padding-bottom: 2px;
+      &:hover{
+        background-color: #417d3f;
+        border-bottom: 2px solid #ffcc00;
+      }
+    }
+  }
+}
+
+#gross-test{
+  font-weight: bold;
 }

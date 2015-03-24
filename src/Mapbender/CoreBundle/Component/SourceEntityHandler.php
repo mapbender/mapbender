@@ -30,11 +30,4 @@ abstract class SourceEntityHandler extends EntityHandler
      * @param boolean $persist a flag to save the entity
      */
     abstract public function createInstance(Layerset $layerset = NULL, $persist = true);
-    
-    /**
-     * Remove a source from a database
-     */
-    abstract public function remove();
-
-
 }

@@ -43,12 +43,43 @@ class Fullscreen extends Template
     static public function listAssets()
     {
         $assets = array(
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
+            'css' => array(
+//                '@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
+                '@MapbenderCoreBundle/Resources/public/fonts/opensans_regular_macroman/stylesheet.css',
                 '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
-            'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/regional/EventDispatcher.js',
+                '@MapbenderCoreBundle/Resources/public/libs/StringHelper.js',
+                '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/fn.formData.js',
+
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
-                '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js'
+                '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js',
+
+
+//                                    'vendor/underscore.js',
+//                                    'vendor/json2.js',
+//                                    'vendor/backbone.js',
+//                                    'vendor/jquery.form.min.js',
+
+                /**
+                 * @copyright 2008-2014 SpryMedia Ltd - datatables.net/license
+                 * Released under the MIT license: http://jsbin.mit-license.org
+                 */
+                '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/jquery.dataTables.1.10.3.min.js',
+
+                /**
+                 * @copyright (c) 2014 by anonymous (http://jsbin.com/ehagoy/154/edit)
+                 * Released under the MIT license: http://jsbin.mit-license.org
+                 */
+                '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/jquery.dialogextend.2.0.3.js',
+
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.resultTable.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.tabNavigator.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.popupDialog.js'
+
+
             ),
             'trans' => array()
         );
@@ -94,6 +125,11 @@ class Fullscreen extends Template
         $default_region_props = $this->getRegionsProperties();
 
         $templating = $this->container->get('templating');
+
+        if(!is_array( $region_props)){
+            $region_props = array();
+        }
+
         return $templating
                 ->render('MapbenderCoreBundle:Template:fullscreen.html.twig', array(
                     'html' => $html,

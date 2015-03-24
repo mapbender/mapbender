@@ -72,20 +72,10 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     public function remove()
     {
         $this->removeRecursively($this->entity);
-    }
-
-    /**
-     * Recursively remove a nested Layerstructure
-     * @param WmsInstanceLayer
-     * @param EntityManager
-     */
-    private function removeRecursively(WmsInstanceLayer $wmslayer)
-    {
-        foreach ($wmslayer->getSublayer() as $sublayer) {
-            $this->removeRecursively($sublayer);
+        foreach ($this->entity->getSublayer() as $sublayer) {
+            self::createHandler($this->container, $sublayer)->remove();
         }
-        $this->container->get('doctrine')->getManager()->remove($wmslayer);
-        $this->container->get('doctrine')->getManager()->flush();
+        $this->container->get('doctrine')->getManager()->remove($this->entity);
     }
 
     /**
