@@ -83,6 +83,9 @@ Mapbender.Model = {
                     this.mbMap.options.targetsrs)
             });
         }
+        if(this.mbMap.options.targetscale){
+            this.map.olMap.zoomToScale(this.mbMap.options.targetscale, true);
+        }
     },
     /**
      * Set map view: extent from URL parameters or configuration and POIs
