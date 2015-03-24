@@ -45,7 +45,12 @@ class Fullscreen extends Template
         $assets = array(
             'css' => array('@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
                 '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
-            'js' => array('@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+            'js' => array(
+                '@MapbenderCoreBundle/Resources/public/regional/EventDispatcher.js',
+                '@MapbenderCoreBundle/Resources/public/libs/StringHelper.js',
+                '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/fn.formData.js',
+
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
                 '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js'
@@ -94,6 +99,11 @@ class Fullscreen extends Template
         $default_region_props = $this->getRegionsProperties();
 
         $templating = $this->container->get('templating');
+
+        if(!is_array( $region_props)){
+            $region_props = array();
+        }
+
         return $templating
                 ->render('MapbenderCoreBundle:Template:fullscreen.html.twig', array(
                     'html' => $html,
