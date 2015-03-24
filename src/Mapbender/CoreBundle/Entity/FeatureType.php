@@ -301,17 +301,21 @@ class FeatureType extends ContainerAware
         /** @var Statement $statement */
         /** @var Feature $feature */
         $maxResults   = isset($criteria['maxResults']) ? intval($criteria['maxResults']) : self::MAX_RESULTS;
-        $intersect    = isset($criteria['intersect']) ? $criteria['intersect'] : null;
+        $intersect    = isset($criteria['intersectGeometry']) ? $criteria['intersectGeometry'] : null;
         $returnType   = isset($criteria['returnType']) ? $criteria['returnType'] : null;
-
-        $queryBuilder = $this->getSelectQueryBuilder();
+        $srid         = isset($criteria['srid']) ? $criteria['srid'] : $this->getSrid();
+        $queryBuilder = $this->getSelectQueryBuilder($srid);
 
         // add GEOM where condition
-        if (is_array($intersect) && isset($intersect['geometry'])) {
-            $geometry = self::roundGeometry($intersect['geometry']);
-            $srid     = isset($intersect['srid']) ? $intersect['srid'] : $this->getSrid();
-            $queryBuilder->andWhere(self::genIntersectCondition($this->getPlatformName(), $geometry, $this->geomField, $srid));
+        if ($intersect) {
+            $geometry = self::roundGeometry($intersect,2);
+            $queryBuilder->andWhere(self::genIntersectCondition($this->getPlatformName(), $geometry, $this->geomField, $srid, $this->getSrid()));
         }
+//
+//        $sql = $queryBuilder->getSQL();
+//
+//        var_dump($sql);
+//        die();
 
         $queryBuilder->setMaxResults($maxResults);
         // $queryBuilder->setParameters($params);
@@ -410,15 +414,15 @@ class FeatureType extends ContainerAware
      * @param $srid
      * @return null|string
      */
-    public static function genIntersectCondition($platformName, $geometry, $geometryAttribute, $srid)
+    public static function genIntersectCondition($platformName, $geometry, $geometryAttribute, $srid, $sridTo)
     {
         $sql = null;
         switch ($platformName) {
             case self::POSTGRESQL_PLATFORM:
-                $sql = "ST_INTERSECTS(ST_GEOMFROMTEXT('$geometry',$srid),$geometryAttribute)";
+                $sql = "ST_INTERSECTS(ST_TRANSFORM(ST_GEOMFROMTEXT('$geometry',$srid),$sridTo),$geometryAttribute)";
                 break;
             case self::ORACLE_PLATFORM:
-                $sql = "SDO_RELATE( $geometryAttribute ,SDO_GEOMETRY('$geometry',$srid), 'mask=ANYINTERACT querytype=WINDOW') = 'TRUE'";
+                $sql = "SDO_RELATE($geometryAttribute ,SDO_GEOMETRY(SDO_CS.TRANSFORM('$geometry',$srid),$sridTo), 'mask=ANYINTERACT querytype=WINDOW') = 'TRUE'";
                 break;
         }
         return $sql;
@@ -487,10 +491,10 @@ class FeatureType extends ContainerAware
      *
      * @return QueryBuilder
      */
-    public function getSelectQueryBuilder()
+    public function getSelectQueryBuilder($srid = null)
     {
         $connection         = $this->getConnection();
-        $geomFieldCondition = self::getGeomAttribute($this->getPlatformName(), $this->geomField, $this->getSrid());
+        $geomFieldCondition = self::getGeomAttribute($this->getPlatformName(), $this->geomField, $srid? $srid: $this->getSrid());
         $spatialFields      = array($this->uniqueId, $geomFieldCondition);
         $attributes         = array_merge($spatialFields, $this->fields);
         $queryBuilder       = $connection->createQueryBuilder()->select($attributes)->from($this->tableName, 't');
