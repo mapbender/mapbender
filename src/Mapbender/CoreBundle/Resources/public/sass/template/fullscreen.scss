@@ -1,8 +1,108 @@
 @import "libs/variables";
 @import "libs/mixins";
+@import "theme/mapbender3";
 
+@import "../regional/vendor/normalize.3.0.1";
+@import "../regional/vendor/bootstrap/3.2.0/css/bootstrap_base";
 
-/* -------------------------------------------------------------- LOGO */
+/*
+  Override bootstrap standard declaration
+*/
+label {
+  font-weight: normal;
+}
+
+form {
+  // Form holder, needed to disable group form elements.
+  // Example: <fieldset disabled="disabled">...</fieldset>
+  > fieldset{
+    border: none;
+    padding: 0;
+  }
+
+//  label{
+//    color: #2A2929;
+//  }
+
+  .form-group {
+    > label{
+      margin-bottom: 0px;
+    }
+
+    > input[type='text']{
+      @extend .ie-8-borders-hack;
+    }
+
+     > input[type='text']:before {
+      display: block;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-family: FontAwesome;
+      font-style: normal;
+      font-weight: normal;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-smoothing: antialiased;
+      content: "\f110";
+      -webkit-animation: spin 2s infinite linear;
+      -moz-animation: spin 2s infinite linear;
+      -o-animation: spin 2s infinite linear;
+      animation: spin 2s infinite linear;
+    }
+  }
+}
+
+.checkbox-container{
+  .checkbox-inline{
+    clear:  both;
+    label{
+      white-space: nowrap;
+    }
+  }
+}
+
+form{
+  input[type='submit'].hidden{
+    display: none;
+  }
+}
+
+.has-spinner {
+  &.active {
+    cursor: progress;
+    &.spinner {
+      opacity: 1;
+      width: auto; /* This doesn't work, just fix for unknown width elements */
+    }
+  }
+
+  .spinner {
+    display: inline-block;
+    opacity: 0;
+    width: 0;
+
+    -webkit-transition: opacity 0.25s, width 0.25s;
+    -moz-transition: opacity 0.25s, width 0.25s;
+    -o-transition: opacity 0.25s, width 0.25s;
+    transition: opacity 0.25s, width 0.25s;
+  }
+
+}
+
+/**
+* Notify JS settings
+*/
+.notifyjs-container {
+  border-radius: 8px;
+  box-shadow: -2px 2px 16px 0px rgba(0,0,0,0.75);
+
+  .notifyjs-bootstrap-base{
+    padding: 6px 6px 4px 25px;
+  }
+}
+
 .logoContainer{
   position: relative;
   z-index: 10;
@@ -18,7 +118,7 @@
 
 
 /* ---------------------------------------------------------- CONTENT */
-.templateWrapper{
+.templateWrapper {
   margin:0 auto;
   overflow: hidden;
   @include absolute(0 0 0 0);

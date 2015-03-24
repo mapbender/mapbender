@@ -39,6 +39,7 @@
   &.bottom{
     [class^="icon"]:before,[class*=" icon"]:before{font-size: 14px;}
     padding:$space/4 $space/2 $space/4 $space/2;
+    margin-bottom: 0;
     .toolBarItem{
 //      height:30px;
 //      line-height:30px;
@@ -83,7 +84,7 @@
   $buttonFirstColor:#6fb536;
   $buttonSecondColor:#5fa229;
 
-  display: block;
+  display: block !important;
   padding:($space/4) ($space/2);
   margin-bottom:5px;
   color:$lightFontColor;
