@@ -43,10 +43,7 @@ class Fullscreen extends Template
     static public function listAssets()
     {
         $assets = array(
-            'css' => array(
-//                '@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss',
-                '@MapbenderCoreBundle/Resources/public/fonts/opensans_regular_macroman/stylesheet.scss',
-                '@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
             'js' => array(
                 '@MapbenderCoreBundle/Resources/public/regional/EventDispatcher.js',
                 '@MapbenderCoreBundle/Resources/public/libs/StringHelper.js',
