@@ -12,7 +12,7 @@ use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
 
 /**
- * Description of EntityHandler
+ * Description of SourceEntityHandler
  *
  * @author Paul Schmidt
  */
@@ -33,18 +33,6 @@ abstract class SourceEntityHandler extends EntityHandler
     abstract public function createInstance(Layerset $layerset = NULL, $persist = true);
     
     /**
-     * Remove a source from a database
-     */
-    abstract public function remove();
-
-
-
-    /**
-     * Saves an entity
-     */
-    abstract public function save();
-    
-    /**
      * Update a source from a new source
      * @param Source $source a Source object
      */
@@ -54,6 +42,4 @@ abstract class SourceEntityHandler extends EntityHandler
      * Returns a source from a database
      */
     abstract public function getInstances();
-
-
 }

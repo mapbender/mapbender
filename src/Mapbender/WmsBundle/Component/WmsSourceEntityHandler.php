@@ -7,10 +7,6 @@
 
 namespace Mapbender\WmsBundle\Component;
 
-//use Doctrine\Common\Collections\ArrayCollection;
-//use Doctrine\ORM\PersistentCollection;
-//use Mapbender\CoreBundle\Component\ReflectionHandler;
-use Mapbender\CoreBundle\Component\Exception\NotUpdateableException;
 use Mapbender\CoreBundle\Component\SourceEntityHandler;
 use Mapbender\CoreBundle\Entity\Layerset;
 use Mapbender\CoreBundle\Entity\Source;
@@ -18,7 +14,7 @@ use Mapbender\CoreBundle\Utils\EntityUtil;
 use Mapbender\WmsBundle\Entity\WmsInstance;
 
 /**
- * Description of WmsSourceHandler
+ * Description of WmsSourceEntityHandler
  *
  * @author Paul Schmidt
  */
@@ -113,8 +109,12 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                 }
             }
         }
-        $updater->updateKeywords($this->entity, $sourceNew, $this->container->get('doctrine')->getManager(),
-            'Mapbender\WmsBundle\Entity\WmsSourceKeyword');
+        $updater->updateKeywords(
+            $this->entity,
+            $sourceNew,
+            $this->container->get('doctrine')->getManager(),
+            'Mapbender\WmsBundle\Entity\WmsSourceKeyword'
+        );
 
         $rootHandler = self::createHandler($this->container, $this->entity->getRootlayer());
         $rootHandler->update($sourceNew->getRootlayer());
@@ -126,8 +126,9 @@ class WmsSourceEntityHandler extends SourceEntityHandler
         }
     }
 
-    private function updateInstances(){
-        foreach($this->getInstances() as $instance){
+    private function updateInstances()
+    {
+        foreach ($this->getInstances() as $instance) {
             self::createHandler($this->container, $instance)->update();
         }
     }
@@ -138,7 +139,8 @@ class WmsSourceEntityHandler extends SourceEntityHandler
     public function getInstances()
     {
         $query    = $this->container->get('doctrine')->getManager()->createQuery(
-            "SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.source=:sid");
+            "SELECT i FROM MapbenderWmsBundle:WmsInstance i WHERE i.source=:sid"
+        );
         $query->setParameters(array("sid" => $this->entity->getId()));
         $instList = $query->getResult();
         return $instList;

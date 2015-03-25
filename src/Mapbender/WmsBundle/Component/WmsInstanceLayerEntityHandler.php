@@ -18,7 +18,7 @@ use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
- * Description of WmsSourceHandler
+ * Description of WmsInstanceLayerEntityHandler
  *
  * @author Paul Schmidt
  */
@@ -171,7 +171,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $configuration = array(
             "id" => strval($this->entity->getId()),
             "priority" => $this->entity->getPriority(),
-            "name" => $this->entity->getSourceItem()->getName() !== null ? $this->entity->getSourceItem()->getName() : "",
+            "name" => $this->entity->getSourceItem()->getName() !== null ?
+                $this->entity->getSourceItem()->getName() : "",
             "title" => $this->entity->getTitle(),
             "queryable" => $this->entity->getInfo(),
             "style" => $this->entity->getStyle(),
@@ -205,7 +206,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                     "width" => intval($legendurl->getWidth()),
                     "height" => intval($legendurl->getHeight()));
             }
-        } else if ($this->entity->getSourceInstance()->getSource()->getGetLegendGraphic() !== null &&
+        } elseif ($this->entity->getSourceInstance()->getSource()->getGetLegendGraphic() !== null &&
             $this->entity->getSourceItem()->getName() !== null &&
             $this->entity->getSourceItem()->getName() !== "") {
             $legend                  = $this->entity->getSourceInstance()->getSource()->getGetLegendGraphic();
