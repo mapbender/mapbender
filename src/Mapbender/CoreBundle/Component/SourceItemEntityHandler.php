@@ -17,7 +17,7 @@ use Mapbender\CoreBundle\Component\SourceItem;
  */
 abstract class SourceItemEntityHandler extends EntityHandler
 {
-        
+
     /**
      * Creates a Sourcetem
      */

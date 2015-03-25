@@ -1,4 +1,5 @@
 <?php
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -12,6 +13,8 @@ use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
+use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
@@ -138,14 +141,14 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             $children = array();
             if ($this->entity->getSublayer()->count() > 0) {
                 foreach ($this->entity->getSublayer() as $sublayer) {
-                    $instLayHandler    = self::createHandler($this->container, $sublayer);
+                    $instLayHandler = self::createHandler($this->container, $sublayer);
                     $configurationTemp = $instLayHandler->generateConfiguration();
                     if (count($configurationTemp) > 0) {
                         $children[] = $configurationTemp;
                     }
                 }
             }
-            $layerConf     = $this->getConfiguration();
+            $layerConf = $this->getConfiguration();
             $configuration = array(
                 "options" => $layerConf,
                 "state" => array(

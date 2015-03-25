@@ -50,6 +50,4 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * @param boolean $persist Description
      */
     abstract public function mergeDimension($dimension, $persist = false);
-
-
 }
