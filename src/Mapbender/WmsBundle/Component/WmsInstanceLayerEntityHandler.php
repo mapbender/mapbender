@@ -71,7 +71,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function remove()
     {
-        $this->removeRecursively($this->entity);
         foreach ($this->entity->getSublayer() as $sublayer) {
             self::createHandler($this->container, $sublayer)->remove();
         }
