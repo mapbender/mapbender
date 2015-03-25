@@ -33,16 +33,24 @@
         {% endfor %}
       {% endif %}
     </ul>
-  {% if application.elements.sidepane is defined %}
-    <div id="sidepane" class="clear sidePane left">
-      <ul class="sidePaneTabs">
-        <li class="sidePaneTabItem toggleSideBar"></li>
-      </ul>
-      <div class="sideContent">
-        {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'sidepane' }%}
+
+    {# Right sidepane definition #}
+    {% set name = 'sidepane' %}
+    {% if application.elements[name] is defined %}
+      {% set region = application.elements[name] %}
+      {% set properties = region_props[name].properties %}
+      {% set align = properties.align|default('left') %}
+
+      <div id="{{ name }}"  class="clear sidePane {{ align }}" {% if properties.width is defined %} style="width: {{ properties.width }}"{% endif %}>
+        <ul class="sidePaneTabs">
+          <li class="sidePaneTabItem toggleSideBar"></li>
+        </ul>
+        <div class="sideContent">
+          {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': name } %}
+        </div>
       </div>
-    </div>
-  {% endif %}
+    {% endif %}
+
     <div id="content" class="contentPane">
       {% include "MapbenderCoreBundle:Template:region.html.twig"  with {'region_props': region_props, 'application': application, 'region': 'content' }%}
     </div>
