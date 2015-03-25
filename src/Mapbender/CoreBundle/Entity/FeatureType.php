@@ -216,141 +216,133 @@ class FeatureType extends ContainerAware
      */
     public function save($featureData, $autoUpdate = true)
     {
-        /** @var Feature $feature */
-        $connection = $this->getConnection();
-        $data       = array();
-        $id         = null;
-
-        // If $featureData is string, posible is an JSON, so try to convert it
-        if (is_string($featureData)) {
-            $featureData = $this->create($featureData);
-        }
-
-        // If $featureData is object, so collect data as array
-        if (is_object($featureData) && $featureData instanceof Feature) {
-            $feature     = $featureData;
-            $featureData = $feature->getAttributes();
-
-            if ($feature->hasId()) {
-                $featureData['id'] = $feature->getId();
-            }
-
-            if ($feature->hasGeom()) {
-                //$wkb = \geoPHP::load($feature->getGeom(), 'wkt')->out('wkb');
-                if ($this->getSrid()) {
-                    $featureData['geom'] = "SRID=" . $this->getSrid() . ";" . $feature->getGeom();
-                } else {
-                    $featureData['geom'] = $this->srid . ";" . $feature->getGeom();
-                }
-            }
-        }
-
-        if (!is_array($featureData)) {
+        if (!is_array($featureData) && !is_object($featureData)) {
             throw new \Exception("Feature data given isn't compatible to save into the table: " . $this->getTableName());
         }
 
-        // collect input data for the table
-        if (isset($featureData[$this->getUniqueId()])) {
-            $id = $featureData[$this->getUniqueId()];
-        } elseif (isset($featureData['id'])) {
-            $id = $featureData['id'];
-        }
-
-        if (isset($featureData[$this->getGeomField()])) {
-            $data[$this->getGeomField()] = $featureData[$this->getGeomField()];
-        } elseif (isset($featureData['geom'])) {
-            $data[$this->getGeomField()] = $featureData['geom'];
-        }
-        foreach ($this->getFields() as $fieldName) {
-            if (isset($featureData[$fieldName])) {
-                $data[$fieldName] = $featureData[$fieldName];
-            }
-        }
-
-        if (!count($data)) {
-            throw new \Exception("Feature data given is empty");
-        }
-
+        /** @var Feature $feature */
+        $feature    = $this->create($featureData);
         // Insert if no ID given
-        if (!$autoUpdate || is_null($id)) {
-
-            if (!$autoUpdate) {
-                $data[$this->uniqueId] = $id;
-            }
-
-            $connection->insert($this->tableName, $data);
-            $data['id'] = $connection->lastInsertId();
+        if (!$autoUpdate || !$feature->hasId()) {
+            $result = $this->insert($feature);
         } // Replace if has ID
         else {
-            $connection->update($this->tableName, $data, array($this->uniqueId => $id));
+            $result = $this->update($feature);
         }
 
-        return $this->create($data);
+        return $result;
+    }
+
+    /**
+     * Insert feature
+     *
+     * @param array|Feature $featureData
+     * @return Feature
+     */
+    public function insert($featureData)
+    {
+        /** @var Feature $feature */
+        $feature    = $this->create($featureData);
+        $data       = $this->cleanFeatureData($feature->toArray());
+        $connection = $this->getConnection();
+        $data[$this->getGeomField()] = $this->transformEwkt($data[$this->getGeomField()], $this->getSrid());
+
+        $result     = $connection->insert($this->tableName, $data);
+        $lastId     = $connection->lastInsertId();
+        $feature->setId($lastId);
+        return $feature;
+    }
+
+    // TODO: oracle and posgresql switch
+    public function transformEwkt($geom,$srid=null)
+    {
+        $srid = $srid?$srid:$this->getSrid();
+        return $this->connection->executeQuery("SELECT ST_TRANSFORM(ST_GEOMFROMTEXT('$geom'),".$this->getSrid() .")")->fetchColumn();
+    }
+
+    /**
+     * Update
+     *
+     * @param $featureData
+     * @return Feature
+     * @throws \Exception
+     * @internal param array $criteria
+     */
+    public function update($featureData)
+    {
+        /** @var Feature $feature */
+        $feature    = $this->create($featureData);
+        $data       = $this->cleanFeatureData($feature->toArray());
+        $connection = $this->getConnection();
+        $data[$this->getGeomField()] = $this->transformEwkt($data[$this->getGeomField()], $this->getSrid());
+
+        unset($data[$this->getUniqueId()]);
+
+        if (empty($data)) {
+            throw new \Exception("Feature can't be updated without criteria");
+        }
+
+        $connection->update($this->tableName, $data, array($this->uniqueId => $feature->getId()));
+        return $feature;
     }
 
     /**
      * Remove feature
      *
-     * @param Feature|array|int $feature
+     * @param  Feature|array|int $featureData
      * @return int
      * @throws Exception
      */
-    public function remove($feature)
+    public function remove($featureData)
     {
-        /** @var Feature $feature */
-        $id = null;
-        if (is_array($feature)) {
-            if (isset($feature[$this->uniqueId])) {
-                $id = $feature[$this->uniqueId];
-            } elseif (isset($feature['id'])) {
-                $id = $feature['id'];
-            }
-        } elseif (is_numeric($feature)) {
-            $id = intval($feature);
-        } elseif (is_object($feature) && $feature instanceof Feature) {
-            $id = $feature->getId();
-        }
-
-        if (!is_null($id)) {
-            $criteria = array($this->uniqueId => $id);
-        } elseif (is_array($feature)) {
-            $criteria = $feature;
-        } else {
-            throw new Exception("Remove of feature with no criteria");
-        }
-
-        return $this->getConnection()->delete($this->tableName, $criteria);
+        $feature = $this->create($featureData);
+        $this->getConnection()->delete($this->tableName, array($this->uniqueId => $feature->getId()));
+        return $feature;
     }
 
 
     /**
      * Search feature by criteria
      *
-     * @param array $criteria
+     * @param array  $criteria
      * @return Feature[]
      */
     public function search(array $criteria = array())
     {
+
         /** @var Statement $statement */
-        $queryBuilder      = $this->getSelectQueryBuilder();
-        $maxResults        = isset($criteria['maxResults']) ? intval($criteria['maxResults']) : self::MAX_RESULTS;
-        $intersectGeometry = isset($criteria['intersectGeometry']) ? $criteria['intersectGeometry'] : null;
+        /** @var Feature $feature */
+        $maxResults   = isset($criteria['maxResults']) ? intval($criteria['maxResults']) : self::MAX_RESULTS;
+        $intersect    = isset($criteria['intersectGeometry']) ? $criteria['intersectGeometry'] : null;
+        $returnType   = isset($criteria['returnType']) ? $criteria['returnType'] : null;
+        $srid         = isset($criteria['srid']) ? $criteria['srid'] : $this->getSrid();
+        $queryBuilder = $this->getSelectQueryBuilder($srid);
 
         // add GEOM where condition
-        if (!empty($intersectGeometry)) {
-            $geometry = self::roundGeometry($intersectGeometry);
-            $queryBuilder->andWhere(self::genIntersectCondition($this->getPlatformName(), $intersectGeometry, $this->geomField, $this->getSrid()));
+        if ($intersect) {
+            $geometry = self::roundGeometry($intersect,2);
+            $queryBuilder->andWhere(self::genIntersectCondition($this->getPlatformName(), $geometry, $this->geomField, $srid, $this->getSrid()));
         }
+//
+//        $sql = $queryBuilder->getSQL();
+//
+//        var_dump($sql);
+//        die();
 
         $queryBuilder->setMaxResults($maxResults);
         // $queryBuilder->setParameters($params);
         $statement  = $queryBuilder->execute();
         $rows       = $statement->fetchAll();
-        $hasResults = count($rows) > 1;
+        $hasResults = count($rows) > 0;
+
 
         // Convert to Feature object
         if ($hasResults) {
-            $this->prepareResults($rows);
+            $this->prepareResults($rows,$srid);
+        }
+
+        if ($returnType == "FeatureCollection") {
+            $rows = $this->toFeatureCollection($rows);
         }
 
         return $rows;
@@ -426,21 +418,23 @@ class FeatureType extends ContainerAware
     }
 
     /**
+     * Generate intersect where condition
+     *
      * @param $platformName
      * @param $geometry
      * @param $geometryAttribute
-     * @param $sridTo
+     * @param $srid
      * @return null|string
      */
-    public static function genIntersectCondition($platformName, $geometry, $geometryAttribute, $sridTo)
+    public static function genIntersectCondition($platformName, $geometry, $geometryAttribute, $srid, $sridTo)
     {
         $sql = null;
         switch ($platformName) {
             case self::POSTGRESQL_PLATFORM:
-                $sql = "ST_INTERSECTS(ST_GEOMFROMTEXT('$geometry',$sridTo),$geometryAttribute)";
+                $sql = "ST_INTERSECTS(ST_TRANSFORM(ST_GEOMFROMTEXT('$geometry',$srid),$sridTo),$geometryAttribute)";
                 break;
             case self::ORACLE_PLATFORM:
-                $sql = "SDO_RELATE( $geometryAttribute ,SDO_GEOMETRY('$geometry',$sridTo), 'mask=ANYINTERACT querytype=WINDOW') = 'TRUE'";
+                $sql = "SDO_RELATE($geometryAttribute ,SDO_GEOMETRY(SDO_CS.TRANSFORM('$geometry',$srid),$sridTo), 'mask=ANYINTERACT querytype=WINDOW') = 'TRUE'";
                 break;
         }
         return $sql;
@@ -487,10 +481,10 @@ class FeatureType extends ContainerAware
     /**
      * Convert results to Feature objects
      *
-     * @param $rows
-     * @return array
+     * @param Feature[] $rows
+     * @return Feature[]
      */
-    public function prepareResults(&$rows)
+    public function prepareResults(&$rows,$srid = null)
     {
         // Transform Oracle result column names from upper to lower case
         if ($this->isOracle()) {
@@ -498,7 +492,7 @@ class FeatureType extends ContainerAware
         }
 
         foreach ($rows as $key => &$row) {
-            $row = $this->create($row);
+            $row = $this->create($row,$srid);
         }
 
         return $rows;
@@ -509,10 +503,10 @@ class FeatureType extends ContainerAware
      *
      * @return QueryBuilder
      */
-    public function getSelectQueryBuilder()
+    public function getSelectQueryBuilder($srid = null)
     {
         $connection         = $this->getConnection();
-        $geomFieldCondition = self::getGeomAttribute($this->getPlatformName(), $this->geomField, $this->getSrid());
+        $geomFieldCondition = self::getGeomAttribute($this->getPlatformName(), $this->geomField, $srid? $srid: $this->getSrid());
         $spatialFields      = array($this->uniqueId, $geomFieldCondition);
         $attributes         = array_merge($spatialFields, $this->fields);
         $queryBuilder       = $connection->createQueryBuilder()->select($attributes)->from($this->tableName, 't');
@@ -520,13 +514,24 @@ class FeatureType extends ContainerAware
     }
 
     /**
-     * Create feature
+     * Cast feature by $args
      *
      * @param $args
      * @return Feature
      */
-    public function create($args) {
-        return new Feature($args, $this->getSrid(), $this->getUniqueId(), $this->getGeomField());
+    public function create($args)
+    {
+        $feature = null;
+        if (is_object($args)) {
+            if ($args instanceof Feature) {
+                $feature = $args;
+            } else {
+                $args = get_object_vars($args);
+            }
+        } elseif (is_numeric($args)) {
+            $args = array($this->getUniqueId() => intval($args));
+        }
+        return $feature ? $feature : new Feature($args, $this->getSrid(), $this->getUniqueId(), $this->getGeomField());
     }
 
     /**
@@ -552,5 +557,40 @@ class FeatureType extends ContainerAware
             }
         }
         return $this->srid;
+    }
+
+    /**
+     * Convert Features[] to FeatureCollection
+     *
+     * @param Feature[] $rows
+     * @return array FeatureCollection
+     */
+    public function toFeatureCollection($rows)
+    {
+        /** @var Feature $feature */
+        foreach ($rows as $k => $feature) {
+            $rows[$k] = $feature->toGeoJson(true);
+        }
+        return array("type"     => "FeatureCollection",
+                     "features" => $rows);
+    }
+
+    /**
+     * Clean data this can't be saved into db table from data array
+     *
+     * @param array $data
+     * @return array
+     */
+    private function cleanFeatureData($data)
+    {
+        $fields = array_merge($this->getFields(), array($this->getUniqueId(), $this->getGeomField()));
+
+        // clean data from feature
+        foreach ($data as $fieldName => $value) {
+            if (isset($fields[$fieldName])) {
+                unset($data[$fieldName]);
+            }
+        }
+        return $data;
     }
 }

@@ -33,6 +33,12 @@ class Feature
      */
     protected $attributes;
 
+    /** @var string */
+    private $uniqueIdField;
+
+    /** @var string */
+    private $geomField;
+
     /**
      * Get id
      *
@@ -78,10 +84,13 @@ class Feature
     }
 
     /**
+     * Get attributes (parameters)
+     *
      * @return mixed
      */
     public function getAttributes()
     {
+        $this->attributes[$this->uniqueIdField] = $this->getId();
         return $this->attributes;
     }
 
@@ -109,15 +118,29 @@ class Feature
             }
         }
 
+        $this->setSrid($srid);
+
+        // Is JSON feature array?
+        if (is_array($args) && isset($args["geometry"]) && isset($args['properties'])) {
+            $properties             = $args["properties"];
+            $geom                   = $args["geometry"];
+            $properties[$geomField] = $geom;
+
+            if (isset($args['id'])) {
+                $properties[$uniqueIdField] = $args['id'];
+            }
+
+            if (isset($args['srid'])) {
+               $this->setSrid($args['srid']);
+            }
+
+            $args = $properties;
+        }
+
         // set GEOM
         if (isset($args[$geomField])) {
             $this->setGeom($args[$geomField]);
             unset($args[$geomField]);
-        }
-
-        if (isset($args["geom"])) {
-            $this->setGeom($args["geom"]);
-            unset($args["geom"]);
         }
 
         // set ID
@@ -126,26 +149,33 @@ class Feature
             unset($args[$uniqueIdField]);
         }
 
-        if (isset($args['id'])) {
-            $this->setId($args['id']);
-            unset($args['id']);
-        }
-
         // set attributes
         $this->setAttributes($args);
-        $this->setSrid($srid);
+
+
+        $this->uniqueIdField = $uniqueIdField;
+        $this->geomField = $geomField;
+
     }
 
     /**
      * Get GeoJSON
      *
+     * @param bool $decodeGeometry
      * @return array in GeoJSON format
+     * @throws \exception
      */
-    public function toGeoJson()
+    public function toGeoJson( $decodeGeometry = true)
     {
+        $wkt = \geoPHP::load($this->getGeom(), 'wkt')->out('json');
+        if($decodeGeometry){
+            $wkt = json_decode($wkt, true);
+        }
+
         return array('type'       => 'Feature',
                      'properties' => $this->getAttributes(),
-                     'geometry'   => \geoPHP::load($this->getGeom(), 'wkt')->out('json'),
+                     'geometry'   => $wkt,
+                     'id'         => $this->getId(),
                      'srid'       => $this->getSrid());
     }
 
@@ -160,6 +190,33 @@ class Feature
     }
 
     /**
+     * Return array
+     *
+     * @return mixed
+     */
+    public function toArray()
+    {
+        $data = $this->getAttributes();
+
+        if ($this->hasGeom()) {
+            //$wkb = \geoPHP::load($feature->getGeom(), 'wkt')->out('wkb');
+            if ($this->getSrid()) {
+                $data[$this->geomField] = "SRID=" . $this->getSrid() . ";" . $this->getGeom();
+            } else {
+                $data[$this->geomField] = $this->srid . ";" . $this->getGeom();
+            }
+        }
+
+        if (!$this->hasId()) {
+            unset($data[$this->uniqueIdField]);
+        }else{
+            $data[$this->uniqueIdField] = $this->getId();
+        }
+
+        return $data;
+    }
+
+    /**
      * @param mixed $id
      */
     public function setId($id)
@@ -167,10 +224,20 @@ class Feature
         $this->id = $id;
     }
 
+    /**
+     * Is id set
+     *
+     * @return bool
+     */
     public function hasId(){
         return !is_null($this->id);
     }
 
+    /**
+     * Has geom data
+     *
+     * @return bool
+     */
     public function hasGeom(){
         return !is_null($this->geom);
     }
