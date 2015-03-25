@@ -31,11 +31,9 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $this->entity->setSourceItem($wmslayersource);
         $this->entity->setTitle($wmslayersource->getTitle());
         // @TODO min max from scaleHint
-        $this->entity->setMinScale(
-            $wmslayersource->getScaleRecursive() !== null ?
+        $this->entity->setMinScale($wmslayersource->getScaleRecursive() !== null ?
                 $wmslayersource->getScaleRecursive()->getMin() : null);
-        $this->entity->setMaxScale(
-            $wmslayersource->getScaleRecursive() !== null ?
+        $this->entity->setMaxScale($wmslayersource->getScaleRecursive() !== null ?
                 $wmslayersource->getScaleRecursive()->getMax() : null);
         $queryable = $wmslayersource->getQueryable();
         $this->entity->setInfo(Utils::getBool($queryable));
@@ -75,7 +73,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             self::createHandler($this->container, $sublayer)->remove();
         }
         $this->container->get('doctrine')->getManager()->remove($this->entity);
-        $this->container->get('doctrine')->getManager()->flush();
     }
 
     /**
@@ -96,15 +93,20 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                 self::createHandler($this->container, $layer)->update($instance, $wmslayersourceSub);
             } else {
                 self::createHandler($this->container, new WmsInstanceLayer())->create(
-                    $instance, $wmslayersourceSub, $wmslayersourceSub->getPriority());
+                    $instance,
+                    $wmslayersourceSub,
+                    $wmslayersourceSub->getPriority()
+                );
             }
         }
         $this->entity->setPriority($wmslayersource->getPriority());
         $origMinMax  = $wmslayersource->getScaleRecursive();
         $scaleMinMax = null;
         if ($origMinMax) {
-            $scaleMinMax = MinMax::create($origMinMax->getInRange($this->entity->getMinScale()),
-                    $origMinMax->getInRange($this->entity->getMaxScale()));
+            $scaleMinMax = MinMax::create(
+                $origMinMax->getInRange($this->entity->getMinScale()),
+                $origMinMax->getInRange($this->entity->getMaxScale())
+            );
         } else {
             $scaleMinMax = MinMax::create($this->entity->getMinScale(), $this->entity->getMaxScale());
         }
@@ -115,8 +117,8 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $this->entity->setAllowinfo($queryable === true ? $this->entity->getInfo() : $queryable);
         if ($wmslayersource->getSublayer()->count() > 0) {
             $this->entity->setToggle(is_bool($this->entity->getToggle()) ? $this->entity->getToggle() : false);
-            $this->entity->setAllowtoggle(
-                is_bool($this->entity->getAllowtoggle()) ? $this->entity->getAllowtoggle() : true);
+            $alowtoggle = is_bool($this->entity->getAllowtoggle()) ? $this->entity->getAllowtoggle() : true;
+            $this->entity->setAllowtoggle($alowtoggle);
         } else {
             $this->entity->setToggle(null);
             $this->entity->setAllowtoggle(null);
@@ -231,7 +233,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
 
     /**
      * Finds an instance layer, that is linked with a given wms source layer.
-     * 
+     *
      * @param WmsLayerSource $wmssourcelayer wms layer source
      * @param array $instancelayerList list of instance layers
      * @return WmsInstanceLayer | null the instance layer, otherwise null
