@@ -68,11 +68,17 @@
   }
 
   .btn {
+    $mainColor: #6FB536;
     border-radius: 0;
     font-size: 11px;
-    padding: 5px 11px;
+    padding: 4px 9px;
+    border-color: #538E24;
+    background-color: $mainColor;
+    color: #ffffff;
+    &:hover,&:focus{
+      background-color: darken($mainColor,10%);
+    }
   }
-
 }
 
 
