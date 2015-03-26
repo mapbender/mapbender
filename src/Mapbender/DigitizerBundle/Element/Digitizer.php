@@ -6,6 +6,7 @@ use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Mapbender\CoreBundle\Entity\FeatureType;
 
 /**
  *
@@ -117,7 +118,17 @@ class Digitizer extends Element
         $schemas       = $configuration["schemes"];
         $schema        = $schemas[$request["schema"]];
         $features      = $this->container->get('features');
-        $featureType   = $features->get($schema['featureType']);
+
+        if(is_string($schema['featureType'])){
+            $featureType  = $features->get($schema['featureType']);
+        }elseif(is_array ($schema['featureType'])){
+            $featureType = new FeatureType($this->container, $schema['featureType']);
+        }else{
+            throw new Exception("FeatureType settings not correct");
+        }
+
+
+
         $results       = array();
 
         switch ($action) {

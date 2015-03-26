@@ -222,7 +222,7 @@
             // build navigation
             $.each(items, function(idx, button) {
                 var item = this;
-                var button = $("<button/>");
+                var button = $("<button class='btn'/>");
                 var type = item.type;
                 
                 button.html(item.type);
@@ -314,7 +314,8 @@
         
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
-
+            var frames = [];
+            var activeFrame = null;
             var self = this;
             var element = $(self.element);
             var toolset = $(".tool-set", element);
@@ -334,64 +335,95 @@
             var styleMap = new OpenLayers.StyleMap({'default': defaultStyle,
                 'select': selectStyle}, {extendDefault: true});  
             
-            $.each(this.options.schemes, function(key){
+            $.each(this.options.schemes, function(schemaName){
                 var settings = this;
                 var option = $("<option/>");
-                option.val(key).html(settings.label);
+                option.val(schemaName).html(settings.label);
                 
-                settings.layer = new OpenLayers.Layer.Vector(settings.label, {styleMap: styleMap});
-                self.map.addLayer(settings.layer);
+                var layer =  settings.layer = new OpenLayers.Layer.Vector(settings.label, {styleMap: styleMap});
+                self.map.addLayer(layer);
+
+                var frame = settings.frame = $("<div/>").addClass('frame').data(settings);
+                var tools = settings.tools = $("<div/>").mbDigitizerToolset({items: self.toolsets[settings.geomType], layer: layer});
+                var columns = []
+                $.each(settings.tableFields, function(fieldName){
+                    columns.push({data: "properties."+fieldName, title: this.label});
+                });
                 
+                var table = settings.table = $("<div/>").resultTable({
+                    lengthChange: false,
+                    pageLength: 10,
+                    searching: false,
+                    info: false,
+                    processing: false,
+                    ordering: true,
+                    paging: true,
+                    selectable: false,
+                    autoWidth: false,
+                    columns:  columns,
+//                        {data: 'id', title: 'ID'},
+//                        {
+//                            data: null, 
+//                            title: 'SRID',
+//                            render: function ( feature ) {
+//                                return "<button class='feature-locate' data-id='"+feature.id+"'>locate</button>";
+//                            }
+//                        }
+//                    ],
+                    //scrollY:       "150px",
+                    buttons: []
+                });
+
+                settings.schemaName = schemaName;
+
+                frame.append(tools);
+                frame.append(table);
+                
+                frames.push(settings);
+                frame.css('display','none');
+                
+                frame.data(settings);
+                
+                element.append(frame);
                 option.data(settings);
+                
                 selector.append(option);
             });
-            
+
             function onSelectorChange(){
                 var option = selector.find(":selected");
                 var settings = option.data();
-                self.activeSchemaName = option.val();
-                self.activeSchema = settings;
-                self.activeLayer = settings.layer;
+                var frame = settings.frame;
+                var table = settings.table;   
 
-
-                $(toolset).mbDigitizerToolset({items: self.toolsets[settings.geomType], layer: settings.layer});
+                if(activeFrame){
+                    activeFrame.css('display','none');
+                    var tableApi = activeFrame.data("table").resultTable('getApi');
+                    var layer = activeFrame.data("layer");
+                    
+                    layer.removeAllFeatures();
+                    tableApi.clear();
+                }
                 
-                self._getData();
+                activeFrame = frame;
+                activeFrame.css('display','block');
+                
+                self.activeLayer = settings.layer;
+                self.schemaName = settings.schemaName;
+                
+                self._getData(settings);
             }
-            
+
             selector.on('change',onSelectorChange);
-            
-            // render selector
-            element.append(selector);
-            element.append(toolset);
-            
-            this.featureTable = $('.results',element).resultTable({
-                lengthChange: false,
-                searching: false,
-                info: false,
-                processing: false,
-                ordering: false,
-                paging: false,
-                selectable: false,
-                autoWidth: true,
-                columns:          [{
-                    data:  'title'
-                }],
-                //scrollY:       "150px",
-                buttons: []
-            });
-            
-            
-            
+
             onSelectorChange();
                     
             this.map.events.register('click', this, this._mapClick);
-
             this._trigger('ready');
         },
         
         _mapClick: function(evt) {
-            var widget = this;
+            var self = this;
             var x = evt.pageX;
             var y = evt.pageY;
             
@@ -418,7 +450,8 @@
             var extent = this.map.getExtent();
 
             //TODO open form popup
-            widget.query('save',{
+            self.query('save',{
+                schema: self.schemaName,
                 feature: {
                     properties: feature.attributes,
                     geometry:   wkt,
@@ -448,7 +481,6 @@
                                 targets.push(target);
                                 target = document.elementFromPoint(x, y);
                             } else {
-                                // sketch, all bets off
                                 target = false;
                             }
                         }
@@ -471,25 +503,29 @@
             return features;
         },
         
-        _getData: function(){
+        _getData: function(settings){
             var self = this;
-            
             var proj = this.map.getProjectionObject();
             var extent = this.map.getExtent();
 
             var request = {
                 srid: proj.proj.srsProjNumber,
                 intersectGeometry: extent.toGeometry().toString(),
-                maxResults: 100
+                maxResults: 100,
+                schema: settings.schemaName
             };
 
-            self.query('select', request).done(function(response) {
-                if(response) {
-                    self.activeLayer.removeAllFeatures();
+            self.query('select', request).done(function(geoJson) {
+                if(geoJson) {
                     var geojson_format = new OpenLayers.Format.GeoJSON();
-                    var features = geojson_format.read(response);
-                    self.activeLayer.addFeatures(features);
-                    self.add(features)
+                    var features = geojson_format.read(geoJson);
+                    var tableApi = settings.table.resultTable('getApi');
+                    
+                    settings.layer.removeAllFeatures();
+                    settings.layer.addFeatures(features);
+
+                    tableApi.rows.add(geoJson.features);
+                    tableApi.draw();
                 }
             });
         },
@@ -503,7 +539,7 @@
          */
         query: function(uri, request) {
             var widget = this;
-            request.schema = this.activeSchemaName;
+            //request.schema = this.activeSchemaName;
             return $.ajax({
                 url:         widget.elementUrl + uri,
                 type:        'POST',
@@ -514,23 +550,8 @@
                 $.notify("XHR error:" + JSON.stringify(xhr.responseText));
                 console.log("XHR Error:", xhr);
             });
-        },
+        }   
         
-        add: function(features) {
-            var self = this;
-            var tableApi = self.featureTable.resultTable('getApi');
-            
-            $.each(features, function() {
-                var data = {
-                    title:   'dummy',
-                    feature: this
-                };
-                tableApi.rows.add([data]);
-                tableApi.draw();
-            });
-            
-            return self.featureTable.resultTable('getRowByData', data)
-        },
     });
 
 })(jQuery);
