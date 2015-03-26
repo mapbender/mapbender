@@ -365,6 +365,24 @@
             element.append(selector);
             element.append(toolset);
             
+            this.featureTable = $('.results',element).resultTable({
+                lengthChange: false,
+                searching: false,
+                info: false,
+                processing: false,
+                ordering: false,
+                paging: false,
+                selectable: false,
+                autoWidth: true,
+                columns:          [{
+                    data:  'title'
+                }],
+                //scrollY:       "150px",
+                buttons: []
+            });
+            
+            
+            
             onSelectorChange();
                     
             this.map.events.register('click', this, this._mapClick);
@@ -471,6 +489,7 @@
                     var geojson_format = new OpenLayers.Format.GeoJSON();
                     var features = geojson_format.read(response);
                     self.activeLayer.addFeatures(features);
+                    self.add(features)
                 }
             });
         },
@@ -495,7 +514,23 @@
                 $.notify("XHR error:" + JSON.stringify(xhr.responseText));
                 console.log("XHR Error:", xhr);
             });
-        }
+        },
+        
+        add: function(features) {
+            var self = this;
+            var tableApi = self.featureTable.resultTable('getApi');
+            
+            $.each(features, function() {
+                var data = {
+                    title:   'dummy',
+                    feature: this
+                };
+                tableApi.rows.add([data]);
+                tableApi.draw();
+            });
+            
+            return self.featureTable.resultTable('getRowByData', data)
+        },
     });
 
 })(jQuery);
