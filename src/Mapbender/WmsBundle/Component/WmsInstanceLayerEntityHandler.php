@@ -31,11 +31,9 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $this->entity->setSourceItem($wmslayersource);
         $this->entity->setTitle($wmslayersource->getTitle());
         // @TODO min max from scaleHint
-        $this->entity->setMinScale(
-            $wmslayersource->getScaleRecursive() !== null ?
+        $this->entity->setMinScale($wmslayersource->getScaleRecursive() !== null ?
                 $wmslayersource->getScaleRecursive()->getMin() : null);
-        $this->entity->setMaxScale(
-            $wmslayersource->getScaleRecursive() !== null ?
+        $this->entity->setMaxScale($wmslayersource->getScaleRecursive() !== null ?
                 $wmslayersource->getScaleRecursive()->getMax() : null);
         $queryable = $wmslayersource->getQueryable();
         $this->entity->setInfo(Utils::getBool($queryable));
@@ -71,7 +69,6 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
      */
     public function remove()
     {
-        $this->removeRecursively($this->entity);
         foreach ($this->entity->getSublayer() as $sublayer) {
             self::createHandler($this->container, $sublayer)->remove();
         }
@@ -183,5 +180,4 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         );
         return $configuration;
     }
-
 }

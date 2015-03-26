@@ -33,10 +33,15 @@
 /* jQuery UI Dialog with Bootstrap classes */
 .mb-element-popup-dialog {
 
-  $borderRadius: 4px;
+  $borderRadius: 0px;
   z-index: 22;
   position: absolute !important;
-
+  background-color: #E4E4E4;
+  border-radius: $borderRadius;
+  border: 1px solid #b3b3b3;
+  box-shadow:none;
+  background-image: url("bundles/mapbendercore/image/content.png");
+  border-bottom-width: 5px;
   @extend .clearfix;
   //  @extend .ie-8-borders-hack;
 
@@ -66,16 +71,20 @@
         @extend .button;
         display: block;
         float: right;
-        padding-left: 5px;
-        padding-right: 5px;
+//        padding-left: 5px;
+//        padding-right: 5px;
         width: auto;
         white-space: normal;
-        color: #000000;
+        color: #000000 !important;
         height: 20px;
         overflow: hidden;
-        background-color: transparent;
+        background-color: transparent !important;
+        border-radius: 0;
         opacity: .2;
         text-shadow: rgb(255, 255, 255) 0px 1px 0px;
+        padding-left: 4px !important;
+        padding-right: 0 !important;
+
         &:hover, &:focus{
           background-color: transparent;
           opacity: .5;
@@ -97,19 +106,19 @@
           &.ui-icon-extlink:after{
             content: "\f0b2";
             font-size: 18px;
-            margin-top: -3px;
+            margin-top: -2px;
           }
 
           /** collapse **/
           &.ui-icon-triangle-1-s:after{
             content: "\f062";
-            font-size: 16px;
+            font-size: 18px;
             margin-top: -3px;
           }
           /** restore to normal **/
           &.ui-icon-newwin:after{
             content: "\f063";
-            font-size: 16px;
+            font-size: 18px;
             margin-top: -3px;
           }
         }
