@@ -23,17 +23,39 @@
 
   textarea,
   select,
-  input {
-    font-size: 11px;
-    border: solid 1px #c8c8c8;
-    background-color: #ffffff;
-    border-radius: 0;
-    padding: 2px 7px;
+  input,
+  {
     &:-webkit-autofill {
       background-color: #E0FBCF;
       color: #858585;
     }
   }
+
+  textarea,
+  select,
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="file"]
+  {
+    font-size: 11px;
+    border: solid 1px #c8c8c8;
+    background-color: #ffffff;
+    border-radius: 0;
+    padding: 2px 7px;
+    height: 29px;
+    display: block;
+    width: 100%;
+  }
+
+  textarea{
+    height: auto;
+  }
+
+  input[type="file"]{
+    padding: 0;
+  }
+
 
   input.form-control {
     &[type='password'],
@@ -47,6 +69,8 @@
   .checkbox {
     height: auto;
     opacity: 1;
+    filter: none;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(enabled = false)";
     top: auto;
     left: auto;
     right: auto;
@@ -54,6 +78,7 @@
     position: inherit;
   }
 
+  select,
   button,
   textarea,
   input,
