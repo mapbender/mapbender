@@ -13,9 +13,70 @@
 /*
   Override bootstrap standard declaration
 */
-label {
-  font-weight: normal;
+.ui-dialog.modal-content.mb-element-popup-dialog{
+  > form{
+    padding: 10px;
+
+    label{
+      font-size: 11px;
+      color: #707070;
+    }
+
+    textarea,
+    select,
+    input{
+      font-size: 11px;
+      border: solid 1px #c8c8c8;
+      background-color: #ffffff;
+      border-radius: 0;
+      padding: 2px 7px;
+      &:-webkit-autofill{
+        background-color: #E0FBCF;
+        color: #858585;
+      }
+    }
+
+    input.form-control {
+      &[type='password'],
+      &[type='email'],
+      &[type='text'] {
+        height: 29px;
+        //    background-color: rgb(250, 255, 189);
+      }
+    }
+
+    .checkbox {
+      height: auto;
+      opacity: 1;
+      top: auto;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      position: inherit;
+    }
+
+    button,
+    textarea,
+    input,
+    .uneditable-input {
+      &:focus {
+        border-color: #578e2a;
+        outline: 0;
+        outline: thin dotted \9;
+        /* IE6-9 */
+        box-shadow: inset 0 1px 1px rgba(87, 142, 42, .075), 0 0 8px rgba(87, 142, 42, .6);
+      }
+    }
+
+    .btn{
+      border-radius: 0;
+      font-size: 11px;
+      padding: 5px 11px;
+    }
+
+  }
 }
+
 
 form {
   // Form holder, needed to disable group form elements.
