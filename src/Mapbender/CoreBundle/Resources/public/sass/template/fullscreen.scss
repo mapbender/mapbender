@@ -238,7 +238,11 @@ form{
 /* --------------------------------------------------------- TOOLBARS */
 .toolBar{
   z-index:4;
-  label, span{font-family: $fontFamily;}
+  label, span{
+    font-family: $fontFamily;
+    font-weight: normal;
+    font-size: 11px;
+  }
   &.top{position:relative;}
   &.bottom{@include absolute('' 0 0 0);}
 }
