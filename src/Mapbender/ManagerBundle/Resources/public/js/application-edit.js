@@ -140,7 +140,7 @@ $(function() {
                     popup.close();
                     window.setTimeout(function() {
                         window.location.reload();
-                    }, 10);
+                    }, 50);
 
                 },
                 205: function() {
@@ -148,7 +148,7 @@ $(function() {
                     window.setTimeout(function() {
                         var now = new Date();
                         window.location.search = now.getTime();
-                    }, 10);
+                    }, 50);
                 }
             }
 
