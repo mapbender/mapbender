@@ -312,6 +312,38 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
         
+        openFeatureEditDialog: function (feature) {
+            var self = this;
+            var olFeature = self.activeLayer.getFeatureByFid(feature.id);
+            var dialog = $("<div/>");
+            var form = $("<form/>");
+            var submitButton = $("<input type='submit' class='btn right'/>");
+            var input, label, formGroup;
+
+            $.each(feature.properties, function (key) {
+
+                formGroup = $('<div class="form-group">')
+                input = $("<input type='text' class='form-control'/>");
+                label = $("<label/>");
+
+                label.html(key);
+                input.val(this);
+
+                formGroup.append(label);
+                formGroup.append(input);
+
+                form.append(formGroup);
+            });
+
+            // get form fields from settings
+            // render form 
+
+            form.append(submitButton);
+            dialog.append(form);
+            form.data({olFeature: olFeature, feature: feature});
+            dialog.popupDialog({title: "Feature #" + feature.id});
+        },
+        
         _setup: function(){
             this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
             var frames = [];
@@ -371,7 +403,49 @@
 //                        }
 //                    ],
                     //scrollY:       "150px",
-                    buttons: []
+                    buttons: [
+                        {
+                            title: 'E',
+                            className: 'edit',
+                            onClick: function(feature, ui) {
+                                self.openFeatureEditDialog(feature);
+                            }
+                        },
+                        {
+                            title: 'X',
+                            className: 'remove',
+                            onClick: function(data, ui) {
+                                var tr = ui.closest('tr');
+                                table.resultTable('getApi').row(tr).remove().draw();
+                                self._deactivateControl();
+                                self.layer.removeFeatures(data.feature);
+                            }
+                        },
+                        {
+                            title: 'DBX',
+                            className: 'delete',
+                            onClick: function(data, ui) {
+                                if(!Mapbender.confirm('Aus der Datenbank löschen?')){
+                                    return;
+                                };
+                                var tr = ui.closest('tr');
+                                var feature = data.feature;
+                                self._deactivateControl();
+                                $.ajax({
+                                    url: self.elementUrl + "delete",
+                                    type: 'GET',
+                                    data: {
+                                        id: feature.attributes.id,
+                                        schema: feature.attributes.schema
+                                    },
+                                    success: function(html) {
+                                        table.resultTable('getApi').row(tr).remove().draw();
+                                        self.layer.removeFeatures(feature);
+                                    }
+                                });
+                            }
+                        }
+                ]
                 });
 
                 settings.schemaName = schemaName;
