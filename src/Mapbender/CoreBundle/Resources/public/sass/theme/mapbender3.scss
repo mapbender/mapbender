@@ -179,3 +179,20 @@ div.notifyjs-container > div.notifyjs-bootstrap-base > span{
     overflow: auto;
     word-wrap: break-word;
 }
+
+.templateWrapper {
+  @media screen and (max-width: 991px) {
+    > .toolBar {
+      &.top {
+        > .toolBarItem {
+          > label, > span {
+            font-size: 0;
+          }
+          > input[type='checkbox'] {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
