@@ -5,33 +5,74 @@
  */
 (function($){
 
+    /**
+     * Check if object has a key
+     *
+     * @param obj
+     * @param key
+     * @returns {boolean}
+     */
     function has (obj, key){
         return typeof obj[key] !== 'undefined';
     }
 
+    /**
+     * Add jquery events to element by declration
+     *
+     * @param element
+     * @param declaration
+     */
+    function addEvents(element, declaration) {
+        $.each(declaration, function(k, value) {
+            if(typeof value == 'function') {
+                element.on(k, value);
+            }
+        });
+    }
+
     $.widget('mapbender.generateElements', {
-        options: {},
-        declarations:{
-            'input':{
-                init: function(item,declarations) {
+        options:      {},
+        declarations: {
+            html:   {
+                init: function(item) {
+                    var container = $('<div class="html-element"/>');
+                    return container.html(typeof item === 'string' ? item : JSON.stringify(item));
+                }
+            },
+            button: {
+                init: function(item, declarations) {
+                    var title = has(item, 'title') ? item.title : 'Submit';
+                    var button = $('<button class="btn button">' + title + '</button>');
+                    addEvents(button, item);
+                    return button;
+                }
+            },
+            submit: {
+                init: function(item, declarations) {
+                    var button = declarations.button.init(item, declarations);
+                    button.attr('type', 'submit');
+                    return button;
+                }
+            },
+            input:  {
+                init: function(item, declarations) {
                     var inputField = $('<input class="form-control"/>');
                     var container = $('<div class="form-group"/>');
 
                     if(has(item, 'name')) {
-                        inputField.attr('name',item.name);
+                        inputField.attr('name', item.name);
                     }
 
                     if(has(item, 'placeholder')) {
-                        inputField.attr('placeholder',item.placeholder);
+                        inputField.attr('placeholder', item.placeholder);
                     }
 
-                    if(has(item,'value')){
+                    if(has(item, 'value')) {
                         inputField.val(item.value);
                     }
 
-                    console.log(declarations);
-                    if(has(inputField,'text')){
-                        container.append(declarations.label.init(item,declarations));
+                    if(has(inputField, 'text')) {
+                        container.append(declarations.label.init(item, declarations));
                     }
 
                     container.append(inputField);
@@ -67,14 +108,17 @@
             var element = $(this.element);
             var widget = this;
             if(key === "items") {
-                $.each(value, function() {
-                    var item = this;
-                    if(!has(widget.declarations, item.type)) {
-                        return;
+                $.each(value, function(k,item) {
+                    var type = has(widget.declarations, item.type) ? item.type : 'html';
+                    var declaration = widget.declarations[type];
+                    var subElement = declaration.init(item, widget.declarations);
+
+                    if(has(item,'cssClass')){
+                        subElement.addClass(item.cssClass);
                     }
-                    var declaration = widget.declarations[item.type];
-                    element.append(declaration.init(item, widget.declarations));
-                    element.data('item', item);
+
+                    element.append(subElement);
+                    element.data('item',item);
                 })
             }
 
@@ -92,28 +136,32 @@
     var popup = $("<div/>").popupDialog();
 
     popup.generateElements({
-        items: [ {
-            type: 'label', //value:       'test',
-            text: 'HE-HE'
-        },{
+        items: [{
             type: 'label',
-            text: 'Name'
-        }, {type: 'submit'}, {
-            type:        'input', //value:       'test',
+            text: 'Label TEST'
+        }, {
+            type:        'input',
             name:        'name',
             text:        'Name',
             placeholder: 'Enter your name'
-        }, {type: 'submit'}, {
-            type:        'input', //value:       'test',
+        }, {
+            type:        'input',
             name:        'Nachname',
             text:        'Nachname',
             placeholder: 'Nachname'
-        }, {type: 'submit'}, {type: 'submit'}, {
-            type:        'input', //value:       'test',
+        }, {
+            type:        'input',
             name:        'email',
             text:        'E-Mail',
             placeholder: 'eslider@gmail.com'
-        }, {type: 'submit'}]
+        },
+        "<div style='background-color: #ff0000; height: 2px'/>", {
+            type:     'submit',
+            cssClass: 'right',
+            click: function(){
+                console.log('CLICK');
+            }
+        }]
     });
 
     //console.log("TEST");
