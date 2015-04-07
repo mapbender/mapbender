@@ -28,6 +28,11 @@
 /* jQuery UI Dialog with Bootstrap classes */
 .mb-element-popup-dialog {
 
+  > *{
+    box-sizing: content-box !important;
+  }
+
+
   $borderRadius: 0px;
   z-index: 22;
   position: absolute !important;

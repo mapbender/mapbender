@@ -29,14 +29,15 @@
                 }
             });
 
-            // resize dialog height fix
+            //resize dialog height fix
             element.bind('popupdialogresize', function(e, ui) {
                 var win = $(e.target).closest('.ui-dialog');
                 var height = 0;
-                $.each($('.modal-header,.modal-body,.modal-footer', win), function(idx, el) {
+                $.each($('> .modal-header, > .modal-body, > .modal-footer', win), function(idx, el) {
                     height += $(el).outerHeight();
                 });
-                win.height(height);
+                win.height(Math.round(height));
+                //$("> .modal-body",win).height(height-40);
             });
 
             // prevent key listening outside the dialog
