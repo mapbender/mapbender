@@ -273,7 +273,13 @@
             type:  'checkbox',
             name:  'check1',
             value: true,
-            text:  'Check me'
+            text:  'Checked!',
+            checked: true
+        }, {
+            type:  'checkbox',
+            name:  'check2',
+            value: true,
+            text:  'Check me '
         }, {
             type:  'radio',
             name:  'radio1',
