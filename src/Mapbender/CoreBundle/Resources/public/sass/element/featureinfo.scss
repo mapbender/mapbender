@@ -1,0 +1,15 @@
+@import "libs/variables";
+@import "libs/mixins";
+@import "libs/icons";
+@import "modules/button";
+@import "modules/text";
+
+.mb-element-featureinfo{
+  iframe.featureInfoFrame{
+    width: 100%;
+    border-width: 0px;
+  }
+  .accordionContainer > .container{display:none}
+  .accordionContainer > .container.active{display:block}
+  
+}

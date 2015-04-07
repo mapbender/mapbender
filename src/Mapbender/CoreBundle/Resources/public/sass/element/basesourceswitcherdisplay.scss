@@ -1,0 +1,26 @@
+@import "libs/variables";
+@import "libs/mixins";
+
+.mb-element-basesourceswitcherdisplay{
+    height: 20px;
+    display: inline-block;
+    color:white;
+    text-align:left;
+
+/*  .collectionItem{
+    position: relative;
+    margin-bottom: $space;
+  }
+  .iconRemove{@include absolute(0 30px '' '');}*/
+}
+
+.mb-element-basesourceswitcherdisplay a:visited{
+    color:white;
+}
+.mb-element-basesourceswitcherdisplay a:link{
+    color:white;
+}
+.mb-element-basesourceswitcherdisplay a:hover{
+    color:grey;
+}
+

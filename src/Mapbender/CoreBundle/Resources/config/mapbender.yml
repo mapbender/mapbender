@@ -6,6 +6,7 @@ parameters:
             template:  Mapbender\ManagerBundle\Template\ManagerTemplate
             excludeFromList: true
             published: true
+            roles: [IS_AUTHENTICATED_ANONYMOUSLY]
 
         # Login app definition
         mb3-login:
@@ -13,3 +14,5 @@ parameters:
             template:  Mapbender\ManagerBundle\Template\LoginTemplate
             excludeFromList: true
             published: true
+            anonymous: true
+            roles: [IS_AUTHENTICATED_ANONYMOUSLY]

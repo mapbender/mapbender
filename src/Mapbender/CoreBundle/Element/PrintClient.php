@@ -210,6 +210,10 @@ class PrintClient extends Element
                 if (isset($data['extent_feature'])){         
                         $data['extent_feature'] = json_decode($data['extent_feature'], true);                  
                 }
+
+                if (isset($data['legends'])){
+                        $data['legends'] = json_decode($data['legends'], true);
+                }
                     
                 $content = json_encode($data);
 

@@ -15,15 +15,9 @@ namespace Mapbender\CoreBundle\Component;
  */
 abstract class SourceItemEntityHandler extends EntityHandler
 {
-        
+
     /**
      * Creates a Sourcetem
      */
     abstract public function create();
-    
-    /**
-     * Remove a SourceItem
-     */
-    abstract public function remove();
-
 }

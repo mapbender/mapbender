@@ -75,6 +75,10 @@
   $label:70px;
   .labelInput{width:$label;}
 }
+.wideLabelForm{
+  $label:100px;
+  .labelInput{width:$label;}
+}
 .collectionItem{
   clear:both;
   & > .labelInput{display:none;}

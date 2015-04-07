@@ -33,13 +33,13 @@ Mapbender.Model = {
         this.mapMaxExtent = {
             projection: this.getProj(this.mbMap.options.srs),
             extent: this.mbMap.options.extents.max ?
-                    OpenLayers.Bounds.fromArray(this.mbMap.options.extents.max) : null
+                OpenLayers.Bounds.fromArray(this.mbMap.options.extents.max) : null
         };
 
         this.mapStartExtent = {
             projection: this.getProj(this.mbMap.options.srs),
             extent: this.mbMap.options.extents.start ?
-                    OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start) : this.mbMap.options.extents.max
+                OpenLayers.Bounds.fromArray(this.mbMap.options.extents.start) : this.mbMap.options.extents.max
         };
 
         var mapOptions = {
@@ -53,7 +53,13 @@ Mapbender.Model = {
             allOverlays: true,
             theme: null,
             transitionEffect: null,
-            layers: [{type: "wms", name: "FAKE", isBaseLayer: true, url: "http://localhost", visibility: false}],
+            layers: [{
+                    type: "wms",
+                    name: "FAKE",
+                    isBaseLayer: true,
+                    url: "http://localhost",
+                    visibility: false
+                }],
             fallThrough: true
         };
 
@@ -72,10 +78,15 @@ Mapbender.Model = {
         this.setView(true);
         this.parseURL();
         if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
-            this.changeProjection({projection: this.getProj(this.mbMap.options.targetsrs)});
+            this.changeProjection({
+                projection: this.getProj(
+                    this.mbMap.options.targetsrs)
+            });
+        }
+        if (this.mbMap.options.targetscale) {
+            this.map.olMap.zoomToScale(this.mbMap.options.targetscale, true);
         }
     },
-
     /**
      * Set map view: extent from URL parameters or configuration and POIs
      */
@@ -87,8 +98,8 @@ Mapbender.Model = {
             bbox = null;
         if (this.mbMap.options.extra && this.mbMap.options.extra['bbox']) {
             bbox = this.mbMap.options.extra['bbox'] ?
-                    OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']) :
-                    start_extent;
+                OpenLayers.Bounds.fromArray(this.mbMap.options.extra['bbox']) :
+                start_extent;
         }
         if (this.mbMap.options.extra && this.mbMap.options.extra['pois']) {
             $.each(this.mbMap.options.extra['pois'], function(idx, poi) {
@@ -101,20 +112,22 @@ Mapbender.Model = {
         }
 
         var poiBox = null,
-                poiMarkerLayer = null,
-                poiIcon = null,
-                poiPopups = [];
+            poiMarkerLayer = null,
+            poiIcon = null,
+            poiPopups = [];
         if (pois.length) {
             poiMarkerLayer = new OpenLayers.Layer.Markers();
             poiIcon = new OpenLayers.Icon(
-                    Mapbender.configuration.application.urls.asset +
-                    this.mbMap.options.poiIcon.image, {
-                        w: this.mbMap.options.poiIcon.width,
-                        h: this.mbMap.options.poiIcon.height
-                    }, {
+                Mapbender.configuration.application.urls.asset + this.mbMap.options.poiIcon.image,
+                {
+                    w: this.mbMap.options.poiIcon.width,
+                    h: this.mbMap.options.poiIcon.height
+                },
+            {
                 x: this.mbMap.options.poiIcon.xoffset,
                 y: this.mbMap.options.poiIcon.yoffset
-            });
+            }
+            );
         }
         $.each(pois, function(idx, poi) {
             if (!bbox) {
@@ -125,20 +138,20 @@ Mapbender.Model = {
 
             // Marker
             poiMarkerLayer.addMarker(new OpenLayers.Marker(
-                    poi.position,
-                    poiIcon.clone()));
+                poi.position,
+                poiIcon.clone()));
 
             if (poi.label) {
                 poiPopups.push(new OpenLayers.Popup.FramedCloud('chicken',
-                        poi.position,
-                        null,
-                        poi.label,
-                        null,
-                        true,
-                        function() {
-                            self.mbMap.removePopup(this);
-                            this.destroy();
-                        }));
+                    poi.position,
+                    null,
+                    poi.label,
+                    null,
+                    true,
+                    function() {
+                        self.mbMap.removePopup(this);
+                        this.destroy();
+                    }));
             }
         });
         var centered = false;
@@ -153,6 +166,9 @@ Mapbender.Model = {
         }
 
         if (bbox) {
+            if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+                bbox = bbox.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj());
+            }
             this.map.olMap.zoomToExtent(bbox, true);
         } else {
             if (!centered) {
@@ -160,8 +176,13 @@ Mapbender.Model = {
             }
         }
 
-        if(!centered && this.mbMap.options['center']){
-            this.map.olMap.setCenter(new OpenLayers.LonLat(this.mbMap.options['center']));
+        if (!centered && this.mbMap.options['center']) {
+            var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
+            if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+                this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
+            } else {
+                this.map.olMap.setCenter(lonlat);
+            }
         }
 
         if (true === addLayers) {
@@ -170,11 +191,17 @@ Mapbender.Model = {
             // this.map.olMap.events.register('moveend', this, $.proxy(this._checkOutOfBounds, this));
 
             this.map.olMap.events.register('moveend', this, $.proxy(this._checkChanges, this));
-            $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId){
-                $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr){
-                    $.each(defArr, function(idx, layerDef){
+            $.each(this.mbMap.options.layersets.reverse(), function(idx, layersetId) {
+                $.each(Mapbender.configuration.layersets[layersetId].reverse(), function(lsidx, defArr) {
+                    $.each(defArr, function(idx, layerDef) {
                         layerDef['origId'] = idx;
-                        self.addSource({add: {sourceDef: layerDef, before: null, after: null}});
+                        self.addSource({
+                            add: {
+                                sourceDef: layerDef,
+                                before: null,
+                                after: null
+                            }
+                        });
                     });
                 });
             });
@@ -197,7 +224,7 @@ Mapbender.Model = {
         for (var i = 0; i < this.srsDefs.length; i++) {
             if (this.srsDefs[i].name === srscode) {
                 proj = new OpenLayers.Projection(this.srsDefs[i].name);
-                if(!proj.proj.units) {
+                if (!proj.proj.units) {
                     proj.proj.units = 'degrees';
                 }
                 return proj;
@@ -216,11 +243,16 @@ Mapbender.Model = {
      * @returns {OpenLayers.Bounds}
      */
     calculateExtent: function(geom, buffer) {
-        var proj = this.getCurrentProj(),
-                centroid = geom.getCentroid(),
-                bounds = geom.getBounds() ? geom.getBounds() : geom.calculateBounds(),
-                buffer_bounds = {w: (bounds.right - bounds.left) / 2, h: (bounds.top - bounds.bottom) / 2},
-        k, w, h;
+        var proj = this.getCurrentProj();
+        var centroid = geom.getCentroid();
+        var bounds = geom.getBounds() ? geom.getBounds() : geom.calculateBounds();
+        var buffer_bounds = {
+            w: (bounds.right - bounds.left) / 2,
+            h: (bounds.top - bounds.bottom) / 2
+        };
+        var k;
+        var w;
+        var h;
         if (proj.proj.units === 'degrees' || proj.proj.units === 'dd') {
             var pnt_ll = new OpenLayers.LonLat(centroid.x, centroid.y);
             var pnt_pxl = this.map.olMap.getViewPortPxFromLonLat(pnt_ll);
@@ -230,10 +262,10 @@ Mapbender.Model = {
             var lb_lonlat = this.map.olMap.getLonLatFromLayerPx(lb);
             var rt_lonlat = this.map.olMap.getLonLatFromLayerPx(rt);
             return new OpenLayers.Bounds(
-                    lb_lonlat.lon - buffer_bounds.w,
-                    lb_lonlat.lat - buffer_bounds.h,
-                    rt_lonlat.lon + buffer_bounds.w,
-                    rt_lonlat.lat + buffer_bounds.h);
+                lb_lonlat.lon - buffer_bounds.w,
+                lb_lonlat.lat - buffer_bounds.h,
+                rt_lonlat.lon + buffer_bounds.w,
+                rt_lonlat.lat + buffer_bounds.h);
         } else if (proj.proj.units === 'm') {
             w = buffer.w;
             h = buffer.h;
@@ -249,18 +281,20 @@ Mapbender.Model = {
             h = 0;
         }
         return new OpenLayers.Bounds(
-                centroid.x - 0.5 * w - buffer_bounds.w,
-                centroid.y - 0.5 * h - buffer_bounds.h,
-                centroid.x + 0.5 * w + buffer_bounds.w,
-                centroid.y + 0.5 * h + buffer_bounds.h);
+            centroid.x - 0.5 * w - buffer_bounds.w,
+            centroid.y - 0.5 * h - buffer_bounds.h,
+            centroid.x + 0.5 * w + buffer_bounds.w,
+            centroid.y + 0.5 * h + buffer_bounds.h);
     },
     _convertLayerDef: function(layerDef) {
         if (typeof Mapbender.source[layerDef.type] !== 'object'
-                && typeof Mapbender.source[layerDef.type].create !== 'function') {
+            && typeof Mapbender.source[layerDef.type].create !== 'function') {
             throw "Layer type " + layerDef.type + " is not supported by mapbender.mapquery-map";
         }
         // TODO object should be cleaned up
-        var l = $.extend({}, Mapbender.source[layerDef.type].create(layerDef), {mapbenderId: layerDef.id});
+        var l = $.extend({}, Mapbender.source[layerDef.type].create(layerDef), {
+            mapbenderId: layerDef.id
+        });
         return l;
     },
     generateSourceId: function() {
@@ -276,9 +310,24 @@ Mapbender.Model = {
         var maxExt = this.map.olMap.getMaxExtent();
         var size = this.map.olMap.getSize();
         var state = {
-            window: {width: size.w, height: size.h},
-            extent: {srs: proj.projCode, minx: ext.left, miny: ext.bottom, maxx: ext.right, maxy: ext.top},
-            maxextent: {srs: proj.projCode, minx: maxExt.left, miny: maxExt.bottom, maxx: maxExt.right, maxy: maxExt.top},
+            window: {
+                width: size.w,
+                height: size.h
+            },
+            extent: {
+                srs: proj.projCode,
+                minx: ext.left,
+                miny: ext.bottom,
+                maxx: ext.right,
+                maxy: ext.top
+            },
+            maxextent: {
+                srs: proj.projCode,
+                minx: maxExt.left,
+                miny: maxExt.bottom,
+                maxx: maxExt.right,
+                maxy: maxExt.top
+            },
             sources: []
         };
         var sources = this.getSources();
@@ -314,7 +363,7 @@ Mapbender.Model = {
         if (key) {
             for (var i = 0; i < this.sourceTree.length; i++) {
                 if (this.sourceTree[i][key] && idObject[key]
-                        && this.sourceTree[i][key].toString() === idObject[key].toString()) {
+                    && this.sourceTree[i][key].toString() === idObject[key].toString()) {
                     return this.sourceTree[i];
                 }
             }
@@ -385,15 +434,18 @@ Mapbender.Model = {
             return null;
         }
     },
-    findLayerset: function(options){
-        for(layersetId in Mapbender.configuration.layersets){
+    findLayerset: function(options) {
+        for (layersetId in Mapbender.configuration.layersets) {
             var layerset = Mapbender.configuration.layersets[layersetId];
-            for(var i = 0; i < layerset.length; i++){
-                if(options.source && layerset[i][options.source.origId]){
-                    return {id: layersetId, title: Mapbender.configuration.layersetmap[layersetId]};
+            for (var i = 0; i < layerset.length; i++) {
+                if (options.source && layerset[i][options.source.origId]) {
+                    return {
+                        id: layersetId,
+                        title: Mapbender.configuration.layersetmap[layersetId]
+                    };
                 }
             }
-            
+
         }
         return null;
     },
@@ -415,7 +467,9 @@ Mapbender.Model = {
      */
     getSourceLayerById: function(source, layerId) {
         if (source && layerId) {
-            return Mapbender.source[source.type].findLayer(source, {id: layerId});
+            return Mapbender.source[source.type].findLayer(source, {
+                id: layerId
+            });
         } else {
             return null;
         }
@@ -424,7 +478,9 @@ Mapbender.Model = {
      *Creates a "tochange" object
      */
     createToChange: function(idxKey, idxValue) {
-        var tochange = {sourceIdx: {}};
+        var tochange = {
+            sourceIdx: {}
+        };
         tochange.sourceIdx[idxKey] = idxValue;
         if (this.getSource(tochange.sourceIdx))
             return tochange;
@@ -438,7 +494,10 @@ Mapbender.Model = {
         if (!source || !source.id) {
             return null;
         }
-        return {source: source, children: {}};
+        return {
+            source: source,
+            children: {}
+        };
     },
     /**
      * Returns the current map's scale
@@ -453,7 +512,7 @@ Mapbender.Model = {
         var source = this.getSource(toChangeOpts.sourceIdx);
         var result = Mapbender.source[source.type].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
-        if(this._resetSourceVisibility(mqLayer, result.layers, result.infolayers)){
+        if (this._resetSourceVisibility(mqLayer, result.layers, result.infolayers)) {
             mqLayer.olLayer.redraw();
         }
         return result.changed;
@@ -462,16 +521,31 @@ Mapbender.Model = {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
             var result = Mapbender.source[source.type].changeOptions(
-                source, self.getScale(), {sourceIdx: {id: source.id}, options: {children: {}}});
+                source, self.getScale(), {
+                sourceIdx: {
+                    id: source.id
+                },
+                options: {
+                    children: {}
+                }
+            });
             var mqLayer = self.map.layersList[source.mqlid];
-            if(self._resetSourceVisibility(mqLayer, result.layers, result.infolayers)){
+            if (self._resetSourceVisibility(mqLayer, result.layers, result.infolayers)) {
                 mqLayer.olLayer.redraw();
             }
             for (child in result.changed.children) {
                 if (result.changed.children[child].state
                     && typeof result.changed.children[child].state.outOfScale !== 'undefined') {
-                    var changed = {changed: {children: result.changed.children, sourceIdx: result.changed.sourceIdx}};
-                    self.mbMap.fireModelEvent({name: 'sourceChanged', value: changed});//{options: result}});
+                    var changed = {
+                        changed: {
+                            children: result.changed.children,
+                            sourceIdx: result.changed.sourceIdx
+                        }
+                    };
+                    self.mbMap.fireModelEvent({
+                        name: 'sourceChanged',
+                        value: changed
+                    });//{options: result}});
                     break;
                 }
             }
@@ -503,10 +577,20 @@ Mapbender.Model = {
      *
      */
     _sourceLoadStart: function(e) {
-        var src = this.getSource({ollid: e.element.id});
+        var src = this.getSource({
+            ollid: e.element.id
+        });
         var mqLayer = this.map.layersList[src.mqlid];
         if (mqLayer.olLayer.getVisibility()) {
-            this.mbMap.fireModelEvent({name: 'sourceloadstart', value: {source: this.getSource({ollid: e.element.id})}});
+            this.mbMap.fireModelEvent({
+                name: 'sourceloadstart',
+                value: {
+                    source: this.getSource(
+                        {
+                            ollid: e.element.id
+                        })
+                }
+            });
         }
     },
     /**
@@ -516,23 +600,42 @@ Mapbender.Model = {
 //        var src = this.getSource({ollid: e.element.id});
 //        var mqLayer = this.map.layersList[src.mqlid];
 //        if (mqLayer.olLayer.getVisibility()) {
-        this.mbMap.fireModelEvent({name: 'sourceloadend', value: {source: this.getSource({ollid: e.element.id})}});
-//        }
+        this.mbMap.fireModelEvent({
+            name: 'sourceloadend',
+            value: {
+                source: this.getSource(
+                    {
+                        ollid: e.element.id
+                    })
+            }
+        });
     },
     /**
      *
      */
     _sourceLoadError: function(e, imgEl) {
-        var source = this.getSource({ollid: e.element.id});
+        var source = this.getSource({
+            ollid: e.element.id
+        });
         var mqLayer = this.map.layersList[source.mqlid];
         if (mqLayer.olLayer.getVisibility()) {
-            Mapbender.source[source.type].onLoadError(imgEl, source.id, this.map.olMap.getProjectionObject(), $.proxy(this.sourceLoadErrorCallback, this));
+            Mapbender.source[source.type].onLoadError(imgEl, source.id, this.map.olMap.getProjectionObject(), $.proxy(
+                this.sourceLoadErrorCallback, this));
         } else {
             this._sourceLoadeEnd(e);
         }
     },
     sourceLoadErrorCallback: function(loadError) {
-        this.mbMap.fireModelEvent({name: 'sourceloaderror', value: {source: this.getSource({'id': loadError.sourceId}), error: loadError}});
+        this.mbMap.fireModelEvent({
+            name: 'sourceloaderror',
+            value: {
+                source: this.getSource(
+                    {
+                        'id': loadError.sourceId
+                    }),
+                error: loadError
+            }
+        });
     },
     /**
      *
@@ -540,20 +643,31 @@ Mapbender.Model = {
     highlightOn: function(features, options) {
         var self = this;
         if (!this.highlightLayer) {
-            this.highlightLayer = this.map.layers({type: 'vector', label: 'Highlight'});
+            this.highlightLayer = this.map.layers({
+                type: 'vector',
+                label: 'Highlight'
+            });
             var selectControl = new OpenLayers.Control.SelectFeature(this.highlightLayer.olLayer, {
                 hover: true,
                 onSelect: function(feature) {
-                    self.mbMap._trigger('highlighthoverin', null, {feature: feature});
+                    self.mbMap._trigger('highlighthoverin', null, {
+                        feature: feature
+                    });
                 },
                 onUnselect: function(feature) {
-                    self.mbMap._trigger('highlighthoverout', null, {feature: feature});
+                    self.mbMap._trigger('highlighthoverout', null, {
+                        feature: feature
+                    });
                 }
             });
             this.map.olMap.addControl(selectControl);
             selectControl.activate();
         }
-        var o = $.extend({}, {clearFirst: true, "goto": true}, options);
+        var o = $.extend({}, {
+            clearFirst: true,
+            "goto": true
+        },
+        options);
         // Remove existing features if requested
         if (o.clearFirst) {
             this.highlightLayer.olLayer.removeAllFeatures();
@@ -563,7 +677,9 @@ Mapbender.Model = {
         // Goto features if requested
         if (o['goto']) {
             var bounds = this.highlightLayer.olLayer.getDataExtent();
-            this.map.center({box: bounds.toArray()});
+            this.map.center({
+                box: bounds.toArray()
+            });
         }
         this.highlightLayer.bind('featureselected', function() {
             self.mbMap._trigger('highlightselected', arguments);
@@ -594,14 +710,17 @@ Mapbender.Model = {
      * @param {object} options of form { sourceId: XXX, layerId: XXX, inherit: BOOL }
      */
     zoomToLayer: function(options) {
-        var sources = this.findSource({id: options.sourceId});
+        var sources = this.findSource({
+            id: options.sourceId
+        });
         if (sources.length === 1) {
             var extents = Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
             var proj = this.map.olMap.getProjectionObject();
             if (extents && extents[proj.projCode]) {
                 this.mbMap.zoomToExtent(OpenLayers.Bounds.fromArray(extents[proj.projCode]), true);
             } else {
-                var ext = null, extProj = null;
+                var ext = null;
+                var extProj = null;
                 for (srs in extents) {
                     extProj = this.getProj(srs);
                     if (extProj !== null) {
@@ -619,7 +738,9 @@ Mapbender.Model = {
         }
     },
     getLayerExtents: function(options) {
-        var sources = this.findSource({id: options.sourceId});
+        var sources = this.findSource({
+            id: options.sourceId
+        });
         if (sources.length === 1) {
             return Mapbender.source[sources[0].type].getLayerExtents(sources[0], options.layerId);
         }
@@ -631,24 +752,35 @@ Mapbender.Model = {
     addSource: function(addOptions) {
         var self = this;
         if (addOptions.add) {
-            var sourceDef = addOptions.add.sourceDef, before = addOptions.add.before, after = addOptions.add.after;
+            var sourceDef = addOptions.add.sourceDef;
+            var before = addOptions.add.before;
+            var after = addOptions.add.after;
             sourceDef.id = this.generateSourceId();
 
-            if (typeof sourceDef.origId === 'undefined')
+            if (typeof sourceDef.origId === 'undefined') {
                 sourceDef.origId = sourceDef.id;
+            }
             this.mbMap.fireModelEvent({
                 name: 'beforeSourceAdded',
-                value: {source: sourceDef, before: before, after: after}
+                value: {
+                    source: sourceDef,
+                    before: before,
+                    after: after
+                }
             });
             if (!this.getSourcePos(sourceDef)) {
                 if (!before && !after) {
-                    before = {source: this.sourceTree[this.sourceTree.length - 1]};
+                    before = {
+                        source: this.sourceTree[this.sourceTree.length - 1]
+                    };
                     after = null;
                 }
                 this.sourceTree.push(sourceDef);
             } else {
                 if (!before && !after) {
-                    before = {source: this.sourceTree[this.sourceTree.length - 1]};
+                    before = {
+                        source: this.sourceTree[this.sourceTree.length - 1]
+                    };
                     after = null;
                 }
             }
@@ -670,10 +802,27 @@ Mapbender.Model = {
                         self._sourceLoadeEnd(e);
                     }
                 });
-                this.mbMap.fireModelEvent({name: 'sourceAdded', value: {added: {source: source, before: before, after: after}}});
-                if (after)
+                this.mbMap.fireModelEvent({
+                    name: 'sourceAdded',
+                    value: {
+                        added: {
+                            source: source,
+                            before: before,
+                            after: after
+                        }
+                    }
+                });
+                if (after) {
                     this._moveSource(source, before, after);
-                this._checkAndRedrawSource({sourceIdx: {id: source.id}, options: {children: {}}});
+                }
+                this._checkAndRedrawSource({
+                    sourceIdx: {
+                        id: source.id
+                    },
+                    options: {
+                        children: {}
+                    }
+                });
             } else
                 this.sourceTree.splice(this.getSourcePos(sourceDef), 1);
         } else {
@@ -687,15 +836,22 @@ Mapbender.Model = {
         if (options.remove.sourceIdx) {
             var sourceToRemove = this.getSource(options.remove.sourceIdx);
             if (sourceToRemove) {
-                this.mbMap.fireModelEvent({name: 'beforeSourceRemoved', value: {source: sourceToRemove}});
+                this.mbMap.fireModelEvent({
+                    name: 'beforeSourceRemoved',
+                    value: {
+                        source: sourceToRemove
+                    }
+                });
                 var mqLayer = this.map.layersList[sourceToRemove.mqlid];
                 if (mqLayer) {
                     if (mqLayer.olLayer instanceof OpenLayers.Layer.Grid) {
                         mqLayer.olLayer.clearGrid();
                     }
                     var tileManager = this.map.olMap.tileManager;
-                    if(tileManager) {
-                        tileManager.clearTileQueue({object: mqLayer.olLayer});
+                    if (tileManager) {
+                        tileManager.clearTileQueue({
+                            object: mqLayer.olLayer
+                        });
                     }
                     var removedMq = mqLayer.remove();
                     if (removedMq) {
@@ -709,7 +865,12 @@ Mapbender.Model = {
                         if (this.map.layersList[sourceToRemove.mqlid]) {
                             delete(this.map.layersList[sourceToRemove.mqlid]);
                         }
-                        this.mbMap.fireModelEvent({name: 'sourceRemoved', value: {source: sourceToRemove}});
+                        this.mbMap.fireModelEvent({
+                            name: 'sourceRemoved',
+                            value: {
+                                source: sourceToRemove
+                            }
+                        });
                     }
                 }
             }
@@ -725,7 +886,13 @@ Mapbender.Model = {
         for (var i = 0; i < this.sourceTree.length; i++) {
             var source = this.sourceTree[i];
             if (!keepSources[source.id]) {
-                toRemoveArr.push({remove: {sourceIdx: {id: source.id}}});
+                toRemoveArr.push({
+                    remove: {
+                        sourceIdx: {
+                            id: source.id
+                        }
+                    }
+                });
             }
         }
         for (var i = 0; i < toRemoveArr.length; i++) {
@@ -740,43 +907,97 @@ Mapbender.Model = {
             var changeOpts = options.change;
             if (typeof changeOpts.options !== 'undefined') {
                 var sourceToChange = this.getSource(changeOpts.sourceIdx);
-                this.mbMap.fireModelEvent({name: 'beforeSourceChanged', value: {source: sourceToChange, changeOptions: changeOpts}});
+                this.mbMap.fireModelEvent({
+                    name: 'beforeSourceChanged',
+                    value: {
+                        source: sourceToChange,
+                        changeOptions: changeOpts
+                    }
+                });
                 if (changeOpts.options.type === 'selected') {
                     var result = this._checkAndRedrawSource(changeOpts);
-                    var changed = {changed: {children: result.children, sourceIdx: result.sourceIdx}};
-                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: changed});
+                    var changed = {
+                        changed: {
+                            children: result.children,
+                            sourceIdx: result.sourceIdx
+                        }
+                    };
+                    this.mbMap.fireModelEvent({
+                        name: 'sourceChanged',
+                        value: changed
+                    });
                 }
                 if (changeOpts.options.type === 'info') {
-                    var result = {infolayers: [], changed: {sourceIdx: {id: sourceToChange.id}, children: {}}};
+                    var result = {
+                        infolayers: [
+                        ],
+                        changed: {
+                            sourceIdx: {
+                                id: sourceToChange.id
+                            },
+                            children: {}
+                        }
+                    };
                     result = Mapbender.source[sourceToChange.type].checkInfoLayers(sourceToChange,
-                            this.getScale(), changeOpts, result);
+                        this.getScale(), changeOpts, result);
                     this.map.layersList[sourceToChange.mqlid].olLayer.queryLayers = result.infolayers;
-                    this.mbMap.fireModelEvent({name: 'sourceChanged', value: result});//{options: result}});
+                    this.mbMap.fireModelEvent({
+                        name: 'sourceChanged',
+                        value: result
+                    });//{options: result}});
                 }
                 if (changeOpts.options.type === 'toggle') {
 
                 }
             }
             if (changeOpts.move) {
-                var tomove = {source: this.getSource(changeOpts.move.tomove.sourceIdx)};
+                var tomove = {
+                    source: this.getSource(
+                        changeOpts.move.tomove.sourceIdx)
+                };
                 if (changeOpts.move.tomove.layerIdx) {
                     tomove['layerId'] = changeOpts.move.tomove.layerIdx.id;
                 }
                 var before = changeOpts.move.before;
-                if (before)
-                    before = {source: this.getSource(changeOpts.move.before.sourceIdx), layerId: changeOpts.move.before.layerIdx.id};
+                if (before) {
+                    before = {
+                        source: this.getSource(
+                            changeOpts.move.before.sourceIdx),
+                        layerId: changeOpts.move.before.layerIdx.id
+                    };
+                }
                 var after = changeOpts.move.after;
-                if (after)
-                    after = {source: this.getSource(changeOpts.move.after.sourceIdx), layerId: changeOpts.move.after.layerIdx.id};
+                if (after) {
+                    after = {
+                        source: this.getSource(
+                            changeOpts.move.after.sourceIdx),
+                        layerId: changeOpts.move.after.layerIdx.id
+                    };
+                }
                 this._moveSourceOrLayer(tomove, before, after);
             }
             if (changeOpts.layerRemove) {
                 var sourceToChange = this.getSource(changeOpts.layerRemove.sourceIdx);
-                var layerToRemove = Mapbender.source[sourceToChange.type].findLayer(sourceToChange, changeOpts.layerRemove.layer.options);
-                var removedLayer = Mapbender.source[sourceToChange.type].removeLayer(sourceToChange, layerToRemove.layer);
-                var changed = {changed: {childRemoved: removedLayer, sourceIdx: changeOpts.layerRemove.sourceIdx}};
-                this._checkAndRedrawSource({sourceIdx: changeOpts.layerRemove.sourceIdx, options: {children: {}}});
-                this.mbMap.fireModelEvent({name: 'sourceChanged', value: changed});
+                var layerToRemove = Mapbender.source[sourceToChange.type].findLayer(sourceToChange,
+                    changeOpts.layerRemove.layer.options);
+                var removedLayer = Mapbender.source[sourceToChange.type].removeLayer(sourceToChange,
+                    layerToRemove.layer);
+                var changed = {
+                    changed: {
+                        childRemoved: removedLayer,
+                        sourceIdx: changeOpts.layerRemove.sourceIdx
+                    }
+                };
+                this._checkAndRedrawSource({
+                    sourceIdx: changeOpts.layerRemove.sourceIdx,
+                    options: {
+                        children: {}
+                    }
+                });
+                this.mbMap.fireModelEvent({
+                    name: 'sourceChanged',
+                    value: changed
+                });
             }
         } else {
             window.console && console.error("CHECK options at model.changeSource");
@@ -792,14 +1013,15 @@ Mapbender.Model = {
      * @param {Object} options in form of:
      * {layers:{'LAYERNAME': {options:{treeOptions:{selected: bool,info: bool}}}}}
      */
-    changeLayerState: function(sourceIdObject, options, defaultSelected, mergeSelected){
-        if(typeof mergeSelected === 'undefined')
+    changeLayerState: function(sourceIdObject, options, defaultSelected, mergeSelected) {
+        if (typeof mergeSelected === 'undefined')
             mergeSelected = false;
-        if(typeof defaultSelected === 'undefined')
+        if (typeof defaultSelected === 'undefined')
             defaultSelected = false;
         var source = this.getSource(sourceIdObject);
-        if(source !== null){
-            var toChangeOptions = Mapbender.source[source.type].createOptionsLayerState(source, options, defaultSelected, mergeSelected);
+        if (source !== null) {
+            var toChangeOptions = Mapbender.source[source.type].createOptionsLayerState(source, options,
+                defaultSelected, mergeSelected);
             this.changeSource(toChangeOptions);
         }
 
@@ -807,22 +1029,36 @@ Mapbender.Model = {
     _moveSourceOrLayer: function(tomove, before, after) {
         var layerToMove;
         if (before && after
-                && before.source.id.toString() === after.source.id.toString()
-                && before.source.id.toString() === tomove.source.id.toString()) {
+            && before.source.id.toString() === after.source.id.toString()
+            && before.source.id.toString() === tomove.source.id.toString()) {
 //            window.console && console.log("move layer inside");
-            var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {id: before.layerId});
-            var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {id: after.layerId});
-            layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
+            var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {
+                id: before.layerId
+            });
+            var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {
+                id: after.layerId
+            });
+            layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
+                id: tomove.layerId
+            });
             this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, beforeLayer.idx, before, after);
         } else if (before && before.source.id.toString() === tomove.source.id.toString()) {
 //            window.console && console.log("move layer into last pos");
-            var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {id: before.layerId});
-            layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
+            var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {
+                id: before.layerId
+            });
+            layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
+                id: tomove.layerId
+            });
             this._reorderLayers(tomove.source, layerToMove.layer, beforeLayer.parent, beforeLayer.idx, before, after);
         } else if (after && after.source.id.toString() === tomove.source.id.toString()) {
 //            window.console && console.log("move layer into first pos");
-            var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {id: after.layerId});
-            layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
+            var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {
+                id: after.layerId
+            });
+            layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
+                id: tomove.layerId
+            });
             this._reorderLayers(tomove.source, layerToMove.layer, afterLayer.parent, afterLayer.idx, before, after);
         } else if (before && before.source.origId === tomove.source.origId) {
             alert("not implemented yet");
@@ -831,7 +1067,9 @@ Mapbender.Model = {
             if (count.simpleCount === 1) { // remove source
                 this._insertLayer(tomove, before, after);
             } else if (count.simpleCount > 1) {
-                var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
+                var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
+                    id: tomove.layerId
+                });
                 var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
                 this.addSource(source_new, before, after);
             }
@@ -850,7 +1088,9 @@ Mapbender.Model = {
                 if (count.simpleCount === 1) { // remove source
                     this._moveSource(tomove.source, before, after);
                 } else if (count.simpleCount > 1) {
-                    var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
+                    var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
+                        id: tomove.layerId
+                    });
                     var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
                     this.addSource(source_new, before, after);
                 }
@@ -866,7 +1106,9 @@ Mapbender.Model = {
                 if (count.simpleCount === 1) { // remove source
                     this._moveSource(tomove.source, before, after);
                 } else if (count.simpleCount > 1) {
-                    var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
+                    var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
+                        id: tomove.layerId
+                    });
                     var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
                     this.addSource(source_new, before, after);
                 }
@@ -879,16 +1121,26 @@ Mapbender.Model = {
                 alert("not implemented yet");
                 return;
                 if (after.source.id === before.source.id) {
-                    var layerToSplit = Mapbender.source[after.source.type].findLayer(after.source, {id: after.layerId});
+                    var layerToSplit = Mapbender.source[after.source.type].findLayer(after.source, {
+                        id: after.layerId
+                    });
                     var new_splitted = this._getNewFromList(after.source, layerToSplit.layer);
                     this.addSource(new_splitted, before, null);
                     var count = Mapbender.source[tomove.source.type].layerCount(tomove.source);
                     if (count.simpleCount === 1) { // move source
-                        this._moveSource(tomove.source, before, {source: new_splitted, layerId: after.layerId});
+                        this._moveSource(tomove.source, before, {
+                            source: new_splitted,
+                            layerId: after.layerId
+                        });
                     } else if (count.simpleCount > 1) {
-                        var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
+                        var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
+                            id: tomove.layerId
+                        });
                         var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
-                        this.addSource(source_new, before, {source: new_splitted, layerId: after.layerId});
+                        this.addSource(source_new, before, {
+                            source: new_splitted,
+                            layerId: after.layerId
+                        });
                     }
                 } else {
                     var count = Mapbender.source[tomove.source.type].layerCount(tomove.source);
@@ -903,9 +1155,14 @@ Mapbender.Model = {
                             this._concatSources(before_cur, after_cur);
                         }
                     } else if (count.simpleCount > 1) {
-                        var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
+                        var layerToMove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
+                            id: tomove.layerId
+                        });
                         var source_new = this._createSourceFromLayer(tomove.source, layerToMove.layer);
-                        this.addSource(source_new, before, {source: new_splitted, layerId: after.layerId});
+                        this.addSource(source_new, before, {
+                            source: new_splitted,
+                            layerId: after.layerId
+                        });
                     }
                 }
             }
@@ -915,9 +1172,13 @@ Mapbender.Model = {
      *
      */
     _concatSources: function(source1, source2) {
-        var pos1 = this.getSourcePos(source1), pos2 = this.getSourcePos(source2);
+        var pos1 = this.getSourcePos(source1),
+            pos2 =
+            this.getSourcePos(
+                source2);
         if (source1.configuration.url === source2.configuration.url && Math.abs(pos2 - pos1) === 1) {
-            var first, second;
+            var first,
+                second;
             if (pos1 < pos2) {
                 first = source1;
                 second = source2;
@@ -931,7 +1192,12 @@ Mapbender.Model = {
             if (layers.length > 0) {
                 var secondRoot = $.extend(true, {}, second.configuration.children[0]);
                 var toremove = this.createToChangeObj(second);
-                this.mbMap.fireModelEvent({name: 'beforeSourceRemoved', value: {toremove: toremove}});
+                this.mbMap.fireModelEvent({
+                    name: 'beforeSourceRemoved',
+                    value: {
+                        toremove: toremove
+                    }
+                });
                 var mqLayer = this.map.layersList[toremove.source.mqlid];
                 var removedMq = mqLayer.remove();
                 if (removedMq) {
@@ -945,15 +1211,24 @@ Mapbender.Model = {
                         delete(this.map.layersList[toremove.source.mqlid]);
                     }
                     var removedObj = this.createChangedObj(toremove.source);
-                    this.mbMap.fireModelEvent({name: 'sourceRemoved', value: removedObj});
+                    this.mbMap.fireModelEvent({
+                        name: 'sourceRemoved',
+                        value: removedObj
+                    });
                     var toadd = this.createToChangeObj(first);
-                    this.mbMap.fireModelEvent({name: 'beforeSourceAdded', value: toadd});
+                    this.mbMap.fireModelEvent({
+                        name: 'beforeSourceAdded',
+                        value: toadd
+                    });
                     var firstRoot = first.configuration.children[0];
                     firstRoot.children = firstRoot.children.concat(secondRoot.children);
                     for (var i = 0; i < layers.length; i++) {
                         var addedobj = this.createChangedObj(first);
                         addedobj.children[layers[i].options.id] = layers[i];
-                        this.mbMap.fireModelEvent({name: 'sourceAdded', value: addedobj});
+                        this.mbMap.fireModelEvent({
+                            name: 'sourceAdded',
+                            value: addedobj
+                        });
                     }
                     this._checkAndRedrawSource(first, this.map.layersList[first.mqlid], this.createToChangeObj(first));
                 }
@@ -971,16 +1246,31 @@ Mapbender.Model = {
         changed.layerId = added.options.id;
         changed.after = after;
         changed.before = before;
-        this.mbMap.fireModelEvent({name: 'sourceMoved', value: changed});
-        this._checkAndRedrawSource({sourceIdx: {id: source.id}, options: {children: {}}});
+        this.mbMap.fireModelEvent({
+            name: 'sourceMoved',
+            value: changed
+        });
+        this._checkAndRedrawSource({
+            sourceIdx: {
+                id: source.id
+            },
+            options: {
+                children: {}
+            }
+        });
     },
     /**
      *
      */
     _insertLayer: function(tomove, before, after) {
-        var layerToRemove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {id: tomove.layerId});
+        var layerToRemove = Mapbender.source[tomove.source.type].findLayer(tomove.source, {
+            id: tomove.layerId
+        });
         var count = Mapbender.source[tomove.source.type].layerCount(tomove.source);
-        var addedobj, tochange, toremove, removed;
+        var addedobj;
+        var tochange;
+        var toremove;
+        var removed;
         if (count.simpleCount === 1 && layerToRemove) {
             toremove = this.createToChangeObj(tomove.source);
             toremove.children[layerToRemove.layer.options.id] = layerToRemove.layer;
@@ -989,33 +1279,54 @@ Mapbender.Model = {
             removed = layerToRemove;
         } else if (count.simpleCount > 1 && layerToRemove) {
             removed = Mapbender.source[tomove.source.type].removeLayer(tomove.source, layerToRemove.layer);
-            this._checkAndRedrawSource(tomove.source, this.map.layersList[tomove.source.mqlid], this.createToChangeObj(tomove.source));
+            this._checkAndRedrawSource(tomove.source, this.map.layersList[tomove.source.mqlid], this.createToChangeObj(
+                tomove.source));
         } else {
             return;
         }
         if (before) {
             tochange = this.createToChangeObj(before.source);
-            this.mbMap.fireModelEvent({name: 'beforeSourceAdded', value: tochange});
-            var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {id: before.layerId});
-            var added = Mapbender.source[before.source.type].addLayer(before.source, removed.layer, beforeLayer.parent, beforeLayer.idx + 1);
+            this.mbMap.fireModelEvent({
+                name: 'beforeSourceAdded',
+                value: tochange
+            });
+            var beforeLayer = Mapbender.source[before.source.type].findLayer(before.source, {
+                id: before.layerId
+            });
+            var added = Mapbender.source[before.source.type].addLayer(before.source, removed.layer, beforeLayer.parent,
+                beforeLayer.idx + 1);
             addedobj = this.createChangedObj(before.source);
             //            addedobj = this.createChangedObj(after.source); ??????
             addedobj.children[added.options.id] = added;
             addedobj.before = before;
             addedobj.after = after;
-            this.mbMap.fireModelEvent({name: 'sourceAdded', value: addedobj});
-            this._checkAndRedrawSource(before.source, this.map.layersList[before.source.mqlid], this.createToChangeObj(before.source));
+            this.mbMap.fireModelEvent({
+                name: 'sourceAdded',
+                value: addedobj
+            });
+            this._checkAndRedrawSource(before.source, this.map.layersList[before.source.mqlid], this.createToChangeObj(
+                before.source));
         } else if (after) {
             tochange = this.createToChangeObj(after.source);
-            this.mbMap.fireModelEvent({name: 'beforeSourceAdded', value: tochange});
-            var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {id: after.layerId});
-            var added = Mapbender.source[after.source.type].addLayer(after.source, removed.layer, afterLayer.parent, afterLayer.idx);
+            this.mbMap.fireModelEvent({
+                name: 'beforeSourceAdded',
+                value: tochange
+            });
+            var afterLayer = Mapbender.source[after.source.type].findLayer(after.source, {
+                id: after.layerId
+            });
+            var added = Mapbender.source[after.source.type].addLayer(after.source, removed.layer, afterLayer.parent,
+                afterLayer.idx);
             addedobj = this.createChangedObj(after.source);
             addedobj.children[added.options.id] = added;
             addedobj.before = before;
             addedobj.after = after;
-            this.mbMap.fireModelEvent({name: 'sourceAdded', value: addedobj});
-            this._checkAndRedrawSource(after.source, this.map.layersList[after.source.mqlid], this.createToChangeObj(after.source));
+            this.mbMap.fireModelEvent({
+                name: 'sourceAdded',
+                value: addedobj
+            });
+            this._checkAndRedrawSource(after.source, this.map.layersList[after.source.mqlid], this.createToChangeObj(
+                after.source));
         }
 
     },
@@ -1049,7 +1360,10 @@ Mapbender.Model = {
         var changed = this.createChangedObj(source);
         changed.after = after;
         changed.before = before;
-        this.mbMap.fireModelEvent({name: 'sourceMoved', value: changed});
+        this.mbMap.fireModelEvent({
+            name: 'sourceMoved',
+            value: changed
+        });
     },
     /**
      *
@@ -1058,7 +1372,10 @@ Mapbender.Model = {
         var removed = Mapbender.source[source.type].removeLayer(source, layerToMove);
         var removedObj = this.createChangedObj(source);
         removedObj.children[removed.layer.options.id] = removed.layer;
-        this.mbMap.fireModelEvent({name: 'sourceRemoved', value: removedObj});
+        this.mbMap.fireModelEvent({
+            name: 'sourceRemoved',
+            value: removedObj
+        });
         this._checkAndRedrawSource(source, this.map.layersList[source.mqlid], this.createToChangeObj(source));
 
         var source_new = $.extend(true, {}, source);
@@ -1082,7 +1399,10 @@ Mapbender.Model = {
                 Mapbender.source[source.type].removeLayer(source, layers[i]);
                 source_new.configuration.children[0].children.push(layers[i]);
             }
-            this.mbMap.fireModelEvent({name: 'sourceRemoved', value: removed});
+            this.mbMap.fireModelEvent({
+                name: 'sourceRemoved',
+                value: removed
+            });
             this._checkAndRedrawSource(source, this.map.layersList[source.mqlid], this.createToChangeObj(source));
             return source_new;
         } else {
@@ -1119,7 +1439,12 @@ Mapbender.Model = {
             layer.initResolutions();
         });
         this.map.olMap.setCenter(center, this.map.olMap.getZoom(), false, true);
-        this.mbMap.fireModelEvent({name: 'srschanged', value: {projection: srs.projection}});
+        this.mbMap.fireModelEvent({
+            name: 'srschanged',
+            value: {
+                projection: srs.projection
+            }
+        });
     },
     /*
      * Transforms an extent into destProjection projection.
@@ -1145,7 +1470,8 @@ Mapbender.Model = {
             layer = layer.olLayer;
         }
         if (!this.layersMaxExtent[layer.id]) {
-            var proj, maxExt;
+            var proj;
+            var maxExt;
             if (layer.options.configuration) {
                 var bboxes = layer.options.configuration.configuration.options.bbox;
                 /* TODO? add "if" for source type 'wms' etc. */
@@ -1161,7 +1487,10 @@ Mapbender.Model = {
                 proj = this.proj;
                 maxExt = layer.maxExtent ? layer.maxExtent.clone() : null;
             }
-            this.layersMaxExtent[layer.id] = {projection: proj, extent: maxExt};
+            this.layersMaxExtent[layer.id] = {
+                projection: proj,
+                extent: maxExt
+            };
         }
     },
     /**
@@ -1182,9 +1511,14 @@ Mapbender.Model = {
         if (ids.length) {
             $.each(ids, function(idx, id) {
                 var id = id.split('/');
-                if(1 < id.length){
-                    var layer = self.findLayer({origId: id[0]}, {origId: id[1]});
-                    if(layer){
+                if (1 < id.length) {
+                    var layer = self.findLayer({
+                        origId: id[0]
+                    },
+                    {
+                        origId: id[1]
+                    });
+                    if (layer) {
                         var options = {};
                         options.layers = {};
                         options.layers[layer.layer.options.id] = {
@@ -1194,7 +1528,12 @@ Mapbender.Model = {
                                 }
                             }
                         };
-                        self.changeLayerState({origId: id[0]}, options, false, true);
+                        self.changeLayerState({
+                            origId: id[0]
+                        },
+                        options,
+                            false,
+                            true);
                     }
                 }
             });
