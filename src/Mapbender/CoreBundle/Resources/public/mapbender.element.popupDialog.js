@@ -16,6 +16,7 @@
          */
         _create: function() {
             var element = $(this.element);
+            var widget = this;
 
             // overrides default options
             $.extend(this.options, {
@@ -50,13 +51,14 @@
             element.dialogExtend($.extend(true, {
                 closable:    true,
                 maximizable: true,
+                //dblclick: true,
                 //minimizable: true,
                 //modal: true,
                 collapsable: true
             }, this.options));
 
+            var dialog = element.closest('.ui-dialog');
             if(this.options.modal){
-                var dialog = element.closest('.ui-dialog');
                 var modal = $('<div class="mb-element-modal-dialog"><div class="background" unselectable="on"></div></div>');
 
                 modal.insertBefore(dialog);
@@ -72,6 +74,15 @@
                     });
                 });
             }
+
+            // Fullscreen on double click
+            $(dialog).dblclick(function() {
+                if(element.dialogExtend('state') == 'normal'){
+                    element.dialogExtend('maximize');
+                }else{
+                    element.dialogExtend('restore');
+                }
+            });
 
             return result;
         },
