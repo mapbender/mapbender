@@ -10,6 +10,9 @@
 @import "element/tab_navigator";
 @import "element/result_table";
 
+body{
+  overflow: hidden;
+}
 
 /*
   Override bootstrap standard declaration
