@@ -20,7 +20,15 @@ body{
 .modal-body {
   padding: 10px;
 
+  .form-group {
+    margin-bottom: 5px;
+    > label {
+
+    }
+  }
+
   label {
+    margin-bottom: 0px;
     font-size: 11px;
     color: #707070;
   }
@@ -42,6 +50,7 @@ body{
   input[type="email"],
   input[type="file"]
   {
+    color: #555;
     font-size: 11px;
     border: solid 1px #c8c8c8;
     background-color: #ffffff;
@@ -50,6 +59,14 @@ body{
     height: 29px;
     display: block;
     width: 100%;
+  }
+
+  select{
+    padding: 2px 3px;
+  }
+
+  select[multiple]{
+    height: auto;
   }
 
   textarea{
@@ -124,7 +141,7 @@ form {
 //  }
 
   .form-group {
-    > label{
+    > label {
       margin-bottom: 0px;
     }
 

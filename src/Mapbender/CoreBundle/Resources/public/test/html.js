@@ -34,7 +34,7 @@
         options:      {},
         declarations: {
             html:   {
-                init: function(item) {
+                init: function(item, declarations) {
                     var container = $('<div class="html-element"/>');
                     return container.html(typeof item === 'string' ? item : JSON.stringify(item));
                 }
@@ -58,6 +58,9 @@
                 init: function(item, declarations) {
                     var inputField = $('<input class="form-control"/>');
                     var container = $('<div class="form-group"/>');
+                    var type = has(declarations, 'type') ? declarations.type : 'text';
+
+                    inputField.attr('type', type);
 
                     if(has(item, 'name')) {
                         inputField.attr('name', item.name);
@@ -71,7 +74,7 @@
                         inputField.val(item.value);
                     }
 
-                    if(has(inputField, 'text')) {
+                    if(has(item, 'text')) {
                         container.append(declarations.label.init(item, declarations));
                     }
 
@@ -92,14 +95,111 @@
                     return label;
                 }
             },
-            'form-group':{
-                init: function(){
-                    return;
+            checkbox: {
+                init: function(item, declarations) {
+                    var container = $('<div class="checkbox"/>');
+                    var label = $('<label/>');
+                    var input = $('<input type="checkbox"/>');
+
+                    label.append(input);
+
+                    if(has(item, 'name')) {
+                        input.attr('name', item.name);
+                    }
+
+                    if(has(item, 'value')) {
+                        input.val(item.value);
+                    }
+
+                    if(has(item, 'text')) {
+                        label.append( item.text );
+                    }
+
+                    if(has(item, 'checked')) {
+                        input.attr('checked', "checked");
+                    }
+
+                    container.append(label);
+                    return container;
+                }
+            },
+            radio: {
+                init: function(item, declarations) {
+                    var container = $('<div class="radio"/>');
+                    var label = $('<label/>');
+                    var input = $('<input type="radio"/>');
+
+                    label.append(input);
+
+                    if(has(item, 'name')) {
+                        input.attr('name', item.name);
+                    }
+
+                    if(has(item, 'text')) {
+                        label.append( item.text );
+                    }
+
+                    if(has(item, 'value')) {
+                        input.val(item.value);
+                    }
+
+                    if(has(item, 'checked')) {
+                        input.attr('checked', "checked");
+                    }
+
+
+                    container.append(label);
+                    return container;
+                }
+            },
+            textarea: {
+                init: function(item, declarations) {
+                    var input = $('<textarea class="form-control" rows="3"/>');
+
+                    if(has(item, 'value')) {
+                        input.val(item.value);
+                    }
+
+                    $.each(['name','rows','placeholder'],function(i,key){
+                        if(has(item, key)) {
+                            input.attr(key, item[key]);
+                        }
+                    });
+
+                    return input;
+                }
+            },
+            select: {
+                init: function(item, declarations) {
+                    var container = $('<div class="form-group"/>');
+                    var select = $('<select class="form-control"/>');
+
+                    $.each(['name'],function(i,key){
+                        if(has(item, key)) {
+                            select.attr(key, item[key]);
+                        }
+                    });
+
+                    if(has(item, 'multiple') && item.multiple) {
+                        select.attr('multiple', 'multiple');
+                    }
+
+                    if(has(item, 'options')) {
+                        $.each(item.options,function(value,title){
+                            var option = $("<option/>");
+                            option.attr('value',value);
+                            option.html(title);
+                            option.data(this);
+                            select.append(option);
+                        });
+                    }
+                    container.append(select);
+
+                    return container;
                 }
             }
-
         },
-        _create: function() {
+        _create:      function() {
             this._setOptions(this.options);
         },
 
@@ -133,32 +233,61 @@
         }
     });
 
-    var popup = $("<div/>").popupDialog();
+    var popup = $("<div/>").popupDialog({title: 'Form generator test',width: "400px"});
 
     popup.generateElements({
         items: [{
             type: 'label',
-            text: 'Label TEST'
+            text: 'Anrede'
+        }, {
+            type:    'select',
+            name:    'gender',
+            options: {
+                male:   'Herr',
+                female: 'Frau'
+            }
+        }, {
+            type:     'select',
+            name:     'titul',
+            multiple: true,
+            options:  ['Prof.','Dr.', 'med.', 'jur.','vet.','habil.']
         }, {
             type:        'input',
             name:        'name',
-            text:        'Name',
-            placeholder: 'Enter your name'
+            placeholder: 'Name'
         }, {
             type:        'input',
             name:        'Nachname',
-            text:        'Nachname',
             placeholder: 'Nachname'
+
+        }, {
+            type:        'textarea',
+            name:        'description',
+            placeholder: 'Beschreibung'
         }, {
             type:        'input',
             name:        'email',
             text:        'E-Mail',
-            placeholder: 'eslider@gmail.com'
-        },
-        "<div style='background-color: #ff0000; height: 2px'/>", {
+            placeholder: 'E-Mail'
+        }, {
+            type:  'checkbox',
+            name:  'check1',
+            value: true,
+            text:  'Check me'
+        }, {
+            type:  'radio',
+            name:  'radio1',
+            value: 'test1',
+            text:  'Radio #1'
+        }, {
+            type:  'radio',
+            name:  'radio1',
+            value: 'test2',
+            text:  'Radio #2'
+        }, "<div style='background-color: #ff0000; height: 2px'/>", {
             type:     'submit',
             cssClass: 'right',
-            click: function(){
+            click:    function() {
                 console.log('CLICK');
             }
         }]
