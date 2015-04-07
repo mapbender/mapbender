@@ -61,6 +61,7 @@ body{
     width: 100%;
   }
 
+
   select{
     padding: 2px 3px;
   }
@@ -75,8 +76,8 @@ body{
 
   input[type="file"]{
     padding: 0;
+    height: 24px;
   }
-
 
   input.form-control {
     &[type='password'],
