@@ -441,11 +441,11 @@ Mapbender.Model = {
                 if (options.source && layerset[i][options.source.origId]) {
                     return {
                         id: layersetId,
-                        title: Mapbender.configuration.layersetmap[layersetId]
+                        title: Mapbender.configuration.layersetmap[layersetId],
+                        content: layerset
                     };
                 }
             }
-
         }
         return null;
     },
