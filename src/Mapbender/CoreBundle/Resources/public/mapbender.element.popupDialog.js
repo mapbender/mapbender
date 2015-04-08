@@ -76,7 +76,12 @@
             }
 
             // Fullscreen on double click
-            $(dialog).dblclick(function() {
+            $(dialog).dblclick(function(event) {
+                var target = $(event.target);
+                if(!target.is('.ui-dialog-titlebar, .ui-dialog-title')){
+                    return;
+                }
+
                 if(element.dialogExtend('state') == 'normal'){
                     element.dialogExtend('maximize');
                 }else{
