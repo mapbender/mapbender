@@ -20,6 +20,10 @@ body{
 .modal-body {
   padding: 10px;
 
+  .nav.nav-tabs.ui-tabs-nav{
+    padding: 0;
+  }
+
   .form-group {
     margin-bottom: 5px;
     > label {

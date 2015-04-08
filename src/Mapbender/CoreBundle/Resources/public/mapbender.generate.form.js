@@ -39,15 +39,17 @@
         options:      {},
         declarations: {
             popup: function(item, declarations, widget) {
-                var popup = $("<div/>")
-
+                var popup = $("<div/>");
                 if(has(item, 'items')) {
                     $.each(item.items, function(k, item) {
                         popup.append(widget.genElement(item));
-                    })
+                    });
                 }
+                window.setTimeout(function() {
+                    popup.popupDialog(item)
+                }, 1);
 
-                popup.popupDialog(item);
+
                 return popup;
             },
 

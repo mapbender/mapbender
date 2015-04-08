@@ -5,12 +5,12 @@
  */
 (function($) {
 
-    return ;
+    //return ;
 
     /**
      * Tests
      */
-    var popup = $("<div/>").popupDialog({
+    var popup= $("<div/>").popupDialog({
         title: 'Form generator test',
         width: "423px"
     });

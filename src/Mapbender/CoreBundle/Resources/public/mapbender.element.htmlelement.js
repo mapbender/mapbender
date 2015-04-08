@@ -12,7 +12,8 @@
                 if(items[0].type == "popup") {
                     element = $("<div/>");
                 }
-                element.generateElements({items: items});
+                    element.generateElements({items: items});
+
             }
         }
     });
