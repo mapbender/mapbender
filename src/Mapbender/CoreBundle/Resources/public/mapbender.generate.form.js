@@ -52,7 +52,6 @@
 
                 return popup;
             },
-
             form: function(item, declarations, widget) {
                 var form = $('<form/>');
                 if(has(item, 'items')) {
@@ -256,7 +255,6 @@
                 container.append(input);
                 return container;
             },
-
             tabs: function(item, declarations, widget) {
                 var container = $('<div/>');
                 var tabs = [];
