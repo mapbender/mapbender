@@ -9,7 +9,9 @@
             displayType: 'tabs',
             printResult: false,
             showOriginal: false,
-            onlyValid: false
+            onlyValid: false,
+            width: 700,
+            height: 500
         },
         target: null,
         model: null,
@@ -91,6 +93,11 @@
             var y = e.xy.y;
             var num = 0;
             var called = false;
+
+            console.log(this.options.width);
+            console.log(this);
+
+
             if (!self.options.onlyValid) {
                 this._setContentEmpty();
             } else if (self.options.onlyValid && this._isVisible()) {
@@ -266,8 +273,8 @@
                         closeOnESC: false,
                         content: this.element.removeClass('hidden'),
                         resizable: true,
-                        width: 700,
-                        height: 500,
+                        width: self.options.width,
+                        height: self.options.height,
                         buttons: {
                             'ok': {
                                 label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
