@@ -48,6 +48,7 @@ class Fullscreen extends Template
                 '@MapbenderCoreBundle/Resources/public/regional/EventDispatcher.js',
                 '@MapbenderCoreBundle/Resources/public/libs/StringHelper.js',
                 '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/fn.formData.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.generate.form.js',
 
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
