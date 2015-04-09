@@ -377,7 +377,7 @@
 
                 var frame = settings.frame = $("<div/>").addClass('frame').data(settings);
                 var tools = settings.tools = $("<div/>").mbDigitizerToolset({items: self.toolsets[settings.geomType], layer: layer});
-                var columns = []
+                var columns = [];
                 $.each(settings.tableFields, function(fieldName){
                     columns.push({data: "properties."+fieldName, title: this.label});
                 });
@@ -393,16 +393,6 @@
                     selectable: false,
                     autoWidth: false,
                     columns:  columns,
-//                        {data: 'id', title: 'ID'},
-//                        {
-//                            data: null, 
-//                            title: 'SRID',
-//                            render: function ( feature ) {
-//                                return "<button class='feature-locate' data-id='"+feature.id+"'>locate</button>";
-//                            }
-//                        }
-//                    ],
-                    //scrollY:       "150px",
                     buttons: [
                         {
                             title: 'E',
