@@ -46,6 +46,9 @@ $.fn.formData = function(values) {
             switch (this.type) {
                 case 'checkbox':
                 case 'radio':
+                    if(values.hasOwnProperty(this.name) && values[this.name] != null){
+                       return;
+                    }
                     value = input.is(':checked') ? input.val() : null;
                     break;
                 default:
