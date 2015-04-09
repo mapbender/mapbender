@@ -15,6 +15,61 @@
         width: "423px"
     });
 
+    popup.generateElements({
+        items: [{
+            type:  "tabs",
+            items: [
+                {type: "form", title: "Formular #1", items:[
+                    {type: "html", html: "<div>TEST</div>", click: function(){
+                        console.log(this);
+                    }},
+                    {type: "input", name: "Test"},
+                    {type: "select", options: ["Herr","Frau"], name: "gender"},
+                    {type: "input"},
+                    {type: "radio", name: "accetion", text:"Ja", value: "1" },
+                    {type: "radio", name: "accetion", text:"Nein", value: "2"},
+                    {type: "inline", items:[
+                        {type: "input"}, {
+                            type: "label",
+                            text: "Name",
+                            css:  {
+                                "padding-left": "20px",
+                                "padding-right": "20px"
+                            }
+                        },
+                        {type: "input"},
+
+                    ]},
+                    {type: "tabs", items:[{
+                     type: "HTML", title: "test tab 1", html: "test"
+                    },{
+                        type: "HTML", title: "test tab 2", html: "test 2"
+                    }]},
+                    {type: "button", title: "OK", cssClass: "right", click: function(){
+                        console.log(popup.formData());
+                        return false;
+                    }}, {
+                        type:     "button",
+                        title:    "Fill",
+                        cssClass: "right",
+                        click:    function() {
+                            popup.formData({
+                                Test:     "Beispiel",
+                                accetion: 2,
+                                gender:   1
+                            });
+
+                            return false;
+                        }
+                    }
+                ]},
+                {type: "checkbox"}
+            ]
+        }]
+    });
+
+
+
     var items2 = [{
         type:  'inline',
         items: [{
@@ -191,30 +246,30 @@
         }
     }];
 
-    popup.generateElements({
-        items: [{
-            type:  'tabs',
-            items: [{
-                type:  'form',
-                title: 'Form 1',
-                items: tabFormItems
-            }, {
-                type: 'form',
-                title: 'Form 2',
-                items:[
-                    {
-                        text: 'Test Label:',
-                        type:  'input',
-                        title: 'Text tab',
-                        placeholder: 'Test input'
-                    }
-                ]
-            }, {
-                type:  'html',
-                title: 'Text tab',
-                html:  'Beispiel Text'
-            }]
-        }]
-    });
+    //popup.generateElements({
+    //    items: [{
+    //        type:  'tabs',
+    //        items: [{
+    //            type:  'form',
+    //            title: 'Form 1',
+    //            items: tabFormItems
+    //        }, {
+    //            type: 'form',
+    //            title: 'Form 2',
+    //            items:[
+    //                {
+    //                    text: 'Test Label:',
+    //                    type:  'input',
+    //                    title: 'Text tab',
+    //                    placeholder: 'Test input'
+    //                }
+    //            ]
+    //        }, {
+    //            type:  'html',
+    //            title: 'Text tab',
+    //            html:  'Beispiel Text'
+    //        }]
+    //    }]
+    //});
 
 })(jQuery);

@@ -274,6 +274,23 @@
                 container.tabNavigator({items: tabs});
 
                 return container;
+            },
+            fieldSet: function(item, declarations, widget) {
+                var fieldSet = $("<fieldset/>");
+                if(has(item, 'items')) {
+                    $.each(item.items, function(k, subItem) {
+                        var htmlElement = widget.genElement(subItem);
+                        var tab = {
+                            html: htmlElement
+                        };
+
+                        if(has(subItem, 'title')) {
+                            tab.title = subItem.title;
+                        }
+                        tabs.push(tab);
+                    });
+                }
+                return fieldSet;
             }
         },
 
@@ -297,7 +314,9 @@
                 element.addClass(item.cssClass);
             }
 
+
             if(has(item, 'css')) {
+
                 element.css(item.css);
             }
 
