@@ -204,3 +204,22 @@ $pageWidth:$contentPaneWidth + $navWidth;
 .icon[data-state="new"]{
   @extend .iconFile;
 }
+
+div[data-type="datetime"] {
+  position: relative;
+  display: inline-block;
+  min-width: 300px;
+  margin-bottom: 10px;
+}
+
+div[data-type="datetime"] div:first-child div.dropdown{
+  min-width: 98px;
+  display: inline-block;
+  margin-right: 3px;
+  margin-bottom: 10px;
+}
+div[data-type="datetime"] div:last-child div.dropdown{
+  min-width: 144px;
+  display: inline-block;
+  margin-right: 3px;
+}
