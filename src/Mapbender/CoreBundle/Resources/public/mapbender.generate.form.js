@@ -313,7 +313,9 @@
                 element.addClass(item.cssClass);
             }
 
-            addEvents(element,item);
+            if(typeof item == "object") {
+                addEvents(element, item);
+            }
 
             if(has(item, 'css')) {
 
