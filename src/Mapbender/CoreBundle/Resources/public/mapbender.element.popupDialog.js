@@ -16,6 +16,7 @@
          */
         _create: function() {
             var element = $(this.element);
+            var widget = this;
 
             // overrides default options
             $.extend(this.options, {
@@ -29,14 +30,15 @@
                 }
             });
 
-            // resize dialog height fix
+            //resize dialog height fix
             element.bind('popupdialogresize', function(e, ui) {
                 var win = $(e.target).closest('.ui-dialog');
                 var height = 0;
-                $.each($('.modal-header,.modal-body,.modal-footer', win), function(idx, el) {
+                $.each($('> .modal-header, > .modal-body, > .modal-footer', win), function(idx, el) {
                     height += $(el).outerHeight();
                 });
-                win.height(height);
+                win.height(Math.round(height));
+                //$("> .modal-body",win).height(height-40);
             });
 
             // prevent key listening outside the dialog
@@ -49,13 +51,14 @@
             element.dialogExtend($.extend(true, {
                 closable:    true,
                 maximizable: true,
+                //dblclick: true,
                 //minimizable: true,
                 //modal: true,
                 collapsable: true
             }, this.options));
 
+            var dialog = element.closest('.ui-dialog');
             if(this.options.modal){
-                var dialog = element.closest('.ui-dialog');
                 var modal = $('<div class="mb-element-modal-dialog"><div class="background" unselectable="on"></div></div>');
 
                 modal.insertBefore(dialog);
@@ -71,6 +74,20 @@
                     });
                 });
             }
+
+            // Fullscreen on double click
+            $(dialog).dblclick(function(event) {
+                var target = $(event.target);
+                if(!target.is('.ui-dialog-titlebar, .ui-dialog-title')){
+                    return;
+                }
+
+                if(element.dialogExtend('state') == 'normal'){
+                    element.dialogExtend('maximize');
+                }else{
+                    element.dialogExtend('restore');
+                }
+            });
 
             return result;
         },

@@ -38,6 +38,11 @@ $.fn.formData = function(values) {
         $.each(inputs, function() {
             var input = $(this);
             var value;
+
+            if(this.name == ""){
+                return;
+            }
+
             switch (this.type) {
                 case 'checkbox':
                 case 'radio':

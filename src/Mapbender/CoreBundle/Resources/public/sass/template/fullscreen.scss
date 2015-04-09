@@ -1,14 +1,18 @@
 @import "libs/variables";
-@import "libs/mixins";
-@import "theme/mapbender3";
-@import "../fonts/opensans_regular_macroman/stylesheet";
 @import "../regional/vendor/normalize.3.0.1";
+@import "libs/mixins";
+@import "libs/icons";
+@import "../fonts/opensans_regular_macroman/stylesheet";
 @import "../regional/vendor/bootstrap/3.2.0/css/bootstrap_base";
+@import "theme/mapbender3";
 
 @import "element/popup_dialog";
 @import "element/tab_navigator";
 @import "element/result_table";
 
+body{
+  overflow: hidden;
+}
 
 /*
   Override bootstrap standard declaration
@@ -16,7 +20,19 @@
 .modal-body {
   padding: 10px;
 
+  .nav.nav-tabs.ui-tabs-nav{
+    padding: 0;
+  }
+
+  .form-group {
+    margin-bottom: 5px;
+    > label {
+
+    }
+  }
+
   label {
+    margin-bottom: 0px;
     font-size: 11px;
     color: #707070;
   }
@@ -38,6 +54,7 @@
   input[type="email"],
   input[type="file"]
   {
+    color: #555;
     font-size: 11px;
     border: solid 1px #c8c8c8;
     background-color: #ffffff;
@@ -48,14 +65,23 @@
     width: 100%;
   }
 
+
+  select{
+    padding: 2px 3px;
+  }
+
+  select[multiple]{
+    height: auto;
+  }
+
   textarea{
     height: auto;
   }
 
   input[type="file"]{
     padding: 0;
+    height: 24px;
   }
-
 
   input.form-control {
     &[type='password'],
@@ -120,7 +146,7 @@ form {
 //  }
 
   .form-group {
-    > label{
+    > label {
       margin-bottom: 0px;
     }
 
@@ -238,7 +264,11 @@ form{
 /* --------------------------------------------------------- TOOLBARS */
 .toolBar{
   z-index:4;
-  label, span{font-family: $fontFamily;}
+  label, span{
+    font-family: $fontFamily;
+    font-weight: normal;
+    font-size: 11px;
+  }
   &.top{position:relative;}
   &.bottom{@include absolute('' 0 0 0);}
 }
