@@ -249,6 +249,14 @@ class FeatureType extends ContainerAware
         
         $result     = $connection->insert($this->tableName, $data);
         $lastId     = $connection->lastInsertId();
+        if($lastId < 1){
+            switch ($connection->getDatabasePlatform()->getName()) {
+                case self::POSTGRESQL_PLATFORM:
+                    $lastId =  $connection->executeQuery("SELECT currval(pg_get_serial_sequence('".$this->tableName."','".$this->getUniqueId()."'))")->fetchColumn();
+                    break;
+            }
+        }
+
         $feature->setId($lastId);
         return $feature;
     }
