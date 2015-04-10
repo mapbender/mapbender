@@ -152,13 +152,10 @@ class Digitizer extends Element
                 $results = $featureType->toFeatureCollection($results);
                 break;
 
-            case 'remove':
+            case 'delete':
                 // remove once
-                if(isset($request['feature'])){
-                    $results[] =  array($featureType->remove($request['feature']));
-                }
-                $results = $featureType->toFeatureCollection($results);
-                break;
+                $results =  $featureType->remove($request['feature'])->getId();
+
         }
 
         return new JsonResponse($results);
