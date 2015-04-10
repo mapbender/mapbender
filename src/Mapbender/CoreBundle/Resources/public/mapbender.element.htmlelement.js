@@ -1,6 +1,4 @@
 (function($) {
-    console.log("HTML ELEMENT READY");
-
     $.widget("mapbender.mbHTMLElement", {
         _create: function() {
             var widget = this;
@@ -12,8 +10,7 @@
                 if(items[0].type == "popup") {
                     element = $("<div/>");
                 }
-                    element.generateElements({items: items});
-
+                element.generateElements({items: items});
             }
         }
     });
