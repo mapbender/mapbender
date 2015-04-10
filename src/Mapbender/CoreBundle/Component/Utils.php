@@ -40,11 +40,11 @@ class Utils
         $pos = strpos($baseUrl, "?");
         if ($pos === false) {
             $url = $baseUrl . "?";
-        } else if (strlen($baseUrl) - 1 !== $pos) {
+        } elseif (strlen($baseUrl) - 1 !== $pos) {
             $pos = strpos($baseUrl, "&");
             if ($pos === false) {
                 $url = $baseUrl . "&";
-            } else if (strlen($baseUrl) - 1 !== $pos) {
+            } elseif (strlen($baseUrl) - 1 !== $pos) {
                 $url = $baseUrl . "&";
             } else {
                 $url = $baseUrl;
@@ -54,7 +54,7 @@ class Utils
         }
         if (is_string($parameters)) {
             return $url . $parameters;
-        } else if (is_array($parameters)) {
+        } elseif (is_array($parameters)) {
             $params = array();
             foreach ($parameters as $key => $value) {
                 if (is_string($key)) {
@@ -78,7 +78,7 @@ class Utils
     {
         if (is_file($path)) {
             return @unlink($path);
-        } else if (is_dir($path)) {
+        } elseif (is_dir($path)) {
             foreach (scandir($path) as $file) {
                 if ($file !== '.' && $file !== '..' && (is_file($path . "/" . $file) || is_dir($path . "/" . $file))) {
                     Utils::deleteFileAndDir($path . "/" . $file);
@@ -109,7 +109,7 @@ class Utils
      */
     public static function copyOrderRecursive($sourceOrder, $destinationOrder)
     {
-        $dir = opendir($sourceOrder);
+        $dir  = opendir($sourceOrder);
         @mkdir($destinationOrder);
         while (false !== ( $file = readdir($dir))) {
             if (( $file != '.' ) && ( $file != '..' )) {
@@ -156,11 +156,25 @@ class Utils
      * @param       $keyFrom
      * @param       $keyTo
      */
-    public static function replaceKey(array &$data, $keyFrom, $keyTo )
+    public static function replaceKey(array &$data, $keyFrom, $keyTo)
     {
         if (isset($data[$keyFrom])) {
             $data[$keyTo] = &$data[$keyFrom];
             unset($data[$keyFrom]);
         }
+    }
+
+    /**
+     * Generates an UUID.
+     * @return string uuid
+     */
+    public static function guidv4()
+    {
+        $data = openssl_random_pseudo_bytes(16);
+
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0010
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }

@@ -375,11 +375,11 @@
         },
         _createSourceTree: function(source, sourceEl, scale, type, isroot) {
             if (sourceEl.type) {
-                var li = "";
-                sourceEl.layers = [];
-                for (var i = 0; i < sourceEl.configuration.children.length; i++) {
-                    li = this._createSourceTree(source, sourceEl.configuration.children[i], scale, sourceEl.type,
-                        true);
+                var li = this._createSourceTree(source, sourceEl.configuration.children[0], scale, sourceEl.type,
+                    true);
+                if (sourceEl.configuration.status !== 'ok') {
+                    li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
+                        sourceEl.configuration.status);
                 }
             } else {
                 var config = this._getNodeProporties(sourceEl);
