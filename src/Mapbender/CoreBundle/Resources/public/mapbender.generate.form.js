@@ -106,8 +106,12 @@
                 var inputField = $('<input class="form-control"/>');
                 var container = $('<div class="form-group"/>');
                 var type = has(declarations, 'type') ? declarations.type : 'text';
-
+                var icon = '<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>';
                 inputField.attr('type', type);
+                inputField.data('declaration',item);
+                inputField.data('warn',function(){
+                    container.addClass('has-error');
+                });
 
                 if(has(item, 'name')) {
                     inputField.attr('name', item.name);
@@ -126,6 +130,7 @@
                 }
 
                 container.append(inputField);
+                container.append(icon);
 
                 return container;
             },
@@ -143,6 +148,8 @@
                 var container = $('<div class="checkbox"/>');
                 var label = $('<label/>');
                 var input = $('<input type="checkbox"/>');
+
+                input.data('declaration',item);
 
                 label.append(input);
 
@@ -170,6 +177,8 @@
                 var label = $('<label/>');
                 var input = $('<input type="radio"/>');
 
+                input.data('declaration',item);
+
                 label.append(input);
 
                 if(has(item, 'name')) {
@@ -196,6 +205,7 @@
             },
             textArea:  function(item, declarations) {
                 var input = $('<textarea class="form-control" rows="3"/>');
+                input.data('declaration',item);
 
                 if(has(item, 'value')) {
                     input.val(item.value);
@@ -212,6 +222,8 @@
             select:    function(item, declarations) {
                 var container = $('<div class="form-group"/>');
                 var select = $('<select class="form-control"/>');
+
+                select.data('declaration',item);
 
                 $.each(['name'], function(i, key) {
                     if(has(item, key)) {
@@ -240,6 +252,8 @@
                 var container = $('<div class="form-group"/>');
                 var label = $('<label/>');
                 var input = $('<input type="file"/>');
+
+                input.data('declaration',item);
 
                 if(has(item, 'name') && item.multiple) {
                     label.attr('for', item.name);

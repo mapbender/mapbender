@@ -10,6 +10,37 @@
 @import "element/tab_navigator";
 @import "element/result_table";
 
+
+.glyphicon {
+  position: relative;
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  top: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.form-control-feedback {
+  position: absolute;
+  right: 0;
+  z-index: 2;
+  display: block;
+  width: 34px;
+  height: 31px;
+  line-height: 31px;
+  text-align: center;
+  pointer-events: none;
+  margin-top: -29px;
+}
+
+.glyphicon-ok:before {
+  content: "\f00c";
+  color: #3c763d;
+}
+
 body{
   overflow: hidden;
 }
@@ -26,6 +57,7 @@ body{
 
   .form-group {
     margin-bottom: 5px;
+    position: relative;
     > label {
 
     }
@@ -63,8 +95,14 @@ body{
     height: 29px;
     display: block;
     width: 100%;
-  }
+    padding-right: 24px;
 
+  }
+  .has-error{
+    input{
+      border-color: #f54b07;
+    }
+  }
 
   select{
     padding: 2px 3px;

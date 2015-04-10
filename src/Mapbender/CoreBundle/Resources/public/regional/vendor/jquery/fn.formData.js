@@ -38,6 +38,7 @@ $.fn.formData = function(values) {
         $.each(inputs, function() {
             var input = $(this);
             var value;
+            var declaration = input.data('declaration');
 
             if(this.name == ""){
                 return;
@@ -52,9 +53,19 @@ $.fn.formData = function(values) {
                     value = input.is(':checked') ? input.val() : null;
                     break;
                 default:
-                    value = $(this).val();
+                    value = input.val();
             }
-            values[this.name] = value;
+
+            if(declaration){
+                console.log(declaration);
+                if(declaration.hasOwnProperty('mandatory') && declaration.mandatory ){
+                    input.data('warn')();
+                }
+                values[this.name] = value;
+            }else{
+                values[this.name] = value;
+            }
+
         });
         return values;
     }
