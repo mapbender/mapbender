@@ -500,6 +500,9 @@
                     var tr = this;
                     var row = tableApi.row(tr);
                     var jsonData = row.data();
+                    if(!jsonData){
+                        return;
+                    }
                     self._highlightFeature(jsonData,true);
                 });
 
@@ -507,6 +510,9 @@
                     var tr = this;
                     var row = tableApi.row(tr);
                     var jsonData = row.data();
+                    if(!jsonData){
+                        return;
+                    }
                     self._highlightFeature(jsonData,false);
                 });
 
@@ -514,6 +520,9 @@
                     var tr = this;
                     var row = tableApi.row(tr);
                     var jsonData = row.data();
+                    if(!jsonData){
+                        return;
+                    }                  
                     self._zoomToFeature(jsonData);
                 });
   
