@@ -286,30 +286,30 @@
             point: [
               {type: 'drawPoint', icon: 'drawPoint'},
               {type: 'edit', icon: 'edit'},
-              {type: 'drag', icon: 'drag'},
-              {type: 'select', icon: 'select'},
-              {type: 'removeSelected', icon: 'removeSelected'},
-              {type: 'removeAll', icon: 'removeAll'}
+              //{type: 'drag', icon: 'drag'},
+              //{type: 'select', icon: 'select'},
+              //{type: 'removeSelected', icon: 'removeSelected'},
+              //{type: 'removeAll', icon: 'removeAll'}
             ],
             line: [
               {type: 'drawLine', icon: 'drawLine'},
               {type: 'edit', icon: 'edit'},
-              {type: 'drag', icon: 'drag'},
-              {type: 'select', icon: 'select'},
-              {type: 'removeSelected', icon: 'removeSelected'},
-              {type: 'removeAll', icon: 'removeAll'}
+              //{type: 'drag', icon: 'drag'},
+              //{type: 'select', icon: 'select'},
+              //{type: 'removeSelected', icon: 'removeSelected'},
+              //{type: 'removeAll', icon: 'removeAll'}
             ],
             polygon: [
               {type: 'drawPolygon', icon: 'drawPolygon'},
-              {type: 'drawRectangle', icon: 'drawRectangle'},
-              {type: 'drawCircle', icon: 'drawRectangle'},
-              {type: 'drawEllipse', icon: 'drawRectangle'},
-              {type: 'donut', icon: 'drawRectangle'},
+              //{type: 'drawRectangle', icon: 'drawRectangle'},
+              //{type: 'drawCircle', icon: 'drawRectangle'},
+              //{type: 'drawEllipse', icon: 'drawRectangle'},
+              //{type: 'donut', icon: 'drawRectangle'},
               {type: 'edit', icon: 'edit'},
-              {type: 'drag', icon: 'drag'},
-              {type: 'select', icon: 'select'},
-              {type: 'removeSelected', icon: 'removeSelected'},
-              {type: 'removeAll', icon: 'removeAll'}
+              //{type: 'drag', icon: 'drag'},
+              //{type: 'select', icon: 'select'},
+              //{type: 'removeSelected', icon: 'removeSelected'},
+              //{type: 'removeAll', icon: 'removeAll'}
             ]
         },
         map: null,
@@ -347,7 +347,7 @@
                 'select': selectStyle}, {extendDefault: true});  
             
             // Hide selector if only one schema defined
-            if(_.size(this.options.schemes) == 1){
+            if(_.size(this.options.schemes) === 1){
                 selector.css('display','none');
             }
             
@@ -362,6 +362,10 @@
 
                 var frame = settings.frame = $("<div/>").addClass('frame').data(settings);
                 var tools = settings.tools = $("<div/>").mbDigitizerToolset({items: self.toolsets[settings.featureType.geomType], layer: layer});
+                var checkbox = $('<div class="checkbox">\n\
+                                <label><input class="onlyExtent'+schemaName+'" type="checkbox" checked="true">current extent</label>\n\
+                             </div>');
+                
                 var columns = [];
                 var newFeatureDefaultProperties = {};
                 
@@ -396,7 +400,7 @@
                             }
                         },
                         {
-                            title: 'DBX',
+                            title: 'X',
                             className: 'delete',
                             onClick: function(feature, ui) {
                                 var tr = ui.closest('tr');
@@ -416,7 +420,7 @@
                                         schema: schemaName,
                                         feature: feature
                                     }).done(function(fid){                 
-                                        $.notify('features deleted: ' +  JSON.stringify(fid),'info');
+                                        $.notify('erfolgreich gelöscht','info');
                                     });
                                 }
                                 
@@ -433,6 +437,8 @@
                 settings.schemaName = schemaName;
 
                 frame.append(tools);
+                
+                frame.append(checkbox);
                 frame.append(table);
                 
                 frames.push(settings);
@@ -465,7 +471,17 @@
                     var tableApi = table.resultTable('getApi');
                     tableApi.rows.add([jsonFeature]);
                     tableApi.draw();
+                    
+                    if(settings.openFormAfterEdit === true){
+                        self._openFeatureEditDialog(feature);
+                    }
+                    
                 });
+                
+                checkbox.delegate('input','change',function(){
+                    self._getData();
+                });
+                
                 
             });
 
@@ -532,12 +548,13 @@
             selector.on('change',onSelectorChange);
             onSelectorChange();
             
+            // register events
             this.moveEndEvent = function(){
                 self._getData();
             };
-            this.map.events.register("moveend", this.map, this.moveEndEvent); 
-            
+            this.map.events.register("moveend", this.map, this.moveEndEvent);          
             this.map.events.register('click', this, this._mapClick);         
+            
             this._trigger('ready');
         },
         
@@ -564,12 +581,11 @@
                                     srid: srid
                                 };
 
-//                            debugger;
-
                             if(feature.fid){
                                 jsonFeature.id = feature.fid;
                             }
                             form.disableForm();
+                            
                             self.query('save',{
                                 schema: self.schemaName,
                                 feature: jsonFeature
@@ -618,7 +634,7 @@
 
                                 form.enableForm();
                                 self.currentPopup.popupDialog('close');
-                                $.notify('features saved: ' +  JSON.stringify(featureCollection),'info');
+                                $.notify('erfolgreich gespeichert','info');
                             });
                         }
                     }]
@@ -650,7 +666,6 @@
             }
             var feature = features[0];
             
-            $.notify('feature clicked: ' + feature.fid,'info');
             self._openFeatureEditDialog(feature);
         },
         
@@ -704,10 +719,14 @@
                     
             var request = {
                 srid: proj.proj.srsProjNumber,
-                intersectGeometry: extent.toGeometry().toString(),
+                //intersectGeometry: extent.toGeometry().toString(),
                 maxResults: 100,
                 schema: settings.schemaName
             };
+            
+            if($('.onlyExtent'+settings.schemaName).prop('checked')){
+                request.intersectGeometry = extent.toGeometry().toString();
+            }
 
             self.query('select', request).done(function(geoJson) {
                 if(geoJson) {
