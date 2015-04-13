@@ -237,7 +237,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get originUrl
      *
-     * @return string 
+     * @return string
      */
     public function getOriginUrl()
     {
@@ -259,7 +259,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -281,7 +281,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get version
      *
-     * @return string 
+     * @return string
      */
     public function getVersion()
     {
@@ -303,7 +303,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get onlineResource
      *
-     * @return string 
+     * @return string
      */
     public function getOnlineResource()
     {
@@ -325,7 +325,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get contact
      *
-     * @return string 
+     * @return string
      */
     public function getContact()
     {
@@ -347,7 +347,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get fees
      *
-     * @return text 
+     * @return text
      */
     public function getFees()
     {
@@ -369,7 +369,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get accessConstraints
      *
-     * @return text 
+     * @return text
      */
     public function getAccessConstraints()
     {
@@ -391,7 +391,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get layerLimit
      *
-     * @return integer 
+     * @return integer
      */
     public function getLayerLimit()
     {
@@ -413,7 +413,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get maxWidth
      *
-     * @return integer 
+     * @return integer
      */
     public function getMaxWidth()
     {
@@ -435,7 +435,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get maxHeight
      *
-     * @return integer 
+     * @return integer
      */
     public function getMaxHeight()
     {
@@ -469,7 +469,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get exceptionFormats
      *
-     * @return array 
+     * @return array
      */
     public function getExceptionFormats()
     {
@@ -491,7 +491,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get supportSld
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getSupportSld()
     {
@@ -513,7 +513,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get userLayer
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUserLayer()
     {
@@ -535,7 +535,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get userStyle
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getUserStyle()
     {
@@ -557,7 +557,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get remoteWfs
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRemoteWfs()
     {
@@ -579,7 +579,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get inlineFeature
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getInlineFeature()
     {
@@ -601,7 +601,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get remoteWcs
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getRemoteWcs()
     {
@@ -623,7 +623,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get getCapabilities
      *
-     * @return Object 
+     * @return Object
      */
     public function getGetCapabilities()
     {
@@ -645,7 +645,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get getMap
      *
-     * @return Object 
+     * @return Object
      */
     public function getGetMap()
     {
@@ -667,7 +667,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get getFeatureInfo
      *
-     * @return Object 
+     * @return Object
      */
     public function getGetFeatureInfo()
     {
@@ -689,7 +689,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get describeLayer
      *
-     * @return Object 
+     * @return Object
      */
     public function getDescribeLayer()
     {
@@ -711,7 +711,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get getLegendGraphic
      *
-     * @return Object 
+     * @return Object
      */
     public function getGetLegendGraphic()
     {
@@ -733,7 +733,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get getStyles
      *
-     * @return Object 
+     * @return Object
      */
     public function getGetStyles()
     {
@@ -755,7 +755,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get putStyles
      *
-     * @return Object 
+     * @return Object
      */
     public function getPutStyles()
     {
@@ -777,7 +777,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get username
      *
-     * @return text 
+     * @return text
      */
     public function getUsername()
     {
@@ -799,7 +799,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get password
      *
-     * @return text 
+     * @return text
      */
     public function getPassword()
     {
@@ -821,7 +821,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get layers
      *
-     * @return array 
+     * @return array
      */
     public function getLayers()
     {
@@ -843,7 +843,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get root layer
      *
-     * @return WmsLayerSource 
+     * @return WmsLayerSource
      */
     public function getRootlayer()
     {
@@ -870,7 +870,7 @@ class WmsSource extends Source implements ContainingKeyword
     /**
      * Get keywords
      *
-     * @return ArrayCollection 
+     * @return ArrayCollection
      */
     public function getKeywords()
     {
@@ -925,10 +925,5 @@ class WmsSource extends Source implements ContainingKeyword
     public function __toString()
     {
         return (string) $this->getId();
-    }
-
-    public function update(Source $source)
-    {
-        
     }
 }

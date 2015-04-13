@@ -9,6 +9,7 @@ namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\Signer;
 use Mapbender\CoreBundle\Component\SourceInstanceEntityHandler;
+use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\CoreBundle\Utils\ArrayUtil;
 use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
@@ -33,8 +34,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         $this->entity->setTitle($this->entity->getSource()->getTitle());
         $source = $this->entity->getSource();
         $this->entity->setFormat(ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), null, 0));
-        $this->entity->setInfoformat(ArrayUtil::getValueFromArray(
-                $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(), null, 0));
+        $this->entity->setInfoformat(
+            ArrayUtil::getValueFromArray(
+                $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(),
+                null,
+                0
+            )
+        );
         $this->entity->setExceptionformat(ArrayUtil::getValueFromArray($source->getExceptionFormats(), null, 0));
 
         $dimensions = $this->getDimensionInst();
@@ -77,18 +83,24 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     {
         $source     = $this->entity->getSource();
         $this->entity->setFormat(
-            ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), $this->entity->getFormat(), 0));
-        $this->entity->setInfoformat(ArrayUtil::getValueFromArray(
+            ArrayUtil::getValueFromArray($source->getGetMap()->getFormats(), $this->entity->getFormat(), 0)
+        );
+        $this->entity->setInfoformat(
+            ArrayUtil::getValueFromArray(
                 $source->getGetFeatureInfo() ? $source->getGetFeatureInfo()->getFormats() : array(),
-                $this->entity->getInfoformat(), 0));
-        $this->entity->setExceptionformat(ArrayUtil::getValueFromArray(
-                $source->getExceptionFormats(), $this->entity->getExceptionformat(), 0));
+                $this->entity->getInfoformat(),
+                0
+            )
+        );
+        $this->entity->setExceptionformat(
+            ArrayUtil::getValueFromArray($source->getExceptionFormats(), $this->entity->getExceptionformat(), 0)
+        );
         $dimensions = $this->updateDimension($this->entity->getDimensions(), $this->getDimensionInst());
         $this->entity->setDimensions($dimensions);
 
         # TODO vendorspecific ?
-        self::createHandler($this->container, $this->entity->getRootlayer())->update(
-            $this->entity, $this->entity->getSource()->getRootlayer());
+        self::createHandler($this->container, $this->entity->getRootlayer())
+            ->update($this->entity, $this->entity->getSource()->getRootlayer());
 
         $this->generateConfiguration();
         $this->container->get('doctrine')->getManager()->persist($this->entity);
@@ -96,7 +108,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     }
 
     /**
-     * 
+     * Creates DimensionInst object
      * @param \Mapbender\WmsBundle\Component\Dimension $dim
      * @return \Mapbender\WmsBundle\Component\DimensionInst
      */
@@ -131,12 +143,14 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
         }
         $configuration = $this->entity->getConfiguration();
         if ($this->entity->getSource()->getUsername()) {
-            $url                             = $this->container->get('router')->generate('mapbender_core_application_instancebasicauth',
+            $url                             = $this->container->get('router')->generate(
+                'mapbender_core_application_instancebasicauth',
                 array(
-                'slug' => $this->entity->getLayerset()->getApplication()->getSlug(),
-                'instanceId' => $this->entity->getId()
-//                , 'url' => $configuration['options']['url']
-                ), UrlGeneratorInterface::ABSOLUTE_URL);
+                    'slug' => $this->entity->getLayerset()->getApplication()->getSlug(),
+                    'instanceId' => $this->entity->getId()
+                ),
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
             $configuration['options']['url'] = $url;
         } elseif ($signer) {
             $configuration['options']['url'] = $signer->signUrl($configuration['options']['url']);
@@ -144,6 +158,8 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 $this->signeUrls($signer, $configuration['children'][0]);
             }
         }
+        $status = $this->entity->getSource()->getStatus();
+        $configuration['status'] = $status ? strtolower($status) : strtolower(Source::STATUS_OK);
         return $configuration;
     }
 
@@ -163,12 +179,16 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             )
         );
         foreach ($rootlayer->getSourceItem()->getBoundingBoxes() as $bbox) {
-            $srses = array_merge($srses,
+            $srses = array_merge(
+                $srses,
                 array($bbox->getSrs() => array(
                     floatval($bbox->getMinx()),
                     floatval($bbox->getMiny()),
                     floatval($bbox->getMaxx()),
-                    floatval($bbox->getMaxy()))));
+                    floatval($bbox->getMaxy())
+                    )
+                )
+            );
         }
         $wmsconf = new WmsInstanceConfiguration();
         $wmsconf->setType(strtolower($this->entity->getType()));
@@ -298,7 +318,6 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
     /**
      * Signes urls.
-     * 
      * @param Signer $signer signer
      * @param type $layer
      */
@@ -350,11 +369,11 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 
     private function findDimension(DimensionInst $dimension, $dimensionList)
     {
-        foreach($dimensionList as $help){
+        foreach ($dimensionList as $help) {
             /* check if dimensions equals (check only origextent) */
-            if($help->getOrigextent() === $dimension->getOrigextent() &&
+            if ($help->getOrigextent() === $dimension->getOrigextent() &&
                 $help->getName() === $dimension->getName() &&
-                $help->getUnits() === $dimension->getUnits()){
+                $help->getUnits() === $dimension->getUnits()) {
                 return $help;
             }
         }
@@ -364,9 +383,9 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
     private function updateDimension(array $dimensionsOld, array $dimensionsNew)
     {
         $dimensions = array();
-        foreach($dimensionsNew as $dimNew){
-            $dimension = $this->findDimension($dimNew, $dimensionsOld);
-            $dimension = $dimension ? clone $dimension : clone $dimNew;
+        foreach ($dimensionsNew as $dimNew) {
+            $dimension    = $this->findDimension($dimNew, $dimensionsOld);
+            $dimension    = $dimension ? clone $dimension : clone $dimNew;
             /* replace attribute values */
             $dimension->setUnitSymbol($dimNew->getUnitSymbol());
             $dimension->setNearestValue($dimNew->getNearestValue());
