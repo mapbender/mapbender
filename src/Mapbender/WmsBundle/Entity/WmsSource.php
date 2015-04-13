@@ -206,6 +206,7 @@ class WmsSource extends Source implements ContainingKeyword
 
     public function __construct()
     {
+        parent::__construct();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->exceptionFormats = array();

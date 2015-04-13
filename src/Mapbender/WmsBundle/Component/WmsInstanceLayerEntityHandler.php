@@ -13,8 +13,6 @@ use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
-use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Component\SourceItem;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**

@@ -103,7 +103,7 @@ class WmsSourceEntityHandler extends SourceEntityHandler
                     $valueNew  = clone $value;
                     $this->container->get('doctrine')->getManager()->detach($valueNew);
                     $refMethod->invoke($this->entity, $valueNew);
-                } else {
+                } elseif(isset($properties[EntityUtil::TOSET])) {
                     $refMethod = new \ReflectionMethod($updater->getClass(), $properties[EntityUtil::TOSET]);
                     $refMethod->invoke($this->entity, $value);
                 }
