@@ -20,7 +20,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class EntityHandler
 {
+    /**
+     * @var ContainerInterface container
+     */
     protected $container;
+
+    /**
+     * @var mixed entity
+     */
     protected $entity;
 
     public function __construct(ContainerInterface $container, $entity)

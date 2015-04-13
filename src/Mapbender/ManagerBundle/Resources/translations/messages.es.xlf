@@ -542,6 +542,10 @@
         <source>mb.manager.admin.layerset.id_description</source>
         <target>Id</target>
       </trans-unit>
+      <trans-unit id="c4c6bf3442aaab7c9eb080249b6a3109" resname="mb.manager.admin.source.update">
+        <source>mb.manager.admin.source.update</source>
+        <target>Update source</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

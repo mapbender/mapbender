@@ -9,7 +9,6 @@ namespace Mapbender\WmsBundle\Component;
  */
 class Attribution
 {
-
     /**
      * ORM\Column(type="string", nullable=false)
      */
@@ -30,7 +29,7 @@ class Attribution
 
     /**
      * Get title
-     * 
+     *
      * @return string
      */
     public function getTitle()
@@ -49,7 +48,7 @@ class Attribution
 
     /**
      * Get onlineResource
-     * 
+     *
      * @return string
      */
     public function getOnlineResource()
@@ -59,7 +58,7 @@ class Attribution
 
     /**
      * Set onlineResource
-     * @param string $value 
+     * @param string $value
      */
     public function setOnlineResource($value)
     {
@@ -68,7 +67,7 @@ class Attribution
 
     /**
      * Get logoUrl
-     * 
+     *
      * @return string
      */
     public function getLogoUrl()
@@ -78,12 +77,11 @@ class Attribution
 
     /**
      * Set logoUrl
-     * @param string $value 
+     * @param string $value
      */
     public function setLogoUrl(LegendUrl $value)
     {
         $this->logoUrl = $value;
         return $this;
     }
-
 }

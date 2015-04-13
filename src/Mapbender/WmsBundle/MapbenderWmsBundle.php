@@ -32,6 +32,7 @@ class MapbenderWmsBundle
                 'label' => 'OGC WMS',
                 'manager' => 'mapbender_wms_repository',
                 'startAction' => "MapbenderWmsBundle:Repository:start",
+                'updateformAction' => "MapbenderWmsBundle:Repository:updateform",
                 'bundle' => "MapbenderWmsBundle"
             )
         );

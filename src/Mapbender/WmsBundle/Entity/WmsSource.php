@@ -3,12 +3,12 @@ namespace Mapbender\WmsBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Mapbender\CoreBundle\Component\ContainsKeyword;
+use Mapbender\CoreBundle\Component\ContainingKeyword;
 use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\RequestInformation;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
-use Mapbender\WmsBundle\Entity\WmsSourceKeyword;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="mb_wms_wmssource")
  * ORM\DiscriminatorMap({"mb_wms_wmssource" = "WmsSource"})
  */
-class WmsSource extends Source implements ContainsKeyword
+class WmsSource extends Source implements ContainingKeyword
 {
     /**
      * @var string An origin WMS URL
@@ -187,7 +187,7 @@ class WmsSource extends Source implements ContainsKeyword
     /**
      * @var ArrayCollections A list of WMS layers
      * @ORM\OneToMany(targetEntity="WmsLayerSource",mappedBy="source", cascade={"persist","remove"})
-     * @ORM\OrderBy({"id" = "asc"})
+     * @ORM\OrderBy({"priority" = "asc","id" = "asc"})
      */
     protected $layers;
 
@@ -201,12 +201,12 @@ class WmsSource extends Source implements ContainsKeyword
     /**
      * @var ArrayCollections A list of WMS instances
      * @ORM\OneToMany(targetEntity="WmsInstance",mappedBy="source", cascade={"persist","remove"})
-     * 
      */
     protected $instances;
 
     public function __construct()
     {
+        parent::__construct();
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->exceptionFormats = array();
@@ -862,7 +862,7 @@ class WmsSource extends Source implements ContainsKeyword
      * @param ArrayCollection $keywords
      * @return Source
      */
-    public function setKeywords($keywords)
+    public function setKeywords(ArrayCollection $keywords)
     {
         $this->keywords = $keywords;
         return $this;
@@ -876,6 +876,18 @@ class WmsSource extends Source implements ContainsKeyword
     public function getKeywords()
     {
         return $this->keywords;
+    }
+
+    /**
+     * Add keyword
+     *
+     * @param WmsSourceKeyword $keyword
+     * @return Source
+     */
+    public function addKeyword(Keyword $keyword)
+    {
+        $this->keywords->add($keyword);
+        return $this;
     }
     
     public function addInstance(WmsInstance $instance)
