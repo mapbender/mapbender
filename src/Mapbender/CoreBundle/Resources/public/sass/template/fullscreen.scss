@@ -100,9 +100,19 @@ body{
   }
   .has-error{
     input{
-      border-color: #f54b07;
+      border-color: #a94442;
     }
   }
+
+  div.radio,
+  div.checkbox{
+    &.has-error > label{
+      background-color: #E4C0C0;
+      border-radius: 4px;
+      padding-right: 4px;
+    }
+  }
+
 
   select{
     padding: 2px 3px;

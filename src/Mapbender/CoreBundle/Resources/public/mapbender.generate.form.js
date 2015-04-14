@@ -107,11 +107,9 @@
                 var container = $('<div class="form-group"/>');
                 var type = has(declarations, 'type') ? declarations.type : 'text';
                 var icon = '<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>';
+
                 inputField.attr('type', type);
                 inputField.data('declaration',item);
-                inputField.data('warn',function(){
-                    container.addClass('has-error');
-                });
 
                 if(has(item, 'name')) {
                     inputField.attr('name', item.name);
@@ -129,8 +127,21 @@
                     container.append(declarations.label(item, declarations));
                 }
 
+                if(has(item, 'mandatory') && item.mandatory) {
+                    container.append(declarations.label(item, declarations));
+                    inputField.data('warn',function(){
+                        var hasValue = $.trim(inputField.val()) != '';
+                        if(hasValue){
+                            container.removeClass('has-error');
+                        }else{
+                            container.addClass('has-error');
+                        }
+                        return hasValue;
+                    });
+                }
+
                 container.append(inputField);
-                container.append(icon);
+                //container.append(icon);
 
                 return container;
             },
@@ -169,6 +180,18 @@
                     input.attr('checked', "checked");
                 }
 
+                if(has(item, 'mandatory') && item.mandatory) {
+                    input.data('warn',function(){
+                        var isChecked = input.is(':checked');
+                        if(isChecked){
+                            container.removeClass('has-error');
+                        }else{
+                            container.addClass('has-error');
+                        }
+                        return isChecked;
+                    });
+                }
+
                 container.append(label);
                 return container;
             },
@@ -197,11 +220,29 @@
                     input.attr('checked', "checked");
                 }
 
+                if(has(item, 'mandatory') && item.mandatory) {
+                    input.data('warn',function(value){
+                        var isChecked = input.is(':checked');
+                        if(isChecked){
+                            container.removeClass('has-error');
+                        }else{
+                            container.addClass('has-error');
+                        }
+                        return isChecked;
+                    });
+                }
+
                 container.append(label);
                 return container;
             },
-            formGroup: function(item, declarations) {
-                return $('<div class="form-group"/>');
+            formGroup: function(item, declarations, widget) {
+                var container = $('<div class="form-group"/>');
+                if(has(item, 'items')) {
+                    $.each(item.items, function(k, item) {
+                        container.append(widget.genElement(item));
+                    });
+                }
+                return container;
             },
             textArea:  function(item, declarations) {
                 var input = $('<textarea class="form-control" rows="3"/>');
@@ -244,6 +285,25 @@
                         select.append(option);
                     });
                 }
+
+                if(has(item, 'value')) {
+                    window.setTimeout(function(){
+                        select.val(item.value);
+                    },1)
+                }
+
+                if(has(item, 'mandatory') && item.mandatory) {
+                    select.data('warn',function(){
+                        var hasValue = $.trim(select.val()) != '';
+                        if(hasValue){
+                            container.removeClass('has-error');
+                        }else{
+                            container.addClass('has-error');
+                        }
+                        return hasValue;
+                    });
+                }
+
                 container.append(select);
 
                 return container;

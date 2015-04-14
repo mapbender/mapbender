@@ -57,9 +57,8 @@ $.fn.formData = function(values) {
             }
 
             if(declaration){
-                console.log(declaration);
                 if(declaration.hasOwnProperty('mandatory') && declaration.mandatory ){
-                    input.data('warn')();
+                    input.data('warn')(value);
                 }
                 values[this.name] = value;
             }else{

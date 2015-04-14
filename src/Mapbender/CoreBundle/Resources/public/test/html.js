@@ -203,11 +203,14 @@
                 }, {
                     type:      "input",
                     name:      "Test",
-                    mandatory: true
+                    mandatory: true,
+                    placeholder: "Enter something"
                 }, {
                     type:    "select",
                     options: ["Herr", "Frau"],
-                    name:    "gender"
+                    name:    "gender",
+                    value:  '',
+                    mandatory: true
                 }, {type: "input"}, {
                     type:  "radio",
                     name:  "acception",
@@ -217,6 +220,12 @@
                     type:  "radio",
                     name:  "acception",
                     text:  "Nein",
+                    value: "2"
+                }, {
+                    type:  "checkbox",
+                    name:  "asdasd",
+                    mandatory: true,
+                    text:  "yay!",
                     value: "2"
                 }, {
                     type:  "inline",
