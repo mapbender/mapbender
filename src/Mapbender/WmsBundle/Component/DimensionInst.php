@@ -9,10 +9,9 @@ namespace Mapbender\WmsBundle\Component;
  */
 class DimensionInst extends Dimension
 {
-
-    const TYPE_SINGLE = 'single';
-    const TYPE_INTERVAL = 'interval';
-    const TYPE_MULTIPLE = 'multiple';
+    const TYPE_SINGLE           = 'single';
+    const TYPE_INTERVAL         = 'interval';
+    const TYPE_MULTIPLE         = 'multiple';
     const TYPE_MULTIPLEINTERVAL = 'multipleinterval';
 
     public $origextent = null;
@@ -88,7 +87,7 @@ class DimensionInst extends Dimension
     public static function getData($extent)
     {
         $array = is_string($extent) ? explode(",", $extent) : $extent;
-        $res = array();
+        $res   = array();
         if (count($array) === 1) {
             $help = explode("/", $array[0]);
             if (count($help) === 1) {
@@ -143,5 +142,4 @@ class DimensionInst extends Dimension
             'type' => $this->getType(),
         );
     }
-
 }

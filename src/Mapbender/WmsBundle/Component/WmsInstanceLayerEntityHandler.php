@@ -9,13 +9,14 @@
 namespace Mapbender\WmsBundle\Component;
 
 use Mapbender\CoreBundle\Component\SourceInstanceItemEntityHandler;
-use Mapbender\CoreBundle\Component\Utils;
-use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
-use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Component\SourceItem;
+use Mapbender\CoreBundle\Component\Utils;
+use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
+use Mapbender\WmsBundle\Entity\WmsLayerSource;
 
 /**
- * Description of WmsSourceHandler
+ * Description of WmsInstanceLayerEntityHandler
  *
  * @author Paul Schmidt
  */
@@ -76,6 +77,56 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     }
 
     /**
+     * @inheritdoc
+     */
+    public function update(SourceInstance $instance, SourceItem $wmslayersource)
+    {
+        /* remove instance layers for missed layer sources */
+        foreach ($this->entity->getSublayer() as $wmsinstlayer) {
+            if (!$wmsinstlayer->getSourceItem()) {
+                self::createHandler($this->container, $wmsinstlayer)->remove();
+            }
+        }
+
+        foreach ($wmslayersource->getSublayer() as $wmslayersourceSub) {
+            $layer = $this->findLayer($wmslayersourceSub, $this->entity->getSublayer());
+            if ($layer) {
+                self::createHandler($this->container, $layer)->update($instance, $wmslayersourceSub);
+            } else {
+                self::createHandler($this->container, new WmsInstanceLayer())->create(
+                    $instance,
+                    $wmslayersourceSub,
+                    $wmslayersourceSub->getPriority()
+                );
+            }
+        }
+        $this->entity->setPriority($wmslayersource->getPriority());
+        $origMinMax  = $wmslayersource->getScaleRecursive();
+        $scaleMinMax = null;
+        if ($origMinMax) {
+            $scaleMinMax = MinMax::create(
+                $origMinMax->getInRange($this->entity->getMinScale()),
+                $origMinMax->getInRange($this->entity->getMaxScale())
+            );
+        } else {
+            $scaleMinMax = MinMax::create($this->entity->getMinScale(), $this->entity->getMaxScale());
+        }
+        $this->entity->setMinScale($scaleMinMax ? $scaleMinMax->getMin() : null);
+        $this->entity->setMaxScale($scaleMinMax ? $scaleMinMax->getMax() : null);
+        $queryable = Utils::getBool($wmslayersource->getQueryable());
+        $this->entity->setInfo($queryable === true ? $this->entity->getInfo() : $queryable);
+        $this->entity->setAllowinfo($queryable === true ? $this->entity->getInfo() : $queryable);
+        if ($wmslayersource->getSublayer()->count() > 0) {
+            $this->entity->setToggle(is_bool($this->entity->getToggle()) ? $this->entity->getToggle() : false);
+            $alowtoggle = is_bool($this->entity->getAllowtoggle()) ? $this->entity->getAllowtoggle() : true;
+            $this->entity->setAllowtoggle($alowtoggle);
+        } else {
+            $this->entity->setToggle(null);
+            $this->entity->setAllowtoggle(null);
+        }
+    }
+
+    /**
      * Generates a configuration for layers
      *
      * @param array $configuration
@@ -118,15 +169,16 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         $configuration = array(
             "id" => strval($this->entity->getId()),
             "priority" => $this->entity->getPriority(),
-            "name" => $this->entity->getSourceItem()->getName() !== null ? $this->entity->getSourceItem()->getName() : "",
+            "name" => $this->entity->getSourceItem()->getName() !== null ?
+                $this->entity->getSourceItem()->getName() : "",
             "title" => $this->entity->getTitle(),
             "queryable" => $this->entity->getInfo(),
             "style" => $this->entity->getStyle(),
             "minScale" => $this->entity->getMinScale() !== null ? floatval($this->entity->getMinScale()) : null,
             "maxScale" => $this->entity->getMaxScale() !== null ? floatval($this->entity->getMaxScale()) : null
         );
-        $srses = array();
-        $llbbox = $this->entity->getSourceItem()->getLatlonBounds();
+        $srses         = array();
+        $llbbox        = $this->entity->getSourceItem()->getLatlonBounds();
         if ($llbbox !== null) {
             $srses[$llbbox->getSrs()] = array(
                 floatval($llbbox->getMinx()),
@@ -144,7 +196,7 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
         }
         $configuration['bbox'] = $srses;
         if (count($this->entity->getSourceItem()->getStyles()) > 0) {
-            $styles = $this->entity->getSourceItem()->getStyles();
+            $styles    = $this->entity->getSourceItem()->getStyles();
             $legendurl = $styles[count($styles) - 1]->getLegendUrl(); // the last style from object's styles
             if ($legendurl !== null) {
                 $configuration["legend"] = array(
@@ -152,18 +204,18 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
                     "width" => intval($legendurl->getWidth()),
                     "height" => intval($legendurl->getHeight()));
             }
-        } else if ($this->entity->getSourceInstance()->getSource()->getGetLegendGraphic() !== null &&
+        } elseif ($this->entity->getSourceInstance()->getSource()->getGetLegendGraphic() !== null &&
             $this->entity->getSourceItem()->getName() !== null &&
             $this->entity->getSourceItem()->getName() !== "") {
-            $legend = $this->entity->getSourceInstance()->getSource()->getGetLegendGraphic();
-            $url = $legend->getHttpGet();
-            $formats = $legend->getFormats();
-            $params = "service=WMS&request=GetLegendGraphic"
+            $legend                  = $this->entity->getSourceInstance()->getSource()->getGetLegendGraphic();
+            $url                     = $legend->getHttpGet();
+            $formats                 = $legend->getFormats();
+            $params                  = "service=WMS&request=GetLegendGraphic"
                 . "&version=" . $this->entity->getSourceInstance()->getSource()->getVersion()
                 . "&layer=" . $this->entity->getSourceItem()->getName()
                 . (count($formats) > 0 ? "&format=" . $formats[0] : "")
                 . "&sld_version=1.1.0";
-            $legendgraphic = Utils::getHttpUrl($url, $params);
+            $legendgraphic           = Utils::getHttpUrl($url, $params);
             $configuration["legend"] = array(
                 "graphic" => $legendgraphic);
         }
@@ -179,5 +231,22 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
             )
         );
         return $configuration;
+    }
+
+    /**
+     * Finds an instance layer, that is linked with a given wms source layer.
+     *
+     * @param WmsLayerSource $wmssourcelayer wms layer source
+     * @param array $instancelayerList list of instance layers
+     * @return WmsInstanceLayer | null the instance layer, otherwise null
+     */
+    public function findLayer(WmsLayerSource $wmssourcelayer, $instancelayerList)
+    {
+        foreach ($instancelayerList as $instancelayer) {
+            if ($wmssourcelayer->getId() === $instancelayer->getSourceItem()->getId()) {
+                return $instancelayer;
+            }
+        }
+        return null;
     }
 }
