@@ -6,15 +6,6 @@
 (function($) {
 
     //return ;
-
-    /**
-     * Tests
-     */
-    var popup= $("<div/>").popupDialog({
-        title: 'Form generator test',
-        width: "423px"
-    });
-
     var items2 = [{
         type:  'inline',
         items: [{
@@ -22,6 +13,7 @@
             text: 'Name',
             css:  {"margin-right": "10px"}
         }, {
+            info:        "Info text",
             type:        'input',
             name:        'inline[anrede]',
             placeholder: 'Anrede',
@@ -191,29 +183,67 @@
         }
     }];
 
+    /**
+     * Tests
+     */
+    var popup= $("<div/>");
+
     popup.generateElements({
         items: [{
             type:  "tabs",
-            items: [
-                {type: "form", title: "Formular #1", items:[
-                    {type: "html", html: "<div>TEST</div>", click: function(){
+            items: [{
+                type:  "form",
+                title: "Formular #1",
+                items: [{
+                    type:  "html",
+                    html:  "<div>TEST</div>",
+                    click: function() {
                         console.log(this);
-                    }},
-                    {type: "input", name: "Test"},
-                    {type: "select", options: ["Herr","Frau"], name: "gender"},
-                    {type: "input"},
-                    {type: "radio", name: "acception", text:"Ja", value: "1" },
-                    {type: "radio", name: "acception", text:"Nein", value: "2"},
-                    {type: "inline", items:[
-                        {type: "input", placeholder:"Name", css:  {"padding-right": "20px"}},
-                        {type: "input", placeholder:"Vorname"}
-                    ]}, {
-                        type:  "tabs",
-                        items: [{
-                            type:  "HTML",
-                            title: "test tab 1",
-                            html:  "test"
-                        }, {
+                    }
+                }, {
+                    type:      "input",
+                    name:      "Test",
+                    mandatory: true,
+                    placeholder: "Enter something"
+                }, {
+                    type:    "select",
+                    options: ["Herr", "Frau"],
+                    name:    "gender",
+                    value:  '',
+                    mandatory: true
+                }, {type: "input"}, {
+                    type:  "radio",
+                    name:  "acception",
+                    text:  "Ja",
+                    value: "1"
+                }, {
+                    type:  "radio",
+                    name:  "acception",
+                    text:  "Nein",
+                    value: "2"
+                }, {
+                    type:  "checkbox",
+                    name:  "asdasd",
+                    mandatory: true,
+                    text:  "yay!",
+                    value: "2"
+                }, {
+                    type:  "inline",
+                    items: [{
+                        type:        "input",
+                        placeholder: "Name",
+                        css:         {"margin-right": "20px"}
+                    }, {
+                        type:        "input",
+                        placeholder: "Vorname"
+                    }]
+                }, {
+                    type:  "tabs",
+                    items: [{
+                        type:  "HTML",
+                        title: "test tab 1",
+                        html:  "test"
+                    }, {
                             type:  "HTML",
                             title: "test tab 2",
                             html:  "test 2"
@@ -223,7 +253,8 @@
                         title:    "OK",
                         cssClass: "right",
                         click:    function() {
-                            console.log(popup.formData());
+                            var data = popup.formData();
+                            console.log(data);
                             return false;
                         }
                     }, {
@@ -246,9 +277,11 @@
         }]
     });
 
-
-
-
+    popup.popupDialog({
+        title: 'Form generator test',
+        width: "423px",
+        modal: true
+    });
 
     //popup.generateElements({
     //    items: [{
