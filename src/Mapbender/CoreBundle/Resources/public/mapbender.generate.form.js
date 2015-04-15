@@ -128,7 +128,6 @@
                 }
 
                 if(has(item, 'mandatory') && item.mandatory) {
-                    container.append(declarations.label(item, declarations));
                     inputField.data('warn',function(){
                         var hasValue = $.trim(inputField.val()) != '';
                         if(hasValue){
