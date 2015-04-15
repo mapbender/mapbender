@@ -263,6 +263,7 @@
                 var container = $('<div class="form-group"/>');
                 var select = $('<select class="form-control"/>');
 
+
                 select.data('declaration',item);
 
                 $.each(['name'], function(i, key) {
@@ -301,6 +302,10 @@
                         }
                         return hasValue;
                     });
+                }
+                
+                if(has(item, 'text')) {
+                    container.append(declarations.label(item, declarations));
                 }
 
                 container.append(select);
