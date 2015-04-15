@@ -28,6 +28,16 @@
     
     .mapbender-element-result-table{
         margin-top: 10px;
+        
+        // Row higlight by feature select
+        table.dataTable > tbody > tr{
+            
+            &.odd,&.even{
+                &.hover td{
+                    background-color: #F7F79A;
+                }
+            }
+        }
     }
     
     
@@ -39,4 +49,9 @@
     font-size: 1px;
     opacity: 0.5;
     position: absolute;
+}
+
+div.notifyjs-container > div.notifyjs-bootstrap-base > span{
+    text-wrap: none;
+    white-space: nowrap; 
 }

@@ -378,7 +378,7 @@
                     lengthChange: false,
                     pageLength: 10,
                     searching: false,
-                    info: false,
+                    info: true,
                     processing: false,
                     ordering: true,
                     paging: true,
@@ -433,6 +433,7 @@
                         }
                 ]
                 });
+                var tableWidget = table.data('mapbenderResultTable');
 
                 settings.schemaName = schemaName;
 
@@ -558,27 +559,29 @@
             var featureoverEvent = function(e){
                 var feature = e.feature;
                 var table = self.currentSettings.table;
-                var tableApi = table.resultTable('getApi');
+                var tableWidget = table.data('mapbenderResultTable');
+                
                 if(feature.layer.name === self.currentSettings.label){
-                    $.each(tableApi.data(),function(idx, jsonFeature){
-                        if(jsonFeature.id === feature.fid){
-                            $(tableApi.rows(idx).nodes()).css('color','red');
-                        }
-                    });
+                    
+                    var jsonFeature = tableWidget.getDataById(feature.fid);
+                    var domRow = tableWidget.getDomRowByData(jsonFeature); 
+                    
+                    tableWidget.showByRow(domRow);
+                    domRow.addClass('hover');
                     feature.layer.drawFeature(feature,'select');
+//                    debugger;
                 }
             };
             
             var featureoutEvent = function(e){
                 var feature = e.feature;
                 var table = self.currentSettings.table;
-                var tableApi = table.resultTable('getApi');
+                var tableWidget = table.data('mapbenderResultTable');
+                
                 if(feature.layer.name === self.currentSettings.label){
-                    $.each(tableApi.data(),function(idx, jsonFeature){
-                        if(jsonFeature.id === feature.fid){
-                            $(tableApi.rows(idx).nodes()).css('color','green');
-                        }
-                    });
+                    var jsonFeature = tableWidget.getDataById(feature.fid);
+                    var domRow = tableWidget.getDomRowByData(jsonFeature); 
+                    domRow.removeClass('hover');
                     feature.layer.drawFeature(feature,'default');
                 }
             };
@@ -595,8 +598,7 @@
             if(self.currentPopup){
                 self.currentPopup.popupDialog('close');
             }
-
-            var popup= $("<div/>").popupDialog({
+            var popupConfiguration = {
                 title: 'Attribute',
                 width: "423px",
                 buttons: [{
@@ -615,65 +617,75 @@
                             if(feature.fid){
                                 jsonFeature.id = feature.fid;
                             }
-                            form.disableForm();
                             
-                            self.query('save',{
-                                schema: self.schemaName,
-                                feature: jsonFeature
-                            }).done(function(featureCollection){
-                                
-                                var dbFeature = featureCollection.features[0];
-                                var table = self.currentSettings.table;
-                                var tableApi = table.resultTable('getApi');
-                                var isNew = !feature.hasOwnProperty('fid');
-                                var tableJson = null;
+                            var errorInputs = $(".has-error", popup);
+                            var hasErrors = errorInputs.size() > 0;
+                            
+                            if( !hasErrors ){
+                                form.disableForm();
+                                self.query('save',{
+                                    schema: self.schemaName,
+                                    feature: jsonFeature
+                                }).done(function(featureCollection){
 
-                                // search jsonData from table
-                                $.each(tableApi.data(),function(i,jsonData){
-                                    if(isNew){
-                                       if(jsonData.id == feature.id){
-                                           delete jsonData.isNew;
-                                           tableJson = jsonData;
-                                           return false
-                                       }
-                                    }else{
-                                        if(jsonData.id == feature.fid){
-                                           tableJson = jsonData;
-                                           return false
+                                    var dbFeature = featureCollection.features[0];
+                                    var table = self.currentSettings.table;
+                                    var tableApi = table.resultTable('getApi');
+                                    var isNew = !feature.hasOwnProperty('fid');
+                                    var tableJson = null;
+
+                                    // search jsonData from table
+                                    $.each(tableApi.data(),function(i,jsonData){
+                                        if(isNew){
+                                           if(jsonData.id == feature.id){
+                                               delete jsonData.isNew;
+                                               tableJson = jsonData;
+                                               return false
+                                           }
+                                        }else{
+                                            if(jsonData.id == feature.fid){
+                                               tableJson = jsonData;
+                                               return false
+                                            }
                                         }
-                                    }
-                                })
+                                    })
 
-                                // Merge object2 into object1
-                                $.extend( tableJson, dbFeature );
-                                
-                                // Redraw table fix
-                                // TODO: find how to drop table cache...
-                                $.each(tableApi.$("tbody > tr"), function (i, tr) {
-                                    var row = tableApi.row(tr);
-                                    if(row.data() == tableJson){
-                                        row.data(tableJson);
-                                        return false;
-                                    }
-                                })     
-                                tableApi.draw();
-                                
-                                // Update open layer feature to...
-                                feature.fid = tableJson.id;
-                                feature.data = tableJson.properties;
-                                feature.attributes = tableJson.properties;
+                                    // Merge object2 into object1
+                                    $.extend( tableJson, dbFeature );
 
-                                form.enableForm();
-                                self.currentPopup.popupDialog('close');
-                                $.notify('erfolgreich gespeichert','info');
-                            });
+                                    // Redraw table fix
+                                    // TODO: find how to drop table cache...
+                                    $.each(tableApi.$("tbody > tr"), function (i, tr) {
+                                        var row = tableApi.row(tr);
+                                        if(row.data() == tableJson){
+                                            row.data(tableJson);
+                                            return false;
+                                        }
+                                    })     
+                                    tableApi.draw();
+
+                                    // Update open layer feature to...
+                                    feature.fid = tableJson.id;
+                                    feature.data = tableJson.properties;
+                                    feature.attributes = tableJson.properties;
+
+                                    form.enableForm();
+                                    self.currentPopup.popupDialog('close');
+                                    $.notify('erfolgreich gespeichert','info');
+                                });
+                            }
                         }
                     }]
-            });
+            };
+            
+            if(self.currentSettings.hasOwnProperty('popup')){
+                $.extend(popupConfiguration,self.currentSettings.popup);
+            }
+            
+            var popup= $("<div/>").popupDialog(popupConfiguration);
             
             self.currentPopup = popup;
             popup.generateElements({items: self.currentSettings.formItems});
-            console.log(feature.data);
             popup.formData(feature.data); 
         },
         
