@@ -128,11 +128,20 @@
                 }
 
                 if(has(item, 'mandatory') && item.mandatory) {
-                    inputField.data('warn',function(){
-                        var hasValue = $.trim(inputField.val()) != '';
+                    inputField.data('warn',function(value){
+                        var hasValue = $.trim(value) != '';
+                        var isRegExp = item.mandatory !== true;
+                        var text = item.hasOwnProperty('mandatoryText')? item.mandatoryText: "Bitte übeprüfen!";
+                        
+                        if(isRegExp){
+                            hasValue = eval(item.mandatory).exec(value) != null;
+                        }
+                        
                         if(hasValue){
                             container.removeClass('has-error');
+                            
                         }else{
+                            $.notify( inputField, text, { position:"top right", autoHideDelay: 2000});
                             container.addClass('has-error');
                         }
                         return hasValue;
@@ -244,6 +253,7 @@
                 return container;
             },
             textArea:  function(item, declarations) {
+                var container = $('<div class="form-group"/>');
                 var input = $('<textarea class="form-control" rows="3"/>');
                 input.data('declaration',item);
 
@@ -256,8 +266,14 @@
                         input.attr(key, item[key]);
                     }
                 });
-
-                return input;
+                
+                if(has(item, 'text')) {
+                    container.append(declarations.label(item, declarations));
+                }
+                
+                container.append(input);
+                
+                return container;
             },
             select:    function(item, declarations) {
                 var container = $('<div class="form-group"/>');
