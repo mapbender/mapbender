@@ -395,7 +395,7 @@
                                     olFeature =  layer.getFeatureById(feature.id);
                                 }else{
                                     olFeature = self.activeLayer.getFeatureByFid(feature.id);
-                                }
+                                }                         
                                 self._openFeatureEditDialog(olFeature);
                             }
                         },
@@ -553,8 +553,39 @@
                 self._getData();
             };
             this.map.events.register("moveend", this.map, this.moveEndEvent);          
-            this.map.events.register('click', this, this._mapClick);         
+            this.map.events.register('click', this, this._mapClick);
             
+            var featureoverEvent = function(e){
+                var feature = e.feature;
+                var table = self.currentSettings.table;
+                var tableApi = table.resultTable('getApi');
+                if(feature.layer.name === self.currentSettings.label){
+                    $.each(tableApi.data(),function(idx, jsonFeature){
+                        if(jsonFeature.id === feature.fid){
+                            $(tableApi.rows(idx).nodes()).css('color','red');
+                        }
+                    });
+                    feature.layer.drawFeature(feature,'select');
+                }
+            };
+            
+            var featureoutEvent = function(e){
+                var feature = e.feature;
+                var table = self.currentSettings.table;
+                var tableApi = table.resultTable('getApi');
+                if(feature.layer.name === self.currentSettings.label){
+                    $.each(tableApi.data(),function(idx, jsonFeature){
+                        if(jsonFeature.id === feature.fid){
+                            $(tableApi.rows(idx).nodes()).css('color','green');
+                        }
+                    });
+                    feature.layer.drawFeature(feature,'default');
+                }
+            };
+
+            this.map.events.register('featureover', this, featureoverEvent);
+            this.map.events.register('featureout', this, featureoutEvent);
+            this.map.resetLayersZIndex();
             this._trigger('ready');
         },
         
@@ -642,6 +673,7 @@
             
             self.currentPopup = popup;
             popup.generateElements({items: self.currentSettings.formItems});
+            console.log(feature.data);
             popup.formData(feature.data); 
         },
         
