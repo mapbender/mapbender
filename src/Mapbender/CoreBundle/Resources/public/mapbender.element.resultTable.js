@@ -169,6 +169,15 @@
         getApi: function() {
             return this._dataTable;
         },
+        
+        /**
+         * Get widget itself
+         * 
+         * @returns widget
+         */
+        getWidget: function(){
+            return this;
+        },
 
         /**
          * Get selection manager
@@ -389,7 +398,68 @@
                 }
             });
             return r;
-        }
+        },
+        
+        /**
+         * 
+         * @param {type} id
+         * @param {type} key
+         * @returns {@exp;selector|@exp;seed@pro;length|@exp;selector@call;slice|String|@exp;compiled@pro;selector|@exp;selector@call;replace|@exp;handleObjIn@pro;selector|until|seed.length|compiled.selector|handleObjIn.selector|@exp;type|@exp;type@call;slice|@exp;callback|@exp;props|@exp;params|@arr;@this;|@exp;data|@exp;speed|@exp;options|Array|@exp;props@call;split|@exp;jQuery@call;param|@exp;query@call;split|@exp;jQuery@call;makeArray|@exp;selectorundefined|@exp;options@pro;duration|@exp;_@call;extend|options|@exp;s@call;join@call;replace|selectorundefined|_@call;extend.duration|options.duration}Get data by id
+         */
+        getDataById: function(value, key){    
+            var result;
+            
+            if(!key){
+                key = 'id'
+            }
+            $.each(this.getApi().data(),function(i, data){
+                if(value === data[key]){
+                    result = data;
+                    return false
+                }
+            });
+            return result;
+        },
+        
+        /**
+         * 
+         * @param {type} dom
+         * @returns {undefined}
+         */
+        getDomRowByData: function(data){
+           var tableApi = this.getApi();
+           var rows = tableApi.rows().nodes();
+           var result;
+
+           $.each(rows, function(i, domRow){
+                var tr = $(domRow);
+                var row = tableApi.row( tr );
+                if( row.data() == data){
+                    result = tr;
+                    return false;
+                }
+           });
+           
+           return result;
+        },
+        
+        /**
+         * Show by DOM row
+         * @return int page number
+         */
+        showByRow: function(domRow){
+            var tableApi =  this._dataTable;
+            var rowsOnOnePage = tableApi.page.len();
+            
+            if(domRow.hasOwnProperty('length')){
+                domRow = domRow[0]
+            }
+            
+            var nodePosition = tableApi.rows({order: 'current'}).nodes().indexOf(domRow);
+            var pageNumber = Math.floor(nodePosition / rowsOnOnePage);
+            tableApi.page(pageNumber).draw( false );
+            return pageNumber;
+        },
     });
 
 })(jQuery);
