@@ -8,12 +8,13 @@ namespace Mapbender\CoreBundle\Controller;
 
 use Assetic\Asset\StringAsset;
 use Assetic\Filter\CssRewriteFilter;
+use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
+use Mapbender\CoreBundle\Asset\AssetFactory;
+use Mapbender\CoreBundle\Component\Application;
+use Mapbender\CoreBundle\Component\SecurityContext;
+use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
-use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
-use Mapbender\CoreBundle\Component\Application;
-use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
-use Mapbender\CoreBundle\Component\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -22,7 +23,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Mapbender\CoreBundle\Asset\AssetFactory;
 
 /**
  * Application controller.
@@ -272,6 +272,14 @@ class ApplicationController extends Controller
 
         $application_entity = $application->getEntity();
         if ($application_entity::SOURCE_YAML === $application_entity->getSource() && count($application_entity->yaml_roles)) {
+
+            // If no token, then check manually if some role IS_AUTHENTICATED_ANONYMOUSLY
+            if (!$securityContext->getToken()) {
+                if (in_array('IS_AUTHENTICATED_ANONYMOUSLY', $application_entity->yaml_roles)) {
+                    return;
+                }
+            }
+
             $passed = false;
             foreach ($application_entity->yaml_roles as $role) {
                 if ($securityContext->isGranted($role)) {

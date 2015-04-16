@@ -28,6 +28,10 @@ $.extend(true, Mapbender, {
             create: function(layerDef){
                 var self = this;
                 var rootLayer = layerDef.configuration.children[0];
+                if(layerDef.configuration.status !== 'ok'){ //deactivate corrupte or unreachable sources
+                    rootLayer.options.treeOptions.selected = false;
+                    rootLayer.options.treeOptions.allow.selected = false;
+                }
 
                 function _setProperties(layer, parent, id, num, proxy){
                     /* set unic id for a layer */

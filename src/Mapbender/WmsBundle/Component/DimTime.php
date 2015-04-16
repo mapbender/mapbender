@@ -60,8 +60,8 @@ class DimTime extends Dimension
 
     /**
      * Set name
-     * 
-     * @param string $value 
+     *
+     * @param string $value
      * @return Dimension
      */
     public function setName($value)
@@ -71,7 +71,7 @@ class DimTime extends Dimension
 
     /**
      * Get name
-     * 
+     *
      * @return string
      */
     public function getName()
@@ -81,8 +81,8 @@ class DimTime extends Dimension
 
     /**
      * Set units
-     * 
-     * @param string $value 
+     *
+     * @param string $value
      * @return Dimension
      */
     public function setUnits($value)
@@ -92,7 +92,7 @@ class DimTime extends Dimension
 
     /**
      * Get units
-     * 
+     *
      * @return string
      */
     public function getUnits()
@@ -102,8 +102,8 @@ class DimTime extends Dimension
 
     /**
      * Set unitSymbol
-     * 
-     * @param string $value 
+     *
+     * @param string $value
      * @return Dimension
      */
     public function setUnitSymbol($value)
@@ -113,7 +113,7 @@ class DimTime extends Dimension
 
     /**
      * Get unitSymbol
-     * 
+     *
      * @return string
      */
     public function getUnitSymbol()
@@ -123,8 +123,8 @@ class DimTime extends Dimension
 
     /**
      * Set default
-     * 
-     * @param string $value 
+     *
+     * @param string $value
      * @return Dimension
      */
     public function setDefault($value)
@@ -138,7 +138,7 @@ class DimTime extends Dimension
 
     /**
      * Get default
-     * 
+     *
      * @return string
      */
     public function getDefault()
@@ -148,8 +148,8 @@ class DimTime extends Dimension
 
     /**
      * Set multipleValues
-     * 
-     * @param boolean $value 
+     *
+     * @param boolean $value
      * @return Dimension
      */
     public function setMultipleValues($value)
@@ -163,7 +163,7 @@ class DimTime extends Dimension
 
     /**
      * Get multipleValues
-     * 
+     *
      * @return boolean
      */
     public function getMultipleValues()
@@ -173,8 +173,8 @@ class DimTime extends Dimension
 
     /**
      * Set nearestValue
-     * 
-     * @param boolean $value 
+     *
+     * @param boolean $value
      * @return Dimension
      */
     public function setNearestValue($value)
@@ -188,7 +188,7 @@ class DimTime extends Dimension
 
     /**
      * Get nearestValue
-     * 
+     *
      * @return boolean
      */
     public function getNearestValue()
@@ -198,8 +198,8 @@ class DimTime extends Dimension
 
     /**
      * Set current
-     * 
-     * @param boolean $value 
+     *
+     * @param boolean $value
      * @return Dimension
      */
     public function setCurrent($value)
@@ -213,7 +213,7 @@ class DimTime extends Dimension
 
     /**
      * Get current
-     * 
+     *
      * @return boolean
      */
     public function getCurrent()
@@ -223,8 +223,8 @@ class DimTime extends Dimension
 
     /**
      * Set extentValue
-     * 
-     * @param string $value 
+     *
+     * @param string $value
      * @return Dimension
      */
     public function setExtentValue($value)
@@ -234,12 +234,11 @@ class DimTime extends Dimension
 
     /**
      * Get extentValue
-     * 
+     *
      * @return string
      */
     public function getExtentValue()
     {
         return $this->extentValue;
     }
-
 }
