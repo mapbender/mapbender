@@ -114,6 +114,18 @@ class ApplicationYAMLMapper
             $weight = 0;
             if ($elementsDefinition !== null) {
                 foreach ($elementsDefinition as $id => $elementDefinition) {
+                    /**
+                     * MAP Layersets handling
+                     */
+                    if ($elementDefinition['class'] == "Mapbender\\CoreBundle\\Element\\Map") {
+                        if (!isset($elementDefinition['layersets'])) {
+                            $elementDefinition['layersets'] = array();
+                        }
+                        if (isset($elementDefinition['layerset'])) {
+                            $elementDefinition['layersets'][] = $elementDefinition['layerset'];
+                        }
+                    }
+
                     $configuration_ = $elementDefinition;
                     unset($configuration_['class']);
                     unset($configuration_['title']);
@@ -163,6 +175,13 @@ class ApplicationYAMLMapper
 
         if(!isset($definition['layersets'])){
             $definition['layersets'] = array();
+
+            /**
+             * @deprecated definition
+             */
+            if(isset($definition['layerset'])){
+                $definition['layersets'][] = $definition['layerset'];
+            }
         }
 
         // TODO: Add roles, entity needs work first
