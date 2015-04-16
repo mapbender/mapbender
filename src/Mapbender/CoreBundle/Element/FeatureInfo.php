@@ -59,7 +59,7 @@ class FeatureInfo extends Element
             "target" => null,
             "width" => 700,
             "height" => 500
-            );
+        );
     }
 
     /**
@@ -86,7 +86,9 @@ class FeatureInfo extends Element
         return array(
             'js' => array(
                 'mapbender.element.featureInfo.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js'),
+                '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
+                '@FOMCoreBundle/Resources/public/js/widgets/popup.js'
+            ),
             'css' => array(
                 '@MapbenderCoreBundle/Resources/public/sass/element/featureinfo.scss'
             ),
@@ -101,13 +103,13 @@ class FeatureInfo extends Element
     {
         $configuration = parent::getConfiguration();
         return $this->container->get('templating')
-                        ->render(
-                            'MapbenderCoreBundle:Element:featureinfo.html.twig',
-                            array(
-                            'id' => $this->getId(),
-                            'configuration' => $configuration,
-                            'title' => $this->getTitle())
-                        );
+                ->render(
+                    'MapbenderCoreBundle:Element:featureinfo.html.twig',
+                    array(
+                    'id' => $this->getId(),
+                    'configuration' => $configuration,
+                    'title' => $this->getTitle())
+        );
     }
 
     /**
@@ -117,5 +119,4 @@ class FeatureInfo extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:featureinfo.html.twig';
     }
-
 }
