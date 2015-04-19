@@ -52,6 +52,9 @@
       display: inline-block;
       text-wrap: avoid;
       white-space: nowrap;
+      > label{
+        margin-bottom: 0;
+      }
     }
 
     .dropdownList{
