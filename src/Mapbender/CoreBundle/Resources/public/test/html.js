@@ -5,6 +5,28 @@
  */
 (function($) {
 
+    // widget <- HTMLElement widget
+    // options <- element configuration
+    // element <- jQuery widget DOM element
+    var forms = findItem('form');
+
+    $.each(forms,function(i, form){
+        form.items.push({
+            type:  'button',
+            title: 'Absenden',
+            click: function(event) {
+                var form = $(event.currentTarget).closest('form');
+                var data = form.formData();
+                console.log(data);
+                return false;
+            }
+        })
+    });
+
+
+    // disable rendering
+    //delete options.items;
+
     //return ;
     var items2 = [{
         type:  'inline',
