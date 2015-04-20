@@ -77,7 +77,8 @@ class BaseSourceSwitcherAdminType extends AbstractType implements ExtendedCollec
                 'required' => true,
                 'choices' => array(
                     "group" => "group",
-                    "dropdown" => "dropdown")))
+                    "dropdown" => "dropdown",
+                    "mobile" => "mobile")))
             ->add('target', 'target_element',
                   array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
