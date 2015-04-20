@@ -3,283 +3,14 @@
     /**
      * Digitizer tool
      */
-    $.widget("mapbender.mbDigitizerToolset", {
-        options: {},
-        _activeControls: [],
-
-        refresh:function(){
-            var widget = this;
-            var element = $(widget.element);
-            var items = widget.options.items;
-            var layer = widget.options.layer;
-            var map = layer.map;
-            var currentController = null;
-            // TODO: find map DOM element 
-            var mapEl = $('#map');
-            
-            var controls = {
-                drawPoint:     {
-                    listener: function(e) {
-                        var el = $(e.currentTarget);
-                        if(switchController(el.data('control'))) {
-                            mapEl.css({cursor: 'crosshair'});
-                        } else {
-                            mapEl.css({cursor: 'default'});
-                        }
-
-                    },
-                    control: new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Point, {
-                        featureAdded: function (feature) {
-                            widget._trigger("featureAdded",null, feature);
-                        }
-                    })
-                },
-                drawLine:   {
-                    listener: function(e) {
-                        var el = $(e.currentTarget);
-                        if(switchController(el.data('control'))) {
-                            mapEl.css({cursor: 'crosshair'});
-                        } else {
-                            mapEl.css({cursor: 'default'});
-                        }
-
-                    },
-                    control:  new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Path, {
-                        featureAdded: function (feature) {
-                            widget._trigger("featureAdded",null, feature);
-                        }
-                    })
-                },
-                drawPolygon:   {
-                    listener: function(e) {
-                        var el = $(e.currentTarget);
-                        if(switchController(el.data('control'))) {
-                            mapEl.css({cursor: 'crosshair'});
-                        } else {
-                            mapEl.css({cursor: 'default'});
-                        }
-
-                    },
-                    control:  new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Polygon, {
-                        featureAdded: function (feature) {
-                            widget._trigger("featureAdded", null, feature);
-                        }
-                    })
-                },
-                drawRectangle: {
-                    listener: function(e) {
-                        var el = $(e.currentTarget);
-                        if(switchController(el.data('control'))) {
-                            mapEl.css({cursor: 'crosshair'});
-                        } else {
-                            mapEl.css({cursor: 'default'});
-                        }
-
-                    },
-                    control:  new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.RegularPolygon, {
-                            handlerOptions: {
-                                sides:      4,
-                                irregular:  true
-                            }
-                        })
-                },
-                drawCircle: {
-                    listener: function(e) {
-                        var el = $(e.currentTarget);
-                        if(switchController(el.data('control'))) {
-                            mapEl.css({cursor: 'crosshair'});
-                        } else {
-                            mapEl.css({cursor: 'default'});
-                        }
-
-                    },
-                    control:  new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.RegularPolygon, {
-                            handlerOptions: {
-                                sides:      40
-                            }
-                        })
-                },
-                drawEllipse: {
-                    listener: function(e) {
-                        var el = $(e.currentTarget);
-                        if(switchController(el.data('control'))) {
-                            mapEl.css({cursor: 'crosshair'});
-                        } else {
-                            mapEl.css({cursor: 'default'});
-                        }
-
-                    },
-                    control:  new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.RegularPolygon, {
-                            handlerOptions: {
-                                sides:      40,
-                                irregular:  true,
-                            }
-                        })
-                },
-                donut: {
-                    listener: function(e) {
-                        var el = $(e.currentTarget);
-                        if(switchController(el.data('control'))) {
-                            mapEl.css({cursor: 'crosshair'});
-                        } else {
-                            mapEl.css({cursor: 'default'});
-                        }
-
-                    },
-                    control:  new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Polygon, {
-                            handlerOptions: {
-                                holeModifier: 'element'
-                            }
-                        })
-                },
-                edit:{
-                    listener: function(e) {
-                        var el = $(e.currentTarget);
-                        if(switchController(el.data('control'))) {
-                            mapEl.css({cursor: 'crosshair'});
-                        } else {
-                            mapEl.css({cursor: 'default'});
-                        }
-
-                    },
-                    control: new OpenLayers.Control.ModifyFeature(layer)
-                },
-                drag:  {
-                    listener: function(e) {
-                        var el = $(e.currentTarget);
-                        if(switchController(el.data('control'))) {
-                            mapEl.css({cursor: 'default'});
-                        }
-                        mapEl.css({cursor: 'default'});
-                    },
-                    control:  new OpenLayers.Control.DragFeature(layer,{
-                            onStart: function(feature) {
-                                    feature.renderIntent = 'select';
-                                },
-                            onComplete: function(feature) {
-                                    feature.renderIntent = 'default';
-                                    feature.layer.redraw();
-                                }
-                    })
-                },
-                select:   {
-                    listener: function(e) {
-                        var el = $(e.currentTarget);
-                        switchController(el.data('control'));
-                        mapEl.css({cursor: 'default'});
-
-                    },
-                    control:  new OpenLayers.Control.SelectFeature(layer, {
-                        clickout:    true,
-                        toggle:      true,
-                        multiple:    true,
-                        hover:       false,
-                        box:         true,
-                        toggleKey:   "ctrlKey", // ctrl key removes from selection
-                        multipleKey: "shiftKey" // shift key adds to selection
-                    })
-                },
-                removeSelected:  {
-                    listener: function(e) {
-                        layer.removeFeatures(layer.selectedFeatures);
-                    }
-                },
-                removeAll:       {
-                    listener: function(e) {
-                        layer.removeAllFeatures();
-                    }
-                }
-            };
-            
-            /**
-             * Switch between current and element controller.
-             * Returns true if last controller was different to given one
-             *
-             * @param controller
-             * @returns {boolean}
-             */
-            function switchController(controller) {
-
-                if(controller) {
-                    controller.activate();
-                }
-
-                if(currentController) {
-                    if(currentController instanceof OpenLayers.Control.SelectFeature){
-                        currentController.unselectAll();
-                    }
-                    currentController.deactivate();
-                    if(controller === currentController) {
-                        currentController = null;
-                        return false;
-                    }
-                }
-                currentController = controller;
-                return true;
-            }
-            
-            // clean controllers
-            for (var key in widget._activeControls) {
-                var control = widget._activeControls[key];
-                control.deactivate();
-                
-                mapEl.css({cursor: 'default'});
-                map.removeControl(control);
-            }        
-            widget._activeControls = [];
-
-            // clean navigation
-            element.empty();
-            
-            // build navigation
-            $.each(items, function(idx, button) {
-                var item = this;
-                var button = $("<button class='btn'/>");
-                var type = item.type;
-                
-                button.html(item.type);
-                button.data(item);
-                
-                if(controls.hasOwnProperty(type)){
-                    var controlDefiniton = controls[type];
-                    button.on('click', controlDefiniton.listener);
-
-                    if(controlDefiniton.hasOwnProperty('control')) {
-                        button.data('control', controlDefiniton.control);
-                        widget._activeControls.push(controlDefiniton.control);
-                        
-                        var drawControlEvents = controlDefiniton.control.events;
-                        drawControlEvents.register('activate', button, function(e, obj) {
-                            button.addClass('active');
-                        });
-                        drawControlEvents.register('deactivate', button, function(e, obj) {
-                            button.removeClass('active');
-                        });
-                    }
-                }
-
-                element.append(button);
-            });
-            
-            // Init map controllers
-            for (var key in widget._activeControls) {
-                map.addControl(widget._activeControls[key]);
-            }
-            
-            widget._trigger('ready', null, this);
-        },
-
-        _create: function() {
-            this.refresh();
-        },
-        
-        _setOptions: function( options ) {
-            this._super( options );
-            this.refresh();
-        }
-    });
-
-
+    /**
+     * Digitizing tool set
+     *
+     * @author Andriy Oblivantsev <eslider@gmail.com>
+     * @author Stefan Winkelmann <stefan.winkelmann@wheregroup.com>
+     *
+     * @copyright 20.04.2015 by WhereGroup GmbH & Co. KG
+     */
     $.widget("mapbender.mbDigitizer", {
         options: {},
         toolsets: {
@@ -325,12 +56,13 @@
         },
         
         _setup: function(){
-            this.map = $('#' + this.options.target).data('mapbenderMbMap').map.olMap;
             var frames = [];
             var activeFrame = null;
-            var self = this;
-            var element = $(self.element);
-            var selector = self.selector =  $("select.selector", element);
+            var widget = this;
+            var element = $(widget.element);
+            var selector = widget.selector =  $("select.selector", element);
+            widget.map = $('#' + widget.options.target).data('mapbenderMbMap').map.olMap;
+
 
             var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["default"], {
                 'strokeWidth': 2
@@ -355,13 +87,13 @@
             $.each(this.options.schemes, function(schemaName){
                 var settings = this;
                 var option = $("<option/>");
-                option.val(schemaName).html(settings.label);
-
                 var layer =  settings.layer = new OpenLayers.Layer.Vector(settings.label, {styleMap: styleMap});
-                self.map.addLayer(layer);
+
+                option.val(schemaName).html(settings.label);
+                widget.map.addLayer(layer);
 
                 var frame = settings.frame = $("<div/>").addClass('frame').data(settings);
-                var tools = settings.tools = $("<div/>").mbDigitizerToolset({items: self.toolsets[settings.featureType.geomType], layer: layer});
+                var tools = settings.tools = $("<div/>").digitizingToolSet({items: widget.toolsets[settings.featureType.geomType], layer: layer});
                 var checkbox = $('<div class="checkbox">\n\
                                 <label><input class="onlyExtent'+schemaName+'" type="checkbox" checked="true">current extent</label>\n\
                              </div>');
@@ -394,9 +126,9 @@
                                 if(feature.hasOwnProperty('isNew') ){
                                     olFeature =  layer.getFeatureById(feature.id);
                                 }else{
-                                    olFeature = self.activeLayer.getFeatureByFid(feature.id);
+                                    olFeature = widget.activeLayer.getFeatureByFid(feature.id);
                                 }                         
-                                self._openFeatureEditDialog(olFeature);
+                                widget._openFeatureEditDialog(olFeature);
                             }
                         },
                         {
@@ -416,7 +148,7 @@
                                         return;
                                     };
 
-                                    self.query('delete',{
+                                    widget.query('delete',{
                                         schema: schemaName,
                                         feature: feature
                                     }).done(function(fid){                 
@@ -474,13 +206,13 @@
                     tableApi.draw();
                     
                     if(settings.openFormAfterEdit === true){
-                        self._openFeatureEditDialog(feature);
+                        widget._openFeatureEditDialog(feature);
                     }
                     
                 });
                 
                 checkbox.delegate('input','change',function(){
-                    self._getData();
+                    widget._getData();
                 });
                 
                 
@@ -504,11 +236,11 @@
                 activeFrame = frame;
                 activeFrame.css('display','block');
                 
-                self.activeLayer = settings.layer;
-                self.schemaName = settings.schemaName;
-                self.currentSettings = settings;
+                widget.activeLayer = settings.layer;
+                widget.schemaName = settings.schemaName;
+                widget.currentSettings = settings;
                 
-                var table = self.currentSettings.table;
+                var table = widget.currentSettings.table;
                 var tableApi = table.resultTable('getApi');
             
                 table.off('mouseenter','mouseleave','click');
@@ -520,7 +252,7 @@
                     if(!jsonData){
                         return;
                     }
-                    self._highlightFeature(jsonData,true);
+                    widget._highlightFeature(jsonData,true);
                 });
 
                 table.delegate("tbody > tr", 'mouseleave', function() {
@@ -530,7 +262,7 @@
                     if(!jsonData){
                         return;
                     }
-                    self._highlightFeature(jsonData,false);
+                    widget._highlightFeature(jsonData,false);
                 });
 
                 table.delegate("tbody > tr", 'click', function() {
@@ -540,10 +272,10 @@
                     if(!jsonData){
                         return;
                     }                  
-                    self._zoomToFeature(jsonData);
+                    widget.zoomToJsonFeature(jsonData);
                 });
   
-                self._getData();
+                widget._getData();
             }
 
             selector.on('change',onSelectorChange);
@@ -551,17 +283,17 @@
             
             // register events
             this.moveEndEvent = function(){
-                self._getData();
+                widget._getData();
             };
             this.map.events.register("moveend", this.map, this.moveEndEvent);          
             this.map.events.register('click', this, this._mapClick);
             
             var featureoverEvent = function(e){
                 var feature = e.feature;
-                var table = self.currentSettings.table;
+                var table = widget.currentSettings.table;
                 var tableWidget = table.data('mapbenderResultTable');
                 
-                if(feature.layer.name === self.currentSettings.label){
+                if(feature.layer.name === widget.currentSettings.label){
                     
                     var jsonFeature = tableWidget.getDataById(feature.fid);
                     var domRow = tableWidget.getDomRowByData(jsonFeature); 
@@ -575,10 +307,10 @@
             
             var featureoutEvent = function(e){
                 var feature = e.feature;
-                var table = self.currentSettings.table;
+                var table = widget.currentSettings.table;
                 var tableWidget = table.data('mapbenderResultTable');
                 
-                if(feature.layer.name === self.currentSettings.label){
+                if(feature.layer.name === widget.currentSettings.label){
                     var jsonFeature = tableWidget.getDataById(feature.fid);
                     var domRow = tableWidget.getDomRowByData(jsonFeature); 
                     domRow.removeClass('hover');
@@ -832,14 +564,18 @@
             }
             this.activeLayer.redraw();
         },
-        
-        _zoomToFeature: function(jsonFeature){
+
+        /**
+         * Zoom to JSON feature
+         *
+         * @param jsonFeature
+         */
+        zoomToJsonFeature: function(jsonFeature){
             var layer = this.activeLayer;
             var feature = jsonFeature.hasOwnProperty('isNew') ? layer.getFeatureById(jsonFeature.id): layer.getFeatureByFid(jsonFeature.id);
             var bounds = feature.geometry.getBounds();
             this.map.zoomToExtent(bounds);
-        },
-        
+        }
     });
 
 })(jQuery);

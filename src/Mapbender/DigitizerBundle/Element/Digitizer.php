@@ -3,10 +3,8 @@
 namespace Mapbender\DigitizerBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Mapbender\CoreBundle\Entity\FeatureType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  *
@@ -51,12 +49,12 @@ class Digitizer extends Element
      */
     static public function listAssets()
     {
-        return array('js' => array('mapbender.element.digitizer.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
-            'css' => array('sass/element/digitizer.scss'),
-            'trans' => array()
-        );
+        return array('js'    => array('@MapbenderCoreBundle/Resources/public/mapbender.digitizing.toolset.js',
+                                      'mapbender.element.digitizer.js',
+                                      '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+                                      '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
+                     'css'   => array('sass/element/digitizer.scss'),
+                     'trans' => array());
     }
 
     /**
