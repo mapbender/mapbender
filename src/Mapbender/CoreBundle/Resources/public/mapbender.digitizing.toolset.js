@@ -173,7 +173,7 @@
                 select:         {
                     listener: function(e) {
                         var el = $(e.currentTarget);
-                        setController(el.data('control'));
+                        widget.setController(el.data('control'));
                         mapElement.css({cursor: 'default'});
 
                     },
@@ -188,12 +188,12 @@
                     })
                 },
                 removeSelected: {
-                    listener: function(e) {
+                    listener: function() {
                         layer.removeFeatures(layer.selectedFeatures);
                     }
                 },
                 removeAll:      {
-                    listener: function(e) {
+                    listener: function() {
                         layer.removeAllFeatures();
                     }
                 }
@@ -221,8 +221,8 @@
             widget.buildNavigation(items);
 
             // Init map controllers
-            for (var key in widget._activeControls) {
-                map.addControl(widget._activeControls[key]);
+            for (var k in widget._activeControls) {
+                map.addControl(widget._activeControls[k]);
             }
 
             widget._trigger('ready', null, this);
@@ -240,7 +240,7 @@
          * @param controller
          * @returns {boolean}
          */
-        setController:   function(controller) {
+        setController: function(controller) {
             var widget = this;
 
             if(controller) {
@@ -274,7 +274,7 @@
             var element = $(widget.element);
             var controls = widget.controls;
 
-            $.each(buttons, function(idx, _button) {
+            $.each(buttons, function() {
                 var item = this;
                 var button = $("<button class='btn'/>");
                 var type = item.type;
@@ -282,18 +282,18 @@
                 button.data(item);
 
                 if(controls.hasOwnProperty(type)) {
-                    var controlDefiniton = controls[type];
-                    button.on('click', controlDefiniton.listener);
+                    var controlDefinition = controls[type];
+                    button.on('click', controlDefinition.listener);
 
-                    if(controlDefiniton.hasOwnProperty('control')) {
-                        button.data('control', controlDefiniton.control);
-                        widget._activeControls.push(controlDefiniton.control);
+                    if(controlDefinition.hasOwnProperty('control')) {
+                        button.data('control', controlDefinition.control);
+                        widget._activeControls.push(controlDefinition.control);
 
-                        var drawControlEvents = controlDefiniton.control.events;
-                        drawControlEvents.register('activate', button, function(e, obj) {
+                        var drawControlEvents = controlDefinition.control.events;
+                        drawControlEvents.register('activate', button, function() {
                             button.addClass('active');
                         });
-                        drawControlEvents.register('deactivate', button, function(e, obj) {
+                        drawControlEvents.register('deactivate', button, function() {
                             button.removeClass('active');
                         });
                     }
@@ -310,10 +310,10 @@
             var widget = this;
             var mapElement = widget.getMapElement();
             var map = widget.getLayer().map;
-            var key;
+            var activeControls = widget._activeControls;
 
-            for (key in widget._activeControls) {
-                var control = widget._activeControls[key];
+            for (var k in  activeControls) {
+                var control = activeControls[k];
                 control.deactivate();
                 mapElement.css({cursor: 'default'});
                 map.removeControl(control);
@@ -334,10 +334,9 @@
         /**
          * Get map jQuery HTML element
          *
-         * @param map
          * @return HTMLElement jquery HTML element
          */
-        getMapElement: function(map) {
+        getMapElement: function() {
             return $(this.getLayer().map.div);
         }
     });
