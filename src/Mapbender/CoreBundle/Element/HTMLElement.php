@@ -2,7 +2,9 @@
 
 namespace Mapbender\CoreBundle\Element;
 
+use Doctrine\DBAL\Connection;
 use Mapbender\CoreBundle\Component\Element;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class HTMLElement extends Element
 {
@@ -118,4 +120,99 @@ class HTMLElement extends Element
         );
     }
 
+    /**
+     * Is associative array given?
+     * @param $arr
+     * @return bool
+     */
+    protected static function isAssoc(&$arr)
+    {
+        return array_keys($arr) !== range(0, count($arr) - 1);
+    }
+
+    /**
+     * Prepare elements recursive.
+     *
+     * @param $items
+     * @return array
+     * @internal param $configuration
+     */
+    protected function prepareItems($items)
+    {
+        if (!is_array($items)) {
+            return $items;
+        } elseif (self::isAssoc($items)) {
+            $items = $this->prepareItem($items);
+        } else {
+            foreach ($items as $key => $item) {
+                $items[$key] = $this->prepareItem($item);
+            }
+        }
+        return $items;
+    }
+
+    /**
+     * Prepare element by type
+     *
+     * @param $item
+     * @return mixed
+     * @internal param $type
+     */
+    protected function prepareItem($item)
+    {
+        if(!isset($item["type"])){
+            return $item;
+        }
+
+        if (isset($item["items"])) {
+            $item["items"] = $this->prepareItems($item["items"]);
+        }
+
+        switch ($item['type']) {
+            case 'select':
+                if (isset($item['sql'])) {
+                    $connectionName = isset($item['connection']) ? $item['connection'] : 'default';
+                    $sql            = $item['sql'];
+                    $options        = isset($item["options"]) ? $item["options"] : array();
+
+                    unset($item['sql']);
+                    unset($item['connection']);
+
+                    /** @var Connection $dbal */
+                    $dbal = $this->container->get("doctrine.dbal.{$connectionName}_connection");
+                    foreach ($dbal->fetchAll($sql) as $option) {
+                        $options[current($option)] = end($option);
+                    }
+
+                    $item["options"] = $options;
+                }
+                break;
+        }
+        return $item;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function httpAction($action)
+    {
+        switch ($action) {
+            case 'configuration':
+                return new JsonResponse($this->getConfiguration());
+        }
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getConfiguration()
+    {
+        $configuration = parent::getConfiguration();
+
+        if (isset($configuration['items'])) {
+            $configuration['items'] = $this->prepareItems($configuration['items']);
+        }
+        return $configuration;
+    }
 }
