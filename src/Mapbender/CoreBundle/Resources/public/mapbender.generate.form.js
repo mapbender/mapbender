@@ -136,10 +136,9 @@
                         if(isRegExp){
                             hasValue = eval(item.mandatory).exec(value) != null;
                         }
-                        
+
                         if(hasValue){
                             container.removeClass('has-error');
-                            
                         }else{
                             $.notify( inputField, text, { position:"top right", autoHideDelay: 2000});
                             container.addClass('has-error');
@@ -278,7 +277,6 @@
             select:    function(item, declarations) {
                 var container = $('<div class="form-group"/>');
                 var select = $('<select class="form-control"/>');
-
 
                 select.data('declaration',item);
 

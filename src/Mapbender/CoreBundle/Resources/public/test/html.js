@@ -280,7 +280,7 @@
     popup.popupDialog({
         title: 'Form generator test',
         width: "423px",
-        modal: true
+        modal: false
     });
 
     //popup.generateElements({

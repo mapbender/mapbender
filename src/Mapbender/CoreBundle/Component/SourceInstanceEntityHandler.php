@@ -11,7 +11,7 @@ namespace Mapbender\CoreBundle\Component;
 use Mapbender\CoreBundle\Component\Signer;
 
 /**
- * Description of EntityHandler
+ * Description of SourceInstanceEntityHandler
  *
  * @author Paul Schmidt
  */
@@ -22,6 +22,11 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * Creates a SourceInstance
      */
     abstract public function create($persist = true);
+    
+    /**
+     * Update instance parameters
+     */
+    abstract public function update();
     
     /**
      * Returns the instance configuration with signed urls.
