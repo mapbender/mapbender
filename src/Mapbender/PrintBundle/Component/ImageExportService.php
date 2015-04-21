@@ -2,7 +2,6 @@
 namespace Mapbender\PrintBundle\Component;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
@@ -38,6 +37,8 @@ class ImageExportService
 //        die();
         $this->format = $this->data['format'];
         $this->requests = $this->data['requests'];
+        // resource dir
+        $this->resourceDir = $this->container->getParameter('kernel.root_dir') . '/Resources/MapbenderPrintBundle';
         $this->getImages();
     }
 
@@ -185,18 +186,18 @@ class ImageExportService
             $points = array();
             foreach($ring as $c) {
                 $p = $this->realWorld2mapPos($c[0], $c[1]);
-
                 $points[] = floatval($p[0]);
                 $points[] = floatval($p[1]);
             }
-
+            imagesetthickness($image, 0);
             // Filled area
-            $color = $this->getColor(
-                $geometry['style']['fillColor'],
-                $geometry['style']['fillOpacity'],
-                $image);
-            imagefilledpolygon($image, $points, count($ring), $color);
-
+            if($geometry['style']['fillOpacity'] > 0){
+                $color = $this->getColor(
+                    $geometry['style']['fillColor'],
+                    $geometry['style']['fillOpacity'],
+                    $image);
+                imagefilledpolygon($image, $points, count($ring), $color);
+            }
             // Border
             $color = $this->getColor(
                 $geometry['style']['strokeColor'],
@@ -205,8 +206,38 @@ class ImageExportService
             imagesetthickness($image, $geometry['style']['strokeWidth']);
             imagepolygon($image, $points, count($ring), $color);
         }
-        // reset image thickness !!
-        imagesetthickness($image, 0);
+    }
+
+    private function drawMultiPolygon($geometry, $image)
+    {
+        foreach($geometry['coordinates'][0] as $ring) {
+            if(count($ring) < 3) {
+                continue;
+            }
+
+            $points = array();
+            foreach($ring as $c) {
+                $p = $this->realWorld2mapPos($c[0], $c[1]);
+                $points[] = floatval($p[0]);
+                $points[] = floatval($p[1]);
+            }
+            imagesetthickness($image, 0);
+            // Filled area
+            if($geometry['style']['fillOpacity'] > 0){
+                $color = $this->getColor(
+                    $geometry['style']['fillColor'],
+                    $geometry['style']['fillOpacity'],
+                    $image);
+                imagefilledpolygon($image, $points, count($ring), $color);
+            }
+            // Border
+            $color = $this->getColor(
+                $geometry['style']['strokeColor'],
+                $geometry['style']['strokeOpacity'],
+                $image);
+            imagesetthickness($image, $geometry['style']['strokeWidth']);
+            imagepolygon($image, $points, count($ring), $color);
+        }
     }
 
     private function drawLineString($geometry, $image)
@@ -228,9 +259,6 @@ class ImageExportService
 
             imageline($image, $from[0], $from[1], $to[0], $to[1], $color);
         }
-
-        // reset image thickness !!
-        imagesetthickness($image, 0);
     }
 
     private function drawPoint($geometry, $image)
@@ -240,34 +268,34 @@ class ImageExportService
         $p = $this->realWorld2mapPos($c[0], $c[1]);
 
         if(isset($geometry['style']['label'])){
-            $color = $this->getColor(
-                '#ff0000',
-                1,
-                $image);
-            $fontPath = $this->container->get('kernel')->getRootDir().'/Resources/MapbenderPrintBundle/fonts/';
-            imagettftext($image, 14, 0, $p[0], $p[1], $color, $fontPath.'Trebuchet_MS.ttf', $geometry['style']['label']);
+            // draw label with white halo
+            $color = $this->getColor('#ff0000', 1, $image);
+            $bgcolor = $this->getColor('#ffffff', 1, $image);
+            $fontPath = $this->resourceDir.'/fonts/';
+            $font = $fontPath . 'Trebuchet_MS.ttf';
+            imagettftext($image, 14, 0, $p[0], $p[1]+1, $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, 14, 0, $p[0], $p[1]-1, $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, 14, 0, $p[0]-1, $p[1], $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, 14, 0, $p[0]+1, $p[1], $bgcolor, $font, $geometry['style']['label']);
+            imagettftext($image, 14, 0, $p[0], $p[1], $color, $font, $geometry['style']['label']);
             return;
         }
 
         $radius = $geometry['style']['pointRadius'];
         // Filled circle
-        $color = $this->getColor(
-            $geometry['style']['fillColor'],
-            $geometry['style']['fillOpacity'],
-            $image);
-
-        imagefilledellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
-
+        if($geometry['style']['fillOpacity'] > 0){
+            $color = $this->getColor(
+                $geometry['style']['fillColor'],
+                $geometry['style']['fillOpacity'],
+                $image);
+            imagefilledellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
+        }
         // Circle border
         $color = $this->getColor(
             $geometry['style']['strokeColor'],
             $geometry['style']['strokeOpacity'],
             $image);
-        imagesetthickness($image, $geometry['style']['strokeWidth']);
         imageellipse($image, $p[0], $p[1], 2*$radius, 2*$radius, $color);
-
-        // reset image thickness !!
-        imagesetthickness($image, 0);
     }
 
     private function realWorld2mapPos($rw_x,$rw_y)

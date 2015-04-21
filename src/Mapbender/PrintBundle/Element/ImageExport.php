@@ -3,8 +3,7 @@
 namespace Mapbender\PrintBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Mapbender\PrintBundle\Component\ImageExportService;;
 
 /**
  *
@@ -119,17 +118,8 @@ class ImageExport extends Element
             case 'export':
                 $request = $this->container->get('request');
                 $data = $request->get('data');
-                // Forward to Printer Service URL using OWSProxy
-                $url = $this->container->get('router')->generate('mapbender_print_print_export', array(), true);
-                
-                $path = array(
-                    '_controller' => 'OwsProxy3CoreBundle:OwsProxy:genericProxy',
-                    'url' => $url,
-                    'content' => $data
-                );
-                $subRequest = $request->duplicate(array(), null, $path);
-                return $this->container->get('http_kernel')->handle(
-                        $subRequest, HttpKernelInterface::SUB_REQUEST);
+                $exportservice = new ImageExportService($this->container);
+                $exportservice->export($data);
         }
     }
 
