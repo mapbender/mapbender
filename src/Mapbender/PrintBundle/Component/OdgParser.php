@@ -38,14 +38,11 @@ class OdgParser
         $width = $node->item(0)->getAttribute('svg:width');
         $height = $node->item(0)->getAttribute('svg:height');
 
-        $data = array();
-        $data['width'] = substr($width, 0, -2);
-        $data['height'] = substr($height, 0, -2);
+        $size = array();
+        $size['width'] = substr($width, 0, -2);
+        $size['height'] = substr($height, 0, -2);
 
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/json');
-        $response->setContent(json_encode($data));
-        return $response;
+        return json_encode($size);
     }
 
     public function getConf($template)
