@@ -26,20 +26,20 @@
                 return;
             }
             var self = this;
-            var me = this.element;
-            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
 
         _setup: function(){
+            this.elementUrl = Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/';
             this.map = $('#' + this.options.target).data('mapbenderMbMap');
+            
 
             $('input[name="scale_text"],select[name="scale_select"], input[name="rotation"]', this.element)
                 .on('change', $.proxy(this._updateGeometry, this));
             $('input[name="scale_text"], input[name="rotation"]', this.element)
                 .on('keyup', $.proxy(this._updateGeometry, this));
             $('select[name="template"]', this.element)
-                .on('change', $.proxy(this._getPrintSize, this));
+                .on('change', $.proxy(this._getTemplateSize, this));
             $('#formats input[required]').on('change invalid', this._checkFieldValidity);
             this._trigger('ready');
             this._ready();
@@ -92,7 +92,7 @@
             }
             me.show();
             this.popupIsOpen = true;
-            this._getPrintSize();
+            this._getTemplateSize();
             this._loadPrintFormats();
             this._updateElements();
             this._updateGeometry(true);
@@ -331,11 +331,7 @@
         },
 
         _getPrintScale: function() {
-            return $('select[name="scale_select"],input[name="scale_text"]').val();
-        },
-
-        _print: function() {
-            this._printDirectly();
+            return $('select[name="scale_select"]').val();
         },
 
         _getPrintExtent: function() {
@@ -352,21 +348,12 @@
             return data;
         },
 
-        _printDirectly: function() {
-            var form = $('form#formats', this.element),
-            extent = this._getPrintExtent(),
-            template_key = this.element.find('select[name="template"]').val(),
-            format = this.options.templates[template_key].format,
-            file_prefix = this.options.file_prefix;
+        _print: function() {
+            var form = $('form#formats', this.element);
+            var extent = this._getPrintExtent();
 
             // Felder für extent, center und layer dynamisch einbauen
             var fields = $();
-
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'format',
-                value: format
-            }));
 
             $.merge(fields, $('<input />', {
                 type: 'hidden',
@@ -392,13 +379,7 @@
                 value: extent.center.y
             }));
 
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'file_prefix',
-                value: file_prefix
-            }));
-
-            // koordinaten fuer extent feature mitschicken
+            // extent feature
             var feature_coords = new Array();
             var feature_comp = this.feature.geometry.components[0].components;
             for(var i = 0; i < feature_comp.length-1; i++) {
@@ -413,10 +394,8 @@
                 value: JSON.stringify(feature_coords)
             }));
 
-            // layer auslesen
+            // wms layer
             var sources = this.map.getSourceTree(), lyrCount = 0;
-
-            var geojsonFormat = new OpenLayers.Format.GeoJSON();
 
             function _getLegends(layer) {
                 var legend = null;
@@ -488,6 +467,7 @@
             
             
             // Iterating over all vector layers, not only the ones known to MapQuery
+            var geojsonFormat = new OpenLayers.Format.GeoJSON();
             for(var i = 0; i < this.map.map.olMap.layers.length; i++) {
                 var layer = this.map.map.olMap.layers[i];
                 if('OpenLayers.Layer.Vector' !== layer.CLASS_NAME || this.layer === layer) {
@@ -537,7 +517,6 @@
                     var width = size.w;
                     var res = mwidth / width;
                     var scale = Math.round(OpenLayers.Util.getScaleFromResolution(res,'m'));
-                    var scale_deg = Math.round(OpenLayers.Util.getScaleFromResolution(res));
 
                     var overview = {};
                     overview.url = url;
@@ -552,23 +531,11 @@
                 }
             }
 
-            // replace pattern
-
-            if (typeof this.options.replace_pattern !== 'undefined' && this.options.replace_pattern !== null){
-                for(var i = 0; i < this.options.replace_pattern.length; i++) {
-                    $.merge(fields, $('<input />', {
-                        type: 'hidden',
-                        name: 'replace_pattern[' + i + ']',
-                        value: JSON.stringify(this.options.replace_pattern[i])
-                    }));
-                }
-            }
-
             $('div#layers').empty();
             fields.appendTo(form.find('div#layers'));
 
             // Post in neuen Tab (action bei form anpassen)
-            var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/direct';
+            var url =  this.elementUrl + 'print';
 
             form.get(0).setAttribute('action', url);
             form.attr('target', '_blank');
@@ -577,52 +544,24 @@
             if (lyrCount === 0){
                 Mapbender.info(Mapbender.trans('mb.core.printclient.info.noactivelayer'));
             }else{
-                //click hidden submit button to check requierd fields
-                var valid = this._checkFields();
+                //click hidden submit
                 form.find('input[type="submit"]').click();
-                if(valid) this.close();
             }
         },
 
-        _checkFields: function(){
-            var valid = true;
+        _getTemplateSize: function() {
             var self = this;
-            $('#formats input[required]').each(function() {
-                valid = valid && self._checkFieldValidity.apply(this);
-            });
-            return valid;
-        },
+            var template = $('select[name="template"]', this.element).val();
 
-        _checkFieldValidity: function() {
-            var valid = true;
-            var textfield = $(this).get(0);
-            // 'setCustomValidity not only sets the message, but also marks
-            // the field as invalid. In order to see whether the field really is
-            // invalid, we have to remove the message first
-            textfield.setCustomValidity('');
-            if (!textfield.validity.valid) {
-                //textfield.setCustomValidity(Mapbender.trans('mb.core.printclient.form.required'));
-                valid = false;
-            }
-            return valid;
-        },
-
-        _getPrintSize: function() {
-            var self = this;
-            var template = $('select[name="template"]', this.element).val(),
-            data = {
-                template: template
-            };
-            var url =  Mapbender.configuration.application.urls.element + '/' + this.element.attr('id') + '/template';
+            var url =  this.elementUrl + 'getTemplateSize';
             $.ajax({
                 url: url,
-                type: 'POST',
-                contentType: "application/json",
+                type: 'GET',
+                data: {template: template},
                 dataType: "json",
-                data: JSON.stringify(data),
                 success: function(data) {
-                    self.width = data['width'];
-                    self.height = data['height'];
+                    self.width = data.width;
+                    self.height = data.height;
                     self._updateGeometry();
                 }
             });
