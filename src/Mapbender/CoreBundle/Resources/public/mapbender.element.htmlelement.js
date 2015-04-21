@@ -30,7 +30,7 @@
                 return r;
             }
 
-            function render(){
+            function render() {
                 if(hasItems) {
                     var items = $.isArray(options.items) ? options.items : [options.items];
                     if(items[0].type == "popup") {
@@ -49,7 +49,7 @@
                         render();
                     }
                 });
-            }else{
+            } else {
                 render();
             }
         }

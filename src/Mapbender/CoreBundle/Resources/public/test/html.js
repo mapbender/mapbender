@@ -8,6 +8,9 @@
     // widget <- HTMLElement widget
     // options <- element configuration
     // element <- jQuery widget DOM element
+
+    $("#layertree").generateElements({items:[{type:'input',text:"test"}]})
+
     var forms = findItem('form');
 
     $.each(forms,function(i, form){
@@ -302,6 +305,7 @@
     popup.popupDialog({
         title: 'Form generator test',
         width: "423px",
+        height: 450,
         modal: false
     });
 

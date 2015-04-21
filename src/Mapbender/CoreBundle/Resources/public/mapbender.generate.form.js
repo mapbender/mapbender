@@ -108,7 +108,8 @@
                 var type = has(declarations, 'type') ? declarations.type : 'text';
                 var icon = '<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>';
 
-                inputField.attr('type', type);
+                // IE8 bug: type can't be changed...
+                /// inputField.attr('type', type);
                 inputField.data('declaration',item);
 
                 if(has(item, 'name')) {
@@ -415,7 +416,6 @@
             }
 
             element.data('item', item);
-
             return element;
         },
 
@@ -430,13 +430,13 @@
             $.each(items, function(k, item) {
                 var subElement = widget.genElement(item);
                 element.append(subElement);
-
             })
         },
 
         _setOption:  function(key, value) {
-            var element = $(this.element);
             var widget = this;
+            var element = $(widget.element);
+
             if(key === "items") {
                 widget.genElements(element, value);
             }
