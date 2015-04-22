@@ -123,7 +123,7 @@
                     inputField.val(item.value);
                 }
 
-                if(has(item, 'text')) {
+                if(has(item, 'title')) {
                     container.append(declarations.label(item, declarations));
                 }
 
@@ -157,6 +157,9 @@
                 if(_.has(item, 'text')) {
                     label.html(item.text);
                 }
+                if(_.has(item, 'title')) {
+                    label.html(item.title);
+                }
                 if(_.has(item, 'name')) {
                     label.attr('for', item.name);
                 }
@@ -179,8 +182,8 @@
                     input.val(item.value);
                 }
 
-                if(has(item, 'text')) {
-                    label.append(item.text);
+                if(has(item, 'title')) {
+                    label.append(item.title);
                 }
 
                 if(has(item, 'checked')) {
@@ -215,8 +218,8 @@
                     input.attr('name', item.name);
                 }
 
-                if(has(item, 'text')) {
-                    label.append(item.text);
+                if(has(item, 'title')) {
+                    label.append(item.title);
                 }
 
                 if(has(item, 'value')) {
@@ -266,7 +269,7 @@
                     }
                 });
 
-                if(has(item, 'text')) {
+                if(has(item, 'title')) {
                     container.append(declarations.label(item, declarations));
                 }
 
@@ -318,7 +321,7 @@
                     });
                 }
                 
-                if(has(item, 'text')) {
+                if(has(item, 'title')) {
                     container.append(declarations.label(item, declarations));
                 }
 
@@ -338,8 +341,8 @@
                     input.attr('name', item.name);
                 }
 
-                if(has(item, 'text')) {
-                    label.html(item.text);
+                if(has(item, 'title')) {
+                    label.html(item.title);
                     container.append(label);
                 }
 

@@ -9,11 +9,16 @@
     // options <- element configuration
     // element <- jQuery widget DOM element
 
-    $("#layertree").generateElements({children:[{type:'input',text:"test"}]})
+    $("#layertree").generateElements({
+        children: [{
+            type:  'input',
+            title: "test"
+        }]
+    })
 
     var forms = findItem('form');
 
-    $.each(forms,function(i, form){
+    $.each(forms, function(i, form) {
         form.children.push({
             type:  'button',
             title: 'Absenden',
@@ -26,23 +31,25 @@
         })
     });
 
-
     // disable rendering
     //delete options.children;
 
     //return ;
     var children2 = [{
-        type:  'inline',
+        type:     'inline',
         children: [{
-            type: 'label',
-            text: 'Name',
-            css:  {"margin-right": "10px"}
+            type:  'label',
+            title: 'Name',
+            css:   {"margin-right": "10px"}
         }, {
             info:        "Info text",
             type:        'input',
             name:        'inline[anrede]',
             placeholder: 'Anrede',
-            css:         {"margin-right": "10px",width:"60px"}
+            css:         {
+                "margin-right": "10px",
+                width:          "60px"
+            }
         }, {
             type:        'input',
             name:        'inline[firstname]',
@@ -53,8 +60,8 @@
             placeholder: 'Nachname'
         }]
     }, {
-        type: 'label',
-        text: 'Anrede'
+        type:  'label',
+        title: 'Anrede'
     }, {
         type:    'select',
         name:    'gender',
@@ -83,33 +90,33 @@
     }, {
         type:        'input',
         name:        'email',
-        text:        'E-Mail',
+        title:       'E-Mail',
         placeholder: 'E-Mail'
     }, {
-        type: 'file',
-        name: 'file',
-        text: 'Foto'
+        type:  'file',
+        name:  'file',
+        title: 'Foto'
     }, {
         type:    'checkbox',
         name:    'check1',
         value:   true,
-        text:    'Checked!',
+        title:   'Checked!',
         checked: true
     }, {
         type:  'checkbox',
         name:  'check2',
         value: true,
-        text:  'Check me '
+        title: 'Check me '
     }, {
         type:  'radio',
         name:  'radio1',
         value: 'test1',
-        text:  'Radio #1'
+        title: 'Radio #1'
     }, {
         type:  'radio',
         name:  'radio1',
         value: 'test2',
-        text:  'Radio #2'
+        title: 'Radio #2'
     }, "<div style='background-color: #c0c0c0; height: 2px'/>", {
         type:     'submit',
         cssClass: 'right',
@@ -119,17 +126,20 @@
             console.log(form.formData());
         }
     }];
-    var tabFormItems =  [{
-        type:  'inline',
+    var tabFormItems = [{
+        type:     'inline',
         children: [{
-            type: 'label',
-            text: 'Name',
-            css:  {"margin-right": "10px"}
+            type:  'label',
+            title: 'Name',
+            css:   {"margin-right": "10px"}
         }, {
             type:        'input',
             name:        'inline[anrede]',
             placeholder: 'Anrede',
-            css:         {"margin-right": "10px",width:"60px"}
+            css:         {
+                "margin-right": "10px",
+                width:          "60px"
+            }
         }, {
             type:        'input',
             name:        'inline[firstname]',
@@ -140,8 +150,8 @@
             placeholder: 'Nachname'
         }]
     }, {
-        type: 'label',
-        text: 'Anrede'
+        type:  'label',
+        title: 'Anrede'
     }, {
         type:    'select',
         name:    'gender',
@@ -170,33 +180,33 @@
     }, {
         type:        'input',
         name:        'email',
-        text:        'E-Mail',
+        title:       'E-Mail',
         placeholder: 'E-Mail'
     }, {
-        type: 'file',
-        name: 'file',
-        text: 'Foto'
+        type:  'file',
+        name:  'file',
+        title: 'Foto'
     }, {
         type:    'checkbox',
         name:    'check1',
         value:   true,
-        text:    'Checked!',
+        title:   'Checked!',
         checked: true
     }, {
         type:  'checkbox',
         name:  'check2',
         value: true,
-        text:  'Check me '
+        title: 'Check me '
     }, {
         type:  'radio',
         name:  'radio1',
         value: 'test1',
-        text:  'Radio #1'
+        title: 'Radio #1'
     }, {
         type:  'radio',
         name:  'radio1',
         value: 'test2',
-        text:  'Radio #2'
+        title: 'Radio #2'
     }, "<div style='background-color: #c0c0c0; height: 2px'/>", {
         type:     'submit',
         cssClass: 'right',
@@ -211,14 +221,14 @@
     /**
      * Tests
      */
-    var popup= $("<div/>");
+    var popup = $("<div/>");
 
     popup.generateElements({
         children: [{
-            type:  "tabs",
+            type:     "tabs",
             children: [{
-                type:  "form",
-                title: "Formular #1",
+                type:     "form",
+                title:    "Formular #1",
                 children: [{
                     type:  "html",
                     html:  "<div>TEST</div>",
@@ -226,34 +236,35 @@
                         console.log(this);
                     }
                 }, {
-                    type:      "input",
-                    name:      "Test",
-                    mandatory: true,
+                    type:        "input",
+                    name:        "Test",
+                    title:       "Label for something",
+                    mandatory:   true,
                     placeholder: "Enter something"
                 }, {
-                    type:    "select",
-                    options: ["Herr", "Frau"],
-                    name:    "gender",
-                    value:  '',
+                    type:      "select",
+                    options:   ["Herr", "Frau"],
+                    name:      "gender",
+                    value:     '',
                     mandatory: true
                 }, {type: "input"}, {
                     type:  "radio",
                     name:  "acception",
-                    text:  "Ja",
+                    title: "Ja",
                     value: "1"
                 }, {
                     type:  "radio",
                     name:  "acception",
-                    text:  "Nein",
+                    title: "Nein",
                     value: "2"
                 }, {
-                    type:  "checkbox",
-                    name:  "asdasd",
+                    type:      "checkbox",
+                    name:      "asdasd",
                     mandatory: true,
-                    text:  "yay!",
-                    value: "2"
+                    title:     "yay!",
+                    value:     "2"
                 }, {
-                    type:  "inline",
+                    type:     "inline",
                     children: [{
                         type:        "input",
                         placeholder: "Name",
@@ -263,50 +274,52 @@
                         placeholder: "Vorname"
                     }]
                 }, {
-                    type:  "tabs",
+                    type:     "tabs",
                     children: [{
                         type:  "HTML",
                         title: "test tab 1",
                         html:  "test"
                     }, {
-                            type:  "HTML",
-                            title: "test tab 2",
-                            html:  "test 2"
-                        }]
-                    }, {
-                        type:     "button",
-                        title:    "OK",
-                        cssClass: "right",
-                        click:    function() {
-                            var data = popup.formData();
-                            console.log(data);
-                            return false;
-                        }
-                    }, {
-                        type:     "button",
-                        title:    "Fill",
-                        cssClass: "right",
-                        click:    function() {
-                            popup.formData({
-                                Test:      "Beispiel",
-                                acception: 2,
-                                gender:    1
-                            });
-
-                            return false;
-                        }
+                        type:  "HTML",
+                        title: "test tab 2",
+                        html:  "test 2"
                     }]
-                },
-                {type: "form", title: "Form 2", children: children2}
-            ]
+                }, {
+                    type:     "button",
+                    title:    "OK",
+                    cssClass: "right",
+                    click:    function() {
+                        var data = popup.formData();
+                        console.log(data);
+                        return false;
+                    }
+                }, {
+                    type:     "button",
+                    title:    "Fill",
+                    cssClass: "right",
+                    click:    function() {
+                        popup.formData({
+                            Test:      "Beispiel",
+                            acception: 2,
+                            gender:    1
+                        });
+
+                        return false;
+                    }
+                }]
+            }, {
+                type:     "form",
+                title:    "Form 2",
+                children: children2
+            }]
         }]
     });
 
     popup.popupDialog({
-        title: 'Form generator test',
-        width: "423px",
+        title:  'Form generator test',
+        width:  "423px",
         height: 450,
-        modal: false
+        modal:  false
     });
 
     //popup.generateElements({
@@ -321,7 +334,7 @@
     //            title: 'Form 2',
     //            children:[
     //                {
-    //                    text: 'Test Label:',
+    //                    title: 'Test Label:',
     //                    type:  'input',
     //                    title: 'Text tab',
     //                    placeholder: 'Test input'
