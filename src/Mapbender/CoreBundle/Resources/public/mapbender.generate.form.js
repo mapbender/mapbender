@@ -40,8 +40,8 @@
         declarations: {
             popup: function(item, declarations, widget) {
                 var popup = $("<div/>");
-                if(has(item, 'items')) {
-                    $.each(item.items, function(k, item) {
+                if(has(item, 'children')) {
+                    $.each(item.children, function(k, item) {
                         popup.append(widget.genElement(item));
                     });
                 }
@@ -49,13 +49,12 @@
                     popup.popupDialog(item)
                 }, 1);
 
-
                 return popup;
             },
             form: function(item, declarations, widget) {
                 var form = $('<form/>');
-                if(has(item, 'items')) {
-                    $.each(item.items, function(k, item) {
+                if(has(item, 'children')) {
+                    $.each(item.children, function(k, item) {
                         form.append(widget.genElement(item));
                     })
                 }
@@ -64,8 +63,8 @@
             fluidContainer: function(item, declarations, widget) {
                 var container = $('<div class="container-fluid"/>');
                 var hbox = $('<div class="row"/>');
-                if(has(item, 'items')) {
-                    $.each(item.items, function(k, item) {
+                if(has(item, 'children')) {
+                    $.each(item.children, function(k, item) {
                         hbox.append(widget.genElement(item));
                     })
                 }
@@ -74,8 +73,8 @@
             },
             inline: function(item, declarations, widget) {
                 var container = $('<div class="form-inline"/>');
-                if(has(item, 'items')) {
-                    $.each(item.items, function(k, item) {
+                if(has(item, 'children')) {
+                    $.each(item.children, function(k, item) {
                         container.append(widget.genElement(item));
                     })
                 }
@@ -103,9 +102,9 @@
                 return button;
             },
             input:     function(item, declarations) {
-                var inputField = $('<input class="form-control"/>');
-                var container = $('<div class="form-group"/>');
                 var type = has(declarations, 'type') ? declarations.type : 'text';
+                var inputField = $('<input class="form-control" type="'+type+'"/>');
+                var container = $('<div class="form-group"/>');
                 var icon = '<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>';
 
                 // IE8 bug: type can't be changed...
@@ -245,8 +244,8 @@
             },
             formGroup: function(item, declarations, widget) {
                 var container = $('<div class="form-group"/>');
-                if(has(item, 'items')) {
-                    $.each(item.items, function(k, item) {
+                if(has(item, 'children')) {
+                    $.each(item.children, function(k, item) {
                         container.append(widget.genElement(item));
                     });
                 }
@@ -350,8 +349,8 @@
             tabs: function(item, declarations, widget) {
                 var container = $('<div/>');
                 var tabs = [];
-                if(has(item, 'items') ) {
-                    $.each(item.items, function(k, subItem) {
+                if(has(item, 'children') ) {
+                    $.each(item.children, function(k, subItem) {
                         var htmlElement = widget.genElement(subItem);
                         var tab = {
                             html: htmlElement
@@ -363,14 +362,13 @@
                         tabs.push(tab);
                     });
                 }
-                container.tabNavigator({items: tabs});
-
+                container.tabNavigator({children: tabs});
                 return container;
             },
             fieldSet: function(item, declarations, widget) {
                 var fieldSet = $("<fieldset/>");
-                if(has(item, 'items')) {
-                    $.each(item.items, function(k, subItem) {
+                if(has(item, 'children')) {
+                    $.each(item.children, function(k, subItem) {
                         var htmlElement = widget.genElement(subItem);
                         var tab = {
                             html: htmlElement
@@ -423,11 +421,11 @@
          * Generate elements
          *
          * @param element jQuery object
-         * @param items declarations
+         * @param children declarations
          */
-        genElements: function(element, items) {
+        genElements: function(element, children) {
             var widget = this;
-            $.each(items, function(k, item) {
+            $.each(children, function(k, item) {
                 var subElement = widget.genElement(item);
                 element.append(subElement);
             })
@@ -437,7 +435,7 @@
             var widget = this;
             var element = $(widget.element);
 
-            if(key === "items") {
+            if(key === "children") {
                 widget.genElements(element, value);
             }
 

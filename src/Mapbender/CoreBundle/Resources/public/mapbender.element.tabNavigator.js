@@ -19,8 +19,8 @@
             //var wrapper = navigation.closest('.ui-tabs');
             el.addClass('mapbender-element-tab-navigator');
 
-            if(options.hasOwnProperty('items')){
-                $.each(options.items,function(){
+            if(options.hasOwnProperty('children')){
+                $.each(options.children,function(){
                     var tab = widget._add(this);
                 });
             }

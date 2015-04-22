@@ -4,17 +4,17 @@
             var widget = this;
             var element = $(widget.element);
             var options = widget.options;
-            var hasItems = options.hasOwnProperty('items');
+            var hasItems = options.hasOwnProperty('children');
 
-            function findItem(type, name, items) {
+            function findItem(type, name, children) {
                 var r = [];
-                items = items ? items : (hasItems ? options.items : []);
+                children = children ? children : (hasItems ? options.children : []);
 
-                if(items && !$.isArray(items)) {
-                    items = [items];
+                if(children && !$.isArray(children)) {
+                    children = [children];
                 }
 
-                $.each(items, function(i, item) {
+                $.each(children, function(i, item) {
                     if(!item.hasOwnProperty('type')) {
                         return;
                     }
@@ -23,8 +23,8 @@
                         r.push(item);
                     }
 
-                    if(item.hasOwnProperty('items')) {
-                        $.merge(r, findItem(type, name, item['items']));
+                    if(item.hasOwnProperty('children')) {
+                        $.merge(r, findItem(type, name, item['children']));
                     }
                 });
                 return r;
@@ -32,11 +32,11 @@
 
             function render() {
                 if(hasItems) {
-                    var items = $.isArray(options.items) ? options.items : [options.items];
-                    if(items[0].type == "popup") {
+                    var children = $.isArray(options.children) ? options.children : [options.children];
+                    if(children[0].type == "popup") {
                         element = $("<div/>");
                     }
-                    element.generateElements({items: items});
+                    element.generateElements({children: children});
                 }
             }
 

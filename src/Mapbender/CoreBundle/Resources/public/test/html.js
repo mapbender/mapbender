@@ -9,12 +9,12 @@
     // options <- element configuration
     // element <- jQuery widget DOM element
 
-    $("#layertree").generateElements({items:[{type:'input',text:"test"}]})
+    $("#layertree").generateElements({children:[{type:'input',text:"test"}]})
 
     var forms = findItem('form');
 
     $.each(forms,function(i, form){
-        form.items.push({
+        form.children.push({
             type:  'button',
             title: 'Absenden',
             click: function(event) {
@@ -28,12 +28,12 @@
 
 
     // disable rendering
-    //delete options.items;
+    //delete options.children;
 
     //return ;
-    var items2 = [{
+    var children2 = [{
         type:  'inline',
-        items: [{
+        children: [{
             type: 'label',
             text: 'Name',
             css:  {"margin-right": "10px"}
@@ -121,7 +121,7 @@
     }];
     var tabFormItems =  [{
         type:  'inline',
-        items: [{
+        children: [{
             type: 'label',
             text: 'Name',
             css:  {"margin-right": "10px"}
@@ -214,12 +214,12 @@
     var popup= $("<div/>");
 
     popup.generateElements({
-        items: [{
+        children: [{
             type:  "tabs",
-            items: [{
+            children: [{
                 type:  "form",
                 title: "Formular #1",
-                items: [{
+                children: [{
                     type:  "html",
                     html:  "<div>TEST</div>",
                     click: function() {
@@ -254,7 +254,7 @@
                     value: "2"
                 }, {
                     type:  "inline",
-                    items: [{
+                    children: [{
                         type:        "input",
                         placeholder: "Name",
                         css:         {"margin-right": "20px"}
@@ -264,7 +264,7 @@
                     }]
                 }, {
                     type:  "tabs",
-                    items: [{
+                    children: [{
                         type:  "HTML",
                         title: "test tab 1",
                         html:  "test"
@@ -297,7 +297,7 @@
                         }
                     }]
                 },
-                {type: "form", title: "Form 2", items: items2}
+                {type: "form", title: "Form 2", children: children2}
             ]
         }]
     });
@@ -310,16 +310,16 @@
     });
 
     //popup.generateElements({
-    //    items: [{
+    //    children: [{
     //        type:  'tabs',
-    //        items: [{
+    //        children: [{
     //            type:  'form',
     //            title: 'Form 1',
-    //            items: tabFormItems
+    //            children: tabFormItems
     //        }, {
     //            type: 'form',
     //            title: 'Form 2',
-    //            items:[
+    //            children:[
     //                {
     //                    text: 'Test Label:',
     //                    type:  'input',
