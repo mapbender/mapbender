@@ -178,6 +178,11 @@ body{
       background-color: darken($mainColor,10%);
     }
   }
+
+  // Tab-Navigator
+  .tab-content.ui-tabs-panel{
+    overflow: visible;
+  }
 }
 
 
