@@ -183,6 +183,16 @@ body{
   .tab-content.ui-tabs-panel{
     overflow: visible;
   }
+
+  fieldset {
+    margin-left: -15px;
+    .checkbox,
+    .radio,
+    > .form-group {
+      display: inline-block;
+      padding-left: 15px;
+    }
+  }
 }
 
 

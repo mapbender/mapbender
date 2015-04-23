@@ -371,17 +371,9 @@
             fieldSet: function(item, declarations, widget) {
                 var fieldSet = $("<fieldset/>");
                 if(has(item, 'children')) {
-                    $.each(item.children, function(k, subItem) {
-                        var htmlElement = widget.genElement(subItem);
-                        var tab = {
-                            html: htmlElement
-                        };
-
-                        if(has(subItem, 'title')) {
-                            tab.title = subItem.title;
-                        }
-                        tabs.push(tab);
-                    });
+                    $.each(item.children, function(k, item) {
+                        fieldSet.append(widget.genElement(item));
+                    })
                 }
                 return fieldSet;
             },
