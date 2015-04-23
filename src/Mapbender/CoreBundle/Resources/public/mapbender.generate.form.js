@@ -384,6 +384,12 @@
                     });
                 }
                 return fieldSet;
+            },
+            date: function(item, declarations, widget) {
+                var inputHolder = declarations.input(item, declarations, widget);
+                var input = inputHolder.find('> input');
+                input.dateSelector(item);
+                return inputHolder;
             }
         },
 

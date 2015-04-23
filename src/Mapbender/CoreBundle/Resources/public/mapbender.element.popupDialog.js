@@ -116,7 +116,6 @@
 
             // Set as mapbender element
             dialog.addClass('mb-element-popup-dialog');
-
             return this._super();
         }
     });
