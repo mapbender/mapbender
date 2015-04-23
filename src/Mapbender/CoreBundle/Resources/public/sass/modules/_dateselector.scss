@@ -76,11 +76,18 @@
         display: block;
         color: #555;
         font-size: 11px;
+
+        &.ui-state-active,
+        &.ui-state-highlight,
         &:focus,
         &:hover {
           color: #fff;
           text-decoration: none;
           background-color: lighten(#6FB536, 20%);
+        }
+
+        &.ui-state-active{
+          background-color: #6FB536;
         }
       }
       &.ui-datepicker-week-end {

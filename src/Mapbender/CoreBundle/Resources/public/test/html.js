@@ -236,6 +236,11 @@
                         console.log(this);
                     }
                 }, {
+                    type: "date",
+                    placeholder: "Bitte Datum eingeben",
+                    value: '21-12-2009',
+                    monthNamesShort:    ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "DIZ"]
+                },{
                     type:        "input",
                     name:        "Test",
                     title:       "Label for something",

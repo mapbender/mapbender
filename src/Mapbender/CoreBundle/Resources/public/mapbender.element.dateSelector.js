@@ -24,9 +24,10 @@
             var widget = this;
             var element = widget.element;
             var dialog;
-            var datePicker = element.datepicker($.extend(widget.options, {
+            var datePicker = element.datepicker($.extend({
                 changeMonth:       true,
                 changeYear:        true,
+                gotoCurrent:       true,
                 firstDay:          1, //showWeek:          true,
                 dayNamesMin:       ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
                 monthNamesShort:   ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"], //showButtonPanel: true,
@@ -37,7 +38,7 @@
                         widget._trigger('render');
                     }, 1);
                 }
-            })).data('datepicker');
+            }, widget.options)).data('datepicker');
 
             dialog = datePicker.dpDiv;
             dialog.on('show', function(e) {
