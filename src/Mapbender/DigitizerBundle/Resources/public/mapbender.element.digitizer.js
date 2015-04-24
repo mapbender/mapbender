@@ -413,11 +413,12 @@
             if(self.currentSettings.hasOwnProperty('popup')){
                 $.extend(popupConfiguration,self.currentSettings.popup);
             }
-            
-            var popup= $("<div/>").popupDialog(popupConfiguration);
-            self.currentPopup = popup;
-            popup.generateElements({children: self.currentSettings.formItems});
-            popup.formData(feature.data);
+
+            var dialog= $("<div/>");
+            dialog.generateElements({children: self.currentSettings.formItems});
+            dialog.popupDialog(popupConfiguration);
+            self.currentPopup = dialog;
+            dialog.formData(feature.data);
         },
         
         _mapClick: function(evt) {
