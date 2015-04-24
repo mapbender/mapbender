@@ -63,6 +63,7 @@ class FeatureType extends ContainerAware
      * @var array Dield to select from the table
      */
     protected $fields = array();
+    protected $sqlFilter;
 
 
     /**
@@ -360,11 +361,11 @@ class FeatureType extends ContainerAware
             $geometry = self::roundGeometry($intersect,2);
             $queryBuilder->andWhere(self::genIntersectCondition($this->getPlatformName(), $geometry, $this->geomField, $srid, $this->getSrid()));
         }
-//
-//        $sql = $queryBuilder->getSQL();
-//
-//        var_dump($sql);
-//        die();
+
+        // add filter (https://trac.wheregroup.com/cp/issues/3733)
+        if(!empty($this->sqlFilter)){
+            $queryBuilder->andWhere($this->sqlFilter);
+        }
 
         $queryBuilder->setMaxResults($maxResults);
         // $queryBuilder->setParameters($params);
@@ -629,5 +630,16 @@ class FeatureType extends ContainerAware
             }
         }
         return $data;
+    }
+
+    /**
+     * Set FeatureType permanent SQL filter used by $this->search()
+     * https://trac.wheregroup.com/cp/issues/3733
+     *
+     * @see $this->search()
+     * @param $sqlFilter
+     */
+    protected function setFilter($sqlFilter){
+        $this->sqlFilter = $sqlFilter;
     }
 }
