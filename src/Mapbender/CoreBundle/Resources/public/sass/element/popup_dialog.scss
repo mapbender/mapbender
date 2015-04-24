@@ -149,11 +149,9 @@
   }
 
   > .modal-footer {
-    border-top: #CCC;;
-    border-bottom-left-radius: $borderRadius;
-    border-bottom-right-radius: $borderRadius;
-    background-color: #E6E6E6;
-    //    @extend .ie-8-borders-hack;
+    border-top: 1px solid #c0c0c0;
+    background-color: transparent;
+    padding: 10px;
   }
 
   .ui-resizable {
