@@ -77,8 +77,8 @@ class Fullscreen extends Template
 
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.resultTable.js',
                 '@MapbenderCoreBundle/Resources/public/mapbender.element.tabNavigator.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.popupDialog.js'
-
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.popupDialog.js',
+                '@MapbenderCoreBundle/Resources/public/mapbender.element.dateSelector.js'
 
             ),
             'trans' => array()

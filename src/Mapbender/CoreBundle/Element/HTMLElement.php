@@ -40,19 +40,9 @@ class HTMLElement extends Element
     static public function listAssets()
     {
         return array(
-            'js' => array('mapbender.element.htmlelement.js'),
+            'js'  => array('mapbender.element.htmlelement.js'),
             'css' => array('sass/element/htmlelement.scss')
         );
-    }
-
-    public function getAssets()
-    {
-        $configuration = $this->getConfiguration();
-        $assets = parent::getAssets();
-        if(isset($configuration['js'])){
-            $assets['js'][] = $configuration['js'];
-        }
-        return $assets;
     }
 
     /**
@@ -87,12 +77,13 @@ class HTMLElement extends Element
     public function render()
     {
         return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:htmlelement.html.twig',
-                    array(
+            ->render('MapbenderCoreBundle:Element:htmlelement.html.twig',
+                array(
                     'id'            => $this->getId(),
                     'entity'        => $this->entity,
                     'application'   => $this->application,
-                    'configuration' => $this->getConfiguration()));
+                    'configuration' => $this->getConfiguration())
+            );
     }
 
     /**
@@ -106,7 +97,7 @@ class HTMLElement extends Element
     static public function getFormAssets()
     {
         return array(
-            'js' => array(
+            'js'  => array(
                 'bundles/mapbendermanager/codemirror/lib/codemirror.js',
                 'bundles/mapbendermanager/codemirror/mode/xml/xml.js',
                 'bundles/mapbendermanager/codemirror/keymap/sublime.js',
@@ -122,6 +113,7 @@ class HTMLElement extends Element
 
     /**
      * Is associative array given?
+     *
      * @param $arr
      * @return bool
      */
@@ -160,12 +152,12 @@ class HTMLElement extends Element
      */
     protected function prepareItem($item)
     {
-        if(!isset($item["type"])){
+        if (!isset($item["type"])) {
             return $item;
         }
 
-        if (isset($item["items"])) {
-            $item["items"] = $this->prepareItems($item["items"]);
+        if (isset($item["children"])) {
+            $item["children"] = $this->prepareItems($item["children"]);
         }
 
         switch ($item['type']) {
@@ -183,7 +175,6 @@ class HTMLElement extends Element
                     foreach ($dbal->fetchAll($sql) as $option) {
                         $options[current($option)] = end($option);
                     }
-
                     $item["options"] = $options;
                 }
                 break;
@@ -209,9 +200,8 @@ class HTMLElement extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-
-        if (isset($configuration['items'])) {
-            $configuration['items'] = $this->prepareItems($configuration['items']);
+        if (isset($configuration['children'])) {
+            $configuration['children'] = $this->prepareItems($configuration['children']);
         }
         return $configuration;
     }
