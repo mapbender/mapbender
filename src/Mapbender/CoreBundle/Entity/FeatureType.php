@@ -5,6 +5,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Statement;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Query;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Exception\Exception;
@@ -82,6 +83,13 @@ class FeatureType extends ContainerAware
                 }
             }
         }
+
+        // if no fields defined find it all and remove geo field from the list
+        if (!isset($args["fields"]) || $args["fields"] == '*') {
+            $fields = $this->getTableFields();
+            unset($fields[array_search($this->getGeomField(), $fields, false)]);
+            $this->setFields($fields);
+        }
     }
 
     /**
@@ -140,6 +148,35 @@ class FeatureType extends ContainerAware
     public function setSrid($srid)
     {
         $this->srid = $srid;
+    }
+
+    /**
+     * Get all table fields
+     *
+     * @throws \Doctrine\DBAL\DBALException
+     * @return array field names
+     */
+    public function getTableFields()
+    {
+        $tableName = $this->getTableName();
+        $fields    = array();
+        $sql       = null;
+
+        switch ($this->getPlatformName()) {
+            case self::ORACLE_PLATFORM:
+                $sql = "SELECT column_name, data_type, data_length FROM USER_TAB_COLUMNS WHERE table_name = '$tableName'";
+                break;
+
+            case self::SQLITE_PLATFORM:
+            case self::POSTGRESQL_PLATFORM:
+                $sql = "SELECT column_name FROM information_schema.columns WHERE (table_schema || '.' || table_name = '{$tableName}' OR table_name = '{$tableName}')";
+                break;
+        }
+
+        foreach ($this->fields = $this->getConnection()->executeQuery($sql)->fetchAll() as $fieldInfo) {
+            $fields[] = current($fieldInfo);
+        }
+        return $fields;
     }
 
     /**
