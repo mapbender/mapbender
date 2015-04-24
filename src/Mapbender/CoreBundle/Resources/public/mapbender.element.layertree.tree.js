@@ -283,6 +283,39 @@
                 });
             });
         },
+        _isThemeVisible: function(layerset) {
+            for (var i = 0; i < layerset.content.length; i++) {
+                for (id in layerset.content[i]) {
+                    if (layerset.content[i][id].configuration.children[0].options.treeOptions.selected) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        },
+        _updateTheme: function(sourceOpts) {
+            var source = this.model.findSource(sourceOpts);
+            var themeElm = $('li[data-sourceid="' + source[0].id + '"][data-type="' + this.consts.root + '"]').
+                parents('li[data-type="' + this.consts.theme + '"]:first');
+            if (themeElm.length === 1) {
+                var layerset = this.model.findLayerset({
+                    source: {
+                        origId: source[0].origId
+                    }
+                });
+                var themeChk = themeElm.find('input[name="sourceVisibility"]');
+                var themeVsblt = this._isThemeVisible(layerset);
+                if (themeVsblt !== themeChk.prop("checked")) {
+                    themeChk.prop("checked", themeVsblt);
+                    if (themeVsblt) {
+                        $('>.leaveContainer .checkWrapper', themeElm).addClass('iconCheckboxActive');
+                    } else {
+                        $('>.leaveContainer .checkWrapper', themeElm).removeClass('iconCheckboxActive');
+                    }
+                }
+            }
+
+        },
         _createThemeNode: function(layerset, theme) {
             var $li = $('ul.layers:first > li[data-layersetid="' + layerset.id + '"]', this.element);
             if ($li.length === 1) {
@@ -311,6 +344,9 @@
             }
             if (!theme.sourceVisibility) {
                 $('div.sourceVisibilityWrapper', $li).remove();
+            } else {
+                $('div.sourceVisibilityWrapper input[name="sourceVisibility"]', $li).prop('checked',
+                    this._isThemeVisible(layerset));
             }
             $('.layer-menu-btn', $li).remove();
             return $li;
@@ -375,11 +411,11 @@
         },
         _createSourceTree: function(source, sourceEl, scale, type, isroot) {
             if (sourceEl.type) {
-                var li = "";
-                sourceEl.layers = [];
-                for (var i = 0; i < sourceEl.configuration.children.length; i++) {
-                    li = this._createSourceTree(source, sourceEl.configuration.children[i], scale, sourceEl.type,
-                        true);
+                var li = this._createSourceTree(source, sourceEl.configuration.children[0], scale, sourceEl.type,
+                    true);
+                if (sourceEl.configuration.status !== 'ok') {
+                    li.attr('data-state', 'error').find('span.layer-title:first').attr("title",
+                        sourceEl.configuration.status);
                 }
             } else {
                 var config = this._getNodeProporties(sourceEl);
@@ -483,6 +519,7 @@
             } else if (options.changed && options.changed.childRemoved) {
                 this._removeChild(options.changed);
             }
+            this._updateTheme(options.changed.sourceIdx);
         },
         _resetNodeOutOfScale: function($li, layerDef) {
             if (layerDef.state.outOfScale) {

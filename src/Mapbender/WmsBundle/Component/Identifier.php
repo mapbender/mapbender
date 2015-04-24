@@ -24,7 +24,7 @@ class Identifier
 
     /**
      * Get authority
-     * 
+     *
      * @return string
      */
     public function getAuthority()
@@ -45,7 +45,7 @@ class Identifier
 
     /**
      * Get value
-     * 
+     *
      * @return string
      */
     public function getValue()
@@ -55,7 +55,7 @@ class Identifier
 
     /**
      * Set value
-     * @param string $value 
+     * @param string $value
      * @return Identifier
      */
     public function setValue($value)
@@ -63,5 +63,4 @@ class Identifier
         $this->value = $value;
         return $this;
     }
-
 }

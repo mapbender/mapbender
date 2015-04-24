@@ -12,7 +12,7 @@ use Mapbender\CoreBundle\Entity\SourceInstance;
 use Mapbender\CoreBundle\Component\SourceItem;
 
 /**
- * Description of EntityHandler
+ * Description of SourceInstanceItemEntityHandler
  *
  * @author Paul Schmidt
  */
@@ -23,14 +23,19 @@ abstract class SourceInstanceItemEntityHandler extends EntityHandler
      * Creates a SourceInstanceItem
      */
     abstract public function create(SourceInstance $instance, SourceItem $item, $num = 0, $persist = true);
-    
+
     /**
      * Generates an item configuration
      */
     abstract public function generateConfiguration();
-    
+
     /**
      * Returns an item configuration
      */
     abstract public function getConfiguration();
+
+    /**
+     * Update instance item parameters
+     */
+    abstract public function update(SourceInstance $instance, SourceItem $wmslayersource);
 }

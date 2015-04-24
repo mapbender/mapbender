@@ -83,7 +83,7 @@ Mapbender.Model = {
                     this.mbMap.options.targetsrs)
             });
         }
-        if(this.mbMap.options.targetscale){
+        if (this.mbMap.options.targetscale) {
             this.map.olMap.zoomToScale(this.mbMap.options.targetscale, true);
         }
     },
@@ -123,10 +123,10 @@ Mapbender.Model = {
                     w: this.mbMap.options.poiIcon.width,
                     h: this.mbMap.options.poiIcon.height
                 },
-                {
-                    x: this.mbMap.options.poiIcon.xoffset,
-                    y: this.mbMap.options.poiIcon.yoffset
-                }
+            {
+                x: this.mbMap.options.poiIcon.xoffset,
+                y: this.mbMap.options.poiIcon.yoffset
+            }
             );
         }
         $.each(pois, function(idx, poi) {
@@ -177,7 +177,12 @@ Mapbender.Model = {
         }
 
         if (!centered && this.mbMap.options['center']) {
-            this.map.olMap.setCenter(new OpenLayers.LonLat(this.mbMap.options['center']));
+            var lonlat = new OpenLayers.LonLat(this.mbMap.options['center']);
+            if (this.mbMap.options.targetsrs && this.getProj(this.mbMap.options.targetsrs)) {
+                this.map.olMap.setCenter(lonlat.transform(this.getProj(this.mbMap.options.targetsrs), this.getCurrentProj()));
+            } else {
+                this.map.olMap.setCenter(lonlat);
+            }
         }
 
         if (true === addLayers) {
@@ -436,11 +441,11 @@ Mapbender.Model = {
                 if (options.source && layerset[i][options.source.origId]) {
                     return {
                         id: layersetId,
-                        title: Mapbender.configuration.layersetmap[layersetId]
+                        title: Mapbender.configuration.layersetmap[layersetId],
+                        content: layerset
                     };
                 }
             }
-
         }
         return null;
     },
@@ -752,7 +757,7 @@ Mapbender.Model = {
             var after = addOptions.add.after;
             sourceDef.id = this.generateSourceId();
 
-            if (typeof sourceDef.origId === 'undefined'){
+            if (typeof sourceDef.origId === 'undefined') {
                 sourceDef.origId = sourceDef.id;
             }
             this.mbMap.fireModelEvent({
@@ -807,7 +812,7 @@ Mapbender.Model = {
                         }
                     }
                 });
-                if (after){
+                if (after) {
                     this._moveSource(source, before, after);
                 }
                 this._checkAndRedrawSource({
@@ -954,7 +959,7 @@ Mapbender.Model = {
                     tomove['layerId'] = changeOpts.move.tomove.layerIdx.id;
                 }
                 var before = changeOpts.move.before;
-                if (before){
+                if (before) {
                     before = {
                         source: this.getSource(
                             changeOpts.move.before.sourceIdx),
@@ -962,7 +967,7 @@ Mapbender.Model = {
                     };
                 }
                 var after = changeOpts.move.after;
-                if (after){
+                if (after) {
                     after = {
                         source: this.getSource(
                             changeOpts.move.after.sourceIdx),

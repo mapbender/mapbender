@@ -21,14 +21,17 @@
 
             var widthLi = [];
             var count = $(".mb-element-basesourceswitcher li").size();
-            while (count > 0) {
-                if (display === "dropdown") {
-                widthLi[count - 1] = $(".mb-element-basesourceswitcher li").eq(count - 1).width() + 30;
+            if (display !== 'mobile') {
+                while (count > 0) {
+                    widthLi[count - 1] = $(".mb-element-basesourceswitcher li").eq(count - 1).width() + 30;
+                    count--;
                 }
-                else {
+            }
+            else {
+                while (count > 0) {
                     widthLi[count - 1] = $(".mb-element-basesourceswitcher li").eq(count - 1).width();
+                    count--;
                 }
-                count--;
             }
             var largest = Math.max.apply(Math, widthLi) + 20 + "px";
             $(".mb-element-basesourceswitcher li").css("width", largest);
