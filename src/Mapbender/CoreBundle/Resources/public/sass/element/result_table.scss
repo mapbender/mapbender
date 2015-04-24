@@ -29,6 +29,7 @@
   }
 
   .dataTables_wrapper {
+    position: relative;
     > table {
       > thead > tr > th {
         background-color: lighten(#578e2a, 50%);
@@ -36,9 +37,11 @@
         user-select: none;
         border: 1px solid #ffffff;
         height: 26px;
-
-        &.sorting:after, &.sorting_asc:after, &.sorting_desc:after {
-          display: block;
+        font-size: $uiFontSize;
+        white-space: nowrap;
+        &:after{
+          clear: both;
+          display: inline-block;
           float: right;
           font-family: FontAwesome;
         }
@@ -54,7 +57,7 @@
       }
       > tbody > tr {
         > td {
-
+          font-size: $uiFontSize;
           &.selection {
             padding-top: 0;
             > input[type="checkbox"] {
@@ -68,20 +71,30 @@
       margin-bottom: 0px;
     }
 
-//    .dataTables_info {
-//      position: relative;
-//      margin-top: 1px;
-//      display: block;
-//      padding-left: 15px;
-//      margin-bottom: -21px;
-//    }
+    .dataTables_info {
+      font-size: $uiFontSize;
+      margin-top: 8px;
+      text-align: center;
+      border-radius: 7px;
+      margin-bottom: 10px;
+      padding: 5px;
+      border: 1px solid #6FB536;
+      right: 0;
+    }
 
     > .paging_simple_numbers {
-      padding: 15px;
+//      border: 1px solid #fff;
+//      outline: 1px solid #c0c0c0;
+      text-align: left;
+
       @extend .clearfix;
-      text-align: right;
-      background-color: #E6E6E6;
+
       > span {
+        float: left;
+        display: inline-block;
+        a.paginate_button{
+          margin-left: -1px;
+        }
         > span {
           padding-right: 5px;
         }
@@ -89,13 +102,18 @@
       a {
         @extend .btn;
         @extend .button;
-        margin-right: 5px;
+        margin-right: 0px;
+        display: inline-block;
         &.next {
           margin-right: 0;
+          float: right;
         }
 
+        &.previous{
+          float: left;
+        }
         &.current {
-          background-color: #47791f;
+          background-color: #47791f !important;
         }
 
         &.disabled {
