@@ -2,14 +2,14 @@
 
 namespace Mapbender\DigitizerBundle\Element;
 
-use Mapbender\CoreBundle\Component\Element;
+use Mapbender\CoreBundle\Element\HTMLElement;
 use Mapbender\CoreBundle\Entity\FeatureType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  *
  */
-class Digitizer extends Element
+class Digitizer extends HTMLElement
 {
 
     /**
@@ -68,12 +68,21 @@ class Digitizer extends Element
     }
 
     /**
+     * Prepare form items for each scheme definition
+     *
      * @inheritdoc
      */
     public function getConfiguration()
     {
-        $config = parent::getConfiguration();
-        return $config;
+        $configuration = parent::getConfiguration();
+        if($configuration["schemes"] && is_array($configuration["schemes"])){
+            foreach($configuration["schemes"] as $key => &$scheme){
+                if(isset($scheme['formItems'])){
+                    $scheme['formItems'] = $this->prepareItems($scheme['formItems']);
+                }
+            }
+        }
+        return $configuration;
     }
 
     /**

@@ -127,9 +127,8 @@ class HTMLElement extends Element
      *
      * @param $items
      * @return array
-     * @internal param $configuration
      */
-    protected function prepareItems($items)
+    public function prepareItems($items)
     {
         if (!is_array($items)) {
             return $items;
@@ -169,7 +168,6 @@ class HTMLElement extends Element
 
                     unset($item['sql']);
                     unset($item['connection']);
-
                     /** @var Connection $dbal */
                     $dbal = $this->container->get("doctrine.dbal.{$connectionName}_connection");
                     foreach ($dbal->fetchAll($sql) as $option) {

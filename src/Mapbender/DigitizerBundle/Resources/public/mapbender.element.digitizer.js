@@ -84,7 +84,7 @@
             }
             
             // build select options
-            $.each(this.options.schemes, function(schemaName){
+            $.each(widget.options.schemes, function(schemaName){
                 var settings = this;
                 var option = $("<option/>");
                 var layer =  settings.layer = new OpenLayers.Layer.Vector(settings.label, {styleMap: styleMap});
@@ -93,7 +93,7 @@
                 widget.map.addLayer(layer);
 
                 var frame = settings.frame = $("<div/>").addClass('frame').data(settings);
-                var tools = settings.tools = $("<div/>").digitizingToolSet({items: widget.toolsets[settings.featureType.geomType], layer: layer});
+                var tools = settings.tools = $("<div/>").digitizingToolSet({children: widget.toolsets[settings.featureType.geomType], layer: layer});
                 var checkbox = $('<div class="checkbox">\n\
                                 <label><input class="onlyExtent'+schemaName+'" type="checkbox" checked="true">current extent</label>\n\
                              </div>');
@@ -415,10 +415,9 @@
             }
             
             var popup= $("<div/>").popupDialog(popupConfiguration);
-            
             self.currentPopup = popup;
-            popup.generateElements({items: self.currentSettings.formItems});
-            popup.formData(feature.data); 
+            popup.generateElements({children: self.currentSettings.formItems});
+            popup.formData(feature.data);
         },
         
         _mapClick: function(evt) {
