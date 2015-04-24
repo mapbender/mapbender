@@ -113,6 +113,16 @@ body{
     }
   }
 
+  hr {
+    display: block;
+    clear: both;
+    height: 1px;
+    background-color: #c0c0c0;
+//    border-top: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
 
   select{
     padding: 2px 3px;
@@ -189,8 +199,13 @@ body{
     .checkbox,
     .radio,
     > .form-group {
+      width: auto;
       display: inline-block;
       padding-left: 15px;
+    }
+
+    > hr{
+      margin-left: 15px;
     }
   }
 }

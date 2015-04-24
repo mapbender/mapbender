@@ -375,6 +375,11 @@
                         fieldSet.append(widget.genElement(item));
                     })
                 }
+
+                if(has(item, 'breakLine') && item.breakLine) {
+                    fieldSet.append(declarations.breakLine(item, declarations, widget));
+                }
+
                 return fieldSet;
             },
             date: function(item, declarations, widget) {
@@ -382,6 +387,18 @@
                 var input = inputHolder.find('> input');
                 input.dateSelector(item);
                 return inputHolder;
+            },
+
+            /**
+             * Break line
+             *
+             * @param item
+             * @param declarations
+             * @param widget
+             * @return {*|HTMLElement}
+             */
+            breakLine: function(item, declarations, widget) {
+                return $("<hr/>");
             }
         },
 
