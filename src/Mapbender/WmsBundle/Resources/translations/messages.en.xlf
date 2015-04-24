@@ -714,6 +714,10 @@
         <source>mb.wms.wmsloader.dialog.label.wmspass</source>
         <target>Password</target>
       </trans-unit>
+      <trans-unit id="0e63672cec31c3116babef6b8277de36" resname="mb.wms.wmsloader.repo.instance.vendorspecific.label">
+        <source>mb.wms.wmsloader.repo.instance.vendorspecific.label</source>
+        <target>Vendor specific</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

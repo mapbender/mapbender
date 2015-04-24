@@ -1019,6 +1019,10 @@ class PrintService
         foreach ($this->data['legends'] as $idx => $legendArray) {
             foreach ($legendArray as $title => $legendUrl) {
 
+                if (preg_match('/request=GetLegendGraphic/i', $legendUrl) === 0) {
+                    continue;
+                }
+
                 $image = $this->getLegendImage($legendUrl);
 
                 $size = getimagesize($image);

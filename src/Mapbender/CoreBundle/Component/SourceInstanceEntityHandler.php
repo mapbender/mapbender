@@ -44,4 +44,9 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * @param boolean $persist Description
      */
     abstract public function mergeDimension($dimension, $persist = false);
+    
+    /**
+     * Returns an array with sensitive vendor specific parameters
+     */
+    abstract public function getSensitiveVendorSpecific();
 }

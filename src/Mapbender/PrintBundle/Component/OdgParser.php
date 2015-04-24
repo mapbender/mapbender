@@ -19,7 +19,7 @@ class OdgParser
         while ($zip_entry = zip_read($open)) {
             if (zip_entry_name($zip_entry) == $file) {
                 zip_entry_open($open, $zip_entry);
-                $xml = zip_entry_read($zip_entry, 51200);
+                $xml = zip_entry_read($zip_entry, 204800);
                 break;
             }
         }

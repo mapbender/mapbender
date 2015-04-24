@@ -48,9 +48,11 @@ class WmsInstanceInstanceLayersType extends AbstractType
         foreach ($arr as $value) {
             $formats[$value] = $value;
         }
-        $builder->add('title', 'text', array(
+        $builder->add('title', 'text',
+                      array(
                 'required' => true))
-            ->add('format', 'choice', array(
+            ->add('format', 'choice',
+                  array(
                 'choices' => $formats,
                 'required' => true));
         $gfi = $wmsinstance->getSource()->getGetFeatureInfo();
@@ -77,29 +79,42 @@ class WmsInstanceInstanceLayersType extends AbstractType
                       array(
                 'choices' => $formats_exc,
                 'required' => false))
-            ->add('basesource', 'checkbox', array(
+            ->add('basesource', 'checkbox',
+                  array(
                 'required' => false))
-            ->add('visible', 'checkbox', array(
+            ->add('visible', 'checkbox',
+                  array(
                 'required' => false))
-            ->add('proxy', 'checkbox', array(
+            ->add('proxy', 'checkbox',
+                  array(
                 'required' => false))
-            ->add('opacity', 'choice', array(
+            ->add('opacity', 'choice',
+                  array(
                 'choices' => $opacity,
                 'required' => true))
-            ->add('transparency', 'checkbox', array(
+            ->add('transparency', 'checkbox',
+                  array(
                 'required' => false))
-            ->add('tiled', 'checkbox', array(
+            ->add('tiled', 'checkbox',
+                  array(
                 'required' => false))
-            ->add('ratio', 'number', array(
+            ->add('ratio', 'number',
+                  array(
                 'required' => false,
                 'precision' => 2))
-            ->add('buffer', 'integer', array(
+            ->add('buffer', 'integer',
+                  array(
                 'required' => false))
             ->add('dimensions', 'collection',
                   array(
                 'required' => false,
                 'type' => new DimensionInstType(),
-                'auto_initialize' => false,
+                'allow_add' => true,
+                'allow_delete' => true,))
+            ->add('vendorspecifics', 'collection',
+                  array(
+                'required' => false,
+                'type' => new VendorSpecificType(),
                 'allow_add' => true,
                 'allow_delete' => true,))
             ->add('layers', 'collection',

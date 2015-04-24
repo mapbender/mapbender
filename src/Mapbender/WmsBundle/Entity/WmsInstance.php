@@ -90,6 +90,11 @@ class WmsInstance extends SourceInstance
      * @ORM\Column(type="array", nullable=true)
      */
     protected $dimensions;
+    
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    protected $vendorspecifics;
 
     /**
      * @ORM\Column(type="integer", options={"default" = 0})
@@ -105,6 +110,7 @@ class WmsInstance extends SourceInstance
     {
         $this->layers = new ArrayCollection();
         $this->dimensions = array();
+        $this->vendorspecifics = array();
     }
 
     /**
@@ -147,6 +153,31 @@ class WmsInstance extends SourceInstance
     public function setDimensions(array $dimensions)
     {
         $this->dimensions = $dimensions;
+        return $this;
+    }
+
+    /**
+     * Returns vendorspecifics
+     * 
+     * @return array of DimensionIst
+     */
+    public function getVendorspecifics()
+    {
+        if(!$this->vendorspecifics){
+            $this->vendorspecifics = array();
+        }
+        return $this->vendorspecifics;
+    }
+
+    /**
+     * Sets vendorspecifics
+     * 
+     * @param ArrayCollections $vendorspecifics array of DimensionIst
+     * @return \Mapbender\WmsBundle\Entity\WmsInstance
+     */
+    public function setVendorspecifics(array $vendorspecifics)
+    {
+        $this->vendorspecifics = $vendorspecifics;
         return $this;
     }
 

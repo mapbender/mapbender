@@ -11,6 +11,7 @@ use Assetic\Filter\CssRewriteFilter;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
+use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
@@ -335,9 +336,9 @@ class ApplicationController extends Controller
     /**
      * Get SourceInstances via HTTP Basic Authentication
      *
-     * @Route("/application/{slug}/instance/{instanceId}/basicAuth")
+     * @Route("/application/{slug}/instance/{instanceId}/tunnel")
      */
-    public function instanceBasicAuthAction($slug, $instanceId)
+    public function instanceTunnelAction($slug, $instanceId)
     {
         $instance = $this->container->get("doctrine")
                 ->getRepository('Mapbender\CoreBundle\Entity\SourceInstance')->find($instanceId);
@@ -352,13 +353,25 @@ class ApplicationController extends Controller
 //            && !$securityContext->isGranted('VIEW', $instance->getSource())) {
 //            throw new AccessDeniedException();
 //        }
-        $params = $this->getRequest()->getMethod() == 'POST' ?
-            $this->get("request")->request->all() : $this->get("request")->query->all();
-
+//        $params = $this->getRequest()->getMethod() == 'POST' ?
+//            $this->get("request")->request->all() : $this->get("request")->query->all();
+        $headers = array();
+        $postParams = $this->get("request")->request->all();
+        $getParams = $this->get("request")->query->all();
+        $user = $instance->getSource()->getUsername() ? $instance->getSource()->getUsername() : null;
+        $password = $instance->getSource()->getUsername() ? $instance->getSource()->getPassword() : null;
+        $instHandler = EntityHandler::createHandler($this->container, $instance);
+        $vendorspec = $instHandler->getSensitiveVendorSpecific();
+        /* overwrite vendorspecific parameters from handler with get/post parameters */
+        if (count($getParams)) {
+            $getParams = array_merge($vendorspec, $getParams); 
+        }
+        if (count($postParams)) {
+            $postParams = array_merge($vendorspec, $postParams);
+        }
         $proxy_config = $this->container->getParameter("owsproxy.proxy");
         $proxy_query = ProxyQuery::createFromUrl(
-                $instance->getSource()->getGetMap()->getHttpGet(), $instance->getSource()->getUsername(),
-                $instance->getSource()->getPassword(), array(), $params);
+                $instance->getSource()->getGetMap()->getHttpGet(), $user, $password, $headers, $getParams, $postParams);
         $proxy = new CommonProxy($proxy_config, $proxy_query);
         $browserResponse = $proxy->handle();
         $response = new Response();
