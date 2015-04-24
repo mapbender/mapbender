@@ -69,15 +69,20 @@ class Digitizer extends HTMLElement
 
     /**
      * Prepare form items for each scheme definition
+     * Optional: get featureType by name from global context.
      *
      * @inheritdoc
      */
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        if($configuration["schemes"] && is_array($configuration["schemes"])){
-            foreach($configuration["schemes"] as $key => &$scheme){
-                if(isset($scheme['formItems'])){
+        if ($configuration["schemes"] && is_array($configuration["schemes"])) {
+            foreach ($configuration["schemes"] as $key => &$scheme) {
+                if (is_string($scheme['featureType'])) {
+                    $featureTypes          = $this->container->getParameter('featureTypes');
+                    $scheme['featureType'] = $featureTypes[$scheme['featureType']];
+                }
+                if (isset($scheme['formItems'])) {
                     $scheme['formItems'] = $this->prepareItems($scheme['formItems']);
                 }
             }
@@ -124,17 +129,12 @@ class Digitizer extends HTMLElement
         $request       = json_decode($this->container->get('request')->getContent(), true);
         $schemas       = $configuration["schemes"];
         $schema        = $schemas[$request["schema"]];
-        $features      = $this->container->get('features');
 
-        if(is_string($schema['featureType'])){
-            $featureType  = $features->get($schema['featureType']);
-        }elseif(is_array ($schema['featureType'])){
+        if(is_array($schema['featureType'])){
             $featureType = new FeatureType($this->container, $schema['featureType']);
         }else{
             throw new Exception("FeatureType settings not correct");
         }
-
-
 
         $results       = array();
 
