@@ -208,7 +208,7 @@
         refresh: function() {
             var widget = this;
             var element = $(widget.element);
-            var items = widget.options.items;
+            var children = widget.options.children;
             var layer = widget.getLayer();
             var map = layer.map;
 
@@ -218,7 +218,7 @@
             // clean navigation
             element.empty();
 
-            widget.buildNavigation(items);
+            widget.buildNavigation(children);
 
             // Init map controllers
             for (var k in widget._activeControls) {

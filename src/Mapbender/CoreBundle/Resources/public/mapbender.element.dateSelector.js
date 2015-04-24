@@ -31,7 +31,7 @@
                 firstDay:          1, //showWeek:          true,
                 dayNamesMin:       ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
                 monthNamesShort:   ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"], //showButtonPanel: true,
-                dateFormat:        'dd-mm-yy',
+                dateFormat:        'dd.mm.yy',
                 onChangeMonthYear: function(input, instance) {
                     widget._trigger('changeMonthYear');
                     setTimeout(function() {
