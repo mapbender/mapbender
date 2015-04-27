@@ -53,6 +53,7 @@
     padding-bottom: 6px;
     user-select: none;
     position: relative;
+    border-bottom: none;
     // @extend .ie-8-borders-hack;
 
 
@@ -146,6 +147,13 @@
 //    padding: 0;
     width: auto !important;
     overflow: auto;
+
+    // Tab-Navigator displaying if direct bounded to the window
+    > .mapbender-element-tab-navigator {
+      > .modal-header > li > a{
+          border-top: none;
+      }
+    }
   }
 
   > .modal-footer {

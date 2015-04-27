@@ -1,4 +1,3 @@
-
 .mapbender-element-tab-navigator {
   padding: 0;
   position: relative;
@@ -8,19 +7,18 @@
       list-style: none;
       float: left;
       position: relative;
-      top: 1px;
       margin-bottom: 1px;
       border-bottom: 0 !important;
       padding: 0;
       white-space: normal;
       &.ui-state-active a {
-        background-color: darken(#5fa229, 10%);
+        background-color: #578e2a;
       }
       &.current a{
         background-color:  #47791f;
       }
-
       a {
+        border-radius: 0px;
         @extend .button;
         float: left;
         > span.close {
@@ -50,6 +48,6 @@
 
   .tab-content {
     overflow-y: auto;
-    padding: 0;
+    padding: 10px;
   }
 }
