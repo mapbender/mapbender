@@ -8,7 +8,9 @@
  */
 .ui-datepicker {
 
-  padding: 10px;
+  &.modal-body{
+    padding: 10px;
+  }
 
   > .ui-datepicker-header {
     > .ui-datepicker-title {
