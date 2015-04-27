@@ -175,6 +175,7 @@
     border-bottom-left-radius: $borderRadius;
     border-bottom-right-radius: $borderRadius;
     background-color: transparent;
+    border-top: 1px solid #c0c0c0;
     //    @extend .ie-8-borders-hack;
     button {
       border-radius: 0;
