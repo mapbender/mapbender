@@ -350,7 +350,7 @@
                                 jsonFeature.id = feature.fid;
                             }
                             
-                            var errorInputs = $(".has-error", popup);
+                            var errorInputs = $(".has-error", dialog);
                             var hasErrors = errorInputs.size() > 0;
                             
                             if( !hasErrors ){
