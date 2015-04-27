@@ -4,899 +4,755 @@
     <body>
       <trans-unit id="18de8162e371da730a52c3d6d452e5ad" resname="mb.core.admin.copyright.label.autoopen">
         <source>mb.core.admin.copyright.label.autoopen</source>
-        <target>__mb.core.admin.copyright.label.autoopen</target>
+        <target>Auto open</target>
       </trans-unit>
       <trans-unit id="40c239c7f7d130a17c9b299f2e03e738" resname="mb.core.basesourceswitcher.form.mesage">
         <source>mb.core.basesourceswitcher.form.mesage</source>
-        <target>Save first the element, then edit it</target>
+        <target>Geen basis set is gedefinieerd.</target>
       </trans-unit>
       <trans-unit id="f2fca95e4366a0e4a5aad0b95efb5744" resname="mb.core.admin.printclient.label.autoopen">
         <source>mb.core.admin.printclient.label.autoopen</source>
-        <target>__mb.core.admin.printclient.label.autoopen</target>
+        <target>Auto open</target>
       </trans-unit>
       <trans-unit id="b163e7bd1f8de3ae1a5abf00b6342cee" resname="mb.core.admin.printclient.label.rotatable">
         <source>mb.core.admin.printclient.label.rotatable</source>
-        <target>__mb.core.admin.printclient.label.rotatable</target>
+        <target>Draaibaar</target>
       </trans-unit>
       <trans-unit id="bd4ca84470dfba347979a8b363fdea12" resname="mb.core.admin.layertree.label.showbasesources">
         <source>mb.core.admin.layertree.label.showbasesources</source>
-        <target>__mb.core.admin.layertree.label.showbasesources</target>
+        <target>Toon basis capaciteit</target>
       </trans-unit>
       <trans-unit id="71b752f5f8f9465c2dd33581a4d5e797" resname="mb.core.admin.layertree.label.autoopen">
         <source>mb.core.admin.layertree.label.autoopen</source>
-        <target>__mb.core.admin.layertree.label.autoopen</target>
+        <target>Auto open</target>
       </trans-unit>
       <trans-unit id="855cb022f4ce41f697c2d2a4674b8509" resname="mb.core.admin.layertree.label.showheader">
         <source>mb.core.admin.layertree.label.showheader</source>
-        <target>__mb.core.admin.layertree.label.showheader</target>
+        <target>Toon header</target>
       </trans-unit>
       <trans-unit id="b9e1e1bd4fe12c68c958110c5a3f24aa" resname="mb.core.admin.layertree.label.showlayerremove">
         <source>mb.core.admin.layertree.label.showlayerremove</source>
-        <target>__mb.core.admin.layertree.label.showlayerremove</target>
+        <target>Toon laag verwijder</target>
       </trans-unit>
       <trans-unit id="f5bd5fff138c48e2bb72f9446a4bbfa7" resname="mb.core.admin.poi.label.usemailto">
         <source>mb.core.admin.poi.label.usemailto</source>
-        <target>__mb.core.admin.poi.label.usemailto</target>
+        <target>Gebruik mail naar</target>
       </trans-unit>
       <trans-unit id="d7bb1cd5c3550424b7fa9a49d70fadc9" resname="mb.core.admin.legend.label.autoopen">
         <source>mb.core.admin.legend.label.autoopen</source>
-        <target>__mb.core.admin.legend.label.autoopen</target>
+        <target>Auto open</target>
       </trans-unit>
       <trans-unit id="a68b07cd84e92c05aa0182899bccc4c0" resname="mb.core.admin.legend.label.hideemptylayers">
         <source>mb.core.admin.legend.label.hideemptylayers</source>
-        <target>__mb.core.admin.legend.label.hideemptylayers</target>
+        <target>Verberg lege lagen</target>
       </trans-unit>
       <trans-unit id="cd587ed8a374f42b8c2e5575dcb02ad0" resname="mb.core.admin.legend.label.generatelegendurl">
         <source>mb.core.admin.legend.label.generatelegendurl</source>
-        <target>__mb.core.admin.legend.label.generatelegendurl</target>
+        <target>Genereer een legenda url</target>
       </trans-unit>
       <trans-unit id="90675349c781bc0f026bca337fce8218" resname="mb.core.admin.legend.label.showsourcetitle">
         <source>mb.core.admin.legend.label.showsourcetitle</source>
-        <target>__mb.core.admin.legend.label.showsourcetitle</target>
+        <target>Toon source titel</target>
       </trans-unit>
       <trans-unit id="0ca2080280477b91ee0130c78044e3e6" resname="mb.core.admin.legend.label.showlayertitle">
         <source>mb.core.admin.legend.label.showlayertitle</source>
-        <target>__mb.core.admin.legend.label.showlayertitle</target>
+        <target>Toon laag titel</target>
       </trans-unit>
       <trans-unit id="7dc9941d3994c6bcf1410b0b4ae5400d" resname="mb.core.admin.legend.label.showgroupedlayertitle">
         <source>mb.core.admin.legend.label.showgroupedlayertitle</source>
-        <target>__mb.core.admin.legend.label.showgroupedlayertitle</target>
+        <target>Toon gegroepeerde laag titel</target>
       </trans-unit>
       <trans-unit id="2e00fc227abbc4eb9c5e531f7ba38758" resname="mb.core.admin.featureinfo.label.autoopen">
         <source>mb.core.admin.featureinfo.label.autoopen</source>
-        <target>__mb.core.admin.featureinfo.label.autoopen</target>
+        <target>Auto open</target>
       </trans-unit>
       <trans-unit id="656d615fc3d3f6ea34a34e5a19bcf36c" resname="mb.core.admin.featureinfo.label.deactivateonclose">
         <source>mb.core.admin.featureinfo.label.deactivateonclose</source>
-        <target>__mb.core.admin.featureinfo.label.deactivateonclose</target>
+        <target>De activeer bij sluiten</target>
       </trans-unit>
       <trans-unit id="3f141d25282496cf3791bd532359e433" resname="mb.core.aboutdialog.content.versionprefix">
         <source>mb.core.aboutdialog.content.versionprefix</source>
-        <target>__mb.core.aboutdialog.content.versionprefix</target>
+        <target>v.</target>
       </trans-unit>
       <trans-unit id="1d84c5293abecb3624fa6828185b3493" resname="mb.core.aboutdialog.content.learnmore">
         <source>mb.core.aboutdialog.content.learnmore</source>
-        <target>__mb.core.aboutdialog.content.learnmore</target>
+        <target>Leer mer over Mapbender3</target>
       </trans-unit>
       <trans-unit id="a8b14434dc098a6e7b028915b631cd24" resname="mb.core.aboutdialog.content.linktitle">
         <source>mb.core.aboutdialog.content.linktitle</source>
-        <target>__mb.core.aboutdialog.content.linktitle</target>
+        <target>Bezoek onze officiele official Mapbender3 website</target>
       </trans-unit>
       <trans-unit id="97ab0befb054f94d9b438e6f8b18aa62" resname="mb.core.aboutdialog.content.website">
         <source>mb.core.aboutdialog.content.website</source>
-        <target>__mb.core.aboutdialog.content.website</target>
+        <target>website</target>
       </trans-unit>
       <trans-unit id="869cda28f81afcf6b2488ba2f4117e91" resname="mb.core.ruler.popup.btn.ok">
         <source>mb.core.ruler.popup.btn.ok</source>
-        <target>Sluiten</target>
+        <target>Sluit</target>
       </trans-unit>
       <trans-unit id="255dfe21ded353929e03b1f48f3d8603" resname="mb.core.ruler.create_error">
         <source>mb.core.ruler.create_error</source>
-        <target>__mb.core.ruler.create_error</target>
+        <target>Liniaal: Type moet een lijn of vlak zijn.</target>
       </trans-unit>
       <trans-unit id="f741a4a709f26fdf399f7b805ff27125" resname="mb.core.featureinfo.error.nolayer">
         <source>mb.core.featureinfo.error.nolayer</source>
-        <target>__mb.core.featureinfo.error.nolayer</target>
+        <target>No info kenmerk laag bestaat.</target>
       </trans-unit>
       <trans-unit id="4000aaa3f1fd6921b40ae958ee5d0c2b" resname="mb.core.featureinfo.error.unknownoption">
         <source>mb.core.featureinfo.error.unknownoption</source>
-        <target>__mb.core.featureinfo.error.unknownoption</target>
+        <target>Onbekende of onbehandelde optie %key% voor %namespace%.%widgetname%.</target>
       </trans-unit>
       <trans-unit id="21505ff4507774e2777bb6a166e8bf31" resname="mb.core.featureinfo.popup.btn.ok">
         <source>mb.core.featureinfo.popup.btn.ok</source>
-        <target>__mb.core.featureinfo.popup.btn.ok</target>
+        <target>Sluit</target>
       </trans-unit>
       <trans-unit id="6e4242b56cb4757b456f1308ed822a9f" resname="mb.core.printclient.popup.btn.ok">
         <source>mb.core.printclient.popup.btn.ok</source>
-        <target>__mb.core.printclient.popup.btn.ok</target>
+        <target>Print</target>
       </trans-unit>
       <trans-unit id="0a5f51d624f13c3e7238d5ab610ca6df" resname="mb.core.printclient.popup.btn.cancel">
         <source>mb.core.printclient.popup.btn.cancel</source>
-        <target>__mb.core.printclient.popup.btn.cancel</target>
+        <target>Cancel</target>
       </trans-unit>
       <trans-unit id="8d91b0195b98dba3e9c4cfdff582505d" resname="mb.core.printclient.info.noactivelayer">
         <source>mb.core.printclient.info.noactivelayer</source>
-        <target>__mb.core.printclient.info.noactivelayer</target>
+        <target>Geen active laag!</target>
       </trans-unit>
       <trans-unit id="31c04113d72fe80fff824faee81d4ddf" resname="mb.core.printclient.form.required">
         <source>mb.core.printclient.form.required</source>
-        <target>__mb.core.printclient.form.required</target>
+        <target>Vul dit veld in graag</target>
       </trans-unit>
       <trans-unit id="9274af4427ddd97ba8b314fb87847f55" resname="mb.core.zoombar.panup">
         <source>mb.core.zoombar.panup</source>
-        <target>__mb.core.zoombar.panup</target>
+        <target>Pan naar boven</target>
       </trans-unit>
       <trans-unit id="5d9ce5e3d3eea5da11c8a0aef5345eb9" resname="mb.core.zoombar.panright">
         <source>mb.core.zoombar.panright</source>
-        <target>__mb.core.zoombar.panright</target>
+        <target>Pan rechts</target>
       </trans-unit>
       <trans-unit id="fccfef101736b6635da3b0e5a2319418" resname="mb.core.zoombar.pandown">
         <source>mb.core.zoombar.pandown</source>
-        <target>__mb.core.zoombar.pandown</target>
+        <target>Pan naar beneden</target>
       </trans-unit>
       <trans-unit id="fe00b345e9c46350ce7945e1abdbb787" resname="mb.core.zoombar.panleft">
         <source>mb.core.zoombar.panleft</source>
-        <target>__mb.core.zoombar.panleft</target>
+        <target>Pan links</target>
       </trans-unit>
       <trans-unit id="8f867fb77fb4bb576647c7a16b431474" resname="mb.core.zoombar.goback">
         <source>mb.core.zoombar.goback</source>
-        <target>__mb.core.zoombar.goback</target>
+        <target>Ga terug</target>
       </trans-unit>
       <trans-unit id="0e800b52545b464cd93311c60c6007f6" resname="mb.core.zoombar.goforward">
         <source>mb.core.zoombar.goforward</source>
-        <target>__mb.core.zoombar.goforward</target>
+        <target>Ga voorwaarts</target>
       </trans-unit>
       <trans-unit id="209477f6d7629c4e272555dee781929e" resname="mb.core.zoombar.zoombybox">
         <source>mb.core.zoombar.zoombybox</source>
-        <target>__mb.core.zoombar.zoombybox</target>
+        <target>Zoom met kader</target>
       </trans-unit>
       <trans-unit id="9e35239edca01f34b1092c1bb8539150" resname="mb.core.zoombar.zoombyworld">
         <source>mb.core.zoombar.zoombyworld</source>
-        <target>__mb.core.zoombar.zoombyworld</target>
+        <target>Zoom met wereldblik</target>
       </trans-unit>
       <trans-unit id="5feedcb7eb18018c003e6fa2562c4b53" resname="mb.core.zoombar.zoomin">
         <source>mb.core.zoombar.zoomin</source>
-        <target>__mb.core.zoombar.zoomin</target>
+        <target>Zoom in</target>
       </trans-unit>
       <trans-unit id="c13aa9d4bce372c110a373dad4519db8" resname="mb.core.zoombar.zoomout">
         <source>mb.core.zoombar.zoomout</source>
-        <target>__mb.core.zoombar.zoomout</target>
+        <target>Zoom uit</target>
       </trans-unit>
       <trans-unit id="8411d94dea29828997130d6346ad0777" resname="mb.core.printclient.label.template">
         <source>mb.core.printclient.label.template</source>
-        <target>__mb.core.printclient.label.template</target>
+        <target>Sjabloon</target>
       </trans-unit>
       <trans-unit id="5aeaf1ae0a1e67e0e392f563be749204" resname="mb.core.printclient.label.quality">
         <source>mb.core.printclient.label.quality</source>
-        <target>__mb.core.printclient.label.quality</target>
+        <target>Kwaliteit</target>
       </trans-unit>
       <trans-unit id="421aa7382e001de0b0960d411265998a" resname="mb.core.printclient.label.scale">
         <source>mb.core.printclient.label.scale</source>
-        <target>__mb.core.printclient.label.scale</target>
+        <target>Schaal</target>
       </trans-unit>
       <trans-unit id="1d6b0cb565c46ffb069608c564861358" resname="mb.core.printclient.label.rotation">
         <source>mb.core.printclient.label.rotation</source>
-        <target>__mb.core.printclient.label.rotation</target>
+        <target>Roteren</target>
       </trans-unit>
       <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
         <source>mb.core.legend.nolegend</source>
-        <target>__mb.core.legend.nolegend</target>
+        <target>Geen legenda beschikbaar</target>
       </trans-unit>
       <trans-unit id="91bc32055005b136d2a134db512294b2" resname="mb.core.legend.popup.btn.ok">
         <source>mb.core.legend.popup.btn.ok</source>
-        <target>__mb.core.legend.popup.btn.ok</target>
+        <target>Sluit</target>
       </trans-unit>
       <trans-unit id="960c243a1919783483eb30395e158174" resname="mb.core.poi.popup.btn.ok">
         <source>mb.core.poi.popup.btn.ok</source>
-        <target>__mb.core.poi.popup.btn.ok</target>
+        <target>Ok</target>
       </trans-unit>
       <trans-unit id="9388cfe7d4bb57b87dcdd53957723380" resname="mb.core.poi.popup.btn.cancel">
         <source>mb.core.poi.popup.btn.cancel</source>
-        <target>__mb.core.poi.popup.btn.cancel</target>
+        <target>Cancel</target>
       </trans-unit>
       <trans-unit id="868e554ea585dc5b1d394eb2b66e972c" resname="mb.core.layertree.tooltip.sublayers_openclose">
         <source>mb.core.layertree.tooltip.sublayers_openclose</source>
-        <target>sub lagen menu open/dicht</target>
+        <target>Sub lagen open/sluiten</target>
       </trans-unit>
       <trans-unit id="e48917a6335f8fa17b6b68aabc94390b" resname="mb.core.layertree.label.visibility_onoff">
         <source>mb.core.layertree.label.visibility_onoff</source>
-        <target>laag aan/uit</target>
+        <target>Zichtbaarheid aan/uit</target>
       </trans-unit>
       <trans-unit id="9f816610733911918c9413a1b5af826a" resname="mb.core.layertree.label.featureinfo_onoff">
         <source>mb.core.layertree.label.featureinfo_onoff</source>
-        <target>eigenschap aan/uit</target>
+        <target>Kenmerk informatie aan/uit</target>
       </trans-unit>
       <trans-unit id="651284d6bbac0abe419148db4b94a3b5" resname="mb.core.layertree.label.transparency">
         <source>mb.core.layertree.label.transparency</source>
-        <target>__mb.core.layertree.label.transparency</target>
+        <target>Doorzichtbaarheid</target>
       </trans-unit>
       <trans-unit id="f64a6c2fa79ba290fd214c07b396e006" resname="mb.core.layertree.label.zoomtolayer">
         <source>mb.core.layertree.label.zoomtolayer</source>
-        <target>__mb.core.layertree.label.zoomtolayer</target>
+        <target>Zoom naar laag</target>
       </trans-unit>
       <trans-unit id="c1e88d23834e42294c5c46903293bbb3" resname="mb.core.layertree.tooltip.removelayer">
         <source>mb.core.layertree.tooltip.removelayer</source>
-        <target>laag wissen</target>
+        <target>Verwijder laag</target>
       </trans-unit>
       <trans-unit id="263857036bd43f2fed5421b06430c19a" resname="mb.core.layertree.label.sources">
         <source>mb.core.layertree.label.sources</source>
-        <target>__mb.core.layertree.label.sources</target>
+        <target>Sources</target>
       </trans-unit>
       <trans-unit id="937de90c8cbe2cbfca37e4df0c18b6aa" resname="mb.core.layertree.label.deleteallsources">
         <source>mb.core.layertree.label.deleteallsources</source>
-        <target>__mb.core.layertree.label.deleteallsources</target>
+        <target>Remove all sources</target>
       </trans-unit>
       <trans-unit id="d34e7ce2889c54092fc147356c3faa14" resname="mb.core.searchrouter.popup.btn.ok">
         <source>mb.core.searchrouter.popup.btn.ok</source>
-        <target>__mb.core.searchrouter.popup.btn.ok</target>
+        <target>Zoek</target>
       </trans-unit>
       <trans-unit id="23529c02cd41313d7461246d3b172252" resname="mb.core.searchrouter.popup.btn.cancel">
         <source>mb.core.searchrouter.popup.btn.cancel</source>
-        <target>__mb.core.searchrouter.popup.btn.cancel</target>
+        <target>Sluit</target>
       </trans-unit>
       <trans-unit id="c6f45ed7c4b619ab7d4f83f3271fb6c1" resname="mb.core.searchrouter.popup.btn.reset">
         <source>mb.core.searchrouter.popup.btn.reset</source>
-        <target>__mb.core.searchrouter.popup.btn.reset</target>
+        <target>Reset</target>
       </trans-unit>
       <trans-unit id="09839a0199d014e89f195b741b758697" resname="mb.core.poi.sharepoi">
         <source>mb.core.poi.sharepoi</source>
-        <target>__mb.core.poi.sharepoi</target>
+        <target>Deel POI</target>
       </trans-unit>
       <trans-unit id="46b75948336bd4019bbaee9324151ecc" resname="mb.core.poi.label.text">
         <source>mb.core.poi.label.text</source>
-        <target>__mb.core.poi.label.text</target>
+        <target>Tekst</target>
       </trans-unit>
       <trans-unit id="43279759bfe1cf656538dd558e3748a6" resname="mb.core.poi.text.snippet">
         <source>mb.core.poi.text.snippet</source>
-        <target>__mb.core.poi.text.snippet</target>
+        <target>U kan het volgende knipsel gebruiken in uw mail om een POI te versturen</target>
       </trans-unit>
       <trans-unit id="73baa3dd55f5169a84b49015e5cbbc6f" resname="mb.core.layertree.confirm.allremove">
         <source>mb.core.layertree.confirm.allremove</source>
-        <target>__mb.core.layertree.confirm.allremove</target>
+        <target>Wilt u werkelijk alle bronnen verwijderen?</target>
       </trans-unit>
       <trans-unit id="261c3c35cd7b5f9737f2c3ab03c1ba76" resname="mb.core.layertree.popup.btn.ok">
         <source>mb.core.layertree.popup.btn.ok</source>
-        <target>Sluiten</target>
+        <target>Sluit</target>
       </trans-unit>
       <trans-unit id="179f487db6ae9a2cc2f6bc20a3973928" resname="mb.core.layertree.const.outofscale">
         <source>mb.core.layertree.const.outofscale</source>
-        <target>__mb.core.layertree.const.outofscale</target>
+        <target>Laag buiten de schaal</target>
       </trans-unit>
       <trans-unit id="ed37a9ab842a774969e361c70f45fd81" resname="mb.core.layertree.const.outofbounds">
         <source>mb.core.layertree.const.outofbounds</source>
-        <target>__mb.core.layertree.const.outofbounds</target>
+        <target>Laag buiten de kaders</target>
       </trans-unit>
       <trans-unit id="f2c092bf66ee0b1608a750ef1646fcfe" resname="mb.core.layertree.const.parentinvisible">
         <source>mb.core.layertree.const.parentinvisible</source>
-        <target>__mb.core.layertree.const.parentinvisible</target>
+        <target>Onderlegende laag niet zichtbaar</target>
       </trans-unit>
       <trans-unit id="982d326f994e1c5e3f11f1a1b8493506" resname="mb.core.simplesearch.input.search">
         <source>mb.core.simplesearch.input.search</source>
-        <target>__mb.core.simplesearch.input.search</target>
+        <target>Zoek</target>
       </trans-unit>
       <trans-unit id="d19f7fb816f3b4515f79e8c5c8546ede" resname="mb.core.basesourceswitcher.error.sourcenotavailable">
         <source>mb.core.basesourceswitcher.error.sourcenotavailable</source>
-        <target>__mb.core.basesourceswitcher.error.sourcenotavailable</target>
+        <target>Een bron met ID %id% is niet beschikbaar</target>
       </trans-unit>
       <trans-unit id="c6c2daa6191922b3b1d289aae1ec8f31" resname="mb.core.overview.nolayer">
         <source>mb.core.overview.nolayer</source>
-        <target>__mb.core.overview.nolayer</target>
+        <target>Het overzichtselement heeft geen laag.</target>
       </trans-unit>
       <trans-unit id="d2279b60abd41fd9e228763532d10b02" resname="mb.core.gpsposition.error.notsupported">
         <source>mb.core.gpsposition.error.notsupported</source>
-        <target>__mb.core.gpsposition.error.notsupported</target>
+        <target>Sorry maar de geo locatie service wordt niet ondersteund door deze browser.</target>
       </trans-unit>
       <trans-unit id="52f2119c302dee02a460f03b9ef78cf2" resname="mb.core.sketch.circle.radius.label">
         <source>mb.core.sketch.circle.radius.label</source>
-        <target>__mb.core.sketch.circle.radius.label</target>
+        <target>Radius</target>
       </trans-unit>
       <trans-unit id="6329edbadca4ae33674d3ba4beb0095a" resname="mb.core.sketch.circle.radius.error">
         <source>mb.core.sketch.circle.radius.error</source>
-        <target>__mb.core.sketch.circle.radius.error</target>
+        <target>Radius is niet valide</target>
       </trans-unit>
       <trans-unit id="45477889021de187cea8384dc6ee4d05" resname="mb.core.sketch.circle.form.button.yes">
         <source>mb.core.sketch.circle.form.button.yes</source>
-        <target>__mb.core.sketch.circle.form.button.yes</target>
+        <target>Ja</target>
       </trans-unit>
       <trans-unit id="94226bb9060eba51287384df96529632" resname="mb.core.sketch.circle.form.button.cancel">
         <source>mb.core.sketch.circle.form.button.cancel</source>
-        <target>__mb.core.sketch.circle.form.button.cancel</target>
+        <target>Cancel</target>
       </trans-unit>
       <trans-unit id="2ec03c5c014dec42d2bc46c9cf012215" resname="mb.core.aboutdialog.class.title">
         <source>mb.core.aboutdialog.class.title</source>
-        <target>__mb.core.aboutdialog.class.title</target>
+        <target>Over de dialoog</target>
       </trans-unit>
       <trans-unit id="a1fe1182d0efa70a68e07d8375db34ce" resname="mb.core.aboutdialog.class.description">
         <source>mb.core.aboutdialog.class.description</source>
-        <target>__mb.core.aboutdialog.class.description</target>
+        <target>Toon de dialoog</target>
       </trans-unit>
       <trans-unit id="cb1d0ceba4aa38a8a623c339903c7b71" resname="mb.core.aboutdialog.tag.help">
         <source>mb.core.aboutdialog.tag.help</source>
-        <target>__mb.core.aboutdialog.tag.help</target>
+        <target>Help</target>
       </trans-unit>
       <trans-unit id="c02738e437b4048f9b434d851d1e1a3f" resname="mb.core.aboutdialog.tag.info">
         <source>mb.core.aboutdialog.tag.info</source>
-        <target>__mb.core.aboutdialog.tag.info</target>
+        <target>Info</target>
       </trans-unit>
       <trans-unit id="80a2c08826a2379b7239f4e9c581805e" resname="mb.core.aboutdialog.tag.about">
         <source>mb.core.aboutdialog.tag.about</source>
-        <target>__mb.core.aboutdialog.tag.about</target>
+        <target>Over</target>
       </trans-unit>
       <trans-unit id="befc1f8d20bbd1ba5f26e124d8b94f1a" resname="mb.core.activityindicator.class.title">
         <source>mb.core.activityindicator.class.title</source>
-        <target>__mb.core.activityindicator.class.title</target>
+        <target>Activiteiten indicator</target>
       </trans-unit>
       <trans-unit id="4c68bd109de1a07d8c03455e938af4d9" resname="mb.core.activityindicator.class.description">
         <source>mb.core.activityindicator.class.description</source>
-        <target>__mb.core.activityindicator.class.description</target>
+        <target>Toon HTTP activiteit</target>
       </trans-unit>
       <trans-unit id="fd918578edd7d0cca263c511c5aa5d1e" resname="mb.core.activityindicator.tag.activity">
         <source>mb.core.activityindicator.tag.activity</source>
-        <target>__mb.core.activityindicator.tag.activity</target>
+        <target>Activiteit</target>
       </trans-unit>
       <trans-unit id="bb2ea876407e337655b44710c250006a" resname="mb.core.activityindicator.tag.indicator">
         <source>mb.core.activityindicator.tag.indicator</source>
-        <target>__mb.core.activityindicator.tag.indicator</target>
+        <target>Indicator</target>
       </trans-unit>
       <trans-unit id="294c1985386655b73d5c1704a44242d6" resname="mb.core.basesourceswitcher.class.title">
         <source>mb.core.basesourceswitcher.class.title</source>
-        <target>__mb.core.basesourceswitcher.class.title</target>
+        <target>Basis bron schakelaar</target>
       </trans-unit>
       <trans-unit id="5b27fd259590198ffacb9832ea9bb07a" resname="mb.core.basesourceswitcher.class.Description">
         <source>mb.core.basesourceswitcher.class.Description</source>
-        <target>__mb.core.basesourceswitcher.class.Description</target>
+        <target>Wijzig de mappen achtergrond bronnen</target>
       </trans-unit>
       <trans-unit id="e8db259e0e053a06725b325ba778c123" resname="mb.core.basesourceswitcher.tag.base">
         <source>mb.core.basesourceswitcher.tag.base</source>
-        <target>__mb.core.basesourceswitcher.tag.base</target>
+        <target>Basis</target>
       </trans-unit>
       <trans-unit id="e26245d77479bc7e6881f009caa8a278" resname="mb.core.basesourceswitcher.tag.source">
         <source>mb.core.basesourceswitcher.tag.source</source>
-        <target>__mb.core.basesourceswitcher.tag.source</target>
+        <target>Bron</target>
       </trans-unit>
       <trans-unit id="513988b56bb558e00c71361466e939fe" resname="mb.core.basesourceswitcher.tag.switcher">
         <source>mb.core.basesourceswitcher.tag.switcher</source>
-        <target>__mb.core.basesourceswitcher.tag.switcher</target>
+        <target>Schakelaar</target>
       </trans-unit>
       <trans-unit id="1b2f36a63d291efb8bc41dabbd6917a8" resname="mb.core.button.class.title">
         <source>mb.core.button.class.title</source>
-        <target>__mb.core.button.class.title</target>
+        <target>Knop</target>
       </trans-unit>
       <trans-unit id="2c4223a6c0c9581d0a621696c7420a64" resname="mb.core.button.class.description">
         <source>mb.core.button.class.description</source>
-        <target>__mb.core.button.class.description</target>
+        <target>Knop</target>
       </trans-unit>
       <trans-unit id="28b6501d35cb5022d2f1a5ffa6c46b0a" resname="mb.core.button.tag.button">
         <source>mb.core.button.tag.button</source>
-        <target>__mb.core.button.tag.button</target>
+        <target>Knop</target>
       </trans-unit>
       <trans-unit id="9c1ccf262204218acfe9d7d4531efdb5" resname="mb.core.coordinatesdisplay.class.title">
         <source>mb.core.coordinatesdisplay.class.title</source>
-        <target>__mb.core.coordinatesdisplay.class.title</target>
+        <target>Coordinaten scherm</target>
       </trans-unit>
       <trans-unit id="cee2d354d34004657e8a450d251585dc" resname="mb.core.coordinatesdisplay.class.description">
         <source>mb.core.coordinatesdisplay.class.description</source>
-        <target>__mb.core.coordinatesdisplay.class.description</target>
+        <target>Het coordinaten scherm toont uw muis positie in map coordinaten.</target>
       </trans-unit>
       <trans-unit id="eab1a6ab1b72d1da761177f459e3f5ed" resname="mb.core.coordinatesdisplay.tag.coordinates">
         <source>mb.core.coordinatesdisplay.tag.coordinates</source>
-        <target>__mb.core.coordinatesdisplay.tag.coordinates</target>
+        <target>Coordinaten</target>
       </trans-unit>
       <trans-unit id="ff24de9e7a96cd53867af20168d49ebd" resname="mb.core.coordinatesdisplay.tag.display">
         <source>mb.core.coordinatesdisplay.tag.display</source>
-        <target>__mb.core.coordinatesdisplay.tag.display</target>
+        <target>Scherm</target>
       </trans-unit>
       <trans-unit id="651e9b111a6dd5b2050eb314a88df0d5" resname="mb.core.coordinatesdisplay.tag.mouse">
         <source>mb.core.coordinatesdisplay.tag.mouse</source>
-        <target>__mb.core.coordinatesdisplay.tag.mouse</target>
+        <target>Muis</target>
       </trans-unit>
       <trans-unit id="9d31d5498141043d830d3bcf7b338987" resname="mb.core.coordinatesdisplay.tag.position">
         <source>mb.core.coordinatesdisplay.tag.position</source>
-        <target>__mb.core.coordinatesdisplay.tag.position</target>
+        <target>positie</target>
       </trans-unit>
       <trans-unit id="788b3224b624aa4530d43991cedc9ced" resname="mb.core.copyright.class.title">
         <source>mb.core.copyright.class.title</source>
-        <target>__mb.core.copyright.class.title</target>
+        <target>Copyright</target>
       </trans-unit>
       <trans-unit id="785b8e73415635049ccda83324dabdd4" resname="mb.core.copyright.class.description">
         <source>mb.core.copyright.class.description</source>
-        <target>__mb.core.copyright.class.description</target>
+        <target>Toon de gebruikscondities</target>
       </trans-unit>
       <trans-unit id="edd9a51254ed3282c94086cb82181c4b" resname="mb.core.copyright.tag.copyright">
         <source>mb.core.copyright.tag.copyright</source>
-        <target>__mb.core.copyright.tag.copyright</target>
+        <target>Copyright</target>
       </trans-unit>
       <trans-unit id="8f0414b7eb120282a4e0086e674e03bb" resname="mb.core.copyright.tag.dialog">
         <source>mb.core.copyright.tag.dialog</source>
-        <target>__mb.core.copyright.tag.dialog</target>
+        <target>dialoog</target>
       </trans-unit>
       <trans-unit id="5d2843de110ec9bc967ddcbdafed4b04" resname="mb.core.featureinfo.class.title">
         <source>mb.core.featureinfo.class.title</source>
-        <target>__mb.core.featureinfo.class.title</target>
+        <target>Kenmerk info</target>
       </trans-unit>
       <trans-unit id="2b611c8cacca06828c4da13b84e8caf3" resname="mb.core.featureinfo.class.description">
         <source>mb.core.featureinfo.class.description</source>
-        <target>__mb.core.featureinfo.class.description</target>
+        <target>Kenmerk info</target>
       </trans-unit>
       <trans-unit id="a7a27b022bb1c74647c76562bc2bca92" resname="mb.core.featureinfo.tag.featureinfo">
         <source>mb.core.featureinfo.tag.featureinfo</source>
-        <target>__mb.core.featureinfo.tag.featureinfo</target>
+        <target>Kenmerk info</target>
       </trans-unit>
       <trans-unit id="84265e0b65d9180071e2d8be52ff266d" resname="mb.core.featureinfo.tag.feature">
         <source>mb.core.featureinfo.tag.feature</source>
-        <target>__mb.core.featureinfo.tag.feature</target>
+        <target>kenmerk</target>
       </trans-unit>
       <trans-unit id="4ca1e715fc760a219401f2b0bc8ec66d" resname="mb.core.featureinfo.tag.info">
         <source>mb.core.featureinfo.tag.info</source>
-        <target>__mb.core.featureinfo.tag.info</target>
+        <target>info</target>
       </trans-unit>
       <trans-unit id="466f3c57656eccfdff2975c40964f72a" resname="mb.core.featureinfo.tag.dialog">
         <source>mb.core.featureinfo.tag.dialog</source>
-        <target>__mb.core.featureinfo.tag.dialog</target>
+        <target>dialoog</target>
       </trans-unit>
       <trans-unit id="6b752500265cd713262d3ac40782289e" resname="mb.core.gpsposition.class.title">
         <source>mb.core.gpsposition.class.title</source>
-        <target>__mb.core.gpsposition.class.title</target>
+        <target>GPS Positie</target>
       </trans-unit>
       <trans-unit id="1ad088a7f936e3e8a90a2c668adb0393" resname="mb.core.gpsposition.class.description">
         <source>mb.core.gpsposition.class.description</source>
-        <target>__mb.core.gpsposition.class.description</target>
+        <target>Renders een knop om de GPS positie te tonen</target>
       </trans-unit>
       <trans-unit id="63927352ea1d9602ea2d39950657b022" resname="mb.core.gpsposition.tag.gpsposition">
         <source>mb.core.gpsposition.tag.gpsposition</source>
-        <target>__mb.core.gpsposition.tag.gpsposition</target>
+        <target>GPS Positie</target>
       </trans-unit>
       <trans-unit id="1e4a324bb1c86559e915eeae664f16ca" resname="mb.core.gpsposition.tag.gps">
         <source>mb.core.gpsposition.tag.gps</source>
-        <target>__mb.core.gpsposition.tag.gps</target>
+        <target>GPS</target>
       </trans-unit>
       <trans-unit id="b7770cbd87d28b8cc56cf8692909971a" resname="mb.core.gpsposition.tag.position">
         <source>mb.core.gpsposition.tag.position</source>
-        <target>__mb.core.gpsposition.tag.position</target>
+        <target>positie</target>
       </trans-unit>
       <trans-unit id="9a2760ef9a6ef1a36a78fc130f3e4dc2" resname="mb.core.gpsposition.tag.button">
         <source>mb.core.gpsposition.tag.button</source>
-        <target>__mb.core.gpsposition.tag.button</target>
+        <target>knop</target>
       </trans-unit>
       <trans-unit id="91c4794eb87858c6ea0a7f736ffc31d5" resname="mb.core.layertree.class.title">
         <source>mb.core.layertree.class.title</source>
-        <target>__mb.core.layertree.class.title</target>
+        <target>Laag boom</target>
       </trans-unit>
       <trans-unit id="ef9d6ec32821b43276bd1a3777a7d83c" resname="mb.core.layertree.class.description">
         <source>mb.core.layertree.class.description</source>
-        <target>__mb.core.layertree.class.description</target>
+        <target>Boom van maplagen</target>
       </trans-unit>
       <trans-unit id="6887daa52d3a65065194eae2ddb59766" resname="mb.core.layertree.tag.layertree">
         <source>mb.core.layertree.tag.layertree</source>
-        <target>__mb.core.layertree.tag.layertree</target>
+        <target>Lagenboom</target>
       </trans-unit>
       <trans-unit id="fa5d8e4f7cddffeb22ee18ed267e20bc" resname="mb.core.layertree.tag.layer">
         <source>mb.core.layertree.tag.layer</source>
-        <target>__mb.core.layertree.tag.layer</target>
+        <target>laag</target>
       </trans-unit>
       <trans-unit id="261c2591eda9e2e2f29c5cdc3da88f7d" resname="mb.core.layertree.tag.tree">
         <source>mb.core.layertree.tag.tree</source>
-        <target>__mb.core.layertree.tag.tree</target>
+        <target>boom</target>
       </trans-unit>
       <trans-unit id="0e414a98c26c7e55a83bae397b5faf8d" resname="mb.core.legend.class.title">
         <source>mb.core.legend.class.title</source>
-        <target>__mb.core.legend.class.title</target>
+        <target>Legenda</target>
       </trans-unit>
       <trans-unit id="c6b4222c59ccebdcc9c399ed4e0a8169" resname="mb.core.legend.class.description">
         <source>mb.core.legend.class.description</source>
-        <target>__mb.core.legend.class.description</target>
+        <target>De legenda toont de legenda van de map lagen</target>
       </trans-unit>
       <trans-unit id="bc4dbd2f4a17fa2486f8c153b2785959" resname="mb.core.legend.tag.layer">
         <source>mb.core.legend.tag.layer</source>
-        <target>__mb.core.legend.tag.layer</target>
+        <target>laag</target>
       </trans-unit>
       <trans-unit id="3a1ad035c9ded1d5f15ad139a3180479" resname="mb.core.legend.tag.legend">
         <source>mb.core.legend.tag.legend</source>
-        <target>__mb.core.legend.tag.legend</target>
+        <target>legenda</target>
       </trans-unit>
       <trans-unit id="6ff9a6860becdb38fc62382a5a94d19f" resname="mb.core.map.class.title">
         <source>mb.core.map.class.title</source>
-        <target>__mb.core.map.class.title</target>
+        <target>Map</target>
       </trans-unit>
       <trans-unit id="a51d63e59c7008d6fc19ae6fd66e0034" resname="mb.core.mapabs.class.description">
         <source>mb.core.mapabs.class.description</source>
-        <target>__mb.core.mapabs.class.description</target>
+        <target>MapQuery/OpenLayers gebaseerde map</target>
       </trans-unit>
       <trans-unit id="62a123effedc924f13f9f73b303a159e" resname="mb.core.map.tag.map">
         <source>mb.core.map.tag.map</source>
-        <target>__mb.core.map.tag.map</target>
+        <target>map</target>
       </trans-unit>
       <trans-unit id="5b354e24e317b47d82b91e5fb901398e" resname="mb.core.map.tag.mapquery">
         <source>mb.core.map.tag.mapquery</source>
-        <target>__mb.core.map.tag.mapquery</target>
+        <target>MapQuery</target>
       </trans-unit>
       <trans-unit id="be27b82e95734992bbcd31c4faad6251" resname="mb.core.map.tag.openlayers">
         <source>mb.core.map.tag.openlayers</source>
-        <target>__mb.core.map.tag.openlayers</target>
+        <target>OpenLayers</target>
       </trans-unit>
       <trans-unit id="4b943baa1ecd120693a0169188869129" resname="mb.core.map.srsnotfound">
         <source>mb.core.map.srsnotfound</source>
-        <target>__mb.core.map.srsnotfound</target>
+        <target>SRS properties for %srslist% are not found</target>
       </trans-unit>
       <trans-unit id="1545d3b3b00b2d6a9ffa64836e72cf89" resname="mb.core.overview.class.title">
         <source>mb.core.overview.class.title</source>
-        <target>__mb.core.overview.class.title</target>
+        <target>Overzicht</target>
       </trans-unit>
       <trans-unit id="4a541e9cb0bbec61e67b6410c5d91bfd" resname="mb.core.overview.class.description">
         <source>mb.core.overview.class.description</source>
-        <target>__mb.core.overview.class.description</target>
+        <target>Renders een kleine overzichtsmap</target>
       </trans-unit>
       <trans-unit id="e5d9eb4a51009c1523e241487f33efb0" resname="mb.core.overview.tag.overview">
         <source>mb.core.overview.tag.overview</source>
-        <target>__mb.core.overview.tag.overview</target>
+        <target>overzicht</target>
       </trans-unit>
       <trans-unit id="bb3d9d93dcc6f6dabc4d558e5a9f4222" resname="mb.core.overview.tag.map">
         <source>mb.core.overview.tag.map</source>
-        <target>__mb.core.overview.tag.map</target>
+        <target>map</target>
       </trans-unit>
       <trans-unit id="7de6b6e60dc29467aa72968a60ec2781" resname="mb.core.poi.class.title">
         <source>mb.core.poi.class.title</source>
-        <target>__mb.core.poi.class.title</target>
+        <target>POI</target>
       </trans-unit>
       <trans-unit id="fcb05118e63af0be8eb3f9d50d2b8383" resname="mb.core.poi.class.description">
         <source>mb.core.poi.class.description</source>
-        <target>__mb.core.poi.class.description</target>
+        <target>Maak een POI aan om te delen</target>
       </trans-unit>
       <trans-unit id="718b2faa45e981d61773328503144051" resname="mb.core.poi.tag.poi">
         <source>mb.core.poi.tag.poi</source>
-        <target>__mb.core.poi.tag.poi</target>
+        <target>poi</target>
       </trans-unit>
       <trans-unit id="2af3ff9534bd82ecac0c9f50041b4c7a" resname="mb.core.poi.tag.point">
         <source>mb.core.poi.tag.point</source>
-        <target>__mb.core.poi.tag.point</target>
+        <target>punt</target>
       </trans-unit>
       <trans-unit id="f1ceefdd74e75aa8d53bbdcc65de9972" resname="mb.core.poi.tag.interest">
         <source>mb.core.poi.tag.interest</source>
-        <target>__mb.core.poi.tag.interest</target>
+        <target>interest</target>
       </trans-unit>
       <trans-unit id="b180ccb1c56081666f1a56362200e5e1" resname="mb.core.printclient.class.title">
         <source>mb.core.printclient.class.title</source>
-        <target>__mb.core.printclient.class.title</target>
+        <target>Print client</target>
       </trans-unit>
       <trans-unit id="269640fdb1e7654374bffe68abf67d3b" resname="mb.core.printclient.class.description">
         <source>mb.core.printclient.class.description</source>
-        <target>__mb.core.printclient.class.description</target>
+        <target>Renders a Print dialog</target>
       </trans-unit>
       <trans-unit id="02faddbd2151e0d55dfb3084ad20682b" resname="mb.core.printclient.tag.print">
         <source>mb.core.printclient.tag.print</source>
-        <target>__mb.core.printclient.tag.print</target>
+        <target>print</target>
       </trans-unit>
       <trans-unit id="c5617befbd65f424d0919d2a64132eab" resname="mb.core.printclient.tag.pdf">
         <source>mb.core.printclient.tag.pdf</source>
-        <target>__mb.core.printclient.tag.pdf</target>
+        <target>pdf</target>
       </trans-unit>
       <trans-unit id="f750d15bfba2ae4304ecab260cdc2605" resname="mb.core.printclient.tag.png">
         <source>mb.core.printclient.tag.png</source>
-        <target>__mb.core.printclient.tag.png</target>
+        <target>png</target>
       </trans-unit>
       <trans-unit id="5029f5e2943a7d47e3f3aacf6dccdd29" resname="mb.core.printclient.tag.gif">
         <source>mb.core.printclient.tag.gif</source>
-        <target>__mb.core.printclient.tag.gif</target>
+        <target>gif</target>
       </trans-unit>
       <trans-unit id="372f9e7a3c20b23e10ceb76afde7e5ef" resname="mb.core.printclient.tag.jpg">
         <source>mb.core.printclient.tag.jpg</source>
-        <target>__mb.core.printclient.tag.jpg</target>
+        <target>jpg</target>
       </trans-unit>
       <trans-unit id="0d294c2ab4049fb7a76de6c3314fcfb6" resname="mb.core.printclient.tag.jpeg">
         <source>mb.core.printclient.tag.jpeg</source>
-        <target>__mb.core.printclient.tag.jpeg</target>
+        <target>jpeg</target>
       </trans-unit>
       <trans-unit id="89eb0c4bbc2dbf36dfaa030e4424cde7" resname="mb.core.ruler.class.title">
         <source>mb.core.ruler.class.title</source>
-        <target>__mb.core.ruler.class.title</target>
+        <target>Lijn/Vlak lineaal</target>
       </trans-unit>
       <trans-unit id="df474f4781cc43d563e67a4bcbde1bbb" resname="mb.core.ruler.class.description">
         <source>mb.core.ruler.class.description</source>
-        <target>__mb.core.ruler.class.description</target>
+        <target>Lineaal voor het tekenen van een lijn/vlak en toont de lengte/oppervlakte in een dialoogbox</target>
       </trans-unit>
       <trans-unit id="930ae199f6f8a21841e441cb64842229" resname="mb.core.ruler.tag.line">
         <source>mb.core.ruler.tag.line</source>
-        <target>__mb.core.ruler.tag.line</target>
+        <target>lijn</target>
       </trans-unit>
       <trans-unit id="f570199e41fc3a71fcad197332f1c315" resname="mb.core.ruler.tag.area">
         <source>mb.core.ruler.tag.area</source>
-        <target>__mb.core.ruler.tag.area</target>
+        <target>vlak</target>
       </trans-unit>
       <trans-unit id="271f9c8a039e12ec95a13cc6b14fcca2" resname="mb.core.ruler.tag.measure">
         <source>mb.core.ruler.tag.measure</source>
-        <target>__mb.core.ruler.tag.measure</target>
+        <target>opmeten</target>
       </trans-unit>
       <trans-unit id="c0cca69e14f668acf1f83440eda1074a" resname="mb.core.scalebar.class.title">
         <source>mb.core.scalebar.class.title</source>
-        <target>__mb.core.scalebar.class.title</target>
+        <target>Schaal bar</target>
       </trans-unit>
       <trans-unit id="df03ffea85a38b9b604f4253377fe61c" resname="mb.core.scalebar.class.description">
         <source>mb.core.scalebar.class.description</source>
-        <target>__mb.core.scalebar.class.description</target>
+        <target>De schaal bar toont een smalle indicator lijn welke de huidige map schaal weergeeft.</target>
       </trans-unit>
       <trans-unit id="f00869751975198840c745c4d58b1360" resname="mb.core.scalebar.tag.scale">
         <source>mb.core.scalebar.tag.scale</source>
-        <target>__mb.core.scalebar.tag.scale</target>
+        <target>schaal</target>
       </trans-unit>
       <trans-unit id="cca56645382cac33ff73d2252c54600c" resname="mb.core.scalebar.tag.bar">
         <source>mb.core.scalebar.tag.bar</source>
-        <target>__mb.core.scalebar.tag.bar</target>
+        <target>bar</target>
       </trans-unit>
       <trans-unit id="84a6d65871a9ef3e993fdc1db86ffcba" resname="mb.core.scaledisplay.class.title">
         <source>mb.core.scaledisplay.class.title</source>
-        <target>__mb.core.scaledisplay.class.title</target>
+        <target>Schaal scherm</target>
       </trans-unit>
       <trans-unit id="e68ccfbb22d73367cbf5455424d7fdcb" resname="mb.core.scaledisplay.class.description">
         <source>mb.core.scaledisplay.class.description</source>
-        <target>__mb.core.scaledisplay.class.description</target>
+        <target>Toont de huidige map schaal</target>
       </trans-unit>
       <trans-unit id="071b6b10cd34e561d489c538671de9e6" resname="mb.core.scaledisplay.tag.scale">
         <source>mb.core.scaledisplay.tag.scale</source>
-        <target>__mb.core.scaledisplay.tag.scale</target>
+        <target>schaal</target>
       </trans-unit>
       <trans-unit id="d2cbf19268c2a9378b16d27a8f2c3c21" resname="mb.core.scaledisplay.tag.display">
         <source>mb.core.scaledisplay.tag.display</source>
-        <target>__mb.core.scaledisplay.tag.display</target>
+        <target>toon</target>
       </trans-unit>
       <trans-unit id="b85e01d963b6106bb2d2de44e241f97d" resname="mb.core.scaleselector.class.title">
         <source>mb.core.scaleselector.class.title</source>
-        <target>__mb.core.scaleselector.class.title</target>
+        <target>Schaal selector</target>
       </trans-unit>
       <trans-unit id="d9751023269ee3f4f3d84ad0b6355f8b" resname="mb.core.scaleselector.class.description">
         <source>mb.core.scaleselector.class.description</source>
-        <target>__mb.core.scaleselector.class.description</target>
+        <target>Toon en wijzig de map schaal</target>
       </trans-unit>
       <trans-unit id="ea46156a86949b1bfd58cad9bef049c0" resname="mb.core.scaleselector.tag.scale">
         <source>mb.core.scaleselector.tag.scale</source>
-        <target>__mb.core.scaleselector.tag.scale</target>
+        <target>schaal</target>
       </trans-unit>
       <trans-unit id="e3e2d4bbdab626252c2d0d480f7209a7" resname="mb.core.scaleselector.tag.selector">
         <source>mb.core.scaleselector.tag.selector</source>
-        <target>__mb.core.scaleselector.tag.selector</target>
+        <target>selector</target>
       </trans-unit>
       <trans-unit id="26ffa92883d7c4140fe66b4d76176b5f" resname="mb.core.searchrouter.class.title">
         <source>mb.core.searchrouter.class.title</source>
-        <target>__mb.core.searchrouter.class.title</target>
+        <target>Zoek route</target>
       </trans-unit>
       <trans-unit id="6ab2689e7fbc56d76055949a730142b4" resname="mb.core.searchrouter.class.description">
         <source>mb.core.searchrouter.class.description</source>
-        <target>__mb.core.searchrouter.class.description</target>
+        <target>Configureer  het zoek route element</target>
       </trans-unit>
       <trans-unit id="503c12f9039ad418c497da90113359cb" resname="mb.core.searchrouter.tag.search">
         <source>mb.core.searchrouter.tag.search</source>
-        <target>__mb.core.searchrouter.tag.search</target>
+        <target>zoek</target>
       </trans-unit>
       <trans-unit id="e397392a6736e4c692690852147ee845" resname="mb.core.searchrouter.tag.router">
         <source>mb.core.searchrouter.tag.router</source>
-        <target>__mb.core.searchrouter.tag.router</target>
+        <target>route</target>
       </trans-unit>
       <trans-unit id="2d82734a91ac66cd751875530abdd2dd" resname="mb.core.sketch.class.title">
         <source>mb.core.sketch.class.title</source>
-        <target>__mb.core.sketch.class.title</target>
+        <target>Schets</target>
       </trans-unit>
       <trans-unit id="fc172c08f41ce1029d79190eecdb2446" resname="mb.core.sketch.class.description">
         <source>mb.core.sketch.class.description</source>
-        <target>__mb.core.sketch.class.description</target>
+        <target>Voegt een vector laag toe aan de map waarop geometrische objecten op getekend kunnen worden.</target>
       </trans-unit>
       <trans-unit id="7ae33b15957a16081ce3bff4098cec7a" resname="mb.core.sketch.tag.sketch">
         <source>mb.core.sketch.tag.sketch</source>
-        <target>__mb.core.sketch.tag.sketch</target>
+        <target>schets</target>
       </trans-unit>
       <trans-unit id="1b7a2f9aa3b7ee2e3d7989fd4b6f3caa" resname="mb.core.sketch.tag.circle">
         <source>mb.core.sketch.tag.circle</source>
-        <target>__mb.core.sketch.tag.circle</target>
+        <target>cirkel</target>
       </trans-unit>
       <trans-unit id="d79bf5328be657237d7d5c90ef421742" resname="mb.core.srsselector.class.title">
         <source>mb.core.srsselector.class.title</source>
-        <target>__mb.core.srsselector.class.title</target>
+        <target>SRS selector</target>
       </trans-unit>
       <trans-unit id="508503c89e4e2a834b66b6ce4a17d51c" resname="mb.core.srsselector.class.description">
         <source>mb.core.srsselector.class.description</source>
-        <target>__mb.core.srsselector.class.description</target>
+        <target>Het spatiale reference system selector wijzigt de map spatial reference system</target>
       </trans-unit>
       <trans-unit id="ab4fd7ac0477504180eaaa27b0e42464" resname="mb.core.srsselector.tag.srs">
         <source>mb.core.srsselector.tag.srs</source>
-        <target>__mb.core.srsselector.tag.srs</target>
+        <target>SRS</target>
       </trans-unit>
       <trans-unit id="35d70c6b173b8c1dafdf0bc3f9773321" resname="mb.core.srsselector.tag.selector">
         <source>mb.core.srsselector.tag.selector</source>
-        <target>__mb.core.srsselector.tag.selector</target>
+        <target>selector</target>
       </trans-unit>
       <trans-unit id="f60b842a67fc8eb5030a1d8dc06d8cd8" resname="mb.core.zoombar.class.title">
         <source>mb.core.zoombar.class.title</source>
-        <target>__mb.core.zoombar.class.title</target>
+        <target>Navigatie toolbar</target>
       </trans-unit>
       <trans-unit id="7f5f1a808b7d6958c515f4cf6bc0dc58" resname="mb.core.zoombar.class.description">
         <source>mb.core.zoombar.class.description</source>
-        <target>__mb.core.zoombar.class.description</target>
+        <target>The Navigation Toolbar element provides a floating control to pan and zoom, similar to the OpenLayers PanZoomBar control. This element though is easier to use when custom styling is needed.</target>
       </trans-unit>
       <trans-unit id="dd8da2c48bb9ba297c6c85c5760c63b8" resname="mb.core.zoombar.tag.zoom">
         <source>mb.core.zoombar.tag.zoom</source>
-        <target>__mb.core.zoombar.tag.zoom</target>
+        <target>zoom</target>
       </trans-unit>
       <trans-unit id="95ba880851677b631f8bb98a6d2d6383" resname="mb.core.zoombar.tag.pan">
         <source>mb.core.zoombar.tag.pan</source>
-        <target>__mb.core.zoombar.tag.pan</target>
+        <target>pan</target>
       </trans-unit>
       <trans-unit id="5125087b8bc99226bc9852bd732d46ea" resname="mb.core.zoombar.tag.control">
         <source>mb.core.zoombar.tag.control</source>
-        <target>__mb.core.zoombar.tag.control</target>
+        <target>control</target>
       </trans-unit>
       <trans-unit id="e3fb9d6f29c3fc95ffffab704493bc02" resname="mb.core.zoombar.tag.navigation">
         <source>mb.core.zoombar.tag.navigation</source>
-        <target>__mb.core.zoombar.tag.navigation</target>
+        <target>navigatie</target>
       </trans-unit>
       <trans-unit id="26f98160a1059c3bb9ba4ca8079d70ca" resname="mb.core.zoombar.tag.panel">
         <source>mb.core.zoombar.tag.panel</source>
-        <target>__mb.core.zoombar.tag.panel</target>
+        <target>paneel</target>
       </trans-unit>
       <trans-unit id="8558c0db68060954e93d0d7b7a38a19c" resname="mb.core.simplesearch.class.title">
         <source>mb.core.simplesearch.class.title</source>
-        <target>__mb.core.simplesearch.class.title</target>
+        <target>Simpele zoek</target>
       </trans-unit>
       <trans-unit id="f5721f3be6fafc85615fee69cc4e94bc" resname="mb.core.simplesearch.class.description">
         <source>mb.core.simplesearch.class.description</source>
-        <target>__mb.core.simplesearch.class.description</target>
+        <target>Enkel zoekveld voor JSON bronnen (e.g. Solr)</target>
       </trans-unit>
       <trans-unit id="a55fa2bdd2dbedda05045a70c8d7c36b" resname="mb.core.layertree.label.metadata">
         <source>mb.core.layertree.label.metadata</source>
-        <target>__mb.core.layertree.label.metadata</target>
+        <target>Metadata</target>
       </trans-unit>
       <trans-unit id="6c94e9d72f4b9fe8f3d778bbd0f3a0c4" resname="mb.core.layertree.label.legend">
         <source>mb.core.layertree.label.legend</source>
-        <target>__mb.core.layertree.label.legend</target>
+        <target>Legenda</target>
       </trans-unit>
       <trans-unit id="8c1f66fa95ed2baff3594f48febee178" resname="mb.core.layertree.label.kmlexport">
         <source>mb.core.layertree.label.kmlexport</source>
-        <target>__mb.core.layertree.label.kmlexport</target>
+        <target>Kml export</target>
       </trans-unit>
       <trans-unit id="13348442cc6a27032d2b4aa28b75a5d3" resname="Search">
         <source>Search</source>
-        <target>__Search</target>
-      </trans-unit>
-      <trans-unit id="bd119ab6a5ece631673030875e90a43d" resname="FeatureInfo">
-        <source>FeatureInfo</source>
-        <target>Informatie</target>
-      </trans-unit>
-      <trans-unit id="992a0f0542384f1ee5ef51b7cf4ae6c4" resname="Services">
-        <source>Services</source>
-        <target>Diensten</target>
-      </trans-unit>
-      <trans-unit id="40e3696f27329506b830b516877a3868" resname="X coordinate">
-        <source>X coordinate</source>
-        <target>X-coördinaten</target>
-      </trans-unit>
-      <trans-unit id="26a26a1c9e92eafe8d52ea6142d28abf" resname="Y coordinate">
-        <source>Y coordinate</source>
-        <target>Y-coördinaten</target>
-      </trans-unit>
-      <trans-unit id="90a2f24270d56a0741d3346a3a4475c6" resname="Pan up">
-        <source>Pan up</source>
-        <target>Schuif omhoog</target>
-      </trans-unit>
-      <trans-unit id="aa91b8d3a40cdbb43b40e7fd58712409" resname="Pan right">
-        <source>Pan right</source>
-        <target>Schuif naar rechts</target>
-      </trans-unit>
-      <trans-unit id="61c86e3373e03d5e99871c04a8995484" resname="Pan down">
-        <source>Pan down</source>
-        <target>Schuif omlaag</target>
-      </trans-unit>
-      <trans-unit id="a034ede36d71483d78479da1efb9f1fa" resname="Pan left">
-        <source>Pan left</source>
-        <target>Schuif naar links</target>
-      </trans-unit>
-      <trans-unit id="22b653bd8d2edcebb9e0036b4ac79262" resname="Go back">
-        <source>Go back</source>
-        <target>Vorige</target>
-      </trans-unit>
-      <trans-unit id="06e7328d1857738121d88a216d5a01a7" resname="Go forward">
-        <source>Go forward</source>
-        <target>Volgende</target>
-      </trans-unit>
-      <trans-unit id="a22b10ed7a2425c6a682bbfe7af2c526" resname="Zoom by box">
-        <source>Zoom by box</source>
-        <target>Zoomen met kader</target>
-      </trans-unit>
-      <trans-unit id="7b91156d64b76a5dda815937fce9119d" resname="Zoom in">
-        <source>Zoom in</source>
-        <target>Zoom in</target>
-      </trans-unit>
-      <trans-unit id="96bcf0139eb17d2c331ee55bc03f25cd" resname="Click to zoom">
-        <source>Click to zoom</source>
-        <target>Klik om te zoomen</target>
-      </trans-unit>
-      <trans-unit id="52ebc26c2921d5b84fc670dff9891821" resname="Zoom out">
-        <source>Zoom out</source>
-        <target>Zoom uit</target>
-      </trans-unit>
-      <trans-unit id="8f7f4c1ce7a4f933663d10543562b096" resname="About">
-        <source>About</source>
-        <target>Over</target>
-      </trans-unit>
-      <trans-unit id="c9cc8cce247e49bae79f15173ce97354" resname="Save">
-        <source>Save</source>
-        <target>Opslaan</target>
-      </trans-unit>
-      <trans-unit id="ea4788705e6873b424c65e91c2846b19" resname="Cancel">
-        <source>Cancel</source>
-        <target>Afbreken</target>
-      </trans-unit>
-      <trans-unit id="b112803ab9deb7deba2a6b24ef3bb91a" resname="Add Group">
-        <source>Add Group</source>
-        <target>Groep toevoegen</target>
-      </trans-unit>
-      <trans-unit id="f2a6c498fb90ee345d997f888fce3b18" resname="Delete">
-        <source>Delete</source>
-        <target>Wissen</target>
-      </trans-unit>
-      <trans-unit id="4f9dd14e1101391c65d74868e71699ef" resname="Really Delete">
-        <source>Really Delete</source>
-        <target>Definitief wissen</target>
-      </trans-unit>
-      <trans-unit id="6d12d5da91993e8a116f5fb904ee268d" resname="Group Index">
-        <source>Group Index</source>
-        <target>Groepsindex</target>
-      </trans-unit>
-      <trans-unit id="08f1f32cbd6bf7422568c1c55edf0933" resname="Available Groups">
-        <source>Available Groups</source>
-        <target>Beschikbare groepen</target>
-      </trans-unit>
-      <trans-unit id="49ee3087348e8d44e1feda1917443987" resname="Name">
-        <source>Name</source>
-        <target>Naam</target>
-      </trans-unit>
-      <trans-unit id="7dce122004969d56ae2e0245cb754d35" resname="Edit">
-        <source>Edit</source>
-        <target>Bewerken</target>
-      </trans-unit>
-      <trans-unit id="f6612e39f1899f6bdc3bbc73ecd14fbc" resname="No Groups">
-        <source>No Groups</source>
-        <target>Geen groepen</target>
-      </trans-unit>
-      <trans-unit id="c2208ccd0104d97d8925713036d5cb57" resname="Add User">
-        <source>Add User</source>
-        <target>Gebruiker toevoegen</target>
-      </trans-unit>
-      <trans-unit id="c217dacc4d3c0b8bdf205e216279f778" resname="Realy delete?">
-        <source>Realy delete?</source>
-        <target>Definitief wissen?</target>
-      </trans-unit>
-      <trans-unit id="93cba07454f06a4a960172bbd6e2a435" resname="Yes">
-        <source>Yes</source>
-        <target>Ja</target>
-      </trans-unit>
-      <trans-unit id="bafd7322c6e97d25b6299b5d6fe8920b" resname="No">
-        <source>No</source>
-        <target>Nee</target>
-      </trans-unit>
-      <trans-unit id="43781db5c40ecc39fd718685594f0956" resname="save">
-        <source>save</source>
-        <target>opslaan</target>
-      </trans-unit>
-      <trans-unit id="77c295788277f7ee605a01d81ce6e861" resname="User Index">
-        <source>User Index</source>
-        <target>Gebruikersindex</target>
-      </trans-unit>
-      <trans-unit id="f3d5c3126fc548a441b1dfb7504e2ff6" resname="Available Users">
-        <source>Available Users</source>
-        <target>Beschikbare gebruikers</target>
-      </trans-unit>
-      <trans-unit id="6fe17b14a818a73ecb886e7a9be44ef8" resname="No Users">
-        <source>No Users</source>
-        <target>Geen gebruikers</target>
-      </trans-unit>
-      <trans-unit id="f84d08652206487f39225d85cb160d98" resname="Share POI">
-        <source>Share POI</source>
-        <target>Share POI</target>
-      </trans-unit>
-      <trans-unit id="9dffbf69ffba8bc38bc4e01abf4b1675" resname="Text">
-        <source>Text</source>
-        <target>Text</target>
-      </trans-unit>
-      <trans-unit id="a59c799972d58d925b7ace1269bd43d7" resname="You can use the following snippet in an email to send the POI.">
-        <source>You can use the following snippet in an email to send the POI.</source>
-        <target>You can use the following snippet in an email to send the POI.</target>
+        <target>Zoek</target>
       </trans-unit>
     </body>
   </file>
