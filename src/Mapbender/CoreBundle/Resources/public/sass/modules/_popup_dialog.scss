@@ -151,13 +151,14 @@
     // Tab-Navigator displaying if direct bounded to the window
     > .mapbender-element-tab-navigator {
       > .modal-header > li {
+        margin-left: -1px;
+        &:first-child{
+          margin-left: 0px;
+        }
         > a {
           border-top: none;
           &:focus {
-            -webkit-transition: all 0.30s ease-in-out;
-            -moz-transition: all 0.30s ease-in-out;
-            -ms-transition: all 0.30s ease-in-out;
-            -o-transition: all 0.30s ease-in-out;
+            @include transition(all, 0.30s, ease-in-out);
             outline: none;
             box-shadow: 0 0 5px #578e2a;
           }
