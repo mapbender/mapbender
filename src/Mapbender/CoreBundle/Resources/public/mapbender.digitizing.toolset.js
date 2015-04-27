@@ -199,6 +199,7 @@
                 }
             };
 
+            mapElement.addClass('digitizing-tool-set');
             widget.refresh();
         },
 
