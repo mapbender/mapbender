@@ -160,6 +160,9 @@
     border-top: 1px solid #c0c0c0;
     background-color: transparent;
     padding: 10px;
+    button {
+      border-radius: 0;
+    }
   }
 
   .ui-resizable {
