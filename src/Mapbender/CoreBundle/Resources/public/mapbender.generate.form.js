@@ -273,6 +273,25 @@
                     container.append(declarations.label(item, declarations));
                 }
 
+                if(has(item, 'mandatory') && item.mandatory) {
+                    input.data('warn',function(value){
+                        var hasValue = $.trim(value) != '';
+                        var isRegExp = item.mandatory !== true;
+                        var text = item.hasOwnProperty('mandatoryText')? item.mandatoryText: "Bitte übeprüfen!";
+
+                        if(isRegExp){
+                            hasValue = eval(item.mandatory).exec(value) != null;
+                        }
+
+                        if(hasValue){
+                            container.removeClass('has-error');
+                        }else{
+                            $.notify( input, text, { position:"top right", autoHideDelay: 2000});
+                            container.addClass('has-error');
+                        }
+                        return hasValue;
+                    });
+                }
                 container.append(input);
 
                 return container;
