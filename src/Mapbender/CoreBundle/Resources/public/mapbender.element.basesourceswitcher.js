@@ -26,20 +26,14 @@
                     widthLi[count - 1] = $(".mb-element-basesourceswitcher li").eq(count - 1).width() + 30;
                     count--;
                 }
-            }
-            else {
-                while (count > 0) {
-                    widthLi[count - 1] = $(".mb-element-basesourceswitcher li").eq(count - 1).width();
-                    count--;
-                }
-            }
+            
             var largest = Math.max.apply(Math, widthLi) + 20 + "px";
             $(".mb-element-basesourceswitcher li").css("width", largest);
             if (display === "dropdown") {
                 $('.mb-element-basesourceswitcher').addClass("dropdownbs");
 
             }
-
+            }
             $('.basesourcesetswitch', this.element).click($.proxy(self._toggleMapset, self));
             $('.basesourcegroup', this.element).click(function(e) {
 
@@ -53,6 +47,7 @@
 
                 }
             });
+            
             this._hideSources();
             this._showActive();
             self._trigger('ready');
