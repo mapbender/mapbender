@@ -226,6 +226,10 @@
             var layer = widget.getLayer();
             var map = layer.map;
 
+            if(widget.options.hasOwnProperty('onFeatureAdded')) {
+                widget.element.bind('mbdigitizertoolsetfeatureadded', widget.options.onFeatureAdded);
+            }
+
             // clean controllers
             widget.cleanUp();
 
