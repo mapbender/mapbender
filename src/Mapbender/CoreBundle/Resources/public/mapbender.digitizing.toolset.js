@@ -10,7 +10,7 @@
 
     $.widget("mapbender.digitizingToolSet", {
 
-        options:           {},
+        options:           {layer: null},
         controls:          null,
         _activeControls:   [],
         currentController: null,
@@ -338,10 +338,13 @@
          */
         cleanUp: function() {
             var widget = this;
+            if(!widget.hasLayer()){
+                return;
+            }
+            var layer = widget.getLayer();
             var mapElement = widget.getMapElement();
-            var map = widget.getLayer().map;
+            var map = layer.map;
             var activeControls = widget._activeControls;
-
             for (var k in  activeControls) {
                 var control = activeControls[k];
                 control.deactivate();
@@ -367,7 +370,16 @@
          * @return HTMLElement jquery HTML element
          */
         getMapElement: function() {
-            return $(this.getLayer().map.div);
+            var layer = this.getLayer();
+            return layer?$(layer.map.div):null;
+        },
+
+        /**
+         * Has layer?
+         * @return {boolean}
+         */
+        hasLayer: function(){
+            return !!this.getLayer();
         }
     });
 })(jQuery);
