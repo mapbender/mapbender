@@ -15,32 +15,38 @@
         options: {},
         toolsets: {
             point: [
-              {type: 'drawPoint', icon: 'drawPoint'},
-              {type: 'edit', icon: 'edit'},
-              //{type: 'drag', icon: 'drag'},
-              //{type: 'select', icon: 'select'},
-              //{type: 'removeSelected', icon: 'removeSelected'},
-              //{type: 'removeAll', icon: 'removeAll'}
+              {type: 'drawPoint'},
+              //{type: 'drawLine'},
+              //{type: 'drawPolygon'},
+              //{type: 'drawRectangle'},
+              //{type: 'drawCircle'},
+              //{type: 'drawEllipse'},
+              //{type: 'drawDonut'},
+              {type: 'modifyFeature'},
+              //{type: 'moveFeature'},
+              //{type: 'selectFeature'},
+              //{type: 'removeSelected'}
+              //{type: 'removeAll'}
             ],
             line: [
-              {type: 'drawLine', icon: 'drawLine'},
-              {type: 'edit', icon: 'edit'},
-              //{type: 'drag', icon: 'drag'},
-              //{type: 'select', icon: 'select'},
-              //{type: 'removeSelected', icon: 'removeSelected'},
-              //{type: 'removeAll', icon: 'removeAll'}
+              {type: 'drawLine'},
+              {type: 'modifyFeature'},
+              //{type: 'moveFeature'},
+              //{type: 'selectFeature'},
+              //{type: 'removeSelected'},
+              //{type: 'removeAll'}
             ],
             polygon: [
-              {type: 'drawPolygon', icon: 'drawPolygon'},
-              //{type: 'drawRectangle', icon: 'drawRectangle'},
-              //{type: 'drawCircle', icon: 'drawRectangle'},
-              //{type: 'drawEllipse', icon: 'drawRectangle'},
-              //{type: 'donut', icon: 'drawRectangle'},
-              {type: 'edit', icon: 'edit'},
-              //{type: 'drag', icon: 'drag'},
-              //{type: 'select', icon: 'select'},
-              //{type: 'removeSelected', icon: 'removeSelected'},
-              //{type: 'removeAll', icon: 'removeAll'}
+              {type: 'drawPolygon'},
+              //{type: 'drawRectangle'},
+              //{type: 'drawCircle'},
+              //{type: 'drawEllipse'},
+              //{type: 'drawDonut'},
+              {type: 'modifyFeature'},
+              //{type: 'moveFeature'},
+              //{type: 'selectFeature'},
+              //{type: 'removeSelected'},
+              //{type: 'removeAll'}
             ]
         },
         map: null,
@@ -119,7 +125,7 @@
                     columns:  columns,
                     buttons: [
                         {
-                            title: 'E',
+                            title: 'Edit',
                             className: 'edit',
                             onClick: function(feature, ui) {
                                 var olFeature;
@@ -132,8 +138,9 @@
                             }
                         },
                         {
-                            title: 'X',
-                            className: 'delete',
+                            title: 'Remove',
+                            className: 'remove',
+                            cssClass: 'critical',
                             onClick: function(feature, ui) {
                                 var tr = ui.closest('tr');
                                 var tableApi = table.resultTable('getApi');
@@ -297,7 +304,9 @@
                     
                     var jsonFeature = tableWidget.getDataById(feature.fid);
                     var domRow = tableWidget.getDomRowByData(jsonFeature); 
-                    
+                    if(!domRow){
+                        return;
+                    }
                     tableWidget.showByRow(domRow);
                     domRow.addClass('hover');
                     feature.layer.drawFeature(feature,'select');
@@ -312,7 +321,10 @@
                 
                 if(feature.layer.name === widget.currentSettings.label){
                     var jsonFeature = tableWidget.getDataById(feature.fid);
-                    var domRow = tableWidget.getDomRowByData(jsonFeature); 
+                    var domRow = tableWidget.getDomRowByData(jsonFeature);
+                    if(!domRow){
+                        return;
+                    }
                     domRow.removeClass('hover');
                     feature.layer.drawFeature(feature,'default');
                 }
@@ -437,7 +449,6 @@
             // getFeatures from Event
             var features = this._getFeaturesFromEvent(x, y);
             if(features.length === 0) {
-                console.log('no features');
                 return;
             }
             var feature = features[0];
