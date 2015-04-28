@@ -499,6 +499,9 @@
             this._super(key, value);
         },
         _setOptions: function(options) {
+            if(has(options, 'type')) {
+                this.element.append(this.genElement(options));
+            }
             this._super(options);
             this.refresh();
         },
