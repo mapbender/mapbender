@@ -288,8 +288,11 @@
             var element = $(widget.element);
             var controls = widget.controls;
 
-            $.each(buttons, function() {
-                var item = this;
+            $.each(buttons, function(i, item) {
+                //var item = this;
+                if(!item || !item.hasOwnProperty('type')){
+                    return;
+                }
                 var button = $("<button class='button' type='button'/>");
                 var type = item.type;
 
