@@ -155,7 +155,16 @@
                         html.append(element.html);
                         break;
                     case 'button':
-                        html.append('<button class="btn button ' + element.className + '" title="' + element.title + '">' + element.title + '</button>');
+                        var button = $('<button class="button" title="' + element.title + '">' + element.title + '</button>');
+                        if(_.has(element,'cssClass')){
+                             button.addClass(element.cssClass);
+                        }
+                        if(_.has(element,'className')){
+                            button.addClass("icon-"+element.className);
+                            button.addClass( element.className);
+                        }
+
+                        html.append(button);
                         break;
                 }
             });
@@ -450,7 +459,7 @@
         showByRow: function(domRow){
             var tableApi =  this._dataTable;
             var rowsOnOnePage = tableApi.page.len();
-            
+
             if(domRow.hasOwnProperty('length')){
                 domRow = domRow[0]
             }
