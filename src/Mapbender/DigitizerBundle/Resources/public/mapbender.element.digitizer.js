@@ -60,16 +60,14 @@
             this.elementUrl = Mapbender.configuration.application.urls.element + '/' + me.attr('id') + '/';
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
-        
+
         _setup: function(){
             var frames = [];
             var activeFrame = null;
             var widget = this;
             var element = $(widget.element);
             var selector = widget.selector =  $("select.selector", element);
-            widget.map = $('#' + widget.options.target).data('mapbenderMbMap').map.olMap;
-
-
+            var map = widget.map = $('#' + widget.options.target).data('mapbenderMbMap').map.olMap;
             var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["default"], {
                 'strokeWidth': 2
 //                'strokeColor': '#FF0000',
@@ -80,15 +78,16 @@
 //                strokeColor: '#FFFF00',
 //                fillColor: '#0000FF'
             }));
+            var styleMap = new OpenLayers.StyleMap({
+                'default': defaultStyle,
+                'select':  selectStyle
+            }, {extendDefault: true});
 
-            var styleMap = new OpenLayers.StyleMap({'default': defaultStyle,
-                'select': selectStyle}, {extendDefault: true});  
-            
             // Hide selector if only one schema defined
             if(_.size(this.options.schemes) === 1){
                 selector.css('display','none');
             }
-            
+
             // build select options
             $.each(widget.options.schemes, function(schemaName){
                 var settings = this;
@@ -99,19 +98,14 @@
                 widget.map.addLayer(layer);
 
                 var frame = settings.frame = $("<div/>").addClass('frame').data(settings);
-                var tools = settings.tools = $("<div/>").digitizingToolSet({children: widget.toolsets[settings.featureType.geomType], layer: layer});
-                var checkbox = $('<div class="checkbox">\n\
-                                <label><input class="onlyExtent'+schemaName+'" type="checkbox" checked="true">current extent</label>\n\
-                             </div>');
-                
                 var columns = [];
                 var newFeatureDefaultProperties = {};
-                
+
                 $.each(settings.tableFields, function(fieldName){
-                    newFeatureDefaultProperties[fieldName] = ""; 
+                    newFeatureDefaultProperties[fieldName] = "";
                     columns.push({data: "properties."+fieldName, title: this.label});
                 });
-                
+
                 var table = settings.table = $("<div/>").resultTable({
                     lengthChange: false,
                     pageLength: 10,
@@ -133,7 +127,7 @@
                                     olFeature =  layer.getFeatureById(feature.id);
                                 }else{
                                     olFeature = widget.activeLayer.getFeatureByFid(feature.id);
-                                }                         
+                                }
                                 widget._openFeatureEditDialog(olFeature);
                             }
                         },
@@ -146,7 +140,7 @@
                                 var tableApi = table.resultTable('getApi');
                                 var row = tableApi.row(tr);
                                 var olFeature;
-                                
+
                                 if(feature.hasOwnProperty('isNew')){
                                     olFeature =  layer.getFeatureById(feature.id);
                                 }else{
@@ -158,100 +152,104 @@
                                     widget.query('delete',{
                                         schema: schemaName,
                                         feature: feature
-                                    }).done(function(fid){                 
+                                    }).done(function(fid){
                                         $.notify('erfolgreich gelöscht','info');
                                     });
                                 }
-                                
+
                                 // remove from map
                                 olFeature.layer.removeFeatures(olFeature);
-                                
+
                                 // remove from table
-                                row.remove().draw();                         
+                                row.remove().draw();
                             }
                         }
                 ]
                 });
-                var tableWidget = table.data('mapbenderResultTable');
 
                 settings.schemaName = schemaName;
 
-                frame.append(tools);
-                
-                frame.append(checkbox);
+                frame.generateElements({
+                    children: [{
+                        type:           'digitizingToolSet',
+                        children:       widget.toolsets[settings.featureType.geomType],
+                        layer:          layer,
+                        onFeatureAdded: function() {
+                            var geoJSON = new OpenLayers.Format.GeoJSON();
+                            var srid = feature.layer.map.getProjectionObject().proj.srsProjNumber;
+                            var properties = jQuery.extend(true, {}, newFeatureDefaultProperties); // clone from newFeatureDefaultProperties
+                            var jsonGeometry;
+
+                            eval("jsonGeometry=" + geoJSON.write(feature.geometry));
+
+                            var jsonFeature = {
+                                id:         feature.id,
+                                isNew:      true,
+                                properties: properties,
+                                geometry:   jsonGeometry,
+                                type:       "Feature",
+                                srid:       srid
+                            };
+
+                            var tableApi = table.resultTable('getApi');
+                            tableApi.rows.add([jsonFeature]);
+                            tableApi.draw();
+
+                            if(settings.openFormAfterEdit === true) {
+                                widget._openFeatureEditDialog(feature);
+                            }
+                        }
+                    }, {
+                        type:     'checkbox',
+                        cssClass: 'onlyExtent' + schemaName,
+                        title:    'current extent',
+                        change:   function() {
+                            widget._getData();
+
+                        }
+                    }]
+                });
+
                 frame.append(table);
-                
+
                 frames.push(settings);
                 frame.css('display','none');
-                
+
                 frame.data(settings);
-                
+
                 element.append(frame);
                 option.data(settings);
-                
-                selector.append(option);
-                
-                tools.bind('mbdigitizertoolsetfeatureadded',function(event,feature){
-                    var geoJSON = new OpenLayers.Format.GeoJSON();
-                    var srid = feature.layer.map.getProjectionObject().proj.srsProjNumber;
-                    var properties = jQuery.extend(true, {}, newFeatureDefaultProperties); // clone from newFeatureDefaultProperties
-                    var jsonGeometry;
-                    
-                    eval("jsonGeometry="+geoJSON.write(feature.geometry));
-                    
-                    var jsonFeature = {
-                        id: feature.id,
-                        isNew: true,
-                        properties: properties,
-                        geometry:  jsonGeometry,
-                        type: "Feature",
-                        srid: srid
-                    };
 
-                    var tableApi = table.resultTable('getApi');
-                    tableApi.rows.add([jsonFeature]);
-                    tableApi.draw();
-                    
-                    if(settings.openFormAfterEdit === true){
-                        widget._openFeatureEditDialog(feature);
-                    }
-                    
-                });
-                
-                checkbox.delegate('input','change',function(){
-                    widget._getData();
-                });
-                
-                
+                selector.append(option);
             });
 
             function onSelectorChange(){
                 var option = selector.find(":selected");
                 var settings = option.data();
                 var frame = settings.frame;
-                var table = settings.table;   
+                var table = settings.table;
 
                 if(activeFrame){
                     activeFrame.css('display','none');
                     var tableApi = activeFrame.data("table").resultTable('getApi');
                     var layer = activeFrame.data("layer");
-                    
+
                     layer.removeAllFeatures();
                     tableApi.clear();
                 }
-                
+
                 activeFrame = frame;
                 activeFrame.css('display','block');
-                
+
                 widget.activeLayer = settings.layer;
                 widget.schemaName = settings.schemaName;
                 widget.currentSettings = settings;
-                
+
                 var table = widget.currentSettings.table;
                 var tableApi = table.resultTable('getApi');
-            
+
                 table.off('mouseenter','mouseleave','click');
-            
+
                 table.delegate("tbody > tr", 'mouseenter', function() {
                     var tr = this;
                     var row = tableApi.row(tr);
@@ -278,32 +276,32 @@
                     var jsonData = row.data();
                     if(!jsonData){
                         return;
-                    }                  
+                    }
                     widget.zoomToJsonFeature(jsonData);
                 });
-  
+
                 widget._getData();
             }
 
             selector.on('change',onSelectorChange);
             onSelectorChange();
-            
+
             // register events
             this.moveEndEvent = function(){
                 widget._getData();
             };
-            this.map.events.register("moveend", this.map, this.moveEndEvent);          
+            this.map.events.register("moveend", this.map, this.moveEndEvent);
             this.map.events.register('click', this, this._mapClick);
-            
+
             var featureoverEvent = function(e){
                 var feature = e.feature;
                 var table = widget.currentSettings.table;
                 var tableWidget = table.data('mapbenderResultTable');
-                
+
                 if(feature.layer.name === widget.currentSettings.label){
-                    
+
                     var jsonFeature = tableWidget.getDataById(feature.fid);
-                    var domRow = tableWidget.getDomRowByData(jsonFeature); 
+                    var domRow = tableWidget.getDomRowByData(jsonFeature);
                     if(!domRow){
                         return;
                     }
@@ -313,12 +311,12 @@
 //                    debugger;
                 }
             };
-            
+
             var featureoutEvent = function(e){
                 var feature = e.feature;
                 var table = widget.currentSettings.table;
                 var tableWidget = table.data('mapbenderResultTable');
-                
+
                 if(feature.layer.name === widget.currentSettings.label){
                     var jsonFeature = tableWidget.getDataById(feature.fid);
                     var domRow = tableWidget.getDomRowByData(jsonFeature);
@@ -335,7 +333,7 @@
             this.map.resetLayersZIndex();
             this._trigger('ready');
         },
-        
+
         _openFeatureEditDialog: function (feature) {
             var self = this;
 
@@ -361,10 +359,10 @@
                             if(feature.fid){
                                 jsonFeature.id = feature.fid;
                             }
-                            
+
                             var errorInputs = $(".has-error", dialog);
                             var hasErrors = errorInputs.size() > 0;
-                            
+
                             if( !hasErrors ){
                                 form.disableForm();
                                 self.query('save',{
@@ -405,7 +403,7 @@
                                             row.data(tableJson);
                                             return false;
                                         }
-                                    })     
+                                    })
                                     tableApi.draw();
 
                                     // Update open layer feature to...
@@ -421,7 +419,7 @@
                         }
                     }]
             };
-            
+
             if(self.currentSettings.hasOwnProperty('popup')){
                 $.extend(popupConfiguration,self.currentSettings.popup);
             }
@@ -432,12 +430,12 @@
             self.currentPopup = dialog;
             dialog.formData(feature.data);
         },
-        
+
         _mapClick: function(evt) {
             var self = this;
             var x = evt.pageX;
             var y = evt.pageY;
-            
+
             // return if modifycontrol is active
             var controls = this.map.getControlsByClass('OpenLayers.Control.ModifyFeature');
             for (var i = 0; i <  controls.length; i++){
@@ -445,18 +443,18 @@
                     return;
                 }
             }
-            
+
             // getFeatures from Event
             var features = this._getFeaturesFromEvent(x, y);
             if(features.length === 0) {
                 return;
             }
             var feature = features[0];
-            
+
             self._openFeatureEditDialog(feature);
         },
-        
-        _getFeaturesFromEvent: function(x, y) {       
+
+        _getFeaturesFromEvent: function(x, y) {
             var features = [], targets = [], layers = [];
             var layer, target, feature, i, len;
             this.map.resetLayersZIndex();
@@ -464,7 +462,7 @@
             for (i=this.map.layers.length-1; i>=0; --i) {
                 layer = this.map.layers[i];
                 if (layer.div.style.display !== "none") {
-                    if (layer === this.activeLayer) {               
+                    if (layer === this.activeLayer) {
                         target = document.elementFromPoint(x, y);
                         while (target && target._featureId) {
                             feature = layer.getFeatureById(target._featureId);
@@ -495,37 +493,37 @@
             this.map.resetLayersZIndex();
             return features;
         },
-        
+
         _getData: function(){
             var self = this;
             var settings = self.currentSettings;
             var proj = this.map.getProjectionObject();
             var extent = this.map.getExtent();
             var tableApi = settings.table.resultTable('getApi');
-           
-                    
+
+
             var request = {
                 srid: proj.proj.srsProjNumber,
                 //intersectGeometry: extent.toGeometry().toString(),
                 maxResults: 100,
                 schema: settings.schemaName
             };
-            
+
             if($('.onlyExtent'+settings.schemaName).prop('checked')){
                 request.intersectGeometry = extent.toGeometry().toString();
             }
 
             self.query('select', request).done(function(geoJson) {
                 if(geoJson) {
-                    
-                    // - find all new (not saved) features  
+
+                    // - find all new (not saved) features
                     // - collect it to the select result list
                     $.each(tableApi.data(),function(i, tableJson){
                         if(tableJson.hasOwnProperty('isNew')){
                             geoJson.features.push(tableJson);
                         }
                     });
-       
+
                     settings.layer.removeAllFeatures();
                     var geojson_format = new OpenLayers.Format.GeoJSON();
                     var olFeatures = geojson_format.read(geoJson);
@@ -559,15 +557,15 @@
                 console.log("XHR Error:", xhr);
             });
         },
-        
+
         _highlightFeature: function(jsonFeature,highlight){
             var layer = this.activeLayer;
             var feature = jsonFeature.hasOwnProperty('isNew') ? layer.getFeatureById(jsonFeature.id): layer.getFeatureByFid(jsonFeature.id);
-            
+
             if(!feature){
                 return;
             }
-            
+
             if(highlight === true){
                 feature.renderIntent = 'select';
             }else{
