@@ -27,6 +27,7 @@
 
             widget.controls = {
                 drawPoint:      {
+                    infoText: "Draw point",
                     listener: function(e) {
                         var el = $(e.currentTarget);
                         if(widget.setController(el.data('control'))) {
@@ -43,6 +44,7 @@
                     })
                 },
                 drawLine:       {
+                    infoText: "Draw line",
                     listener: function(e) {
                         var el = $(e.currentTarget);
                         if(widget.setController(el.data('control'))) {
@@ -59,6 +61,7 @@
                     })
                 },
                 drawPolygon:    {
+                    infoText: "Draw polygone",
                     listener: function(e) {
                         var el = $(e.currentTarget);
                         if(widget.setController(el.data('control'))) {
@@ -75,6 +78,7 @@
                     })
                 },
                 drawRectangle:  {
+                    infoText: "Draw rectangle",
                     listener: function(e) {
                         var el = $(e.currentTarget);
                         if(widget.setController(el.data('control'))) {
@@ -92,6 +96,7 @@
                     })
                 },
                 drawCircle:     {
+                    infoText: "Draw circle",
                     listener: function(e) {
                         var el = $(e.currentTarget);
                         if(widget.setController(el.data('control'))) {
@@ -108,6 +113,7 @@
                     })
                 },
                 drawEllipse:    {
+                    infoText: "Draw ellipse",
                     listener: function(e) {
                         var el = $(e.currentTarget);
                         if(widget.setController(el.data('control'))) {
@@ -124,7 +130,8 @@
                         }
                     })
                 },
-                donut:          {
+                drawDonut:          {
+                    infoText: "Draw donut",
                     listener: function(e) {
                         var el = $(e.currentTarget);
                         if(widget.setController(el.data('control'))) {
@@ -140,7 +147,8 @@
                         }
                     })
                 },
-                edit:           {
+                modifyFeature:           {
+                    infoText: "Select and edit geometry position/size",
                     listener: function(e) {
                         var el = $(e.currentTarget);
                         if(widget.setController(el.data('control'))) {
@@ -152,7 +160,8 @@
                     },
                     control:  new OpenLayers.Control.ModifyFeature(layer)
                 },
-                drag:           {
+                moveFeature:           {
+                    infoText: "Move geometry",
                     listener: function(e) {
                         var el = $(e.currentTarget);
                         if(widget.setController(el.data('control'))) {
@@ -170,7 +179,8 @@
                         }
                     })
                 },
-                select:         {
+                selectFeature:         {
+                    infoText: "Select geometry",
                     listener: function(e) {
                         var el = $(e.currentTarget);
                         widget.setController(el.data('control'));
@@ -188,18 +198,21 @@
                     })
                 },
                 removeSelected: {
+                    infoText: "Remove selected geometries",
+                    cssClass: 'critical',
                     listener: function() {
                         layer.removeFeatures(layer.selectedFeatures);
                     }
                 },
                 removeAll:      {
+                    infoText: "Remove all geometries",
+                    cssClass: 'critical',
                     listener: function() {
                         layer.removeAllFeatures();
                     }
                 }
             };
-
-            mapElement.addClass('digitizing-tool-set');
+            widget.element.addClass('digitizing-tool-set');
             widget.refresh();
         },
 
@@ -277,13 +290,26 @@
 
             $.each(buttons, function() {
                 var item = this;
-                var button = $("<button class='btn'/>");
+                var button = $("<button class='button' type='button'/>");
                 var type = item.type;
-                button.html(item.type);
+
+                button.addClass(item.type);
                 button.data(item);
 
                 if(controls.hasOwnProperty(type)) {
                     var controlDefinition = controls[type];
+
+                    if(controlDefinition.hasOwnProperty('infoText')){
+                        button.attr('title',controlDefinition.infoText)
+                    }
+
+                    // add icon css class
+                    button.addClass("icon-" + type.replace(/([A-Z])+/g,'-$1').toLowerCase());
+
+                    if(controlDefinition.hasOwnProperty('cssClass')){
+                        button.addClass(controlDefinition.cssClass)
+                    }
+
                     button.on('click', controlDefinition.listener);
 
                     if(controlDefinition.hasOwnProperty('control')) {
