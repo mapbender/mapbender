@@ -407,6 +407,26 @@
                 input.dateSelector(item);
                 return inputHolder;
             },
+            resultTable: function(item, declarations, widget) {
+                var $div = $("<div/>");
+                $div.data('declaration',item);
+                return $div.resultTable($.extend(item, {
+                    lengthChange: false,
+                    pageLength:   10,
+                    searching:    false,
+                    info:         true,
+                    processing:   false,
+                    ordering:     true,
+                    paging:       true,
+                    selectable:   false,
+                    autoWidth:    false
+                }));
+            },
+            digitizingToolSet: function(item, declarations, widget) {
+                var $div = $("<div/>");
+                $div.data('declaration',item);
+                return $div.digitizingToolSet(item);
+            },
 
             /**
              * Break line
