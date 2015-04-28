@@ -12,16 +12,25 @@
       }
 
       &.buttons {
-        padding: 2px;
         text-align: center;
+        padding: 0px;
         > div.button-navigation {
           white-space: nowrap;
           float: right;
+          padding: 0px;
           > button {
-            padding-bottom: 0px;
-            padding-left: 5px;
-            padding-right: 5px;
-            margin-left: 2px;
+            margin-left: -1px;
+            font-size: 0;
+            padding: 0px;
+            &:first-child{
+              margin-left: 0px;
+            }
+            &:before {
+              display: inline-block;
+              font-size: $uiFontSize;
+              vertical-align: bottom;
+              padding: 3px 3px 2px 4px;
+            }
           }
         }
       }
