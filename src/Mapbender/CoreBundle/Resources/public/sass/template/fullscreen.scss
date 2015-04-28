@@ -193,12 +193,14 @@ body{
 
   fieldset {
     margin-left: -15px;
+    vertical-align: bottom;
     .checkbox,
     .radio,
     > .form-group {
       width: auto;
       display: inline-block;
       padding-left: 15px;
+      vertical-align: bottom;
     }
 
     > hr{
