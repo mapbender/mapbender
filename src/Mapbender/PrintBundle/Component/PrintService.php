@@ -1024,7 +1024,9 @@ class PrintService
                 }
 
                 $image = $this->getLegendImage($legendUrl);
-
+                if (false === @imagecreatefromstring(@file_get_contents($image))) {
+                    continue;
+                }
                 $size = getimagesize($image);
                 $tempY = round($size[1] * 25.4 / 72) + 10;
 
@@ -1068,7 +1070,7 @@ class PrintService
         $url = $signer->signUrl($unsignedUrl);
 
         $attributes = array();
-        $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
+        $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:genericProxy';
         $subRequest = new Request(array(
             'url' => $url
             ), array(), $attributes, array(), array(), array(), '');
