@@ -10,7 +10,7 @@
     padding: 3px 4px;
     &.active,
     &.active:focus {
-      background-color: darken($buttonSecondColor,10%);
+      background-color: $buttonFirstActiveColor;
     }
     &:before {
       display: inline-block;
