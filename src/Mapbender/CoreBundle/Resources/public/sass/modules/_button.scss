@@ -13,9 +13,6 @@
   cursor:pointer;
 }
 .button{
-  $buttonFirstColor:#6fb536;
-  $buttonSecondColor:#5fa229;
-
   padding:($space/4) ($space/2);
   line-height:$fontSize;
   margin:0px;
@@ -28,9 +25,6 @@
   &:hover{background-color:darken($buttonFirstColor, 5%);}
 
   &.critical{
-    $buttonCriticalFirstColor:#d36565;
-    $buttonCriticalSecondColor:#b23a3a;
-
     border:1px solid darken($buttonCriticalSecondColor, 5%);
     color:$lightFontColor;
     background-color:$buttonCriticalFirstColor;
