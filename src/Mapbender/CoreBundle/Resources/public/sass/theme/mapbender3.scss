@@ -2,7 +2,6 @@
 @import "libs/mixins";
 //@ import "libs/normalize";
 //@ import "libs/icons";
-
 @import "modules/base";
 @import "modules/layout";
 @import "modules/popup";
@@ -18,6 +17,7 @@
 @import "modules/popup_dialog";
 @import "modules/tab_navigator";
 @import "modules/result_table";
+@import "modules/digitizing_tool_set";
 
 /* ------------------------------------------------------------- MISC */
 .mb-hiddenCheckbox{
