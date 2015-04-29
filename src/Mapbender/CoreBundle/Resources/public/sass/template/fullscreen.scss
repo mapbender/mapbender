@@ -46,6 +46,11 @@ body {
 .modal-body {
   padding: 0px;
 
+  &.confirm-dialog{
+    padding: 5px;
+    text-shadow: 0px 1px 0px #fff;
+  }
+
   .nav.nav-tabs.ui-tabs-nav {
     padding: 0;
   }
