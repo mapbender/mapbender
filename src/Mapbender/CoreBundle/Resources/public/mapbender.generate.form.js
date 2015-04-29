@@ -124,7 +124,6 @@
                     inputField.data('warn',function(value){
                         var hasValue = $.trim(value) != '';
                         var isRegExp = item.mandatory !== true;
-                        var text = item.hasOwnProperty('mandatoryText')? item.mandatoryText: "Bitte übeprüfen!";
 
                         if(isRegExp){
                             hasValue = eval(item.mandatory).exec(value) != null;
@@ -133,7 +132,10 @@
                         if(hasValue){
                             container.removeClass('has-error');
                         }else{
-                            $.notify( inputField, text, { position:"top right", autoHideDelay: 2000});
+                            if(inputField.is(":visible")){
+                                var text = item.hasOwnProperty('mandatoryText')? item.mandatoryText: "Bitte übeprüfen!";
+                                $.notify( inputField, text, { position:"top right", autoHideDelay: 2000});
+                            }
                             container.addClass('has-error');
                         }
                         return hasValue;
@@ -191,6 +193,11 @@
                             container.removeClass('has-error');
                         }else{
                             container.addClass('has-error');
+                            if(input.is(':visible')){
+                                var text = item.hasOwnProperty('mandatoryText') ? item.mandatoryText : "Bitte bestätigen!";
+                                $.notify( input, text, { position:"top left", autoHideDelay: 2000});
+                            }
+
                         }
                         return isChecked;
                     });
