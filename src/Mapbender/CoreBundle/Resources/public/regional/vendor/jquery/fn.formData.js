@@ -35,6 +35,7 @@ $.fn.formData = function(values) {
         return form;
     } else {
         values = {};
+        var firstInput;
         $.each(inputs, function() {
             var input = $(this);
             var value;
@@ -58,7 +59,16 @@ $.fn.formData = function(values) {
 
             if(declaration){
                 if(declaration.hasOwnProperty('mandatory') && declaration.mandatory ){
-                    input.data('warn')(value);
+                    var isDataReady = false;
+                    if(typeof declaration.mandatory === "function"){
+                        isDataReady = declaration.mandatory(input, declaration, value);
+                    } else{
+                        isDataReady = input.data('warn')(value);
+                    }
+                    if(!isDataReady && !firstInput){
+                        firstInput = input;
+                        input.focus();
+                    }
                 }
                 values[this.name] = value;
             }else{
