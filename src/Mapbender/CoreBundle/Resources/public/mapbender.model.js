@@ -183,6 +183,7 @@ Mapbender.Model = {
         });
     },
     getCurrentProj: function() {
+        this.proj = this.getProj(this.mbMap.map.olMap.getProjection());
         return this.proj;
     },
     getProj: function(srscode) {
