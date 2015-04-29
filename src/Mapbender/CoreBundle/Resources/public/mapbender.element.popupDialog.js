@@ -109,7 +109,7 @@
             // Marriage of jQuery UI and Bootstrap
             dialog.addClass('modal-content');
             dialogBottomPane.addClass('modal-footer');
-            dialogBottomButtons.addClass('btn').addClass('button');
+            dialogBottomButtons.addClass('button');
             header.addClass('modal-header');
             closeButton.addClass('close');
             dialogBody.addClass('modal-body');
