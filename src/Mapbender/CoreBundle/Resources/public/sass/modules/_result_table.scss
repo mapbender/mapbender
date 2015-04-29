@@ -1,3 +1,4 @@
+
 .mapbender-element-result-table {
 
   > .dataTables_wrapper {
@@ -13,6 +14,13 @@
         font-weight: normal;
         font-size: $uiFontSize;
         padding: 3px 6px;
+        @include transition(all, 0.3s, ease-in-out);
+        &:focus {
+          box-shadow: 0 0 5px $buttonFirstActiveColor;
+        }
+        &:hover{
+          background-color: $buttonSecondColor;
+        }
 
         &.sorting_asc, &.sorting_desc {
           background-color: $buttonFirstActiveColor;
@@ -122,19 +130,30 @@
           padding-right: 5px;
         }
       }
+
       a {
-        @extend .btn;
+//        @extend .btn;
         @extend .button;
         margin-right: 0px;
         display: inline-block;
-        &.next {
-          margin-right: 0;
-          float: right;
-        }
 
         &.previous {
           float: left;
+          font-size: 0;
+          &:before{
+            @include buttonFAIcon("\f177");
+          }
         }
+
+        &.next {
+          margin-right: 0;
+          float: right;
+          font-size: 0;
+          &:after{
+            @include buttonFAIcon("\f178");
+          }
+        }
+
         &.current {
           background-color: $buttonFirstActiveColor !important;
         }

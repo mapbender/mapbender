@@ -56,7 +56,7 @@
             }));
 
             dataTableContainer = table.closest('.dataTables_wrapper');
-            dataTableContainer.find('.dataTables_paginate a').addClass('btn button');
+            dataTableContainer.find('.dataTables_paginate a').addClass('button');
 
             if(isSelectable) {
 
