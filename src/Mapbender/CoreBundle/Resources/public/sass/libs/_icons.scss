@@ -92,8 +92,8 @@
 .iconActivity:before{content:"\f110";}
 .iconCoordinates:before{content:"\f05b";}
 .iconGpsTarget:before{content:"\f05b";}
-.iconPrev:before{content:"\f0e2";}
-.iconNext:before{content:"\f01e";}
+.iconPrev:before{content:"\f177";}
+.iconNext:before{content:"\f178";}
 .iconZoomSelect:before{content:"\f00e";}
 .iconZoomMin:before{content:"\f0ac";}
 .iconZoomIn:before{content:"\f196";}
@@ -178,4 +178,14 @@
   text-transform: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@mixin buttonFAIcon($content) {
+  margin-bottom: -1px;
+  content: $content;
+  font-size: $uiFontSize;
+  font-family: FontAwesome;
+  vertical-align: bottom;
+  display: inline-block;
+  margin-top: 1px;
 }
