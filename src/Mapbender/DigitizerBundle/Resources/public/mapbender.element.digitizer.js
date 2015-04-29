@@ -66,6 +66,7 @@
             var activeFrame = null;
             var widget = this;
             var element = $(widget.element);
+            var titleElement = $("> div.title", element);
             var selector = widget.selector =  $("select.selector", element);
             var map = widget.map = $('#' + widget.options.target).data('mapbenderMbMap').map.olMap;
             var defaultStyle = new OpenLayers.Style($.extend({}, OpenLayers.Feature.Vector.style["default"], {
@@ -85,7 +86,10 @@
 
             // Hide selector if only one schema defined
             if(_.size(this.options.schemes) === 1){
+                titleElement.html(_.toArray(this.options.schemes)[0].label);
                 selector.css('display','none');
+            }else{
+                titleElement.css('display','none');
             }
 
             // build select options
