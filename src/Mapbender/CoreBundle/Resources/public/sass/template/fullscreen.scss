@@ -372,6 +372,9 @@ form {
   }
   &.top {
     position: relative;
+    .iconBig:before {
+      margin-top: -4px;
+    }
   }
   &.bottom {
     @include absolute('' 0 0 0);
