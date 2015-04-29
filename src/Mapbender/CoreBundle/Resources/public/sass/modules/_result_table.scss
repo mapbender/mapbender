@@ -1,54 +1,27 @@
 .mapbender-element-result-table {
 
-  /* result table */
-  table[role="grid"] > tbody > tr {
-    > td {
-      vertical-align: middle;
-      padding-top: 4px;
-      padding-bottom: 4px;
-
-      &.selection{
-        vertical-align: middle;
-      }
-
-      &.buttons {
-        text-align: center;
-        padding: 0px;
-        > div.button-navigation {
-          white-space: nowrap;
-          float: right;
-          padding: 0px;
-          > button {
-            margin-left: -1px;
-            font-size: 0;
-            padding: 0px;
-            &:first-child{
-              margin-left: 0px;
-            }
-            &:before {
-              display: inline-block;
-              font-size: $uiFontSize;
-              vertical-align: bottom;
-              padding: 3px 3px 2px 4px;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .dataTables_wrapper {
+  > .dataTables_wrapper {
     position: relative;
-    > table {
+
+    > table[role="grid"] {
       > thead > tr > th {
-        background-color: lighten(#578e2a, 50%);
+        background-color: $buttonFirstColor;
         cursor: pointer;
         user-select: none;
-        border: 1px solid #ffffff;
-        height: 26px;
+        border: 1px solid $buttonSecondColor;
+        color: #ffffff;
+        font-weight: normal;
         font-size: $uiFontSize;
-        white-space: nowrap;
-        &:after{
+        padding: 3px 6px;
+
+        &.sorting_asc, &.sorting_desc {
+          background-color: $buttonFirstActiveColor;
+        }
+        &.buttons.sorting_disabled {
+          cursor: default;
+        }
+
+        &:after {
           clear: both;
           display: inline-block;
           float: right;
@@ -65,12 +38,55 @@
         }
       }
       > tbody > tr {
+        &.odd{
+          background-color: #F8F8F8;
+        }
+
+        &.even{
+          background-color: #EBEBEB;;
+        }
+        &:hover{
+          background-color: $selectColor;
+        }
         > td {
+          background: transparent;
+          vertical-align: middle;
+          padding-top: 4px;
+          padding-bottom: 4px;
+
+          &.selection {
+            vertical-align: middle;
+          }
+
+          &.buttons {
+            text-align: center;
+            padding: 0px;
+            > div.button-navigation {
+              white-space: nowrap;
+              float: right;
+              padding: 0px;
+              > button {
+                margin-left: -1px;
+                font-size: 0;
+                padding: 0px;
+                &:first-child {
+                  margin-left: 0px;
+                }
+                &:before {
+                  display: inline-block;
+                  font-size: $uiFontSize;
+                  vertical-align: bottom;
+                  padding: 3px 3px 2px 4px;
+                }
+              }
+            }
+          }
+
           font-size: $uiFontSize;
           &.selection {
             padding-top: 0;
             > input[type="checkbox"] {
-              margin-top: 0 ;
+              margin-top: 0;
             }
           }
 
@@ -80,7 +96,7 @@
       margin-bottom: 0px;
     }
 
-    .dataTables_info {
+    > .dataTables_info {
       font-size: $uiFontSize;
       margin-top: 8px;
       text-align: center;
@@ -92,16 +108,14 @@
     }
 
     > .paging_simple_numbers {
-//      border: 1px solid #fff;
-//      outline: 1px solid #c0c0c0;
-      text-align: left;
 
+      text-align: left;
       @extend .clearfix;
 
       > span {
         float: left;
         display: inline-block;
-        a.paginate_button{
+        a.paginate_button {
           margin-left: -1px;
         }
         > span {
@@ -118,7 +132,7 @@
           float: right;
         }
 
-        &.previous{
+        &.previous {
           float: left;
         }
         &.current {
@@ -132,12 +146,4 @@
       }
     }
   }
-//  > .button-navigation.bottom-navigation {
-//    position: absolute;
-//    margin-top: -32px;
-//    padding-left: 15px;
-//    > button {
-//      margin-right: 4px;
-//    }
-//  }
 }
