@@ -67,6 +67,10 @@ body {
     &.has-error {
       > input, > select, > textarea {
         border-color: $errorColor;
+        &[type="file"] {
+          border: none;
+          color: $errorFontColor;
+        }
       }
     }
   }
