@@ -3,11 +3,6 @@
  * @author Andriy Oblivantsev <eslider@gmail.com>
  * @copyright 08.04.2015 by WhereGroup GmbH & Co. KG
  */
-/**
- *
- * @author Andriy Oblivantsev <eslider@gmail.com>
- * @copyright 05.04.15 by WhereGroup GmbH & Co. KG
- */
 (function($) {
 
     /**

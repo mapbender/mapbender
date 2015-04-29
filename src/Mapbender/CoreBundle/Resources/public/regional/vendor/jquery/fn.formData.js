@@ -65,7 +65,7 @@ $.fn.formData = function(values) {
                     } else{
                         isDataReady = input.data('warn')(value);
                     }
-                    if(!isDataReady && !firstInput){
+                    if(!isDataReady && !firstInput && input.is(":visible")){
                         firstInput = input;
                         input.focus();
                     }
