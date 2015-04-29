@@ -101,9 +101,9 @@
                 button.attr('type', 'submit');
                 return button;
             },
-            input:     function(item, declarations) {
+            input:     function(item, declarations, widget, input) {
                 var type = has(declarations, 'type') ? declarations.type : 'text';
-                var inputField = $('<input class="form-control" type="'+type+'"/>');
+                var inputField = input ? input : $('<input class="form-control" type="' + type + '"/>');
                 var container = $('<div class="form-group"/>');
                 var icon = '<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>';
 
@@ -111,13 +111,11 @@
                 /// inputField.attr('type', type);
                 inputField.data('declaration',item);
 
-                if(has(item, 'name')) {
-                    inputField.attr('name', item.name);
-                }
-
-                if(has(item, 'placeholder')) {
-                    inputField.attr('placeholder', item.placeholder);
-                }
+                $.each(['name', 'rows', 'placeholder'], function(i, key) {
+                    if(has(item, key)) {
+                        inputField.attr(key, item[key]);
+                    }
+                });
 
                 if(has(item, 'value')) {
                     inputField.val(item.value);
@@ -165,10 +163,11 @@
                 }
                 return label;
             },
-            checkbox:  function(item, declarations) {
+            checkbox: function(item, declarations, widget, input) {
                 var container = $('<div class="checkbox"/>');
                 var label = $('<label/>');
-                var input = $('<input type="checkbox"/>');
+
+                input = input ? input : $('<input type="checkbox"/>');
 
                 input.data('declaration',item);
 
@@ -205,44 +204,10 @@
                 container.append(label);
                 return container;
             },
-            radio:     function(item, declarations) {
-                var container = $('<div class="radio"/>');
-                var label = $('<label/>');
+            radio: function(item, declarations, widget) {
                 var input = $('<input type="radio"/>');
-
-                input.data('declaration',item);
-
-                label.append(input);
-
-                if(has(item, 'name')) {
-                    input.attr('name', item.name);
-                }
-
-                if(has(item, 'title')) {
-                    label.append(item.title);
-                }
-
-                if(has(item, 'value')) {
-                    input.val(item.value);
-                }
-
-                if(has(item, 'checked')) {
-                    input.attr('checked', "checked");
-                }
-
-                if(has(item, 'mandatory') && item.mandatory) {
-                    input.data('warn',function(value){
-                        var isChecked = input.is(':checked');
-                        if(isChecked){
-                            container.removeClass('has-error');
-                        }else{
-                            container.addClass('has-error');
-                        }
-                        return isChecked;
-                    });
-                }
-
-                container.append(label);
+                var container = declarations.checkbox(item, declarations, widget, input);
+                container.addClass('radio');
                 return container;
             },
             formGroup: function(item, declarations, widget) {
@@ -254,59 +219,15 @@
                 }
                 return container;
             },
-            textArea:  function(item, declarations) {
-                var container = $('<div class="form-group"/>');
-                var input = $('<textarea class="form-control" rows="3"/>');
-                input.data('declaration',item);
-
-                if(has(item, 'value')) {
-                    input.val(item.value);
-                }
-
-                $.each(['name', 'rows', 'placeholder'], function(i, key) {
-                    if(has(item, key)) {
-                        input.attr(key, item[key]);
-                    }
-                });
-
-                if(has(item, 'title')) {
-                    container.append(declarations.label(item, declarations));
-                }
-
-                if(has(item, 'mandatory') && item.mandatory) {
-                    input.data('warn',function(value){
-                        var hasValue = $.trim(value) != '';
-                        var isRegExp = item.mandatory !== true;
-                        var text = item.hasOwnProperty('mandatoryText')? item.mandatoryText: "Bitte übeprüfen!";
-
-                        if(isRegExp){
-                            hasValue = eval(item.mandatory).exec(value) != null;
-                        }
-
-                        if(hasValue){
-                            container.removeClass('has-error');
-                        }else{
-                            $.notify( input, text, { position:"top right", autoHideDelay: 2000});
-                            container.addClass('has-error');
-                        }
-                        return hasValue;
-                    });
-                }
-                container.append(input);
-
+            textArea:  function(item, declarations, widget) {
+                var inputField = $('<textarea class="form-control" rows="3"/>');
+                var container =  declarations.input(item, declarations, widget, inputField);
+                inputField.data('declaration',item);
                 return container;
             },
-            select:    function(item, declarations) {
-                var container = $('<div class="form-group"/>');
+            select:    function(item, declarations, widget) {
                 var select = $('<select class="form-control"/>');
-
-                select.data('declaration',item);
-
-                $.each(['name'], function(i, key) {
-                    if(has(item, key)) {
-                        select.attr(key, item[key]);
-                    }
-                });
+                var container = declarations.input(item, declarations, widget, select);
 
                 if(has(item, 'multiple') && item.multiple) {
                     select.attr('multiple', 'multiple');
@@ -328,44 +249,11 @@
                     },1)
                 }
 
-                if(has(item, 'mandatory') && item.mandatory) {
-                    select.data('warn',function(){
-                        var hasValue = $.trim(select.val()) != '';
-                        if(hasValue){
-                            container.removeClass('has-error');
-                        }else{
-                            container.addClass('has-error');
-                        }
-                        return hasValue;
-                    });
-                }
-                
-                if(has(item, 'title')) {
-                    container.append(declarations.label(item, declarations));
-                }
-
-                container.append(select);
-
                 return container;
             },
-            file:      function(item, declarations) {
-                var container = $('<div class="form-group"/>');
-                var label = $('<label/>');
+            file:      function(item, declarations, widget) {
                 var input = $('<input type="file"/>');
-
-                input.data('declaration',item);
-
-                if(has(item, 'name') && item.multiple) {
-                    label.attr('for', item.name);
-                    input.attr('name', item.name);
-                }
-
-                if(has(item, 'title')) {
-                    label.html(item.title);
-                    container.append(label);
-                }
-
-                container.append(input);
+                var container = declarations.input(item, declarations, widget, input);
                 return container;
             },
             tabs: function(item, declarations, widget) {
