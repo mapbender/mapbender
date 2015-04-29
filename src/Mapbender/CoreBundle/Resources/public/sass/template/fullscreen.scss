@@ -96,6 +96,12 @@ body{
       background-color: #f2b17f;
     }
   }
+
+  input[type="checkbox"],
+  input[type="radio"]{
+    margin-left: -17px;
+  }
+
   .has-error{
     input{
       border-color: #a94442;
