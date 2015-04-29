@@ -1,8 +1,36 @@
 (function($){
 
-    /**
-     * Digitizer tool
-     */
+
+    function confirmDialog(options) {
+        var dialog = $("<div class='confirm-dialog'>" + (options.hasOwnProperty('html') ? options.html : "") + "</div>").popupDialog({
+            title:       options.hasOwnProperty('title') ? options.title : "",
+            maximizable: false,
+            dblclick:    false,
+            minimizable: false,
+            resizable:   false,
+            collapsable: false,
+            buttons:     [{
+                text:  "OK",
+                click: function(e) {
+                    if(!options.hasOwnProperty('onSuccess') || options.onSuccess(e)) {
+                        dialog.popupDialog('hide');
+                    }
+                    return false;
+                }
+            }, {
+                text:    "Abbrechen",
+                'class': 'critical',
+                click:   function(e) {
+                    if(!options.hasOwnProperty('onCancel') || options.onSuccess(e)) {
+                        dialog.popupDialog('hide');
+                    }
+                    return false;
+                }
+            }]
+        });
+        return dialog;
+    }
+
     /**
      * Digitizing tool set
      *
@@ -61,7 +89,12 @@
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
 
-        _setup: function(){
+        _setup: function() {
+
+            //confirmDialog({html: "Feature löschen?", title: "Bitte bestätigen!", onSuccess:function(){
+            //        return false;
+            //}});
+
             var frames = [];
             var activeFrame = null;
             var widget = this;
