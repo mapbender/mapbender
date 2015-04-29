@@ -471,6 +471,11 @@
             }
 
             element.data('item', item);
+
+            if(has(item, 'mandatory')){
+                element.addClass('has-warning');
+            }
+
             return element;
         },
 

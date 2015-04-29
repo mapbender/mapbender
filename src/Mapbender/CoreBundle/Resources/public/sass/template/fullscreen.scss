@@ -36,7 +36,7 @@
   color: #3c763d;
 }
 
-body{
+body {
   overflow: hidden;
 }
 
@@ -46,17 +46,44 @@ body{
 .modal-body {
   padding: 0px;
 
-  .nav.nav-tabs.ui-tabs-nav{
+  .nav.nav-tabs.ui-tabs-nav {
     padding: 0;
   }
 
   .form-group {
     margin-bottom: 5px;
     position: relative;
-    > label {
 
+    &.has-warning {
+      > input, > select, > textarea {
+        border-color: $mandatoryColor;
+        &[type="file"] {
+          border: none;
+          color: $warnFontColor;
+        }
+      }
+    }
+
+    &.has-error {
+      > input, > select, > textarea {
+        border-color: $errorColor;
+      }
     }
   }
+
+  div.radio,
+  div.checkbox {
+    > label {
+      padding-right: 4px;
+    }
+    &.has-warning > label {
+      color: $warnFontColor;
+    }
+    &.has-error > label {
+      color: $errorFontColor;
+    }
+  }
+
 
   label {
     margin-bottom: 0px;
@@ -80,69 +107,52 @@ body{
   input[type="text"],
   input[type="password"],
   input[type="email"],
-  input[type="file"]
-  {
+  input[type="file"] {
     color: #555;
     font-size: 11px;
-    border: solid 1px #c8c8c8;
-//    background-color: #ffffff;
     border-radius: 0;
-    padding: 2px 7px;
     height: 29px;
     display: block;
     width: 100%;
-    padding-right: 24px;
-    &.mandatory{
+    padding: 2px 24px 2px 7px;
+    &.mandatory {
       background-color: #f2b17f;
     }
   }
 
   input[type="checkbox"],
-  input[type="radio"]{
+  input[type="radio"] {
     margin-left: -17px;
   }
 
-  .has-error{
-    input{
-      border-color: #a94442;
-    }
-  }
-
-  div.radio,
-  div.checkbox{
-    &.has-error > label{
-      background-color: #E4C0C0;
-      border-radius: 4px;
-      padding-right: 4px;
-    }
-  }
 
   hr {
     display: block;
     clear: both;
     height: 1px;
     background-color: #c0c0c0;
-//    border-top: 1px solid #ffffff;
+    //    border-top: 1px solid #ffffff;
     border-bottom: 1px solid #ffffff;
     margin-top: 10px;
     margin-bottom: 10px;
   }
 
-  select{
+  select {
     padding: 2px 3px;
   }
 
-  select[multiple]{
+  select[multiple] {
     height: auto;
   }
 
-  textarea{
+  textarea {
     height: auto;
   }
 
-  input[type="file"]{
+  input[type="file"] {
     padding: 0;
     height: 24px;
+
   }
 
   input.form-control {
@@ -188,13 +198,13 @@ body{
     border-color: #538E24;
     background-color: $mainColor;
     color: #ffffff;
-    &:hover,&:focus{
-      background-color: darken($mainColor,10%);
+    &:hover, &:focus {
+      background-color: darken($mainColor, 10%);
     }
   }
 
   // Tab-Navigator
-  .tab-content.ui-tabs-panel{
+  .tab-content.ui-tabs-panel {
     overflow: visible;
   }
 
@@ -210,35 +220,35 @@ body{
       vertical-align: bottom;
     }
 
-    > hr{
+    > hr {
       margin-left: 15px;
     }
   }
 }
 
-
 form {
   // Form holder, needed to disable group form elements.
   // Example: <fieldset disabled="disabled">...</fieldset>
-  > fieldset{
+  > fieldset {
     border: none;
     padding: 0;
   }
 
-//  label{
-//    color: #2A2929;
-//  }
+  //  label{
+  //    color: #2A2929;
+  //  }
 
   .form-group {
+
     > label {
       margin-bottom: 0px;
     }
 
-    > input[type='text']{
+    > input[type='text'] {
       @extend .ie-8-borders-hack;
     }
 
-     > input[type='text']:before {
+    > input[type='text']:before {
       display: block;
       position: absolute;
       top: 15px;
@@ -259,17 +269,17 @@ form {
   }
 }
 
-.checkbox-container{
-  .checkbox-inline{
-    clear:  both;
-    label{
+.checkbox-container {
+  .checkbox-inline {
+    clear: both;
+    label {
       white-space: nowrap;
     }
   }
 }
 
-form{
-  input[type='submit'].hidden{
+form {
+  input[type='submit'].hidden {
     display: none;
   }
 }
@@ -301,91 +311,106 @@ form{
 */
 .notifyjs-container {
   border-radius: 8px;
-  box-shadow: -2px 2px 16px 0px rgba(0,0,0,0.75);
+  box-shadow: -2px 2px 16px 0px rgba(0, 0, 0, 0.75);
 
-  .notifyjs-bootstrap-base{
+  .notifyjs-bootstrap-base {
     padding: 6px 6px 4px 25px;
   }
 }
 
-.logoContainer{
+.logoContainer {
   position: relative;
   z-index: 10;
   display: inline-block;
-  padding:$space/2 $space;
+  padding: $space/2 $space;
   margin-left: $space;
-  float:left;
+  float: left;
   background-color: white;
 }
 
-
-
-
-
 /* ---------------------------------------------------------- CONTENT */
 .templateWrapper {
-  margin:0 auto;
+  margin: 0 auto;
   overflow: hidden;
   @include absolute(0 0 0 0);
 }
-.contentPane{
-  width:100%;
-  height:100%;
+
+.contentPane {
+  width: 100%;
+  height: 100%;
   @include absolute(0 '' '' 0);
-  .left-top, .right-top, .left-bottom, .right-bottom{z-index: 1;}
+  .left-top, .right-top, .left-bottom, .right-bottom {
+    z-index: 1;
+  }
 
   /* Positioning */
-  .left-top{@include absolute($space*7 '' '' $space);}
-  .right-top{@include absolute($space*3 $space '' '');}
-  .left-bottom{@include absolute('' '' $space*3 $space);}
-  .right-bottom{@include absolute('' $space $space*3 '');}
+  .left-top {
+    @include absolute($space*7 '' '' $space);
+  }
+  .right-top {
+    @include absolute($space*3 $space '' '');
+  }
+  .left-bottom {
+    @include absolute('' '' $space*3 $space);
+  }
+  .right-bottom {
+    @include absolute('' $space $space*3 '');
+  }
 }
 
-
-
-
-
 /* --------------------------------------------------------- TOOLBARS */
-.toolBar{
-  z-index:4;
-  label, span{
+.toolBar {
+  z-index: 4;
+  label, span {
     font-family: $fontFamily;
     font-weight: normal;
     font-size: 11px;
   }
-  &.top{position:relative;}
-  &.bottom{@include absolute('' 0 0 0);}
+  &.top {
+    position: relative;
+  }
+  &.bottom {
+    @include absolute('' 0 0 0);
+  }
 }
 
-
-
-
-
 /* --------------------------------------------------------- SIDEPANE */
-$tabSize:32px;
-.sidePaneTabs{
+$tabSize: 32px;
+.sidePaneTabs {
   width: $tabSize;
   height: $tabSize;
   @include absolute(40% '' '' '');
   /*@include transition(all 0.3s ease-in-out);*/
 }
-.sidePane{
-  width:10px;
-  z-index:20;
 
-  &.notCollapsable{
-    .sidePaneTabs{display:none;}
+.sidePane {
+  width: 10px;
+  z-index: 20;
+
+  &.notCollapsable {
+    .sidePaneTabs {
+      display: none;
+    }
   }
 
-  &.left{
+  &.left {
     @include absolute(120px '' $space*3 0);
-    .sidePaneTabs{right:-$tabSize;}
+    .sidePaneTabs {
+      right: -$tabSize;
+    }
   }
-  &.right{
+  &.right {
     @include absolute(80px 0 $space*3 '');
-    .sidePaneTabs{left:-$tabSize;}
+    .sidePaneTabs {
+      left: -$tabSize;
+    }
   }
-  .sideContent{@include stretch();}
+  .sideContent {
+    @include stretch();
+  }
 }
-.sidePaneOpened .sidePane{width:350px;}
+
+.sidePaneOpened .sidePane {
+  width: 350px;
+}
 
