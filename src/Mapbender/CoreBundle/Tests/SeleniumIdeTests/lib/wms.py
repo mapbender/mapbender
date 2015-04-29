@@ -1,4 +1,4 @@
-from .aux import get_url
+from .utils import get_url
 from selenium.webdriver.support.wait import WebDriverWait
 
 def addwms(wd, url='http://osm-demo.wheregroup.com/service?REQUEST=GetCapabilities'):

@@ -2,7 +2,7 @@
 
 from lib.user import login
 from lib.logout import logout
-from lib.aux import get_sreenshot_path, create_webdriver  # Changed
+from lib.utils import get_sreenshot_path, create_webdriver  # Changed
 from lib.wms import addwms
 from lib.wms import deletewms
 

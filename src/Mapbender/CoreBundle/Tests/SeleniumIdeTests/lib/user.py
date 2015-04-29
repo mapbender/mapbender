@@ -1,4 +1,4 @@
-from .aux import get_url
+from .utils import get_url
 
 
 def login(wd, name='root', password='root'):
