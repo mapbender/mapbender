@@ -2,8 +2,8 @@
   padding: 0;
   position: relative;
 
-  .ui-tabs-nav {
-    li {
+  > .ui-tabs-nav {
+    > li {
       list-style: none;
       float: left;
       position: relative;
@@ -11,13 +11,15 @@
       border-bottom: 0 !important;
       padding: 0;
       white-space: normal;
-      &.ui-state-active a {
-        background-color: #578e2a;
+      &.ui-state-active > a {
+        background-color: $buttonFirstActiveColor;
+        z-index: 1;
+        position: relative;
       }
-      &.current a{
+      &.current > a{
         background-color:  #47791f;
       }
-      a {
+      > a {
         border-radius: 0px;
         @extend .button;
         float: left;
