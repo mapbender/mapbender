@@ -28,7 +28,7 @@
 /* jQuery UI Dialog with Bootstrap classes */
 .mb-element-popup-dialog {
 
-  > *{
+  > * {
     box-sizing: content-box !important;
   }
 
@@ -36,11 +36,10 @@
   $borderRadius: 0px;
   z-index: 22;
   position: absolute !important;
-  background-color: #E4E4E4;
   border-radius: $borderRadius;
   border: 1px solid #b3b3b3;
   box-shadow:none;
-  background-image: url("bundles/mapbendercore/image/content.png");
+  background: #E4E4E4 url("bundles/mapbendercore/image/content.png");
   border-bottom-width: 5px;
   @extend .clearfix;
   //  @extend .ie-8-borders-hack;
@@ -48,7 +47,7 @@
   > .modal-header {
     border-top-left-radius: $borderRadius;
     border-top-right-radius: $borderRadius;
-    background-color: #578e2a;
+    background-color: $buttonFirstActiveColor;
     padding-top: 7px;
     padding-bottom: 6px;
     user-select: none;
@@ -160,6 +159,13 @@
             border-top: none;
 //            border-left: 0px;
           }
+        }
+      }
+      > .tab-content {
+        padding: 0px;
+        position: relative;
+        > form {
+          padding: 10px;
         }
       }
     }
