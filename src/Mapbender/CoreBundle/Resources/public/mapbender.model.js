@@ -423,14 +423,14 @@ Mapbender.Model = {
      * Returns the current map's scale
      */
     getScale: function() {
-        return this.map.olMap.getScale();
+        return Math.round(this.map.olMap.getScale());
     },
     /**
      * Checks the source changes and returns the source changes.
      */
     _checkAndRedrawSource: function(toChangeOpts) {
         var source = this.getSource(toChangeOpts.sourceIdx);
-        var result = Mapbender.source[source.type].changeOptions(source, this.map.olMap.getScale(), toChangeOpts);
+        var result = Mapbender.source[source.type].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
         if (result.layers.length === 0) {
             mqLayer.olLayer.setVisibility(false);
@@ -452,7 +452,7 @@ Mapbender.Model = {
     _checkChanges: function(e) {
         var self = this;
         $.each(self.sourceTree, function(idx, source) {
-            var result = Mapbender.source[source.type].changeOptions(source, self.map.olMap.getScale(), {sourceIdx: {id: source.id}, options: {children: {}}});
+            var result = Mapbender.source[source.type].changeOptions(source, self.getScale(), {sourceIdx: {id: source.id}, options: {children: {}}});
             var mqLayer = self.map.layersList[source.mqlid];
             if (result.layers.length === 0) {
                 mqLayer.olLayer.setVisibility(false);
@@ -731,7 +731,7 @@ Mapbender.Model = {
                 if (changeOpts.options.type === 'info') {
                     var result = {infolayers: [], changed: {sourceIdx: {id: sourceToChange.id}, children: {}}};
                     result = Mapbender.source[sourceToChange.type].checkInfoLayers(sourceToChange,
-                            this.map.olMap.getScale(), changeOpts, result);
+                            this.getScale(), changeOpts, result);
                     this.map.layersList[sourceToChange.mqlid].olLayer.queryLayers = result.infolayers;
                     this.mbMap.fireModelEvent({name: 'sourceChanged', value: result});//{options: result}});
                 }
