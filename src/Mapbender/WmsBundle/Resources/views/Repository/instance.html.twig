@@ -27,7 +27,7 @@
     </div>
 
     <span class="labelInput">{{ 'mb.wms.wmsloader.repo.instance.label.originurl' | trans }}</span>
-    <a class="linkButton" href="{{ instance.source.originUrl }}" target="_BLANK">{{ instance.source.originUrl }}</a>
+    <a class="linkButton" href="{{ instance.source.originUrl }}" target="_BLANK" title='{{ instance.source.originUrl }}'>{{ instance.source.originUrl | slice(0, 35) }}...</a>
     <div class="clear"></div>
 
     <div class="metaData">
@@ -41,6 +41,12 @@
         {{ form_label(form.exceptionformat) }}{{ form_widget(form.exceptionformat) }}
         <div class="clear"></div>
         {{ form_label(form.opacity) }}{{ form_widget(form.opacity) }}
+        <div class="clear"></div>
+        <label class='labelInput' for="{{form.buffer.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.buffer"|trans}}</label>
+        {{ form_widget(form.buffer) }}
+        <div class='clear'></div>
+        <label class='labelInput' for="{{form.ratio.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.ratio"|trans}}</label>
+        {{ form_widget(form.ratio) }}
         <div class="clear"></div>
       </div>
 
@@ -64,11 +70,6 @@
         <div class="left">
         {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.tiled"|trans}}</label>
         </div>
-        <div class="clear"></div>
-
-        {{ form_widget(form.ratio) }} <label for="{{form.ratio.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.ratio"|trans}}</label>
-        <div class="clear"></div>
-        {{ form_widget(form.buffer) }} <label for="{{form.buffer.vars.id}}">{{"mb.wms.wmsloader.repo.instance.label.buffer"|trans}}</label>
         <div class="clear"></div>
       </div>
     </div>
