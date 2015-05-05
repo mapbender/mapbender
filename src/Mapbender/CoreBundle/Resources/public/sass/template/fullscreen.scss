@@ -1,8 +1,8 @@
-@import "libs/variables";
 @import url("components/normalize-css/normalize.css");
+@import url("components/open-sans/open-sans.css");
+@import "libs/variables";
 @import "libs/mixins";
 @import "libs/icons";
-@import "../fonts/opensans_regular_macroman/stylesheet";
 @import "../regional/vendor/bootstrap/3.2.0/css/bootstrap_base";
 @import "theme/mapbender3";
 
