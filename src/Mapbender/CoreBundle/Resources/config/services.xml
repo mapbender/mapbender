@@ -47,9 +47,8 @@
             <tag name="assetic.filter" alias="sass" />
 
             <!-- SASS Compiler location path -->
-            <argument>%kernel.root_dir%/../bin/sassc</argument>
-            <!-- <argument>%assetic.filter.sass.bin%</argument> -->
-            
+            <argument>%kernel.root_dir%/../vendor/eslider/sasscb/dist/sassc</argument>
+
             <argument>null</argument>
             <call method="setTimeout">
                 <argument>%assetic.filter.sass.timeout%</argument>
