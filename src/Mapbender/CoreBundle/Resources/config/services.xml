@@ -73,6 +73,9 @@
             <call method="addLoadPath">
                 <argument>%kernel.root_dir%/../vendor/igosuki/compass-mixins/lib</argument>
             </call>
+            <call method="addLoadPath">
+                <argument>%kernel.root_dir%/../web</argument>
+            </call>
         </service>
 
         <!-- User management -->
