@@ -1,13 +1,3 @@
-@font-face {
-  font-family: 'FontAwesome'; //v.3.0.1
-  src: url($iconBasePath + '/fontawesome-webfont.eot?');
-  src: url($iconBasePath + '/fontawesome-webfont.eot?') format("embedded-opentype"),
-    url($iconBasePath + '/fontawesome-webfont.woff?') format("woff"),
-    url($iconBasePath + '/fontawesome-webfont.ttf?') format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
 [class^="icon"],
 [class*=" icon"],
 .icon{
