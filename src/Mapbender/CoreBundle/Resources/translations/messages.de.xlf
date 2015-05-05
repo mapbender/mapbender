@@ -888,7 +888,7 @@
       </trans-unit>
       <trans-unit id="012324b93835eb976d2a88819cd609ee" resname="mb.core.admin.layertree.label.hideselect">
         <source>mb.core.admin.layertree.label.hideselect</source>
-        <target>Visibility bei Ordnern asublenden</target>
+        <target>Visibility bei Ordnern ausblenden</target>
       </trans-unit>
       <trans-unit id="d1368f78e4f1bdc29f696297a211fd1f" resname="mb.core.admin.layertree.label.hideinfo">
         <source>mb.core.admin.layertree.label.hideinfo</source>
@@ -912,7 +912,7 @@
       </trans-unit>
       <trans-unit id="7232f3e59dad7f7d89467eada5c254e8" resname="mb.core.admin.layertree.label.theme.allSelected">
         <source>mb.core.admin.layertree.label.theme.allSelected</source>
-        <target>Thema: Layer-Sichtbarkei</target>
+        <target>Thema: Layer-Sichtbarkeit</target>
       </trans-unit>
       <trans-unit id="e7fc5ac247221c68263af27adf77755f" resname="mb.core.admin.layertree.label.theme.label">
         <source>mb.core.admin.layertree.label.theme.label</source>
