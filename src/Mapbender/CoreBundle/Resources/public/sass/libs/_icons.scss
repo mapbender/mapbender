@@ -139,7 +139,7 @@
 .iconPlay:before{content: "\f04b";}
 .iconStop:before{content: "\f04d";}
 
-@import url("components/icons/style.css");
+@import url("components/mapbender-icons/style.css");
 [class^="icon-"]:before, [class*=" icon-"]:before {
   font-family: 'mapbender-icons';
 }
