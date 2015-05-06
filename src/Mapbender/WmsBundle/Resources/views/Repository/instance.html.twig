@@ -1,20 +1,18 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 
-{% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} ({{instance.source.id}}/{{ instance.id }}) - {{ form.vars.value.title }}{% endblock %}
+{% block title %}{{ 'mb.wms.wmsloader.repo.instance.title.wmsinstance' | trans }} ({{instance.source.id}}/{{ instance.id }}) - {{ instance.source.title }}{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{{ asset('bundles/mapbendercore/regional/vendor/jquery/jquery-ui-1.11.1.custom/jquery-ui.min.css') }}" type="text/javascript" />
   {{parent()}}
-  {% stylesheets filter="compass,cssrewrite"
-    "bundles/mapbendermanager/sass/manager/services.scss"
-  %}
-    <link rel="stylesheet" href="{{ asset_url }}" />{% endstylesheets %}
 {% endblock %}
 
 {% block js %}
   <script type="text/javascript" src="{{ asset('bundles/mapbendercore/vendor/joii.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/mapbender.wms.dimension.js') }}"></script>
   {{parent()}}
-  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/mapbendermanager/js/repository.js') }}"></script> 
+  <script type="text/javascript" src="{{ asset('bundles/mapbenderwms/backend/instance-dimension.js') }}"></script>
 {% endblock %}
 
 {% block manager_content %}
@@ -71,6 +69,20 @@
         {{ form_widget(form.tiled) }}<label for="{{form.tiled.vars.id}}" class="labelCheck">{{"mb.wms.wmsloader.repo.instance.label.tiled"|trans}}</label>
         </div>
         <div class="clear"></div>
+      </div>
+      <div class="extendedGroup">
+        {% if form.dimensions is not null and form.dimensions | length > 0 %}
+        <div id="dimension" class="on-off on-off-title">{{ 'mb.wms.repo.instance.label.dimensions' | trans }}</div>
+        <div id="dimension-content" class="on-off-content hidden">
+          {% for dim in form.dimensions %}
+            {% include "MapbenderWmsBundle:Repository:dimension-form.html.twig"  with {'dim': dim, 'num': loop.index }%}
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div id="vendorspecific" class="on-off on-off-title">{{ 'mb.wms.wmsloader.repo.instance.vendorspecific.label' | trans }}</div>
+        <div id="vendorspecific-content" class="vendorspecific-content on-off-content hidden">
+        {{ form_widget(form.vendorspecifics) }} 
+        </div>
       </div>
     </div>
     {% set root = instance.source.getRootlayer() %}

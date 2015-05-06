@@ -45,17 +45,41 @@
 
         <service id="mapbender.assetic.filter.sass" class="%assetic.filter.sass.class%">
             <tag name="assetic.filter" alias="sass" />
-            <argument>%assetic.filter.sass.bin%</argument>
-            <argument>%assetic.ruby.bin%</argument>
-            <call method="setTimeout"><argument>%assetic.filter.sass.timeout%</argument></call>
-            <call method="setStyle"><argument>%assetic.filter.sass.style%</argument></call>
-            <call method="setCompass"><argument>%assetic.filter.sass.compass%</argument></call>
+
+            <!-- SASS Compiler location path -->
+            <argument>%kernel.root_dir%/../bin/sassc</argument>
+            <!-- <argument>%assetic.filter.sass.bin%</argument> -->
+            
+            <argument>null</argument>
+            <call method="setTimeout">
+                <argument>%assetic.filter.sass.timeout%</argument>
+            </call>
+            <call method="setStyle">
+                <argument>%assetic.filter.sass.style%</argument>
+            </call>
+            <call method="setCompass">
+                <argument>%assetic.filter.sass.compass%</argument>
+            </call>
 			
-			<!-- default option for SASSC -->
-			<call method="setCacheLocation"><argument>false</argument></call>
-			<call method="setScss"><argument>false</argument></call>
-            <call method="addLoadPath"><argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/public/sass</argument></call>
-            <call method="addLoadPath"><argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/compass-mixins/lib</argument></call>
+            <!-- default option for SASSC -->
+            <call method="setCacheLocation">
+                <argument>false</argument>
+            </call>
+            <call method="setScss">
+                <argument>false</argument>
+            </call>
+            <call method="addLoadPath">
+                <argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/public/sass</argument>
+            </call>
+            <call method="addLoadPath">
+                <argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/compass-mixins/lib</argument>
+            </call>
+        </service>
+
+        <!-- User management -->
+        <service id="security.context" class="Mapbender\CoreBundle\Component\SecurityContext">
+            <argument type="service" id="security.authentication.manager" />
+            <argument type="service" id="security.access.decision_manager" />
         </service>
     </services>
 </container>

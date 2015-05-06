@@ -40,10 +40,13 @@
     [class^="icon"]:before,[class*=" icon"]:before{font-size: 14px;}
     padding:$space/4 $space/2 $space/4 $space/2;
     .toolBarItem{
-      height:30px;
-      line-height:30px;
-      font-size:90%;
+//      height:30px;
+//      line-height:30px;
+//      font-size:90%;
+      vertical-align: middle;
+      font-size:80%;
       padding:5px;
+      display: inline-block;
     }
 
     .dropdownList{
@@ -157,4 +160,17 @@
     display: inline-block;
     word-wrap: break-word;
   }
+}
+
+
+/*
+Mapbender info and error styling
+*/
+div.notifyjs-container > div.notifyjs-bootstrap-base > span{
+    display: block;
+    white-space: normal;
+    max-width: 800px;
+    max-height: 600px;
+    overflow: auto;
+    word-wrap: break-word;
 }

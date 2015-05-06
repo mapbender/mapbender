@@ -13,14 +13,14 @@ namespace Mapbender\CoreBundle\Utils;
  */
 class EntityAnnotationParser
 {
-    const GET = 'get';
-    const SET = 'set';
-    const HAS = 'has';
-    const IS = 'is';
-    const GETTER = 'getter';
-    const SETTER = 'setter';
-    const HAS_METHOD = 'hasMethod';
-    const IS_METHOD = 'isMethod';
+    const GET = EntityUtil::GET;
+    const SET = EntityUtil::SET;
+    const HAS = EntityUtil::HAS;
+    const IS = EntityUtil::IS;
+    const GETTER = EntityUtil::GETTER;
+    const SETTER = EntityUtil::SETTER;
+    const HAS_METHOD = EntityUtil::HAS_METHOD;
+    const IS_METHOD = EntityUtil::IS_METHOD;
     const COLUMN = 'Column';
     const NAME = 'name';
     const JOIN_COLUMN = 'JoinColumn';

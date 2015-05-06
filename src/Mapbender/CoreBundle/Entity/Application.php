@@ -11,7 +11,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 /**
  * Applicaton entity
  *
@@ -33,7 +32,6 @@ class Application
      * @var Exclude form application menu list
      */
     protected $excludeFromList = false;
-
     private $preparedElements;
     private $screenshotPath;
 
@@ -441,7 +439,6 @@ class Application
     public function setUpdated(\DateTime $updated)
     {
         $this->updated = $updated;
-
         return $this;
     }
 
@@ -475,7 +472,7 @@ class Application
     {
         return $this->custom_css;
     }
-    
+
     public function getElementsByRegion($region = null)
     {
         if ($this->preparedElements === null) {
@@ -490,7 +487,8 @@ class Application
             }
 
             foreach ($this->preparedElements as $elementRegion => $elements) {
-                usort($elements, function($a, $b) {
+                usort($elements,
+                      function($a, $b) {
                     return $a->getWeight() - $b->getWeight();
                 });
             }
@@ -603,7 +601,8 @@ class Application
      * @param $exclude
      * @return $this
      */
-    public function setExcludeFromList($exclude){
+    public function setExcludeFromList($exclude)
+    {
         $this->excludeFromList = $exclude;
         return $this;
     }
@@ -615,4 +614,5 @@ class Application
     {
         return $this->excludeFromList;
     }
+
 }

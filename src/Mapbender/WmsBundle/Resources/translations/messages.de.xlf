@@ -682,6 +682,30 @@
         <source>mb.wms.wmsloader.repo.instancelayerform.label.id.description</source>
         <target>Instance Layer Id in From: SourceId-SourceLayerId/InstanceId-InstanceLayerId</target>
       </trans-unit>
+      <trans-unit id="f10e8560b3828ce53198437e5676c72f" resname="mb.wms.dimhandler.class.title">
+        <source>mb.wms.dimhandler.class.title</source>
+        <target>Dimensions-Handler</target>
+      </trans-unit>
+      <trans-unit id="42ebea14b3e8f8d6104b48330209866a" resname="mb.wms.dimhandler.class.description">
+        <source>mb.wms.dimhandler.class.description</source>
+        <target>Dimensions-Handler gruppiert und steuert in Der Karte Source Instanzen</target>
+      </trans-unit>
+      <trans-unit id="f488bc9686cf461f1f1799c055f4d70d" resname="mb.wms.dimhandler.tag.dimension">
+        <source>mb.wms.dimhandler.tag.dimension</source>
+        <target>Dimension</target>
+      </trans-unit>
+      <trans-unit id="5080c4d4ef665793e3628e2d61471406" resname="mb.wms.dimhandler.tag.handler">
+        <source>mb.wms.dimhandler.tag.handler</source>
+        <target>Handler</target>
+      </trans-unit>
+      <trans-unit id="f56702f4f808c0e89daddb78b7f51993" resname="mb.wms.dimensionsets.no_dimension">
+        <source>mb.wms.dimensionsets.no_dimension</source>
+        <target>Keine Dimension vorhanden.</target>
+      </trans-unit>
+      <trans-unit id="0e63672cec31c3116babef6b8277de36" resname="mb.wms.wmsloader.repo.instance.vendorspecific.label">
+        <source>mb.wms.wmsloader.repo.instance.vendorspecific.label</source>
+        <target>Vendor specific</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

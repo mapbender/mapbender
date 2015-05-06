@@ -16,7 +16,8 @@ class MapbenderWmsBundle
     public function getElements()
     {
         return array(
-            'Mapbender\WmsBundle\Element\WmsLoader'
+            'Mapbender\WmsBundle\Element\WmsLoader',
+            'Mapbender\WmsBundle\Element\DimensionsHandler'
             );
     }
 
@@ -31,6 +32,7 @@ class MapbenderWmsBundle
                 'label' => 'OGC WMS',
                 'manager' => 'mapbender_wms_repository',
                 'startAction' => "MapbenderWmsBundle:Repository:start",
+                'updateformAction' => "MapbenderWmsBundle:Repository:updateform",
                 'bundle' => "MapbenderWmsBundle"
             )
         );

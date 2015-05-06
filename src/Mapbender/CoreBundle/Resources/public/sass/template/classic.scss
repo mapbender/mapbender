@@ -32,7 +32,7 @@ $sidePaneWidth:280px;
   height:700px;
   border-right:1px solid darken(white, 30%);
   @include absolute($headHeight 0 '' 0);
-  @include transition(all 0.3s linear);
+  /*@include transition(all 0.3s linear);*/
   .left-top, .right-top, .left-bottom, .right-bottom{z-index: 1;}
 
   /* Positioning */
@@ -65,7 +65,7 @@ $tabSize:32px;
   width: $tabSize;
   height: $tabSize;
   @include absolute(40% '' '' '');
-  @include transition(all 0.3s linear);
+  /*@include transition(all 0.3s linear);*/
 }
 .sidePane{
   width:10px;

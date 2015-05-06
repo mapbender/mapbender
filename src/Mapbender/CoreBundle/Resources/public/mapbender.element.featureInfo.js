@@ -1,164 +1,287 @@
-(function($){
+(function($) {
 
     $.widget("mapbender.mbFeatureInfo", {
         options: {
-            layers: undefined,
-            target: undefined,
+            target: null,
+            autoActivate: false,
             deactivateOnClose: true,
             type: 'dialog',
-            customHandler: {}
+            displayType: 'tabs',
+            printResult: false,
+            showOriginal: false,
+            onlyValid: false,
+            width: 700,
+            height: 500
         },
-        map: null,
+        target: null,
+        model: null,
         mapClickHandler: null,
         popup: null,
-
-        _create: function(){
-            if(!Mapbender.checkTarget("mbFeatureInfo", this.options.target)){
+        context: null,
+        queries: [],
+        state: null,
+        contentManager: null,
+        _create: function() {
+            if (!Mapbender.checkTarget("mbFeatureInfo", this.options.target)) {
                 return;
             }
-            var self = this;
-            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
+            Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(this._setup, this));
         },
-
-        _setup: function(){
-            // Set up click handler
-            this.map = $('#' + this.options.target).data('mapQuery');
-            this.mapClickHandler = new OpenLayers.Handler.Click(this, {
-                'click': this._triggerFeatureInfo
-            }, {
-                map: this.map.olMap
+        _setup: function() {
+            this.target = $("#" + this.options.target).data("mapbenderMbMap");//.getModel();
+            this.mapClickHandler = new OpenLayers.Handler.Click(this,
+                {
+                    'click': this._triggerFeatureInfo
+                },
+            {
+                map: $('#' + this.options.target).data(
+                    'mapQuery').olMap
             });
-
-            if(this.options.autoOpen)
+            if (this.options.autoActivate){
                 this.activate();
+            }
             this._trigger('ready');
             this._ready();
         },
-
-        _setOption: function(key, value){
-            switch(key){
-                case "layers":
-                    this.options.layers = value;
-                    break;
-                default:
-                    throw Mapbender.trans("mb.core.featureinfo.error.unknownoption",
-                        {'key': key, 'namespace': this.namespace, 'widgetname': this.widgetName});
-            }
-        },
-
         /**
          * Default action for mapbender element
          */
-        defaultAction: function(callback){
+        defaultAction: function(callback) {
             this.activate(callback);
         },
-
-        activate: function(callback){
+        activate: function(callback) {
             this.callback = callback ? callback : null;
-            var self = this;
             $('#' + this.options.target).addClass('mb-feature-info-active');
             this.mapClickHandler.activate();
         },
-
-        deactivate: function(){
+        deactivate: function() {
             $('#' + this.options.target).removeClass('mb-feature-info-active');
             $(".toolBarItemActive").removeClass("toolBarItemActive");
-            if(this.popup){
-                if(this.popup.$element){
+            if (this.popup) {
+                if (this.popup.$element) {
+                    $('body').append(this.element.addClass('hidden'));
                     this.popup.destroy();
                 }
                 this.popup = null;
             }
-
             this.mapClickHandler.deactivate();
             this.callback ? this.callback.call() : this.callback = null;
         },
-
-        _onTabs: function(){
-            $(".tabContainer", this.popup.$element).on('click', '.tab', function(){
-                var me = $(this);
-                me.parent().parent().find(".active").removeClass("active");
-                me.addClass("active");
-                $("#" + me.attr("id").replace("tab", "container")).addClass("active");
-            });
+        _isVisible: function() {
+            if (this.options.type === 'dialog') {// visible for dialog
+                if (this.state && this.state === 'opened') {
+                    return true;
+                } else
+                    return false;
+            } else { // TODO visible for element ?
+                return true;
+            }
         },
-
-        _offTabs: function(){
-            $(".tabContainer", this.popup.$element).off('click', '.tab');
-        },
-
         /**
          * Trigger the Feature Info call for each layer.
          * Also set up feature info dialog if needed.
          */
-        _triggerFeatureInfo: function(e){
-            this._trigger('featureinfo', null, { action: "clicked", title: this.element.attr('title'), id: this.element.attr('id')});
-            var self = this,
-                x = e.xy.x,
-                y = e.xy.y,
-                fi_exist = false;
+        _triggerFeatureInfo: function(e) {
+            this._trigger('featureinfo', null, {
+                action: "clicked",
+                title: this.element.attr(
+                    'title'),
+                id: this.element.attr('id')
+            });
+            var self = this;
+            var x = e.xy.x;
+            var y = e.xy.y;
+            var num = 0;
+            var called = false;
 
-            $(this.element).empty();
+            console.log(this.options.width);
+            console.log(this);
 
-            var tabContainer = $('<div id="featureInfoTabContainer" class="tabContainer featureInfoTabContainer">' +
-                '<ul class="tabs"></ul>' +
-                '</div><br>');
-            var header = tabContainer.find(".tabs");
-            var layers = this.map.layers();
-            var newTab, newContainer;
 
-            // XXXVH: Need to optimize this section for better performance!
-            // Go over all layers
-            var first = true;
-            $.each(this.map.layers(), function(idx, layer){
-                if(!layer.visible()){
-                    return;
-                }
-                if(!layer.olLayer.queryLayers || layer.olLayer.queryLayers.length === 0){
-                    return;
-                }
-                fi_exist = true;
-                // Prepare result tab list
-                newTab = $('<li id="tab' + layer.id + '" class="tab">' + layer.label + '</li>');
-                newContainer = $('<div id="container' + layer.id + '" class="container"></div>');
-
-                // activate the first container
-                if(first){
-                    newTab.addClass("active");
-                    newContainer.addClass("active");
-                    first = false;
-                }
-
-                header.append(newTab);
-                tabContainer.append(newContainer);
-
-                switch(layer.options.type){
-                    case 'wms':
-                        Mapbender.source.wms.featureInfo(layer, x, y, $.proxy(self._featureInfoCallback, self));
-                        break;
+            if (!self.options.onlyValid) {
+                this._setContentEmpty();
+            } else if (self.options.onlyValid && this._isVisible()) {
+                this._setContentEmpty();
+            }
+            $('#js-error-featureinfo').addClass('hidden');
+            $.each(this.target.getModel().getSources(), function(idx, src) {
+                var mqLayer = self.target.getModel().map.layersList[src.mqlid];
+                if (Mapbender.source[src.type]) {
+                    var url = Mapbender.source[src.type].featureInfoUrl(mqLayer, x, y, $.proxy(self._setInfo, self));
+                    if (url) {
+                        if (!self.options.onlyValid) {
+                            self._addContent(mqLayer, 'wird geladen');
+                        }
+                        called = true;
+                        if (self.options.showOriginal && !self.options.onlyValid) {
+                            self._addContent(mqLayer, self._getIframeDeclaration(Mapbender.Util.UUID(), url));
+                        } else {
+                            self._setInfo(mqLayer, url);
+                        }
+                    }
                 }
             });
-
-            var content = (fi_exist) ? tabContainer : '<p class="description">' + Mapbender.trans('mb.core.featureinfo.error.nolayer') + '</p>';
-            if(this.options.type === 'dialog'){
-                if(!this.popup || !this.popup.$element){
+            if (!called) {
+                $('#js-error-featureinfo').removeClass('hidden');
+            }
+        },
+        _getIframeDeclaration: function(uuid, url) {
+            var id = uuid ? (' id="' + uuid + '"') : '';
+            var src = url ? (' src="' + url + '"') : '';
+            return '<iframe class="featureInfoFrame"' + id + src + '></iframe>'
+        },
+        _setInfo: function(mqLayer, url) {
+            var self = this;
+            var proxy = mqLayer.source.configuration.options.proxy;
+            var contentType_ = "";
+            if (typeof (mqLayer.source.configuration.options.info_charset) !== 'undefined') {
+                contentType_ += contentType_.length > 0 ? ";"
+                    : "" + mqLayer.source.configuration.options.info_charset;
+            }
+            var request = $.ajax({
+                url: Mapbender.configuration.application.urls.proxy,
+                contentType: contentType_,
+                data: {
+                    url: proxy ?
+                        url :
+                        encodeURIComponent(
+                            url)
+                }
+            });
+            request.done(function(data, textStatus, jqXHR) {
+                var mimetype = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
+                if (self.options.showOriginal) {
+                    self._showOriginal(mqLayer, data, mimetype, url);
+                } else {
+                    self._showEmbedded(mqLayer, data, mimetype);
+                }
+            });
+            request.fail(function(jqXHR, textStatus, errorThrown) {
+                Mapbender.error(textStatus);
+            });
+        },
+        _isDataValid: function(data, mimetype) {
+            switch (mimetype.toLowerCase()) {
+                case 'text/html':
+                    var found = (/<body>(.+?)<\/body>/gi).exec(data.replace(/\r|\n/g, ""));
+                    if (found && $.isArray(found) && found[1] && found[1].trim() !== '') {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                case 'text/plain':
+                    return data.trim() === '';
+                default: // TODO other mimetypes ?
+                    return true;
+            }
+        },
+        _showOriginal: function(mqLayer, data, mimetype, url) {
+            /* handle only onlyValid=true. handling for onlyValid=false see in "_triggerFeatureInfo" */
+            switch (mimetype.toLowerCase()) {
+                case 'text/html':
+                    if (this.options.onlyValid && this._isDataValid(data,
+                        mimetype)) { // !onlyValid s. _triggerFeatureInfo
+                        /* add a blank iframe and replace it's content */
+                        var uuid = Mapbender.Util.UUID();
+                        this._addContent(mqLayer, this._getIframeDeclaration(uuid, null));
+                        var doc = document.getElementById(uuid).contentWindow.document;
+                        doc.open();
+                        doc.write(data);
+                        doc.close();
+                    } else {
+                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
+                    }
+                    break;
+                case 'text/plain':
+                default:
+                    if (this.options.onlyValid && this._isDataValid(data, mimetype)) {
+                        this._addContent(mqLayer, '<pre>' + data + '</pre>');
+                    } else {
+                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
+                    }
+                    break;
+            }
+        },
+        _showEmbedded: function(mqLayer, data, mimetype) {
+            switch (mimetype.toLowerCase()) {
+                case 'text/html':
+                    data = this._cleanHtml(data);
+                    if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
+                        this._addContent(mqLayer, data);
+                    } else {
+                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
+                    }
+                    break;
+                case 'text/plain':
+                default:
+                    if (!this.options.onlyValid || (this.options.onlyValid && this._isDataValid(data, mimetype))) {
+                        this._addContent(mqLayer, '<pre>' + data + '</pre>');
+                    } else {
+                        Mapbender.info(mqLayer.label + ': ' + Mapbender.trans("mb.core.featureinfo.error.noresult"));
+                    }
+                    break;
+            }
+        },
+        _cleanHtml: function(data) {
+            try {
+                if (data.search('<link') > -1 || data.search('<style') > -1) {
+                    return data.replace(/document.writeln[^;]*;/g, '')
+                        .replace(/\n|\r/g, '')
+                        .replace(/<link[^>]*>/gi, '')
+                        .replace(/<meta[^>]*>/gi, '')
+                        .replace(/<title>*(?:[^<]*<\/title>)/gi, '')
+                        .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '')
+                        .replace(/<script[^>]*(?:[^<]*<\/script>|>)/gi, '');
+                }
+            } catch (e) {
+            }
+            return '';
+        },
+        _wrapData: function(data, $wraper) {
+            return $wraper.append(data);
+        },
+        _getContentManager: function() {
+            if (!this.contentManager) {
+                this.contentManager = {
+                    headerSel: '.js-header',
+                    $headerParent: $('.js-header', this.element).parent(),
+                    $header: $('.js-header', this.element).remove(),
+                    headerContentSel: '.js-header-content',
+                    headerId: function(id) {
+                        return this.$header.attr('data-idname') + id
+                    },
+                    contentSel: '.js-content',
+                    $contentParent: $('.js-content', this.element).parent(),
+                    $content: $('.js-content', this.element).remove(),
+                    contentContentSel: '.js-content-content',
+                    contentId: function(id) {
+                        return this.$content.attr('data-idname') + id
+                    }
+                };
+            }
+            return this.contentManager;
+        },
+        _getContext: function() {
+            var self = this;
+            if (this.options.type === 'dialog') {
+                if (!this.popup || !this.popup.$element) {
                     this.popup = new Mapbender.Popup2({
-                        title: self.element.attr('title'),
+                        title: self.element.attr('data-title'),
                         draggable: true,
                         modal: false,
                         closeButton: false,
                         closeOnESC: false,
-                        content: content,
+                        content: this.element.removeClass('hidden'),
                         resizable: true,
-                        width: 500,
-                        height: 500,
+                        width: self.options.width,
+                        height: self.options.height,
                         buttons: {
                             'ok': {
                                 label: Mapbender.trans('mb.core.featureinfo.popup.btn.ok'),
                                 cssClass: 'button buttonCancel critical right',
-                                callback: function(){
+                                callback: function() {
                                     this.close();
-                                    if(self.options.deactivateOnClose){
+                                    if (self.options.deactivateOnClose) {
                                         self.deactivate();
                                     }
                                 }
@@ -166,92 +289,103 @@
                         }
                     });
                     this.popup.$element.on('close', function() {
-                        if(self.options.deactivateOnClose){
+                        self.state = 'closed';
+                        if (self.options.deactivateOnClose) {
                             self.deactivate();
+                        } else {
+                            self._setContentEmpty();
                         }
                     });
-                    if(typeof this.options.printResult !== 'undefined' && this.options.printResult === true){
-                        this.popup.addButtons({'print': {
+                    this.popup.$element.on('open', function() {
+                        self.state = 'opened';
+                    });
+                    if (this.options.printResult === true) {
+                        this.popup.addButtons({
+                            'print': {
                                 label: Mapbender.trans('mb.core.printclient.popup.btn.ok'),
                                 cssClass: 'button right',
-                                callback: function(){
-                                        self._printContent();
+                                callback: function() {
+                                    self._printContent();
                                 }
-                        }});
+                            }
+                        });
                     }
-
-                    this._onTabs();
-                }else{
-                    this._offTabs();
-                    this.popup.open(content);
-                    this._onTabs();
                 }
-            } else if(this.options.type === 'element'){
-                this.element.append(content);
+                this.popup.open();
+            }
+            return this.element;
+        },
+        _selectorSelfAndSub: function(idStr, classSel) {
+            return '#' + idStr + classSel + ',' + '#' + idStr + ' ' + classSel;
+        },
+        _setContentEmpty: function(id) {
+            var $context = this._getContext();
+            var manager = this._getContentManager();
+            if (id) {
+                $(this._selectorSelfAndSub(manager.headerId(id), manager.headerContentSel), $context).text('');
+                $(this._selectorSelfAndSub(manager.contentId(id), manager.contentContentSel), $context).empty();
+            } else {
+                $(manager.headerSel, manager.$headerParent).remove();
+                $(manager.contentSel, manager.$contentParent).remove();
             }
         },
-
-        /**
-         * Once data is coming back from each layer's FeatureInfo call,
-         * insert it into the corresponding tab.
-         */
-        _featureInfoCallback: function(data, jqXHR){
-            var container = $('#container' + data.layerId);
-            var mime = jqXHR.getResponseHeader('Content-Type').toLowerCase().split(';')[0];
-            switch(mime) {
-                case 'text/html':
-                    var html = data.response;
-                    try{ // cut css
-                        if(data.response.search('<link') > -1 || data.response.search('<style') > -1){
-                            html = data.response.replace(/document.writeln[^;]*;/g, '')
-                                .replace(/\n/g, '')
-                                .replace(/<link[^>]*>/gi, '')
-                                .replace(/<style[^>]*(?:[^<]*<\/style>|>)/gi, '');
-                        }
-                    }catch(e){
-                        html = '';
-                    }
-
-                    container.html(html);
-                    break;
-                case 'text/plain':
-                default:
-                    var instanceId = parseInt($('#' + this.options.target).data('mapQuery').layersList[data.layerId].source.origId);
-                    if('function' === typeof this.options.customHandler[instanceId]) {
-                        this.options.customHandler[instanceId](data.response, container);
-                    } else {
-                        var text = data.response;
-                        container.append($('<pre></pre>', {
-                            text: text
-                        }));
-                    }
+        _addContent: function(mqLayer, content) {
+            var $context = this._getContext();
+            var manager = this._getContentManager();
+            var $header = $('#' + manager.headerId(mqLayer.id), $context);
+            if ($header.length === 0) {
+                $header = manager.$header.clone();
+                $header.attr('id', manager.headerId(mqLayer.id));
+                manager.$headerParent.append($header);
             }
-            container.removeClass('loading');
-        },
+            $(this._selectorSelfAndSub(manager.headerId(mqLayer.id), manager.headerContentSel), $context).text(
+                mqLayer.label);
+            var $content = $('#' + manager.contentId(mqLayer.id), $context);
+            if ($content.length === 0) {
+                $content = manager.$content.clone();
+                $content.attr('id', manager.contentId(mqLayer.id));
+                manager.$contentParent.append($content);
+            }
+            $(this._selectorSelfAndSub(manager.contentId(mqLayer.id), manager.contentContentSel), $context)
+                .empty().append(content);
+            if (this.options.displayType === 'tabs' || this.options.displayType === 'accordion') {
+                initTabContainer($context);
+                $header.click();
+            } else if (this.options.displayType === 'tabs') {
 
-        _printContent: function(){
+            }
+        },
+        _printContent: function() {
+            var $context = this._getContext();
             var w = window.open("", "title", "attributes");
-            var c = $('#featureInfoTabContainer').find('div.active').html();
-            w.document.write(c);
-            w.setTimeout(function(){w.print();},1000);
+            var el = $('.js-content-content.active,.active .js-content-content', $context);
+            var printContent = "";
+            if ($('> iframe', el).length === 1) {
+                var a = document.getElementById($('iframe', el).attr('id'));
+                printContent = a.contentWindow.document.documentElement.innerHTML;
+            } else {
+                printContent = el.html();
+            }
+            w.document.write(printContent);
+            w.setTimeout(function() {
+                w.print();
+            }, 1000);
         },
-
         /**
          *
          */
-        ready: function(callback){
-            if(this.readyState === true){
+        ready: function(callback) {
+            if (this.readyState === true) {
                 callback();
-            }else{
+            } else {
                 this.readyCallbacks.push(callback);
             }
         },
-
         /**
          *
          */
-        _ready: function(){
-            for(callback in this.readyCallbacks){
+        _ready: function() {
+            for (callback in this.readyCallbacks) {
                 callback();
                 delete(this.readyCallbacks[callback]);
             }

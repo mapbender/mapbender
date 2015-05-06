@@ -7,8 +7,7 @@ namespace Mapbender\CoreBundle\Component\Exception;
  * @package Mapbender
  * @author Paul Schmidt
  */
-class XmlParseException
-        extends \Exception
+class XmlParseException extends \Exception
 {
     
 }

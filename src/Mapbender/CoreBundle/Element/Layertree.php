@@ -81,7 +81,7 @@ class Layertree extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-        $configuration['menu'] = array_values($configuration['menu']);
+        $configuration['menu'] = isset($configuration['menu']) ? array_values($configuration['menu']) : array();
         return $configuration;
     }
 
@@ -94,12 +94,16 @@ class Layertree extends Element
             "target" => null,
             "type" => null,
             "displaytype" => null,
-            "useAccordion" => false,
             "titlemaxlength" => intval(20),
             "autoOpen" => false,
-            "showBaseSource" => true,
+            "showBaseSource" => null,
             "showHeader" => false,
-            "menu" => array()
+            "hideNotToggleable" => false,
+            "hideSelect" => false,
+            "hideInfo" => false,
+            "menu" => array(),
+            "useTheme" => false,
+            'themes' => array()
         );
     }
 
@@ -108,6 +112,14 @@ class Layertree extends Element
      */
     public function render()
     {
+        $html = $this->container->get('templating')->render(
+                'MapbenderCoreBundle:Element:layertree.html.twig',
+                array(
+                'id' => $this->getId(),
+                'configuration' => $this->getConfiguration(),
+                'title' => $this->getTitle()
+                )
+        );
         return $this->container->get('templating')->render(
                 'MapbenderCoreBundle:Element:layertree.html.twig',
                 array(
