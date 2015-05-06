@@ -6,12 +6,7 @@
 
 namespace Mapbender\CoreBundle\Component;
 
-use Assetic\Asset\AssetReference;
-use Assetic\Asset\FileAsset;
-use Assetic\FilterManager;
 use Assetic\Asset\StringAsset;
-use Assetic\Factory\AssetFactory;
-use Mapbender\CoreBundle\Component\Utils;
 use Mapbender\CoreBundle\Entity\Application as Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -370,9 +365,14 @@ class Application
     private function getReference($object, $file)
     {
         // If it starts with an @ we assume it's already an assetic reference
-        if ($file[0] !== '@') {
+        $firstChar = $file[0];
+        if ($firstChar == "/" ) {
+            return "../../web/".substr($file,1);
+        } elseif ($firstChar == "." ) {
+            return $file;
+        } elseif ($firstChar !== '@') {
             $namespaces = explode('\\', get_class($object));
-            $bundle = sprintf('%s%s', $namespaces[0], $namespaces[1]);
+            $bundle     = sprintf('%s%s', $namespaces[0], $namespaces[1]);
             return sprintf('@%s/Resources/public/%s', $bundle, $file);
         } else {
             return $file;
