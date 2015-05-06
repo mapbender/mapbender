@@ -43,22 +43,17 @@ class Fullscreen extends Template
     static public function listAssets()
     {
         $assets = array(
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
-            'js' => array(
+            'css'   => array('@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
+            'js'    => array(
                 '/components/underscore/underscore-min.js',
-
                 '@MapbenderCoreBundle/Resources/public/regional/EventDispatcher.js',
                 '@MapbenderCoreBundle/Resources/public/libs/StringHelper.js',
-
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
                 '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js',
-
-                '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/jquery.dataTables.1.10.3.min.js',
-
-                '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/jquery.dialogextend.2.0.3.js',
-
+                "/components/datatables/media/js/jquery.dataTables.min.js",
+                '/components/jquerydialogextendjs/jquerydialogextendjs-built.js',
                 "/components/vis-ui.js/vis-ui.js-built.js"
 
             ),
