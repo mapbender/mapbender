@@ -1,15 +1,12 @@
 @import url("components/font-awesome/css/font-awesome.min.css");
-@import url("components/icons/style.css");
-
 [class^="icon"],
 [class*=" icon"],
-.icon{
+.icon {
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: 'FontAwesome';
 
-  // some resets
   cursor: pointer;
   display: inline;
   width: auto;
@@ -142,35 +139,9 @@
 .iconPlay:before{content: "\f04b";}
 .iconStop:before{content: "\f04d";}
 
-
-/**
-* Iconmon icon font
-*/
-//@ import "bundles/mapbendercore/fonts/icons/style";
-
-// Overload mapbender-icons load path
-@font-face {
-  $version: 'k2i9cv';
-  $iconsPath: $iconBasePath +'/icons/fonts/mapbenderer-icons';
-  font-family: 'mapbender-icons';
-  src: url($iconsPath +'.eot?' + $version);
-  src: url($iconsPath +'.eot?#iefix-' + $version) format('embedded-opentype'),
-  url($iconsPath + '.woff?' + $version) format('woff'),
-  url($iconsPath + '.ttf?' + $version) format('truetype'),
-  url($iconsPath + '.svg?' + $version + '#mapbender-icons') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-
+@import url("components/icons/style.css");
 [class^="icon-"]:before, [class*=" icon-"]:before {
   font-family: 'mapbender-icons';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 @mixin buttonFAIcon($content) {
