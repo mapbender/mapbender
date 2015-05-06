@@ -55,22 +55,8 @@ class Fullscreen extends Template
                 '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
                 '@MapbenderCoreBundle/Resources/public/regional/vendor/notify.0.3.2.min.js',
 
-
-//                                    'vendor/underscore.js',
-//                                    'vendor/json2.js',
-//                                    'vendor/backbone.js',
-//                                    'vendor/jquery.form.min.js',
-
-                /**
-                 * @copyright 2008-2014 SpryMedia Ltd - datatables.net/license
-                 * Released under the MIT license: http://jsbin.mit-license.org
-                 */
                 '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/jquery.dataTables.1.10.3.min.js',
 
-                /**
-                 * @copyright (c) 2014 by anonymous (http://jsbin.com/ehagoy/154/edit)
-                 * Released under the MIT license: http://jsbin.mit-license.org
-                 */
                 '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/jquery.dialogextend.2.0.3.js',
 
                 "/components/vis-ui.js/vis-ui.js-built.js"
