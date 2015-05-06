@@ -11,7 +11,6 @@ use Assetic\Filter\CssRewriteFilter;
 use Mapbender\CoreBundle\Asset\ApplicationAssetCache;
 use Mapbender\CoreBundle\Asset\AssetFactory;
 use Mapbender\CoreBundle\Component\Application;
-use Mapbender\CoreBundle\Component\SecurityContext;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
 use OwsProxy3\CoreBundle\Component\CommonProxy;
 use OwsProxy3\CoreBundle\Component\ProxyQuery;
@@ -241,7 +240,7 @@ class ApplicationController extends Controller
      * exception if it can not be found. This also checks access control and
      * therefore may throw an AuthorizationException.
      *
-     * @return Mapbender\CoreBundle\Component\Application
+     * @return Application
      */
     private function getApplication($slug)
     {
