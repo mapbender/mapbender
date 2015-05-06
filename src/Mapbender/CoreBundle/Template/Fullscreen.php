@@ -46,8 +46,6 @@ class Fullscreen extends Template
             'css'   => array('@MapbenderCoreBundle/Resources/public/sass/template/fullscreen.scss'),
             'js'    => array(
                 '/components/underscore/underscore-min.js',
-                '@MapbenderCoreBundle/Resources/public/regional/EventDispatcher.js',
-                '@MapbenderCoreBundle/Resources/public/libs/StringHelper.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/tabcontainer.js',
