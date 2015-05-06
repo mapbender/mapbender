@@ -49,9 +49,6 @@ class Fullscreen extends Template
 
                 '@MapbenderCoreBundle/Resources/public/regional/EventDispatcher.js',
                 '@MapbenderCoreBundle/Resources/public/libs/StringHelper.js',
-                '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/fn.formData.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.generate.form.js',
-
 
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/frontend/sidepane.js',
@@ -76,10 +73,7 @@ class Fullscreen extends Template
                  */
                 '@MapbenderCoreBundle/Resources/public/regional/vendor/jquery/jquery.dialogextend.2.0.3.js',
 
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.resultTable.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.tabNavigator.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.popupDialog.js',
-                '@MapbenderCoreBundle/Resources/public/mapbender.element.dateSelector.js'
+                "/components/vis-ui.js/vis-ui.js-built.js"
 
             ),
             'trans' => array()

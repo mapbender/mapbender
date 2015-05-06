@@ -333,7 +333,7 @@
             var featureoverEvent = function(e){
                 var feature = e.feature;
                 var table = widget.currentSettings.table;
-                var tableWidget = table.data('mapbenderResultTable');
+                var tableWidget = table.data('visUiJsResultTable');
 
                 if(feature.layer.name === widget.currentSettings.label){
 
@@ -352,7 +352,7 @@
             var featureoutEvent = function(e){
                 var feature = e.feature;
                 var table = widget.currentSettings.table;
-                var tableWidget = table.data('mapbenderResultTable');
+                var tableWidget = table.data('visUiJsResultTable');
 
                 if(feature.layer.name === widget.currentSettings.label){
                     var jsonFeature = tableWidget.getDataById(feature.fid);
