@@ -1,0 +1,117 @@
+@font-face {
+	font-family: 'mapbenderer-icons';
+	src:url('fonts/mapbenderer-icons.eot?skg553');
+	src:url('fonts/mapbenderer-icons.eot?#iefixskg553') format('embedded-opentype'),
+		url('fonts/mapbenderer-icons.woff?skg553') format('woff'),
+		url('fonts/mapbenderer-icons.ttf?skg553') format('truetype'),
+		url('fonts/mapbenderer-icons.svg?skg553#mapbenderer-icons') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'mapbenderer-icons';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-remove-selected:before {
+	content: "\e615";
+}
+
+.icon-select-feature:before {
+	content: "\e614";
+}
+
+.icon-draw-point:before {
+	content: "\e60f";
+}
+
+.icon-modify-feature:before {
+	content: "\e610";
+}
+
+.icon-draw-line:before {
+	content: "\e60c";
+}
+
+.icon-draw-rectangle:before {
+	content: "\e60d";
+}
+
+.icon-draw-ellipse:before {
+	content: "\e611";
+}
+
+.icon-draw-circle:before {
+	content: "\e60e";
+}
+
+.icon-move-feature:before {
+	content: "\e613";
+}
+
+.icon-polyline:before {
+	content: "\e60b";
+}
+
+.icon-draw-donut:before {
+	content: "\e612";
+}
+
+.icon-select:before {
+	content: "\e60a";
+}
+
+.icon-remove:before {
+	content: "\e606";
+}
+
+.icon-edit:before {
+	content: "\e609";
+}
+
+.icon-layer-tree:before {
+	content: "\e607";
+}
+
+.icon-feature-info:before {
+	content: "\e608";
+}
+
+.icon-area-ruler:before {
+	content: "\e600";
+}
+
+.icon-polygon:before {
+	content: "\e601";
+}
+
+.icon-draw-polygon:before {
+	content: "\e601";
+}
+
+.icon-line-ruler:before {
+	content: "\e602";
+}
+
+.icon-image-export:before {
+	content: "\e603";
+}
+
+.icon-legend:before {
+	content: "\e604";
+}
+
+.icon-about:before {
+	content: "\e605";
+}
+

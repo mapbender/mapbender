@@ -35,18 +35,46 @@ $.fn.formData = function(values) {
         return form;
     } else {
         values = {};
+        var firstInput;
         $.each(inputs, function() {
             var input = $(this);
             var value;
+            var declaration = input.data('declaration');
+
+            if(this.name == ""){
+                return;
+            }
+
             switch (this.type) {
                 case 'checkbox':
                 case 'radio':
+                    if(values.hasOwnProperty(this.name) && values[this.name] != null){
+                       return;
+                    }
                     value = input.is(':checked') ? input.val() : null;
                     break;
                 default:
-                    value = $(this).val();
+                    value = input.val();
             }
-            values[this.name] = value;
+
+            if(declaration){
+                if(declaration.hasOwnProperty('mandatory') && declaration.mandatory ){
+                    var isDataReady = false;
+                    if(typeof declaration.mandatory === "function"){
+                        isDataReady = declaration.mandatory(input, declaration, value);
+                    } else{
+                        isDataReady = input.data('warn')(value);
+                    }
+                    if(!isDataReady && !firstInput && input.is(":visible")){
+                        firstInput = input;
+                        input.focus();
+                    }
+                }
+                values[this.name] = value;
+            }else{
+                values[this.name] = value;
+            }
+
         });
         return values;
     }

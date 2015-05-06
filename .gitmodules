@@ -4,6 +4,3 @@
 [submodule "src/Mapbender/ManagerBundle/Resources/public/codemirror2"]
 	path = src/Mapbender/ManagerBundle/Resources/public/codemirror2
 	url = http://marijnhaverbeke.nl/git/codemirror2
-[submodule "src/Mapbender/CoreBundle/Resources/compass-mixins"]
-	path = src/Mapbender/CoreBundle/Resources/compass-mixins
-	url = https://github.com/Igosuki/compass-mixins.git

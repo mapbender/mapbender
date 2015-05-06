@@ -1,13 +1,3 @@
-@font-face {
-  font-family: 'FontAwesome'; //v.3.0.1
-  src: url($iconBasePath + '/fontawesome-webfont.eot?');
-  src: url($iconBasePath + '/fontawesome-webfont.eot?') format("embedded-opentype"),
-    url($iconBasePath + '/fontawesome-webfont.woff?') format("woff"),
-    url($iconBasePath + '/fontawesome-webfont.ttf?') format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
 [class^="icon"],
 [class*=" icon"],
 .icon{
@@ -25,30 +15,6 @@
   &:before {
     font-family: FontAwesome;
   }
-}
-
-[class^="icon-"], [class*=" icon-"] {
-  font-family: 'mapbender-icons';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  text-decoration: none;
-
-  // some resets
-  width: auto;
-  height: auto;
-//  vertical-align: top;
-
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-[class^="icon-"]:before, [class*=" icon-"]:before {
-  font-family: 'mapbender-icons' !important;
 }
 
 .iconBig {
@@ -80,8 +46,6 @@
   0%{transform:rotate(0deg)}
   100%{transform:rotate(359deg)}
 }
-
-
 
 // all
 .iconCheckboxActive:before{content:"\f046" !important;} // overwrite the default icon if checked
@@ -175,48 +139,43 @@
 .iconPlay:before{content: "\f04b";}
 .iconStop:before{content: "\f04d";}
 
+
 /**
-* New icon font from iconmoon service
+* Iconmon icon font
 */
+@import "bundles/mapbendercore/fonts/icons/style";
+
+// Overload mapbender-icons load path
 @font-face {
-  $iconsPath: $iconBasePath +'/icons/icomoon';
+  $version: 'k2i9cv';
+  $iconsPath: $iconBasePath +'/icons/fonts/mapbenderer-icons';
   font-family: 'mapbender-icons';
-  src: url($iconsPath +'.eot?-dwa3cy');
-  src: url($iconsPath +'.eot?#iefix-dwa3cy') format('embedded-opentype'),
-  url($iconsPath + '.woff?-dwa3cy') format('woff'),
-  url($iconsPath + '.ttf?-dwa3cy') format('truetype'),
-  url($iconsPath + '.svg?-dwa3cy#icomoon') format('svg');
+  src: url($iconsPath +'.eot?' + $version);
+  src: url($iconsPath +'.eot?#iefix-' + $version) format('embedded-opentype'),
+  url($iconsPath + '.woff?' + $version) format('woff'),
+  url($iconsPath + '.ttf?' + $version) format('truetype'),
+  url($iconsPath + '.svg?' + $version + '#mapbender-icons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
-.icon-layer-tree:before {
-  content: "\e607";
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: 'mapbender-icons';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-feature-info:before {
-  content: "\e608";
-}
-
-.icon-area-ruler:before {
-  content: "\e600";
-}
-
-.icon-polygone:before {
-  content: "\e601";
-}
-
-.icon-line-ruler:before {
-  content: "\e602";
-}
-
-.icon-image-export:before {
-  content: "\e603";
-}
-
-.icon-legend:before {
-  content: "\e604";
-}
-
-.icon-about:before {
-  content: "\e605";
+@mixin buttonFAIcon($content) {
+  margin-bottom: -1px;
+  content: $content;
+  font-size: $uiFontSize;
+  font-family: FontAwesome;
+  vertical-align: bottom;
+  display: inline-block;
+  margin-top: 1px;
 }

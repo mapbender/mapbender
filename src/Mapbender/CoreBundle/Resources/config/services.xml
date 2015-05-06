@@ -47,9 +47,8 @@
             <tag name="assetic.filter" alias="sass" />
 
             <!-- SASS Compiler location path -->
-            <argument>%kernel.root_dir%/../bin/sassc</argument>
-            <!-- <argument>%assetic.filter.sass.bin%</argument> -->
-            
+            <argument>%kernel.root_dir%/../vendor/eslider/sasscb/dist/sassc</argument>
+
             <argument>null</argument>
             <call method="setTimeout">
                 <argument>%assetic.filter.sass.timeout%</argument>
@@ -72,7 +71,10 @@
                 <argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/public/sass</argument>
             </call>
             <call method="addLoadPath">
-                <argument>%kernel.root_dir%/../mapbender/src/Mapbender/CoreBundle/Resources/compass-mixins/lib</argument>
+                <argument>%kernel.root_dir%/../vendor/igosuki/compass-mixins/lib</argument>
+            </call>
+            <call method="addLoadPath">
+                <argument>%kernel.root_dir%/../web</argument>
             </call>
         </service>
 
@@ -81,6 +83,12 @@
             <argument type="service" id="security.authentication.manager" />
             <argument type="service" id="security.access.decision_manager" />
         </service>
+
+        <!-- Feature service -->
+        <service class="Mapbender\CoreBundle\Component\Features" id="features">
+            <argument type="service" id="service_container" />
+         </service>
+
     </services>
 </container>
 

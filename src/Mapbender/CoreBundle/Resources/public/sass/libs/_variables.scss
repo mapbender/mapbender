@@ -6,8 +6,9 @@ $contentPatternUrl: $imageBasePath + "/content.png";
 $headPatternUrl: $imageBasePath + "/head.png";
 
 //------------------------------------------------------------------font
-$fontFamily:"Calluna Sans", "Gill Sans", Calibri, "Trebuchet MS", sans-serif;
-$fontSize:14px;
+$fontFamily: "Open Sans", "Calluna Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+$fontSize:13px;
+$uiFontSize: 11px;
 
 //-----------------------------------------------------------------other
 $lineHeight:21px;
@@ -35,3 +36,16 @@ $lightFontColor:#fff; // white
 // the holy colors
 $ciColor:#5b932a; // green
 $ciColor2:#4899ba; // blue
+
+// Button colors
+$buttonCriticalFirstColor: #d36565;
+$buttonCriticalSecondColor: #b23a3a;
+$buttonFirstColor: #6fb536;
+$buttonSecondColor: #5fa229;
+$buttonFirstActiveColor: #47791f;
+
+$selectColor: #F7F79A;
+//$mandatoryColor: #E49FA7;
+$mandatoryColor: #DCAF18;
+$warnFontColor: #B4AD2D;
+$errorFontColor: #E12F2F;
