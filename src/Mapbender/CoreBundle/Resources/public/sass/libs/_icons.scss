@@ -1,3 +1,6 @@
+@import url("components/font-awesome/css/font-awesome.min.css");
+@import url("components/icons/style.css");
+
 [class^="icon"],
 [class*=" icon"],
 .icon{
@@ -143,7 +146,7 @@
 /**
 * Iconmon icon font
 */
-@import "bundles/mapbendercore/fonts/icons/style";
+//@ import "bundles/mapbendercore/fonts/icons/style";
 
 // Overload mapbender-icons load path
 @font-face {
