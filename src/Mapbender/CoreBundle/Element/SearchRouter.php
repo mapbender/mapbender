@@ -2,9 +2,9 @@
 namespace Mapbender\CoreBundle\Element;
 
 use Mapbender\CoreBundle\Component\Element;
-use Symfony\Component\HttpFoundation\Response;
-use Mapbender\CoreBundle\Element\Type\SearchRouterSelectType;
 use Mapbender\CoreBundle\Element\Type\SearchRouterFormType;
+use Mapbender\CoreBundle\Element\Type\SearchRouterSelectType;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -64,7 +64,6 @@ class SearchRouter extends Element
                 '@MapbenderCoreBundle/Resources/public/mapquery/lib/openlayers/OpenLayers.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js',
-                'vendor/underscore.js',
                 'vendor/json2.js',
                 'vendor/backbone.js',
                 'mapbender.element.searchRouter.Feature.js',
