@@ -234,7 +234,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 $options->setUrl(UrlUtil::validateUrl($options->getUrl(), $help, array()));
             }
         }
-        $options$options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet())
+        $options->setUrl($this->entity->getSource()->getGetMap()->getHttpGet())
             ->setProxy($this->entity->getProxy())
             ->setVisible($this->entity->getVisible())
             ->setFormat($this->entity->getFormat())
