@@ -459,12 +459,13 @@
             }
 
             //legend
-            $.merge(fields, $('<input />', {
-                type: 'hidden',
-                name: 'legends',
-                value: JSON.stringify(legends)
-            }));
-            
+            if($('input[name="printLegend"]',form).prop('checked')){
+                $.merge(fields, $('<input />', {
+                    type: 'hidden',
+                    name: 'legends',
+                    value: JSON.stringify(legends)
+                }));
+            }
             
             // Iterating over all vector layers, not only the ones known to MapQuery
             var geojsonFormat = new OpenLayers.Format.GeoJSON();
