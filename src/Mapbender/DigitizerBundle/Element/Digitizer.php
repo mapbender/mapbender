@@ -49,7 +49,7 @@ class Digitizer extends HTMLElement
      */
     static public function listAssets()
     {
-        return array('js'    => array('@MapbenderCoreBundle/Resources/public/mapbender.digitizing.toolset.js',
+        return array('js'    => array(
                                       'mapbender.element.digitizer.js',
                                       '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                                       '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),

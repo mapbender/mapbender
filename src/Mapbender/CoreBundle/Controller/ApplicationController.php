@@ -242,7 +242,7 @@ class ApplicationController extends Controller
      * exception if it can not be found. This also checks access control and
      * therefore may throw an AuthorizationException.
      *
-     * @return Mapbender\CoreBundle\Component\Application
+     * @return Application
      */
     private function getApplication($slug)
     {
@@ -364,7 +364,7 @@ class ApplicationController extends Controller
         $vendorspec = $instHandler->getSensitiveVendorSpecific();
         /* overwrite vendorspecific parameters from handler with get/post parameters */
         if (count($getParams)) {
-            $getParams = array_merge($vendorspec, $getParams); 
+            $getParams = array_merge($vendorspec, $getParams);
         }
         if (count($postParams)) {
             $postParams = array_merge($vendorspec, $postParams);
