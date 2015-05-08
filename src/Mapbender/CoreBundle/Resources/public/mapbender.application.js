@@ -59,27 +59,33 @@ Mapbender.elementRegistry = new Mapbender.ElementRegistry();
 Mapbender.setup = function(){
     // Initialize all elements by calling their init function with their options
     $.each(Mapbender.configuration.elements, function(id, data){
-        // Split for namespace and widget name
-        var widget = data.init.split('.');
+        try {
+            // Split for namespace and widget name
+            var widget = data.init.split('.');
 
-        // Register for ready event to operate ElementRegistry
-        var readyEvent = widget[1].toLowerCase() + 'ready';
-        $('#' + id).one(readyEvent, function(event){
-            for(var i in Mapbender.configuration.elements) {
-                var conf = Mapbender.configuration.elements[i],
+            // Register for ready event to operate ElementRegistry
+            var readyEvent = widget[1].toLowerCase() + 'ready';
+            $('#' + id).one(readyEvent, function(event){
+                for(var i in Mapbender.configuration.elements) {
+                    var conf = Mapbender.configuration.elements[i],
                         widget = conf.init.split('.'),
                         readyEvent = widget[1].toLowerCase() + 'ready';
-                if(readyEvent === event.type) {
-                    Mapbender.elementRegistry.onElementReady(i, true);
+                    if(readyEvent === event.type) {
+                        Mapbender.elementRegistry.onElementReady(i, true);
+                    }
                 }
-            }
-        });
+            });
 
-        // This way we call by namespace and widget name
-        // The namespace is kinda useless, as $.widget creates a function with
-        // the widget name directly in the jQuery object, too. Still, let's be
-        // futureproof.
-        $[widget[0]][widget[1]](data.configuration, '#' + id);
+            // This way we call by namespace and widget name
+            // The namespace is kinda useless, as $.widget creates a function with
+            // the widget name directly in the jQuery object, too. Still, let's be
+            // futureproof.
+            $[widget[0]][widget[1]](data.configuration, '#' + id);
+        } catch(e) {
+            console.log('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.');
+            console.log('Error:', e);
+            console.log('Configuration:', data.configuration);
+        }
     });
 
     // Tell the world that all widgets have been set up. Some elements will
@@ -88,7 +94,7 @@ Mapbender.setup = function(){
 };
 
 Mapbender.error = function(errorObject,delayTimeout){
-    var errorMessage = errorObject; 
+    var errorMessage = errorObject;
     if(typeof errorObject != "string"){
         errorMessage = JSON.stringify(errorObject);
     }
@@ -97,7 +103,7 @@ Mapbender.error = function(errorObject,delayTimeout){
 };
 
 Mapbender.info = function(infoObject,delayTimeout){
-    var message = infoObject; 
+    var message = infoObject;
     if(typeof infoObject != "string"){
         message = JSON.stringify(infoObject);
     }
@@ -191,7 +197,7 @@ Mapbender.Util.Url = function(urlString){
     /**
      * Gets a GET parameter value from a giving parameter name.
      * @param {String} name parameter name
-     * @param {Boolean} ignoreCase 
+     * @param {Boolean} ignoreCase
      * @returns parameter value or null
      */
     this.getParameter = function(name, ignoreCase){
