@@ -113,7 +113,7 @@
                     num++;
                 }
             }
-            
+
             // Iterating over all vector layers, not only the ones known to MapQuery
             var geojsonFormat = new OpenLayers.Format.GeoJSON();
             var vectorLayers = [];
@@ -127,7 +127,7 @@
                 for(var idx = 0; idx < layer.features.length; idx++) {
                     var feature = layer.features[idx];
                     if (!feature.onScreen(true)) continue
-                    
+
 
                         var geometry = geojsonFormat.extract.geometry.apply(geojsonFormat, [feature.geometry]);
 
@@ -145,13 +145,13 @@
                     opacity: 1,
                     geometries: geometries
                 };
-                
-                
+
+
                 vectorLayers.push(JSON.stringify(lyrConf))
             }
 
             var mapExtent = this.map.map.olMap.getExtent();
-            
+
             if(num === 0){
                 Mapbender.info(Mapbender.trans("mb.print.imageexport.info.noactivelayer"));
             }else{
@@ -172,7 +172,6 @@
                 var form = $('<form method="POST" action="' + url + '"  />');
                 $('<input></input>').attr('type', 'hidden').attr('name', 'data').val(JSON.stringify(data)).appendTo(form);
                 form.appendTo($('body'));
-                form.attr('target', '_blank');
                 form.submit();
                 form.remove();
             }
