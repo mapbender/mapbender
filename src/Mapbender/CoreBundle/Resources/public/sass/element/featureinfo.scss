@@ -1,4 +1,3 @@
-
 .mb-element-featureinfo{
   iframe.featureInfoFrame{
     width: 100%;
@@ -6,5 +5,10 @@
   }
   .accordionContainer > .container{display:none}
   .accordionContainer > .container.active{display:block}
-  
+
+  .container {
+    width: 100%;
+    height: 100%;
+  }
+
 }

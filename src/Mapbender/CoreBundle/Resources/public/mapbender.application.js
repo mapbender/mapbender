@@ -85,6 +85,9 @@ Mapbender.setup = function(){
             console.log('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.');
             console.log('Error:', e);
             console.log('Configuration:', data.configuration);
+            if(Error) {
+                console.log(Error().stack);
+            }
         }
     });
 

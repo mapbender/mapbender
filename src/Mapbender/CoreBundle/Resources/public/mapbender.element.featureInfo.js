@@ -94,10 +94,6 @@
             var num = 0;
             var called = false;
 
-            console.log(this.options.width);
-            console.log(this);
-
-
             if (!self.options.onlyValid) {
                 this._setContentEmpty();
             } else if (self.options.onlyValid && this._isVisible()) {
