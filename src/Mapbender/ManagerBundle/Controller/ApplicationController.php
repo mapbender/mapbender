@@ -1056,4 +1056,17 @@ class ApplicationController extends Controller
     }
 
 
+
+    /**
+     * Delete a source instance from a layerset
+     * @ManagerRoute("/application/{slug}/loadapp")
+     * @Method("GET")
+     *
+     */
+    public function loadappAction()
+    {
+        $a = new \Mapbender\CoreBundle\DataFixtures\ORM\Application\LoadApplicationData();
+        $a->setContainer($this->container);
+        $a->load($this->getDoctrine()->getManager());
+    }
 }

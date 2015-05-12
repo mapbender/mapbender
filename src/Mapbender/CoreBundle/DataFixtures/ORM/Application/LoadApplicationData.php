@@ -1,6 +1,6 @@
 <?php
 
-namespace Mapbender\CoreBundle\DataFixtures\ORM;
+namespace Mapbender\CoreBundle\DataFixtures\ORM\Application;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
@@ -29,6 +29,8 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
      */
     private $container;
 
+    private $mapper = array();
+
     /**
      * @inheritdoc
      */
@@ -43,6 +45,69 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
     public function load(ObjectManager $manager)
     {
         $definitions = $this->container->getParameter('applications');
+            $manager->getConnection()->beginTransaction();
+        foreach ($definitions as $slug => $definition) {
+            $appMapper = new \Mapbender\CoreBundle\Component\ApplicationYAMLMapper($this->container);
+            $application = $appMapper->getApplication($slug);
+            if ($application->getLayersets()->count() === 0) {
+                continue;
+            }
+            $application->setSource(ApplicationEntity::SOURCE_DB);
+//            $manager->persist($application);
+            $this->saveLayersets($manager, $application);
+
+
+        }
+            $application->setAuto();
+            $manager->getConnection()->commit();
+    }
+    
+    private function addMapping($object, $id_old, $id_new)
+    {
+        $class = get_class($layerset);
+        if (!isset($this->mapper[$class])) {
+            $this->mapper[$class] = array();
+        }
+        $this->mapper[$class][$id_old] = $id_new;
+    }
+
+    private function saveLayersets(ObjectManager $manager, ApplicationEntity $application)
+    {
+        foreach ($application->getLayersets() as $layerset) {
+            if (!isset($this->mapper[get_class($layerset)])) {
+                $this->mapper[get_class($layerset)] = array();
+            }
+            $old_id = $layerset->getId();
+            $layerset->setId(null);
+            $this->mapper[get_class($layerset)][$old_id] = $layerset->getId();
+        }
+    }
+
+    private function saveInstances(ObjectManager $manager, Layerset $layerset)
+    {
+
+        foreach ($layerset->getInstances() as $instance) {
+//            $this->mapper
+        }
+    }
+
+    private function saveElements(ObjectManager $manager, ApplicationEntity $application)
+    {
+
+        foreach ($application->getElements() as $element) {
+//            $this->mapper
+        }
+    }
+
+
+
+    /**
+     * @inheritdoc
+     */
+    public function loadOld(ObjectManager $manager)
+    {
+        $definitions = $this->container->getParameter('applications');
+        $manager->getConnection()->beginTransaction();
         foreach ($definitions as $slug => $definition) {
             if (isset($definition['excludeFromList']) && $definition['excludeFromList']) {
                 continue;
@@ -133,8 +198,8 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 unset($configuration_yml['class']);
                 unset($configuration_yml['title']);
 
-                $configuration = ElementComponent::mergeArrays(
-                        $elComp->getDefaultConfiguration(), $configuration_yml, array());
+                $configuration =
+                    ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_yml, array());
 
                 if (key_exists("target", $configuration)
                     && $configuration["target"] !== null
@@ -155,7 +220,8 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
                 $manager->persist($element);
             }
             $manager->flush();
+            $ccc;
         }
+        $manager->getConnection()->commit();
     }
-
 }
