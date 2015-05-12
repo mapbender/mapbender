@@ -333,5 +333,5 @@ abstract class SourceMetadata
      * @param boolean $templating
      * @param integer $itemName unic item name
      */
-    protected abstract function render($templating, $itemName);
+    public abstract function render($templating, $itemName);
 }

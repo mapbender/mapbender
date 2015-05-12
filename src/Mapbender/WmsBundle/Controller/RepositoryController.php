@@ -484,8 +484,9 @@ class RepositoryController extends Controller
         $wmsinstance = $this->getDoctrine()
             ->getRepository("MapbenderCoreBundle:SourceInstance")
             ->find($instanceId);
-        $wmsinstance->generateConfiguration();
-        $em->persist($wmsinstance);
+        $wmsinsthandler = EntityHandler::createHandler($this->container, $wmsinstance);
+        $wmsinsthandler->generateConfiguration();
+        $wmsinsthandler->save();
         $em->flush();
         $em->getConnection()->commit();
         return new Response(json_encode(array(

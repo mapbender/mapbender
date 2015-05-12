@@ -573,6 +573,19 @@
                             if (changed.children[layerId].options.state) {
                                 this._resetNodeVisible($li, changed.children[layerId].options);
                             }
+                            if(changed.children[layerId].options.treeOptions.allow){
+                                if(changed.children[layerId].options.treeOptions.allow.selected === true){
+                                    var chk_selected = $('input[name="selected"]:first', $li);
+                                    chk_selected.prop('disabled', false);
+                                    $li.removeClass('invisible');
+                                    initCheckbox.call(chk_selected);
+                                } else if(changed.children[layerId].options.treeOptions.allow.selected === false){
+                                    var chk_selected = $('input[name="selected"]:first', $li);
+                                    chk_selected.prop('disabled', true);
+                                    $li.addClass('invisible');
+                                    initCheckbox.call(chk_selected);
+                                }
+                            }
                         } else if (changed.children[layerId].state) {
                             this._resetNodeOutOfScale($li, changed.children[layerId]);
                         }
@@ -841,7 +854,7 @@
         _toggleMenu: function(e) {
             var self = this;
             function createMenu($element, sourceId, layerId) {
-                console.log(self.menuTemplate.clone().html());
+//                console.log(self.menuTemplate.clone().html());
                 var source = self.model.findSource({
                     id: sourceId
                 })[0];

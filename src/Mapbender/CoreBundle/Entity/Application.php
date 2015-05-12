@@ -487,10 +487,12 @@ class Application
             }
 
             foreach ($this->preparedElements as $elementRegion => $elements) {
-                usort($elements,
-                      function($a, $b) {
-                    return $a->getWeight() - $b->getWeight();
-                });
+                usort(
+                    $elements,
+                    function ($a, $b) {
+                        return $a->getWeight() - $b->getWeight();
+                    }
+                );
             }
         }
 
@@ -523,76 +525,11 @@ class Application
     public function getPropertiesFromRegion($regionName)
     {
         foreach ($this->getRegionProperties() as $regionProperties) {
-            if ($regionProperties->getName() === $regionName)
+            if ($regionProperties->getName() === $regionName) {
                 return $regionProperties;
-        }
-
-        return null;
-    }
-
-    public function copy($container, EntityManager $em, $app)
-    {
-        $app->preparedElements = $this->preparedElements;
-        $app->screenshotPath = $this->screenshotPath;
-        $app->source = $this->source;
-        $app->owner = $this->owner;
-        $app->screenshot = $this->screenshot;
-        $app->extra_assets = $this->extra_assets;
-        $app->screenshotFile = $this->screenshotFile;
-        $em->persist($app);
-        $layersetMap = array();
-        foreach ($this->layersets as $layerset) {
-            $instanceMap = array();
-            $layerset_cloned = $layerset->copy($em, $instanceMap);
-            $layerset_cloned->setApplication($app);
-            $em->persist($layerset_cloned);
-            $app->addLayerset($layerset_cloned);
-            $layersetMap[strval($layerset->getId())] = array('layerset' => $layerset_cloned, 'instanceMap' => $instanceMap);
-        }
-        if (isset($layerset))
-            unset($layerset);
-
-        foreach ($this->getRegionProperties() as $regprops) {
-            $clonedRP = $regprops->copy();
-            $clonedRP->setApplication($app);
-            $app->addRegionProperties($clonedRP);
-        }
-        $elementsMap = array();
-        $em->flush();
-        $aclProvider = $container->get('security.acl.provider');
-        # save without target
-        foreach ($this->elements as $element) {
-            $copied = $element->copy($em);
-            $copied->setApplication($app);
-//            $copied->setConfiguration(array());
-            $em->persist($copied);
-            $app->addElements($copied);
-            $em->persist($app);
-            $em->flush();
-            $elementsMap[$element->getId()] = $copied;
-            try {
-                $oid = ObjectIdentity::fromDomainObject($element);
-                $acl = $aclProvider->findAcl($oid);
-                $newAcl = $aclProvider->createAcl(ObjectIdentity::fromDomainObject($copied));
-                foreach ($acl->getObjectAces() as $ace) {
-                    $newAcl->insertObjectAce($ace->getSecurityIdentity(), $ace->getMask());
-                }
-                $aclProvider->updateAcl($newAcl);
-            } catch (\Exception $e) {
-                $a = 0;
             }
-            $em->persist($copied);
-            $em->flush();
         }
-        $applicationComponent = new ApplicationComponent($container, $this, array());
-        foreach ($this->elements as $element) {
-            $elmclass = $element->getClass();
-            $elemComponent = new $elmclass($applicationComponent, $container, $element);
-            $copied = $elemComponent->copyConfiguration($em, $app, $elementsMap, $layersetMap);
-            $em->persist($copied);
-        }
-
-        return $app;
+        return null;
     }
 
     /**
@@ -614,5 +551,4 @@ class Application
     {
         return $this->excludeFromList;
     }
-
 }

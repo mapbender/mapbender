@@ -38,4 +38,21 @@ class ArrayUtil
             return null;
         }
     }
+
+    /**
+     * Check if array has a key and return the value, other way set new one and return it.
+     *
+     * @param array $arr array
+     * @param string $key array key to check for existens
+     * @param null  $value default value if key doesn't exists
+     * @return mixed new value
+     */
+    public static function hasSet(array &$arr, $key, $value = null){
+        if(isset($arr[$key])){
+            return $arr[$key];
+        }else{
+            $arr[$key] = $key;
+            return $value;
+        }
+    }
 }

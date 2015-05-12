@@ -8,21 +8,19 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 
 /**
- * 
+ * MapFieldSubscriber
  */
 class MapFieldSubscriber implements EventSubscriberInterface
 {
 
     /**
      * A FormFactoryInterface 's Factory
-     * 
-     * @var \Symfony\Component\Form\FormFactoryInterface 
+     * @var \Symfony\Component\Form\FormFactoryInterface
      */
     private $factory;
 
     /**
      * The application
-     * 
      * @var application
      */
     private $application;
@@ -48,7 +46,6 @@ class MapFieldSubscriber implements EventSubscriberInterface
 
     /**
      * Checkt form fields by PRE_SUBMIT FormEvent
-     * 
      * @param FormEvent $event
      */
     public function preSubmit(FormEvent $event)
@@ -64,7 +61,6 @@ class MapFieldSubscriber implements EventSubscriberInterface
         }
         if (key_exists("scales", $data) && is_string($data["scales"])) {
             $scales = preg_split("/\s?[\,\;]+\s?/", $data["scales"]);
-            $scales = array_map(create_function('$value', 'return (int)$value;'), $scales);
             arsort($scales, SORT_NUMERIC);
             $data["scales"] = $scales;
             $event->setData($data);
@@ -74,22 +70,20 @@ class MapFieldSubscriber implements EventSubscriberInterface
             $form->remove('layersets');
             $event->setData($data);
             $choices = $this->getChoicesLayersets($data['layersets']);
-            $form->add($this->factory->createNamed('layersets', 'choice', null,
-                                                   array(
-                        'choices' => $choices,
-                        'required' => true,
-                        'multiple' => true,
-                        'expanded' => true,
-                        'data' => $data["layersets"],
-                        'auto_initialize' => false,
-                        'attr' => array('data-sortable' => 'choiceExpandedSortable'))));
+            $form->add($this->factory->createNamed('layersets', 'choice', null, array(
+                'choices' => $choices,
+                'required' => true,
+                'multiple' => true,
+                'expanded' => true,
+                'data' => $data["layersets"],
+                'auto_initialize' => false,
+                'attr' => array('data-sortable' => 'choiceExpandedSortable'))));
             $event->setData($data);
         }
     }
 
     /**
      * Checkt form fields by PRE_SET_DATA FormEvent
-     * 
      * @param FormEvent $event
      */
     public function preSetData(FormEvent $event)
@@ -113,14 +107,13 @@ class MapFieldSubscriber implements EventSubscriberInterface
             $event->setData($data);
         } # "layerset" deprecated end
         if (key_exists("layersets", $data) && is_array($data["layersets"])) {
-            $form->add($this->factory->createNamed('layersets', 'choice', null,
-                                                   array(
-                        'choices' => $this->getChoicesLayersets($data['layersets']),
-                        'required' => true,
-                        'multiple' => true,
-                        'expanded' => true,
-                        'auto_initialize' => false,
-                        'attr' => array('data-sortable' => 'choiceExpandedSortable'))));
+            $form->add($this->factory->createNamed('layersets', 'choice', null, array(
+                'choices' => $this->getChoicesLayersets($data['layersets']),
+                'required' => true,
+                'multiple' => true,
+                'expanded' => true,
+                'auto_initialize' => false,
+                'attr' => array('data-sortable' => 'choiceExpandedSortable'))));
         }
     }
 
@@ -146,5 +139,4 @@ class MapFieldSubscriber implements EventSubscriberInterface
             return $layersets;
         }
     }
-
 }

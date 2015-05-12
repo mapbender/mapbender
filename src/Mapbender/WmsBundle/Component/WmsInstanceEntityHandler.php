@@ -17,8 +17,8 @@ use Mapbender\WmsBundle\Component\Dimension;
 use Mapbender\WmsBundle\Component\DimensionInst;
 use Mapbender\WmsBundle\Component\VendorSpecific;
 use Mapbender\WmsBundle\Entity\WmsInstanceLayer;
-use Mapbender\WmsBundle\Entity\WmsSource;
 use Mapbender\WmsBundle\Entity\WmsLayerSource;
+use Mapbender\WmsBundle\Entity\WmsSource;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
@@ -29,6 +29,27 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  */
 class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
 {
+    /**
+     * @param array $configuration
+     * @return WmsInstance
+     */
+    public function configure(array $configuration = array())
+    {
+        /** @var WmsInstance $sourceInstance */
+        $sourceInstance = $this->getEntity();
+        $sourceInstance->setId(ArrayUtil::hasSet($configuration, 'id', null))
+            ->setTitle(ArrayUtil::hasSet($configuration, 'id', ""))
+            ->setWeight(ArrayUtil::hasSet($configuration, 'weight', 0))
+            ->setLayerset(ArrayUtil::hasSet($configuration, 'layerset'))
+            ->setProxy(ArrayUtil::hasSet($configuration, 'proxy', false))
+            ->setVisible(ArrayUtil::hasSet($configuration, 'visible', true))
+            ->setFormat(ArrayUtil::hasSet($configuration, 'format', true))
+            ->setInfoformat(ArrayUtil::hasSet($configuration, 'info_format'))
+            ->setTransparency(ArrayUtil::hasSet($configuration, 'transparent', true))
+            ->setOpacity(ArrayUtil::hasSet($configuration, 'opacity', false))
+            ->setTiled(ArrayUtil::hasSet($configuration, 'tiled', false));
+        return $sourceInstance;
+    }
 
     /**
      * @inheritdoc
@@ -160,7 +181,7 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 }
             }
         }
-        if ($hide) {
+        if ($hide || $this->entity->getSource()->getUsername()) {
             $url = $this->container->get('router')->generate(
                 'mapbender_core_application_instancetunnel',
                 array(

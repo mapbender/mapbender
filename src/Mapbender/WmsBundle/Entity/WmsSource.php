@@ -173,13 +173,13 @@ class WmsSource extends Source implements ContainingKeyword
     public $putStyles = null;
 
     /**
-     * @var RequestInformation A request information for the PutStyles operation
+     * @var string a user name
      * @ORM\Column(type="string", nullable=true);
      */
     protected $username = null;
 
     /**
-     * @var string A password
+     * @var string a user password
      * @ORM\Column(type="string", nullable=true);
      */
     protected $password = null;
@@ -206,20 +206,18 @@ class WmsSource extends Source implements ContainingKeyword
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(Source::TYPE_WMS);
         $this->keywords = new ArrayCollection();
         $this->layers = new ArrayCollection();
         $this->exceptionFormats = array();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getType()
     {
-        return "WMS";
-    }
-
-    public function getManagertype()
-    {
-        return "wms";
+        return parent::getType() ? parent::getType() : Source::TYPE_WMS;
     }
 
     /**
@@ -911,7 +909,7 @@ class WmsSource extends Source implements ContainingKeyword
      */
     public function getIdentifier()
     {
-        return $this->identifier ? : $this->originUrl;
+        return $this->identifier ? $this->identifier : $this->originUrl;
     }
     
     /**
@@ -921,10 +919,5 @@ class WmsSource extends Source implements ContainingKeyword
     {
         $this->identifier = $identifier;
         return $this;
-    }
-
-    public function __toString()
-    {
-        return (string) $this->getId();
     }
 }
