@@ -27,7 +27,7 @@ class XmlValidator
     /**
      * @var string path to local directory for schemas, document type definitions.
      */
-    protected $dir;
+    protected $dir = null;
 
     /**
      * @var array Proxy connection parameters
@@ -62,6 +62,7 @@ class XmlValidator
         if (isset($doc->doctype)) {// DTD
             $docH = new \DOMDocument();
             $filePath = $this->getFileName($doc->doctype->name, $doc->doctype->systemId);
+            $this->isDirExists($filePath);
             if (!is_file($filePath)) {
                 $proxy_query = ProxyQuery::createFromUrl($doc->doctype->systemId);
                 $proxy = new CommonProxy($this->proxy_config, $proxy_query);
@@ -266,37 +267,6 @@ EOF
         $urlArr = parse_url($url);
         $path   = $urlArr['host'] . $urlArr['path'];
         return $this->normalizePath($path);
-    }
-
-    /**
-     * Creates a new file name form namespace and url
-     *
-     * @param string $ns namespace
-     * @param string $url url
-     * @return string filename from a namespace and a url
-     */
-    private function fileNameFromUrlI($ns, $url)
-    {
-        $maxlength = 255;
-        if (strlen($ns . $url) + 1 <= $maxlength) {
-            $nsName = preg_replace("/[^A-Za-z0-9]/", "_", $ns);
-            $urlName = preg_replace("/[^A-Za-z0-9]/", "_", $url);
-        } else {
-            $maxnslength = 100;
-            $nsName = preg_replace("/[^A-Za-z0-9]/", "_", $ns);
-            $nsName =
-                substr($nsName, strlen($nsName) >= $maxnslength ? strlen($nsName) - $maxnslength : 0, $maxnslength);
-
-            $maxurllength = $maxlength - strlen($nsName) - 1;
-
-            $urlName = preg_replace("/[^A-Za-z0-9]/", "_", $url);
-            $urlName = substr(
-                $urlName,
-                strlen($urlName) >= $maxurllength ? strlen($urlName) - $maxurllength : 0,
-                $maxurllength
-            );
-        }
-        return $this->normalizePath($nsName . "_" . $urlName);
     }
 
     /**

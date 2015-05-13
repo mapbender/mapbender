@@ -1,7 +1,7 @@
 {% extends "FOMManagerBundle::manager.html.twig" %}
 {% from "MapbenderWmsBundle:Repository:macros.html.twig" import requestinformation  %}
 
-{% block title %}{{ 'mb.wms.wmsloader.repo.view.title.wms' | trans }} {{ wms.title }}{% endblock %}
+{% block title %}{{ wms.type }} {{ wms.title }}{% endblock %}
 
 {% block css %}
   {{parent()}}

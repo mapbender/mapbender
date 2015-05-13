@@ -926,6 +926,18 @@
         <source>mb.core.printclient.label.legend</source>
         <target>Legende drucken</target>
       </trans-unit>
+      <trans-unit id="f22da785244a98eb26f463fe681cc872" resname="mb.geosource.image_error.datails">
+        <source>mb.geosource.image_error.datails</source>
+        <target>Die Karte kann nicht angezeigt werden.</target>
+      </trans-unit>
+      <trans-unit id="4115a32e09882121bb4a410859d5657e" resname="mb.geosource.image_error.exception">
+        <source>mb.geosource.image_error.exception</source>
+        <target>Ausnahmefehler: %exception%</target>
+      </trans-unit>
+      <trans-unit id="c02ac4b03faa03bd83e61ab066ea39f1" resname="mb.geosource.image_error.statuscode">
+        <source>mb.geosource.image_error.statuscode</source>
+        <target>HTTP Statuscode</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -906,6 +906,18 @@
         <source>mb.core.featureinfo.error.noresult</source>
         <target>no result</target>
       </trans-unit>
+      <trans-unit id="a0b566abaccf9a7b4c3e8d7a45660c4f" resname="mb.geosource.image_error.datails">
+        <source>mb.geosource.image_error.datails</source>
+        <target>La mappa non può essere visualizzata.</target>
+      </trans-unit>
+      <trans-unit id="04541f44b11f3f7128ed8f4fac7874a7" resname="mb.geosource.image_error.exception">
+        <source>mb.geosource.image_error.exception</source>
+        <target>Eccezione: %exception%</target>
+      </trans-unit>
+      <trans-unit id="e162f0ce53da6cde57332698cb2e8f4d" resname="mb.geosource.image_error.statuscode">
+        <source>mb.geosource.image_error.statuscode</source>
+        <target>HTTP status code</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

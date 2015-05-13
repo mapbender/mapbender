@@ -325,7 +325,7 @@ class ApplicationController extends Controller
 //        }
 
         $managers = $this->get('mapbender')->getRepositoryManagers();
-        $manager = $managers[$instance->getSource()->getManagertype()];
+        $manager = $managers[$instance->getManagertype()];
 
         $path = array('_controller' => $manager['bundle'] . ":" . "Repository:metadata");
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);

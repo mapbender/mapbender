@@ -186,6 +186,7 @@ class ApplicationYAMLMapper
 
         // TODO: Add roles, entity needs work first
         // Create layersets and layers
+        /** @var SourceInstanceEntityHandler $entityHandler */
         foreach ($definition['layersets'] as $id => $layerDefinitions) {
             $layerset = new Layerset();
             $layerset
@@ -197,19 +198,13 @@ class ApplicationYAMLMapper
             foreach ($layerDefinitions as $id => $layerDefinition) {
                 $class = $layerDefinition['class'];
                 unset($layerDefinition['class']);
-                $instance = new $class();
-                $instance->setId($id)
-                        ->setTitle($layerDefinition['title'])
-                        ->setWeight($weight++)
-                        ->setLayerset($layerset)
-                        ->setProxy(!isset($layerDefinition['proxy']) ? false : $layerDefinition['proxy'])
-                        ->setVisible(!isset($layerDefinition['visible']) ? true : $layerDefinition['visible'])
-                        ->setFormat(!isset($layerDefinition['format']) ? true : $layerDefinition['format'])
-                        ->setInfoformat(!isset($layerDefinition['info_format']) ? null : $layerDefinition['info_format'])
-                        ->setTransparency(!isset($layerDefinition['transparent']) ? true : $layerDefinition['transparent'])
-                        ->setOpacity(!isset($layerDefinition['opacity']) ? 100 : $layerDefinition['opacity'])
-                        ->setTiled(!isset($layerDefinition['tiled']) ? false : $layerDefinition['tiled'])
-                        ->setConfiguration($layerDefinition);
+                $entityHandler    = EntityHandler::createHandler($this->container, new $class());
+                $instance         = $entityHandler->getEntity();
+                $internDefinition = array('weight'   => $weight++,
+                                          "id"       => $id,
+                                          "layerset" => $layerset);
+                $entityHandler->configure(array_merge($layerDefinition, $internDefinition));
+                $instance->setConfiguration($layerDefinition);
                 $layerset->addInstance($instance);
             }
             $application->addLayerset($layerset);
