@@ -29,21 +29,6 @@ abstract class SourceInstanceItem
      */
     protected $sourceItem;
 
-//    /**
-//     * Creates the mapbender configuration.
-//     * 
-//     * 
-//     * @return array configuration parameters
-//     */
-//    public abstract function getConfiguration();
-//
-//    /**
-//     * Copies a source instance
-//     * @param EntityManager $em
-//     * @return InstanceLayerIn a copy of InstanceLayerIn
-//     */
-//    public abstract function copy(EntityManager $em);
-
     /**
      * Set SourceInstance
      * @param $sourceInstance the source

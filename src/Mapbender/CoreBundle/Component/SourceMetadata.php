@@ -17,62 +17,62 @@ abstract class SourceMetadata
 {
     /**
      * Section 'common'
-     * @var string 
+     * @var string
      */
     public static $SECTION_COMMON = 'common';
     /**
      * Section 'useconditions'
-     * @var string 
+     * @var string
      */
     public static $SECTION_USECONDITIONS = 'useconditions';
     /**
      * Section 'contact'
-     * @var string 
+     * @var string
      */
     public static $SECTION_CONTACT = 'contact';
     /**
      * Section 'items'
-     * @var string 
+     * @var string
      */
     public static $SECTION_ITEMS = 'items';
     /**
      * Section 'subitems'
-     * @var string 
+     * @var string
      */
     public static $SECTION_SUBITEMS = 'subitems';
     /**
      * Section 'item'
-     * @var string 
+     * @var string
      */
     public static $SECTION_EXTENDED = 'extended';
 
     /**
      * Container 'tabs'
-     * @var string 
+     * @var string
      */
     public static $CONTAINER_TABS = 'tabs';
 
     /**
      * Container 'accordion'
-     * @var string 
+     * @var string
      */
     public static $CONTAINER_ACCORDION = 'accordion';
     
     /**
      * Container 'none'
-     * @var string 
+     * @var string
      */
     public static $CONTAINER_NONE = 'none';
 
     /**
      * Metadata contenttype - as html site
-     * @var integer 
+     * @var integer
      */
     public static $CONTENTTYPE_HTML = 'html';
     
     /**
      * Metadata contenttype - as html element
-     * @var integer 
+     * @var integer
      */
     public static $CONTENTTYPE_ELEMENT = 'element';
 
@@ -114,13 +114,13 @@ abstract class SourceMetadata
     
     /**
      * Contenttype (s. CONTENTTYPE_HTML, CONTENTTYPE_ELEMENT)
-     * @var type 
+     * @var type
      */
     protected $contenttype;
 
     /**
      * Metadata
-     * @var array 
+     * @var array
      */
     protected $data;
 
@@ -197,7 +197,7 @@ abstract class SourceMetadata
     /**
      * Sets useCommon
      * @param boolean $useCommon
-     * @return SourceMetadata 
+     * @return SourceMetadata
      */
     protected function setUseCommon($useCommon)
     {
@@ -208,7 +208,7 @@ abstract class SourceMetadata
     /**
      * Sets useContact
      * @param boolean $useContact
-     * @return SourceMetadata 
+     * @return SourceMetadata
      */
     protected function setUseContact($useContact)
     {
@@ -219,7 +219,7 @@ abstract class SourceMetadata
     /**
      * Sets useUseConditions
      * @param boolean $useUseConditions
-     * @return SourceMetadata 
+     * @return SourceMetadata
      */
     protected function setUseUseConditions($useUseConditions)
     {
@@ -230,7 +230,7 @@ abstract class SourceMetadata
     /**
      * Sets useItems
      * @param boolean $useItems
-     * @return SourceMetadata 
+     * @return SourceMetadata
      */
     protected function setUseItems($useItems)
     {
@@ -241,7 +241,7 @@ abstract class SourceMetadata
     /**
      * Sets useExtended
      * @param boolean $useExtended
-     * @return SourceMetadata 
+     * @return SourceMetadata
      */
     protected function setUseExtended($useExtended)
     {
@@ -252,13 +252,14 @@ abstract class SourceMetadata
     /**
      * Sets container
      * @param string $container
-     * @return SourceMetadata 
+     * @return SourceMetadata
      */
     public function setContainer($container = null)
     {
-        if($container === null){
+        if ($container === null) {
             $this->container = SourceMetadata::$CONTAINER_NONE;
-        } else if ($container === SourceMetadata::$CONTAINER_ACCORDION || $container === SourceMetadata::$CONTAINER_TABS || $container === SourceMetadata::$CONTAINER_NONE) {
+        } elseif ($container === SourceMetadata::$CONTAINER_ACCORDION ||
+            $container === SourceMetadata::$CONTAINER_TABS || $container === SourceMetadata::$CONTAINER_NONE) {
             $this->container = $container;
         } else {
             $this->container = SourceMetadata::$CONTAINER_NONE;
@@ -274,9 +275,10 @@ abstract class SourceMetadata
      */
     public function setContenttype($contenttype)
     {
-        if($contenttype === null){
+        if ($contenttype === null) {
             $this->contenttype = SourceMetadata::$CONTENTTYPE_ELEMENT;
-        } else if ($contenttype === SourceMetadata::$CONTENTTYPE_ELEMENT || $contenttype === SourceMetadata::$CONTENTTYPE_HTML) {
+        } elseif ($contenttype === SourceMetadata::$CONTENTTYPE_ELEMENT ||
+            $contenttype === SourceMetadata::$CONTENTTYPE_HTML) {
             $this->contenttype = $contenttype;
         } else {
             $this->contenttype = SourceMetadata::$CONTENTTYPE_ELEMENT;
@@ -298,7 +300,7 @@ abstract class SourceMetadata
     }
 
     /**
-     * 
+     * Returns data.
      * @return array
      */
     public function getData()
@@ -318,9 +320,9 @@ abstract class SourceMetadata
     {
         if ($instanceValue !== null && $sourceValue !== null) {
             return $sourceValue . "(" . $instanceValue . ")";
-        } else if ($sourceValue !== null) {
+        } elseif ($sourceValue !== null) {
             return $sourceValue;
-        } else if ($instanceValue !== null) {
+        } elseif ($instanceValue !== null) {
             return $instanceValue;
         } else {
             return '';
@@ -329,9 +331,8 @@ abstract class SourceMetadata
 
     /**
      * Renders the SourceMetadata.
-     * 
      * @param boolean $templating
      * @param integer $itemName unic item name
      */
-    public abstract function render($templating, $itemName);
+    abstract public function render($templating, $itemName);
 }
