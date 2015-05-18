@@ -80,7 +80,15 @@ class Feature
      */
     public function setSrid($srid)
     {
-        $this->srid = $srid;
+        $this->srid = intval($srid);
+    }
+
+    /**
+     *  has SRID?
+     */
+    public function hasSrid()
+    {
+        return !!$this->srid;
     }
 
     /**
@@ -118,25 +126,6 @@ class Feature
             }
         }
         
-        $this->setSrid($srid);
-        
-        // Is JSON feature array?
-        if (is_array($args) && isset($args["geometry"]) && isset($args['properties'])) {
-            $properties             = $args["properties"];
-            $geom                   = $args["geometry"];
-            $properties[$geomField] = $geom;
-
-            if (isset($args['id'])) {
-                $properties[$uniqueIdField] = $args['id'];
-            }
-
-            if (isset($args['srid'])) {
-               $this->setSrid($args['srid']);
-            }
-
-            $args = $properties;
-        }
-
         $this->setSrid($srid);
 
         // Is JSON feature array?

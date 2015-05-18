@@ -32,7 +32,7 @@ class FeatureType extends ContainerAware
     /**
      *  Default max results by search
      */
-    const MAX_RESULTS = 100;
+    const MAX_RESULTS = 1000;
 
     /**
      * @var Connection
@@ -280,17 +280,18 @@ class FeatureType extends ContainerAware
     public function insert($featureData)
     {
         /** @var Feature $feature */
-        $feature    = $this->create($featureData);
-        $data       = $this->cleanFeatureData($feature->toArray());
-        $connection = $this->getConnection();
+        $feature                     = $this->create($featureData);
+        $data                        = $this->cleanFeatureData($feature->toArray());
+        $connection                  = $this->getConnection();
         $data[$this->getGeomField()] = $this->transformEwkt($data[$this->getGeomField()], $this->getSrid());
-        
-        $result     = $connection->insert($this->tableName, $data);
-        $lastId     = $connection->lastInsertId();
+        $result                      = $connection->insert($this->tableName, $data);
+        $lastId                      = $connection->lastInsertId();
+
         if($lastId < 1){
             switch ($connection->getDatabasePlatform()->getName()) {
                 case self::POSTGRESQL_PLATFORM:
-                    $lastId =  $connection->executeQuery("SELECT currval(pg_get_serial_sequence('".$this->tableName."','".$this->getUniqueId()."'))")->fetchColumn();
+                    $sql    = "SELECT currval(pg_get_serial_sequence('" . $this->tableName . "','" . $this->getUniqueId() . "'))";
+                    $lastId =  $connection->executeQuery($sql)->fetchColumn();
                     break;
             }
         }
@@ -300,10 +301,26 @@ class FeatureType extends ContainerAware
     }
 
     // TODO: oracle and posgresql switch
+    /**
+     * @param      $geom
+     * @param null $srid
+     * @return bool|string
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function transformEwkt($geom,$srid=null)
     {
-        $srid = $srid?$srid:$this->getSrid();
-        return $this->connection->executeQuery("SELECT ST_TRANSFORM(ST_GEOMFROMTEXT('$geom'),".$this->getSrid() .")")->fetchColumn();
+        $srid = $srid ? $srid : $this->getSrid();
+        $sql = null;
+        switch ($this->getPlatformName()) {
+            case self::POSTGRESQL_PLATFORM:
+                $sql = "SELECT ST_TRANSFORM(ST_GEOMFROMTEXT('$geom'), $srid)";
+                break;
+            case self::ORACLE_PLATFORM:
+                $sql = "SELECT SDO_CS.TRANSFORM(SDO_UTIL.TO_WKBGEOMETRY('$geom'), $srid)";
+                break;
+        }
+
+        return $this->connection->executeQuery($sql)->fetchColumn();
     }
 
     /**
@@ -317,11 +334,10 @@ class FeatureType extends ContainerAware
     public function update($featureData)
     {
         /** @var Feature $feature */
-        $feature    = $this->create($featureData);
-        $data       = $this->cleanFeatureData($feature->toArray());
-        $connection = $this->getConnection();
+        $feature                     = $this->create($featureData);
+        $data                        = $this->cleanFeatureData($feature->toArray());
+        $connection                  = $this->getConnection();
         $data[$this->getGeomField()] = $this->transformEwkt($data[$this->getGeomField()], $this->getSrid());
-        
         unset($data[$this->getUniqueId()]);
 
         if (empty($data)) {
@@ -649,5 +665,30 @@ class FeatureType extends ContainerAware
      */
     protected function setFilter($sqlFilter){
         $this->sqlFilter = $sqlFilter;
+    }
+
+    /**
+     * Get sequence name
+     *
+     * @return string sequence name
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function getTableSequenceName(){
+        $connection = $this->getConnection();
+        $result = $connection->executeQuery("SELECT column_default from information_schema.columns where table_name='" . $this->getTableName() . "' and column_name='" . $this->getUniqueId() . "'")->fetchColumn();
+        $result = explode("'",$result);
+        return $result[0];
+    }
+
+    /**
+     * Repair table sequence.
+     * Set sequence next ID to (highest ID + 1) in the table
+     *
+     * @return int last insert ID
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function repairTableSequence()
+    {
+        return $this->getConnection()->executeQuery("SELECT setval('" . $this->getTableSequenceName() . "', (SELECT MAX(" . $this->getUniqueId() . ") FROM " . $this->getTableName() . "))")->fetchColumn();
     }
 }

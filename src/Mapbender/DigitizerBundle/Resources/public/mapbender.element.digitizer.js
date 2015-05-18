@@ -429,6 +429,7 @@
                                         }
                                     })
 
+
                                     // Merge object2 into object1
                                     $.extend( tableJson, dbFeature );
 
@@ -542,7 +543,7 @@
             var request = {
                 srid: proj.proj.srsProjNumber,
                 //intersectGeometry: extent.toGeometry().toString(),
-                maxResults: 100,
+                maxResults: settings.hasOwnProperty('maxResults')?settings.maxResults:1000,
                 schema: settings.schemaName
             };
 
