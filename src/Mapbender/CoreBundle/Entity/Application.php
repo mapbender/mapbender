@@ -3,12 +3,8 @@
 namespace Mapbender\CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Query\AST\Functions\IdentityFunction;
-use Mapbender\CoreBundle\Component\Application as ApplicationComponent;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -147,6 +143,17 @@ class Application
     public function getSource()
     {
         return $this->source;
+    }
+
+    /**
+     * Set id
+     *
+     * @return Application
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
     }
 
     /**

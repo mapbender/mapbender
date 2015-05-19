@@ -23,7 +23,7 @@ abstract class SourceInstanceEntityHandler extends EntityHandler
      * @return SourceInstance
      * @internal param SourceInstance $instance
      */
-    abstract public function configure(array $configuration = array());
+    abstract public function setParameters(array $configuration = array());
 
     /**
      * Creates a SourceInstance

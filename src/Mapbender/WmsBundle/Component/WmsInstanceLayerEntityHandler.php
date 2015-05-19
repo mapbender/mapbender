@@ -68,6 +68,17 @@ class WmsInstanceLayerEntityHandler extends SourceInstanceItemEntityHandler
     /**
      * @inheritdoc
      */
+    public function save()
+    {
+        $this->container->get('doctrine')->getManager()->persist($this->entity);
+        foreach ($this->entity->getSublayer() as $sublayer) {
+            self::createHandler($this->container, $sublayer)->save();
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function remove()
     {
         foreach ($this->entity->getSublayer() as $sublayer) {
