@@ -21,34 +21,34 @@ class IconClassType extends AbstractType
     {
         $icons = array(
 
-            // New Icons
-            'icon-layer-tree'   => 'Layer tree (New)',
-            'icon-feature-info' => 'Feature Info (New)',
-            'icon-area-ruler'   => 'Area ruler (New)',
-            'icon-polygone'     => 'Polygone (New)',
-            'icon-line-ruler'   => 'Line ruler (New)',
-            'icon-image-export' => 'Image Export (New)',
-            'icon-legend'       => 'Legend (New)',
-            'icon-about'        => 'About (New)',
+            // Mapbender Icons
+            'icon-layer-tree'   => 'Layer tree',
+            'icon-feature-info' => 'Feature Info',
+            'icon-area-ruler'   => 'Area ruler',
+            'icon-polygone'     => 'Polygone',
+            'icon-line-ruler'   => 'Line ruler',
+            'icon-image-export' => 'Image Export',
+            'icon-legend'       => 'Legend',
+            'icon-about'        => 'About',
 
-            // Deprecated
-            'iconAbout'         => 'About',
-            'iconAreaRuler'     => 'Area ruler',
-            'iconInfoActive'    => 'Feature info',
-            'iconGps'           => 'GPS',
-            'iconLegend'        => 'Legend',
-            'iconPrint'         => 'Print',
-            'iconSearch'        => 'Search',
-            'iconLayertree'     => 'Layer tree',
-            'iconWms'           => 'WMS',
-            'iconHelp'          => 'Help',
-            'iconWmcEditor'     => 'WMC Editor',
-            'iconWmcLoader'     => 'WMC Loader',
-            'iconCoordinates'   => 'Coordinates',
-            'iconGpsTarget'     => 'Gps Target',
-            'iconPoi'           => 'POI',
-            'iconImageExport'   => 'Image Export',
-            'iconSketch'        => 'Sketch');
+            // FontAwesome
+            'iconAbout'         => 'About (FontAwesome)',
+            'iconAreaRuler'     => 'Area ruler (FontAwesome)',
+            'iconInfoActive'    => 'Feature info (FontAwesome)',
+            'iconGps'           => 'GPS (FontAwesome)',
+            'iconLegend'        => 'Legend (FontAwesome)',
+            'iconPrint'         => 'Print (FontAwesome)',
+            'iconSearch'        => 'Search (FontAwesome)',
+            'iconLayertree'     => 'Layer tree (FontAwesome)',
+            'iconWms'           => 'WMS (FontAwesome)',
+            'iconHelp'          => 'Help (FontAwesome)',
+            'iconWmcEditor'     => 'WMC Editor (FontAwesome)',
+            'iconWmcLoader'     => 'WMC Loader (FontAwesome)',
+            'iconCoordinates'   => 'Coordinates (FontAwesome)',
+            'iconGpsTarget'     => 'Gps Target (FontAwesome)',
+            'iconPoi'           => 'POI (FontAwesome)',
+            'iconImageExport'   => 'Image Export (FontAwesome)',
+            'iconSketch'        => 'Sketch (FontAwesome)');
 
         asort($icons);
 
