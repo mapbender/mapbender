@@ -17,7 +17,8 @@
     text-align:center;
     &.iconCheckboxActive{@extend .iconInfoActive}
   }
-  .leave.invisible{@include opacity(.7); visibility: visible;} //for .serviceContainer too
+  .leave.invisible .layer-title {@include opacity(.7);} //for .serviceContainer too
+  .leave.invisible {visibility: visible;}
   .themeContainer{
     border-left:dotted 1px black;
     margin-bottom:1px; // Fix for Firefox
