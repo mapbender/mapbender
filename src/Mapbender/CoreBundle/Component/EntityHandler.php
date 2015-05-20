@@ -31,18 +31,10 @@ class EntityHandler
      */
     protected $entity;
 
-    public function __construct(ContainerInterface $container, $entity = null)
+    public function __construct(ContainerInterface $container, $entity)
     {
         $this->container = $container;
         $this->entity    = $entity;
-    }
-
-    /**
-     * @param mixed $entity
-     */
-    public function setEntity($entity)
-    {
-        $this->entity = $entity;
     }
 
     /**

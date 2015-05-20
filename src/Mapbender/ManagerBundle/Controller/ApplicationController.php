@@ -600,6 +600,7 @@ class ApplicationController extends Controller
 
         return new Response();
     }
+
     /* Layerset block start */
 
     /**
@@ -738,6 +739,7 @@ class ApplicationController extends Controller
             $this->generateUrl('mapbender_manager_application_edit', array('slug' => $slug)) . "#layersets"
         );
     }
+
     /* Layerset block end */
 
     /* Instance block start */
@@ -829,6 +831,7 @@ class ApplicationController extends Controller
         $subRequest = $this->container->get('request')->duplicate(array(), null, $path);
         return $this->container->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
     }
+
     /* Instance block end */
 
     /**

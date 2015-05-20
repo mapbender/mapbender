@@ -105,7 +105,7 @@ class ApplicationYAMLMapper
             }
         }
 
-        if(!isset($definition['elements'])){
+        if (!isset($definition['elements'])) {
             $definition['elements'] = array();
         }
 
@@ -138,7 +138,8 @@ class ApplicationYAMLMapper
 
                     $elm_class = get_class($elComp);
                     if ($elm_class::$merge_configurations) {
-                        $configuration = ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_, array());
+                        $configuration =
+                            ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_, array());
                     } else {
                         $configuration = $configuration_;
                     }
@@ -173,13 +174,13 @@ class ApplicationYAMLMapper
             $application->yaml_roles = $definition['roles'];
         }
 
-        if(!isset($definition['layersets'])){
+        if (!isset($definition['layersets'])) {
             $definition['layersets'] = array();
 
             /**
              * @deprecated definition
              */
-            if(isset($definition['layerset'])){
+            if (isset($definition['layerset'])) {
                 $definition['layersets'][] = $definition['layerset'];
             }
         }
@@ -200,11 +201,12 @@ class ApplicationYAMLMapper
                 unset($layerDefinition['class']);
                 $entityHandler    = EntityHandler::createHandler($this->container, new $class());
                 $instance         = $entityHandler->getEntity();
-                $internDefinition = array('weight'   => $weight++,
-                                          "id"       => $id,
-                                          "layerset" => $layerset);
-                $entityHandler->configure(array_merge($layerDefinition, $internDefinition));
-                $instance->setConfiguration($layerDefinition);
+                $internDefinition = array(
+                    'weight'   => $weight++,
+                    "id"       => $id,
+                    "layerset" => $layerset
+                );
+                $entityHandler->setParameters(array_merge($layerDefinition, $internDefinition));
                 $layerset->addInstance($instance);
             }
             $application->addLayerset($layerset);
@@ -214,5 +216,4 @@ class ApplicationYAMLMapper
 
         return $application;
     }
-
 }

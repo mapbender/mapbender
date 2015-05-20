@@ -203,7 +203,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     public function setId($id)
     {
-        return $this->id;
+        $this->id = $id;
+        return $this;
     }
 
     /**
@@ -266,11 +267,12 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
 
     /**
      *
-     * @return ArrayCollection
+     * @return WmsLayerSource
      */
     public function setSublayer($sublayer)
     {
         $this->sublayer = $sublayer;
+        return $this;
     }
 
     /**
