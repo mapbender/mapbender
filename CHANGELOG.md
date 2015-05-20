@@ -1,6 +1,18 @@
 # Changelog
-* **v3.0.4.?**
+* **v3.0.5.0**
     - a map parameter "layerset" is renamed into "layersets" and represets a list of layersets
+    - WMS Update
+    - Digitize Functionality
+    - Print with legend
+    - configurable Layertree
+    - Mobile Template
+    - SASS Compiler
+    - addvendorspecific
+    - advanced features for HTML element through formgenerator
+    - New button collection
+    - advanced behaviour of featureInfo dialog (keep styles, only open tabs for hits, width and height for FeatureInfo dialog)
+    - add prameter on start of a Mapbender3 application (change srs, poi, bbox, center)
+    - Symfony Update 2.3.27
 * **v3.0.4.1**
     - center the map from GET paramter 'center added
     - option 'removelayer' added into layertree menu
