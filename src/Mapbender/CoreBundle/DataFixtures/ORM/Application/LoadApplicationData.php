@@ -6,14 +6,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
-use Mapbender\CoreBundle\Component\Element as ElementComponent;
+use Mapbender\CoreBundle\Component\Application;
+use Mapbender\CoreBundle\Component\ApplicationYAMLMapper;
 use Mapbender\CoreBundle\Component\EntityHandler;
 use Mapbender\CoreBundle\Entity\Application as ApplicationEntity;
-use Mapbender\CoreBundle\Entity\Element;
-use Mapbender\CoreBundle\Entity\Layerset;
-use Mapbender\CoreBundle\Entity\SourceInstance;
+use Mapbender\CoreBundle\Entity\Contact;
+use Mapbender\CoreBundle\Entity\RegionProperties;
+use Mapbender\CoreBundle\Utils\EntityUtil;
 
 /**
  * The class LoadApplicationData loads the applications from the "mapbender.yml"
@@ -52,11 +51,20 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
     {
         $definitions = $this->container->getParameter('applications');
         foreach ($definitions as $slug => $definition) {
-            $appMapper = new \Mapbender\CoreBundle\Component\ApplicationYAMLMapper($this->container);
+            $appMapper = new ApplicationYAMLMapper($this->container);
             $application = $appMapper->getApplication($slug);
             if ($application->getLayersets()->count() === 0) {
                 continue;
             }
+            $this->mapper = array();
+            $appHandler = new Application($this->container, $application, array());
+
+            $application->setSlug(
+                EntityUtil::getUniqueValue($manager, get_class($application), 'slug', $application->getSlug() . '_yml', '')
+            );
+            $application->setTitle(
+                EntityUtil::getUniqueValue($manager, get_class($application), 'title', $application->getSlug() . ' YML', '')
+            );
             $manager->getConnection()->beginTransaction();
             $application->setSource(ApplicationEntity::SOURCE_DB);
             $id = $application->getId();
@@ -64,77 +72,86 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
             $this->saveSources($manager, $application);
             $this->saveLayersets($manager, $application);
             $this->saveElements($manager, $application);
-//            $application->setId(null);
             $manager->persist($application->setUpdated(new \DateTime('now')));
+            $this->checkRegionProperties($manager, $application);
             $manager->flush();
             $this->addMapping($application, $id, $application);
             $manager->getConnection()->commit();
+            $appHandler->createAppWebDir($this->container, $application->getSlug());
         }
     }
     
-    private function addMapping($object, $id_old, $objWithNewId)
+    private function addMapping($object, $id_old, $objWithNewId, $unique = true)
     {
         $class = is_object($object) ? get_class($object) : $object;
         if (!isset($this->mapper[$class])) {
             $this->mapper[$class] = array();
         }
-        $this->mapper[$class][$id_old] = $objWithNewId;
+        if (!$unique) {
+            $this->mapper[$class][$id_old] = $objWithNewId;
+        } elseif (!isset($this->mapper[$class][$id_old])) {
+            $this->mapper[$class][$id_old] = $objWithNewId;
+        }
     }
 
     private function saveSources(ObjectManager $manager, ApplicationEntity $application)
     {
         foreach ($application->getLayersets() as $layerset) {
             foreach ($layerset->getInstances() as $instance) {
+                $instlayerOldIds = array();
+                foreach ($instance->getLayers() as $instlayer) {
+                    $instlayerOldIds[] = $instlayer->getId();
+                }
                 $source = $instance->getSource();
                 $id = $source->getId();
                 $layerOldIds = array();
                 foreach ($source->getLayers() as $layer) {
                     $layerOldIds[] = $layer->getId();
                 }
-                $repo = $manager->getRepository(get_class($source));
-//                $meta = $manager->getClassMetadata(get_class($source));
-////                $a = $meta->__toString();
-//                $apps = $repo->findBy(array(
-//                    "originUrl" => $source->getOriginUrl()
-//                ));
                 $founded = null;
+                $repo = $manager->getRepository(get_class($source));
                 foreach ($repo->findBy(array('originUrl' => $source->getOriginUrl())) as $fsource) {
-                    if ($source->getLayers()->count() !== $fsource->getLayers()->count()) {
-                        $founded = $fsource;
-                        break;
+                    if ($source->getLayers()->count() === $fsource->getLayers()->count()) {
+                        $ok = true;
+                        for ($i = 0; $i <  $source->getLayers()->count(); $i++) {
+                            if ($source->getLayers()->get($i)->getName() !== $source->getLayers()->get($i)->getName()) {
+                                $ok = false;
+                            }
+                        }
+                        if ($ok) {
+                            $founded = $fsource;
+                            break;
+                        }
                     }
                 }
                 if (!$founded) {
-                    $contact = new Contact();
-                    $contact->setPerson(null)
-                        ->setOrganization(null)
-                        ->setPosition(null)
-                        ->setAddressType(null)
-                        ->setAddress(null)
-                        ->setAddressCity(null)
-                        ->setAddressStateOrProvince(null)
-                        ->setAddressPostCode(null)
-                        ->setAddressCountry(null)
-                        ->setVoiceTelephone(null)
-                        ->setFacsimileTelephone(null)
-                        ->setElectronicMailAddress(null);
-                    $source->setContact($contact);
+                    $source->setContact(new Contact());
                     EntityHandler::createHandler($this->container, $source)->save();
-//                    $manager->flush();
+                    $num = 0;
+                    foreach ($source->getLayers() as $layer) {
+                        $this->addMapping($layer, $layerOldIds[$num], $layer);
+                        $num++;
+                    }
+                    $this->addMapping($source, $id, $source);
                 } else {
                     $source = $founded;
+                    $num = 0;
+                    foreach ($source->getLayers() as $layer) {
+                        $this->addMapping($layer, $layerOldIds[$num], $layer);
+                        $num++;
+                    }
+                    $this->addMapping($source, $id, $source);
+                    $instance->setSource($source);
+                    $num = 0;
+                    foreach ($instance->getLayers() as $instlayer) {
+                        $instlayer->setSourceItem(
+                            $this->mapper[get_class($instlayer->getSourceItem())][$instlayer->getSourceItem()->getId()]
+                        );
+                        EntityHandler::createHandler($this->container, $instlayer)->save();
+                        $this->addMapping($instlayer, $instlayerOldIds[$num], $instlayer);
+                    }
                 }
-                $num = 0;
-                foreach ($source->getLayers() as $layer) {
-                    $this->addMapping($layer, $layerOldIds[$num], $layer);
-                    $num++;
-                }
-                $this->addMapping($source, $id, $source);
             }
-//            $id = $layerset->getId();
-//            $layerset->setId(null);
-//            $manager->persist($layerset);
-//            $this->addMapping($layerset, $id, $layerset->getId());
         }
     }
 
@@ -142,190 +159,73 @@ class LoadApplicationData implements FixtureInterface, ContainerAwareInterface
     {
         foreach ($application->getLayersets() as $layerset) {
             $id = $layerset->getId();
-            $instOldIds = array();
-            foreach ($layerset->getInstances() as $instance) {
-                $instOldIds[] = $instance->getId();
-            }
-            foreach ($layerset->getInstances() as $instance) {
-                $this->saveInstance($manager, $layerset, $instance);
-//                $manager->flush();
-            }
-//            $layerset->setId(null);
             $manager->persist($layerset);
-//            $manager->flush();
             $this->addMapping($layerset, $id, $layerset);
-            $num = 0;
-            foreach ($layerset->getInstances() as $instance) {
-                $this->addMapping($layerset, $instOldIds[$num], $instance);
-//                EntityHandler::createHandler($this->container, $instance)->save();
-                $num++;
-            }
         }
-    }
-
-    private function saveInstance(ObjectManager $manager, Layerset $layerset, SourceInstance $instance)
-    {
-//        $idInst =  $instance->getId();
-//        $in_id = $instance->getId();
-//        $instance->getSource()->setId(null);
-//        EntityHandler::createHandler($this->container, $instance->getSource())->save();
-//        $this->addMapping($instance->getSource(), $id, $instance->getSource()->getId());
-//        $instance->getSource()->setId(null);
-        foreach ($instance->getLayers() as $layer) {
-            $idLayInst =  $layer->getId();
-//            $layer->setId(null);
-            if (!is_int($layer->getSourceItem()->getId())) {
-                $class = get_class($layer->getSourceItem());
-                $layer->setSourceItem($this->mapper[$class][$layer->getSourceItem()->getId()]);
-            }
-            EntityHandler::createHandler($this->container, $layer)->save();
-//            $manager->flush();
-            $this->addMapping($layer, $idLayInst, $layer);
-//
-//            $idLay =  $layer->getSourceItem()->getId();
-//            $layer->getSourceItem()->setId(null);
-//            EntityHandler::createHandler($this->container, $layer->getSourceItem())->save();
-//            $this->addMapping($layer->getSourceItem(), $idLay, $layer->getSourceItem()->getId());
-        }
-//        $instance->setId(null);
-//        EntityHandler::createHandler($this->container, $instance)->save();
-//        $this->addMapping($instance, $idInst, $instance);
     }
 
     private function saveElements(ObjectManager $manager, ApplicationEntity $application)
     {
+        $elementIds = array();
+        $num = 0;
+        foreach ($application->getElements() as $element) {
+//            $elementIds[] = $element->getId();
+            $id = $element->getId();
+            $manager->persist($element);
+            $this->addMapping($element, $id, $element);
+        }
         foreach ($application->getElements() as $element) {
             $id = $element->getId();
-//            $element->setId(null);
-            $manager->persist($element);
-//            $manager->flush();
-            $this->addMapping($element, $id, $element);
+            $config = $element->getConfiguration();
+            if (isset($config['target'])) {
+                $elm = $this->mapper[get_class($element)][$config['target']];
+                $config['target'] = $elm->getId();
+                $element->setConfiguration($config);
+                $manager->persist($element);
+            }
+            if (isset($config['layersets'])) {
+                $layersets = array();
+                foreach ($config['layersets'] as $layerset) {
+                    $layerset = $this->mapper['Mapbender\CoreBundle\Entity\Layerset'][$layerset];
+                    $layersets[] = $layerset->getId();
+                }
+                $config['layersets'] = $layersets;
+                $element->setConfiguration($config);
+                $manager->persist($element);
+            }
+            if (isset($config['layerset'])) {
+                $layerset = $this->mapper['Mapbender\CoreBundle\Entity\Layerset'][$config['layerset']];
+                $config['layerset'] = $layerset->getId();
+                $element->setConfiguration($config);
+                $manager->persist($element);
+            }
         }
     }
 
-
-
-    /**
-     * @inheritdoc
-     */
-    public function loadOld(ObjectManager $manager)
+    private function checkRegionProperties(ObjectManager $manager, ApplicationEntity $application)
     {
-        $definitions = $this->container->getParameter('applications');
-        $manager->getConnection()->beginTransaction();
-        foreach ($definitions as $slug => $definition) {
-            if (isset($definition['excludeFromList']) && $definition['excludeFromList']) {
-                continue;
-            }
-            $timestamp = round((microtime(true) * 1000));
-            if (!key_exists('title', $definition)) {
-                $definition['title'] = "TITLE " . $timestamp;
-            }
-
-            if (!key_exists('published', $definition)) {
-                $definition['published'] = false;
-            } else {
-                $definition['published'] = (boolean) $definition['published'];
-            }
-            // First, create an application entity
-            $application = new ApplicationEntity();
-            $application
-                ->setSlug($timestamp . "_" . $slug)
-                ->setTitle($timestamp . " " . (isset($definition['title']) ? $definition['title'] : ''))
-                ->setDescription(isset($definition['description']) ? $definition['description'] : '')
-                ->setTemplate($definition['template'])
-                ->setPublished(isset($definition['published']) ? $definition['published'] : false)
-                ->setUpdated(new \DateTime('now'));
-            if (array_key_exists('extra_assets', $definition)) {
-                $application->setExtraAssets($definition['extra_assets']);
-            }
-
-            $application->yaml_roles = array();
-            if (array_key_exists('roles', $definition)) {
-                $application->yaml_roles = $definition['roles'];
-            }
-            $manager->persist($application);
-            $layersets_map = array();
-            foreach ($definition['layersets'] as $layersetName => $layersetDef) {
-                $layerset = new Layerset();
-                $layerset->setTitle($layersetName);
-                $layerset->setApplication($application);
-                $manager->persist($layerset);
-                $application->addLayerset($layerset);
-                $manager->flush();
-                $layersets_map[$layersetName] = $layerset->getId();
-            }
-            $manager->persist($application);
-
-            // Set inital ACL
-            $aces = array();
-            $aces[] = array(
-                'sid' => new RoleSecurityIdentity('IS_AUTHENTICATED_ANONYMOUSLY'),
-                'mask' => MaskBuilder::MASK_VIEW);
-
-            $aclManager = $this->container->get('fom.acl.manager');
-            $aclManager->setObjectACL($application, $aces, 'object');
-
-            $elements_map = array();
-            // Then create elements
-            foreach ($definition['elements'] as $region => $elementsDefinition) {
-                if ($elementsDefinition !== null) {
-                    $weight = 0;
-                    foreach ($elementsDefinition as $element_yml_id => $elementDefinition) {
-                        $class = $elementDefinition['class'];
-                        $title = array_key_exists('title', $elementDefinition)
-                            && $elementDefinition['title'] !== null ?
-                            $elementDefinition['title'] :
-                            $class::getClassTitle();
-
-                        $element = new Element();
-
-                        $element->setClass($elementDefinition['class'])
-                            ->setTitle($title)
-                            ->setConfiguration($elementDefinition)
-                            ->setRegion($region)
-                            ->setWeight($weight++)
-                            ->setApplication($application);
-                        //TODO: Roles
-                        $application->addElements($element);
-                        $manager->persist($element);
-                        $manager->flush();
-                        $elements_map[$element_yml_id] = $element->getId();
-                    }
+        $templateClass = $application->getTemplate();
+        $templateProps = $templateClass::getRegionsProperties();
+        // add RegionProperties if defined
+        foreach ($templateProps as $regionName => $regionProps) {
+            $exists = false;
+            foreach ($application->getRegionProperties() as $regprops) {
+                if ($regprops->getName() === $regionName) {
+                    $regprops->setApplication($application);
+                    $manager->persist($regprops);
+                    $manager->persist($application);
+                    $exists = true;
+                    break;
                 }
             }
-            // Then merge default configuration and elements configuration
-            foreach ($application->getElements() as $element) {
-                $configuration_yml = $element->getConfiguration();
-                $entity_class = $configuration_yml['class'];
-                $appl = new \Mapbender\CoreBundle\Component\Application($this->container, $application, array());
-                $elComp = new $entity_class($appl, $this->container, new Element());
-                unset($configuration_yml['class']);
-                unset($configuration_yml['title']);
-
-                $configuration =
-                    ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_yml, array());
-
-                if (key_exists("target", $configuration)
-                    && $configuration["target"] !== null
-                    && key_exists($configuration["target"], $elements_map)) {
-                    $configuration["target"] = $elements_map[$configuration["target"]];
-                }
-                if (key_exists("layerset", $configuration_yml)
-                    && $configuration["layerset"] !== null
-                    && key_exists($configuration["layerset"], $layersets_map)) {
-                    $configuration["layerset"] = $layersets_map[$configuration["layerset"]];
-                }
-
-                $class = $elementDefinition['class'];
-                $title = array_key_exists('title', $elementDefinition) ?
-                    $elementDefinition['title'] :
-                    $class::getClassTitle();
-                $element->setConfiguration($configuration);
-                $manager->persist($element);
+            if (!$exists) {
+                $regionProperties = new RegionProperties();
+                $application->addRegionProperties($regionProperties);
+                $regionProperties->setApplication($application);
+                $regionProperties->setName($regionName);
+                $manager->persist($regionProperties);
+                $manager->persist($application);
             }
-            $manager->flush();
-            $ccc;
         }
-        $manager->getConnection()->commit();
     }
 }

@@ -490,7 +490,6 @@ class WmsInstance extends SourceInstance
     public function setBuffer($buffer)
     {
         $this->buffer = $buffer;
-
         return $this;
     }
 
@@ -539,13 +538,13 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * Remove layers
-     *
+     * Remove layer
      * @param WmsInstanceLayer $layers
+     * @return boolean true if layer removed
      */
     public function removeLayer(WmsInstanceLayer $layers)
     {
-        $this->layers->removeElement($layers);
+        return $this->layers->removeElement($layers);
     }
 
     public function __toString()

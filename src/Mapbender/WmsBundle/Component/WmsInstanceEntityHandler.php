@@ -66,11 +66,13 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setOpacity(ArrayUtil::hasSet($configuration, 'opacity', false))
             ->setTiled(ArrayUtil::hasSet($configuration, 'tiled', false));
 
-        $num       = 0;
-        $root = new WmsLayerSource();
-        $root->setPriority($num);
-        $source->addLayer($root);
-        $root->setTitle($this->entity->getTitle());
+        $num  = 0;
+        $layersourceroot = new WmsLayerSource();
+        $layersourceroot->setPriority($num)
+            ->setSource($source)
+            ->setTitle($this->entity->getTitle())
+            ->setId($source->getId() . '_' . $num);
+        $source->addLayer($layersourceroot);
         $rootInstLayer = new WmsInstanceLayer();
         $rootInstLayer->setTitle($this->entity->getTitle())
             ->setId($this->entity->getId() . "_" . $num)
@@ -78,16 +80,18 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
             ->setMaxScale(!isset($configuration["maxScale"]) ? null : $configuration["maxScale"])
             ->setSelected(!isset($configuration["visible"]) ? false : $configuration["visible"])
             ->setPriority($num)
-            ->setSourceItem($root)
+            ->setSourceItem($layersourceroot)
             ->setSourceInstance($this->entity)
             ->setToggle(false)
             ->setAllowtoggle(true);
         $this->entity->addLayer($rootInstLayer);
         foreach ($configuration["layers"] as $layerDef) {
             $num++;
-            $layer       = new WmsInstanceLayer();
             $layersource = new WmsLayerSource();
-            $layersource->setName($layerDef["name"]);
+            $layersource->setSource($source)
+                ->setName($layerDef["name"])
+                ->setParent($layersourceroot)
+                ->setId($this->entity->getId() . '_' . $num);
             if (isset($layerDef["legendurl"])) {
                 $style          = new Style();
                 $style->setName(null);
@@ -103,19 +107,21 @@ class WmsInstanceEntityHandler extends SourceInstanceEntityHandler
                 $style->setLegendUrl($legendUrl);
                 $layersource->addStyle($style);
             }
-            $layer->setTitle($layerDef["title"])
-                ->setId($this->entity->getId() . '-' . $num)
+            $layersourceroot->addSublayer($layersource);
+            $source->addLayer($layersource);
+            $layerInst       = new WmsInstanceLayer();
+            $layerInst->setTitle($layerDef["title"])
+                ->setId($this->entity->getId() . '_' . $num)
                 ->setMinScale(!isset($layerDef["minScale"]) ? null : $layerDef["minScale"])
                 ->setMaxScale(!isset($layerDef["maxScale"]) ? null : $layerDef["maxScale"])
                 ->setSelected(!isset($layerDef["visible"]) ? false : $layerDef["visible"])
                 ->setInfo(!isset($layerDef["queryable"]) ? false : $layerDef["queryable"])
                 ->setParent($rootInstLayer)
                 ->setSourceItem($layersource)
-                ->setSourceInstance($this->entity);
-            $root->addSublayer($layersource);
-            $layer->setAllowinfo($layer->getInfo() !== null && $layer->getInfo() ? true : false);
-            $rootInstLayer->addSublayer($layer);
-            $this->entity->addLayer($layer);
+                ->setSourceInstance($this->entity)
+                ->setAllowinfo($layerInst->getInfo() !== null && $layerInst->getInfo() ? true : false);
+            $rootInstLayer->addSublayer($layerInst);
+            $this->entity->addLayer($layerInst);
         }
         return $this->entity;
     }
