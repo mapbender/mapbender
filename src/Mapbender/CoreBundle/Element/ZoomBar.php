@@ -15,6 +15,8 @@ use Mapbender\CoreBundle\Component\Element;
 class ZoomBar extends Element
 {
 
+    public static $merge_configurations = false;
+
     /**
      * @inheritdoc
      */
@@ -47,10 +49,12 @@ class ZoomBar extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
-        return array('js' => array('mapbender.element.zoombar.js'), 
-            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/zoombar.scss'));
+        return array(
+            'js' => array('mapbender.element.zoombar.js'),
+            'css' => array('@MapbenderCoreBundle/Resources/public/sass/element/zoombar.scss')
+        );
     }
 
     /**
@@ -61,8 +65,7 @@ class ZoomBar extends Element
         return array(
             'tooltip' => null,
             'target' => null,
-            'components' => array(
-                "pan", "history", "zoom_box", "zoom_max", "zoom_in_out", "zoom_slider"),
+            'components' => array("pan", "history", "zoom_box", "zoom_max", "zoom_in_out", "zoom_slider"),
             'anchor' => 'left-top',
             'stepSize' => 50,
             'stepByPixel' => false,
@@ -83,15 +86,18 @@ class ZoomBar extends Element
     public function render()
     {
         $configuration = $this->getConfiguration();
-        if(in_array("zoom_slider", $configuration['components'])
-            && !in_array("zoom_in_out", $configuration['components']))
+        if (in_array("zoom_slider", $configuration['components'])
+            && !in_array("zoom_in_out", $configuration['components'])) {
             $configuration['components'][] = "zoom_in_out";
-        return $this->container->get('templating')
-                ->render('MapbenderCoreBundle:Element:zoombar.html.twig',
-                    array(
-                    'id' => $this->getId(),
-                    "title" => $this->getTitle(),
-                    'configuration' => $configuration));
+        }
+        return $this->container->get('templating')->render(
+            'MapbenderCoreBundle:Element:zoombar.html.twig',
+            array(
+                'id' => $this->getId(),
+                "title" => $this->getTitle(),
+                'configuration' => $configuration
+            )
+        );
     }
 
     /**
@@ -109,5 +115,4 @@ class ZoomBar extends Element
     {
         return 'MapbenderManagerBundle:Element:zoombar.html.twig';
     }
-
 }

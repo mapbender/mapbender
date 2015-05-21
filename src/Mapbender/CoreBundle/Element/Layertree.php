@@ -13,7 +13,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.core.layertree.class.title";
     }
@@ -21,7 +21,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.core.layertree.class.description";
     }
@@ -29,7 +29,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    public function getTags()
+    public static function getClassTags()
     {
         return array(
             "mb.core.layertree.tag.layertree",
@@ -56,7 +56,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         $assets = array(
             'js' => array(
@@ -88,7 +88,7 @@ class Layertree extends Element
     /**
      * @inheritdoc
      */
-    static public function getDefaultConfiguration()
+    public static function getDefaultConfiguration()
     {
         return array(
             "target" => null,
@@ -113,20 +113,20 @@ class Layertree extends Element
     public function render()
     {
         $html = $this->container->get('templating')->render(
-                'MapbenderCoreBundle:Element:layertree.html.twig',
-                array(
+            'MapbenderCoreBundle:Element:layertree.html.twig',
+            array(
                 'id' => $this->getId(),
                 'configuration' => $this->getConfiguration(),
                 'title' => $this->getTitle()
-                )
+            )
         );
         return $this->container->get('templating')->render(
-                'MapbenderCoreBundle:Element:layertree.html.twig',
-                array(
+            'MapbenderCoreBundle:Element:layertree.html.twig',
+            array(
                 'id' => $this->getId(),
                 'configuration' => $this->getConfiguration(),
                 'title' => $this->getTitle()
-                )
+            )
         );
     }
 
@@ -137,5 +137,4 @@ class Layertree extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:layertree.html.twig';
     }
-
 }
