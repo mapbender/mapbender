@@ -1,6 +1,13 @@
 (function($){
 
-
+    /**
+     * Example:
+     *     confirmDialog({html: "Feature löschen?", title: "Bitte bestätigen!", onSuccess:function(){
+                  return false;
+           }});
+     * @param options
+     * @returns {*}
+     */
     function confirmDialog(options) {
         var dialog = $("<div class='confirm-dialog'>" + (options.hasOwnProperty('html') ? options.html : "") + "</div>").popupDialog({
             title:       options.hasOwnProperty('title') ? options.title : "",
@@ -44,12 +51,6 @@
         toolsets: {
             point: [
               {type: 'drawPoint'},
-              //{type: 'drawLine'},
-              //{type: 'drawPolygon'},
-              //{type: 'drawRectangle'},
-              //{type: 'drawCircle'},
-              //{type: 'drawEllipse'},
-              //{type: 'drawDonut'},
               {type: 'modifyFeature'},
               //{type: 'moveFeature'},
               //{type: 'selectFeature'},
@@ -90,11 +91,6 @@
         },
 
         _setup: function() {
-
-            //confirmDialog({html: "Feature löschen?", title: "Bitte bestätigen!", onSuccess:function(){
-            //        return false;
-            //}});
-
             var frames = [];
             var activeFrame = null;
             var widget = this;
@@ -137,6 +133,9 @@
                 var frame = settings.frame = $("<div/>").addClass('frame').data(settings);
                 var columns = [];
                 var newFeatureDefaultProperties = {};
+                if( !settings.hasOwnProperty("tableFields")){
+                    console.error("Digitizer table fields isn't defined!",settings );
+                }
 
                 $.each(settings.tableFields, function(fieldName){
                     newFeatureDefaultProperties[fieldName] = "";
@@ -206,12 +205,17 @@
 
                 settings.schemaName = schemaName;
 
+                var toolset = widget.toolsets[settings.featureType.geomType];
+                if(settings.hasOwnProperty("toolset")){
+                    toolset = settings.toolset;
+                }
+
                 frame.generateElements({
                     children: [{
                         type:           'digitizingToolSet',
-                        children:       widget.toolsets[settings.featureType.geomType],
+                        children:       toolset,
                         layer:          layer,
-                        onFeatureAdded: function() {
+                        onFeatureAdded: function(event,feature) {
                             var geoJSON = new OpenLayers.Format.GeoJSON();
                             var srid = feature.layer.map.getProjectionObject().proj.srsProjNumber;
                             var properties = jQuery.extend(true, {}, newFeatureDefaultProperties); // clone from newFeatureDefaultProperties
@@ -232,7 +236,7 @@
                             tableApi.rows.add([jsonFeature]);
                             tableApi.draw();
 
-                            if(settings.openFormAfterEdit === true) {
+                            if(settings.openFormAfterEdit) {
                                 widget._openFeatureEditDialog(feature);
                             }
                         }
