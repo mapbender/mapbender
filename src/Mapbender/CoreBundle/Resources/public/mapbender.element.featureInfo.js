@@ -231,7 +231,7 @@
                 }
             } catch (e) {
             }
-            return '';
+            return data;
         },
         _wrapData: function(data, $wraper) {
             return $wraper.append(data);

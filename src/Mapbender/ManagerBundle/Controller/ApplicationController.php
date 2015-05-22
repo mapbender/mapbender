@@ -1038,22 +1038,4 @@ class ApplicationController extends Controller
             }
         }
     }
-
-    private function getApplicationDir($slug)
-    {
-        $uploads_dir = $this->container->get('kernel')->getRootDir() . '/../web/'
-            . $this->container->getParameter("mapbender.uploads_dir");
-        if (!is_dir($uploads_dir)) {
-            return null;
-        }
-
-        $slug_dir = $uploads_dir . "/" . $slug;
-        if (!is_dir($slug_dir)) {
-            return null;
-        } else {
-            return realpath($slug_dir);
-        }
-    }
-
-
 }

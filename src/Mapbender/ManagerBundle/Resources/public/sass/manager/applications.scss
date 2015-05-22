@@ -300,6 +300,8 @@
 .region{
   padding-top:$space;
   border-top:dashed 1px darken(#fff, 30%);
+  width: 100%;
+  clear: both;
 }
 
 

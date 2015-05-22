@@ -15,8 +15,9 @@
 .popupContent, .popupSubContent{
   padding:0 20px;
   margin-bottom: $space;
+  height: 92%;
 }
-.popupSubContent{width: 100%;}
+.popupSubContent{width: 100%; height: 100%;}
 .popup{
   min-width: 300px;
   min-height: 250px;
