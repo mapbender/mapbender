@@ -128,4 +128,33 @@ class Layertree extends Element
     {
         return 'MapbenderCoreBundle:ElementAdmin:layertree.html.twig';
     }
+
+    /**
+     * Changes a element entity configuration while exporting.
+     *
+     * @param array $formConfiguration element entity configuration
+     * @param array $entityConfiguration element entity configuration
+     * @return array a configuration
+     */
+    public function normalizeConfiguration(array $formConfiguration, array $entityConfiguration = array())
+    {
+        return $formConfiguration;
+    }
+
+    /**
+     * Changes a element entity configuration while importing.
+     *
+     * @param array $configuration element entity configuration
+     * @param array $idMapper array with ids before denormalize and after denormalize.
+     * @return array a configuration
+     */
+    public function denormalizeConfiguration(array $configuration, array $idMapper = array())
+    {
+        foreach ($configuration['themes'] as &$theme) {
+            if (isset($idMapper['Mapbender\CoreBundle\Entity\Layerset']['map'][intval($theme['id'])])) {
+                $theme['id'] = $idMapper['Mapbender\CoreBundle\Entity\Layerset']['map'][intval($theme['id'])];
+            }
+        }
+        return $configuration;
+    }
 }

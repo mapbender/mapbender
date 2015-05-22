@@ -259,19 +259,4 @@ class Element
     {
         return (string) $this->id;
     }
-
-    public function copy(EntityManager $em)
-    {
-        $elm = new Element();
-        $elm->title = $this->title;
-        $elm->class = $this->class;
-        $elm->configuration = $this->configuration;
-//        $elm->application = $this->;
-        $elm->region = $this->region;
-        $elm->enabled = $this->enabled;
-        $elm->weight = $this->weight;
-
-        return $elm;
-    }
-
 }

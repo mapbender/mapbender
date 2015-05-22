@@ -278,12 +278,6 @@ abstract class SourceInstance
      * @return array instance configuration
      */
     abstract public function getConfiguration();
-//
-//    /**
-//     * Copies a source instance
-//     * @param Manager $em
-//     */
-//    abstract public function copy(EntityManager $em);
 
     /**
      *
