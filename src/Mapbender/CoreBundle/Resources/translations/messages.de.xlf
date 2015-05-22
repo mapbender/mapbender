@@ -52,7 +52,7 @@
       </trans-unit>
       <trans-unit id="d19f7fb816f3b4515f79e8c5c8546ede" resname="mb.core.basesourceswitcher.error.sourcenotavailable">
         <source>mb.core.basesourceswitcher.error.sourcenotavailable</source>
-        <target>Der Diensr mit der ID %id% ist nicht vorhanden</target>
+        <target>Der Dienst mit der ID %id% ist nicht vorhanden</target>
       </trans-unit>
       <trans-unit id="f123690a3603fb7e32cfb02774f84512" resname="mb.core.legend.nolegend">
         <source>mb.core.legend.nolegend</source>
