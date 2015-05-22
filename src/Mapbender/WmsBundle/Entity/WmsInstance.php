@@ -21,7 +21,6 @@ use Mapbender\WmsBundle\Entity\WmsSource;
  */
 class WmsInstance extends SourceInstance
 {
-
     /**
      * @var array $configuration The instance configuration
      * @ORM\Column(type="array", nullable=true)
@@ -108,7 +107,7 @@ class WmsInstance extends SourceInstance
 
     public function __construct()
     {
-        $this->layers = new ArrayCollection();
+        $this->layers     = new ArrayCollection();
         $this->dimensions = array();
         $this->vendorspecifics = array();
     }
@@ -136,7 +135,7 @@ class WmsInstance extends SourceInstance
 
     /**
      * Returns dimensions
-     * 
+     *
      * @return array of DimensionIst
      */
     public function getDimensions()
@@ -146,7 +145,7 @@ class WmsInstance extends SourceInstance
 
     /**
      * Sets dimensions
-     * 
+     *
      * @param array $dimensions array of DimensionIst
      * @return \Mapbender\WmsBundle\Entity\WmsInstance
      */
@@ -419,7 +418,7 @@ class WmsInstance extends SourceInstance
      * Set proxy
      *
      * @param boolean $proxy
-     * @return WmsInstance
+     * @return $this
      */
     public function setProxy($proxy)
     {
@@ -441,7 +440,7 @@ class WmsInstance extends SourceInstance
      * Set tiled
      *
      * @param boolean $tiled
-     * @return WmsInstance
+     * @return $this
      */
     public function setTiled($tiled)
     {
@@ -463,7 +462,7 @@ class WmsInstance extends SourceInstance
      * Set ratio
      *
      * @param boolean $ratio
-     * @return WmsInstance
+     * @return $this
      */
     public function setRatio($ratio)
     {
@@ -491,7 +490,6 @@ class WmsInstance extends SourceInstance
     public function setBuffer($buffer)
     {
         $this->buffer = $buffer;
-
         return $this;
     }
 
@@ -540,13 +538,13 @@ class WmsInstance extends SourceInstance
     }
 
     /**
-     * Remove layers
-     *
+     * Remove layer
      * @param WmsInstanceLayer $layers
+     * @return boolean true if layer removed
      */
     public function removeLayer(WmsInstanceLayer $layers)
     {
-        $this->layers->removeElement($layers);
+        return $this->layers->removeElement($layers);
     }
 
     public function __toString()
@@ -557,29 +555,18 @@ class WmsInstance extends SourceInstance
     /**
      * @inheritdoc
      */
-    public function getType()
-    {
-        return "wms";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getManagerType()
-    {
-        return "wms";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array(
             'js' => array(
-                '@MapbenderWmsBundle/Resources/public/mapbender.source.wms.js'),
+                '@MapbenderCoreBundle/Resources/public/mapbender.geosource.js',
+                '@MapbenderWmsBundle/Resources/public/mapbender.geosource.wms.js'),
             'css' => array(),
-            'trans' => array('MapbenderWmsBundle::wmsbundle.json.twig'));
+            'trans' => array(
+                'MapbenderCoreBundle::geosource.json.twig',
+                'MapbenderWmsBundle::wmsbundle.json.twig'
+            )
+        );
     }
 
     /**
@@ -588,52 +575,5 @@ class WmsInstance extends SourceInstance
     public function getMetadata()
     {
         return new WmsMetadata($this);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function copy(EntityManager $em)
-    {
-        $inst = new WmsInstance();
-        $inst->title = $this->title;
-        $inst->weight = $this->weight;
-        $inst->enabled = $this->enabled;
-        $inst->configuration = $this->configuration; //???
-        $inst->source = $this->source;
-        $inst->srs = $this->srs;
-        $inst->format = $this->format;
-        $inst->infoformat = $this->infoformat;
-        $inst->exceptionformat = $this->exceptionformat;
-        $inst->transparency = $this->transparency;
-        $inst->visible = $this->visible;
-        $inst->opacity = $this->opacity;
-        $inst->proxy = $this->proxy;
-        $inst->tiled = $this->tiled;
-        $inst->ratio = $this->ratio;
-        $inst->buffer = $this->buffer;
-        $this->copyLayerRecursive($em, $inst, $this->getRootlayer(), NULL);
-        return $inst;
-    }
-
-    /**
-     * Recursively copy a nested Layerstructure
-     * @param EntityManager $em
-     * @param WmsInstanceLayer $instLayer
-     */
-    private function copyLayerRecursive(EntityManager $em, WmsInstance $instCloned, WmsInstanceLayer $origin,
-        WmsInstanceLayer $clonedParent = null)
-    {
-        $cloned = $origin->copy($em);
-        $cloned->setWmsinstance($instCloned);
-        $cloned->setSourceItem($origin->getSourceItem());
-        if ($clonedParent !== null) {
-            $cloned->setParent($clonedParent);
-            $clonedParent->addSublayer($cloned);
-        }
-        $instCloned->addLayer($cloned);
-        foreach ($origin->getSublayer() as $sublayer) {
-            $this->copyLayerRecursive($em, $instCloned, $sublayer, $cloned);
-        }
     }
 }

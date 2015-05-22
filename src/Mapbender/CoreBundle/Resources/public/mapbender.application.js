@@ -215,7 +215,34 @@ Mapbender.Util.Url = function(urlString){
 
 Mapbender.Util.isInScale = function(scale, min_scale, max_scale){
     return (min_scale ? min_scale <= scale : true) && (max_scale ? max_scale >= scale : true);
-}
+};
+
+Mapbender.Util.addProxy = function(url) {
+    return OpenLayers.ProxyHost + encodeURIComponent(url);
+};
+
+Mapbender.Util.removeProxy = function(url) {
+    if (url.indexOf(OpenLayers.ProxyHost) === 0) {
+        return decodeURIComponent(url.substring(OpenLayers.ProxyHost.length));
+    }
+    return url;
+};
+
+Mapbender.Util.removeSignature = function(url) {
+    var pos = -1;
+    pos = url.indexOf("_signature");
+    if (pos !== -1) {
+        var url_new = url.substring(0, pos);
+        if (url_new.lastIndexOf('&') === url_new.length - 1) {
+            url_new = url_new.substring(0, url_new.lastIndexOf('&'));
+        }
+        if (url_new.lastIndexOf('?') === url_new.length - 1) {
+            url_new = url_new.substring(0, url_new.lastIndexOf('?'));
+        }
+        return url_new;
+    }
+    return url;
+};
 
 // This calls on document.ready and won't be called when inserted dynamically
 // into a existing page. In such case, Mapbender.setup has to be called

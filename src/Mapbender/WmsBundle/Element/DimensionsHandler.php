@@ -15,7 +15,7 @@ class DimensionsHandler extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTitle()
+    public static function getClassTitle()
     {
         return "mb.wms.dimhandler.class.title";
     }
@@ -23,7 +23,7 @@ class DimensionsHandler extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassDescription()
+    public static function getClassDescription()
     {
         return "mb.wms.dimhandler.class.description";
     }
@@ -31,7 +31,7 @@ class DimensionsHandler extends Element
     /**
      * @inheritdoc
      */
-    static public function getClassTags()
+    public static function getClassTags()
     {
         return array("mb.wms.dimhandler.dimension", "mb.wms.dimhandler.handler");
     }
@@ -60,19 +60,19 @@ class DimensionsHandler extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
-        $files = array(
+        return array(
             'js' => array(
-                '@MapbenderCoreBundle/Resources/public/vendor/joii.min.js',
                 'mapbender.wms.dimension.js',
                 'mapbender.element.dimensionshandler.js',
-                ),
+            ),
             'css' => array(
                 '@MapbenderWmsBundle/Resources/public/sass/element/dimensionshandler.scss',
-                '@MapbenderCoreBundle/Resources/public/sass/element/mbslider.scss'),
-            'trans' => array('MapbenderWmsBundle:Element:dimensionshandler.json.twig'));
-        return $files;
+                '@MapbenderCoreBundle/Resources/public/sass/element/mbslider.scss'
+            ),
+            'trans' => array('MapbenderWmsBundle:Element:dimensionshandler.json.twig')
+        );
     }
 
     /**
@@ -96,13 +96,14 @@ class DimensionsHandler extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')
-                ->render('MapbenderWmsBundle:Element:dimensionshandler.html.twig',
-                         array(
-                    'id' => $this->getId(),
-                    "title" => $this->getTitle(),
-                    'configuration' => $this->getConfiguration()
-            ));
+        return $this->container->get('templating')->render(
+            'MapbenderWmsBundle:Element:dimensionshandler.html.twig',
+            array(
+                'id' => $this->getId(),
+                "title" => $this->getTitle(),
+                'configuration' => $this->getConfiguration()
+            )
+        );
     }
     
     /**
@@ -125,14 +126,14 @@ class DimensionsHandler extends Element
         $configuration = parent::getConfiguration();
         $instances = array();
         foreach ($configuration['dimensionsets'] as $key => $value) {
-            for($i = 0; isset($value['group']) && count($value['group']) > $i; $i++){
+            for ($i = 0; isset($value['group']) && count($value['group']) > $i; $i++) {
                 $item = explode("-", $value['group'][$i]);
                 $instances[$item[0]] = $value['dimension'];
             }
         }
         foreach ($this->application->getEntity()->getLayersets() as $layerset) {
-            foreach ($layerset->getInstances() as $instance){
-                if (key_exists($instance->getId(), $instances)){
+            foreach ($layerset->getInstances() as $instance) {
+                if (key_exists($instance->getId(), $instances)) {
                     $handler = EntityHandler::createHandler($this->container, $instance);
                     $handler->mergeDimension($instances[$instance->getId()], true);
                 }

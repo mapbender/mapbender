@@ -4,27 +4,12 @@
 @import "libs/icons";
 
 /* ---------------------------------------------------------------- VARIABLES */
-$popupModalWidth: 460px;
-$popupMaxHeight: 370px;
-$inputHeight: 38px;
-$elementPopupWidth: $popupModalWidth - ($space * 3);
-$firstColor:#404040; // dark gray
-$secondColor:#858585; // middle gray
-$thirdColor:#a2a2a2;  // light gray
-$contentColor:#f9f9f9; // very light gray
-$errorColor:#aa2323; // red
-$hintColor:#2375a8; // blue
-$noticeColor:#22a522; // green
-
-$darkFontColor:#3f3f3f; // darker gray
-$middleFontColor:#707070; // lighter gray
-$lightFontColor:#fff; // white
 
 // the holy colors
 $ciColor:#0066BA; // blue
-$ciColor2:#CCCCCC; // gray
+$ciColor2:#CCC; // gray
 $ciColor3:#134271 ; // blue
-$ciColor4:#fff ; // white
+$ciColor4:#fff ; // white*/
 
 
 /* --------------------------------------------------------------- COMPONENTS */
@@ -573,13 +558,14 @@ fieldset{
           border: 2px solid $ciColor2;
           margin:$space/2 5px 0px 5px;
           padding:$space/2;
-          color: darken($ciColor2, 20%);
+          color:$ciColor3;
           background-color: $ciColor4;
 
           & > li{
             .iconBig{
                 height: 25px;
                 padding-left: 22px !important;
+                color: $ciColor;
             }
             margin:3px 0;
           }

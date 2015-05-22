@@ -92,6 +92,9 @@ class ApplicationYAMLMapper
                 ->setTemplate($definition['template'])
                 ->setExcludeFromList(isset($definition['excludeFromList'])?$definition['excludeFromList']:false)
                 ->setPublished($definition['published']);
+        if (isset($definition['custom_css'])) {
+            $application->setCustomCss($definition['custom_css']);
+        }
 
         if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);
@@ -105,7 +108,7 @@ class ApplicationYAMLMapper
             }
         }
 
-        if(!isset($definition['elements'])){
+        if (!isset($definition['elements'])) {
             $definition['elements'] = array();
         }
 
@@ -138,7 +141,8 @@ class ApplicationYAMLMapper
 
                     $elm_class = get_class($elComp);
                     if ($elm_class::$merge_configurations) {
-                        $configuration = ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_, array());
+                        $configuration =
+                            ElementComponent::mergeArrays($elComp->getDefaultConfiguration(), $configuration_, array());
                     } else {
                         $configuration = $configuration_;
                     }
@@ -173,19 +177,20 @@ class ApplicationYAMLMapper
             $application->yaml_roles = $definition['roles'];
         }
 
-        if(!isset($definition['layersets'])){
+        if (!isset($definition['layersets'])) {
             $definition['layersets'] = array();
 
             /**
              * @deprecated definition
              */
-            if(isset($definition['layerset'])){
+            if (isset($definition['layerset'])) {
                 $definition['layersets'][] = $definition['layerset'];
             }
         }
 
         // TODO: Add roles, entity needs work first
         // Create layersets and layers
+        /** @var SourceInstanceEntityHandler $entityHandler */
         foreach ($definition['layersets'] as $id => $layerDefinitions) {
             $layerset = new Layerset();
             $layerset
@@ -197,19 +202,14 @@ class ApplicationYAMLMapper
             foreach ($layerDefinitions as $id => $layerDefinition) {
                 $class = $layerDefinition['class'];
                 unset($layerDefinition['class']);
-                $instance = new $class();
-                $instance->setId($id)
-                        ->setTitle($layerDefinition['title'])
-                        ->setWeight($weight++)
-                        ->setLayerset($layerset)
-                        ->setProxy(!isset($layerDefinition['proxy']) ? false : $layerDefinition['proxy'])
-                        ->setVisible(!isset($layerDefinition['visible']) ? true : $layerDefinition['visible'])
-                        ->setFormat(!isset($layerDefinition['format']) ? true : $layerDefinition['format'])
-                        ->setInfoformat(!isset($layerDefinition['info_format']) ? null : $layerDefinition['info_format'])
-                        ->setTransparency(!isset($layerDefinition['transparent']) ? true : $layerDefinition['transparent'])
-                        ->setOpacity(!isset($layerDefinition['opacity']) ? 100 : $layerDefinition['opacity'])
-                        ->setTiled(!isset($layerDefinition['tiled']) ? false : $layerDefinition['tiled'])
-                        ->setConfiguration($layerDefinition);
+                $entityHandler    = EntityHandler::createHandler($this->container, new $class());
+                $instance         = $entityHandler->getEntity();
+                $internDefinition = array(
+                    'weight'   => $weight++,
+                    "id"       => $id,
+                    "layerset" => $layerset
+                );
+                $entityHandler->setParameters(array_merge($layerDefinition, $internDefinition));
                 $layerset->addInstance($instance);
             }
             $application->addLayerset($layerset);
@@ -219,5 +219,4 @@ class ApplicationYAMLMapper
 
         return $application;
     }
-
 }

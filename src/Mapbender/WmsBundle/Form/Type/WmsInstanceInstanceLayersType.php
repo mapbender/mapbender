@@ -29,10 +29,11 @@ class WmsInstanceInstanceLayersType extends AbstractType
         $resolver->setDefaults(
             array(
                 'available_templates' => array(),
-                'gfg' => function(FormInterface $form) {
-                $data = $form->getData()->getWmssourcelayer();
-                return true;
-            })
+                'gfg' => function (FormInterface $form) {
+                    $data = $form->getData()->getWmssourcelayer();
+                    return true;
+                }
+            )
         );
     }
 
@@ -48,11 +49,9 @@ class WmsInstanceInstanceLayersType extends AbstractType
         foreach ($arr as $value) {
             $formats[$value] = $value;
         }
-        $builder->add('title', 'text',
-                      array(
+        $builder->add('title', 'text', array(
                 'required' => true))
-            ->add('format', 'choice',
-                  array(
+            ->add('format', 'choice', array(
                 'choices' => $formats,
                 'required' => true));
         $gfi = $wmsinstance->getSource()->getGetFeatureInfo();
@@ -61,8 +60,7 @@ class WmsInstanceInstanceLayersType extends AbstractType
         foreach ($arr as $value) {
             $formats_gfi[$value] = $value;
         }
-        $builder->add('infoformat', 'choice',
-                      array(
+        $builder->add('infoformat', 'choice', array(
             'choices' => $formats_gfi,
             'required' => false));
         $arr = $wmsinstance->getSource()->getExceptionFormats() !== null ?
@@ -75,55 +73,41 @@ class WmsInstanceInstanceLayersType extends AbstractType
         foreach (range(0, 100, 10) as $value) {
             $opacity[$value] = $value;
         }
-        $builder->add('exceptionformat', 'choice',
-                      array(
+        $builder->add('exceptionformat', 'choice', array(
                 'choices' => $formats_exc,
                 'required' => false))
-            ->add('basesource', 'checkbox',
-                  array(
+            ->add('basesource', 'checkbox', array(
                 'required' => false))
-            ->add('visible', 'checkbox',
-                  array(
+            ->add('visible', 'checkbox', array(
                 'required' => false))
-            ->add('proxy', 'checkbox',
-                  array(
+            ->add('proxy', 'checkbox', array(
                 'required' => false))
-            ->add('opacity', 'choice',
-                  array(
+            ->add('opacity', 'choice', array(
                 'choices' => $opacity,
                 'required' => true))
-            ->add('transparency', 'checkbox',
-                  array(
+            ->add('transparency', 'checkbox', array(
                 'required' => false))
-            ->add('tiled', 'checkbox',
-                  array(
+            ->add('tiled', 'checkbox', array(
                 'required' => false))
-            ->add('ratio', 'number',
-                  array(
+            ->add('ratio', 'number', array(
                 'required' => false,
                 'precision' => 2))
-            ->add('buffer', 'integer',
-                  array(
+            ->add('buffer', 'integer', array(
                 'required' => false))
-            ->add('dimensions', 'collection',
-                  array(
+            ->add('dimensions', 'collection', array(
                 'required' => false,
                 'type' => new DimensionInstType(),
                 'allow_add' => true,
                 'allow_delete' => true,))
-            ->add('vendorspecifics', 'collection',
-                  array(
+            ->add('vendorspecifics', 'collection', array(
                 'required' => false,
                 'type' => new VendorSpecificType(),
                 'allow_add' => true,
                 'allow_delete' => true,))
-            ->add('layers', 'collection',
-                  array(
+            ->add('layers', 'collection', array(
                 'type' => new WmsInstanceLayerType(),
                 'options' => array(
                     'data_class' => 'Mapbender\WmsBundle\Entity\WmsInstanceLayer',
-                    'num_layers' => count($wmsinstance->getLayers()))
-        ));
+                    'num_layers' => count($wmsinstance->getLayers()))));
     }
-
 }
