@@ -271,10 +271,8 @@ class Application
     public function getCustomCssAsset()
     {
         $entity = $this->getEntity();
-        if ($entity::SOURCE_DB === $entity->getSource() && $entity->getCustomCss()) {
+        if ($entity->getCustomCss()) {
             return new StringAsset($entity->getCustomCss());
-        } else {
-            return null;
         }
     }
 
