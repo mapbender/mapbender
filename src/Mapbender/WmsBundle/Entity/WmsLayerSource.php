@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Mapbender\CoreBundle\Component\BoundingBox;
 use Mapbender\CoreBundle\Component\ContainingKeyword;
-use Mapbender\CoreBundle\Component\SourceItem;
+use Mapbender\CoreBundle\Entity\SourceItem;
 use Mapbender\CoreBundle\Entity\Keyword;
 use Mapbender\CoreBundle\Entity\Source;
 use Mapbender\WmsBundle\Component\IdentifierAuthority;
@@ -198,13 +198,13 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
 
     /**
      * Sets an id
-     * 
      * @param integer $id
      * @return WmsLayerSource
      */
     public function setId($id)
     {
-        return $this->id;
+        $this->id = $id;
+        return $this;
     }
 
     /**
@@ -267,11 +267,12 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
 
     /**
      *
-     * @return ArrayCollection
+     * @return WmsLayerSource
      */
     public function setSublayer($sublayer)
     {
         $this->sublayer = $sublayer;
+        return $this;
     }
 
     /**
@@ -586,8 +587,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     {
 //        return $this->srs;
         if ($inherit && $this->getParent() !== null) { // add crses from parent
-            return array_merge(
-                $this->getParent()->getSrs(), $this->srs);
+            return array_merge($this->getParent()->getSrs(), $this->srs);
         } else {
             return $this->srs;
         }
@@ -626,8 +626,7 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     public function getStyles($inherit = TRUE)
     {
         if ($inherit && $this->getParent() !== null) { // add styles from parent
-            return array_merge(
-                $this->getParent()->getStyles(), $this->styles);
+            return array_merge($this->getParent()->getStyles(), $this->styles);
         } else {
             return $this->styles;
         }
@@ -802,9 +801,8 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
      */
     public function getAuthority($inherit = TRUE)
     {
-        if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) { 
-            return array_merge(
-                $this->getParent()->getAuthority(), $this->authority);
+        if ($inherit && $this->getParent() !== null && $this->getParent()->getAuthority() !== null) {
+            return array_merge($this->getParent()->getAuthority(), $this->authority);
         } else {
             $this->authority;
         }
@@ -1007,22 +1005,6 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     /**
      * @inheritdoc
      */
-    public function getType()
-    {
-        return "WMS";
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getManagerType()
-    {
-        return "wms";
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getClassname()
     {
         return get_class();
@@ -1032,5 +1014,4 @@ class WmsLayerSource extends SourceItem implements ContainingKeyword
     {
         return (string) $this->id;
     }
-
 }

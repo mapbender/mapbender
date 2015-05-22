@@ -63,7 +63,6 @@ class Layertree extends Element
                 '@FOMCoreBundle/Resources/public/js/dragdealer.min.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
                 '@FOMCoreBundle/Resources/public/js/widgets/checkbox.js',
-                '@MapbenderCoreBundle/Resources/public/vendor/joii.min.js',
                 '@MapbenderWmsBundle/Resources/public/mapbender.wms.dimension.js',
                 'mapbender.element.layertree.tree.js',
                 'mapbender.metadata.js'),
@@ -112,14 +111,6 @@ class Layertree extends Element
      */
     public function render()
     {
-        $html = $this->container->get('templating')->render(
-            'MapbenderCoreBundle:Element:layertree.html.twig',
-            array(
-                'id' => $this->getId(),
-                'configuration' => $this->getConfiguration(),
-                'title' => $this->getTitle()
-            )
-        );
         return $this->container->get('templating')->render(
             'MapbenderCoreBundle:Element:layertree.html.twig',
             array(

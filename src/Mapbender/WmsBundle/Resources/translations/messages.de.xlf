@@ -12,7 +12,7 @@
       </trans-unit>
       <trans-unit id="27c45a8d7df44b7de7adf685e204e80c" resname="mb.wms.wmsloader.error.url">
         <source>mb.wms.wmsloader.error.url</source>
-        <target>WMS laden: das WMS Capabilities Dokument konnten nicht geladen werden! Die Capabilities-URL ist nicht gültig.</target>
+        <target>WMS laden: das WMS Capabilities Dokument konnte nicht geladen werden! Die Capabilities-URL ist nicht gültig.</target>
       </trans-unit>
       <trans-unit id="6ff51d3832f0575b54225dea941a97ff" resname="mb.wms.wmsloader.error.service">
         <source>mb.wms.wmsloader.error.service</source>
@@ -460,7 +460,7 @@
       </trans-unit>
       <trans-unit id="62be339a16eb03f936fbf6f412dc717a" resname="mb.wms.wmsloader.repo.form.label.serviceurl">
         <source>mb.wms.wmsloader.repo.form.label.serviceurl</source>
-        <target>Dienste-URL</target>
+        <target>Dienst-URL</target>
       </trans-unit>
       <trans-unit id="3f7db4515f7b6274c1da02b1b151971a" resname="mb.wms.wmsloader.repo.form.label.username">
         <source>mb.wms.wmsloader.repo.form.label.username</source>
@@ -526,25 +526,13 @@
         <source>mb.wms.wmsloader.admin.label.declarative</source>
         <target>deklarativ verwenden</target>
       </trans-unit>
-      <trans-unit id="a0b566abaccf9a7b4c3e8d7a45660c4f" resname="mb.wms.source.image_error.datails">
-        <source>mb.wms.source.image_error.datails</source>
-        <target>Die Karte kann nicht angezeigt werden.</target>
-      </trans-unit>
-      <trans-unit id="04541f44b11f3f7128ed8f4fac7874a7" resname="mb.wms.source.image_error.exception">
-        <source>mb.wms.source.image_error.exception</source>
-        <target>Ausnahmefehler: %exception%</target>
-      </trans-unit>
-      <trans-unit id="e162f0ce53da6cde57332698cb2e8f4d" resname="mb.wms.source.image_error.statuscode">
-        <source>mb.wms.source.image_error.statuscode</source>
-        <target>HTTP Statuscode</target>
-      </trans-unit>
       <trans-unit id="3fc45286dbed3669423eea7520e5278f" resname="mb.wms.metadata.section.common">
         <source>mb.wms.metadata.section.common</source>
         <target>Allgemein</target>
       </trans-unit>
       <trans-unit id="c92e0e2df5db11fd510a0cd23bd2a1c5" resname="mb.wms.metadata.section.common.title">
         <source>mb.wms.metadata.section.common.title</source>
-        <target>Title</target>
+        <target>Titel</target>
       </trans-unit>
       <trans-unit id="7f29afe01b89b0f9806207ff2e7e6db4" resname="mb.wms.metadata.section.common.name">
         <source>mb.wms.metadata.section.common.name</source>

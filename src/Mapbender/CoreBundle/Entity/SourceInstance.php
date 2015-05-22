@@ -95,14 +95,20 @@ abstract class SourceInstance
      *
      * @return String type
      */
-    abstract public function getType();
+    public function getType()
+    {
+        return $this->source->getType();
+    }
 
     /**
      * Returns a manager type
      *
      * @return String a manager type
      */
-    abstract public function getManagertype();
+    public function getManagertype()
+    {
+        return $this->source->getManagertype();
+    }
 
     /**
      * Returns a full class name
@@ -174,7 +180,7 @@ abstract class SourceInstance
      * Sets the layerset
      *
      * @param  Layerset       $layerset Layerset
-     * @return Sourceinstance
+     * @return $this
      */
     public function setLayerset(Layerset $layerset)
     {
@@ -272,12 +278,12 @@ abstract class SourceInstance
      * @return array instance configuration
      */
     abstract public function getConfiguration();
-
-    /**
-     * Copies a source instance
-     * @param Manager $em
-     */
-    abstract public function copy(EntityManager $em);
+//
+//    /**
+//     * Copies a source instance
+//     * @param Manager $em
+//     */
+//    abstract public function copy(EntityManager $em);
 
     /**
      *

@@ -153,11 +153,53 @@ $pageWidth:$contentPaneWidth + $navWidth;
 
   & > .content{
     min-height: 600px;
-    position:relative;
-    padding:$space;
-    margin:0px;
-    background-color:$contentColor;
-    background-image:url($contentPatternUrl);
+    position: relative;
+    padding: $space;
+    margin: 0px;
+    background: $contentColor url($contentPatternUrl);
+
+    form{
+      &:after{
+        content: "";
+        display: block;
+        visibility: hidden;
+        clear: both;
+      }
+
+      label.labelInput{
+        margin-bottom: -6px;
+      }
+      .dropdown{
+        width: 100%;
+        .dropdownList{
+          width: 100%;
+        }
+      }
+      .inputWrapper{
+        width: 100%;
+        textarea,
+        input[type="password"],
+        input[type="email"],
+        input[type="text"]{
+          width: 100%;
+          background: #fff;
+        }
+
+      }
+      .screenshot_upload.left{
+        width: 100%;
+      }
+
+      select[multiple="multiple"]{
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      input[type='submit']{
+        min-width: 20px;
+      }
+    }
+
     border: {
       top: solid 1px $secondColor;
       left: solid 1px $thirdColor;

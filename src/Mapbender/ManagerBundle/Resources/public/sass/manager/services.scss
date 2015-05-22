@@ -47,26 +47,39 @@
   .metaText{@extend .smallText;}
   margin-bottom:$space;
 }
-.serviceMetaContainer{
-  $labelWidth:120px;
+.serviceMetaContainer {
+  $padding: 5px;
+  .labelText {
+    float: none;
+//    font-size: 13px;
+  }
+  .metaText {
+    line-height: 16px;
+    margin-bottom: 5px;
+    text-align: justify;
+    padding-bottom: $padding;
+  }
 
-  .labelText{width:$labelWidth;}
-  .metaText{margin-left:$labelWidth + $space/2;}
-  .metaUrl{word-wrap: break-word;}
+  .metaUrl {
+    word-wrap: break-word;
+
+  }
 }
+
 .serviceContactContainer{
   $labelWidth:90px;
 
   .labelText{width:$labelWidth; }
   .metaText{margin-left:$labelWidth + $space/2; }
 }
-.serviceServiceContainer{
-  $labelWidth:160px;
-
-  .labelText{width:$labelWidth;}
-  .metaText{margin-left:$labelWidth + $space/2; }
-  .metaFormats{line-height:1em;margin-top:0.6em;}
-}
+//.serviceServiceContainer{
+//  $labelWidth:160px;
+//
+//  .labelText{width:$labelWidth;}
+//  .metaText{margin-left:$labelWidth + $space/2; }
+//  .metaFormats{line-height:1em;margin-top:0.6em;}
+//}
+.serviceServiceContainer,
 .serviceLayersContainer{
   $labeText:85px;
 
