@@ -6,6 +6,9 @@ use Doctrine\DBAL\Connection;
 use Mapbender\CoreBundle\Component\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * HTMLElement.
+ */
 class HTMLElement extends Element
 {
 
@@ -37,7 +40,7 @@ class HTMLElement extends Element
     /**
      * @inheritdoc
      */
-    static public function listAssets()
+    public static function listAssets()
     {
         return array(
             'js'  => array('mapbender.element.htmlelement.js'),
@@ -59,7 +62,8 @@ class HTMLElement extends Element
     public static function getDefaultConfiguration()
     {
         return array(
-            'classes' => 'html-element-inline'
+            'classes' => 'html-element-inline',
+            'content' =>  ''
         );
     }
 
@@ -76,14 +80,15 @@ class HTMLElement extends Element
      */
     public function render()
     {
-        return $this->container->get('templating')
-            ->render('MapbenderCoreBundle:Element:htmlelement.html.twig',
-                array(
-                    'id'            => $this->getId(),
-                    'entity'        => $this->entity,
-                    'application'   => $this->application,
-                    'configuration' => $this->getConfiguration())
-            );
+        return $this->container->get('templating')->render(
+            'MapbenderCoreBundle:Element:htmlelement.html.twig',
+            array(
+                'id'            => $this->getId(),
+                'entity'        => $this->entity,
+                'application'   => $this->application,
+                'configuration' => $this->getConfiguration()
+            )
+        );
     }
 
     /**
@@ -94,7 +99,10 @@ class HTMLElement extends Element
         return 'MapbenderCoreBundle:ElementAdmin:htmlelement.html.twig';
     }
 
-    static public function getFormAssets()
+    /**
+     * @inheritdoc
+     */
+    public static function getFormAssets()
     {
         return array(
             'js'  => array(
@@ -191,9 +199,8 @@ class HTMLElement extends Element
         }
     }
 
-
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getConfiguration()
     {
