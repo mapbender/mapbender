@@ -92,6 +92,9 @@ class ApplicationYAMLMapper
                 ->setTemplate($definition['template'])
                 ->setExcludeFromList(isset($definition['excludeFromList'])?$definition['excludeFromList']:false)
                 ->setPublished($definition['published']);
+        if (isset($definition['custom_css'])) {
+            $application->setCustomCss($definition['custom_css']);
+        }
 
         if (array_key_exists('extra_assets', $definition)) {
             $application->setExtraAssets($definition['extra_assets']);
