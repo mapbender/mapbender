@@ -30,6 +30,7 @@ class Mobile extends Template
                 '@MapbenderMobileBundle/Resources/public/sass/theme/mobile.scss'
             ),
             'js' => array(
+                '/components/underscore/underscore-min.js',
                 '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
                 '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
                 '@MapbenderMobileBundle/Resources/public/js/mobile.js'
@@ -47,6 +48,7 @@ class Mobile extends Template
 //                '@MapbenderCoreBundle/Resources/public/sass/theme/mapbender3.scss'
             ),
             'js' => array(
+                '/components/underscore/underscore-min.js',
                 '@MapbenderMobileBundle/Resources/public/js/mapbender.mobile.js',
                 '@MapbenderMobileBundle/Resources/public/js/vendors/jquery.mobile.custom.min.js',
                 '@MapbenderMobileBundle/Resources/public/js/mobile.js',
