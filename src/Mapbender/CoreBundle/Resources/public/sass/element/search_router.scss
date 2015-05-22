@@ -1,10 +1,11 @@
-
 $searchRouterInputWidth:100%;
 .mb-element-searchrouter{
   display: block;
 
   .labelInput{
     width:90px;
+    font-weight: normal;
+    margin-bottom: 0;
     /*float:left;*/
   }
   .dropdown, .input{
