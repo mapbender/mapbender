@@ -52,29 +52,29 @@
             point: [
               {type: 'drawPoint'},
               {type: 'modifyFeature'},
-              //{type: 'moveFeature'},
-              //{type: 'selectFeature'},
-              //{type: 'removeSelected'}
+              {type: 'moveFeature'},
+              {type: 'selectFeature'},
+              {type: 'removeSelected'}
               //{type: 'removeAll'}
             ],
             line: [
               {type: 'drawLine'},
               {type: 'modifyFeature'},
-              //{type: 'moveFeature'},
-              //{type: 'selectFeature'},
-              //{type: 'removeSelected'},
+              {type: 'moveFeature'},
+              {type: 'selectFeature'},
+              {type: 'removeSelected'}
               //{type: 'removeAll'}
             ],
             polygon: [
               {type: 'drawPolygon'},
-              //{type: 'drawRectangle'},
-              //{type: 'drawCircle'},
-              //{type: 'drawEllipse'},
-              //{type: 'drawDonut'},
+              {type: 'drawRectangle'},
+              {type: 'drawCircle'},
+              {type: 'drawEllipse'},
+              {type: 'drawDonut'},
               {type: 'modifyFeature'},
-              //{type: 'moveFeature'},
-              //{type: 'selectFeature'},
-              //{type: 'removeSelected'},
+              {type: 'moveFeature'},
+              {type: 'selectFeature'},
+              {type: 'removeSelected'}
               //{type: 'removeAll'}
             ]
         },
@@ -126,11 +126,12 @@
                 var settings = this;
                 var option = $("<option/>");
                 var layer =  settings.layer = new OpenLayers.Layer.Vector(settings.label, {styleMap: styleMap});
+                var searchType = settings.searchType = settings.hasOwnProperty("searchType") ? settings.searchType : "currentExtent";
 
                 option.val(schemaName).html(settings.label);
                 widget.map.addLayer(layer);
 
-                var frame = settings.frame = $("<div/>").addClass('frame').data(settings);
+                var frame = settings.frame = $("<div/>").addClass('frame').data("schemaSettings", settings);
                 var columns = [];
                 var newFeatureDefaultProperties = {};
                 if( !settings.hasOwnProperty("tableFields")){
@@ -242,11 +243,12 @@
                         }
                     }, {
                         type:     'checkbox',
-                        cssClass: 'onlyExtent' + schemaName,
-                        title:    'current extent',
+                        cssClass: 'onlyExtent',
+                        title:    'Current extent',
+                        checked:  true,
                         change:   function() {
+                            settings.searchType = $('.onlyExtent', settings.frame).prop('checked') ? "currentExtent" : "all";
                             widget._getData();
-
                         }
                     }]
                 });
@@ -256,17 +258,16 @@
                 frames.push(settings);
                 frame.css('display','none');
 
-                frame.data(settings);
+                frame.data("schemaSettings", settings);
 
                 element.append(frame);
-                option.data(settings);
-
+                option.data("schemaSettings",settings);
                 selector.append(option);
             });
 
             function onSelectorChange(){
                 var option = selector.find(":selected");
-                var settings = option.data();
+                var settings = option.data("schemaSettings");
                 var frame = settings.frame;
                 var table = settings.table;
 
@@ -349,7 +350,6 @@
                     tableWidget.showByRow(domRow);
                     domRow.addClass('hover');
                     feature.layer.drawFeature(feature,'select');
-//                    debugger;
                 }
             };
 
@@ -536,22 +536,19 @@
             return features;
         },
 
-        _getData: function(){
+        _getData: function() {
             var self = this;
             var settings = self.currentSettings;
             var proj = this.map.getProjectionObject();
             var extent = this.map.getExtent();
             var tableApi = settings.table.resultTable('getApi');
-
-
             var request = {
-                srid: proj.proj.srsProjNumber,
-                //intersectGeometry: extent.toGeometry().toString(),
-                maxResults: settings.hasOwnProperty('maxResults')?settings.maxResults:1000,
-                schema: settings.schemaName
+                srid:       proj.proj.srsProjNumber, //intersectGeometry: extent.toGeometry().toString(),
+                maxResults: settings.hasOwnProperty('maxResults') ? settings.maxResults : 1000,
+                schema:     settings.schemaName
             };
 
-            if($('.onlyExtent'+settings.schemaName).prop('checked')){
+            if(settings.searchType == "currentExtent") {
                 request.intersectGeometry = extent.toGeometry().toString();
             }
 
@@ -560,8 +557,8 @@
 
                     // - find all new (not saved) features
                     // - collect it to the select result list
-                    $.each(tableApi.data(),function(i, tableJson){
-                        if(tableJson.hasOwnProperty('isNew')){
+                    $.each(tableApi.data(), function(i, tableJson) {
+                        if(tableJson.hasOwnProperty('isNew')) {
                             geoJson.features.push(tableJson);
                         }
                     });
