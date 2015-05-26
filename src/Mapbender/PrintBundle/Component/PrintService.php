@@ -19,17 +19,7 @@ class PrintService
 
     public function doPrint($data)
     {
-//        print "<pre>";
-//        print_r($data);
-//        print "</pre>";
-//        die();
-
         $this->setup($data);
-
-//        print "<pre>";
-//        print_r($this->conf);
-//        print "</pre>";
-//        die();
 
         if ($data['rotation'] == 0) {
             $this->createFinalMapImage();
@@ -828,7 +818,7 @@ class PrintService
         $url = $signer->signUrl($unsignedUrl);
 
         $attributes = array();
-        $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:genericProxy';
+        $attributes['_controller'] = 'OwsProxy3CoreBundle:OwsProxy:entryPoint';
         $subRequest = new Request(array(
             'url' => $url
             ), array(), $attributes, array(), array(), array(), '');
