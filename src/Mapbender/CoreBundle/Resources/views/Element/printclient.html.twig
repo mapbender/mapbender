@@ -48,7 +48,7 @@
                 <div class="clearContainer"></div>
                 <div id="extra_fields"></div>
                 <div class="clearContainer"></div>
-                {% if configuration.legend == 1 %}
+                {% if configuration.legend is defined and configuration.legend == 1 %}
                     <div class="checkWrapper left iconCheckbox iconCheckboxActive " data-icon="iconCheckbox">
                         <input class="checkbox" type="checkbox" name="printLegend" value="1" checked="checked">
                     </div>
