@@ -922,6 +922,10 @@
         <source>mb.core.featureinfo.error.noresult</source>
         <target>kein Ergebnis</target>
       </trans-unit>
+      <trans-unit id="c093a9f43f4ac6e10fa05a048a82f32d" resname="mb.core.admin.printclient.label.legend">
+        <source>mb.core.admin.printclient.label.legend</source>
+        <target>Legende drucken</target>
+      </trans-unit>
       <trans-unit id="0a0018ea0813e145104cea653eab6d17" resname="mb.core.printclient.label.legend">
         <source>mb.core.printclient.label.legend</source>
         <target>Legende drucken</target>

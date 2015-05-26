@@ -48,10 +48,12 @@
                 <div class="clearContainer"></div>
                 <div id="extra_fields"></div>
                 <div class="clearContainer"></div>
-                <div class="checkWrapper left iconCheckbox iconCheckboxActive " data-icon="iconCheckbox">
-                    <input class="checkbox" type="checkbox" name="printLegend" value="1" checked="checked">
-                </div>
-                <label class="labelCheck">{{ 'mb.core.printclient.label.legend' | trans }}</label>
+                {% if configuration.legend == 1 %}
+                    <div class="checkWrapper left iconCheckbox iconCheckboxActive " data-icon="iconCheckbox">
+                        <input class="checkbox" type="checkbox" name="printLegend" value="1" checked="checked">
+                    </div>
+                    <label class="labelCheck">{{ 'mb.core.printclient.label.legend' | trans }}</label>
+                {% endif %}
                 <div id="layers"></div>
                 <input type="submit" style="display: none"/>
                 <div class="clearContainer"></div>
