@@ -286,7 +286,7 @@ Mapbender.Model = {
             centroid.y + 0.5 * h + buffer_bounds.h);
     },
     _convertLayerDef: function(layerDef) {
-        var l = $.extend({}, Mapbender.source[layerDef.type].create(layerDef), {
+        var l = $.extend({}, Mapbender.source[layerDef.type.toLowerCase()].create(layerDef), {
             mapbenderId: layerDef.id
         });
         return l;
@@ -507,7 +507,7 @@ Mapbender.Model = {
      */
     _checkAndRedrawSource: function(toChangeOpts) {
         var source = this.getSource(toChangeOpts.sourceIdx);
-        var result = Mapbender.source[source.type].changeOptions(source, this.getScale(), toChangeOpts);
+        var result = Mapbender.source[source.type.toLowerCase()].changeOptions(source, this.getScale(), toChangeOpts);
         var mqLayer = this.map.layersList[source.mqlid];
         if (this._resetSourceVisibility(mqLayer, result.layers, result.infolayers)) {
             mqLayer.olLayer.redraw();
@@ -785,7 +785,7 @@ Mapbender.Model = {
                 source.ollid = mapQueryLayer.olLayer.id;
                 mapQueryLayer.source = source;
                 this._addLayerMaxExtent(mapQueryLayer);
-                Mapbender.source[source.type].postCreate(source, mapQueryLayer);
+                Mapbender.source[source.type.toLowerCase()].postCreate(source, mapQueryLayer);
                 mapQueryLayer.olLayer.events.register("loadstart", mapQueryLayer.olLayer, function(e) {
                     self._sourceLoadStart(e);
                 });

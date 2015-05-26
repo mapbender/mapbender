@@ -138,9 +138,10 @@ class Map extends Element
                 }
             }
             if (!$exists) {
-                throw new \RuntimeException('The srs: "' . $srs_req . '" does not supported.');
+                $this->container->get('logger')->error('The requested srs ' . $srs_req . ' is not supported by this application.');
+            } else {
+                $configuration = array_merge($configuration, array('targetsrs' => strtoupper($srs_req)));
             }
-            $configuration = array_merge($configuration, array('targetsrs' => strtoupper($srs_req)));
         }
 
         $pois = $this->container->get('request')->get('poi');
