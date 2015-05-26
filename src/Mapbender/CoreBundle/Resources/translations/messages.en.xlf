@@ -937,6 +937,7 @@
       <trans-unit id="c02ac4b03faa03bd83e61ab066ea39f1" resname="mb.geosource.image_error.statuscode">
         <source>mb.geosource.image_error.statuscode</source>
         <target>HTTP status code</target>
+      </trans-unit>
       <trans-unit id="c093a9f43f4ac6e10fa05a048a82f32d" resname="mb.core.admin.printclient.label.legend">
         <source>mb.core.admin.printclient.label.legend</source>
         <target>Print legend</target>
