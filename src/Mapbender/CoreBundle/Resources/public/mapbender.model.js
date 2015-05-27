@@ -12,6 +12,8 @@ Mapbender.Model = {
     layersMaxExtent: {},
     highlightLayer: null,
     baseId: 0,
+    // Hash map query layers settings
+    _layersHash: {},
     init: function(mbMap) {
         this.mbMap = mbMap;
         var self = this;
@@ -534,7 +536,7 @@ Mapbender.Model = {
             if (self._resetSourceVisibility(mqLayer, result.layers, result.infolayers)) {
                 mqLayer.olLayer.redraw();
             }
-            for (child in result.changed.children) {
+            for (var child in result.changed.children) {
                 if (result.changed.children[child].state
                     && typeof result.changed.children[child].state.outOfScale !== 'undefined') {
                     var changed = {
@@ -553,16 +555,35 @@ Mapbender.Model = {
 
         });
     },
+
+    /**
+     * Check if OpenLayer layer need to be redraw
+     *
+     * @TODO: infoLayers should be set outside of the function
+     *
+     * @param mqLayer map query layer
+     * @param layers layer name string array
+     * @param infolayers Various layers like: WMS layer; WFS layers; WFS Feature; WMTS Layers...
+     *
+     * @returns {boolean}
+     * @private
+     */
     _resetSourceVisibility: function(mqLayer, layers, infolayers) {
-        if (layers.length === 0) {
+        mqLayer.olLayer.queryLayers = infolayers;
+        if(mqLayer.hasOwnProperty("id")) {
+            if(this._layersHash.hasOwnProperty(mqLayer.id) && this._layersHash[mqLayer.id] == layers.toString()) {
+                return false;
+            }
+            this._layersHash[mqLayer.id] = layers.toString();
+        }
+
+        if(layers.length === 0) {
             mqLayer.olLayer.setVisibility(false);
             mqLayer.visible(false);
             mqLayer.olLayer.params.LAYERS = layers;
-            mqLayer.olLayer.queryLayers = infolayers;
             return false;
         } else {
             mqLayer.olLayer.params.LAYERS = layers;
-            mqLayer.olLayer.queryLayers = infolayers;
             mqLayer.olLayer.setVisibility(true);
             mqLayer.visible(true);
             return true;
