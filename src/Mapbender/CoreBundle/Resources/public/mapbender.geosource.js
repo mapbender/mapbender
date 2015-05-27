@@ -73,12 +73,12 @@ Mapbender.Geo.SourceHandler = Class({
 
     },
     'public function postCreate': function(olLayer) {
-        
+
     },
     'public function changeProjection': function(source, projection) {
     },
     'public function onLoadStart': function(source) {
-        
+
     },
     'public function onLoadError': function(imgEl, sourceId, projection, callback) {
         var loadError = {
@@ -685,4 +685,3 @@ Mapbender.Geo.SourceHandler = Class({
 
 // old declaration
 Mapbender['source'] = {};
-
