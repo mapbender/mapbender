@@ -328,7 +328,7 @@
       </trans-unit>
       <trans-unit id="3a1ad035c9ded1d5f15ad139a3180479" resname="mb.core.legend.tag.legend">
         <source>mb.core.legend.tag.legend</source>
-		<target>Legenda</target>
+        <target>Legenda</target>
       </trans-unit>
       <trans-unit id="6ff9a6860becdb38fc62382a5a94d19f" resname="mb.core.map.class.title">
         <source>mb.core.map.class.title</source>
@@ -901,6 +901,22 @@
       <trans-unit id="c13aa9d4bce372c110a373dad4519db8" resname="mb.core.zoombar.zoomout">
         <source>mb.core.zoombar.zoomout</source>
         <target>Reduzir</target>
+      </trans-unit>
+      <trans-unit id="f22da785244a98eb26f463fe681cc872" resname="mb.geosource.image_error.datails">
+        <source>mb.geosource.image_error.datails</source>
+        <target>__mb.geosource.image_error.datails</target>
+      </trans-unit>
+      <trans-unit id="4115a32e09882121bb4a410859d5657e" resname="mb.geosource.image_error.exception">
+        <source>mb.geosource.image_error.exception</source>
+        <target>__mb.geosource.image_error.exception</target>
+      </trans-unit>
+      <trans-unit id="c02ac4b03faa03bd83e61ab066ea39f1" resname="mb.geosource.image_error.statuscode">
+        <source>mb.geosource.image_error.statuscode</source>
+        <target>__mb.geosource.image_error.statuscode</target>
+      </trans-unit>
+      <trans-unit id="c093a9f43f4ac6e10fa05a048a82f32d" resname="mb.core.admin.printclient.label.legend">
+        <source>mb.core.admin.printclient.label.legend</source>
+        <target>__mb.core.admin.printclient.label.legend</target>
       </trans-unit>
     </body>
   </file>
