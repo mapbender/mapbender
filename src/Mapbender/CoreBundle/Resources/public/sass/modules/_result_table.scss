@@ -15,6 +15,7 @@
         font-size: $uiFontSize;
         padding: 3px 6px;
         @include transition(all, 0.3s, ease-in-out);
+        white-space: nowrap;
         &:focus {
           box-shadow: 0 0 5px $buttonFirstActiveColor;
         }
@@ -46,11 +47,13 @@
         }
       }
       > tbody > tr {
-        &.odd{
+        cursor: pointer;
+
+        &.odd {
           background-color: #F8F8F8;
         }
 
-        &.even{
+        &.even {
           background-color: #EBEBEB;;
         }
         &:hover{
@@ -73,8 +76,9 @@
               white-space: nowrap;
               float: right;
               padding: 0px;
+              transition: opacity 0.5s ease-in-out 0s;
               > button {
-                margin-left: -1px;
+                margin-right: -1px;
                 font-size: 0;
                 padding: 0px;
                 &:first-child {
