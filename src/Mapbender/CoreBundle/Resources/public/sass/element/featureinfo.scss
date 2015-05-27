@@ -15,6 +15,10 @@
 
 }
 
-.popupContent .contentItem,.popupContent .container,.featureInfoTabContainer {
-    height: 90%;
+.featureInfoTabContainer {
+    top: 25px;
+    bottom: 35px;
+    position: absolute;
+    left: 25px;
+    right: 25px;
 }
