@@ -128,28 +128,28 @@
                 var searchType = settings.searchType = settings.hasOwnProperty("searchType") ? settings.searchType : "currentExtent";
                 var allowDelete =  settings.allowDelete = settings.hasOwnProperty("allowDelete") ? settings.allowDelete :  true;
                 var deleteButton = {
-                            title: 'Remove',
-                            className: 'remove',
-                            cssClass: 'critical',
-                            onClick: function(feature, ui) {
+                    title:     'Remove',
+                    className: 'remove',
+                    cssClass:  'critical',
+                    onClick:   function(feature, ui) {
                         var tr = ui.closest('tr');
                         var tableApi = table.resultTable('getApi');
                         var row = tableApi.row(tr);
                         var olFeature;
 
-                        if(feature.hasOwnProperty('isNew')){
-                            olFeature =  layer.getFeatureById(feature.id);
-                        }else{
-                            olFeature =  layer.getFeatureByFid(feature.id);
-                            if(!Mapbender.confirm('Aus der Datenbank löschen?')){
+                        if(feature.hasOwnProperty('isNew')) {
+                            olFeature = layer.getFeatureById(feature.id);
+                        } else {
+                            olFeature = layer.getFeatureByFid(feature.id);
+                            if(!Mapbender.confirm('Aus der Datenbank löschen?')) {
                                 return;
                             }
 
-                            widget.query('delete',{
-                                schema: schemaName,
+                            widget.query('delete', {
+                                schema:  schemaName,
                                 feature: feature
-                            }).done(function(fid){
-                                $.notify('erfolgreich gelöscht','info');
+                            }).done(function(fid) {
+                                $.notify('erfolgreich gelöscht', 'info');
                             });
                         }
 
@@ -174,7 +174,6 @@
                     }
                 };
                 var buttons = [editButton];
-
                 if(allowDelete) {
                     buttons.push(deleteButton);
                 }
@@ -213,6 +212,13 @@
                 var toolset = widget.toolsets[settings.featureType.geomType];
                 if(settings.hasOwnProperty("toolset")){
                     toolset = settings.toolset;
+                }
+                if(!allowDelete){
+                    $.each(toolset,function(k,tool){
+                        if(tool.type == "removeSelected"){
+                            toolset.splice(k,1);
+                        }
+                    })
                 }
 
                 frame.generateElements({
@@ -276,20 +282,25 @@
 
             function deactivateFrame(settings) {
                 var frame = settings.frame;
-                var tableApi = settings.table.resultTable('getApi');
+                //var tableApi = settings.table.resultTable('getApi');
                 var layer = settings.layer;
 
                 frame.css('display', 'none');
-                layer.removeAllFeatures();
-                tableApi.clear();
+                layer.setVisibility(false);
+                //layer.redraw();
+                //layer.removeAllFeatures();
+                //tableApi.clear();
             }
 
             function activateFrame(settings) {
                 var frame = settings.frame;
+                var layer = settings.layer;
 
                 widget.activeLayer = settings.layer;
                 widget.schemaName = settings.schemaName;
                 widget.currentSettings = settings;
+                layer.setVisibility(true);
+                //layer.redraw();
 
                 frame.css('display', 'block');
             }
@@ -663,14 +674,38 @@
             var widget = this;
             var settings = widget.currentSettings;
             var tableApi = settings.table.resultTable('getApi');
+            var features = settings.features;
             var geoJsonReader = new OpenLayers.Format.GeoJSON();
+            var loadedFeatures = [];
 
-            //console.log(featureCollection);
-
+            // Break if something goes wrong
             if(!featureCollection || !featureCollection.hasOwnProperty("features")) {
-                Mapbender.error("Feature load error", featureCollection);
+                Mapbender.error("Feature load error", featureCollection, xhr);
                 return;
             }
+
+            // Filter feature loaded before
+            $.each(featureCollection.features, function(i, feature) {
+                if(!features.loaded.hasOwnProperty(feature.id)) {
+                    features.loaded[feature.id] = feature;
+                    loadedFeatures.push(feature);
+                    //console.log("add feature ", feature);
+                }
+            });
+
+            if(loadedFeatures.length){
+                // Replace feature collection
+                featureCollection.features = loadedFeatures;
+
+                // Add features to map
+                settings.layer.addFeatures(geoJsonReader.read(featureCollection));
+
+                // Add features to table
+                tableApi.rows.add(featureCollection.features);
+                tableApi.draw();
+            }
+            return;
+
 
             // - find all new (not saved) features
             // - collect it to the select result list
@@ -682,7 +717,6 @@
 
             //settings.layer.removeAllFeatures();
             settings.layer.addFeatures(geoJsonReader.read(featureCollection));
-
             tableApi.clear();
             tableApi.rows.add(featureCollection.features);
             tableApi.draw();
