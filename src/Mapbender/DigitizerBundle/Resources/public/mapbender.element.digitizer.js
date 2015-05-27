@@ -188,9 +188,11 @@
                     console.error("Digitizer table fields isn't defined!",settings );
                 }
 
-                $.each(settings.tableFields, function(fieldName){
+                $.each(settings.tableFields, function(fieldName, fieldSettings) {
                     newFeatureDefaultProperties[fieldName] = "";
-                    columns.push({data: "properties."+fieldName, title: this.label});
+                    fieldSettings.title = fieldSettings.label;
+                    fieldSettings.data = "properties." + fieldName;
+                    columns.push(fieldSettings);
                 });
 
                 var table = settings.table = $("<div/>").resultTable({

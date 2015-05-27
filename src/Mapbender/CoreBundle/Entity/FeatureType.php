@@ -264,13 +264,23 @@ class FeatureType extends ContainerAware
         }
 
         /** @var Feature $feature */
-        $feature    = $this->create($featureData);
-        // Insert if no ID given
-        if (!$autoUpdate || !$feature->hasId()) {
-            $result = $this->insert($feature);
-        } // Replace if has ID
-        else {
-            $result = $this->update($feature);
+        $feature = $this->create($featureData);
+
+        try {
+            // Insert if no ID given
+            if (!$autoUpdate || !$feature->hasId()) {
+                $result = $this->insert($feature);
+            } // Replace if has ID
+            else {
+                $result = $this->update($feature);
+            }
+
+        } catch (Exception $e) {
+            $result = array(
+                "exception"   => $e,
+                "feature"     => $feature,
+                "featureData" => $featureData
+            );
         }
 
         return $result;
