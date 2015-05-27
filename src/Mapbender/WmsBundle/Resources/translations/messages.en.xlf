@@ -706,6 +706,18 @@
         <source>mb.wms.wmsloader.repo.instance.vendorspecific.label</source>
         <target>Vendor specific</target>
       </trans-unit>
+      <trans-unit id="a0b566abaccf9a7b4c3e8d7a45660c4f" resname="mb.wms.source.image_error.datails">
+        <source>mb.wms.source.image_error.datails</source>
+        <target>__mb.wms.source.image_error.datails</target>
+      </trans-unit>
+      <trans-unit id="04541f44b11f3f7128ed8f4fac7874a7" resname="mb.wms.source.image_error.exception">
+        <source>mb.wms.source.image_error.exception</source>
+        <target>__mb.wms.source.image_error.exception</target>
+      </trans-unit>
+      <trans-unit id="e162f0ce53da6cde57332698cb2e8f4d" resname="mb.wms.source.image_error.statuscode">
+        <source>mb.wms.source.image_error.statuscode</source>
+        <target>__mb.wms.source.image_error.statuscode</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
