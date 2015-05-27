@@ -51,7 +51,7 @@
         toolsets: {
             point: [
               {type: 'drawPoint'},
-              {type: 'modifyFeature'},
+              //{type: 'modifyFeature'},
               {type: 'moveFeature'},
               {type: 'selectFeature'},
               {type: 'removeSelected'}
