@@ -567,7 +567,7 @@
             var geometry = bbox.toGeometry();
             var _request = $.extend(true, {intersectGeometry: geometry.toString()}, request);
 
-            if(!debug){
+            if(debug){
                 if(!widget._boundLayer) {
                     widget._boundLayer = new OpenLayers.Layer.Vector("bboxGeometry");
                     widget.map.addLayer(widget._boundLayer);
@@ -605,45 +605,49 @@
                 schema:     settings.schemaName
             };
 
-            if(settings.searchType == "currentExtent") {
-                if(settings.hasOwnProperty("lastBbox")) {
-                    var bbox = extent.toGeometry().getBounds();
-                    var lastBbox = settings.lastBbox;
+            switch (settings.searchType){
+                case  "currentExtent":
+                    if(settings.hasOwnProperty("lastBbox")) {
+                        var bbox = extent.toGeometry().getBounds();
+                        var lastBbox = settings.lastBbox;
 
-                    var topDiff = bbox.top - lastBbox.top;
-                    var leftDiff = bbox.left - lastBbox.left;
-                    var rightDiff = bbox.right - lastBbox.right;
-                    var bottomDiff = bbox.bottom - lastBbox.bottom;
+                        var topDiff = bbox.top - lastBbox.top;
+                        var leftDiff = bbox.left - lastBbox.left;
+                        var rightDiff = bbox.right - lastBbox.right;
+                        var bottomDiff = bbox.bottom - lastBbox.bottom;
 
-                    var sidesChanged = {
-                        left:   leftDiff < 0,
-                        bottom: bottomDiff < 0,
-                        right:  rightDiff > 0,
-                        top:    topDiff > 0
-                    };
+                        var sidesChanged = {
+                            left:   leftDiff < 0,
+                            bottom: bottomDiff < 0,
+                            right:  rightDiff > 0,
+                            top:    topDiff > 0
+                        };
 
-                    //console.log(sidesChanged);
+                        //console.log(sidesChanged);
 
-                    if(sidesChanged.left) {
-                        widget._queryIntersect(request, new OpenLayers.Bounds(bbox.left, bbox.bottom, bbox.left + leftDiff * -1, bbox.top));
+                        if(sidesChanged.left) {
+                            widget._queryIntersect(request, new OpenLayers.Bounds(bbox.left, bbox.bottom, bbox.left + leftDiff * -1, bbox.top));
+                        }
+                        if(sidesChanged.right) {
+                            widget._queryIntersect(request, new OpenLayers.Bounds(bbox.right - rightDiff, bbox.bottom, bbox.right, bbox.top));
+                        }
+                        if(sidesChanged.top) {
+                            widget._queryIntersect(request, new OpenLayers.Bounds(bbox.left - leftDiff, bbox.top - topDiff, bbox.right - rightDiff, bbox.top));
+                        }
+                        if(sidesChanged.bottom) {
+                            widget._queryIntersect(request, new OpenLayers.Bounds(bbox.left - leftDiff, bbox.bottom + bottomDiff * -1, bbox.right - rightDiff, bbox.bottom));
+                        }
+                    } else {
+                        widget._queryIntersect(request, extent);
                     }
-                    if(sidesChanged.right) {
-                        widget._queryIntersect(request, new OpenLayers.Bounds(bbox.right - rightDiff, bbox.bottom, bbox.right, bbox.top));
-                    }
-                    if(sidesChanged.top) {
-                        widget._queryIntersect(request, new OpenLayers.Bounds(bbox.left - leftDiff, bbox.top - topDiff, bbox.right - rightDiff, bbox.top));
-                    }
-                    if(sidesChanged.bottom) {
-                        widget._queryIntersect(request, new OpenLayers.Bounds(bbox.left - leftDiff, bbox.bottom + bottomDiff * -1, bbox.right - rightDiff, bbox.bottom));
-                    }
-                } else {
-                    widget._queryIntersect(request, extent);
-                }
-                settings.lastBbox = $.extend(true, {}, extent.toGeometry().getBounds());
-            }else{
-                widget.query('select', request).done(function(featureCollection) {
-                    widget._onFeatureCollectionLoaded(featureCollection, this);
-                })
+                    settings.lastBbox = $.extend(true, {}, extent.toGeometry().getBounds());
+                    break;
+
+                default: // all
+                    widget.query('select', request).done(function(featureCollection) {
+                        widget._onFeatureCollectionLoaded(featureCollection, this);
+                    });
+                    break;
             }
         },
 
