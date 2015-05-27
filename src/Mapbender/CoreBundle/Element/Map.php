@@ -45,9 +45,10 @@ class Map extends Element
      */
     public static function getDefaultConfiguration()
     {
+        /* "standardized rendering pixel size" for WMTS 0.28 mm × 0.28 mm -> DPI for WMTS: 90.714285714 */
         return array(
             'layersets' => array(),
-            'dpi' => 72,
+            'dpi' => 90.714,// DPI for WMTS: 90.714285714
             'srs' => 'EPSG:4326',
             'otherSrs' => array("EPSG:31466", "EPSG:31467"),
             'units' => 'degrees',
@@ -89,19 +90,6 @@ class Map extends Element
     public function getConfiguration()
     {
         $configuration = parent::getConfiguration();
-
-        if (isset($configuration["scales"])) {
-            $scales = array();
-            if (is_string($configuration["scales"])) { // from database
-                $scales = preg_split("/\s?[\,\;]\s?/", $configuration["scales"]);
-            } elseif (is_array($configuration["scales"])) { // from twig
-                $scales = $configuration["scales"];
-            }
-            // sort scales high to low
-            $scales                  = array_map(create_function('$value', 'return (int)$value;'), $scales);
-            arsort($scales, SORT_NUMERIC);
-            $configuration["scales"] = $scales;
-        }
         $extra = array();
         // @TODO: Move into DataTransformer of MapAdminType
         $configuration = array_merge(array('extra' => $extra), $configuration);
@@ -138,7 +126,7 @@ class Map extends Element
                 }
             }
         }
-
+        $allsrs = array_unique($allsrs, SORT_REGULAR);
         $configuration["srsDefs"] = $this->getSrsDefinitions($allsrs);
         $srs_req                  = $this->container->get('request')->get('srs');
         if ($srs_req) {
@@ -150,10 +138,10 @@ class Map extends Element
                 }
             }
             if (!$exists) {
-                throw new \RuntimeException('The srs: "' . $srs_req
-                . '" does not supported.');
+                $this->container->get('logger')->error('The requested srs ' . $srs_req . ' is not supported by this application.');
+            } else {
+                $configuration = array_merge($configuration, array('targetsrs' => strtoupper($srs_req)));
             }
-            $configuration = array_merge($configuration, array('targetsrs' => strtoupper($srs_req)));
         }
 
         $pois = $this->container->get('request')->get('poi');
@@ -193,12 +181,6 @@ class Map extends Element
         }
 
         $configuration['extra'] = $extra;
-
-        if (!isset($configuration['scales'])) {
-            throw new \RuntimeException('The scales does not defined.');
-        } elseif (is_string($configuration['scales'])) {
-            $configuration['scales'] = preg_split("/\s?,\s?/", $configuration['scales']);
-        }
         if (!isset($configuration['layersets']) && isset($configuration['layerset'])) {# "layerset" deprecated start
             $configuration['layersets'] = array($configuration['layerset']);
         }# "layerset" deprecated end

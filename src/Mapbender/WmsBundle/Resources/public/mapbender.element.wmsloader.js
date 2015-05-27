@@ -263,6 +263,7 @@
             var mbMap = $('#' + self.options.target).data('mapbenderMbMap');
             $.each(sourceDefs, function(idx, sourceDef) {
                 var opts = {configuration: {options: {url: sourceDef.configuration.options.url}}};
+                sourceDef.configuration.status = 'ok';
                 if(!sourceOpts.global.mergeSource){
                     mbMap.addSource(sourceDef, null, null);
                 }else if(mbMap.model.findSource(opts).length === 0){

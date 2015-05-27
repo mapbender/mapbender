@@ -1,12 +1,13 @@
 <?php
-namespace Mapbender\CoreBundle\Component;
-
-use Mapbender\CoreBundle\Component\Signer;
 
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
+namespace Mapbender\CoreBundle\Component;
+
+use Mapbender\CoreBundle\Component\Signer;
 
 /**
  * Description of SourceConfigurationOptions
@@ -18,50 +19,27 @@ abstract class InstanceConfigurationOptions
     /**
      * ORM\Column(type="string", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $url;
-
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $format;
-
-    /**
-     * ORM\Column(type="string", nullable=true)
-     */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $infoformat;
 
     /**
      * ORM\Column(type="float", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $opacity;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $proxy;
 
     /**
      * ORM\Column(type="boolean", nullable=true)
      */
-    //@TODO Doctrine bug: "protected" replaced with "public"
     public $visible;
 
     /**
-     * ORM\Column(type="boolean", nullable=true)
-     */
-    //@TODO Doctrine bug: "protected" replaced with "public"
-    public $transparency;
-
-    /**
      * Sets an url
-     * 
      * @param string $url source url
-     * @return SierviceConfigurationOptions 
+     * @return SierviceConfigurationOptions
      */
     public function setUrl($url)
     {
@@ -71,7 +49,6 @@ abstract class InstanceConfigurationOptions
 
     /**
      * Returns a source url
-     * 
      * @return string url
      */
     public function getUrl()
@@ -80,54 +57,9 @@ abstract class InstanceConfigurationOptions
     }
 
     /**
-     * Sets a format
-     * 
-     * @param string $format source format
-     * @return SierviceConfigurationOptions 
-     */
-    public function setFormat($format)
-    {
-        $this->format = $format;
-        return $this;
-    }
-
-    /**
-     * Returns a format
-     * 
-     * @return string format
-     */
-    public function getFormat()
-    {
-        return $this->format;
-    }
-
-    /**
-     * Sets a infoformat
-     * 
-     * @param string $infoformat source infoformat
-     * @return SierviceConfigurationOptions 
-     */
-    public function setInfoformat($infoformat)
-    {
-        $this->infoformat = $infoformat;
-        return $this;
-    }
-
-    /**
-     * Returns an infoformat
-     * 
-     * @return string infoformat
-     */
-    public function getInfoformat()
-    {
-        return $this->infoformat;
-    }
-
-    /**
      * Sets an opacity
-     * 
      * @param float $opacity source opacity
-     * @return SierviceConfigurationOptions 
+     * @return SierviceConfigurationOptions
      */
     public function setOpacity($opacity)
     {
@@ -137,7 +69,6 @@ abstract class InstanceConfigurationOptions
 
     /**
      * Returns an opacity
-     * 
      * @return float opacity
      */
     public function getOpacity()
@@ -147,9 +78,8 @@ abstract class InstanceConfigurationOptions
 
     /**
      * Sets a proxy
-     * 
      * @param boolean $proxy source proxy
-     * @return SierviceConfigurationOptions 
+     * @return SierviceConfigurationOptions
      */
     public function setProxy($proxy)
     {
@@ -159,7 +89,6 @@ abstract class InstanceConfigurationOptions
 
     /**
      * Returns a proxy
-     * 
      * @return boolean proxy
      */
     public function getProxy()
@@ -169,9 +98,8 @@ abstract class InstanceConfigurationOptions
 
     /**
      * Sets a visible
-     * 
      * @param boolean $visible source visibility
-     * @return SierviceConfigurationOptions 
+     * @return SierviceConfigurationOptions
      */
     public function setVisible($visible)
     {
@@ -181,7 +109,6 @@ abstract class InstanceConfigurationOptions
 
     /**
      * Returns a visible
-     * 
      * @return boolean visible
      */
     public function getVisible()
@@ -190,30 +117,7 @@ abstract class InstanceConfigurationOptions
     }
 
     /**
-     * Sets a transparency
-     * 
-     * @param boolean $transparency source transparency
-     * @return SierviceConfigurationOptions 
-     */
-    public function setTransparency($transparency)
-    {
-        $this->transparency = $transparency;
-        return $this;
-    }
-
-    /**
-     * Returns a transparency
-     * 
-     * @return boolean transparency
-     */
-    public function getTransparency()
-    {
-        return $this->transparency;
-    }
-
-    /**
      * Sings a url
-     * 
      * @return boolean transparency
      */
     public function signUrl(Signer $signer = null)
@@ -225,14 +129,12 @@ abstract class InstanceConfigurationOptions
 
     /**
      * Returns InstanceConfigurationOptions as array
-     * 
      * @return array
      */
-    public abstract function toArray();
+    abstract public function toArray();
 
     /**
      * Creates an InstanceConfigurationOptions from options
-     * 
      * @param array $options array with options
      * @return InstanceConfigurationOptions
      */
@@ -240,6 +142,4 @@ abstract class InstanceConfigurationOptions
     {
         
     }
-
 }
-

@@ -9,7 +9,7 @@
 namespace Mapbender\CoreBundle\Component;
 
 use Mapbender\CoreBundle\Entity\SourceInstance;
-use Mapbender\CoreBundle\Component\SourceItem;
+use Mapbender\CoreBundle\Entity\SourceItem;
 
 /**
  * Description of SourceInstanceItemEntityHandler

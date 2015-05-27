@@ -5,20 +5,19 @@ namespace Mapbender\WmsBundle;
 use Mapbender\CoreBundle\Component\MapbenderBundle;
 
 /**
- * 
+ * MapbenderWmsBundle
  */
-class MapbenderWmsBundle
-        extends MapbenderBundle
+class MapbenderWmsBundle extends MapbenderBundle
 {
+
     /**
      * @inheritdoc
      */
     public function getElements()
     {
         return array(
-            'Mapbender\WmsBundle\Element\WmsLoader',
-            'Mapbender\WmsBundle\Element\DimensionsHandler'
-            );
+            'Mapbender\WmsBundle\Element\WmsLoader'
+        );
     }
 
     /**
@@ -37,5 +36,4 @@ class MapbenderWmsBundle
             )
         );
     }
-
 }

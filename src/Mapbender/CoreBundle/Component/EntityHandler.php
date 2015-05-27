@@ -9,6 +9,7 @@ namespace Mapbender\CoreBundle\Component;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
+use Mapbender\CoreBundle\Entity\SourceInstance;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 //use 
@@ -26,7 +27,7 @@ class EntityHandler
     protected $container;
 
     /**
-     * @var mixed entity
+     * @var mixed|SourceInstance entity
      */
     protected $entity;
 
@@ -36,6 +37,9 @@ class EntityHandler
         $this->entity    = $entity;
     }
 
+    /**
+     * @return mixed|SourceInstance|null
+     */
     public function getEntity()
     {
         return $this->entity;
@@ -67,6 +71,11 @@ class EntityHandler
         return $container->get('doctrine')->getRepository($entityClass)->find($entityId);
     }
 
+    /**
+     * @param ContainerInterface $container
+     * @param  SourceInstance $entity
+     * @return SourceInstanceEntityHandler|null
+     */
     public static function createHandler(ContainerInterface $container, $entity)
     {
         $bundles            = $container->get('kernel')->getBundles();

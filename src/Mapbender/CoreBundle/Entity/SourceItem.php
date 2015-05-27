@@ -6,9 +6,10 @@
  * and open the template in the editor.
  */
 
-namespace Mapbender\CoreBundle\Component;
+namespace Mapbender\CoreBundle\Entity;
 
 use Mapbender\CoreBundle\Entity\Source;
+
 /**
  *
  * @author Paul Schmidt
@@ -20,18 +21,18 @@ abstract class SourceItem
      * @var Source source
      */
     protected $source;
-    
+
     /**
      * Set Source
-     * @param $source the source
+     * @param Source $source the source
      * @return Source
      */
-    public abstract function setSource(Source $source);
+    abstract public function setSource(Source $source);
 
     /**
      * Get Source
      *
-     * @return Source 
+     * @return Source
      */
-    public abstract function getSource();
+    abstract public function getSource();
 }

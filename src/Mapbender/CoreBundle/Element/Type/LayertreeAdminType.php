@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * 
+ * LayertreeAdminType
  */
 class LayertreeAdminType extends AbstractType
 {
@@ -44,51 +44,40 @@ class LayertreeAdminType extends AbstractType
             "metadata" => "Metadata",
 //            "legend" => "Legend",
 //            "kmlexport" => "KML export",
-            "dimension" => "Dimension",
+//            "dimension" => "Dimension",
         );
-        $builder->add('target', 'target_element',
-                array(
+        $builder->add('target', 'target_element', array(
                 'element_class' => 'Mapbender\\CoreBundle\\Element\\Map',
                 'application' => $options['application'],
                 'property_path' => '[target]',
                 'required' => false))
-            ->add('type', 'choice',
-                array(
+            ->add('type', 'choice', array(
                 'required' => true,
                 'choices' => array(
                     'element' => 'Element',
                     'dialog' => 'Dialog')))
-            ->add('autoOpen', 'checkbox',
-                array(
+            ->add('autoOpen', 'checkbox', array(
                 'required' => false))
-            ->add('useTheme', 'checkbox',
-                array(
+            ->add('useTheme', 'checkbox', array(
                 'required' => false))
-            ->add('displaytype', 'choice',
-                array(
+            ->add('displaytype', 'choice', array(
                 'required' => true,
                 'choices' => array('tree' => 'Tree')))
-            ->add('titlemaxlength', 'text', array('required' => true))
-            ->add('showBaseSource', 'checkbox',
-                array(
+            ->add('titlemaxlength', 'text', array(
+                'required' => true))
+            ->add('showBaseSource', 'checkbox', array(
                 'required' => false))
-            ->add('showHeader', 'checkbox',
-                array(
+            ->add('showHeader', 'checkbox', array(
                 'required' => false))
-            ->add('hideInfo', 'checkbox',
-                array(
+            ->add('hideInfo', 'checkbox', array(
                 'required' => false))
-            ->add('hideNotToggleable', 'checkbox',
-                array(
+            ->add('hideNotToggleable', 'checkbox', array(
                 'required' => false))
-            ->add('hideSelect', 'checkbox',
-                array(
+            ->add('hideSelect', 'checkbox', array(
                 'required' => false))
-            ->add('menu', 'choice',
-                array(
+            ->add('menu', 'choice', array(
                 'required' => false,
                 "multiple" => true,
                 'choices' => $menuComponents));
     }
-
 }

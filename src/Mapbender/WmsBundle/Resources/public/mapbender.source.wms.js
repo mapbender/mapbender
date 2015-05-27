@@ -131,7 +131,7 @@ $.extend(true, Mapbender, {
                 requestUrl += (/\?/.test(mqLayer.options.url) ? '&' : '?') + params;
                 return requestUrl;
             },
-            
+
             createSourceDefinitions: function(xml, options){
                 if(!options.global.defFormat) {
                     options.global.defFormat = "image/png";
