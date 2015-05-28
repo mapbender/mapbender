@@ -73,6 +73,11 @@ class FeatureType extends ContainerAware
     public function __construct(ContainerInterface $container, $args = null)
     {
         $this->setContainer($container);
+        $hasFields = isset($args["fields"]) && is_array($args["fields"]);
+
+        if (!$hasFields) {
+            $args["fields"] = array();
+        }
 
         // init $methods by $args
         if (is_array($args)) {
@@ -85,10 +90,10 @@ class FeatureType extends ContainerAware
             }
         }
 
-        // if no fields defined find it all and remove geo field from the list
-        if (!isset($args["fields"]) || $args["fields"] == '*') {
+        // if no fields defined, but geomField, find it all and remove geo field from the list
+        if (!$hasFields && isset($args["geomField"])) {
             $fields = $this->getTableFields();
-            unset($fields[array_search($this->getGeomField(), $fields, false)]);
+            unset($fields[array_search($args["geomField"], $fields, false)]);
             $this->setFields($fields);
         }
     }
@@ -259,13 +264,23 @@ class FeatureType extends ContainerAware
         }
 
         /** @var Feature $feature */
-        $feature    = $this->create($featureData);
-        // Insert if no ID given
-        if (!$autoUpdate || !$feature->hasId()) {
-            $result = $this->insert($feature);
-        } // Replace if has ID
-        else {
-            $result = $this->update($feature);
+        $feature = $this->create($featureData);
+
+        try {
+            // Insert if no ID given
+            if (!$autoUpdate || !$feature->hasId()) {
+                $result = $this->insert($feature);
+            } // Replace if has ID
+            else {
+                $result = $this->update($feature);
+            }
+
+        } catch (Exception $e) {
+            $result = array(
+                "exception"   => $e,
+                "feature"     => $feature,
+                "featureData" => $featureData
+            );
         }
 
         return $result;

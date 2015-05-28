@@ -56,33 +56,48 @@ Mapbender.ElementRegistry = function(){
 };
 Mapbender.elementRegistry = new Mapbender.ElementRegistry();
 
+/**
+ * Initialize mapbender element
+ *
+ * @param id
+ * @param data elemenent configurations data object
+ */
+Mapbender.initElement = function(id, data) {
+    // Split for namespace and widget name
+    var widget = data.init.split('.');
+
+    // Register for ready event to operate ElementRegistry
+    var readyEvent = widget[1].toLowerCase() + 'ready';
+    $('#' + id).one(readyEvent, function(event) {
+        for (var i in Mapbender.configuration.elements) {
+            var conf = Mapbender.configuration.elements[i], widget = conf.init.split('.'), readyEvent = widget[1].toLowerCase() + 'ready';
+            if(readyEvent === event.type) {
+                Mapbender.elementRegistry.onElementReady(i, true);
+            }
+        }
+    });
+
+    // This way we call by namespace and widget name
+    // The namespace is kinda useless, as $.widget creates a function with
+    // the widget name directly in the jQuery object, too. Still, let's be
+    // futureproof.
+    $[widget[0]][widget[1]](data.configuration, '#' + id);
+};
+
+Mapbender.isDebugMode = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
+
 Mapbender.setup = function(){
+
     // Initialize all elements by calling their init function with their options
     $.each(Mapbender.configuration.elements, function(id, data){
+        //if(Mapbender.isDebugMode){
+        //    Mapbender.initElement(id,data);
+        //    return;
+        //}
         try {
-            // Split for namespace and widget name
-            var widget = data.init.split('.');
-
-            // Register for ready event to operate ElementRegistry
-            var readyEvent = widget[1].toLowerCase() + 'ready';
-            $('#' + id).one(readyEvent, function(event){
-                for(var i in Mapbender.configuration.elements) {
-                    var conf = Mapbender.configuration.elements[i],
-                        widget = conf.init.split('.'),
-                        readyEvent = widget[1].toLowerCase() + 'ready';
-                    if(readyEvent === event.type) {
-                        Mapbender.elementRegistry.onElementReady(i, true);
-                    }
-                }
-            });
-
-            // This way we call by namespace and widget name
-            // The namespace is kinda useless, as $.widget creates a function with
-            // the widget name directly in the jQuery object, too. Still, let's be
-            // futureproof.
-            $[widget[0]][widget[1]](data.configuration, '#' + id);
+            Mapbender.initElement(id,data);
         } catch(e) {
-            console.log('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.');
+            console.error('Your element with id ' + id + ' (widget ' + data.init + ') failed to initialize properly.');
             console.log('Error:', e);
             console.log('Configuration:', data.configuration);
             if(Error) {
