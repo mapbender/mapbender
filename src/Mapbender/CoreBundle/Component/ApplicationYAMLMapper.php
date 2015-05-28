@@ -96,7 +96,12 @@ class ApplicationYAMLMapper
             $application->setCustomCss($definition['custom_css']);
         }
 
-        if (array_key_exists('extra_assets', $definition)) {
+        if(isset($definition['publicOptions'])){
+            $application->setPublicOptions($definition['publicOptions']);
+        }
+
+        if(array_key_exists('extra_assets', $definition))
+        {
             $application->setExtraAssets($definition['extra_assets']);
         }
         if (key_exists('regionProperties', $definition)) {
