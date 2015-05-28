@@ -188,13 +188,22 @@
       height: auto;
     }
     .vendorspecific-content{
-      .dropdown,.inputWrapper,.checkWrapper{
+      .dropdown,.inputWrapper{
         width:200px !important;
         margin:0px;
+      }
+      .checkWrapper {
+          width: 20px !important;
+          margin-top: 4px;
       }
       input {width:100%;}
       .labelInput{width:80px;}
       .collectionItem > label{display:none;}
+      a.collectionRemove {
+          position: relative;
+          top: -191px;
+          right: -290px;
+      }
     }
     .mb-slider{margin-top: $space/2;}
   }
@@ -206,7 +215,7 @@
       white-space: nowrap;
     }
   }
-  
+
 }
 .instanceTable{
   margin-top:$space;
