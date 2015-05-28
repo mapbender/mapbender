@@ -100,6 +100,10 @@ class ApplicationYAMLMapper
             $application->setPublicOptions($definition['publicOptions']);
         }
 
+        if(isset($definition['publicOptions'])){
+            $application->setPublicOptions($definition['publicOptions']);
+        }
+
         if(array_key_exists('extra_assets', $definition))
         {
             $application->setExtraAssets($definition['extra_assets']);
