@@ -13,6 +13,7 @@
             var self = this;
             Mapbender.elementRegistry.onElementReady(this.options.target, $.proxy(self._setup, self));
         },
+
         _setup: function() {
             var self = this;
 
@@ -26,7 +27,7 @@
                     widthLi[count - 1] = $(".mb-element-basesourceswitcher li").eq(count - 1).width() + 30;
                     count--;
                 }
-            
+
             var largest = Math.max.apply(Math, widthLi) + 20 + "px";
             $(".mb-element-basesourceswitcher li").css("width", largest);
             if (display === "dropdown") {
@@ -47,7 +48,7 @@
 
                 }
             });
-            
+
             this._hideSources();
             this._showActive();
             self._trigger('ready');
@@ -56,16 +57,18 @@
                 this.setHeight();
             }
         },
+
         getCpr: function() {
             var me = $(this.element);
             var element = me.find('.basesourcesetswitch[data-state="active"]');
             var index = element.index();
             var i = 0;
-            for (gridx in this.options.groups) {
+            var cprTitle, cprUrl;
+            for (var gridx in this.options.groups) {
                 if (i === index) {
                     var gr = this.options.groups[gridx];
-                    var cprTitle = gr.cprTitle;
-                    var cprUrl = gr.cprUrl;
+                    cprTitle = gr.cprTitle;
+                    cprUrl = gr.cprUrl;
                     break;
                 }
                 i++;
@@ -75,43 +78,37 @@
                 url: cprUrl
             }
         },
+
         _hideSources: function() {
             var me = $(this.element),
                 map = $('#' + this.options.target).data('mapbenderMbMap'),
                 model = map.getModel();
-            $.each(me.find('.basesourcesetswitch'), function(idx, elm) {
-                var sourcesIds = $(elm).attr("data-sourceset").split(",");
-                for (var i = 0; i < sourcesIds.length; i++) {
-                    if (sourcesIds[i] !== '') {
-                        var source = model.getSource({
-                            origId: sourcesIds[i]
-                        });
-                        if (source) {
-                            var tochange = {
-                                change: {
-                                    sourceIdx: {
-                                        id: source.id
-                                    },
-                                    options: {
-                                        configuration: {
-                                            options: {
-                                                visibility: false
-                                            }
-                                        },
-                                        type: 'selected'
-                                    }
-                                }
-                            };
-                            model.changeSource(tochange);
-                        } else {
-                            Mapbender.error(Mapbender.trans("mb.core.basesourceswitcher.error.sourcenotavailable", {
-                                'id': +sourcesIds[i]
-                            }));
-                        }
-                    }
+            var ids = [];
+            $.each(model.getSources(), function(_, src) {
+                if(src.configuration.isBaseSource) {
+                    ids.push(src.id);
                 }
             });
+            $.each(ids, function(idx, elm) {
+                var tochange = {
+                    change: {
+                        sourceIdx: {
+                            id: elm
+                        },
+                        options: {
+                            configuration: {
+                                options: {
+                                    visibility: false
+                                }
+                            },
+                            type: 'selected'
+                        }
+                    }
+                };
+                model.changeSource(tochange);
+            });
         },
+
         _showActive: function() {
             var me = $(this.element),
                 map = $('#' + this.options.target).data('mapbenderMbMap'),
@@ -149,29 +146,32 @@
                     }
                 }
             });
-//            this._trigger("", null, eventOptions);
         },
+
         setHeight: function() {
             $('.basesourcesetswitch[data-state="active"]').addClass("iconLegend");
             var dis = $('.basesourcesetswitch[data-state="active"]').offset().top;
             var heightLi = $('.basesourcesetswitch[data-state="active"]').height();
             var size = $('.mb-element-basesourceswitcher li').size();
+            var konst;
             for (var i = 1; i < size; i++) {
                 if ($('.mb-element-basesourceswitcher li').eq(i).attr("data-state") === "") {
                     $('.mb-element-basesourceswitcher li').eq(i).css("top", dis + 1.5 * heightLi + "px");
                 }
                 if (i === 1) {
-                    var konst = heightLi;
+                    konst = heightLi;
                 }
                 heightLi = heightLi + konst;
             }
             heightLi = 0;
 
         },
+
         _toggleMapset: function(event) {
             var me = $(this.element),
                 a = $(event.currentTarget);
             var display = this.options.display;
+            var konst;
 
             if (display === "dropdown") {
                 if (a.attr("data-state") === "active") {
@@ -199,7 +199,7 @@
                             $('.mb-element-basesourceswitcher li').eq(i).css("top", dis + 1.5 * heightLi + "px");
 
                             if ($(a).height() === heightLi) {
-                                var konst = heightLi;
+                                konst = heightLi;
                             }
 
                             heightLi = heightLi + konst;
@@ -234,6 +234,7 @@
                 return false;
             }
         },
+
         /**
          *
          */
@@ -244,17 +245,20 @@
                 this.readyCallbacks.push(callback);
             }
         },
+
         /**
          *
          */
         _ready: function() {
-            for (callback in this.readyCallbacks) {
+            for (var callback in this.readyCallbacks) {
                 callback();
                 delete(this.readyCallbacks[callback]);
             }
             this.readyState = true;
         },
+
         _destroy: $.noop
+
     });
 
 })(jQuery);
