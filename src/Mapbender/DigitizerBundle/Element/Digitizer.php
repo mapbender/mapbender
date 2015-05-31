@@ -50,11 +50,13 @@ class Digitizer extends HTMLElement
     static public function listAssets()
     {
         return array('js'    => array(
-                                      'mapbender.element.digitizer.js',
-                                      '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
-                                      '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
+            'mapbender.element.digitizer.js',
+            '@FOMCoreBundle/Resources/public/js/widgets/popup.js',
+            '@FOMCoreBundle/Resources/public/js/widgets/dropdown.js'),
                      'css'   => array('sass/element/digitizer.scss'),
-                     'trans' => array());
+                     'trans' => array(
+                         '@MapbenderDigitizerBundle/Resources/views/Element/digitizer.json.twig'
+                     ));
     }
 
     /**
