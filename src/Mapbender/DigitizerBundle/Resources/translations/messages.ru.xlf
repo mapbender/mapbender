@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="ru" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="9728e3887eb78b1169723e59697f00b9" resname="mb.digitizer.feature.remove">
+        <source>mb.digitizer.feature.remove</source>
+        <target>__mb.digitizer.feature.remove</target>
+      </trans-unit>
+      <trans-unit id="7dbb76095005015c35538c7b7489899a" resname="mb.digitizer.feature.edit">
+        <source>mb.digitizer.feature.edit</source>
+        <target>__mb.digitizer.feature.edit</target>
+      </trans-unit>
+      <trans-unit id="32f03ad9b45b00218db43485701945d0" resname="mb.digitizer.toolset.current-extent">
+        <source>mb.digitizer.toolset.current-extent</source>
+        <target>__mb.digitizer.toolset.current-extent</target>
+      </trans-unit>
+      <trans-unit id="e9a236b82aef8705927188c6c1cc5e50" resname="mb.digitizer.feature.attributes">
+        <source>mb.digitizer.feature.attributes</source>
+        <target>__mb.digitizer.feature.attributes</target>
+      </trans-unit>
+      <trans-unit id="9bca1e9d6ea962b4fed4d22d88e53cde" resname="mb.digitizer.feature.save">
+        <source>mb.digitizer.feature.save</source>
+        <target>__mb.digitizer.feature.save</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
