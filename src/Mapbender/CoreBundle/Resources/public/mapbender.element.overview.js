@@ -63,7 +63,7 @@
                     });
                 });
             if(layers_overview.length === 0){
-                Mapbender.error(Mapbender.trans("mb.core.overview.nolayer"));
+                Mapbender.info(Mapbender.trans("mb.core.overview.nolayer"));
                 return;
             }
             this.mapOrigExtents = {
