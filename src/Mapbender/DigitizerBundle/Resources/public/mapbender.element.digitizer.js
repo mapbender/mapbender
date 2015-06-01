@@ -5,10 +5,37 @@
      * @param title
      * @returns {*}
      */
-    function translate(title){
-        var translateKey = "mb.digitizer." + title;
-        return Mapbender.trans(translateKey);
+    function translate(title, withoutSuffix) {
+        return Mapbender.trans(withoutSuffix ? title : "mb.digitizer." + title);
     }
+
+    /**
+     * Regular Expression to get checked if string should be translated
+     *
+     * @type {RegExp}
+     */
+    var translationReg = /^trans:\w+\.(\w|-|\.{1}\w+)+\w+$/;
+
+    /**
+     * Check and replace values recursive if they should be translated.
+     * For checking used "translationReg" variable
+     *
+     *
+     * @param items
+     */
+    function translateStructure(items) {
+        var isArray = items instanceof Array;
+        for (var k in items) {
+            if(isArray || k == "children") {
+                translateStructure(items[k]);
+            } else {
+                if(typeof items[k] == "string" && items[k].match(translationReg)) {
+                    items[k] = translate(items[k].split(':')[1], true);
+                }
+            }
+        }
+    }
+
     /**
      * Example:
      *     confirmDialog({html: "Feature löschen?", title: "Bitte bestätigen!", onSuccess:function(){
@@ -478,7 +505,7 @@
                                                return false
                                             }
                                         }
-                                    })
+                                    });
 
 
                                     // Merge object2 into object1
@@ -513,7 +540,9 @@
                 $.extend(popupConfiguration,self.currentSettings.popup);
             }
 
-            var dialog= $("<div/>");
+            var dialog = $("<div/>");
+            translateStructure(self.currentSettings.formItems);
+
             dialog.generateElements({children: self.currentSettings.formItems});
             dialog.popupDialog(popupConfiguration);
             self.currentPopup = dialog;
