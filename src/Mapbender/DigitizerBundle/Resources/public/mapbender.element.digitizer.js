@@ -14,7 +14,7 @@
      *
      * @type {RegExp}
      */
-    var translationReg = /^\w+\.(\w|-|\.{1}\w+)+\w+$/;
+    var translationReg = /^trans:\w+\.(\w|-|\.{1}\w+)+\w+$/;
 
     /**
      * Check and replace values recursive if they should be translated.
@@ -30,7 +30,7 @@
                 translateStructure(items[k]);
             } else {
                 if(typeof items[k] == "string" && items[k].match(translationReg)) {
-                    items[k] = translate(items[k], true);
+                    items[k] = translate(items[k].split(':')[1], true);
                 }
             }
         }
